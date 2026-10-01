@@ -17,49 +17,65 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-prfi-u-purpose role=purpose -->
-## What HL.PRFI.U does
+## What `HL.PRFI.U` does
 
-`HL.PRFI.U` is a standalone `48`-bit scalar AGU instruction that forms a non-binding prefetch hint without performing an architectural memory access using `Immediate` addressing.
+`HL.PRFI.U` is a standalone `48`-bit scalar AGU instruction that issues a non-binding 1-byte-granularity prefetch hint with an immediate displacement and publishes no result.
+
+The canonical assembly is `hl.prfi.u{.l1,.l2,.l3} [SrcL, simm]`. The `.l1`, `.l2`, and `.l3` suffixes select the level named by the `model` field.
+
+Design point: the encoding has no destination field at all, so the effective address is formed and then discarded. A program that also needs the address it hinted must compute the same sum again, because this instruction cannot give it back.
 
 <!-- PTO-READER-BLOCK: scalar-hl-prfi-u-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How the address and the transfer are formed
 
-The address path sign-extends `simm17`, scales it by `1`, and adds the displacement to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+The sign-extended `simm17` value is added to the `SrcL` snapshot modulo `2^PTO_XLEN`. The scale is `1`: the encoded value is the byte distance, not a count of units.
 
-A legal `model` selects the hint level. The hint performs no translation, permission check, alignment check, memory access, memory event, reservation update, ordering edge, or cache-placement guarantee.
+The model then does the address formation and nothing else: no translation, no alignment or permission check, no memory access, no memory event, and no reservation or ordering effect. The level named by `model` is a hint, not an allocation.
 
-The formed address is discarded after the hint; no result field publishes it.
+Design point: the `.u` suffix replaces an implicit transfer-size shift with a shift of `0`, so a `17`-bit field buys byte granularity instead of a count of larger units. The finer step is paid for with the reach of one instruction.
 
 <!-- PTO-READER-BLOCK: scalar-hl-prfi-u-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and the result
 
-- `SrcL` is a `5`-bit field selecting the address base.
-- `model` is a `5`-bit field selecting the prefetch hint level.
-- `simm17` is a `17`-bit field selecting the signed displacement before the `1` scale factor.
+- `SrcL` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `simm17` is a signed `17`-bit displacement carried in the encoding as two pieces at bits `36`..`47` and bits `6`..`10`, covering `-65536`..`65535` bytes.
+- `model` is a `5`-bit selector. Value `0` names `L1`, `1` names `L2`, and `2` names `L3`; values `3`..`31` are reserved.
+- No field of this form receives a value, so the instruction has no architectural result.
+
+Design point: a reserved `model` value rejects before the sources are read, so an instruction that names no legal level cannot consume a `T` or `U` entry or change anything a program can observe.
 
 <!-- PTO-READER-BLOCK: scalar-hl-prfi-u-effects role=effects -->
-## Effects and completion order
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+Every scalar source is snapshotted before any effect, so the base value used for the hint is the pre-instruction value.
 
-A legal hint records no architectural memory event and does not change reservation state.
+The hint records no memory event, changes no memory byte, and leaves reservation state and ordering untouched. No register is written by this form.
 
-After all result or writeback publication, `HL.PRFI.U` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+`TPC` advances by `6` bytes. A rejected or faulting attempt does not retire.
+
+Design point: because there is no destination, the instruction has no architectural result at all, so the `6`-byte `TPC` step is the only observable consequence of a successful execution.
 
 <!-- PTO-READER-BLOCK: scalar-hl-prfi-u-constraints role=constraints -->
 ## Legality, faults, and restart
 
-`model` values `0`, `1`, and `2` are assigned; values `3..31` are reserved and cause `Fault_IllegalInstruction` before source reads or address publication.
+A fixed-bit mismatch, or a source code selecting an unavailable `T` or `U` slot, raises `Fault_IllegalInstruction` before any instruction effect.
 
-A legal prefetch hint cannot raise a data-access fault because it performs no architectural access. Fixed-bit mismatches or unavailable selected T/U sources are rejected before effects.
+A reserved `model` value raises `Fault_IllegalInstruction` before the source is read and before any address is formed for use.
+
+A legal hint raises no data-access fault. Recovery performs a full reissue: the snapshot and the address formation are recomputed with no retained progress.
+
+Design point: the immediate is compared against nothing, because every signed `17`-bit value is assigned. The only rejection this form can produce besides a fixed-bit mismatch is a reserved `model` or an unavailable queue source.
 
 <!-- PTO-READER-BLOCK: scalar-hl-prfi-u-example role=example -->
-## Non-normative reading walkthrough
+## Reading one encoding end to end
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `hl.prfi.u{.l1,.l2,.l3} [SrcL, simm]` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Take `hl.prfi.u.l3 [6, -64]` with GPR6 = `0x1000`.
+- The scale is `1`, so the byte displacement is `-64` and the hinted address is `0x0FC0`.
+- `model` is `2`, so the `.l3` suffix and the encoded field agree on the `L3` level.
+- No register is written, no memory event is recorded, and `TPC` becomes the instruction address plus `6`.
+- The address `0x0FC0` is only a hint: this instruction never reads or probes it.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,47 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-sraw-purpose role=purpose -->
 ## What SRAW does
 
-`SRAW` is a 32-bit scalar ALU instruction. It arithmetically shifts the source right under the low 32-bit word, followed by sign-extension to XLEN shift rules; its current instruction contract defines the result publication path and any additional state effect.
+`SRAW` shifts the low `32` bits of `SrcL` arithmetically right by an amount taken from the low five bits of `SrcR` and publishes the `32`-bit result sign-extended to `PTO_XLEN`. It has three fields: `RegDst` at `[7 +: 5]`, `SrcL` at `[15 +: 5]` and `SrcR` at `[20 +: 5]`.
+
+The carrier matches `0x00006025` under mask `0xfe00707f`.
+
+The sign source is word bit `31`, and the count source is truncated to five bits, so the two operand roles are treated asymmetrically.
 
 <!-- PTO-READER-BLOCK: scalar-sraw-mechanism role=mechanism -->
-## How the result is formed
+## How the word shift is formed
 
-Execution snapshots the encoded inputs, then arithmetically shifts the source right under the low 32-bit word, followed by sign-extension to XLEN shift rules, and only afterward performs the destination effects.
+Dispatch calls `ExecuteDecodedSimpleBinary` with `ScalarBinary_SRA` and `word_operation` true (`asl/scalar/model/dispatch/alu.asl:186-187`). `ScalarBinaryW` takes `left[31:0]`, shifts with `ASR(left32, UInt(right[4:0]))`, and returns `SignExtend{PTO_XLEN}(result32)` (`asl/scalar/model/alu/semantics.asl:483`).
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+sraw SrcL, SrcR, ->{t, u, Rd}
+```
+
+Design point: The count is the low five bits of the full snapshotted `SrcR`, not of a pre-truncated word. A count register holding `0x1000000020` supplies `0`, because bit `5` is outside the used field, while its low five bits are zero.
+
+Design point: Because the shift happens on the word, the upper half of `SrcL` has no influence on the result. Only the word of the value and the low five bits of the count matter.
 
 <!-- PTO-READER-BLOCK: scalar-sraw-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the scalar value through Reg5.
-- The 5-bit `SrcR` field selects the register shift count through Reg5.
+`SrcL` is the shifted value, `SrcR` supplies the count, and `RegDst` receives the sign-extended word.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+- `SrcL`, instruction slice `[15 +: 5]`: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, `28..31` read `U#1..U#4`, non-consuming. Only `SrcL[31:0]` participates.
+- `SrcR`, instruction slice `[20 +: 5]`: the count source, same five-bit map; every value is legal and only bits `4:0` are used.
+- `RegDst`, instruction slice `[7 +: 5]`: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+- Encoded zero of `SrcR` reads the architectural zero GPR, which supplies amount `0`.
+
+Design point: A count whose low five bits are all ones shifts by `31`, which leaves the word sign bit repeated in every position of the word. The published value is then either `0` or the all-ones word, depending only on word bit `31` of `SrcL`.
 
 <!-- PTO-READER-BLOCK: scalar-sraw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are snapshotted before the destination write, so a destination aliasing either source shifts pre-instruction values. The sign-extended word is published and `TPC` advances by `4` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+`SRAW` accesses no memory and leaves reservation, descriptor, numeric-flag, trap, bundle, privilege, predicate and control-flow state unchanged; the only queue movement is the push selected by a `30` or `31` destination.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: `SRAW` reports nothing about how many bits left the word. Because the sign fill is deterministic, the published word is a complete description of the shift result.
 
 <!-- PTO-READER-BLOCK: scalar-sraw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Register shifting uses only the low 5 right-source bits, so the effective amount is `0..31`; every result is defined at the fixed width.
+Every `SrcL`, `SrcR` and `RegDst` code is assigned and no constraint entry applies beyond the fixed carrier bits.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unmatched carrier raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`, reachable for `SRAW` only while a system-block terminal request is pending. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`. Each check precedes the destination effect and the `TPC` advance.
+
+Design point: The count field is entirely assigned and the word shift cannot fault, so `SRAW` has no operand-selected trap. Its fault boundary is encoding validity plus source availability.
 
 <!-- PTO-READER-BLOCK: scalar-sraw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `SRAW` example, source `-8` shifted arithmetically right by `2` produces `-2`.
+With `a0 = -16` and `a1 = 2`, `sraw a0, a1, ->a2` publishes `-4`.
+
+With `a0` holding `0x0000000080000000` and `a1` holding `4`, the word is negative and the result word is `0xF8000000`, so `a2` receives `0xFFFFFFFFF8000000`. With `a1` holding `32`, the low five bits are `0` and `a2` receives the sign-extended word of `a0` unchanged.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

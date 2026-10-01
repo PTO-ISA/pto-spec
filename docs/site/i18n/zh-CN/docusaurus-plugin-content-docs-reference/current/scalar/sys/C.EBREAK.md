@@ -19,42 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-ebreak-purpose role=purpose -->
 ## C.EBREAK 的作用
 
-`C.EBREAK` 使用编码立即数原因触发架构软件断点陷阱。
+`C.EBREAK` 引发软件断点陷阱。陷阱编号是 `50`，编码立即数成为陷阱原因。
+
+它是压缩形式的软件断点：原因随指令本身一起传递，而不是放在寄存器里。
 
 <!-- PTO-READER-BLOCK: scalar-c-ebreak-mechanism role=mechanism -->
-## 系统机制
+## 指令如何放置与执行
 
-ASL DOC 区域选择 `ScalarHandler_SoftwareBreakpoint`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+本指令是活动 SYS 块体中的一个标量操作。标量分派器先检查是否存在活动指令束，以及其块体是否活动且块类型为 System；处于这种块之外的 SYS 形式会以 `Fault_BundleControl` 被拒绝，这发生在任何编码字段检查之前，也发生在任何架构效果之前。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+随后检查编码合法性与源可用性，之后处理程序才运行。
+
+处理程序取出 5 位立即数字段，把它零扩展到 24 位陷阱原因字段，并在请求发生处引发 `Fault_SoftwareBreakpoint`。陷阱上下文在向量转移之前被保存，因此指令执行前状态、陷阱编号、零扩展后的原因以及故障地址参数被一起记录。
+
+设计要点：原因是零扩展而不是符号扩展的，并且不写任何断点标签寄存器。这使立即数成为一个普通的无符号原因值，陷阱处理程序无需知道编码宽度即可比较；同时它把断点身份完全保留在陷阱记录内部。
 
 <!-- PTO-READER-BLOCK: scalar-c-ebreak-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`imm5` 承载5 位立即数。
-
-编码零是已分配的字段值，从不表示省略操作数。
+- `imm5` 是唯一的编码操作数：一个 5 位立即数值。
+- 每个 5 位取值都是已分配编码，因此编码零是真实的零原因，不是被省略的操作数。
+- 没有目的字段，因此该指令绝不写 GPR，也绝不压入 `T` 或 `U`；也没有源字段，因此不读取任何寄存器或队列表项。
 
 <!-- PTO-READER-BLOCK: scalar-c-ebreak-effects role=effects -->
 ## 架构效果
 
-该操作触发 `Fault_SoftwareBreakpoint`、发布陷阱编号 `50`，并把 5 位立即数零扩展到 24 位原因字段。
+该指令引发 `Fault_SoftwareBreakpoint` 并发布陷阱编号 `50`。陷阱原因字段收到零扩展后的立即数，因此 `imm5=0` 产生原因 `0`，`imm5=31` 产生原因 `31`。
 
-转移到陷阱向量之前，陷阱进入会原子保存指令执行前上下文和故障 PC 参数。
+`TPC` 不按该压缩形式通常的 `2` 字节步进前进：陷阱把请求发生处记录为故障地址，控制权经陷阱向量转移。该指令本身不改变任何标量寄存器、队列表项或内存位置。
 
 <!-- PTO-READER-BLOCK: scalar-c-ebreak-constraints role=constraints -->
-## 位置与拒绝边界
+## 放置与拒绝
 
-全部 `32` 个立即数编码都已分配，其中零也是实际原因值。
+无效的块放置首先被拒绝，以 `Fault_BundleControl` 报出，此时连编码字段都还没有被考虑。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+没有任何 `imm5` 取值是保留的，因此原因字段绝不可能是拒绝的原因。没有需要校验的源选择器，也没有需要校验的目的位置。
+
+由于立即数被零扩展进 `5` 位断点标签，软件断点能产生的原因最大是 `31`。
 
 <!-- PTO-READER-BLOCK: scalar-c-ebreak-example role=example -->
 ## 非规范示例
 
-该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
-
-可从 `c.break imm` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+`c.break imm` 在 `imm5=7` 时引发编号为 `50`、原因为 `7` 的软件断点陷阱。在 `imm5=0` 时引发同一个陷阱但原因为 `0`；零原因是真实的编码请求，绝不会被当作缺失的操作数。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

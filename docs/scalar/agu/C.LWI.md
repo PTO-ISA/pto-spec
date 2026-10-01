@@ -17,51 +17,63 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-c-lwi-purpose role=purpose -->
-## What C.LWI does
+## What `C.LWI` does
 
-`C.LWI` is a standalone `16`-bit scalar AGU instruction that loads one 4-byte little-endian value and sign-extends the transferred bits when the result is narrower than `PTO_XLEN` using `Compressed` addressing. The compressed form publishes the loaded result to implicit `T#1`.
+`C.LWI` is a `16`-bit compressed load of one `4`-byte little-endian word. The base is the `SrcL` selector, the byte displacement is the sign-extended `simm5` field multiplied by `4`, and the loaded value is sign-extended to the full `PTO_XLEN` width before it becomes the newest temporary-queue value.
+
+The compressed encoding has no destination field, so `C.LWI` always publishes to the `T` queue.
+
+Design point: the extension is applied between the load and the publication, so the queue slot receives the extended `64`-bit value, not the raw `32` bits that the memory system returned. Loading the four bytes `FF FF FF FF` therefore makes `T#1` hold a value whose `64` bits are all ones, and a later consumer that compares `T#1` with `-1` succeeds without any further extension.
 
 <!-- PTO-READER-BLOCK: scalar-c-lwi-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How the address and the transfer are formed
 
-The address path sign-extends `simm5`, scales it by `4`, and adds the displacement to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+The address path snapshots `SrcL`, sign-extends `simm5`, shifts it left by `2` bits, and adds the two modulo `2^PTO_XLEN`.
 
-After complete preflight, one aligned little-endian `4`-byte load is performed. Its result is sign-extended before destination publication.
+The form has no base writeback, so the computed address is consumed by the access and then discarded; `SrcL` keeps its pre-instruction value whether the access succeeds or faults.
 
-This form does not publish an address-base writeback.
+Once the encoding checks and the address preflight pass, the handler performs one aligned `4`-byte little-endian load, sign-extends bit `31` of the result, and pushes the extended value. The push happens only if the load reported no fault.
+
+Design point: the displacement scale equals the access size. Every byte displacement the form can encode is a multiple of `4`, and the signed `5`-bit field covers `-64` to `60` bytes in steps of `4`. A `4`-byte-aligned base therefore always produces a `4`-byte-aligned effective address, which is exactly what the `4`-byte access requires.
 
 <!-- PTO-READER-BLOCK: scalar-c-lwi-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and where the value goes
 
-- `SrcL` is a `5`-bit field selecting the address base.
-- `simm5` is a `5`-bit field selecting the signed displacement before the `4` scale factor.
-- `T#1` is the implicit loaded-value destination.
+- `SrcL` is a `5`-bit Reg5 selector: codes `0`..`23` name absolute GPRs, codes `24`..`27` name `T#1`..`T#4`, and codes `28`..`31` name `U#1`..`U#4`. A `T` or `U` source is read without consuming it.
+- `simm5` is a signed `5`-bit displacement scaled by `4`. All `32` encodings are values.
+- The destination is implicit `T#1`, reached by a queue push that also moves the older entries towards `T#4`.
+
+Design point: the fields that locate the value also decide how much of it is read; the scale factor and the extension rule come from the encoding, not from the data. Because publication is a queue push, the newest queue entry always describes the most recent load.
 
 <!-- PTO-READER-BLOCK: scalar-c-lwi-effects role=effects -->
-## Effects and completion order
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+The `SrcL` read is taken before any memory or queue effect, so a selector that aliases the pushed `T` slot still supplies its pre-instruction value.
 
-Successful execution records one relaxed load event; memory and reservation state are preserved.
+Successful execution performs one relaxed `4`-byte load and records one load event. Memory bytes and any reservation state are unchanged.
 
-After all result or writeback publication, `C.LWI` advances `TPC` by `2` bytes; a rejected or faulting attempt does not retire.
+After the push, `C.LWI` advances `TPC` by `2` bytes. A rejected or faulting attempt does not retire, so `TPC` stays on the faulting instruction.
+
+Design point: the `4`-byte read and the `64`-bit push are separate steps with the extension between them, so an implementation that reports the fault after the memory stage still leaves the queue untouched: no partially extended value is ever visible.
 
 <!-- PTO-READER-BLOCK: scalar-c-lwi-constraints role=constraints -->
 ## Legality, faults, and restart
 
-Each accessed address is aligned to the `4`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+A fixed-bit mismatch in the `16`-bit encoding raises `Fault_IllegalInstruction` before any effect. An `SrcL` code that selects a `T` or `U` slot whose validity flag is clear raises the same fault at the same point and no memory access is attempted.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
+The preflight tests the low `2` bits of the effective address. A nonzero value raises `Fault_DataAlignment` before address translation and before the permission check; an aligned address that fails a permission or bounded-memory test raises `Fault_DataPage` at the original address.
 
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+A fault records no load event, writes no queue slot, and leaves `TPC` on the faulting instruction. Recovery reissues the whole operation: `SrcL` snapshot, address formation, preflight, `4`-byte load, extension, and push.
 
 <!-- PTO-READER-BLOCK: scalar-c-lwi-example role=example -->
-## Non-normative reading walkthrough
+## Reading one encoding end to end
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `c.lwi [srcL, simm], ->t` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Take `c.lwi [7, 5], ->t` with GPR7 holding `0x3004`. The signed `simm5` is `5`, scaled by `4` gives `20`, so the effective address is `0x3004` plus `20`, which is `0x3018`.
+- The instruction reads the `4` bytes at `0x3018` through `0x301B` in little-endian order.
+- If those bytes are `00 00 00 80`, bit `31` is set, so the pushed `T#1` holds `0xFFFFFFFF80000000`.
+- GPR7 still holds `0x3004`, and `TPC` becomes the instruction address plus `2`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,49 +19,58 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-maddw-purpose role=purpose -->
 ## What HL.MADDW does
 
-`HL.MADDW` is a 48-bit scalar ALU instruction. It adds the selected addend to the signed product and separates the wide result into low and high word halves; its current instruction contract defines the result publication path and any additional state effect.
+`HL.MADDW` is a 48-bit scalar ALU instruction. It reads the low word of all three sources as signed values, forms the 64-bit accumulator `signed32(SrcL) * signed32(SrcR) + signed32(SrcD)`, and publishes its two 32-bit halves, each sign-extended to XLEN.
+
+Both halves are published, so the destination pair carries the complete 64-bit accumulator: `RegDst0` gets `SignExtend(result[31:0])` and `RegDst1` gets `SignExtend(result[63:32])`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-maddw-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then adds the selected addend to the signed product and separates the wide result into low and high word halves, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractResult_HL_MADDW`, which sign-extends `addend[31:0]`, `left[31:0]` and `right[31:0]` to XLEN, takes the low `64` bits of `MultiplyWideSigned`, and adds the widened addend. Dispatch reaches the same 64-bit accumulator through `ExecuteScalarMultiplyAddPair` with `word_operation` true.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+hl.maddw SrcL, SrcR, SrcD, ->Dst0, Dst1
+```
+
+Design point: the word truncation happens before the multiply, not after it. With `SrcL = 0x100000000`, `SrcR = 2` and `SrcD = 0`, `HL.MADDW` publishes `0` in both halves because the low word of `SrcL` is `0`, while `HL.MADD` publishes `0x200000000`; no bit of a source above bit `31` can influence either `HL.MADDW` destination.
 
 <!-- PTO-READER-BLOCK: scalar-hl-maddw-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst0` field selects the Reg5 target for sign-extended `result[31:0]`.
-- The 5-bit `RegDst1` field selects the Reg5 target for sign-extended `result[63:32]`.
-- The 5-bit `SrcD` field selects the addend through Reg5.
-- The 5-bit `SrcL` field selects the left multiplicand or additive operand through Reg5.
-- The 5-bit `SrcR` field selects the right multiplicand through Reg5.
+- `RegDst0`, instruction slice `[23 +: 5]`, receives `SignExtend(result[31:0])`.
+- `RegDst1`, instruction slice `[11 +: 5]`, receives `SignExtend(result[63:32])`.
+- `SrcD`, instruction slice `[43 +: 5]`, supplies the addend word.
+- `SrcL`, instruction slice `[31 +: 5]`, supplies the left multiplicand word.
+- `SrcR`, instruction slice `[36 +: 5]`, supplies the right multiplicand word.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Sources use the common Reg5 map: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4` without consuming the entry. All three reads happen before either destination write.
+
+Design point: because each half is sign-extended separately, a negative accumulator publishes `0xFFFFFFFFFFFFFFFF` in `RegDst1` rather than the raw high word. The high destination therefore holds a value in the same XLEN format as the low one, not an unsigned field.
 
 <!-- PTO-READER-BLOCK: scalar-hl-maddw-effects role=effects -->
 ## Effects and ordering
 
-All results are computed before publication. The destinations are then updated in encoded order (`RegDst0`, `RegDst1`), which also defines the order of duplicate-register writes or queue pushes.
+The complete 64-bit accumulator is formed from source snapshots before the first destination write, so duplicate destination names and source-destination aliases all observe pre-instruction values.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
+Publication order is `RegDst0` then `RegDst1`. If both selectors name one GPR, the second high-word result is final; if both push one queue, `SignExtend(result[63:32])` is the newest entry and `SignExtend(result[31:0])` is next-newest.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+After publication, `TPC` advances by `6` bytes. No memory is read or written, and no state outside `RegDst0`, `RegDst1` and `TPC` changes.
 
 <!-- PTO-READER-BLOCK: scalar-hl-maddw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every `32`-code source encoding is assigned, and every `32`-code destination encoding is accepted, so only source availability can fail the operand checks. The fixed encoding bits must match the canonical 48-bit form; no operand value is otherwise reserved.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. An encoding that does not match the form raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before either destination write, and `TPC` stays on the faulting instruction.
+
+Design point: the accumulator is computed in `64` bits while both destinations are XLEN words. Both destinations use the destination map shared by the pair forms, so the discard and queue-push codes behave exactly as they do for the other pair forms even though the arithmetic is narrower.
 
 <!-- PTO-READER-BLOCK: scalar-hl-maddw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.MADDW` example, multiplicands `6` and `7` with addend `1` produce accumulated value `43`; wide pair forms place `43` in the low result and `0` in the high result.
+With `SrcL = -3`, `SrcR = 5`, and `SrcD = 1`, the signed word product is `-15`, the result is `-14`, and `RegDst0` receives `SignExtend(0xFFFFFFF2)` = `0xFFFFFFFFFFFFFFF2` while `RegDst1` receives `SignExtend(0xFFFFFFFF)` = `0xFFFFFFFFFFFFFFFF`. With `SrcL = 70000`, `SrcR = 70000`, and `SrcD = 0`, the 64-bit result is `4900000000`, which is `0x124101100`, so `RegDst0` receives `605032704` and `RegDst1` receives `1`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

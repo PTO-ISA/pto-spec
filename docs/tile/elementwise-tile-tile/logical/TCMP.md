@@ -19,49 +19,66 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tcmp-purpose role=purpose -->
 ## What TCMP does
 
-`TCMP` is a selector-encoded Tile operation executed by `VEC`. It compares corresponding numeric elements under `CMode` and packs zero-or-one predicate results; its current instruction contract owns the exact bundle form and publication boundary.
+`TCMP` compares corresponding elements of two Local numeric Tiles and produces one true-or-false result per element. The results form a predicate: a mask that a later operation such as `TSEL` can consume. The comparison mode, selected by `CMode`, is one of `EQ`, `NE`, `LT`, `GT`, `LE`, or `GE`.
+
+Design point: `TCMP` has no standalone opcode. `BSTART.VEC` Mode 0 Function 13 (TEPL selector `0x00D`) selects it. `CMode` codes 0 to 5 select `EQ`, `NE`, `LT`, `GT`, `LE`, and `GE`; codes 6 and 7 are reserved. Omitting `B.DATR` leaves `CMode` at zero, so the default comparison is `EQ`.
 
 <!-- PTO-READER-BLOCK: tile-tcmp-mechanism role=mechanism -->
 ## Element and Tile mechanism
 
-After all descriptor and operand checks succeed, the owning ASL handler compares corresponding numeric elements under `CMode` and packs zero-or-one predicate results. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+After complete preflight, `TCMP` snapshots both sources and compares each coordinate of the valid rectangle `ValidRow x ValidCol` under the selected operation `DataType`.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+- Signed integer types use signed order, and unsigned integer types use unsigned order.
+- Floating-point types use numeric order. Positive and negative zero compare equal.
+- If either floating operand is NaN, `NE` is true and every other mode is false. A signaling NaN also records the invalid condition.
+
+Design point: unlike raw-carrier operations such as `TAND` or `TSEL`, `TCMP` must interpret values in order to rank them. Every source element it compares must therefore be a valid encoding of the operation `DataType`, and an invalid encoding is rejected before any effect.
+
+Design point: the selected `BSTART.VEC` `DataType` is the comparison type, and each source's backing type is checked separately. A source may use a different same-width, non-packed backing type; its bits are then compared as the operation type. The source descriptors are not retagged.
 
 <!-- PTO-READER-BLOCK: tile-tcmp-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` has the exact contract role **new packed Local predicate destination**.
-- `source0` has the exact contract role **ordered left Local numeric source**.
-- `source1` has the exact contract role **ordered right Local numeric source**.
-- `comparison` has the exact contract role **EQ, NE, LT, GT, LE, or GE selected by CMode**.
+- `source0` is the left numeric source, and `source1` is the right numeric source. `LT` asks whether left is less than right.
+- `comparison` is the `CMode` relation.
+- `destination0` receives the predicate in the legacy and PredicateCell forms. It is absent in the GPR form.
 
-Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
-Every source coordinate read by the operation must be defined before execution reaches destination publication.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+The predicate is published in exactly one of three mutually exclusive carriers. `RowMajor` sources select the legacy form. `CUBE_M16` or `CUBE_M32` sources select the PredicateCell form when `B.IOT` names a destination, or the GPR form when a destination-only `B.IOR` is bound instead. The `B.DATR` `Layout` field must stay zero.
+
+| Form | Source layout | Result carrier |
+| --- | --- | --- |
+| Legacy | `RowMajor` | New packed Predicate Tile: one bit per element, with element `i` at bit `i mod 8` of byte `floor(i/8)` |
+| PredicateCell | `CUBE_M16` or `CUBE_M32` | New `U8` PredicateCell Tile: one canonical byte, `0x00` or `0x01`, per element |
+| GPR | `CUBE_M16` or `CUBE_M32` | One 64-bit GPR written through a destination-only `B.IOR` |
+
+Design point: a PredicateCell records its basis type, the operation `DataType` of the comparison that produced it. A `TSEL` that consumes the PredicateCell as its selector requires that basis to equal its own operation `DataType`, so a selector built for one element type is rejected for data of another type. Generic ExecutionMask consumption does not apply this basis check.
+
+In the GPR form, the operation type determines the bit-field geometry of the mask word. For an 8-bit operation type, `Sat` selects the Low or High half of the predicate columns; for wider types `Sat` must be zero.
 
 <!-- PTO-READER-BLOCK: tile-tcmp-effects role=effects -->
 ## Publication, definedness, and padding
 
-Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+The payload, the predicate padding, the numeric status, the descriptor or GPR result, and definedness publish together. A rejected `TCMP` leaves all architectural state unchanged. Because both sources are snapshotted first, identical sources and a source that aliases the destination read old values.
 
-Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+Predicate positions outside the valid rectangle follow `PadValue`. `Zero` and `Min` write false, `Max` writes true, and `Null`, the default when `B.DATR` is omitted, leaves them undefined or unspecified according to the carrier.
 
-The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+A CUBE form may consume an explicit ExecutionMask. Active coordinates compare normally. Inactive coordinates keep their old predicate bit or cell under MERGE, or receive zero under ZERO, and contribute no numeric status. `TCMP` has no global-memory effect.
 
 <!-- PTO-READER-BLOCK: tile-tcmp-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The accepted data-type set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
+The legacy form accepts `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. The PredicateCell form excludes the 64-bit types and accepts `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S32`, `S16`, `S8`, `U32`, `U16`, `U8`. The GPR form also requires the operation type to pass `TileCubePredicateGPRDataTypeSupported`, and the valid shape must fit the mask-word geometry derived from that type.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+`PE_MASK=0000` is a strict no-op before any schema, source, allocation, GPR, or status check. Otherwise, a malformed or mixed carrier schema, a missing dimension, a reserved `CMode`, an unsupported `DataType`, a shape, layout, or width mismatch, undefined or invalid source data, insufficient destination capacity, or allocation failure rejects before source reads or effects. Nonzero `Canonicalize`, secondary `DataType`, `RMode`, or `Layout` is illegal.
 
 <!-- PTO-READER-BLOCK: tile-tcmp-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `TCMP` example, under less-than mode, `[1, 3]` compared with `[2, 3]` produces predicate bits `[1, 0]`.
+With `DataType=S32` and `CMode=LT`, a left source row `[1, 3, -5]` and a right source row `[2, 3, 4]` produce predicate values `[1, 0, 1]`. Under `DataType=U32`, the same bits compare `-5` as `0xFFFFFFFB`, so the third result becomes 0.
+
+In macro form, `TCMP <Row=8, Col=64, FP32, LT>, T#1, T#2, ->U<512B>` compares two `RowMajor` `FP32` Tiles into a new packed Predicate Tile `U#1`. Its 512 predicate bits occupy 64 bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

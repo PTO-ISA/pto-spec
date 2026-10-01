@@ -18,43 +18,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-sw-smin-purpose role=purpose -->
 ## SW.SMIN 的作用
-
-`SW.SMIN` 对一个字原子执行有符号最小值并存储结果，但不发布旧值。
+`SW.SMIN` 原子地更新一个对齐的 4 字节内存值并写回结果。它不发布旧值，也不写任何寄存器或临时队列。
+其记录的摘要为：SW.SMIN atomically replaces the aligned 32-bit memory value with its signed minimum with SrcR; it does not publish the old value. `SW` 前缀标明宽度：每次操作 4 字节内存；写操作需要它替换掉的值，而该读取发生在同一次原子访问中。
 
 <!-- PTO-READER-BLOCK: scalar-sw-smin-mechanism role=mechanism -->
 ## 原子机制
-
-ASL DOC 契约选择 `ScalarHandler_AtomicReadModifyWrite`，访问宽度为 `4` 字节。
-
-只有读取与写入访问都完成预检后，同一位置的原子读改写才能提交。
+指令契约以宽度 `4` 选择 `ScalarHandler_AtomicReadModifyWrite`，并把该操作映射到 `Atomic_SMIN`。标量分派调用 `AtomicReadModifyWrite`：对同一地址做两次预检，然后读取、合并、写回；其返回值被丢弃。
+`Atomic_SMIN` 比较 `SInt(old_value)` 与 `SInt(operand)`，返回较小者。
+该辅助函数会返回内存旧值，但分派传入的 `write_result` 为 `FALSE`，且该形式没有目的字段，因此不会发布任何值。
+设计要点：`SW` 操作按 32 位定义，因此只使用操作数寄存器的低 32 位。第 `32` 位及更高位不会进入内存，写回的 4 字节值是结果的低 32 位。
 
 <!-- PTO-READER-BLOCK: scalar-sw-smin-inputs-outputs role=inputs-outputs -->
 ## 输入与结果
-
-`SrcL` 承载 Reg5 原子地址源；`SrcR` 承载 Reg5 原子操作数源；`far` 承载平坦地址路由提示；`rl` 承载释放排序位。
-
-`rl` 选择宽松或释放排序；该形式没有获取位；`far` 是配置档路由提示，在参考配置档中不改变架构结果。
+`SrcL` 提供原子地址。`SrcR` 提供原子操作数，写入的值来自该地址原有的值，按二进制补码有符号整数比较并保留较小者。
+`rl` 是释放位：`rl=0` 以宽松排序记录原子事件，`rl=1` 以释放排序记录。该形式没有获取位，因此不能记录获取或获取-释放排序。`far` 只是路由提示：`AtomicAddress` 原样返回其 `address` 参数，既不改变地址，也不改变排序或结果。
+全部 32 个 Reg5 源编码都已分配：`0`..`23` 命名 GPR，`24`..`27` 命名 `T#1`..`T#4`，`28`..`31` 命名 `U#1`..`U#4`。该形式没有目的字段，因此旧值既不到达 GPR，也不到达队列。
 
 <!-- PTO-READER-BLOCK: scalar-sw-smin-effects role=effects -->
 ## 效果与排序
-
-这种仅存储形式没有目的字段；提交成功时会更新内存并发出一个原子事件。
-
-完成的写入会使重叠的本地 64 字节缓存行保留失效，保留不重叠的保留，并让 `TPC` 前进 `4` 字节。
+成功执行时先读出旧值，选出较小的有符号值，再把结果写回同一翻译地址，并以所选排序记录一个原子内存事件。`SW` 不记录数值状态。
+完成的写入会使与写入范围重叠的本地保留失效，而不会影响不重叠的保留；该判定发生在 `StoreTranslated` 内部，并以 64 字节保留粒度为依据。成功执行随后使 `TPC` 前进 `4` 字节。
+设计要点：宽度固定为 32 位，只有被寻址位置的低 32 位参与运算，因此在该地址保存更宽值的程序必须把该操作视为只更新其低半部分。
 
 <!-- PTO-READER-BLOCK: scalar-sw-smin-constraints role=constraints -->
 ## 合法性与精确故障
-
-有效地址必须按 `4` 字节对齐。对齐、地址翻译和权限检查都先于架构效果。
-
-预检失败时不会发布目的值、内存事件、保留更新或退役效果；保存的原始 `TPC` 支持完整重新执行。
+有效地址必须按 `4` 字节对齐。`ProbeDataAccess` 在查询地址翻译之前先按访问宽度比较地址，因此对齐错误先于翻译或权限故障被报告，且失败的预检报告原始架构地址。
+任一预检失败时什么都不会发生：不加载、不存储、不记录内存事件、不更新保留、不发布结果、不推进 `TPC`。还存在另一种结果：两次预检都通过但解析到不同的翻译地址，此时辅助函数以原始地址置 `Fault_DataPage`，且不改动内存。
+当没有任何形式能解码该 32 位模式时（本形式在掩码 `0xf4007fff` 下匹配 `0x5000300b`），以及当某个具名源选择了当前无效的临时队列项时，都会在任何效果之前触发 `Fault_IllegalInstruction`。`SrcL` 的编码零读取架构零寄存器作为地址，`SrcR` 的编码零提供数值零作为操作数。
+设计要点：未对齐地址与无法翻译的地址属于不同陷入，而对齐先被检查，因此调试器无需重建访问宽度即可区分二者。
+设计要点：两个源都在结果被写入前读出，而 `SrcL` 与 `SrcR` 可以是同一寄存器；此时操作数仍是执行前的值。
 
 <!-- PTO-READER-BLOCK: scalar-sw-smin-example role=example -->
 ## 非规范示例
-
-本示例只展示一种已接受写法；下方生成的契约仍是权威来源。
-
-初次阅读可从 `sw.smin [SrcL], SrcR` 开始，再只改变上文说明的排序或路由修饰位。
+本示例说明当前的 ASL 归属，不替代规范操作。
+该操作接受的四种写法如下；`.rl`、`.f` 与 `.rlf` 只选择排序或路由。
+```text
+sw.smin [SrcL], SrcR
+sw.smin.rl [SrcL], SrcR
+sw.smin.f [SrcL], SrcR
+sw.smin.rlf [SrcL], SrcR
+```
+对齐地址处的 4 字节值为 `0xffffffff`（按 32 位有符号整数读作 -1），`SrcR` 命名的寄存器中存放 `1`。
+有符号最小值为 `0xffffffff`，该值被写回。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

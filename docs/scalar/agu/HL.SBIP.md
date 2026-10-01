@@ -17,52 +17,67 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-sbip-purpose role=purpose -->
-## What HL.SBIP does
+## What `HL.SBIP` does
 
-`HL.SBIP` is a standalone `48`-bit scalar AGU instruction that stores two adjacent 1-byte little-endian values using `Immediate` addressing.
+`HL.SBIP` is a standalone `48`-bit scalar AGU instruction that stores two adjacent `1`-byte little-endian units from `SrcD` and `SrcD1`.
+
+The canonical assembly is `hl.sbip SrcD, SrcD1, [SrcR, simm]`.
+
+The displacement is in the instruction and counts bytes, so a pair of adjacent bytes can be written at a constant offset from a base register without any index register at all.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sbip-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How the address and the transfer are formed
 
-The address path sign-extends `simm17`, scales it by `1`, and adds the displacement to the snapshotted `SrcR` value modulo `2^PTO_XLEN`.
+The displacement is the sign-extended `simm17` value with a shift of `0`, added to the `SrcR` snapshot modulo `2^PTO_XLEN`.
 
-Both adjacent addresses are preflighted before either aligned little-endian `1`-byte store occurs. The two stores commit in increasing-address order.
+That sum is the first address, and the second address is that sum plus `1`. The update mode is none, so no base write-back is published.
 
-This form does not publish an address-base writeback.
+Both addresses are probed and both store-data sources are read before the first store. On a fault, neither unit is written.
+
+Design point: a `1`-byte pair is exactly `16` bits of destination payload, so this is the form that writes two independent bytes of one logical record without a read-modify-write of the surrounding bytes.
+
+Design point: both sources are read only after both probes succeed, so a rejected or faulting attempt leaves every source register and `T` or `U` queue entry unchanged.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sbip-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and what they select
 
-- `SrcD` is a `5`-bit field selecting the first store-data value.
-- `SrcD1` is a `5`-bit field selecting the second store-data value.
-- `SrcR` is a `5`-bit field selecting the address base.
-- `simm17` is a `17`-bit field selecting the signed displacement before the `1` scale factor.
+- `SrcD` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `SrcD1` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `SrcR` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `simm17` is a signed `17`-bit displacement carried in the encoding as three pieces at bits `41`..`47`, bits `23`..`27`, and bits `11`..`15`, covering `-65536`..`65535` bytes.
+- This form has no `RegDst` field, so no register receives a result and no updated base is published.
+
+Design point: `SrcD` and `SrcD1` may name the same register, in which case both bytes receive the same value from one pre-instruction read. Neither source is modified by the store.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sbip-effects role=effects -->
-## Effects and completion order
+## Effects, snapshots, and completion
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+Every scalar source is snapshotted before any memory or destination effect, so a source that a destination also names still contributes the pre-instruction value.
 
-Successful execution records two relaxed store events in address order; an overlapping reservation is invalidated only after complete preflight.
+A successful execution records two relaxed store events in increasing address order.
 
-After all result or writeback publication, `HL.SBIP` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+In memory, a successful execution changes only the bytes inside the stored range. A valid reservation is invalidated when the stored range overlaps the reservation's `64`-byte granule; a reservation whose granule the store leaves untouched stays valid.
+
+Design point: only the low `8` bits of each source are written, so wider sources are truncated silently. The rest of each register is untouched.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sbip-constraints role=constraints -->
 ## Legality, faults, and restart
 
-Each accessed address is aligned to the `1`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+- A fixed-bit mismatch, or a source code selecting an unavailable `T` or `U` slot, raises `Fault_IllegalInstruction` before any instruction effect.
+- Every address is a whole number of `1`-byte units, so preflight cannot raise `Fault_DataAlignment` for this form. A permission or bounded-memory failure raises `Fault_DataPage` at the failing unit's own address: when only the second unit fails the bound or permission check, that second address is reported.
+- A fault records no store event, leaves memory and destination registers unchanged, and keeps `TPC` on the faulting instruction. Recovery recomputes the snapshot, the address, the probe, and the store from the beginning.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
-
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+Design point: the form carries no `SrcRType` and no `shamt` field, so no field of this form is reserved; the encoding-level rejections are a fixed-bit mismatch and an unavailable `T` or `U` source slot.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sbip-example role=example -->
-## Non-normative reading walkthrough
+## Reading one encoding end to end
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `hl.sbip SrcD, SrcD1, [SrcR, simm]` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Take `hl.sbip 5, 6, [7, 2]` with GPR7 = `0x9000`, GPR5 = `0xAA11`, and GPR6 = `0xBB22`.
+- The displacement of `2` bytes gives the two addresses `0x9002` and `0x9003`.
+- Byte `0x11` is stored at `0x9002` and byte `0x22` at `0x9003`.
+- No register changes, and `TPC` becomes the instruction address plus `6`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

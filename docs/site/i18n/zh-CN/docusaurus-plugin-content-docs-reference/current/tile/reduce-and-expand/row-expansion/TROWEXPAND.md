@@ -19,54 +19,66 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-purpose role=purpose -->
 ## TROWEXPAND 的作用
 
-`TROWEXPAND` 在每个有效行上把所选单元内的值按位广播。
+`TROWEXPAND` 是由 `SFU` 引擎执行的 Tile 归约与扩展操作。它把 Local 源 Tile 的每个有效行取值广播到所有有效列：对每个目标坐标 `[r,c]` 复制 `BroadcastTile[r,BroadcastSlot]`。它由 `TEPL` Mode 2 Function 4（选择器 `0x044`）选中，没有独立 opcode。
+
+设计要点：广播源是普通二维 Tile，其后面的有效列会被忽略。契约要求有效行数恰好等于目标且至少一个有效列，因此可以直接传入完整形状的 Tile，每个有效行只用所选槽位提供取值。
 
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-mechanism role=mechanism -->
 ## 操作机制
 
-对于 Local CUBE 源，所选位置位于绑定 Tile 的首个 CELL 内；`B.SUBVIEW` 可先选取后续 CELL。其他列不提供广播值。
+完整预检之后，`ExecuteTileExpand` 按递增行顺序、并在每行内按递增列顺序遍历目标有效矩形。每个坐标复制 `BroadcastTile[r,BroadcastSlot]` 的原始操作视图位；该复制不做转换、舍入、饱和、规范化，也不更新数值状态。
 
-TROWEXPAND 没有完整形状源 Tile。唯一输入 Tile 会保持持久，并在构造按位复制结果前完成快照。
+设计要点：该复制通过操作视图逐位进行。广播后备只有在等位宽、非打包载体视图下才允许与操作 DataType 不同，因此被复制的位按操作 DataType 重新解释。
 
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-inputs-outputs role=inputs-outputs -->
 ## 操作数、形状与类型
 
-- `destination0` 标识新分配的目的 Tile。
+- `source0` 是持久 Local 广播源，由终止 `B.IOT` 绑定一次。其有效行数必须等于目标，每个有效行只用所选槽位提供取值，其余有效列会被忽略，只有在不施加 ExecutionMask 时才必须已定义。
 
-- `source0` 提供持久源 Tile。
+- `destination0` 是新分配的 Local Tile，DataType 为操作 DataType，几何由 `B.DIM` 推导；`LB0` 必需并提供非零 `ValidCol`，省略 `LB1` 选择 `ValidRow` 等于 1，省略 `LB2` 选择 `Col` 等于 `ValidCol`。其余物理坐标是填充坐标。
 
-- 封闭的适用 DataType 集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。
+- 所有操作数使用同一布局，只有 `RowMajor`、`CUBE_M16` 与 `CUBE_M32` 是允许的布局。槽位在 `RowMajor` 下是逻辑第 0 列，在 `CUBE_M16` 与 `CUBE_M32` 下是由 `B.DATR.RMode` 选出的操作类型槽位。
 
-- 除非该助记符显式选择其他允许布局，数据 Tile 使用行主序布局。
+- 各操作数共享同一个 `PE_MASK`。`PE_MASK=0000` 是严格无操作，发生在描述符读取、分配、故障、状态或载荷效果之前。
 
-- `LB0`、`LB1`、`LB2` 按该助记符契约补全有效形状与物理形状；所有必需有效范围都必须非零。
+设计要点：广播复制没有完整形状源，因此目标几何来自 `B.DIM` 推导的几何，而不是从第二个操作数复制。广播 Tile 只需在有效行数上一致，其有效列数可以大于 1。
+
+设计要点：与归约不同，扩展接受共享的 Local CUBE ExecutionMask。非活动目标坐标取掩码的零值或合并值，而不是计算结果，也不贡献源读取与数值状态；带掩码时完整形状源必须与掩码的布局及两个有效范围一致。
 
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-effects role=effects -->
 ## 已定义性、填充与发布
 
-所有源描述符与载荷都会在目标发布前完成验证和快照。
+目标作为一个整体发布：描述符、每个有效结果、已定义性、有效矩形之外的填充与累积的数值状态同时出现，被拒绝的执行不会发布其中任何一项。源的载荷在写入第一个目标元素前快照，因此合法别名读取旧的源值，源本身保持不变。
 
-按位复制的载荷、目标描述符、已定义性与填充状态会原子发布；TROWEXPAND 不执行数值配置档求值，也不更新数值状态。
+`ValidRow x ValidCol` 有效区域之外的物理目标坐标接收所选 `PadValue`。`Zero`、`Max` 与 `Min` 会定义这些坐标；`Null` 使它们保持未定义。
 
-Null 填充让有效矩形外的物理坐标保持未定义；显式非 Null 填充值会用选定带类型的值定义这些位置。
-
-源 Tile 在成功执行后保持不变。
+设计要点：省略 `B.DATR` 选择 `Null`，而显式 `PadValue` 编码 `00` 选择 `Zero`。省略与编码零并不相同，因此要读取整个物理目标的程序必须请求 `Zero`、`Max` 或 `Min`。
 
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-constraints role=constraints -->
 ## 合法性、故障与顺序边界
 
-完整绑定模式、维度、DataType、布局、源已定义性、数值编码、目标容量与分配都会在效果前预检。
+可接受的操作类型为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16` 与 `U8`，`BSTART` DataType 同时是源操作 DataType 与目标 DataType。每个源后备只有在等位宽、非打包载体视图下才允许与它不同；原始位按操作 DataType 解释，不重新打标签，也不做数值转换。
 
-合法性或分配检查失败会引发相应 Tile 故障，不留下部分目标、状态或内存效果。
+- 恰好一条终止的 Local `B.IOT` 提供各操作数与一个新分配的 Local 目标；`B.IOR` 与 `B.IOS` 非法。
 
-`PE_MASK=0000` 是严格无操作，发生在操作数读取、分配、故障、数值状态或载荷效果之前。
+- 绑定流格式错误、维度缺失或为零、DataType 不受支持、布局不受支持或混合、源元素未定义、源几何不匹配，或参与运算的操作视图编码无效，会在效果之前引发 `Fault_TileLegality`。目标形状无法表示、`TSize` 不足、重命名目标不可用或 Tile 容量耗尽，会在发布之前引发 `Fault_TileAllocation`。
+
+设计要点：广播复制完全不校验算术编码，因此被复制的元素不会因为是该类型的非规范编码而被拒绝；只检查已定义性、描述符、载体位宽与几何。
+
+设计要点：对于 `CUBE_M32` 与 `CUBE_M16`，`B.DATR.RMode` 是无符号 `BroadcastByteOffset`，不是数值舍入选择子；`RowMajor` 要求它为零，偏移必须按元素对齐并落在同一个 `CELL` 分片内。
+
+- 非法的 CUBE 字节偏移、对齐、`CELL` 槽位或有效列选择，会在源快照、目标分配或发布、数值状态与载荷效果之前引发 `Fault_TileLegality`；`PE_MASK=0000` 在严格无效果路径上跳过这一操作专属的选择子检查。
 
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-example role=example -->
 ## 非规范示例
 
 下面的示例只帮助理解当前 ASL 绑定契约，并不是第二份指令定义。
 
-`TROWEXPAND <bundle operands>` 先完成完整预检与源快照，再原子发布助记符定义的结果与填充状态。
+以一个小型 `TROWEXPAND` 示例说明：逻辑第 0 列为 `[10, 20]` 的广播源把两个有效目标行分别填成 `[10, 10]` 与 `[20, 20]`；即使其逻辑第 1 列为 `[99, 99]`，2 x 2 目标仍为 `[[10, 10], [20, 20]]`。
+
+对于有效区域为 7 x 60 且使用 `Zero` 填充的 8 x 64 `FP32` 源，目标有效区域为 7 x 60，因此计算 420 个元素，512 个坐标中有 92 个接收填充值。
+
+同样的操作在宏形式下写作 `TROWEXPAND <Row=8, Col=64, ValidRow=7, ValidCol=60, FP32, Zero>, T#1, ->T<2KB>`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

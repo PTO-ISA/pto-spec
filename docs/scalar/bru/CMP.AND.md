@@ -19,44 +19,53 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-cmp-and-purpose role=purpose -->
 ## What CMP.AND does
 
-`CMP.AND` applies bitwise AND to two decoded scalar values and publishes whether the combined value is nonzero.
+`CMP.AND` combines the two operand values with a bitwise AND and writes the canonical XLEN boolean `1` when the combined value is nonzero and `0` when it is zero.
+
+It is a comparison in result shape only. The value written does not report a relation between the operands; it reports whether the AND of them is all zeros.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-and-mechanism role=mechanism -->
 ## Mechanism
 
-Sources are snapshotted before bitwise AND.
+The contract returns `ScalarHandler_ExecuteCompareLogical` with the operation AND. The model applies the `SrcRType` transformation to the `SrcR` snapshot before the combination. Value `0` leaves the complete value unchanged, `1` substitutes the sign-extended low `32` bits, `2` substitutes the zero-extended low `32` bits, and `3` substitutes the bitwise complement.
 
-A zero combined word becomes XLEN zero; any nonzero word becomes XLEN one.
+The handler then takes the left source and the prepared right value, computes `left AND right`, and writes `Zeros{PTO_XLEN} + 1` when the logical result is nonzero and `Zeros{PTO_XLEN}` when it is zero. No other state is read or written.
+
+Design point: the two operands are combined first and tested second, so the instruction cannot reveal anything about one operand alone. That is why a mask test such as "does this value have any of these bits" needs one instruction instead of a compare followed by a branch on two results.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-and-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `RegDst` selects the encoded destination or discard behavior.
-
-- `SrcL` supplies the left scalar source.
-
-- `SrcR` supplies the right scalar source.
-
+- `SrcL` and `SrcR` are Reg5 sources: codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`.
 - `SrcRType` selects the right-source transformation.
+
+`RegDst` names the destination: codes `1..23` write the named absolute GPR, code `0` and codes `24..29` discard the result, code `30` pushes it to the `U` queue, and code `31` pushes it to the `T` queue.
+
+Code `0` in either source reads the architectural zero GPR. Queue sources are read without being consumed.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-and-effects role=effects -->
 ## Effects and ordering
 
-The canonical boolean is published through the encoded destination, then `TPC` advances by `4` bytes.
+On success the instruction writes exactly one destination value and advances `TPC` by `4` bytes, the encoded length of the `32`-bit form.
 
-The instruction does not modify commit state and does not access memory or reservation state.
+It has no memory effect, no reservation effect, no descriptor effect, and no numeric status flag. It leaves the commit argument, the block argument, and the block condition marker unchanged, because it is not a condition setter.
+
+Design point: `CMP.AND` is not an alias of `AND`. `AND` writes the combined XLEN value, while `CMP.AND` writes the canonical boolean that reports whether that value is nonzero, so the two forms are not interchangeable when the combined bits themselves are needed later.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-and-constraints role=constraints -->
 ## Legality and fault order
 
-Encoding, reserved field values, and source availability are checked before destination, control, or `TPC` effects.
+Decode runs first, and a fixed-bit mismatch raises `Fault_IllegalInstruction` at the instruction address before any effect.
+
+All `32` encodings of `SrcL`, `SrcR`, and `RegDst` are assigned, and all four `SrcRType` values decode to a defined transformation, so no register or modifier encoding is reserved.
+
+A selected `T` or `U` source that is not available is rejected during operand legality, before the destination is written. A rejected instruction changes neither the destination nor `TPC`, and trap entry saves the original `TPC` so it can be reissued.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-and-example role=example -->
 ## Non-normative example
 
-This example illustrates the current owner and does not create a second semantic definition.
+Set GPR1 to `7` and GPR2 to `3`.
 
-`cmp.and SrcL, SrcR<.sw, .uw, .not>, ->{t, u, Rd}` publishes XLEN one when its condition is true and XLEN zero otherwise.
+`cmp.and 1, 2, ->0` computes `7 AND 3`, which is `3`, so it writes `1` into the destination. With GPR2 set to `8` the same form writes `0`, because `7 AND 8` is `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

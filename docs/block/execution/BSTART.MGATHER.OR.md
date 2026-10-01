@@ -19,32 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mgather-or-purpose role=purpose -->
 ## Purpose and scope
 
-`BSTART.MGATHER.OR` is the stable reader entry point for this accepted operation. The normative `ASL` source and the generated contract sections on this page remain the only owners of architectural behavior.
+`BSTART.MGATHER.OR` opens a Tile memory block whose operation is `MGATHER_OR`: one atomic read-modify-write per lane that replaces a global memory (GM) element with the bitwise OR of that element and a value Tile element, and returns the observed old value in a new Local destination Tile.
+
+The command is one 32-bit word with match `0x01111181` under mask `0x07ffffff`, so `DataType` occupies bits 31 to 27 and the fixed low bits carry TLSU selector 17. `ExecuteBundleGMAtomRedOperation` maps selector 17 through `GMAtomicOperationFromFunction` to `GMAtomic_OR` and calls `GM_ATOM_VALUE(...)`. A reserved `DataType` code raises `Fault_IllegalInstruction` at the `BSTART`, before the block commits.
+
+Design point: the sibling `BSTART.MSCATTER.OR` performs the same bit setting but publishes no Tile. Because an OR only adds set bits, the atom form's returned old value is what tells a program which bits were already set before this block ran.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-or-mechanism role=mechanism -->
 ## How to read the operation
 
-Read the generated Decode and Operation sections together to locate the selected form and semantic handler. This guide adds no alternate execution algorithm.
+At commit the block runs the Tile-level body through `GM_ATOM_VALUE`, which calls the shared atom body `GMRunAtomic`. That body visits every active lane, computes the address as `BaseGPR` plus the lane's byte displacement, and probes it for read and then for write; two probes whose translations differ raise `Fault_DataPage`. Only after all lanes pass does it update them one at a time in an `ARBITRARY` order: load the old element, compute the new element, store it, publish the old value into the destination, and record one atomic event.
+
+`GMAtomicResult` computes the new element as the raw bitwise `old OR value` of the two element-width words, with no numeric interpretation of either operand.
+
+Design point: a lane whose value element is zero leaves its element unchanged yet still publishes the old value and still records an update event. A zero mask is therefore an atomic observation of an element rather than a no-op in the event stream.
+
+Design point: `OR` is commutative, associative, and idempotent, so two lanes that name the same address produce the same element value in either commit order. A program that needs a defined result can rely on the memory value even where it must not rely on the destination contents.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-or-inputs role=inputs-outputs -->
 ## Inputs and outputs
 
-Use the generated Operands and results table and Block composition section as the complete map of encoded and architectural roles. Do not infer an omitted operand or result from this summary.
+- `DataType` must be `U32` or `U64`; every other code, including the floating, signed, and packed four-bit types, is rejected for this operation.
+- `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col. All three must equal the index Tile's and the value Tile's valid columns, valid rows, and the destination's physical columns.
+- `B.IOR BaseGPR, zero, zero, ->zero` is required: `RegSrc0` selects the per-PE base GPR, the other three selectors encode zero, and a `RegSrc0` of `zero` supplies base address zero.
+- Without a predicate-Tile ExecutionMask, one terminating `B.IOT` carries the index Tile, the value Tile, and the destination. With one, the first `B.IOT` carries the two sources with no destination and no `last`, and a second `B.IOT` carries the mask Tile, the destination, and `last`.
+- The index Tile is `S32`, `U32`, `S64`, or `U64` with byte displacements. The value Tile uses the operation `DataType` and the same valid shape as the index Tile.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-or-effects role=effects -->
 ## Effects and state
 
-Use the generated State effects and Memory effects and ordering sections for the complete effect boundary. Executable points are evidence that the owner is exercised, not another source of meaning.
+Each active lane leaves the updated element in one GM element and publishes the old value into the destination element at the same row and column. The complete physical destination region is defined before those results: coordinates the ExecutionMask deactivates take the mask's zero or merge value, and every other element outside the active lanes takes the bundle `PadValue`.
+
+On success each active lane has performed one atomic update and recorded one atomic event, and the destination is fully defined. The GM results stay visible; the atom form does not roll memory back.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-or-constraints role=constraints -->
 ## Boundaries and failures
 
-Defaults, Legality, and Exceptions below define the accepted domain and failure boundary. Reserved values and unsupported combinations remain governed by those generated sections.
+`PE_MASK=0000` exits at the start of the atom/red dispatcher, before its schema, GPR, descriptor, type, and memory checks.
+
+An unknown TLSU code raises `Fault_IllegalInstruction`. A binding count other than the one or two records above raises `Fault_BundleControl`. A missing `B.IOR`, a Shared binding, a nonzero unused `B.IOR` selector, a dimension outside `1..65535`, a `DataType` other than `U32` or `U64`, a wrong layout or shape, or an undefined active index or value element raises `Fault_TileLegality` before the first probe. A failed destination allocation raises `Fault_TileAllocation`, and a memory fault keeps its own kind.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-or-example role=example -->
 ## Non-normative usage example
 
 Treat the generated `BSTART.MGATHER.OR` example as a spelling and navigation aid. Substitute operands only within the legality and state contracts owned below.
+
+```asm
+BSTART.MGATHER.OR U32
+B.DIM zero, 2, ->LB0
+B.DIM zero, 1, ->LB1
+B.DIM zero, 2, ->LB2
+B.IOT T#1, T#2, mask=1111, last, ->T<8B>
+B.IOR a0, zero, zero, ->zero
+BSTOP
+```
+
+`T#1` is a 1 by 2 `S32` index Tile holding `0` and `4`, `T#2` is the 1 by 2 `U32` value Tile holding the masks `0x30` and `0x0F`, and `a0` holds `0x1000`. If GM holds `0x0F` at `0x1000` and `0xF0` at `0x1004`, the results are `0x0F OR 0x30`, which is `0x3F`, and `0xF0 OR 0x0F`, which is `0xFF`. The destination receives the old values `0x0F` and `0xF0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -7,8 +7,76 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-legality-operand-schema-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines the operand legality predicates for the elementwise, comparison, select, generation, and conversion handlers. Each predicate, named with the `TileOperandsLegal_` prefix and the handler name, returns TRUE only when every operand descriptor, type, layout, and required source value is acceptable.
+
+The `PTO-INSTRUCTION` metadata names these predicates as legality handlers, for example:
+
+- `TileOperandsLegal_ExecuteTileBinary` for TADD, TSUB, TMUL, TDIV, TREM, TMAX, TMIN, TAND, TOR, TXOR, TSHL, and TSHR.
+- `TileOperandsLegal_ExecuteTileUnary` for TABS, TNEG, TNOT, TRELU, TEXP, TLOG, TRECIP, TSQRT, and TRSQRT.
+- `TileOperandsLegal_ExecuteTileScalar` for the twelve Tile-scalar operations such as TADDS and TSHLS.
+- The compare and select predicates for TCMP, TCMPS, TSEL, and TSELS, plus `TileOperandsLegal_TCI`, `TileOperandsLegal_TTRI`, and `TileOperandsLegal_TCVT`.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-operand-schema-concepts role=concepts-state -->
+## Concepts and visible state
+
+The predicates are `readonly`. They read `_Tiles`, the selected bundle operation, and the bundle ExecutionMask state, and write nothing.
+
+The operation type is the bundle DataType when a Tile operation is selected with a valid DataType. Otherwise the binary, unary, and scalar predicates use the destination's backing type. The compare and select wrappers instead call `ResolveTileCarrierOperationType`, which rejects an active bundle without a resolvable type.
+
+`TileElementwiseDescriptorLegal` checks CUBE Tiles with `TileCubeDescriptorLegal` and other Tiles with `TileDescriptorLegal`. `TileElementwiseShapeMatch` then requires equal rows, columns, valid rows, valid columns, layout, and storage kind.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-operand-schema-rules role=rules-interactions -->
+## Rules and interactions
+
+`TileOperandsLegal_ExecuteTileBinary` rejects EXPDIF, requires matching shapes for both sources and the destination, requires the destination type to equal the operation type, and requires each source backing to satisfy `TileCarrierWidthCompatible`. For the twelve closed operations it also checks source definedness, the operation's type set, an elementwise layout, an integer right source for shifts, and valid encodings except for AND, OR, XOR, SHL, and SHR.
+
+Design point: integer TDIV and TREM additionally require `TilePayloadNonzero` on the divisor. The divisor is read in preflight, so a zero active divisor rejects the bundle before any destination element is written.
+
+`TileOperandsLegal_ExecuteTileUnary` requires TNOT sources to have the destination's exact backing type and an integer type. The other unary operations accept a same-width backing and check definedness, type set, layout, and encodings.
+
+`TileOperandsLegal_ExecuteTileScalar` normalizes the scalar to the operation width and, except for the raw logical operations, requires a valid encoding. Integer TDIVS and TREMS accept a zero scalar only when an ExecutionMask leaves no active coordinate.
+
+Compare predicates branch on the source layout. For CUBE_M16 and CUBE_M32 sources, the destination must be a predicate cell whose basis type is the operation type. Otherwise each source must pass `TileRowMajorNumericCarrierLegal` and the destination must be a bit-packed predicate Tile. Select predicates use the same split for their mask operand.
+
+`TileOperandsLegal_TCVT` requires equal valid shapes, a supported conversion pair and rounding mode, and a same-width backing for the source operation type. A CUBE_M16 or CUBE_M32 source keeps its layout and may change physical size. Other conversions keep rows and columns and reject a CUBE destination and canonicalization.
+
+Design point: for the handlers that own source definedness, the generated dispatcher does not add its own `TileSourceContentsDefined` checks. These predicates use ExecutionMask-aware definedness helpers such as `TileElementwiseSourceContentsDefined`, so under an ExecutionMask only active source coordinates must be defined.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-operand-schema-boundaries role=boundaries -->
+## Architectural boundaries
+
+Legality runs before execution. The generated dispatcher calls the handler's `TileOperandsLegal_` predicate and raises `Fault_TileLegality` without calling the handler when it returns FALSE. The execute functions then assert a subset of the same conditions.
+
+Legality admits types that some numeric helpers assert against. Binary predicates admit TF32, HF32, E4M3, and E5M2 through `TileVecArithmeticDataTypeSupported`, but floating ADD, SUB, MUL, and DIV use `ScalarFPBinaryProfile`, which accepts only FP64, FP32, FP16, and BF16. Floating TREM and the SFU unary operations use helpers that accept only FP32, FP16, and BF16.
+
+`TileOperandsLegal_TRESHAPE`, `TileOperandsLegal_TINTERLEAVE`, and `TileOperandsLegal_TDEINTERLEAVE` are defined here but have no caller in `asl/`.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-operand-schema-example role=example-usage -->
+## Non-normative reading example
+
+Consider TDIV with operation type S32, no ExecutionMask, and three RowMajor 16 x 16 Tiles with valid region 16 x 10. The left source (dividend) is S32 and the right source (divisor) is U32.
+
+- Shapes match, and the destination type is S32.
+- `TileCarrierWidthCompatible(U32, S32)` is TRUE, so the right source is read as S32.
+- S32 is in the arithmetic set, RowMajor is an elementwise layout, and both sources are defined.
+- The divisor has 16 x 10 = 160 valid elements. If any of them is zero, `TilePayloadNonzero` returns FALSE and the bundle faults before any destination element is written.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-operand-schema-related role=related-owners-navigation -->
+## Related owners
+
+- [Data type and layout tables](dtype-layout.md) owns the type sets and carrier-width relation.
+- [ExecutionMask source schema](execution-mask-source-schema.md) owns active-coordinate definedness and encoding checks.
+- [Predicate carriers](predicate-carriers.md) owns the CUBE and predicate cell helpers used by compare and select.
+- [Allocation capacity](allocation-capacity.md) owns `TilePayloadNonzero`.
+- [Elementwise execution](../execution/elementwise.md) shows what runs after these checks pass.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -19,49 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-addw-purpose role=purpose -->
 ## ADDW 的作用
 
-`ADDW` 是一条 32 位标量 ALU 指令。它按照低 32 位字，再符号扩展到 XLEN结果规则执行加法；当前指令契约定义结果发布路径以及任何额外状态效果。
+`ADDW` 按与 `ADD` 完全相同的方式准备右源，在 32 位宽上把它加到左源上，并把低 `32` 位符号扩展到 `PTO_XLEN` 后发布。
+
+设计要点：`ADDW` 保留 `ADD` 的全部字段布局，包括 `SrcRType` 和 `shamt`，只改变最终加法的位宽。因此同时需要全宽运算和字运算的程序使用两个助记符、一套操作数模型，而不是两种指令形状。
 
 <!-- PTO-READER-BLOCK: scalar-addw-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后按照低 32 位字，再符号扩展到 XLEN结果规则执行加法，最后才产生目标效果。
+右源首先在 `PTO_XLEN` 位宽上准备：`SrcRType` 应用 `00`（对 `SrcR[31:0]` 做符号扩展）、`01`（对 `SrcR[31:0]` 做零扩展）、`10`（取负）或 `11`（不变），随后 `shamt` 把该值逻辑左移 `0` 至 `31` 位。
 
-- `SrcRType` 先转换右源；`shamt` 再对转换后的值执行逻辑左移，随后才进行算术或逻辑操作。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+只有在此之后，两个操作数才被截断到各自的低 `32` 位。`ScalarBinaryW` 按 `2^32` 取模把 `SrcL[31:0]` 与准备好的右字相加，并对结果做符号扩展，因此发布值的 `63..32` 位是结果位 `31` 的副本。
+
+设计要点：变换和移位发生在截断之前，因此 `.sw`、`.uw` 和 `.neg` 看到的是完整的 `64` 位右源，被移出的位只由字加法丢弃。
+
+设计要点：`SrcL` 的 `63..32` 位被忽略，因此对大的操作数而言 `ADDW` 并不是 `ADD` 的低半部分。`addw a0, zero, ->a0` 是对 `a0[31:0]` 做符号扩展的规范写法。
 
 <!-- PTO-READER-BLOCK: scalar-addw-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择左操作数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择右操作数。
-- `SrcRType` 是 2 位字段，选择应用到右源的转换。
-- `shamt` 是 5 位字段，编码右源转换后执行的逻辑左移量。
+- `SrcL` 和 `SrcR` 是 Reg5 源：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`，且不会消费队列项。
+- `SrcRType` 选择右源变换，`shamt` 给出变换后的逻辑左移量。汇编中省略后缀即编码 `SrcRType=11`。
+- `RegDst` 发布符号扩展后的字结果：`1..23` 写入该 GPR，`30` 压入 `U`，`31` 压入 `T`，`0` 与 `24..29` 一起丢弃结果。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+设计要点：编码零对 `SrcL` 和 `SrcR` 表示读取架构零 GPR，对 `RegDst` 表示丢弃；`SrcRType` 的编码零选择 `.sw`，`shamt` 的编码零表示不移位。
 
 <!-- PTO-READER-BLOCK: scalar-addw-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+两个源都在写入目标之前读取，因此源与目标重名时使用指令执行前的值。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
-
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+结果发布或丢弃之后，`TPC` 前进 `4` 字节。`ADDW` 不访问内存；除 `RegDst` 选中的那一次 `T` 或 `U` 压入外，它不改变保留状态、描述符、数值状态、陷阱、指令束、特权、谓词和控制流状态。
 
 <!-- PTO-READER-BLOCK: scalar-addw-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+每个编码取值都已分配：四个 `SrcRType` 编码以及 `0` 至 `31` 的全部 `32` 个 `shamt` 取值。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+无法译码的形式在 `PC` 处引发 `Fault_IllegalInstruction`；不适用于当前指令束的指令在 `TPC` 处引发 `Fault_BundleControl`；固定编码位不匹配或所选 T/U 源不可用会引发 `Fault_IllegalInstruction`。这些都先于目标效果和 `TPC` 前进。
+
+设计要点：字加法不会触发故障。超过 `2^32` 的和保留低 `32` 位并对其做符号扩展，因此不存在溢出陷阱，`ADDW` 也不需要饱和控制。
 
 <!-- PTO-READER-BLOCK: scalar-addw-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `ADDW` 示例说明：`SrcL=7`、`SrcR=3`、`SrcRType=11` 且 `shamt=0` 产生 `10`。
+当 `SrcL=4294967295`、`SrcR=1`、`SrcRType=11`、`shamt=0` 时，字和回绕为 `0`，`ADDW` 发布 `0`；而同样的操作数在 `ADD` 下发布 `4294967296`。当 `SrcL=3`、`SrcR=3` 且 `SrcRType=10` 时，准备好的右值为 `-3`，发布出的字为 `0`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

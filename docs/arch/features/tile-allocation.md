@@ -15,35 +15,54 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-tile-allocation-purpose role=purpose-scope -->
 ## Purpose and scope
 
-This unit fixes the capacities and model parameters used when PTO reasons about Local and Shared Tile allocation. It separates architectural capacity constants from ASL verification bounds.
+This unit declares the capacity model that Tile allocation reads. Its whole ASL body is `11` `constant` declarations and `2` `config` declarations, with no function, no state variable, no fault and no executable transition.
+
+Line 1 records classification `features/tile-allocation` and `depends_on` `PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY`, which defines the per-PE topology the independent pools assume.
+
+Design point: the pool size and the largest single object are separate constants, so a full pool and one oversized object are two independent rejections: `PTO_TILE_MAX_ALLOCATION_BYTES` bounds one Local object while `PTO_TILE_CAPACITY_BYTES` bounds the aggregate Local pool.
 
 <!-- PTO-READER-BLOCK: arch-tile-allocation-concepts role=concepts-state -->
-## Capacity model
+## Constants and configuration
 
-- A Tile cell is `128` bytes, and each pool contains `2048` cells, yielding `262144` bytes.
-- Each PE has an independent Local pool; the Core has a separate Shared pool.
-- `PTO_RESERVATION_GRANULE_BYTES` is `64`, while the bundle exposes `3` dimensions, `32` scalar bindings, and `16` Tile bindings.
+- `PTO_TILE_CELL_BYTES` is `128` and `PTO_TILE_CELL_COUNT` is `2048`, so `PTO_TILE_CAPACITY_BYTES` is `262144` bytes.
+- `PTO_TILE_MAX_ALLOCATION_BYTES` caps one Local object at `65536` bytes, which is `512` cells; `PTO_SHARED_TILE_MAX_ALLOCATION_BYTES` caps one Shared object at `262144` bytes, the whole Shared pool; and `PTO_MODEL_MAX_TILE_CAPACITY_BYTES` is defined as `PTO_TILE_CAPACITY_BYTES`.
+- `PTO_RESERVATION_GRANULE_BYTES` is `64`, half of one cell, and the counts are `PTO_BUNDLE_DIMENSION_COUNT` `3`, `PTO_BUNDLE_SCALAR_BINDING_COUNT` `32`, `PTO_BUNDLE_TILE_BINDING_COUNT` `16`, `PTO_TILE_BASE_COUNT` `6`.
+- `PTO_MODEL_TILE_ELEMENTS` is a `config` with declared range `1` through `32768` and default `32768`; `PTO_MODEL_MEMORY_BYTES` is a `config` with declared range `256` through `65536` and default `4096`.
+
+Design point: the two `config` values are model bounds, not architectural numbers. The comment derives the `32768` default from `S63` witnesses for the `262144`-byte Shared boundary.
 
 <!-- PTO-READER-BLOCK: arch-tile-allocation-rules role=rules-interactions -->
 ## Rules and interactions
 
-Local and Shared allocations consume different budgets. `PTO_TILE_MAX_ALLOCATION_BYTES` caps one Local object at `65536` bytes, while `PTO_SHARED_TILE_MAX_ALLOCATION_BYTES` permits one Shared object up to `262144` bytes. The separate `PTO_TILE_CAPACITY_BYTES` value keeps each PE's aggregate Local pool at `262144` bytes.
+Neither constant is a combined budget: the Local and Shared pools stay separate.
+
+Design point: the Local object cap is one quarter of the Local pool, because `65536` times `4` is `262144`. Four maximal Local objects fill a PE's pool exactly; a fifth is rejected on the aggregate budget even though its own capacity is legal. The Shared object cap equals its pool.
 
 <!-- PTO-READER-BLOCK: arch-tile-allocation-boundaries role=boundaries -->
 ## Model boundaries
 
-`PTO_MODEL_TILE_ELEMENTS` defaults to `32768` so the executable model can carry the largest required witnesses. `PTO_MODEL_MEMORY_BYTES` defaults to `4096` within its declared `256` through `65536` range. These static ASL bounds are verification configuration, not universal payload, profile, or implementation limits.
+Design point: the comment on `PTO_MODEL_TILE_ELEMENTS` states that ASL arrays require static bounds, that the model needs `32768` element slots to carry `S63` witnesses for the `262144`-byte Shared boundary, and that this is a model bound rather than a claim that every payload uses that many elements. A payload past the model bound is a model limitation, not an architectural rejection.
+
+The same comment tells bounded callers to size per-step timeouts for a whole-tile step. This file carries no `NDF-BEGIN` clause; the accepted per-PE capacity clause is `PTO-TILE-CAPACITY-PER-PE` in `asl/arch/overview/architecture.asl`: a Local allocation is one selected PE's share of its independent 256 KiB pool, a Shared allocation is one Core-wide allocation in the independent 256 KiB Shared pool, and the two must not consume one combined budget.
 
 <!-- PTO-READER-BLOCK: arch-tile-allocation-example role=example-usage -->
 ## Non-normative capacity example
 
 Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
 
+A Local object at the `65536`-byte cap occupies `512` of a PE's `2048` cells. Four such objects fill the aggregate pool exactly; a fifth is rejected because `5` times `65536` is more than `262144`, not because its own capacity is illegal.
+
+One Shared object may hold `262144` bytes while each of two Local objects holds `65536` bytes: the Local total is `131072` against the Local pool, the Shared total is `262144` against the Shared pool, and neither sum is charged to the other pool.
+
+Design point: because the pools are independent and equal in size, one maximal Shared object and four maximal Local objects per selected PE can be held at once; on the Local side the per-object cap binds, not the cell count.
+
 <!-- PTO-READER-BLOCK: arch-tile-allocation-related role=related-owners-navigation -->
 ## Related owners
 
-- `PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY` defines the topology assumed by the independent pools.
-- Allocation instructions and Tile state owners apply these constants to concrete transitions.
+- `PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY` is the declared dependency.
+- Tile state owners apply these constants: for example `asl/tile/model/state/descriptors.asl` bounds a Local capacity to whole `128`-byte cells no larger than `PTO_TILE_MAX_ALLOCATION_BYTES`; `asl/tile/model/capacity/shared.asl` returns `PTO_SHARED_TILE_MAX_ALLOCATION_BYTES`.
+- `asl/tile/model/capacity/local.asl` bounds the live Local budget by `PTO_MODEL_MAX_TILE_CAPACITY_BYTES`, the ceiling over the `tile_capacity` system register; scalar atomic units use `PTO_RESERVATION_GRANULE_BYTES` as their reservation granule.
+- `PTO-TILE-CAPACITY-PER-PE` is owned by `asl/arch/overview/architecture.asl`, not by this unit.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -17,48 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-swip-purpose role=purpose -->
-## What HL.SWIP does
+## What `HL.SWIP` does
 
-`HL.SWIP` is a standalone `48`-bit AGU instruction that forms a signed-immediate address and stores two adjacent aligned little-endian `4`-byte values.
+`HL.SWIP` stores two adjacent `4`-byte little-endian units from `SrcD` and `SrcD1` at a scaled signed-immediate distance from the `SrcR` base.
+
+The canonical assembly is `hl.swip SrcD, SrcD1, [SrcR, simm]`.
+
+Design point: one encoding writes two adjacent units, so an `8`-byte payload is written from two source registers in a single instruction. The pair is `address` and `address + 4`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swip-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the two addresses and the transfers are formed
 
-`HL.SWIP` sign-extends `simm17` from its complete `-65536..65535` domain, multiplies it by `4`, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcR` base.
+The immediate store address kind makes `SrcR` the base. The sign-extended `simm17` is scaled by `4` and added to the base modulo `2^PTO_XLEN`.
 
-The instruction preflights two adjacent `4`-byte addresses, then stores the two snapshotted data values in increasing-address order.
+Both addresses are probed before either store: the first, then the first plus `4`. Only when both pass are `SrcD` and `SrcD1` read and the two relaxed stores committed in address order.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+No destination selector exists in this encoding, so the sum is used only as the pair base.
+
+Design point: the immediate counts `4`-byte units, so an odd immediate cannot make an aligned base produce a misaligned address; the alignment risk sits entirely in the base.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swip-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `SrcR` supplies the base; `simm17` supplies the signed displacement. Every encoded Reg5 source among `SrcD`, `SrcD1`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcD` supplies first store value; `SrcD1` supplies second store value.
-- `simm17` assigns every signed value from `-65536` through `65535`; encoded zero is a zero displacement, not omission.
+- `SrcD` supplies the first unit and `SrcD1` the second. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `SrcR` supplies the base. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `simm17` is signed and covers `-65536`..`65535` units of `4` bytes, that is `-262144`..`262140` bytes.
+- Design point: both source selectors can read queue entries, and reading them does not consume the entries, so a pushed pair can be stored more than once.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swip-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+Every source is snapshotted before the first store, so aliasing between the sources and any other operand cannot change the stored bytes.
 
-After both addresses pass preflight, success records two relaxed store events in address order, updates overlapping reservation state only after complete preflight, and advances `TPC` by `6` bytes.
+Success writes the two adjacent `4`-byte ranges, records two relaxed store events in address order, and advances `TPC` by `6` bytes.
+
+Design point: the two store events are recorded in address order, so the record of this instruction names the lower-addressed unit first.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swip-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `4`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch or an unavailable `T`/`U` source raises `Fault_IllegalInstruction` before any instruction effect.
+- Either address that is not a multiple of `4` raises `Fault_DataAlignment` before either store; a later permission or bounded-memory failure raises `Fault_DataPage` at the address that failed.
+- A fault records no event, writes neither unit, and leaves `TPC` on the faulting instruction for a complete reissue.
+- Design point: because both probes precede both stores, the pair has no partially completed state to recover from; a reissue either performs both units or neither.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swip-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With the base set to `0x100` and the signed immediate set to `2`, the displacement is `8` and base plus displacement is `0x108`. The memory access uses `0x108`. The second `4`-byte store uses `0x10c` after both addresses pass preflight.
+- With GPR `6` = `0x2000` and `simm` = `1`, the byte displacement is `4` and the addresses are `0x2004` and `0x2008`.
+- With `SrcD` = `0x0000000011223344` and `SrcD1` = `0x0000000055667788`, the bytes `44 33 22 11` land at `0x2004` and `88 77 66 55` at `0x2008`.
+- With a base of `0x2002`, the two addresses become `0x2006` and `0x200A`; the first is not a multiple of `4`, so neither unit is written.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,47 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-andiw-purpose role=purpose -->
 ## What HL.ANDIW does
 
-`HL.ANDIW` is a 48-bit scalar ALU instruction. It performs bitwise conjunction under the low 32-bit word, followed by sign-extension to XLEN result rules; its current instruction contract defines the result publication path and any additional state effect.
+`HL.ANDIW` is the word form of the conjunction. It sign-extends `simm24` to `PTO_XLEN`, keeps the low `32` bits of that mask, combines them bitwise with `SrcL[31:0]`, sign-extends bit `31` of the `32`-bit result to `PTO_XLEN`, and publishes it through `RegDst`. Successful execution advances `TPC` by `6` bytes.
+
+Design point: `hl.andiw a0, -1, ->a0` does not leave `a0` alone the way `hl.andi a0, -1, ->a0` does. The word mask is all ones, so the low word survives, but the `32`-bit result is then sign-extended: a source of `4294967295` is republished as `18446744073709551615`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-andiw-mechanism role=mechanism -->
-## How the result is formed
+## How the word mask is formed
 
-Execution snapshots the encoded inputs, then performs bitwise conjunction under the low 32-bit word, followed by sign-extension to XLEN result rules, and only afterward performs the destination effects.
+Decode rebuilds one exact `24`-bit value from the two 12-bit pieces and sign-extends it. Bits `23:0` of the mask are the encoded value and bits `31:24` are its sign bit, so a negative `simm24` sets all eight of them and a non-negative one clears all eight. The conjunction is then bitwise over the `32` mask bits.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: a non-negative `simm24` therefore clears source bits `31:24` as well as every bit above bit `23`. `hl.andiw a0, 8388607, ->a0` keeps `SrcL[22:0]`, and because result bit `31` is then `0`, bits `63:32` of the published value are all zero.
 
 <!-- PTO-READER-BLOCK: scalar-hl-andiw-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 scalar result target or discards the result.
-- The 5-bit `SrcL` field selects a Reg5 scalar value whose low 32 bits participate.
-- The signed 24-bit `simm24` field carries the signed split 24-bit immediate.
+- `SrcL` reads one Reg5 value and only bits `31:0` participate: codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, `28..31` read `U#1..U#4`, and a relative read does not consume the entry.
+- `simm24` supplies the signed mask, `-8388608` through `8388607`.
+- `RegDst` receives the sign-extended word: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: `simm24=0` supplies a mask of zero for all `32` word bits, so `hl.andiw a0, 0, ->a0` publishes `0`. The mask that keeps the low word exactly as it stands is `-1`, and even that one still rewrites the bits above bit `31`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-andiw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is resolved before publication, so the destination may name the source register and still read the pre-instruction value. The source queue is read and not popped; a `T` or `U` destination push makes the new value index `1` of that queue and discards whatever was at index `4`.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Publication is followed by the `TPC` advance of `6` bytes. `HL.ANDIW` performs no memory access and changes no reservation, descriptor, numeric-status, `Tile`, bundle, privilege or branch-target state.
 
 <!-- PTO-READER-BLOCK: scalar-hl-andiw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every encoded value is assigned: all `32` `SrcL` codes, all `32` `RegDst` codes, and every signed `24`-bit mask from `-8388608` through `8388607`.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Three rejections are reachable, in model order. A `48`-bit word whose fixed bits match no form raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active bundle raises `Fault_BundleControl` at `TPC`. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`. Each precedes the destination effect and the `TPC` advance.
+
+Design point: the `32`-bit conjunction is total. It cannot overflow and cannot raise an arithmetic exception, so the only mechanism on this page that sets or clears bits above bit `31` is the sign extension of the result.
 
 <!-- PTO-READER-BLOCK: scalar-hl-andiw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.ANDIW` example, `SrcL=0xc` and `simm24=0xa` produce `0x8`.
+With `a0` holding `4294967295` and `simm24=-1`, `hl.andiw a0, -1, ->a0` publishes `18446744073709551615`. With the same source and `simm24=8388607`, it publishes `8388607`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -15,38 +15,53 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-timer-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit defines the per-ACR timer interrupt ID and the rule that derives timer-pending state from the cycle counter and comparison register.
+This unit owns the rule that turns the architectural cycle count and one stored comparison value into the pending state of one timer interrupt per ring, and it fixes which interrupt ID each ring's timer uses.
+
+It does not count cycles and it does not store the comparison value itself; it reads the stored value through the context-register helpers and updates pending state through the interrupt owner.
 
 <!-- PTO-READER-BLOCK: arch-timer-concepts-state role=concepts-state -->
-## Timer identifiers and comparison value
+## Interrupt identity and the comparison value
 
-`TimerInterruptId` returns interrupt ID `1` for ACR0 and interrupt ID `3` for every other ACR.
+`TimerInterruptId` returns interrupt ID 1 for ACR0 and interrupt ID 3 for every other ring, so the timer of a ring always occupies the same position in that ring's pending bitmap.
 
-`RefreshTimerPending` reads the comparison value from context-register low index `0x0f21` and compares it with `_SystemRegisters.cycle` as unsigned values.
+`RefreshTimerPending` reads the comparison value from context-register offset `0x0f21` of the ring it is given and compares it with `_SystemRegisters.cycle`. Both sides are treated as unsigned values.
+
+The two inputs come from different owners: `cycle` is reset by the addressing owner and advanced by the execution path, and the comparison word is ordinary context-register storage.
 
 <!-- PTO-READER-BLOCK: arch-timer-rules-interactions role=rules-interactions -->
-## Pending-state rule
+## The pending rule
 
-The timer interrupt is set pending when the comparison value is nonzero and the cycle value is greater than or equal to it. Otherwise the timer interrupt is cleared.
+The timer interrupt is set pending when the comparison value is not zero and the cycle count is greater than or equal to it. In every other case the timer interrupt is cleared.
 
-The update uses `SetInterruptPending` or `ClearInterruptPending`, so it also refreshes the top-pending interrupt value.
+The update goes through `SetInterruptPending` or `ClearInterruptPending`, so the top pending interrupt value is recomputed on the same call. A timer that becomes pending while some lower-numbered interrupt is pending leaves the top value pointing at that lower interrupt.
+
+A zero comparison value can never set the timer interrupt, whatever the cycle count is. An exact match does set it, because the comparison is inclusive.
+
+Design point: zero would otherwise be the smallest reachable cycle count, so treating it as an ordinary threshold would make the timer pending from the very first cycle of a reset core. Reserving zero for disabled gives software a way to arm the timer without also having the pending bit set at reset.
+
+Design point: naming the interrupt by the ring comes before the comparison, so the same refresh function serves all rings and the pending bit position never depends on which comparison value happens to be programmed.
 
 <!-- PTO-READER-BLOCK: arch-timer-boundaries role=boundaries -->
 ## Architectural boundaries
 
-A zero comparison value disables timer-pending assertion even when the cycle value is zero or greater. This owner does not increment the cycle counter or define when timer refresh is invoked beyond calls to `RefreshTimerPending`.
+This owner runs the comparison only when the refresh function is called. Reading the interrupt pending bitmap calls it, reading the top pending interrupt calls it, and a write to the comparison offset of a ring calls it for that ring. Resetting a ring's comparison word is not one of those writes in this repository, so a zero comparison value does not by itself clear a pending timer bit.
+
+Acknowledging a timer interrupt clears the pending bit and does not change the comparison value, so the next refresh sets the bit again while the threshold still matches. Clearing the interrupt for good means making the comparison value zero or making it exceed the current cycle count.
 
 <!-- PTO-READER-BLOCK: arch-timer-example-usage role=example-usage -->
 ## Non-normative threshold example
 
-On a timer refresh for ACR0 with comparison `100`, cycles `99` and below leave interrupt ID `1` clear. Cycle `100` and later set ID `1` until the comparison becomes zero or moves above the current cycle.
+With the comparison value of ACR0 set to 100, a refresh at cycle count 99 leaves interrupt ID 1 clear, and a refresh at cycle count 100 sets it. Raising the comparison value above the current cycle count clears it again.
+
+On ACR1 the same sequence acts on interrupt ID 3, because `TimerInterruptId` maps every ring other than ACR0 to ID 3.
 
 <!-- PTO-READER-BLOCK: arch-timer-related-owners role=related-owners-navigation -->
 ## Related owners
 
-- [Context registers](context.md) is the declared dependency and supplies the ring-relative index calculation.
-- [Interrupt registers](interrupt.md) owns pending-bit storage, enable checks, and top-pending selection.
-- [System-register addressing](addressing.md) owns the cycle counter field read here.
+- [Context registers](context.md) is the declared dependency and computes the ring-relative offset used here.
+- [Interrupt registers](interrupt.md) owns the pending bitmap, the enable gates, and the top pending value.
+- [System-register addressing](addressing.md) owns the `cycle` field that this rule reads.
+- [Access control](access-control.md) defines the ring type that selects between interrupt ID 1 and interrupt ID 3.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -7,8 +7,75 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-EXECUTION-GENERATION}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-generation-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines the Tile operations that create values without reading a source Tile. `TCI` writes an integer index sequence into a one-row RowMajor Tile. `TCICube` writes a two-dimensional index pattern into a CUBE_M16 or CUBE_M32 Tile. `TTRI` writes a triangular mask of typed ones and zeros.
+
+It also owns the type sets for these operations: `TileTCIDataTypeSupported` accepts S32, S16, U32, and U16, and `TileTTRIDataTypeSupported` adds FP32 and FP16.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-generation-concepts role=concepts-state -->
+## Concepts and visible state
+
+The only state these helpers change is the destination `TileInfo`: its payload, its per-element definedness, `defined_valid_elements`, and `contents_defined`. Each helper builds the result in a local copy and assigns `_Tiles` once at the end.
+
+A start value arrives in a scalar register. `TileRawElementValue` keeps only the low bits that fit the element width, and each generated value is normalized the same way. Integer sequences therefore wrap modulo the element width.
+
+`TTRI` compares each column `c` with `r + diagonal`, where `r` is the row. Lower orientation selects `c <= r + diagonal`; upper orientation selects `c >= r + diagonal`. Selected elements receive the typed one from `TileTTRIOneEncoding`, for example `0x3f800000` for FP32; other valid elements receive zero.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-generation-rules role=rules-interactions -->
+## Rules and interactions
+
+`TCI` asserts `valid_rows == 1` and writes column `k` as `start + k`, or `start - k` when descending.
+
+`TCICube` takes a packed Step2D word. Bits 63 to 32 give the row step and bits 31 to 0 give the column step, and each step must be -1, 0, or 1. Element (row, column) receives `start + row x row_step + column x column_step`, normalized to the element width.
+
+`TCICube` is the only helper here that consults the ExecutionMask. An active coordinate receives the generated value. An inactive coordinate receives `BundleExecutionMaskDestinationValue`: zero under ZERO, or the old value of the merge base under MERGE.
+
+All three helpers call `TileWithValidRegionDefined` and then `TileWithPadding` with `TilePad_Null`. They do not use the bundle PadValue.
+
+Design point: generation always pads with Null. The TCI and TTRI B.DATR contracts require the pad field to be zero, so these instructions carry no PadValue. Null writes a zero carrier outside the valid region but leaves those elements undefined, so a later definedness check does not treat them as generated data.
+
+Design point: the arithmetic is raw carrier arithmetic followed by truncation. A U16 ascending sequence that passes 65535 continues at 0 instead of faulting or saturating.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-generation-boundaries role=boundaries -->
+## Architectural boundaries
+
+Bundle dispatch in [Tile execution](../../../block/model/dispatch/tile-execution.md) selects `TCICube` when the operation is TCI and the current bundle layout is CUBE_M16 or CUBE_M32. It checks `TileOperandsLegal_TCICube` first and raises `Fault_TileLegality` without calling the helper if that check fails. Other TCI forms reach `TCI` through the generated instruction handler.
+
+`TTRI` does not call `BundleExecutionMaskActiveAt`. The [ExecutionMask source schema](../legality/execution-mask-source-schema.md) states that TTRI is RowMajor-only and has no applicable ExecutionMask form, so a mask carrier on TTRI must be rejected before effects. The executable list `TileOperationExecutionMaskEligible` nevertheless still names TTRI.
+
+`TCI` and `TTRI` assert their preconditions. The legality predicates that turn a bad request into a fault are evaluated before these helpers run: `TileOperandsLegal_TCICube` is defined in this unit and called by bundle dispatch, and `TileOperandsLegal_TCI` and `TileOperandsLegal_TTRI` are defined in [operand schema legality](../legality/operand-schema.md).
+
+<!-- PTO-READER-BLOCK: tile-model-execution-generation-example role=example-usage -->
+## Non-normative reading example
+
+A U16 `TCI` destination has one row and 4 valid columns. The start register holds `0x1fffe` and the direction is ascending.
+
+1. `TileRawElementValue` keeps the low 16 bits, so the start is 65534.
+2. Columns 0 to 3 receive 65534, 65535, 0, and 1. The third value is 65536 truncated to 16 bits.
+3. The 4 valid elements become defined. Physical elements outside the valid region hold zero but stay undefined because the padding is Null.
+
+A FP32 `TTRI` destination with 3 valid rows, 4 valid columns, lower orientation, and diagonal 0 holds these values, with 1 meaning `0x3f800000`:
+
+```text
+row 0: 1 0 0 0
+row 1: 1 1 0 0
+row 2: 1 1 1 0
+```
+
+<!-- PTO-READER-BLOCK: tile-model-execution-generation-related role=related-owners-navigation -->
+## Related owners
+
+- [TCI](../../irregular-and-complex/initialization/TCI.md) and [TTRI](../../irregular-and-complex/initialization/TTRI.md) own the instruction contracts.
+- [Irregular and complex dispatch](../dispatch/irregular-and-complex.md) names the instruction class that contains TCI and TTRI; it has no executable ASL.
+- [ExecutionMask state](execution-mask-state.md) defines `BundleExecutionMaskActiveAt` and the inactive-value rule.
+- [Element definedness](../definedness/elements.md) defines `TileWithValidRegionDefined` and `TileWithPadding`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

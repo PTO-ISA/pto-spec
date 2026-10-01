@@ -17,34 +17,70 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-mgather-cas-purpose role=purpose -->
-## Purpose and scope
+## What MGATHER_CAS does
 
-`MGATHER_CAS` is the stable reader entry point for this accepted operation. The normative `ASL` source and the generated contract sections on this page remain the only owners of architectural behavior.
+`MGATHER_CAS` performs one atomic compare-and-swap in global memory (GM) per lane and returns the value each lane observed in a new Local destination Tile. It is a selector-encoded Tile operation of engine `TLSU`, selected by TLSU Function 8 and spelled `BSTART.MGATHER.CAS DataType`. The block dispatcher `ExecuteBundleMGATHERCASOperation` resolves the bundle and then calls the body `MGATHER_CAS`.
+
+A lane is one coordinate of the index Tile's valid region. The compared address is `BaseGPR` plus that lane's index value used as a byte displacement. `MGATHER_CAS` has no standalone opcode.
+
+Design point: the destination carries the observed old value, not the value written. A lane whose compare fails still reports what GM then held, so software can tell a successful swap from a failed one without a second read.
 
 <!-- PTO-READER-BLOCK: tile-mgather-cas-mechanism role=mechanism -->
-## How to read the operation
+## Two-command schema and the atomic mechanism
 
-Read the generated Decode and Operation sections together to locate the selected form and semantic handler. This guide adds no alternate execution algorithm.
+`ExecuteBundleMGATHERCASOperation` calls `MGATHER_CAS`, a body of its own that makes two passes. Function 8 never reaches the shared atom body `GMRunAtomic`: `BundleMGATHERCASSelected` claims the block before `BundleGMAtomRedSelected`, so the atom/red dispatcher and its `GM_ATOM_CAS` wrapper do not run for this function.
+
+The preflight pass visits every active coordinate and builds the address with `TileMemoryByteDisplacementAddress`. It probes that address with `ProbeTileMemoryAccess` once for read and once for write, raises the probe's own fault through `RaiseDataAccessFault`, and raises `Fault_DataPage` when the two probes translate to different addresses. It also snapshots the index, expected, and replacement elements.
+
+The commit pass initializes every physical destination element, then visits the lanes in an order chosen by `ARBITRARY` choices. Each lane loads the old value, compares it with the expected element at the element width, stores the replacement only when the two are equal, writes the old value into its destination element, and records one atomic event whose write flag reports whether that store happened.
+
+Design point: the two probes must agree on the translated address. If they do not, the request raises `Fault_DataPage` during preflight, so it can never store through an address whose write-side translation was not checked. Both probes and all snapshotting finish before the first load or store of the commit pass.
 
 <!-- PTO-READER-BLOCK: tile-mgather-cas-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Operand roles and bindings
 
-Use the generated Operands and results table and Block composition section as the complete map of encoded and architectural roles. Do not infer an omitted operand or result from this summary.
+- `destination0` is a new Local Tile with the bundle `DataType`. It receives the observed old values.
+- `address` is the base address, read from the GPR named by `B.IOR.RegSrc0` in the current memory agent's register file.
+- `source0` is the index Tile: `S32`, `U32`, `S64`, or `U64` byte displacements.
+- `source1` is the expected Tile, compared against the old value of the addressed element.
+- `source2` is the replacement Tile, stored when the comparison matches.
+
+`B.IOR` is required, and `RegSrc1`, `RegSrc2`, and `RegDst` must encode zero. This is a two-command form: `BundleMGATHERCASBindingsLegal` requires exactly two tile bindings, the first carrying the index and expected Tiles with no destination and no `last`, and the second carrying the replacement Tile, the destination, and `last`. With a predicate-Tile ExecutionMask the predicate Tile becomes the first source of the first binding, which moves the index Tile to that binding's second source and the replacement Tile to the second binding's second source.
 
 <!-- PTO-READER-BLOCK: tile-mgather-cas-effects role=effects -->
-## Effects and state
+## GM, destination, and fault effects
 
-Use the generated State effects and Memory effects and ordering sections for the complete effect boundary. Executable points are evidence that the owner is exercised, not another source of meaning.
+`B.DATR` is optional and absent from the block composition of this form. When it is omitted, `_BundleDataAttributesPresent` is false, so `CurrentBundlePadValue` returns `TilePad_Null` and `TilePadValueForDataType` maps that to zero bits. Every physical destination element outside the valid region is set to that pad value, and the region is marked defined.
+
+A lane whose comparison matches stores the replacement. A lane whose comparison fails stores nothing and still publishes its observed old value. In both cases the destination element receives the old value.
+
+On a successful attempt the destination is published. On a preflight fault the dispatcher calls `RollBackBundleTileDestinations` and no destination is published, and the body has by then performed no store.
 
 <!-- PTO-READER-BLOCK: tile-mgather-cas-constraints role=constraints -->
-## Boundaries and failures
+## Types, shape, and fault boundary
 
-Defaults, Legality, and Exceptions below define the accepted domain and failure boundary. Reserved values and unsupported combinations remain governed by those generated sections.
+Only `U16`, `U32`, and `U64` transfer `DataType` values are accepted. `GMAtomicOperationDataTypeLegal` admits exactly those three for `GMAtomic_CAS`, and the dispatcher independently re-checks the same three. The index Tile must still be `S32`, `U32`, `S64`, or `U64` through `IndexedTLSUMemoryIndexDataTypeLegal`.
+
+The destination, index, expected, and replacement Tiles must all use the bundle layout, and the index, expected, and replacement Tiles must each have the same valid rows and valid columns as the destination. Layouts are `ROWMAJOR`, `CUBE_M16`, and `CUBE_M32`; `IndexedTLSULayoutSupported` rejects `CUBE_N8`, and each `B.DIM` value must lie in `1..65535`.
+
+A decoded selector code of nothing raises `Fault_IllegalInstruction`. A wrong number of tile bindings, a missing `B.IOR`, an undefined active index, expected, or replacement element, or a wrong type, shape, or layout raises `Fault_TileLegality`. A misaligned lane address raises `Fault_DataAlignment` and a read and write translation mismatch raises `Fault_DataPage`, both during preflight.
+
+Design point: an atom form may not be used as a producer. `BundleProducerEffectClassOfHandler` classifies `TileHandler_GM_ATOM_CAS` as `BundleProducerEffect_NonRollbackAuxiliary`, and `BundleProducerEffectEligible` rejects that class when the bundle carries an assemble modifier, because the GM updates an atom performs are not rolled back.
 
 <!-- PTO-READER-BLOCK: tile-mgather-cas-example role=example -->
-## Non-normative usage example
+## Non-normative worked example
 
-Treat the generated `MGATHER_CAS` example as a spelling and navigation aid. Substitute operands only within the legality and state contracts owned below.
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Take a 1 by 4 `U64` index Tile holding `0, 8, 0, 16`, a base address `0x2000` in `a0`, an expected Tile holding `7, 3, 5, 9`, and a replacement Tile holding `70, 30, 50, 90`. GM holds the `U64` values `7` at `0x2000`, `3` at `0x2008`, and `9` at `0x2010`.
+
+- Lanes `0` and `2` both address `0x2000`. Lane `0` expects `7` and matches, so it stores `70`; lane `2` expects `5`, so it never matches. GM ends at `70` whichever of the two runs first.
+- Lane `1` addresses `0x2008` and matches the stored `3`, so it stores `30`.
+- Lane `3` addresses `0x2010` and matches the stored `9`, so it stores `90`.
+
+Every destination element receives the old value its own lane observed: lane `0` reports `7`, lane `1` reports `3`, lane `3` reports `9`, and lane `2` reports `7` if it ran first or `70` if lane `0` ran first.
+
+In macro form this is `MGATHER_CAS <Col=4, U64>, [base=a0], T#1, T#2, T#3, ->T<128B>`, with `T#1` as the index Tile, `T#2` as the expected Tile, and `T#3` as the replacement Tile. The 128-byte destination holds 16 `U64` physical elements: the 4 valid ones receive the observed values and the other 12 receive zero bits from the default pad value.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

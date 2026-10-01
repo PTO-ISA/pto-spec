@@ -19,32 +19,61 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-xor-purpose role=purpose -->
 ## 目的与范围
 
-`BSTART.MSCATTER.XOR` 是该已接受操作的稳定阅读入口。规范 `ASL` 源文件和本页生成的 contract 章节仍是架构行为的唯一 owner。
+`BSTART.MSCATTER.XOR` 打开一个 Tile 内存指令束，其操作为 `MSCATTER_XOR`：一种索引归约。对每个通道，它读取位于基址加字节位移处的 GM 元素，与 Local 值 Tile 中的一个值做 XOR，并把结果写回。它不返回 Tile。
+
+该命令是一个 32 位字（匹配值 `0x01a11181`，掩码 `0x07ffffff`），`DataType` 位于位 31 到 27。它携带固定的 TLSU 选择器 26，归约表把它映射为 `GMReduction_XOR`。保留的 `DataType` 编码在 `BSTART` 处引发 `Fault_IllegalInstruction`，发生在[指令束启动分派](../model/dispatch/start.md)提交任何前驱之前。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-xor-mechanism role=mechanism -->
 ## 如何阅读操作
 
-应结合生成的 Decode 与 Operation 章节定位所选形式和语义 handler。本指南不增加另一套执行算法。
+提交时，[Tile 执行](../model/dispatch/tile-execution.md)把没有被更早选择器认领的 function 8 到 12 与 14 到 27 都交给 [GM 原子与归约处理程序](../model/dispatch/tlsu-gm-atom-red.md)。Function 26 是归约，因此处理程序不解析目标，而是调用 `GM_RED_VALUE`。
+
+`GM_RED_VALUE` 先访问每个有效通道。它对地址分别做读探测与写探测，两次转换结果不同时引发 `Fault_DataPage`。只有全部通道通过之后，它才以任意顺序逐个通道应用更新：加载旧值，计算 `old XOR value`，存回，并记录一个原子内存事件。
+
+设计要点：所有探测都在第一次更新之前运行。因此任何通道上的转换或权限故障都会使内存保持不变。契约把这一点表述为原子效果之前的完整预检。
+
+设计要点：每次更新都重新加载当前内存值。地址相同的两个通道都会产生作用，并且由于 XOR 满足交换律与结合律，最终值不依赖于由实现定义的通道顺序。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-xor-inputs role=inputs-outputs -->
 ## 输入与输出
 
-以生成的 Operands and results 表和 Block composition 章节作为编码角色与架构角色的完整映射，不应从本摘要推断省略的操作数或结果。
+- `DataType` 必须是 `U32` 或 `U64`；其他已分配编码在提交时引发故障。
+- `B.DIM` 的 `LB0` 是 ValidCol，`LB1` 是 ValidRow（默认 1），`LB2` 是物理 Col。
+- 一条没有目标的 `B.IOT` 在 `source0` 中携带索引 Tile，在 `source1` 中携带值 Tile；没有谓词 Tile ExecutionMask 时它携带 `last`。
+- 需要一条 `B.IOR BaseGPR, zero, zero, ->zero`；`RegSrc0` 是每个 PE 的基址。
+- 索引 Tile 为 S32、U32、S64 或 U64。值 Tile 的类型为操作 `DataType`。二者都具有 `B.DIM` 的有效形状和指令束布局。
+
+设计要点：操作数顺序与普通 `MSCATTER` 相反，后者的 `B.IOT` 先携带数据 Tile。这里索引在前，与所有索引归约共用的 `GM_RED_VALUE` 参数顺序一致。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-xor-effects role=effects -->
 ## 效果与状态
 
-完整效果边界由生成的 State effects 以及 Memory effects and ordering 章节给出。可执行点只证明 owner 得到覆盖，不构成另一份语义来源。
+成功时，每个有效通道已把一个 GM 元素更新为 `old XOR value`，并按指令束内存顺序为每个通道记录一个原子事件。不写入任何 Tile、Shared Tile 或寄存器，两个源 Tile 保持其内容。
+
+重复地址之间的顺序由实现定义，但对 XOR 而言它不会改变最终的内存值。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-xor-constraints role=constraints -->
 ## 边界与故障
 
-下方 Defaults、Legality 与 Exceptions 规定接受域和故障边界。保留值及不支持的组合仍由这些生成章节管理。
+`PE_MASK=0000` 是严格无操作，发生在任何 schema、描述符、类型或内存检查之前。
+
+该操作仅作用于 GM。存在 `B.IOS` 绑定、缺少 `B.IOR`、PE 掩码不一致、维度非法、类型错误、源未定义，或形状、布局不匹配，都会引发 `Fault_TileLegality`。被处理程序自身的数量检查拒绝的绑定数量引发 `Fault_BundleControl`。内存故障保持其自身类型，且因为没有目标，不需要回滚。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-xor-example role=example -->
 ## 非规范用法示例
 
 生成的 `BSTART.MSCATTER.XOR` 示例仅用于拼写与导航。替换操作数时必须遵守下方 owner 定义的 legality 和状态合同。
+
+```asm
+BSTART.MSCATTER.XOR U32
+B.DIM zero, 8, ->LB0
+B.DIM zero, 8, ->LB2
+B.IOT T#1, T#2, mask=1111, last
+B.IOR a0, zero, zero, ->zero
+BSTOP
+```
+
+省略了 `LB1`，因此 ValidRow 为 1。索引 Tile `T#1` 与值 Tile `T#2` 都是 1 x 8 的 `U32` Tile。在每个 PE 上，8 个通道在任何更新之前都完成读探测与写探测。若两个通道的索引都是 `0x10`，值分别为 `0x0F` 和 `0xF0`，且 `a0 + 0x10` 处的字原为 `0x01`，则无论通道顺序如何，结果都是 `0x01 XOR 0x0F XOR 0xF0`，即 `0xFE`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

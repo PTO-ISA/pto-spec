@@ -7,8 +7,63 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit is the bundle-level handler for TLSU bundles that name a Shared Tile through `B.IOS`. A Shared Tile is one Tile register visible to all four PEs of a core. The unit covers three functions: `TLOAD` into a Shared Tile (function `0`), `TSTORE` from a Shared Tile (function `1`), and `TMOV` between a Local Tile and a Shared Tile (function `2`).
+
+`BundleSharedTLSUSelected` holds for a valid `TileMemory` descriptor with a valid selector and at least one physical Shared binding. `ExecuteBundleSharedTLSUOperation` then validates and executes the selected function.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-concepts role=concepts-state -->
+## Concepts and visible state
+
+The handler reads the one Shared binding: its Shared Tile ID, size code, PE mask, and whether it is a destination, a reused generation destination, a source subview, or an assembly writer.
+
+- `TLOAD` (`0`) needs a Shared destination or reused destination, no `B.IOT`, and `LB0`, `LB1`, `LB2` giving valid columns, valid rows, and physical columns.
+- `TSTORE` (`1`) needs a Shared source, no `B.IOT`, and a PE mask accepted by `SharedStorePEMaskLegal`.
+- `TMOV` (`2`) needs one `B.IOT`. With a Shared destination, the `B.IOT` names the Local source. With a Shared source, the `B.IOT` names the Local destination.
+
+For `TLOAD` and `TSTORE`, each PE reads the `B.IOR` base address and byte row stride from its own GPRs. Without a `B.IOR`, the base is zero and the stride is the dense row size.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-rules role=rules-interactions -->
+## Rules and interactions
+
+The handler checks, in order: exactly one physical Shared binding, else `Fault_TileLegality`; a zero Shared PE mask returns success with no effect; an unknown TLSU code raises `Fault_IllegalInstruction`; for functions `0` and `1`, the data type must pass `TileRegularTLSUDataTypeSupported`; an illegal `B.IOR` schema raises `Fault_BundleControl`; then the data attributes. A function other than `0`, `1`, or `2` raises `Fault_TileLegality`.
+
+Design point: a `TSTORE` or a Shared-to-Local `TMOV` first tests `SharedTilePublished`. If the Shared Tile is not yet published, the handler returns failure without a fault. The ASL comment calls this a parent-level readiness gate: the block stays active so commit can retry after publication, with no payload read, binding consumption, or global-memory effect.
+
+Design point: when a Shared destination is assembled from several writers, `TLOAD` and `TMOV` write a candidate record and then commit it with `CommitBundleSharedGenerationCandidate`. For `TLOAD`, the comment states that on a first fault the partial candidate is left in place, so earlier reads stay observable, but it is neither ready nor published.
+
+A Shared-to-Local `TMOV` resolves a Local destination and then requires its rows, columns, valid shape, data type, and layout to equal the Shared view. A mismatch rolls the destination back and raises `Fault_TileLegality`.
+
+At the end, any fault rolls back bundle-allocated Local destinations. On success the handler consumes the Shared binding with `ConsumeBundleSharedBindings` and calls `FinalizeBundleTileAttempt`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-boundaries role=boundaries -->
+## Architectural boundaries
+
+`ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules` tests this selector last among the specialized selectors, after `TPREFETCH`. If no selector matches but a Shared binding remains unconsumed, that caller raises `Fault_TileLegality`.
+
+The Shared record format, publication, and the assembly protocol belong to the Shared generation and Shared movement owners.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Suppose a `TSTORE` bundle binds Shared Tile `s2` with PE mask `1111`, sets `LB0` to 32, `LB1` to 8, and `LB2` to 32 for FP32, and gives no `B.IOR`. Each PE uses base zero and stride 32 times 4, which is 128 bytes. If `s2` is still being assembled by another bundle, `SharedTilePublished` is false and commit returns without a fault; the bundle stays active. Once `s2` is published, a retried commit stores 8 rows.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-related role=related-owners-navigation -->
+## Related owners
+
+- [Shared bindings](../operands/shared-bindings.md) define binding consumption.
+- [Shared generation](../operands/shared-generation.md) defines assembly commit and abort.
+- [Shared movement](../../../tile/model/memory/shared-movement.md) defines `TLOADShared`, `TSTOREShared`, and the `TMOV` effects.
+- [Tile execution dispatch](tile-execution.md) orders the specialized selectors.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

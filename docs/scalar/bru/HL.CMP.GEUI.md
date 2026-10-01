@@ -19,44 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-geui-purpose role=purpose -->
 ## What HL.CMP.GEUI does
 
-`HL.CMP.GEUI` evaluates unsigned greater-than-or-equal over decoded scalar operands and publishes canonical XLEN one or zero.
+`HL.CMP.GEUI` compares a scalar register with a `24`-bit unsigned immediate using unsigned greater-than-or-equal and writes `1` or `0` as the result. The signed counterpart is `HL.CMP.GEI`.
+
+Design point: the relation includes equality, so `hl.cmp.geui a0, imm` and `hl.cmp.ltui a0, imm` are exact complements on the same operand pair, with no signed interpretation anywhere in the path.
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-geui-mechanism role=mechanism -->
-## Mechanism
+## How the unsigned greater-or-equal test is evaluated
 
-The instruction snapshots its operands, prepares the decoded immediate, and then evaluates unsigned greater-than-or-equal.
+`SrcL` is read and `uimm24` is zero-extended to `PTO_XLEN`, so the field always supplies a non-negative value from `0` to `16777215`. The handler evaluates unsigned greater-than-or-equal, producing `1` when true and `0` when false.
 
-`uimm24` is zero-extended to XLEN before any shift or comparison.
+Design point: every unsigned value is greater than or equal to `0`, so `hl.cmp.geui a0, 0` writes `1` for every `a0`. The same encoding under `HL.CMP.GEI` would instead test the sign bit.
 
-A true relation becomes XLEN one; a false relation becomes XLEN zero.
+Design point: the written word is always `1` or `0`, never an all-ones mask, so a consumer can add it to a counter, shift it, or test it without masking.
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-geui-inputs-outputs role=inputs-outputs -->
-## Inputs and output
+## Operands and destination codes
 
-- `RegDst` selects the encoded destination or discard behavior.
+- `SrcL` supplies the left operand through the `Reg5` source rules: codes `0` to `23` read absolute GPRs, codes `24` to `27` read the T queue, and codes `28` to `31` read the U queue. A queue code whose entry is not valid rejects the instruction before any read.
 
-- `SrcL` supplies the left scalar source.
+- `uimm24` supplies the `24`-bit unsigned bound, encoded in two pieces of `12` bits and `12` bits.
 
-- `uimm24` supplies an unsigned encoded immediate.
+- `RegDst` selects the destination with the ordinary `Reg5` rules: codes `0` to `23` name absolute GPRs, codes `24` to `29` write nothing, code `30` pushes the U queue, and code `31` pushes the T queue.
+
+Design point: this form has no right-source modifier field, so it has no `.sw`, `.uw`, or `.not` spelling. The left operand is used exactly as read, and the only transformation is the extension of the immediate.
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-geui-effects role=effects -->
 ## Effects and ordering
 
-The canonical boolean is published through the encoded destination, then `TPC` advances by `6` bytes.
+The canonical `1` or `0` is written through the selected destination, and nothing else is written. Because the handler does not write `TPC`, the dispatch boundary then advances `TPC` by `6` bytes, the encoded length of the `48`-bit form.
 
-The instruction does not modify commit state and does not access memory or reservation state.
+`HL.CMP.GEUI` is not a condition setter, so it never touches `_CommitArgument`, `BARG.TAKEN`, or the bundle condition marker, and no Conditional-block placement is required for it. The relational commit twin with the same condition is `HL.SETC.GEUI`.
+
+The handler reads no memory, takes no reservation, and records no numeric status, so the only architectural difference an accepted execution makes is the destination word and the advanced `TPC`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-geui-constraints role=constraints -->
 ## Legality and fault order
 
-Encoding, reserved field values, and source availability are checked before destination, control, or `TPC` effects.
+The fixed bits of the form must match, otherwise the pattern does not decode as this instruction and raises `Fault_IllegalInstruction`. No field value is reserved: all `32` `RegDst` codes and all values of the `24`-bit immediate field are assigned. The selected `SrcL` code must also be usable, so a T or U queue code whose entry is not valid raises the same fault.
+
+Design point: the decode, source, and destination checks all run before an operand is read and before the destination is written, so a rejected encoding changes neither the destination nor `TPC`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-geui-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not create a second semantic definition.
 
-`hl.cmp.geui SrcL, uimm, ->{t, u, Rd}` publishes XLEN one when its condition is true and XLEN zero otherwise.
+With `a0` holding `0xFFFFFFFFFFFFFFFF`, `hl.cmp.geui a0, 0, ->a1` writes `1`. With `a0` holding `0`, `hl.cmp.geui a0, 1, ->a1` writes `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -17,22 +17,52 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tunpack-purpose role=purpose -->
-**Why use it.** `TUNPACK` extracts a contiguous raw byte field from each Local `U32` CUBE word and places that field in a zero-extended `U32` result.
+## What TUNPACK does
+
+`TUNPACK` extracts one contiguous byte field from every participating 32-bit word of a Local CUBE source and places it in the low bytes of a destination word. It rearranges raw bytes and performs no numeric conversion.
+
+Design point: `TUNPACK` is selected by `BSTART.SFU` with TEPL Mode 3 Function 24 (selector `0x078`). The `BSTART` type, `U8`, `U16`, or `U32`, is the destination type; the source backing type need not equal it.
 
 <!-- PTO-READER-BLOCK: tile-tunpack-mechanism role=mechanism -->
-**How it works.** The low control byte gives the source byte offset, the next control byte gives the count, and the selected bytes are copied down to destination byte zero while all higher result bits remain zero.
+## Extraction rule
+
+The control word gives a byte offset in bits 7 to 0 and a byte count in bits 15 to 8. For word w of each row, destination bytes 0 to count-1 receive source bytes `4w + offset` onward, and every remaining destination byte is zero.
+
+Design point: the span rule is checked for every word, including a partial last word, whether or not the ExecutionMask makes it active. `offset + count` must fit inside each word's valid bytes, so a field never reads past the valid data of a row.
+
+Only selected bytes are read, and each selected byte of a participating word must belong to a defined element. Unselected valid bytes and physical padding are never read.
 
 <!-- PTO-READER-BLOCK: tile-tunpack-inputs-outputs role=inputs-outputs -->
-**Inputs and result.** `source` is a Local `U32` `CUBE_M16` or `CUBE_M32` Tile, `unpack_control` selects the field, and `destination` is a fresh Local `U32` Tile with matching layout and geometry.
+## Inputs and result
+
+- `source0` is a Local numeric `CUBE_M16` or `CUBE_M32` Tile with non-packed 8-, 16-, or 32-bit elements.
+- `scalar0` is the unpack control word from one `B.IOR`; RegSrc1, RegSrc2, and RegDst are zero.
+- `destination0` is fresh, with the `BSTART` type, the source layout and valid rows, and `words per row x elements per word` valid columns: 4 for `U8`, 2 for `U16`, and 1 for `U32`.
+
+Like `TPACK`, the destination shape is derived from the source descriptor rather than from `B.DIM`.
 
 <!-- PTO-READER-BLOCK: tile-tunpack-effects role=effects -->
-**Effects.** Control and source validation precedes publication of the fully defined valid destination region; the source persists, destination padding is `Null`, and the operation has no memory effect.
+## Effects
+
+Control and source validation precede publication. Each participating source word produces one complete destination word, every valid destination element becomes defined, and padding is `Null`.
+
+Under an ExecutionMask, one mask bit at (row, word index) gates the whole destination word group; an inactive group reads no source byte and receives the mask's zero or merge value. The source persists, and the operation has no memory or numeric-status effect.
 
 <!-- PTO-READER-BLOCK: tile-tunpack-constraints role=constraints -->
-**What is rejected.** The offset must be from `0` through `3`, the count from `1` through `4`, their sum must not exceed `4`, control bits `63:32` must be zero, and source and destination must not alias; rejection has no destination effect.
+## What is rejected
+
+The offset must be 0 to 3, the count 1 to 4, and `offset + count` at most 4; control bits `63:32` must be zero. An unsupported storage, layout, or source width, a field outside a word's valid bytes, a destination that aliases the source, or an undefined selected byte raises `Fault_TileLegality` before effects.
 
 <!-- PTO-READER-BLOCK: tile-tunpack-example role=example -->
-**Concrete example.** Source word `0x44332211` with control `0x00000201` selects two bytes starting at byte offset `1` and produces `0x00003322`.
+## Concrete example
+
+Source word `0x44332211` with control `0x00000201` selects two bytes starting at byte offset `1`, which are `0x22` and `0x33`. The destination word is `0x00003322`.
+
+A `U8` `CUBE_M16` source with 6 valid columns has 6 valid bytes per row: word 0 has 4 and word 1 has 2. Control `0x00000200` (offset 0, count 2) is legal, and a `U16` destination gets 2 x 2 = 4 valid columns. Control `0x00000201` is rejected, because offset 1 plus count 2 exceeds the 2 valid bytes of word 1.
+
+```text
+TUNPACK <U16>, T#1, a0, ->T<128B>
+```
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

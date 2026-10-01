@@ -19,35 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-sfu-purpose role=purpose -->
 ## What BSTART.SFU contributes
 
-`BSTART.SFU` is the canonical SFU spelling for operations carried by the existing 32-bit `BSTART.TEPL` encoding. It is an encoding alias, not an independently encoded block-start command.
+`BSTART.SFU` is the canonical spelling for starting a block whose operation runs on the SFU engine, for example `TEXP`, `TDIV`, or `TSQRT`. It is an encoding alias: it has no bits of its own. `BSTART.SFU TileOp, DataType` resolves `TileOp` to its `Mode:Function` selector and emits the [BSTART.TEPL](BSTART.TEPL.md) word with that selector and `DataType`.
+
+Canonical assembly and disassembly use `BSTART.SFU` for every SFU operation, and [BSTART.VEC](BSTART.VEC.md) for every VEC operation.
 
 <!-- PTO-READER-BLOCK: block-bstart-sfu-mechanism role=mechanism -->
 ## Placement and mechanism
 
-Header commands execute sequentially after the start, while `BSTOP` or the next `BSTART` is the boundary that validates and retires the completed block. The current owner gives this exact composition checklist:
+The alias owner maps each piece to `BSTART.TEPL`: `InstructionContractMatches_BSTART_SFU` matches the TEPL form, and `InstructionContractHandler_BSTART_SFU` returns the TEPL handler, `CommandHandler_ExecuteBundleStart`. Execution is therefore exactly the TEPL path.
 
-```text
-TileOp resolves to one assigned TEPL Mode:Function selector whose execution engine is SFU; the alias adds no encoding bits or ownership.
-The resulting block uses the same descriptor, header composition, commit, and rollback rules as BSTART.TEPL.
-```
+1. [Bundle start dispatch](../model/dispatch/start.md) checks the decoded descriptor before it commits any predecessor.
+2. It commits the predecessor, opens a Tile-element block, and installs the descriptor.
+3. At `BSTOP` or the next `BSTART`, [Tile execution dispatch](../model/dispatch/tile-execution.md) validates the bundle and runs the operation.
 
-Alias resolution maps `TileOp` to an assigned TEPL `Mode:Function` whose execution engine is SFU, then uses the unchanged `BSTART.TEPL` carrier bits and start handler. The resulting descriptor, header execution, commit, and rollback path are the inherited TEPL path; the alias adds no state or encoding field.
+`TileTEPLAliasAcceptsOperation(TileTEPLAlias_SFU, operation)` defines which names the alias accepts: the operation must use the TEPL carrier and its execution engine must be SFU.
+
+Design point: some SFU operations keep a TEPL selector that sits among VEC selectors. `TEXP` is `Mode` 0 `Function` 18, and `TDIV` is `Mode` 0 `Function` 3. The engine is a property of the operation, so the spelling follows the engine while the selector bits stay unchanged.
 
 <!-- PTO-READER-BLOCK: block-bstart-sfu-inputs role=inputs-outputs -->
 ## Operands and header roles
 
-- `TileOp` supplies the named selector or attribute field; its exact assigned domain remains in the generated contract below.
-- `DataType` selects the element data type or inheritance sentinel; its exact assigned domain remains in the generated contract below.
+- `TileOp` names an SFU operation carried by TEPL. It becomes `Mode` and `Function`.
+- `DataType` is the element type, encoded as in `BSTART.TEPL`. It must be concrete.
+
+The remaining header commands are those of the selected operation. For `TEXP`, they are `B.DIM LB0`, optional `LB1`, `LB2`, and `B.DATR`, and one terminating `B.IOT` with one Local source and a new Local destination.
 
 <!-- PTO-READER-BLOCK: block-bstart-sfu-effects role=effects -->
 ## Pending state and completion
 
-Applicability, SFU-engine matching, carrier fields, and descriptor legality are checked before predecessor retirement. If retirement succeeds, the resolved TEPL descriptor becomes pending; the selected SFU operation executes only when the completed block commits.
+The alias adds no state. After the predecessor commits, the start installs exactly the TEPL descriptor for the resolved selector and `DataType`, sets the block kind to Tile element, and moves `TPC` to the next instruction.
+
+The selected SFU operation runs only when the block commits. On success it publishes its destination atomically. On failure the block stays active and its destinations are rolled back. The start has no memory effect.
 
 <!-- PTO-READER-BLOCK: block-bstart-sfu-constraints role=constraints -->
 ## Legality and fault boundary
 
-An unknown `TileOp`, a selector assigned to another engine, a TEPL selector hole, or a reserved `DataType` is rejected before predecessor retirement or new `BARG` effects. A predecessor-retirement failure preserves the predecessor and publishes no alias descriptor.
+`BSTART.SFU` accepts only a name that `TileTEPLAliasAcceptsOperation` admits for SFU. An unknown name, a VEC operation such as `TADD`, or a TLSU or CUBE operation has no `BSTART.SFU` spelling.
+
+For the emitted word, the TEPL checks apply before predecessor commit: a reserved `DataType` code or an unassigned selector raises `Fault_IllegalInstruction`, and the active predecessor is left in place.
+
+Design point: because the alias and `BSTART.TEPL` produce identical bits, no program can observe a difference between them. Both install the same descriptor and fault in the same way.
 
 <!-- PTO-READER-BLOCK: block-bstart-sfu-example role=example -->
 ## Non-normative worked example
@@ -58,7 +69,7 @@ This worked example is non-normative; it illustrates the current owner without r
 BSTART.SFU TEXP, FP32
 ```
 
-`BSTART.SFU TEXP, FP32` resolves TEXP to its assigned SFU `Mode:Function` and emits the existing `BSTART.TEPL` carrier. If predecessor retirement succeeds, that inherited TEPL descriptor remains pending until the completed TEXP block commits.
+`TEXP` resolves to `Mode` 0 `Function` 18, and `FP32` is `DataType` 1, so the emitted word is `0x09219181`, the same word as `BSTART.TEPL 0, 18, FP32`. A complete bundle adds `B.DIM` commands and one `B.IOT` naming the source and the destination, then `BSTOP`. The same bundle is written in macro form as `TEXP <Row=8, Col=64, FP32>, T#1, ->T<2KB>`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Alias contract

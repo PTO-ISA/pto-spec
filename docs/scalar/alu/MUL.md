@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-mul-purpose role=purpose -->
 ## What MUL does
 
-`MUL` is a 32-bit scalar ALU instruction. It computes the low part of the unsigned product under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+`MUL` is a 32-bit encoded scalar ALU instruction that multiplies two XLEN sources and publishes the low `PTO_XLEN` bits of the complete product through one Reg5 destination.
+
+The `L32` class of the form is the instruction length, so the source operands still enter the multiply as complete `64`-bit values. No high product half is produced and no immediate is encoded.
 
 <!-- PTO-READER-BLOCK: scalar-mul-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then computes the low part of the unsigned product under the complete XLEN value result rules, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractResult_MUL`, which returns `MultiplyWord(left, right)`. That helper starts from zero and, for every set bit position of `right`, adds `LSL(left, bit_index)` to a `Word` accumulator, so each partial sum is already reduced modulo `2^PTO_XLEN`.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+mul SrcL, SrcR, ->{t, u, Rd}
+```
+
+Design point: the retained half is the same under either sign interpretation, and the executable dispatch binds `MUL` and `MULU` to that one helper. `SrcL = 0xFFFFFFFFFFFFFFFF` with `SrcR = 0xFFFFFFFFFFFFFFFF` therefore publishes `1` under both mnemonics.
 
 <!-- PTO-READER-BLOCK: scalar-mul-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the left multiplicand or additive operand through Reg5.
-- The 5-bit `SrcR` field selects the right multiplicand through Reg5.
+- `RegDst`, instruction slice `[7 +: 5]`, receives the low XLEN bits of the product.
+- `SrcL`, instruction slice `[15 +: 5]`, supplies the left multiplicand.
+- `SrcR`, instruction slice `[20 +: 5]`, supplies the right multiplicand.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Both sources use the common Reg5 map: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`. Reads do not consume a queue entry, and an encoded zero reads the architectural zero GPR.
+
+Design point: this form encodes no `SrcRType` or shift field, so `SrcR` reaches the multiply unchanged. A form that carries those fields, such as `ADD`, writes them as a suffix on the right source (`.sw`, `.uw`, `.neg`, and the shift); `MUL` has three operand fields only.
 
 <!-- PTO-READER-BLOCK: scalar-mul-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are snapshotted before the destination effect, so `mul a0, a0, ->a0` multiplies the pre-instruction `a0` by itself.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Once the result is published, `TPC` advances by `4` bytes. `MUL` performs no memory access and changes no numeric-status, reservation, descriptor, bundle, privilege or control-flow state; the only possible queue change is the single `T` or `U` push selected by `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-mul-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every `32`-code source encoding is assigned and every `32`-code destination encoding is accepted, so an unavailable temporary source is the only operand condition that can fail. Fixed encoding bits must match the canonical 32-bit form.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise a mismatching encoding raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before the destination write.
+
+Design point: the discarded high product bits leave no trace and set no flag, so `MUL` cannot report overflow. Code that must detect it has to compare against a wider form or reconstruct the product, because no exception is defined for any operand pair.
 
 <!-- PTO-READER-BLOCK: scalar-mul-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `MUL` example, sources `6` and `7` produce the single low-product result `42`.
+With `SrcL = 6` and `SrcR = 7`, the accumulator holds `42` and `RegDst` receives `42`. With `SrcL = SrcR = 0xFFFFFFFFFFFFFFFF`, the exact product is `2^128 - 2^65 + 1`, whose low `PTO_XLEN` bits are `1`, so `RegDst` receives `1` under `MUL` and under `MULU` alike.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,48 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-divuw-purpose role=purpose -->
 ## What HL.DIVUW does
 
-`HL.DIVUW` is a 48-bit scalar ALU instruction. It computes the unsigned quotient and remainder together from source snapshots; its current instruction contract defines the result publication path and any additional state effect.
+`HL.DIVUW` is the 48-bit HL48 pair form that divides the low word of two Reg5 sources as unsigned integers. It publishes a sign-extended quotient to `RegDst0` and a sign-extended remainder to `RegDst1`.
+
+Design point: the operands are unsigned while the published words are sign-extended, so either half of the pair can look negative in `PTO_XLEN`. A low-word dividend of `4294967295` with a divisor of `1` gives the quotient `-1`, and only a consumer that reads the low `32` bits recovers the unsigned value.
 
 <!-- PTO-READER-BLOCK: scalar-hl-divuw-mechanism role=mechanism -->
-## How the result is formed
+## How both results are formed
 
-Execution snapshots the encoded inputs, then computes the unsigned quotient and remainder together from source snapshots, and only afterward performs the destination effects.
+Execution zero-extends `SrcL[31:0]` and `SrcR[31:0]` to `PTO_XLEN` and computes both results from those two words.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+- The quotient is the unsigned quotient of the zero-extended operands.
+- The remainder is `dividend - quotient * divisor`, so it stays below the divisor whenever the divisor is nonzero.
+
+Each result is then reduced to its low `32` bits and sign-extended to `PTO_XLEN`: the quotient to `RegDst0` first, the remainder to `RegDst1` second.
+
+Design point: the extension applies to the remainder too, and the remainder can carry bit `31` when the divisor is larger than the dividend, because the quotient is then `0` and the remainder is the dividend's low word. With a low-word dividend of `4000000000` and a divisor of `4294967295`, `hl.divuw a0, a1, ->a2, a3` publishes quotient `0` and remainder `-294967296`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-divuw-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst0` field selects the quotient Reg5 target or discards the quotient.
-- The 5-bit `RegDst1` field selects the remainder Reg5 target or discards the remainder.
-- The 5-bit `SrcL` field selects the dividend through Reg5.
-- The 5-bit `SrcR` field selects the divisor through Reg5.
+- `SrcL` is the dividend and `SrcR` is the divisor. Both are read through the Reg5 source map, `0..23` for absolute GPRs, `24..27` for `T#1..T#4` and `28..31` for `U#1..U#4`, and only the low `32` bits of each source reach the divider.
+- `RegDst0` takes the quotient and `RegDst1` the remainder. Each destination uses the common map: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+- Reading a source never consumes a `T` or `U` entry; only a destination code of `30` or `31` changes a queue.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: a source read never removes a `T` or `U` entry, while a destination code of `30` or `31` appends one. Each destination is applied on its own, and a destination that reuses a source selector writes that register only after both snapshots have been taken.
 
 <!-- PTO-READER-BLOCK: scalar-hl-divuw-effects role=effects -->
 ## Effects and ordering
 
-All results are computed before publication. The destinations are then updated in encoded order (`RegDst0`, `RegDst1`), which also defines the order of duplicate-register writes or queue pushes.
+The sources are read and both results are computed before the first destination effect. The quotient is published to `RegDst0`, then the remainder to `RegDst1`, and then `TPC` advances by `6` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
+No memory, reservation, descriptor, numeric-status, bundle, privilege, predicate or control-flow state changes. Nothing records the truncation, and the remainder exists only at `RegDst1`.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: the publication order is observable only through aliasing. When `RegDst0` and `RegDst1` encode the same GPR the remainder is the final content of that register, and when both encode one queue the remainder is the newest entry; with two distinct destinations the order has no visible effect.
 
 <!-- PTO-READER-BLOCK: scalar-hl-divuw-constraints role=constraints -->
 ## Legality and fault boundary
 
-A zero divisor uses the defined quotient and remainder outcomes; both outputs are computed before either destination is written.
+The four selectors assign every code, duplicate destinations are legal, and the 48-bit encoding adds no fixed-bit constraint, so no selector value is reserved for this mnemonic.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An undecodable form raises `Fault_IllegalInstruction` at `PC`; an instruction that is not applicable to the active bundle raises `Fault_BundleControl` at `TPC`; an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before either destination effect and before `TPC` advances.
+
+Design point: the divisor value is total. A low-word divisor of `0` gives quotient `0` and the sign-extended low word of the dividend as the remainder, which can itself be negative, and no divisor value raises a fault.
 
 <!-- PTO-READER-BLOCK: scalar-hl-divuw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.DIVUW` example, dividend `13` and divisor `5` produce quotient `2` and remainder `3` in destination order.
+With `a0` whose low `32` bits are `10` and `a1` whose low `32` bits are `4`, `hl.divuw a0, a1, ->a2, a3` writes `2` to `a2` and `2` to `a3`. With a low-word dividend of `4294967295` and a divisor of `2` the pair is `2147483647` and `1`, and with a low-word dividend of `4000000000` and a divisor of `4294967295` the pair is `0` and `-294967296`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

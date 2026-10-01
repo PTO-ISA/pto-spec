@@ -19,48 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tdiv-purpose role=purpose -->
 ## What TDIV does
 
-`TDIV` is a selector-encoded Tile operation executed by `SFU`. It divides corresponding numerator and denominator elements under the selected integer or floating interpretation; its current instruction contract owns the exact bundle form and publication boundary.
+`TDIV` divides one Local Tile by another element by element and writes the quotients into a newly allocated Local destination Tile. It shares the bundle schema, padding, and publication rules of `TADD`, but it adds a division-by-zero check and runs on the `SFU` engine.
+
+Design point: `TDIV` keeps the TEPL carrier Mode 0 Function 3 (selector `0x003`) and has no standalone opcode. Its canonical header is `BSTART.SFU TDIV, DataType`. `BSTART.SFU` is an alias of `BSTART.TEPL` that adds no encoding bits, so the engine name changes only the assembly spelling, not the binary encoding.
 
 <!-- PTO-READER-BLOCK: tile-tdiv-mechanism role=mechanism -->
 ## Element and Tile mechanism
 
-After all descriptor and operand checks succeed, the owning ASL handler divides corresponding numerator and denominator elements under the selected integer or floating interpretation. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+After complete preflight, `ExecuteTileBinary` computes `numerator / denominator` for each coordinate in the valid rectangle `ValidRow x ValidCol`. The rule depends on the kind of `DataType`:
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+- Signed integers use signed division, and the quotient is truncated toward zero. For example, `-7 / 2` produces `-3`.
+- Unsigned integers use unsigned division. For example, `7 / 2` produces `3`.
+- Floating types use the floating division profile with its fixed default rounding.
+
+An integer zero anywhere in the valid denominator rectangle is a legality error. Preflight checks every valid denominator element, or every active one when an ExecutionMask is in force, and raises `Fault_TileLegality` before any source snapshot or destination effect. Denominator padding is not read.
+
+Design point: an integer `DataType` has no infinity or NaN encoding that could represent `x / 0`. Instead of inventing a value, `TDIV` rejects the whole bundle, so a program never receives a silently wrong integer quotient. A program that may divide by zero must replace those divisors or exclude them with an ExecutionMask before issuing `TDIV`.
+
+A floating zero divisor is not a legality error. The floating profile defines the result: a nonzero value divided by zero gives an infinity with the combined sign, `0 / 0` and `inf / inf` give a quiet NaN, and a finite value divided by infinity gives a signed zero.
 
 <!-- PTO-READER-BLOCK: tile-tdiv-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` has the exact contract role **new Local destination**.
-- `source0` has the exact contract role **ordered numerator**.
-- `source1` has the exact contract role **ordered denominator**.
+- `source0` is the numerator. It is an existing, allocated Local Tile.
+- `source1` is the denominator. It must match `source0` in physical rows, physical columns, valid rows, valid columns, and layout.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected operation `DataType`, and its shape matches the sources.
 
-Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
-Every source coordinate read by the operation must be defined before execution reaches destination publication.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+All three Tiles are bound by one terminating `B.IOT` and share one `PE_MASK`. `PE_MASK=0000` is a strict no-op before any read, check, or allocation. A source may be stored with a different same-width, non-packed backing type; its bits are then validated and interpreted as the selected `DataType`.
 
 <!-- PTO-READER-BLOCK: tile-tdiv-effects role=effects -->
 ## Publication, definedness, and padding
 
-Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+Both sources are snapshotted only after all legality and integer-zero checks pass, so a source that aliases the destination is read before it is overwritten. The destination descriptor, the valid-region quotients, the padding, and the definedness of every element are published together. A rejected bundle leaves descriptors, payloads, and allocation state unchanged.
 
-Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero` writes zero; `Max` and `Min` write the largest and smallest finite value of the `DataType`; `Null` leaves those elements undefined. Omitting `B.DATR` selects `Null`, while an explicit code `00` selects `Zero`.
 
-The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+`TDIV` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value instead of a quotient.
 
 <!-- PTO-READER-BLOCK: tile-tdiv-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The accepted data-type set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
+The accepted data-type set is the same as for `TADD`: `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, and `U8`. Packed four-bit formats are excluded. The floating element arithmetic that `TDIV` reaches, `ScalarFPBinaryProfile`, is defined only for `FP64`, `FP32`, `FP16`, and `BF16`, so the ASL gives no element result for `TF32`, `HF32`, `E4M3`, or `E5M2`.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`, and all operands must use that same layout. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal. `TDIV` rejects nondefault `RMode`, `Sat`, and `CMode`.
+
+An integer zero divisor, malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported `DataType`, or an invalid destination capacity raise `Fault_TileLegality` before any destination effect.
 
 <!-- PTO-READER-BLOCK: tile-tdiv-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `TDIV` example, numerator `8` and denominator `2` produce quotient `4`.
+For `S32`, a numerator row `[7, -7, 9]` and a denominator row `[2, 2, -3]` produce the destination row `[3, -3, -3]`. If any valid denominator element were `0`, the bundle would fault instead and no destination would be produced.
+
+For `FP32`, a numerator row `[1.0, -1.0, 0.0]` and a denominator row `[0.0, 0.0, 0.0]` produce `[+inf, -inf, NaN]` without a fault.
+
+In macro form, an 8 x 64 `FP32` division is `TDIV <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>`, where `T#1` is the numerator and `T#2` is the denominator.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

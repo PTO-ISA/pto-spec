@@ -7,8 +7,71 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-STATE-BARG}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-state-barg-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines how `BARG`, the bundle argument register, chooses where execution continues after a bundle commits. It also defines the three `BARG` words that `LSRGET` can read from inside a bundle body.
+
+Its contract, `PTO-BARG-CONTINUATION-001`, says `BSTART` initializes every `BARG` field, and `BSTOP` or the next `BSTART` is the only boundary that picks the next PC.
+
+<!-- PTO-READER-BLOCK: block-model-state-barg-concepts role=concepts-state -->
+## Concepts and visible state
+
+`BARG` has five parts:
+
+- `BPC`, the address of the current `BSTART`, stored in program-control state.
+- `BlockType`, the block class, such as `Standard`, `Floating`, or `System`.
+- `BPCN`, the candidate next PC.
+- `TYPE`, the transfer rule: `Fallthrough`, `Direct`, `Conditional`, `Call`, `Return`, `Indirect`, or `IndirectCall`.
+- `TAKEN`, which matters only for `Conditional`.
+
+`BARG` has no trap field. The `B.CATR` trap request is held in the bundle control attributes.
+
+<!-- PTO-READER-BLOCK: block-model-state-barg-rules role=rules-interactions -->
+## Rules and interactions
+
+`BARGSelectsBPCN` is true for `Direct`, `Call`, `Indirect`, `IndirectCall`, and `Return`, and for `Conditional` when `TAKEN` is set. `BARGCommitPC(continuation)` returns `BPCN` when it is selected and the sequential continuation otherwise.
+
+`LSRGET` identifiers are:
+
+| ID | Word | Applicable when |
+| --- | --- | --- |
+| 0 | `BPC` | an active bundle body |
+| 1 | `BPCN` | an active body of a `Standard` or `Floating` block |
+| 2 | packed control word | an active bundle body |
+
+The packed control word holds the block-kind code in bits `3:0`. For `Standard` and `Floating` blocks, it holds the transfer code in bits `6:4` and `TAKEN` in bit 7. Bits 8 to 12 hold the `B.CATR` atomic, acquire, release, far, and dimension-reduction flags. All higher bits are zero.
+
+Design point: one record decides the continuation. `SETC.TGT` rewrites `BPCN`, and a `SETC` condition sets `TAKEN`, but neither changes control flow directly. Commit reads the final `BARG` once, so the program sees exactly one transfer per bundle, taken only when the bundle commits.
+
+Design point: `BARGHasCandidateWord` is true only for `Standard` and `Floating` blocks. For other kinds ID 1 is not applicable and the transfer and `TAKEN` bits of the packed word stay zero, so a program never reads a candidate target from those kinds.
+
+<!-- PTO-READER-BLOCK: block-model-state-barg-boundaries role=boundaries -->
+## Architectural boundaries
+
+`ReadCurrentBARGWord` asserts applicability. The `LSRGET` caller checks it first and raises `Fault_BundleControl` when an ID is not applicable or no bundle body is active.
+
+This unit does not write `BARG`. Begin, the commit target setters, the condition setters, stop, reset, and trap-context recovery do.
+
+<!-- PTO-READER-BLOCK: block-model-state-barg-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+In the body of a `Standard` conditional block with `BPCN = 0x2000`, a `SETC` sets `TAKEN`. `LSRGET` ID 1 returns `0x2000`. ID 2 returns block-kind code `0000`, transfer code `010` in bits `6:4`, and 1 in bit 7. At `BSTOP`, `BARGCommitPC` selects `0x2000`.
+
+<!-- PTO-READER-BLOCK: block-model-state-barg-related role=related-owners-navigation -->
+## Related owners
+
+- [Begin](../lifecycle/begin.md) initializes `BARG`.
+- [Enter and stop](../lifecycle/enter-stop.md) consumes it at commit.
+- [Bundle encoding](../schema/bundle-encoding.md) defines the kind and transfer codes.
+- [LSRGET](../../../scalar/sys/LSRGET.md) and [SETC.TGT](../../../scalar/sys/SETC.TGT.md) read and write it from the body.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

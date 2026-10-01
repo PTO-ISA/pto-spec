@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-min-purpose role=purpose -->
 ## What MIN does
 
-`MIN` is a 32-bit scalar ALU instruction. It compares the complete operands as signed values and selects the minimum bit pattern; its current instruction contract defines the result publication path and any additional state effect.
+`MIN` is a 32-bit encoded scalar ALU instruction that compares two XLEN values as signed integers and publishes the smaller of the two unchanged through one Reg5 destination.
+
+As with `MAX`, the result is one of the operand bit patterns rather than a computed value, and the comparison uses all `64` bits of each source.
 
 <!-- PTO-READER-BLOCK: scalar-min-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then compares the complete operands as signed values and selects the minimum bit pattern, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractResult_MIN`, which returns `left` when `SInt(left) < SInt(right)` and `right` otherwise, and `InstructionContractUsesSignedComparison_MIN`, which returns true. Dispatch reaches the same helper through `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MIN, FALSE)`.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+min SrcL, SrcR, ->{t, u, Rd}
+```
+
+Design point: the minimum is taken on the signed reading, so it is not the same as clearing the high bits. `SrcL = 0xFFFFFFFFFFFFFFFF` and `SrcR = 0` produce `SrcL`, because `-1 < 0`, even though `SrcR` is the smaller word when both are read as unsigned.
 
 <!-- PTO-READER-BLOCK: scalar-min-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the left operand through Reg5.
-- The 5-bit `SrcR` field selects the right operand through Reg5.
+- `RegDst`, instruction slice `[7 +: 5]`, receives the selected operand or discards it.
+- `SrcL`, instruction slice `[15 +: 5]`, supplies the left operand.
+- `SrcR`, instruction slice `[20 +: 5]`, supplies the right operand.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Both sources use the common Reg5 map: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4` without consuming an entry. Encoded zero reads the architectural zero GPR.
+
+Design point: only the two 5-bit source fields feed the comparison; the form carries no immediate, no modifier and no shift field. A `MIN` against a constant therefore needs that constant in a register, which may be a temporary read from a queue.
 
 <!-- PTO-READER-BLOCK: scalar-min-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+The two sources are snapshotted before the destination effect. A destination push to the same queue a source was read from publishes the selected operand without disturbing the entry that was read.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The selected operand is written through `RegDst`, and `TPC` then advances by `4` bytes. The instruction has no memory effect, no numeric-status effect and no effect on reservation, descriptor, bundle, privilege or control-flow state.
 
 <!-- PTO-READER-BLOCK: scalar-min-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every `32`-code source encoding and every `32`-code destination encoding is assigned, and every XLEN bit pattern is legal, so only an unavailable temporary source can fail the operand checks. Instruction bits `31:25` and `14:12` are fixed by the accepted form.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise a mismatching encoding raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before the destination write.
+
+Design point: the fault surface is identical to `MAX` because both mnemonics share the selection helper and differ only in the comparison operator. There is no operand pair for which one of the two faults on values and the other does not.
 
 <!-- PTO-READER-BLOCK: scalar-min-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `MIN` example, operands `7` and `3` select result `3`.
+With `SrcL = 0xFFFFFFFFFFFFFFFF` and `SrcR = 0`, the signed values are `-1` and `0`, so `RegDst` receives `0xFFFFFFFFFFFFFFFF`. With `SrcL = 4` and `SrcR = 7`, `RegDst` receives `4`. With `SrcL = SrcR = 0x8000000000000000`, the strict comparison is false and `RegDst` receives the right operand, whose bit pattern is identical.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

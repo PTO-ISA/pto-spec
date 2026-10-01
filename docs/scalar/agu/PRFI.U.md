@@ -17,48 +17,59 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-prfi-u-purpose role=purpose -->
-## What PRFI.U does
+## What `PRFI.U` does
 
-`PRFI.U` is a standalone `32`-bit AGU instruction that forms a signed-immediate address and issues a non-binding prefetch hint with no destination effect.
+`PRFI.U` forms a byte address from `SrcL` plus an immediate that is added without scaling, and issues a non-binding prefetch hint for it. Its canonical assembly is `prfi.u [SrcL, simm]`, and the form exposes no destination.
+
+Design point: a hint needs no alignment check, and that is what makes an unscaled immediate useful here. `PRFI.U` can name any byte in `-2048`..`2047` around the base, including the addresses a `4`-byte load would refuse with `Fault_DataAlignment`.
 
 <!-- PTO-READER-BLOCK: scalar-prfi-u-mechanism role=mechanism -->
-## Address and memory mechanism
+## How `PRFI.U` forms the address and issues the hint
 
-`PRFI.U` sign-extends `simm12` from its complete `-2048..2047` domain, uses it without scaling, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+`simm12` is sign-extended from its `12` bits to `PTO_XLEN` and added to the `SrcL` base modulo `2^PTO_XLEN`. The sum is passed to the hint and then discarded.
 
-The formed address is a non-binding one-byte-granularity prefetch hint; legal execution performs no architectural translation, memory access, memory event, reservation update, ordering edge, or cache-placement guarantee.
+The encoding retains a `RegDst` field that names no destination, and no other field publishes a result. `SrcL` therefore keeps its value and no queue slot is written.
 
-No encoded destination publishes the hint address, and the instruction performs no base-register update.
+Design point: the only architectural trace the operation leaves is the `TPC` advance. The formed address is not stored anywhere, so two consecutive hints for the same address are indistinguishable from one.
 
 <!-- PTO-READER-BLOCK: scalar-prfi-u-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and what the hint consumes
 
-- `SrcL` supplies the base; `simm12` supplies the signed displacement. Every encoded Reg5 source among `SrcL` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `RegDst` is an ignored alias; every `RegDst` code is an assigned non-writing alias.
-- `simm12` assigns every signed value from `-2048` through `2047`; encoded zero is a zero displacement, not omission.
+- `SrcL` is a `5`-bit Reg5 source. Codes `0`..`23` name absolute GPRs, `24`..`27` name `T#1`..`T#4`, and `28`..`31` name `U#1`..`U#4`. Reading a `T` or `U` slot neither consumes nor reorders it, and code `0` supplies the constant zero GPR.
+- `simm12` is a signed `12`-bit field, so all `4096` encodings are values, and encoded zero supplies a zero displacement rather than denoting omission.
+- `RegDst` is retained as an ignored alias: every code `0`..`31` is legal, none writes a register or pushes a queue slot, and the canonical assembly exposes no destination.
+
+Design point: the hint still reads `SrcL`, because the address is formed from it, and that read is why an unavailable `T`/`U` source is a rejection reason. Nothing about the read is published afterwards.
 
 <!-- PTO-READER-BLOCK: scalar-prfi-u-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+`SrcL` is read before the hint, so the address uses the pre-instruction value even if a later instruction overwrites that register.
 
-A legal hint produces no memory event, reservation change, or destination write and advances `TPC` by `4` bytes.
+Successful execution changes no memory byte, reservation entry, queue entry, or register. `TPC` then advances by `4` bytes, the length of this encoding.
+
+Design point: with no memory event and no ordering edge, this form cannot change what another agent observes. Its only visible effect is that the instruction retires and `TPC` moves to the next instruction.
 
 <!-- PTO-READER-BLOCK: scalar-prfi-u-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-A legal prefetch does not perform data alignment, translation, permission, or bounded-memory checks and therefore cannot raise a data-access fault.
+Dispatch rejects the instruction with `Fault_IllegalInstruction` before any effect when the fixed bits do not match, or when a selected `T`/`U` source slot is unavailable because nothing has been pushed into it.
 
-A reserved prefetch model rejects before source reads and before any optional address publication.
+A legal `PRFI.U` performs no alignment, translation, permission, or bounded-memory test, so neither `Fault_DataAlignment` nor `Fault_DataPage` is reachable from a legal encoding.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+The rejection happens before the address is formed, so a rejected attempt has no partial effect and `TPC` stays on the faulting instruction; reissue repeats the same encoding checks.
+
+Design point: there is no data-fault path to restart, so the only restart this form can require is an encoding or source-availability rejection, which software resolves by changing the instruction rather than by fixing an address.
 
 <!-- PTO-READER-BLOCK: scalar-prfi-u-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With base `0x100` and signed immediate `2`, the formed hint address is `0x102`; it is issued only as a non-binding hint and causes no architectural memory or destination effect.
+- Take `prfi.u [3, 2]` with GPR3 = `0x1000`.
+- `simm12=2` sign-extends to `2`, so the hint address is `0x1002`.
+- `0x1002` is not `4`-byte aligned, but a hint performs no alignment check, so nothing is refused.
+- The address is discarded: no register, queue slot, or memory byte changes, and `TPC` advances by `4` bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

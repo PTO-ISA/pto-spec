@@ -17,51 +17,67 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-xor-purpose role=purpose -->
-## What XOR does
+## What XOR computes
 
-`XOR` is a 32-bit scalar ALU instruction. It performs bitwise exclusive OR under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+`XOR` is a 32-bit scalar ALU form. It combines the left source `SrcL` with a prepared copy of the right source `SrcR` using a bitwise exclusive OR, and publishes the result through `RegDst`.
+
+The combination happens at the full `PTO_XLEN` width of 64 bits, and the result is truncated there. `XOR` reads no memory and raises no arithmetic exception, so apart from `RegDst` its only architectural effect is the `TPC` advance of `4` bytes.
+
+Design point: `XOR` is the exclusive-OR member of the register logical family and shares its operand layout with `AND`, `OR` and the other register forms that also carry the `SrcRType` and `shamt` fields; the decoded mnemonic selects the operation, not the operand shape.
 
 <!-- PTO-READER-BLOCK: scalar-xor-mechanism role=mechanism -->
-## How the result is formed
+## Preparing the right source, then combining
 
-Execution snapshots the encoded inputs, then performs bitwise exclusive OR under the complete XLEN value result rules, and only afterward performs the destination effects.
+Execution reads `SrcL` and `SrcR`, transforms `SrcR` according to the 2-bit `SrcRType` field, shifts that value left by the 5-bit `shamt` amount, and only then performs the exclusive OR and writes the destination.
 
-- `SrcRType` first transforms the right source; `shamt` then logically shifts that transformed value left before the arithmetic or logical operation.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+| `SrcRType` | Assembly suffix | Effect on `SrcR` before the shift |
+| --- | --- | --- |
+| `00` | `.sw` | sign-extend `SrcR[31:0]` to `PTO_XLEN` |
+| `01` | `.uw` | zero-extend `SrcR[31:0]` to `PTO_XLEN` |
+| `10` | `.not` | complement all `PTO_XLEN` bits |
+| `11` | omitted | leave `SrcR` unchanged |
+
+Design point: both steps act on `SrcR` alone and the transformation runs first, so they cannot be exchanged. With `SrcR=0x000000000000000f`, `.not` then a shift of `4` gives `0xffffffffffffff00`; a shift of `4` then `.not` would give `0xffffffffffffff0f`.
+
+Design point: `.not` complements all 64 bits rather than the low word, because the logical family requests the complement reading while the arithmetic family gives the same encoding the negate reading. With `SrcR=0x0000000000000001`, `.not` prepares `0xfffffffffffffffe`, never `0x00000000fffffffe`.
 
 <!-- PTO-READER-BLOCK: scalar-xor-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Encoded operands
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the left operand through Reg5.
-- The 5-bit `SrcR` field selects the right operand through Reg5.
-- The 2-bit `SrcRType` field selects the transformation applied to the right source.
-- The 5-bit `shamt` field encodes the logical-left shift applied after right-source transformation.
+- `RegDst` is a 5-bit field at instruction bits `7..11`: codes `1..23` write that absolute GPR, code `0` and codes `24..29` discard, code `30` pushes the U queue and code `31` pushes the T queue.
+- `SrcL` is a 5-bit field at bits `15..19` and `SrcR` at bits `20..24`. Codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4` and `28..31` read `U#1..U#4`.
+- `SrcRType` is a 2-bit field at bits `25..26`; `shamt` is a 5-bit field at bits `27..31` and encodes the left shift applied after the transformation.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+A queue source is read without being consumed, and source code `0` always reads zero. `XOR` touches no memory, so it has no address operand, no ordering bit and no `far` field.
+
+Design point: an omitted `.sw`, `.uw` or `.not` suffix encodes `SrcRType=11`, meaning "leave the source unchanged" rather than the sign-extending `.sw`. A plain `xor a0, a1, ->a2` therefore uses all 64 bits of `a1` exactly as written.
 
 <!-- PTO-READER-BLOCK: scalar-xor-effects role=effects -->
-## Effects and ordering
+## Destination and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are read before the destination is written, and the published value is computed from those pre-instruction values.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+Design point: because the reads complete first, `xor a0, a1, ->a0` publishes the exclusive OR of the old `a0` and `a1`, and `xor a0, a0, ->a1` publishes zero whatever `a0` held. No destination alias can change which operand values were combined.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+A successful execution advances `TPC` by `4` bytes. No memory location, reservation, descriptor, numeric flag, trap, block, privilege or control-flow state is touched by `XOR`.
 
 <!-- PTO-READER-BLOCK: scalar-xor-constraints role=constraints -->
-## Legality and fault boundary
+## Legality and the fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every `SrcRType` encoding and every `shamt` value from `0` through `31` is assigned, and so is every source and destination code, so `XOR` has no reserved field value. The operands are combined modulo `2^PTO_XLEN`: a carry out of the top bit is discarded and no arithmetic exception is raised.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Before any effect the form is decoded, its encoded fields are checked, and each selected T/U source must hold a valid queue entry. An encoding that belongs to no form, or an unavailable `T#1..T#4` or `U#1..U#4` entry, raises `Fault_IllegalInstruction` before the destination is written and before `TPC` advances.
+
+Design point: `XOR` forms no address, so it can raise neither an alignment fault nor an access fault. After a successful decode, applicability is checked first: while the system-block terminal marker `_SystemBlockTerminalPending` is set, that check rejects any scalar operation with `Fault_BundleControl`. Apart from that, the remaining reason to reject `XOR` is operand availability, and that check happens before the destination write, so an unavailable queue source rejects the instruction instead of reading an undefined value.
 
 <!-- PTO-READER-BLOCK: scalar-xor-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `XOR` example, `SrcL=0xc`, `SrcR=0xa`, `SrcRType=11`, and `shamt=0` produce `0x6`.
+With `SrcL=0xc`, `SrcR=0xa`, `SrcRType=11` and `shamt=0` the right source is neither transformed nor shifted, so the instruction publishes `0xc XOR 0xa = 0x6`.
+
+A second case shows the order. With `SrcL=0x00000000000000ff`, `SrcR=0x000000000000000f`, `SrcRType=10` (`.not`) and `shamt=4`, the complement of `0x000000000000000f` is `0xfffffffffffffff0`, the left shift gives `0xffffffffffffff00`, and the exclusive OR publishes `0xffffffffffffffff`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

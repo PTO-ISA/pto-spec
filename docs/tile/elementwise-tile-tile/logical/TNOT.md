@@ -17,44 +17,51 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tnot-purpose role=purpose -->
-## Purpose
+## What TNOT does
 
-`TNOT` computes element-width bitwise complement over a Local integer Tile.
+`TNOT` inverts every bit of every element of one Local integer Tile and writes the results into a newly allocated Local destination Tile. It is the bitwise complement.
+
+Design point: `TNOT` has no standalone opcode. `BSTART.VEC` Mode 0 Function 16 (TEPL selector `0x010`) selects it, and it shares the closed unary bundle schema with `TABS`, `TNEG`, and `TRELU`.
 
 <!-- PTO-READER-BLOCK: tile-tnot-mechanism role=mechanism -->
-## Execution mechanism
+## Element and Tile mechanism
 
-The ASL DOC contract selects `TileHandler_ExecuteTileUnary` through the instruction's selector-encoded block carrier.
+After complete preflight, `ExecuteTileUnary` reads the source and, for each coordinate of the valid rectangle `ValidRow x ValidCol`, complements exactly the selected 8-, 16-, 32-, or 64-bit element width. Signedness does not change the result: `S8` and `U8` both map `0x0F` to `0xF0`.
 
-Binding schema, dimensions, DataType, row-major layout, source definedness and encoding, PE_MASK, destination capacity, and applicable attributes are checked before source snapshots.
+Design point: only the element's own `W` bits are complemented, and carrier bits above `W` are zero in the result. The model holds every element in a 64-bit carrier; complementing the whole carrier would turn the unused upper bits into ones. Limiting the result to `W` bits keeps an 8-bit result an 8-bit value.
+
+Design point: `TNOT` is a bit operation, so it applies no numeric rounding, saturation, or status. Unlike `TABS`, `TNEG`, and `TRELU`, which also accept floating types, `TNOT` accepts only the eight integer types.
 
 <!-- PTO-READER-BLOCK: tile-tnot-inputs-outputs role=inputs-outputs -->
-## Operands and descriptors
+## Operand roles and descriptors
 
-`destination0` is the new Local destination; `source0` is the bitwise source.
+- `source0` is the bitwise source. It is an existing, allocated Local Tile.
+- `destination0` is a newly allocated Local Tile with the same physical shape, valid shape, layout, and `DataType` as the source.
 
-Sources remain persistent unless the current contract explicitly names a consumed or replaced state; destination descriptors are published only after complete preflight.
+One terminating `B.IOT` binds both Tiles under a single `PE_MASK`; `B.IOR` and `B.IOS` are illegal. `PE_MASK=0000` is a strict no-op before dimensions, source access, schema checks, or destination allocation.
+
+Design point: the unary legality path for `TNOT` requires the source backing `DataType` to equal the operation `DataType`. It does not use the same-width reinterpretation that `TABS`, `TNEG`, and `TRELU` allow, so a source stored under another backing type is rejected before any effect.
 
 <!-- PTO-READER-BLOCK: tile-tnot-effects role=effects -->
-## Publication and ordering
+## Publication, definedness, and padding
 
-Every valid coordinate applies the operation at the selected element type; all sources and private-GPR scalar operands are snapshotted before destination publication.
+The source payload is snapshotted before the first destination write, so a source that aliases the destination is read with its old values.
 
-The valid payload, selected physical padding definedness, descriptor, and applicable sticky numeric flags publish atomically; rejection has no architectural effect.
+The destination descriptor, the valid-region results, the padding, and every element's definedness publish together; a rejected `TNOT` has no architectural effect. Elements outside `ValidRow x ValidCol` receive the selected `PadValue`: `Zero`, `Max`, and `Min` are defined, and `Null`, the value when `B.DATR` is omitted, leaves them undefined. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value. `TNOT` has no global-memory effect.
 
 <!-- PTO-READER-BLOCK: tile-tnot-constraints role=constraints -->
-## Legality, padding, and faults
+## Type, layout, and fault boundary
 
-Malformed bindings, unsupported types or layouts, invalid shapes, undefined consumed elements, illegal attributes, or insufficient destination capacity are rejected before source snapshots or publication.
+The accepted data-type set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Floating and packed formats are rejected. The layout is `RowMajor` by default, or `CUBE_M16` or `CUBE_M32` when an explicit `Layout` selects it; `CUBE_N8`, Shared Tiles, and mixed layouts are illegal.
 
-`PE_MASK=0000` is a strict no-op before reads, allocation, faults, numeric status, padding, or descriptor effects. Allocation failure raises the owner-defined Tile allocation fault; other rejected schema or value conditions raise the owner-defined legality, bundle-control, or memory fault without partial effects.
+Malformed bindings, missing or zero dimensions, undefined or mismatched source state, an unsupported `DataType`, a non-selected layout, or a nondefault `CMode`, `Sat`, `Canonicalize`, secondary `DataType`, or `RMode` raises `Fault_TileLegality` before any effect. An unrepresentable destination shape or insufficient `TSize` capacity raises `Fault_TileAllocation` before allocation.
 
 <!-- PTO-READER-BLOCK: tile-tnot-example role=example -->
 ## Non-normative contract sketch
 
 This is a non-normative contract schema sketch; it organizes fields and bindings but is not claimed to be directly assembleable.
 
-Read `BSTART.VEC TNOT, U64; B.DIM LB0=ValidCol; B.IOT Src, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP` as a non-normative binding walkthrough, then use the generated contract below for exact dimensions, attributes, and fault behavior.
+With `DataType=U16`, valid elements `[0x0000, 0x00FF, 0xFFFF]` become `[0xFFFF, 0xFF00, 0x0000]`. In macro form, `TNOT <Row=8, Col=64, U16>, T#1, ->T<1KB>` complements all 8 x 64 elements into a new 1 KB destination.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

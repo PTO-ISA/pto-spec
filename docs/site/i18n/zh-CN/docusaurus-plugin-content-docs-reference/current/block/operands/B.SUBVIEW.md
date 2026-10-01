@@ -19,32 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-b-subview-purpose role=purpose -->
 ## B.SUBVIEW 的作用
 
-`B.SUBVIEW` 是一条 32 位 Block header 命令，用来把一个源 subview 修饰符附加到已打开的 Local 或 Shared 绑定组。它修改待处理 Block 元数据，不会立即执行 Tile body 操作。
+`B.SUBVIEW` 是一条 32 位头部命令，把紧邻其前的绑定命令的一个源缩小为一段连续范围。绑定命令是 `B.IOT` 或 `B.IOS`。该命令是范围修饰符：它附着于该绑定命令，不分配任何内容，执行时也不查询操作模式。参见[范围修饰符](../model/operands/range-modifiers.md)。
 
 <!-- PTO-READER-BLOCK: block-b-subview-mechanism role=mechanism -->
-## 位置与机制
+## 放置与机制
 
-该修饰符必须与打开其 carrier 的 `B.IOT` 或 `B.IOS` 绑定组保持连续。若中间插入其他命令、顺序反转或重复使用，会在 carrier 状态变化前被拒绝。
+`B.SUBVIEW` 必须紧跟其绑定命令，或紧跟同一绑定命令的另一个范围修饰符。每条不是范围修饰符的头部命令都会关闭打开的范围组，因此修饰符无法越过中间的 `B.DIM` 或 `B.DATR`。
 
-该命令把原始选择与范围字段以及派生的 XLEN 偏移记录到已打开的 binder carrier。若 binder 解码后的 PE mask 为零，则只保留一个随后丢弃的语法组，不读取源，也不产生角色影响。
+处理程序先检查原始字段。然后检查范围组已打开、所选源角色存在于绑定命令上，并且角色按源 0、源 1、目标的顺序出现且各至多一次。之后它才读取 `GPR[RegSrc]`，加上零扩展的 `uimm11`（模 2^XLEN），并把原始字段与派生偏移存入该源的范围记录。
+
+设计要点：零参与的绑定命令（`PEMode = 000`）会打开零模式范围组。在该组中，每条 `B.SUBVIEW` 只经过范围组已打开的检查，不读取 GPR，也不记录任何内容。因此没有参与 PE 的绑定命令仍使其后的修饰符在语法上合法，而不产生任何效果。
 
 <!-- PTO-READER-BLOCK: block-b-subview-inputs role=inputs-outputs -->
-## 操作数与 header 角色
+## 字段与编码值
 
-- `SrcSelect` 选择源 carrier 0 或 1；其确切分配域仍以下方生成契约为准。
-- `RegSrc` 选择具名的绝对 GPR 角色；其确切分配域仍以下方生成契约为准。
-- `uimm11` 提供编码偏移或加数；其确切分配域仍以下方生成契约为准。
-- `SubviewSizeCode` 提供 subview 范围大小编码；其确切分配域仍以下方生成契约为准。
+- `SrcSelect`（位 31）为 0 时选择源 0，为 1 时选择源 1。Shared 范围组没有源 1。
+- `uimm11`（位 30:20）是无符号加数，零扩展。零是真实的零加数。
+- `RegSrc`（位 19:15）指定绝对 GPR 0 至 23。编码零指零 GPR，读出 0。
+- `SubviewSizeCode`（位 10:7）是请求的范围大小，1 至 12，对应 128 B 至 256 KiB。编码 0 保留。
+- 位 14:11 固定；该形式在掩码 `0x0000787f` 下低位匹配 `0x53`。
+
+设计要点：偏移在修饰符执行时计算一次，结果存入范围记录。之后写 `RegSrc` 的主体指令不会改变已记录的偏移。对于 Local CUBE 源，派生偏移以父 Tile 的 128 字节 CELL 计数。
 
 <!-- PTO-READER-BLOCK: block-b-subview-effects role=effects -->
-## 待处理状态与完成
+## 记录的状态与后续使用
 
-被接受的 header 命令只改变自己的待处理记录或 carrier。除非本所有者明确指出即时 header 状态更新，否则架构 Tile、Shared、GPR、内存和完成影响都推迟到完整 Block。
+被接受的 `B.SUBVIEW` 只改变绑定上该源的范围记录。它不读取 Tile 载荷。
+
+在阶段 2 准备期间，Local 子视图成为 CUBE 布局父 Tile 上从偏移开始、覆盖 `min(requested, remaining)` 个 CELL 的描述符。所选 CELL 被复制到一个临时 Tile 中，该 Tile 使用父 Tile 的布局、数据类型与 PE 掩码，操作读取这份副本。无论成功还是失败路径，副本都在操作之后释放。参见[子视图描述符](../model/operands/subview-descriptor.md)。
+
+设计要点：父 Tile 保持不变，父 Tile 中未定义的元素在视图中仍未定义。子视图选择同一对象的一个范围；它不是重新布局，也不能使未定义的数据变得可读。
 
 <!-- PTO-READER-BLOCK: block-b-subview-constraints role=constraints -->
 ## 合法性与故障边界
 
-保留编码会在读取或待处理状态变化前被拒绝。位置、重复、角色或完成后 schema 不匹配，会在 body 影响前失败。
+- `RegSrc` 编码为 24 至 31、`SubviewSizeCode` 为 0 或 13 至 15，或固定位非零时，在读取任何 GPR 之前引发 `Fault_IllegalInstruction`。
+- 附着于参与的 Local 范围组的 `SubviewSizeCode` 11 或 12 引发 `Fault_TileLegality`，因为 Local 大小编码止于 10，即每 PE 64 KiB。Shared 范围组接受 1 至 12。
+- 没有打开的范围组、绑定命令没有所选源角色、角色重复或角色顺序错误时，引发 `Fault_BundleControl`。
+- 在阶段 2 准备期间，若 Local 子视图的父 Tile 不是已分配的 CUBE Tile，或偏移不小于父 Tile 的 CELL 数，则在操作之前引发 `Fault_TileLegality`。
 
 <!-- PTO-READER-BLOCK: block-b-subview-example role=example -->
 ## 非规范示例
@@ -52,11 +64,11 @@ The current instruction contract is owned by the ASL source linked above.
 以下为非规范示例，仅用于说明当前所有者，不替代其定义。
 
 ```asm
-B.IOT SrcTile0, mask=PE_MASK, <last>
-B.SUBVIEW 0, RegSrc, uimm11, SubviewSizeCode
+B.IOT T#1, mask=1111, <last>, ->T<2KB>
+B.SUBVIEW 0, a0, 2, 2
 ```
 
-源形式的 `B.IOT` 打开一个具有确切 source-zero carrier 的组。紧随其后的 `B.SUBVIEW 0` 只修饰该源 carrier；它不能与 binder 分离，也不能改为作用于目的 carrier。
+假设 `T#1` 是有效形状为 16 x 32 的 `CUBE_M16` `FP16` Tile，即 8 个 16 行 x 4 列的 CELL，且 `a0` 保存 0。派生偏移为 0 + 2 = 2 个 CELL，大小编码 2 请求 256 B，即 2 个 CELL。剩余 4 个 CELL，因此视图覆盖所请求的 2 个 CELL：父 Tile 的第 8 至 15 列，即 16 x 8 的视图。该修饰符编码为 `0x00210153`。其后再出现 `B.SUBVIEW 0` 会引发 `Fault_BundleControl`，因为源 0 已被修饰。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

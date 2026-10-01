@@ -19,50 +19,107 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-bias-purpose role=purpose -->
 ## What BSTART.TMATMULMX.BIAS does
 
-`BSTART.TMATMULMX.BIAS` opens an active Block descriptor for `TileOperation_TMATMUL_MX_BIAS`; the body supplies the attributes and bindings required before completion.
+`BSTART.TMATMULMX.BIAS` opens a bundle whose operation is the CUBE matrix product `TMATMUL_MX_BIAS`. It is a 32-bit standalone start command. Its fixed bits select CUBE Function 5 and `TileOperation_TMATMUL_MX_BIAS`, and its only encoded field is the 5-bit `DataType` in bits 31:27. That field becomes AType, the element type of the left operand A.
+
+The result D is the product of A (M x K) and B (K x N) plus a 1 x N Bias row, which is broadcast by output column to every output row. As an MX form it takes microscaled inputs: a side whose type is not `FP16` or `BF16` carries its own scale Tile.
+
+Design point: the operation identity is fixed entirely by the start command. The following commands (`B.DATR`, `B.FPATR`, `B.DIM`, `B.IOS`, `B.IOT`, and `B.IOR`) supply only types, shape, and operands. All 12 CUBE matrix start commands commit through one handler, `ExecuteBundleTMATMULOperation`, which tells the bias, accumulator, MX, and GEMV variants apart only by the function code.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-bias-mechanism role=mechanism -->
 ## Placement and execution mechanism
 
-`BSTART.TMATMULMX.BIAS` must appear as the starter of its Block. Later attributes, dimensions, and bindings accumulate in the active descriptor until `BSTOP` or the next accepted `BSTART` completion boundary.
+At the start, `BSTART.TMATMULMX.BIAS` builds a Tile matrix descriptor with selector 5 and the encoded `DataType`. A `DataType` code of 15, 21 to 23, or 29 to 31 is outside the accepted set and is rejected by the encoding check with `Fault_IllegalInstruction`. All start checks run before any active predecessor bundle is committed, so a rejected start leaves the predecessor in place. See [bundle start dispatch](../model/dispatch/start.md).
 
-The accepted carrier uses the `L32` encoding class and resolves every displayed field before the command reads bindings or changes state.
+The header commands that follow only record bundle state. No operand is read and no Tile is allocated until the bundle commits at `BSTOP` or at the next `BSTART`.
 
-At completion, the descriptor runs `TileOperation_TMATMUL_MX_BIAS` only after schema, type, dimension, descriptor, readiness, alias, and capacity preflight succeeds.
+At commit, [commit validation](../model/commit/validation.md) runs the Tile operation, and [Tile execution](../model/dispatch/tile-execution.md) routes it to [CUBE TMATMUL dispatch](../model/dispatch/cube-tmatmul.md). `ExecuteBundleTMATMULOperation` then works in this order:
+
+1. If every Tile and Shared binding selects no PE, it returns with no effect.
+2. A missing `B.FPATR` raises `Fault_BundleControl`.
+3. Types, binding counts, `B.DATR` fields, `CCTRL`, dimensions, and PE masks are checked together. Any failure raises `Fault_TileLegality`.
+4. It waits, without a fault, until every Shared source is published, and then checks the Shared schemas.
+5. It checks the Local sources, the result layout, and the post-processing sources.
+6. It allocates the destination group, snapshots the operands, and computes the result. A fault after allocation rolls the destinations back.
+
+Design point: allocation is the last preflight step. Every field, stream, descriptor, shape, and capacity rule is closed before the first destination is reserved, so a bundle rejected by a legality check leaves no allocated destination and no changed source.
+
+Design point: a failed commit returns before the bundle stops. The bundle stays active with its header intact and its continuation is not applied, so the trap context still describes the failing bundle.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-bias-inputs role=inputs-outputs -->
 ## Carrier, bindings, and inputs
 
-- Encoded operands: `DataType` — tile element data type selector.
-- The Block schema is completed by the ordered companion carriers `BSTART.TMATMULMX.BIAS`, `B.DATR`, `B.FPATR`, `B.DIM`, `B.IOS`, `B.IOT`, `B.IOT/B.IOR`; omitted optional carriers take only the defaults named by this owner.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+- `DataType` in the start command is AType. The optional `B.DATR` supplies BType in its `DataType` field; when `B.DATR` is omitted, BType equals AType, rounding is RNE, and saturation is off. Each type must be an MX input type: `FP16`, `BF16`, `E4M3`, `E5M2`, `E2M1X2`, `E1M2X2`, or `HiF4X2`.
+- `B.DATR` may set BType, `RMode`, `Sat`, and `CCTRL`, which travels in its `PadValueOrByteId` field. Its `Layout` and `CMode` must be zero and `Canonicalize` must be off.
+- Exactly one `B.FPATR` is required. All-zero fields select no conversion, activation, or reduction; nonzero fields add the RowMax, GroupMax, quantization, or ReLU operands that they enable.
+- `B.DIM` `LB0`, `LB1`, and `LB2` give M, N, and K, and each defaults to 1 when omitted. In a cooperative bundle `LB0` is the Core-total group_M.
+- `B.IOT` binds the Local mathematical sources in this order: A, the A scale when required, B, and the B scale when required, then Bias. Post-processing sources follow them.
+- The destination bindings are D, then RowMaxOut and GroupMaxOut when `B.FPATR` enables them.
+- An optional `B.IOS` supplies the right group (B and its scale) or both matrix groups from Shared Tiles. Supplementary sources and all destinations stay Local.
+
+Local A uses `CUBE_M16` (M at most 16) or `CUBE_M32` (M at most 32), and Local B uses `CUBE_N8`. Bias is a Local `CUBE_N8` Tile with 1 row and N columns of the result type. A Local scale is stored in `CUBE_M32`. It is `E8M0` with one value per group of 32 K elements, or `U32` with one value per group of 64 for `HiF4X2`. The A scale has M rows and the B scale has N rows.
+
+D's element type is `FP32`. A nonzero `PreQuantMode` selects that mode's output type for D instead.
+
+Design point: a scale Tile is present exactly when its side needs one. `FP16` and `BF16` sides carry none, so the expected source count depends on both types. A missing or extra scale changes the count and is rejected with `Fault_TileLegality` before allocation.
+
+Design point: Bias is checked against the result type, not against AType. A Bias Tile with another type, layout, or shape is rejected with `Fault_TileLegality` before allocation, so a program must hold Bias in the result type.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-bias-effects role=effects -->
 ## State effects and ordering
 
-Starting the Block records the selected carrier and leaves operation execution deferred until the completion boundary.
+The start command changes only bundle state. It records a fallthrough `BARG` of kind `TileMatrix` and installs the descriptor; no Tile, Shared Tile, or memory changes.
 
-After complete preflight and computation, every enabled output publishes as the owner-defined atomic group; successful mathematical sources remain available unless the contract explicitly consumes them.
+On success, D and every enabled RowMaxOut and GroupMaxOut are published as one atomic group. A rejected bundle publishes none of them. No source is consumed or modified, and a successful read leaves every Shared source descriptor, publication state, and payload unchanged.
+
+D is allocated in A's M layout. When A itself is Shared, the layout is `CUBE_M16` for up to 16 rows per PE and `CUBE_M32` for up to 32.
+
+`CCTRL` is read from `B.DATR` and is `00` when `B.DATR` is absent. Bit 0 publishes D as the raw accumulator-type result and forbids quantization, ReLU, and the RowMax, GroupMax, and max-abs reductions. Bit 1 must be zero, because this form has no C source.
+
+Design point: omitting `B.DATR` is not the same as encoding pad value `11`. `BundleTMATMULCCTRL` returns `00` when `B.DATR` is absent, so a bundle without `B.DATR` never requests raw output by accident. See [accumulator routing](../model/dispatch/cube-accumulator-routing.md).
+
+Design point: the cache hints call implementation-defined hooks that do nothing in the portable model. They cannot change results, faults, allocation, or publication; only the output type chosen by bit 0 is observable.
+
+The bundle has no global-memory effect.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-bias-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+A bundle with any Shared source is cooperative. Every binding must then use `PE_MASK` 1111, group_M must be 1 to 128, and N and K must be powers of two. Each PE owns 16 rows when group_M is at most 64 and 32 rows otherwise. A PE whose rows start at or beyond group_M consumes its Shared bindings and finishes with no Local effect. See [Shared CUBE matrix](../model/dispatch/shared-cube-matrix.md).
 
-The current owner reports invalid schema, state, address, or continuation conditions through `Fault_BundleControl`, `Fault_IllegalInstruction`, `Fault_TileLegality`; no prose on this page creates an additional fault rule.
+`TransA` and `TransB` are legal only when the corresponding primary is Shared. A Shared source that is not yet published makes the commit return without a fault, and the bundle stays active.
 
-Complete schema, binding, readiness, alias, capacity, and allocation preflight precedes source snapshots and every destination publication.
+`CScaleEn` must be zero, because CScale is accepted only by CUBE Functions 2 and 6.
+
+`PE_MASK` 0000 on every binding is a strict no-op: the matrix handler reads no descriptor and raises no fault.
+
+A `DataType` outside the accepted set raises `Fault_IllegalInstruction` at the start. A missing `B.FPATR` raises `Fault_BundleControl`. A failed type, count, shape, layout, alias, or post-processing check raises `Fault_TileLegality`, and a full destination hand or insufficient capacity raises `Fault_TileAllocation`. Each of these faults occurs before any destination is published.
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-bias-example role=example -->
 ## Non-normative worked example
 
 This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract.
 
-```asm
-BSTART.TMATMULMX.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn (exactly one); B.DIM LB0 M or cooperative group_M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; cooperative mask 1111); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary
+The canonical macro below computes a 16 x 32 result with K equal to 64. A is `T#5`, a 16 x 64 `E4M3` Tile in `CUBE_M16`; the A scale is `T#4`, a 16 x 2 `E8M0` Tile in `CUBE_M32`; B is `T#3`, a 64 x 32 `E4M3` Tile in `CUBE_N8`; the B scale is `T#2`, a 32 x 2 `E8M0` Tile in `CUBE_M32`; Bias is `T#1`, a 1 x 32 `FP32` Tile in `CUBE_N8`.
+
+```text
+TMATMUL_MX_BIAS <M=16, N=32, K=64, E4M3>, T#5, T#4, T#3, T#2, T#1, ->T<2KB>
 ```
 
-The starter establishes the descriptor first; the following carriers fill its declared schema, and the final completion boundary triggers validation and operation execution.
+One physical bundle for this macro follows. The all-zero `B.FPATR` is still required.
+
+```asm
+BSTART.TMATMULMX.BIAS E4M3
+B.FPATR None, None, 0, 0, 0, 0, 0, 0, 0, 0
+B.DIM zero, 16, ->LB0
+B.DIM zero, 32, ->LB1
+B.DIM zero, 64, ->LB2
+B.IOT T#5, T#4, mask=1111
+B.IOT T#3, T#2, mask=1111
+B.IOT T#1, mask=1111, last, ->T<5>
+BSTOP
+```
+
+The result type is `FP32`, and each side uses 2 scale groups because 64 / 32 = 2. Each selected PE computes 16 x 32 = 512 elements from sums of 64 products, and every output row adds the same 32 Bias values. D is a new `FP32` Tile in `CUBE_M16` that occupies 16 cells of 128 bytes, which is 2KB and matches SizeCode 5.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

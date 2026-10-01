@@ -7,8 +7,69 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-DISPATCH-DECODE}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-decode-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit turns the raw bits of a bundle command into typed values. A bundle command is a block-surface command instruction handled by command dispatch, for example `BSTART`, `B.DIM`, `B.IOT`, `B.DATR`, or `BSTOP`. A form is one concrete encoding of such a command in the frozen command catalog.
+
+The unit defines the field extractors that command handlers call, the two handler classification predicates, and `DecodeBundleOperationDescriptor`, which builds the operation descriptor that a `BSTART` form carries. It also defines `CommandExecutionStatus`, the `Executed` or `Rejected` result that command dispatch returns.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-decode-concepts role=concepts-state -->
+## Concepts and visible state
+
+Every function in this unit except the enumeration is `pure`. The unit reads no architectural state and writes none.
+
+- `CommandDecodedWord` widens a field to `PTO_XLEN` bits. A field that the catalog marks signed is sign-extended from its width, which must be 8, 12, 15, 17, 25, 30, or 42 bits. Any other field is zero-extended.
+- `CommandDecodedReg5` keeps the low 5 bits as a GPR selector. `CommandDecodedTile` keeps the low 6 bits as a `TileIndex`. `CommandDecodedSmall` keeps the low 4 bits. `CommandDecodedBool` tests bit 0.
+- The queue flag helpers pack single-bit fields into a 4-bit value. Move places `i`, `e`, `s`, `r` in bits 3 to 0. Pop places `e` in bit 1 and `r` in bit 0. Push places `h` in bit 3, `e` in bit 2, and `r` in bit 0.
+- `CommandDecodedBundleDimension` picks the dimension slot. A form with a `LoopNest` field uses its low 2 bits. Otherwise the `B.DIM` form itself names the slot: `->LB0` gives 0, `->LB1` gives 1, and any other form gives 2.
+
+The operation descriptor records `form_identity`, `operation_class`, and four optional fields: `selector`, `data_type`, `mode`, and `branch_type`. Each optional field has its own valid flag.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-decode-rules role=rules-interactions -->
+## Rules and interactions
+
+The selector is taken from the first source that applies, in this order: an encoding-variant constant, the 10-bit Tile operation code of a form that selects a Tile operation, the 5-bit `Function` field, and a catalog selector constant. If none applies, `selector_valid` is false.
+
+`data_type_valid` is true when the form selects a Tile operation or has a `DataType` field. `mode` is the low 2 bits of the `Mode` field and `branch_type` is the low 3 bits of the `BrType` field, each only when that field exists.
+
+Design point: an absent field and an encoded zero stay distinct. Each optional field carries a valid flag, and an absent field is stored as zeros with its flag false. Later checks test the flag. For example, `BundleSelectorCode` places `mode` above the selector only when `mode_valid` is true.
+
+`CommandHandlerSupported` returns false for three handlers: `SaveExecutionContext`, `RecoverExecutionContext`, and `ExecuteCrossBlockTransfer`, which serve `ESAVE`, `ERCOV`, and `XB`. Command dispatch checks it before calling any handler and raises `Fault_IllegalInstruction` for these handlers.
+
+Design point: these forms still decode to a known form, but no handler runs for them. The `XB` contract states the reason: the decoded identity is kept for collision inventory and fail-closed dispatch.
+
+`CommandHandlerAdvancesSequentially` is false for the bundle start, bundle stop, `FRET.RA`, and `FRET.STK` handlers. For other handlers, command dispatch normally adds the command length in bytes to `TPC` after a fault-free execution, except for a `B.HINT` trace form.
+
+Design point: those four handlers choose the next `TPC` themselves. The start and stop handlers can commit a bundle, and a commit writes `TPC` from `BARG`. A fixed sequential step after them would overwrite that choice.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-decode-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit does not match raw bits to a form. `ExecuteCommandInstruction` does that and checks operand legality before `ExecuteDecodedBundleCommand` runs. This unit also does not judge whether a descriptor is legal. `ExecuteDecodedBundleStart` decodes the descriptor, then checks it with `BundleOperationDescriptorLegal` before it commits any predecessor bundle. It installs the descriptor only after a fault-free `BeginBundleAt`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-decode-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+A 32-bit `B.DIM RegSrc, uimm, ->LB1` has no `LoopNest` field, so `CommandDecodedBundleDimension` returns 1. Its handler is not one of the four non-sequential handlers, so a fault-free execution at `TPC` 0x1004 leaves `TPC` at 0x1008.
+
+A `BSTART.STD DIRECT, <label>` has a signed 17-bit `simm17` field. If `CommandDecodedWord` were applied to that field holding `0x1FFFF`, it would sign-extend it to -1 across `PTO_XLEN` bits, while the same raw bits in an unsigned 17-bit field such as `B.DIM` `uimm17` give 131071. The bundle start path itself reads this offset through the generated `CommandSignedOffsetOfForm`, which also sign-extends it.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-decode-related role=related-owners-navigation -->
+## Related owners
+
+- [Top-level dispatch](top-level.md) matches the form and checks operands before any handler runs.
+- [Commands](commands.md) calls the extractors and advances `TPC` for sequential handlers.
+- [Bundle start dispatch](start.md) decodes, checks, and installs the operation descriptor.
+- [Descriptor legality](descriptor-legality.md) decides which decoded descriptors may be installed.
+- [XB](../../encoding/XB.md) is a reserved form that decodes but is always rejected.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

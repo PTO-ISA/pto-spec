@@ -19,49 +19,66 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tcmp-purpose role=purpose -->
 ## TCMP 的作用
 
-`TCMP` 是一条由 `VEC` 执行、通过选择器编码的 Tile 操作。它按照 `CMode` 比较相应数值元素，并紧凑存放零或一的谓词结果；当前指令契约拥有精确的指令束形式和发布边界。
+`TCMP` 比较两个 Local 数值 Tile 的对应元素，并为每个元素产生一个真或假的结果。这些结果构成一个谓词：一个可供 `TSEL` 等后续操作使用的掩码。比较模式由 `CMode` 选择，为 `EQ`、`NE`、`LT`、`GT`、`LE` 或 `GE` 之一。
+
+设计要点：`TCMP` 没有独立 opcode。它由 `BSTART.VEC` Mode 0 Function 13（TEPL 选择器 `0x00D`）选中。`CMode` 编码 0 至 5 依次选择 `EQ`、`NE`、`LT`、`GT`、`LE` 与 `GE`；编码 6 与 7 保留。省略 `B.DATR` 时 `CMode` 保持为零，因此默认比较为 `EQ`。
 
 <!-- PTO-READER-BLOCK: tile-tcmp-mechanism role=mechanism -->
 ## 元素与 Tile 机制
 
-所有描述符与操作数检查成功后，所属 ASL 处理函数按照 `CMode` 比较相应数值元素，并紧凑存放零或一的谓词结果。当前契约允许别名时，源载荷会在目标写入前完成快照。
+完整预检通过后，`TCMP` 快照两个源，并在所选操作 `DataType` 下比较有效矩形 `ValidRow x ValidCol` 内的每个坐标。
 
-处理函数使用解析后的有效区域，不把物理填充区当作输入数据。操作专属的数据类型、布局、舍入、饱和与配置档钩子仍由可执行定义拥有。
+- 有符号整数类型使用有符号序，无符号整数类型使用无符号序。
+- 浮点类型使用数值序。正零与负零比较相等。
+- 若任一浮点操作数为 NaN，`NE` 为真，其余模式均为假。信号 NaN 还会记录无效条件。
+
+设计要点：与 `TAND` 或 `TSEL` 等原始载体操作不同，`TCMP` 必须解释数值才能排序。因此它比较的每个源元素都必须是操作 `DataType` 的合法编码，无效编码会在任何效果之前被拒绝。
+
+设计要点：所选 `BSTART.VEC` `DataType` 就是比较类型，每个源的后备类型分别检查。源可以使用位宽相同、非打包的其他后备类型；此时其位按操作类型比较。源描述符不会被重新标记。
 
 <!-- PTO-READER-BLOCK: tile-tcmp-inputs role=inputs-outputs -->
 ## 操作数角色与描述符
 
-- `destination0` 的精确契约角色是“新分配的紧凑 Local 谓词目标”。
-- `source0` 的精确契约角色是“有序左 Local 数值源”。
-- `source1` 的精确契约角色是“有序右 Local 数值源”。
-- `comparison` 的精确契约角色是“由 CMode 选择的 EQ、NE、LT、GT、LE 或 GE”。
+- `source0` 是左数值源，`source1` 是右数值源。`LT` 判断左值是否小于右值。
+- `comparison` 是 `CMode` 关系。
+- `destination0` 在传统形式与 PredicateCell 形式中接收谓词。GPR 形式中没有该操作数。
 
-参与操作的源与目标描述符采用当前契约规定的行优先布局和形状关系。
-操作读取的每个源坐标都必须在目标发布前处于已定义状态。
-`PE_MASK=0000` 是严格无操作，在描述符、分配、载荷、数值状态或内存效果之前即结束。
+谓词只在三种互斥载体之一中发布。`RowMajor` 源选择传统形式。`CUBE_M16` 或 `CUBE_M32` 源在 `B.IOT` 指定目标时选择 PredicateCell 形式，在改为绑定仅含目标的 `B.IOR` 时选择 GPR 形式。`B.DATR` 的 `Layout` 字段必须保持为零。
+
+| 形式 | 源布局 | 结果载体 |
+| --- | --- | --- |
+| 传统 | `RowMajor` | 新的打包 Predicate Tile：每个元素一位，元素 `i` 位于字节 `floor(i/8)` 的第 `i mod 8` 位 |
+| PredicateCell | `CUBE_M16` 或 `CUBE_M32` | 新的 `U8` PredicateCell Tile：每个元素一个规范字节，取值 `0x00` 或 `0x01` |
+| GPR | `CUBE_M16` 或 `CUBE_M32` | 通过仅含目标的 `B.IOR` 写入的一个 64 位 GPR |
+
+设计要点：PredicateCell 记录其基准类型，即产生它的比较所用的操作 `DataType`。把 PredicateCell 用作选择子的 `TSEL` 要求该基准等于自身的操作 `DataType`，因此为某种元素类型构造的选择子用于另一种类型的数据时会被拒绝。通用 ExecutionMask 使用不做这项基准检查。
+
+在 GPR 形式中，操作类型决定掩码字的位域几何。对 8 位操作类型，`Sat` 选择谓词列的 Low 或 High 半部分；对更宽的类型，`Sat` 必须为零。
 
 <!-- PTO-READER-BLOCK: tile-tcmp-effects role=effects -->
 ## 发布、已定义性与填充
 
-只有完整预检后才发布目标可见状态；契约规定原子发布时，载荷、描述符、已定义性、填充和状态同时可见。
+载荷、谓词填充、数值状态、描述符或 GPR 结果以及已定义性同时发布。被拒绝的 `TCMP` 不改变任何架构状态。由于两个源先被快照，相同的源以及与目标互为别名的源都读取旧值。
 
-有效矩形之外的物理坐标遵循契约选择的填充规则；适用时，`Null` 填充保持未定义。
+有效矩形之外的谓词位置遵循 `PadValue`。`Zero` 与 `Min` 写入假，`Max` 写入真，而 `Null`（省略 `B.DATR` 时的默认值）按载体不同使其未定义或未规定。
 
-该操作不产生 GM 内存效果；描述符、载荷、已定义性、填充和数值状态变化仅限于当前契约列出的项目。
+CUBE 形式可以使用显式 ExecutionMask。活动坐标正常比较。非活动坐标在 MERGE 下保留旧的谓词位或单元，在 ZERO 下写入零，且不贡献数值状态。`TCMP` 没有全局内存效果。
 
 <!-- PTO-READER-BLOCK: tile-tcmp-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-可接受的数据类型集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。
+传统形式接受 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。PredicateCell 形式排除 64 位类型，接受 `FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S32`、`S16`、`S8`、`U32`、`U16`、`U8`。GPR 形式还要求操作类型通过 `TileCubePredicateGPRDataTypeSupported`，且有效形状必须符合由该类型推导出的掩码字几何。
 
-下方生成的合法性与异常章节是数据类型组合、布局、维度、容量、已定义性、填充控制、配置档行为和故障类别的权威说明。合法性或分配失败发生在任何部分架构效果之前。
+`PE_MASK=0000` 是严格无操作，发生在任何模式、源、分配、GPR 或状态检查之前。否则，载体模式格式错误或混用、维度缺失、`CMode` 为保留值、`DataType` 不受支持、形状、布局或位宽不匹配、源数据未定义或无效、目标容量不足或分配失败时，会在读取源或产生效果之前被拒绝。非零的 `Canonicalize`、第二 `DataType`、`RMode` 或 `Layout` 均非法。
 
 <!-- PTO-READER-BLOCK: tile-tcmp-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `TCMP` 示例说明：在小于模式下，`[1, 3]` 与 `[2, 3]` 比较后产生谓词位 `[1, 0]`。
+当 `DataType=S32` 且 `CMode=LT` 时，左源行 `[1, 3, -5]` 与右源行 `[2, 3, 4]` 产生谓词值 `[1, 0, 1]`。在 `DataType=U32` 下，相同的位把 `-5` 当作 `0xFFFFFFFB` 比较，因此第三个结果变为 0。
+
+宏形式 `TCMP <Row=8, Col=64, FP32, LT>, T#1, T#2, ->U<512B>` 比较两个 `RowMajor` `FP32` Tile，结果写入新的打包 Predicate Tile `U#1`。其 512 个谓词位占用 64 字节。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

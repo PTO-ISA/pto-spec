@@ -19,52 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fexp-purpose role=purpose -->
 ## What FEXP does
 
-`FEXP` applies exponential to one carrier through the active numeric profile.
+`FEXP` applies the exponential operation to the selected floating-point carrier and writes the rounded result to a Reg5 destination.
+
+It is a unary arithmetic form, so it reads one source, consults the numeric profile, and can raise the same exception flags that the profile reports for the other floating operations.
 
 <!-- PTO-READER-BLOCK: scalar-fexp-mechanism role=mechanism -->
-## Numeric mechanism
+## How the exponential is computed
 
-`SrcType=00` selects a complete FP64 carrier; `SrcType=01` selects the zero-extended low 32-bit FP32 carrier.
+`SrcType` selects the carrier, encoded `00` for FP64 and encoded `01` for an FP32 carrier in the low word, and the source is normalised to that carrier before the operation runs.
 
-The active profile receives snapshotted operands and the mnemonic-selected operation, then returns a result and exact `NV`, `DZ`, `OF`, `UF`, `NX` vector.
+The operation is evaluated through the profile with the active rounding mode from `core_state[39:37]`. The special-value rules decide three cases before any finite evaluation: a NaN input produces a quiet NaN and records `NV` only if the input was signaling, an input of positive infinity produces positive infinity with no flag, and an input of negative infinity produces a positive zero with no flag.
 
-In the `pto-v0` reference profile, the normalized carrier is incremented modulo the selected width. This deterministic reference rule is not an IEEE-754 or target-hardware claim.
+Design point: the mnemonic names the operation, not an algorithm. The portable model evaluates the exponential through its reference profile, so an implementation is bound to the published result and flags rather than to any particular evaluation order.
 
 <!-- PTO-READER-BLOCK: scalar-fexp-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `RegDst` selects the encoded destination or discard behavior.
+- `SrcL` supplies the sole Reg5 source.
+- `SrcType` selects the source carrier.
+- `RegDst` selects the destination: codes `1..23` write the named absolute GPR, code `30` pushes the `U` queue, code `31` pushes the `T` queue, and code `0` plus codes `24..29` discard the result.
 
-- `SrcL` supplies the left scalar source.
-
-- `SrcType` selects the source-carrier width.
-
-- Reg5 source selectors may read GPR, T, or U state without consuming temporary entries.
-
-- The destination selector writes a GPR, pushes T/U, or discards only the result.
+Reg5 source codes read absolute GPRs, `T#1..T#4`, or `U#1..U#4` without consuming a queue entry. Encoded zero in `SrcL` reads the architectural zero GPR, and encoded zero in `RegDst` discards.
 
 <!-- PTO-READER-BLOCK: scalar-fexp-effects role=effects -->
 ## Effects and ordering
 
-All explicit sources are snapshotted before numeric-status or destination effects.
+The result is normalised to the selected carrier width and written once, the flags the profile returns are ORed into the sticky numeric status, and `TPC` advances by `4` bytes. There is no memory, reservation, or descriptor effect.
 
-All five profile-returned flags are ORed into sticky numeric state; the operation cannot clear an existing flag.
-
-The result is published or discarded, then `TPC` advances by `4` bytes. The instruction has no memory or reservation effect.
+Because the flags are ORed rather than assigned, a flag recorded by an earlier operation is still visible after an `FEXP` that reports nothing.
 
 <!-- PTO-READER-BLOCK: scalar-fexp-constraints role=constraints -->
-## Type and profile boundaries
+## Carrier legality and flag reporting
 
-`SrcType=10` and `SrcType=11` are reserved. Reserved types and unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+`SrcType` codes `0` and `1` are assigned and codes `2` and `3` are reserved. The carrier check runs before the first architectural source read, so a reserved `SrcType`, a fixed-bit mismatch, or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before any source, profile, destination, flag, queue, or `TPC` effect.
 
-The portable instruction contract owns carrier selection, snapshots, flag accumulation, publication, and fault order; the active named profile owns the numeric result and produced flags.
+Every Reg5 destination code is assigned. Numeric status flags update sticky status and never raise a synchronous PTO trap.
 
 <!-- PTO-READER-BLOCK: scalar-fexp-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
 
-`fexp.fd a0, ->a1` selects its carriers, snapshots its sources, invokes the active profile, accumulates returned flags, publishes the result, and then advances `TPC`.
+The canonical FP64 example is `fexp.fd a0, ->a1`: GPR `a0` holds `0x0000000000000000`, standing for `0.0`, and GPR `a1` receives `0x3ff0000000000000`, standing for `1.0`, with no flag recorded.
+
+The companion example `fexp.fs t#1, ->t` applies the same operation to the FP32 carrier in the low word of the `T#1` entry and pushes the result to the `T` queue.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

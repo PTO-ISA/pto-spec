@@ -19,54 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fdiv-purpose role=purpose -->
 ## What FDIV does
 
-`FDIV` divides the left carrier by the right through the active numeric profile.
+`FDIV` divides the left selected floating-point carrier by the right one and publishes the rounded quotient to a Reg5 destination.
+
+It is the division member of the binary `FSU` forms, so it shares the operand shape and the destination rules of `FADD`, `FMUL`, `FMIN`, and `FMAX`.
 
 <!-- PTO-READER-BLOCK: scalar-fdiv-mechanism role=mechanism -->
-## Numeric mechanism
+## How the quotient is produced
 
-`SrcType=00` selects a complete FP64 carrier; `SrcType=01` selects the zero-extended low 32-bit FP32 carrier.
+`SrcType` selects the carrier for both sides: encoded `00` selects FP64 and encoded `01` selects an FP32 carrier in the low word. The two sources are normalised first, then the binary division runs with the active rounding mode read from `core_state[39:37]`.
 
-The active profile receives snapshotted operands and the mnemonic-selected operation, then returns a result and exact `NV`, `DZ`, `OF`, `UF`, `NX` vector.
+Division by zero is a defined result, not a trap. A finite nonzero dividend over a zero divisor produces an infinity whose sign is the exclusive-or of the operand signs, and the model reports `DZ` for that case. Zero divided by zero and infinity divided by infinity produce a quiet NaN and report `NV`.
 
-In the `pto-v0` reference profile, a zero divisor returns all-one carrier bits with `DZ`; otherwise unsigned carrier division is used. This deterministic reference rule is not an IEEE-754 or target-hardware claim.
+Design point: because the result of a zero divisor is an infinity rather than a trap, a program can test the quotient for infinity after the fact; the `DZ` flag tells it that the infinity came from a zero divisor rather than from an overflowed finite division.
 
 <!-- PTO-READER-BLOCK: scalar-fdiv-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `RegDst` selects the encoded destination or discard behavior.
+- `SrcL` supplies the dividend as the left Reg5 source.
+- `SrcR` supplies the divisor as the right Reg5 source.
+- `SrcType` selects the source carrier for both sides.
+- `RegDst` selects the destination: codes `1..23` write the named absolute GPR, code `30` pushes the `U` queue, code `31` pushes the `T` queue, and code `0` plus codes `24..29` discard the result.
 
-- `SrcL` supplies the left scalar source.
-
-- `SrcR` supplies the right scalar source.
-
-- `SrcType` selects the source-carrier width.
-
-- Reg5 source selectors may read GPR, T, or U state without consuming temporary entries.
-
-- The destination selector writes a GPR, pushes T/U, or discards only the result.
+Reg5 source codes read absolute GPRs, `T#1..T#4`, or `U#1..U#4` without consuming a queue entry. Encoded zero in a source reads the architectural zero GPR.
 
 <!-- PTO-READER-BLOCK: scalar-fdiv-effects role=effects -->
 ## Effects and ordering
 
-All explicit sources are snapshotted before numeric-status or destination effects.
+The quotient is normalised to the selected carrier width and written once, the produced flags are ORed into the sticky numeric status, and `TPC` advances by `4` bytes. No memory, reservation, or descriptor state changes.
 
-All five profile-returned flags are ORed into sticky numeric state; the operation cannot clear an existing flag.
-
-The result is published or discarded, then `TPC` advances by `4` bytes. The instruction has no memory or reservation effect.
+An infinity operand over a finite nonzero divisor yields an infinity with the exclusive-or sign, and a finite value over an infinity yields a signed zero. Both cases report no flag, because the input was already infinite and no new exception condition was created.
 
 <!-- PTO-READER-BLOCK: scalar-fdiv-constraints role=constraints -->
-## Type and profile boundaries
+## Carrier legality and flag reporting
 
-`SrcType=10` and `SrcType=11` are reserved. Reserved types and unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+`SrcType` codes `0` and `1` are assigned and codes `2` and `3` are reserved. The carrier check runs before the first architectural source read, so a reserved `SrcType`, a fixed-bit mismatch, or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before any source, profile, destination, flag, queue, or `TPC` effect.
 
-The portable instruction contract owns carrier selection, snapshots, flag accumulation, publication, and fault order; the active named profile owns the numeric result and produced flags.
+Every Reg5 destination code is assigned. Numeric status flags update sticky status and never raise a synchronous PTO trap.
 
 <!-- PTO-READER-BLOCK: scalar-fdiv-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
 
-`fdiv.fd a0, a1, ->a2` selects its carriers, snapshots its sources, invokes the active profile, accumulates returned flags, publishes the result, and then advances `TPC`.
+The canonical FP64 example is `fdiv.fd a0, a1, ->a2` with GPR `a0` holding `0x3ff0000000000000`, standing for `1.0`, and GPR `a1` holding `0x4000000000000000`, standing for `2.0`: GPR `a2` receives `0x3fe0000000000000`, standing for `0.5`, and no numeric flag is reported, because the quotient `0.5` is exact in FP64.
+
+Dividing `1.0` by `0.0` instead produces an infinity and sets `DZ`; the quotient `1.0 / 3.0` is not exact and reports `NX`. The destination is written in every case.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

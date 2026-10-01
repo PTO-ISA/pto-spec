@@ -19,56 +19,67 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tsel-purpose role=purpose -->
 ## TSEL 的作用
 
-`TSEL` 在打包谓词 Tile 控制下，从两个 Tile 源选择精确载体位。
+`TSEL` 在谓词控制下从两个源 Tile 之一选取每个元素，构造一个新的 Local Tile。谓词为 1 处取 `SrcTrue` 的元素，为 0 处取 `SrcFalse` 的元素。谓词通常由 `TCMP` 产生。
+
+设计要点：`TSEL` 没有独立 opcode。它由 `BSTART.VEC` Mode 0 Function 26（TEPL 选择器 `0x01A`）选中。`PadValueOrByteId` 是唯一适用的 `B.DATR` 字段。
 
 <!-- PTO-READER-BLOCK: tile-c-tsel-mechanism role=mechanism -->
 ## 操作机制
 
-谓词位为零时选择假输入，为一时选择真输入；选中的载体位会原样复制，不执行数值转换。
+完整预检通过后，`TSEL` 快照谓词与两个数据源。对有效矩形 `ValidRow x ValidCol` 内的每个坐标，它读取谓词，并把所选源元素的精确位拷贝到目标。
+
+设计要点：`TSEL` 是原始载体操作。它不要求被选载荷是操作 `DataType` 的合法编码，也不做转换、舍入、饱和、规范化或数值状态更新。被选中的 NaN 保留其载荷，信号 NaN 也不会引发无效。在两个值之间做选择不需要算术，因此目标保存的正是被选中的位。
+
+设计要点：所选操作 `DataType` 仍然有作用。它是目标后备类型，并决定每个源后备类型必须匹配的元素位宽。在 PredicateCell 形式中它必须等于 PredicateCell 基准，在 GPR 形式中它决定掩码字几何。数值编码校验留给之后解释这些值的操作。
 
 <!-- PTO-READER-BLOCK: tile-c-tsel-inputs-outputs role=inputs-outputs -->
 ## 操作数、形状与类型
 
-- `destination0` 标识新分配的目的 Tile。
+- `source0` 是谓词：打包 Predicate Tile、CUBE PredicateCell Tile，或第一个掩码 GPR。
+- `source1` 是 `SrcTrue`，即谓词为 1 处选中的 Tile。
+- `source2` 是 `SrcFalse`，即谓词为 0 处选中的 Tile。
+- `destination0` 是新分配的 `RowMajor` 或 CUBE 数值 Tile，其 `DataType` 为所选操作 `DataType`。
 
-- `source0` 提供打包谓词 Tile。
+`TSEL` 恰好使用三种互斥谓词载体之一。
 
-- `source1` 提供持久源 Tile。
+| 形式 | 数据布局 | 绑定 |
+| --- | --- | --- |
+| 传统 | `RowMajor` | `B.IOT` Predicate、SrcTrue；然后 `B.IOT` SrcFalse 与新目标 |
+| PredicateCell | `CUBE_M16` 或 `CUBE_M32` | 相同的两条 `B.IOT` 记录，以 PredicateCell 作为谓词 |
+| GPR | `CUBE_M16` 或 `CUBE_M32` | 一条 `B.IOT` 含 SrcTrue、SrcFalse 与新目标，外加一条携带掩码的仅源 `B.IOR` |
 
-- `source2` 提供持久源 Tile。
+传统谓词是每个元素一位的打包 Tile，其有效区域内的每个谓词位都必须已定义。PredicateCell 每个元素占一个字节，其基准类型必须等于操作 `DataType`。PredicateCell 字节在每个有效坐标处被检查和读取（存在 ExecutionMask 时仅在活动坐标处），每个这样的字节都必须已定义且为规范值：`0x00` 或 `0x01`。在 GPR 形式中，8 位操作类型使用两个掩码 GPR，16 位与 32 位类型使用一个。
 
-- 封闭的适用 DataType 集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。
-
-- 除非该助记符显式选择其他允许布局，数据 Tile 使用行主序布局。
-
-- `LB0`、`LB1`、`LB2` 按该助记符契约补全有效形状与物理形状；所有必需有效范围都必须非零。
+每个数据源都可以使用位宽相同、非打包的其他后备类型。其位按原样拷贝到以操作 `DataType` 标记的目标中。
 
 <!-- PTO-READER-BLOCK: tile-c-tsel-effects role=effects -->
 ## 已定义性、填充与发布
 
-所有源描述符与载荷都会在目标发布前完成验证和快照。
+谓词与两个数据载荷都在第一次写目标之前被快照。两个数据源可以指向同一个 Tile，任一数据源也可以与目标互为别名；每次读取都看到旧值。
 
-完整目标载荷、描述符、已定义性、填充状态与适用数值状态会原子发布；拒绝路径不发布任何部分。
+被选载荷、填充已定义性与目标描述符同时发布。被拒绝的 `TSEL` 不产生任何架构效果，且无论成败三个源都保留。
 
-Null 填充让有效矩形外的物理坐标保持未定义；显式非 Null 填充值会用选定带类型的值定义这些位置。
+`ValidRow x ValidCol` 之外的元素接收所选 `PadValue`。`Zero`、`Max` 与 `Min` 为已定义值，而 `Null`（省略 `B.DATR` 时的选择）使其保持未定义。
 
-源 Tile 在成功执行后保持不变。
+在 CUBE 形式中，可以存在 ExecutionMask。此时非活动坐标接收该掩码规定的零值或合并值，而不是被选元素。`TSEL` 没有全局内存效果。
 
 <!-- PTO-READER-BLOCK: tile-c-tsel-constraints role=constraints -->
 ## 合法性、故障与顺序边界
 
-完整绑定模式、维度、DataType、布局、源已定义性、数值编码、目标容量与分配都会在效果前预检。
+操作 `DataType` 集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。CUBE 形式进一步限制为 CUBE 谓词类型，其中不含 64 位类型。
 
-合法性或分配检查失败会引发相应 Tile 故障，不留下部分目标、状态或内存效果。
+源数据必须已定义（在 CUBE 形式中为每个活动坐标处），即使其编码不被校验。`PE_MASK=0000` 是严格无操作，发生在 GPR、谓词、源、分配或载荷检查之前。
 
-`PE_MASK=0000` 是严格无操作，发生在操作数读取、分配、故障、数值状态或载荷效果之前。
+载体模式格式错误或混用、维度缺失、`DataType` 不受支持、PredicateCell 基准与操作 `DataType` 不同、活动谓词字节非规范或未定义、活动源数据未定义、形状或布局不匹配、目标容量不足或分配失败时，会在任何效果之前被拒绝。
 
 <!-- PTO-READER-BLOCK: tile-c-tsel-example role=example -->
 ## 非规范示例
 
 下面的示例只帮助理解当前 ASL 绑定契约，并不是第二份指令定义。
 
-`TSEL <bundle operands>` 先完成完整预检与源快照，再原子发布助记符定义的结果与填充状态。
+当 `DataType=S32` 时，谓词位 `[1, 0, 1]`、`SrcTrue` 行 `[10, 20, 30]` 与 `SrcFalse` 行 `[-1, -2, -3]` 产生 `[10, -2, 30]`。当 `DataType=FP32` 时，被选中的 NaN `0x7FC00001` 按 `0x7FC00001` 拷贝，且不记录任何状态。
+
+宏形式 `TSEL <Row=8, Col=64, FP32>, U#1, T#1, T#2, ->T<2KB>` 使用打包 Predicate Tile `U#1`，为全部 8 x 64 个元素在 `T#1` 与 `T#2` 之间选择。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

@@ -19,40 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-timg2col-purpose role=purpose -->
 ## What BSTART.TIMG2COL contributes
 
-`BSTART.TIMG2COL` opens a TLSU block that materializes sliding feature-map windows as a two-dimensional Tile. The start command selects the element type; the completed block supplies the source view, window parameters, destination, and publication boundary.
+`BSTART.TIMG2COL` opens a Tile memory bundle whose operation is IMG2COL: it reads a convolution input image from global memory (GM) and writes it as a matrix. Each matrix row is one output pixel, and each matrix column is one kernel position and input channel, grouped in 32-byte `C0` channel groups. The command is one 32-bit word (match `0x01c11181`, mask `0x07ffffff`) with `DataType` in bits 31 to 27. It is command form 94 and carries the fixed TLSU selector 28.
+
+The result goes to one of two places: a Shared Tile in ordinary row-major (ND) order, or a Local Tile in `CUBE_M16` or `CUBE_M32` layout, ready for the CUBE engine.
+
+Design point: [descriptor legality](../model/dispatch/descriptor-legality.md) has a dedicated rule for form 94. The descriptor is legal only as the exact TIMG2COL descriptor with a supported `DataType`. An unsupported code therefore raises `Fault_IllegalInstruction` at the `BSTART`, before [bundle start dispatch](../model/dispatch/start.md) commits any predecessor.
 
 <!-- PTO-READER-BLOCK: block-bstart-timg2col-mechanism role=mechanism -->
 ## Placement and mechanism
 
-Read the result as a matrix: each logical row identifies one output spatial position, while each logical column identifies one kernel-and-channel position. The source layout chooses dense NCHW or NHWC indexing, and the destination layout chooses a Shared ND result or direct Local CUBE materialization.
+At commit, [Tile execution](../model/dispatch/tile-execution.md) tests the TIMG2COL selector first and calls [TIMG2COL execution](../model/dispatch/timg2col-execution.md). It skips the generic effect-eligibility check, stage-2 preparation, Local continuation reuse, and ExecutionMask capture for this operation. The handler validates the whole bundle, then builds the matrix.
 
-```text
-Shared: BSTART.TIMG2COL; optional B.DATR; LB0/LB1/LB2; two contiguous B.IOR records; B.IOS; optional B.ASSEMBLE for multiple PEs; BSTOP.
-Local CUBE: BSTART.TIMG2COL; explicit CUBE-producing B.DATR; LB0/LB1/LB2; two contiguous B.IOR records; B.IOT; BSTOP.
-```
+The `B.DATR` layout picks the output. `ND2M16` (code 22) and code 31 select Local M16; `ND2M32` (code 21) and code 29 select Local M32; `NORM` (code 0), `DN2ND` (code 6), or an absent `B.DATR` select Shared ND. Codes 6, 29, and 31 read the image through the channel-major (DN, NCHW) index; the other layouts use the channel-minor (ND, NHWC) index. The geometry of each cell is defined by [TIMG2COL schema](../model/dispatch/timg2col-schema.md).
 
-The complete header is validated before any GM read. Spatial padding and channel-tail positions become defined zero elements without issuing a source access for those positions.
+Design point: validation reads no memory, and `BundleTIMG2COLPreflightGM` then probes every GM address of all ValidRow rows before the first load. A translation or permission fault leaves no load event, allocation, or Shared generation change behind.
+
+Design point: a cell whose input coordinate falls in the spatial padding, or whose channel is not below `Cin`, is a defined raw zero with no GM access. Padding never faults and never records a load event.
 
 <!-- PTO-READER-BLOCK: block-bstart-timg2col-inputs role=inputs-outputs -->
 ## Operands and header roles
 
-- `DataType` selects the feature-map element representation; the exact accepted codes remain in the generated contract below.
-- `B.DATR.Layout` selects the dense source order and whether the result is Shared ND or Local CUBE.
-- `B.DIM.LB0`, `B.DIM.LB1`, and `B.DIM.LB2` describe the valid output columns, valid output rows, and total output columns.
-- The first `B.IOR` supplies `GMBase`; it is a source-only record.
-- The immediately following `B.IOR` supplies the three packed parameter GPRs used for feature-map, kernel, stride, dilation, crop, and channel-padding values.
-- `B.IOS` names the Shared destination, while `B.IOT` names the Local CUBE destination.
-- `B.ASSEMBLE` joins explicit row ranges when multiple PEs publish one Shared result.
+- `DataType` is the element type: `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `HiF8`, `E4M3`, `E5M2`, `E8M0`, `S32`, `S16`, `S8`, `U32`, `U16`, or `U8`.
+- An explicit `B.DATR` must use `DTYPE_NONE`, Zero pad (code 0), and zero comparison, rounding, saturation, and canonicalization controls; only its layout matters.
+- `B.DIM` `LB0`, `LB1`, and `LB2` give ValidCol, ValidRow (1 to 128, at most 64 for Local M16), and TotalCol.
+- Two contiguous source-only `B.IOR` records: the first is `GMBase, zero, zero`, the second is `ParamGPR0, ParamGPR1, ParamGPR2`. [TIMG2COL parameters](../model/operands/timg2col-parameters.md) defines the packing.
+- Shared ND output uses exactly one `B.IOS` and no `B.IOT`. Local output uses exactly one destination `B.IOT` with `PE_MASK` `1111` and no `B.IOS`.
+
+Design point: every participating PE must hold identical `GMBase` and parameter words. Each PE computes a different row share from the same geometry, so this check keeps all shares in one matrix; a mismatch rejects before any GM access.
 
 <!-- PTO-READER-BLOCK: block-bstart-timg2col-effects role=effects -->
 ## Result and publication
 
-Successful completion writes only the logical output rectangle and its definedness. A Shared result becomes visible as one complete generation; a Local CUBE result has the same logical values as the corresponding Shared ND result followed by the selected ND-to-CUBE layout conversion.
+ValidRow is split over the four PEs, filling PE 0 first. Local M16 uses 16 rows per PE and Local M32 uses 32; Shared ND uses 16 when ValidRow is at most 64 and 32 otherwise. A Local PE with zero rows allocates nothing and reads nothing, but stays a participant.
+
+A Shared ND mask must be a single PE or `1111` and must include the current PE. A single PE must not use `B.ASSEMBLE` and publishes the Tile directly. With `1111`, `B.ASSEMBLE` is required: PE 0 carries INIT, PE 3 carries LAST, and PEs 1 and 2 carry neither. Its register and immediate must be zero, because the handler derives each writer's offset from the row start in 32-byte units. The parent publishes only when the gap-free LAST writer arrives.
+
+Only the logical rectangle and its definedness are written; physical storage tails are neither written nor marked defined. A Local CUBE result equals the Shared ND result followed by the ordinary ND-to-CUBE conversion.
 
 <!-- PTO-READER-BLOCK: block-bstart-timg2col-constraints role=constraints -->
 ## Legality and fault boundary
 
-The block requires supported element and layout codes, one complete parameter set, the required four-PE mask, a compatible destination form, and dimensions that fit the selected capacity. Schema, arithmetic, access, allocation, readiness, alias, and PE-consistency failures are resolved before GM access or destination publication.
+The crop must be `C0`-aligned: ValidCol, TotalCol, and ColStart are multiples of `C0`, ValidCol does not exceed TotalCol, `RowStart + ValidRow` does not exceed `Hout * Wout`, and `ColStart + ValidCol` does not exceed `KValid`. Nonzero parameter extension bits, zero sizes, and a wrong binding count also reject.
+
+A failed check without a recorded fault becomes `Fault_TileLegality`; a memory fault keeps its own kind. On any failure `BundleTIMG2COLAbortFailedAttempt` aborts the Shared generation or rolls back the Local destination, so the previous Shared generation stays in place.
+
+Design point: repeat, transpose, dual-source, and hidden descriptor state are outside this per-bundle interface, as the NDF clause `PTO-BSTART-TIMG2COL-CONTRACT-001` states. Every input of the operation is visible in the bundle's own commands and GPRs.
 
 <!-- PTO-READER-BLOCK: block-bstart-timg2col-example role=example -->
 ## Non-normative worked example
@@ -61,17 +72,17 @@ This example sketches a cooperative Shared result; symbolic values stand for pre
 
 ```asm
 BSTART.TIMG2COL FP16
-B.DIM LB0, ValidCol
-B.DIM LB1, ValidRow
-B.DIM LB2, TotalCol
-B.IOR GMBase, zero, zero
-B.IOR ParamGPR0, ParamGPR1, ParamGPR2
-B.IOS PE_MASK, ->S0<SizeCode>
-B.ASSEMBLE 1, 1, zero, 0, ParentSizeCode
+B.DIM zero, 64, ->LB0
+B.DIM zero, 64, ->LB1
+B.DIM zero, 64, ->LB2
+B.IOR a0, zero, zero
+B.IOR a1, a2, a3
+B.IOS mask=1111, ->S0<7>
+B.ASSEMBLE 1, 0, zero, 0, 5
 BSTOP
 ```
 
-The two `B.IOR` records stay adjacent. `BSTOP` validates the complete composition and publishes the result only after every participating range succeeds.
+This is the bundle of PE 0. PEs 1 and 2 bind `B.IOS S0, mask=1111` with `B.ASSEMBLE 0, 0, zero, 0, 5`, and PE 3 uses `B.ASSEMBLE 0, 1, zero, 0, 5`. With `FP16`, `C0` is 16. ValidRow 64 gives each PE 16 rows, and each writer covers 16 * 64 / 16 = 64 units of 32 bytes, at offsets 0, 64, 128, and 192. `SizeCode` 7 is 8192 bytes, or 256 units, so PE 3's LAST range ends exactly at 256 and the parent is published.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

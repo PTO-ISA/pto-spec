@@ -19,39 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-vec-purpose role=purpose -->
 ## BSTART.VEC 的作用
 
-`BSTART.VEC` 打开一个活动 Block 描述符；Block 体在完成前提供所需属性与绑定。
+`BSTART.VEC` 是启动其操作在 VEC 引擎上运行的块的规范写法，例如 `TADD`、`TSUB`、`TMUL` 或 `TMAX`。它是编码别名：没有自己的位。`BSTART.VEC TileOp, DataType` 把 `TileOp` 解析为其 `Mode:Function` 选择器，并以该选择器和 `DataType` 生成 [BSTART.TEPL](BSTART.TEPL.md) 指令字。
+
+规范汇编与反汇编对每个 VEC 操作使用 `BSTART.VEC`，对每个 SFU 操作使用 [BSTART.SFU](BSTART.SFU.md)。
 
 <!-- PTO-READER-BLOCK: block-bstart-vec-mechanism role=mechanism -->
 ## 放置与执行机制
 
-`BSTART.VEC` 必须位于所属 Block 的起始位置。后续属性、维度与绑定会累积到活动描述符中，直到 `BSTOP` 或下一条已接受的 `BSTART` 完成边界。
+别名所有者把每个部分映射到 `BSTART.TEPL`：`InstructionContractMatches_BSTART_VEC` 匹配 TEPL 形式，`InstructionContractHandler_BSTART_VEC` 返回 TEPL 处理器 `CommandHandler_ExecuteBundleStart`。因此执行过程与 TEPL 路径完全相同。
 
-已接受载体使用 `encoding-alias` 编码类别；命令在读取绑定或改变状态前，会先解析所有显示字段。
+1. [指令束启动分派](../model/dispatch/start.md)在提交任何前驱之前检查译码后的描述符。
+2. 它提交前驱、打开 Tile 元素块并安装描述符。
+3. 在 `BSTOP` 或下一条 `BSTART` 时，[Tile 执行分派](../model/dispatch/tile-execution.md)验证指令束并运行操作。
 
-完成时，只有全部模式与状态预检成功，描述符才会执行所选 Block 操作。
+`TileTEPLAliasAcceptsOperation(TileTEPLAlias_VEC, operation)` 定义别名接受哪些名称：操作必须使用 TEPL 载体，且执行引擎必须是 VEC。
+
+设计要点：引擎名体现在写法中，而不在位中。同一个编码承载两种引擎，汇编器按操作的引擎选择 `BSTART.VEC` 或 `BSTART.SFU`，因此读者无需额外编码字段即可看出由哪个引擎运行该块。
 
 <!-- PTO-READER-BLOCK: block-bstart-vec-inputs role=inputs-outputs -->
 ## 载体、绑定与输入
 
-- 编码操作数：`TileOp` — 解析 Mode:Function 选择器的已分配 VEC 操作助记符; `DataType` — Tile 元素数据类型选择器。
-- `BSTART.VEC` 通过 `BSTART.TEPL` 载体解析 `TileOp`，随后采用该归属单元的描述符、Block 体组成、提交与回滚规则。
-- 编码零仍是已分配值或明确规定的拒绝值；它不会静默表示省略操作数。
+- `TileOp` 命名一个由 TEPL 承载的 VEC 操作。它转换为 `Mode` 和 `Function`；`TADD` 为 `Mode` 0 `Function` 0，`TSUB` 为 `Function` 1，`TMAX` 为 `Function` 11。
+- `DataType` 是元素类型，编码方式与 `BSTART.TEPL` 相同。它必须是具体类型。
+
+其余 header 命令由所选操作决定。对 `TADD` 而言，是 `B.DIM LB0`、可选的 `LB1`、`LB2` 与 `B.DATR`，以及一条带两个 Local 源和一个新 Local 目标的终止 `B.IOT`。
 
 <!-- PTO-READER-BLOCK: block-bstart-vec-effects role=effects -->
 ## 状态效果与顺序
 
-启动 Block 会记录所选载体，并把操作执行推迟到完成边界。
+别名不增加任何状态。前驱提交后，起始命令安装与解析出的选择器和 `DataType` 完全对应的 TEPL 描述符，把块类型设为 Tile 元素，并把 `TPC` 移到下一条指令。
 
-完成全部预检与计算后，所有启用输出按归属单元规定的原子组发布；除非契约明确消费，成功执行后的数学源仍保持可用。
+所选 VEC 操作只在块提交时运行。成功时它原子地发布目标；失败时块保持有效，其目标被回滚。起始命令没有内存效果。
 
 <!-- PTO-READER-BLOCK: block-bstart-vec-constraints role=constraints -->
 ## 合法性、故障与原子性
 
-固定比特、保留值、选择器取值域与必需的 Block 放置关系都在架构效果之前检查。
+`BSTART.VEC` 只接受 `TileTEPLAliasAcceptsOperation` 对 VEC 认可的名称。未知名称、`TEXP` 等 SFU 操作，或 TLSU、CUBE 操作都没有 `BSTART.VEC` 写法。
 
-无效模式、状态、地址或后继条件通过当前归属单元定义的故障行为报告；本页不添加故障规则。
+对于生成的指令字，TEPL 检查先于前驱提交：保留的 `DataType` 编码或未分配的选择器引发 `Fault_IllegalInstruction`，有效前驱保持不变。
 
-完整模式、绑定、就绪状态、别名、容量与分配预检发生在源快照和所有目的端发布之前。
+设计要点：由于别名与 `BSTART.TEPL` 产生相同的位，任何程序都无法观察到两者的差别。它们安装相同的描述符，并以相同方式产生故障。
 
 <!-- PTO-READER-BLOCK: block-bstart-vec-example role=example -->
 ## 非规范示例
@@ -62,7 +69,7 @@ The current instruction contract is owned by the ASL source linked above.
 BSTART.VEC TADD, FP32
 ```
 
-起始指令先建立描述符；后续载体按声明模式补充内容，最终完成边界触发验证与操作执行。
+`TADD` 解析为 `Mode` 0 `Function` 0，`FP32` 为 `DataType` 1，因此生成的指令字为 `0x08019181`，与 `BSTART.TEPL 0, 0, FP32` 相同。完整的指令束再加上 `B.DIM` 命令和一条命名两个源与目标的 `B.IOT`，然后是 `BSTOP`。同一指令束的宏形式写作 `TADD <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Alias contract

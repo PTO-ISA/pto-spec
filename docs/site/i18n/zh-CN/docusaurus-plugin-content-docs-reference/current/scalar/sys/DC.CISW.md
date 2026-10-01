@@ -19,42 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-cisw-purpose role=purpose -->
 ## DC.CISW 的作用
 
-`DC.CISW` 同步完成所分配的缓存或地址翻译维护请求，并记录精确操作令牌。
+`DC.CISW` 同步完成数据缓存 clean-and-invalidate set/way 维护操作。该指令携带一个操作数 `SrcL`（`asl/scalar/sys/DC.CISW.asl:29`），由它提供维护记录所捕获的作用域令牌。
 
 <!-- PTO-READER-BLOCK: scalar-dc-cisw-mechanism role=mechanism -->
 ## 系统机制
 
-ASL DOC 区域选择 `ScalarHandler_ExecuteMaintenance`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+`InstructionContractHandler_DC_CISW` 选择 `ScalarHandler_ExecuteMaintenance`（`asl/scalar/sys/DC.CISW.asl:11`），而 `InstructionContractMaintenanceOperation_DC_CISW` 把操作固定为 `Maintenance_DC_CISW`（`asl/scalar/sys/DC.CISW.asl:23`）。该处理程序与其他所有缓存、bundle 缓存和 TLB 维护指令共用，因此它们之间的差别只在于操作令牌和操作数规则。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+该指令占用活动 SYS 块体中的一个标量操作位置（`asl/scalar/model/sys/semantics.asl:322`）。所有固定位和操作数约束都在合法性检查阶段完成，早于处理程序运行。
 
 <!-- PTO-READER-BLOCK: scalar-dc-cisw-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`SrcL` 承载 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。
+`SrcL` 是 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。派发器通过 `ReadDecodedScalarRegister` 读取它，并把取到的值作为操作数传给执行器（`asl/scalar/model/dispatch/sys.asl:42`）。编码零命名架构零 GPR，因此它是已分配的值，从不表示省略操作数。
 
-编码零是已分配的字段值，从不表示省略操作数。
+`DC.CISW` 不产生标量目的地。唯一的输出是维护记录。
 
 <!-- PTO-READER-BLOCK: scalar-dc-cisw-effects role=effects -->
 ## 架构效果
 
-成功时，维护记录接收 `Maintenance_DC_CISW` 和精确捕获的操作数令牌。
+成功时，维护记录接收 `Maintenance_DC_CISW` 和确切的操作数令牌（`asl/scalar/model/sys/semantics.asl:159`），同时数据缓存纪元递增一（`asl/scalar/model/sys/semantics.asl:137`）。随后 `TPC` 按指令长度前进，因为派发器只在执行报告成功之后才推进 `TPC`（`asl/scalar/model/dispatch/top-level.asl:55`）。
 
-选中的缓存或 TLB 纪元恰好递增一次，然后 `TPC` 前进；该操作是同步完成的本地提示。
+设计要点：操作数在纪元改变之前完成快照，因此被记录的令牌就是该指令读取时源所持有的值。之后对该源的写入无法改写日志中这条指令所请求的内容。
+
+不执行普通标量内存访问，因此数据内存保持不变。
 
 <!-- PTO-READER-BLOCK: scalar-dc-cisw-constraints role=constraints -->
 ## 位置与拒绝边界
 
-缓存维护在每个 ACR 都是同步本地提示，并不定义额外的实现缓存内容。
+先检查位置。如果 bundle 未活动，或其块体不是 System 块，该次尝试会在任何合法性检查之前引发 `Fault_BundleControl`，因此记录与数据缓存纪元保持原值。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+缓存在每个 ACR 都允许维护；只有 TLB 操作被限制在 ring 0。因此 `DC.CISW` 没有特权门，具体实现的缓存内容也不由该指令定义。
+
+设计要点：该操作发布的是操作令牌和纪元，而不是指名缓存行，因此 `SrcL` 中的作用域令牌被记录为证据，而不会被可移植模型解释为 set/way 索引。
 
 <!-- PTO-READER-BLOCK: scalar-dc-cisw-example role=example -->
 ## 非规范示例
 
 该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
 
-可从 `dc.cisw SrcL` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+在 SYS 块体内运行 `dc.cisw SrcL`。如果源寄存器持有 10，该次尝试先通过位置与编码检查，再读取该寄存器作为操作数，然后推进数据缓存纪元，最后以操作数 10 记录 `Maintenance_DC_CISW`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

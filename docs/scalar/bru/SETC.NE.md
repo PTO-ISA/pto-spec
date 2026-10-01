@@ -19,44 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-ne-purpose role=purpose -->
 ## What SETC.NE does
 
-`SETC.NE` evaluates inequality and publishes the result as the current Conditional bundle commit decision.
+`SETC.NE` compares two scalar registers for inequality and publishes the answer as the commit decision of the Conditional bundle it sits in.
+
+The published value is the block's commit argument, which the block reads for its conditional transfer, and it also drives `BARG.TAKEN`.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ne-mechanism role=mechanism -->
-## Mechanism
+## Inequality of two prepared snapshots
 
-Placement and the single-setter rule are checked before source readiness or reads.
+The instruction writes no destination register. It snapshots `SrcL` and the prepared right operand, tests `ConditionHolds(ScalarCondition_NE, left, right)`, and stores exactly `1` when the relation holds and exactly `0` when it does not.
 
-The snapshotted operands are evaluated for inequality and canonicalized to XLEN one or zero.
+`ConditionHolds` compares the complete words for inequality, so the result depends only on whether the two snapshots differ, not on the numeric size of either one.
+
+Design point: the setter forms pass the `11` modifier through unchanged, so `SETC.NE` cannot complement the right source; an inequality test against the complement of a stored mask needs a separate instruction to build that complement.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ne-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `SrcL` supplies the left scalar source.
+- `SrcL` is a Reg5 source: codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`.
+- `SrcR` uses the same Reg5 mapping.
+- `SrcRType` transforms the `SrcR` snapshot before the test: value `1` substitutes the sign-extended low `32` bits, value `2` the zero-extended low `32` bits, and values `0` and `3` leave the complete word unchanged.
 
-- `SrcR` supplies the right scalar source.
-
-- `SrcRType` selects the right-source transformation.
+Encoded zero in `SrcL` or `SrcR` names the architectural zero GPR. Sources are not consumed, and the instruction writes no `GPR`, `T`, or `U` destination.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ne-effects role=effects -->
 ## Effects and ordering
 
-The canonical condition is written atomically to `_CommitArgument` and `BARG.TAKEN`, and the condition-set marker becomes true.
+On success the commit argument receives the canonical condition, `BARG.TAKEN` mirrors that truth value while a bundle is active, the block condition marker becomes set, and `TPC` advances by `4` bytes.
 
-On success, `SETC.NE` advances `TPC` by `4` bytes. It has no scalar destination and no memory or reservation effect.
+No memory, reservation, descriptor, or numeric-status effect occurs, and `BARG.BPC`, `BARG.BPCN`, `BARG.BlockType`, and `BARG.TYPE` keep their values.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ne-constraints role=constraints -->
-## Legality and fault order
+## Fault classes and their order
 
-The instruction is valid only in the applicable Conditional bundle context, and only one successful condition setter may occur.
+Applicability is confined to the body of an active Conditional block, and the shared marker allows at most one successful `SETC` condition setter in that block.
 
-Wrong placement or a repeated setter raises an Illegal Block Exception before source reads; encoding or unavailable-source failures raise `Fault_IllegalInstruction` before commit or `TPC` effects.
+Wrong placement or a second successful setter raises `Fault_BundleControl` (trap number `5`, `BUNDLE_TRAP`) before operand legality and before any source read. A fixed-bit mismatch or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before commit state, `BARG`, queue, or `TPC` effects. A failed first occurrence does not consume the shared marker.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ne-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not create a second semantic definition.
 
-`setc.ne SrcL, SrcR<{.sw, .uw}>` evaluates the described condition, writes the canonical decision to commit state, and advances `TPC` only after that update.
+Place `7` in both GPR1 and GPR2, then execute `setc.ne R1, R2`. The words are equal, so the form commits `0`. Set GPR2 to `8` and the same form commits `1`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

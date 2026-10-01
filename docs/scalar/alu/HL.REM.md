@@ -19,48 +19,57 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-rem-purpose role=purpose -->
 ## What HL.REM does
 
-`HL.REM` is a 48-bit scalar ALU instruction. It computes the signed remainder and quotient together from source snapshots; its current instruction contract defines the result publication path and any additional state effect.
+`HL.REM` is a 48-bit scalar ALU instruction that divides two signed XLEN values and publishes both results: the remainder through `RegDst0` and the quotient through `RegDst1`.
+
+The division is total. A zero divisor and the signed minimum divided by `-1` both have defined results, so the mnemonic has no arithmetic fault case.
 
 <!-- PTO-READER-BLOCK: scalar-hl-rem-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then computes the signed remainder and quotient together from source snapshots, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractQuotient_HL_REM` and `InstructionContractRemainder_HL_REM`, which call `ScalarDivideSigned` and `ScalarRemainderSigned`. Dispatch calls `ExecuteScalarRemainderPair` with `signed_operation` true; that helper computes `quotient` and `remainder` first, then writes the remainder to `RegDst0` and the quotient to `RegDst1`.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+hl.rem SrcL, SrcR, ->Dst0, Dst1
+```
+
+Design point: `ScalarDivideSigned` divides the magnitudes and negates only when the two signs differ, so the quotient truncates toward zero. `ScalarRemainderSigned` is `dividend - quotient * divisor`, which makes the remainder carry the dividend's sign rather than the divisor's.
 
 <!-- PTO-READER-BLOCK: scalar-hl-rem-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst0` field selects the remainder Reg5 target or discards the remainder.
-- The 5-bit `RegDst1` field selects the quotient Reg5 target or discards the quotient.
-- The 5-bit `SrcL` field selects the dividend through Reg5.
-- The 5-bit `SrcR` field selects the divisor through Reg5.
+- `RegDst0`, instruction slice `[23 +: 5]`, receives the remainder or discards it.
+- `RegDst1`, instruction slice `[11 +: 5]`, receives the quotient or discards it.
+- `SrcL`, instruction slice `[31 +: 5]`, supplies the dividend.
+- `SrcR`, instruction slice `[36 +: 5]`, supplies the divisor.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Both sources use the common Reg5 map: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4` without consuming an entry. An encoded-zero divisor reads the architectural zero GPR and therefore selects the defined zero-divisor results.
+
+Design point: the two destination fields are independent, so the pair may discard one half, write one GPR and push the other, or push both to the same queue. A duplicate push is well defined because the remainder is pushed first and the quotient second.
 
 <!-- PTO-READER-BLOCK: scalar-hl-rem-effects role=effects -->
 ## Effects and ordering
 
-All results are computed before publication. The destinations are then updated in encoded order (`RegDst0`, `RegDst1`), which also defines the order of duplicate-register writes or queue pushes.
+Both sources are snapshotted and both results are computed before either destination write, so a destination that aliases `SrcL` or `SrcR` cannot disturb the pair.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
+Publication order is `RegDst0` then `RegDst1`: the remainder first, the quotient second. If both fields name one GPR the quotient is the final value; if both push one queue the quotient is the newest entry and the remainder is next-newest.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+`TPC` advances by `6` bytes after the destination effects. `HL.REM` reads and writes no memory and changes no numeric-status, reservation, descriptor, Tile, bundle, privilege or control-flow state apart from the selected queue pushes.
 
 <!-- PTO-READER-BLOCK: scalar-hl-rem-constraints role=constraints -->
 ## Legality and fault boundary
 
-Zero divisors and signed-minimum divided by negative one use total definitions; both outputs are computed before either destination is written.
+Every `32`-code source encoding and every `32`-code destination encoding is assigned, and duplicate destinations are legal, so operand legality can fail only on an unavailable temporary source. The fixed encoding bits must match the canonical 48-bit form.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise a mismatching encoding raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before either destination write.
+
+Design point: no operand value can raise an arithmetic fault here. A zero divisor publishes quotient `0` and remainder equal to the dividend, and the signed minimum divided by `-1` publishes the signed minimum as quotient with remainder `0`, because the magnitude path wraps instead of trapping.
 
 <!-- PTO-READER-BLOCK: scalar-hl-rem-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.REM` example, dividend `13` and divisor `5` produce remainder `3` followed by quotient `2`.
+With `SrcL = 13` and `SrcR = 5`, the quotient is `2` and the remainder is `3`, so `RegDst0` receives `3` and `RegDst1` receives `2`. With `SrcL = -7` and `SrcR = 3`, the quotient is `-2` and the remainder is `-1`, so `RegDst0` receives `0xFFFFFFFFFFFFFFFF` and `RegDst1` receives `0xFFFFFFFFFFFFFFFE`. With `SrcR` held at the architectural zero GPR and `SrcL = 13`, `RegDst0` receives `13` and `RegDst1` receives `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

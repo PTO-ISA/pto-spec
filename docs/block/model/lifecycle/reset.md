@@ -7,8 +7,63 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-LIFECYCLE-RESET}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-lifecycle-reset-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines `ResetBundleControlState`, the transition that puts every member of the bundle-control state into a known initial value. It is called from profile reset, after the program counters and the bundle-active flags have been cleared.
+
+<!-- PTO-READER-BLOCK: block-model-lifecycle-reset-concepts role=concepts-state -->
+## Concepts and visible state
+
+After reset:
+
+- No bundle is active, no body is active, and all per-bundle markers are false.
+- `BARG` is `Standard`, `Fallthrough`, `taken` false, and `BPCN` zero.
+- The operation descriptor is invalid. Every dimension `LB0..LB2` holds its default value 1 and is marked absent.
+- All scalar, Tile, and Shared bindings, range groups, and attribute records are cleared. The data-attribute pad field holds `11` (`Null`), and the data type is `DTYPE_NONE`.
+- All 64 Local generation records and every Shared generation record are cleared.
+- The execution-domain token is 0 and the next token is 1.
+- The memory-copy and frame templates are inactive, and `_FrameDepth` and the last-command records are zero.
+- `_TileDataLayoutCapabilities` has only bit 0 set, so only the `NORM` layout is advertised.
+- Every per-ring trap context is marked invalid, and its bundle fields are loaded from the just-reset live values.
+
+<!-- PTO-READER-BLOCK: block-model-lifecycle-reset-rules role=rules-interactions -->
+## Rules and interactions
+
+Reset writes the complete member list of `PTO-STATE-BLOCK-CONTROL`, including the generation records that survive ordinary commit.
+
+Design point: reset clears more than a commit does. `ClearBundleHeaderState`, used at commit, leaves Local and Shared generations open on purpose so that a multi-bundle assembly can continue. Reset is the only transition here that closes them all. After reset, no generation from earlier execution can accept writers.
+
+Design point: the next execution-domain token starts at 1 while the current token is 0. The first bundle after reset therefore receives token 1, which differs from the reset value.
+
+Design point: omitted dimensions reset to 1, not 0, and the pad field resets to `Null`, not `Zero`. These are the same omission defaults that each new bundle sees. An explicit `B.DIM` of 0 or `B.DATR` pad code `00` remains distinguishable from omission.
+
+<!-- PTO-READER-BLOCK: block-model-lifecycle-reset-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit does not reset the program counters. Profile reset in addressing clears `_PC`, `_BPC`, `_BundleActive`, and `_BundleBodyActive` and then calls this transition, which clears the two active flags again.
+
+Tile and Shared register contents are reset by other steps of profile reset, not by this transition. The trap contexts are marked invalid, so a reset cannot be followed by a recovery into pre-reset state.
+
+<!-- PTO-READER-BLOCK: block-model-lifecycle-reset-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Right after reset, a bundle that uses `LB0` without any `B.DIM` sees the value 1. If the first operation needs `LB0 = 16`, the program must write it with `B.DIM`. The first `BSTART` after reset receives execution-domain token 1 and advances the next token to 2.
+
+<!-- PTO-READER-BLOCK: block-model-lifecycle-reset-related role=related-owners-navigation -->
+## Related owners
+
+- [Addressing and profile reset](../../../arch/system-registers/addressing.md) calls this transition.
+- [Control state](../state/control-state.md) lists the reset members.
+- [Descriptor state](../state/descriptor-state.md) defines the smaller per-commit clear.
+- [Shared generation state](../state/shared-generation-state.md) defines the Shared generation reset.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

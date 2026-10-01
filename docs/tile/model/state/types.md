@@ -7,8 +7,81 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-STATE-TYPES}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-state-types-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines the vocabulary types of the Tile model. It declares no state and no transitions.
+
+It covers three groups:
+
+- Operation selectors, such as `TileBinaryOperation`, `TileUnaryOperation`, `TileComparison`, `TileReductionOperation`, and `TileExpandOperation`.
+- The decoded operand carrier `TileInstructionOperands` and its defaults.
+- The storage records `TileInfo` and `SharedTileInfo`, with their payload and definedness carriers.
+
+<!-- PTO-READER-BLOCK: tile-model-state-types-concepts role=concepts-state -->
+## Concepts and visible state
+
+`TileInfo` is the complete record of one Tile. Its fields fall into four groups:
+
+- Lifecycle: `allocated` and `storage_kind` (Numeric, Predicate, or PredicateCell).
+- Definedness: `contents_defined`, the per-element bitmap `defined_elements`, the count `defined_valid_elements`, and the packed bitmap `packed_defined_elements` of 524288 bits.
+- Descriptor: `capacity_bytes`, `rows`, `columns`, `valid_rows`, `valid_columns`, `data_type`, `predicate_basis_type`, and `layout`.
+- CUBE geometry: `cube_k_repeat`, `cube_n_repeat`, `cube_cell_count`, and `cube_storage_bytes`.
+
+The `payload` is an array of `PTO_MODEL_TILE_ELEMENTS` 64-bit Words.
+
+`SharedTileInfo` wraps one `TileInfo` with Shared-only metadata: `descriptor_valid`, `allocation_mask`, `initialized_mask`, `whole_parent_ready`, and `published`.
+
+<!-- PTO-READER-BLOCK: tile-model-state-types-rules role=rules-interactions -->
+## Rules and interactions
+
+`TileInstructionOperands` is one uniform record for every direct Tile instruction. It holds up to three destinations, nine sources, an address, scalars, numeric fields, an axis, a comparison, a flag, and a numeric-control selection. Each catalog binding reads only the fields its operation names; unused fields have no architectural effect.
+
+`DefaultTileInstructionOperands` sets register, scalar, natural, diagonal, byte-count, and selected-byte fields to 0, the `positive` fields to 1, `sort_width` to 32, `axis` to Row, and `comparison` to EQ; its numeric control sets `use_operation_default` to TRUE with a stored RNE rounding mode and saturation off.
+
+Design point: `TileBinary_EXPDIF` is a selector, but the source comment states that TEXPDIF is a dedicated typed binary operation that must not enter the generic integer, Tile-binary, or Tile-scalar execution helpers. `TileExpand_EXPDIF` is a separate expand selector.
+
+Design point: `SharedTileInfo` separates four facts. `allocation_mask` is which PEs participate in the parent, `initialized_mask` is which producers have written it, `whole_parent_ready` is hardware-maintained parent readiness, and `published` is visibility. The source comment states that readiness is independent of both the producer mask and the consumer participation mask.
+
+<!-- PTO-READER-BLOCK: tile-model-state-types-boundaries role=boundaries -->
+## Architectural boundaries
+
+`TileLayout` and `TileDataType` are defined by the architecture data-type owner, not here.
+
+Two capacities coexist in `TileInfo`. `PackedTileDefinedElements` has 524288 bits, one per logical element of a 256 KiB four-bit Tile. The Word payload has only `PTO_MODEL_TILE_ELEMENTS` slots, so large or four-bit Tiles pack several logical elements into each Word. `PTO_MODEL_TILE_ELEMENTS` is a model representation bound; 524288 covers the largest architectural logical element count.
+
+`TileExecutionStatus` has only two values, `TileExecution_Executed` and `TileExecution_Rejected`; bundle Tile execution uses it as its step status.
+
+<!-- PTO-READER-BLOCK: tile-model-state-types-example role=example-usage -->
+## Non-normative reading example
+
+A freshly allocated FP32 Tile of 4096 bytes and 16 columns reads as follows:
+
+| Field | Value |
+| --- | --- |
+| `allocated` | TRUE |
+| `storage_kind` | `TileStorage_Numeric` |
+| `contents_defined` | FALSE |
+| `defined_valid_elements` | 0 |
+| `capacity_bytes` | 4096 |
+| `rows` x `columns` | 64 x 16 |
+| `cube_cell_count` | 0 |
+
+The descriptor is complete, but no payload element is readable yet.
+
+<!-- PTO-READER-BLOCK: tile-model-state-types-related role=related-owners-navigation -->
+## Related owners
+
+- [Local registers](local-registers.md) declares the arrays of these records.
+- [Allocation](allocation.md) fills `TileInfo` descriptors.
+- [Packed boundary](../definedness/packed-boundary.md) explains the carrier and packed definedness representation.
+- [Tile data types](../../../arch/data-types/tile-data-types.md) defines `TileDataType` and `TileLayout`.
+- [Tile instruction operands](../../../block/model/dispatch/tile-instruction-operands.md) fills the operand carrier from a bundle.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

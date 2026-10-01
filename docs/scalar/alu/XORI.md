@@ -17,49 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-xori-purpose role=purpose -->
-## What XORI does
+## What XORI computes
 
-`XORI` is a 32-bit scalar ALU instruction. It performs bitwise exclusive OR under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+`XORI` is the immediate form of the scalar exclusive OR. It sign-extends its 12-bit immediate `simm12` to the full `PTO_XLEN` width, exclusive-ORs that value with the left source `SrcL`, and publishes the complete 64-bit result through `RegDst`.
+
+`XORI` is a 32-bit form, so a successful execution advances `TPC` by `4` bytes. It has no memory effect and raises no arithmetic exception.
+
+Design point: the immediate form has no `SrcR` field, no `SrcRType` selector and no `shamt` shift, so there is nothing to transform or shift before the operation. All 4096 immediate encodings are usable values, and the mnemonic cannot be given a right-source modifier it does not have.
 
 <!-- PTO-READER-BLOCK: scalar-xori-mechanism role=mechanism -->
-## How the result is formed
+## Immediate extension, then exclusive OR
 
-Execution snapshots the encoded inputs, then performs bitwise exclusive OR under the complete XLEN value result rules, and only afterward performs the destination effects.
+The `simm12` field is signed. It holds a value from `-2048` through `2047`, and execution sign-extends those 12 bits to 64 bits before the operation, so a negative immediate contributes 1s in every bit above bit 10.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+The operation itself is a full-width exclusive OR of `SrcL` with the extended immediate, truncated to 64 bits.
+
+Design point: because the immediate is sign-extended, `-1` supplies an all-ones operand for all 64 bits, so `xori a0, -1, ->a0` complements `a0`. The largest positive immediate `2047` reaches only bit 10, so it can never change bits 63 through 11 of the source.
 
 <!-- PTO-READER-BLOCK: scalar-xori-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Encoded operands
 
-- The 5-bit `RegDst` field selects the Reg5 scalar result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar value through Reg5.
-- The signed 12-bit `simm12` field carries the signed 12-bit immediate.
+- `RegDst` is a 5-bit field at instruction bits `7..11`: codes `1..23` write that absolute GPR, code `0` and codes `24..29` discard, code `30` pushes the U queue and code `31` pushes the T queue.
+- `SrcL` is a 5-bit field at bits `15..19`: codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4` and `28..31` read `U#1..U#4`.
+- `simm12` is a signed 12-bit field at bits `20..31`.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Source code `0` reads the architectural zero register, and a T/U source is read without consuming the queue entry. An immediate encoded as zero supplies numeric zero, so `xori a0, 0, ->a1` copies `a0`.
 
 <!-- PTO-READER-BLOCK: scalar-xori-effects role=effects -->
-## Effects and ordering
+## Destination and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is read before the destination is written, and the published value is computed from that pre-instruction value.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+Design point: `xori a0, 255, ->a0` therefore publishes the exclusive OR of the old `a0` with `255`, not of the newly written value with `255`. Source and destination may name the same register without changing the result.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+After a successful execution `TPC` advances by `4` bytes. No memory location, reservation, descriptor, numeric flag, trap, block, privilege or control-flow state changes.
 
 <!-- PTO-READER-BLOCK: scalar-xori-constraints role=constraints -->
-## Legality and fault boundary
+## Legality and the fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every `SrcL` and `RegDst` code is assigned, and every signed 12-bit immediate from `-2048` through `2047` is legal, so `XORI` has no reserved field value. Bitwise exclusive OR is defined for every source and immediate bit pattern, so no arithmetic exception can be raised.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Before any effect the form is decoded, its encoded fields are checked, and a selected T/U source must hold a valid queue entry. A pattern owned by no form, or an unavailable `T#1..T#4` or `U#1..U#4` entry, raises `Fault_IllegalInstruction` before the destination is written and before `TPC` advances.
+
+Design point: `XORI` has no memory operand, so a rejected `XORI` leaves the register file and `TPC` untouched: the operand-availability check runs before the destination write.
 
 <!-- PTO-READER-BLOCK: scalar-xori-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `XORI` example, `SrcL=0xc` and `simm12=0xa` produce `0x6`.
+With `SrcL=0x0000000000000000` and `simm=-1` the extended immediate is `0xffffffffffffffff`, so the published value is `0xffffffffffffffff`.
+
+With `SrcL=0x00000000000000ff` and `simm=240` the extended immediate is `0x00000000000000f0` and the published value is `0x000000000000000f`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

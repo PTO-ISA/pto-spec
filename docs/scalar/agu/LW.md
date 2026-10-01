@@ -17,48 +17,59 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-lw-purpose role=purpose -->
-## What LW does
+## What `LW` does
 
-`LW` is a standalone `32`-bit AGU instruction that forms a register-offset address and loads one aligned little-endian `4`-byte value.
+`LW` loads one `4`-byte little-endian word from a base register plus a transformed and shifted register offset, then sign-extends the loaded `32` bits to `PTO_XLEN` before they reach `RegDst`. Its canonical assembly is `lw [SrcL, SrcR<{.sw,.uw}><<<shamt>], ->{t, u, Rd}`.
+
+Design point: `LW` and `LWU` share one addressing operation and differ only in extension. The bytes `FF FF FF FF` publish `0xFFFFFFFFFFFFFFFF` through `LW` and `0x00000000FFFFFFFF` through `LWU`, so the mnemonic decides what bits `63`:`32` of the destination hold.
 
 <!-- PTO-READER-BLOCK: scalar-lw-mechanism role=mechanism -->
-## Address and memory mechanism
+## How `LW` forms the address and completes the access
 
-`LW` transforms `SrcR` according to `SrcRType`, shifts the transformed value left by the encoded `shamt`, and adds it modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+`SrcL` is read as the base. `SrcR` is transformed by `SrcRType` — `0` keeps the complete `64`-bit value, `1` sign-extends the low `32` bits, `2` zero-extends them — and the result is shifted left by the encoded `shamt`. Base and offset are added modulo `2^PTO_XLEN`.
 
-After complete preflight, the instruction performs one little-endian `4`-byte load and sign-extends the loaded `4`-byte value to `PTO_XLEN` for destination publication.
+That sum is used by one little-endian `4`-byte load; there is no base writeback and no second destination. The result is sign-extended and written through `RegDst` only if the load reported no fault.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+Design point: the transformation runs before the shift, so a negative word index keeps its sign through the scaling. `SrcRType=1` with `SrcR` = `0xFFFFFFFE` and `shamt=3` gives the offset `-16`. Reversing the steps would scale the zero-extended value.
 
 <!-- PTO-READER-BLOCK: scalar-lw-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and where the value goes
 
-- `SrcL` supplies the base; `SrcR` supplies the offset; `SrcRType` supplies the offset transformation. Every encoded Reg5 source among `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- All `SrcRType` values `0..3` and all `shamt` values `0..31` are assigned; transformation precedes the encoded shift.
+- `SrcL` and `SrcR` are `5`-bit Reg5 sources. Codes `0`..`23` name absolute GPRs, `24`..`27` name `T#1`..`T#4`, and `28`..`31` name `U#1`..`U#4`. Reading a `T` or `U` slot neither consumes nor reorders it, and code `0` supplies the constant zero GPR.
+- `SrcRType` is assigned for `0`, `1`, and `2`; raw `3` is reserved. `shamt` is assigned for all `32` values `0`..`31`, and encoded zero leaves the transformed offset unscaled.
+- `RegDst` is a `5`-bit destination: codes `1`..`23` write absolute GPRs, code `30` pushes the `U` queue, code `31` pushes the `T` queue, and codes `0` and `24`..`29` discard the loaded value.
+
+Design point: `shamt` occupies the same five encoding bits that `SB`, `SW`, and `SD` use for their `SrcD` store-data field. `LW` can scale an index by any power of two from `1` to `2^31`; a register-offset store must use the fixed scale of its mnemonic.
 
 <!-- PTO-READER-BLOCK: scalar-lw-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+Both sources are read before any memory or destination effect, so a destination that aliases the base still uses the pre-instruction value: `lw [1, 2<<<1], ->1` uses the old `1` as its base.
 
-A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+Successful execution performs one relaxed `4`-byte load and records one load event. No memory byte changes and reservation state is preserved. `TPC` then advances by `4` bytes, the length of this encoding.
+
+Design point: codes `30` and `31` publish by pushing a queue entry through the same gated write as a GPR destination. A faulting `LW` therefore pushes nothing and leaves the queue contents and validity flags untouched.
 
 <!-- PTO-READER-BLOCK: scalar-lw-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `4`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+Dispatch rejects the instruction with `Fault_IllegalInstruction` before any effect when the fixed encoding bits do not match, when `SrcRType` holds the reserved value `3`, or when a selected `T`/`U` source slot is unavailable because nothing has been pushed into it.
 
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+The preflight tests the low `2` bits of the effective address, and a nonzero value raises `Fault_DataAlignment` before translation and before the permission test. An aligned address that fails a permission or bounded-memory test raises `Fault_DataPage` at the original address; PTO v0 translation is the identity function, so there is no separate translation fault.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+A fault records no load event, writes no destination, and leaves `TPC` on the faulting instruction. Recovery reissues the whole operation: every source read, the address arithmetic, the preflight, the load, and the publication.
+
+Design point: the alignment test precedes the permission test, so an address that is both misaligned and out of region reports `Fault_DataAlignment`; only an aligned address reaches `Fault_DataPage`.
 
 <!-- PTO-READER-BLOCK: scalar-lw-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With base `0x100`, unchanged offset source `2`, and `shamt=1`, the offset is `4` and base plus offset is `0x104`. The memory access uses `0x104`. If aligned and permitted, the instruction loads `4` bytes from that address.
+- Take `lw [2, 3<.sw><<<3], ->4` with GPR2 = `0x2000` and GPR3 = `0xFFFFFFFE`.
+- `SrcRType=1` sign-extends the low `32` bits, so the offset source contributes `0xFFFFFFFFFFFFFFFE`, which is `-2`.
+- `shamt=3` shifts that value left by `3`, giving `-16`; the effective address is `0x2000` minus `16`, which is `0x1FF0`.
+- `0x1FF0` is `4`-byte aligned, so the preflight passes. The instruction reads the `4` bytes at `0x1FF0` through `0x1FF3`, sign-extends them into GPR4, and advances `TPC` by `4` bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

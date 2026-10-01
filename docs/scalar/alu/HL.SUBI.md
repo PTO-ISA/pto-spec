@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-subi-purpose role=purpose -->
 ## What HL.SUBI does
 
-`HL.SUBI` is a 48-bit scalar ALU instruction. It performs subtraction under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+`HL.SUBI` is a 48-bit scalar ALU instruction that subtracts a zero-extended 24-bit immediate from `SrcL` modulo `2^PTO_XLEN` and publishes the result through one Reg5 destination.
+
+The immediate is unsigned. Every `uimm24` value is subtracted as a positive quantity in the range `0` through `16777215`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-subi-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then performs subtraction under the complete XLEN value result rules, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractResult_HL_SUBI`, which builds `right = ZeroExtend{PTO_XLEN}(immediate)` and returns `ScalarBinary(ScalarBinary_SUB, left, right)`. Dispatch selects the same path with `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_SUB, ScalarField_uimm24, FALSE)`.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+hl.subi SrcL, uimm, ->{t, u, Rd}
+```
+
+Design point: the arithmetic and logical immediate spellings of this family differ in exactly this extension rule. `HL.SUBI` zero-extends its 24-bit field while `HL.ORI` and `HL.XORI` sign-extend theirs, so the same 24 encoded bits mean `16777215` under one mnemonic and `-1` under another.
 
 <!-- PTO-READER-BLOCK: scalar-hl-subi-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 scalar result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar value through Reg5.
-- The unsigned 24-bit `uimm24` field carries the unsigned split 24-bit immediate.
+- `RegDst`, instruction slice `[23 +: 5]`, receives the XLEN result or discards it.
+- `SrcL`, instruction slice `[31 +: 5]`, supplies the value the immediate is subtracted from.
+- `uimm24`, instruction slices `[36 +: 12]` and `[4 +: 12]`, supplies value bits `11:0` and `23:12`.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+`SrcL` uses the common Reg5 map: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4` without consuming an entry. An encoded zero reads architectural GPR zero.
+
+Design point: the two 12-bit pieces of the immediate sit at instruction bits `[47:36]` and `[15:4]`. They are not adjacent, and neither piece alone is the immediate; the decoder has to reassemble the 24-bit value before extending it.
 
 <!-- PTO-READER-BLOCK: scalar-hl-subi-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is snapshotted before the destination effect, so `hl.subi a0, 1, ->a0` decrements the pre-instruction `a0` and same-queue read-then-push cases publish the value read before the push.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The result is published through `RegDst`, and `TPC` then advances by `6` bytes. `HL.SUBI` reads and writes no memory and leaves numeric-status, reservation, descriptor, Tile, bundle, privilege and control-flow state unchanged; only the destination-selected queue push can change a temporary queue.
 
 <!-- PTO-READER-BLOCK: scalar-hl-subi-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+All `32` `SrcL` codes and all `32` `RegDst` codes are assigned, and every unsigned 24-bit immediate from `0` through `16777215` is legal, so only an unavailable temporary source can fail the operand checks. Fixed encoding bits must match the canonical 48-bit form.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise a mismatching encoding raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before the destination write. A subtraction that underflows wraps and raises nothing.
+
+Design point: because the field is unsigned, there is no negative-immediate spelling. Subtracting one and subtracting `16777215` are different encodings of the same field, and one instruction can only subtract a value from `0` through `16777215`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-subi-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.SUBI` example, `SrcL=7` and `uimm24=3` produce `4`.
+With `SrcL = 3` and `uimm24 = 5`, the difference is `-2`, so `RegDst` receives `0xFFFFFFFFFFFFFFFE`. With `SrcL = 3` and `uimm24 = 16777215`, the difference is `-16777212` and `RegDst` receives `0xFFFFFFFFFF000004`. With `uimm24 = 0` the published value is `SrcL` unchanged.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

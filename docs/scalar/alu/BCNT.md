@@ -19,48 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-bcnt-purpose role=purpose -->
 ## What BCNT does
 
-`BCNT` is a 32-bit scalar ALU instruction. It counts one-bits in the independently selected wrapping bit field; its current instruction contract defines the result publication path and any additional state effect.
+`BCNT` selects a bit field inside one Reg5 source, counts how many of its bits are set, and publishes that count as an XLEN word through a Reg5 destination.
+
+Design point: `BCNT` takes its field from two immediate fields instead of from a mask register. That keeps the operation to three encoded operands and makes the selected field a property of the instruction text rather than of run-time state.
 
 <!-- PTO-READER-BLOCK: scalar-bcnt-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then counts one-bits in the independently selected wrapping bit field, and only afterward performs the destination effects.
+- `imms` is the field start bit `M`, from `0` through `63`.
+- `imml` encodes the field width `N` minus one, so raw values `0` through `63` select widths `1` through `64`.
 
-- `imml` and `imms` independently select field width and starting bit; wrapping is part of the selected-field mechanism.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+The instruction extracts the `N`-bit field beginning at bit `M` and counts the set bits in it. The published value is the count, so an all-zero field publishes `0` and an all-ones field publishes `N`.
+
+Design point: `imml` stores `N - 1` rather than `N` so that `N=64`, the complete register, still fits in six bits. Encoded zero therefore selects a one-bit field, not an empty or omitted field.
+
+Design point: the field wraps. When `M + N` exceeds `64`, the field continues from bit `0`; the implementation rotates the source right by `M` and then reads the low `N` bits. A consequence a programmer can rely on is that `N=64` selects the whole register for every `M`, so `bcnt a0, 0, 64, ->a1` and `bcnt a0, 63, 64, ->a1` publish the same count.
+
+Design point: the width is a 6-bit immediate, so the selected field can never exceed `64` bits and the count can never exceed `64`. No saturation rule is needed, and no overflow can occur.
 
 <!-- PTO-READER-BLOCK: scalar-bcnt-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar input through Reg5.
-- The 6-bit `imml` field encodes the selected field width as `N-1`.
-- The 6-bit `imms` field encodes selected-field starting bit `M`.
+- `SrcL` is a Reg5 source: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`. Reading a temporary source does not consume it.
+- `imml` and `imms` are encoded fields, not registers, so they name no storage.
+- `RegDst` publishes the count: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero of `SrcL` reads the architectural zero GPR, whose every bit field counts to `0`. Encoded zero of `imml` selects a `1`-bit field and encoded zero of `imms` starts it at bit `0`, so `bcnt zero, 0, 1, ->a1` publishes `0` with no source read that can change the answer.
 
 <!-- PTO-READER-BLOCK: scalar-bcnt-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is read before the destination is written, so a destination that aliases the source does not change the counted value.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The count is published or discarded, and then `TPC` advances by `4` bytes. `BCNT` accesses no memory and leaves reservation, descriptor, numeric-status, trap, bundle, privilege, predicate and control-flow state unchanged apart from the one `T` or `U` push selected by `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-bcnt-constraints role=constraints -->
 ## Legality and fault boundary
 
-Field selection may wrap from bit 63 to bit 0; the generated defaults and legality tables below give the exact width and starting-position encodings.
+Every encoded value is assigned: all `32` `SrcL` codes, all `32` `RegDst` codes, and every `imml` and `imms` value. There is no reserved field width and no reserved start bit.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An undecodable form raises `Fault_IllegalInstruction` at `PC`; an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`; a fixed-bit mismatch or an unavailable selected T/U source raises `Fault_IllegalInstruction`. Each precedes the destination effect and the `TPC` advance.
+
+Design point: counting bits produces no exceptional value, so `BCNT` raises no arithmetic, memory, alignment or permission fault. Its fault boundary is entirely encoding and source availability.
 
 <!-- PTO-READER-BLOCK: scalar-bcnt-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `BCNT` example, the four-bit selected field `1011` contains three set bits, so the result is `3`.
+With `SrcL=1`, `M=60` and `N=8`, the selected field is bits `60..63` followed by bits `0..3`; it contains the set bit `0`, so `bcnt a0, 60, 8, ->a1` publishes `1`. With `SrcL=18446744073709551615`, `M=0` and `N=64`, every selected bit is set and the published count is `64`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

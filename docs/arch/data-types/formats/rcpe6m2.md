@@ -15,42 +15,58 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-format-rcpe6m2-purpose role=purpose-scope -->
 ## Purpose and scope
 
-RCPE6M2 is a source-only derived PTO numeric type that reinterprets the E6M2 raw code space through exact reciprocals. This page helps a reader connect the shared carrier, reciprocal value rule, and classification; the ASL owner remains the exact definition.
+`RCPE6M2` is an assigned PTO numeric type that reinterprets the `E6M2` code space as exact reciprocals, and this unit owns its descriptor, exact finite value, decomposition availability, classification, and canonical NaN.
+
+It is a source-only type: the raw eight-bit code is unchanged, and only the numeric interpretation of that code differs from `E6M2`.
 
 <!-- PTO-READER-BLOCK: arch-format-rcpe6m2-concepts role=concepts-state -->
 ## Carrier and fields
 
-The descriptor uses an `8`-bit carrier, an `8`-bit logical lane, and `1` lane per carrier. It retains E6M2's six-bit exponent, two-bit fraction, bias `48`, and unsigned field layout so that both types interpret the same raw code.
+The descriptor uses a `8`-bit carrier, a `8`-bit logical lane, and `1` lane per carrier.
 
-The descriptor records no zero, signed zero, subnormal, infinity, or signaling NaN encoding, and code `0xff` remains the quiet-NaN code.
+It keeps the `E6M2` shape: `6` exponent bit(s) in `7:2`, `2` fraction bit(s) in `1:0`, exponent bias `48`, no sign bit, and `required_low_zero_bits` and `required_high_zero_bits` both `0`.
+
+Design point: the descriptor repeats the `E6M2` field widths rather than referencing them, so a reader can see from one record that both types consume exactly the same raw code.
 
 <!-- PTO-READER-BLOCK: arch-format-rcpe6m2-rules role=rules-interactions -->
-## Reciprocal value and classification
+## Decomposition and classification
 
-For codes `0x00` through `0xfe`, `RCPE6M2FiniteValue` returns the exact mathematical reciprocal of `E6M2FiniteValue` for the same raw code. Every such code is classified as a positive normal value, while `0xff` is classified as quiet NaN.
+`RCPE6M2FiniteValue` returns `1.0 / E6M2FiniteValue(value)` for a code that is not `0xff`, and `RCPE6M2FiniteDecomposition` always reports a decomposition unavailable.
 
-A general reciprocal has an exact rational value rather than the integer-significand binary form used by ordinary finite decomposition. `RCPE6M2FiniteDecomposition` therefore reports decomposition unavailable, and reference conversion consumes the exact reciprocal value directly.
+`ClassifyRCPE6M2` returns quiet NaN for `0xff` and the positive normal class for every other code, so no code is a zero, subnormal, infinity, or signaling NaN.
+
+The decomposition is unavailable for every code, including finite ones, because a reciprocal of a general significand is an exact rational rather than an integer-significand binary value.
+
+Design point: the unavailable decomposition is not a statement about special codes; `RCPE6M2FiniteDecomposition` returns `FALSE` for every code, finite ones included, so a consumer takes the value from `RCPE6M2FiniteValue` instead.
 
 <!-- PTO-READER-BLOCK: arch-format-rcpe6m2-boundaries role=boundaries -->
-## Boundaries and conversion boundary
+## Boundaries and exact encodings
 
-`0xff` is both the sole quiet-NaN code and the canonical NaN returned by the owner. All other raw codes are finite reciprocal inputs.
+Design point: reporting unavailable rather than rounding the reciprocal to the nearest binary value keeps the exact rational available to the conversion that consumes it, so a later rounding happens once at the destination.
 
-When TCVT consumes RCPE6M2, it performs one final destination rounding and does not first materialize an intermediate rounded floating value.
+`0x00` denotes the exact reciprocal of `2^-48`, the smallest `E6M2` value, so it is `2^48`; `0xfe` denotes the reciprocal of `1.5 * 2^15`.
+
+Design point: the format declares no zero encoding at all, so a consumer that needs zero must reach it through a conversion rather than through a raw code in this type.
+
+Read this page in the order of the functions: take the field positions from the descriptor, call `ClassifyRCPE6M2` when the value class matters, and take the value from `RCPE6M2FiniteValue`, because this type never reports an available decomposition.
 
 <!-- PTO-READER-BLOCK: arch-format-rcpe6m2-example role=example-usage -->
 ## Non-normative reading example
 
-This example illustrates how to read the owner functions; it does not add a conversion rule.
+This example illustrates the current ASL owner and does not replace the normative operation.
 
-For example, E6M2 code `0x00` denotes `2^-48`, so RCPE6M2 code `0x00` denotes its exact reciprocal `2^48`; the raw code is unchanged and only its numeric interpretation differs.
+`0xff` is both the sole quiet-NaN code and the canonical NaN returned by `RCPE6M2CanonicalNaN`, and `RCPE6M2FiniteValue` asserts that its argument is not `0xff`.
+
+Reference conversion consumes the exact reciprocal value directly instead of a decomposition, so a consumer must not require an available decomposition before using this type.
 
 <!-- PTO-READER-BLOCK: arch-format-rcpe6m2-related role=related-owners-navigation -->
 ## Related owners
 
-- [E6M2](./e6m2.md) defines the raw code values whose reciprocals RCPE6M2 denotes.
 - [Numeric format descriptor](../format-descriptor.md) defines the common metadata record.
+
 - [Numeric formats](../numeric-formats.md) dispatches Tile data types to their format-specific helpers.
+
+- [E6M2](e6m2.md) defines the raw code values whose reciprocals this type denotes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

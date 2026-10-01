@@ -575,9 +575,15 @@ class MnemonicExplanationTests(unittest.TestCase):
             architecture_count = sum(
                 unit["surface"] == "arch" for unit in traceability["units"]
             )
+            model_count = sum(
+                unit["surface"] != "arch" and unit["mnemonic"] is None
+                and unit["classification"][:1] == ["model"]
+                for unit in traceability["units"]
+            )
+            self.assertGreater(model_count, 0)
             self.assertEqual(
                 len(targets),
-                traceability["summary"]["mnemonic_count"] + architecture_count,
+                traceability["summary"]["mnemonic_count"] + architecture_count + model_count,
             )
             self.assertEqual(
                 sum(unit["surface"] == "arch" for unit in targets),

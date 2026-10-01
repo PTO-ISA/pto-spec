@@ -19,48 +19,60 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tadd-purpose role=purpose -->
 ## What TADD does
 
-`TADD` is a selector-encoded Tile operation executed by `VEC`. It adds corresponding valid elements from the ordered left and right Local sources; its current instruction contract owns the exact bundle form and publication boundary.
+`TADD` adds two Local Tiles element by element and writes the sums into a newly allocated Local destination Tile. It is the reference member of the VEC elementwise arithmetic family: `TSUB`, `TMUL`, `TMAX`, and `TMIN` reuse the same bundle schema and differ only in the element operation.
+
+Design point: `TADD` has no standalone opcode. It is selected by `BSTART.VEC` Mode 0 Function 0 (TEPL selector `0x000`), and the surrounding `B.DIM`, `B.DATR`, and `B.IOT` commands supply shape, attributes, and operands. Keeping the operation identity in one selector and the configuration in shared bundle commands lets every elementwise operation share one decoder and one operand model.
 
 <!-- PTO-READER-BLOCK: tile-tadd-mechanism role=mechanism -->
 ## Element and Tile mechanism
 
-After all descriptor and operand checks succeed, the owning ASL handler adds corresponding valid elements from the ordered left and right Local sources. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+Execution has two phases. Preflight checks the complete bundle first: the selected `DataType`, the layout, both source descriptors, source definedness, the destination capacity, and the operand schema. Only after every check passes does `ExecuteTileBinary` read the sources and compute `left + right` for each coordinate in the valid rectangle `ValidRow x ValidCol`.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+Design point: both sources are read completely before the first destination element is written. This makes aliasing well defined: if a source and the destination name the same Tile, the result is computed from the old source values, exactly as if the destination were a separate Tile.
+
+The addition itself is defined by the numeric profile for the selected `DataType`, including rounding, overflow, and special values. Integer addition wraps; floating-point addition uses the profile's fixed default rounding. `TADD` rejects any nondefault `RMode`, `Sat`, or `CMode`, so there is no per-instruction rounding or saturation control.
 
 <!-- PTO-READER-BLOCK: tile-tadd-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` has the exact contract role **new Local destination**.
-- `source0` has the exact contract role **ordered left Local source**.
-- `source1` has the exact contract role **ordered right Local source**.
+- `source0` is the left addend. It is an existing, allocated Local Tile.
+- `source1` is the right addend. It must have the same physical rows, physical columns, valid rows, valid columns, and layout as `source0`.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected operation `DataType`, and its shape matches the sources.
 
-Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
-Every source coordinate read by the operation must be defined before execution reaches destination publication.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+Without an ExecutionMask carrier, all three Tiles are bound by one terminating `B.IOT`, and all share one `PE_MASK`. Each selected PE executes independently on its own fragment.
+
+Design point: `PE_MASK=0000` is a strict no-op. Once the `B.IOT` encoding itself is well formed, zero participation skips schema, allocation, and descriptor checks, and no descriptor, allocation, payload, or numeric status is produced. A bundle can therefore be encoded with no participating PE without being rejected by the operation's schema checks.
+
+Design point: a source may be stored with a different same-width, non-packed backing type, for example `U16` data read as `FP16`. The bits are then validated and interpreted as the selected `DataType`. This allows a reinterpreting read without a separate copy, while a width mismatch or a packed four-bit carrier remains illegal.
 
 <!-- PTO-READER-BLOCK: tile-tadd-effects role=effects -->
 ## Publication, definedness, and padding
 
-Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+The destination becomes visible as a single unit. Its descriptor, the valid-region sums, the padding outside the valid rectangle, and the definedness of every element are published together. No observer can see a partially written `TADD` result.
 
-Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero` writes zero; `Max` and `Min` write the largest and smallest finite value of the `DataType`; `Null` leaves those elements undefined.
 
-The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+Design point: omitting `B.DATR` selects `Null`, while an explicit code `00` selects `Zero`. Omission and encoded zero are architecturally distinct: by default the elements outside the valid rectangle are left undefined, so a program that later needs those physical elements to hold defined values must request `Zero`, `Max`, or `Min` explicitly.
+
+`TADD` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value instead of the sum.
 
 <!-- PTO-READER-BLOCK: tile-tadd-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The accepted data-type set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
+The accepted data-type set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Packed four-bit formats are excluded. The floating element arithmetic that `TADD` reaches, `ScalarFPBinaryProfile`, is defined only for `FP64`, `FP32`, `FP16`, and `BF16`, so the ASL gives no element result for `TF32`, `HF32`, `E4M3`, or `E5M2`.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32` so that `TADD` can operate directly on Tiles already arranged for the CUBE engine, without a layout conversion. All operands must use the same layout; `CUBE_N8`, Shared Tiles, and mixed layouts are illegal.
+
+Every source element in the valid rectangle (every active one, when an ExecutionMask is in force) must be defined. A missing `LB0`, a malformed `B.IOT`, any `B.IOR` or `B.IOS`, a shape or width mismatch, an undefined source element, an unsupported `DataType`, or an invalid destination capacity raises `Fault_TileLegality` before any destination effect. The generated legality and exception sections below are authoritative.
 
 <!-- PTO-READER-BLOCK: tile-tadd-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `TADD` example, valid rows `[1, 2]` and `[3, 4]` produce `[4, 6]`.
+For a small `TADD` example, a left source row `[1, 2]` and a right source row `[3, 4]` produce the destination row `[4, 6]`.
+
+A partial Tile with an 8 x 64 `FP32` physical shape, a 7 x 60 valid region, and `Zero` padding is written in macro form as `TADD <Row=8, Col=64, ValidRow=7, ValidCol=60, FP32, Zero>, T#1, T#2, ->T<2KB>`. The 7 x 60 sums are computed, and the other 92 physical elements of the 8 x 64 destination (all of row 7, plus columns 60 to 63 of rows 0 to 6) are defined as zero.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

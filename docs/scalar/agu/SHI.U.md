@@ -17,48 +17,59 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-shi-u-purpose role=purpose -->
-## What SHI.U does
+## What `SHI.U` does
 
-`SHI.U` is a standalone `32`-bit AGU instruction that forms a signed-immediate address and stores one aligned little-endian `2`-byte value.
+`SHI.U` writes the low `2` bytes of `SrcL` to the address formed from the `SrcR` base plus a signed immediate. Its canonical assembly is `shi.u SrcL, [SrcR, simm]`.
+
+Design point: `SrcR` is the base and `SrcL` supplies the stored halfword, and the `.u` marker keeps the immediate unscaled. The `12`-bit field therefore counts bytes and can name an odd address directly.
 
 <!-- PTO-READER-BLOCK: scalar-shi-u-mechanism role=mechanism -->
-## Address and memory mechanism
+## How `SHI.U` forms the address and completes the store
 
-`SHI.U` sign-extends `simm12` from its complete `-2048..2047` domain, uses it without scaling, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcR` base.
+`simm12` is sign-extended from `12` bits to `PTO_XLEN`, giving a displacement in `-2048`..`2047` bytes, and added to `SrcR` modulo `2^PTO_XLEN`. No scale is applied to the intermediate value.
 
-After complete preflight, the instruction performs one little-endian `2`-byte store from its snapshotted store-data source.
+The value written to that address is the low `2` bytes of `SrcL`, least-significant byte at the lowest address. The form has no destination field: nothing in the encoding selects a register or queue slot to write, so a store never publishes a result and never updates a base.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+Design point: the displacement range is `-2048` through `2047` bytes, which is smaller than the scaled `SHI` range of `-4096` through `4094`. The two forms trade reach against byte granularity for the same encoded field.
 
 <!-- PTO-READER-BLOCK: scalar-shi-u-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and what the store consumes
 
-- `SrcR` supplies the base; `simm12` supplies the signed displacement. Every encoded Reg5 source among `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcL` supplies store data.
-- `simm12` assigns every signed value from `-2048` through `2047`; encoded zero is a zero displacement, not omission.
+- `SrcL` supplies the store data and `SrcR` supplies the base. Both are `5`-bit Reg5 sources: codes `0`..`23` name absolute GPRs, `24`..`27` name `T#1`..`T#4`, and `28`..`31` name `U#1`..`U#4`. Reading a `T` or `U` slot neither consumes nor reorders it, and code `0` supplies the constant zero GPR.
+- `simm12` is a signed `12`-bit field, so all `4096` encodings are values, and encoded zero supplies a zero displacement rather than denoting omission. The encodable byte displacements are `-2048` through `2047` bytes.
+- The form has no destination field: nothing in the encoding selects a register or queue slot to write, so a store never publishes a result and never updates a base.
+
+Design point: only the low `16` bits of `SrcL` reach memory. The store is defined for every `SrcL` code, including code `0`, which stores a zero halfword.
 
 <!-- PTO-READER-BLOCK: scalar-shi-u-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+`SrcL` and `SrcR` are read before the memory effect, so the stored bytes are the pre-instruction value of `SrcL`.
 
-A successful attempt records one relaxed store event, invalidates an overlapping reservation but preserves a nonoverlapping one, and advances `TPC` by `4` bytes.
+Successful execution performs one relaxed `2`-byte store and records one store event. A store whose byte range overlaps the `64`-byte reservation granule that contains a valid reservation invalidates that reservation; a store outside the granule leaves it valid. `TPC` then advances by `4` bytes.
+
+Design point: the base register is read for the address and never written back, so a store loop must advance its pointer with a separate instruction. Nothing in the encoding can express an update.
 
 <!-- PTO-READER-BLOCK: scalar-shi-u-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `2`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+Dispatch rejects the instruction with `Fault_IllegalInstruction` before any effect when the fixed bits do not match, or when a selected `T`/`U` source is unavailable because nothing has been pushed into it.
 
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+The preflight tests the low bit of the effective address, because the access is `2` bytes wide. An unaligned value raises `Fault_DataAlignment` before translation; an even address that fails a permission or bounded-memory test raises `Fault_DataPage` at the original address.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+A fault writes no memory byte, records no store event, and leaves `TPC` on the faulting instruction. Recovery reissues the whole operation: every source read, the address arithmetic, the preflight, and the store.
+
+Design point: parity is the whole alignment rule for a `2`-byte store, so an odd base is acceptable here as long as the byte displacement is odd too. That freedom disappears in `SHI`, whose even displacements make an odd base permanently misaligned.
 
 <!-- PTO-READER-BLOCK: scalar-shi-u-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With the base set to `0x100` and the signed immediate set to `2`, the displacement is `2` and base plus displacement is `0x102`. The memory access uses `0x102`. If aligned and permitted, the instruction stores `2` bytes at that address.
+- Take `shi.u 5, [3, 1]` with GPR3 = `0x2000` and GPR5 = `0x0000000000001234`.
+- The displacement is `1` byte, so the effective address is `0x2001`.
+- `0x2001` is odd, so the preflight raises `Fault_DataAlignment`: no byte is written, no event is recorded, and `TPC` stays on the instruction.
+- With `simm12=2` the address would be `0x2002`; the `2` bytes `34 12` are written there and `TPC` advances by `4` bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

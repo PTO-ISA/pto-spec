@@ -19,48 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-misub-purpose role=purpose -->
 ## HL.MISUB 的作用
 
-`HL.MISUB` 是一条 48 位标量 ALU 指令。它把右源乘以无符号立即数，再将乘积从左源中减去左源，结果按 `2^PTO_XLEN` 回绕；当前指令契约定义结果发布路径以及任何额外状态效果。
+`HL.MISUB` 是一条 48 位标量 ALU 指令，它通过一个 Reg5 目标发布按模 `2^PTO_XLEN` 回绕的 `SrcL - SrcR * uimm19`。
+
+`SrcL` 是被减数，缩放后的乘积是减数，因此立即数决定从 `SrcL` 中减去多少份 `SrcR`。
 
 <!-- PTO-READER-BLOCK: scalar-hl-misub-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后把右源乘以无符号立即数，再将乘积从左源中减去左源，结果按 `2^PTO_XLEN` 回绕，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractResult_HL_MISUB`，它返回 `ScalarMultiplyImmediateAdd(left, right, immediate, TRUE)`。减法标志置位时，该辅助函数先计算 `MultiplyWord(right, ZeroExtend{PTO_XLEN}(immediate))`，再返回 `left - product`。分派路径共用 `ScalarOperation_HL_MIADD, ScalarOperation_HL_MISUB` 分支，并把 `operation == ScalarOperation_HL_MISUB` 作为该标志传入。
 
-- 立即数宽度与扩展规则由下方编码字段确定；除非生成契约给出其他零值含义，编码零提供数值零。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+hl.misub SrcL, SrcR, uimm, ->{t, u, Rd}
+```
+
+设计要点：减法是一个完整宽度的步骤，因此大于 `SrcL` 的乘积会跨越整个字借位。`SrcL = 0`、`SrcR = 1`、`uimm19 = 1` 发布 `0xFFFFFFFFFFFFFFFF`，而不是被截断的零。
 
 <!-- PTO-READER-BLOCK: scalar-hl-misub-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择左乘数或加法操作数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择右乘数。
-- `uimm19` 是 19 位无符号字段，携带无符号 19 位乘数。
+- `RegDst`，指令切片 `[23 +: 5]`，接收 XLEN 结果，或丢弃它。
+- `SrcL`，指令切片 `[31 +: 5]`，提供被减数。
+- `SrcR`，指令切片 `[36 +: 5]`，提供被乘数。
+- `uimm19`，指令切片 `[41 +: 7]` 与 `[4 +: 12]`，提供数值位 `6:0` 与 `18:7`。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+每个 Reg5 编码都是通用映射中的源编码或目标编码：`0..23` 命名绝对 GPR，`24..27` 命名 `T#1..T#4`，`28..31` 作为源命名 `U#1..U#4`。读取临时项会把它留在原处，两次读取都先于目标写入。
+
+设计要点：目标与源共用这个 5 位字段，但两种角色并不对称：作为源时编码 `24..29` 是可读的临时表项，而作为目标时同样的编码会丢弃结果。`->u` 与 `->t` 分别是编码 `30` 与 `31`。
 
 <!-- PTO-READER-BLOCK: scalar-hl-misub-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+两个源都在目标效果之前取快照，因此与 `SrcL` 或 `SrcR` 同名的目标收到的是由执行前寄存器算出的值。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 6 字节。
-
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+结果通过 `RegDst` 发布，随后 `TPC` 前进 `6` 字节。不读写内存，数值状态、保留、描述符、指令束、特权与控制流状态都不改变；只有目标选择的队列推送能改动临时队列。
 
 <!-- PTO-READER-BLOCK: scalar-hl-misub-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+每个 `32` 编码的源编码、每个 `32` 编码的目标编码以及 `0` 到 `524287` 之间的每个 `uimm19` 取值都有定义，因此只有临时源不可用会使操作数检查失败。固定编码位必须与规范的 48 位形式匹配。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+适用性只在系统块终止请求挂起时失败，并在 `TPC` 触发 `Fault_BundleControl`。否则，不匹配的编码在进入指令束主体之前于 `PC` 触发 `Fault_IllegalInstruction`，所选 `T` 或 `U` 源不可用时则在目标写入之前于 `PC` 触发 `Fault_IllegalInstruction`。
+
+设计要点：下溢的减法不是异常，因此该指令无法上报负的中间结果。`HL.MISUB` 发布回绕后的字，差值的符号只能从它的最高位读出。
 
 <!-- PTO-READER-BLOCK: scalar-hl-misub-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `HL.MISUB` 示例说明：左源 `20`、右源 `3` 与 `uimm19=4` 产生结果 `8`。
+取 `SrcL = 20`、`SrcR = 3`、`uimm19 = 4` 时乘积为 `12`，`RegDst` 收到 `8`。取 `SrcL = 0`、`SrcR = 1`、`uimm19 = 1` 时减法回绕，`RegDst` 收到 `0xFFFFFFFFFFFFFFFF`。取 `uimm19 = 0` 时乘积为 `0`，`RegDst` 收到 `SrcL`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

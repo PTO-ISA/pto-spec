@@ -19,48 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-miadd-purpose role=purpose -->
 ## HL.MIADD 的作用
 
-`HL.MIADD` 是一条 48 位标量 ALU 指令。它把右源乘以无符号立即数，再将乘积加到左源，结果按 `2^PTO_XLEN` 回绕；当前指令契约定义结果发布路径以及任何额外状态效果。
+`HL.MIADD` 是一条 48 位标量 ALU 指令，它通过一个 Reg5 目标发布按模 `2^PTO_XLEN` 回绕的 `SrcL + SrcR * uimm19`。
+
+19 位字段是乘数。它被零扩展到 XLEN 并与 `SrcR` 相乘；乘积再以完整 XLEN 宽度加到 `SrcL` 上。
 
 <!-- PTO-READER-BLOCK: scalar-hl-miadd-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后把右源乘以无符号立即数，再将乘积加到左源，结果按 `2^PTO_XLEN` 回绕，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractResult_HL_MIADD`，它返回 `ScalarMultiplyImmediateAdd(left, right, immediate, FALSE)`。该辅助函数计算 `MultiplyWord(right, ZeroExtend{PTO_XLEN}(immediate))`，再把 `left` 加到乘积上。分派路径从 `ScalarOperation_HL_MIADD, ScalarOperation_HL_MISUB` 分支以 `ScalarDecodedBits19(instruction, form, ScalarField_uimm19)` 到达它。
 
-- 立即数宽度与扩展规则由下方编码字段确定；除非生成契约给出其他零值含义，编码零提供数值零。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+hl.miadd SrcL, SrcR, uimm, ->{t, u, Rd}
+```
+
+设计要点：立即数缩放的是 `SrcR`，它本身不是独立操作数。因此令 `uimm19 = 0` 会使乘积为零，指令原样发布 `SrcL`，这是唯一不依赖 `SrcR` 的立即数取值。
 
 <!-- PTO-READER-BLOCK: scalar-hl-miadd-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择左乘数或加法操作数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择右乘数。
-- `uimm19` 是 19 位无符号字段，携带无符号 19 位乘数。
+- `RegDst`，指令切片 `[23 +: 5]`，接收 XLEN 结果，或丢弃它。
+- `SrcL`，指令切片 `[31 +: 5]`，提供加法操作数。
+- `SrcR`，指令切片 `[36 +: 5]`，提供被乘数。
+- `uimm19`，指令切片 `[41 +: 7]` 与 `[4 +: 12]`，提供数值位 `6:0` 与 `18:7`。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+三个 Reg5 编码都使用通用映射：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4` 且不消耗表项。`SrcL` 或 `SrcR` 的编码零读取体系结构零 GPR。
+
+设计要点：两段立即数并不相邻。数值位 `6:0` 位于 48 位字的高端，数值位 `18:7` 位于目标字段之下，因此译码器必须先安放两段才能做乘法。
 
 <!-- PTO-READER-BLOCK: scalar-hl-miadd-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+`SrcL` 与 `SrcR` 在目标效果之前取快照，因此 `hl.miadd a0, a1, 3, ->a0` 仍以执行前的 `a0` 作为加法操作数。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 6 字节。
-
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+唯一结果通过 `RegDst` 发布，随后 `TPC` 前进 `6` 字节。`HL.MIADD` 没有内存效果，也没有数值状态效果；除 `RegDst` 与 `TPC` 之外，只有目标编码选择的 `T` 或 `U` 推送能改变状态。
 
 <!-- PTO-READER-BLOCK: scalar-hl-miadd-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+每个 `32` 编码的源编码与每个 `32` 编码的目标编码都有定义，`0` 到 `524287` 之间的每个 `uimm19` 取值也都合法，因此操作数检查只可能因临时源不可用而失败。固定编码位必须与规范的 48 位形式匹配。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+适用性只在系统块终止请求挂起时失败，并在 `TPC` 触发 `Fault_BundleControl`。否则，不匹配的编码在进入指令束主体之前于 `PC` 触发 `Fault_IllegalInstruction`，所选 `T` 或 `U` 源不可用时则在目标写入之前于 `PC` 触发 `Fault_IllegalInstruction`。乘法与加法在任何数值上都不触发算术异常。
+
+设计要点：乘数是无符号的，上限为 `524287`，因此乘法永远不会被要求取负比例。负贡献来自 `SrcR` 本身：`MultiplyWord` 作用于 XLEN 位模式，因此补码负被乘数会产生回绕后的乘积。
 
 <!-- PTO-READER-BLOCK: scalar-hl-miadd-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `HL.MIADD` 示例说明：左源 `20`、右源 `3` 与 `uimm19=4` 产生结果 `32`。
+取 `SrcL = 20`、`SrcR = 3`、`uimm19 = 4` 时乘积为 `12`，`RegDst` 收到 `32`。取 `SrcR = 3`、`uimm19 = 0` 时乘积为 `0`，因此无论 `SrcR` 是什么，`RegDst` 都收到 `SrcL`。取 `SrcL = 0`、`SrcR = 0xFFFFFFFFFFFFFFFF`、`uimm19 = 2` 时乘积为 `0xFFFFFFFFFFFFFFFE`，它就是发布值。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

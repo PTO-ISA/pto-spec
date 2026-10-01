@@ -19,42 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-lw-add-purpose role=purpose -->
 ## LW.ADD 的作用
 
-`LW.ADD` 对一个字原子执行模加、存储结果，并发布先前的内存值。
+`LW.ADD` 把一个操作数加到一个 4 字节内存字上，把和的低 32 位写回同一个字，并发布指令执行前该处的字。地址来自 `SrcL`，操作数来自 `SrcR`，发布值来自执行前的内存内容。
 
 <!-- PTO-READER-BLOCK: scalar-lw-add-mechanism role=mechanism -->
-## 原子机制
+## 如何累加进一个 32 位字
 
-ASL DOC 契约选择 `ScalarHandler_AtomicReadModifyWrite`，访问宽度为 `4` 字节。
+该形式绑定 `ScalarHandler_AtomicReadModifyWrite`、访问宽度 `4` 和原子操作 `Atomic_ADD`。读取预检与写入预检都覆盖同样的 4 字节；随后该字被加载、截断到低 32 位、与 `SrcR` 的低 32 位相加，32 位结果被写回。同时记录一个 `write_performed` 为 true 的原子事件。
 
-只有读取与写入访问都完成预检后，同一位置的原子读改写才能提交。
+运算在 32 位上取模。存放 `0x7fffffff` 的字加上 `SrcR = 0x0000000000000001` 后存储 `0x80000000`；存放 `0xffffffff` 的字加上同一操作数后存储 `0x0`。
+
+设计要点：截断发生在加法之前，第 31 位的进位被丢弃，因此 `SrcR` 的高 32 位绝不会影响存储的字。访问宽度 `4` 同时决定对齐规则：地址必须是 4 的倍数。
+
+设计要点：发布值遵循与存储字节不同的规则。`RegDst` 接收的是符号扩展到 `XLEN` 的旧字，因此存放 `0xffffffff` 的字会发布 `0xffffffffffffffff`，而存储写入的是 `0x0`；把目的地按有符号 64 位值读取即可还原被替换的字。
 
 <!-- PTO-READER-BLOCK: scalar-lw-add-inputs-outputs role=inputs-outputs -->
-## 输入与结果
+## 字段与操作数角色
 
-`SrcL` 承载 Reg5 原子地址源；`SrcR` 承载 Reg5 原子操作数源；`RegDst` 承载 Reg5 旧值目的地；`aq` 承载获取排序位；`rl` 承载释放排序位；`far` 承载平坦地址路由提示。
+`RegDst` 是位于指令位 `7..11` 的 `5` 位字段，`SrcL` 位于位 `15..19`，`SrcR` 位于位 `20..24`，`rl` 位于位 `25`，`aq` 位于位 `26`，`far` 位于位 `27`。
 
-`aq` 与 `rl` 选择宽松、获取、释放或获取-释放排序；`far` 是配置档路由提示，在参考配置档中不改变架构结果。
+`SrcL` 提供地址，`SrcR` 提供操作数；两者都接受全部 Reg5 源选择子，被选中的 T 或 U 项必须有效且不会被消耗。`RegDst` 接收发布值：编码 `0` 与编码 `24` 到 `29` 丢弃它，编码 `30` 压入 U，编码 `31` 压入 T，编码 `1` 到 `23` 写入所指的 GPR。
+
+设计要点：`aq` 与 `rl` 为原子事件选择宽松、获取、释放或获取-释放排序，而 `far` 被译码并传给 `AtomicAddress`，后者原样返回地址，因此在参考模型中 `lw.add` 与 `lw.add.f` 访问同一个字。
 
 <!-- PTO-READER-BLOCK: scalar-lw-add-effects role=effects -->
-## 效果与排序
+## 效果
 
-只有读改写提交后才会发布旧内存值；任何目的地效果之前都会先捕获源别名。
+一次完成的 `LW.ADD` 写入 4 字节、记录一个 `write_performed` 为 true 的原子事件、发布符号扩展后的执行前字，并让 `TPC` 前进 4 字节。若写入的 4 字节与保留的 64 字节粒度重叠，本地保留会被清除。
 
-完成的写入会使重叠的本地 64 字节缓存行保留失效，保留不重叠的保留，并让 `TPC` 前进 `4` 字节。
+设计要点：只有目标字发生变化。即使加法在第 31 位产生进位，同一个 8 字节双字中相邻的 4 字节仍保持原内容，因为存储宽度固定为 4 字节。
 
 <!-- PTO-READER-BLOCK: scalar-lw-add-constraints role=constraints -->
-## 合法性与精确故障
+## 合法性与故障
 
-有效地址必须按 `4` 字节对齐。对齐、地址翻译和权限检查都先于架构效果。
+地址必须是 4 的倍数。读取预检对未对齐的地址报告 `Fault_DataAlignment`，对超出允许区域的地址报告 `Fault_DataPage`，两者都在加载之前、都以原始地址报告；写入预检重复这些检查，并且两个翻译地址必须相同。译码失败或所选 T 或 U 源不可用会在任何效果之前引发 `Fault_IllegalInstruction`。发生故障时不发布任何值、内存不变、不记录原子事件、保留不变，`TPC` 也不变。
 
-预检失败时不会发布目的值、内存事件、保留更新或退役效果；保存的原始 `TPC` 支持完整重新执行。
+设计要点：两次预检都在加载之前完成，而参考模型的读写判定来自同一个边界检查，因此被拒绝的访问不会触及该字，且报告的故障携带的是程序提供的地址，而不是任何翻译后的形式。
 
 <!-- PTO-READER-BLOCK: scalar-lw-add-example role=example -->
 ## 非规范示例
 
 本示例只展示一种已接受写法；下方生成的契约仍是权威来源。
 
-初次阅读可从 `lw.add [SrcL], SrcR, ->Rd` 开始，再只改变上文说明的排序或路由修饰位。
+当 `a0` 存放 4 字节对齐的地址时，`lw.add [a0], a1, ->a2` 把 `a1` 的低 32 位加到 `[a0]` 处的字上。若该字存放 `0x7fffffff` 且 `a1` 存放 `0x0000000000000001`，该位置得到 `0x80000000`，`a2` 得到 `0x000000007fffffff`。
+
+若该字存放 `0xffffffff` 且 `a1` 存放 `0x0000000000000001`，该位置得到 `0x0`，`a2` 得到 `0xffffffffffffffff`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

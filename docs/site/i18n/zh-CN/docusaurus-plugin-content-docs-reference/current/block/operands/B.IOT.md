@@ -19,34 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-b-iot-purpose role=purpose -->
 ## B.IOT 的作用
 
-`B.IOT` 是一条 32 位 Block header 命令，用来为所选 Block 操作记录有序的 Local Tile 源和目的位置。它修改待处理 Block 元数据，不会立即执行 Tile body 操作。
+`B.IOT` 是一条 32 位块头部命令，把 Local Tile 绑定到当前块的操作。一条 `B.IOT` 可指定最多两个源 Tile、一个可选的新目标、一种 PE 参与模式，以及结束绑定序列的 `L` 标志。Local Tile 是每个 PE 私有的 Tile 寄存器。
+
+`B.IOT` 本身不执行任何操作。它向块的 Tile 绑定追加一条记录，所选操作在块提交时读取完整集合。参见 [Tile 绑定](../model/operands/tile-bindings.md)。
 
 <!-- PTO-READER-BLOCK: block-b-iot-mechanism role=mechanism -->
-## 位置与机制
+## 放置与机制
 
-该命令位于有效 header 中，并且在第一条 body 指令之前。它的有效顺序和数量由完成后的操作 schema 检查，而不是由本命令单独推断。
+参与的 `B.IOT` 必须出现在活动块的头部，位于块启动之后、第一条主体指令之前。记录按编码顺序保存。`L = 1` 的记录关闭序列，之后参与的 `B.IOT` 会引发 `Fault_BundleControl`。
 
-公共 PE-mode 解码器只形成一次 4-PE mask。零 mask 是严格 no-op；有效的 Local 源保持只读，有效目的位置则在完整验证后等待原子发布。
+处理程序先检查 SizeCode 编码，然后检查零参与，然后检查放置，然后检查 PE 掩码，最后追加记录。TGPR2T 块还要求在任何参与的 `B.IOT` 之前已有它的两条 `B.IOR` 记录。每个编码源都保存为相对选择器；下一条非修饰符头部命令会关闭随后 `B.SUBVIEW` 或 `B.ASSEMBLE` 可修饰的范围组。
+
+设计要点：源在之后解析，而不是由 `B.IOT` 解析。`ResolveBundleRelativeTileSources` 在阶段 2 准备期间、分配任何目标之前，把每个选择器映射到物理 Tile。因此即使同一块中较早的绑定在同一手中有目标，所有源命名的仍是操作之前相对队列中的 Tile。
 
 <!-- PTO-READER-BLOCK: block-b-iot-inputs role=inputs-outputs -->
-## 操作数与 header 角色
+## 字段与编码值
 
-- `SrcTile0` 选择第一个有序 Local 源；其确切分配域仍以下方生成契约为准。
-- `SrcTile1` 选择第二个有序 Local 源；其确切分配域仍以下方生成契约为准。
-- `L` 终止有效 Local 绑定序列；其确切分配域仍以下方生成契约为准。
-- `SizeCode` 选择只读源或目的容量；其确切分配域仍以下方生成契约为准。
-- `PEMode` 编码参与 PE 模式；其确切分配域仍以下方生成契约为准。
-- `DstTile` 选择 Local 目的 hand；其确切分配域仍以下方生成契约为准。
+- `SrcTile0`（位 25:20）与 `SrcTile1`（位 31:26）是 6 位相对选择器。位 5:4 选择手 T、U、M 或 N，位 3:0 选择距离。距离 0 是该手最新发布的 Tile，写作 `T#1`；距离 1 写作 `T#2`。因此编码零指 `T#1`，而不是缺失的源。
+- `L`（位 19）在本记录之后结束绑定序列。它不结束任何源的生命周期。
+- `SizeCode`（位 18:15）在仅源形式中为 0。目标形式使用 1 至 10，表示每个参与 PE 128 B、256 B、512 B、1 KiB、2 KiB、4 KiB、8 KiB、16 KiB、32 KiB 或 64 KiB。
+- `PEMode`（位 11:9）展开为四 PE 掩码：`000` 无，`001` PE0，`010` PE1，`011` PE2，`100` PE3，`101` PE0 与 PE1，`110` PE0 至 PE2，`111` 全部四个。
+- `DstTile`（位 8:7）选择目标手：0 为 T，1 为 U，2 为 M，3 为 N。
+
+设计要点：目标只指定手，从不指定寄存器。分配器选择物理 Tile，发布使其成为该手的 `#1`。容量按每个被选中的 PE 分别计入，因此 Core 范围的总量是每 PE 大小乘以参与 PE 的数量。
 
 <!-- PTO-READER-BLOCK: block-b-iot-effects role=effects -->
-## 待处理状态与完成
+## 挂起状态与发布
 
-被接受的 header 命令只改变自己的待处理记录或 carrier。除非本所有者明确指出即时 header 状态更新，否则架构 Tile、Shared、GPR、内存和完成影响都推迟到完整 Block。
+被接受的 `B.IOT` 只改变挂起的绑定记录。它不读取 Tile，也不分配任何内容。
+
+块的操作成功后，块在没有 `B.ASSEMBLE` 修饰符的情况下分配的每个目标，都发布为其手的新 `#1`。该手中较旧的存活 Tile 各向更旧的方向移动一个距离（朝向 `#16`），并保留其描述符与载荷。源 Tile 保持已分配，因为 `B.IOT` 从不释放源。
+
+设计要点：只要 SizeCode 编码有效，`PEMode = 000` 就是严格无操作。在头部内，它记录零参与并打开零模式范围组；随后跳过放置、流、模式、分配与描述符检查，并推进 `TPC`。不会追加记录。
 
 <!-- PTO-READER-BLOCK: block-b-iot-constraints role=constraints -->
 ## 合法性与故障边界
 
-契约区分原始解码失败、header 流错误和 Tile 合法性失败。零 mask 绑定是严格 no-op，会跳过后续 schema、重复、分配、描述符和内存检查。
+- 仅源形式的 `SizeCode` 非零，或目标形式的 `SizeCode` 为 0 或 11 至 15 时，引发 `Fault_IllegalInstruction`。
+- 参与的 `B.IOT` 位于活动头部之外，或出现在序列关闭之后，引发 `Fault_BundleControl`。
+- 掩码与同一块中较早 Tile 绑定不同时引发 `Fault_TileLegality`。Tile 绑定表容纳 16 条记录；向已满的表追加也引发 `Fault_TileLegality`。
+- 相对源未指向存活的已分配 Tile 时，在阶段 2 准备期间、源读取、分配或操作效果之前引发 `Fault_TileLegality`。
+
+操作模式决定它接受多少条记录以及各记录承担的角色。不匹配时，在提交时、任何目标效果之前引发该操作的合法性故障。
 
 <!-- PTO-READER-BLOCK: block-b-iot-example role=example -->
 ## 非规范示例
@@ -54,10 +68,10 @@ The current instruction contract is owned by the ASL source linked above.
 以下为非规范示例，仅用于说明当前所有者，不替代其定义。
 
 ```asm
-B.IOT SrcTile0, mask=PE_MASK, <last>, ->DstTile<SizeCode>
+B.IOT T#1, T#2, mask=1111, <last>, ->T<2KB>
 ```
 
-假设当前存在兼容的有效 header，并且之前没有冲突的 `B.IOT` 命令。把 `B.IOT SrcTile0, mask=PE_MASK, <last>, ->DstTile<SizeCode>` 放在下一个 header 槽，会记录该命令的待处理字段；它本身不会执行最终的 body 操作。
+这条记录把最新的 T Tile 绑定为左源，把次新的 T Tile 绑定为右源，四个 PE 全部参与，并在手 T 中为每个 PE 分配 2 KiB 目标。其字段为 `SrcTile0 = 0`、`SrcTile1 = 1`、`L = 1`、`SizeCode = 5`、`PEMode = 111`、`DstTile = 0`，编码为 `0x040ace13`。Core 范围的分配量为 4 x 2 KiB = 8 KiB。操作成功后，目标成为 `T#1`，原 `T#1` 成为 `T#2`，原 `T#2` 成为 `T#3`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

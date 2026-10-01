@@ -19,48 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-madd-purpose role=purpose -->
 ## MADD 的作用
 
-`MADD` 是一条 32 位标量 ALU 指令。它在完整 XLEN 值算术下把已快照加数加入乘积；当前指令契约定义结果发布路径以及任何额外状态效果。
+`MADD` 是一条 32 位编码的标量 ALU 指令，通过一个 Reg5 目标发布按模 `2^PTO_XLEN` 回绕的 `SrcD + SrcL * SrcR`。它是乘加组里单目标的形式：不产生乘积高半部。
+
+`L32` 编码类固定的是指令长度，而不是操作数宽度。两个乘数都按完整 XLEN 宽度使用，这一点与只读取低字的 `MADDW` 不同。
 
 <!-- PTO-READER-BLOCK: scalar-madd-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后在完整 XLEN 值算术下把已快照加数加入乘积，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractResult_MADD`，它返回 `ScalarMultiplyAdd(addend, left, right)`。该辅助函数就是 `addend + MultiplyWord(left, right)`，而 `MultiplyWord` 按 `right` 的每个置位位置累加左移后的 `left`，并在每一步保留 `PTO_XLEN` 位以内的部分和。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+madd SrcL, SrcR, SrcD, ->{t, u, Rd}
+```
+
+设计要点：乘积从不超出 XLEN 宽度。`SrcL = 2^63` 与 `SrcR = 2` 会产生 `2^64` 的部分和，该位被丢弃，因此发布值是 `SrcD`；而 `HL.MADD` 这类宽形式会把这一位保留在高半部。
 
 <!-- PTO-READER-BLOCK: scalar-madd-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcD` 是 5 位字段，通过 Reg5 选择加数。
-- `SrcL` 是 5 位字段，通过 Reg5 选择左乘数或加法操作数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择右乘数。
+- `RegDst`，指令切片 `[7 +: 5]`，接收 XLEN 结果。
+- `SrcD`，指令切片 `[27 +: 5]`，提供加数。
+- `SrcL`，指令切片 `[15 +: 5]`，提供左乘数。
+- `SrcR`，指令切片 `[20 +: 5]`，提供右乘数。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+三个源都使用通用 Reg5 映射：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`。读取是非消耗的，编码零读取的是体系结构零 GPR，而不是未定义值。
+
+设计要点：目标映射并不是源映射的镜像。编码 `1..23` 写 GPR，编码 `30` 与 `31` 分别推入 `U` 与 `T`，而编码 `0` 与 `24..29` 丢弃结果。因此目标编码 `24` 虽然指向可读的 `T#1` 源，却不写入任何东西。
 
 <!-- PTO-READER-BLOCK: scalar-madd-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+三个源在目标效果之前取快照，因此 `madd a0, a1, a0, ->a0` 把执行前的 `a0` 同时用作加数和目标。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
-
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+结果被发布或被丢弃之后，`TPC` 前进 `4` 字节。`MADD` 不访问内存，不改变保留、描述符、数值状态、指令束、特权与控制流状态；唯一可能的队列变化是由 `RegDst` 选择的 `T` 或 `U` 推送。
 
 <!-- PTO-READER-BLOCK: scalar-madd-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+每个 `32` 编码的源编码都有定义，每个 `32` 编码的目标编码都被接受，因此操作数合法性只可能因临时源不可用而失败。固定编码位必须与规范的 32 位形式匹配；没有操作数值被保留。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+适用性只在系统块终止请求挂起时失败，并在 `TPC` 触发 `Fault_BundleControl`。否则，不匹配的编码在进入指令束主体之前于 `PC` 触发 `Fault_IllegalInstruction`，所选 `T` 或 `U` 源不可用时则在目标写入之前于 `PC` 触发 `Fault_IllegalInstruction`。乘法与加法在任何数值上都不触发算术异常。
+
+设计要点：乘法、加法与回绕都是没有标志输出的固定宽度步骤，因此该指令不存在会上报溢出的操作数对。需要被丢弃的高位的调用方必须改用更宽的形式。
 
 <!-- PTO-READER-BLOCK: scalar-madd-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `MADD` 示例说明：乘数 `6` 与 `7` 加上加数 `1`，产生单一结果 `43`。
+取 `SrcL = 6`、`SrcR = 7`、`SrcD = 1` 时 `MultiplyWord` 返回 `42`，加数再加 `1`，`RegDst` 收到 `43`。取 `SrcL = 2^63`、`SrcR = 2`、`SrcD = 0` 时乘积为 `2^64`，按模 `2^PTO_XLEN` 回绕为 `0`，因此 `RegDst` 收到 `0`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

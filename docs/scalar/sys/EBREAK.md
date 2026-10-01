@@ -19,42 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ebreak-purpose role=purpose -->
 ## What EBREAK does
 
-`EBREAK` raises the architectural software-breakpoint trap with its encoded immediate cause.
+`EBREAK` raises a software breakpoint. Unlike a branch or a call, it publishes a fault instead of a continuation: the attempt ends with trap number 50 and the faulting instruction address, and the encoded immediate becomes the trap cause.
 
 <!-- PTO-READER-BLOCK: scalar-ebreak-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_SoftwareBreakpoint`. Placement and encoded legality are checked before sources or system state can change.
+`InstructionContractHandler_EBREAK` selects `ScalarHandler_SoftwareBreakpoint` (`asl/scalar/sys/EBREAK.asl:11`). The dispatcher decodes the 4-bit `imm4` field, zero-extends it to 5 bits, and calls `SoftwareBreakpoint` (`asl/scalar/model/dispatch/sys.asl:78`). That helper raises `Fault_SoftwareBreakpoint` with the current instruction address and the zero-extended cause (`asl/scalar/model/sys/semantics.asl:91`).
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+The fault class fixes the trap identity: `Fault_SoftwareBreakpoint` maps to trap number 50 (`asl/arch/memory-model/fault-precision.asl:80`). `InstructionContractBreakpointPublishesTrapCause_EBREAK` returns `TRUE` (`asl/scalar/sys/EBREAK.asl:36`), so the immediate is published as the cause rather than kept in a separate breakpoint register.
+
+The instruction is applicable only in the body of an active SYS block (`asl/scalar/model/sys/semantics.asl:322`).
 
 <!-- PTO-READER-BLOCK: scalar-ebreak-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`imm4` carries the 4-bit immediate value.
+`imm4` is a 4-bit immediate at instruction bits 27:24 (`asl/scalar/sys/EBREAK.asl:1`). All sixteen of its values are assigned, and `InstructionContractBreakpointImmediateWidth_EBREAK` reports the width as 4 (`asl/scalar/sys/EBREAK.asl:30`).
 
-Encoded zero is an assigned field value, never an omitted operand.
+The instruction writes no register. Its outputs are architectural trap state: the trap cause and the faulting address. Encoded zero in `imm4` is a real zero cause, not an omitted operand.
 
 <!-- PTO-READER-BLOCK: scalar-ebreak-effects role=effects -->
 ## Architectural effects
 
-The operation raises `Fault_SoftwareBreakpoint`, publishes trap number `50`, and zero-extends the 4-bit immediate into the 24-bit cause field.
+The attempt saves the pre-instruction context for the target ring, stores the zero-extended immediate as the trap cause, stores the faulting instruction address as the trap argument, and writes the trap vector entry into `TPC` (`asl/arch/memory-model/fault-precision.asl:63`). The new `TPC` therefore comes from the trap vector rather than from an increment of the faulting address.
 
-Trap entry atomically saves the pre-instruction context and faulting-PC argument before vector transfer.
+Design point: the immediate is zero-extended twice on the way to the trap bank, first from 4 bits to 5 bits at the dispatcher and then into the 24-bit cause field (`asl/arch/memory-model/fault-precision.asl:70`). Every encoding stays distinguishable as a cause, and no parallel breakpoint-tag state is created.
+
+`EBREAK` has no memory effect: no ordinary scalar memory access is performed, and no data memory changes.
 
 <!-- PTO-READER-BLOCK: scalar-ebreak-constraints role=constraints -->
 ## Placement and rejection
 
-All `16` immediate encodings are assigned, including zero as a real cause value.
+The placement check comes first. Outside an active SYS block body the attempt raises `Fault_BundleControl` and never reaches the breakpoint handler, so the breakpoint does not update the trap bank.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+Once the handler runs, the breakpoint fault is the instruction's effect rather than a rejection. There is no reserved immediate value to reject, because all sixteen are assigned, and the operation is not ring-restricted, so a properly placed `EBREAK` always produces trap number 50.
 
 <!-- PTO-READER-BLOCK: scalar-ebreak-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `ebreak imm` and trace its encoded fields through preflight before following the selected system effect.
+Execute `ebreak 0` in a SYS block body. The attempt passes the placement check, and the trap bank then holds trap number 50 with cause 0 and the faulting instruction address as the argument, while `TPC` points at the trap vector entry. Executing `ebreak 15` behaves the same way but leaves cause 15 in the trap bank.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

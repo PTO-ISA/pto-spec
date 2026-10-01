@@ -19,48 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-clz-purpose role=purpose -->
 ## What CLZ does
 
-`CLZ` is a 32-bit scalar ALU instruction. It counts leading zeroes in the independently selected wrapping bit field; its current instruction contract defines the result publication path and any additional state effect.
+`CLZ` counts the zero bits that precede the first one bit at the most significant end of a selected field of one Reg5 source, and publishes that count as an XLEN value.
+
+Design point: the counted domain is chosen by two independent encoded fields instead of being the whole register. `imms` gives the first bit of the field and `imml` gives its width, so one instruction can count a byte, a word, or all sixty-four bits.
 
 <!-- PTO-READER-BLOCK: scalar-clz-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then counts leading zeroes in the independently selected wrapping bit field, and only afterward performs the destination effects.
+The field is extracted by rotating the source right by the start bit and taking the low `N` bits, so field bit zero is source bit `M`, and a field may run past bit `63` and continue from bit `0`. The count then walks down from the field's own most significant bit and stops at the first one bit. A field that is entirely zero returns `N`.
 
-- `imml` and `imms` independently select field width and starting bit; wrapping is part of the selected-field mechanism.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: `imml` stores `N` minus one, so encoded zero selects a one-bit field rather than a zero-width field. Every six-bit value then names a usable count domain from `1` through `64`, and the widest field is the encoded value `63`.
+
+Design point: the published count saturates at the selected width, not at `PTO_XLEN`. Counting an all-zero eight-bit field publishes `8`, so the answer is always expressed in the coordinate system of the field the caller chose.
 
 <!-- PTO-READER-BLOCK: scalar-clz-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar input through Reg5.
-- The 6-bit `imml` field encodes the selected field width as `N-1`.
-- The 6-bit `imms` field encodes selected-field starting bit `M`.
+- `SrcL` is a Reg5 source: codes `0..23` select absolute GPRs, `24..27` select `T#1..T#4`, and `28..31` select `U#1..U#4`, read without consuming a queue entry.
+- `imms` is the start bit `M`, directly encoded from `0` through `63`.
+- `imml` is the width `N` minus one, encoded from `0` through `63`, giving `N` from `1` through `64`.
+- `RegDst` publishes through the common destination map: codes `0` and `24..29` discard, `1..23` write a GPR, `30` pushes `U`, and `31` pushes `T`.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero has a defined meaning in all four fields, so `clz zero, 0, 1, ->zero` is a complete instruction: it counts the single bit zero of the architectural zero GPR and discards the result.
 
 <!-- PTO-READER-BLOCK: scalar-clz-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is snapshotted before any destination effect, so a GPR destination that aliases the source, or a destination push into the same queue, observes the pre-instruction source value. The count is then published as one XLEN value.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+After publication, `TPC` advances by `4` bytes. No memory, reservation, descriptor, numeric-status, block, privilege, branch-target or other control state changes; a relative source is non-consuming, and only a `T` or `U` destination push changes a temporary queue.
 
 <!-- PTO-READER-BLOCK: scalar-clz-constraints role=constraints -->
 ## Legality and fault boundary
 
-Field selection may wrap from bit 63 to bit 0; the generated defaults and legality tables below give the exact width and starting-position encodings.
+Every `imml` and `imms` value is assigned, so all widths from `1` through `64` and all start bits from `0` through `63` are legal, and no field value is reserved. The fixed encoding bits must match the canonical form.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before the destination effect and before `TPC` advances. `CLZ` raises no arithmetic, memory, alignment, permission or control-flow exception for any operand.
+
+Design point: the discard destinations are legal and do not skip the source check. A discard form whose source is available reads and preflights `SrcL`, then changes no architectural state except `TPC`, which is what makes it usable as a defined placeholder.
 
 <!-- PTO-READER-BLOCK: scalar-clz-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `CLZ` example, the four-bit selected field `0010` has two leading zeroes, so the result is `2`.
+With `a0` holding `256`, `clz a0, 0, 64, ->a1` counts the whole register and pushes `55`, because bit `8` is the highest set bit. With `T#1` holding `2^63`, `clz t#1, 62, 4, ->a0` selects the four bits `62`, `63`, `0`, `1` and scans them in the order `1`, `0`, `63`, `62`, so it counts the two zeros at bits `1` and `0` and pushes `2`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

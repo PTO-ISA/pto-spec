@@ -19,39 +19,47 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-c-bstart-purpose role=purpose -->
 ## What C.BSTART does
 
-`C.BSTART` opens an active Block descriptor; the body supplies the attributes and bindings required before completion.
+`C.BSTART` is the 16-bit start command for a Standard block with a PC-relative target. It has two forms: `C.BSTART DIRECT, label` and `C.BSTART COND, label`. A block (also called a bundle) is a group of header commands and body instructions that commits as one unit at `BSTOP` or at the next block start.
+
+The command does not jump. It records a candidate target in `BARG`, the bundle argument register, and the jump happens only when the new block commits. The model pages [Bundle start dispatch](../model/dispatch/start.md) and [Begin](../model/lifecycle/begin.md) define the shared start sequence.
 
 <!-- PTO-READER-BLOCK: block-c-bstart-mechanism role=mechanism -->
-## Placement and execution mechanism
+## Encoding and start sequence
 
-`C.BSTART` must appear as the starter of its Block. Later attributes, dimensions, and bindings accumulate in the active descriptor until `BSTOP` or the next accepted `BSTART` completion boundary.
+Both forms are one halfword. The low nibble selects the form: `0x2` is DIRECT and `0x4` is COND. Bits 15:4 hold `simm12`, a signed 12-bit displacement counted in halfwords.
 
-The accepted carrier uses the `C16` encoding class and resolves every displayed field before the command reads bindings or changes state.
+The candidate target is `P + (SignExtend(simm12) << 1)`, where `P` is the address of the `C.BSTART` itself. The reachable range is therefore -4096 to +4094 bytes from `P`.
 
-At completion, the descriptor runs its selected Block operation only after all schema and state preflight succeeds.
+Execution follows the common start order. The target is computed and checked for alignment first. Then any active predecessor block commits. The new Standard block is opened only if that commit selected this `C.BSTART` address as the next PC. Header execution then continues at `P + 2`.
+
+Design point: the displacement is added to `P`, not to the next instruction. Encoded zero is a real zero displacement, so `C.BSTART DIRECT` with `simm12 = 0` names its own address as the target and, at commit, execution returns to this `C.BSTART`.
 
 <!-- PTO-READER-BLOCK: block-c-bstart-inputs role=inputs-outputs -->
-## Carrier, bindings, and inputs
+## Fields and BARG values
 
-- Encoded operands: `simm12` — 12-bit signed bundle target displacement.
-- After an active predecessor commits successfully, this carrier opens one Standard Block whose header runs until `BSTOP` or the next `BSTART` completion boundary.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+- `simm12` is always encoded. It has no omitted form and no default.
+- DIRECT installs `BARG.BPC = P`, `BlockType = STD`, `BPCN =` the computed target, `TYPE = DIRECT`, and `TAKEN = 1`.
+- COND installs the same `BPC`, `BlockType`, and `BPCN`, with `TYPE = COND` and `TAKEN = 0`.
+
+Design point: COND starts with `TAKEN = 0`, so a conditional block that executes no `SETC` condition falls through at commit. A `SETC` condition in the body may set `TAKEN`, and `SETC.TGT` may replace `BPCN`, before the block commits. See [BARG helpers](../model/state/barg.md).
 
 <!-- PTO-READER-BLOCK: block-c-bstart-effects role=effects -->
 ## State effects and ordering
 
-Starting the Block records the selected carrier and leaves operation execution deferred until the completion boundary.
+A successful start clears the previous header state, marks the new block active in its header phase, writes `BARG` and `BPC`, and takes a fresh execution-domain token. `C.BSTART` performs no memory access and writes no GPR.
 
-After complete preflight and computation, every enabled output publishes as the owner-defined atomic group; successful mathematical sources remain available unless the contract explicitly consumes them.
+The candidate target is selected only at `BSTOP` or at the next block start. `BARGSelectsBPCN` is true for DIRECT, and for COND only when `TAKEN` is set; otherwise commit continues at the sequential PC.
+
+Design point: the predecessor commits before the new `BARG` is installed. If the predecessor commit fails, the predecessor stays authoritative and no Standard `BARG` is installed. If the predecessor transfers elsewhere, this `C.BSTART` was on an unselected path and opens nothing.
 
 <!-- PTO-READER-BLOCK: block-c-bstart-constraints role=constraints -->
-## Legality, faults, and atomicity
+## Legality and fault boundary
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+Only the low-nibble values `0x2` and `0x4` belong to `C.BSTART`. Every `simm12` value is assigned.
 
-The current owner reports invalid schema, state, address, or continuation conditions through `Fault_InstructionPC`; no prose on this page creates an additional fault rule.
+An odd computed target raises `Fault_InstructionPC` before the predecessor commits and before any new `BARG` effect. Because the start checks run before predecessor retirement, a rejected `C.BSTART` leaves the active predecessor in place.
 
-Complete schema, binding, readiness, alias, capacity, and allocation preflight precedes source snapshots and every destination publication.
+A final `BPCN` rewritten by `SETC.TGT` is checked again at commit, where an odd selected target raises `Fault_InstructionPC` before block effects become visible.
 
 <!-- PTO-READER-BLOCK: block-c-bstart-example role=example -->
 ## Non-normative worked example
@@ -59,10 +67,10 @@ Complete schema, binding, readiness, alias, capacity, and allocation preflight p
 This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract.
 
 ```asm
-C.BSTART DIRECT, label
+C.BSTART COND, label
 ```
 
-The starter establishes the descriptor first; the following carriers fill its declared schema, and the final completion boundary triggers validation and operation execution.
+Suppose this `C.BSTART COND` sits at `0x1000` and `label` is `0x1040`. The encoded `simm12` is `0x20`, because `0x1000 + (0x20 << 1) = 0x1040`. After the start, `BARG.BPCN` is `0x1040`, `TAKEN` is 0, and header execution continues at `0x1002`. If a `SETC` condition in the body sets `TAKEN`, the commit continues at `0x1040`; otherwise it continues after the block.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

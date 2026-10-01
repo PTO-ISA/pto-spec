@@ -19,45 +19,47 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-zext-h-purpose role=purpose -->
 ## What C.ZEXT.H does
 
-`C.ZEXT.H` is a 16-bit scalar ALU instruction. It zero-extends the low 16 source bits to XLEN; its current instruction contract defines the result publication path and any additional state effect.
+`C.ZEXT.H` selects the low 16 bits of one Reg5 source, zero-fills every result bit above bit `15`, and pushes the XLEN result to `T`.
+
+Design point: this form and `C.ZEXT.B` call the same handler with a different width argument, and their encodings differ only in fixed bits. Changing the selected width from a byte to a halfword therefore changes the opcode, not a width field or a destination field.
 
 <!-- PTO-READER-BLOCK: scalar-c-zext-h-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then zero-extends the low 16 source bits to XLEN, and only afterward performs the destination effects.
+The shared extension helper selects `value[15:0]` and zero-extends it to `PTO_XLEN`. The published value is always in `0..65535`, whatever the discarded upper bits of the source contained.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: the truncation happens before the extension, so the helper never inspects bits above bit `15`. A source whose bit `15` is set is not treated as negative; the published halfword is the unsigned reading of the selected 16 bits.
 
 <!-- PTO-READER-BLOCK: scalar-c-zext-h-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `SrcL` field selects a scalar input through Reg5.
+- `SrcL` is the only encoded operand: a Reg5 source where codes `0..23`, `24..27` and `28..31` select GPRs, `T#1..T#4` and `U#1..U#4` respectively, without consuming a queue entry.
+- The destination is fixed to `T` by the compressed encoding.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero of `SrcL` reads the architectural zero GPR, so a halfword extension of `zero` pushes `0`; there is no way for this instruction to read a constant other than through a register.
 
 <!-- PTO-READER-BLOCK: scalar-c-zext-h-effects role=effects -->
 ## Effects and ordering
 
-Any scalar source is snapshotted before publication, and the completed instruction pushes exactly one result to T.
+The selected source is snapshotted before the destination effect, and the source is not consumed. The push moves the queue toward older indices, so the result becomes `T#1` and the previous `T#4` is discarded.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 2 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+After the push, `TPC` advances by `2` bytes. No GPR is written, and no `U` entry, memory, reservation, descriptor, numeric-status, bundle, privilege, branch-target or other control state changes.
 
 <!-- PTO-READER-BLOCK: scalar-c-zext-h-constraints role=constraints -->
 ## Legality and fault boundary
 
-Materialization, movement, and extension are total at their fixed widths and do not raise arithmetic exceptions. A fixed-bit mismatch or unavailable selected T/U source faults before state effects.
+Every `SrcL` code is assigned, and the fixed encoding bits must match the canonical form; there is no immediate to bound. Extension is total and raises no arithmetic exception.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before the destination effect and before `TPC` advances. An undecodable 16-bit form raises `Fault_IllegalInstruction` at `PC`, and an instruction that is not applicable to the active bundle raises `Fault_BundleControl` at `TPC`.
+
+Design point: because the selected width is fixed by the opcode, the operand checks can reject this instruction only for an unavailable queue source. No source bit pattern makes the extension undecodable or exceptional.
 
 <!-- PTO-READER-BLOCK: scalar-c-zext-h-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `C.ZEXT.H` example, source low 16 bits `0x8000` become positive XLEN value `32768` after zero extension.
+With `a0` holding `0x12345678`, `c.zext.h a0, ->t` pushes `0x5678`, which is `22136`. With `u#1` holding an all-ones value, `c.zext.h u#1, ->t` pushes `65535` and leaves `u#1` readable at index `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -15,23 +15,33 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-gqm-purpose-scope role=purpose-scope -->
 ## 用途与范围
 
-通用队列管理对按地址访问的队列、队列条目以及队列操作返回的状态进行建模。`PTO-STATE-ARCH-GQM` 拥有队列表、条目存储、释放与获取纪元，以及事件观测状态。
+通用队列管理（GQM）提供软件可见的队列，队列条目为 64 位，每个队列由一个 64 位地址标识。程序可以创建队列、压入与弹出条目、暂停或恢复队列，并可在队列操作成功时选择广播事件。`PTO-STATE-ARCH-GQM` 拥有队列表、条目存储、释放与获取纪元，以及事件观测状态。
 
-该所有者定义初始化、暂停与损坏状态、压入与弹出行为以及事件通知。指令解码仍由调用这些辅助函数的指令所有者定义。
+本单元以辅助函数的形式定义队列行为。`HL.QMT`、`HL.QPUSH` 和 `HL.QPOP` 指令译码其操作数，并通过队列管理器效果函数调用这些辅助函数。
 
 <!-- PTO-READER-BLOCK: arch-gqm-concepts-state role=concepts-state -->
 ## 队列状态与结果字
 
 每个有效模型槽记录地址、容量、计数、队头、暂停标志、损坏标志和条目数组。每个条目包含一个 `Word` 值和一个释放纪元。
 
-`GQMResult` 把主值放入位 `12:0`，把两位状态放入位 `63:62`；其他结果位从零开始。状态 `00` 表示成功路径。压入操作在队列暂停或已满时使用 `01`，弹出操作则在队列为空时使用 `01`。状态 `10` 用于队列不存在或已经损坏。
+每个操作都在由 `GQMResult` 构造的结果字中报告结果。主值（例如剩余容量或剩余计数）位于位 `12:0`。两位状态位于位 `63:62`，其余位均为零。
+
+| 状态 | 压入 | 弹出 |
+| --- | --- | --- |
+| `00` | 条目已存入 | 条目已移除 |
+| `01` | 队列暂停或已满 | 队列为空 |
+| `10` | 队列不存在或已损坏 | 队列不存在或已损坏 |
+
+设计要点：压入与弹出辅助函数在结果字中报告不成功的结果，而不引发故障。软件因此可以检查状态位并重试或退避，队列满或空只是普通结果。
 
 <!-- PTO-READER-BLOCK: arch-gqm-rules-interactions role=rules-interactions -->
 ## 压入、弹出与通知
 
-`PushGQMQueueEntry` 拒绝不存在或损坏的队列；对于暂停或已满的队列，它返回剩余容量；否则根据 `at_head` 在队头或队尾插入。非宽松压入会递增 `_GQMReleaseEpoch` 并把该纪元存入条目；宽松压入存入纪元 `0`。
+`PushGQMQueueEntry` 拒绝不存在或损坏的队列；对于暂停或已满的队列，它返回剩余容量；否则根据 `at_head` 在队头或队尾插入。存储是环形的：队头插入把队头后退一个槽位，并回绕到最后一个槽位；队尾插入写入最后一个条目之后的槽位。
 
-`PopGQMQueueEntry` 对不存在或损坏的队列返回零数据和状态 `10`，对空队列返回状态 `01`，否则移除队头条目。非宽松弹出会把条目中非零的释放纪元复制到 `_LastGQMAcquireEpoch`。
+`PopGQMQueueEntry` 对不存在或损坏的队列返回零数据和状态 `10`，对空队列返回状态 `01`。否则它移除队头条目，并返回其值和剩余计数。移除最后一个条目时，队头复位为零。
+
+设计要点：释放纪元与获取纪元把一次弹出与产生该条目的压入联系起来。非宽松压入会递增 `_GQMReleaseEpoch` 并把新值存入条目；宽松压入存入纪元 `0`。非宽松弹出把条目中非零的纪元复制到 `_LastGQMAcquireEpoch`，因此该字段指明最近一次被非宽松弹出消费其条目的非宽松压入。宽松的压入或弹出不留下这种联系。
 
 当成功压入或弹出的 `notify_event` 为真时，`BroadcastGQMEvent` 递增 `_GQMEventEpoch`，并在 `_LastGQMEventAddress` 中记录队列地址。
 
@@ -42,10 +52,14 @@ This page is a generated reference view of the normative ASL unit.
 
 初始化会复用相同地址的现有槽，或者选择第一个空闲槽。可执行配置档必须为其工作负载提供足够的模型槽；槽耗尽会触发断言，而不是定义一个可移植的队列数量失败结果。
 
-<!-- PTO-READER-BLOCK: arch-gqm-example-usage role=example-usage -->
-## 非规范队列流程示例
+设计要点：压入与弹出对被标记为损坏的队列的处理与不存在的队列完全相同：两者都返回状态 `10`，且不改变任何队列状态。用 `HL.QMT` 再次初始化同一地址会清除损坏标志。
 
-对于容量为二的队列，一次成功的队尾压入会把计数从零改为一，并报告剩余一个条目。随后进行非宽松弹出会返回所存值，把计数恢复为零、把队头复位为零，并观测条目的非零释放纪元。
+<!-- PTO-READER-BLOCK: arch-gqm-example-usage role=example-usage -->
+## 非规范队列演示
+
+对于容量为二的队列，一次成功的非宽松队尾压入会把计数从零改为一，并返回状态 `00` 和主值 `1`，即剩余容量。第二次压入填满队列并报告 `0`。第三次压入返回状态 `01` 和主值 `0`，不存入任何内容。
+
+随后的非宽松弹出返回第一个存入的值，报告剩余一个条目，并把该条目的非零释放纪元复制到 `_LastGQMAcquireEpoch`。
 
 这个流程仅用于说明；嵌入的 ASL 仍是状态字段和状态更新顺序的确切来源。
 
@@ -53,8 +67,9 @@ This page is a generated reference view of the normative ASL unit.
 ## 相关所有者
 
 - [执行上下文](execution-context.md)提供 GQM 所依赖的架构上下文。
-- [内存排序](../memory-model/ordering.md)拥有架构排序关系；GQM 的纪元字段不会取代该所有者。
-- [陷阱上下文](../state/trap-context.md)拥有执行上下文的可移植保存与恢复行为。
+- [HL.QMT](../../block/lifecycle/HL.QMT.md)、[HL.QPUSH](../../block/lifecycle/HL.QPUSH.md) 和 [HL.QPOP](../../block/lifecycle/HL.QPOP.md) 是调用这些辅助函数的指令。
+- [内存排序](../memory-model/ordering.md)拥有架构的排序关系；GQM 的纪元字段不能替代该所有者。
+- [陷阱上下文](../state/trap-context.md)拥有执行上下文的可移植保存与恢复。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

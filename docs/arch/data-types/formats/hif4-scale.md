@@ -15,41 +15,60 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-hif4-scale-purpose role=purpose-scope -->
 ## Purpose and scope
 
-A HiF4 Matrix scale is one `32`-bit raw word used with `64` logical HiF4 lanes. This page explains how the base E6M2 field and two levels of exponent-selection bits combine; exact behavior remains in `PTO-CUBE-HIF4-SCALE-001` and its ASL functions.
+A HiF4 Matrix scale is one raw `32`-bit word that supplies a base scale and per-lane exponent increments for `64` logical HiF4 lanes, and this unit owns its field layout, index selection, and finite value rule.
+
+The contract `PTO-CUBE-HIF4-SCALE-001` fixes the word layout, and the ASL functions in this unit implement it.
+
+Design point: the scale word is not a Tile data type of its own, so the descriptor function has no entry for it; one raw scale word instead fixes the increment shared by `64` logical HiF4 lanes.
 
 <!-- PTO-READER-BLOCK: arch-hif4-scale-concepts role=concepts-state -->
-## Scale-word layout
+## Carrier and fields
 
-Bits `7:0` hold one E6M2 base scale, bits `15:8` hold eight E1_8 exponent bits, and bits `31:16` hold sixteen E1_16 exponent bits.
+The word holds one `E6M2` base value in bits `7:0`, eight E1_8 exponent bits in bits `15:8`, and sixteen E1_16 exponent bits in bits `31:16`.
 
-For lane index `q` in `0..63`, `HiF4ScaleExponentIncrement` selects bit `8 + (q DIVRM 8)` and bit `16 + (q DIVRM 4)`, then adds the two selected bits to produce an increment from `0` through `2`.
+For a lane index `q` in `0..63`, `HiF4ScaleExponentIncrement` reads bit `8 + (q DIVRM 8)` and bit `16 + (q DIVRM 4)`, then returns their sum as an increment in `0..2`.
+
+Design point: each E1_8 bit is shared by eight consecutive lanes and each E1_16 bit by four, so the increment is the sum of a coarse and a fine term rather than a per-lane field.
 
 <!-- PTO-READER-BLOCK: arch-hif4-scale-rules role=rules-interactions -->
-## Base value and lane scale
+## Decomposition and classification
 
-E6M2 encodings `0x00` through `0xfe` are finite positive values with bias `48` and two fraction bits. `0xff` is a legal quiet NaN scale.
+`HiF4E6M2ValueClass` forwards to `ClassifyE6M2` and `HiF4E6M2FiniteValue` forwards to `E6M2FiniteValue`, so both functions keep the `E6M2` code meaning unchanged.
 
-For a finite base, `HiF4ScaleFiniteValue` multiplies `HiF4E6M2FiniteValue` by `FP19PowerOfTwo(increment)`, where `increment` is returned by `HiF4ScaleExponentIncrement`. The function requires the base field to classify as `NumericValue_PositiveNormal`.
+`HiF4ScaleFiniteValue` asserts that the base field classifies as `NumericValue_PositiveNormal`, then multiplies the `E6M2` finite value by `FP19PowerOfTwo` of the increment.
+
+`E6M2` codes `0x00` through `0xfe` are finite positive values with bias `48` and two fraction bits, and `0xff` is a legal quiet NaN scale.
+
+Design point: this unit returns no availability flag; the `E6M2` base code `0xff` is excluded by the assertion in `HiF4E6M2FiniteValue`, so a non-finite base is a definedness failure rather than a value a consumer can test.
 
 <!-- PTO-READER-BLOCK: arch-hif4-scale-boundaries role=boundaries -->
-## Boundaries
+## Boundaries and exact encodings
 
-`0x00` denotes `2^-48`; `0xfe` denotes `1.5 * 2^15`; `0xff` is not accepted by `HiF4E6M2FiniteValue` because it is the quiet NaN encoding.
+The base field must be a positive normal value, so a scale word whose `E6M2` field is `0xff` cannot be evaluated as a finite scale; only the selected pair of exponent bits affects a given lane index.
 
-Each E1_8 bit is shared by eight consecutive logical lanes, while each E1_16 bit is shared by four. The selected pair, not the other exponent bits in the word, affects a given `q`.
+Design point: `HiF4ScaleFiniteValue` asserts the base class before the multiplication, so a scale word whose `E6M2` field is not a positive normal value stops at the assertion instead of returning a per-lane scale.
+
+Design point: the `E6M2` base field has no zero code, because the `E6M2` descriptor declares no zero encoding and classification never returns a zero class.
+
+Read this page in the order of the functions: take the field positions from the `PTO-CUBE-HIF4-SCALE-001` contract, call `HiF4E6M2ValueClass` when the base value class matters, and call `HiF4ScaleFiniteValue` only for a base code that classifies as `NumericValue_PositiveNormal`.
 
 <!-- PTO-READER-BLOCK: arch-hif4-scale-example role=example-usage -->
 ## Non-normative reading example
 
-This example illustrates indexing and does not add a scale rule.
+This example illustrates the current ASL owner and does not replace the normative operation.
 
-With base `0x00`, E1_8 bit `8` set, and E1_16 bit `16` set, lane `q = 0` gets increment `2` and scale `2^-46`; lane `q = 8` selects different exponent bits and gets increment `0` in the AVS fixture.
+`0x00` denotes `2^-48` and `0xfe` denotes `1.5 * 2^15`; these are the smallest and largest finite base values a scale word can carry.
+
+`HiF4E6M2ValueClass` reports the quiet NaN class for `0xff` and the positive normal class for every other base code, and `HiF4E6M2FiniteValue` therefore asserts on `0xff`.
 
 <!-- PTO-READER-BLOCK: arch-hif4-scale-related role=related-owners-navigation -->
 ## Related owners
 
-- [FP19](../fp19.md) provides `FP19PowerOfTwo`.
-- [HiF4X2](hif4x2.md) defines the packed HiF4 logical-lane value format.
+- [Numeric format descriptor](../format-descriptor.md) defines the common metadata record.
+
+- [Numeric formats](../numeric-formats.md) dispatches Tile data types to their format-specific helpers.
+
+- [HiF4X2](hif4x2.md) defines the packed logical lanes that this scale word multiplies.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -19,47 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-slliw-purpose role=purpose -->
 ## What SLLIW does
 
-`SLLIW` is a 32-bit scalar ALU instruction. It logically shifts the source left under the low 32-bit word, followed by sign-extension to XLEN shift rules; its current instruction contract defines the result publication path and any additional state effect.
+`SLLIW` shifts the low `32` bits of `SrcL` logically left by a constant `shamt` of `0` through `31` and publishes the `32`-bit result sign-extended to `PTO_XLEN`. It has three fields: `RegDst` at `[7 +: 5]`, `SrcL` at `[15 +: 5]` and the five-bit `shamt` at `[20 +: 5]`.
+
+The carrier matches `0x00007035` under mask `0xfe00707f`; bits `31:25` are fixed, so the amount is exactly five bits wide.
+
+The result is reconstructed by sign extension rather than zero extension, which is why a shift that sets bit `31` publishes an all-ones upper half.
 
 <!-- PTO-READER-BLOCK: scalar-slliw-mechanism role=mechanism -->
-## How the result is formed
+## How the word result is formed
 
-Execution snapshots the encoded inputs, then logically shifts the source left under the low 32-bit word, followed by sign-extension to XLEN shift rules, and only afterward performs the destination effects.
+Dispatch calls `ExecuteDecodedShiftImmediate` with `ScalarBinary_SLL` and `word_operation` true (`asl/scalar/model/dispatch/alu.asl:190-191`). `ScalarBinaryW` binds `left32` to `left[31:0]`, shifts with `UInt(right[4:0])`, and returns `SignExtend{PTO_XLEN}(result32)` (`asl/scalar/model/alu/semantics.asl:470-487`).
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+slliw SrcL, shamt, ->{t, u, Rd}
+```
+
+Design point: The mask and the helper agree on five bits: the encodable amounts are `0` through `31`, and the helper would discard any higher bit of the count anyway. No encoding can request a shift of a whole word.
+
+Design point: Bits shifted past bit `31` of the word are discarded before the sign extension, so they cannot reappear in the upper half. The published upper half is always a copy of result bit `31`.
 
 <!-- PTO-READER-BLOCK: scalar-slliw-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects a Reg5 scalar input whose low 32 bits are used.
-- The 5-bit `shamt` field encodes the five-bit shift amount.
+`SrcL` supplies the word, `shamt` is decoded from the carrier, and `RegDst` receives the sign-extended word.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+- `SrcL`, instruction slice `[15 +: 5]`: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, `28..31` read `U#1..U#4`, non-consuming. Only `SrcL[31:0]` participates.
+- `shamt`, instruction slice `[20 +: 5]`: `0` through `31`; encoded zero performs an identity word shift.
+- `RegDst`, instruction slice `[7 +: 5]`: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+- Encoded zero of `SrcL` reads the architectural zero GPR, so a zero source publishes `0`.
+
+Design point: A source whose low word is `1` and whose upper half is nonzero still shifts only the low word: with `a0 = 0xFFFFFFFF00000001`, `slliw a0, 4, ->a2` publishes `16`, because the upper half of the source is dropped before the shift.
 
 <!-- PTO-READER-BLOCK: scalar-slliw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is read before the write, so an aliasing destination shifts the pre-instruction value. The sign-extended word is published and `TPC` advances by `4` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+`SLLIW` reads no memory and changes no reservation, descriptor, numeric-flag, trap, bundle, privilege, predicate or control-flow state. The only queue movement is the push selected by a `30` or `31` destination.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: The narrowing happens before the shift, not after, so an upper-half bit of `SrcL` can never be shifted down into the result. `SLLIW` is therefore a complete word operation rather than a `PTO_XLEN` shift followed by truncation.
 
 <!-- PTO-READER-BLOCK: scalar-slliw-constraints role=constraints -->
 ## Legality and fault boundary
 
-All 5 encoded shift bits are assigned, giving amounts `0..31`; fixed-width shifting is total and raises no arithmetic exception.
+All `32` `SrcL` codes, all `32` `RegDst` codes and all `32` shift amounts are assigned. The form has no constraint entry beyond the fixed bits `31:25` and `14:12`.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unmatched carrier raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`, reachable for `SLLIW` only while a system-block terminal request is pending. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`, before the destination effect and before `TPC` advances.
+
+Design point: Neither the word shift nor the final sign extension faults, so `SLLIW` has no operand-selected trap. Apart from the block-applicability check above, its fault boundary is encoding validity plus source availability.
 
 <!-- PTO-READER-BLOCK: scalar-slliw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `SLLIW` example, source `1` shifted left by `3` produces `8`.
+With `a0` holding `1`, `slliw a0, 4, ->a2` publishes `16`.
+
+With `a0` holding `1`, `slliw a0, 31, ->a2` publishes `0xFFFFFFFF80000000`, because word bit `31` is set and the final extension copies it through the upper half.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

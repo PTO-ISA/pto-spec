@@ -19,47 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-sll-purpose role=purpose -->
 ## What SLL does
 
-`SLL` is a 32-bit scalar ALU instruction. It logically shifts the source left under the complete XLEN value shift rules; its current instruction contract defines the result publication path and any additional state effect.
+`SLL` shifts `SrcL` logically left by an amount taken from the low six bits of `SrcR` and publishes the full `PTO_XLEN` result. It has exactly three fields: `RegDst` at `[7 +: 5]`, `SrcL` at `[15 +: 5]` and `SrcR` at `[20 +: 5]`.
+
+The carrier matches `0x00007005` under mask `0xfe00707f`. There is no `shamt` field and no modifier field, so the shift amount is a register value rather than a constant.
+
+Bits `5:0` of `SrcR` carry the amount; bits above them are ignored by the shift but still belong to the source operand.
 
 <!-- PTO-READER-BLOCK: scalar-sll-mechanism role=mechanism -->
-## How the result is formed
+## How the shift is formed
 
-Execution snapshots the encoded inputs, then logically shifts the source left under the complete XLEN value shift rules, and only afterward performs the destination effects.
+Dispatch calls `ExecuteDecodedSimpleBinary` with `ScalarBinary_SLL` and `word_operation` false (`asl/scalar/model/dispatch/alu.asl:176-177`). `ScalarBinary` returns `LSL(left, UInt(right[5:0]))` (`asl/scalar/model/alu/semantics.asl:456`), so the amount is the low six bits of the snapshotted right source and the left operand is shifted at full width.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+sll SrcL, SrcR, ->{t, u, Rd}
+```
+
+Design point: Masking the amount to six bits means every raw `SrcR` value is legal and no amount is rejected. A right source whose low six bits are `0` performs an identity shift even when its upper bits are nonzero.
+
+Design point: Bits shifted beyond bit `PTO_XLEN-1` are dropped and zero bits enter from the right. The helper reports nothing about the dropped bits, so `SLL` cannot signal that information was lost.
 
 <!-- PTO-READER-BLOCK: scalar-sll-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the scalar value through Reg5.
-- The 5-bit `SrcR` field selects the register shift count through Reg5.
+Both operands use the Reg5 source map and the result leaves through the Reg5 destination map.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+- `SrcL`, instruction slice `[15 +: 5]`: the value shifted; `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, `28..31` read `U#1..U#4`, non-consuming.
+- `SrcR`, instruction slice `[20 +: 5]`: the shift-count source, same five-bit map. Every value is legal; only bits `5:0` are used.
+- `RegDst`, instruction slice `[7 +: 5]`: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+- Encoded zero of `SrcR` reads the architectural zero GPR, which supplies amount `0` and therefore an identity shift.
+
+Design point: A `SrcR` selected from a `T` or `U` queue slot is read without consuming it, so the same count can drive several shifts. Only a `30` or `31` destination pushes a new queue entry.
 
 <!-- PTO-READER-BLOCK: scalar-sll-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are snapshotted before the destination is written, so a destination that aliases `SrcL` or `SrcR` shifts the pre-instruction values. The result is published and `TPC` advances by `4` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+`SLL` reads no memory and changes no reservation, descriptor, numeric-flag, trap, bundle, privilege, predicate or control-flow state. The only queue movement is the push selected by a `30` or `31` destination.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: The shift amount comes from a register, so it can be computed at run time, but it is also renamed with the rest of `SrcR`: a `31` destination writes the shift result, not the amount, to the `T` queue.
 
 <!-- PTO-READER-BLOCK: scalar-sll-constraints role=constraints -->
 ## Legality and fault boundary
 
-Register shifting uses only the low 6 right-source bits, so the effective amount is `0..63`; every result is defined at the fixed width.
+Every `SrcL`, `SrcR` and `RegDst` code is assigned, and there is no constraint entry beyond the fixed carrier bits.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unmatched carrier raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`, reachable for `SLL` only while a system-block terminal request is pending. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`, before the destination effect and before `TPC` advances.
+
+Design point: The shift count is total: masking to six bits covers `0` through `63`, and the shift itself cannot fault. No operand value selects a trap in `SLL`.
 
 <!-- PTO-READER-BLOCK: scalar-sll-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `SLL` example, source `1` shifted left by `3` produces `8`.
+With `a0` holding `1` and `a1` holding `4`, `sll a0, a1, ->a2` publishes `16`.
+
+With `a0` holding `1` and `a1` holding `64`, the low six bits of the amount are `0`, so `a2` receives `1` unchanged; a `SrcR` of `63` publishes `0x8000000000000000`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,52 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-frecip-purpose role=purpose -->
 ## What FRECIP does
 
-`FRECIP` applies reciprocal to one carrier through the active numeric profile.
+`FRECIP` computes the reciprocal of one floating-point scalar and publishes the result carrier. It takes a single source and produces a single destination. It applies one named operation from the numeric profile; it is not a bit-manipulation instruction, so it does not preserve the source encoding.
 
 <!-- PTO-READER-BLOCK: scalar-frecip-mechanism role=mechanism -->
-## Numeric mechanism
+## How the operation is performed
 
-`SrcType=00` selects a complete FP64 carrier; `SrcType=01` selects the zero-extended low 32-bit FP32 carrier.
+`SrcType=00` selects a complete 64-bit FP64 carrier. `SrcType=01` selects FP32 and uses only the low 32 bits of the source word, zero-extended to XLEN.
 
-The active profile receives snapshotted operands and the mnemonic-selected operation, then returns a result and exact `NV`, `DZ`, `OF`, `UF`, `NX` vector.
+The contract names `FloatingUnary_RECIP`, which the profile evaluates as `1.0 / value`.
 
-In the `pto-v0` reference profile, zero returns all-one carrier bits with `DZ`; otherwise an all-one carrier is divided by the operand. This deterministic reference rule is not an IEEE-754 or target-hardware claim.
+The selected numeric profile returns both the result and an exact `NV`, `DZ`, `OF`, `UF`, `NX` vector. In the `pto-v0` reference profile the operation is evaluated on real values and encoded once with the rounding mode encoded in `CORE_STATE[39:37]`.
+
+A zero input does not divide. It publishes a signed infinity with the sign of the input and records `DZ`. An infinity input publishes a signed zero with the sign of the input and records no flag. A NaN input publishes the canonical quiet NaN for the carrier and records `NV` only when the input was a signaling NaN.
+
+Design point: every special input is answered by an explicit architecture rule before the finite kernel is entered. That is why a zero input still retires normally with a sticky `DZ` instead of raising a trap.
 
 <!-- PTO-READER-BLOCK: scalar-frecip-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `RegDst` selects the encoded destination or discard behavior.
-
-- `SrcL` supplies the left scalar source.
-
-- `SrcType` selects the source-carrier width.
-
-- Reg5 source selectors may read GPR, T, or U state without consuming temporary entries.
-
-- The destination selector writes a GPR, pushes T/U, or discards only the result.
+- `RegDst` selects the destination selector: codes `1`..`23` write a GPR, `30` pushes `U`, `31` pushes `T`, and `0` plus `24`..`29` discard the result.
+- `SrcL` is the source selector. There is no second source field.
+- `SrcType` selects the carrier that the source is read with.
+- Source selectors `0`..`23` read GPRs, `24`..`27` read `T#1`..`T#4`, and `28`..`31` read `U#1`..`U#4`. Reading a temporary never consumes or reorders it.
+- Source selector `0` always reads XLEN zero, and destination selector `0` writes nothing.
 
 <!-- PTO-READER-BLOCK: scalar-frecip-effects role=effects -->
 ## Effects and ordering
 
-All explicit sources are snapshotted before numeric-status or destination effects.
+The single source is read before any write, so `SrcL` and `RegDst` may name the same register or queue slot and the operation still uses the pre-instruction value. A push into `T` or `U` happens only after the read, so a read-then-push of the same queue observes the entry that was already present.
 
-All five profile-returned flags are ORed into sticky numeric state; the operation cannot clear an existing flag.
-
-The result is published or discarded, then `TPC` advances by `4` bytes. The instruction has no memory or reservation effect.
+All five returned flag bits are ORed into `CORE_STATE[36:32]`, so the operation can set a sticky flag but never clear one. The destination is written or discarded, and only then does `TPC` advance by `4` bytes. No memory access and no reservation is involved.
 
 <!-- PTO-READER-BLOCK: scalar-frecip-constraints role=constraints -->
-## Type and profile boundaries
+## Reserved types and rejection
 
-`SrcType=10` and `SrcType=11` are reserved. Reserved types and unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+`SrcType=10` and `SrcType=11` are reserved. The handler checks the carrier type before the first read of the source register, so a reserved type raises `Fault_IllegalInstruction` with no source read, no profile call, no flag, no queue change, no destination write, and no `TPC` advance.
 
-The portable instruction contract owns carrier selection, snapshots, flag accumulation, publication, and fault order; the active named profile owns the numeric result and produced flags.
+A source selector that names an unavailable `T` or `U` slot is rejected the same way, at the same point.
+
+The active rounding mode comes from `CORE_STATE[39:37]`; there is no per-instruction rounding field. A recorded flag never raises a synchronous PTO trap by itself.
 
 <!-- PTO-READER-BLOCK: scalar-frecip-example role=example -->
 ## Non-normative example
 
-This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
+`frecip.fd a0, ->a1` reads `a0` as a complete FP64 carrier, computes its reciprocal, records the returned flags, and writes the result to `a1`.
 
-`frecip.fd a0, ->a1` selects its carriers, snapshots its sources, invokes the active profile, accumulates returned flags, publishes the result, and then advances `TPC`.
+With `a0` holding FP64 `-0.0`, the instruction writes the FP64 encoding of negative infinity to `a1` and sets sticky `DZ` in `CORE_STATE[33]`. No memory traffic is generated and `TPC` advances by `4` bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

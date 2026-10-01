@@ -19,40 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ic-iall-purpose role=purpose -->
 ## IC.IALL 的作用
 
-`IC.IALL` 同步完成所分配的缓存或地址翻译维护请求，并记录精确操作令牌。
+`IC.IALL` 是指令缓存所有条目的作用域维护操作。它的编码没有操作数字段（`asl/scalar/sys/IC.IALL.asl:1`），契约规定其语义操作数是全零的 XLEN 值，而不是某个寄存器。
 
 <!-- PTO-READER-BLOCK: scalar-ic-iall-mechanism role=mechanism -->
 ## 系统机制
 
-ASL DOC 区域选择 `ScalarHandler_ExecuteMaintenance`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+该指令选择共用的维护处理程序（`asl/scalar/sys/IC.IALL.asl:11`）与令牌 `Maintenance_IC_IALL`（`asl/scalar/sys/IC.IALL.asl:23`）。`Maintenance_IC_IALL` 是执行器中两个指令缓存分支之一，因此它推进 `_InstructionCacheEpoch`，而不是数据缓存纪元（`asl/scalar/model/sys/semantics.asl:138`）。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+由于 `InstructionContractMaintenanceUsesOperand_IC_IALL` 为 `FALSE`（`asl/scalar/sys/IC.IALL.asl:29`），派发器直接提供 `Zeros{PTO_XLEN}`，不读取任何标量寄存器（`asl/scalar/model/dispatch/sys.asl:46`）。
+
+`IC.IALL` 只在活动 SYS 块体中适用（`asl/scalar/model/sys/semantics.asl:322`）。
 
 <!-- PTO-READER-BLOCK: scalar-ic-iall-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-该编码没有显式操作数字段；操作完全由固定指令位选择。
+没有编码操作数，也没有目的地。单条目录记录固定了该 32 位形式的每一位，因此该指令无法选择作用域、set 或 way。
+
+被记录的操作数为零。不向寄存器、临时队列或系统寄存器写入任何内容。
 
 <!-- PTO-READER-BLOCK: scalar-ic-iall-effects role=effects -->
 ## 架构效果
 
-成功时，维护记录接收 `Maintenance_IC_IALL` 和精确捕获的操作数令牌。
+成功的尝试把指令缓存纪元递增一，并把 `Maintenance_IC_IALL` 与零操作数存入维护记录（`asl/scalar/model/sys/semantics.asl:159`）。随后 `TPC` 前进 4 字节，即该 32 位形式的长度（`asl/scalar/model/dispatch/top-level.asl:56`）。
 
-选中的缓存或 TLB 纪元恰好递增一次，然后 `TPC` 前进；该操作是同步完成的本地提示。
+设计要点：指令缓存纪元同时也是 `fence.i` 与 `FENCE.D` 可以推进的可见性点。把纪元与已记录的操作令牌配对，使记录的读者能够把所有条目的请求与按地址限定范围的请求区分开，即使两者移动的是同一个计数器。
+
+数据内存、寄存器或队列状态都不改变。
 
 <!-- PTO-READER-BLOCK: scalar-ic-iall-constraints role=constraints -->
 ## 位置与拒绝边界
 
-缓存维护在每个 ACR 都是同步本地提示，并不定义额外的实现缓存内容。
+只有位置能拒绝 `IC.IALL`：在活动 SYS 块体之外，派发器引发 `Fault_BundleControl`（`asl/scalar/model/dispatch/top-level.asl:28`），执行器从不运行，因此纪元与记录保持先前值。所有位都是固定的，所以没有保留编码可拒绝。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+指令缓存维护没有环限制：`MaintenanceAccessPermitted` 只把四个 TLB 操作限制在 ring 0（`asl/scalar/model/sys/semantics.asl:121`）。
 
 <!-- PTO-READER-BLOCK: scalar-ic-iall-example role=example -->
 ## 非规范示例
 
 该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
 
-可从 `ic.iall` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+在 SYS 块体内执行 `ic.iall`。该次尝试检查固定位，把指令缓存纪元递增一，以操作数零记录 `Maintenance_IC_IALL`，并给 `TPC` 加上 4 字节。数据缓存纪元与 TLB 纪元不受影响。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

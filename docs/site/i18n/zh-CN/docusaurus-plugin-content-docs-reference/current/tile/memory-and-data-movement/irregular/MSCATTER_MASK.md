@@ -19,48 +19,67 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-mscatter-mask-purpose role=purpose -->
 ## MSCATTER_MASK 的作用
 
-`MSCATTER_MASK` 是一条由 `TLSU` 执行、通过选择器编码的 Tile 操作。它只把谓词恰好为一的通道存储到索引指定的 GM 字节位移；当前指令契约拥有精确的指令束形式和发布边界。
+`MSCATTER_MASK` 是 TLSU Function 7，写作 `BSTART.MSCATTER.MASK DataType`。它的寻址沿用 `MSCATTER` 的字节位移规则：`B.IOR.RegSrc0` 指定的每 PE 基地址加上索引值，存储的值是源元素的原始位。区别在于一个 Local `U8` 谓词 Tile 决定哪些索引事务执行存储。NDF `PTO-MSCATTER-MASK-PREDICATE-001` 规定每个事务只能取 `0x00` 与 `0x01`，并规定零值会抑制地址生成、转换、权限检查、存储与事件。
+
+拥有者声明 `InstructionContractUsesMaskTile_MSCATTER_MASK` 为 TRUE、`InstructionContractWritesMemory_MSCATTER_MASK` 为 TRUE。分派器 `ExecuteBundleMSCATTERMASKOperation` 解码 Function 7，检查两条 `B.IOT` 绑定与描述符，然后调用 `TileOperandsLegal_MSCATTER_MASK` 与执行体 `MSCATTER_MASK`。
+
+设计要点：通道判定为 `BundleExecutionMaskActiveAt(...) && ReadIndexedTLSUPredicate(mask, ...)`，地址计算与探测都在该判定之内。因此谓词元素为零的通道不会被转换，也不会发生故障，所以超出范围或未对齐的位移在其谓词元素为零时是无害的。
 
 <!-- PTO-READER-BLOCK: tile-mscatter-mask-mechanism role=mechanism -->
-## 元素与 Tile 机制
+## 两种掩码：ExecutionMask 与谓词 Tile
 
-所有描述符与操作数检查成功后，所属 ASL 处理函数只把谓词恰好为一的通道存储到索引指定的 GM 字节位移。当前契约允许别名时，源载荷会在目标写入前完成快照。
+有两种不同的掩码可以门控一个通道，它们不可互换。
 
-处理函数使用解析后的有效区域，不把物理填充区当作输入数据。操作专属的数据类型、布局、舍入、饱和与配置档钩子仍由可执行定义拥有。
+ExecutionMask 是指令束级状态。它既可以由 GPR 对承载（`BundleExecutionMaskGPRCarrierShapeLegal` 只对 `CUBE_M16` 与 `CUBE_M32` 坐标布局接受这种承载），也可以由存储类型为 `TileStorage_PredicateCell` 的谓词 Tile 承载。它在这里的坐标来源是索引 Tile，因此其布局与有效形状跟随该 Tile。`CaptureBundleExecutionMaskPredicateTile` 把每个元素的第 0 位复制到快照中，此后只查阅该快照。
+
+`MaskTile` 操作数只属于本指令。它是一个 Local `U8` Tile，每个索引事务对应一个元素，其有效行数与有效列数必须等于索引 Tile 的对应值，其布局必须等于指令束布局。`IndexedTLSUPredicateValuesLegal` 扫描 ExecutionMask 留为活动的每个元素，只要有一个未定义或不等于 `0x00` 或 `0x01`，就拒绝整个指令束。
+
+设计要点：该谓词扫描属于合法性检查，因此在任何地址存在之前运行。只要有一个元素取 `0x02`，整个指令束就会以 `Fault_TileLegality` 被拒绝，任何通道都不存储，而不仅仅是违规通道。
+
+设计要点：对打包四位传输，索引 Tile 的列数是数据 Tile 的一半，因此一个谓词元素覆盖一个字节的两个半字节，它们一起启用或一起被抑制（NDF `PTO-MSCATTER-MASK-TYPE-002`）。
 
 <!-- PTO-READER-BLOCK: tile-mscatter-mask-inputs role=inputs-outputs -->
-## 操作数角色与描述符
+## 操作数角色与绑定
 
-- `address` 的精确契约角色是“基址”。
-- `source0` 的精确契约角色是“源数据”。
-- `source1` 的精确契约角色是“字节位移索引”。
-- `source2` 的精确契约角色是“取值严格为零或一的谓词掩码”。
+- `address` 是基地址，从执行 PE 自己的寄存器文件中由 `B.IOR.RegSrc0` 指定的 GPR 读取；`RegSrc1`、`RegSrc2` 与 `RegDst` 必须编码为零。
+- `source0` 是数据 Tile：指令束 `DataType`、`LB1` 有效行数、`LB0` 有效列数、`LB2` 物理列数，以及指令束布局。
+- `source1` 是索引 Tile：元素为 `S32`、`U32`、`S64` 或 `U64`，采用指令束布局，有效形状与数据 Tile 匹配。
+- `source2` 是掩码 Tile：一个 Local `U8` Tile，其有效形状等于索引 Tile 的有效形状，其布局等于指令束布局。
 
-操作读取的每个源坐标都必须在目标发布前处于已定义状态。
-`PE_MASK=0000` 是严格无操作，在描述符、分配、载荷、数值状态或内存效果之前即结束。
+本形式始终绑定恰好两条 `B.IOT` 命令。第一条携带数据 Tile 与索引 Tile，没有目标，也不是 `last`。第二条携带掩码 Tile 作为其源且为 `last`；当谓词 Tile ExecutionMask 生效时，同一条第二条 `B.IOT` 还把该掩码的谓词 Tile 作为其第二个源。所有绑定必须携带相同的 `PE_MASK`。
+
+每个绑定上的 `PE_MASK=0000` 在分派器开头即严格无操作，早于解码、schema、GPR、维度、描述符与内存检查。
 
 <!-- PTO-READER-BLOCK: tile-mscatter-mask-effects role=effects -->
-## 发布、已定义性与填充
+## 内存效果、已定义性与填充
 
-只有源、谓词、地址与权限完成完整预检后，GM 写入和内存事件才开始；该操作没有 Tile 目标。
+每个启用的索引事务在 `base + displacement` 处存储一个传输元素；对四位传输则存储一个打包字节，低半字节在前、高半字节在后。被禁用的事务不生成地址、不做转换、不做权限检查、不做探测、不访问、不产生事件，因此它也不可能引发数据访问故障。
 
-本页不暗示当前处理函数契约之外的填充行为。
+与未掩码形式一样，没有 ExecutionMask 时两个源 Tile 必须在整个有效区域上处于已定义状态；有该掩码时只在掩码的活动坐标处要求已定义。掩码 Tile 只被读取，从不被修改，并且不分配目标 Tile。
 
-操作在首次存储或内存事件前预检每个启用的 GM 地址，并且不分配目标 Tile。
+此处 `B.DATR` 只能设置 `Layout`：显式的非零 `PadValue` 字段会被拒绝，因为该形式的 pad union 是 `must-zero`。合并模式的 ExecutionMask 也没有可填充的目标，`PrepareSelectedBundleExecutionMaskMerge` 在本指令束中找不到目标绑定。
 
 <!-- PTO-READER-BLOCK: tile-mscatter-mask-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-索引 Tile 使用 `S32`、`U32`、`S64` 或 `U64`。紧凑四位传输类型 `E2M1X2`、`E1M2X2`、`HiF4X2`、`S4X2` 与 `U4X2` 会被拒绝，因为该索引传输没有半字节选择器。
+指令束 `DataType` 必须等于数据 Tile 的类型，索引 Tile 为 `S32`、`U32`、`S64` 或 `U64`。NDF `PTO-MSCATTER-MASK-TYPE-002` 要求打包四位传输数据每个索引字节使用相邻的两个逻辑半字节，且每对共用一个谓词；NDF `PTO-MSCATTER-MASK-DUPLICATE-001` 让重复的已启用地址具有实现定义的胜者，且不施加内部启用通道顺序。
 
-下方生成的合法性与异常章节是数据类型组合、布局、维度、容量、已定义性、填充控制、配置档行为和故障类别的权威说明。合法性或分配失败发生在任何部分架构效果之前。
+布局为 `RowMajor`、`CUBE_M16` 与 `CUBE_M32`，`CUBE_N8` 会被拒绝，`RowMajor` 要求 `ValidCol <= Col` 且 `Col` 为非零的 2 的幂。数据、索引与掩码 Tile 都必须采用指令束布局。
+
+`Fault_IllegalInstruction` 覆盖未知的 TLSU 编码。`Fault_TileLegality` 覆盖缺少 `B.IOR`、`B.IOT` 绑定形状错误、维度超范围、布局、类型或形状不匹配、谓词元素缺失或未定义，以及谓词值不是 `0x00` 或 `0x01`。探测失败引发 `Fault_DataAlignment` 或 `Fault_DataPage`，且发生在首次存储之前。
 
 <!-- PTO-READER-BLOCK: tile-mscatter-mask-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `MSCATTER_MASK` 示例说明：源值 `7` 在掩码为 `1` 时被存储，而掩码为 `0` 时不生成地址。
+取 `U32`、`ValidRow=1`、`ValidCol=2`、`Col=4`，`a0` 中的基地址为 `0x1000`，数据 Tile 保存 `7, 9`，索引 Tile 保存 `4, 0`，掩码 Tile 保存 `0, 1`。
+
+- 坐标 (0, 0) 被禁用，因此位移 `4` 不生成地址，`0x1004` 保持其原有内容。
+- 坐标 (0, 1) 被启用，因此位移 `0` 把 `9` 存到 `0x1000`。
+- 若掩码 Tile 改为保存 `2, 1`，`IndexedTLSUPredicateValuesLegal` 会失败，因此两次存储都不会发生。
+
+宏写法为 `MSCATTER_MASK <Col=4, ValidCol=2, U32>, [base=a0], T#1, T#2, PredicateTile2`，其中 `T#1` 是数据 Tile，`T#2` 是索引 Tile，`PredicateTile2` 是掩码 Tile。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

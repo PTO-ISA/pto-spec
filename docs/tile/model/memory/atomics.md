@@ -7,8 +7,73 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-MEMORY-ATOMICS}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-atomics-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns `MGATHER_CAS`, the indexed atomic compare-and-swap gather. For each active lane it reads a GM element, compares it with an expected value, writes a replacement if they are equal, and returns the value it observed in a destination Tile.
+
+A second overload without a `pad_value` argument calls the first with `TilePad_Null`.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-atomics-concepts role=concepts-state -->
+## Concepts and visible state
+
+`MGATHER_CAS` takes four Tiles, one base address, and a pad value:
+
+- `indices` holds a byte displacement per lane (S32, U32, S64, or U64).
+- `expected` and `replacement` hold the compare value and the new value per lane.
+- `destination` receives the old value observed by each lane.
+
+An atomic event is one read-modify-write on one address. `RecordAtomicEvent` records the old raw value, the value that would be written, the bundle memory order, and whether the write happened.
+
+The block dispatcher for Function 8 accepts only U16, U32, and U64 transfer types. The assertions in this body are weaker: `IndexedTLSUTransferDataTypeLegal` only excludes four-bit types.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-atomics-rules role=rules-interactions -->
+## Rules and interactions
+
+Phase 1, preflight: for every active lane the body computes `base + displacement`, probes it for read and then for write, and faults with `Fault_DataPage` if the two translations differ. It records addresses and snapshots the expected and replacement values.
+
+Phase 2, initialization: every physical destination element receives the pad value, except inactive valid coordinates, which receive the ExecutionMask zero or merge value.
+
+Phase 3, atomic updates: lanes are processed in an order chosen by `ARBITRARY` choices. Each lane loads the old value, stores it in the destination, compares it with `expected` at element width, stores `replacement` only on a match, and records one atomic event. Finally the whole physical region is marked defined.
+
+Design point: all read and write probes complete before the first atomic effect (NDF `PTO-MGATHER-CAS-PUBLICATION-001`). A fault therefore leaves GM unchanged and produces no atomic event. Bundle dispatch then releases the destination it allocated.
+
+Design point: expected and replacement values are snapshotted in phase 1. If one of those Tiles is also the destination, phase 2 and phase 3 writes cannot change the values being compared.
+
+Design point: duplicate addresses serialize in an implementation-defined order, and row-major order is not architectural (NDF `PTO-MGATHER-CAS-ATOMIC-001`). Each lane is still one complete atomic read-modify-write, so each lane observes the value left by whichever lane ran before it.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-atomics-boundaries role=boundaries -->
+## Architectural boundaries
+
+Atomicity is per lane. The body does not make the whole request atomic, and it does not add ordering beyond the per-lane events tagged with `CurrentBundleMemoryOrder()`. The memory-model atomicity and ordering units own those event rules.
+
+The generic GM atom/red family has its own CAS path, `GM_ATOM_CAS`. In the current block dispatcher, Function 8 is recognized by the `MGATHER_CAS` selector first and reaches the body in this unit.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-atomics-example role=example-usage -->
+## Non-normative reading example
+
+U32 `MGATHER_CAS` with base `0x8000` and a 1 by 2 index Tile holding `0, 0`. GM at `0x8000` holds 5. Lane 0 has expected 5 and replacement 9; lane 1 has expected 5 and replacement 3.
+
+Both lanes target `0x8000`, so the ASL allows either order.
+
+- Lane 0 first: it observes 5, matches, and writes 9. Lane 1 observes 9, fails, and writes nothing. The destination is `5, 9` and GM ends at 9.
+- Lane 1 first: it observes 5 and writes 3. Lane 0 observes 3 and fails. The destination is `3, 5` and GM ends at 3.
+
+Both outcomes record two atomic events, one with the write performed and one without.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-atomics-related role=related-owners-navigation -->
+## Related owners
+
+- [GM atom/red](gm-atom-red.md) and [GM atom/red execution](gm-atom-red-execution.md) own the other atomic operations.
+- [Gather and scatter](gather-scatter.md) owns the non-atomic indexed transfers.
+- [Memory atomicity](../../../arch/memory-model/atomicity.md) owns atomic events.
+- [Memory ordering](../../../arch/memory-model/ordering.md) owns atomic ordering points.
+- [MGATHER_CAS](../../memory-and-data-movement/irregular/MGATHER_CAS.md) is the instruction page.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

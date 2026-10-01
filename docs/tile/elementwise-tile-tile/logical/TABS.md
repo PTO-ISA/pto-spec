@@ -19,47 +19,61 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tabs-purpose role=purpose -->
 ## What TABS does
 
-`TABS` is a selector-encoded Tile operation executed by `VEC`. It applies typed absolute value independently to every valid source coordinate; its current instruction contract owns the exact bundle form and publication boundary.
+`TABS` takes the absolute value of every element of one Local Tile and writes the results into a newly allocated Local destination Tile. What "absolute value" means depends on the selected `DataType`: signed integers, unsigned integers, and floating-point types each follow their own rule.
+
+Design point: `TABS` has no standalone opcode. It is selected by `BSTART.VEC` Mode 0 Function 15 (TEPL selector `0x00F`). It shares the closed unary bundle schema with `TNOT`, `TNEG`, and `TRELU`: one terminating `B.IOT`, one source, and one new destination. The four operations still differ in their accepted `DataType` sets and per-element transforms, and `TNOT` additionally requires an exact source backing type.
 
 <!-- PTO-READER-BLOCK: tile-tabs-mechanism role=mechanism -->
 ## Element and Tile mechanism
 
-After all descriptor and operand checks succeed, the owning ASL handler applies typed absolute value independently to every valid source coordinate. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+Preflight checks the complete bundle first: operand schema, dimensions, `DataType`, layout, source definedness, source encodings, and destination capacity. Only then does `ExecuteTileUnary` read the source and transform each coordinate of the valid rectangle `ValidRow x ValidCol`.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+- Signed integer types: a negative element is negated modulo the element width, and other elements are unchanged. The most negative value has no positive counterpart, so it keeps its bit pattern: `S8` `0x80` (-128) stays `0x80`.
+- Unsigned integer types: `TABS` is the identity.
+- Floating-point types: `TABS` clears only the sign bit. Negative zero becomes positive zero, negative infinity becomes positive infinity, and a NaN keeps its class and payload.
+
+Design point: floating `TABS` is a sign-bit operation, not an arithmetic one. It therefore never reports an invalid condition, even for a signaling NaN, and it never changes exponent or mantissa bits.
+
+Design point: the source is still validated as a number before execution. Every valid-region element (every active one, when an ExecutionMask is in force) must be a valid encoding of the selected `DataType`. For example, a `TF32` element whose low 13 mantissa bits are not zero is rejected. Raw-carrier operations such as `TAND` do not perform this check.
 
 <!-- PTO-READER-BLOCK: tile-tabs-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` has the exact contract role **new Local destination**.
-- `source0` has the exact contract role **absolute-value source**.
+- `source0` is the absolute-value source. It is an existing, allocated Local Tile.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected operation `DataType`, and its physical shape, valid shape, and layout match the source.
 
-Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
-Every source coordinate read by the operation must be defined before execution reaches destination publication.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+One terminating `B.IOT` binds both Tiles under a single `PE_MASK`; `B.IOR` and `B.IOS` are illegal. Once the `B.IOT` encoding itself is well formed, `PE_MASK=0000` is a strict no-op: no source is read and no destination is allocated.
+
+Design point: the source may be stored with a different same-width, non-packed backing type, for example `U16` data processed as `FP16`. The bits are validated and interpreted as the selected `DataType`, so a reinterpreting absolute value needs no separate copy.
 
 <!-- PTO-READER-BLOCK: tile-tabs-effects role=effects -->
 ## Publication, definedness, and padding
 
-Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+The source payload is snapshotted after preflight and before the first destination write. If the source and destination alias, the result is computed from the old source values.
 
-Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+The destination descriptor, the valid-region results, the padding, and the definedness of every element publish together. A rejected `TABS` has no architectural effect.
 
-The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero`, `Max`, and `Min` write defined values; `Null`, selected when `B.DATR` is omitted, leaves them undefined.
+
+`TABS` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value instead of an absolute value.
 
 <!-- PTO-READER-BLOCK: tile-tabs-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The accepted data-type set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
+The accepted data-type set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Packed four-bit formats are excluded.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`; `CUBE_N8`, Shared Tiles, and mixed layouts are illegal. Nondefault `CMode`, `Sat`, `Canonicalize`, secondary `DataType`, or `RMode` is illegal.
+
+Malformed bindings, missing or zero dimensions, undefined or mismatched source state, an unsupported `DataType`, a non-selected layout, or an invalid floating source encoding raises `Fault_TileLegality` before any effect. An unrepresentable destination shape or insufficient `TSize` capacity raises `Fault_TileAllocation` before allocation. The generated legality and exception sections below are authoritative.
 
 <!-- PTO-READER-BLOCK: tile-tabs-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `TABS` example, valid elements `[-2, 3]` become `[2, 3]`.
+With `DataType=S8`, valid elements `[-2, 3, -128]` become `[2, 3, -128]`. With `DataType=FP16`, the encoding `0x8000` (negative zero) becomes `0x0000`, and `0xFC00` (negative infinity) becomes `0x7C00`.
+
+In macro form, `TABS <Row=8, Col=64, S8>, T#1, ->T<512B>` computes all 8 x 64 results of an `S8` Tile into a new 512-byte destination.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

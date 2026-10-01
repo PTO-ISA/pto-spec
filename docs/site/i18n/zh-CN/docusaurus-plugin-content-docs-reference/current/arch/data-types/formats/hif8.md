@@ -13,49 +13,64 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: arch-hif8-purpose-scope role=purpose-scope -->
-## 目的与范围
+## 用途与范围
 
-本单元精确定义 `HiF8` 的八位格式描述、动态点字段解码、有限值分解、数值分类和规范 NaN。
+`HiF8` 是已分配的 PTO 数值格式，存储在 `8` 位载体中；本单元拥有它的描述符、点字段解码、有限值分解、值分类和规范 NaN。
 
-有了这一归属单元，使用者可以直接根据原始载体推理，而无需用宿主浮点类型替代架构规定的编码。
+`HiF8` 不是固定指数宽度的格式：指数与尾数之间小数点的位置取决于数值本身，因此该格式对小量值少用指数位、对大量值多用指数位。
+
+设计要点：该记录把载体宽度与逻辑 lane 宽度分开，因此打包类型在一个载体中报告两个 lane，而单 lane 类型在其载体中只报告自己的 lane 宽度。
 
 <!-- PTO-READER-BLOCK: arch-hif8-concepts-state role=concepts-state -->
-## 概念与可见状态
+## 载体与字段
 
-- `HiF8NumericFormatDescriptor` 规定一个符号位、`0..4` 个可变指数位、`1..3` 个小数位和一个八位通道，并且不采用固定指数偏置。
-- `HiF8DecodeDotField` 将载体中的点字段映射为 `HiF8DotField_Denormal` 或 `HiF8DotField_D0` 至 `HiF8DotField_D4`，同时返回当前采用的指数宽度和小数宽度。
-- `HiF8FiniteDecomposition` 返回可用性、符号、整数有效数和二进制指数；`ClassifyHiF8` 返回相应的数值类别。
+描述符使用 `8` 位载体、`8` 位逻辑 lane，并且每个载体包含 `1` 个 lane，指数位数为 `0` 到 `4`，尾数位数为 `1` 到 `3`，没有固定指数偏置。
+
+描述符报告正零、次正规数、无穷大和静默 NaN，但不报告带符号零和信号 NaN，并选择 `NumericFormatKind_HiF8`。
+
+设计要点：指数宽度以范围而不是单一数字报告，因此需要某个载体的字段宽度的调用方必须调用 `HiF8DecodeDotField`，而不能直接读描述符。
+
+只需要值类别的读者可以在分类之后停止，因为分类从不要求分解可用。
 
 <!-- PTO-READER-BLOCK: arch-hif8-rules-interactions role=rules-interactions -->
-## 规则与交互
+## 分解与分类
 
-原始载体 `0x80`、`0x6f` 和 `0xef` 都是非有限值：前者是静默 NaN，后两者分别是正无穷大和负无穷大。
+`HiF8DecodeDotField` 把载体的 `6:3` 位映射为 `HiF8DotField_Denormal` 以及 `HiF8DotField_D0` 到 `HiF8DotField_D4` 中的一个点字段，同时给出该载体生效的指数位数和尾数位数。
 
-全零载体表示正零。低七位处于 `1..7` 的载体归类为带符号次正规数，其余有限载体归类为带符号正规数。
+`HiF8FiniteDecomposition` 先排除三个非有限载体，然后返回可用性、符号、整数有效数和二进制指数，使精确值为 `(-1)^sign * UInt(significand) * 2^exponent`；`ClassifyHiF8` 返回对应的值类别。
 
-`HiF8CanonicalNaN` 返回 `0x80`，与分类规则一致，不另设第二种 NaN 编码。
+载体 `0x80`、`0x6f` 和 `0xef` 是非有限值：`0x80` 是静默 NaN，`0x6f` 是正无穷大，`0xef` 是负无穷大；其余每个载体都是有限值。
+
+设计要点：为可用性写 `FALSE` 而不是任意有效数，可以避免调用方把非有限载体的占位字段当作数值读取，因此必须先查看可用性标志。
 
 <!-- PTO-READER-BLOCK: arch-hif8-boundaries role=boundaries -->
-## 架构边界
+## 边界与确切编码
 
-该描述符声明支持零、次正规数、无穷大和静默 NaN，但不支持带符号零或信号 NaN。
+全零载体是正零；低七位在 `1` 到 `7` 范围内的载体分类为带符号的次正规数，其余有限载体分类为带符号的正规数。
 
-所有非有限载体的分解结果都标记为不可用；调用者必须先检查可用性，再使用返回的有效数和指数。
+设计要点：延后的点字段查找正是能够先做一次非有限检查的前提，因此解码器只在分解仍然有意义的载体上运行。
+
+设计要点：只有全零载体表示零，因为符号位为 1 且量值字段全为零的载体被分配给静默 NaN，所以描述符报告没有带符号零。
+
+按函数顺序阅读本页：先从描述符取得字段位置，在需要值类别时调用分类函数，在需要精确有效数与指数时调用分解函数。
 
 <!-- PTO-READER-BLOCK: arch-hif8-example-usage role=example-usage -->
 ## 非规范阅读示例
 
-对于 `0x01`，解码器选择 `HiF8DotField_Denormal`。该值可用、为正且属于次正规数，其精确大小由返回的整数有效数和指数表示。
+本例说明当前的 ASL 归属单元，不替代规范操作。
 
-对于 `0x80`，分类结果为 `NumericValue_QuietNaN`，有限值分解则报告不可用。
+`HiF8CanonicalNaN` 返回 `0x80`，这与分类报告为静默 NaN 的载体相同，因此不存在需要协调的第二个 NaN 编码。
 
-这只是两个 API 的阅读示例，不构成新的算术规则。
+`0x01` 经 `HiF8DotField_Denormal` 解码，分解为有效数 `1` 和指数 `-22`，即 `2^-22`；`0x10` 经 `HiF8DotField_D1` 解码，分解为有效数 `8` 和指数 `-2`，即 `2`。
 
 <!-- PTO-READER-BLOCK: arch-hif8-related-owners role=related-owners-navigation -->
 ## 相关归属单元
 
-- [数值格式分派](../numeric-formats.md)
-- [数值分类](../numeric-classification.md)
+- [数值格式描述符](../format-descriptor.md)定义公共元数据记录。
+
+- [数值格式](../numeric-formats.md)把 Tile 数据类型分派到各格式自己的辅助函数。
+
+- [数值分类](../numeric-classification.md)定义本页返回的类别。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

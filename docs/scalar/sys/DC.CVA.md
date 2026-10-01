@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-cva-purpose role=purpose -->
 ## What DC.CVA does
 
-`DC.CVA` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+`DC.CVA` is the data-cache clean by address operation. It takes the address to clean from `SrcL` and completes the request synchronously, recording both the operation and the exact operand token (`asl/scalar/sys/DC.CVA.asl:23`).
 
 <!-- PTO-READER-BLOCK: scalar-dc-cva-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+`InstructionContractHandler_DC_CVA` selects `ScalarHandler_ExecuteMaintenance`, the one handler shared by the whole cache and translation maintenance group (`asl/scalar/sys/DC.CVA.asl:11`). What makes this instruction distinct is its operation token: `Maintenance_DC_CVA` selects the data-cache branch of `ExecuteMaintenance`, which advances `_DataCacheEpoch` by one (`asl/scalar/model/sys/semantics.asl:135`).
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+Placement is part of the mechanism rather than an afterthought. The instruction is applicable only in an active SYS block body, and the dispatcher rejects everything else before the handler is reached (`asl/scalar/model/sys/semantics.asl:321`).
 
 <!-- PTO-READER-BLOCK: scalar-dc-cva-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+`SrcL` carries a Reg5 source, one of R0..R23, T#1..T#4, or U#1..U#4. Because `DC.CVA` is clean-by-address, that register supplies the address used for the request.
 
-Encoded zero is an assigned field value, never an omitted operand.
+The instruction has no destination operand. Its output is the maintenance record entry, which stores the operand value as captured before the epoch advanced.
 
 <!-- PTO-READER-BLOCK: scalar-dc-cva-effects role=effects -->
 ## Architectural effects
 
-On success, the maintenance record receives `Maintenance_DC_CVA` and the exact captured operand token.
+The executor increments the data-cache epoch, then, only when no fault has been raised, stores `Maintenance_DC_CVA` and the operand into the maintenance record (`asl/scalar/model/sys/semantics.asl:156`). The dispatcher's common tail then advances `TPC` by the instruction length (`asl/scalar/model/dispatch/top-level.asl:56`).
 
-Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+The instruction performs no ordinary scalar memory access. A load or store to the same address is unaffected, and no destination register or temporary queue is written.
+
+Design point: an address-based maintenance request is recorded rather than executed against a modelled cache, so the observable contract is the epoch advance and the recorded token, not a specific cache line state.
 
 <!-- PTO-READER-BLOCK: scalar-dc-cva-constraints role=constraints -->
 ## Placement and rejection
 
-Cache maintenance is a synchronous local hint at every ACR and does not define additional implementation cache contents.
+Placement comes first: outside an active SYS block body, the attempt raises `Fault_BundleControl` (`asl/scalar/model/dispatch/top-level.asl:28`) and no executor state is touched. Encoded legality follows, covering the fixed bits and the `SrcL` selector.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+Ring permission is not a constraint here. `MaintenanceAccessPermitted` grants the data-cache operations at every ACR and reserves ring 0 for the TLB operations (`asl/scalar/model/sys/semantics.asl:120`). The address in `SrcL` is likewise not range-checked, because this operation is not the canonical-address path.
 
 <!-- PTO-READER-BLOCK: scalar-dc-cva-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `dc.cva SrcL` and trace its encoded fields through preflight before following the selected system effect.
+With a GPR holding 0x1234, `dc.cva SrcL` inside a SYS block body snapshots 0x1234, advances the data-cache epoch once, and leaves the maintenance record holding `Maintenance_DC_CVA` with operand 0x1234. Nothing validates 0x1234 against an address rule, and nothing restricts the instruction to a particular ring.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -15,40 +15,51 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-fault-purpose role=purpose-scope -->
 ## Purpose and scope
 
-`FaultCode` is the PTO ASL enumeration for `Fault_None` and fifteen named non-`None` fault identities. This unit defines only those identities; it does not define when they are selected or what transition follows.
+`FaultCode` is the PTO ASL enumeration of fault identities, with `Fault_None` plus fifteen named non-`None` members. This unit defines those identities only; it does not define when one is selected or what state transition follows.
+
+The fifteen non-`None` members name an execution-state check, an illegal instruction, an instruction address or instruction page, a data alignment or data page, a hardware or software breakpoint, a hardware watchpoint, an assertion, Tile legality and Tile allocation, bundle control and bundle post-commit, and a service request.
 
 <!-- PTO-READER-BLOCK: arch-fault-concepts role=concepts-state -->
-## Fault groups
+## Concepts and visible state
 
-`Fault_None` represents no active fault. Execution checking, illegal instruction, instruction address/page, data alignment/page, debug, assertion, Tile legality/allocation, bundle control/post-commit, and service request each have distinct enumeration members.
+Each `FaultCode` value is exactly one member of the enumeration, so a consumer cannot express a fault that combines two causes in one value.
 
-The separation lets later ASL owners select a cause without encoding trap numbers or recovery behavior into this type definition.
+The declared members carry no trap number, no priority, no argument, and no recovery behavior; those belong to the ASL owner that raises the fault and to the trap machinery that handles it.
+
+Design point: a fault identity is separated from the trap that reports it, so the same `FaultCode` can be raised by several instructions and reported through one trap entry without either side redefining the other.
 
 <!-- PTO-READER-BLOCK: arch-fault-rules role=rules-interactions -->
-## How the code is used
+## Rules and interactions
 
-A `FaultCode` value is exactly one member of this enumeration. The declaration does not assign trap numbers, priorities, payloads, or recovery behavior.
+`Fault_BundleControl` and `Fault_BundlePostCommit` are distinct members, so a bundle rejected by its control checks is distinguishable from a successfully committed bundle that requests a trap at its commit boundary.
 
-The AVS linked to this unit provides cross-owner execution evidence; it is not part of the enumeration definition on this page.
+`Fault_TileLegality` and `Fault_TileAllocation` are also distinct members, so a consumer can tell an operand that fails its descriptor or type checks from a destination request that the allocation cannot satisfy.
+
+`Fault_None` is itself a member, so a value of this type always has an answer and no separate absence representation is needed.
 
 <!-- PTO-READER-BLOCK: arch-fault-boundaries role=boundaries -->
-## Boundaries
+## Architectural boundaries
 
-`Fault_BundleControl` and `Fault_BundlePostCommit` are distinct enumeration members. `Fault_TileLegality` and `Fault_TileAllocation` are also distinct members.
+This unit declares no behavior of its own, so a `FaultCode` that a consumer never selects has no observable effect.
 
-Questions about which instruction selects a member, or how a trap or profile owner interprets it, are outside this type declaration.
+Reading a fault report means reading the owner that selected the member, not this page; the trap owner decides the trap number, argument, and restart behavior.
+
+Read this page as a vocabulary list: the unit declares one enumeration and no functions, so every rule about when a fault is raised, reported, or recovered is owned by another unit.
 
 <!-- PTO-READER-BLOCK: arch-fault-example role=example-usage -->
 ## Non-normative reading example
 
-This example is a reading aid, not a new fault rule.
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+The declared identities do not by themselves say that an instruction can produce the corresponding condition, because reachability is decided by each consuming unit.
 
 When another ASL unit uses `Fault_DataAlignment`, read that unit as the owner of the surrounding behavior; this page establishes only that `Fault_DataAlignment` is a distinct `FaultCode` member.
 
 <!-- PTO-READER-BLOCK: arch-fault-related role=related-owners-navigation -->
 ## Related owners
 
-- [Trap context](trap-context.md) defines saved trap context state.
+- [Trap context](trap-context.md) defines the saved trap context state.
+
 - [Execution context](../programming-model/execution-context.md) explains where fault and program-control state fit in the architectural state model.
 <!-- SUPPLEMENTARY-END -->
 

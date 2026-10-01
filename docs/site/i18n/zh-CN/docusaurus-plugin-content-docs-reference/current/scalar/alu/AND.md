@@ -19,49 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-and-purpose role=purpose -->
 ## AND 的作用
 
-`AND` 是一条 32 位标量 ALU 指令。它按照完整 XLEN 值结果规则执行按位与；当前指令契约定义结果发布路径以及任何额外状态效果。
+`AND` 先准备右源，再在全部 `PTO_XLEN` 位上计算该值与不变的左源逐位相与，然后通过 Reg5 目标发布结果。
+
+设计要点：`AND` 复用 `ADD` 的字段布局，因此这里同样有 `SrcRType=10`。共享的修饰符辅助函数以逻辑族标志被调用，而该标志改变了这一个编码的含义：在 `AND` 中它是按位取反，在 `ADD` 中它是取负。因此同一个编码在这里产生掩码，在那里产生减法。
 
 <!-- PTO-READER-BLOCK: scalar-and-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后按照完整 XLEN 值结果规则执行按位与，最后才产生目标效果。
+右源分两步准备，然后取合取。
 
-- `SrcRType` 先转换右源；`shamt` 再对转换后的值执行逻辑左移，随后才进行算术或逻辑操作。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+- `SrcRType` 变换 `SrcR`：`00` 对 `SrcR[31:0]` 做符号扩展，`01` 对 `SrcR[31:0]` 做零扩展，`10` 对每一位取反，`11` 保持该值不变。汇编中省略后缀即编码 `SrcRType=11`。
+- `shamt` 随后把变换后的值逻辑左移 `0` 至 `31` 位；移出位 `63` 的位被丢弃，空出的低位为零。
+
+结果为 `SrcL AND prepared-right`，按 `64` 个位位置独立计算。
+
+设计要点：在相与之前对右源移位会移动掩码。`and a0, a1<<4, ->a2` 完全忽略 `a0` 的低 `4` 位，因为对应的掩码位为零。
+
+设计要点：取反与移位在一个编码中组合。`and a0, a1.not<<3, ->a2` 先清掉 `a0` 的低 `3` 位，再只保留 `a1` 原本为零的那些位置。
 
 <!-- PTO-READER-BLOCK: scalar-and-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择左操作数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择右操作数。
-- `SrcRType` 是 2 位字段，选择应用到右源的转换。
-- `shamt` 是 5 位字段，编码右源转换后执行的逻辑左移量。
+- `SrcL` 和 `SrcR` 是 Reg5 源：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`。读取临时源不会消费它。
+- `RegDst` 发布结果：`1..23` 写入该 GPR，`30` 压入 `U`，`31` 压入 `T`，`0` 与 `24..29` 一起丢弃结果。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+设计要点：`SrcL` 或 `SrcR` 的编码零读取架构零 GPR，因此 `and a0, zero, ->a1` 是物化常数零而不是无操作，而 `and a0, a0, ->a1` 是一次拷贝。`AND` 的任何字段都不能省略。
 
 <!-- PTO-READER-BLOCK: scalar-and-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+两个源都在写入目标之前读取，因此 `and a0, a0, ->a0` 以及任何目标重名都使用指令执行前的值。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
-
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+结果发布或丢弃之后，`TPC` 前进 `4` 字节。`AND` 不访问内存；除 `RegDst` 选中的那一次 `T` 或 `U` 压入外，它不改变保留状态、描述符、数值状态、陷阱、指令束、特权、谓词和控制流状态。
 
 <!-- PTO-READER-BLOCK: scalar-and-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+每个编码取值都已分配：四个 `SrcRType` 编码以及 `0` 至 `31` 的全部 `32` 个 `shamt` 取值。既没有保留修饰符，也没有保留移位量。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+无法译码的形式在 `PC` 处引发 `Fault_IllegalInstruction`；不适用于当前指令束的指令在 `TPC` 处引发 `Fault_BundleControl`；固定编码位不匹配或所选 T/U 源不可用会引发 `Fault_IllegalInstruction`。这些都先于目标效果和 `TPC` 前进。
+
+设计要点：按位运算不产生任何信号，因此除上述检查外 `AND` 没有故障。取反或移出的位只是不出现在结果中；没有任何状态标志记录它们。
 
 <!-- PTO-READER-BLOCK: scalar-and-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `AND` 示例说明：`SrcL=0xc`、`SrcR=0xa`、`SrcRType=11` 且 `shamt=0` 产生 `0x8`。
+当 `SrcL=12`、`SrcR=10`、`SrcRType=11`、`shamt=0` 时，合取为 `12 AND 10 = 8`。对同样的操作数取 `SrcRType=10` 时，准备好的右值是 `10` 的按位取反，发布结果为 `12 AND NOT 10 = 4`。取 `SrcRType=11`、`shamt=2` 时，准备好的右值为 `40`，且 `12 AND 40 = 8`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,44 +19,57 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-cmp-ge-purpose role=purpose -->
 ## What CMP.GE does
 
-`CMP.GE` evaluates signed greater-than-or-equal over decoded scalar operands and publishes canonical XLEN one or zero.
+`CMP.GE` evaluates a signed greater-than-or-equal relation and writes a canonical XLEN boolean to a destination: `1` when the condition holds, `0` when it does not.
+
+The result is ordinary data. `CMP.GE` does not set the commit condition of the enclosing block and does not touch any predicate register.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ge-mechanism role=mechanism -->
 ## Mechanism
 
-The instruction snapshots its operands, prepares the decoded right source, and then evaluates signed greater-than-or-equal.
+The contract returns `ScalarHandler_ExecuteCompare`. The model reads the left source, prepares the right operand, tests the condition `ScalarCondition_GE`, and writes `Zeros{PTO_XLEN} + 1` or `Zeros{PTO_XLEN}` through the destination selector.
 
-A true relation becomes XLEN one; a false relation becomes XLEN zero.
+`SrcRType` selects a transformation of the `SrcR` snapshot before the relation is tested. Value `1` substitutes the sign-extended low `32` bits and value `2` the zero-extended low `32` bits. Values `0` and `3` are both defined and both leave the complete value unchanged: the model passes an `11` modifier through untransformed, so no `SrcRType` encoding is reserved and only `1` and `2` change the compared value.
+
+Design point: `CMP.AND` and `CMP.OR` are the register-form comparisons that apply a `.not` modifier, through a different modifier decoder. For the relation forms, `cmp.eq` and its siblings, the value the program placed in `SrcR` is the value the relation tests.
+
+The relation is tested over signed XLEN values: the model compares the signed reading of the left operand with the signed reading of the prepared right operand, so the answer does not follow from which pattern is larger when both are read as unsigned integers.
+
+Design point: canonicalizing to exactly `1` or `0` rather than to an arbitrary nonzero value means two comparisons can be combined arithmetically, and a single test of the destination is enough to recover the relation.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ge-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `RegDst` selects the encoded destination or discard behavior.
+- `SrcL` and `SrcR` are Reg5 sources: codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`.
+- `SrcRType` selects the transformation of the `SrcR` snapshot: `1` substitutes the sign-extended low `32` bits and `2` the zero-extended low `32` bits, while `0` and `3` both leave the complete value unchanged.
 
-- `SrcL` supplies the left scalar source.
+`RegDst` names the destination: codes `1..23` write the named absolute GPR, code `0` and codes `24..29` discard the result, code `30` pushes it to the `U` queue, and code `31` pushes it to the `T` queue.
 
-- `SrcR` supplies the right scalar source.
-
-- `SrcRType` selects the right-source transformation.
+Code `0` in either source reads the architectural zero GPR. Queue sources are read without being consumed.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ge-effects role=effects -->
 ## Effects and ordering
 
-The canonical boolean is published through the encoded destination, then `TPC` advances by `4` bytes.
+On success the instruction writes exactly one destination value and advances `TPC` by `4` bytes, the encoded length of the `32`-bit form.
 
-The instruction does not modify commit state and does not access memory or reservation state.
+It has no memory effect, no reservation effect, no descriptor effect, and no numeric status flag. It leaves the commit argument, the block argument, and the block condition marker unchanged, because it is not a condition setter.
+
+The model reads every selected register source before writing the destination. Scalar dispatch advances `TPC` only after that destination effect.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ge-constraints role=constraints -->
 ## Legality and fault order
 
-Encoding, reserved field values, and source availability are checked before destination, control, or `TPC` effects.
+Decode runs first, and a fixed-bit mismatch raises `Fault_IllegalInstruction` at the instruction address before any effect.
+
+All `32` encodings of `SrcL`, `SrcR`, and `RegDst` are assigned, and all four `SrcRType` values are defined, so no register or modifier encoding is reserved.
+
+A selected `T` or `U` source that is not available is rejected during operand legality, before the destination is written. A rejected instruction changes neither the destination nor `TPC`, and trap entry saves the original `TPC` so it can be reissued.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ge-example role=example -->
 ## Non-normative example
 
-This example illustrates the current owner and does not create a second semantic definition.
+Set GPR1 to `5` and GPR2 to `5`.
 
-`cmp.ge SrcL, SrcR<{.sw, .uw}>, ->{t, u, Rd}` publishes XLEN one when its condition is true and XLEN zero otherwise.
+`cmp.ge 1, 2, ->0` writes `1` into the destination. With GPR2 set to `6` the same form writes `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

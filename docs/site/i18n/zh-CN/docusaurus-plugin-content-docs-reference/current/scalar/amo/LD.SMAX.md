@@ -19,42 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ld-smax-purpose role=purpose -->
 ## LD.SMAX 的作用
 
-`LD.SMAX` 对一个双字原子执行有符号最大值、存储结果，并发布先前的内存值。
+`LD.SMAX` 用该 8 字节内存双字与一个 64 位操作数中较大的一个替换该双字，两者都按有符号二进制补码解读。指令执行前内存中的值通过 `RegDst` 发布。
 
 <!-- PTO-READER-BLOCK: scalar-ld-smax-mechanism role=mechanism -->
-## 原子机制
+## 如何选出较大的有符号值
 
-ASL DOC 契约选择 `ScalarHandler_AtomicReadModifyWrite`，访问宽度为 `8` 字节。
+该形式经由 `ScalarHandler_AtomicReadModifyWrite` 运行，访问宽度 `8`，原子操作 `Atomic_SMAX`：读取预检、写入预检、加载、有符号比较、存储获胜者、记录一个 `write_performed` 为 true 的原子事件，并返回旧双字以供发布。
 
-只有读取与写入访问都完成预检后，同一位置的原子读改写才能提交。
+负数模式会输给一个小的正数。存放 `0xfffffffffffffffd`（即 `-3`）的位置与 `SrcR = 0x0000000000000005` 比较后存放 `0x0000000000000005`。
+
+设计要点：符号位决定比较结果。若按 `LD.UMAX` 的无符号规则比较同样的两个模式，反而会保留 `0xfffffffffffffffd`，因为无符号序把它读作极大的数；这两个形式接受相同的操作数，区别只在于如何解读它们。
+
+设计要点：只写入获胜者的字节。在访问宽度 `8` 下取值按加载时的形式使用，因此存储的双字要么是旧模式、要么是操作数，绝不会是转换后的形式。
 
 <!-- PTO-READER-BLOCK: scalar-ld-smax-inputs-outputs role=inputs-outputs -->
-## 输入与结果
+## 字段与操作数角色
 
-`SrcL` 承载 Reg5 原子地址源；`SrcR` 承载 Reg5 原子操作数源；`RegDst` 承载 Reg5 旧值目的地；`aq` 承载获取排序位；`rl` 承载释放排序位；`far` 承载平坦地址路由提示。
+`RegDst` 是位于指令位 `7..11` 的 `5` 位字段，`SrcL` 位于位 `15..19`，`SrcR` 位于位 `20..24`，`rl` 位于位 `25`，`aq` 位于位 `26`，`far` 位于位 `27`。
 
-`aq` 与 `rl` 选择宽松、获取、释放或获取-释放排序；`far` 是配置档路由提示，在参考配置档中不改变架构结果。
+`SrcL` 是地址源，`SrcR` 是操作数源。编码为零的源读取架构零寄存器；选择子 `24` 到 `27` 读取 `T#1` 到 `T#4`，`28` 到 `31` 读取 `U#1` 到 `U#4`，且不消耗队列项。编码为零的目的地丢弃发布值，编码 `24` 到 `29` 也同样丢弃；编码 `30` 压入 U，编码 `31` 压入 T。
+
+设计要点：`far` 只是路由提示。它被译码并传给 `AtomicAddress`，后者原样返回地址，因此在参考模型中 `.f` 写法无法把比较重定向到另一个双字。
 
 <!-- PTO-READER-BLOCK: scalar-ld-smax-effects role=effects -->
-## 效果与排序
+## 效果
 
-只有读改写提交后才会发布旧内存值；任何目的地效果之前都会先捕获源别名。
+一次完成的 `LD.SMAX` 向目标地址写入 8 字节、记录一个 `write_performed` 为 true 的原子事件、发布执行前的双字，并让 `TPC` 前进 4 字节。与保留的 64 字节粒度重叠的写入会清除本地保留。
 
-完成的写入会使重叠的本地 64 字节缓存行保留失效，保留不重叠的保留，并让 `TPC` 前进 `4` 字节。
+设计要点：该存储不是有条件的。当操作数是较小值时，旧双字被原样写回，`write_performed` 仍为 true，重叠的保留也仍会被清除。
 
 <!-- PTO-READER-BLOCK: scalar-ld-smax-constraints role=constraints -->
-## 合法性与精确故障
+## 合法性与故障
 
-有效地址必须按 `8` 字节对齐。对齐、地址翻译和权限检查都先于架构效果。
-
-预检失败时不会发布目的值、内存事件、保留更新或退役效果；保存的原始 `TPC` 支持完整重新执行。
+地址必须按 8 字节对齐。对齐先于翻译检查，翻译先于权限与边界检查；写入预检会为写访问重复这一顺序，而且两个翻译地址必须相同。`Fault_DataAlignment` 与 `Fault_DataPage` 都在原始地址上报告，译码失败或所选 T 或 U 源不可用则更早引发 `Fault_IllegalInstruction`。发生故障时不发布任何值、不加载或存储任何字节、不记录原子事件、不改变保留，也不推进 `TPC`。
 
 <!-- PTO-READER-BLOCK: scalar-ld-smax-example role=example -->
 ## 非规范示例
 
 本示例只展示一种已接受写法；下方生成的契约仍是权威来源。
 
-初次阅读可从 `ld.smax [SrcL], SrcR, ->Rd` 开始，再只改变上文说明的排序或路由修饰位。
+当 `a0` 存放 8 字节对齐的地址时，`ld.smax [a0], a1, ->a2` 就地比较。若 `[a0]` 存放 `0xfffffffffffffffd` 且 `a1` 存放 `0x0000000000000005`，该位置得到 `0x0000000000000005`，`a2` 得到 `0xfffffffffffffffd`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,48 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-divu-purpose role=purpose -->
 ## What HL.DIVU does
 
-`HL.DIVU` is a 48-bit scalar ALU instruction. It computes the unsigned quotient and remainder together from source snapshots; its current instruction contract defines the result publication path and any additional state effect.
+`HL.DIVU` is the unsigned 48-bit HL48 pair form. It reads two Reg5 operands as unsigned `PTO_XLEN` integers and publishes the quotient through `RegDst0` and the remainder through `RegDst1`, in that order.
+
+Design point: `HL.DIVU` and `HL.DIV` share one field layout and differ only in the mnemonic and the fixed match bits of the 48-bit encoding, so the unsigned interpretation belongs to the executed instruction word rather than to an operand value or a mode field.
 
 <!-- PTO-READER-BLOCK: scalar-hl-divu-mechanism role=mechanism -->
-## How the result is formed
+## How the pair is formed
 
-Execution snapshots the encoded inputs, then computes the unsigned quotient and remainder together from source snapshots, and only afterward performs the destination effects.
+Execution reads both sources, computes both results, and then publishes them in encoded order.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+- For a zero divisor the quotient is `0` and the remainder is the dividend itself, so the pair still satisfies `dividend = quotient * divisor + remainder`.
+- For a nonzero divisor the quotient is the unsigned quotient of the two complete operands and the remainder is `dividend - quotient * divisor`, which stays strictly below the divisor.
+
+The quotient goes to `RegDst0` first and the remainder to `RegDst1` second.
+
+Design point: the remainder is the difference the quotient leaves over, not a separately rounded value. `13` divided by `5` gives the pair `2` and `3`, and `7` divided by `7` gives `1` and `0`; the identity between the two results holds for every operand pair the encoding can express.
 
 <!-- PTO-READER-BLOCK: scalar-hl-divu-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst0` field selects the quotient Reg5 target or discards the quotient.
-- The 5-bit `RegDst1` field selects the remainder Reg5 target or discards the remainder.
-- The 5-bit `SrcL` field selects the dividend through Reg5.
-- The 5-bit `SrcR` field selects the divisor through Reg5.
+- `SrcL` is the dividend and `SrcR` is the divisor, read through the Reg5 source map: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4` without consuming an entry.
+- `RegDst0` publishes the quotient and `RegDst1` publishes the remainder. Each destination uses the common map independently: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard.
+- `SrcL`, `SrcR`, `RegDst0` and `RegDst1` are all required encoded fields, so no operand and no destination can be omitted.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: the two destinations are independent, so one instruction can mix a GPR write with a queue push, and a code that discards on one side leaves the other side untouched. A destination code that names a source selector is a legal alias: both sources are snapshotted first, so that register or queue slot is overwritten only after the two source reads have happened.
 
 <!-- PTO-READER-BLOCK: scalar-hl-divu-effects role=effects -->
 ## Effects and ordering
 
-All results are computed before publication. The destinations are then updated in encoded order (`RegDst0`, `RegDst1`), which also defines the order of duplicate-register writes or queue pushes.
+Both results are computed from the same two source snapshots and both are published only after the arithmetic is complete. `TPC` then advances by `6` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
+No memory, reservation, descriptor, numeric-status, bundle, privilege, predicate or control-flow state changes, and no queue entry moves unless a destination encodes `30` or `31`.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: when both destinations push one queue, the pushes follow the encoded order, so the remainder pushed by `RegDst1` is the newest entry and the quotient pushed by `RegDst0` is next-newest. While `T#1` is available, `hl.divu t#1, zero, ->u, u` therefore leaves the remainder in `U#1` and the quotient in `U#2`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-divu-constraints role=constraints -->
 ## Legality and fault boundary
 
-A zero divisor uses the defined quotient and remainder outcomes; both outputs are computed before either destination is written.
+Both sources and both destinations assign every code, and duplicate destination codes are legal, so `HL.DIVU` reserves no selector value.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An undecodable form raises `Fault_IllegalInstruction` at `PC`; an instruction that is not applicable to the active bundle raises `Fault_BundleControl` at `TPC`; an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before either destination effect and before `TPC` advances.
+
+Design point: no divisor value can fault. A zero divisor has defined outputs, `0` for the quotient and the dividend for the remainder, and a nonzero divisor goes through the same guarded loop the single-result `DIVU` uses, so the pair form adds no trap path.
 
 <!-- PTO-READER-BLOCK: scalar-hl-divu-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.DIVU` example, dividend `13` and divisor `5` produce quotient `2` and remainder `3` in destination order.
+With `a0=13` and `a1=5`, `hl.divu a0, a1, ->a2, a3` writes `2` to `a2` and `3` to `a3`. With `SrcR` encoded as zero the divisor is the architectural zero GPR, so the quotient is `0` and the remainder is `13`. With `a0=7` and `a1=7` the pair is `1` and `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

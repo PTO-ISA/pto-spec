@@ -19,33 +19,42 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-icall-purpose role=purpose -->
 ## What BSTART.ICALL contributes
 
-`BSTART.ICALL` is a 32-bit block-start command for the ICALL form. It establishes the pending block identity and selectors; the completed block, not the start command alone, owns body execution and result commitment.
+`BSTART.ICALL` is the fused indirect call. It retires the block that is active, snapshots that block's `BARG.BPCN` as the call target, opens a new Standard indirect-call block, and publishes an independent return target to `ra`. The call target is not encoded in this command at all; only the return address is.
+
+The one accepted spelling is `BSTART.ICALL <rt_label>, ->ra`, a 32-bit word with match `0x50166001` under mask `0xf83fffff`. The mask fixes the high discriminator bits and bits 21 to 0, and leaves the unsigned 5-bit `uimm5` visible in bits 26 to 22. `InstructionContractTransfer_BSTART_ICALL` returns `BundleTransfer_IndirectCall` and `InstructionContractWritesReturnAddress_BSTART_ICALL` returns TRUE.
+
+Design point: `BSTART.STD CALL, <label>` and `BSTART.FP CALL, <label>` take their target from `simm17` and their return address from the sequential word. `BSTART.ICALL` reverses that split: the target comes from the retiring block's `BARG.BPCN` and the return target comes from `uimm5`. The observable consequence is that a caller can call a destination the closing block only knows as its own candidate continuation.
 
 <!-- PTO-READER-BLOCK: block-bstart-icall-mechanism role=mechanism -->
 ## Placement and mechanism
 
-Header commands execute sequentially after the start, while `BSTOP` or the next `BSTART` is the boundary that validates and retires the completed block. The current owner gives this exact composition checklist:
+The start decodes the word, checks its descriptor, and requires `RetiringBundleBPCNAvailable`: the bundle must be active and its `BARG.BlockType` must be Standard or Floating. Otherwise `Fault_BundleControl` is raised at the instruction, before any target or return-address effect. On the accepted path the call target is the snapshot of the retiring `BARG.BPCN` and the return target is `P + 2 + 2 * uimm5`.
 
-```text
-BSTART.ICALL retires one active Standard or Floating block whose BARG.BPCN supplies the call target, then atomically opens a new Standard indirect-call block and writes ra.
-```
-
-After any active predecessor is retired successfully, the command initializes the new pending `BARG` or operation descriptor and continues header execution at the sequential PC. No block destination or memory result becomes visible merely because the start decoded. The return-address result is published only when start applicability, target checks, and predecessor retirement all succeed.
+Design point: the new block is installed only when the predecessor commit leaves the program counter at the address of this instruction. A predecessor whose commit selects a different continuation keeps that continuation and installs no call state, and `ra` keeps the value it had before.
 
 <!-- PTO-READER-BLOCK: block-bstart-icall-inputs role=inputs-outputs -->
 ## Operands and header roles
 
-- `uimm5` supplies the encoded offset or addend; its exact assigned domain remains in the generated contract below.
+- `uimm5` is the unsigned 5-bit return-address displacement in bits 26 to 22. It is a displacement from the embedded high `C.SETRET` halfword, so encoded zero is a real zero and selects `P + 2`, while `uimm5` 3 selects `P + 8`.
+- The retiring block's `BARG.BPCN` supplies the call target. That value must have its low bit clear, and the retiring block must be Standard or Floating.
+- `ra` receives the return target when the new block is installed; `ra` is GPR 10, and the same value is kept as the architectural return address.
 
 <!-- PTO-READER-BLOCK: block-bstart-icall-effects role=effects -->
 ## Pending state and completion
 
-The start transition is all-or-nothing with predecessor retirement for applicability and target checks. After the start succeeds, the later completion boundary validates the full composition before any body result can commit.
+On success the new block records the `BSTART.ICALL` address in `BARG.BPC`, sets `BARG.BlockType` to STD, stores the retiring `BARG.BPCN` snapshot in `BARG.BPCN`, records ICALL in `BARG.TYPE`, sets `BARG.TAKEN` to 1, and publishes the return target to `ra`. The call target becomes the next PC only when `BSTOP` or the next `BSTART` commits the new block.
+
+Any memory effects of the retiring block complete before the indirect-call `BARG` and `ra` are published, and `BSTART.ICALL` itself performs no memory access. If the retiring commit fails, `ra` and the retiring `BARG` are preserved and no candidate `BARG` is installed.
+
+Design point: because `ra` is written only in the installation step, every earlier failure leaves the previous `ra` intact. A handler can therefore tell from `ra` alone whether the call was installed, and a retry of the same instruction starts from the same snapshot.
 
 <!-- PTO-READER-BLOCK: block-bstart-icall-constraints role=constraints -->
 ## Legality and fault boundary
 
-Reserved selectors, invalid targets, malformed completed composition, or failed predecessor retirement are rejected before new-block or body effects.
+- This fused form is the only accepted indirect-call spelling; bare `BSTART.* ICALL` forms are deleted.
+- A System retiring block raises `Fault_BundleControl`, because a System `BARG` has no selecting `BPCN`.
+- An odd retiring `BARG.BPCN` raises `Fault_InstructionPC` before the retiring-block effects.
+- A decode, applicability, target, or retiring-commit failure preserves `ra` and the retiring `BARG`, and installs no candidate `BARG`.
 
 <!-- PTO-READER-BLOCK: block-bstart-icall-example role=example -->
 ## Non-normative worked example
@@ -56,7 +65,7 @@ This worked example is non-normative; it illustrates the current owner without r
 BSTART.ICALL <rt_label>, ->ra
 ```
 
-Assume predecessor retirement and target checks succeed. `BSTART.ICALL <rt_label>, ->ra` opens the pending `BSTART.ICALL` form; subsequent header/body commands remain provisional until `BSTOP` or the next `BSTART` validates the complete composition.
+Assume the enclosing block was opened by `BSTART.STD DIRECT, callee`, so its `BARG.BPCN` holds `callee`. The `BSTART.ICALL` closing that block then calls `callee` and writes `P + 2` to `ra` when `uimm5` is 0, or `P + 8` when `uimm5` is 3. A matching `BSTART.STD RET` in the callee eventually continues at the value `ra` holds.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -15,38 +15,62 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-memory-events-purpose role=purpose-scope -->
 ## Purpose and scope
 
-This unit defines the bounded event records used to construct and inspect a PTO total-store-order candidate execution. It supports explicit event construction and optional capture from production memory helpers.
+This unit defines the event vocabulary the rest of the memory model reasons over: read versus write kinds, shared locations, fence strength from two masks, and the bounded event array.
+
+It carries four accepted clauses, `PTO-ARCH-MEMORY-MODEL-VISIBILITY-001`, `PTO-ARCH-MEMORY-MODEL-FENCE-TRANSPORT-001`, `PTO-ARCH-MEMORY-MODEL-MIXED-SIZE-001` and `PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001`, plus a `PTO-REQ-MEMORY-RC-001` comment naming the event bound as verification infrastructure. The `MemoryEvent` record is declared in `asl/arch/data-types/memory-model.asl`, not here.
 
 <!-- PTO-READER-BLOCK: arch-memory-events-concepts role=concepts-state -->
-## Event kinds and fields
+## Event kinds, fields and classes
 
-- Loads and atomics are reads; initial writes, stores, and write-performing atomics are writes.
-- Two events share a location only when both address and `size_bytes` match.
-- Data event classes use `0001` for reads, `0010` for writes, and `0011` for atomics; fence events carry separate predecessor and successor masks.
+- `MemoryEventIsRead` is true for `MemoryEvent_Load` and `MemoryEvent_Atomic`; `MemoryEventIsWrite` for `MemoryEvent_InitialWrite`, `MemoryEvent_Store` and an atomic with `write_performed` true.
+- `MemoryEventsShareLocation` requires equal `address` and equal `size_bytes`; `MemoryEventRangesOverlap` calls `RangesOverlap` over both events' address and `size_bytes`, and `MemoryEventPartialOverlap` is overlap without shared location.
+- `MemoryEventClass` maps `MemoryEvent_Load` to `'0001'`, both store kinds to `'0010'`, `MemoryEvent_Atomic` to `'0011'` and `MemoryEvent_Fence` to `Zeros{4}`.
+- `MemoryFenceStrengthOf(predecessor, successor)` returns `MemoryFenceStrength_AcquireRelease` when both are nonzero, `MemoryFenceStrength_Release` for predecessor only, `MemoryFenceStrength_Acquire` for successor only, and `MemoryFenceStrength_None` when both are `Zeros{4}`.
+- `AddLoadEvent` sets `write_performed = FALSE` with a zeroed `write_value`; `AddStoreEvent` sets `write_performed = TRUE`, the rank it is given and a zeroed `read_value`.
+- `AddAtomicOutcomeEvent` normalizes both `read_value` and `write_value`; `AddDataFenceEvent` fixes `address = Zeros{PTO_XLEN}`, `size_bytes = 1` and `order = MemoryOrder_AcquireRelease`.
+- Its state is `_MemoryEvents`, `_MemoryEventCount`, `_CurrentMemoryAgent` and `_MemoryEventCaptureEnabled`.
 
 <!-- PTO-READER-BLOCK: arch-memory-events-rules role=rules-interactions -->
 ## Capture lifecycle
 
-- `StartMemoryEventCapture` resets the sequence, selects a `MemoryAgentId`, and enables capture.
-- `SelectMemoryEventAgent` changes the agent used by subsequent wrappers.
-- `StopMemoryEventCapture` disables automatic recording without deleting the captured sequence.
-- `AddMemoryEvent` appends one event and advances `_MemoryEventCount`; specialized helpers normalize access values before appending.
+- `ResetMemoryExecution` sets `_MemoryEventCount = 0` and touches nothing else.
+- `StartMemoryEventCapture(agent)` calls `ResetMemoryExecution`, sets `_CurrentMemoryAgent = agent` and `_MemoryEventCaptureEnabled = TRUE`.
+- `SelectMemoryEventAgent(agent)` writes only `_CurrentMemoryAgent`, so it changes the agent of later wrapper calls without clearing the sequence.
+- `StopMemoryEventCapture` sets the flag false and leaves the array and `_CurrentMemoryAgent` unchanged.
+- `AddMemoryEvent` asserts `_MemoryEventCount < PTO_MODEL_MEMORY_EVENTS`, stores the record at the current count, increments the count and returns the index. It does not consult `_MemoryEventCaptureEnabled`; that check sits one level up in the atomicity unit's `Record` functions, so a direct `AddInitialWriteEvent` or `AddStoreEvent` call appends while capture is off.
+- `AddInitialWriteEvent` always stores `agent = 0`, `order = MemoryOrder_Relaxed`, `read_from = 0` and `coherence_rank = 0`.
+
+Design point: `MemoryEventClass` gives an atomic event `'0011'`, the OR of the read and write classes, because one record holds both sides. A fence naming `'0011'` as predecessor or successor matches an atomic event, and the ordering unit's `MemoryFenceOrders` only tests that the AND with the mask is nonzero.
+
+Design point: strength is derived from the masks and never stored, because `MemoryFenceStrengthOf` reads only its arguments; a fence whose predecessor mask is `'0000'` cannot act as a release.
+
+Design point: `ResetMemoryExecution` clears the count, not the contents, and `AddMemoryEvent` writes the slot before it increments. Every reader bounds its scan by `_MemoryEventCount`, so stale records above the count are unreachable and get overwritten by later appends.
 
 <!-- PTO-READER-BLOCK: arch-memory-events-boundaries role=boundaries -->
 ## Verification boundary
 
-The event array bound and `PTO_MODEL_MEMORY_EVENTS` assertion are model-checking infrastructure. They do not impose an architectural limit on the number of agents or the length of a real execution. Instruction and device fence classes remain explicit mask space even though this candidate model records data events.
+The bounds `PTO_MODEL_MEMORY_EVENTS` of `16` and `PTO_MODEL_MEMORY_AGENTS` of `4` belong to this candidate-execution model, not to an implementation; the `PTO-REQ-MEMORY-RC-001` comment says so.
+
+The clause `PTO-ARCH-MEMORY-MODEL-MIXED-SIZE-001` says GM locations are bytes, this revision defines no byte-level merge or tearing, and only exact address-and-size matches participate in the portable coherence relation. This unit supplies the predicates that draw that line, `MemoryEventsShareLocation` and `MemoryEventPartialOverlap`; the ordering unit's `MemoryCandidateExecutionValid` fails closed on a partial overlap.
+
+`MemoryEventClass` returns `Zeros{4}` for `MemoryEvent_Fence`: its source comment records that instruction and device classes remain explicit mask space while the model records data events, so a fence contributes no class to any AND test.
 
 <!-- PTO-READER-BLOCK: arch-memory-events-example role=example-usage -->
 ## Non-normative capture example
+
+`StartMemoryEventCapture(1)` sets the agent to `1`, clears the count and enables capture. `AddInitialWriteEvent(0x40, 8, 0x55)` occupies index `0`; `AddLoadEvent(1, 0x40, 8, 0x55, MemoryOrder_Acquire)` occupies index `1`, and `_MemoryEventCount` becomes `2`.
+
+`MemoryEventsShareLocation` on those records is true and `MemoryEventPartialOverlap` is false, so they describe one location. A load at `0x44` with `size_bytes` `8` overlaps without sharing, which `MemoryEventPartialOverlap` reports as true.
 
 Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
 
 <!-- PTO-READER-BLOCK: arch-memory-events-related role=related-owners-navigation -->
 ## Related owners
 
-- Address-space helpers provide bounded byte storage beneath event-producing operations.
-- Atomicity assigns coherence and reads-from data; ordering evaluates the complete candidate.
+- `PTO-ARCH-DATA-TYPES-MEMORY-MODEL` declares the `MemoryEvent` record, `MemoryEventKind`, `MemoryOrder` and `MemoryFenceStrength`.
+- [Address space](address-space.md) supplies `ReadPhysicalMemoryByte`, used by `FetchPTOInstruction` and by writes.
+- [Atomicity](atomicity.md) fills `coherence_rank` and `read_from` on the records this unit appends.
+- [Ordering](ordering.md) consumes these predicates to decide `MemoryCandidateExecutionValid` and `MemoryExecutionAllowedRC`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

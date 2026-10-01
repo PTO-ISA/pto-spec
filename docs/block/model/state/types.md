@@ -7,8 +7,64 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-STATE-TYPES}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-state-types-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit declares the enumerations and record types used by all bundle state. It defines no transitions. Reading it tells you what each bundle-state variable can hold.
+
+<!-- PTO-READER-BLOCK: block-model-state-types-concepts role=concepts-state -->
+## Concepts and visible state
+
+The main types group as follows.
+
+- Bundle identity: `BundleKind` (Standard, Floating, System, TileElement, TileMemory, TileMatrix, FrameTemplate), `BundleTransfer` (seven transfer rules), and `BundleArgumentRegister`, the `BARG` record.
+- Operation: `BundleOperationClass` (Control, TileElement, TileMemory, TileMatrix, FixedPoint) and `BundleOperationDescriptor`.
+- Bindings: `BundleScalarBinding`, `BundleTileBinding`, `BundleSharedBinding`, `BundleRangeModifier`, `BundleRangeGroupState`, `BundleSubviewDescriptor`, and `BundleExecutionMaskBinding`.
+- Attributes: `BundleControlAttributes`, `BundleDataAttributes`, `BundleHintAttributes`, and `BundleFixedPointAttributes`.
+- Generations: `LocalGenerationState`, its writer, parent-descriptor, and consumer-dependency records, and `SharedGenerationState`.
+- Templates: `MemoryCopyTemplateState` and `FrameTemplateState`.
+
+Snapshot array types fix the sizes: 3 dimensions, 32 scalar bindings, 16 Tile bindings, 4 Shared bindings, and 64 Local generation records (16 per hand `T`, `U`, `M`, `N`).
+
+<!-- PTO-READER-BLOCK: block-model-state-types-rules role=rules-interactions -->
+## Rules and interactions
+
+Many records carry a separate `valid` or `present` flag next to their fields.
+
+Design point: presence is tracked apart from value. The comment on `BundleFixedPointAttributes` states that `valid` keeps omission, duplicate headers, and encoded zero distinct at commit. A field that is all zeros can therefore still mean "explicitly written as zero".
+
+Design point: a `BundleSubviewDescriptor` is kept apart from the parent Tile's descriptor. The comment says the parent stays the live allocation, and the view is a bounded read-only interpretation until the selected operation has passed preflight. A subview therefore never becomes a Tile in its own right before the operation is known to be legal.
+
+Design point: `BundleExecutionMaskBinding` is pending bundle-operand state. The comment says it never survives commit as an implicit current mask, so each operation must bind its own mask.
+
+Design point: `PortableSpeculationIdentity` pairs an instruction instance with an execution-domain token. The comment explains that the token separates distinct dynamic writers that happen to use the same range.
+
+<!-- PTO-READER-BLOCK: block-model-state-types-boundaries role=boundaries -->
+## Architectural boundaries
+
+`BARG` has no trap field. `BPC` is not in this record; it lives in program-control state.
+
+The consumer-dependency record describes readiness as a logical required-cell set and a lifecycle state (Waiting, Eligible, Retired, Cancelled). The comment says it exposes no backend queue or physical ready table.
+
+<!-- PTO-READER-BLOCK: block-model-state-types-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+A `B.IOT` with two source Tiles, a destination on hand `T` with a size code, PE mask `1111`, and `last` set fills one `BundleTileBinding`. `source0_valid` and `source1_valid` are true, `destination_valid` is true, and `destination_allocated_by_bundle` stays false until commit allocates the destination.
+
+<!-- PTO-READER-BLOCK: block-model-state-types-related role=related-owners-navigation -->
+## Related owners
+
+- [Control state](control-state.md) declares the variables of these types.
+- [Bundle encoding](../schema/bundle-encoding.md) maps kinds and transfers to their codes.
+- [Local generation](../operands/local-generation.md) and [Shared generation](../operands/shared-generation.md) use the generation records.
+- [Subview descriptor](../operands/subview-descriptor.md) builds `BundleSubviewDescriptor`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

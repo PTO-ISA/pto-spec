@@ -17,54 +17,69 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-lwup-purpose role=purpose -->
-## What HL.LWUP does
+## What `HL.LWUP` does
 
-`HL.LWUP` is a standalone `48`-bit scalar AGU instruction that loads two adjacent 4-byte little-endian values and zero-extends each transferred value when it is narrower than `PTO_XLEN` using `Register` addressing.
+`HL.LWUP` is a standalone `48`-bit scalar AGU instruction that loads two adjacent 4-byte little-endian values through a register offset and zero-extends each one to `PTO_XLEN`.
+
+The canonical assembly is `hl.lwup [SrcL, SrcR<{.sw,.uw}><<<shamt>], ->Dst0, Dst1`.
+
+Design point: the offset comes from `SrcR` and the base from `SrcL`, so one traversal can keep a stream pointer and a moving index in separate registers. The base is an address; the offset register is a distance and can be reused as a count.
+
+Design point: the second address is not encoded. The handler computes it as the first address plus the transfer size, so the pair is always two adjacent 4-byte units. Two values 8 bytes apart need two separate loads.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lwup-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How the address and the transfer are formed
 
-The register-offset path applies the encoded `SrcRType` transformation to `SrcR`, shifts that result left by `shamt`, and adds it to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+`SrcRType` transforms the `SrcR` snapshot first, then `shamt` shifts the result, and the shifted value is added to the `SrcL` snapshot modulo `2^PTO_XLEN`.
 
-Both adjacent addresses are preflighted before either aligned little-endian `4`-byte load occurs. Each result is zero-extended; the two loads commit in increasing-address order.
+That sum is the first address, and the sum plus `4` is the second. The update mode is none, so this form writes no base register back.
 
-This form does not publish an address-base writeback.
+Both addresses are probed before either memory read starts. Only when both probes report no fault does the handler read the two aligned 4-byte units and publish the two results.
+
+Design point: probing the whole pair before the first read makes the form all-or-nothing. An access fault on the second unit is raised before the first unit is read, so half a pair can never be observed as loaded.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lwup-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and results
 
-- `RegDst0` is a `5`-bit field selecting the first loaded-value result.
-- `RegDst1` is a `5`-bit field selecting the second loaded-value result.
-- `SrcL` is a `5`-bit field selecting the address base.
-- `SrcR` is a `5`-bit field selecting the register offset.
-- `SrcRType` is a `2`-bit field selecting the register-offset transformation.
-- `shamt` is a `5`-bit field selecting the post-transformation left shift.
+- `SrcL` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `SrcR` uses the same `5`-bit Reg5 domain, so an offset may also come from a queue slot or from the zero GPR.
+- `SrcRType` is `2` bits: `00` leaves the whole `SrcR` value unchanged, `01` and `10` replace it with the signed and unsigned readings of its low `32` bits, and `11` is reserved.
+- `shamt` is a `5`-bit unsigned shift amount applied after the transformation; encoded zero performs no shift.
+- `RegDst0` and `RegDst1` are `5`-bit selectors. Codes `1`..`23` write absolute GPRs, code `30` pushes `U`, code `31` pushes `T`, and codes `0` and `24`..`29` discard that one result.
+
+Design point: `RegDst0` receives the lower-address unit and `RegDst1` the higher one, and the two fields are independent, so a discarded load still runs and still raises its own faults.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lwup-effects role=effects -->
-## Effects and completion order
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+Every scalar source is snapshotted before any memory or destination effect, so a destination that names `SrcL` or `SrcR` still contributes the pre-instruction value to the address.
 
-Successful execution records two relaxed load events in address order; memory and reservation state are preserved.
+A successful execution records two relaxed load events, lower address first. Memory bytes and reservation state are unchanged, because a load neither writes memory nor disturbs a reservation.
 
-After all result or writeback publication, `HL.LWUP` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+`TPC` advances by `6` bytes after both results are published. A rejected or faulting attempt does not retire.
+
+Design point: both results are written only in the last step, so one destination cannot feed the second address of the same instruction. The pair acts on one pre-instruction register state, which is what makes `->5, 5` a defined encoding.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lwup-constraints role=constraints -->
 ## Legality, faults, and restart
 
-Each accessed address is aligned to the `4`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+A fixed-bit mismatch, a reserved encoded value, or a source code selecting an unavailable `T` or `U` slot raises `Fault_IllegalInstruction` before any instruction effect.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
+A misaligned 4-byte address raises `Fault_DataAlignment` before translation or permission. A later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
 
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+A fault records no load event, writes no destination, and leaves `TPC` on the faulting instruction. Recovery recomputes the snapshots, both addresses, both probes, and both loads from the beginning.
+
+Design point: `SrcRType` raw `11` rejects in the reserved-value check before the sources are read, so a reserved selector cannot expose a partly formed offset.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lwup-example role=example -->
-## Non-normative reading walkthrough
+## Reading one encoding end to end
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `hl.lwup [SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>], ->Dst0, Dst1` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Take `hl.lwup [3, 9<<2], ->5, 6` with GPR3 = `0x1000` and GPR9 = `0x400`.
+- `SrcRType` is `00`, so the offset is `0x400`; `shamt` is `2`, so it becomes `0x1000`.
+- The sum is `0x2000`, so the pair covers `0x2000` and `0x2004`.
+- GPR5 receives the unit at `0x2000` and GPR6 the unit at `0x2004`. GPR3 and GPR9 keep their values, and `TPC` becomes the instruction address plus `6`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

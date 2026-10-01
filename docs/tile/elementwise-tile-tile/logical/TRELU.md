@@ -19,52 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-trelu-purpose role=purpose -->
 ## What TRELU does
 
-`TRELU` applies an elementwise rectifier to every valid element and publishes a new Local destination.
+`TRELU` applies the rectifier `max(x, 0)` to every element of one Local Tile and writes the results into a newly allocated Local destination Tile of the same `DataType`. Negative values and zeros become zero, positive values pass through, and floating NaNs are replaced as described below.
+
+Design point: `TRELU` has no standalone opcode. `BSTART.VEC` Mode 0 Function 23 (TEPL selector `0x017`) selects it, and it shares the closed unary bundle schema with `TABS`, `TNOT`, and `TNEG`.
 
 <!-- PTO-READER-BLOCK: tile-c-trelu-mechanism role=mechanism -->
-## Operation mechanism
+## Element and Tile mechanism
 
-The operation evaluates only the valid rectangle using the mnemonic-selected typed element rule.
+After complete preflight, `ExecuteTileUnary` reads the source and transforms each coordinate of the valid rectangle `ValidRow x ValidCol`. The rule depends on the selected `DataType`.
+
+- Signed integer types: a negative element becomes zero, and a nonnegative element is unchanged.
+- Unsigned integer types: `TRELU` is the identity, because no element is negative.
+- Floating-point types: negative finite values, negative infinity, negative zero, and positive zero all become positive zero. Positive finite values and positive infinity are unchanged.
+- Floating-point NaN: a quiet or signaling NaN becomes the numeric profile's quiet NaN. A signaling NaN also records the invalid condition.
+
+Design point: unlike `TABS` and `TNEG`, which only edit the sign bit, `TRELU` classifies each floating value with `TileNumericValueClass`. Both NaN classes map to the profile quiet NaN, so a NaN payload is not preserved, and a signaling NaN reports invalid. The invalid status is recorded only after complete legality preflight, together with the published result.
+
+Design point: both signed zeros map to the positive-zero encoding, so a computed `TRELU` element is never a negative zero.
 
 <!-- PTO-READER-BLOCK: tile-c-trelu-inputs-outputs role=inputs-outputs -->
-## Operands, shape, and type
+## Operand roles and descriptors
 
-- `destination0` identifies a newly allocated destination.
+- `source0` is the rectifier source. It is an existing, allocated Local Tile.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected operation `DataType`, and its physical shape, valid shape, and layout match the source.
 
-- `source0` supplies a persistent source Tile.
+One terminating `B.IOT` binds both Tiles under a single `PE_MASK`; `B.IOR` and `B.IOS` are illegal. Once the `B.IOT` encoding itself is well formed, `PE_MASK=0000` is a strict no-op.
 
-- The closed applicable DataType set is `FP16`, `BF16`, `FP32`, `S32`.
-
-- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
-
-- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+The source may use a different same-width, non-packed backing type. Its bits are then validated and interpreted as the selected `DataType`. Every valid-region element (every active one, when an ExecutionMask is in force) must be defined and a valid encoding of that type.
 
 <!-- PTO-READER-BLOCK: tile-c-trelu-effects role=effects -->
-## Definedness, padding, and publication
+## Publication, definedness, and padding
 
-All source descriptors and payloads are validated and snapshotted before destination publication.
+The source payload is snapshotted before the first destination write, so a source that aliases the destination is read with its old values.
 
-The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+The destination descriptor, the valid-region results, the padding, the definedness of every element, and any invalid status publish together. A rejected `TRELU` has no architectural effect.
 
-Null padding leaves physical coordinates outside the valid rectangle undefined; an explicit non-Null PadValue defines those coordinates with the selected typed value.
+Elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero`, `Max`, and `Min` are defined; `Null`, selected when `B.DATR` is omitted, leaves them undefined.
 
-Source Tiles persist and are not modified by successful execution.
+When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value and contribute no status. `TRELU` has no global-memory effect.
 
 <!-- PTO-READER-BLOCK: tile-c-trelu-constraints role=constraints -->
-## Legality, fault, and order boundaries
+## Type, layout, and fault boundary
 
-Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+The ASL type predicate `TileTReluDataTypeSupported` accepts `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Packed four-bit formats are excluded.
 
-A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+The layout is `RowMajor` by default, or `CUBE_M16` or `CUBE_M32` when an explicit `Layout` selects it. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal. Nondefault `CMode`, `Sat`, `Canonicalize`, secondary `DataType`, or `RMode` is illegal.
 
-`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+Malformed bindings, missing or zero dimensions, undefined or mismatched source state, an unsupported `DataType`, a non-selected layout, or an invalid floating source encoding raises `Fault_TileLegality` before any effect. An unrepresentable destination shape or insufficient `TSize` capacity raises `Fault_TileAllocation` before allocation.
 
 <!-- PTO-READER-BLOCK: tile-c-trelu-example role=example -->
 ## Non-normative example
 
 This example illustrates the current ASL-bound contract and is not a second instruction definition.
 
-`TRELU <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+With `DataType=S32`, valid elements `[-7, 0, 9]` become `[0, 0, 9]`. With `DataType=FP16`, `0xC000` (-2.0) and `0x8000` (negative zero) both become `0x0000`, while `0x3C00` (1.0) is unchanged.
+
+In macro form, `TRELU <Row=8, Col=64, FP16>, T#1, ->T<1KB>` rectifies all 8 x 64 elements of an `FP16` Tile into a new 1 KB destination.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

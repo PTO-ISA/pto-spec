@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-min-purpose role=purpose -->
 ## MIN 的作用
 
-`MIN` 是一条 32 位标量 ALU 指令。它把完整操作数按有符号值比较，并选择最小值的位模式；当前指令契约定义结果发布路径以及任何额外状态效果。
+`MIN` 是一条 32 位编码的标量 ALU 指令，它把两个 XLEN 值按有符号整数比较，并通过一个 Reg5 目标原样发布其中较小的那个。
+
+与 `MAX` 一样，结果是操作数位模式之一而不是计算值，并且比较使用每个源的全部 `64` 位。
 
 <!-- PTO-READER-BLOCK: scalar-min-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后把完整操作数按有符号值比较，并选择最小值的位模式，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractResult_MIN`：当 `SInt(left) < SInt(right)` 时返回 `left`，否则返回 `right`；并提供返回真的 `InstructionContractUsesSignedComparison_MIN`。分派路径通过 `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MIN, FALSE)` 到达同一个辅助函数。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+min SrcL, SrcR, ->{t, u, Rd}
+```
+
+设计要点：最小值按有符号读法取得，因此它与「清零高位」不是一回事。取 `SrcL = 0xFFFFFFFFFFFFFFFF`、`SrcR = 0` 得到 `SrcL`，因为 `-1 < 0`，尽管两者都按无符号读时 `SrcR` 才是更小的字。
 
 <!-- PTO-READER-BLOCK: scalar-min-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择左操作数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择右操作数。
+- `RegDst`，指令切片 `[7 +: 5]`，接收被选中的操作数，或丢弃它。
+- `SrcL`，指令切片 `[15 +: 5]`，提供左操作数。
+- `SrcR`，指令切片 `[20 +: 5]`，提供右操作数。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+两个源都使用通用 Reg5 映射：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4` 且不消耗表项。编码零读取体系结构零 GPR。
+
+设计要点：只有两个 5 位源字段进入比较；该形式不带立即数、修饰或移位字段。因此与常量比较的 `MIN` 需要把该常量放进寄存器，而该寄存器可以是从队列读到的临时项。
 
 <!-- PTO-READER-BLOCK: scalar-min-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+两个源在目标效果之前取快照。向某个源刚刚读取的同一队列推送目标，会发布被选中的操作数，而不会扰动被读取的那个表项。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
-
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+被选中的操作数通过 `RegDst` 写入，随后 `TPC` 前进 `4` 字节。该指令没有内存效果，没有数值状态效果，也不影响保留、描述符、指令束、特权与控制流状态。
 
 <!-- PTO-READER-BLOCK: scalar-min-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+每个 `32` 编码的源编码与每个 `32` 编码的目标编码都有定义，每个 XLEN 位模式都合法，因此只有临时源不可用会使操作数检查失败。指令第 `31:25` 位与 `14:12` 位由所接受的形式固定。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+适用性只在系统块终止请求挂起时失败，并在 `TPC` 触发 `Fault_BundleControl`。否则，不匹配的编码在进入指令束主体之前于 `PC` 触发 `Fault_IllegalInstruction`，所选 `T` 或 `U` 源不可用时则在目标写入之前于 `PC` 触发 `Fault_IllegalInstruction`。
+
+设计要点：故障面与 `MAX` 完全相同，因为两个助记符共用选择辅助函数，只在比较算子上不同。不存在某个操作数对会让其中之一按值触发故障而另一个不触发。
 
 <!-- PTO-READER-BLOCK: scalar-min-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `MIN` 示例说明：操作数 `7` 与 `3` 选择结果 `3`。
+取 `SrcL = 0xFFFFFFFFFFFFFFFF`、`SrcR = 0` 时有符号值为 `-1` 与 `0`，因此 `RegDst` 收到 `0xFFFFFFFFFFFFFFFF`。取 `SrcL = 4`、`SrcR = 7` 时 `RegDst` 收到 `4`。取 `SrcL = SrcR = 0x8000000000000000` 时严格比较为假，`RegDst` 收到右操作数，其位模式完全相同。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

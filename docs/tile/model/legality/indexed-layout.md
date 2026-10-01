@@ -7,8 +7,80 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-legality-indexed-layout-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns the layout, type, and shape checks for indexed TLSU operations, and the operand checks for `TFMA` and `GMOV`. Indexed TLSU operations are the Tile load-store unit operations that read or write global memory at per-element addresses taken from an index Tile, such as MGATHER and MSCATTER.
+
+- `IndexedTLSULayoutSupported`, `IndexedTLSUNumericDescriptorLegal`, and `IndexedTLSUNumericContentsDefined` check data Tile layout and descriptor.
+- `IndexedTLSUMemoryIndexDataTypeLegal` and `IndexedTLSUOrdinaryTransferDataTypeLegal` check types.
+- `IndexedTLSUDataShapeMatchesIndex` and `IndexedTLSUPhysicalShapeLegal` check shapes.
+- `TileOperandsLegal_TFMA` and `TileOperandsLegal_GMOV` are full operand predicates.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-indexed-layout-concepts role=concepts-state -->
+## Concepts and visible state
+
+All predicates are read-only and raise no fault themselves. The index Tile holds one address or offset per data element; the data Tile holds the values moved.
+
+The supported indexed layouts are RowMajor, CUBE_M16, and CUBE_M32. A memory index Tile must be S32, U32, S64, or U64.
+
+A packed four-bit type, such as E2M1X2 or U4X2, stores two logical elements per byte. For shape matching, one index element covers one packed pair.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-indexed-layout-rules role=rules-interactions -->
+## Rules and interactions
+
+`IndexedTLSUNumericDescriptorLegal` requires numeric storage and a supported layout. A CUBE layout must pass `TileCubeDescriptorLegal`; RowMajor must pass `TileDescriptorLegal`.
+
+`IndexedTLSUDataShapeMatchesIndex` requires equal valid rows. For a four-bit data type, the data valid columns must be even and equal to twice the index valid columns; otherwise the valid columns must be equal.
+
+Design point: indexed addresses are byte displacements, and the block schema has no field to select the low or high nibble of a byte. A four-bit transfer therefore moves whole packed pairs, which is why one index covers two data columns and an odd data column count is rejected.
+
+`IndexedTLSUOrdinaryTransferDataTypeLegal` returns TRUE for every data type: it is `IndexedTLSUTransferDataTypeLegal` (non-four-bit) or four-bit. The pair rule above is what constrains four-bit transfers.
+
+`IndexedTLSUPhysicalShapeLegal` checks the bundle's layout and dimensions. For RowMajor, the physical column count must be a power of two and at least ValidCol. For a CUBE layout, the CUBE storage rows and required bytes must be nonzero and pass `TileCubeDescriptorShapeAndPhysicalLegal`.
+
+`TileOperandsLegal_TFMA` requires the destination and three sources (left, right, addend) to share shape, layout, storage kind, and data type; the layout must be RowMajor, CUBE_M16, or CUBE_M32; and the sources must be defined and, for floating types, validly encoded at every valid coordinate (every active coordinate when an ExecutionMask is in force).
+
+`TileOperandsLegal_TFMA` accepts any type in `TileVecArithmeticDataTypeSupported`, which includes FP64, TF32, HF32, E4M3, E5M2, and 8 integer types. The `TFMA` contract text limits the DataType to FP16, FP32, and BF16. For floating types the finite path calls `ScalarFPFusedProfile`, which asserts an FP64, FP32, or FP16 type code; BF16, which the contract admits, is not among them. This page does not promise a result for a type that helper asserts against.
+
+`TileOperandsLegal_GMOV` requires `peer_tid` below 4, a defined source, matching shape, equal type and layout, a supported elementwise layout, and a data type in `TileCarrierOrPackedBaselineDataTypeSupported` (non-four-bit up to 4 bytes, or four-bit).
+
+All of these run in preflight, before any memory request, snapshot, or destination write.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-indexed-layout-boundaries role=boundaries -->
+## Architectural boundaries
+
+Callers include the memory schema legality predicates such as `TileOperandsLegal_MGATHER`, the TLSU dispatch units for MGATHER, MSCATTER, their MASK and CAS forms, and GM atomic reduction, and memory execution units such as gather-scatter, which assert some of these predicates. `TFMA` and the fused multiply-add execution call `TileOperandsLegal_TFMA`; GMOV dispatch calls `TileOperandsLegal_GMOV`.
+
+A grep of `asl/` finds no caller of `IndexedTLSUNumericContentsDefined`.
+
+This unit does not check index values against memory bounds, and it does not check B.DATR fields or PE_MASK.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-indexed-layout-example role=example-usage -->
+## Non-normative reading example
+
+Consider an MGATHER into an E2M1X2 RowMajor data Tile with valid region 4 by 32, using an S32 index Tile with valid region 4 by 16.
+
+- S32 is a legal memory index type.
+- Valid rows are both 4.
+- E2M1X2 is four-bit, so 32 must be even and equal to 2 x 16, which holds.
+- With `B.DIM` Col 32, RowMajor needs 32 to be a power of two and at least 32, which holds.
+
+An index Tile with valid region 4 by 32 would fail the shape match, because 32 is not 2 x 32.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-indexed-layout-related role=related-owners-navigation -->
+## Related owners
+
+- [Memory schema](memory-schema.md) builds the indexed TLSU operand predicates on these checks.
+- [Gather and scatter](../memory/gather-scatter.md) executes the transfers.
+- [Fused multiply-add](../execution/fused-multiply-add.md) executes `TFMA`.
+- [TLSU MGATHER dispatch](../../../block/model/dispatch/tlsu-mgather.md) applies the physical shape check.
+- [CUBE cell geometry](../shape/cube-cell.md) owns the CUBE shape checks.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

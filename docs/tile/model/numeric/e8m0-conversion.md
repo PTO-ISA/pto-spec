@@ -7,8 +7,82 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-NUMERIC-E8M0-CONVERSION}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-numeric-e8m0-conversion-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns two things.
+
+- The TCVT type-pair and rounding-mode legality predicates, `HardwareTCVTTypePairSupported` and `HardwareTCVTRoundingModeSupported`.
+- The conversion from FP16, BF16, or FP32 to E8M0, `ReferenceFloatToE8M0`, with its exponent-rounding helper `ReferenceE8M0RoundExponent`.
+
+E8M0 is an eight-bit scale format that stores only a biased exponent. Code `c` from `0x00` to `0xFE` means 2^(c - 127), and `0xFF` is NaN. The reverse conversion, E8M0 to a float, is in the TCVT conversion unit.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-e8m0-conversion-concepts role=concepts-state -->
+## Concepts and visible state
+
+A conversion result is a value word and a five-bit flag set. The flag constants used by the ASL are `0x01` NV (invalid), `0x02` DZ, `0x04` OF (overflow), `0x08` UF (underflow), and `0x10` NX (inexact). TCVT ORs the flags of all converted elements into the sticky numeric status.
+
+`HardwareTCVTTypePairSupported` returns:
+
+- FALSE for any pair with HiF4X2, and for RCPE6M2 as a destination.
+- RCPE6M2 source: TRUE only for FP16 or BF16 destinations.
+- E8M0 source: TRUE only for FP16, BF16, or FP32 destinations.
+- E6M2 on either side: TRUE only for E6M2 to FP16 or BF16, and FP16 or BF16 to E6M2.
+- E2M1X2 or E1M2X2 on either side: TRUE only for one packed side and one side in FP32, FP16, or BF16.
+- E8M0 destination: TRUE only for FP16, BF16, or FP32 sources.
+- Every other pair: TRUE.
+
+`HardwareTCVTRoundingModeSupported` allows only RNE and RNA when E6M2 or RCPE6M2 is involved, and every mode otherwise.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-e8m0-conversion-rules role=rules-interactions -->
+## Rules and interactions
+
+`ReferenceFloatToE8M0` asserts an FP16, BF16, or FP32 source and then classifies it.
+
+- Zero, negative values, negative infinity, NaNs, and invalid encodings give `0xFF` with NV.
+- Positive infinity gives `0xFF` with OF and NX (`0x14`), or `0xFE` when `Sat` is set.
+
+A positive finite value is decomposed as significand times 2^exponent. Its floor exponent is `exponent + highest set bit`, that is floor(log2 value).
+
+- Floor exponent below -127: `0xFF`, or `0x00` with `Sat`, with UF and NX (`0x18`).
+- Floor exponent 127 and not an exact power of two: `0xFF`, or `0xFE` with `Sat`, with OF and NX.
+- Otherwise the rounded exponent `r` gives code `r + 127`, with NX if the value was not an exact power of two.
+
+Design point: rounding is applied to the exponent, not to the value. RTM takes the floor and RTP the ceiling. RTZ moves the exponent toward zero, so a value below 1 rounds up in value. RTO picks the odd exponent. The nearest modes compare the value with the geometric midpoint 2^(floor + 0.5), by testing the squared significand against 2^(2 x highest + 1). An integer square is never an odd power of two, so the tie branches are not reached for these inputs.
+
+Design point: the out-of-range checks come before rounding. A value in (2^127, 2^128) is overflow even under RTZ or RTM, and a value below 2^-127 is underflow even under RTP.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-e8m0-conversion-boundaries role=boundaries -->
+## Architectural boundaries
+
+The two legality predicates are called by TCVT operand legality and by the block TCVT schema check, so an unsupported pair or mode is rejected before destination allocation.
+
+`ReferenceFloatToE8M0` is reached from `TileProfileConvert` in the formats unit. It does not record flags itself; TCVT publishes them.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-e8m0-conversion-example role=example-usage -->
+## Non-normative reading example
+
+Convert FP32 3.0 (`0x40400000`) to E8M0.
+
+- Significand `0xC00000`, exponent 128 - 150 = -22, highest set bit 23, so the floor exponent is 1.
+- RNE: the square is `0x900000000000` and the boundary is 2^47 = `0x800000000000`. The square is larger, so the exponent rounds to 2. The code is 2 + 127 = 129 = `0x81` (value 4.0), with NX `0x10`.
+- RTZ or RTM: the exponent stays 1, giving code `0x80` (value 2.0), with NX.
+
+For FP32 2.5 the square is below the boundary, so RNE gives `0x80`.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-e8m0-conversion-related role=related-owners-navigation -->
+## Related owners
+
+- [TCVT conversion](tcvt-conversion.md) owns E8M0 to float.
+- [Formats](formats.md) owns `TCVT` and the dispatch into this unit.
+- [E8M0 format](../../../arch/data-types/formats/e8m0.md) owns the encoding.
+- [Numeric status](../../../arch/state/numeric-status.md) owns sticky flags.
+- [TCVT](../../elementwise-tile-tile/format-conversion/TCVT.md) is the instruction page.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

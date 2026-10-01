@@ -17,48 +17,59 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-sh-pcr-purpose role=purpose -->
-## What SH.PCR does
+## What `SH.PCR` does
 
-`SH.PCR` is a standalone `32`-bit AGU instruction that forms a PC-relative address and stores one aligned little-endian `2`-byte value.
+`SH.PCR` writes the low `2` bytes of `SrcL` to a PC-relative address. It has no base-register field: the address is the current `TPC` plus a signed `17`-bit word displacement. Its canonical assembly is `sh.pcr SrcL, [symbol]`.
+
+Design point: the base is `4`-byte aligned and the displacement is a multiple of `4`, so every address this form can produce is even. A `2`-byte access only needs an even address, and `Fault_DataAlignment` is therefore unreachable here.
 
 <!-- PTO-READER-BLOCK: scalar-sh-pcr-mechanism role=mechanism -->
-## Address and memory mechanism
+## How `SH.PCR` forms the address and completes the store
 
-`SH.PCR` clears `TPC[1:0]`, sign-extends `simm` from `-65536..65535`, multiplies it by `4`, and adds the displacement modulo `2^PTO_XLEN` to the aligned `TPC` base.
+The base is the pre-instruction `TPC` with bits `1`:`0` cleared, and the offset is the sign-extended `simm` field shifted left by `2`. The two values are added modulo `2^PTO_XLEN`.
 
-After complete preflight, the instruction performs one little-endian `2`-byte store from its snapshotted store-data source.
+The value written to that address is the low `2` bytes of `SrcL`, least-significant byte at the lowest address, read before the store. The form has no destination field: nothing in the encoding selects a register or queue slot to write, so a store never publishes a result and never updates a base.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+Design point: the stored value is the low `16` bits of `SrcL`, written with the least-significant byte at the lower address. Software that wants the upper half of a `32`-bit value in memory must shift it down before the store.
 
 <!-- PTO-READER-BLOCK: scalar-sh-pcr-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and what the store consumes
 
-- `TPC` supplies the aligned implicit base; `simm` supplies the signed displacement. Every encoded Reg5 source among `SrcL` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcL` supplies store data.
-- `simm` assigns every signed value from `-65536` through `65535`; encoded zero is a zero displacement, not omission.
+- `SrcL` is a `5`-bit Reg5 store-data source. Codes `0`..`23` name absolute GPRs, `24`..`27` name `T#1`..`T#4`, and `28`..`31` name `U#1`..`U#4`. Reading a `T` or `U` slot neither consumes nor reorders it, and code `0` supplies the constant zero GPR.
+- `simm` is a signed `17`-bit word displacement, so all `131072` encodings are values. The byte displacement is a multiple of `4` in the range `-262144` through `262140`.
+- The form has no destination field: nothing in the encoding selects a register or queue slot to write, so a store never publishes a result and never updates a base.
+
+Design point: the displacement is scaled by `4` even though the access is `2` bytes, because every PC-relative form of this family shares one scale. The scale is not the access size, and the reachable byte range is `-262144` through `262140`.
 
 <!-- PTO-READER-BLOCK: scalar-sh-pcr-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+`SrcL` is read before the memory effect, and the `TPC` advance is the last step, so the address never depends on the instruction's own retirement.
 
-A successful attempt records one relaxed store event, invalidates an overlapping reservation but preserves a nonoverlapping one, and advances `TPC` by `4` bytes.
+Successful execution performs one relaxed `2`-byte store and records one store event. A store whose byte range overlaps the `64`-byte reservation granule that contains a valid reservation invalidates that reservation; a store outside the granule leaves it valid. `TPC` then advances by `4` bytes.
+
+Design point: `TPC` advances only after the store event, and only when no fault was recorded, so a faulting attempt leaves both memory and `TPC` untouched. The store and the retirement are one all-or-nothing step.
 
 <!-- PTO-READER-BLOCK: scalar-sh-pcr-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `2`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+Dispatch rejects the instruction with `Fault_IllegalInstruction` before any effect when the fixed bits do not match, or when a selected `T`/`U` data source is unavailable because nothing has been pushed into it.
 
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+A `2`-byte access needs an even address, and every address this form produces is a multiple of `4`, so `Fault_DataAlignment` is unreachable. The preflight still runs the alignment test and then the permission and bounded-memory test, whose failure raises `Fault_DataPage` at the original address.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+A fault writes no memory byte, records no store event, and leaves `TPC` on the faulting instruction. Recovery reissues the whole operation: every source read, the address arithmetic, the preflight, and the store.
+
+Design point: because the alignment outcome is fixed by the encoding, the only data fault available to this form is `Fault_DataPage`. A program cannot provoke an alignment fault from `SH.PCR` with any pair of encoded operands.
 
 <!-- PTO-READER-BLOCK: scalar-sh-pcr-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With aligned `TPC=0x100` and the encoded displacement set to `2`, the byte displacement is `8` and the effective address is `0x108`. The memory access uses `0x108`. If aligned and permitted, the instruction stores `2` bytes at that address.
+- Take `sh.pcr 5, [symbol]` executing at `TPC` = `0x1010`, with `simm` equal to `-1` and GPR5 = `0x0000000000001234`.
+- The base is `0x1010` and the displacement is `-1` times `4`, which is `-4`, so the effective address is `0x100C`.
+- `0x100C` is even, so the preflight passes and the `2` bytes `34 12` are written there, low byte first.
+- GPR5 is unchanged, and `TPC` becomes `0x1014`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

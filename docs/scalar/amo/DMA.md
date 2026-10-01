@@ -19,42 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dma-purpose role=purpose -->
 ## What DMA does
 
-`DMA` copies exactly `64` bytes from the address in `SrcL` to the address in `SrcR` as one restartable scalar operation.
+`DMA` copies exactly `64` bytes from the byte address in `SrcL` to the byte address in `SrcR`. The form has no destination register, so no GPR and no queue entry receives a result: the only architectural result is the destination range in memory.
+
+A successful execution commits the whole copy and advances `TPC` by `4` bytes; a fault commits nothing and leaves `TPC` on the instruction.
+
+Design point: the copy length belongs to the mnemonic, not to the encoding. `InstructionContractCopySizeBytes_DMA` returns `64` and both probes request `64` bytes, so no field value selects another length.
 
 <!-- PTO-READER-BLOCK: scalar-dma-mechanism role=mechanism -->
-## Atomic mechanism
+## How the copy is ordered
 
-The ASL DOC contract selects `ExecuteScalarDMACopy64`: it probes the complete source range before the complete destination range.
+Dispatch routes the form to `ExecuteScalarDMACopy64` in `asl/scalar/model/amo/semantics.asl`. Both `ReadDecodedScalarRegister` arguments are evaluated before that call, so the two addresses are snapshotted before the first probe.
 
-All source bytes are captured before the first destination write, so exact, forward, and backward overlap follow memmove-style snapshot behavior.
+The steps then run in a fixed order:
+
+- probe the complete `64`-byte source range for read access with one-byte alignment;
+- probe the complete `64`-byte destination range for write access with one-byte alignment;
+- read all `64` source bytes into one snapshot and record `8` relaxed load events;
+- write that snapshot to the destination range and record `8` relaxed store events.
+
+Design point: the snapshot is read before the first destination byte is written, so overlapping ranges behave like `memmove`: with the destination `8` bytes above the source, the bytes at `source+8 .. source+71` are the original `source+0 .. source+63`.
+
+Design point: the source probe precedes the destination probe, so when both ranges are unusable the reported fault is the source one and the destination range is not probed at all in that case.
 
 <!-- PTO-READER-BLOCK: scalar-dma-inputs-outputs role=inputs-outputs -->
 ## Inputs and result
 
-`SrcL` carries the Reg5 source byte-address source; `SrcR` carries the Reg5 destination byte-address source.
+`SrcL` is a `5`-bit field at instruction bits `15..19` and supplies the source byte address; `SrcR` is a `5`-bit field at bits `20..24` and supplies the destination byte address. Both are Reg5 sources: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`.
 
-This form has no ordering or route modifier.
+Reading a queue entry does not consume it, so `dma [t#1], u#1` reads `T#1` and `U#1` and leaves both queues at their previous depth.
+
+Bits `31:25` are fixed zero by the instruction match, so this form has no ordering field, no route hint and no size modifier: no `far` bit and no `.aq`, `.rl` or size suffix to encode. Alignment requires one byte, so every byte address passes the alignment test inside `ProbeDataAccess`; the range must still pass the permission and bounds check.
+
+Design point: with a one-byte alignment requirement the alignment branch of `ProbeDataAccess` never fires here, so the only data-access fault this form raises is `Fault_DataPage`.
 
 <!-- PTO-READER-BLOCK: scalar-dma-effects role=effects -->
 ## Effects and ordering
 
-A successful copy emits eight relaxed 8-byte load events followed by eight relaxed 8-byte store events, then advances `TPC` by `4` bytes.
+A successful execution records `8` load events of `8` bytes at the translated source address plus offsets `0, 8, ... 56`, then writes all `64` snapshot bytes to the destination, then records `8` store events of `8` bytes at the translated destination address plus the same offsets. Every event uses relaxed ordering, and events are captured only while memory-event capture is enabled.
 
-Only a successful destination overlap invalidates the local reservation; unrelated reservation state is preserved.
+The destination store clears the local reservation when a reservation is valid and the `64`-byte destination range overlaps the reserved `64`-byte granule; a reservation that does not overlap is preserved. GPRs and queue entries are unchanged.
+
+Design point: every recorded store value comes from the snapshot rather than a second read of the source, so the trace describes the source bytes as they were before the instruction started.
 
 <!-- PTO-READER-BLOCK: scalar-dma-constraints role=constraints -->
 ## Legality and precise faults
 
-Both complete 64-byte ranges must pass preflight before any byte is read or written, and the first failing source-or-destination probe determines the fault.
+Both complete ranges must pass preflight before any byte is read or written, and the first failing probe wins. The fault carries the original architectural address; in the reference model translation returns that address unchanged.
 
-A fault exposes no event prefix or partial destination update, leaves memory unchanged, and preserves the original `TPC` for full reissue.
+A fault at either probe produces no destination byte, no memory event, no reservation change and no `TPC` advance. A decode failure or an unavailable selected T/U source raises `Fault_IllegalInstruction` earlier.
+
+Design point: because both probes cover the complete ranges before the copy starts, a fault leaves memory exactly as it was; a reissue therefore performs the whole copy rather than resuming a partly finished one.
 
 <!-- PTO-READER-BLOCK: scalar-dma-example role=example -->
 ## Non-normative example
 
 This example only shows one accepted spelling; the generated contract below remains authoritative.
 
-For a first reading, use `dma [SrcL], SrcR` and follow source preflight, destination preflight, the 64-byte snapshot, and the final copy commit; this instruction has no ordering or route modifier.
+With `a0` holding the source address and `a1` holding an address `8` bytes above it, `dma [a0], a1` leaves the `64` bytes that were at `[a0 .. a0+63]` at `[a0+8 .. a0+71]`, and the captured trace holds `8` load events followed by `8` store events.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

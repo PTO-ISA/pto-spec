@@ -19,48 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-madd-purpose role=purpose -->
 ## What MADD does
 
-`MADD` is a 32-bit scalar ALU instruction. It adds a snapshotted addend to the product under the complete XLEN value arithmetic; its current instruction contract defines the result publication path and any additional state effect.
+`MADD` is a 32-bit encoded scalar ALU instruction that publishes `SrcD + SrcL * SrcR` modulo `2^PTO_XLEN` through one Reg5 destination. It is the single-destination member of the multiply-add group: no high product half is produced.
+
+The `L32` encoding class fixes the instruction length, not the operand width. Both multiplicands are used at full XLEN width, unlike `MADDW`, which reads only their low words.
 
 <!-- PTO-READER-BLOCK: scalar-madd-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then adds a snapshotted addend to the product under the complete XLEN value arithmetic, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractResult_MADD`, which returns `ScalarMultiplyAdd(addend, left, right)`. That helper is `addend + MultiplyWord(left, right)`, and `MultiplyWord` accumulates `left` shifted left by each set bit position of `right`, keeping the low `PTO_XLEN` bits of every partial sum.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+madd SrcL, SrcR, SrcD, ->{t, u, Rd}
+```
+
+Design point: the product never leaves XLEN width. `SrcL = 2^63` with `SrcR = 2` produces a partial sum of `2^64`, which is discarded, so the published value is `SrcD`; a wide form such as `HL.MADD` would instead keep that bit in its high half.
 
 <!-- PTO-READER-BLOCK: scalar-madd-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcD` field selects the addend through Reg5.
-- The 5-bit `SrcL` field selects the left multiplicand or additive operand through Reg5.
-- The 5-bit `SrcR` field selects the right multiplicand through Reg5.
+- `RegDst`, instruction slice `[7 +: 5]`, receives the XLEN result.
+- `SrcD`, instruction slice `[27 +: 5]`, supplies the addend.
+- `SrcL`, instruction slice `[15 +: 5]`, supplies the left multiplicand.
+- `SrcR`, instruction slice `[20 +: 5]`, supplies the right multiplicand.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+All three sources use the common Reg5 map: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`. Reads are non-consuming, and an encoded zero reads the architectural zero GPR rather than an uninitialized value.
+
+Design point: the destination map is not the mirror image of the source map. Codes `1..23` write GPRs and codes `30` and `31` push `U` and `T`, while code `0` and codes `24..29` discard the result. A destination code of `24` therefore names a readable `T#1` source but writes nothing.
 
 <!-- PTO-READER-BLOCK: scalar-madd-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+The three sources are snapshotted before the destination effect, so `madd a0, a1, a0, ->a0` uses the pre-instruction `a0` as both addend and destination.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+After the result is published or discarded, `TPC` advances by `4` bytes. `MADD` accesses no memory and changes no reservation, descriptor, numeric-status, bundle, privilege or control-flow state; the single possible queue change is the `T` or `U` push selected by `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-madd-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every `32`-code source encoding is assigned and every `32`-code destination encoding is accepted, so operand legality can fail only on an unavailable temporary source. The fixed encoding bits must match the canonical 32-bit form; no operand value is reserved.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise a mismatching encoding raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before the destination write. Multiplication and addition raise no arithmetic exception at any value.
+
+Design point: the multiply, the add and the wrap are all fixed-width steps with no flag output, so the instruction has no operand pair that reports overflow. A caller that needs the discarded high bits must use a wider form instead.
 
 <!-- PTO-READER-BLOCK: scalar-madd-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `MADD` example, multiplicands `6` and `7` with addend `1` produce the single result `43`.
+With `SrcL = 6`, `SrcR = 7` and `SrcD = 1`, `MultiplyWord` returns `42`, the addend adds `1`, and `RegDst` receives `43`. With `SrcL = 2^63`, `SrcR = 2` and `SrcD = 0` the product is `2^64`, which wraps to `0` modulo `2^PTO_XLEN`, so `RegDst` receives `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

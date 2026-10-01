@@ -17,44 +17,54 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tneg-purpose role=purpose -->
-## Purpose
+## What TNEG does
 
-`TNEG` performs typed elementwise arithmetic negation.
+`TNEG` negates every element of one Local Tile and writes the results into a newly allocated Local destination Tile. Integers are negated with wraparound at the element width; floating-point values have their sign bit flipped.
+
+Design point: `TNEG` has no standalone opcode. `BSTART.VEC` Mode 0 Function 17 (TEPL selector `0x011`) selects it, and it shares the closed unary bundle schema with `TABS`, `TNOT`, and `TRELU`.
 
 <!-- PTO-READER-BLOCK: tile-tneg-mechanism role=mechanism -->
-## Execution mechanism
+## Element and Tile mechanism
 
-The ASL DOC contract selects `TileHandler_ExecuteTileUnary` through the instruction's selector-encoded block carrier.
+After complete preflight, `ExecuteTileUnary` reads the source and transforms each coordinate of the valid rectangle `ValidRow x ValidCol`.
 
-Binding schema, dimensions, DataType, row-major layout, source definedness and encoding, PE_MASK, destination capacity, and applicable attributes are checked before source snapshots.
+- Integer types, signed and unsigned: the result is `0 - source` modulo the element width. For `U8`, 1 becomes `0xFF`. For `S8`, -128 (`0x80`) stays `0x80`, because +128 is not representable.
+- Floating-point types: only the sign bit is toggled. Positive and negative zero exchange encodings, infinities change sign, and a NaN keeps its class and payload.
+
+Design point: floating `TNEG` is a sign-bit toggle, not a subtraction from zero. It therefore never rounds, never reports an invalid condition (even for a signaling NaN), and maps positive zero to negative zero, which `0 - x` would not do.
+
+Design point: before any effect, every valid-region source element (every active one, when an ExecutionMask is in force) must be a valid encoding of the selected `DataType`. Invalid floating encodings, such as a `TF32` value with nonzero low mantissa bits, are rejected even though the transform only touches the sign bit.
 
 <!-- PTO-READER-BLOCK: tile-tneg-inputs-outputs role=inputs-outputs -->
-## Operands and descriptors
+## Operand roles and descriptors
 
-`destination0` is the new Local destination; `source0` is the negation source.
+- `source0` is the negation source. It is an existing, allocated Local Tile.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected operation `DataType`, and its physical shape, valid shape, and layout match the source.
 
-Sources remain persistent unless the current contract explicitly names a consumed or replaced state; destination descriptors are published only after complete preflight.
+One terminating `B.IOT` binds both Tiles under a single `PE_MASK`; `B.IOR` and `B.IOS` are illegal. The source may use a different same-width, non-packed backing type; its bits are then validated and interpreted as the selected `DataType`.
 
 <!-- PTO-READER-BLOCK: tile-tneg-effects role=effects -->
-## Publication and ordering
+## Publication, definedness, and padding
 
-Every valid coordinate applies the operation at the selected element type; all sources and private-GPR scalar operands are snapshotted before destination publication.
+The source payload is snapshotted before the first destination write, so a source that aliases the destination is read with its old values.
 
-The valid payload, selected physical padding definedness, descriptor, and applicable sticky numeric flags publish atomically; rejection has no architectural effect.
+The destination descriptor, the valid-region results, the padding, and every element's definedness publish together. Elements outside `ValidRow x ValidCol` receive the selected `PadValue`: `Zero`, `Max`, and `Min` are defined, and `Null`, the value when `B.DATR` is omitted, leaves them undefined. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value. `TNEG` has no global-memory effect.
 
 <!-- PTO-READER-BLOCK: tile-tneg-constraints role=constraints -->
-## Legality, padding, and faults
+## Type, layout, and fault boundary
 
-Malformed bindings, unsupported types or layouts, invalid shapes, undefined consumed elements, illegal attributes, or insufficient destination capacity are rejected before source snapshots or publication.
+The ASL type predicate `TileTNegDataTypeSupported` accepts `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Packed four-bit formats are excluded. The layout is `RowMajor` by default, or `CUBE_M16` or `CUBE_M32` when an explicit `Layout` selects it; `CUBE_N8`, Shared Tiles, and mixed layouts are illegal.
 
-`PE_MASK=0000` is a strict no-op before reads, allocation, faults, numeric status, padding, or descriptor effects. Allocation failure raises the owner-defined Tile allocation fault; other rejected schema or value conditions raise the owner-defined legality, bundle-control, or memory fault without partial effects.
+`PE_MASK=0000` is a strict no-op. Otherwise, malformed bindings, missing or zero dimensions, undefined or mismatched source state, an unsupported `DataType`, a non-selected layout, a nondefault `CMode`, `Sat`, `Canonicalize`, secondary `DataType`, or `RMode`, or an invalid floating source encoding raises `Fault_TileLegality` before any effect. An unrepresentable destination shape or insufficient `TSize` capacity raises `Fault_TileAllocation` before allocation.
 
 <!-- PTO-READER-BLOCK: tile-tneg-example role=example -->
 ## Non-normative contract sketch
 
 This is a non-normative contract schema sketch; it organizes fields and bindings but is not claimed to be directly assembleable.
 
-Read `BSTART.VEC TNEG, U64; B.DIM LB0=ValidCol; B.IOT Src, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP` as a non-normative binding walkthrough, then use the generated contract below for exact dimensions, attributes, and fault behavior.
+With `DataType=S8`, valid elements `[5, -3, 0, -128]` become `[-5, 3, 0, -128]`. With `DataType=FP32`, `0x3F800000` (1.0) becomes `0xBF800000` (-1.0), and `0x00000000` (positive zero) becomes `0x80000000` (negative zero).
+
+In macro form, `TNEG <Row=8, Col=64, FP32>, T#1, ->T<2KB>` negates all 8 x 64 elements of an `FP32` Tile into a new 2 KB destination.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

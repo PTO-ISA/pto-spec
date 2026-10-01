@@ -19,42 +19,66 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-sw-xor-purpose role=purpose -->
 ## What SW.XOR does
 
-`SW.XOR` atomically applies bitwise XOR to one word and stores the result without publishing the old value.
+`SW.XOR` atomically replaces the aligned `4`-byte memory word at the address in `SrcL` with the bitwise XOR of that word and the value in `SrcR`.
+
+It is one of the store-only atomic forms: the old memory value is discarded. There is no destination field in the encoding at all.
 
 <!-- PTO-READER-BLOCK: scalar-sw-xor-mechanism role=mechanism -->
 ## Atomic mechanism
 
-The ASL DOC contract selects `ScalarHandler_AtomicReadModifyWrite` with an access width of `4` bytes.
+The instruction contract returns `ScalarHandler_AtomicReadModifyWrite` with `Atomic_XOR` and an access width of `4` bytes. The model then executes `AtomicReadModifyWrite`, which is a fixed sequence:
 
-Read and write access are preflighted before the same-location atomic read-modify-write is allowed to commit.
+1. Probe read access for `4` bytes at the effective address and raise a fault if it fails.
+2. Probe write access for `4` bytes at the same address and raise a fault if it fails.
+3. Require both probes to translate to the same address; otherwise raise a data page fault.
+4. Load the old word, XOR it with the operand, and store the result to the same location.
+5. Record one atomic memory event carrying the old value, the new value, and the selected ordering.
+
+`SrcL` and `SrcR` are snapshotted before any memory effect, so the operand value cannot change between the read and the write.
+
+Design point: both probes complete before the load, so a form whose writes are not permitted faults without having read the location at all.
 
 <!-- PTO-READER-BLOCK: scalar-sw-xor-inputs-outputs role=inputs-outputs -->
-## Inputs and result
+## Inputs and effect
 
 `SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 atomic operand source; `far` carries the flat-address routing hint; `rl` carries the release ordering bit.
 
-`rl` selects relaxed or release ordering; this form has no acquire bit; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+All `32` `SrcL` and `SrcR` encodings are assigned: `SrcL` and `SrcR` codes `0..23` select absolute GPRs, `24..27` select `T#1..T#4`, and `28..31` select `U#1..U#4`. Encoded zero in either source reads the architectural zero register.
+
+`rl=0` records the atomic event with relaxed ordering and `rl=1` with release ordering. This encoding has no acquire bit. `far=1` is a routing hint only: the reference profile computes the same architectural address and the same atomic result either way.
+
+Design point: the field that would carry a destination selector is instead spent on the ordering bit and the routing hint, so the encoding cannot name an old-value destination even if software wanted one. `LW.XOR` is the form that returns the old value.
 
 <!-- PTO-READER-BLOCK: scalar-sw-xor-effects role=effects -->
 ## Effects and ordering
 
-This store-only form has no destination field; successful commit updates memory and emits one atomic event.
+On success the instruction performs exactly one atomic memory event, updates memory, and leaves `SrcL` and `SrcR` unchanged, because scalar sources are non-consuming.
 
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+The write publishes no destination value and no numeric status flag. `TPC` advances by `4` bytes, the length of the `32`-bit form.
+
+A completed write invalidates a local reservation when it overlaps the `64`-byte reservation granule, and preserves a reservation on a different granule.
+
+On a fault nothing is recorded: no memory event, no reservation change, and no `TPC` advance. Trap entry saves `TPC` so the instruction can be reissued.
 
 <!-- PTO-READER-BLOCK: scalar-sw-xor-constraints role=constraints -->
-## Legality and precise faults
+## Legality and fault order
 
-The effective address must be aligned to `4` bytes. Alignment, translation, and permission checks precede architectural effects.
+The effective address must be aligned to `4` bytes.
 
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+Dispatch runs its checks in a fixed order: decode, then operand legality, then scalar source availability, then the read and write probes. Alignment, translation, and permission failures are raised in that order and report the original address.
+
+A preflight failure publishes no memory event, no reservation update, and no retirement effect. A selected `T` or `U` source that is not available is rejected with `Fault_IllegalInstruction` before the address is probed.
+
+Design point: because every failure path leaves memory and `TPC` untouched, a recovering handler can reissue the same instruction and get the same access checks rather than a partially applied update.
 
 <!-- PTO-READER-BLOCK: scalar-sw-xor-example role=example -->
 ## Non-normative example
 
-This example only shows one accepted spelling; the generated contract below remains authoritative.
+Take `a0 = 1024` and `a1 = 9`, and let the `4`-byte word at address `1024` hold `5`.
 
-For a first reading, use `sw.xor [SrcL], SrcR` and then vary only the ordering or route modifiers described above.
+`sw.xor [a0], a1` leaves the word at address `1024` holding `12`, and leaves `a0` holding `1024` and `a1` holding `9`.
+
+The old value `5` is not written anywhere.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -15,32 +15,56 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-memory-model-instruction-fetch-purpose role=purpose-scope -->
 ## Purpose and scope
 
-This page is the stable reader entry point for one architecture `ASL` owner. The generated unit below remains the complete source of architectural meaning.
+This unit owns the instruction side of the memory model: turning a `TPC` value into either a length-qualified instruction word or a reason to stop. It defines `PTOInstructionFetchProbe`, `DeterminePTOInstructionLength`, `TranslateInstructionAddress`, `InstructionAccessPermitted`, `ProbeInstructionAccess` and `FetchPTOInstruction`.
+
+The contract is `PTO-REQ-INSTRUCTION-FETCH-001`, and the line-1 metadata declares `PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE` as the dependency supplying `ReadPhysicalMemoryByte` and `PTO_MODEL_MEMORY_BYTES`. `ExecuteNextPTOInstruction` in `asl/arch/dispatch/top-level.asl` calls these helpers and owns the `SetFault` calls.
 
 <!-- PTO-READER-BLOCK: arch-memory-model-instruction-fetch-concepts role=concepts-state -->
-## Concepts and visible state
+## Probe record, length encoding and the byte read
 
-Use the generated declarations and embedded requirement regions to identify the concepts and state referenced by this owner. This guide does not add state or rename an existing concept.
+- `PTOInstructionFetchProbe` has exactly two fields, `permitted` as `boolean` and `physical_address` as `Word`; a later read uses the stored address, not a second translation.
+- `DeterminePTOInstructionLength(first_halfword)` maps `first_halfword[3:1]` `'111'` with bit `0` `'0'` to `48` and with bit `0` `'1'` to `64`, other halfwords to `16` when bit `0` is `'0'` and to `32` otherwise.
+- `TranslateInstructionAddress(address)` returns `address` unchanged, so instruction fetch is identity-mapped here.
+- `InstructionAccessPermitted(physical_address, size_bytes)` returns false only when `UInt(physical_address) + size_bytes` exceeds `PTO_MODEL_MEMORY_BYTES`; `ProbeInstructionAccess(address, size_bytes)` puts that predicate and the translated address into the probe.
+- `FetchPTOInstruction(probe, length_bits)` asserts `probe.permitted`, computes `size_bytes` as `length_bits DIV 8`, and writes bytes from `Zeros{64}` while `byte_index < size_bytes`.
+- `ReadPhysicalMemoryByte` uses `UInt(address) < PTO_MODEL_MEMORY_BYTES`, the same boundary as the permitted set here.
 
 <!-- PTO-READER-BLOCK: arch-memory-model-instruction-fetch-rules role=rules-interactions -->
-## Rules and interactions
+## What the length encoding selects
 
-Follow the dependency metadata and calls in the generated unit to reach interacting owners. Generated documentation and evidence remain projections of those sources.
+The accepted lengths are `16`, `32`, `48` and `64`: bit `0` chooses between `16` and `32`, and `first_halfword[3:1] == '111'` chooses between `48` and `64`.
+
+`FetchPTOInstruction` places byte `byte_index` at bit position `byte_index * 8`, so the lowest-addressed byte occupies bits `7:0`, bytes at or above `size_bytes` stay zero, and the read count is `2`, `4`, `6` or `8`.
+
+Design point: the fetch loop allocates a full `bits(64)` result but writes only the first `size_bytes` bytes from `Zeros{64}`, so a `16`-bit instruction returns a word with zero upper 48 bits and a decoder sees a defined value, not leftovers; the length travels separately because the word alone does not carry it.
+
+Design point: `ProbeInstructionAccess` stores the address it checked and `FetchPTOInstruction` reads that stored address; the two are equal here because `TranslateInstructionAddress` is the identity, but a shared probe would send the read elsewhere, so `ExecuteNextPTOInstruction` compares `complete_probe.physical_address` with `prefix_probe.physical_address` first.
 
 <!-- PTO-READER-BLOCK: arch-memory-model-instruction-fetch-boundaries role=boundaries -->
-## Architectural boundaries
+## Boundaries
 
-Treat every fixed bound, profile hook, fault, and unspecified case exactly as written in the generated owner. No implementation behavior is promoted by this reader guide.
+The clause lists denied, unmapped, overflowing and truncated ranges as reasons for `Fault_InstructionPage`; the executable predicate checks one condition, `UInt(physical_address) + size_bytes > PTO_MODEL_MEMORY_BYTES`, so `permitted` is false exactly when the range's last byte lies outside the model array, and the clause's denied range cannot be produced here.
+
+The clause also says the next-instruction action rejects an odd `TPC` before memory access and preflights the selected range before reading any remaining byte; this file implements the second half only. The odd-`TPC` test is `instruction_pc[0] == '1'` in `ExecuteNextPTOInstruction`, which also performs the `SetFault(Fault_InstructionPage, instruction_pc)` calls at the original `TPC`; no ASL unit outside `asl/arch/dispatch/top-level.asl` calls these helpers.
+
+`TranslateInstructionAddress` has no caller other than `ProbeInstructionAccess` in the same file, and the catalogue entry for the `IOTTBR_ACR1`, `IOTCR_ACR1` and `IOMAIR_ACR1` registers in `PTO-ARCH-DATA-TYPES-SYSTEM-REGISTERS` calls them storage-only, so there is no architectural translation to configure; `InstructionAccessPermitted` is likewise called only from `ProbeInstructionAccess`.
 
 <!-- PTO-READER-BLOCK: arch-memory-model-instruction-fetch-example role=example-usage -->
-## Non-normative reading example
+## Non-normative fetch example
 
-Start with the generated unit identity, locate the relevant requirement region, and then follow referenced owners before consulting executable evidence.
+With the default `PTO_MODEL_MEMORY_BYTES` of `4096`, a `TPC` of `0x40` probes bytes `0x40` and `0x41`, both inside the array, so `permitted` is true; if they decode to a `32`-bit instruction, `size_bytes` is `4` and the complete probe ends at `0x43`.
+
+A `TPC` of `0xfff` probes bytes `0xfff` and `0x1000`, a sum of `4097`, so the probe is not permitted: the caller raises `Fault_InstructionPage` at `0xfff` without reading a byte. `TPC` equal to `0x41` is rejected earlier still, by the odd-address test in the dispatch owner.
+
+Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
 
 <!-- PTO-READER-BLOCK: arch-memory-model-instruction-fetch-related role=related-owners-navigation -->
 ## Related owners
 
-The dependency list and linked source path below are the navigation index for related architecture owners. Current meaning always returns to the named `ASL` source.
+- [Address space](address-space.md) owns `ReadPhysicalMemoryByte` and `PTO_MODEL_MEMORY_BYTES`.
+- `PTO-ARCH-DISPATCH-TOP-LEVEL` calls these helpers and owns the fault raising, the odd-address test and the full-range re-probe.
+- `PTO-ARCH-STATE-PROGRAM-COUNTER` owns `ReadTPC` and `WriteTPC`.
+- [Fault precision](fault-precision.md) maps `Fault_InstructionPC` and `Fault_InstructionPage` to trap numbers `32` and `33`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

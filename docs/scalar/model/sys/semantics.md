@@ -7,8 +7,88 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-SCALAR-MODEL-SYS-SEMANTICS}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-sys-semantics-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns the scalar system behavior that is not a register transfer by address. It covers:
+
+- the start of each instruction attempt and architectural time;
+- base system-register read and write;
+- data and instruction fences;
+- cache and TLB maintenance;
+- assertions, software breakpoints, and control requests;
+- access-ring close and enter requests;
+- the applicability rules that decide where a scalar operation may run;
+- the bundle commit-target setters.
+
+<!-- PTO-READER-BLOCK: scalar-model-sys-semantics-concepts role=concepts-state -->
+## Concepts and visible state
+
+Architectural time is `_SystemRegisters.cycle`. `BeginArchitecturalInstructionAttempt` clears `_LastFault` and `_FaultAddress` and adds one to the cycle count. `TIME` and `CYCLE` both read that count.
+
+Base registers live in `_SystemRegisters`. Only four are writable: `THREAD_PTR`, `GLOBAL_PTR`, `CORE_STATE`, and `CORE_FEATURE_ENABLE`. Writing `CORE_STATE` also sets the current access ring from bits 3:0.
+
+Maintenance and fences advance epoch counters instead of modeling caches: `_DataCacheEpoch`, `_InstructionCacheEpoch`, `_BundleCacheEpoch`, and `_TLBEpoch`.
+
+Applicability is the rule that decides whether an operation may execute in the current bundle state. `ScalarOperationApplicable` computes it.
+
+<!-- PTO-READER-BLOCK: scalar-model-sys-semantics-rules role=rules-interactions -->
+## Rules and interactions
+
+`ScalarOperationApplicable` returns FALSE for every operation while a System-block terminal request is pending. Otherwise:
+
+- `SETC.*` setters need an active conditional bundle body whose condition is not yet set.
+- `ACRC` and the System-block operations, such as `SSRGET`, `FENCE.D`, and `DC.CVA`, need an active System bundle body.
+- `SETC.TGT` needs an active Standard or Floating bundle; `C.SETC.TGT` also needs the target unset.
+- `LSRGET` needs any active bundle body.
+- All other operations are always applicable.
+
+Design point: top-level dispatch checks applicability after it enters a pending bundle body and before operand legality and the handler. An operation outside its required bundle raises `Fault_BundleControl` before its handler runs, so it has none of its own effects; the body-entry transition and the attempt's cycle increment remain.
+
+`FenceData` clears the reservation, records the two 4-bit masks, records a fence event, and advances the instruction-cache epoch if bit 3 of either mask is set. `FenceInstruction` clears the reservation and advances the instruction-cache epoch.
+
+`ExecuteMaintenance` first checks privilege: TLB operations need ACR0. It then checks the operand. `TLB.IV` and `TLB.IAV` need a canonical 48-bit address, or raise `Fault_DataPage`. `TLB.IA` needs bits 63:16 clear, or raises `Fault_IllegalInstruction`. On success it advances the epoch and records the operation and operand.
+
+Design point: privilege is checked before operand validity, and the last operation and operand are recorded only when no fault was raised. A rejected maintenance operation therefore leaves the previous record unchanged.
+
+`ArchitectureEnterRequest` accepts request types 0 and 1 as aliases. It validates the saved trap context and completes the bundle before it restores the context. If a check fails, it keeps the saved context.
+
+<!-- PTO-READER-BLOCK: scalar-model-sys-semantics-boundaries role=boundaries -->
+## Architectural boundaries
+
+`ExecuteControlRequest` records the request and operand and advances `_ArchitectureRequestEpoch`. The ASL comment states that PTO v0 treats `BSE`, `BWE`, `BWI`, and `BWT` as a nonblocking handoff; suspension adds no visible state here.
+
+`SwapSystemRegister`, a swap by `SystemRegister` enumeration, has no caller in the ASL tree. Decoded `SSRSWAP` uses `SwapSystemRegisterAddress` in [system registers](registers.md).
+
+Cache maintenance operands are recorded but not interpreted. This model does not describe a cache topology.
+
+<!-- PTO-READER-BLOCK: scalar-model-sys-semantics-example role=example-usage -->
+## Non-normative reading example
+
+Assume the current ring is ACR1 inside a System bundle body.
+
+| Instruction | Operand | Result |
+| --- | --- | --- |
+| `DC.CVA` | 0x1234 | data-cache epoch advances; operation and operand recorded |
+| `TLB.IV` | 0x1234 | `Fault_IllegalInstruction`, since ACR1 is not ACR0 |
+| `FENCE.D` | masks 0x8 and 0x1 | reservation cleared; instruction-cache epoch advances |
+| `ASSERT` | 0 | `Fault_Assert` at the current TPC |
+
+Each attempt also adds one to the cycle count, including the two that fault.
+
+<!-- PTO-READER-BLOCK: scalar-model-sys-semantics-related role=related-owners-navigation -->
+## Related owners
+
+- [System registers](registers.md) owns SSR addressing and permission.
+- [SYS dispatch](../dispatch/sys.md) decodes the operands for these helpers.
+- [BARG state](../../../block/model/state/barg.md) owns the bundle state read by applicability.
+- [Trap context](../../../arch/state/trap-context.md) owns trap save and recovery.
+- [Execution context](../../../arch/programming-model/execution-context.md) declares the epoch counters and the last maintenance record.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

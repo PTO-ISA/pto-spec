@@ -17,48 +17,65 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-sd-pcr-purpose role=purpose -->
-## What HL.SD.PCR does
+## What `HL.SD.PCR` does
 
-`HL.SD.PCR` is a standalone `48`-bit AGU instruction that forms a PC-relative address and stores one aligned little-endian `8`-byte value.
+`HL.SD.PCR` is a standalone `48`-bit scalar AGU instruction that stores `SrcL` to one 8-byte little-endian unit at a PC-relative displacement.
+
+The canonical assembly is `hl.sd.pcr SrcL, [<symbol>]`.
+
+Design point: the base is not a register but the instruction's own aligned address, which is why the assembly names `[<symbol>]`. The store target is therefore fixed at link time and cannot be redirected at run time by changing a pointer register.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sd-pcr-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address and the transfer are formed
 
-`HL.SD.PCR` clears `TPC[1:0]`, sign-extends `simm` from `-268435456..268435455`, multiplies it by `4`, and adds the displacement modulo `2^PTO_XLEN` to the aligned `TPC` base.
+The base is the instruction address with bits `1`: `0` cleared, so the displacement is measured from a 4-byte-aligned instruction address rather than from the arbitrary bit pattern of `TPC`.
 
-After complete preflight, the instruction performs one little-endian `8`-byte store from its snapshotted store-data source.
+The displacement is the sign-extended `29`-bit immediate left-shifted by `2`, so the encoded field counts 4-byte units and covers `-268435456`..`268435455` units, which is `-1073741824`..`1073741820` bytes. It is added to the aligned base modulo `2^PTO_XLEN`.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+The address is preflighted before the store. On success one 8-byte little-endian store is performed and one relaxed store event is recorded.
+
+Design point: the base is only `4`-byte aligned and the displacement counts `4`-byte units while the transfer is `8` bytes wide, so a `4`-byte-aligned address that is not `8`-byte aligned is reachable. The probe then raises `Fault_DataAlignment`, which is how a symbol the linker placed off an `8`-byte boundary is reported rather than silently rounded.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sd-pcr-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and the effect
 
-- `TPC` supplies the aligned implicit base; `simm` supplies the signed displacement. Every encoded Reg5 source among `SrcL` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcL` supplies store data.
-- `simm` assigns every signed value from `-268435456` through `268435455`; encoded zero is a zero displacement, not omission.
+- `SrcL` is a `5`-bit Reg5 selector and supplies the store data. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `simm` is a signed `29`-bit displacement in 4-byte units, carried in the encoding as three pieces at bits `36`..`47`, bits `23`..`27`, and bits `4`..`15`.
+- This form has no `RegDst` field, so no register receives a result and no updated base is published.
+
+Design point: all 8 bytes of the source are the transfer, so the low byte lands at the lowest address and the high byte at the highest. No truncation happens on this form, unlike a narrower store of the same register.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sd-pcr-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+`SrcL` is read before any memory effect, so the value stored is the pre-instruction value of that source even if a later instruction overwrites it.
 
-A successful attempt records one relaxed store event, invalidates an overlapping reservation but preserves a nonoverlapping one, and advances `TPC` by `6` bytes.
+A successful execution writes 8 memory bytes in little-endian order. A valid reservation is invalidated when the stored range overlaps the reservation's `64`-byte granule; a reservation whose granule the store leaves untouched stays valid.
+
+`TPC` advances by `6` bytes after the memory operation completes. A rejected or faulting attempt does not retire.
+
+Design point: only the bytes this store actually covers are affected, so a store to a range that misses the reservation granule leaves the reservation intact. The invalidate test is the overlap of the written range, not of the whole granule.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sd-pcr-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `8`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+A fixed-bit mismatch, or a source code selecting an unavailable `T` or `U` slot, raises `Fault_IllegalInstruction` before any instruction effect.
 
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+A misaligned 8-byte address raises `Fault_DataAlignment` before translation or permission. A later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+A fault records no store event, leaves memory and destination registers unchanged, and keeps `TPC` on the faulting instruction. Recovery recomputes the snapshot, the base, the displacement, and the probe from the beginning.
+
+Design point: the alignment test runs before the permission test, so a misaligned address is always reported as `Fault_DataAlignment` even when it is also outside the permitted region. A program cannot use the alignment fault to probe which addresses are permitted.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sd-pcr-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
-This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
+This walkthrough explains how to use the page and does not add instruction behavior.
 
-With aligned `TPC=0x100` and the encoded displacement set to `2`, the byte displacement is `8` and the effective address is `0x108`. The memory access uses `0x108`. If aligned and permitted, the instruction stores `8` bytes at that address.
+- Suppose the instruction sits at `0x3004`, so the aligned base is `0x3004`, and GPR5 = `0x0807060504030201`.
+- Take a displacement of `-1` unit, that is `-4`, so the effective address is `0x3000`.
+- `0x3000` is 8-byte aligned, so the probe passes and the 8 bytes `01` `02` `03` `04` `05` `06` `07` `08` are written at `0x3000` in increasing address order.
+- No register changes, and `TPC` becomes the instruction address plus `6`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

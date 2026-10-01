@@ -7,8 +7,72 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-command-data-attributes-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit connects the `B.DATR` header command to bundle state and checks its two ExecutionMask controls. `B.DATR` is the bundle data-attribute command. It carries `DataType`, `Layout`, `PadValueOrByteId`, `CMode`, `RMode`, `Sat`, `Canonicalize`, and the two mask controls `PredInv` and `Zero`.
+
+It defines two functions:
+
+- `SetBundleDataAttributesFromCommand` decodes the fields of one `B.DATR` and latches them.
+- `BundleExecutionMaskDataAttributesLegal` decides, for a selected Tile operation, whether the ExecutionMask and its `PredInv` and `Zero` controls are legal.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-command-data-attributes-concepts role=concepts-state -->
+## Concepts and visible state
+
+An ExecutionMask is a per-coordinate predicate that limits which destination coordinates an operation writes. It can be carried by a GPR (`execution_mask_present` on a `B.IOR` record) or by an extra PredicateCell source Tile. `PredInv` inverts that predicate. `Zero` selects zeroing instead of merging for inactive destination coordinates.
+
+`SetBundleDataAttributesFromCommand` passes the seven data fields to `SetBundleDataAttributeState`. That helper checks the `DataType` and `Layout` codes, then writes the fields into `_BundleDataAttributes` and clears both mask controls. Only if no fault was raised does this unit then write `execution_mask_invert` and `execution_mask_zero` and set `_BundleDataAttributesPresent`.
+
+Design point: `_BundleDataAttributesPresent` is set last and only after a fault-free decode. A reserved `DataType` or unassigned `Layout` raises `Fault_TileLegality` and leaves the data attributes unchanged and not marked present.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-command-data-attributes-rules role=rules-interactions -->
+## Rules and interactions
+
+The command handler in the commands owner calls `SetBundleDataAttributesFromCommand` only while a bundle is in its header phase and no earlier `B.DATR` was latched. Otherwise it raises `Fault_BundleControl`.
+
+`BundleExecutionMaskDataAttributesLegal` is a read-only check that runs later, when the bundle is validated. It rejects in two cases.
+
+1. `PredInv` or `Zero` is nonzero and no ExecutionMask is present in any carrier.
+2. A mask is present, and either the operation is not ExecutionMask-eligible, or the Local layout is not `CUBE_M16` or `CUBE_M32`, or `Zero` is set on an operation without a `destination0` operand, unless the operation is `TCMP` or `TCMPS`.
+
+The Local layout normally comes from the bundle's current layout. A CUBE layout-conversion transport uses the CUBE layout named by its `B.DATR` conversion code instead.
+
+Design point: `TCMP`, `TCMPS`, `TSEL`, and `TSELS` keep the `B.DATR` `Layout` field at zero, and a CUBE `TCVT` keeps it at `NORM`; for these five operations this check derives the CUBE domain from the source Tile descriptors. `TCMP` needs both sources in the same CUBE layout. `TSEL` needs its true and false sources in the same CUBE layout, and it chooses those sources differently for the PredicateCell and non-PredicateCell forms. As a result, a masked CUBE comparison is accepted even though its `B.DATR` says `NORM`.
+
+Design point: a nonzero mask control without a mask is rejected, not ignored. Zero values keep their defined meanings: normal polarity and MERGE. A stray `PredInv=1` or `Zero=1` therefore cannot silently have no effect.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-command-data-attributes-boundaries role=boundaries -->
+## Architectural boundaries
+
+`BundleExecutionMaskDataAttributesLegal` returns a boolean; it does not raise the rejection fault itself. Its callers, for example the Tile schema owner, the Tile execution owner, and the CUBE transport owner, map a false result to `Fault_TileLegality`.
+
+It does not decide whether the other `B.DATR` fields apply to the operation. Per-operation applicability of `CMode`, `RMode`, `Sat`, `Canonicalize`, and padding is checked by the Tile schema owner through `TileOperationDATRFieldsLegal`. Mask capture and application belong to the ExecutionMask owners.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-command-data-attributes-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Consider a `TADD` bundle whose `B.DATR` selects `Layout` `CUBE_M16` and sets `Zero=1`.
+
+- With a third PredicateCell source Tile as the mask, `TADD` is eligible, the layout is CUBE, and `TADD` has a destination. The check passes, and inactive destination coordinates are zeroed.
+- Without any mask carrier, case 1 applies and the bundle is rejected with `Fault_TileLegality` before effects.
+- With a mask but `B.DATR` `Layout` `NORM` (RowMajor), case 2 applies and the bundle is also rejected.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-command-data-attributes-related role=related-owners-navigation -->
+## Related owners
+
+- [Command dispatch](commands.md) enforces header placement and the single-`B.DATR` rule.
+- [Control state](../state/control-state.md) owns `SetBundleDataAttributeState` and the current layout.
+- [ExecutionMask schema](execution-mask-schema.md) detects mask carriers and captures the mask.
+- [Tile schema](tile-schema.md) calls this check together with per-field applicability.
+- [B.DATR](../../attributes/B.DATR.md) is the instruction page for the command.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

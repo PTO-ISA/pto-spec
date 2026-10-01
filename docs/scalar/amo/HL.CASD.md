@@ -17,44 +17,57 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-casd-purpose role=purpose -->
-## What HL.CASD does
+## What `HL.CASD` does
 
-`HL.CASD` atomically compares the doubleword at `SrcL` with `SrcR`; equality stores `SrcD`, while both paths publish the prior 64-bit value.
+`HL.CASD` conditionally replaces the 64-bit doubleword at the address in `SrcL`. It compares that doubleword with `SrcR` and stores `SrcD` only when the two are equal. Either way the value that memory held is published through `RegDst`, and because the access is `8` bytes wide the published value is the complete 64-bit prior value with no extension applied.
+
+The form matches `0x3000600b000e` under the mask `0xf000707ff83f`. Its access width is `8` bytes, so both probes require an address that is a multiple of `8`, and its handler is `ScalarHandler_CompareAndSwap`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-casd-mechanism role=mechanism -->
-## Atomic mechanism
+## What happens to the eight bytes
 
-The ASL DOC contract selects `ScalarHandler_CompareAndSwap` with an access width of `8` bytes.
+The dispatcher resolves the address through `ScalarDecodedAtomicAddress`, which reads the register selected by `SrcL` and the `far` bit and then calls `AtomicAddress`. `CompareAndSwap` works at a width of `8` bytes:
 
-Match and mismatch both emit one ordered atomic event; only the matching path marks a write as performed.
+- The read probe tests `UInt(address) MOD 8` and then the bounds; the write probe repeats both tests, and a difference between the two translated addresses raises `Fault_DataPage`.
+- `LoadTranslatedUnsigned` reads the eight bytes into one 64-bit value.
+- The comparison is `old_value == NormalizeAtomicUnsigned(SrcR, 8)`, which at size `8` compares the whole of `SrcR` with the whole loaded value.
+- On equality `StoreTranslated` writes all `8` bytes of `SrcD`; one atomic event records the order taken from `aq` and `rl` with `write_performed` equal to the match result.
+
+Design point: at width `8` neither `NormalizeAtomicUnsigned` nor `NormalizeAtomicReturn` changes its argument, so the comparison uses every bit of `SrcR` and the publication returns every bit of the prior value. This form has no truncation or extension step: `SrcR` must reproduce the stored doubleword exactly for the swap to happen.
 
 <!-- PTO-READER-BLOCK: scalar-hl-casd-inputs-outputs role=inputs-outputs -->
-## Inputs and result
+## Operands, ordering and `far`
 
-`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 expected doubleword source; `SrcD` carries the Reg5 desired doubleword source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+- `SrcL`, `SrcR` and `SrcD` are Reg5 source selectors and `RegDst` is a destination selector: codes `0`..`23` name absolute GPRs, `24`..`27` read `T#1`..`T#4` and `28`..`31` read `U#1`..`U#4` without removing the entry, while `RegDst` writes GPRs `1`..`23`, discards codes `0` and `24`..`29`, pushes `U` for code `30` and `T` for code `31`.
+- `aq` and `rl` select the recorded order: `0` is relaxed, `aq` is acquire, `rl` is release and both is acquire-release, for a match and a mismatch alike.
+- `far` is the profile routing hint at instruction bit 43. `AtomicAddress` returns its argument unchanged, so `far` does not move the doubleword.
 
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+Design point: the four forms of this family have match values that differ only at instruction bits 45 and 44, which hold `00` for the byte form, `01` for the halfword form, `10` for the word form and `11` for `HL.CASD`. The width is therefore part of the fixed-bit decode, above the `far` bit, and not a modifier that software can vary at run time.
 
 <!-- PTO-READER-BLOCK: scalar-hl-casd-effects role=effects -->
-## Effects and ordering
+## Effects and completion
 
-After successful preflight, the old value is published even on comparison mismatch; memory changes only on equality.
+A match rewrites all `8` bytes at the address with `SrcD`. A mismatch leaves memory unchanged and still publishes the prior doubleword, so the instruction reports what memory held even when the swap does not happen.
 
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `6` bytes.
+A matching store invalidates the local reservation when the stored eight bytes overlap the reserved 64-byte granule. A mismatch stores nothing, so the reservation survives it.
+
+Design point: this form is 48 bits long and the dispatcher advances `TPC` by `length_bits DIV 8`, which is 6 here, so the next instruction starts 6 bytes after `HL.CASD`. The `8`-byte data alignment and the `6`-byte instruction step are independent quantities. A fault leaves `TPC` at the start of the form, so recovery re-executes the same 6 bytes.
 
 <!-- PTO-READER-BLOCK: scalar-hl-casd-constraints role=constraints -->
-## Legality and precise faults
+## Legality and faults
 
-The effective address must be aligned to `8` bytes. Alignment, translation, and permission checks precede architectural effects.
-
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+- Every field value is assigned: all `32` selector codes for `SrcL`, `SrcR`, `SrcD` and `RegDst`, and all `8` combinations of `aq`, `rl` and `far`. An unavailable `T` or `U` entry, or a failed fixed-bit decode, raises `Fault_IllegalInstruction` at `ReadPC()` before any architectural effect.
+- The address must be a multiple of `8`; otherwise the read probe reports `Fault_DataAlignment` with the original address, and the write probe is never reached.
+- A probe fault changes no memory, publishes no destination value, records no atomic event, changes no reservation and does not advance `TPC`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-casd-example role=example -->
-## Non-normative example
+## Replacing a doubleword
 
 This example only shows one accepted spelling; the generated contract below remains authoritative.
 
-For a first reading, use `hl.casd [SrcL], SrcR, SrcD, ->Rd` and then vary only the ordering or route modifiers described above.
+With the doubleword at `SrcL` equal to `0x0123456789abcdef`, `SrcR` equal to `0x0123456789abcdef` and `SrcD` equal to `0xffffffffffffffff`, the comparison matches: all `8` bytes become `0xff`, `RegDst` receives `0x0123456789abcdef`, and the event reports `write_performed=true`.
+
+With the same memory doubleword and `SrcR` equal to `0x0123456789abcdee`, the comparison fails: memory keeps `0x0123456789abcdef`, `RegDst` still receives `0x0123456789abcdef`, and the event reports `write_performed=false`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,49 +19,69 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-or-purpose role=purpose -->
 ## OR 的作用
 
-`OR` 是一条 32 位标量 ALU 指令。它按照完整 XLEN 值结果规则执行按位或；当前指令契约定义结果发布路径以及任何额外状态效果。
+`OR` 由 `SrcR` 构造右操作数，并以完整的 `PTO_XLEN` 宽度发布该操作数与 `SrcL` 的按位或。它包含五个字段：`RegDst`、`SrcL`、`SrcR`、两位的 `SrcRType` 选择子以及五位的 `shamt`。
+
+载体在掩码 `0x0000707f` 下匹配 `0x00003005`；助记符与这五个字段确定了该指令的全部行为。
+
+`OR` 属于逻辑族，正是该族标志使 `SrcRType=10` 成为按位取反而非取负。
 
 <!-- PTO-READER-BLOCK: scalar-or-mechanism role=mechanism -->
-## 结果形成方式
+## 操作数形成方式
 
-执行时先对编码输入做快照，然后按照完整 XLEN 值结果规则执行按位或，最后才产生目标效果。
+分派路径读取 `SrcL`、未修改的 `SrcR`、`SrcRType` 与 `shamt`，然后在 `asl/scalar/model/dispatch/alu.asl:80-83` 处调用 `PrepareScalarRight(unmodified_right, modifier, shift_amount, TRUE)`。该辅助函数先应用修饰再对结果逻辑左移 `shamt`；这个被修饰并移位后的值就是最终 `ScalarBinary_OR` 的右操作数。
 
-- `SrcRType` 先转换右源；`shamt` 再对转换后的值执行逻辑左移，随后才进行算术或逻辑操作。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+or SrcL, SrcR<{.sw,.uw,.not}><<<shamt>, ->{t, u, Rd}
+```
+
+- `SrcRType=00` 选择 `.sw`：`SignExtend{PTO_XLEN}(SrcR[31:0])`。
+- `SrcRType=01` 选择 `.uw`：`ZeroExtend{PTO_XLEN}(SrcR[31:0])`。
+- `SrcRType=10` 选择 `.not`：完整的 `SrcR` 的每一位都被取反。
+- `SrcRType=11` 不选择修饰，保持 `SrcR` 不变；省略汇编后缀时编码的就是该值。
+- `shamt` 把变换后的值逻辑左移 `0` 到 `31` 位；编码零不执行移位。
+
+设计要点：`.not` 取反 `SrcR` 的全部 `PTO_XLEN` 位，而不仅是低字，因此 `or a0, a1<.not>, ->a2` 是“或上一个完整寄存器的反码”的表达方式。`.sw` 与 `.uw` 会先替换高半部，因此无法用一条指令在它们之后再叠加 `.not`。
+
+设计要点：变换只作用于 `SrcR`，`SrcL` 原封不动地进入按位或。
 
 <!-- PTO-READER-BLOCK: scalar-or-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择左操作数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择右操作数。
-- `SrcRType` 是 2 位字段，选择应用到右源的转换。
-- `shamt` 是 5 位字段，编码右源转换后执行的逻辑左移量。
+`SrcL` 与 `SrcR` 是五位 Reg5 字段；`SrcRType` 与 `shamt` 是载体内的编码选择子；`RegDst` 是五位目标。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+- `SrcL` 位于 `[15 +: 5]`、`SrcR` 位于 `[20 +: 5]`，按 Reg5 映射读取：`0..23` 为绝对 GPR，`24..27` 为 `T#1..T#4`，`28..31` 为 `U#1..U#4`，都不消耗条目。
+- `SrcRType` 位于 `[25 +: 2]`，选择右源变换；`shamt` 位于 `[27 +: 5]`，选择变换后的逻辑左移量。
+- `RegDst` 位于 `[7 +: 5]`，发布或运算结果：`1..23` 写入对应 GPR，`30` 压入 `U`，`31` 压入 `T`，`0` 与 `24..29` 丢弃。
+- `SrcL` 或 `SrcR` 的编码零读取体系结构零 GPR，`shamt` 的编码零不执行任何移位。
+
+设计要点：`SrcRType` 的编码零选择 `.sw`，而不是“无修饰”。无修饰的右操作数是值 `11`，因此省略后缀与写出 `.sw` 会产生不同的指令。
 
 <!-- PTO-READER-BLOCK: scalar-or-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+两个源都在写目标之前读取，因此与 `SrcL` 或 `SrcR` 同名的目标仍然对执行前的值做或运算。结果发布后 `TPC` 推进 `4` 字节。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
+`OR` 不访问内存，也不改变保留、描述符、数值标志、陷阱、指令束、特权、谓词或控制流状态。它唯一可能引起的队列移动是 `30` 或 `31` 目标所选的一次压入。
 
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+设计要点：在修饰生效之前读取 `SrcR`，意味着 `30` 或 `31` 目标无法把被修饰的值送回同一条指令，尽管该压入会重命名该队列槽位。后续指令会把压入的结果读作 `T#1` 或 `U#1`。
 
 <!-- PTO-READER-BLOCK: scalar-or-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+全部四个 `SrcRType` 编码、从 `0` 到 `31` 的全部 `32` 个 `shamt` 值、全部 `32` 个源编码与全部 `32` 个目标编码都有定义。该形式除固定编码位外没有约束条目。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+不匹配的载体在 `PC` 触发 `Fault_IllegalInstruction`。对活动块不适用的指令在 `TPC` 触发 `Fault_BundleControl`；对 `OR` 而言，这仅在系统块终止请求挂起期间可达。所选 `T` 或 `U` 源不可用时在 `PC` 触发 `Fault_IllegalInstruction`，先于目标效果与 `TPC` 推进。
+
+设计要点：`OR` 对全部操作数取值都是全定义的：没有任何选择子组合或源位模式会产生陷阱，因此故障边界是编码有效性加上源可用性。
 
 <!-- PTO-READER-BLOCK: scalar-or-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `OR` 示例说明：`SrcL=0xc`、`SrcR=0xa`、`SrcRType=11` 且 `shamt=0` 产生 `0xe`。
+当 `a0` 为 `0x0F0F`、`a1` 为 `0x00F0` 时，`or a0, a1, ->a2` 发布 `0x0FFF`。
+
+当 `a0` 为 `0`、`a1` 为 `1` 时，`or a0, a1<.sw><<<4>, ->a2` 先把低字 `1` 符号扩展，再左移 `4` 位，因此 `a2` 收到 `16`。若同一编码使用 `SrcRType=10`，则改为对 `a1` 取反，把该反码左移 `4` 位后发布 `0xFFFFFFFFFFFFFFE0`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

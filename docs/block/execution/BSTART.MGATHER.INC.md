@@ -19,32 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mgather-inc-purpose role=purpose -->
 ## Purpose and scope
 
-`BSTART.MGATHER.INC` is the stable reader entry point for this accepted operation. The normative `ASL` source and the generated contract sections on this page remain the only owners of architectural behavior.
+`BSTART.MGATHER.INC` opens a Tile memory block whose operation is `MGATHER_INC`: one atomic read-modify-write per lane that increments a global memory (GM) counter under a per-lane limit, and returns the observed old value in a new Local destination Tile.
+
+The command is one 32-bit word with match `0x00e11181` under mask `0x07ffffff`, so `DataType` occupies bits 31 to 27 and the fixed low bits carry TLSU selector 14. `ExecuteBundleGMAtomRedOperation` maps selector 14 through `GMAtomicOperationFromFunction` to `GMAtomic_INC` and calls `GM_ATOM_VALUE(...)`. A reserved `DataType` code raises `Fault_IllegalInstruction` at the `BSTART`.
+
+Design point: the limit is not an encoding field but the value Tile element of that lane, so a single block can apply a different limit to every lane. The increment rule itself is shared: `GMIncValue` returns zero when the old element is at or above the limit.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-inc-mechanism role=mechanism -->
 ## How to read the operation
 
-Read the generated Decode and Operation sections together to locate the selected form and semantic handler. This guide adds no alternate execution algorithm.
+At commit the block runs the Tile-level body through `GM_ATOM_VALUE`, which calls the shared atom body `GMRunAtomic`. That body visits every active lane, computes the address as `BaseGPR` plus the lane's byte displacement, and probes it for read and then for write; two probes whose translations differ raise `Fault_DataPage`. Only after all lanes pass does it update them one at a time in an `ARBITRARY` order: load the old element, compute the new element, store it, publish the old value into the destination, and record one atomic event.
+
+`GMAtomicResult` computes the new element with `GMIncValue(old, value)`, which compares the two as unsigned quantities and returns `old + 1` while the old element is below the limit and zero otherwise.
+
+Design point: a counter that reaches its limit resets to zero rather than sticking at the limit, so every result is a legal count and no value at or above the limit is ever stored by this operation. A program that uses the limit as an array bound therefore cannot be handed an out-of-range index by a successful increment.
+
+Design point: all probes run before the first update, so a fault on any lane leaves GM unchanged and records no event, and a retry cannot increment a counter twice.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-inc-inputs role=inputs-outputs -->
 ## Inputs and outputs
 
-Use the generated Operands and results table and Block composition section as the complete map of encoded and architectural roles. Do not infer an omitted operand or result from this summary.
+- `DataType` must be `U32`; every other code, including `S32` and the floating types, is rejected for this operation.
+- The value Tile element of a lane is that lane's limit, and it is compared with the old element without a numeric conversion.
+- `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col. All three must equal the index Tile's and the value Tile's valid columns, valid rows, and the destination's physical columns.
+- `B.IOR BaseGPR, zero, zero, ->zero` is required: `RegSrc0` selects the per-PE base GPR, the other three selectors encode zero, and a `RegSrc0` of `zero` supplies base address zero.
+- Without a predicate-Tile ExecutionMask, one terminating `B.IOT` carries the index Tile, the limit Tile, and the destination. With one, the first `B.IOT` carries the two sources with no destination and no `last`, and a second `B.IOT` carries the mask Tile, the destination, and `last`.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-inc-effects role=effects -->
 ## Effects and state
 
-Use the generated State effects and Memory effects and ordering sections for the complete effect boundary. Executable points are evidence that the owner is exercised, not another source of meaning.
+Each active lane writes one new count into its GM element and publishes the old count into the destination element at the same row and column. The complete physical destination region is defined before those results: coordinates the ExecutionMask deactivates take the mask's zero or merge value, and every other element outside the active lanes takes the bundle `PadValue`.
+
+On success each active lane has performed one atomic update and recorded one atomic event, and the destination is fully defined. The GM results stay visible; the atom form does not roll memory back.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-inc-constraints role=constraints -->
 ## Boundaries and failures
 
-Defaults, Legality, and Exceptions below define the accepted domain and failure boundary. Reserved values and unsupported combinations remain governed by those generated sections.
+`PE_MASK=0000` exits at the start of the atom/red dispatcher, before its schema, GPR, descriptor, type, and memory checks.
+
+An unknown TLSU code raises `Fault_IllegalInstruction`. A binding count other than the one or two records above raises `Fault_BundleControl`. A missing `B.IOR`, a Shared binding, a nonzero unused `B.IOR` selector, a dimension outside `1..65535`, a `DataType` other than `U32`, a wrong layout or shape, or an undefined active index or limit element raises `Fault_TileLegality` before the first probe. A failed destination allocation raises `Fault_TileAllocation`, and a memory fault keeps its own kind.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-inc-example role=example -->
 ## Non-normative usage example
 
 Treat the generated `BSTART.MGATHER.INC` example as a spelling and navigation aid. Substitute operands only within the legality and state contracts owned below.
+
+```asm
+BSTART.MGATHER.INC U32
+B.DIM zero, 2, ->LB0
+B.DIM zero, 1, ->LB1
+B.DIM zero, 2, ->LB2
+B.IOT T#1, T#2, mask=1111, last, ->T<8B>
+B.IOR a0, zero, zero, ->zero
+BSTOP
+```
+
+`T#1` is a 1 by 2 `S32` index Tile holding `0` and `4`, `T#2` is the 1 by 2 `U32` limit Tile holding `3` and `5`, and `a0` holds `0x1000`. If GM holds `2` at `0x1000` and `5` at `0x1004`, lane 0 increments its counter to `3`, because `2` is below its limit of `3`, and lane 1 resets its counter to `0`, because `5` has reached its limit of `5`. The destination receives the old counts `2` and `5`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

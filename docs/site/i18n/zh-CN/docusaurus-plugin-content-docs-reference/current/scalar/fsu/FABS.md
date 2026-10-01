@@ -19,50 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fabs-purpose role=purpose -->
 ## FABS 的作用
 
-`FABS` 清除选定 FP64 或 FP32 载体的符号位，并保持其他载体位不变。
+`FABS` 清除选定浮点载体的符号位，并把得到的字作为普通目的值发布。它是对载体的位操作，而不是带舍入的算术运算。
+
+该指令是 `FSU` 家族的一元形式：一个 Reg5 源、一个 Reg5 目的或丢弃，并且没有提交或谓词效果。
 
 <!-- PTO-READER-BLOCK: scalar-fabs-mechanism role=mechanism -->
-## 数值机制
+## 符号如何被清除
 
-`SrcType=00` 选择完整 FP64 载体；`SrcType=01` 选择零扩展后的低 32 位 FP32 载体。
+`SrcType` 选择载体。编码 `00` 选择完整 FP64 载体，模型因此用 `0x7fffffffffffffff` 对读到的字做掩码。编码 `01` 选择低字中的 FP32 载体，因此用 `0x7fffffff` 对低 `32` 位做掩码并把结果零扩展。
 
-该操作只清除选定符号位，不产生新的数值标志。
+只有符号位被改变。指数位和有效数位，包括 NaN 载荷或无穷指数，都原样复制，该指令本身也不发布任何数值标志。
+
+设计要点：由于该变换从不检查值类别，`FABS` 既不能把发信 NaN 变成静默 NaN，也不能引发无效操作标志。需要该行为的程序必须改用算术运算。
 
 <!-- PTO-READER-BLOCK: scalar-fabs-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `RegDst` 选择编码指定的目的位置或丢弃行为。
-
-- `SrcL` 提供左侧标量源。
-
+- `SrcL` 提供唯一的 Reg5 源。
 - `SrcType` 选择源载体宽度。
+- `RegDst` 选择目的：编码 `1..23` 写所指的绝对 GPR，编码 `30` 压入 `U` 队列，编码 `31` 压入 `T` 队列，编码 `0` 以及编码 `24..29` 丢弃结果。
 
-- Reg5 源选择器可以读取 GPR、T 或 U 状态，且不会消费临时队列项。
-
-- 目的选择器可以写 GPR、压入 T/U，或只丢弃结果。
+Reg5 源码 `0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`，都不消费队列项。`SrcL` 中的编码零读取架构零 GPR，`RegDst` 中的编码零表示丢弃。
 
 <!-- PTO-READER-BLOCK: scalar-fabs-effects role=effects -->
 ## 效果与顺序
 
-所有显式源都会在数值状态或目的效果前完成快照。
+目的被写入一次，内容是按选定宽度规范化的掩码后载体，随后 `TPC` 前进 `4` 字节。该指令没有内存、保留状态或描述符效果。
 
-已有数值标志保持不变。
-
-结果完成发布或丢弃后，`TPC` 前进 `4` 字节。该指令不产生内存或保留状态效果。
+已有数值状态标志保持不变。由于 `FABS` 只清除选定载体的符号位，FP64 结果与源最多只差这一位；而 FP32 结果的高 `32` 位会被置零，因为选定载体是零扩展后的低字。
 
 <!-- PTO-READER-BLOCK: scalar-fabs-constraints role=constraints -->
-## 类型与配置档边界
+## 保留类型编码与故障顺序
 
-`SrcType=10` 和 `SrcType=11` 为保留值。保留类型或不可用 T/U 源会在读取源、调用配置档、更新标志或队列、写入目的以及改变 `TPC` 前引发 `Fault_IllegalInstruction`。
+`SrcType` 编码 `0` 和 `1` 已分配；编码 `2` 和 `3` 为保留值。编码合法性在第一次架构源读取之前运行，因此保留的 `SrcType`、固定位不匹配或所选的 `T`、`U` 源不可用，都会在任何源、配置档、目的、标志、队列或 `TPC` 效果之前引发 `Fault_IllegalInstruction`。
 
-数值标志更新本身不会引发同步 PTO 陷阱。
+每个 Reg5 目的编码都已分配，因此没有非法的目的编码，该指令也没有可能报告数值异常的配置档钩子。数值状态更新永远不会引发同步 PTO 陷阱。
 
 <!-- PTO-READER-BLOCK: scalar-fabs-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不会脱离规范规则或当前配置档另行定义算术。
+本示例用于说明当前所有者，不会脱离规范规则或活动配置档另行定义算术语义。
 
-`fabs.fd a0, ->a1` 只清除选定符号位，发布结果载体，并保持数值标志不变。
+对 FP64 形式，规范示例是 `fabs.fd a0, ->a1`：GPR `a0` 保存 `0xc000000000000000`，表示 `-2.0`，GPR `a1` 收到 `0x4000000000000000`，表示 `2.0`，其余各位完全相同。
+
+对 FP32 形式，规范示例是 `fabs.fs t#1, ->t`：`T#1` 项的低字用 `0x7fffffff` 做掩码并零扩展，结果压入 `T` 队列。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

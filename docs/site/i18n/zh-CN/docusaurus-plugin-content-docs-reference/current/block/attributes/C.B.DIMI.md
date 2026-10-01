@@ -19,23 +19,27 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-c-b-dimi-purpose role=purpose -->
 ## C.B.DIMI 的作用
 
-`C.B.DIMI` 是压缩 Block 头属性，用于恰好写入一次所选束局部维度。
+`C.B.DIMI` 是 `B.DIM` 的 16 位压缩形式。它用一个无符号 8 位立即数写入一个指令束局部维度寄存器 `LB0`、`LB1` 或 `LB2`。它不读取任何寄存器。
+
+与 `B.DIM` 一样，它不赋予寄存器任何含义。完成后的操作 schema 决定该值是有效列数、行数还是矩阵维度。
 
 <!-- PTO-READER-BLOCK: block-c-b-dimi-mechanism role=mechanism -->
 ## 放置与执行机制
 
-`C.B.DIMI` 只允许出现在活动头部的 `BSTART` 之后、第一条 Block 体操作之前；独立放置或放入 Block 体都会引发 `Fault_BundleControl`。
+命令分派器只在 Block 处于活动状态且仍在 header 中（`BSTART` 之后、第一条 body 指令之前）时接受 `C.B.DIMI`。否则引发 `Fault_BundleControl`。
 
-已接受载体使用 `C16` 编码类别；命令在读取绑定或改变状态前，会先解析所有显示字段。
+该命令通过 `SetBundleDimension` 写入 `ZeroExtend(imm8)`，这与 `B.DIM` 使用的写入器相同（见[维度 schema 模型](../model/schema/dimensions.md)）。
 
 `C.B.DIMI` 与 `B.DIM` 为 `LB0`、`LB1`、`LB2` 分别共享一个只写一次的存在位。
 
-<!-- PTO-READER-BLOCK: block-c-b-dimi-inputs role=inputs-outputs -->
-## 载体、绑定与输入
+设计要点：由于存在位是共享的，压缩形式与完整形式对同一寄存器可以互换，但不能都写它。混合使用（例如用 `C.B.DIMI` 写 `LB0`、用 `B.DIM` 写 `LB2`）是合法的；用两者都写 `LB0` 会被拒绝。
 
-- 编码操作数：`LoopNest` — 编码的 LB0、LB1 或 LB2 选择器; `imm8` — 无符号八位束局部维度值。
-- `LoopNest` 选择 `LB0..LB2`；`imm8` 会被零扩展，编码 `3` 在改变 Block 状态前保留。
-- 编码零仍是已分配值或明确规定的拒绝值；它不会静默表示省略操作数。
+<!-- PTO-READER-BLOCK: block-c-b-dimi-inputs role=inputs-outputs -->
+## 编码字段
+
+- `imm8`，第 6 至 13 位：无符号值 0 至 255，零扩展到维度字。
+- `LoopNest`，第 14 与 15 位：编码 0、1、2 依次选择 `LB0`、`LB1`、`LB2`。编码 3 保留，会在任何状态改变之前引发 `Fault_IllegalInstruction`。
+- 第 0 至 5 位固定为 `0x3c`。
 
 <!-- PTO-READER-BLOCK: block-c-b-dimi-effects role=effects -->
 ## 状态效果与顺序
@@ -44,10 +48,13 @@ The current instruction contract is owned by the ASL source linked above.
 
 成功执行会原子发布所选原始 LB 值及其共享存在位，再将 `TPC` 前移 `2` 字节。
 
+设计要点：`imm8` 总是被编码，因此编码零写入数值零。这不是省略：从未写入的 `LB` 寄存器有效值为 1，而 `C.B.DIMI 0, ->LB0` 使其为 0。随后由操作 schema 决定 0 是否合法。
+
 <!-- PTO-READER-BLOCK: block-c-b-dimi-constraints role=constraints -->
 ## 合法性、故障与原子性
 
-固定比特、保留值、选择器取值域与必需的 Block 放置关系都在架构效果之前检查。
+- `LoopNest` 编码 3 在 `TPC` 或 Block 状态发生任何改变之前引发 `Fault_IllegalInstruction`。
+- 位于活动 Block header 之外的 `C.B.DIMI` 引发 `Fault_BundleControl`。
 
 当前归属单元通过 `Fault_BundleControl`, `Fault_IllegalInstruction` 报告无效模式、状态、地址或后继条件；本页说明文字不创建额外故障规则。
 
@@ -62,7 +69,7 @@ The current instruction contract is owned by the ASL source linked above.
 C.B.DIMI 0, ->LB0
 ```
 
-活动 `BSTART` 之后，该头命令把数值零写入 `LB0`；进入 Block 体前不能再次写同一 LB。
+在活动 `BSTART` 之后，该 header 命令把数值零写入 `LB0` 并置位其存在位。大于 255 的值（例如 256）无法放入 `imm8`，需要使用带寄存器或 17 位立即数的 `B.DIM`，例如 `B.DIM zero, 256, ->LB2`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

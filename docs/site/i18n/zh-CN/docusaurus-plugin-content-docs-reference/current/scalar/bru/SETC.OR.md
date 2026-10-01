@@ -19,44 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-or-purpose role=purpose -->
 ## SETC.OR 的作用
 
-`SETC.OR` 计算按位或条件，并把它发布为当前条件指令束的提交判定。
+`SETC.OR` 用按位 OR 组合两个标量寄存器，并把组合结果是否非零发布为所在 Conditional 指令束的提交判定。
+
+这使该助记符成为对两个字的析取：只要任一操作数贡献了至少一个置位比特，指令束就提交。
 
 <!-- PTO-READER-BLOCK: scalar-setc-or-mechanism role=mechanism -->
-## 执行机制
+## 用按位 OR 组合两个字
 
-放置和单次设置检查通过后，指令对操作数取快照并执行按位或。
+该指令对 `SrcL` 和准备好的右侧操作数做快照，计算两个完整字的按位 OR，组合为零时存入恰好 `0`，否则存入恰好 `1`。
 
-组合值为零时提交条件为假，任何非零值都表示真。
+与家族中的关系类成员不同，这里不涉及数值条件：被测试的性质是 OR 是否产生了任何置位比特。
+
+设计要点：提交的是归约后的真值，而不是 OR 结果。组合产生的字不会写入任何位置，因此需要组合后比特的程序必须另行计算。
 
 <!-- PTO-READER-BLOCK: scalar-setc-or-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `SrcL` 提供左侧标量源。
+- `SrcL` 是 Reg5 源：编码 `0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`。
+- `SrcR` 使用相同的 Reg5 映射。
+- `SrcRType` 在组合之前变换 `SrcR` 快照：值 `0` 保持完整字不变，值 `1` 代入低 `32` 位的符号扩展结果，值 `2` 代入低 `32` 位的零扩展结果，值 `3` 代入完整字的按位取反，即规范汇编上的 `.not` 标注。
 
-- `SrcR` 提供右侧标量源。
-
-- `SrcRType` 选择右源变换。
+`SrcL` 或 `SrcR` 中的编码零指向架构零 GPR。源不会被消费，也不写任何 `GPR`、`T` 或 `U` 目的。
 
 <!-- PTO-READER-BLOCK: scalar-setc-or-effects role=effects -->
 ## 效果与顺序
 
-规范化条件会原子写入 `_CommitArgument` 和 `BARG.TAKEN`，同时置位条件已设置标记。
+成功时提交参数收到恰好 `1` 或 `0`，指令束处于活动状态时 `BARG.TAKEN` 取同一真值，指令束条件标记变为已设置，`TPC` 前进 `4` 字节。
 
-成功时，`SETC.OR` 让 `TPC` 前进 `4` 字节；它没有标量目的位置，也不产生内存或保留状态效果。
+不产生内存、保留状态、描述符或数值状态效果，`BARG.BPC`、`BARG.BPCN`、`BARG.BlockType` 和 `BARG.TYPE` 保持不变。
 
 <!-- PTO-READER-BLOCK: scalar-setc-or-constraints role=constraints -->
-## 合法性与故障顺序
+## 设置者标记与放置检查拒绝什么
 
-该指令只在适用的条件指令束上下文中合法，并且只能有一个条件设置操作成功。
+适用性限于活动 Conditional 指令束的束体，共享标记允许该指令束中最多一个成功的 `SETC` 条件设置者。
 
-放置错误或重复设置会在读取源之前引发非法指令束异常；编码或源不可用会在提交状态或 `TPC` 效果前引发 `Fault_IllegalInstruction`。
+错误的放置位置或第二个成功的设置者会在操作数合法性检查和任何源读取之前引发 `Fault_BundleControl`（陷阱编号 `5`，`BUNDLE_TRAP`）。固定位不匹配或所选的 `T`、`U` 源不可用会在提交状态、`BARG`、队列或 `TPC` 效果之前引发 `Fault_IllegalInstruction`。被拒绝的一次出现不会消耗共享标记。
 
 <!-- PTO-READER-BLOCK: scalar-setc-or-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不构成第二份语义定义。
+本示例用于说明当前所有者，不会建立第二套语义定义。
 
-`setc.or SrcL, SrcR<.sw, .uw, .not>` 按上述规则计算条件，把规范化判定写入提交状态，并且只在更新完成后推进 `TPC`。
+把 `0` 放入 GPR1、`0` 放入 GPR2，然后执行 `setc.or R1, R2`。两个零字的 OR 为零，因此该形式提交 `0`。把 GPR1 设为 `4`，同一形式提交 `1`，尽管只置位了一个比特。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,42 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-cmp-gei-purpose role=purpose -->
 ## CMP.GEI 的作用
 
-`CMP.GEI` 对解码后的标量操作数判断有符号大于等于，并发布规范化的 XLEN 一或零。
+`CMP.GEI` 求值有符号的大于等于关系，并把规范 XLEN 布尔值写入目的：条件成立时为 `1`，不成立时为 `0`。
+
+结果是普通数据。`CMP.GEI` 不设置所在块的提交条件，也不触碰任何谓词寄存器。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-gei-mechanism role=mechanism -->
-## 执行机制
+## 机制
 
-指令先对操作数取快照，准备解码立即数，再判断有符号大于等于。
+契约返回 `ScalarHandler_ExecuteCompare`。模型读取左源、准备右操作数、测试条件 `ScalarCondition_GE`，并通过目的选择子写入 `Zeros{PTO_XLEN} + 1` 或 `Zeros{PTO_XLEN}`。
 
-关系成立时结果为 XLEN 一，否则为 XLEN 零。
+右操作数是 `simm12`，一个 `12` 位有符号立即数，解码器把它符号扩展到 XLEN。关系本身是有符号的，因此两侧都按有符号整数读取，立即数的符号扩展与该比较所使用的读数一致。
+
+设计要点：这里并不存在"扩展立即数还是扩展关系"的独立选择。由于两侧都按有符号 XLEN 值读取，负立即数是用一条指令表达零以下有符号边界的唯一方式。
+
+设计要点：规范化为恰好 `1` 或 `0`（而不是任意非零值），使两次比较可以做算术组合，并且对目的做一次测试就足以恢复该关系。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-gei-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `RegDst` 选择编码指定的目的位置或丢弃行为。
+- `SrcL` 是 Reg5 源：编码 `0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`。
+- `simm12` 提供 `12` 位有符号立即数。
 
-- `SrcL` 提供左侧标量源。
+`RegDst` 命名目的：编码 `1..23` 写入所指的绝对 GPR，编码 `0` 与编码 `24..29` 丢弃结果，编码 `30` 把它压入 `U` 队列，编码 `31` 把它压入 `T` 队列。
 
-- `simm12` 提供有符号编码立即数。
+源编码为 `0` 时读取架构零 GPR。队列源只被读取，不会被消费。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-gei-effects role=effects -->
-## 效果与顺序
+## 效果与排序
 
-规范化布尔值先通过编码目的位置发布，随后 `TPC` 前进 `4` 字节。
+成功时该指令恰好写入一个目的值，并让 `TPC` 前进 `4` 字节，即 `32` 位形式的编码长度。
 
-该指令不修改提交状态，也不访问内存或保留状态。
+它没有内存效果、没有保留效果、没有描述符效果，也没有数值状态标志。它保持提交参数、块参数和块条件标记不变，因为它不是条件设置指令。
+
+模型先读取所有选中的寄存器源，再写入目的。标量派发只在该目的效果之后推进 `TPC`。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-gei-constraints role=constraints -->
 ## 合法性与故障顺序
 
-编码、保留字段值和源可用性都会在目的、控制或 `TPC` 效果前检查。
+先执行解码，固定位不匹配会在指令地址处抛出 `Fault_IllegalInstruction`，且在任何效果之前。
+
+`simm12` 的全部 `4096` 个模式都已分配；没有保留立即数。
+
+被选中但不可用的 `T` 或 `U` 源会在操作数合法性阶段被拒绝，且早于目的写入。被拒绝的指令既不改变目的也不改变 `TPC`，陷入入口保存原始 `TPC`，因此它可以重新执行。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-gei-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不构成第二份语义定义。
+把 GPR1 设为 `5`。
 
-`cmp.gei SrcL, simm, ->{t, u, Rd}` 在条件为真时发布 XLEN 一，否则发布 XLEN 零。
+`cmp.gei 1, 5, ->0` 把 `1` 写入目的。若把 `simm12` 设为 `6`，同一形式写入 `0`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

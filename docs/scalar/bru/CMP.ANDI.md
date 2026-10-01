@@ -19,42 +19,53 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-cmp-andi-purpose role=purpose -->
 ## What CMP.ANDI does
 
-`CMP.ANDI` applies bitwise AND to two decoded scalar values and publishes whether the combined value is nonzero.
+`CMP.ANDI` combines the two operand values with a bitwise AND and writes the canonical XLEN boolean `1` when the combined value is nonzero and `0` when it is zero.
+
+It is a comparison in result shape only. The value written does not report a relation between the operands; it reports whether the AND of them is all zeros.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-andi-mechanism role=mechanism -->
 ## Mechanism
 
-Sources are snapshotted before bitwise AND.
+The contract returns `ScalarHandler_ExecuteCompareLogical` with the operation AND. The model sign-extends the `12`-bit `simm12` field to XLEN and uses it as the right value.
 
-A zero combined word becomes XLEN zero; any nonzero word becomes XLEN one.
+The handler then takes the left source and the prepared right value, computes `left AND right`, and writes `Zeros{PTO_XLEN} + 1` when the logical result is nonzero and `Zeros{PTO_XLEN}` when it is zero. No other state is read or written.
+
+Design point: the two operands are combined first and tested second, so the instruction cannot reveal anything about one operand alone. That is why a mask test such as "does this value have any of these bits" needs one instruction instead of a compare followed by a branch on two results.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-andi-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `RegDst` selects the encoded destination or discard behavior.
+- `SrcL` is a Reg5 source: codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`.
+- `simm12` supplies the `12`-bit signed immediate.
 
-- `SrcL` supplies the left scalar source.
+`RegDst` names the destination: codes `1..23` write the named absolute GPR, code `0` and codes `24..29` discard the result, code `30` pushes it to the `U` queue, and code `31` pushes it to the `T` queue.
 
-- `simm12` supplies a signed encoded immediate.
+Source code `0` reads the architectural zero GPR. A queue source is read without being consumed.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-andi-effects role=effects -->
 ## Effects and ordering
 
-The canonical boolean is published through the encoded destination, then `TPC` advances by `4` bytes.
+On success the instruction writes exactly one destination value and advances `TPC` by `4` bytes, the encoded length of the `32`-bit form.
 
-The instruction does not modify commit state and does not access memory or reservation state.
+It has no memory effect, no reservation effect, no descriptor effect, and no numeric status flag. It leaves the commit argument, the block argument, and the block condition marker unchanged, because it is not a condition setter.
+
+Design point: `CMP.ANDI` is not an alias of `ANDI`. `ANDI` writes the combined XLEN value, while `CMP.ANDI` writes the canonical boolean that reports whether that value is nonzero, so the two forms are not interchangeable when the combined bits themselves are needed later.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-andi-constraints role=constraints -->
 ## Legality and fault order
 
-Encoding, reserved field values, and source availability are checked before destination, control, or `TPC` effects.
+Decode runs first, and a fixed-bit mismatch raises `Fault_IllegalInstruction` at the instruction address before any effect.
+
+All `32` encodings of `SrcL` and `RegDst` are assigned, and all `4096` patterns of `simm12` are assigned, so no operand encoding is reserved.
+
+A selected `T` or `U` source that is not available is rejected during operand legality, before the destination is written. A rejected instruction changes neither the destination nor `TPC`, and trap entry saves the original `TPC` so it can be reissued.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-andi-example role=example -->
 ## Non-normative example
 
-This example illustrates the current owner and does not create a second semantic definition.
+Set GPR1 to `7`.
 
-`cmp.andi SrcL, simm, ->{t, u, Rd}` publishes XLEN one when its condition is true and XLEN zero otherwise.
+`cmp.andi 1, 3, ->0` computes `7 AND 3`, which is `3`, so it writes `1` into the destination. With `simm12` set to `8` the same form writes `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

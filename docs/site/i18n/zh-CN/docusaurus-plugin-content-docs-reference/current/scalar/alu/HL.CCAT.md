@@ -19,49 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-ccat-purpose role=purpose -->
 ## HL.CCAT 的作用
 
-`HL.CCAT` 是一条 48 位标量 ALU 指令。它拼接两个源部分，执行编码指定的逻辑右移，再把结果拆分到低、高XLEN目标；当前指令契约定义结果发布路径以及任何额外状态效果。
+`HL.CCAT` 是一条 48 位标量 ALU 指令。它把 `SrcL` 作为高半部、`SrcR` 作为低半部组成一个 128 位值，对该值做 7 位 `shamt` 指定的逻辑右移，并把位 `63:0` 发布到 `Dst0`、位 `127:64` 发布到 `Dst1`。
+
+设计要点：这个拼接值从不作为寄存器值存在。两个半部分开计算，因此小于 `64` 的移位会把高半部的低位带入低部结果的顶部：当 `SrcL` 为 `1`、`SrcR` 为 `2`、`shamt=8` 时，低部结果为 `0x0100000000000000`。
 
 <!-- PTO-READER-BLOCK: scalar-hl-ccat-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后拼接两个源部分，执行编码指定的逻辑右移，再把结果拆分到低、高XLEN目标，最后才产生目标效果。
+`InstructionContractLowResult_HL_CCAT` 返回位 `63:0`，`InstructionContractHighResult_HL_CCAT` 返回位 `127:64`（`asl/scalar/alu/HL.CCAT.asl:26-55`）。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+- 当 `shamt=0` 时，低部结果是 `SrcR`，高部结果是 `SrcL`。
+- 当 `shamt` 取 `1..63` 时，低部结果是 `LSR(SrcR, shamt) OR LSL(SrcL, 64 - shamt)`，高部结果是 `LSR(SrcL, shamt)`。
+- 当 `shamt` 取 `64..127` 时，低部结果是 `LSR(SrcL, shamt - 64)`，高部结果为零。
+
+设计要点：零移位直接返回两个源，因此 `hl.ccat a0, a1, 0, ->a2, a3` 把 `a1` 发布到 `a2`，把 `a0` 发布到 `a3`。
+
+设计要点：`shamt=127` 只保留位 127，也就是 `SrcL` 的位 63，并把它移到低部结果的位 0。对于 `64` 及以上的 `shamt`，高部结果为零，因此没有任何数据到达高部目标。
 
 <!-- PTO-READER-BLOCK: scalar-hl-ccat-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst0` 是 5 位字段，选择第一个低部结果的 Reg5 目标，或丢弃该结果。
-- `RegDst1` 是 5 位字段，选择第二个高部结果的 Reg5 目标，或丢弃该结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择拼接值的高部源。
-- `SrcR` 是 5 位字段，通过 Reg5 选择拼接值的低部源。
-- `shamt` 是 7 位字段，编码无符号七位逻辑右移量。
+- `RegDst0` 接收低部结果，或丢弃它。
+- `RegDst1` 接收高部结果，或丢弃它。
+- `SrcL` 是高部源，提供位 `127:64`。
+- `SrcR` 是低部源，提供位 `63:0`。
+- `shamt` 是 7 位无符号逻辑右移量。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+两个源都使用完整的源映射：编码 `0..23` 选择绝对 GPR，`24..27` 选择 `T#1..T#4`，`28..31` 选择 `U#1..U#4`，且不消费队列项。两个目标都使用公共目标映射：编码 `1..23` 写 GPR，编码 `0` 与 `24..29` 丢弃，编码 `30` 压入 `U`，编码 `31` 压入 `T`。
+
+设计要点：在目标位置上，汇编写法 `zero` 是丢弃编码 `0`。元数据示例 `hl.ccat t#1, u#1, 64, ->zero, a0` 丢弃低部结果 `T#1`，并把高部结果 `0` 写到 `a0`。
 
 <!-- PTO-READER-BLOCK: scalar-hl-ccat-effects role=effects -->
 ## 效果与顺序
 
-所有结果都在发布前计算完成。随后按编码顺序（`RegDst0`, `RegDst1`）更新目标；目标重复指向同一寄存器或队列时也采用这一顺序。
+两个结果都在任何写入之前计算完成，写入顺序固定：先 `Dst0` 写入位 `63:0`，再 `Dst1` 写入位 `127:64`。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 6 字节。
+设计要点：当两个目标指向同一位置时，这个顺序是可观察的。指向同一个 GPR 时 `Dst1` 的写入是最终结果，因此该寄存器保存高部结果。指向同一个队列时 `Dst0` 先入队，因此高部结果成为最新项。
 
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+`HL.CCAT` 没有内存效果，也不改变其他架构状态；丢弃目标不产生任何效果。两个目标效果之后，`TPC` 前进 `6` 字节。
 
 <!-- PTO-READER-BLOCK: scalar-hl-ccat-constraints role=constraints -->
 ## 合法性与故障边界
 
-编码移位范围全部有定义并使用零填充；固定编码位不匹配或所选 T/U 源不可用时，会在两个目标效果之前触发 `Fault_IllegalInstruction`。
+`shamt` 的全部 `128` 个取值都已分配，移位以零填充，因此没有保留的 `shamt` 取值；每个源编码与目标编码同样都已分配。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+固定编码位与 `HL48` 形式不匹配的编码不会被译码；不匹配任何已接受形式的编码会在读取任何源之前于 `PC` 处引发 `Fault_IllegalInstruction`。所选 `T` 或 `U` 源不可用会在两个目标效果之前、`TPC` 前进之前于 `PC` 处引发 `Fault_IllegalInstruction`。不适用于当前指令束的指令会在 `TPC` 处触发 `Fault_BundleControl`（`asl/scalar/model/dispatch/top-level.asl:17-37`，`asl/scalar/model/types/operands.asl:6-19`）。
+
+设计要点：移位是全域定义的，因此每个 `shamt` 与每一对源都会产生一对已定义的 XLEN 结果，该指令没有算术故障路径。
 
 <!-- PTO-READER-BLOCK: scalar-hl-ccat-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `HL.CCAT` 示例说明：移位量为 `0`、高部源为 `1`、低部源为 `2` 时，按顺序得到低部结果 `2` 和高部结果 `1`。
+当 `shamt=0` 时没有移位：`hl.ccat a0, a1, 0, ->a2, a3` 把 `a1` 发布到 `a2`，把 `a0` 发布到 `a3`。
+
+当 `a0` 为 `1`、`a1` 为 `2`、`shamt=8` 时，低部结果是 `LSR(2, 8) OR LSL(1, 56)`，即 `0x0100000000000000`，而高部结果是 `LSR(1, 8)`，即 `0`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

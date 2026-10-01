@@ -19,38 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-setret-purpose role=purpose -->
 ## What HL.SETRET does
 
-`HL.SETRET` computes and records the architectural return address relative to the current `TPC`.
+`HL.SETRET` computes a return address from the current instruction `TPC` plus an unsigned halfword offset and records it in two places: the general-purpose register `R10`, which the assembly names `Ra`, and the bundle-local return address.
+
+Design point: `HL.SETRET` prepares a return but does not take it. The transfer happens later, when a block start whose transfer type is return reads the recorded return address, so the instruction itself leaves execution sequential.
 
 <!-- PTO-READER-BLOCK: scalar-hl-setret-mechanism role=mechanism -->
-## Mechanism
+## How the return address is formed
 
-The unsigned `32`-bit immediate is zero-extended, shifted left by `1`, and added to the snapshotted current `TPC`.
+The `32`-bit `imm32` is zero-extended to `PTO_XLEN` and shifted left by `1`, and the result is added to the current `TPC`. The scale of `2` makes the field count halfwords, and the sum wraps at `2^64`.
 
-The same target is written to GPR `R10` and bundle-local return-address state; execution does not branch to that target.
+Design point: `imm32` is zero-extended rather than sign-extended, so the field spans `0` to `4294967295` halfwords and there is no negative displacement. The sibling `HL.ADDTPC` instead uses a signed immediate with a `12`-bit page scale, so the two forms are not interchangeable.
+
+Both writes use the same computed value and happen in one handler step: `SetReturnAddress` writes GPR `10` first and then the bundle-local return address.
 
 <!-- PTO-READER-BLOCK: scalar-hl-setret-inputs-outputs role=inputs-outputs -->
-## Inputs and output
+## Operands and the fixed destination
 
-- `imm32` supplies the encoded immediate or displacement.
+- `imm32` supplies the unsigned halfword offset. It is assembled from two instruction pieces, `20` bits and `12` bits wide.
+
+- There is no destination selector field: the bits that other `48`-bit forms use for `RegDst` are fixed to the value `10` here, so the target always reaches `R10`.
+
+- There is no source register operand. The base of the computation is the instruction `TPC`.
+
+Design point: because the destination is pinned by the encoding instead of named by a field, `HL.SETRET` cannot be encoded with a discarded or queue destination. Every successful occurrence updates `R10` and the return address together.
 
 <!-- PTO-READER-BLOCK: scalar-hl-setret-effects role=effects -->
 ## Effects and ordering
 
-The return target is published before the normal successful `TPC` advance of `6` bytes.
+`R10` receives the wrapped target and the bundle-local return address receives the same value. `SetReturnAddress` does not write `TPC`, so the dispatch boundary then advances `TPC` by `6` bytes.
 
-No memory, reservation, numeric-status, or predicate state changes.
+No other state changes: no memory location, no reservation, no commit argument, and no `BARG` field is written. The `SetReturnAddress` path raises no fault of its own.
+
+Design point: writing `R10` as well as the bundle-local return address keeps the value visible to ordinary scalar code, which can read, save, or replace it with normal register operations, while the block machinery keeps its own copy for return-type block starts and frame templates.
 
 <!-- PTO-READER-BLOCK: scalar-hl-setret-constraints role=constraints -->
 ## Legality and fault order
 
-Encoding, reserved field values, and source availability are checked before destination, control, or `TPC` effects.
+The fixed bits of the form must match, otherwise the pattern does not decode as this instruction and raises `Fault_IllegalInstruction`. Every value of `imm32` is assigned, so no immediate is reserved.
+
+Design point: decoding happens before the `TPC` read and before either write, so a rejected pattern leaves `R10`, the bundle-local return address, and `TPC` unchanged.
 
 <!-- PTO-READER-BLOCK: scalar-hl-setret-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not create a second semantic definition.
 
-`hl.setret imm, ->Ra` records the return target without transferring control to it.
+With `TPC` equal to `0x2000`, `hl.setret 4, ->Ra` writes `0x2008` to `R10` and records `0x2008` as the return address, while execution continues at `0x2006`. `hl.setret 0, ->Ra` records `0x2000`, the address of the instruction itself.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

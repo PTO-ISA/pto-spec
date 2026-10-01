@@ -19,39 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-fret-ra-purpose role=purpose -->
 ## FRET.RA 的作用
 
-`FRET.RA` 是独立的栈帧生命周期命令；发布栈帧或控制流效果前，会先验证寄存器范围与栈状态。
+`FRET.RA` 用一条命令撤除栈帧并返回。它与 [FEXIT](FEXIT.md) 完全一样地恢复寄存器，然后转移到恢复开始之前的当前返回地址。
+
+返回地址是返回地址状态 `_ReturnAddress`。调用形式的 block 启动与 [SETRET](../../scalar/bru/SETRET.md) 会把相同的值写入它和 R10（`ra`）。栈指针是 GPR 1（`sp`）。共用的帧模板见 [帧生命周期](../model/lifecycle/lifetime.md)。
 
 <!-- PTO-READER-BLOCK: block-fret-ra-mechanism role=mechanism -->
 ## 放置与执行机制
 
-`FRET.RA` 作为独立的 `32` 位命令执行，不要求放在 `BSTART`/`BSTOP` Block 体内。
+`FRET.RA` 是独立的 32 位命令。它不打开或提交 block，也不写 `BARG`。
 
-已接受载体使用 `L32` 编码类别；命令在读取绑定或改变状态前，会先解析所有显示字段。
+执行按固定顺序进行：
 
-命令会在第一个可见效果前快照所有必需源，随后遵循归属单元定义的提交或重启边界。
+1. 检查端点与帧大小。
+2. 把 `_ReturnAddress` 快照为返回目标。目标为奇数时引发 `Fault_InstructionPC`。
+3. 计算 `caller_sp = sp + size` 并写入 `sp`。
+4. 按范围顺序从 `caller_sp - 8`、`caller_sp - 16` 等位置加载寄存器。
+5. 最后一次加载之后，若帧深度非零则递减，记录最近帧元组，并把快照的目标写入 `TPC`。
+
+设计要点：目标在任何寄存器被恢复之前捕获。若范围包含 R10，恢复会改变 `ra` 与 `_ReturnAddress`，但命令仍返回到它开始时的当前地址。
 
 <!-- PTO-READER-BLOCK: block-fret-ra-inputs role=inputs-outputs -->
 ## 载体、绑定与输入
 
-- 编码操作数：`DstBegin` — R2..R23 闭环范围中的首个寄存器; `DstEnd` — R2..R23 闭环范围中的最后一个寄存器; `uimm` — 以八字节倍数编码的栈帧字节数。
-- 所有操作数都来自已接受载体或命名架构状态；命令不会创建 Block 体私有的隐藏操作数流。
-- 编码零仍是已分配值或明确规定的拒绝值；它不会静默表示省略操作数。
+- `DstBegin`，位 `19:15`，是范围的第一个寄存器。
+- `DstEnd`，位 `24:20`，是范围的最后一个寄存器。
+- `uimm` 是 12 位字段，拆分在位 `31:25`（值位 `6:0`）与位 `11:7`（值位 `11:7`）。帧大小（字节）为 `uimm << 3`。
+
+范围在环 `R2..R23` 上是闭区间，并从 R23 回绕到 R2。每个字段都必须编码，没有默认值。端点的编码零指 R0，属于保留值。`uimm` 的编码零是真正的零字节帧，是非法的。
 
 <!-- PTO-READER-BLOCK: block-fret-ra-effects role=effects -->
 ## 状态效果与顺序
 
-源验证与快照发生在所有寄存器、队列、栈帧、内存、事件或控制流效果之前。
+每次加载以 relaxed 加载事件读取对齐的 8 字节并写入其寄存器。与 `FEXIT` 相同，每次加载与其进度推进构成一个重启事件，重试的命令不会两次调整 `sp`，也不会重复之前的加载。
 
-命令按内存契约规定的重启边界提交；只有归属单元明确允许保存重启进度时，先前已提交步骤才保持可见。
+完成时，若 `_FrameDepth` 非零则递减，记录最近帧，并以目标写入 `TPC`。没有顺序的 `TPC` 递增。
+
+设计要点：转移只在最后一个寄存器恢复之后写入。中途发生故障时，`TPC` 仍指向该 `FRET.RA`，因此恢复会重新执行它，在返回之前继续完成恢复。
 
 <!-- PTO-READER-BLOCK: block-fret-ra-constraints role=constraints -->
 ## 合法性、故障与原子性
 
-固定比特、保留值、选择器取值域与必需的 Block 放置关系都在架构效果之前检查。
+- 端点不在 `2..23` 内，或帧小于每个寄存器 8 字节时，在任何效果之前引发 `Fault_IllegalInstruction`。
+- 返回目标为奇数时，在任何 `sp`、内存、寄存器、帧或返回效果之前引发 `Fault_InstructionPC`。
+- 加载遵循普通数据访问故障规则，并在其所在步精确地发生故障。
+- 帧模板正在进行时，另一种类的帧命令，或位于另一 PC 的帧命令，会引发 `Fault_IllegalInstruction`，而不是继续该模板。
 
-当前归属单元通过 `Fault_IllegalInstruction`, `Fault_InstructionPC` 报告无效模式、状态、地址或后继条件；本页说明文字不创建额外故障规则。
-
-除非当前归属单元明确规定带保留进度的重启边界，否则拒绝发生在效果之前；完成顺序始终采用 ASL 顺序。
+下方生成的合法性与异常章节具有权威性。
 
 <!-- PTO-READER-BLOCK: block-fret-ra-example role=example -->
 ## 非规范示例
@@ -62,7 +75,7 @@ The current instruction contract is owned by the ASL source linked above.
 FRET.RA [RegDst0 ~ RegDstn], sp!, uimm
 ```
 
-所示已接受拼写从当前载体解析字段，快照必需源，再执行归属单元规定的状态与顺序转换。
+某函数在 48 字节帧中保存了 R8 至 R11，因此 `sp` 为 `0x7FD0`，且 `_ReturnAddress` 为 `0x3000`。`DstBegin = 8`、`DstEnd = 11`、编码 `uimm` 为 6 的 `FRET.RA` 快照 `0x3000`，把 `sp` 设为 `0x8000`，并恢复 R8 至 R11。R10 接收来自 `0x7FE8` 的保存值，这也会更新 `_ReturnAddress`。`TPC` 仍然变为 `0x3000`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,47 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-remu-purpose role=purpose -->
 ## What REMU does
 
-`REMU` is a 32-bit scalar ALU instruction. It computes the unsigned remainder over the complete XLEN value; its current instruction contract defines the result publication path and any additional state effect.
+`REMU` treats both complete `PTO_XLEN` sources as unsigned integers and publishes the unsigned remainder. It has three five-bit fields: `RegDst` at `[7 +: 5]`, `SrcL` at `[15 +: 5]` and `SrcR` at `[20 +: 5]`.
+
+The carrier matches `0x00005057` under mask `0xfe00707f`. The mnemonic carries no encoded mode, so the operand interpretation is exactly the unsigned one.
+
+Because the values are unsigned, the plain pattern comparison of a source decides whether it is larger than the divisor; no sign bit is special.
 
 <!-- PTO-READER-BLOCK: scalar-remu-mechanism role=mechanism -->
-## How the result is formed
+## How the remainder is formed
 
-Execution snapshots the encoded inputs, then computes the unsigned remainder over the complete XLEN value, and only afterward performs the destination effects.
+Dispatch calls `ScalarRemainderUnsigned(left, right)` with both sources read through the Reg5 map (`asl/scalar/model/dispatch/alu.asl:240-245`). A zero divisor returns the dividend unchanged; otherwise `DivideWordUnsigned` performs restoring division over `PTO_XLEN` steps and the helper returns `dividend - quotient * divisor`.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+remu SrcL, SrcR, ->{t, u, Rd}
+```
+
+Design point: The restoring-division comparison is on `UInt` values, so a dividend with bit `63` set is treated as a value above `2^63`, not as a negative number. `remu` with dividend `0xFFFFFFFFFFFFFFFF` and divisor `2` publishes `1`, whereas `rem` publishes `-1` for the same bit patterns.
+
+Design point: `DivideWordUnsigned` subtracts the divisor whenever the running remainder reaches it, so a nonzero divisor always leaves a remainder smaller than the divisor and never negative. There is no sign correction step after the loop, and the published word is the raw pattern of `dividend - quotient * divisor`.
 
 <!-- PTO-READER-BLOCK: scalar-remu-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the dividend through Reg5.
-- The 5-bit `SrcR` field selects the divisor through Reg5.
+`SrcL` is the dividend, `SrcR` the divisor, and `RegDst` the destination of the remainder.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+- `SrcL`, instruction slice `[15 +: 5]`: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, `28..31` read `U#1..U#4`, and no read consumes an entry.
+- `SrcR`, instruction slice `[20 +: 5]`: same five-bit map; the divisor is used only to compare and subtract.
+- `RegDst`, instruction slice `[7 +: 5]`: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+- Encoded zero of `SrcR` reads the architectural zero GPR and selects the defined zero-divisor answer, which is the unchanged dividend.
+
+Design point: The zero-divisor answer is the dividend itself, which can be as large as the full `PTO_XLEN` pattern. A program that relies on a remainder smaller than the divisor must therefore exclude the zero divisor first.
 
 <!-- PTO-READER-BLOCK: scalar-remu-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are snapshotted before the destination write, so a destination aliasing `SrcL` or `SrcR` divides the pre-instruction values. The remainder is published and `TPC` advances by `4` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+No memory is accessed, and reservation, descriptor, numeric-flag, trap, bundle, privilege, branch-target and control-flow state stay unchanged. A `30` or `31` destination is the only case in which a temporary queue moves.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: The instruction writes exactly one architectural value. The quotient that the restoring loop computed is a helper-local binding, so no consumer can read it without running `DIVU`.
 
 <!-- PTO-READER-BLOCK: scalar-remu-constraints role=constraints -->
 ## Legality and fault boundary
 
-A zero divisor returns the effective dividend as the remainder; the signed overflow combination returns zero. Neither case raises an arithmetic exception.
+Every source code and every destination code of the `32`-value Reg5 domain is assigned, and the form has no constraint entry beyond the fixed carrier bits.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unmatched carrier raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`, reachable for `REMU` only while a system-block terminal request is pending. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`. All checks precede the destination effect and the `TPC` advance.
+
+Design point: Unsigned division is total over the whole operand domain, including a zero divisor, so `REMU` has no operand-selected trap. Its fault boundary is encoding validity and source availability.
 
 <!-- PTO-READER-BLOCK: scalar-remu-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `REMU` example, dividend `13` and divisor `5` produce remainder `3`.
+With `a0` holding `10` and `a1` holding `4`, `remu a0, a1, ->a2` publishes `2`.
+
+With `a0` holding `0xFFFFFFFFFFFFFFFF` and `a1` holding `2`, the unsigned remainder is `1`, so `a2` receives `1`. Setting `a1` to `0` publishes the whole dividend `0xFFFFFFFFFFFFFFFF`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,56 +19,61 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tsels-purpose role=purpose -->
 ## What TSELS does
 
-`TSELS` selects each result from a Tile source or per-PE scalar under a packed predicate Tile.
+`TSELS` builds a new Local Tile by choosing, for each element in the valid rectangle, either the element of a true-source Tile or one scalar. A predicate of one selects the Tile element and zero selects the scalar. It is selected by TEPL Mode 1 Function 26 (selector `0x03A`), written canonically as `BSTART.VEC TSELS, DataType`, and has no standalone opcode.
+
+Design point: the false alternative is a scalar, not a Tile. The Tile-Tile form `TSEL` needs a second source Tile, so replacing rejected elements with one constant that way first requires a Tile filled with it. `TSELS` takes the constant directly from a GPR.
 
 <!-- PTO-READER-BLOCK: tile-c-tsels-mechanism role=mechanism -->
-## Operation mechanism
+## Selection mechanism
 
-Predicate bit zero selects the false input and bit one selects the true input; selected carrier bits are copied without numeric conversion.
+The false scalar comes from a `B.IOR` source register resolved in each participating PE's private GPR file. In the RowMajor and PredicateCell forms described below, omitting `B.IOR` makes the scalar the all-zero encoding of the selected `DataType`.
+
+The GPR value is narrowed by `TileRawElementValue` to the low element-width bits of the selected `DataType`. No numeric conversion happens.
+
+Design point: selection is a raw copy. A predicate of one copies the exact true-source encoding, and zero copies the narrowed scalar bits. Neither value is validated as a number, and there is no rounding, saturation, canonicalization, or numeric-status update, so selecting a NaN does not raise the invalid status.
+
+Complete preflight finishes before the predicate, true source, and scalar are snapshotted, and the destination is published only after every element is chosen.
 
 <!-- PTO-READER-BLOCK: tile-c-tsels-inputs-outputs role=inputs-outputs -->
-## Operands, shape, and type
+## Operand roles and mask carriers
 
-- `destination0` identifies a newly allocated destination.
+- `source0` is the mask. Its carrier depends on the form described below.
+- `source1` is the true source, an existing Local numeric Tile that persists unchanged.
+- `scalar0` is the per-PE false scalar.
+- `destination0` is a newly allocated Local Tile whose `DataType` is the selected `DataType`.
 
-- `source0` supplies the packed predicate Tile.
+Three mutually exclusive forms are described by the contract:
 
-- `source1` supplies a persistent source Tile.
+- RowMajor: a legacy packed predicate Tile in `B.IOT`, one bit per element. The false scalar is `B.IOR.RegSrc0`. This remains the intended legacy form, but the current executable schema cannot reach it: the same first Tile is required to pass both Predicate and Numeric carrier checks. Treat this branch as an executable-model gap tracked in issue #367, not as a runnable form.
+- `CUBE_M16` or `CUBE_M32` with a PredicateCell: a `U8` PredicateCell in `B.IOT` whose basis equals the operation `DataType`. The false scalar is `B.IOR.RegSrc0`.
+- `CUBE_M16` or `CUBE_M32` with a GPR mask: one source-only `B.IOR` carries the mask words first and then the false scalar, so the scalar is the second source for a one-word mask and the third source for the two-word mask of an 8-bit type.
 
-- `scalar0` supplies the per-PE scalar operand.
-
-- The closed applicable DataType set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
-
-- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
-
-- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+Design point: fixed `B.IOT` decoding and SizeCode legality still apply when `PE_MASK=0000`. After those checks, the zero-mask command returns before placement and schema checks. At commit, zero participation makes Tile dispatch return before the TSELS operation handler is called, so no GPR or descriptor is read and no Tile is allocated.
 
 <!-- PTO-READER-BLOCK: tile-c-tsels-effects role=effects -->
-## Definedness, padding, and publication
+## Publication, definedness, and padding
 
-All source descriptors and payloads are validated and snapshotted before destination publication.
+The destination payload, padding definedness, and descriptor are published as one unit. A rejected bundle has no architectural effect, and `TSELS` has no global-memory effect.
 
-The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero`, `Max`, and `Min` define them; `Null`, the default when `B.DATR` is omitted, leaves them undefined.
 
-Null padding leaves physical coordinates outside the valid rectangle undefined; an explicit non-Null PadValue defines those coordinates with the selected typed value.
-
-Source Tiles persist and are not modified by successful execution.
+With an ExecutionMask on a CUBE form, inactive coordinates receive the mask's zero or merge value instead of a selected value.
 
 <!-- PTO-READER-BLOCK: tile-c-tsels-constraints role=constraints -->
-## Legality, fault, and order boundaries
+## Type, layout, and fault boundary
 
-Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+The operation `DataType` set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. The CUBE forms are further limited: the PredicateCell form excludes `FP64`, `S64`, and `U64` and its basis must equal the operation type, and the GPR form is limited by the GPR predicate geometry.
 
-A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+The true source may use a different same-width, non-packed backing type; the destination always uses the operation `DataType`. `PadValueOrByteId` is the only applicable `B.DATR` field, and the layout comes from the source descriptor.
 
-`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+Mask bytes and true-source elements must be defined at every active coordinate, and PredicateCell bytes must be canonical `0x00` or `0x01`. A malformed or mixed carrier schema, a wrong PredicateCell basis, a shape or layout mismatch, insufficient capacity, or an allocation failure rejects the bundle before any effect.
 
 <!-- PTO-READER-BLOCK: tile-c-tsels-example role=example -->
 ## Non-normative example
 
 This example illustrates the current ASL-bound contract and is not a second instruction definition.
 
-`TSELS <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+Consider a `CUBE_M16` `FP32` true-source row `[-1.5, 2.0]`, a matching PredicateCell row `[0, 1]`, and an omitted false scalar. Conceptually, CUBE selection produces `[+0.0, 2.0]`: the first element takes the all-zero scalar and the second copies the source encoding. This is only a non-normative data-flow example; it does not claim a particular macro expansion or make the unreachable RowMajor branch runnable.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

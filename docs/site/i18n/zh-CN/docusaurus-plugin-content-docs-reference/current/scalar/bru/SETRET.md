@@ -19,38 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setret-purpose role=purpose -->
 ## SETRET 的作用
 
-`SETRET` 相对当前 `TPC` 计算并记录架构返回地址。
+`SETRET` 用当前 `TPC` 和一个编码位移计算返回目标，并把它记录到架构返回状态和 Bundle 局部返回状态中。
+
+它只记录地址而不转移控制：该指令不会跳转到它所计算的目标，顺序路径继续在后续指令处执行。之后的控制转移必须读取 `R10` 或保留的 Bundle 返回状态才能使用所记录的地址。
 
 <!-- PTO-READER-BLOCK: scalar-setret-mechanism role=mechanism -->
-## 执行机制
+## 目标如何计算
 
-无符号 `20` 位立即数先零扩展并左移 `1` 位，再与快照的当前 `TPC` 相加。
+立即数先零扩展到完整字宽，再左移 `1` 位把半字偏移缩放为字节偏移，然后与执行时读取的 `TPC` 相加。计算得到的同一个字写入 GPR `R10`（架构返回地址寄存器）以及 Bundle 局部返回地址。
 
-同一目标同时写入 GPR `R10` 和指令束局部返回地址状态；指令不会跳转到该目标。
+设计要点：移位量是固定 `1` 而不是字段，因此计算出的目标始终为偶数。返回点因此在构造上总是半字对齐，程序使用前无需再做掩码。
+
+设计要点：基址是本条指令的 `TPC`，因此位移相对于 `SETRET` 自身而不是相对于下一条指令。
 
 <!-- PTO-READER-BLOCK: scalar-setret-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `imm20` 提供编码立即数或位移。
+- `imm20` 提供编码位移，按无符号处理并按 `2` 缩放；编码零提供数值零。
+- 当前 `TPC` 提供基地址。
+- 计算得到的目标写入 GPR `R10` 以及保留的 Bundle 返回状态。
 
 <!-- PTO-READER-BLOCK: scalar-setret-effects role=effects -->
 ## 效果与顺序
 
-返回目标先完成发布，随后成功路径按普通规则让 `TPC` 前进 `4` 字节。
+目标作为一次更新发布到 `R10` 和 Bundle 局部返回地址，随后该指令沿普通顺序路径退出，`TPC` 前进 `4` 字节。
 
-内存、保留状态、数值状态和谓词状态均不改变。
+内存、保留状态、描述符、数值状态和谓词状态都不改变，该指令也没有需要检查就绪状态的源操作数。之后对 `R10` 的写入是普通 GPR 写，不会再耦合回 Bundle 局部返回地址。
 
 <!-- PTO-READER-BLOCK: scalar-setret-constraints role=constraints -->
-## 合法性与故障顺序
+## 该指令可能引发的故障
 
-编码、保留字段值和源可用性都会在目的、控制或 `TPC` 效果前检查。
+该指令只携带一个不受约束的 `20` 位字段，因此该字段的每个编码都被分配，没有保留字段值。固定位不匹配会在任何效果之前引发 `Fault_IllegalInstruction`。
+
+`SETRET` 没有需要校验的编码寄存器操作数，也没有内存访问，`SetReturnAddress` 本身不引发任何故障。除每条标量形式都要经过的适用性检查外，固定位不匹配是本编码唯一可能新增的故障。
 
 <!-- PTO-READER-BLOCK: scalar-setret-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不构成第二份语义定义。
+本示例用于说明当前所有者，不会建立第二套语义定义。
 
-`setret uimm, ->Ra` 记录返回目标，但不会把控制流转移到该目标。
+在 `TPC=1000` 处执行编码字段为 `imm20=64` 的形式。位移缩放为 `128`，因此 `R10` 和 Bundle 局部返回地址都收到 `1128`，而执行继续，下一条指令的 `TPC=1004`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

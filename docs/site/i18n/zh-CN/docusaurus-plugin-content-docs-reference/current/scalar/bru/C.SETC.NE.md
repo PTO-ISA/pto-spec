@@ -19,42 +19,58 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-setc-ne-purpose role=purpose -->
 ## C.SETC.NE 的作用
 
-`C.SETC.NE` 判断不相等，并把结果发布为当前条件指令束的提交判定。
+`C.SETC.NE` 比较两个标量源的不等，并把答案用作当前正在执行的 Conditional 块的提交条件。
+
+它不产生寄存器值。它的结果是决策：指令束提交参数，以及块参数的 taken 位。
 
 <!-- PTO-READER-BLOCK: scalar-c-setc-ne-mechanism role=mechanism -->
-## 执行机制
+## 机制
 
-在检查源就绪状态或读取源之前，先检查放置和单次设置规则。
+契约返回 `ScalarHandler_ExecuteSetCommit`，其条件为 `ScalarCondition_NE`。模型快照两个源，求值 `left != right`，把答案规范化为 XLEN `1` 或 `0`，并把这个值写入提交参数。
 
-指令对源取快照，判断不相等，再规范化为 XLEN 一或零。
+适用性检查早于任何源读取。`C.SETC.NE` 是提交条件设置指令，因此它只在以下情况运行：块处于活动状态、其块体处于活动状态、块的转移类型为 `Conditional`，且本块中此前没有其他设置指令成功过。
+
+检查通过后，模型还会把规范答案复制到块参数的 taken 位，并把块条件标记为已设置。块参数的其他字段保持不变。
+
+设计要点：设置指令标记是整个设置指令家族共享的单个块私有出现标志，因此一个 Conditional 块只能表达一个提交条件，无法让它依次依赖两次比较。
 
 <!-- PTO-READER-BLOCK: scalar-c-setc-ne-inputs-outputs role=inputs-outputs -->
-## 输入与输出
+## 输入与结果
 
-- `SrcL` 提供左侧标量源。
+`SrcL` 提供左侧标量源，`SrcR` 提供右侧标量源。两者都是完整的 `32` 路 Reg5 源：编码 `0..23` 选择绝对 GPR，`24..27` 选择 `T#1..T#4`，`28..31` 选择 `U#1..U#4`。
 
-- `SrcR` 提供右侧标量源。
+任一源编码为零时指向架构零 GPR，因此该指令可以把寄存器与零比较。
+
+两个源都不会被消耗，因为它们都是按值读取，而不是按队列弹出读取。
+
+没有目的字段。结果的唯一观察者是块的提交条件，以及之后读取块参数的任何东西。
 
 <!-- PTO-READER-BLOCK: scalar-c-setc-ne-effects role=effects -->
-## 效果与顺序
+## 效果与排序
 
-规范化条件会原子写入 `_CommitArgument` 和 `BARG.TAKEN`，同时置位条件已设置标记。
+成功时一次更新同时覆盖提交参数、块参数的 taken 位和出现标记，随后 `TPC` 前进 `2` 字节，即 `16` 位形式的编码长度。
 
-成功时，`C.SETC.NE` 让 `TPC` 前进 `2` 字节；它没有标量目的位置，也不产生内存或保留状态效果。
+状态契约保留块的 `BARG.BPC`、`BARG.BPCN`、`BARG.BlockType` 和 `BARG.TYPE` 字段。没有内存效果、没有保留效果、没有描述符效果、没有数值状态标志，也没有目的寄存器效果。
+
+设计要点：提交参数本身承载的就是规范 XLEN `1` 或 `0`，与比较写入寄存器的形状相同。这正是后续消费者能用同一种测试方式读取指令束谓词和寄存器结果的原因。
 
 <!-- PTO-READER-BLOCK: scalar-c-setc-ne-constraints role=constraints -->
-## 合法性与故障顺序
+## 合法性与精确故障
 
-该指令只在适用的条件指令束上下文中合法，并且只能有一个条件设置操作成功。
+块位置错误会在当前 `TPC` 处抛出 `Fault_BundleControl`：没有活动块、块体不活动、转移类型不是 `Conditional`，或者同一块中已有另一个设置指令成功之后又出现 `C.SETC.NE`。
 
-放置错误或重复设置会在读取源之前引发非法指令束异常；编码或源不可用会在提交状态或 `TPC` 效果前引发 `Fault_IllegalInstruction`。
+该位置检查早于标量源就绪检查和任何源读取，因此位置错误的设置指令既不改动提交参数，也不改动出现标记。
+
+固定位不匹配或被选中但不可用的 `T` 或 `U` 源会在提交状态、队列或 `TPC` 改变之前抛出 `Fault_IllegalInstruction`。失败的首次尝试不会消耗共享标记，因此该指令可以重新执行并仍然设置该条件。
 
 <!-- PTO-READER-BLOCK: scalar-c-setc-ne-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不构成第二份语义定义。
+在一个 Conditional 块内，把 GPR1 设为 `5`，把 GPR2 设为 `5`。
 
-`c.setc.ne srcL, srcR` 按上述规则计算条件，把规范化判定写入提交状态，并且只在更新完成后推进 `TPC`。
+`c.setc.ne 1, 2` 发现条件成立，因此提交参数变为 `0`，块的 taken 位变为`0`。
+
+同一块中的第二条 `C.SETC.NE` 会以 `Fault_BundleControl` 被拒绝，而不是覆盖该决策。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

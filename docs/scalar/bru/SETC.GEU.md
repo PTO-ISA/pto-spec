@@ -19,44 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-geu-purpose role=purpose -->
 ## What SETC.GEU does
 
-`SETC.GEU` evaluates unsigned greater-than-or-equal and publishes the result as the current Conditional bundle commit decision.
+`SETC.GEU` compares two scalar registers as unsigned integers and publishes the answer as the commit decision of the Conditional bundle it sits in.
+
+The published value is not a general-purpose result: it lands in the commit argument that the block reads when it decides whether to take its conditional transfer, and it also drives `BARG.TAKEN`.
 
 <!-- PTO-READER-BLOCK: scalar-setc-geu-mechanism role=mechanism -->
-## Mechanism
+## How the GEU condition is decided
 
-Placement and the single-setter rule are checked before source readiness or reads.
+The instruction has no destination register. It snapshots `SrcL` and the prepared right operand, tests `ConditionHolds(ScalarCondition_GEU, left, right)`, and stores exactly `1` when the relation holds and exactly `0` when it does not.
 
-The snapshotted operands are evaluated for unsigned greater-than-or-equal and canonicalized to XLEN one or zero.
+`ConditionHolds` compares `UInt(left) >= UInt(right)`. Both operands are full `64`-bit words, so a pattern with the top bit set counts as a very large number, not as a negative one.
+
+Design point: the committed value is canonicalized to `1` or `0` instead of being any nonzero value, so the block decision never has to re-inspect a raw comparison residue — one test of the commit argument is enough.
 
 <!-- PTO-READER-BLOCK: scalar-setc-geu-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `SrcL` supplies the left scalar source.
+- `SrcL` is a Reg5 source: codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`.
+- `SrcR` uses the same Reg5 mapping.
+- `SrcRType` selects the transformation applied to the `SrcR` snapshot before the relation is tested: value `1` substitutes the sign-extended low `32` bits, value `2` the zero-extended low `32` bits, and values `0` and `3` both leave the complete value unchanged.
 
-- `SrcR` supplies the right scalar source.
-
-- `SrcRType` selects the right-source transformation.
+Encoded zero in `SrcL` or `SrcR` names the architectural zero GPR. Neither source is consumed, and the instruction writes no `GPR`, `T`, or `U` destination.
 
 <!-- PTO-READER-BLOCK: scalar-setc-geu-effects role=effects -->
 ## Effects and ordering
 
-The canonical condition is written atomically to `_CommitArgument` and `BARG.TAKEN`, and the condition-set marker becomes true.
+On success the instruction writes the canonical condition to the commit argument, sets `BARG.TAKEN` to the same truth value when a bundle is active, marks the block condition as set, and only then advances `TPC` by `4` bytes, the encoded length of the `32`-bit form.
 
-On success, `SETC.GEU` advances `TPC` by `4` bytes. It has no scalar destination and no memory or reservation effect.
+It has no memory effect, no reservation effect, and no numeric status flag. `BARG.BPC`, `BARG.BPCN`, `BARG.BlockType`, and `BARG.TYPE` keep their previous values.
+
+Design point: the handler writes the commit argument first and derives `BARG.TAKEN` from that same word, and nothing inside the handler can fault between the two writes, so no observable bundle state shows them disagreeing.
 
 <!-- PTO-READER-BLOCK: scalar-setc-geu-constraints role=constraints -->
-## Legality and fault order
+## Block placement, ordering, and faults
 
-The instruction is valid only in the applicable Conditional bundle context, and only one successful condition setter may occur.
+The operation is applicable only in the body of an active block whose transfer type is Conditional, and only one successful member of the `SETC` condition-setting family may complete in that block.
 
-Wrong placement or a repeated setter raises an Illegal Block Exception before source reads; encoding or unavailable-source failures raise `Fault_IllegalInstruction` before commit or `TPC` effects.
+Wrong placement or a second successful setter raises `Fault_BundleControl` (trap number `5`, `BUNDLE_TRAP`) before any source readiness check or source read. A fixed-bit mismatch or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before commit state, `BARG`, queue, or `TPC` effects. A rejected occurrence does not consume the shared one-setter marker, so a later well-formed setter can still succeed.
 
 <!-- PTO-READER-BLOCK: scalar-setc-geu-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not create a second semantic definition.
 
-`setc.geu SrcL, SrcR<{.sw, .uw}>` evaluates the described condition, writes the canonical decision to commit state, and advances `TPC` only after that update.
+Place `5` in GPR1 and `5` in GPR2, then execute `setc.geu R1, R2`. The unsigned relation `5 >= 5` holds, so the commit argument and `BARG.TAKEN` become `1`. Set GPR2 to `6` and the same form commits `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

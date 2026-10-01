@@ -7,8 +7,72 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mscatter-mask-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit is the bundle-level handler for `MSCATTER.MASK`, the indexed store that writes only lanes whose predicate Tile bit is set.
+
+`BundleMSCATTERMASKSelected` recognizes the bundle: a valid `TileMemory` operation descriptor whose selector function (bits `4:0`) is `7`. `ExecuteBundleMSCATTERMASKOperation` validates the complete bundle and calls the Tile-level `MSCATTER_MASK` effect. Like plain scatter, it produces no Tile and resolves no destination.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mscatter-mask-concepts role=concepts-state -->
+## Concepts and visible state
+
+The form always uses two `B.IOT` commands, as `BundleMSCATTERMASKBindingsLegal` requires.
+
+- The first `B.IOT` carries the data Tile in `source0` and the index Tile in `source1`. It has no destination, a destination size of zero, and no `last` flag.
+- The second `B.IOT` carries the operation's mask Tile in `source0`, no destination, a destination size of zero, and `last`. It carries `source1` only when a predicate-Tile execution mask is in force.
+- One `B.IOR` record is required. Its `source0` selects the GPR that holds the base address for the current memory agent.
+- `B.DIM` gives valid columns, valid rows, and physical columns, which must equal the data Tile's own values.
+
+The mask Tile is the operation's predicate operand. It is separate from an optional execution mask, which is an extra final source.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mscatter-mask-rules role=rules-interactions -->
+## Rules and interactions
+
+The handler first returns success with no effect when `SelectedBundleTileMaskIsZero` holds.
+
+An unknown TLSU operation code raises `Fault_IllegalInstruction`. Every other check below raises `Fault_TileLegality` before the first memory probe.
+
+- No `B.IOS` binding, a present and legal `B.IOR`, a uniform PE mask, dimensions accepted by `BundleMGATHERDimensionsLegal`, and the two-binding schema.
+- The data and index Tiles have defined contents, and the mask Tile passes `IndexedTLSUPredicateValuesLegal`. All three have the bundle layout.
+- The data Tile has the operation data type, which passes `IndexedTLSUOrdinaryTransferDataTypeLegal`. The index Tile is S32, U32, S64, or U64.
+- The data Tile valid rows, valid columns, and physical columns equal the `B.DIM` values. The data shape matches the index shape, the mask shape equals the index valid shape, and the physical shape is legal.
+- `TileOperandsLegal_MSCATTER_MASK` holds.
+
+On success the handler calls `FinalizeBundleTileAttempt`. A memory fault from `MSCATTER_MASK` returns failure with no destination to roll back.
+
+Design point: the form needs a data Tile, an index Tile, and a mask Tile. One `B.IOT` holds at most two sources, so the mask always moves to a second command, even without an execution mask. This differs from plain `MSCATTER`, whose second command appears only for an execution mask.
+
+Design point: a lane is probed and stored only when it is active under the execution mask and its predicate bit is set. A lane with a clear predicate bit forms no address, so its index value cannot cause a fault.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mscatter-mask-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit runs only after `ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules` finds no earlier specialized selector. `BundleMSCATTERMASKSelected` is tested after plain `MSCATTER` and before `TPREFETCH`.
+
+Predicate bit reading and the scatter commit order belong to the Tile gather and scatter owner.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mscatter-mask-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Suppose the data Tile is S16, RowMajor, with 4 valid rows, 8 valid columns, and 8 physical columns, and `B.DIM` sets `LB0` to 8, `LB1` to 4, and `LB2` to 8. The first `B.IOT` names the data Tile and a U32 index Tile of 4 by 8. The second names a mask Tile of 4 by 8 and carries `last`. If the mask sets 10 of the 32 lanes, the scatter probes and stores 10 addresses.
+
+If the second `B.IOT` were omitted, the binding count is 1 and the bundle raises `Fault_TileLegality`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mscatter-mask-related role=related-owners-navigation -->
+## Related owners
+
+- [MSCATTER dispatch](tlsu-mscatter.md) handles the unpredicated form.
+- [MGATHER dispatch](tlsu-mgather.md) defines the shared dimension check.
+- [Gather and scatter memory](../../../tile/model/memory/gather-scatter.md) defines `MSCATTER_MASK`.
+- [BSTART.MSCATTER.MASK](../../execution/BSTART.MSCATTER.MASK.md) is the instruction page for the start form.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

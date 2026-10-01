@@ -19,31 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-b-ios-purpose role=purpose -->
 ## B.IOS 的作用
 
-`B.IOS` 是一条 32 位 Block header 命令，用来记录有序的 Core 范围 Shared Tile 源和目的位置。它修改待处理 Block 元数据，不会立即执行 Tile body 操作。
+`B.IOS` 是一条 32 位块头部命令，把一个 Shared Tile 绑定到当前块的操作。Shared Tile 是 64 个 Core 私有寄存器 `S0` 至 `S63` 之一，Core 的四个 PE 都能看到它。一条 `B.IOS` 指定寄存器，说明它是源还是新目标，并给出 PE 参与模式。
+
+`B.IOS` 本身不执行任何操作。它向块的 Shared 绑定追加一条记录，所选操作在块提交时消费这些记录。参见 [Shared 绑定](../model/operands/shared-bindings.md)。
 
 <!-- PTO-READER-BLOCK: block-b-ios-mechanism role=mechanism -->
-## 位置与机制
+## 放置与机制
 
-该命令位于有效 header 中，并且在第一条 body 指令之前。它的有效顺序和数量由完成后的操作 schema 检查，而不是由本命令单独推断。
+参与的 `B.IOS` 必须出现在活动块的头部、第一条主体指令之前。一个块最多保存四条 Shared 绑定，按编码顺序排列，操作按其模式顺序消费它们。
 
-公共 PE-mode 解码器只形成一次 4-PE mask。零 mask 是严格 no-op；有效的 Shared 源保持只读，有效目的位置则在完整验证后等待原子发布。
+处理程序依次检查：SizeCode 编码、零参与、放置，然后调用 `BindBundleSharedIO`。该函数要求掩码非零且与已记录的每条 Tile 绑定和 Shared 绑定的掩码相同，拒绝已被绑定的 Shared Tile ID，并填入第一个空闲条目。下一条非修饰符头部命令会关闭随后 `B.SUBVIEW` 或 `B.ASSEMBLE` 可修饰的范围组。
+
+设计要点：每个块中一个 Shared Tile ID 只能出现一次。因此每个已记录条目都指向不同的 Shared Tile，任何块都不能把同一个 `Sx` 同时绑定为源和目标。
 
 <!-- PTO-READER-BLOCK: block-b-ios-inputs role=inputs-outputs -->
-## 操作数与 header 角色
+## 字段与编码值
 
-- `SharedTileID` 选择绝对 Shared 寄存器；其确切分配域仍以下方生成契约为准。
-- `SizeCode` 选择只读源或目的容量；其确切分配域仍以下方生成契约为准。
-- `PEMode` 编码参与 PE 模式；其确切分配域仍以下方生成契约为准。
+- `SharedTileID`（位 25:20）直接指定 `S0` 至 `S63`。编码零指 `S0`，不表示缺失。
+- `SizeCode`（位 18:15）为 0 时表示源。编码 1 至 12 表示目标，容量为 128 B、256 B、512 B、1 KiB、2 KiB、4 KiB、8 KiB、16 KiB、32 KiB、64 KiB、128 KiB 或 256 KiB。编码 13 至 15 保留。
+- `PEMode`（位 11:9）使用与 `B.IOT` 相同的表：`000` 无，`001` PE0，`010` PE1，`011` PE2，`100` PE3，`101` PE0 与 PE1，`110` PE0 至 PE2，`111` 全部四个。
+- 位 31:26 与位 19 固定为零。
+
+设计要点：Shared 容量是 256 KiB Shared 池中一个完整的 Core 范围对象的大小。与 `B.IOT` 不同，它不乘以参与 PE 的数量。`PEMode` 选择哪些 PE 发出或消费该绑定；它不为这些 PE 分配载荷四分之一区域或偏移。
 
 <!-- PTO-READER-BLOCK: block-b-ios-effects role=effects -->
-## 待处理状态与完成
+## 挂起状态与发布
 
-被接受的 header 命令只改变自己的待处理记录或 carrier。除非本所有者明确指出即时 header 状态更新，否则架构 Tile、Shared、GPR、内存和完成影响都推迟到完整 Block。
+被接受的 `B.IOS` 只改变挂起的 Shared 绑定。源绑定是只读的：它从不改变 Shared 描述符、分配掩码、初始化掩码或载荷。
+
+由单个 PE 写入的目标在操作成功时发布完整的 Shared 对象。有多个参与 PE 的目标必须带有 `B.ASSEMBLE` 修饰符，其中每个写入者指定一个明确且互不重叠的范围，并由 LAST 发布对象。
+
+设计要点：`PEMode = 000` 在 `SizeCode` 编码检查之后才是严格无操作；编码 13 至 15 仍会引发 `Fault_IllegalInstruction`。在头部内，它记录零参与并打开零模式范围组；随后跳过放置、重复、模式、分配与描述符检查，并推进 `TPC`。不会追加记录。
 
 <!-- PTO-READER-BLOCK: block-b-ios-constraints role=constraints -->
 ## 合法性与故障边界
 
-契约区分原始解码失败、header 流错误和 Tile 合法性失败。零 mask 绑定是严格 no-op，会跳过后续 schema、重复、分配、描述符和内存检查。
+- `SizeCode` 为 13 至 15，或固定位非零时，引发 `Fault_IllegalInstruction`。
+- 参与的 `B.IOS` 位于活动头部之外时，引发 `Fault_BundleControl`。
+- 掩码与块中较早的 Tile 或 Shared 绑定不同时，引发 `Fault_TileLegality`。
+- Shared Tile ID 重复，或出现第五条 Shared 绑定时，引发 `Fault_BundleControl`。
+- 没有 `B.ASSEMBLE` 的多 PE 目标在描述符、载荷、内存或发布效果之前引发 `Fault_TileLegality`。
+
+架构不为冲突的 PE 对同一 Shared 载荷偏移的访问规定顺序。软件应避免此类冲突，或自行添加同步。
 
 <!-- PTO-READER-BLOCK: block-b-ios-example role=example -->
 ## 非规范示例
@@ -51,10 +68,11 @@ The current instruction contract is owned by the ASL source linked above.
 以下为非规范示例，仅用于说明当前所有者，不替代其定义。
 
 ```asm
-B.IOS S<SharedTileID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTileID><SizeCode>
+B.IOS S2, mask=1000
+B.IOS mask=1000, ->S5<4KB>
 ```
 
-假设当前存在兼容的有效 header，并且之前没有冲突的 `B.IOS` 命令。把 `B.IOS S<SharedTileID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTileID><SizeCode>` 放在下一个 header 槽，会记录该命令的待处理字段；它本身不会执行最终的 body 操作。
+两条记录都使用 `PEMode = 001`，因此只有 PE0 参与，掩码一致。第一条以 `SizeCode = 0` 把 `S2` 绑定为源，编码为 `0x00201213`。第二条以 `SizeCode = 6` 把 `S5` 设为 4 KiB 目标，编码为 `0x00531213`。该目标只有一个写入者，因此不需要 `B.ASSEMBLE`。第三条记录 `B.IOS S2, mask=1000` 会引发 `Fault_BundleControl`，因为 `S2` 已被绑定。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

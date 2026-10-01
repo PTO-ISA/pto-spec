@@ -7,8 +7,84 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-EXECUTION-UNARY}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-unary-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns `ExecuteTileUnary`, the shared handler for the nine one-source elementwise Tile operations. The closed group is TABS, TNOT, TNEG, and TRELU. The SFU group is TEXP, TLOG, TRECIP, TSQRT, and TRSQRT.
+
+It also owns the per-element helpers: `TileFixedUnaryValue` for the closed group, `TileSFUUnarySpecialValue` for SFU special inputs, and `TileProfileUnary`. The EXPDIF unit reuses the SFU helpers for its EXP step.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-unary-concepts role=concepts-state -->
+## Concepts and visible state
+
+The operation type is the destination Tile's `data_type`. The source must be allocated, match the destination shape, and have a compatible carrier width.
+
+Type sets differ by operation. TNOT accepts the eight integer types. TABS, TNEG, and TRELU accept the 16 arithmetic types. The SFU operations accept the eight floating types FP64, FP32, TF32, HF32, FP16, BF16, E4M3, and E5M2.
+
+Status flags are NV, DZ, OF, UF, and NX from bit 0 to bit 4. An SFU element returns all five; a closed-group element returns only an invalid bit, recorded as NV. The handler ORs the flags of active elements and records them once with `ScalarFPRecordFlags`.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-unary-rules role=rules-interactions -->
+## Rules and interactions
+
+Integer closed operations wrap to the element width. For a signed type, TABS of the most negative value returns the same bit pattern, and TRELU returns zero for negative values. TNOT inverts every bit of the element.
+
+Floating TABS clears the sign bit and TNEG flips it, even for a NaN, without flags. Floating TRELU returns zero for negative values and for +0, keeps positive values, and turns a NaN into the canonical quiet NaN, setting NV for a signaling NaN.
+
+An SFU element first goes through `TileSFUUnarySpecialValue`:
+
+- A NaN input returns the canonical quiet NaN, with NV for a signaling NaN.
+- TEXP maps a zero to 1.0, +inf to +inf, and -inf to +0.
+- TLOG maps 1.0 to +0, a zero to -inf with DZ, +inf to +inf, and a negative value to NaN with NV.
+- TRECIP maps a zero to an infinity of the same sign with DZ, and an infinity to a zero of the same sign.
+- TSQRT keeps zeros and +inf, and maps a negative value to NaN with NV.
+- TRSQRT maps a zero to an infinity of the same sign with DZ, +inf to +0, and a negative value to NaN with NV.
+
+E4M3 has no infinity, so an unbounded result becomes its canonical NaN. Other inputs go to `ReferenceTileUnaryFinite`, which rounds with RNE.
+
+Design point: the source is snapshotted before any write. The loop reads a copy of the source `TileInfo` and builds the result privately, so a destination that names the source still reads old values.
+
+Design point: special inputs are resolved before the finite profile. Results for NaN, zero, and infinity inputs, and for negative inputs of TLOG, TSQRT, and TRSQRT, are therefore fixed by this unit, not by the finite reference.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-unary-boundaries role=boundaries -->
+## Architectural boundaries
+
+An inactive coordinate under an ExecutionMask takes the ZERO or MERGE value and contributes no flags. After publication, the handler marks the valid region defined and applies the bundle padding.
+
+`ReferenceTileUnaryFinite` accepts only FP32, FP16, and BF16. Legality admits FP64, TF32, HF32, E4M3, and E5M2 for SFU operations, but the model does not define a finite, non-special result for them.
+
+`TileUnaryValue` has no caller in the executable model.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-unary-example role=example-usage -->
+## Non-normative reading example
+
+Take TRECIP on an FP32 Tile of 32 by 4 elements with one valid row and no ExecutionMask:
+
+```text
+TRECIP <Row=32, Col=4, ValidRow=1, FP32>, T#1, ->T<512B>
+```
+
+The valid source row holds 2.0, -0.0, +inf, and 4.0.
+
+1. 2.0 is finite, so the reference gives 0.5, encoded `0x3f000000` with no flags.
+2. -0.0 is a zero, so the result is -inf, `0xff800000`, with DZ.
+3. +inf gives +0, `0x00000000`.
+4. 4.0 gives 0.25, `0x3e800000` with no flags.
+
+The recorded flags are DZ only, ORed into the existing sticky status.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-unary-related role=related-owners-navigation -->
+## Related owners
+
+- [Elementwise execution](elementwise.md) owns the shared binary helpers and type normalization.
+- [Operand schema](../legality/operand-schema.md) owns the unary legality checks.
+- [Reference conversion](../numeric/reference-conversion.md) owns `ReferenceTileUnaryFinite`.
+- [EXPDIF execution](expdif.md) reuses the TEXP helpers.
+- [Numeric status](../../../arch/state/numeric-status.md) owns the sticky flags.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

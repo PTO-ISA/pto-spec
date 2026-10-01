@@ -7,8 +7,67 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-subview-descriptor-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit turns a recorded Local `B.SUBVIEW` modifier into a usable source. A subview selects a contiguous range of CELLs from a CUBE-layout parent Tile. A CELL is the 128-byte storage unit of a CUBE layout. The unit derives the view's descriptor, copies the selected range into a temporary Tile, and releases that Tile after the operation.
+
+It also owns `PrepareSelectedBundleStage2`, the preparation step that resolves sources and checks generations before the operation schema runs.
+
+<!-- PTO-READER-BLOCK: block-model-operands-subview-descriptor-concepts role=concepts-state -->
+## Concepts and visible state
+
+A `BundleSubviewDescriptor` holds `valid`, `parent`, `offset_cells`, `origin_row`, `origin_column`, `rows`, `columns`, `valid_rows`, `valid_columns`, `cell_count`, and `capacity_bytes`. `EmptyBundleSubviewDescriptor` returns one with `valid` FALSE.
+
+The descriptor is stored in the modifier's `derived` field. The temporary copy is recorded by `materialized` and `materialized_index`.
+
+<!-- PTO-READER-BLOCK: block-model-operands-subview-descriptor-rules role=rules-interactions -->
+## Rules and interactions
+
+`PrepareSelectedBundleStage2` runs these steps in order: resolve relative sources, decode the operation, prepare subview descriptors, validate Local generation structure, and validate Shared generations.
+
+`PrepareBundleSubviewDescriptors` first calls `PrepareBundleConsumerDependencies`. The ASL comment gives the reason: a consumer that must wait for an unfinished generation is a non-faulting, no-effect outcome, and it must never copy unready cells into a temporary view.
+
+`BundleCubeSubviewDescriptorOf(parent, offset, size)` returns an empty descriptor when:
+
+- the parent is not allocated, is not CUBE, or has a zero valid region or zero cells;
+- the offset is above 65535 or not below the parent's CELL count;
+- the view origin lies outside the parent's valid region, the derived shape is empty, or the derived CUBE geometry is unusable (zero CELL rows or columns, a `CUBE_N8` K repeat of 0 or above 16384, or more derived CELLs than the view allows).
+
+Otherwise the view covers `min(requested, remaining)` CELLs. For `CUBE_N8` the view stops at the end of the current N column of cells. For the other CUBE layouts the view origin column is `offset_cells` times the CELL width. The valid region is clipped to the parent's.
+
+An empty descriptor raises `Fault_TileLegality`. `MaterializeBundleSubview` then finds a free register in the parent's hand, allocates a CUBE Tile with the parent's layout, data type, and PE mask, and copies each defined parent element in the view. If `TileElementwiseSourceContentsDefined` holds for the parent, the view's valid region is marked defined. The binding's source is redirected to the copy.
+
+Design point: the copy keeps the parent's physical layout. The ASL comment states that no consumer engine or operand role may request an implicit conversion. A subview is therefore a range of the same object, not a relayout.
+
+Design point: undefined parent elements stay undefined in the copy. A view cannot make a value readable that the parent did not define.
+
+<!-- PTO-READER-BLOCK: block-model-operands-subview-descriptor-boundaries role=boundaries -->
+## Architectural boundaries
+
+`DiscardBundleSubviewMaterializations` releases every temporary copy and points the binding back at the parent. Tile execution calls it on both the success and failure paths. `BundleTileArchitecturalSourceIndex` reports the parent, not the copy. The parent's lifetime and payload are unchanged.
+
+`BundleSubviewOperationApplicabilityIsTotal` accepts every decoded operation. The selected operation keeps ownership of data type, layout, shape, and definedness legality. Shared subviews are owned by the Shared-generation unit.
+
+<!-- PTO-READER-BLOCK: block-model-operands-subview-descriptor-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+A `CUBE_M16` FP16 parent has valid shape 16 by 32. Each CELL is 16 rows by 4 columns, so the parent has 8 CELLs. A `B.SUBVIEW` with offset 2 and size code 2 (256 bytes) requests 2 CELLs; 6 remain, so the view has 2 CELLs. Its origin column is 2 x 4 = 8, and its valid shape is 16 by 8, covering parent columns 8 through 15. An offset of 8 would equal the CELL count and fault.
+
+<!-- PTO-READER-BLOCK: block-model-operands-subview-descriptor-related role=related-owners-navigation -->
+## Related owners
+
+- [Range modifiers](range-modifiers.md) record the subview.
+- [CUBE cell geometry](../../../tile/model/shape/cube-cell.md) owns CELL rows, columns, and counts.
+- [Portable carriers](portable-carriers.md) owns consumer readiness.
+- [B.SUBVIEW](../../operands/B.SUBVIEW.md) is the command page.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -19,54 +19,56 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-txor-purpose role=purpose -->
 ## TXOR 的作用
 
-`TXOR` 对对应整数元素执行按位 XOR，并发布一个新的 Local 目标。
+`TXOR` 对两个 Local 整数 Tile 的对应元素计算按位异或（XOR），并把结果写入一个新分配的 Local 目标 Tile。按位异或的规则是：当两个源中恰好一个的某一位为 1 时，结果该位为 1。
+
+设计要点：`TXOR` 没有独立 opcode。它由 `BSTART.VEC` Mode 0 Function 8（TEPL 选择器 `0x008`）选中。其操作数合法性与执行遵循与 `TADD` 相同的封闭 Local 二元 Tile 契约，与 `TAND` 与 `TOR` 只在位运算上不同。
 
 <!-- PTO-READER-BLOCK: tile-c-txor-mechanism role=mechanism -->
-## 操作机制
+## 元素与 Tile 机制
 
-该操作只在有效矩形内按助记符选定的带类型的元素规则求值。
+预检阶段先检查完整指令束：操作数模式、维度、`DataType`、布局、源已定义性以及目标容量。只有全部通过后，`ExecuteTileBinary` 才读取两个源，并对有效矩形 `ValidRow x ValidCol` 内的每个坐标计算 `left XOR right`。
+
+对于 8、16、32 或 64 位的元素位宽 `W`，结果为 XOR 结果的低 `W` 位，`W` 以上的载体位为零。符号性不改变运算：`S8` 与 `U8` 产生相同的位。
+
+设计要点：`TXOR` 是原始载体操作。`TADD` 等算术操作要求每个源元素都是所选 `DataType` 的合法编码；`TXOR` 跳过这种数值校验，按原样使用存储的位。位运算没有需要校验的数值含义，也不产生舍入、饱和或数值状态。
 
 <!-- PTO-READER-BLOCK: tile-c-txor-inputs-outputs role=inputs-outputs -->
-## 操作数、形状与类型
+## 操作数角色与描述符
 
-- `destination0` 标识新分配的目的 Tile。
+- `source0` 是左操作数，必须是已分配的现有 Local Tile。
+- `source1` 是右操作数，其物理形状、有效形状和布局必须与 `source0` 相同。
+- `destination0` 是新分配的 Local Tile，其后备 `DataType` 为所选操作 `DataType`，形状与源一致。
 
-- `source0` 提供持久源 Tile。
+一条终止 `B.IOT` 在同一个 `PE_MASK` 下绑定全部三个 Tile；不接受 `B.IOR` 与 `B.IOS`。`PE_MASK=0000` 是严格无操作，发生在读取、分配或故障之前。
 
-- `source1` 提供持久源 Tile。
-
-- 封闭的适用 DataType 集合为 `S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。
-
-- 除非该助记符显式选择其他允许布局，数据 Tile 使用行主序布局。
-
-- `LB0`、`LB1`、`LB2` 按该助记符契约补全有效形状与物理形状；所有必需有效范围都必须非零。
+设计要点：每个源都可以使用位宽相同、非打包的其他后备类型存储，其位按原样使用。例如，把 `FP32` 数据按 `U32` 读取并与 `0x80000000` 相异或，会翻转每个符号位，得到取负后值的 `U32` 编码。
 
 <!-- PTO-READER-BLOCK: tile-c-txor-effects role=effects -->
-## 已定义性、填充与发布
+## 发布、已定义性与填充
 
-所有源描述符与载荷都会在目标发布前完成验证和快照。
+两个源载荷都在第一次写目标之前被快照。任一源都可以与目标互为别名，两个源也可以指向同一个 Tile；结果总是按旧值计算。
 
-完整目标载荷、描述符、已定义性、填充状态与适用数值状态会原子发布；拒绝路径不发布任何部分。
+目标描述符、有效区域结果、填充以及每个元素的已定义性作为一次提交发布。被拒绝的 `TXOR` 不改变描述符、载荷与分配状态。
 
-Null 填充让有效矩形外的物理坐标保持未定义；显式非 Null 填充值会用选定带类型的值定义这些位置。
-
-源 Tile 在成功执行后保持不变。
+`ValidRow x ValidCol` 之外的元素接收所选 `PadValue`。`Zero` 写入零，`Max` 与 `Min` 写入该整数 `DataType` 的数值最大值与最小值；`Null`（省略 `B.DATR` 时的选择）使其保持未定义。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值。`TXOR` 没有全局内存效果。
 
 <!-- PTO-READER-BLOCK: tile-c-txor-constraints role=constraints -->
-## 合法性、故障与顺序边界
+## 类型、布局与故障边界
 
-完整绑定模式、维度、DataType、布局、源已定义性、数值编码、目标容量与分配都会在效果前预检。
+可接受的数据类型集合为 `S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。浮点与打包操作类型会在效果之前被拒绝；如上所述，浮点数据仍可通过同位宽的整数操作类型处理。
 
-合法性或分配检查失败会引发相应 Tile 故障，不留下部分目标、状态或内存效果。
+默认布局为 `RowMajor`，显式 `Layout` 可选择 `CUBE_M16` 或 `CUBE_M32`。`CUBE_N8`、Shared Tile 以及混合布局均非法。
 
-`PE_MASK=0000` 是严格无操作，发生在操作数读取、分配、故障、数值状态或载荷效果之前。
+有效矩形内的每个源元素（存在 ExecutionMask 时为每个活动元素）都必须已定义，即使其编码不被校验。绑定格式错误、维度缺失或为零、源未定义或不匹配、布局不受支持、`DataType` 不受支持或目标容量无效时，会在效果之前引发 `Fault_TileLegality`。非默认的 `CMode`、`Sat`、`Canonicalize`、第二 `DataType` 或 `RMode` 均非法。
 
 <!-- PTO-READER-BLOCK: tile-c-txor-example role=example -->
 ## 非规范示例
 
 下面的示例只帮助理解当前 ASL 绑定契约，并不是第二份指令定义。
 
-`TXOR <bundle operands>` 先完成完整预检与源快照，再原子发布助记符定义的结果与填充状态。
+当 `DataType=U8` 时，左源行 `[0x0F, 0xF0, 0xFF]` 与右源行 `[0x3C, 0x3C, 0x81]` 产生目标行 `[0x33, 0xCC, 0x7E]`。
+
+宏形式 `TXOR <Row=8, Col=64, U32>, T#1, T#2, ->T<2KB>` 把两个 `U32` Tile 的全部 8 x 64 个结果计算到新的 2 KB 目标中。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

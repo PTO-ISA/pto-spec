@@ -19,52 +19,65 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mgather-cas-purpose role=purpose -->
 ## BSTART.MGATHER.CAS 的作用
 
-`BSTART.MGATHER.CAS` 是 `MGATHER.CAS` 形式的 32 位 Block 起始命令。它建立待处理 Block 的身份和选择参数；真正执行 Block body 并提交结果的是完成后的整个 Block，而不是起始命令本身。
+`BSTART.MGATHER.CAS` 打开一个 Tile memory 指令束，其操作为 `MGATHER_CAS`：逐通道的原子比较并交换。对每个活动通道，它读取基地址加上该通道字节位移处的全局内存（GM）元素，将其与该通道的期望值比较，并且仅当两者匹配时才存入该通道的替换值。无论结果如何，观察到的旧值都会写入目标 Tile。
+
+该命令是一个 32 位字，在掩码 `0x07ffffff` 下匹配 `0x00811181`，因此 `DataType` 占据第 31 至 27 位，固定的低位携带 TLSU 选择子 8。`BundleMGATHERCASSelected` 在 atom 与 reduction 选择子之前匹配该选择子，`ExecuteBundleMGATHERCASOperation` 运行操作 `TileOperation_MGATHER_CAS`。
+
+设计要点：其他 gather 形式把所有操作数放在一条绑定中，而比较并交换需要两条。因此本指令束有两条 `B.IOT` 记录：第一条携带索引与期望 Tile，没有目标；第二条携带替换 Tile、目标以及 `last`。
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-cas-mechanism role=mechanism -->
 ## 位置与机制
 
-起始命令之后的 header 命令按顺序执行；`BSTOP` 或下一条 `BSTART` 是验证并退休完整 Block 的边界。当前所有者给出以下确切组成检查表：
+该 handler 先把 `PE_MASK=0000` 的指令束作为严格无操作直接返回，然后译码选择子，并校验 schema、双记录绑定形状、类型矩阵、布局与物理形状规则，以及索引、期望、替换 Tile 与目标之间的形状关系。
 
-```text
-BSTART.MGATHER.CAS DataType
-B.DATR PadValue, Layout (optional)
-B.DIM LB0=ValidCol
-B.DIM LB1=ValidRow (optional)
-B.DIM LB2=Col (optional)
-B.IOT IndexTile, ExpectedTile, mask=PE_MASK
-B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>
-B.IOR BaseGPR, zero, zero, ->zero
-BSTOP
-```
+Tile 级执行体 `MGATHER_CAS` 随后为每个活动通道做读探测与写探测，并要求同一地址的两次转换结果一致。只有全部探测成功之后，它才按 `ARBITRARY` 顺序访问各通道，执行比较、存储，把旧值发布到目标，并记录一个原子事件。
 
-任何有效前序 Block 成功退休后，该命令初始化新的待处理 `BARG` 或操作描述符，并从顺序 PC 继续执行 header。仅仅成功解码起始命令，不会让 Block 目的结果或内存结果变得可见。
+设计要点：比较使用元素位宽的原始旧值，因此对 `U16`、`U32` 与 `U64` 而言，交换是全位宽的位比较，没有数值转换。比较失败的通道不存储任何东西，并记录一个报告未写入的事件，因此内存内容可以从事件流重建。
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-cas-inputs role=inputs-outputs -->
 ## 操作数与 header 角色
 
-- `DataType` 选择元素数据类型或继承哨兵；其确切分配域仍以下方生成契约为准。
+- `DataType` 必须是 `U16`、`U32` 或 `U64`；其他所有类型（包括每一种打包四位类型）都被拒绝。
+- `B.DIM` 的 `LB0` 是 ValidCol，`LB1` 是 ValidRow（默认 1），`LB2` 是物理 Col。索引、期望、替换 Tile 与目标都必须具有该有效形状与指令束布局。
+- 第一条 `B.IOT` 在 `source0` 中携带索引 Tile，在 `source1` 中携带期望 Tile，没有目标、没有 size 编码，也没有 `last`。
+- 第二条 `B.IOT` 在 `source0` 中携带替换 Tile，携带带 size 编码的目标与 `last`。使用谓词 Tile ExecutionMask 时，目标记录还在 `source1` 中携带该掩码。
+- 索引 Tile 是 `S32`、`U32`、`S64` 或 `U64` 并保存字节位移，`B.IOR BaseGPR, zero, zero, ->zero` 是必需的，规则与普通 gather 相同。
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-cas-effects role=effects -->
 ## 待处理状态与完成
 
-对适用性和目标检查而言，起始状态转换与前序 Block 退休是全有或全无的。起始命令成功后，后续完成边界会在任何 body 结果提交前验证完整组成。
+每个活动通道把观察到的旧值发布到同一行同一列的目标元素，无论比较是否成功。整个物理目标区域在这些结果之前就已初始化：被 ExecutionMask 停用的坐标取该掩码的零值或合并值，活动通道之外的其他每个元素取指令束 `PadValue`。成功时整个物理目标区域都是已定义的。
+
+匹配的通道原子地替换一个 GM 元素并记录一个原子事件；不匹配的通道记录一个报告未写入的事件。若任一探测发生故障，分派器调用 `RollBackBundleTileDestinations`，因此不发布目标，本次尝试也没有修改任何 GM 元素。
+
+设计要点：在两种结果下都发布旧值，正是该操作可用于锁原语的原因。指令束提交之后，目标元素仍等于其期望值的通道表示它未能获取，无需再次读取 GM 就能得知这一点。
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-cas-constraints role=constraints -->
 ## 合法性与故障边界
 
-保留选择器、无效目标、完成后的组成错误或前序退休失败，都会在新 Block 或 body 影响之前被拒绝。
+- `PE_MASK=0000` 是严格无操作，早于所有 schema、源、GPR、维度、分配与内存检查。
+- 保留的 `DataType` 编码或未知的 TLSU 选择子引发 `Fault_IllegalInstruction`；`U16`、`U32` 与 `U64` 之外的类型引发 `Fault_TileLegality`。
+- 绑定条数不是两条、第一条记录带目标或带 `last`、第二条记录没有目标、缺少 `B.IOR`、非零的未使用 `B.IOR` 选择子、未定义的源，或形状、布局不匹配，都会在第一次探测之前引发 `Fault_TileLegality`。
+- 布局为 `ROWMAJOR`、`CUBE_M16` 或 `CUBE_M32`；`CUBE_N8` 被拒绝。读探测、写探测，或两次转换不一致，会引发相应的内存故障，其中不一致的情况为 `Fault_DataPage`。
+- 若不存在空闲的 Local 目标，解析会引发 `Fault_TileAllocation`。
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-cas-example role=example -->
 ## 非规范示例
 
-以下为非规范示例，仅用于说明当前所有者，不替代其定义。
+该演算示例是非规范的；它说明当前 owner，而不替代它。
 
 ```asm
-BSTART.MGATHER.CAS DataType
+BSTART.MGATHER.CAS U32
+B.DIM zero, 2, ->LB0
+B.DIM zero, 1, ->LB1
+B.DIM zero, 2, ->LB2
+B.IOT T#1, T#2, mask=1111
+B.IOT T#3, mask=1111, last, ->T<8B>
+B.IOR a0, zero, zero, ->zero
+BSTOP
 ```
 
-假设前序 Block 退休和目标检查成功，`BSTART.MGATHER.CAS DataType` 会打开待处理的 `BSTART.MGATHER.CAS` 形式；后续 header/body 命令仍是暂定状态，直到 `BSTOP` 或下一条 `BSTART` 验证完整组成。
+`T#1` 保存字节位移 `0` 与 `4`，`T#2` 保存期望值 `10` 与 `99`，`T#3` 保存替换值 `20` 与 `0`，`a0` 保存 `0x1000`。假设 GM 在 `0x1000` 处保存 `10`，在 `0x1004` 处保存 `5`。通道 0 匹配，因此存入 `20`；通道 1 与 `99` 不匹配，因此 `0x1004` 保留 `5`。目标接收观察到的值 `10` 与 `5`，两个元素都已定义，共 8 字节。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

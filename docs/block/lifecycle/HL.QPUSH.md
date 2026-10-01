@@ -19,39 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-hl-qpush-purpose role=purpose -->
 ## What HL.QPUSH does
 
-`HL.QPUSH` is a standalone General Queue Management command whose queue update, status result, and optional event are one ordered instruction effect.
+`HL.QPUSH` adds one 64-bit entry to a General Queue Management (GQM) queue, at the tail by default or at the head with `.h`. It reports the outcome in a result register instead of trapping. Queues are created with [HL.QMT](HL.QMT.md) and drained with [HL.QPOP](HL.QPOP.md); their behavior is defined in [General queue management](../../arch/programming-model/general-queue-management.md).
 
 <!-- PTO-READER-BLOCK: block-hl-qpush-mechanism role=mechanism -->
 ## Placement and execution mechanism
 
-`HL.QPUSH` executes as a standalone `48`-bit command and does not require placement inside a `BSTART`/`BSTOP` body.
+`HL.QPUSH` is a standalone 48-bit command. It does not open, require, or commit a block, and it advances `TPC` by 6.
 
-The accepted carrier uses the `HL48` encoding class and resolves every displayed field before the command reads bindings or changes state.
+After the legality checks, it reads the queue address from `SrcL` and the entry from `SrcR`. It then validates the queue. If the queue accepts the entry, the entry is inserted, the event is broadcast if `e=1`, and the result word is written to `RegDst`. Otherwise only the result word is written.
 
-The command snapshots every required source before its first visible effect, then follows the owner-defined commit or restart boundary.
+Design point: both sources are read before `RegDst` is written. A destination that names the same register as a source therefore does not change the address or entry that the push uses.
 
 <!-- PTO-READER-BLOCK: block-hl-qpush-inputs role=inputs-outputs -->
 ## Carrier, bindings, and inputs
 
-- Encoded operands: `SrcL` — Reg5 source of the queue address; `SrcR` — Reg5 source of the 64-bit entry; `RegDst` — Reg5 destination for the operation result; `h` — head-insertion selector; `e` — success-event selector; `r` — relaxed-ordering selector.
-- All operands are resolved from the accepted carrier or named architectural state; no body-local hidden operand stream is created.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+- `RegDst`, bits `27:23`: destination for the result word.
+- `SrcL`, bits `35:31`: source of the queue address.
+- `SrcR`, bits `40:36`: source of the 64-bit entry.
+- `e` (bit 41), `r` (bit 42), `h` (bit 43): the flags. All eight combinations are assigned, spelled by the suffix, for example `.her`.
+
+Each register field is a Reg5 selector, described in [scalar operands](../../scalar/model/types/operands.md). Codes 0 to 23 name R0 to R23. As sources, codes 24 to 31 read `T#1` to `T#4` and `U#1` to `U#4`. As a destination, code 30 pushes to the U queue, code 31 pushes to the T queue, and codes 24 to 29 discard the result.
+
+Design point: the bare form is a tail insert with no event and release ordering. Each flag's encoded zero selects that default: `h=0` tail, `e=0` no event, `r=0` release. Setting `r` requests relaxed ordering, so the ordering edge is opt-out, not opt-in.
 
 <!-- PTO-READER-BLOCK: block-hl-qpush-effects role=effects -->
 ## State effects and ordering
 
-Source validation and snapshot precede every register, queue, frame, memory, event, or control-flow effect.
+- A successful push stores the entry, returns the remaining capacity after the push in bits `9:0`, and writes status `00` in bits `63:62`.
+- A full or suspended queue returns status `01` with the current remaining capacity; nothing is stored.
+- A missing or corrupt queue returns status `10`; nothing is stored. Status 3 is reserved.
 
-The command publishes its state and result as one ordered instruction effect, then advances or transfers control as defined by the owner.
+Only a successful push with `e=1` broadcasts an event. The queue update, the event, and the result write are one atomic instruction effect.
+
+Design point: with `r=0`, a successful push is a release. The entry records a release epoch, and a non-relaxed pop that removes this entry acquires the memory operations ordered before the push. With `r=1` the entry records no release edge. `HL.QPUSH` itself makes no direct memory access.
 
 <!-- PTO-READER-BLOCK: block-hl-qpush-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+A relative `SrcL` or `SrcR` source whose queue entry is not valid raises `Fault_IllegalInstruction` before source reads, queue observation, events, destination writes, or `TPC` advance.
 
-The current owner reports invalid schema, state, address, or continuation conditions through `Fault_IllegalInstruction`; no prose on this page creates an additional fault rule.
+Full, suspended, missing, and corrupt queues are reported in `RegDst` and do not trap. A queue of capacity 0 is always full, so a push to it returns status `01`.
 
-Rejection occurs before effects unless the current owner explicitly defines a restart boundary with retained progress; completion order remains the ASL order.
+The event suffix is `e`; `b` is not an alias. The generated legality and exception sections below are authoritative.
 
 <!-- PTO-READER-BLOCK: block-hl-qpush-example role=example -->
 ## Non-normative worked example
@@ -62,7 +71,7 @@ This example demonstrates placement and carrier flow only; exact behavior remain
 hl.qpush a0, a1, ->a2
 ```
 
-The shown accepted spelling resolves its fields from the current carrier, snapshots required sources, and then follows the owner-defined state and ordering transition.
+Suppose `a0` names a 16-entry queue that already holds 3 entries, and `a1` holds `0x55`. The push appends `0x55` at the tail and writes `a2 = 12` with status `00`. With `hl.qpush.h`, `0x55` would be inserted before the current head instead, so the next pop returns it first. If the queue were suspended, `a2` would receive status `01` with 13 in bits `9:0`, and the queue would be unchanged.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

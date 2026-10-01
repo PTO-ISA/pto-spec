@@ -15,42 +15,56 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-trap-context-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit owns portable trap-context save, recoverability checking, and recovery, together with implementation-defined hooks whose default bodies call the portable path.
+`asl/arch/state/trap-context.asl` owns six functions: `SavePortableTrapContext`, `SaveTrapContext`, `PortableTrapContextRecoverable`, `TrapContextRecoverable`, `RecoverPortableTrapContext` and `RecoverTrapContext`. They work on `_TrapContexts`, declared in `asl/arch/programming-model/execution-context.asl` as `array [[PTO_ACR_COUNT]] of TrapContext` with `PTO_ACR_COUNT` `16`, and on the context-register bank of the target ring.
+
+`TrapContext` is declared in `asl/arch/data-types/trap-context.asl` and has `41` fields; saving bundle control state, memory replay state, the queues and the predicate registers is what makes a trap resumable inside a bundle, not only at a bundle boundary.
 
 <!-- PTO-READER-BLOCK: arch-trap-context-concepts-state role=concepts-state -->
-## Saved context
+## What the two save paths record
 
-`SavePortableTrapContext` marks the target ACR context valid and snapshots the source ACR, TPC, BPC, `core_state`, bundle control and argument state, scalar/Tile/Shared bindings, local and Shared generations, templates, temporary queues, and predicate registers.
+`SavePortableTrapContext(target, source)` marks the target slot valid, records `source_acr` and assigns all `41` fields of `_TrapContexts[[target]]` from the live context, and writes no context register.
 
-The snapshot is indexed by the target `AccessControlRing`; the saved `source_acr` identifies the ACR restored after recovery.
+`SaveTrapContext(target, source)` assigns the same fields except `memory_replay_state` and then writes the target ring's context registers through `WriteContextRegister`. Register `0x0f00` receives `core_state` with bits `3:0` replaced by `AccessControlRingBits(source)`; register `0x0f40` receives a control word that marks bit `4` with `1` and carries the source ring, `_BundleActive`, `_BundleBodyActive`, `BundleKindCode(_BARG.block_type)`, `BundleTransferCode(_BARG.transfer_type)` and `_BARG.taken`.
+
+The queue loop runs `index` from `0` to `PTO_TEMPORARY_QUEUE_DEPTH - 1` (`3`, since `PTO_TEMPORARY_QUEUE_DEPTH` is `4`), writing `_TQueue[[index]]` to `0x0f45 + index` and `_UQueue[[index]]` to `0x0f49 + index`; the last two writes store `Zeros{PTO_XLEN}` in `0x0f4d` and `0x0f4e`.
+
+Design point: `SavePortableTrapContext` records `memory_replay_state`, but `RecoverPortableTrapContext` never reads it, while `RecoverTrapContext` assigns `_MemoryReplayState` from the slot even though `SaveTrapContext` never wrote it. A portable save followed by a portable recovery therefore leaves the live `_MemoryReplayState` at whatever the running context held.
 
 <!-- PTO-READER-BLOCK: arch-trap-context-rules-interactions role=rules-interactions -->
 ## Recoverability and recovery
 
-`PortableTrapContextRecoverable` requires a valid saved context and zero low bits in both saved BPC and saved TPC. `RecoverPortableTrapContext` returns `FALSE` immediately when that condition is not met.
+`PortableTrapContextRecoverable(target)` requires the slot to be `valid` and the saved `bpc[0]` and `tpc[0]` bits to be `'0'`. `TrapContextRecoverable(target)` reads context registers `0x0f40`, `0x0f00`, `0x0f41` and `0x0f43` and additionally requires `control[4]` to be `'1'`, `EBARGControlLegal(control)` and `control[3:0]` equal to `ecstate[3:0]`, then applies the same two bit tests to the values read from `0x0f41` and `0x0f43`.
 
-On success, recovery restores every portable field saved by the owner, sets `_CurrentACR` to the saved source ACR, clears the target context's valid bit, and returns `TRUE`.
+Both recovery functions return `FALSE` before any assignment when their gate fails. On success the portable path writes `WriteTPC` and `WriteBPC`, restores `core_state`, the bundle state, the queues and the predicate registers from the slot, sets `_CurrentACR` to the saved `source_acr`, clears `valid` and returns `TRUE`.
 
-`SaveTrapContext`, `TrapContextRecoverable`, and `RecoverTrapContext` are implementation-defined profile hooks. Their bodies in this owner delegate to the corresponding portable helpers.
+The context-register path rebuilds `_BundleActive`, `_BundleBodyActive`, the four `_BARG` fields, `_ReturnAddress` and the queue entries from the control word, the saved registers and the `BundleKindOf` and `BundleTransferOf` decoders; it sets `_CurrentACR` from `ecstate[3:0]`, assigns `_MemoryReplayState` from the slot, clears `control[4]` in `0x0f40`, clears `valid` and returns `TRUE`.
+
+Design point: a successful recovery consumes the slot: `RecoverTrapContext` clears `control[4]` and writes the control word back, and both paths clear `valid`, so a repeat call stops at `control[4] == '1'` or at `valid` without restoring anything.
 
 <!-- PTO-READER-BLOCK: arch-trap-context-boundaries role=boundaries -->
 ## Architectural boundaries
 
-Portable recovery deliberately checks `PortableTrapContextRecoverable` directly instead of dispatching through the active profile override. A profile may require additional context-register state, but the portable save helper does not create such target-specific state.
+`RecoverPortableTrapContext` tests `PortableTrapContextRecoverable` rather than `TrapContextRecoverable`, because a portable save writes no context register: a gate requiring `control[4]` does not describe a context that save created.
 
-An unsuccessful portable recovery performs none of the restore assignments and does not invalidate the saved context.
+`TrapContextRecoverable` re-validates the reconstructed control word through `EBARGControlLegal` in `asl/block/model/schema/bundle-encoding.asl`: bits `63:15` zero, a kind code at most `2` or between `5` and `8`, a transfer code at most `6`, and `control[6]` `'0'` or `control[5]` `'1'`.
+
+Within `asl/`, the portable helpers have no caller; `tests/asl/arch/state/trap-context/arch-fault-trap-portable-004.asl` exercises them. `SaveTrapContext` is called from `asl/arch/memory-model/fault-precision.asl` and `asl/block/model/lifecycle/lifetime.asl`; `RecoverTrapContext` from `asl/block/model/lifecycle/lifetime.asl` and `asl/scalar/model/sys/semantics.asl`.
 
 <!-- PTO-READER-BLOCK: arch-trap-context-example-usage role=example-usage -->
 ## Non-normative recovery walkthrough
 
-For an aligned valid snapshot saved from ACR3 into target ACR1, successful portable recovery restores the snapshot, selects ACR3 as current, and consumes the ACR1 snapshot by clearing its valid bit. If either saved low address bit is one, recovery instead returns `FALSE` before changing the live context.
+The portable test in `tests/asl/arch/state/trap-context/arch-fault-trap-portable-004.asl` saves with `SavePortableTrapContext(2, 15)` after `SetCurrentACR(15)`, clears the saved argument, frame and return values, and shows that `RecoverPortableTrapContext(2)` restores them and sets `_CurrentACR` back to `15`.
+
+A fault uses the other save: `SetFaultWithCause` routes a fault taken while ring `15` is current through `TrapTargetForFault(15)` to ring `1`, and `SaveTrapContext(1, 15)` fills slot `1` and writes ring `1`'s context registers. Those registers are zero after a reset, so `TrapContextRecoverable(2)` is `FALSE` for a slot that only a portable save filled, while `RecoverPortableTrapContext(2)` returns `TRUE` for it.
 
 <!-- PTO-READER-BLOCK: arch-trap-context-related-owners role=related-owners-navigation -->
 ## Related owners
 
-- [Program counter](program-counter.md) owns the TPC and BPC accessors used during save and recovery.
-- [Access control](../system-registers/access-control.md) owns ACR state and trap-target selection.
-- [Memory ordering](../memory-model/ordering.md) is the declared dependency for this unit.
+- [Program counter](program-counter.md) owns `ReadTPC`, `ReadBPC`, `WriteTPC` and `WriteBPC`.
+- [Access control](../system-registers/access-control.md) owns `AccessControlRingBits`, `CurrentACR` and `TrapTargetForFault`.
+- [Context registers](../system-registers/context.md) owns the register helpers behind the `0x0f00` to `0x0f4e` writes.
+- [Memory ordering](../memory-model/ordering.md) is the dependency named on line 1.
+- [Fault precision](../memory-model/fault-precision.md) calls the context-register save on fault, service-request and interrupt entry.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

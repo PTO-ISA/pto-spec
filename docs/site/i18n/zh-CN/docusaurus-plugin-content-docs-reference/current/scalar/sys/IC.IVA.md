@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ic-iva-purpose role=purpose -->
 ## IC.IVA 的作用
 
-`IC.IVA` 同步完成所分配的缓存或地址翻译维护请求，并记录精确操作令牌。
+`IC.IVA` 执行指令缓存虚拟地址作用域令牌维护操作并同步完成。作用域令牌来自唯一的源操作数 `SrcL`，该指令对它做捕获并记录（`asl/scalar/sys/IC.IVA.asl:29`）。
 
 <!-- PTO-READER-BLOCK: scalar-ic-iva-mechanism role=mechanism -->
 ## 系统机制
 
-ASL DOC 区域选择 `ScalarHandler_ExecuteMaintenance`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+该指令绑定到 `ScalarHandler_ExecuteMaintenance`（`asl/scalar/sys/IC.IVA.asl:11`），也绑定到令牌 `Maintenance_IC_IVA`（`asl/scalar/sys/IC.IVA.asl:23`）。在 `ExecuteMaintenance` 内部，该令牌选中指令缓存分支，它恰好推进一次 `_InstructionCacheEpoch`（`asl/scalar/model/sys/semantics.asl:138`）。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+位置由适用性强制：bundle 必须活动且块体为 System 块，否则该次尝试会在操作数合法性之前停止（`asl/scalar/model/sys/semantics.asl:321`）。
 
 <!-- PTO-READER-BLOCK: scalar-ic-iva-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`SrcL` 承载 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。
+`SrcL` 接受 Reg5 源编码 R0..R23、T#1..T#4 和 U#1..U#4，并提供请求的地址令牌。该指令没有目的地操作数，因此不向寄存器或队列发布结果。
 
-编码零是已分配的字段值，从不表示省略操作数。
+编码零选择架构零 GPR。它是已分配的值，零令牌与其他令牌一样会被记录。
 
 <!-- PTO-READER-BLOCK: scalar-ic-iva-effects role=effects -->
 ## 架构效果
 
-成功时，维护记录接收 `Maintenance_IC_IVA` 和精确捕获的操作数令牌。
+在成功的尝试之后，指令缓存纪元增加一，维护记录显示 `Maintenance_IC_IVA` 与已快照的操作数（`asl/scalar/model/sys/semantics.asl:156`）。随后 `TPC` 按指令长度前进。
 
-选中的缓存或 TLB 纪元恰好递增一次，然后 `TPC` 前进；该操作是同步完成的本地提示。
+设计要点：令牌被记录而不是被做范围检查。可移植模型只暴露一个纪元与一条记录用于指令缓存维护，因此保留调用方作用域信息的正是被记录的操作数。
+
+`IC.IVA` 不执行普通标量内存访问，自身也不使任何指令字节变得可见；纪元就是可观测点。不写任何寄存器、队列或系统寄存器。
 
 <!-- PTO-READER-BLOCK: scalar-ic-iva-constraints role=constraints -->
 ## 位置与拒绝边界
 
-缓存维护在每个 ACR 都是同步本地提示，并不定义额外的实现缓存内容。
+效果之前有两道门。在活动 SYS 块体之外的尝试引发 `Fault_BundleControl` 并不触碰执行器就返回。在块体内部，固定位与 `SrcL` 选择器在处理程序运行之前完成校验。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+指令缓存维护既没有环门，也没有规范地址要求。只有 `TLB.IV` 与 `TLB.IAV` 测试规范形式，也只有 TLB 操作需要 ring 0（`asl/scalar/model/sys/semantics.asl:115`）。
 
 <!-- PTO-READER-BLOCK: scalar-ic-iva-example role=example -->
 ## 非规范示例
 
 该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
 
-可从 `ic.iva SrcL` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+在源寄存器持有 0x1234 时，SYS 块体内部的 `ic.iva SrcL` 会快照 0x1234，把指令缓存纪元递增一，并以操作数 0x1234 记录 `Maintenance_IC_IVA`。同一条指令在任何访问环上执行行为相同，因为指令缓存维护不受环限制。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -17,44 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tor-purpose role=purpose -->
-## 用途
+## TOR 的作用
 
-`TOR` 对两个整数 Tile 的对应元素执行逐位或。
+`TOR` 对两个 Local 整数 Tile 的对应元素计算按位或（OR），并把结果写入一个新分配的 Local 目标 Tile。按位或的规则是：只要任一源的某一位为 1，结果该位就为 1。
+
+设计要点：`TOR` 没有独立 opcode。它由 `BSTART.VEC` Mode 0 Function 7（TEPL 选择器 `0x007`）选中。其操作数合法性与执行遵循与 `TADD` 相同的封闭 Local 二元 Tile 契约，与 `TAND` 与 `TXOR` 只在位运算上不同。
 
 <!-- PTO-READER-BLOCK: tile-tor-mechanism role=mechanism -->
-## 执行机制
+## 元素与 Tile 机制
 
-ASL DOC 契约通过该指令的选择器编码块载体选择 `TileHandler_ExecuteTileBinary`。
+预检阶段先检查完整指令束：操作数模式、维度、`DataType`、布局、源已定义性以及目标容量。只有全部通过后，`ExecuteTileBinary` 才读取两个源，并对有效矩形 `ValidRow x ValidCol` 内的每个坐标计算 `left OR right`。
 
-源快照之前，必须检查绑定模式、维度、DataType、行主序布局、源已定义性与编码、PE_MASK、目的容量和适用属性。
+对于 8、16、32 或 64 位的元素位宽 `W`，结果为 OR 结果的低 `W` 位，`W` 以上的载体位为零。符号性不改变运算：`S8` 与 `U8` 产生相同的位。
+
+设计要点：`TOR` 是原始载体操作。`TADD` 等算术操作要求每个源元素都是所选 `DataType` 的合法编码；`TOR` 跳过这种数值校验，按原样使用存储的位。位运算没有需要校验的数值含义，也不产生舍入、饱和或数值状态。
 
 <!-- PTO-READER-BLOCK: tile-tor-inputs-outputs role=inputs-outputs -->
-## 操作数与描述符
+## 操作数角色与描述符
 
-`destination0` 是新 Local 目的地；`source0` 是有序左 Local 源；`source1` 是有序右 Local 源。
+- `source0` 是左操作数，必须是已分配的现有 Local Tile。
+- `source1` 是右操作数，其物理形状、有效形状和布局必须与 `source0` 相同。
+- `destination0` 是新分配的 Local Tile，其后备 `DataType` 为所选操作 `DataType`，形状与源一致。
 
-除非当前契约明确指出状态被消费或替换，否则源保持持久；只有完整预检后才发布目的描述符。
+一条终止 `B.IOT` 在同一个 `PE_MASK` 下绑定全部三个 Tile；不接受 `B.IOR` 与 `B.IOS`。`PE_MASK=0000` 是严格无操作，发生在读取、分配或故障之前。
+
+设计要点：每个源都可以使用位宽相同、非打包的其他后备类型存储，其位按原样使用。例如，把 `FP32` 数据按 `U32` 读取并与 `0x80000000` 相或，会置位每个符号位，得到负绝对值的 `U32` 编码。
 
 <!-- PTO-READER-BLOCK: tile-tor-effects role=effects -->
-## 发布与排序
+## 发布、已定义性与填充
 
-每个有效坐标都按所选元素类型执行操作；目的地发布之前会快照全部源和私有 GPR 标量操作数。
+两个源载荷都在第一次写目标之前被快照。任一源都可以与目标互为别名，两个源也可以指向同一个 Tile；结果总是按旧值计算。
 
-有效载荷、选中的物理填充的已定义性、描述符和适用的粘滞数值标志原子发布；拒绝时没有架构效果。
+目标描述符、有效区域结果、填充以及每个元素的已定义性作为一次提交发布。被拒绝的 `TOR` 不改变描述符、载荷与分配状态。
+
+`ValidRow x ValidCol` 之外的元素接收所选 `PadValue`。`Zero` 写入零，`Max` 与 `Min` 写入该整数 `DataType` 的数值最大值与最小值；`Null`（省略 `B.DATR` 时的选择）使其保持未定义。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值。`TOR` 没有全局内存效果。
 
 <!-- PTO-READER-BLOCK: tile-tor-constraints role=constraints -->
-## 合法性、填充与故障
+## 类型、布局与故障边界
 
-绑定格式错误、类型或布局不受支持、形状无效、被消费元素未定义、属性非法或目的容量不足时，会在源快照或发布之前拒绝操作。
+可接受的数据类型集合为 `S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。浮点与打包操作类型会在效果之前被拒绝；如上所述，浮点数据仍可通过同位宽的整数操作类型处理。
 
-`PE_MASK=0000` 是严格空操作，先于读取、分配、故障、数值状态、填充或描述符效果。分配失败触发所有者定义的 Tile 分配故障；其他被拒绝的绑定模式或值条件触发所有者定义的合法性、块控制或内存故障，且不产生部分效果。
+默认布局为 `RowMajor`，显式 `Layout` 可选择 `CUBE_M16` 或 `CUBE_M32`。`CUBE_N8`、Shared Tile 以及混合布局均非法。
+
+有效矩形内的每个源元素（存在 ExecutionMask 时为每个活动元素）都必须已定义，即使其编码不被校验。绑定格式错误、维度缺失或为零、源未定义或不匹配、布局不受支持、`DataType` 不受支持或目标容量无效时，会在效果之前引发 `Fault_TileLegality`。非默认的 `CMode`、`Sat`、`Canonicalize`、第二 `DataType` 或 `RMode` 均非法。
 
 <!-- PTO-READER-BLOCK: tile-tor-example role=example -->
 ## 非规范契约草图
 
 这是非规范契约模式草图；它用于组织字段和绑定关系，不声称可以直接汇编。
 
-把 `BSTART.VEC TOR, U8; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP` 作为非规范绑定演练，再以下方生成契约确认精确维度、属性和故障行为。
+当 `DataType=U8` 时，左源行 `[0x0F, 0xF0, 0xFF]` 与右源行 `[0x3C, 0x3C, 0x81]` 产生目标行 `[0x3F, 0xFC, 0xFF]`。
+
+宏形式 `TOR <Row=8, Col=64, U32>, T#1, T#2, ->T<2KB>` 把两个 `U32` Tile 的全部 8 x 64 个结果计算到新的 2 KB 目标中。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

@@ -19,42 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-tlb-iv-purpose role=purpose -->
 ## What TLB.IV does
 
-`TLB.IV` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+`TLB.IV` completes the canonical 48-bit virtual address translation-maintenance operation synchronously. It is the plain address form: the address to invalidate arrives in `SrcL`, and the attempt is accepted only when that value is a canonical 48-bit virtual address and the current ring is ACR0.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iv-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+`InstructionContractHandler_TLB_IV` selects the shared maintenance handler (`asl/scalar/sys/TLB.IV.asl:18`), and `InstructionContractMaintenanceRequiresRootRing_TLB_IV` returning `TRUE` (`asl/scalar/sys/TLB.IV.asl:42`) is what puts this operation in the executor's ring-restricted group (`asl/scalar/model/sys/semantics.asl:121`). The dispatcher reads `SrcL` for this form because `InstructionContractMaintenanceUsesOperand_TLB_IV` is `TRUE` (`asl/scalar/model/dispatch/sys.asl:50`).
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+Order inside the executor is privilege first, operand second: the ring check runs before the canonical-address test, and each failure has its own fault class (`asl/scalar/model/sys/semantics.asl:129`).
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iv-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+`SrcL` is a Reg5 source: R0..R23, T#1..T#4, or U#1..U#4. Its value is the virtual address operand, tested by `IsCanonicalAddress48`, which requires bits 63:48 to be all zeros when bit 47 is 0 and all ones when bit 47 is 1 (`asl/scalar/model/sys/semantics.asl:108`).
 
-Encoded zero is an assigned field value, never an omitted operand.
+There is no destination operand. On success the operand is published only into the maintenance record, and encoded zero names the architectural zero GPR.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iv-effects role=effects -->
 ## Architectural effects
 
-On success, the maintenance record receives `Maintenance_TLB_IV` and the exact captured operand token.
+A successful attempt advances the TLB epoch by exactly one and records `Maintenance_TLB_IV` with the address operand (`asl/scalar/model/sys/semantics.asl:146`). `TPC` then advances by the instruction length, because a fault-free attempt reports success to the dispatcher.
 
-Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+Design point: a rejected operand leaves the TLB epoch unchanged, and the record is only written when the attempt is fault-free (`asl/scalar/model/sys/semantics.asl:156`). A non-canonical request therefore cannot look like a completed invalidation to a reader of the epoch or the record.
+
+The instruction performs no ordinary scalar memory access, so no page table or data memory is touched.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iv-constraints role=constraints -->
 ## Placement and rejection
 
-TLB maintenance is accepted only at `ACR0`; ring permission is checked before operand validation. The operand must be a canonical 48-bit virtual address.
+Placement is checked first by the dispatcher: outside an active SYS block body the attempt raises `Fault_BundleControl` and the executor never runs. Inside the body the fixed bits and `SrcL` selector are validated before the call.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+The executor then applies two rejections of its own. A current ring other than ACR0 raises `Fault_IllegalInstruction`. A ring-0 attempt whose operand is not canonical raises `Fault_DataPage` with that operand as the trap argument and leaves the epoch unchanged (`asl/scalar/model/sys/semantics.asl:143`).
+
+Design point: translation maintenance is manager state, so it is confined to the root ring, while the address-shaped operand keeps its own page-fault class. Distinguishing the two rejections lets a handler tell a privilege failure from a malformed address.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iv-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `tlb.iv SrcL` and trace its encoded fields through preflight before following the selected system effect.
+At ACR0, with a GPR holding 0x1234, `tlb.iv SrcL` snapshots 0x1234, passes the canonical test because bits 63:48 are clear, advances the TLB epoch by one, and records `Maintenance_TLB_IV` with operand 0x1234. The same instruction on ring ACR1 raises `Fault_IllegalInstruction` without reading the canonical form of the operand.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

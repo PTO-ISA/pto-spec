@@ -7,8 +7,75 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-legality-predicate-carriers-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines legality helpers for predicate carriers: the objects that hold one true or false value per Tile coordinate. It covers three carrier forms and the numeric CUBE sources that produce or consume them.
+
+- A predicate cell is a CUBE_M16 or CUBE_M32 Tile with `TileStorage_PredicateCell`, U8 elements, and values 0 or 1.
+- A GPR predicate carrier is one or two general-purpose registers whose bits hold the result of a CUBE comparison.
+- An indexed-transfer mask is the U8 mask Tile read by MGATHER_MASK and MSCATTER_MASK.
+
+Its callers include the TCMP, TCMPS, TSEL, and TSELS predicates in operand-schema, the CUBE GPR compare and select predicates in the execution predicate-carriers unit, ExecutionMask binding checks, and the masked indexed transfers.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-predicate-carriers-concepts role=concepts-state -->
+## Concepts and visible state
+
+A predicate cell records a `predicate_basis_type`: the operation type of the comparison that produced it. Its own `data_type` is always U8 and its CUBE geometry is computed for U8. `TilePredicateCellDescriptorLegal` requires a basis type in `TileCubePredicateDataTypeSupported` and requires the stored CUBE repeat, cell count, and byte counts to equal the values recomputed from its shape.
+
+`TileCubePredicateDataTypeSupported` accepts FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, and the signed and unsigned 8, 16, and 32-bit integers. Every other type is excluded, including the 64-bit, packed, HiF8, E3M2, E2M3, E8M0, E6M2, and RCPE6M2 types.
+
+For a GPR carrier, `TileCubePredicateRowBits` gives 16 rows for CUBE_M16 and 32 for CUBE_M32. `TileCubePredicateFieldCount` gives the number of columns per register: 2 for CUBE_M32, and for CUBE_M16 either 2 for 32-bit types or 4 otherwise. An 8-bit type uses two registers, doubling the column limit.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-predicate-carriers-rules role=rules-interactions -->
+## Rules and interactions
+
+`TileCubeNumericContentsDefined` checks a CUBE numeric source. Without an ExecutionMask it returns `contents_defined`. With one, the source must match the mask's layout and valid shape, and each active coordinate must be defined. `TileCubeNumericSourceLegalAs` adds a same-width check and a valid encoding under the operation type at each active coordinate.
+
+`TilePredicateCellShapeMatchesNumericAs` pairs a predicate cell with a numeric source. The source backing must be width-compatible with the operation type, the cell's basis type must equal the operation type, and the valid shape and layout must match.
+
+`TilePredicateCellOperationValuesLegal` and `IndexedTLSUPredicateValuesLegal` read the mask values. Each checked coordinate must be defined and must hold byte `0x00` or `0x01`. Without an ExecutionMask every valid coordinate is checked; with one, only active coordinates.
+
+Design point: a mask byte other than `0x00` or `0x01` makes these predicates return FALSE, so the bundle is rejected before the mask is consumed. `ReadIndexedTLSUPredicate` reads only bit 0 and first asserts `IndexedTLSUPredicateValuesLegal`, so a byte such as `0x03` is never silently read as true.
+
+`IndexedTLSUPredicateDescriptorLegal` accepts a U8 mask that is a RowMajor numeric Tile, a CUBE predicate cell, or a CUBE numeric U8 Tile.
+
+Design point: `TileExecutionMaskPredicateCellShapeLegal` compares only layout and valid shape, not the basis type. Requirement `PTO-REQ-TEPL-PREDICATE-CARRIER-001` in the execution predicate-carriers unit states that generic ExecutionMask consumption must not require the producer's basis type to equal the consumer's operation type. A mask produced by an FP32 comparison can gate an FP16 operation of the same layout and shape.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-predicate-carriers-boundaries role=boundaries -->
+## Architectural boundaries
+
+These helpers are checks. `PredicateCellWithPadding` is the one state transform here: it fills coordinates outside the valid region of a predicate cell with 1 for `Max`, 0 for `Zero` or `Min`, and leaves them undefined for `Null`. The CUBE predicate-cell comparison functions `ExecuteTileCompareCellAs` and `ExecuteTileCompareCellScalarAs` call it before they write the cell.
+
+`ReadIndexedTLSUPredicate` asserts the mask is legal and returns bit 0 of the element. Gather and scatter call it only after preflight has passed.
+
+Some helpers have no caller in `asl/` today, for example `TileCubePredicateGPRShapeLegal`, `TileCubeNumericSourceLegal`, `TileCubeNumericShapeAndTypeMatch`, and `TilePredicateCellShapeMatchesNumeric`.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-predicate-carriers-example role=example-usage -->
+## Non-normative reading example
+
+A TCMPS writes its result to a GPR from a CUBE_M16 source with operation type FP16 and valid region 16 x 4.
+
+- FP16 passes `TileCubePredicateGPRDataTypeSupported`.
+- Rows: 16 is at most `TileCubePredicateRowBits(CUBE_M16)` = 16.
+- Columns: FP16 is 16 bits, so the field count is 4 and one register is used; 4 is at most 4 x 1.
+- The result fills 16 x 4 = 64 bits, bit `row + field * 16`.
+
+With a U8 source in CUBE_M16, two registers are used, so up to 4 x 2 = 8 columns are legal. With FP32 in CUBE_M16, the field count is 2, so a valid region 16 x 4 is rejected.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-predicate-carriers-related role=related-owners-navigation -->
+## Related owners
+
+- [Execution predicate carriers](../execution/predicate-carriers.md) uses the GPR helpers for CUBE compare and select.
+- [Operand schema](operand-schema.md) uses the predicate cell helpers for TCMP, TCMPS, TSEL, and TSELS.
+- [Memory schema](memory-schema.md) uses `IndexedTLSUPredicateValuesLegal` for masked transfers.
+- [Descriptor shape](descriptor-shape.md) owns `TileCubeDescriptorLegal`.
+- [ExecutionMask schema](../../../block/model/dispatch/execution-mask-schema.md) checks ExecutionMask carriers at bundle level.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

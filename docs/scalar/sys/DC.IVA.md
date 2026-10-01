@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-iva-purpose role=purpose -->
 ## What DC.IVA does
 
-`DC.IVA` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+`DC.IVA` is the data-cache clean-and-invalidate by virtual address operation. The address travels in the single Reg5 source `SrcL`, and the instruction records the operation token and that operand when it completes (`asl/scalar/sys/DC.IVA.asl:23`).
 
 <!-- PTO-READER-BLOCK: scalar-dc-iva-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+The DOC region binds the instruction to `ScalarHandler_ExecuteMaintenance` (`asl/scalar/sys/DC.IVA.asl:11`), and the operation token `Maintenance_DC_IVA` selects the data-cache case inside the executor (`asl/scalar/model/sys/semantics.asl:134`). The dispatcher reads the source register for this form, because `InstructionContractMaintenanceUsesOperand_DC_IVA` is `TRUE` (`asl/scalar/sys/DC.IVA.asl:29`).
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+Block placement is part of the applicability rule: the bundle must be active and its body must be a System block before operand legality is even considered (`asl/scalar/model/sys/semantics.asl:321`).
 
 <!-- PTO-READER-BLOCK: scalar-dc-iva-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+`SrcL` accepts the Reg5 source encodings R0..R23, T#1..T#4, and U#1..U#4, and supplies the virtual address of the request. The instruction has no destination field.
 
-Encoded zero is an assigned field value, never an omitted operand.
+The only output is the maintenance record entry. Encoded zero in `SrcL` names the architectural zero GPR, so a zero address is expressed by naming that register rather than by omitting the operand.
 
 <!-- PTO-READER-BLOCK: scalar-dc-iva-effects role=effects -->
 ## Architectural effects
 
-On success, the maintenance record receives `Maintenance_DC_IVA` and the exact captured operand token.
+The attempt advances the data-cache epoch once and then writes `Maintenance_DC_IVA` and the snapshotted operand into the maintenance record, provided no fault was raised (`asl/scalar/model/sys/semantics.asl:156`). `TPC` advances after the attempt reports success (`asl/scalar/model/dispatch/top-level.asl:56`).
 
-Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+The address is recorded, not used: `DC.IVA` performs no ordinary scalar memory access, so a subsequent load or store to the same virtual address sees unchanged memory. No register, temporary queue, or system register is written.
 
 <!-- PTO-READER-BLOCK: scalar-dc-iva-constraints role=constraints -->
 ## Placement and rejection
 
-Cache maintenance is a synchronous local hint at every ACR and does not define additional implementation cache contents.
+An attempt outside an active SYS block body raises `Fault_BundleControl` before the handler, so neither the epoch nor the record is modified. Inside the body, the fixed bits and the `SrcL` selector are validated before the executor runs.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+`DC.IVA` imposes no ring gate and no address-shape gate. The data-cache operations are permitted at every ACR, and the canonical-address test belongs to the TLB operations only (`asl/scalar/model/sys/semantics.asl:115`). Even an operand with high bits set is recorded rather than rejected.
+
+Design point: the same handler serves address-based and token-based data-cache requests. Keeping the caller's operand verbatim in the record is what lets the two kinds of request be told apart afterwards.
 
 <!-- PTO-READER-BLOCK: scalar-dc-iva-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `dc.iva SrcL` and trace its encoded fields through preflight before following the selected system effect.
+With a GPR holding 0x1234, `dc.iva SrcL` in a SYS block body snapshots 0x1234, advances the data-cache epoch by one, and records `Maintenance_DC_IVA` with operand 0x1234. An operand such as 0xffff000000001234 is accepted by the same path and recorded unchanged, because only the TLB operations test address canonicality.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

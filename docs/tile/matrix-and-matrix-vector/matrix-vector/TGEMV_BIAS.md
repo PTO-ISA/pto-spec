@@ -17,44 +17,86 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tgemv-bias-purpose role=purpose -->
-## Purpose
+## What TGEMV_BIAS does
 
-`TGEMV_BIAS` multiplies the matrix and vector and adds the bias Tile.
+`TGEMV_BIAS` is the matrix-vector form of the CUBE matrix product. M is fixed to 1, so the left operand A is one row of K elements, the right operand B is a matrix with K rows and N columns, and the destination D is one row of N elements.
+
+A one-row bias vector is added to every result row after the product.
+
+Design point: `TGEMV_BIAS` is selected by `BSTART.TGEMV.BIAS` (CUBE Function 17) and has no standalone opcode. All twelve CUBE matrix instructions share one bundle handler; the function number selects whether a bias, an accumulator, MX scales, the M = 1 and Local-only rules, and CScale apply. The [matrix function table](../../model/legality/matrix-functions.md) lists every form.
 
 <!-- PTO-READER-BLOCK: tile-tgemv-bias-mechanism role=mechanism -->
-## Execution mechanism
+## Element arithmetic
 
-The ASL DOC contract selects `TileHandler_TGEMV_BIAS` through the instruction's selector-encoded block carrier.
+For each result row and column, the sum starts at zero. The inner index then runs from 0 to K-1 in increasing order and adds one product per step.
 
-Matrix schema, M/K/N dimensions, operand layouts, DataTypes, descriptor shapes, aliases, masks, capacity, and every required Bias, accumulator, or E8M0 scale Tile are preflighted before source snapshots.
+The accumulator type is FP32 for floating inputs, S32 for signed integer inputs, and U32 for unsigned integer inputs. When the accumulator is FP32, both inputs are FP32, TF32, HF32, FP16, or BF16, and the running sum and both elements are finite, each step rounds the product to FP32 and then rounds the sum to FP32. It uses the `RMode` and `Sat` of `B.DATR`, or RNE without saturation when `B.DATR` is omitted.
+
+In every other case, including integer inputs, 8-bit and 4-bit floating inputs, and NaN or infinite values, the step adds `MultiplyWord(left, right)` to the raw accumulator carrier with 64-bit wrapping arithmetic. That path is exact bit arithmetic, not IEEE arithmetic, and it records no flags.
+
+The bias step then adds bias element `[0, column]` to every row of that column. When both values are finite FP32, their sum is rounded to FP32 with RNE; otherwise the raw carriers are added. It uses RNE without saturation regardless of `B.DATR`.
+
+Design point: the inner loop walks K in one fixed order, and the FP32 path rounds twice per step, so the result is not a fused multiply-add and the model gives one bit-exact result for each input. Accumulation and bias discard flags; post-processing is the only step that records numeric status flags.
+
+Exactly one `B.FPATR` then selects post-processing. With all fields zero, D keeps the accumulator type. A nonzero `PreQuantMode` converts every valid element to that mode's output type, `ReluMode` selects ReLU or a leaky slope for negative values, and `RowMaxEn` and `GroupMaxEn` add RowMaxOut and GroupMaxOut destinations computed from the final D values. [Matrix post-processing](../../model/execution/matrix-postprocess.md) and [post-processing commit](../../model/execution/postprocess.md) give the exact rules.
+
+`CCTRL` is the `PadValueOrByteId` field of `B.DATR`, read as `00` when `B.DATR` is omitted. With bit 0 set, D is published as the raw accumulator-type result, and `PreQuantMode`, `ReluMode`, `GroupNCode`, `RowMaxEn`, `GroupMaxEn`, and `MaxAbsEn` must all be zero. Bit 1 must be zero, because this form has no C to prefetch.
 
 <!-- PTO-READER-BLOCK: tile-tgemv-bias-inputs-outputs role=inputs-outputs -->
-## Operands and descriptors
+## Operand roles and layouts
 
-`destination0` is the destination; `source0` is the left-vector; `source1` is the right-matrix; `source2` is the bias.
+The Local mathematical sources are bound in this order:
 
-Sources remain persistent unless the current contract explicitly names a consumed or replaced state; destination descriptors are published only after complete preflight.
+- `source0` is the left vector A: valid shape [1, K], type AType, and layout `CUBE_M16` or `CUBE_M32`.
+- `source1` is the right matrix B: valid shape [K, N], type BType, and layout `CUBE_N8`.
+- `source2` is the bias: valid shape [1, N], the accumulator type, and layout `CUBE_N8`.
+
+Post-processing sources, such as RowMaxIn and parameter Tiles, come after all of these.
+
+`destination0` is D: newly allocated, valid shape [1, N], the same M layout as A, and the accumulator type, or the output type of a nonzero `PreQuantMode`.
+
+AType is the `BSTART` data type. BType is the `B.DATR` `DataType`, and equals AType when `B.DATR` is omitted. `B.DIM` LB0, LB1, and LB2 carry M, N, and K, and each defaults to 1 when omitted. The M = 1 rule is mandatory: any other LB0 value raises `Fault_TileLegality`.
+
+AType and BType must both be ordinary Matrix types of one numeric class: both floating, both signed integer, or both unsigned integer. HiF4X2 is not an ordinary Matrix type; it is accepted only by the MX forms.
+
+`TGEMV_BIAS` is Local only. Every Shared binding and a nonzero `TransA` or `TransB` is rejected, and any common nonzero `PE_MASK` is legal.
 
 <!-- PTO-READER-BLOCK: tile-tgemv-bias-effects role=effects -->
 ## Publication and ordering
 
-All persistent inputs are snapshotted before computation; the destination and any enabled auxiliary output publish as one atomic group.
+Complete preflight comes first: types, bindings, dimensions, masks, Local descriptors, aliases, the M layout, and post-processing sources. Only then is the destination group allocated and are the sources read. [CUBE TMATMUL dispatch](../../../block/model/dispatch/cube-tmatmul.md) lists the stages.
 
-The destination uses this operation's CUBE layout and final output type; this mnemonic preserves its Bias input unchanged.
+D and any enabled RowMaxOut and GroupMaxOut publish as one group. D is defined only in its valid region; its padding stays undefined, because no `PadValue` is applied. A rejected bundle publishes nothing, and every source persists unchanged.
+
+Design point: allocation happens after every rule is checked and before the first source snapshot. A legality fault therefore leaves no allocated destination, and a fault after allocation rolls the destination group back.
+
+The operation has no global-memory effect. Post-processing is the only source of numeric status; it ORs the flags of all its outputs and records them at commit.
 
 <!-- PTO-READER-BLOCK: tile-tgemv-bias-constraints role=constraints -->
-## Legality, padding, and faults
+## Legality and fault boundary
 
-Malformed bindings, unsupported types or layouts, invalid shapes, undefined consumed elements, illegal attributes, or insufficient destination capacity are rejected before source snapshots or publication.
+- `PE_MASK=0000` on every binding is a strict no-op before any descriptor read, fault, or allocation.
+- A missing `B.FPATR` raises `Fault_BundleControl`, and an undecodable CUBE selector raises `Fault_IllegalInstruction`.
+- An illegal type pair, source or destination count, `B.DATR` field, `CCTRL` use, dimension, mask, descriptor, alias, layout, or post-processing source raises `Fault_TileLegality` before allocation.
+- A full destination hand, a destination size too small for the CUBE storage of D, RowMaxOut, or GroupMaxOut, or a destination group that exceeds the remaining capacity, raises `Fault_TileAllocation`.
+- Setting `CScaleEn` raises `Fault_TileLegality`, because only `TMATMUL_ACC` and `TMATMUL_MX_ACC` accept CScale.
 
-Allocation failure raises the owner-defined Tile allocation fault; other rejected schema or value conditions raise the owner-defined legality, bundle-control, or memory fault without partial effects.
+Design point: M, N, and K are compared with the valid shapes of A, B, and D, not with a capacity-derived row count. The M layout only bounds M by 16 or 32, so the dimensions stay independent of the destination TSize.
 
 <!-- PTO-READER-BLOCK: tile-tgemv-bias-example role=example -->
-## Non-normative contract sketch
+## Non-normative worked example
 
 This is a non-normative contract schema sketch; it organizes fields and bindings but is not claimed to be directly assembleable.
 
-Read `BSTART.TGEMV.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary` as a non-normative binding walkthrough, then use the generated contract below for exact dimensions, attributes, and fault behavior.
+Take FP16 inputs with N = 2 and K = 2. The left vector is 1.0, 2.0, the right source rows are 3.0, 5.0 and 4.0, 6.0, and the FP32 bias row is 0.25, 0.75.
+
+The product row is 11.0, 17.0, and adding the bias gives D = 11.25, 17.75. Both sums are exact in FP32.
+
+In macro form, `T#3` is the 1 x 16 FP32 `CUBE_N8` bias:
+
+```text
+TGEMV_BIAS <M=1, N=16, K=16, FP16>, T#1, T#2, T#3, ->T<1KB>
+```
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

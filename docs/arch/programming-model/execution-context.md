@@ -15,9 +15,9 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-execution-context-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-The execution context is the central owner for the principal architecture-visible scalar, control, fault, memory, maintenance, extended-system-register, and trap-context storage used while PTO executes.
+The execution context declares most of the storage that PTO execution reads and writes: scalar registers, temporary queues, program control, fault records, memory, maintenance epochs, extended system registers, and trap contexts. It also defines the three operations on the T and U temporary queues.
 
-A Core has four private scalar register files. An instruction carries one absolute GPR selector, but each PE resolves that selector in its own register file.
+A Core has four private scalar register files, one per PE. An instruction carries one absolute GPR selector, but each PE resolves that selector in its own register file.
 
 <!-- PTO-READER-BLOCK: arch-execution-context-concepts-state role=concepts-state -->
 ## Concepts and state families
@@ -27,35 +27,42 @@ A Core has four private scalar register files. An instruction carries one absolu
 - `PTO-STATE-ARCH-MEMORY` owns modeled bytes, reservation state, fence selectors, captured memory events, and the current memory agent.
 - Maintenance epochs, extended system registers, ACR-indexed trap metadata, saved trap contexts, and the current ACR belong to their explicitly declared state families in this unit.
 
+A temporary queue is a four-entry list of 64-bit values. Scalar selectors `24` through `27` read T positions `T#1` through `T#4`, and selectors `28` through `31` read U positions `U#1` through `U#4`. Position `#1`, index `0` in the ASL, is always the newest value.
+
+Design point: a result pushed to a queue does not overwrite any GPR. Compressed binary ALU forms and compressed AGU loads write their result through `WriteCompressedTResult`, which always pushes to T. An ordinary destination selector `31` pushes to T and `30` pushes to U.
+
 <!-- PTO-READER-BLOCK: arch-execution-context-rules-interactions role=rules-interactions -->
 ## Queue rules and interactions
 
 `ReadTemporaryQueue` selects the T queue when `use_t_queue` is true and the U queue otherwise, returning the value at the requested relative index.
 
-`TemporaryQueueSourceAvailable` applies the same T-or-U selection to the validity snapshots and returns the validity entry at the requested relative index. When a push shifts a value, it shifts the corresponding validity entry with that value.
+`TemporaryQueueSourceAvailable` applies the same T-or-U selection to the validity snapshots and returns the validity entry at the requested relative index.
 
 `PushTemporaryQueue` inserts the new value at index `0`, marks that entry valid, and shifts both values and validity from indices `0` through `2` into indices `1` through `3` of the selected queue.
+
+Design point: each entry carries a validity bit that moves with its value. Scalar operand checking uses it: reading a queue position that has never been written is an illegal source and raises `Fault_IllegalInstruction` before execution, instead of returning a stale or reset value.
 
 <!-- PTO-READER-BLOCK: arch-execution-context-boundaries role=boundaries -->
 ## Boundaries
 
 T and U are independent queues: a push to one queue does not modify the value or validity snapshot of the other queue.
 
-A push retains the four newest entries of the selected queue. The previous index `3` entry is replaced when indices `0` through `2` shift upward.
+A push retains the four newest entries of the selected queue. The previous index `3` entry is discarded when indices `0` through `2` shift upward.
 
-This unit declares shared architectural storage, but it does not by itself define every transition over that storage. Memory ordering, reset, system-register behavior, and trap recovery remain in their dedicated ASL owners.
+This unit declares shared architectural storage, but it does not by itself define every transition over that storage. Memory ordering, reset, system-register behavior, and trap recovery remain in their dedicated ASL owners. For example, reset clears every queue value to zero and every validity bit to false, and trap capture saves both queues with their validity.
 
 <!-- PTO-READER-BLOCK: arch-execution-context-example-usage role=example-usage -->
 ## Non-normative queue walkthrough
 
-After reset, suppose the T queue is unavailable at every relative index. Pushing `0x11` makes T index `0` available with value `0x11`; pushing `0x22` next makes index `0` hold `0x22` and index `1` hold the older `0x11`, with both entries available.
+After reset, the T queue is unavailable at every relative index. Pushing `0x11` makes T index `0` available with value `0x11`; pushing `0x22` next makes index `0` hold `0x22` and index `1` hold the older `0x11`, with both entries available.
 
 Pushing `0x33` to U then changes only U index `0`. The T values from the previous step remain in their T-relative positions.
 
 <!-- PTO-READER-BLOCK: arch-execution-context-related-owners role=related-owners-navigation -->
 ## Related owners
 
-- [System-register addressing](../system-registers/addressing.md) is the declared dependency for the execution-context unit.
+- [System-register addressing](../system-registers/addressing.md) is the declared dependency and owns the reset that clears this state.
+- [Scalar operands](../../scalar/model/types/operands.md) maps scalar selectors onto GPRs and queue positions.
 - [Memory ordering](../memory-model/ordering.md) interprets the memory events stored here.
 - [Trap context](../state/trap-context.md) provides the concrete access and trap-context behavior.
 <!-- SUPPLEMENTARY-END -->

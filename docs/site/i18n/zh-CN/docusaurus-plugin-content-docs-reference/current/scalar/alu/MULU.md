@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-mulu-purpose role=purpose -->
 ## MULU 的作用
 
-`MULU` 是一条 32 位标量 ALU 指令。它按照完整 XLEN 值结果规则计算无符号乘积的低部；当前指令契约定义结果发布路径以及任何额外状态效果。
+`MULU` 是一条 32 位编码的标量 ALU 指令，它把两个 XLEN 源相乘，并通过一个 Reg5 目标发布乘积的低 `PTO_XLEN` 位。它没有立即数，也没有高半部目标。
+
+该助记符表示按无符号方式读取操作数，而可执行分派把它与 `MUL` 绑定到同一个 `MultiplyWord` 辅助函数。
 
 <!-- PTO-READER-BLOCK: scalar-mulu-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后按照完整 XLEN 值结果规则计算无符号乘积的低部，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractResult_MULU`，它返回 `MultiplyWord(left, right)`。该辅助函数在累加过程中把每个部分和按模 `2^PTO_XLEN` 约简，因此它返回的是两个源位模式精确乘积的低 XLEN 位。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+mulu SrcL, SrcR, ->{t, u, Rd}
+```
+
+设计要点：`MUL` 与 `MULU` 的区别在名称，而不在可执行行为。`asl/scalar/model/dispatch/alu.asl` 在同一个分支中处理 `ScalarOperation_MUL` 与 `ScalarOperation_MULU` 并调用 `MultiplyWord`，因此没有任何输入对能让这两个助记符发布不同的字。
 
 <!-- PTO-READER-BLOCK: scalar-mulu-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择左乘数或加法操作数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择右乘数。
+- `RegDst`，指令切片 `[7 +: 5]`，接收乘积的低 XLEN 位。
+- `SrcL`，指令切片 `[15 +: 5]`，提供左乘数。
+- `SrcR`，指令切片 `[20 +: 5]`，提供右乘数。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+两个源都使用通用 Reg5 映射：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`。读取临时项会保留该表项，编码零读取体系结构零 GPR。
+
+设计要点：两个操作数的每一位都能进入被保留的乘积，因此 `MULU` 不是字操作。它唯一的截断是丢弃高于第 `PTO_XLEN - 1` 位的乘积位，这与 `MUL` 施加的截断相同。
 
 <!-- PTO-READER-BLOCK: scalar-mulu-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+两个源都在目标写入之前读取，因此与源同名的目标收到的仍是由执行前寄存器内容算出的值。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
-
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+发布之后 `TPC` 前进 `4` 字节。`MULU` 不读写内存，也不触及数值状态、保留、描述符、指令束、特权与控制流状态；只有 `RegDst` 选择的 `T` 或 `U` 推送能改变队列。
 
 <!-- PTO-READER-BLOCK: scalar-mulu-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+每个 `32` 编码的源编码都有定义，每个 `32` 编码的目标编码都被接受，因此所选临时项不可用是唯一可能失败的操作数条件。固定编码位必须与规范的 32 位形式匹配；没有保留的操作数值，也没有编码的模式。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+适用性只在系统块终止请求挂起时失败，并在 `TPC` 触发 `Fault_BundleControl`。否则，不匹配的编码在进入指令束主体之前于 `PC` 触发 `Fault_IllegalInstruction`，所选 `T` 或 `U` 源不可用时则在目标写入之前于 `PC` 触发 `Fault_IllegalInstruction`。对任何操作数对都不存在算术异常。
+
+设计要点：无符号读取完全消除了负值拐角。`0xFFFFFFFFFFFFFFFF` 是最大操作数而不是 `-1`，因此需要有符号低半部的调用方不必为它另设规则，而且两种情况下都不定义溢出故障。
 
 <!-- PTO-READER-BLOCK: scalar-mulu-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `MULU` 示例说明：无符号源值 `6` 与 `7` 产生单一的乘积低部结果 `42`。
+取 `SrcL = SrcR = 0xFFFFFFFFFFFFFFFF` 时，`MultiplyWord` 只累加能放进 `PTO_XLEN` 位的部分和并返回 `1`，因此 `RegDst` 收到 `1`。取 `SrcL = 6`、`SrcR = 7` 时目标收到 `42`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

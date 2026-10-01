@@ -15,46 +15,60 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-tile-data-types-purpose-scope role=purpose-scope -->
 ## 目的与范围
 
-本单元拥有 Tile 操作手、公开的五位数据类型命名空间、Tile 数据布局与存储布局枚举以及填充值。Portable Local tile 状态只记录布局；驻留位置不是架构字段。
+本单元拥有 `TileHand` 枚举、`TileDataType` 命名空间及其五位编码、`TileDataLayout` 变换名、物理 `TileLayout` 枚举，以及 `TilePadValue`。
 
-它构成已编码 `DataType` 字段与数值/Tile 执行归属单元所使用类型化值之间的边界。
+它是编码的数据类型域与数值及 Tile 执行归属单元所消费的类型化值之间的边界；它的第 1 行记录还声明了域 `PTO-FIELD-BLOCK-DATATYPE`，用于 Block 数据属性和带类型的 Block 起始。
+
+设计要点：同一个单元既声明 `bits(5)` 编码类型，也声明两个转换函数。因此该编码空间是一个真实的五位值，有 32 个可能编号，27 个具名成员与 5 个未分配编号是两个可数且不相交的集合，而不是一份缺口不可见的清单。
 
 <!-- PTO-READER-BLOCK: arch-tile-data-types-concepts-state role=concepts-state -->
 ## 概念与可见状态
 
-- `TileHand` 命名 `T`、`U`、`M` 和 `N`；`TileDataType` 包含 15 个浮点/缩放成员、五个有符号整数成员和五个无符号整数成员。
-- `TileDataTypeEncoding` 的类型为 `bits(5)`。编码 `0..14`、`16..20` 和 `24..28` 已分配；`15`、`21..23` 和 `29..31` 保留。
-- 本单元还分别定义面向转换的 `TileDataLayout`、物理 `TileLayout` 和 `TilePadValue` 命名空间；portable Local 合法性基于布局而非驻留位置。
+- `TileHand` 有 4 个成员：`TileHand_T`、`TileHand_U`、`TileHand_M` 和 `TileHand_N`。
+- `TileDataType` 有 27 个成员：编号 `0` 到 `15` 的 16 个浮点与缩放成员，编号 `16` 到 `20` 的 5 个有符号整数成员，编号 `21` 的派生成员 `TileDataType_RCPE6M2`，以及编号 `24` 到 `28` 的 5 个无符号整数成员。
+- `TileDataTypeEncoding` 是 `bits(5)`，而 `TileDataTypeEncodingValid` 接受那三个已分配范围，因此编号 `22`、`23`、`29`、`30` 和 `31` 是保留值。
+- `TileDataLayout` 有 23 个从 `TileDataLayout_NORM` 到 `TileDataLayout_CUBE_M16` 的变换名，`TilePadValue` 有 4 个成员 `TilePad_Zero`、`TilePad_Max`、`TilePad_Min` 和 `TilePad_Null`，`TileLayout` 有 8 个成员 `TileLayout_RowMajor`、`TileLayout_ColumnMajor`、`TileLayout_ZN`、`TileLayout_NZ`、`TileLayout_CUBE_M16`、`TileLayout_CUBE_M32`、`TileLayout_CUBE_N8` 和 `TileLayout_ImplementationDefined`。
+
+设计要点：编号 `0` 的声明域含义是 `FP64`，并且该记录声明零绝不表示缺失、继承、`NONE` 或 `NULL`。因此数据类型域为零是一个完整可用的 64 位浮点格式，“没有数据类型”需要另一个编号，本单元把它提供为独立哨兵 `DTYPE_NONE`，而不是零值。
 
 <!-- PTO-READER-BLOCK: arch-tile-data-types-rules-interactions role=rules-interactions -->
 ## 规则与交互
 
-`TileDataTypeEncodingValid` 只接受三个已分配编码范围；`TileDataTypeFromEncoding` 要求先确认编码有效再进行映射。
+`TileDataTypeFromEncoding` 以 `assert TileDataTypeEncodingValid(encoded)` 开始，并以 `otherwise => unreachable` 结束其 `case`，因此保留编号无法通过该函数产生数据类型。域声明指出保留值在产生架构效果之前被拒绝。
 
-`TileDataTypeToEncoding` 提供反向映射。编码 `0` 表示 `TileDataType_FP64`，不表示缺省、继承或不存在。
+`TileDataTypeToEncoding` 是反向映射，返回显式常量而不是枚举位置。两个方向的缺口在 `TileDataType_RCPE6M2` 处可见：它编码为 `21`，而下一个声明的成员 `TileDataType_U64` 编码为 `24`。
 
-`DTYPE_NONE` 使用编码 `31`，但只作为字段级哨兵值；它有意不属于 `TileDataType`，也没有宽度、格式或算术语义。
+`DTYPE_NONE` 是五位常量 `'11111'`，即编号 `31`。它故意不是 `TileDataType`，因此没有宽度、没有格式、也没有算术语义。
+
+设计要点：把合法性谓词与映射函数分开，使归属单元可以在调用映射函数之前检查编号，而映射函数随后可以把其他任何值视为不可达，而不必构造回退。因此保留编号在检查处被拒绝，而不会被转换成默认数据类型。
 
 <!-- PTO-READER-BLOCK: arch-tile-data-types-boundaries role=boundaries -->
 ## 架构边界
 
-保留的数据类型编码会在产生架构效果之前被拒绝，并留待未来扩展。
+保留编号为将来扩展而保留，并在产生架构效果之前被拒绝。本单元不为它们分配含义，也不说明消费指令对它们做什么。
 
-`TileLayout_ImplementationDefined` 只供非架构模型夹具使用；没有已分配的 `B.DATR` 布局编码映射到它。
+有一个成员明确是非架构的。`TileLayout_ImplementationDefined` 的存在是为了让模型夹具能够证明通用执行会拒绝不透明的实现定义布局，文件也记录没有任何已分配的 `B.DATR` 布局编号映射到它。
+
+`TileDataLayout` 与 `TileLayout` 是成员不同的两个命名空间。诸如 `TileDataLayout_ND2M32` 这样的 23 个变换名不是物理 `TileLayout` 的成员，后者的 8 个成员是两种主序、`ZN`、`NZ`、三种 `CUBE` 形式和实现定义夹具。
+
+设计要点：把变换名与存储布局分开，意味着编码的转换名不会被误认为 Tile 的存储布局：需要存储布局的使用方必须向 Tile 状态归属单元索取 `TileLayout`，而解码得到的转换名是 `TileDataLayout`。
 
 <!-- PTO-READER-BLOCK: arch-tile-data-types-example-usage role=example-usage -->
 ## 非规范阅读示例
 
-编码 `2` 通过验证并映射到 `TileDataType_TF32`；编码 `31` 不映射到任何数据类型，即使独立的 `DTYPE_NONE` 哨兵值使用同一比特模式。
+以编号 `2` 为例。`TileDataTypeEncodingValid` 接受它，因为它落在 `0` 到 `16` 的范围内，`TileDataTypeFromEncoding` 返回 `TileDataType_TF32`。换成编号 `31`：它在三个范围之外，合法性谓词返回假，`assert` 失败，因此 `31` 永远不会变成数据类型，位模式 `'11111'` 只有作为 `DTYPE_NONE` 才有意义。
 
-数据类型解码完成后，可查阅 `TileNumericFormatDescriptor` 获取格式元数据，再查阅使用该类型的指令以确认操作支持范围。
+反方向上，`TileDataTypeToEncoding(TileDataType_U4X2)` 返回 `Zeros{5} + 28`，这与域分配给 `U4X2` 的编号相同。
+
+编号解码之后，格式元数据来自 `TileNumericFormatDescriptor`，操作支持来自消费指令。本单元两者都不决定。
 
 <!-- PTO-READER-BLOCK: arch-tile-data-types-related-owners role=related-owners-navigation -->
 ## 相关归属单元
 
 - [数值格式分派](numeric-formats.md)
-- [打包概念](packed.md)
-- [硬件数值配置](../features/mx-formats.md)
+- [Packed 概念](packed.md)
+- [格式描述符记录](format-descriptor.md)
+- [硬件数值配置档](../features/mx-formats.md)
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

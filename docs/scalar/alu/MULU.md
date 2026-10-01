@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-mulu-purpose role=purpose -->
 ## What MULU does
 
-`MULU` is a 32-bit scalar ALU instruction. It computes the low part of the unsigned product under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+`MULU` is a 32-bit encoded scalar ALU instruction that multiplies two XLEN sources and publishes the low `PTO_XLEN` bits of the product through one Reg5 destination. It has no immediate and no high-half destination.
+
+The mnemonic names the unsigned reading of the operands, and the executable dispatch binds it to the same `MultiplyWord` helper as `MUL`.
 
 <!-- PTO-READER-BLOCK: scalar-mulu-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then computes the low part of the unsigned product under the complete XLEN value result rules, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractResult_MULU`, which returns `MultiplyWord(left, right)`. The helper reduces every partial sum modulo `2^PTO_XLEN` while it accumulates, so the value it returns is the low XLEN bits of the exact product of the two source bit patterns.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+mulu SrcL, SrcR, ->{t, u, Rd}
+```
+
+Design point: `MUL` and `MULU` differ in name, not in executable behavior. `asl/scalar/model/dispatch/alu.asl` handles `ScalarOperation_MUL` and `ScalarOperation_MULU` in one alternative that calls `MultiplyWord`, so no input pair can make the two mnemonics publish different words.
 
 <!-- PTO-READER-BLOCK: scalar-mulu-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the left multiplicand or additive operand through Reg5.
-- The 5-bit `SrcR` field selects the right multiplicand through Reg5.
+- `RegDst`, instruction slice `[7 +: 5]`, receives the low XLEN bits of the product.
+- `SrcL`, instruction slice `[15 +: 5]`, supplies the left multiplicand.
+- `SrcR`, instruction slice `[20 +: 5]`, supplies the right multiplicand.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Both sources use the common Reg5 map: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`. A temporary read leaves the entry in place, and an encoded zero reads the architectural zero GPR.
+
+Design point: every bit of both operands can reach the retained product, so `MULU` is not a word operation. Its only truncation is the discard of product bits above bit `PTO_XLEN - 1`, which is the same truncation `MUL` applies.
 
 <!-- PTO-READER-BLOCK: scalar-mulu-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are read before the destination write, so a destination that aliases a source still receives a value computed from the pre-instruction register contents.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+After publication, `TPC` advances by `4` bytes. `MULU` reads and writes no memory and touches no numeric-status, reservation, descriptor, bundle, privilege or control-flow state; only the `T` or `U` push selected by `RegDst` can change a queue.
 
 <!-- PTO-READER-BLOCK: scalar-mulu-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every `32`-code source encoding is assigned and every `32`-code destination encoding is accepted, so an unavailable selected temporary is the only operand condition that can fail. Fixed encoding bits must match the canonical 32-bit form; there is no reserved operand value and no encoded mode.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise a mismatching encoding raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before the destination write. No arithmetic exception exists for any operand pair.
+
+Design point: the unsigned reading removes the negative corner entirely. `0xFFFFFFFFFFFFFFFF` is the largest operand rather than `-1`, so a caller that wants the signed low half does not need a separate rule for it, and no overflow fault is defined either way.
 
 <!-- PTO-READER-BLOCK: scalar-mulu-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `MULU` example, unsigned sources `6` and `7` produce the single low-product result `42`.
+With `SrcL = SrcR = 0xFFFFFFFFFFFFFFFF`, `MultiplyWord` accumulates only the partial sums that fit in `PTO_XLEN` bits and returns `1`, so `RegDst` receives `1`. With `SrcL = 6` and `SrcR = 7` the destination receives `42`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,42 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-eqi-purpose role=purpose -->
 ## HL.CMP.EQI 的作用
 
-`HL.CMP.EQI` 对解码后的标量操作数判断相等，并发布规范化的 XLEN 一或零。
+`HL.CMP.EQI` 把一个标量寄存器与 `24` 位立即数比较是否相等，并把结果写为 `1` 或 `0`。它是相等比较的宽立即数形式，使用 `24` 位，而 `32` 位的 `CMP.EQI` 使用 `12` 位。
+
+设计要点：比较是在立即数扩展之后的 `64` 位字上判定的，因此 `hl.cmp.eqi a0, -1` 是把 `a0` 与全 `1` 字比较，而不是与 `0x00FFFFFF` 比较。
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-eqi-mechanism role=mechanism -->
-## 执行机制
+## 相等判定的执行方式
 
-指令先对操作数取快照，准备解码立即数，再判断相等。
+读取 `SrcL`，把 `simm24` 符号扩展到 `PTO_XLEN`，处理程序判断两个 `64` 位字是否相等。相等时产生 `1`，不相等时产生 `0`。
 
-关系成立时结果为 XLEN 一，否则为 XLEN 零。
+设计要点：两个操作数都在写入目的之前读取，因此 `SrcL` 与 `RegDst` 可以指向同一寄存器，结果仍是对旧值的比较。
+
+设计要点：写入的字始终是 `1` 或 `0`，绝不是全 `1` 掩码，因此使用者可以直接把它加到计数器上、移位或判断，无需再做掩码。
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-eqi-inputs-outputs role=inputs-outputs -->
-## 输入与输出
+## 操作数与目的编码
 
-- `RegDst` 选择编码指定的目的位置或丢弃行为。
+- `SrcL` 按 `Reg5` 源规则提供左操作数：编码 `0` 到 `23` 读取绝对 GPR，编码 `24` 到 `27` 读取 T 队列，编码 `28` 到 `31` 读取 U 队列。若队列编码对应的项无效，指令会在任何读取之前被拒绝。
 
-- `SrcL` 提供左侧标量源。
+- `simm24` 提供 `24` 位有符号立即数，编码在两个 `12` 位片段中。
 
-- `simm24` 提供有符号编码立即数。
+- `RegDst` 按普通 `Reg5` 规则选择目的：编码 `0` 到 `23` 指定绝对 GPR，编码 `24` 到 `29` 不写入任何位置，编码 `30` 压入 U 队列，编码 `31` 压入 T 队列。
+
+设计要点：本形式没有右源修饰字段，因此没有 `.sw`、`.uw` 或 `.not` 写法。左操作数按读取值原样使用，唯一的变换是立即数的扩展。
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-eqi-effects role=effects -->
 ## 效果与顺序
 
-规范化布尔值先通过编码目的位置发布，随后 `TPC` 前进 `6` 字节。
+规范化的 `1` 或 `0` 通过所选目的写入，除此之外不写任何位置。由于处理程序不写 `TPC`，随后由分派边界让 `TPC` 前进 `6` 字节，即该 `48` 位形式的编码长度。
 
-该指令不修改提交状态，也不访问内存或保留状态。
+`HL.CMP.EQI` 不是条件设置操作，因此不接触 `_CommitArgument`、`BARG.TAKEN` 或指令束条件标记，对它也没有条件指令束的放置要求。具有同一条件的关系型提交姊妹形式是 `HL.SETC.EQI`。
+
+处理程序不访问内存、不获取保留状态、不记录数值状态，因此一次被接受的执行所造成的架构差异只有目的字与前进后的 `TPC`。
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-eqi-constraints role=constraints -->
 ## 合法性与故障顺序
 
-编码、保留字段值和源可用性都会在目的、控制或 `TPC` 效果前检查。
+该形式的固定位必须匹配，否则该编码不会译码为本指令，并引发 `Fault_IllegalInstruction`。没有保留字段值：全部 `32` 个 `RegDst` 编码以及 `24` 位立即数字段的所有取值都已分配。所选的 `SrcL` 编码也必须可用，因此指向无效项的 T 或 U 队列编码会引发同一故障。
+
+设计要点：译码、源与目的检查都在读取操作数之前、写入目的之前完成，因此被拒绝的编码既不改变目的，也不改变 `TPC`。
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-eqi-example role=example -->
 ## 非规范示例
 
 下面的示例只帮助理解当前所有者，不构成第二份语义定义。
 
-`hl.cmp.eqi SrcL, simm, ->{t, u, Rd}` 在条件为真时发布 XLEN 一，否则发布 XLEN 零。
+当 `a0` 持有 `0x0000000000000005` 时，`hl.cmp.eqi a0, 5, ->a1` 把 `1` 写入 `a1`。`hl.cmp.eqi a0, -1, ->a1` 写入 `0`，因为 `-1` 扩展为全 `1` 字。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -17,44 +17,64 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tmuls-purpose role=purpose -->
-## 用途
+## TMULS 的作用
 
-`TMULS` 把每个有效 Local Tile 元素与一个私有 GPR 标量相乘。
+`TMULS` 把 Local 源 Tile 有效矩形内的每个元素乘以一个标量，并把积写入一个新分配的 Local 目标 Tile。它由 TEPL Mode 1 Function 2（选择器 `0x022`）选中，规范写法为 `BSTART.VEC TMULS, DataType`，没有独立 opcode。
+
+设计要点：标量是指令束操作数，而不是 Tile。Tile-Tile 形式 `TMUL` 需要第二个形状和布局都相同的源 Tile，因此用它施加同一个值时，必须先构造一个填满该值的 Tile，例如使用 `TEXPANDS`。`TMULS` 直接从 GPR 读取该值，因此不需要分配广播 Tile，也不需要使其成为已定义。
 
 <!-- PTO-READER-BLOCK: tile-tmuls-mechanism role=mechanism -->
-## 执行机制
+## 标量来源与元素机制
 
-ASL DOC 契约通过该指令的选择器编码块载体选择 `TileHandler_ExecuteTileScalar`。
+标量来自 `B.IOR.RegSrc0`。每个参与的 PE 在自己的私有 GPR 文件中解析该选择器，因此同一 `PE_MASK` 选中的各 PE 可以使用不同的标量值。指令束中没有用于标量的立即数字段；省略 `B.IOR` 时标量为零。
 
-源快照之前，必须检查绑定模式、维度、DataType、行主序布局、源已定义性与编码、PE_MASK、目的容量和适用属性。
+64 位 GPR 值由 `TileRawElementValue` 收窄：只保留与所选 `DataType` 元素位宽一致的低 8、16、32 或 64 位。不发生数值转换。浮点标量必须已经是所选类型的编码，有符号整数标量按元素位宽的补码值读取。
+
+预检通过后，`ExecuteTileScalar` 对 `ValidRow x ValidCol` 内的每个坐标计算 `source * scalar`。有符号与无符号整数乘积只保留低元素位宽的位，因此会回绕。浮点乘积遵循所选 `DataType` 的配置档及其固定默认舍入。没有饱和或加宽形式。
+
+设计要点：包括标量检查在内的所有检查都在对源和标量做快照之前完成，并且只有在所有元素计算完成后才发布结果。因此与目标别名的源按其旧值读取。
 
 <!-- PTO-READER-BLOCK: tile-tmuls-inputs-outputs role=inputs-outputs -->
-## 操作数与描述符
+## 操作数角色与描述符
 
-`destination0` 是新 Local 数值目的地；`source0` 是持久 Local 数值源；`scalar0` 是每个参与 PE 的私有 GPR 标量。
+- `source0` 是 Tile 操作数，必须是已存在的 Local 数值 Tile，并保持不变。
+- `scalar0` 是来自 `B.IOR.RegSrc0` 的逐 PE 标量。显式 `B.IOR` 必须使 `RegSrc1`、`RegSrc2` 和 `RegDst` 保持为零。
+- `destination0` 是新分配的 Local Tile，其后备 `DataType` 为所选 `DataType`，形状与布局与源一致。
 
-除非当前契约明确指出状态被消费或替换，否则源保持持久；只有完整预检后才发布目的描述符。
+一条终止 `B.IOT` 绑定源与目标，二者使用同一个 `PE_MASK`。`B.IOS` 与额外的 Tile 绑定均非法。
+
+设计要点：`PE_MASK=0000` 是严格无操作。它在任何 GPR 读取、描述符读取、分配、故障或状态效果之前退出，因此没有 PE 参与的指令束永远不会读取标量寄存器。
+
+设计要点：源可以使用位宽相同、非打包的其他后备类型存储，例如以 `FP16` 读取 `U16` 数据。此时源的位与标量都按所选 `DataType` 校验和解释，从而无需拷贝即可完成重解释读取。位宽不一致或打包四位载体仍然非法。
 
 <!-- PTO-READER-BLOCK: tile-tmuls-effects role=effects -->
-## 发布与排序
+## 发布、已定义性与填充
 
-每个有效坐标都按所选元素类型执行操作；目的地发布之前会快照全部源和私有 GPR 标量操作数。
+目标作为一个整体变为可见：描述符、有效区域结果、填充、每个元素的已定义性以及任何数值状态同时发布。被拒绝的指令束没有任何架构效果。
 
-有效载荷、选中的物理填充的已定义性、描述符和适用的粘滞数值标志原子发布；拒绝时没有架构效果。
+`ValidRow x ValidCol` 之外的物理元素接收所选 `PadValue`。`Zero`、`Max` 与 `Min` 用该 `DataType` 的对应值定义这些元素；`Null` 使其保持未定义。省略 `B.DATR` 选择 `Null`，而显式编码 `00` 选择 `Zero`。
+
+省略 `B.IOR` 时标量为零。此时每个有效整数结果为零，浮点结果遵循配置档中乘以正零的规则。
+
+`TMULS` 没有全局内存效果。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值，而不是计算结果。
 
 <!-- PTO-READER-BLOCK: tile-tmuls-constraints role=constraints -->
-## 合法性、填充与故障
+## 类型、布局与故障边界
 
-绑定格式错误、类型或布局不受支持、形状无效、被消费元素未定义、属性非法或目的容量不足时，会在源快照或发布之前拒绝操作。
+合法性检查 `TileBinaryDataTypeSupported` 接受 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`；打包四位格式不在其中。它所调用的元素运算 `ScalarFPBinaryProfile` 只为 `FP64`、`FP32`、`FP16` 与 `BF16` 浮点类型定义，因此 ASL 对 `TF32`、`HF32`、`E4M3` 或 `E5M2` 不给出元素结果。低位不是所选类型合法编码的标量会被拒绝，例如低 13 位非零的 `TF32` 值。
 
-`PE_MASK=0000` 是严格空操作，先于读取、分配、故障、数值状态、填充或描述符效果。分配失败触发所有者定义的 Tile 分配故障；其他被拒绝的绑定模式或值条件触发所有者定义的合法性、块控制或内存故障，且不产生部分效果。
+默认布局为 `RowMajor`。显式 `B.DATR` `Layout` 可以选择 `CUBE_M16` 或 `CUBE_M32`；源与目标必须使用同一布局，`CUBE_N8` 与 Shared Tile 均非法。`B.DATR` 只接受 `PadValueOrByteId` 与 `Layout`，因此非默认的 `RMode`、`Sat`、`CMode`、`Canonicalize` 或次级 `DataType` 会被拒绝。
+
+有效矩形内的每个源元素（存在 ExecutionMask 时为每个活动元素）都必须已定义。绑定格式错误、出现 `B.IOS`、`B.IOR` 字段多余、维度缺失或为零、`DataType` 不受支持、源或标量编码无效、容量或分配失败时，会在任何目标效果之前引发 `Fault_TileLegality` 或 `Fault_TileAllocation`。
 
 <!-- PTO-READER-BLOCK: tile-tmuls-example role=example -->
 ## 非规范契约草图
 
 这是非规范契约模式草图；它用于组织字段和绑定关系，不声称可以直接汇编。
 
-把 `BSTART.VEC TMULS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP` 作为非规范绑定演练，再以下方生成契约确认精确维度、属性和故障行为。
+以 `U16` 为例：源行 `[40000, 3]` 与标量 `2` 产生 `[14464, 6]`：40000 x 2 = 80000 回绕为 80000 - 65536 = 14464。
+
+若要把 `FP16` Tile 放大 2.0 倍，应把 `FP16` 编码 `0x4000` 放在 `a2` 的低 16 位，并写作 `TMULS <Row=8, Col=64, FP16>, T#1, a2, ->T<1KB>`。若在 `a2` 中放入 64 位 `FP64` 值，它不会被转换；其低 16 位会被当作 `FP16` 标量使用。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

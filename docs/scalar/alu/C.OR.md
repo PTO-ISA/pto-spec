@@ -19,46 +19,53 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-or-purpose role=purpose -->
 ## What C.OR does
 
-`C.OR` is a 16-bit scalar ALU instruction. It performs bitwise inclusive OR under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+`C.OR` reads two Reg5 sources, computes their bit-by-bit inclusive OR over all `PTO_XLEN` bits, and pushes the result to `T` as the newest temporary value.
+
+Design point: `C.OR` is the setting counterpart of `C.AND` in the same compressed shape. Both take the operation from the opcode and both operands from the two available fields, so neither can transform a source; the transforming forms are the 32-bit `OR` family.
 
 <!-- PTO-READER-BLOCK: scalar-c-or-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then performs bitwise inclusive OR under the complete XLEN value result rules, and only afterward performs the destination effects.
+Both source codes are resolved, the inclusive OR is computed for each of the `64` bit positions, and the result is pushed as the newest `T` entry.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: the push shifts the queue rather than overwriting a slot, so the new value becomes `T#1`, the previous `T#1` becomes `T#2`, and the previous `T#4` is discarded.
+
+Design point: an inclusive OR can only set bits relative to its sources, so a bit that is clear in the result is clear in both sources. Combining fields with `C.OR` therefore never clears a bit that either input had set.
+
+Design point: because both sources are read before the push, `c.or t#1, t#1, ->t` pushes a copy of the old `T#1` as a new entry and moves the original to `T#2`. The queue grows a duplicate instead of the instruction reading its own result.
 
 <!-- PTO-READER-BLOCK: scalar-c-or-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `SrcL` field selects the left operand through Reg5.
-- The 5-bit `SrcR` field selects the right operand through Reg5.
+- `SrcL` and `SrcR` are Reg5 sources: codes `0..23` select absolute GPRs, `24..27` select `T#1..T#4`, and `28..31` select `U#1..U#4`, without consuming a queue entry.
+- The destination is fixed to `T`: exactly one XLEN result is pushed per successful execution.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: duplicate and mixed source pairs are legal and every source code is assigned. Only an unavailable selected temporary prevents the push.
+
+Design point: encoded zero of one source reads the architectural zero GPR, so `c.or a0, zero, ->t` pushes a copy of `a0` and `c.or zero, zero, ->t` pushes `0`. An inclusive OR with zero is the compressed copy operation.
 
 <!-- PTO-READER-BLOCK: scalar-c-or-effects role=effects -->
 ## Effects and ordering
 
-Any scalar source is snapshotted before publication, and the completed instruction pushes exactly one result to T.
+Both sources are snapshotted before the `T` push, so a source that names a queue entry sees the pre-instruction queue.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 2 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+After the push, `TPC` advances by `2` bytes. No GPR, `U` entry, memory, reservation, descriptor, numeric-status, bundle, privilege, predicate or control-flow state changes, and no source queue entry is consumed.
 
 <!-- PTO-READER-BLOCK: scalar-c-or-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every encoded source value is assigned, so `C.OR` has no reserved source code.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before the push, before `TPC` advances, and before any other effect. An undecodable 16-bit form raises `Fault_IllegalInstruction` at `PC`, and an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`.
+
+Design point: bitwise inclusive OR is total, so `C.OR` has no value-dependent fault and no status flag. Setting a bit another part of the program owns is a programming error, not an exception.
 
 <!-- PTO-READER-BLOCK: scalar-c-or-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `C.OR` example, inputs `0xc` and `0xa` produce `0xe`.
+With `T#1` holding `12` and `U#1` holding `10`, `c.or t#1, u#1, ->t` pushes `12 OR 10 = 14` to `T#1`, moves the old value `12` to `T#2`, and leaves `U#1` at `10`. With `SrcR` naming the architectural zero GPR and `SrcL=15`, the pushed value is `15`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

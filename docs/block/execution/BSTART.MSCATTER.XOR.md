@@ -19,32 +19,61 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-xor-purpose role=purpose -->
 ## Purpose and scope
 
-`BSTART.MSCATTER.XOR` is the stable reader entry point for this accepted operation. The normative `ASL` source and the generated contract sections on this page remain the only owners of architectural behavior.
+`BSTART.MSCATTER.XOR` opens a Tile memory bundle whose operation is `MSCATTER_XOR`: an indexed reduction. For each lane it reads the GM element at a base address plus a byte displacement, XORs it with a value from a Local value Tile, and writes the result back. It returns no Tile.
+
+The command is one 32-bit word (match `0x01a11181`, mask `0x07ffffff`) with `DataType` in bits 31 to 27. It carries the fixed TLSU selector 26, which the reduction table maps to `GMReduction_XOR`. A reserved `DataType` code raises `Fault_IllegalInstruction` at the `BSTART`, before [bundle start dispatch](../model/dispatch/start.md) commits any predecessor.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-xor-mechanism role=mechanism -->
 ## How to read the operation
 
-Read the generated Decode and Operation sections together to locate the selected form and semantic handler. This guide adds no alternate execution algorithm.
+At commit, [Tile execution](../model/dispatch/tile-execution.md) sends every function from 8 to 12 and 14 to 27 that no earlier selector claims to the [GM atomic and reduction handler](../model/dispatch/tlsu-gm-atom-red.md). Function 26 is a reduction, so the handler resolves no destination and calls `GM_RED_VALUE`.
+
+`GM_RED_VALUE` first visits every active lane. It probes the address for read and for write, and raises `Fault_DataPage` if the two translations differ. Only after all lanes pass does it apply the updates, one lane at a time in an arbitrary order: load the old value, compute `old XOR value`, store it, and record an atomic memory event.
+
+Design point: all probes run before the first update. A translation or permission fault on any lane therefore leaves memory unchanged. The contract states this as complete preflight before atomic effects.
+
+Design point: each update reloads the current memory value. Two lanes with the same address both contribute, and because XOR is commutative and associative the final value does not depend on the implementation-defined lane order.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-xor-inputs role=inputs-outputs -->
 ## Inputs and outputs
 
-Use the generated Operands and results table and Block composition section as the complete map of encoded and architectural roles. Do not infer an omitted operand or result from this summary.
+- `DataType` must be `U32` or `U64`; other assigned codes fault at commit.
+- `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col.
+- One `B.IOT` with no destination carries the index Tile in `source0` and the value Tile in `source1`, and carries `last` when no predicate-Tile ExecutionMask is present.
+- One `B.IOR BaseGPR, zero, zero, ->zero` is required; `RegSrc0` is the per-PE base address.
+- The index Tile is S32, U32, S64, or U64. The value Tile has the operation `DataType`. Both have the `B.DIM` valid shape and the bundle layout.
+
+Design point: the operand order is the opposite of plain `MSCATTER`, whose `B.IOT` carries the data Tile first. Here the index comes first, matching the `GM_RED_VALUE` argument order shared by every indexed reduction.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-xor-effects role=effects -->
 ## Effects and state
 
-Use the generated State effects and Memory effects and ordering sections for the complete effect boundary. Executable points are evidence that the owner is exercised, not another source of meaning.
+On success, each active lane has updated one GM element to `old XOR value`, and one atomic event per lane is recorded with the bundle memory order. No Tile, Shared Tile, or register is written, and both source Tiles keep their contents.
+
+The duplicate-address order is implementation-defined, but for XOR it does not change the final memory value.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-xor-constraints role=constraints -->
 ## Boundaries and failures
 
-Defaults, Legality, and Exceptions below define the accepted domain and failure boundary. Reserved values and unsupported combinations remain governed by those generated sections.
+`PE_MASK=0000` is a strict no-op before every schema, descriptor, type, or memory check.
+
+The operation is GM-only. A `B.IOS` binding, a missing `B.IOR`, nonuniform PE masks, illegal dimensions, a wrong type, an undefined source, or a shape or layout mismatch raises `Fault_TileLegality`. A binding count rejected by the handler's own count check raises `Fault_BundleControl`. A memory fault keeps its own kind, and no rollback is needed because there is no destination.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-xor-example role=example -->
 ## Non-normative usage example
 
 Treat the generated `BSTART.MSCATTER.XOR` example as a spelling and navigation aid. Substitute operands only within the legality and state contracts owned below.
+
+```asm
+BSTART.MSCATTER.XOR U32
+B.DIM zero, 8, ->LB0
+B.DIM zero, 8, ->LB2
+B.IOT T#1, T#2, mask=1111, last
+B.IOR a0, zero, zero, ->zero
+BSTOP
+```
+
+`LB1` is omitted, so ValidRow is 1. The index Tile `T#1` and the value Tile `T#2` are 1 x 8 `U32` Tiles. On each PE the 8 lanes are probed for read and write before any update. If two lanes both hold index `0x10` with values `0x0F` and `0xF0`, and the word at `a0 + 0x10` was `0x01`, it ends as `0x01 XOR 0x0F XOR 0xF0`, which is `0xFE`, in either lane order.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

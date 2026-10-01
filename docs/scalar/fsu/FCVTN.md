@@ -19,56 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fcvtn-purpose role=purpose -->
 ## What FCVTN does
 
-`FCVTN` converts FP64, FP32, FP16, or E4M3 input to raw DstType codes `0..7` (UD/UW/UH/UB or SD/SW/SH/SB) with fixed round-nearest through the active numeric profile.
+`FCVTN` converts a floating-point carrier to an integer carrier and writes the result to a Reg5 destination, using the round to nearest with ties to even rule.
+
+The rounding rule is fixed by the mnemonic and is not read from a register field, so a program that needs this rounding can name it directly.
 
 <!-- PTO-READER-BLOCK: scalar-fcvtn-mechanism role=mechanism -->
-## Numeric mechanism
+## Rounding a finite source into the integer destination
 
-`SrcType=00`, `01`, `10`, and `11` select FP64, FP32, FP16, and E4M3 carriers respectively.
+`SrcType` selects the source carrier and every code `0..3` is assigned, meaning FP64, FP32, FP16, and E4M3. `DstType` is a raw five-bit field: raw codes `0..3` select the unsigned destinations `UD`, `UW`, `UH`, and `UB`, raw codes `4..7` select the corresponding signed destinations `SD`, `SW`, `SH`, and `SB`, and raw codes `8..31` are reserved.
 
-The active profile receives snapshotted operands and the mnemonic-selected operation, then returns a result and exact `NV`, `DZ`, `OF`, `UF`, `NX` vector.
+The source is normalised to the full word before the profile runs. The result rounds an already finite value into the integer destination, so the rounding decision happens once, when the fractional part is discarded. Round to the nearest integer and break an exact halfway point toward the even result, so `2.5` becomes `2` and `3.5` becomes `4`.
 
-The `pto-v0` reference profile uses the same deterministic value, rounding, range, special-value, saturation, and flag rules as `TCVT` for every shared type pair; scalar conversion supplies saturation disabled.
+Design point: because the rule is a fixed part of the contract, the same source value always produces the same integer for this mnemonic, independently of the current rounding-mode field, and two programs that need different tie-break rules simply name different mnemonics.
 
 <!-- PTO-READER-BLOCK: scalar-fcvtn-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `DstType` selects the destination-carrier code.
+- `SrcL` supplies the sole Reg5 source.
+- `SrcType` selects the source carrier; every code `0..3` is assigned.
+- `DstType` selects the destination integer width and signedness; codes `0..7` are assigned and codes `8..31` are reserved.
+- `RegDst` selects the destination: codes `1..23` write the named absolute GPR, code `30` pushes the `U` queue, code `31` pushes the `T` queue, and code `0` plus codes `24..29` discard the result.
 
-- `RegDst` selects the encoded destination or discard behavior.
-
-- `SrcL` supplies the left scalar source.
-
-- `SrcType` selects the source-carrier width.
-
-- Reg5 source selectors may read GPR, T, or U state without consuming temporary entries.
-
-- The destination selector writes a GPR, pushes T/U, or discards only the result.
+Reg5 source codes read absolute GPRs, `T#1..T#4`, or `U#1..U#4` without consuming a queue entry. Encoded zero in `SrcL` reads the architectural zero GPR.
 
 <!-- PTO-READER-BLOCK: scalar-fcvtn-effects role=effects -->
 ## Effects and ordering
 
-All explicit sources are snapshotted before numeric-status or destination effects.
+The integer result is normalised to the selected destination width and written once, and the flags the profile returns are ORed into the sticky numeric status. `TPC` then advances by `4` bytes. No memory, reservation, or descriptor state changes.
 
-All five profile-returned flags are ORed into sticky numeric state; the operation cannot clear an existing flag.
-
-The result is published or discarded, then `TPC` advances by `4` bytes. The instruction has no memory or reservation effect.
+A NaN source publishes zero for the destination and an infinity source publishes the destination endpoint, and both cases record `NV` rather than raising a trap. The mnemonic does not saturate the result; saturation is disabled for scalar conversion.
 
 <!-- PTO-READER-BLOCK: scalar-fcvtn-constraints role=constraints -->
-## Type and profile boundaries
+## Type legality and the rounding field
 
-All four `SrcType` values are assigned. Unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+Type legality is resolved before the first architectural source read: every `SrcType` is legal and `DstType` must be at most `7`. A reserved destination type, a fixed-bit mismatch, or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before any source, profile, destination, flag, queue, or `TPC` effect.
 
-Raw DstType codes `0..7` are assigned; `8..31` are reserved and reject before effects.
-
-The portable instruction contract owns carrier selection, snapshots, flag accumulation, publication, and fault order; the active named profile owns the numeric result and produced flags.
+Every Reg5 destination code is assigned, so no destination encoding is illegal. The mnemonic does not consult the active rounding field, so changing that field does not change this instruction's result. Numeric status flags update sticky status and never raise a synchronous PTO trap.
 
 <!-- PTO-READER-BLOCK: scalar-fcvtn-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
 
-`fcvtn.fd2sd a0, ->a1` selects its carriers, snapshots its sources, invokes the active profile, accumulates returned flags, publishes the result, and then advances `TPC`.
+The canonical example is `fcvtn.fd2sd a0, ->a1`: GPR `a0` holds `0x4004000000000000`, standing for `2.5`, and the form whose encoded `DstType` selects `SD` writes `2` to the destination, because `2` is the even neighbour.
+
+The companion example `fcvtn.fs2sw t#1, ->u` converts the FP32 carrier in the low word of the `T#1` entry to a signed 32-bit integer and pushes the result to the `U` queue.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

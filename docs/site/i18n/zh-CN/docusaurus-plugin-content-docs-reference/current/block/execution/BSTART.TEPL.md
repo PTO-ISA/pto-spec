@@ -19,36 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-tepl-purpose role=purpose -->
 ## BSTART.TEPL 的作用
 
-`BSTART.TEPL` 是 `TEPL` 形式的 32 位 Block 起始命令。它建立待处理 Block 的身份和选择参数；真正执行 Block body 并提交结果的是完成后的整个 Block，而不是起始命令本身。
+`BSTART.TEPL` 是唯一由其 `Mode` 与 `Function` 字段选择操作的 32 位编码，它选出的每个操作都在 VEC 或 SFU 引擎上运行。其 `Mode` 和 `Function` 字段组成一个七位选择器来命名操作，`DataType` 字段命名元素类型。
+
+规范汇编从不输出 `BSTART.TEPL`。它输出带操作名的 [BSTART.VEC](BSTART.VEC.md) 或 [BSTART.SFU](BSTART.SFU.md)，两个别名都产生完全相同的位。`BSTART.TEPL` 仍作为兼容输入被接受。
 
 <!-- PTO-READER-BLOCK: block-bstart-tepl-mechanism role=mechanism -->
 ## 位置与机制
 
-起始命令之后的 header 命令按顺序执行；`BSTOP` 或下一条 `BSTART` 是验证并退休完整 Block 的边界。当前所有者给出以下确切组成检查表：
+[译码](../model/dispatch/decode.md)构建操作描述符：类别为 Tile 元素，`mode` 来自 `Mode`，选择器位 `4:0` 来自 `Function`，外加数据类型。Tile 译码码由位 `6:5` 的 `Mode` 与位 `4:0` 的 `Function` 组成。
 
-```text
-BSTART.TEPL is the unchanged Mode:Function carrier. It retires any active predecessor, installs one Tile-element block descriptor, and accepts either the VEC or SFU operation assigned to that selector.
-BSTART.TEPL remains accepted compatibility input, but canonical assembly and disassembly select BSTART.VEC or BSTART.SFU from the operation's execution engine.
-```
+随后[指令束启动分派](../model/dispatch/start.md)在提交任何前驱之前，用[描述符合法性](../model/dispatch/descriptor-legality.md)检查该描述符。译码码必须命名 TEPL 族中已分配的操作，数据类型必须是具体类型。两者都满足时，分派提交前驱、打开块并安装描述符。
 
-任何有效前序 Block 成功退休后，该命令初始化新的待处理 `BARG` 或操作描述符，并从顺序 PC 继续执行 header。仅仅成功解码起始命令，不会让 Block 目的结果或内存结果变得可见。
+操作本身稍后运行。在 `BSTOP` 或下一条 `BSTART` 时，[提交验证](../model/commit/validation.md)调用 [Tile 执行分派](../model/dispatch/tile-execution.md)，由它验证指令束并运行操作，例如对 `TADD` 运行 `ExecuteTileBinary`。
+
+设计要点：操作身份放在一个选择器中，形状、属性与操作数来自共享的 header 命令 `B.DIM`、`B.DATR` 和 `B.IOT`。因此所有 VEC 与 SFU 操作共用同一种起始编码、同一种描述符格式和同一条提交路径。
 
 <!-- PTO-READER-BLOCK: block-bstart-tepl-inputs role=inputs-outputs -->
 ## 操作数与 header 角色
 
-- `DataType` 选择元素数据类型或继承哨兵；其确切分配域仍以下方生成契约为准。
-- `Mode` 提供具名选择器或属性字段；其确切分配域仍以下方生成契约为准。
-- `Function` 提供具名选择器或属性字段；其确切分配域仍以下方生成契约为准。
+- `Mode` 位于位 `26:25`，是选择器的高位部分。
+- `Function` 位于位 `24:20`，是选择器的低位部分。`TADD` 为 `Mode` 0 `Function` 0，`TEXP` 为 `Mode` 0 `Function` 18。
+- `DataType` 位于位 `31:27`，是元素类型。接受编码 0 到 21 以及 24 到 28；22、23 以及 29 到 31 保留。编码零选择 `FP64`。
+
+块 schema 的其余部分属于所选操作自己的页面。例如 `TADD` 需要 `B.DIM LB0` 和一条带两个源与一个目标的终止 `B.IOT`。
 
 <!-- PTO-READER-BLOCK: block-bstart-tepl-effects role=effects -->
 ## 待处理状态与完成
 
-对适用性和目标检查而言，起始状态转换与前序 Block 退休是全有或全无的。起始命令成功后，后续完成边界会在任何 body 结果提交前验证完整组成。
+前驱提交后，起始命令写入 `BPC`、块类型为 Tile 元素且转移为 `Fallthrough` 的 `BARG`，以及操作描述符。`TPC` 移到下一条指令。起始命令本身不分配 Tile、不读取源，也没有内存效果。
+
+提交时，失败的操作使块保持有效且 header 完整，并且 Tile 执行所有者已回滚其目标。成功的操作发布其目标，块在顺序后续地址继续。
 
 <!-- PTO-READER-BLOCK: block-bstart-tepl-constraints role=constraints -->
 ## 合法性与故障边界
 
-保留选择器、无效目标、完成后的组成错误或前序退休失败，都会在新 Block 或 body 影响之前被拒绝。
+- 保留的 `DataType` 编码不满足操作数合法性，引发 `Fault_IllegalInstruction`。
+- 未分配的 `Mode:Function` 选择器不满足描述符合法性，引发 `Fault_IllegalInstruction`。
+
+这两项检查都先于前驱提交和 `BARG` 变化，因此被拒绝的 `BSTART.TEPL` 不会触动有效前驱。
+
+设计要点：`DTYPE_NONE`（编码 31）在该编码中保留。只有 `TMOV` 能从源推断类型，而 `TMOV` 不是 TEPL 操作，因此每个 VEC 或 SFU 块的 `BSTART.TEPL` 起始命令都命名具体类型。
+
+操作特定的合法性，例如所选操作不支持的类型或格式错误的 `B.IOT`，在提交时检查并在那里产生故障。
 
 <!-- PTO-READER-BLOCK: block-bstart-tepl-example role=example -->
 ## 非规范示例
@@ -56,10 +68,10 @@ BSTART.TEPL remains accepted compatibility input, but canonical assembly and dis
 以下为非规范示例，仅用于说明当前所有者，不替代其定义。
 
 ```asm
-BSTART.TEPL Mode, Function, DataType
+BSTART.TEPL 0, 0, FP32
 ```
 
-假设前序 Block 退休和目标检查成功，`BSTART.TEPL Mode, Function, DataType` 会打开待处理的 `BSTART.TEPL` 形式；后续 header/body 命令仍是暂定状态，直到 `BSTOP` 或下一条 `BSTART` 验证完整组成。
+`Mode` 0、`Function` 0 选择 `TADD`，`DataType` 1 选择 `FP32`。以匹配值 `0x00019181` 为基础，在位 `31:27` 放入 `DataType` 1 得到指令字 `0x08019181`。规范反汇编把同一个字输出为 `BSTART.VEC TADD, FP32`。把 `Function` 改为 18 得到 `0x09219181`，它选择 `TEXP`，反汇编为 `BSTART.SFU TEXP, FP32`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

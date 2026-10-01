@@ -19,47 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-texp-purpose role=purpose -->
 ## What TEXP does
 
-`TEXP` is a selector-encoded Tile operation executed by `SFU`. It applies the selected same-type natural exponential to every valid floating element; its current instruction contract owns the exact bundle form and publication boundary.
+`TEXP` computes the natural exponential `exp(x)` of each element of one Local floating Tile and writes the results into a newly allocated Local destination Tile of the same type. Unlike `TADD`, it reads one source, accepts only floating types, and runs on the `SFU` engine.
+
+Design point: `TEXP` keeps the TEPL carrier Mode 0 Function 18 (selector `0x012`) and has no standalone opcode. Its canonical header is `BSTART.SFU TEXP, DataType`. `BSTART.SFU` is an alias of `BSTART.TEPL` that adds no encoding bits, so the engine name changes only the assembly spelling.
 
 <!-- PTO-READER-BLOCK: tile-texp-mechanism role=mechanism -->
 ## Element and Tile mechanism
 
-After all descriptor and operand checks succeed, the owning ASL handler applies the selected same-type natural exponential to every valid floating element. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+After complete preflight, `ExecuteTileUnary` computes one result for each coordinate in the valid rectangle `ValidRow x ValidCol`. Each element is first checked against a fixed table of special inputs. Only an ordinary finite input reaches the numeric profile's approximation, whose result is rounded to the `DataType` with the fixed default rounding.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+The special-input table for `TEXP` is:
+
+- Positive or negative zero produces exactly `1.0`.
+- `+inf` stays `+inf`.
+- `-inf` produces `+0`.
+- Any NaN produces the canonical quiet NaN; a signaling NaN also records NV.
+
+Design point: the special table fixes the exact answers before any approximation runs. `exp(0)` is exactly one and `exp(-inf)` is exactly zero on every implementation, so a program can use `-inf` inputs to produce exact zeros.
+
+Each element reports status in the five flags NV, DZ, OF, UF, and NX (invalid, divide-by-zero, overflow, underflow, and inexact). The flags of all active elements are ORed together and recorded when the destination is published. Recording a flag never raises a fault.
 
 <!-- PTO-READER-BLOCK: tile-texp-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` has the exact contract role **new Local floating destination**.
-- `source0` has the exact contract role **persistent Local floating source**.
+- `source0` is the persistent Local floating source. It is not modified.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected operation `DataType`, and its shape and layout match the source.
 
-Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
-Every source coordinate read by the operation must be defined before execution reaches destination publication.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+Both Tiles are bound by one terminating `B.IOT` and share one `PE_MASK`. `PE_MASK=0000` is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects.
+
+Design point: the complete source is snapshotted before the destination is published, so the destination may alias the source and still receives results computed from the old values. A source may be stored with a different same-width, non-packed backing type, for example `U16` data read as `FP16`; its bits are then validated as the selected `DataType`.
 
 <!-- PTO-READER-BLOCK: tile-texp-effects role=effects -->
 ## Publication, definedness, and padding
 
-Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+The destination descriptor, the valid-region results, the padding, the definedness of every element, and the accumulated numeric status are published together. A rejected bundle leaves architectural state unchanged.
 
-Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero` writes zero; `Max` and `Min` write the largest and smallest finite value of the `DataType`; `Null` leaves those elements undefined. Omitting `B.DATR` selects `Null`, while an explicit code `00` selects `Zero`.
 
-The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+`TEXP` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value and contribute no status.
 
 <!-- PTO-READER-BLOCK: tile-texp-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The accepted data-type set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`.
+The ASL legality predicate `TileFloatingElementwiseDataTypeSupported` accepts `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, and `E5M2`. The NDF clause for `TEXP` names only `FP16`, `FP32`, and `BF16`, and the finite-value reference approximation is defined only for those three types, so code should use one of them. Integer and packed types are rejected.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`, and both operands must use that same layout. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal. `TEXP` rejects nondefault `RMode`, `Sat`, and `CMode`.
+
+Malformed bindings, `B.IOR` or `B.IOS`, missing or zero dimensions, an unsupported `DataType`, an undefined source or invalid source encoding, a descriptor mismatch, or an invalid capacity raise the applicable Tile fault before any destination effect. Special floating inputs never fault; they produce the table results above.
 
 <!-- PTO-READER-BLOCK: tile-texp-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `TEXP` example, input zero produces same-type positive one.
+For `FP32`, a source row `[0.0, -inf, +inf, NaN]` produces the destination row `[1.0, +0.0, +inf, NaN]`. No flag is recorded for these inputs when the NaN is quiet.
+
+In macro form, an 8 x 64 `FP32` operation is `TEXP <Row=8, Col=64, FP32>, T#1, ->T<2KB>`, where `T#1` is the source. The destination payload is 8 x 64 x 4 = 2048 bytes, exactly the 2KB capacity.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

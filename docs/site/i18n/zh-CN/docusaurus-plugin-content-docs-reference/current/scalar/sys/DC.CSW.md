@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-csw-purpose role=purpose -->
 ## DC.CSW 的作用
 
-`DC.CSW` 同步完成所分配的缓存或地址翻译维护请求，并记录精确操作令牌。
+`DC.CSW` 执行数据缓存 clean-by-set/way 作用域令牌维护操作并同步完成，因此该指令退休时该次尝试已经结束。它唯一的操作数 `SrcL` 携带标识本次请求作用域的令牌（`asl/scalar/sys/DC.CSW.asl:29`）。
 
 <!-- PTO-READER-BLOCK: scalar-dc-csw-mechanism role=mechanism -->
 ## 系统机制
 
-ASL DOC 区域选择 `ScalarHandler_ExecuteMaintenance`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+该指令绑定到共用的维护处理程序（`asl/scalar/sys/DC.CSW.asl:11`），也绑定到操作令牌 `Maintenance_DC_CSW`（`asl/scalar/sys/DC.CSW.asl:23`）。`ExecuteMaintenance` 用该令牌对照特权表和操作表，而 `Maintenance_DC_CSW` 分支属于推进 `_DataCacheEpoch` 的八个数据缓存分支之一（`asl/scalar/model/sys/semantics.asl:134`）。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+这是一条 SYS 块指令。它的适用性规则要求 bundle 处于活动状态，且其块体的块种类为 `BundleKind_System`（`asl/scalar/model/sys/semantics.asl:321`）。
 
 <!-- PTO-READER-BLOCK: scalar-dc-csw-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`SrcL` 承载 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。
+`SrcL` 是 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。派发器捕获解码后的寄存器值，并把它作为操作数交给执行器（`asl/scalar/model/dispatch/sys.asl:39`）。
 
-编码零是已分配的字段值，从不表示省略操作数。
+`DC.CSW` 不写目的地。它记录该操作数而不是返回它，并且编码零是已分配的值，不是省略的操作数。
 
 <!-- PTO-READER-BLOCK: scalar-dc-csw-effects role=effects -->
 ## 架构效果
 
-成功时，维护记录接收 `Maintenance_DC_CSW` 和精确捕获的操作数令牌。
+在无故障的尝试中，数据缓存纪元递增一，维护记录被 `Maintenance_DC_CSW` 与操作数值覆盖。该记录的更新受执行器内部故障检查保护，因此发生故障的尝试不会改动它（`asl/scalar/model/sys/semantics.asl:156`）。
 
-选中的缓存或 TLB 纪元恰好递增一次，然后 `TPC` 前进；该操作是同步完成的本地提示。
+设计要点：指令完成被建模为一次纪元推进加上一个已记录的令牌。这样软件获得了一个已定义、可观测的完成点，同时不约束具体实现实际清洗多少缓存行。
+
+`TPC` 在尝试报告成功后前进；该增量是一个指令长度，而不是一个纪元（`asl/scalar/model/dispatch/top-level.asl:56`）。
 
 <!-- PTO-READER-BLOCK: scalar-dc-csw-constraints role=constraints -->
 ## 位置与拒绝边界
 
-缓存维护在每个 ACR 都是同步本地提示，并不定义额外的实现缓存内容。
+处于活动 SYS 块体之外的 `DC.CSW` 会在操作数合法性被评估之前以 `Fault_BundleControl` 拒绝，因此纪元和记录都不变。在块体内部，固定位与 `SrcL` 编码在执行器运行之前完成校验。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+数据缓存维护没有环限制：除四个 TLB 操作之外，`MaintenanceAccessPermitted` 对每个操作都返回 `TRUE`（`asl/scalar/model/sys/semantics.asl:123`）。因此 `DC.CSW` 中不存在因环、地址或访问类别而触发的 `Fault_IllegalInstruction` 路径。
 
 <!-- PTO-READER-BLOCK: scalar-dc-csw-example role=example -->
 ## 非规范示例
 
 该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
 
-可从 `dc.csw SrcL` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+从 SYS 块体执行 `dc.csw SrcL`，源寄存器持有令牌 7。位置与编码检查通过，寄存器被快照，数据缓存纪元递增一，随后维护记录显示 `Maintenance_DC_CSW` 与操作数 7。重复同一条指令会再次推进纪元，并用同一令牌改写记录。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,42 +19,60 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-swapb-purpose role=purpose -->
 ## What SWAPB does
 
-`SWAPB` atomically replaces one byte with `SrcR` and publishes the prior 8-bit value.
+`SWAPB` atomically replaces the `1`-byte value at the address in `SrcL` with the low `8` bits of `SrcR`, and publishes the byte it displaced.
+
+This is the one-byte member of the `SWAP` family. Every byte address is naturally aligned, so the form has no alignment restriction beyond the address being a real byte address.
 
 <!-- PTO-READER-BLOCK: scalar-swapb-mechanism role=mechanism -->
 ## Atomic mechanism
 
-The ASL DOC contract selects `ScalarHandler_AtomicReadModifyWrite` with an access width of `1` byte.
+The instruction contract returns `ScalarHandler_AtomicReadModifyWrite` with `Atomic_SWAP` and an access width of `1` byte. The model then executes `AtomicReadModifyWrite`, which probes read access and write access for the same `1` byte and requires both probes to translate to the same address before it loads, replaces, and stores.
 
-The read and write probes must resolve to the same translated location before the atomic exchange can commit.
+`SrcL` and `SrcR` are snapshotted before any memory or destination effect, and `RegDst` is written only after the atomic commit reports no fault.
+
+Because the handler reads a `1`-byte value, the published old value is first normalized by `NormalizeAtomicReturn` at width `1`, which returns the zero-extended byte.
 
 <!-- PTO-READER-BLOCK: scalar-swapb-inputs-outputs role=inputs-outputs -->
 ## Inputs and result
 
-`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 byte replacement source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 byte replacement source; `RegDst` carries the Reg5 old-value destination; `aq` and `rl` carry the ordering bits; `far` carries the flat-address routing hint.
 
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+All `32` `SrcL` and `SrcR` encodings are assigned: codes `0..23` select absolute GPRs, `24..27` select `T#1..T#4`, and `28..31` select `U#1..U#4`.
+
+All `32` `RegDst` encodings are assigned too. Codes `1..23` write the named absolute GPR, code `0` and codes `24..29` discard the old value, code `30` pushes it to the `U` queue, and code `31` pushes it to the `T` queue. Encoded zero in either source reads the architectural zero register.
+
+Design point: `SrcR` and `RegDst` are the same size and share one encoding space, so one instruction can name `T#1` as both the replacement source and the destination. The snapshot happens first and the destination write second, so the destination receives the old memory byte, not the value just read from the queue.
 
 <!-- PTO-READER-BLOCK: scalar-swapb-effects role=effects -->
 ## Effects and ordering
 
-On success, one atomic event records the exchange and the old value is published only after the memory update commits.
+`aq=0,rl=0` records the atomic event with relaxed ordering; `aq=1,rl=0` selects acquire, `aq=0,rl=1` selects release, and `aq=1,rl=1` selects acquire-release. `far=1` is a routing hint only, and the reference profile keeps the same architectural address and result.
 
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+On success the instruction records exactly one atomic event, updates memory, leaves `SrcL` and `SrcR` unchanged, and advances `TPC` by `4` bytes.
+
+A completed write invalidates a local reservation when it overlaps the `64`-byte reservation granule and preserves a reservation on a different granule.
+
+No numeric status flag and no memory ordering effect on any other location is recorded.
 
 <!-- PTO-READER-BLOCK: scalar-swapb-constraints role=constraints -->
 ## Legality and precise faults
 
-Every byte address is naturally aligned. Alignment, translation, and permission checks precede architectural effects.
+Every value of `aq`, `rl`, and `far` is assigned, so there is no reserved modifier combination to reject.
 
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+The check order is fixed: decode, then operand legality, then the read and write probes. Translation and permission failures report the original address, and the two probes must agree on the translated address.
+
+A failing preflight publishes no destination value, records no memory event, leaves the reservation unchanged, and does not advance `TPC`. Trap entry saves the original `TPC` so the instruction can be reissued.
+
+Design point: the destination is written only on the no-fault path, so a faulted `SWAPB` cannot leave a stale value in the destination register that software might mistake for the pre-swap memory byte.
 
 <!-- PTO-READER-BLOCK: scalar-swapb-example role=example -->
 ## Non-normative example
 
-This example only shows one accepted spelling; the generated contract below remains authoritative.
+Take `a0 = 1024`, `a1 = 1`, and `a2 = 0`, and let the byte at address `1024` hold `5`.
 
-For a first reading, use `swapb [SrcL], SrcR, ->Rd` and then vary only the ordering or route modifiers described above.
+`swapb [a0], a1, ->a2` replaces that byte with `1` and leaves `a2` holding `5`.
+
+Before: the byte is `5` and `a2` is `0`. After: the byte is `1` and `a2` is `5`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

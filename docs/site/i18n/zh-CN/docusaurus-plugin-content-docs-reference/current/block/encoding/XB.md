@@ -19,39 +19,39 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-xb-purpose role=purpose -->
 ## XB 的作用
 
-`XB` 标识由扩展拥有的编码空间；PTO 只登记该空间，并始终在解释字段或产生架构效果前拒绝。
+`XB` 指的是一个属于扩展而非 PTO 的 32 位编码族。列出 `XB ACR-ID, C-ID` 这一写法，是为了登记该编码族并防止编码冲突。在 PTO 中它不可执行：匹配的指令会引发 `Fault_IllegalInstruction`，除非下文所述的更早的块控制检查先拒绝它。
 
 <!-- PTO-READER-BLOCK: block-xb-mechanism role=mechanism -->
-## 放置与执行机制
+## 译码与拒绝机制
 
-`XB` 作为独立的 `32` 位命令执行，不要求放在 `BSTART`/`BSTOP` Block 体内。
+该编码族包含低 15 位在掩码 `0x00007fff` 下匹配 `0x6f81` 的每个 32 位字。位 24:15 是 10 位字段 `ACR-ID`，位 31:25 是 7 位字段 `CROSS-BID`。汇编写法把第二个字段写作 `C-ID`。
 
-匹配的原始编码族使用 `L32` 编码类别，但 PTO 会在解释任一显示字段前拒绝。
+译码仍会识别该形式，并把它映射到处理程序 `ExecuteCrossBlockTransfer`。随后命令分派器调用 `CommandHandlerSupported`，它对该处理程序返回假。分派器在当前 `TPC` 处引发 `Fault_IllegalInstruction`，并在到达处理程序分支之前返回。
 
-解码只保留冲突检测身份；配置拒绝发生在操作数解释、内存、Block 状态与控制流效果之前。
+设计要点：即使 PTO 从不执行该形式，它仍保留译码身份。ASL 说明保留该身份只用于冲突登记与失败即关闭的分派。因此检查编码重叠的工具会把该编码族视为已占用，而任何匹配的字都会到达显式的 `CommandHandlerSupported` 拒绝。
 
 <!-- PTO-READER-BLOCK: block-xb-inputs role=inputs-outputs -->
-## 载体、绑定与输入
+## 字段与操作数
 
-- 编码操作数：`ACR-ID` — PTO 中保留且不解释的扩展字段; `CROSS-BID` — PTO 中保留且不解释的扩展字段。
-- 所有操作数都来自已接受载体或命名架构状态；命令不会创建 Block 体私有的隐藏操作数流。
-- 编码零仍是已分配值或明确规定的拒绝值；它不会静默表示省略操作数。
+- `ACR-ID` 宽 10 位。PTO 不解释它，包括编码零。
+- `CROSS-BID` 宽 7 位。PTO 不解释它，包括编码零。
+- `XB` 在 PTO 中没有默认值，也没有放置规则。它不是头部命令，其拒绝也不取决于是否有活动块。
+
+设计要点：`ACR-ID` 的全部 1024 个取值与 `CROSS-BID` 的全部 128 个取值都保持保留。PTO 不得在这个原始编码族中分配任何其他指令，因此后续扩展可以定义这些字段而不与 PTO 冲突。
 
 <!-- PTO-READER-BLOCK: block-xb-effects role=effects -->
 ## 状态效果与顺序
 
-该形式始终引发 `Fault_IllegalInstruction`，且不改变 Block、内存或控制流状态。
+在 PTO 中该形式没有状态效果。拒绝先于操作数解释、内存访问、块状态变化以及控制流变化。
 
-该原始编码的完整字段族持续受到冲突保护。
+分派器本应调用的处理程序主体会记录两个字段，并把 `BARG` 的转移标记为间接转移。该主体在 PTO 中不可达，因为 `CommandHandlerSupported` 会先拒绝 `ExecuteCrossBlockTransfer`。
 
 <!-- PTO-READER-BLOCK: block-xb-constraints role=constraints -->
 ## 合法性、故障与原子性
 
-固定比特、保留值、选择器取值域与必需的 Block 放置关系都在架构效果之前检查。
+每个匹配的 32 位字都以当前 `TPC` 引发 `Fault_IllegalInstruction`，`TPC` 不前进。有一项更早的顶层检查可能优先：当 `ACRC` 请求使 System 块终止标记保持置位时，顶层分派器会以 `Fault_BundleControl` 拒绝除块启动或块停止之外的每条命令，且该检查在处理程序支持检查之前执行。
 
-当前归属单元通过 `Fault_IllegalInstruction` 报告无效模式、状态、地址或后继条件；本页说明文字不创建额外故障规则。
-
-除非当前归属单元明确规定带保留进度的重启边界，否则拒绝发生在效果之前；完成顺序始终采用 ASL 顺序。
+故障发生在读取 `ACR-ID` 或 `CROSS-BID` 之前。任何字段值都不能改变结果，因此没有针对字段的故障。
 
 <!-- PTO-READER-BLOCK: block-xb-example role=example -->
 ## 非规范示例
@@ -62,7 +62,7 @@ The current instruction contract is owned by the ASL source linked above.
 XB ACR-ID, C-ID (reserved in PTO)
 ```
 
-所示拼写只标识已占用的扩展空间；PTO 会在解释任一显示字段之前拒绝所有匹配载体。
+字 `0x00006f81` 的两个字段均为零，匹配该编码族。字 `0x0202ef81` 的 `ACR-ID = 5`、`CROSS-BID = 1`，同样匹配。二者都在各自地址处引发 `Fault_IllegalInstruction`，都不改变任何块、内存或控制流状态。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

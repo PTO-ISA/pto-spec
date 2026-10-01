@@ -19,47 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-oriw-purpose role=purpose -->
 ## ORIW 的作用
 
-`ORIW` 是一条 32 位标量 ALU 指令。它按照低 32 位字，再符号扩展到 XLEN结果规则执行按位或；当前指令契约定义结果发布路径以及任何额外状态效果。
+`ORIW` 把 `SrcL` 的低 `32` 位与一个符号扩展的 `12` 位立即数的低 `32` 位做按位或，并发布符号扩展到 `PTO_XLEN` 的 `32` 位结果。它有三个字段：`RegDst` 位于 `[7 +: 5]`、`SrcL` 位于 `[15 +: 5]`、`simm12` 位于 `[20 +: 12]`。
+
+该载体在掩码 `0x0000707f` 下匹配 `0x00003035`，处理函数是 `ScalarBinaryW`。因此该指令在运算前丢弃源的高字，并在运算后重建符号位。
+
+`ORIW` 与 `OR` 共享目标映射，`ORIW` 与 `ORI` 共享 `12` 位立即数形式，但只有 `ORIW` 收窄到低字。
 
 <!-- PTO-READER-BLOCK: scalar-oriw-mechanism role=mechanism -->
-## 结果形成方式
+## 字结果形成方式
 
-执行时先对编码输入做快照，然后按照低 32 位字，再符号扩展到 XLEN结果规则执行按位或，最后才产生目标效果。
+分派路径在 `asl/scalar/model/dispatch/alu.asl:108-110` 处以 `word_operation` 为真调用 `ExecuteDecodedImmediateBinary`。该路径进入 `ScalarBinaryW(ScalarBinary_OR, left, right)`，它把 `left32` 绑定为 `left[31:0]`、`right32` 绑定为 `right[31:0]`，对两个 `32` 位模式做或运算，并返回 `SignExtend{PTO_XLEN}(result32)`。
 
-- 立即数宽度与扩展规则由下方编码字段确定；除非生成契约给出其他零值含义，编码零提供数值零。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+oriw SrcL, simm, ->{t, u, Rd}
+```
+
+设计要点：立即数在宽度收窄之前先符号扩展到 `PTO_XLEN`，但只有其低字保留下来。因此 `simm12 = -1` 向字级或运算贡献 `0xFFFFFFFF`，发布的字就是全一值。
+
+设计要点：字结果的第 `31` 位被复制到 `63..32` 位。第 `31` 位为 `1` 的字会发布全一的高半部，因此仅凭收窄本身，`oriw` 不会产生零扩展的字。
 
 <!-- PTO-READER-BLOCK: scalar-oriw-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 标量结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择标量值，其中只有低 32 位参与。
-- `simm12` 是 12 位有符号字段，携带有符号 12 位立即数。
+`SrcL` 选择一个 Reg5 源；立即数由载体译出；`RegDst` 选择 Reg5 目标。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+- `SrcL`，指令切片 `[15 +: 5]`：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`，非消耗。只有 `SrcL[31:0]` 参与运算。
+- `simm12`，指令切片 `[20 +: 12]`：有符号，取值 `-2048` 到 `2047`；只有其符号扩展结果的低 `32` 位参与运算。
+- `RegDst`，指令切片 `[7 +: 5]`：`1..23` 写入对应 GPR，`30` 压入 `U`，`31` 压入 `T`，`0` 与 `24..29` 丢弃。
+- `SrcL` 的编码零读取体系结构零 GPR，`simm12` 的编码零提供 `0`。
+
+设计要点：低字相同的两个源在 `ORIW` 下发布相同结果，与它们的高半部无关。该助记符是对该操作的完整描述，而不是 `PTO_XLEN` 或运算的预览。
 
 <!-- PTO-READER-BLOCK: scalar-oriw-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+在写入 `RegDst` 之前读取 `SrcL` 并算出字结果，因此同名目标观察到的是执行前的值。符号扩展后的字发布后，`TPC` 推进 `4` 字节。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
+`ORIW` 不访问内存，保留、描述符、数值标志、陷阱、指令束、特权、谓词与控制流状态都保持不变；唯一可能的队列移动是 `30` 或 `31` 目标所选的一次压入。
 
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+设计要点：`ORIW` 不记录数值状态。收窄不会在任何地方被报告，因此发布的字是该指令唯一可观察的痕迹。
 
 <!-- PTO-READER-BLOCK: scalar-oriw-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+每个 `SrcL` 编码、每个 `RegDst` 编码以及全部 `4096` 个立即数取值都有定义。除固定编码位 `14:12` 与 `6:0` 外，该形式没有约束。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+不匹配的载体在 `PC` 触发 `Fault_IllegalInstruction`。对活动块不适用的指令在 `TPC` 触发 `Fault_BundleControl`，对 `ORIW` 而言仅在系统块终止请求挂起期间可达。所选 `T` 或 `U` 源不可用时在 `PC` 触发 `Fault_IllegalInstruction`。这三项检查都先于目标效果与 `TPC` 推进。
+
+设计要点：`32` 位截断与最终的符号扩展都不会触发故障，因此 `ORIW` 没有依赖取值的陷阱路径。它的故障边界是编码有效性加上源可用性。
 
 <!-- PTO-READER-BLOCK: scalar-oriw-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `ORIW` 示例说明：`SrcL=0xc` 与 `simm12=0xa` 产生 `0xe`。
+当 `a0` 的低 `32` 位为 `0x00F0`、`simm12 = 15` 时，`oriw a0, 15, ->a2` 发布 `0x00FF`。
+
+当 `a0` 为 `0x00000000F0000000`、`simm12 = 15` 时，`a0` 的低字是 `0`，因此字结果是 `15`，`a2` 收到 `15`；`a0` 非零的高半部从不进入按位或。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

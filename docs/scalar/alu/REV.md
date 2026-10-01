@@ -19,48 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-rev-purpose role=purpose -->
 ## What REV does
 
-`REV` is a 32-bit scalar ALU instruction. It reverses byte order inside the selected wrapping field and zero-fills result bits above that field; its current instruction contract defines the result publication path and any additional state effect.
+`REV` selects an `N`-bit field of `SrcL` that starts at bit `M` and wraps around bit `63`, reverses the bytes of that field, and publishes the reversed bytes in result bits `N-1:0`. It has four fields: `RegDst` at `[7 +: 5]`, `SrcL` at `[15 +: 5]`, `imml` at `[20 +: 6]` and `immr` at `[26 +: 6]`.
+
+The carrier matches `0x00007067` under mask `0x0000707f`. `imml` encodes the width minus one and `immr` encodes the starting bit directly, so both fields use their full six-bit domain.
+
+Both of its non-register fields are operand values: the width and the starting bit are independent, unlike the transformation forms such as `OR` where the two fields are a transformation selector and a shift amount.
 
 <!-- PTO-READER-BLOCK: scalar-rev-mechanism role=mechanism -->
-## How the result is formed
+## How the reversal is formed
 
-Execution snapshots the encoded inputs, then reverses byte order inside the selected wrapping field and zero-fills result bits above that field, and only afterward performs the destination effects.
+Dispatch calls `ReverseBitfieldBytes` with the snapshotted `SrcL`, the decoded width and the decoded `immr` offset (`asl/scalar/model/dispatch/alu.asl:385-391`). The helper tests `width MOD 8` first and returns `Zeros{PTO_XLEN}` immediately when the width is not a multiple of eight. Otherwise it extracts the field with `ExtractBitfield` and copies `field[(byte_index * 8) +: 8]` into `result[(((byte_count - 1) - byte_index) * 8) +: 8]` (`asl/scalar/model/alu/semantics.asl:194-205`).
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+rev SrcL,  M, N, ->{t, u, Rd}
+```
+
+Design point: `ExtractBitfield` rotates `SrcL` right by `M` and keeps the low `N` bits, which is why the selected field wraps: a field that runs past bit `63` continues at bit `0`. The extraction is unsigned, so no sign bit enters the reversal.
+
+Design point: The modulo check runs before anything is extracted, so a width such as `7` is a legal encoding with a defined answer of zero rather than an illegal instruction.
 
 <!-- PTO-READER-BLOCK: scalar-rev-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar input through Reg5.
-- The 6-bit `imml` field encodes the selected field width as `N-1`.
-- The 6-bit `immr` field encodes selected-field starting bit `M`.
+`SrcL` is the only register operand. `imml` and `immr` are decoded from the carrier, and `RegDst` receives the result.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+- `SrcL`, instruction slice `[15 +: 5]`: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, `28..31` read `U#1..U#4`, and the read does not consume an entry.
+- `imml`, instruction slice `[20 +: 6]`: raw values `0` through `63` select widths `1` through `64`, so encoded zero selects `N = 1`.
+- `immr`, instruction slice `[26 +: 6]`: the starting bit `M`, `0` through `63`; encoded zero starts the field at source bit zero.
+- `RegDst`, instruction slice `[7 +: 5]`: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+
+Design point: The helper builds its answer from `Zeros{PTO_XLEN}`, so bits outside the selected field never reach the result.
 
 <!-- PTO-READER-BLOCK: scalar-rev-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is snapshotted before the destination effect, so a destination that aliases the source reverses the pre-instruction value. The result is published and `TPC` advances by `4` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+`REV` reads no memory and changes no reservation, descriptor, numeric-flag, trap, bundle, privilege or control-flow state. A `30` or `31` destination is the only case in which it moves a temporary queue.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: Bits above `N-1` of the published word are zero, and for `N = 64` the reversal occupies the whole `PTO_XLEN` word.
 
 <!-- PTO-READER-BLOCK: scalar-rev-constraints role=constraints -->
 ## Legality and fault boundary
 
-A selected width that is not a whole number of bytes produces zero; this is a defined result, not a fault.
+All `64` `imml` values, all `64` `immr` values, all `32` `SrcL` codes and all `32` `RegDst` codes are assigned. The form has no constraint entry; the only fixed requirement is that the carrier bits outside the fields match `0x00007067`.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unmatched carrier raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`, reachable for `REV` only while a system-block terminal request is pending. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`, before the destination effect and before `TPC` advances.
+
+Design point: A width that is not a multiple of eight completes normally with a zero result, so `REV` has no operand-selected trap. The fault boundary is encoding validity and source availability.
 
 <!-- PTO-READER-BLOCK: scalar-rev-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `REV` example, reversing the two selected bytes of `0x1234` produces `0x3412`.
+With `a0` holding `0x1122334455667788`, `immr = 8` and `N = 32`, the selected field is `0x44556677` and `rev a0, 8, 32, ->a2` publishes `0x77665544`: the field byte that starts at source bit `8` moves to result bits `31:24`, and the other three follow in source order.
+
+With the same source and `immr = 8` but `N = 7`, the width is not a multiple of `8`, so `rev a0, 8, 7, ->a2` publishes `0`. Source bits above the selected field never appear in either result.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

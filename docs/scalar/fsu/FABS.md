@@ -19,50 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fabs-purpose role=purpose -->
 ## What FABS does
 
-`FABS` clears the sign bit of the selected FP64 or FP32 carrier while preserving every other carrier bit.
+`FABS` clears the sign bit of the selected floating-point carrier and publishes the resulting word as an ordinary destination value. It is a bit operation on the carrier, not a rounded arithmetic operation.
+
+The instruction is a unary form of the `FSU` family: one Reg5 source, one Reg5 destination or discard, and no commit or predicate effect.
 
 <!-- PTO-READER-BLOCK: scalar-fabs-mechanism role=mechanism -->
-## Numeric mechanism
+## How the sign is removed
 
-`SrcType=00` selects a complete FP64 carrier; `SrcType=01` selects the zero-extended low 32-bit FP32 carrier.
+`SrcType` selects the carrier. Encoded `00` selects a complete FP64 carrier, so the model masks the read word with `0x7fffffffffffffff`. Encoded `01` selects an FP32 carrier in the low word, so it masks the low `32` bits with `0x7fffffff` and zero-extends the result.
 
-The operation clears only the selected sign bit and produces no new numeric flags.
+Only the sign bit is changed. The exponent and significand bits, including a NaN payload or an infinity exponent, are copied unchanged, and the instruction publishes no numeric flags of its own.
+
+Design point: because the transform never inspects the value class, `FABS` cannot turn a signaling NaN into a quiet one and cannot raise an invalid-operation flag. A program that needs that behavior must use an arithmetic operation instead.
 
 <!-- PTO-READER-BLOCK: scalar-fabs-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `RegDst` selects the encoded destination or discard behavior.
+- `SrcL` supplies the sole Reg5 source.
+- `SrcType` selects the source carrier width.
+- `RegDst` selects the destination: codes `1..23` write the named absolute GPR, code `30` pushes the `U` queue, code `31` pushes the `T` queue, and code `0` plus codes `24..29` discard the result.
 
-- `SrcL` supplies the left scalar source.
-
-- `SrcType` selects the source-carrier width.
-
-- Reg5 source selectors may read GPR, T, or U state without consuming temporary entries.
-
-- The destination selector writes a GPR, pushes T/U, or discards only the result.
+Reg5 source codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`, all without consuming a queue entry. Encoded zero in `SrcL` reads the architectural zero GPR, and encoded zero in `RegDst` discards.
 
 <!-- PTO-READER-BLOCK: scalar-fabs-effects role=effects -->
 ## Effects and ordering
 
-All explicit sources are snapshotted before numeric-status or destination effects.
+The destination is written once with the masked carrier, normalised to the selected width, and `TPC` then advances by `4` bytes. The instruction has no memory, reservation, or descriptor effect.
 
-Existing numeric flags remain unchanged.
-
-The result is published or discarded, then `TPC` advances by `4` bytes. The instruction has no memory or reservation effect.
+Existing numeric status flags are unchanged. Because `FABS` clears only the sign bit of the selected carrier, an FP64 result differs from its source in at most that one bit, while an FP32 result also has its upper `32` bits zeroed, because the selected carrier is the zero-extended low word.
 
 <!-- PTO-READER-BLOCK: scalar-fabs-constraints role=constraints -->
-## Type and profile boundaries
+## Reserved type codes and fault order
 
-`SrcType=10` and `SrcType=11` are reserved. Reserved types and unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+`SrcType` codes `0` and `1` are assigned; codes `2` and `3` are reserved. Encoding legality runs before the first architectural source read, so a reserved `SrcType`, a fixed-bit mismatch, or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before any source, profile, destination, flag, queue, or `TPC` effect.
 
-Numeric flag updates do not themselves raise a synchronous PTO trap.
+Every Reg5 destination code is assigned, so no destination encoding is illegal, and the instruction has no profile hook that could report a numeric exception. Numeric status updates never raise a synchronous PTO trap.
 
 <!-- PTO-READER-BLOCK: scalar-fabs-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
 
-`fabs.fd a0, ->a1` clears only the selected sign bit, publishes the carrier, and leaves numeric flags unchanged.
+For the FP64 form, the canonical example is `fabs.fd a0, ->a1`: GPR `a0` holds `0xc000000000000000`, standing for `-2.0`, and GPR `a1` receives `0x4000000000000000`, standing for `2.0`, with every other bit identical.
+
+For the FP32 form, the canonical example is `fabs.fs t#1, ->t`: the low word of the `T#1` entry is masked with `0x7fffffff` and zero-extended, and the result is pushed to the `T` queue.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

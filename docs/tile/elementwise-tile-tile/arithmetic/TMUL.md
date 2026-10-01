@@ -17,44 +17,60 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tmul-purpose role=purpose -->
-## Purpose
+## What TMUL does
 
-`TMUL` multiplies corresponding elements of two Local Tiles.
+`TMUL` multiplies two Local Tiles element by element and writes the products into a newly allocated Local destination Tile. It shares the bundle schema, preflight, padding, and publication rules of `TADD`; only the element operation differs.
+
+Design point: `TMUL` is selected by `BSTART.VEC` Mode 0 Function 2 (TEPL selector `0x002`) and has no standalone opcode. Because the operation identity lives in the selector, `TMUL` reuses the same `B.DIM`, `B.DATR`, and `B.IOT` commands as every other closed binary elementwise operation.
 
 <!-- PTO-READER-BLOCK: tile-tmul-mechanism role=mechanism -->
-## Execution mechanism
+## Element and Tile mechanism
 
-The ASL DOC contract selects `TileHandler_ExecuteTileBinary` through the instruction's selector-encoded block carrier.
+Preflight checks the complete bundle first: the selected `DataType`, the layout, both source descriptors, source definedness and encodings, the destination capacity, and the operand schema. Only after every check passes does `ExecuteTileBinary` compute `left * right` for each coordinate in the valid rectangle `ValidRow x ValidCol`.
 
-Binding schema, dimensions, DataType, row-major layout, source definedness and encoding, PE_MASK, destination capacity, and applicable attributes are checked before source snapshots.
+Integer multiplication keeps only the low bits of the product. Both operands are first sign-extended or zero-extended according to the `DataType`, and the product is truncated back to the element width. For example, with `U16`, `300 * 300 = 90000` produces `24464`.
+
+Design point: the destination has the same `DataType` as the operation, so `TMUL` never widens. A program that needs the full integer product must select a wider `DataType` for the operands before multiplying.
+
+Floating-point multiplication uses the numeric profile of the selected `DataType` with its fixed default rounding. `TMUL` rejects any nondefault `RMode`, `Sat`, or `CMode`. Both sources are read completely before the first destination element is written, so aliasing a source with the destination is well defined.
 
 <!-- PTO-READER-BLOCK: tile-tmul-inputs-outputs role=inputs-outputs -->
-## Operands and descriptors
+## Operand roles and descriptors
 
-`destination0` is the new Local destination; `source0` is the left factor; `source1` is the right factor.
+- `source0` is the left factor. It is an existing, allocated Local Tile.
+- `source1` is the right factor. It must match `source0` in physical rows, physical columns, valid rows, valid columns, and layout.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected operation `DataType`, and its shape matches the sources.
 
-Sources remain persistent unless the current contract explicitly names a consumed or replaced state; destination descriptors are published only after complete preflight.
+All three Tiles are bound by one terminating `B.IOT` and share one `PE_MASK`. `PE_MASK=0000` is a strict no-op: no descriptor, allocation, or payload is produced.
+
+A source may be stored with a different same-width, non-packed backing type. Its bits are then validated and interpreted as the selected `DataType`.
 
 <!-- PTO-READER-BLOCK: tile-tmul-effects role=effects -->
-## Publication and ordering
+## Publication, definedness, and padding
 
-Every valid coordinate applies the operation at the selected element type; all sources and private-GPR scalar operands are snapshotted before destination publication.
+The destination descriptor, the valid-region products, the padding, and the definedness of every element are published together. A rejected bundle publishes none of them, and both sources persist unchanged.
 
-The valid payload, selected physical padding definedness, descriptor, and applicable sticky numeric flags publish atomically; rejection has no architectural effect.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero` writes zero; `Max` and `Min` write the largest and smallest finite value of the `DataType`; `Null` leaves those elements undefined. Omitting `B.DATR` selects `Null`, while an explicit code `00` selects `Zero`.
+
+`TMUL` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value instead of a product.
 
 <!-- PTO-READER-BLOCK: tile-tmul-constraints role=constraints -->
-## Legality, padding, and faults
+## Type, layout, and fault boundary
 
-Malformed bindings, unsupported types or layouts, invalid shapes, undefined consumed elements, illegal attributes, or insufficient destination capacity are rejected before source snapshots or publication.
+The ASL legality predicate `TileVecArithmeticDataTypeSupported` accepts the same 16 types as `TADD`: `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, and `U8`. Packed four-bit formats are excluded. The floating element arithmetic that `TMUL` reaches, `ScalarFPBinaryProfile`, is defined only for `FP64`, `FP32`, `FP16`, and `BF16`, so the ASL gives no element result for `TF32`, `HF32`, `E4M3`, or `E5M2`. The generated legality list below is narrower and names only `S32`, `U32`, `FP32`, `S16`, `U16`, `FP16`, and `BF16`. Code that must satisfy both should use a type from the narrower list.
 
-Allocation failure raises the owner-defined Tile allocation fault; other rejected schema or value conditions raise the owner-defined legality, bundle-control, or memory fault without partial effects.
+The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`, and all operands must use that same layout. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal.
+
+Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported `DataType`, or an invalid destination capacity raise `Fault_TileLegality` before any destination effect.
 
 <!-- PTO-READER-BLOCK: tile-tmul-example role=example -->
-## Non-normative contract sketch
+## Non-normative worked example
 
 This is a non-normative contract schema sketch; it organizes fields and bindings but is not claimed to be directly assembleable.
 
-Read `BSTART.VEC TMUL, U64; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP` as a non-normative binding walkthrough, then use the generated contract below for exact dimensions, attributes, and fault behavior.
+For `U16`, a left source row `[3, 300]` and a right source row `[5, 300]` produce the destination row `[15, 24464]`. The second product, 90000, keeps only its low 16 bits.
+
+In macro form, an 8 x 64 `FP32` multiplication is `TMUL <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>`. The destination payload is 8 x 64 x 4 = 2048 bytes, exactly the 2KB capacity.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

@@ -7,8 +7,76 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-EXECUTION-COMPARISON}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines Tile comparison and selection. TCMP compares two Tiles, TCMPS compares a Tile with a scalar, TSEL picks between two Tiles under a mask, and TSELS picks between a Tile and a scalar.
+
+The instruction units reach it through `ExecuteTileCompare`, `ExecuteTileCompareScalar`, `ExecuteTileSelect`, and `ExecuteTileSelectScalar`. The unit also provides `TileCompareCUBEToGPRAs`, which block dispatch calls when a CUBE TCMP writes its predicate into a GPR.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-concepts role=concepts-state -->
+## Concepts and visible state
+
+A comparison produces one Boolean per coordinate. The destination carrier depends on the source layout:
+
+- RowMajor sources write a legacy predicate Tile, one bit per element, through `TileInfoWithPredicateBit`.
+- CUBE_M16 and CUBE_M32 sources delegate to `ExecuteTileCompareCellAs` in [ExecutionMask comparison](execution-mask-comparison.md), which writes a PredicateCell of `0x00` or `0x01` bytes.
+- The GPR form packs one bit per coordinate into a 64-bit word.
+
+`TileCompareElement` computes the Boolean and a five-bit status value. Integer types are compared after sign or zero extension, signed or unsigned as the type says. Floating types use `TileProfileFloatingCompare`.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-rules role=rules-interactions -->
+## Rules and interactions
+
+Floating comparison handles special values first. If either operand is a NaN, the result is TRUE only for NE, and the NV flag is set only when a NaN is signaling. Positive and negative zero compare equal. Other values are ordered by `TileFloatingOrderKey`, which maps a sign-magnitude encoding to an increasing unsigned key.
+
+Each executor asserts its legality helper first. Compare executors OR the per-element status into one value and call `RecordNumericStatusFlags` once, after the loop. Select executors compute no numeric status.
+
+After a RowMajor compare, `PredicateTileWithPadding` fills bits outside the valid region: Max pads with 1, Zero and Min pad with 0, and Null leaves them undefined. TSEL and TSELS, on both RowMajor and CUBE layouts, call `TileWithValidRegionDefined` and then `TileWithPadding` with the bundle PadValue.
+
+For CUBE layouts, TSEL and TSELS read the PredicateCell byte and select the true source only when it is exactly `0x01`. Each coordinate first asks `BundleExecutionMaskActiveAt`; inactive coordinates take `BundleExecutionMaskDestinationValue`.
+
+The GPR form starts from `TilePredicateGPRPaddingValue`: all zeros for Zero or Min, all ones for Max, and a profile value for Null that this model sets to zero. It then overwrites the bit `row + field x rows`, where `rows` is 16 for CUBE_M16 or 32 for CUBE_M32, for each active valid coordinate. When an ExecutionMask is in force, block dispatch then passes the word to `TileExecutionMaskPredicateGPRResult`, which sets each inactive valid bit to 0 under ZERO or to the old GPR bit under MERGE.
+
+Design point: each executor copies its source Tiles (`left_tile`, `right_tile`, `source_tile`, `true_tile`, `false_tile`, `mask_tile`) before the loop and builds the result in a private `result`; the destination changes once, at the final assignment, so a destination that aliases a source still sees old source values.
+
+Design point: a NaN makes every ordered relation FALSE and NE TRUE. This keeps `!EQ` and NE consistent even for NaN inputs.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-boundaries role=boundaries -->
+## Architectural boundaries
+
+`TileCompareDataTypeSupported` and `TileSelectDataTypeSupported` both accept the 16-type VEC arithmetic set: FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, and signed and unsigned 8-, 16-, 32-, and 64-bit integers.
+
+The GPR form further requires a CUBE_M16 or CUBE_M32 source and a GPR predicate type. The `high` selector is legal only for 8-bit types; it moves the first column to 2 for CUBE_M32 or 4 for CUBE_M16.
+
+`TileProfileCompare` has no caller in the current ASL.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-example role=example-usage -->
+## Non-normative reading example
+
+TCMP with CMode LT compares two FP32 RowMajor Tiles with a valid region of 1 row by 4 columns.
+
+| Column | Left source row | Right source row | LT result |
+| --- | --- | --- | --- |
+| 0 | 1.0 | 2.0 | 1 |
+| 1 | quiet NaN | 1.0 | 0 |
+| 2 | -0.0 | +0.0 | 0 |
+| 3 | 2.0 | 2.0 | 0 |
+
+The predicate bits for columns 0 to 3 are 1, 0, 0, 0. No NaN is signaling, so no flag is recorded. With CMode NE instead, columns 1 and 2 would give 1 and 0, because NaN is unequal to everything and the two zeros are equal.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-related role=related-owners-navigation -->
+## Related owners
+
+- [ExecutionMask comparison](execution-mask-comparison.md) owns the CUBE PredicateCell compare path.
+- [Predicate carriers](predicate-carriers.md) owns the scalar GPR compare and the GPR-mask select forms.
+- [Operand schema](../legality/operand-schema.md) defines the compare and select legality helpers.
+- [Numeric status](../../../arch/state/numeric-status.md) defines the sticky flag register.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

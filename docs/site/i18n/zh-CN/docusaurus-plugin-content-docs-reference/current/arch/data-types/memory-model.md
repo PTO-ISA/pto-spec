@@ -15,45 +15,54 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-memory-model-types-purpose-scope role=purpose-scope -->
 ## 目的与范围
 
-本单元定义表示数据访问探测、内存顺序、内存事件和事件关系所需的记录与枚举。
+本单元定义用于表示数据访问探测、内存顺序、内存事件以及内存请求重放状态的类型化记录与枚举。
 
-这些类型为可执行的内存归属单元提供统一词汇，但本身不决定一个完整执行是否可接受。
+它提供可执行内存所有者消费的词汇，本身不决定一次完整执行是否被接受。
 
 <!-- PTO-READER-BLOCK: arch-memory-model-types-concepts-state role=concepts-state -->
 ## 概念与可见状态
 
-- `DataAccessProbe` 将 `FaultCode` 与转换后的 `Word` 地址组成一条记录。
-- `MemoryOrder` 区分 `Relaxed`、`Acquire`、`Release` 和 `AcquireRelease`；`MemoryEventKind` 区分初始写、加载、存储、原子操作和屏障事件。
-- `MemoryEvent` 记录执行体、地址、大小、读写值、是否执行写入、顺序、读自索引、一致性序位以及屏障前驱/后继掩码。
+`DataAccessProbe` 把 `FaultCode` 与转换后的 `Word` 地址组合起来，`MemoryReplayState` 记录重放是否处于活动状态、请求字、已提交事件数和纪元。
+
+`MemoryOrder` 区分 `MemoryOrder_Relaxed`、`MemoryOrder_Acquire`、`MemoryOrder_Release` 和 `MemoryOrder_AcquireRelease`；`MemoryEventKind` 区分 `MemoryEvent_InitialWrite`、`MemoryEvent_Load`、`MemoryEvent_Store`、`MemoryEvent_Atomic` 和 `MemoryEvent_Fence`。
+
+`MemoryEvent` 记录类别、执行体、地址、访问大小、读值与写值、是否执行写入、顺序、读自事件索引、一致性序位，以及屏障前驱和后继掩码。
 
 <!-- PTO-READER-BLOCK: arch-memory-model-types-rules-interactions role=rules-interactions -->
 ## 规则与交互
 
-内存事件大小只能是 `1`、`2`、`4` 或 `8` 字节。
+设计要点：加载和存储都带有读值字段与写值字段，因此一种记录形状就能表达只读的加载、只写的存储和两者兼做的原子操作，而不需要三种记录。
 
-执行体 ID、事件索引和一致性序位分别受 `PTO_MODEL_MEMORY_AGENTS` 与 `PTO_MODEL_MEMORY_EVENTS` 限定。
+内存事件大小只能是 `1`、`2`、`4` 或 `8` 字节，因此被建模的访问宽度总是这四种之一。
 
-`MemoryRelationMatrix` 为每个建模事件保存一行关系，其类型为 `bits(PTO_MODEL_MEMORY_EVENTS)`。
+`MemoryShareability` 区分 `MemoryShareability_Private`、`MemoryShareability_IntraCore` 和 `MemoryShareability_InterCore`，`MemoryFenceStrength` 由一对掩码导出无、释放、获取或获取释放强度。
 
 <!-- PTO-READER-BLOCK: arch-memory-model-types-boundaries role=boundaries -->
 ## 架构边界
 
-这些声明只规定表示形式，不规定排序接受条件。程序顺序、读自有效性、一致性、屏障和环检测由内存排序 ASL 归属单元定义。
+执行体 ID、事件索引和一致性序位分别受 `PTO_MODEL_MEMORY_AGENTS` 与 `PTO_MODEL_MEMORY_EVENTS` 限定，`MemoryRelationMatrix` 为每个被建模事件保存一行 `bits(PTO_MODEL_MEMORY_EVENTS)`。
 
-`PTO_MODEL_MEMORY_EVENTS` 是模型边界，不是硬件可移植的最大事件数。
+设计要点：共享性被表述为架构可见的分类，而不是缓存或互连层级，因此调用方推理的是谁观察到某次访问，而不是某种具体内存层次。
+
+本单元只声明类型，没有函数，因此这里没有任何内容会在运行时求值：接受或拒绝一次完整执行的检查由内存排序单元拥有。
 
 <!-- PTO-READER-BLOCK: arch-memory-model-types-example-usage role=example-usage -->
 ## 非规范阅读示例
 
-`MemoryEvent_Load` 条目通过 `read_from` 携带来源；执行写入的事件通过 `coherence_rank` 携带一致性序位。排序归属单元会在完整关系集合中验证这两个字段。
+本例说明当前的 ASL 归属单元，不替代规范操作。
 
-调试内存结果时，应先检查事件记录，再沿其中的索引查看排序归属单元构建的关系矩阵。
+这些声明只描述表示形式，不描述排序接受条件；程序顺序、读自有效性、一致性、屏障和环检测属于内存排序 ASL。
+
+`active` 为 false 的 `MemoryReplayState` 是重放结束之后留下的状态，因此调用方不得把重放窗口当作仍在进行。
 
 <!-- PTO-READER-BLOCK: arch-memory-model-types-related-owners role=related-owners-navigation -->
 ## 相关归属单元
 
-- [内存排序](../memory-model/ordering.md)
-- [内存操作选择器](memory-operations.md)
+- [内存排序](../memory-model/ordering.md)消费这些事件记录。
+
+- [内存操作选择器](memory-operations.md)命名原子操作与地址更新选择器。
+
+- [整数类型](integer.md)定义这些记录使用的 `Word` 地址载体。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

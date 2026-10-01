@@ -19,40 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-mset-purpose role=purpose -->
 ## What MSET does
 
-`MSET` is a standalone all-or-nothing memory command: it preflights the complete destination range before filling, and any fault requires a full reissue with no retained partial progress.
+`MSET` fills a byte range with one byte value in one command. It checks the whole destination range before it writes anything, so it either fills the complete range or, on a fault, leaves memory unchanged.
 
 <!-- PTO-READER-BLOCK: block-mset-mechanism role=mechanism -->
 ## Placement and execution mechanism
 
-`MSET` executes as a standalone `32`-bit command and does not require placement inside a `BSTART`/`BSTOP` body.
+`MSET` is a standalone 32-bit command. It does not open or commit a block and does not write `BARG`.
 
-The accepted carrier uses the `L32` encoding class and resolves every displayed field before the command reads bindings or changes state.
+Execution follows a fixed order:
 
-The command snapshots destination, fill byte, and the complete unsigned XLEN
-length, then preflights the complete destination range before the first store.
+1. Read the destination, fill value, and length from the three GPRs.
+2. Reject a nonzero range that wraps past the top of the address space.
+3. For a nonzero length, probe the complete destination range for write access.
+4. Write the low byte of the fill value to every byte, in increasing address order.
+5. Record the last memory command and advance `TPC` by 4.
+
+Design point: the complete range is probed before the first store. Unlike [MCOPY](MCOPY.md), `MSET` keeps no progress state. A faulting `MSET` has written nothing, so executing it again performs the whole fill.
 
 <!-- PTO-READER-BLOCK: block-mset-inputs role=inputs-outputs -->
 ## Carrier, bindings, and inputs
 
-- Encoded operands: `RegSrc0` — absolute GPR containing destination byte address; `RegSrc1` — absolute GPR whose low eight bits are replicated; `RegSrc2` — absolute GPR containing complete unsigned byte length.
-- All operands are resolved from the accepted carrier or named architectural state; no body-local hidden operand stream is created.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+- `RegSrc0`, bits `19:15`, names the GPR that holds the destination byte address.
+- `RegSrc1`, bits `24:20`, names the GPR whose low eight bits are the fill byte. The higher bits are ignored.
+- `RegSrc2`, bits `31:27`, names the GPR that holds the byte count, a complete unsigned XLEN value.
+
+Bits `14:0` are `0x1031`, and bits `26:25` are zero. Each selector accepts only the absolute GPRs `0..23`; codes `24..31` are reserved.
+
+Design point: all three fields are required, and encoded zero reads the architectural zero register. `MSET [zero, zero, zero]` is therefore a legal zero-length command: it performs no memory access but still records destination 0 and size 0 as the last memory command.
 
 <!-- PTO-READER-BLOCK: block-mset-effects role=effects -->
 ## State effects and ordering
 
-All three GPR values are snapshotted before range validation or memory effects.
+A successful nonzero fill writes every byte of the range and invalidates the local load reservation if the range overlaps its granule. A zero length performs no memory or reservation access.
 
-After full-range preflight, bytes fill in increasing address order; success invalidates an overlapping reservation, records command state, and retires once without saved progress.
+After any successful completion, `_LastMemoryCommandAddress` receives the destination and `_LastMemoryCommandSize` the length.
+
+Memory is byte-addressed here: the write probe uses one-byte alignment, so the destination may have any alignment.
 
 <!-- PTO-READER-BLOCK: block-mset-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+- A selector code in `24..31` raises `Fault_IllegalInstruction` before any register, memory, reservation, last-command, or `TPC` effect.
+- A nonzero destination range that wraps raises `Fault_IllegalInstruction` before any memory or last-command effect.
+- In the executable ASL, a length above 262144 bytes, or above the modeled memory size, raises `Fault_DataPage` at the destination address before any store.
+- A write access fault in the probe is reported before the first store.
 
-The current owner reports invalid schema, state, address, or continuation conditions through `Fault_IllegalInstruction`; no prose on this page creates an additional fault rule.
-
-A `Fault_DataPage` during preflight leaves the complete range, reservation, last-command state, and `TPC` unchanged; recovery performs a full reissue.
+Every fault leaves memory, the reservation, the last-command state, and `TPC` unchanged. The generated legality and exception sections below are authoritative.
 
 <!-- PTO-READER-BLOCK: block-mset-example role=example -->
 ## Non-normative worked example
@@ -63,7 +75,7 @@ This example demonstrates placement and carrier flow only; exact behavior remain
 MSET [a0, a1, a2]
 ```
 
-The shown accepted spelling resolves its fields from the current carrier, snapshots required sources, and then follows the owner-defined state and ordering transition.
+Suppose `a0` holds `0x9001`, `a1` holds `0x1234`, and `a2` holds 5. The probe covers `0x9001` to `0x9005`. If it passes, the five bytes receive `0x34`, the low byte of `a1`, and the last memory command becomes address `0x9001`, size 5. If the probe fails on any of the five bytes, none of them is written.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

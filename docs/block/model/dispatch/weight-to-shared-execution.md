@@ -7,8 +7,73 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-DISPATCH-WEIGHT-SHARED-EXEC}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-execution-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit executes a weight-mode `TLOAD` bundle when it commits. It validates the complete bundle, reads the weight crop from global memory (GM), and writes it into one Shared Tile as a row-major N by K matrix. One PE may write the whole Tile, or several PEs may each write a contiguous band of rows.
+
+`ExecuteBundleWeightTLOADOperation` is the entry point. [Tile execution](tile-execution.md) calls it when `BundleWeightTLOADSelected` is true and the bundle is not a TIMG2COL bundle.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-execution-concepts role=concepts-state -->
+## Inputs and state
+
+- One `B.IOS` names the Shared destination. It either carries a size code (a new destination) or is a reused assembly destination with size code 0. There is no `B.IOT`.
+- One `B.IOR` record with three sources and a zero destination carries GMBase, ShapeGPR, and StartGPR. ShapeGPR packs `Cin`, `Cout`, `KernelH`, and `KernelW`; StartGPR packs NStart and KStart.
+- `B.DIM` gives ValidCol, ValidRow, and TotalCol.
+- The data type comes from the `BSTART` descriptor. `B.DATR` supplies only the layout; its own DataType field must be none.
+
+The unit writes the Shared Tile record for a single writer, or the open Shared generation for cooperative writers. It also records a load event for each GM element it reads.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-execution-rules role=rules-interactions -->
+## Validation, build, and publication
+
+A strict no-op comes first. If a zero-participation binder was seen and no Tile or Shared binding exists, the unit returns success without checking anything else.
+
+`BundleWeightTLOADStateLegal` then checks the descriptor type, the `B.DATR` fields, the binding shape, and the `B.IOR` record. A zero Shared mask is legal and does nothing. Otherwise the mask must include the current PE, and every selected PE must hold equal GMBase, ShapeGPR, and StartGPR values. Dimensions must lie in 1 to 65535, ShapeGPR bits 48 to 63 must be zero, and the four sizes must be nonzero. The [schema](weight-to-shared-schema.md) shape rule must hold, and ValidRow rows of TotalCol columns must fit the parent capacity.
+
+A single selected PE must not use `B.ASSEMBLE`. With more PEs, `B.ASSEMBLE` is required: the first selected PE carries INIT, the last carries LAST, and the others carry neither. The encoded register, immediate, and offset must be zero. The unit derives each writer's offset from its row start, in 32-byte units, and, for a nonempty band, requires the writer size code to equal the exact bytes of its row band. It then validates the generation range, including GMBase, the two parameter words, and a metadata word.
+
+Design point: the writer's offset is derived, not encoded, and its size must match its row span exactly. Every participant's destination range is therefore fixed by ValidRow, TotalCol, the selected mask, and PE order; NStart moves only the GM source rows. The NDF clause `PTO-BSTART-TLOAD-WEIGHT-COOPERATIVE-001` rejects a size code that disagrees.
+
+`BundleWeightTLOADBuildAndPublish` calls `BundleWeightTLOADPreflightGM` over all ValidRow rows, not only this PE's band, before its first load.
+
+Design point: each participant proves the complete selected-PE footprint before any participant issues a GM read. A fault in any band therefore stops every writer before a load event is recorded.
+
+The unit then fills its rows. Cin padding lanes become raw zero without a GM access. A single writer publishes through `AtomicUpdateSharedTile`; if that update fails, the fault is `Fault_TileAllocation`. A cooperative writer commits its range into the open generation, which publishes the parent only after a gap-free LAST writer arrives.
+
+On any failure, `BundleWeightTLOADAbortFailedAttempt` aborts an open assembly generation. A failure without a recorded fault becomes `Fault_TileLegality`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-execution-boundaries role=boundaries -->
+## Architectural boundaries
+
+Tile execution routes this operation before generic stage-2 preparation and Local continuation reuse. It still applies the output-structure and Shared assembly-policy checks first, and it aborts all Local and Shared generations of the bundle if this unit fails.
+
+The GM index of each cell, in OHWI or OIHW order, belongs to [weight-to-shared GM access](../memory/weight-to-shared-gm.md). The row split and shape rule belong to the [schema](weight-to-shared-schema.md) unit.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-execution-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Four PEs load FP16 weights with ValidRow 64, ValidCol 64, and TotalCol 64 into a Shared parent with size code 7, which is 8192 bytes. Each PE writes 16 rows of 64 elements, which is 2048 bytes, so every writer size code must be 5.
+
+`C0` is 16, so the offsets are 0, 64, 128, and 192 units of 32 bytes. The parent has 256 units. PE 0 carries INIT, PE 3 carries LAST, and the parent is published after PE 3 covers units 192 to 256.
+
+If only PE 2 is selected, the bundle must omit `B.ASSEMBLE`, and PE 2 writes all 64 rows and publishes directly.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-execution-related role=related-owners-navigation -->
+## Related owners
+
+- [Weight-to-shared schema](weight-to-shared-schema.md) defines selection, the shape rule, and the row split.
+- [Weight-to-shared parameters](../operands/weight-to-shared-parameters.md) unpacks the words and checks equal participant values.
+- [Weight-to-shared GM access](../memory/weight-to-shared-gm.md) defines the cell mapping and GM preflight.
+- [Shared generation](../operands/shared-generation.md) validates and commits cooperative ranges.
+- [Tile execution](tile-execution.md) dispatches this handler.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

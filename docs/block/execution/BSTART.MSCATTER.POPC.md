@@ -19,32 +19,58 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-popc-purpose role=purpose -->
 ## Purpose and scope
 
-`BSTART.MSCATTER.POPC` is the stable reader entry point for this accepted operation. The normative `ASL` source and the generated contract sections on this page remain the only owners of architectural behavior.
+`BSTART.MSCATTER.POPC` opens a Tile memory block whose operation is `MSCATTER_POPC`: one indexed atomic increment per lane that adds one to a `U32` global memory (GM) element. The block publishes no Tile, and its only source is the index Tile.
+
+The command is one 32-bit word with match `0x01b11181` under mask `0x07ffffff`, so `DataType` occupies bits 31 to 27 and the fixed low bits carry TLSU selector 27. `ExecuteBundleGMAtomRedOperation` decodes selector 27 into `GMReduction_POPC` and calls `GM_RED_POPC(...)`. A reserved `DataType` code raises `Fault_IllegalInstruction` at the `BSTART`, before the block commits.
+
+Design point: the increment amount is fixed by the operation instead of coming from a value Tile, so this reduction binds one fewer source than its siblings. The count an element reaches is therefore exactly the number of active lanes that name it, including lanes that repeat an address.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-popc-mechanism role=mechanism -->
 ## How to read the operation
 
-Read the generated Decode and Operation sections together to locate the selected form and semantic handler. This guide adds no alternate execution algorithm.
+At commit the block runs the Tile-level body `GM_RED_POPC`, which first visits every active lane address and probes it for read and then for write. Two probes whose translations differ raise `Fault_DataPage`. Only after all lanes pass does it add one to each element in an `ARBITRARY` order and record one atomic event per lane.
+
+Design point: every lane stores, even when two lanes name the same element, so the operation counts occurrences rather than distinct addresses. The lane order is arbitrary but the final count is not, because the update is a repeated addition of one.
+
+Design point: all probes run before the first increment, so a faulting address leaves every element unchanged and records no event. A retry therefore counts each active lane exactly once instead of double-counting the lanes that already passed their probe.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-popc-inputs role=inputs-outputs -->
 ## Inputs and outputs
 
-Use the generated Operands and results table and Block composition section as the complete map of encoded and architectural roles. Do not infer an omitted operand or result from this summary.
+- `DataType` must be `U32`; every other code, including `S32` and the floating types, is rejected for this operation.
+- `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col. The values must equal the index Tile's valid columns and valid rows, and `LB2` is the physical column count the layout rule uses.
+- One terminating `B.IOT` carries the index Tile in `source0`, the `PE_MASK`, and `last`. It carries no destination and no second source, and no value Tile exists for this operation.
+- `B.IOR BaseGPR, zero, zero, ->zero` is required: `RegSrc0` selects the per-PE base GPR, the other three selectors encode zero, and a `RegSrc0` of `zero` supplies base address zero.
+- The index Tile is `S32`, `U32`, `S64`, or `U64` with byte displacements and the bundle layout.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-popc-effects role=effects -->
 ## Effects and state
 
-Use the generated State effects and Memory effects and ordering sections for the complete effect boundary. Executable points are evidence that the owner is exercised, not another source of meaning.
+Every active lane adds one to one GM element and records one atomic event. No Tile is published, no Local allocation is created, and the index Tile keeps its contents. The GM results stay visible: a reduction does not roll memory back.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-popc-constraints role=constraints -->
 ## Boundaries and failures
 
-Defaults, Legality, and Exceptions below define the accepted domain and failure boundary. Reserved values and unsupported combinations remain governed by those generated sections.
+`PE_MASK=0000` exits at the start of the atom/red dispatcher, before its schema, GPR, descriptor, type, and memory checks.
+
+An unknown TLSU code raises `Fault_IllegalInstruction`. A binding count other than one record raises `Fault_BundleControl`. A missing `B.IOR`, a Shared binding, a nonzero unused `B.IOR` selector, a dimension outside `1..65535`, a `DataType` other than `U32`, a wrong layout or shape, or an undefined active index element raises `Fault_TileLegality` before the first probe. A memory fault keeps its own kind.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-popc-example role=example -->
 ## Non-normative usage example
 
 Treat the generated `BSTART.MSCATTER.POPC` example as a spelling and navigation aid. Substitute operands only within the legality and state contracts owned below.
+
+```asm
+BSTART.MSCATTER.POPC U32
+B.DIM zero, 3, ->LB0
+B.DIM zero, 1, ->LB1
+B.DIM zero, 3, ->LB2
+B.IOT T#1, mask=1111, last
+B.IOR a0, zero, zero, ->zero
+BSTOP
+```
+
+`T#1` is a 1 by 3 `S32` index Tile holding `0`, `4`, and `4`, and `a0` holds `0x1000`. If GM holds `10` at `0x1000` and `20` at `0x1004`, the block counts the two lanes that name `0x1004` separately, so memory ends at `11` and `22`. The block returns no Tile, and the two duplicate lanes cannot be distinguished from two distinct addresses afterwards.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

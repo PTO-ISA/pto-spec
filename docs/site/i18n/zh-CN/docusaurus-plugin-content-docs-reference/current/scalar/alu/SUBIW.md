@@ -19,47 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-subiw-purpose role=purpose -->
 ## SUBIW 的作用
 
-`SUBIW` 是一条 32 位标量 ALU 指令。它按照低 32 位字，再符号扩展到 XLEN结果规则执行减法；当前指令契约定义结果发布路径以及任何额外状态效果。
+`SUBIW` 从 `SrcL` 的低 `32` 位中模 `2^32` 减去一个零扩展的 `12` 位立即数，并发布符号扩展到 `PTO_XLEN` 的 `32` 位结果。它有三个字段：`RegDst` 位于 `[7 +: 5]`、`SrcL` 位于 `[15 +: 5]`、`uimm12` 位于 `[20 +: 12]`。
+
+该载体在掩码 `0x0000707f` 下匹配 `0x00001035`，并分派到 `ScalarBinaryW`。
+
+这里可以看到两个彼此独立的宽度决定：减法按 `32` 位进行，而发布的取值是一个 `PTO_XLEN` 字，其高半部重复字位 `31`。
 
 <!-- PTO-READER-BLOCK: scalar-subiw-mechanism role=mechanism -->
-## 结果形成方式
+## 字结果形成方式
 
-执行时先对编码输入做快照，然后按照低 32 位字，再符号扩展到 XLEN结果规则执行减法，最后才产生目标效果。
+分派路径在 `asl/scalar/model/dispatch/alu.asl:114-116` 处以真 `word_operation` 调用 `ExecuteDecodedImmediateBinary`。`ScalarBinaryW` 把 `left32` 绑定为 `left[31:0]`，按模 `2^32` 计算 `left32 - right32`，并返回 `SignExtend{PTO_XLEN}(result32)`（`asl/scalar/model/alu/semantics.asl:477`）。
 
-- 立即数宽度与扩展规则由下方编码字段确定；除非生成契约给出其他零值含义，编码零提供数值零。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+subiw SrcL, uimm, ->{t, u, Rd}
+```
+
+设计要点：立即数先零扩展到 `PTO_XLEN`，但只有其低字进入减法，而且立即数最大为 `4095`，因此它永远不会置起第 `11` 位以上的位。
+
+设计要点：结果低于零的字减法会产生字位 `31` 被置起的字，最终的扩展把它变成负的发布值。源字为 `0`、`uimm12 = 1` 时，`subiw` 发布 `0xFFFFFFFFFFFFFFFF`，即 `-1`。
 
 <!-- PTO-READER-BLOCK: scalar-subiw-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 标量结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择标量值，其中只有低 32 位参与。
-- `uimm12` 是 12 位无符号字段，携带无符号 12 位立即数。
+`SrcL` 提供该字，`uimm12` 由载体译出，`RegDst` 接收符号扩展后的字。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+- `SrcL`，指令切片 `[15 +: 5]`：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`，非消耗。只有 `SrcL[31:0]` 参与运算。
+- `uimm12`，指令切片 `[20 +: 12]`：无符号，取值 `0` 到 `4095`；编码零提供减数 `0`。
+- `RegDst`，指令切片 `[7 +: 5]`：`1..23` 写入对应 GPR，`30` 压入 `U`，`31` 压入 `T`，`0` 与 `24..29` 丢弃。
+- `SrcL` 的编码零读取体系结构零 GPR，其低字是 `0`。
+
+设计要点：`SrcL` 的高半部在减法之前被丢弃，因此当 `a0 = 0x0000000100000000`、`uimm12 = 1` 时，`subiw` 发布 `0xFFFFFFFFFFFFFFFF`，而不是 `0x00000000FFFFFFFF`。源的字是零，字结果是 `-1`。
 
 <!-- PTO-READER-BLOCK: scalar-subiw-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+`SrcL` 在写入之前读取，因此同名目标基于执行前的值计算。符号扩展后的字发布后 `TPC` 推进 `4` 字节。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
+`SUBIW` 不读内存，也不改变保留、描述符、数值标志、陷阱、指令束、特权、谓词或控制流状态；唯一的队列移动是 `30` 或 `31` 目标所选的一次压入。
 
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+设计要点：`32` 位的回绕与符号扩展都是静默的。想要无符号字差值的调用者读取目标的低 `32` 位并忽略高半部。
 
 <!-- PTO-READER-BLOCK: scalar-subiw-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+全部 `32` 个 `SrcL` 编码、全部 `32` 个 `RegDst` 编码以及全部 `4096` 个立即数取值都有定义，该形式没有约束条目。唯一固定要求是掩码 `0x0000707f` 所选出的载体位匹配 `0x00001035`，因为 `uimm12` 占据全部十二个指令位 `31:20`。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+不匹配的载体在 `PC` 触发 `Fault_IllegalInstruction`。对活动块不适用的指令在 `TPC` 触发 `Fault_BundleControl`，对 `SUBIW` 而言仅在系统块终止请求挂起期间可达。所选 `T` 或 `U` 源不可用时在 `PC` 触发 `Fault_IllegalInstruction`，先于目标效果与 `TPC` 推进。
+
+设计要点：字级减法与最终的符号扩展都是全定义的，因此 `SUBIW` 没有由操作数选择的陷阱。它的故障边界是编码有效性加上源可用性。
 
 <!-- PTO-READER-BLOCK: scalar-subiw-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `SUBIW` 示例说明：`SrcL=7` 与 `uimm12=3` 产生 `4`。
+当 `a0` 为 `10` 时，`subiw a0, 3, ->a2` 发布 `7`。
+
+当 `a0` 的低字为 `3`、立即数为 `7` 时，字差值是 `0xFFFFFFFC`，因此 `a2` 收到 `0xFFFFFFFFFFFFFFFC`，即 `-4`。同一源下立即数为 `3` 时发布 `0`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

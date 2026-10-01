@@ -15,33 +15,51 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-core-pe-topology-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit collects the fixed namespace sizes used by the PTO programming model and defines the representation bridge between semantic PE identities and the four-bit PE mask.
+A PTO Core contains four processing elements (PEs), numbered PE0 through PE3. This unit fixes the sizes of the register namespaces that programs name, and it defines how a PE number maps to a bit of the four-bit PE mask.
 
-It is the place to check counts and identity-to-mask indexing. It does not define instruction behavior or memory ordering.
+Use this page to check counts and mask indexing. It does not define instruction behavior or memory ordering.
 
 <!-- PTO-READER-BLOCK: arch-core-pe-topology-concepts-state role=concepts-state -->
 ## Namespaces and identities
 
-The scalar namespace has `32` register encodings, including `24` absolute GPRs and two temporary queues of depth `4`. The unit also fixes `8` predicate registers of width `32`, `16` ACRs, `64` Tile registers, and `64` Shared Tile registers.
+| Namespace | Count | Notes |
+| --- | --- | --- |
+| Scalar register encodings | `32` | Five-bit selector space |
+| Absolute GPRs | `24` | Selectors `0` through `23` |
+| Temporary queues | `2` | T and U, each of depth `4` |
+| Predicate registers | `8` | Each `32` bits wide |
+| ACRs | `16` | Access-control rings |
+| Local Tile registers | `64` | `PTO_TILE_REGISTER_COUNT` |
+| Shared Tile registers | `64` | `PTO_SHARED_TILE_COUNT` |
 
-Semantic PE identities are the integers `0` through `3`, conventionally read as PE0 through PE3.
+The scalar namespace is a five-bit selector space of `32` encodings: `24` absolute GPRs plus the eight entries of the two bundle-local temporary queues, T and U.
+
+Design point: selectors `24` through `31` are not registers. As sources they name queue positions `T#1` through `T#4` and `U#1` through `U#4`; as destinations, `31` pushes to T, `30` pushes to U, and `24` through `29` write nothing. This is why the GPR file has `24` entries rather than `32`.
+
+Semantic PE identities are the integers `0` through `3`, read as PE0 through PE3.
 
 <!-- PTO-READER-BLOCK: arch-core-pe-topology-rules-interactions role=rules-interactions -->
 ## Identity-to-mask rule
 
-`PTOPEMaskBitOfPEIdentity` maps a semantic PE identity to the corresponding mask index by subtracting it from `3`.
+The architectural PE mask is four bits wide and keeps PE0 in its high bit: PE0 maps to bit `3`, PE1 to bit `2`, PE2 to bit `1`, and PE3 to bit `0`.
 
-This bridge is necessary because PE0 occupies the high bit of the four-bit architectural mask: PE0 maps to bit `3`, PE1 to bit `2`, PE2 to bit `1`, and PE3 to bit `0`.
+`PTOPEMaskBitOfPEIdentity` performs this mapping by computing `3 - pe_identity`.
+
+Design point: the bridge is an explicit function because the PE number and the bit number run in opposite directions. Any consumer that indexes a mask by semantic PE identity must go through this function instead of using the PE number as a bit index. Written as a binary literal, the mask reads left to right as PE0, PE1, PE2, PE3.
 
 <!-- PTO-READER-BLOCK: arch-core-pe-topology-boundaries role=boundaries -->
 ## Model boundaries
 
 `PTO_MODEL_MEMORY_AGENTS` and `PTO_MODEL_MEMORY_EVENTS` size the executable model at `4` agents and `16` events. Their `PTO_MODEL_` names identify them as model bounds; this page does not generalize those values into additional implementation requirements.
 
+In the executable model, the memory-agent identity also indexes the per-PE scalar register files, so each PE has its own GPR file.
+
 <!-- PTO-READER-BLOCK: arch-core-pe-topology-example-usage role=example-usage -->
 ## Non-normative indexing example
 
-When a reader starts with semantic PE2, apply the bridge before indexing a mask: `3 - 2` gives mask bit `1`. Directly using `2` as the bit index would select the wrong semantic PE.
+When a reader starts with semantic PE2, apply the bridge before indexing a mask: `3 - 2` gives mask bit `1`. Directly using `2` as the bit index would select the wrong semantic PE, PE1.
+
+The mask `1100` therefore selects PE0 and PE1: bit `3` is PE0 and bit `2` is PE1. The mask `0001` selects only PE3.
 
 <!-- PTO-READER-BLOCK: arch-core-pe-topology-related-owners role=related-owners-navigation -->
 ## Related owners
@@ -49,6 +67,7 @@ When a reader starts with semantic PE2, apply the bridge before indexing a mask:
 - [Architecture overview](../overview/architecture.md) is the dependency that establishes the top-level architecture identity.
 - [Scalar registers](scalar-registers.md) uses the current memory-agent identity for per-PE GPR access.
 - [Tile registers](tile-registers.md) is the named Tile-register programming-model owner.
+- [PE mask legality](../../tile/model/legality/pe-mask.md) counts selected PEs and derives Core-wide allocation size from a mask.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

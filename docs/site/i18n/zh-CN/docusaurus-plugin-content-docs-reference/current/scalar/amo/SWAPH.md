@@ -19,42 +19,60 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-swaph-purpose role=purpose -->
 ## SWAPH 的作用
 
-`SWAPH` 用 `SrcR` 原子替换一个半字，并发布先前的 16 位值。
+`SWAPH` 把 `SrcL` 中地址处已对齐的 `2` 字节半字原子替换为 `SrcR` 的低 `16` 位，并发布被替换掉的半字。
+
+这是 `SWAP` 家族的 2 字节成员；字节、字和双字成员分别是 `SWAPB`、`SWAPW` 和 `SWAPD`。
 
 <!-- PTO-READER-BLOCK: scalar-swaph-mechanism role=mechanism -->
 ## 原子机制
 
-ASL DOC 契约选择 `ScalarHandler_AtomicReadModifyWrite`，访问宽度为 `2` 字节。
+指令契约返回 `ScalarHandler_AtomicReadModifyWrite`，其操作为 `Atomic_SWAP`，访问宽度为 `2` 字节。模型随后执行 `AtomicReadModifyWrite`，它对同一 `2` 字节探测读访问与写访问，并要求两次探测翻译到同一地址后才载入、替换和存储。
 
-原子交换提交之前，读取与写入探测必须解析到同一个翻译后位置。
+`SrcL` 与 `SrcR` 在任何内存或目的效果之前就被快照，而 `RegDst` 只在原子提交报告无故障之后才被写入。
+
+由于处理程序读取的是一个 `2` 字节值，发布的旧值先由 `NormalizeAtomicReturn` 按宽度 `2` 规范化，它返回零扩展后的半字。
 
 <!-- PTO-READER-BLOCK: scalar-swaph-inputs-outputs role=inputs-outputs -->
 ## 输入与结果
 
-`SrcL` 承载 Reg5 原子地址源；`SrcR` 承载 Reg5 半字替换值源；`RegDst` 承载 Reg5 旧值目的地；`aq` 承载获取排序位；`rl` 承载释放排序位；`far` 承载平坦地址路由提示。
+`SrcL` 承载 Reg5 原子地址源；`SrcR` 承载 Reg5 半字替换源；`RegDst` 承载 Reg5 旧值目的；`aq` 与 `rl` 承载排序位；`far` 承载平坦地址路由提示。
 
-`aq` 与 `rl` 选择宽松、获取、释放或获取-释放排序；`far` 是配置档路由提示，在参考配置档中不改变架构结果。
+`SrcL` 与 `SrcR` 的全部 `32` 个编码都已分配：编码 `0..23` 选择绝对 GPR，`24..27` 选择 `T#1..T#4`，`28..31` 选择 `U#1..U#4`。
+
+`RegDst` 的全部 `32` 个编码也都已分配。编码 `1..23` 写入所指的绝对 GPR，编码 `0` 与编码 `24..29` 丢弃旧值，编码 `30` 把它压入 `U` 队列，编码 `31` 把它压入 `T` 队列。任一源编码为零时读取架构零寄存器。
+
+设计要点：`16` 位半字填不满一个 XLEN 寄存器，因此该形式总是产生非负结果。`SWAPW` 发布的是符号扩展值，所以同一个被替换的半字经 `SWAPH` 与 `SWAPW` 读出时高位的解释可以不同。
 
 <!-- PTO-READER-BLOCK: scalar-swaph-effects role=effects -->
 ## 效果与排序
 
-成功时，一个原子事件记录此次交换，旧值只会在内存更新提交后发布。
+`aq=0,rl=0` 以宽松排序记录原子事件；`aq=1,rl=0` 选择获取，`aq=0,rl=1` 选择释放，`aq=1,rl=1` 选择获取-释放。`far=1` 只是路由提示，参考配置档保持相同的架构地址和结果。
 
-完成的写入会使重叠的本地 64 字节缓存行保留失效，保留不重叠的保留，并让 `TPC` 前进 `4` 字节。
+成功时该指令恰好记录一个原子事件，更新内存，保持 `SrcL` 与 `SrcR` 不变，并让 `TPC` 前进 `4` 字节。
+
+完成的写入在与 `64` 字节保留粒度重叠时使本地保留失效，在不同粒度上则保留该保留。
+
+不记录任何数值状态标志。
 
 <!-- PTO-READER-BLOCK: scalar-swaph-constraints role=constraints -->
 ## 合法性与精确故障
 
-有效地址必须按 `2` 字节对齐。对齐、地址翻译和权限检查都先于架构效果。
+有效地址必须按 `2` 字节对齐；不满足该要求的半字访问会在任何内存效果之前被拒绝。
 
-预检失败时不会发布目的值、内存事件、保留更新或退役效果；保存的原始 `TPC` 支持完整重新执行。
+`aq`、`rl` 和 `far` 的每个取值都已分配，因此没有可拒绝的保留修饰位组合。
+
+检查顺序是固定的：先解码，再操作数合法性，然后是两次探测的对齐、翻译和权限检查。预检失败时不发布目的值、不记录内存事件、不改变保留，也不让 `TPC` 前进；陷入入口保存原始 `TPC` 以便重新执行。
+
+设计要点：读探测与写探测是分别进行的而不是只做一次，因此该指令不会把替换提交到写路径本身不允许的位置。
 
 <!-- PTO-READER-BLOCK: scalar-swaph-example role=example -->
 ## 非规范示例
 
-本示例只展示一种已接受写法；下方生成的契约仍是权威来源。
+取 `a0 = 1024`、`a1 = 6`、`a2 = 0`，并令地址 `1024` 处的 `2` 字节半字存放 `9`。
 
-初次阅读可从 `swaph [SrcL], SrcR, ->Rd` 开始，再只改变上文说明的排序或路由修饰位。
+`swaph [a0], a1, ->a2` 把该半字替换为 `6`，并使 `a2` 存放 `9`。
+
+之前：该半字为 `9`，`a2` 为 `0`。之后：该半字为 `6`，`a2` 为 `9`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

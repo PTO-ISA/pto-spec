@@ -19,52 +19,66 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-mask-purpose role=purpose -->
 ## BSTART.MSCATTER.MASK 的作用
 
-`BSTART.MSCATTER.MASK` 是 `MSCATTER.MASK` 形式的 32 位 Block 起始命令。它建立待处理 Block 的身份和选择参数；真正执行 Block body 并提交结果的是完成后的整个 Block，而不是起始命令本身。
+`BSTART.MSCATTER.MASK` 打开一个 Tile memory 指令束，其操作为 `MSCATTER_MASK`：一次由 Local 谓词 Tile 逐通道决定是否存储的索引存储。对谓词元素为 `0x01` 的每个活动通道，把数据 Tile 的一个传输元素写入全局内存（GM）中基地址加上该通道字节位移处。谓词元素为 `0x00` 的通道被跳过。
+
+该命令是一个 32 位字，在掩码 `0x07ffffff` 下匹配 `0x00711181`，因此 `DataType` 占据第 31 至 27 位，固定的低位携带 TLSU 选择子 7。`BundleMSCATTERMASKSelected` 匹配该选择子，`ExecuteBundleMSCATTERMASKOperation` 运行操作 `TileOperation_MSCATTER_MASK`。该指令束不分配任何 Tile，也不消耗或修改任何源 Tile。
+
+设计要点：这里的掩码总是一条独立的操作数记录，因为 scatter 没有可供第二条记录描述的目标。当存在谓词 Tile ExecutionMask 时，gather 会把第二条记录用于目标，而本指令束把第二条记录用于谓词 Tile，并且完全没有目标。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-mask-mechanism role=mechanism -->
 ## 位置与机制
 
-起始命令之后的 header 命令按顺序执行；`BSTOP` 或下一条 `BSTART` 是验证并退休完整 Block 的边界。当前所有者给出以下确切组成检查表：
+该 handler 先把 `PE_MASK=0000` 的指令束作为严格无操作直接返回，然后译码选择子，并校验 schema、双记录绑定形状、谓词取值、类型矩阵、布局与物理形状规则，以及数据 Tile、索引 Tile 与谓词 Tile 之间的关系。
 
-```text
-BSTART.MSCATTER.MASK DataType
-B.DATR Layout (optional)
-B.DIM LB0=ValidCol
-B.DIM LB1=ValidRow (optional)
-B.DIM LB2=Col (optional)
-B.IOT DataTile, IndexTile, mask=PE_MASK
-B.IOT MaskTile, mask=PE_MASK, <last>
-B.IOR BaseGPR, zero, zero, ->zero
-BSTOP
-```
+Tile 级执行体 `MSCATTER_MASK` 仅在谓词元素为 `0x01` 时才计算地址并做写探测。随后它按 `ARBITRARY` 顺序为每个启用通道提交一次存储，并为每个通道记录一个 store 事件。
 
-任何有效前序 Block 成功退休后，该命令初始化新的待处理 `BARG` 或操作描述符，并从顺序 PC 继续执行 header。仅仅成功解码起始命令，不会让 Block 目的结果或内存结果变得可见。
+设计要点：谓词为假时既不生成地址也不探测，因此假谓词下的野索引不会引发故障也不会触碰内存。这正是掩码 scatter 可用于数据相关索引 Tile 的原因：那些从未初始化的未用条目不会被使用。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-mask-inputs role=inputs-outputs -->
 ## 操作数与 header 角色
 
-- `DataType` 选择元素数据类型或继承哨兵；其确切分配域仍以下方生成契约为准。
+- `DataType` 是传输元素类型，必须等于数据 Tile 的元素类型。
+- `B.DIM` 的 `LB0` 是 ValidCol，`LB1` 是 ValidRow（默认 1），`LB2` 是物理 Col。这些取值必须准确描述数据 Tile：其有效列数、有效行数与物理列数。
+- 第一条 `B.IOT` 在 `source0` 中携带数据 Tile，在 `source1` 中携带索引 Tile，没有目标、没有 size 编码，也没有 `last`。
+- 第二条 `B.IOT` 在 `source0` 中携带谓词 Tile 与 `last`，当存在谓词 Tile ExecutionMask 时在 `source1` 中携带该掩码。没有目标记录。
+- 索引 Tile 是 `S32`、`U32`、`S64` 或 `U64`，保存字节位移并具有指令束布局。谓词 Tile 是普通的 Local `U8` 载体，具有索引 Tile 的有效形状与指令束布局。
+- `B.IOR BaseGPR, zero, zero, ->zero` 是必需的：`RegSrc0` 选择每个 PE 的基地址 GPR，另外三个选择子必须编码为零。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-mask-effects role=effects -->
 ## 待处理状态与完成
 
-对适用性和目标检查而言，起始状态转换与前序 Block 退休是全有或全无的。起始命令成功后，后续完成边界会在任何 body 结果提交前验证完整组成。
+每个启用通道存储一个传输元素。对打包四位 `DataType`，一个索引指名一个字节，该字节接收数据列 `2 * c` 的低半字节与列 `2 * c + 1` 的高半字节，一个谓词元素控制这整个字节对。此时数据有效列数必须恰好是索引有效列数的两倍，因此不会出现不完整的字节对。
+
+该指令束不发布任何 Tile，并保持两个源 Tile 不变。成功时每个启用通道写入 GM 一次并记录一个 store 事件；除重复地址之间的实现定义顺序外，内存序不变。
+
+设计要点：由于被跳过的通道什么都不写，该 GM 元素保持它原有的值。与掩码 gather 不同（其被跳过的通道表现为填充后的目标元素），掩码 scatter 不留下被跳过通道的任何痕迹，因此程序若日后需要知道自己存储了哪些元素，就必须保留谓词 Tile。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-mask-constraints role=constraints -->
 ## 合法性与故障边界
 
-保留选择器、无效目标、完成后的组成错误或前序退休失败，都会在新 Block 或 body 影响之前被拒绝。
+- `PE_MASK=0000` 是严格无操作，早于所有 schema、源、GPR、维度、地址、谓词与内存检查。
+- 保留的 `DataType` 编码或未知的 TLSU 选择子引发 `Fault_IllegalInstruction`。
+- 非 `0x00` 或 `0x01` 的谓词元素、有效形状与索引 Tile 不同的谓词 Tile、`B.IOS` 绑定、缺少 `B.IOR`、非零的未使用 `B.IOR` 选择子、不是上述两条记录的绑定形状、未定义的源，或类型、形状、布局、维度不匹配，都会在第一次探测之前引发 `Fault_TileLegality`。
+- 布局为 `ROWMAJOR`、`CUBE_M16` 或 `CUBE_M32`；`CUBE_N8` 被拒绝。对 `ROWMAJOR`，物理列数必须是非零的 2 的幂，且不得小于有效列数。
+- 无法写入的启用通道引发其自身的内存故障。没有需要回滚的目标，因此这种故障让指令束保持活动且不发布任何东西。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-mask-example role=example -->
 ## 非规范示例
 
-以下为非规范示例，仅用于说明当前所有者，不替代其定义。
+该演算示例是非规范的；它说明当前 owner，而不替代它。
 
 ```asm
-BSTART.MSCATTER.MASK DataType
+BSTART.MSCATTER.MASK U32
+B.DIM zero, 4, ->LB0
+B.DIM zero, 1, ->LB1
+B.DIM zero, 4, ->LB2
+B.IOT T#2, T#1, mask=1111
+B.IOT T#3, mask=1111, last
+B.IOR a0, zero, zero, ->zero
+BSTOP
 ```
 
-假设前序 Block 退休和目标检查成功，`BSTART.MSCATTER.MASK DataType` 会打开待处理的 `BSTART.MSCATTER.MASK` 形式；后续 header/body 命令仍是暂定状态，直到 `BSTOP` 或下一条 `BSTART` 验证完整组成。
+`T#2` 是 1 x 4 的 `U32` 数据 Tile，保存 `7`、`8`、`9` 与 `10`，`T#1` 是 1 x 4 的 `S32` 索引 Tile，保存 `0`、`4`、`8` 与 `12`，`T#3` 是 1 x 4 的 `U8` 谓词 Tile，保存 `1`、`1`、`0` 与 `0`，`a0` 保存 `0x1000`。只有前两个通道存储，分别在 `0x1000` 写入 `7`、在 `0x1004` 写入 `8`。索引 `8` 与 `12` 从不转成地址，它们指名的内存保持原有内容。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

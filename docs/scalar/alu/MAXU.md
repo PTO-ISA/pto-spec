@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-maxu-purpose role=purpose -->
 ## What MAXU does
 
-`MAXU` is a 32-bit scalar ALU instruction. It compares the complete operands as unsigned values and selects the maximum bit pattern; its current instruction contract defines the result publication path and any additional state effect.
+`MAXU` is a 32-bit encoded scalar ALU instruction that compares two XLEN values as unsigned integers and publishes the larger of the two unchanged through one Reg5 destination.
+
+The comparison covers all `64` bits, so a source with bit `63` set is the largest possible operand rather than a negative one.
 
 <!-- PTO-READER-BLOCK: scalar-maxu-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then compares the complete operands as unsigned values and selects the maximum bit pattern, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractResult_MAXU`, which returns `left` when `UInt(left) > UInt(right)` and `right` otherwise, and `InstructionContractUsesSignedComparison_MAXU`, which returns false. Dispatch reaches the same helper through `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MAXU, FALSE)`.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+maxu SrcL, SrcR, ->{t, u, Rd}
+```
+
+Design point: `MAX` and `MAXU` share one helper with a comparison-mode flag rather than two separate bodies, and the choice changes the answer whenever exactly one operand has bit `63` set. With `SrcL = 0xFFFFFFFFFFFFFFFF` and `SrcR = 0`, `MAX` publishes `0` and `MAXU` publishes `SrcL`.
 
 <!-- PTO-READER-BLOCK: scalar-maxu-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the left operand through Reg5.
-- The 5-bit `SrcR` field selects the right operand through Reg5.
+- `RegDst`, instruction slice `[7 +: 5]`, receives the selected operand or discards it.
+- `SrcL`, instruction slice `[15 +: 5]`, supplies the left operand.
+- `SrcR`, instruction slice `[20 +: 5]`, supplies the right operand.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Sources use the common Reg5 map, `0..23` for absolute GPRs, `24..27` for `T#1..T#4` and `28..31` for `U#1..U#4`, all read without consuming an entry. Encoded zero reads the architectural zero GPR.
+
+Design point: the destination codes are the usual ones: `1..23` write GPRs, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard. Because both operands are only read, a discarded `MAXU` leaves every register and queue exactly as it found them.
 
 <!-- PTO-READER-BLOCK: scalar-maxu-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are read before the destination write, so a destination that aliases a source cannot change which operand is selected.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The selected operand is published through `RegDst`, and `TPC` then advances by `4` bytes. The instruction has no memory effect and sets no numeric flag; apart from `RegDst` and `TPC`, only the destination-selected `T` or `U` push can change state.
 
 <!-- PTO-READER-BLOCK: scalar-maxu-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every `32`-code source encoding and every `32`-code destination encoding is assigned, and every XLEN bit pattern is a legal operand, so only an unavailable temporary source can fail the operand checks. Instruction bits `31:25` and `14:12` are fixed by the accepted form, so those bits belong to the decode match rather than to the operands.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise a mismatching encoding raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before the destination write.
+
+Design point: an unsigned comparison has no sign corner and no arithmetic step, so no operand value can produce fault behavior. The complete fault surface is the decode match plus temporary source availability.
 
 <!-- PTO-READER-BLOCK: scalar-maxu-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `MAXU` example, operands `7` and `3` select result `7`.
+With `SrcL = 0xFFFFFFFFFFFFFFFF` and `SrcR = 0`, the unsigned comparison is true, so `RegDst` receives `0xFFFFFFFFFFFFFFFF`. With `SrcL = 4` and `SrcR = 7`, `RegDst` receives `7`. With `SrcL = SrcR = 0x8000000000000000`, the comparison is false and `RegDst` receives the right operand, which holds the same bit pattern.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -7,8 +7,84 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-SCALAR-MODEL-FSU-ARITHMETIC}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-fsu-arithmetic-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit is the real-number layer of scalar floating-point arithmetic. Most of its functions take and return mathematical `real` values or integers, not bit encodings. The unit comment states that encoding, NaN payload, exception flags, and rounding-profile rules are kept separate from this layer.
+
+It also decodes three rounding selectors into the `NumericRoundingMode` enumeration: the scalar active mode, the bundle `RMode` field, and public conversion ordinals.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-arithmetic-concepts role=concepts-state -->
+## Concepts and visible state
+
+A rounding mode says how a real value becomes a representable one. `NumericRoundingMode` has seven values:
+
+| Mode | Meaning |
+| --- | --- |
+| `NumericRound_RNE` | nearest, ties to even |
+| `NumericRound_RTM` | toward negative infinity |
+| `NumericRound_RTP` | toward positive infinity |
+| `NumericRound_RTZ` | toward zero |
+| `NumericRound_RNA` | nearest, ties away from zero |
+| `NumericRound_RTO` | to odd: an inexact value takes the odd neighbor |
+| `NumericRound_RHB` | nearest, ties upward |
+
+`FloatingToInteger` applies one of these modes to turn a real into an integer. The finite encoders in [reference quantization](reference-quantization.md) use it to round a scaled significand.
+
+This unit holds no state. `ScalarFPActiveRoundingMode` in [scalar FP](scalar-fp.md) reads `CORE_STATE` bits 39:37 and passes them to `ResolveScalarFPActiveRoundingMode`.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-arithmetic-rules role=rules-interactions -->
+## Rules and interactions
+
+`FloatingBinary`, `FloatingUnary`, and `FloatingFused` compute exact real results. `FloatingFused` forms the product and adds or subtracts the addend without an intermediate rounding, and the `NMADD` and `NMSUB` forms negate the whole result.
+
+Design point: the fused result is computed once in real arithmetic and rounded once later by the encoder. That single rounding is what distinguishes `FMADD` from a separate `FMUL` then `FADD`.
+
+`FloatingUnary` asserts that a square-root input is not negative, and computes `1.0 / value` for reciprocal. In the reference profile, the special-value layer first handles NaN, infinite, and zero inputs, and negative square-root inputs, so these calls see only the remaining finite values.
+
+`FloatingExponential` sums the Taylor series from degree 0 through degree 18. The ASL comment calls this a fixed 18-term deterministic reference algorithm, not a promise of a host math library.
+
+`ResolveScalarFPActiveRoundingMode` maps `001` to RTM, `010` to RTP, `011` to RTZ, and every other value, including `000` and `100` through `111`, to RNE.
+
+Design point: every 3-bit value resolves to a defined mode. A `CORE_STATE` write is stored without checking bits 39:37, so a value other than `001`, `010`, or `011` gives RNE rather than a fault or an undefined result.
+
+`DecodeBundleRoundingSelection` maps the bundle `RMode` field. Code `000` sets `use_operation_default`; `001` through `111` select RNE, RTZ, RTM, RTP, RNA, RTO, and RHB. `DecodePublicConversionRoundingSelection` translates public conversion ordinals 0 through 6 into bundle codes and reports ordinal 7 as unassigned.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-arithmetic-boundaries role=boundaries -->
+## Architectural boundaries
+
+The scalar active selector and the bundle `RMode` field are different namespaces. The same 3-bit value means different modes in each; for example `010` is RTP for the scalar mode and RTZ for `RMode`.
+
+`FloatingCompare`, `SignedWordToReal`, `UnsignedWordToReal`, `ConvertFloatingEncoding`, and `DecodePublicConversionRoundingSelection` have no caller in the normative `asl/` tree; only tests under `tests/asl/` call some of them. The FSU catalog names `ConvertFloatingEncoding` as the handler of the conversion forms, but decoded dispatch executes conversions through `ExecuteDecodedFPConvert`.
+
+`DecodeBundleRoundingSelection` is used by bundle and tile units, for example `tcvt-schema` and `cube`.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-arithmetic-example role=example-usage -->
+## Non-normative reading example
+
+`FloatingToInteger` on four tie and non-tie inputs:
+
+| Input | RNE | RNA | RTO | RHB | RTZ |
+| --- | --- | --- | --- | --- | --- |
+| 2.5 | 2 | 3 | 3 | 3 | 2 |
+| -2.5 | -2 | -3 | -3 | -2 | -2 |
+| 3.5 | 4 | 4 | 3 | 4 | 3 |
+| 2.25 | 2 | 2 | 3 | 2 | 2 |
+
+For -2.5 the lower integer is -3 and the fraction is 0.5. RNE picks the even -2, RNA picks -3 because the value is negative, and RHB picks -2 because a fraction of 0.5 rounds up.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-arithmetic-related role=related-owners-navigation -->
+## Related owners
+
+- [Scalar FP](scalar-fp.md) reads the active mode and calls the profile hooks.
+- [Reference quantization](reference-quantization.md) rounds real results into FP32, FP64, and FP16 encodings.
+- [Reference special values](reference-scalar-fp-specials.md) handles NaN, infinity, and zero before this layer.
+- [Numeric status](../../../arch/state/numeric-status.md) owns the sticky flags that this layer does not touch.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

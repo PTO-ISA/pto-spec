@@ -7,8 +7,67 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-OPERANDS-WEIGHT-PARAMETERS}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-weight-to-shared-parameters-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns the parameter carrier of weight-mode `TLOAD`. Weight mode loads a convolution weight tensor from Global Memory (GM) into a Shared Tile. Its geometry travels in three general-purpose registers (GPRs) named by one `B.IOR` record. This unit defines how those GPR values are unpacked, which bits must be zero, how values are compared across PEs, and the metadata word used by a cooperative build.
+
+<!-- PTO-READER-BLOCK: block-model-operands-weight-to-shared-parameters-concepts role=concepts-state -->
+## Concepts and visible state
+
+The unit declares one record and no state variables. `BundleWeightTLOADParameters` holds `cin`, `cout`, `kernel_h`, `kernel_w`, `n_start`, and `k_start`.
+
+The single `B.IOR` record names three sources and a zero destination:
+
+| Source | Content |
+| --- | --- |
+| `GMBase` | the GM byte address of the weight tensor |
+| `ShapeGPR` | `cin` 15:0, `cout` 31:16, `kernel_h` 39:32, `kernel_w` 47:40; bits 48..63 must be zero |
+| `StartGPR` | `n_start` 31:0, `k_start` 63:32 |
+
+`BundleWeightTLOADParametersFromWords` performs this unpacking. `n_start` selects the first output-channel row and `k_start` the first K column of the requested window.
+
+<!-- PTO-READER-BLOCK: block-model-operands-weight-to-shared-parameters-rules role=rules-interactions -->
+## Rules and interactions
+
+`BundleWeightTLOADShapeReservedBitsLegal` is TRUE only when `ShapeGPR` bits 48..63 are zero.
+
+`BundleWeightTLOADParticipantValuesEqual(mask)` reads `GMBase`, `ShapeGPR`, and `StartGPR` from every PE selected by the Shared destination mask. It is TRUE only when at least one PE is selected and all selected PEs hold identical values.
+
+The weight execution unit applies these checks in `BundleWeightTLOADStateLegal`, in this order: the data type and `B.DATR` field checks, exactly one physical Shared binding and no Tile bindings, a valid first scalar binding with three sources and a zero destination and no second binding, then the check that the mask includes the current PE together with the participant-equality check, then the dimensions, then the reserved-bit check, then nonzero `cin`, `cout`, `kernel_h`, and `kernel_w`, and then shape legality, all before the GM preflight.
+
+Design point: participant values must be equal. A cooperative load splits N rows across PEs, and each PE computes its slice from its own GPR copy. Equal values guarantee that the slices come from one tensor and one window. A mismatch rejects before GM access.
+
+Design point: reserved `ShapeGPR` bits must be zero instead of being ignored. `BundleWeightTLOADStateLegal` checks them before it unpacks the fields, so a nonzero value rejects the operation before GM preflight and no field is ever read from bits 48..63.
+
+`BundleWeightTLOADGenerationMetadata` packs source layout, data type, `valid_col`, a 16-bit `valid_row`, `total_col`, and the parent size code into one word. The execution unit passes it with the three source words to the Shared-generation checks, so all cooperative writers must agree on it.
+
+<!-- PTO-READER-BLOCK: block-model-operands-weight-to-shared-parameters-boundaries role=boundaries -->
+## Architectural boundaries
+
+`BundleWeightTLOADStateLegal` returns TRUE early for a zero mask, and the build then returns without effects. In practice a recorded Shared binding never has a zero mask: the command handler treats a zero-mask `B.IOS` as a strict no-op that records no binding, and `BundleSharedMaskCanAppend` also rejects a zero mask, so the equality check runs with a nonzero mask. The state check also rejects a mask that does not include the current PE.
+
+This unit does not define the K order, the index formulas, or row splitting. The GM and execution units own those.
+
+<!-- PTO-READER-BLOCK: block-model-operands-weight-to-shared-parameters-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For `cin` 64, `cout` 128, and a 3 by 3 kernel, `ShapeGPR` is `0x0000_0303_0080_0040`. Bits 48..63 are zero, so the reserved check passes. To start at output channel 32 and K column 0, `StartGPR` is `0x0000_0000_0000_0020`. With mask `1111`, all four PEs must hold these same two words and the same `GMBase`.
+
+<!-- PTO-READER-BLOCK: block-model-operands-weight-to-shared-parameters-related role=related-owners-navigation -->
+## Related owners
+
+- [Weight schema](../dispatch/weight-to-shared-schema.md) selects weight mode and checks the shape.
+- [Weight execution](../dispatch/weight-to-shared-execution.md) applies these checks and builds the Tile.
+- [Weight GM access](../memory/weight-to-shared-gm.md) maps cells to GM indices.
+- [B.IOR](../../operands/B.IOR.md) is the command page.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

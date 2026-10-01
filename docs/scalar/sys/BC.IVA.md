@@ -19,42 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-bc-iva-purpose role=purpose -->
 ## What BC.IVA does
 
-`BC.IVA` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+`BC.IVA` is the bundle-cache maintenance operation for a virtual-address scope. It completes synchronously as one scalar operation of a SYS block and advances the bundle-cache epoch.
+
+The address it carries is the scope token: it selects which entries the maintenance applies to.
 
 <!-- PTO-READER-BLOCK: scalar-bc-iva-mechanism role=mechanism -->
-## System mechanism
+## How the instruction is placed and executed
 
-The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+This instruction is one scalar operation of an active SYS block. The scalar dispatcher first checks that a bundle is active and that its body is active with block kind System; a SYS form outside such a block is rejected with `Fault_BundleControl`, before any encoded-field check and before any architectural effect.
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+Encoded legality and source availability are then checked, and only then does the handler run.
+
+The handler reads `SrcL` and runs the shared maintenance rule for the `Maintenance_BC_IVA` operation with that value as its operand. The rule first asks whether the operation is permitted at the current ring.
+
+The all-entry cache scopes are local hints and are permitted at every ring; a virtual-address cache scope is in the same class, because only the translation scopes are restricted. The rule therefore advances the bundle-cache epoch, and on success records the operation together with the operand token it was given.
+
+Design point: the operand is retained as the recorded maintenance operand rather than consumed by the epoch update. That keeps an address-scoped hint inspectable after the fact: the epoch says that bundle-cache maintenance completed, and the recorded token says which address scope it named.
 
 <!-- PTO-READER-BLOCK: scalar-bc-iva-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
-
-Encoded zero is an assigned field value, never an omitted operand.
+- `SrcL` is the source selector that supplies the scope token.
+- Source selectors `0`..`23` read GPRs, `24`..`27` read `T#1`..`T#4`, and `28`..`31` read `U#1`..`U#4`. Reading a temporary never consumes or reorders it.
+- Source selector `0` always reads XLEN zero, and that zero is a legal scope token: the operation is not rejected because the token is zero.
+- There is no destination field, so the instruction never writes a GPR and never pushes `T` or `U`.
 
 <!-- PTO-READER-BLOCK: scalar-bc-iva-effects role=effects -->
 ## Architectural effects
 
-On success, the maintenance record receives `Maintenance_BC_IVA` and the exact captured operand token.
+On success exactly one epoch advances, and for this operation it is the bundle-cache epoch. One data-cache, one instruction-cache, one bundle-cache and one TLB epoch exist in the model, and a maintenance operation that completes advances exactly one of them.
 
-Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+The instruction performs no ordinary scalar memory access: it does not load, store, or probe the address it carries, so a token that names no mapped memory does not raise a data-access fault. `TPC` advances by `4` bytes on success. No reservation is taken or dropped.
 
 <!-- PTO-READER-BLOCK: scalar-bc-iva-constraints role=constraints -->
 ## Placement and rejection
 
-Cache maintenance is a synchronous local hint at every ACR and does not define additional implementation cache contents.
+Invalid block placement is rejected first, with `Fault_BundleControl`, before the encoded field is even considered.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+A virtual-address cache scope is a local hint completion, so the maintenance permission rule accepts it at every ring; the ring restriction applies only to translation maintenance. The reachable `Fault_IllegalInstruction` paths for this form are therefore the placement and encoded-legality checks, not a ring restriction.
+
+A source selector that names an unavailable `T` or `U` slot is rejected before the maintenance rule runs, so such a selector never advances an epoch.
 
 <!-- PTO-READER-BLOCK: scalar-bc-iva-example role=example -->
 ## Non-normative example
 
-This spelling example is illustrative; exact legality and effects remain in the generated contract below.
-
-Start with `bc.iva SrcL` and trace its encoded fields through preflight before following the selected system effect.
+`bc.iva a0` reads the scope token from `a0`, advances the bundle-cache epoch by one, records `Maintenance_BC_IVA` with that token, and advances `TPC` by `4` bytes. If the source selector is unavailable, no epoch advances and the instruction is rejected instead.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

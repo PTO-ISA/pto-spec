@@ -19,48 +19,64 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tdivs-purpose role=purpose -->
 ## What TDIVS does
 
-`TDIVS` is a selector-encoded Tile operation executed by `SFU`. It divides each valid Tile element by one private-GPR scalar under the selected interpretation; its current instruction contract owns the exact bundle form and publication boundary.
+`TDIVS` divides every element in the valid rectangle of a Local source Tile by one scalar and writes the quotients into a newly allocated Local destination Tile. It is selected by TEPL Mode 1 Function 3 (selector `0x023`), written canonically as `BSTART.SFU TDIVS, DataType`, and has no standalone opcode.
+
+Design point: the scalar is a bundle operand, not a Tile. The Tile-Tile form `TDIV` needs a second source Tile with the same shape and layout, so applying one value that way first requires a Tile filled with it, for example by `TEXPANDS`. `TDIVS` reads the value directly from a GPR, so no broadcast Tile has to be allocated or made defined.
 
 <!-- PTO-READER-BLOCK: tile-tdivs-mechanism role=mechanism -->
-## Element and Tile mechanism
+## Scalar source and element mechanism
 
-After all descriptor and operand checks succeed, the owning ASL handler divides each valid Tile element by one private-GPR scalar under the selected interpretation. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+The scalar comes from `B.IOR.RegSrc0`. Each participating PE resolves that selector in its own private GPR file, so PEs selected by one `PE_MASK` can use different scalar values. The bundle has no immediate field for the scalar; when `B.IOR` is omitted the scalar is zero.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+The 64-bit GPR value is narrowed by `TileRawElementValue`: only the low 8, 16, 32, or 64 bits, matching the element width of the selected `DataType`, are kept. No numeric conversion happens. A floating scalar must already be in the encoding of the selected type, and a signed integer scalar is read as a two's-complement value of the element width.
+
+After preflight, `ExecuteTileScalar` computes `source / scalar` for each coordinate in `ValidRow x ValidCol`. Operand order is fixed: the Tile element is the dividend and the scalar is the divisor, so the result is `source / scalar` and never `scalar / source`. Signed integer division truncates toward zero; unsigned division is ordinary unsigned division. Floating-point quotients follow the profile of the selected `DataType` with its fixed default rounding.
+
+Design point: an integer zero divisor is rejected during preflight, not at the element that would divide by it. Because one scalar serves every element, a single check decides legality for the whole Tile, and no partial result exists. The check is skipped only when an ExecutionMask leaves no active coordinate; that operation is a legal no-op. A floating positive or negative zero divisor is legal and produces the profile-defined quotient and status.
+
+Design point: all checks, including the scalar checks, finish before the source and scalar are snapshotted, and the result is published only after every element is computed. A source that aliases the destination is therefore read with its old values.
 
 <!-- PTO-READER-BLOCK: tile-tdivs-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` has the exact contract role **new Local numeric destination**.
-- `source0` has the exact contract role **persistent Local numeric source**.
-- `scalar0` has the exact contract role **per-participating-PE private-GPR scalar**.
+- `source0` is the Tile operand. It is an existing Local numeric Tile and persists unchanged.
+- `scalar0` is the per-PE scalar from `B.IOR.RegSrc0`. An explicit `B.IOR` must keep `RegSrc1`, `RegSrc2`, and `RegDst` zero.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected `DataType`, and its shape and layout match the source.
 
-Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
-Every source coordinate read by the operation must be defined before execution reaches destination publication.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+One terminating `B.IOT` binds the source and destination, and both use one `PE_MASK`. `B.IOS` and additional Tile bindings are illegal.
+
+Design point: `PE_MASK=0000` is a strict no-op. It exits before any GPR read, descriptor read, allocation, fault, or status effect, so a bundle with no participating PE never reads the scalar register.
+
+Design point: the source may be stored with a different same-width, non-packed backing type, for example `U16` data read as `FP16`. Its bits and the scalar are then validated and interpreted as the selected `DataType`, which allows a reinterpreting read without a copy. A width mismatch or a packed four-bit carrier remains illegal.
 
 <!-- PTO-READER-BLOCK: tile-tdivs-effects role=effects -->
 ## Publication, definedness, and padding
 
-Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+The destination becomes visible as one unit: its descriptor, the valid-region results, the padding, the definedness of every element, and any numeric status are published together. A rejected bundle has no architectural effect.
 
-Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero`, `Max`, and `Min` define them with the corresponding value of the `DataType`; `Null` leaves them undefined. Omitting `B.DATR` selects `Null`, while explicit code `00` selects `Zero`.
 
-The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+Omitting `B.IOR` makes the scalar zero. For an integer `DataType` that is an illegal divisor whenever at least one coordinate is active; for a floating `DataType` it is a legal division by positive zero.
+
+`TDIVS` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value instead of a computed result.
 
 <!-- PTO-READER-BLOCK: tile-tdivs-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The accepted data-type set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
+The legality check `TileBinaryDataTypeSupported` accepts `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`; packed four-bit formats are excluded. The element arithmetic it reaches, `ScalarFPBinaryProfile`, is defined only for the `FP64`, `FP32`, `FP16`, and `BF16` floating types, so the ASL gives no element result for `TF32`, `HF32`, `E4M3`, or `E5M2`. A scalar whose low bits are not a valid encoding of the selected type, such as a `TF32` value with nonzero low 13 bits, is rejected.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+The layout is `RowMajor` by default. An explicit `B.DATR` `Layout` may select `CUBE_M16` or `CUBE_M32`; the source and destination must use the same layout, and `CUBE_N8` and Shared Tiles are illegal. `B.DATR` accepts only `PadValueOrByteId` and `Layout`, so nondefault `RMode`, `Sat`, `CMode`, `Canonicalize`, or a secondary `DataType` is rejected.
+
+Every source element in the valid rectangle (every active one, when an ExecutionMask is in force) must be defined. A malformed binding, `B.IOS`, a surplus `B.IOR` field, a missing or zero dimension, an unsupported `DataType`, an invalid source or scalar encoding, an illegal integer zero divisor, or a capacity or allocation failure raises `Fault_TileLegality` or `Fault_TileAllocation` before any destination effect.
 
 <!-- PTO-READER-BLOCK: tile-tdivs-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `TDIVS` example, source element `8` and scalar divisor `2` produce quotient `4`.
+For an `S32` example, a source row `[-7, 9]` and scalar `2` produce `[-3, 4]`, because signed division truncates toward zero. With scalar `0` the same bundle is rejected before any destination effect.
+
+An `FP32` division is written in macro form as `TDIVS <Row=8, Col=64, FP32>, T#1, a2, ->T<2KB>`. It uses canonical `BSTART.SFU` assembly while keeping the TEPL Mode 1 Function 3 encoding.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

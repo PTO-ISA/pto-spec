@@ -19,54 +19,64 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tshls-purpose role=purpose -->
 ## What TSHLS does
 
-`TSHLS` left-shifts every valid integer element by one scalar count and publishes a new Local destination.
+`TSHLS` shifts every element in the valid rectangle of an integer Local source Tile left by one scalar count, and writes the results into a newly allocated Local destination Tile. It is selected by TEPL Mode 1 Function 9 (selector `0x029`), written canonically as `BSTART.VEC TSHLS, DataType`, and has no standalone opcode.
+
+Design point: the scalar is a bundle operand, not a Tile. The Tile-Tile form `TSHL` needs a second source Tile with the same shape and layout, so applying one value that way first requires a Tile filled with it, for example by `TEXPANDS`. `TSHLS` reads the value directly from a GPR, so no broadcast Tile has to be allocated or made defined.
 
 <!-- PTO-READER-BLOCK: tile-c-tshls-mechanism role=mechanism -->
-## Operation mechanism
+## Scalar source and element mechanism
 
-The operation evaluates only the valid rectangle using the mnemonic-selected typed element rule.
+The scalar comes from `B.IOR.RegSrc0`. Each participating PE resolves that selector in its own private GPR file, so PEs selected by one `PE_MASK` can use different scalar values. The bundle has no immediate field for the scalar; when `B.IOR` is omitted the scalar is zero.
+
+The 64-bit GPR value is narrowed by `TileRawElementValue`: only the low 8, 16, 32, or 64 bits, matching the element width of the selected `DataType`, are kept. No numeric conversion happens. The retained bits are used as a raw element-width pattern.
+
+After preflight, `ExecuteTileScalar` computes `source << count` for each coordinate in `ValidRow x ValidCol`. For element width W, the shift count is the unsigned value of the scalar's low log2(W) bits: 3 bits for 8-bit, 4 bits for 16-bit, 5 bits for 32-bit, and 6 bits for 64-bit types. Bits shifted beyond W are discarded, and signedness does not change the result.
+
+Design point: masking the count means every scalar value is a legal count, so there is no out-of-range shift fault and no scalar-dependent rejection. A count of W or more wraps: for a `U8` Tile, a count of 9 shifts by 1.
+
+Design point: all checks, including the scalar checks, finish before the source and scalar are snapshotted, and the result is published only after every element is computed. A source that aliases the destination is therefore read with its old values.
 
 <!-- PTO-READER-BLOCK: tile-c-tshls-inputs-outputs role=inputs-outputs -->
-## Operands, shape, and type
+## Operand roles and descriptors
 
-- `destination0` identifies a newly allocated destination.
+- `source0` is the Tile operand. It is an existing Local numeric Tile and persists unchanged.
+- `scalar0` is the per-PE scalar from `B.IOR.RegSrc0`. An explicit `B.IOR` must keep `RegSrc1`, `RegSrc2`, and `RegDst` zero.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected `DataType`, and its shape and layout match the source.
 
-- `source0` supplies a persistent source Tile.
+One terminating `B.IOT` binds the source and destination, and both use one `PE_MASK`. `B.IOS` and additional Tile bindings are illegal.
 
-- `scalar0` supplies the per-PE scalar operand.
+Design point: `PE_MASK=0000` is a strict no-op. It exits before any GPR read, descriptor read, allocation, fault, or status effect, so a bundle with no participating PE never reads the scalar register.
 
-- The closed applicable DataType set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
-
-- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
-
-- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+Design point: the source may be stored with a different same-width, non-packed backing type. Bitwise and shift operations consume the stored carrier bits directly, so the bits are not validated as numbers; a width mismatch or a packed four-bit carrier remains illegal.
 
 <!-- PTO-READER-BLOCK: tile-c-tshls-effects role=effects -->
-## Definedness, padding, and publication
+## Publication, definedness, and padding
 
-All source descriptors and payloads are validated and snapshotted before destination publication.
+The destination becomes visible as one unit: its descriptor, the valid-region results, the padding, and the definedness of every element are published together. The operation produces no numeric status, and a rejected bundle has no architectural effect.
 
-The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero`, `Max`, and `Min` define them with the corresponding value of the `DataType`; `Null` leaves them undefined. Omitting `B.DATR` selects `Null`, while explicit code `00` selects `Zero`.
 
-Null padding leaves physical coordinates outside the valid rectangle undefined; an explicit non-Null PadValue defines those coordinates with the selected typed value.
+Omitting `B.IOR` supplies a zero count, so every valid source encoding is copied unchanged.
 
-Source Tiles persist and are not modified by successful execution.
+`TSHLS` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value instead of a computed result.
 
 <!-- PTO-READER-BLOCK: tile-c-tshls-constraints role=constraints -->
-## Legality, fault, and order boundaries
+## Type, layout, and fault boundary
 
-Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+The accepted data-type set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Floating, packed, and other encodings are rejected before effects.
 
-A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+The layout is `RowMajor` by default. An explicit `B.DATR` `Layout` may select `CUBE_M16` or `CUBE_M32`; the source and destination must use the same layout, and `CUBE_N8` and Shared Tiles are illegal. `B.DATR` accepts only `PadValueOrByteId` and `Layout`, so nondefault `RMode`, `Sat`, `CMode`, `Canonicalize`, or a secondary `DataType` is rejected.
 
-`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+Every source element in the valid rectangle (every active one, when an ExecutionMask is in force) must be defined. A malformed binding, `B.IOS`, a surplus `B.IOR` field, a missing or zero dimension, an unsupported `DataType`, a carrier-width mismatch, or a capacity or allocation failure raises `Fault_TileLegality` or `Fault_TileAllocation` before any destination effect.
 
 <!-- PTO-READER-BLOCK: tile-c-tshls-example role=example -->
 ## Non-normative example
 
 This example illustrates the current ASL-bound contract and is not a second instruction definition.
 
-`TSHLS <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+For a `U8` example, a source row `[0x81, 0x03]` and scalar `9` use count 1 and produce `[0x02, 0x06]`; the high bit of `0x81` is discarded.
+
+The macro form is `TSHLS <Row=8, Col=64, U8>, T#1, a2, ->T<512B>`; all 512 one-byte elements are valid.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

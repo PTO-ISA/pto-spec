@@ -19,39 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-c-bstart-std-purpose role=purpose -->
 ## What C.BSTART.STD does
 
-`C.BSTART.STD` opens an active Block descriptor; the body supplies the attributes and bindings required before completion.
+`C.BSTART.STD` is the 16-bit start command for a Standard block whose continuation is not a PC-relative label. Its three forms are `C.BSTART.STD FALL`, `C.BSTART.STD IND`, and `C.BSTART.STD RET`. A block (also called a bundle) is a group of header commands and body instructions that commits as one unit at `BSTOP` or at the next block start.
+
+The command records a candidate continuation in `BARG`, the bundle argument register, and does not jump by itself. The model pages [Bundle start dispatch](../model/dispatch/start.md) and [Begin](../model/lifecycle/begin.md) define the shared start sequence.
 
 <!-- PTO-READER-BLOCK: block-c-bstart-std-mechanism role=mechanism -->
-## Placement and execution mechanism
+## Encoding and start sequence
 
-`C.BSTART.STD` must appear as the starter of its Block. Later attributes, dimensions, and bindings accumulate in the active descriptor until `BSTOP` or the next accepted `BSTART` completion boundary.
+The command is one halfword with one field, `BrType`, in bits 13:11. The other bits are fixed by the match `0x0000` under mask `0xc7ff`. `BrType` 1 is FALL, 5 is IND, and 7 is RET.
 
-The accepted carrier uses the `C16` encoding class and resolves every displayed field before the command reads bindings or changes state.
+The candidate target depends on `BrType`:
 
-At completion, the descriptor runs its selected Block operation only after all schema and state preflight succeeds.
+- FALL uses the sequential address `P + 2`, where `P` is the address of the `C.BSTART.STD`.
+- IND uses a snapshot of the retiring block's `BARG.BPCN`.
+- RET uses a snapshot of the return-address state `_ReturnAddress`. For example, `SETRET`, call starts, and frame loads of `ra` write it together with GPR 10; an ordinary write to GPR 10 does not update it.
+
+The target is checked for alignment before any active predecessor commits. The new Standard block opens only if the predecessor commit selected this address as the next PC. Header execution then continues at `P + 2`.
+
+Design point: IND reads the retiring block's `BPCN` before that block commits, and keeps the value as a snapshot that the commit cannot change. A target that the predecessor left in its `BPCN`, for example through `SETC.TGT`, therefore becomes the candidate target of the new block.
 
 <!-- PTO-READER-BLOCK: block-c-bstart-std-inputs role=inputs-outputs -->
-## Carrier, bindings, and inputs
+## Fields and BARG values
 
-- Encoded operands: `BrType` — encoded transfer kind: FALL, IND, or RET.
-- After predecessor retirement, this carrier opens one Standard Block; FALL and RET may start without a predecessor, while IND requires an active retiring Standard or Floating BARG.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+- `BrType` is always encoded. It has no omitted or default form.
+- Every form installs `BARG.BPC = P` and `BlockType = STD`.
+- FALL installs `TYPE = FALL` with `BPCN = P + 2`. `BARGSelectsBPCN` is false for FALL, so commit continues at the sequential PC.
+- IND installs `TYPE = IND` with the snapshotted retiring `BPCN`. RET installs `TYPE = RET` with the snapshotted return address. Both select `BPCN` at commit.
+
+Design point: FALL, IND, and RET start with `TAKEN = 1`; the start path sets `TAKEN` to false only for a COND transfer. `TAKEN` does not affect continuation selection for these transfer kinds, because `BARGSelectsBPCN` consults it only for COND; `LSRGET` identifier 2 still reports it in bit 7.
 
 <!-- PTO-READER-BLOCK: block-c-bstart-std-effects role=effects -->
 ## State effects and ordering
 
-Starting the Block records the selected carrier and leaves operation execution deferred until the completion boundary.
+A successful start clears the previous header state, marks the new block active in its header phase, writes `BARG` and `BPC`, and takes a fresh execution-domain token. `C.BSTART.STD` performs no memory access and writes no GPR.
 
-After complete preflight and computation, every enabled output publishes as the owner-defined atomic group; successful mathematical sources remain available unless the contract explicitly consumes them.
+The installed candidate stays pending until `BSTOP` or the next block start commits the new block. Because the block is Standard, a body `SETC.TGT` may still replace `BPCN` before commit.
+
+Design point: the predecessor commits before the new `BARG` is installed. If the predecessor commit fails, the predecessor stays authoritative and no Standard `BARG` is installed. If the predecessor transfers elsewhere, this command was on an unselected path and opens nothing.
 
 <!-- PTO-READER-BLOCK: block-c-bstart-std-constraints role=constraints -->
-## Legality, faults, and atomicity
+## Legality, faults, and encoding overlap
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+`BrType` code 0 is not a `C.BSTART.STD` value. The halfword `0x0000` decodes as `C.BSTOP`. Codes 2, 3, 4, and 6 do not decode as standalone `C.BSTART.STD` and raise `Fault_IllegalInstruction` before effects. The fused `BSTART.ICALL` form does not use this field: it is a separate 32-bit form whose indirect-call transfer is fixed by the form itself.
 
-The current owner reports invalid schema, state, address, or continuation conditions through `Fault_BundleControl`, `Fault_IllegalInstruction`, `Fault_InstructionPC`; no prose on this page creates an additional fault rule.
+Design point: the reviewed encoding overlap gives `BrType` 0 to `C.BSTOP`, so the all-zero halfword is a block stop, not a start with an unassigned transfer.
 
-Complete schema, binding, readiness, alias, capacity, and allocation preflight precedes source snapshots and every destination publication.
+IND without an active retiring Standard or Floating block raises `Fault_BundleControl`. A System block has no candidate word, so it cannot supply an indirect target. An odd snapshotted target raises `Fault_InstructionPC`. Both faults occur before the predecessor commits.
 
 <!-- PTO-READER-BLOCK: block-c-bstart-std-example role=example -->
 ## Non-normative worked example
@@ -62,7 +75,7 @@ This example demonstrates placement and carrier flow only; exact behavior remain
 C.BSTART.STD FALL
 ```
 
-The starter establishes the descriptor first; the following carriers fill its declared schema, and the final completion boundary triggers validation and operation execution.
+`C.BSTART.STD FALL` encodes `BrType = 1`, which is the halfword `0x0800`. If it sits at `0x2000`, the new block has `BPC = 0x2000`, `BPCN = 0x2002`, and `TYPE = FALL`. Header execution continues at `0x2002`, and the commit continues at the instruction after the block. Suppose instead that the predecessor is an untaken conditional block whose `BPCN` is `0x3000`, so its commit continues at `0x2000`. A `C.BSTART.STD IND` at `0x2000` then snapshots `0x3000` as its target, and the new block continues at `0x3000` when it commits.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

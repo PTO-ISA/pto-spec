@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-subiw-purpose role=purpose -->
 ## What HL.SUBIW does
 
-`HL.SUBIW` is a 48-bit scalar ALU instruction. It performs subtraction under the low 32-bit word, followed by sign-extension to XLEN result rules; its current instruction contract defines the result publication path and any additional state effect.
+`HL.SUBIW` is a 48-bit scalar ALU instruction that subtracts the low word of a zero-extended `uimm24` from `SrcL[31:0]` modulo `2^32`, sign-extends bit `31` of that word difference, and publishes the XLEN result through one Reg5 destination.
+
+`SrcL` contributes only its low `32` bits, and the immediate contributes only its low `24` bits because the rest of the zero-extended field is zero.
 
 <!-- PTO-READER-BLOCK: scalar-hl-subiw-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then performs subtraction under the low 32-bit word, followed by sign-extension to XLEN result rules, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractResult_HL_SUBIW`, which builds `right = ZeroExtend{PTO_XLEN}(immediate)` and returns `ScalarBinaryW(ScalarBinary_SUB, left, right)`. `ScalarBinaryW` subtracts the two low words into a 32-bit value and returns `SignExtend{PTO_XLEN}` of it. Dispatch selects the path with `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_SUB, ScalarField_uimm24, TRUE)`.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+hl.subiw SrcL, uimm, ->{t, u, Rd}
+```
+
+Design point: the underflow is confined to the word and then broadcast by the sign extension. `hl.subiw zero, 1, ->a0` publishes `0xFFFFFFFFFFFFFFFF`, all `64` bits set, even though only one bit of borrow was generated in the low word.
 
 <!-- PTO-READER-BLOCK: scalar-hl-subiw-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 scalar result target or discards the result.
-- The 5-bit `SrcL` field selects a Reg5 scalar value whose low 32 bits participate.
-- The unsigned 24-bit `uimm24` field carries the unsigned split 24-bit immediate.
+- `RegDst`, instruction slice `[23 +: 5]`, receives the sign-extended word result or discards it.
+- `SrcL`, instruction slice `[31 +: 5]`, supplies a value whose bits `31:0` participate.
+- `uimm24`, instruction slices `[36 +: 12]` and `[4 +: 12]`, supplies value bits `11:0` and `23:12`.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+`SrcL` is read through the common Reg5 map, `0..23` for absolute GPRs, `24..27` for `T#1..T#4` and `28..31` for `U#1..U#4`, without consuming the entry. An encoded zero reads architectural GPR zero.
+
+Design point: `SrcL[63:32]` is outside the operation. Two registers that agree in their low word produce the same published value under `HL.SUBIW`, however much their upper halves differ.
 
 <!-- PTO-READER-BLOCK: scalar-hl-subiw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is snapshotted before the destination effect, so a destination that also names `SrcL` observes the pre-instruction value.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The sign-extended difference is published through `RegDst`, and `TPC` then advances by `6` bytes. `HL.SUBIW` performs no memory access and changes no numeric-status, reservation, descriptor, Tile, bundle, privilege or control-flow state; the only queue change it can make is the `T` or `U` push selected by `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-subiw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+All `32` `SrcL` codes and all `32` `RegDst` codes are assigned, and every unsigned 24-bit immediate is legal, so only an unavailable temporary source can fail the operand checks. Fixed encoding bits must match the canonical 48-bit form.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise a mismatching encoding raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before the destination write. A word underflow is not an exception.
+
+Design point: the extension of the immediate is still zero, so the word form shares the unsigned rule of `HL.SUBI` and not the signed rule of `HL.ORIW`. The only difference the `W` suffix makes is which source bits and which result bits are kept.
 
 <!-- PTO-READER-BLOCK: scalar-hl-subiw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.SUBIW` example, `SrcL=7` and `uimm24=3` produce `4`.
+With `SrcL = 3` and `uimm24 = 5`, the word difference is `-2`, `SignExtend(0xFFFFFFFE)` is `0xFFFFFFFFFFFFFFFE`, and `RegDst` receives that value. With `SrcL` held at the architectural zero GPR and `uimm24 = 1`, the word underflows to `0xFFFFFFFF`, so `RegDst` receives `0xFFFFFFFFFFFFFFFF`. With `uimm24 = 0` the published value is `SignExtend(SrcL[31:0])`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

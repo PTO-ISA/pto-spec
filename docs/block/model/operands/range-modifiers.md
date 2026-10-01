@@ -7,8 +7,73 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-range-modifiers-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns the range-modifier group. A range modifier is a `B.SUBVIEW` or `B.ASSEMBLE` header command that refines the binder command just before it. `B.SUBVIEW` selects a range of a source. `B.ASSEMBLE` marks a destination, or a parent reference, as one writer of a multi-bundle build.
+
+The ASL comment states the scope: the group is syntactic header state. It allocates no destination and consults no operation schema.
+
+<!-- PTO-READER-BLOCK: block-model-operands-range-modifiers-concepts role=concepts-state -->
+## Concepts and visible state
+
+`_BundleRangeGroup` is one `BundleRangeGroupState` record:
+
+- `open` and `zero_mode`;
+- `kind`, which is `BundleRangeGroup_None`, `BundleRangeGroup_Local`, or `BundleRangeGroup_Shared`;
+- `tile_binding` or `shared_binding`, the index of the binder that opened the group;
+- `source0_allowed`, `source1_allowed`, `destination_allowed`, taken from the binder's encoded operands;
+- `source0_seen`, `source1_seen`, `destination_seen`.
+
+`OpenBundleRangeTileGroup` is called after a `B.IOT` and `OpenBundleRangeSharedGroup` after a `B.IOS`. A Shared group never allows source 1. A binder with PE mask `0000` opens a group with `zero_mode` TRUE and kind `None`.
+
+<!-- PTO-READER-BLOCK: block-model-operands-range-modifiers-rules role=rules-interactions -->
+## Rules and interactions
+
+The command dispatcher calls `CloseBundleRangeGroup` for every header command that is not a range modifier. A modifier therefore attaches only to the binder immediately before it.
+
+Roles must appear in the order source 0, source 1, destination, each at most once. `BundleRangeRoleLegal` rejects source 0 after source 1 or the destination, and source 1 after the destination.
+
+`B.SUBVIEW` first rejects an illegal register selector or a size code outside 1..12 with `Fault_IllegalInstruction`. `BundleRangeSubviewLegal` then requires an open group and a legal role. The size code must be 1..10 in a Local group and 1..12 in a Shared group. A failure raises `Fault_TileLegality` when a Local non-zero-mode group sees size code 11 or 12, and `Fault_BundleControl` otherwise.
+
+`B.ASSEMBLE` with INIT needs an allowed, unused destination role. Without INIT it is a continuation: the binder must have no destination, and the modifier takes the last source slot. `RecordBundleRangeAssemble` moves that Local source, source 1 if present and otherwise source 0, into `parent_ref` and clears the source. A continuation names the generation being extended, not a new operand.
+
+When the group is not zero-mode, the handler reads `GPR[RegSrc] + uimm11` as the offset and records the modifier in the binder.
+
+Design point: in a zero-mode group each modifier passes the placement check and changes nothing, and no GPR is read. A binder with no participating PEs keeps its following modifiers syntactically legal while producing no effect.
+
+Design point: `BundleSharedDestinationAssemblyPolicyLegal` requires a Shared destination with more than one participating PE to carry `B.ASSEMBLE`. Tile execution checks it before descriptor preparation and raises `Fault_TileLegality`. A multi-PE Shared destination without `B.ASSEMBLE` is therefore rejected before descriptor, payload, memory, or publication effects, as the contract `PTO-B-ASSEMBLE-SHARED-STANDALONE-001` states.
+
+<!-- PTO-READER-BLOCK: block-model-operands-range-modifiers-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit records modifiers. Subview descriptors are derived by the subview-descriptor unit, and generations are opened and checked by the Local and Shared generation units, after the bundle closes.
+
+<!-- PTO-READER-BLOCK: block-model-operands-range-modifiers-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+```asm
+B.IOT T#1, T#2, mask=PE_MASK, <last>, ->T<4KB>
+B.SUBVIEW 1, x5, 0, 3
+B.SUBVIEW 0, x6, 0, 3
+```
+
+The binder allows source 0, source 1, and a destination. The first `B.SUBVIEW` records source 1. The second faults with `Fault_BundleControl`, because source 0 may not follow source 1. Reversing the two commands would be legal. Placing a `B.DIM` between the binder and a modifier would close the group, and the modifier would then fault.
+
+<!-- PTO-READER-BLOCK: block-model-operands-range-modifiers-related role=related-owners-navigation -->
+## Related owners
+
+- [Commands](../dispatch/commands.md) opens and closes groups and holds the modifier handlers.
+- [Subview descriptor](subview-descriptor.md) derives the selected ranges.
+- [Local generation](local-generation.md) and [Shared generation](shared-generation.md) use the assemble records.
+- [B.SUBVIEW](../../operands/B.SUBVIEW.md) and [B.ASSEMBLE](../../operands/B.ASSEMBLE.md) are the command pages.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

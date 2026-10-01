@@ -7,8 +7,66 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns Local generations. A Local generation is a Local Tile built by several bundles with `B.ASSEMBLE`. The first bundle (INIT) allocates the parent Tile. Later bundles (MIDDLE or LAST) are continuations that each write one CELL range of it. A CELL is 128 bytes. The unit validates the structure, registers each writer, closes the generation at LAST, and aborts it on failure.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-concepts role=concepts-state -->
+## Concepts and visible state
+
+`_LocalGenerations` has 64 slots, one per absolute Local Tile register. An INIT uses the slot of its destination register. A slot holds, among other fields:
+
+- lifecycle flags `open`, `closed`, `published`, and `generation_identity_valid`;
+- `participant_mask`, `parent_size_code`, `parent_cell_count`, and a copy of the parent descriptor;
+- `covered_cells` and `ready_cells`, 2048-bit maps, with per-PE copies;
+- up to 16 writer records, each with an offset, a CELL count, a PE mask, and an identity made of the instruction instance (`BPC`) and the execution-domain token;
+- `working_destination`, and `committed_destination` with `committed_valid`;
+- `init_tpc`, the address of the INIT bundle.
+
+`BundleLocalGenerationSlotForDestination` finds the slot whose working destination is a given Tile, or returns 64.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-rules role=rules-interactions -->
+## Rules and interactions
+
+`ValidateBundleLocalGenerationStructure` runs in stage-2 preparation, before destination resolution. For every binding with an assemble modifier it requires a writer size code 1..10. For INIT it also requires a destination and no parent reference, a legal queue insertion, a parent size code 1..10, and `offset + writer_cells <= parent_cells`. For a continuation it requires a resolved parent reference that names an open, unclosed generation, a writer mask that is a subset of the generation's mask, a range inside the parent, and no CELL overlap with an earlier writer on a shared PE.
+
+`BundleLocalGenerationQueueInsertionLegal` looks at the Tile that INIT would push out of relative distance 15. If that Tile is an unpublished generation that is open, closed, or has registered consumers, INIT faults with `Fault_TileAllocation`.
+
+After the operation succeeds, `CommitBundleLocalGeneration` records the effects. INIT resets the slot, copies the destination's descriptor, records `BPC` as `generation_instance` and `init_tpc`, and publishes the destination into the relative queue. Every non-replay writer is appended and its CELLs are marked covered. LAST finalizes a CUBE descriptor, sets `closed`, and publishes the generation only if every participating PE is eligible.
+
+Design point: the generation enters the ordinary relative queue at INIT. The NDF `PTO-B-ASSEMBLE-LOCAL-GENERATION-001` calls it one logical entry in the ordinary T/U/M/N relative queue, and the ASL comment in `BundlePendingRelativeGeneration` states that no private assemble namespace or fallback is used, so a continuation names the parent with an ordinary relative selector such as `T#1`.
+
+Design point: a writer that repeats an earlier writer's range with the same instruction instance and execution-domain token is a replay. It passes the overlap check and is not registered again, so re-executing the same writer in the same execution domain neither faults as an overlap nor adds a second writer record.
+
+Design point: coverage and readiness are separate. Commit sets covered bits only. Ready bits come from the writer-completion event in the portable-carriers unit. Publication at LAST therefore waits until every required CELL is also ready.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-boundaries role=boundaries -->
+## Architectural boundaries
+
+`AbortBundleLocalGeneration` acts only on an open, or closed and unpublished, slot. It releases the working destination unless that register is the last committed destination, clears the slot, and restores the committed mapping. `SetBundleLocalGenerationFault` aborts, raises the fault, and sets the trap-context restart address to `init_tpc` when both are valid, so a restart begins again at the INIT bundle.
+
+`ReuseBundleLocalGenerationDestination` resolves a continuation's parent and calls `BindBundleLocalGenerationDestination`; it never allocates.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Bundle A carries INIT with parent size code 6 (4096 bytes, 32 CELLs), writer size code 5 (2048 bytes, 16 CELLs), and offset 0. After commit, CELLs 0..15 are covered and the parent is the newest entry of its hand (relative distance 0, written `#1` in assembly). Bundle B is a continuation with LAST, the same PE mask, writer size code 5, and offset 16. It covers CELLs 16..31 and closes the generation. The Tile is published once both writers have completed and every CELL is ready. If bundle B used offset 8 instead, CELLs 8..15 would overlap on the same PEs, and B would fault with `Fault_TileLegality` and abort the generation.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-related role=related-owners-navigation -->
+## Related owners
+
+- [Local generation CUBE](local-generation-cube.md) owns CUBE writers and finalization.
+- [Portable carriers](portable-carriers.md) owns readiness, publication events, and squash.
+- [Tile bindings](tile-bindings.md) converts a continuation into a destination.
+- [B.ASSEMBLE](../../operands/B.ASSEMBLE.md) is the command page.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

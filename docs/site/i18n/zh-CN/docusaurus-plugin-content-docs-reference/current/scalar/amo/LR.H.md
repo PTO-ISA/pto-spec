@@ -19,42 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-lr-h-purpose role=purpose -->
 ## LR.H 的作用
 
-`LR.H` 载入一个半字，发布其零扩展值，并把本地保留替换为包含该地址的 64 字节缓存行。
+`LR.H` 从 `SrcL` 中的地址载入一个半字，通过 `RegDst` 发布它，并在被载入的位置上建立保留。成功执行会把 `TPC` 前进 `4` 字节。
+
+设计要点：载入的两个字节落在目标的低半部分，高 `48` 位被清零，因此半字 `0x8000` 永远不会被发布为负的 XLEN 值。
 
 <!-- PTO-READER-BLOCK: scalar-lr-h-mechanism role=mechanism -->
-## 原子机制
+## 半字载入如何排序
 
-ASL DOC 契约选择 `ScalarHandler_LoadReserved`，访问宽度为 `2` 字节。
+分派把该形式交给 `ExecuteDecodedLoadReserved(instruction, form, 2)`。该辅助函数快照 `SrcL`，用 `ScalarDecodedMemoryOrder` 把 `aq` 与 `rl` 转换为内存顺序，并调用 `LoadReserved(address, 2, order)`；在无故障返回时，它把 `NormalizeAtomicReturn(old_value, 2)` 写入 `RegDst`。
 
-`SrcZero` 是被忽略的 5 位别名字段：全部 32 个编码选择同一操作，并且不会通过该字段消费源。
+在 `LoadReserved` 内部，`LoadWithOrder` 执行访问：先用 `ProbeDataAccess(address, 2, 2, FALSE)` 做对齐、翻译与读权限检查，然后进行两字节小端读取，再在翻译后的地址记录一个载入事件。只有在故障标志保持清零时才会写入保留。
+
+设计要点：`ProbeDataAccess` 在调用 `TranslateDataAddress` 之前先检查 `UInt(address) MOD alignment_bytes`，因此奇数地址在这里报告 `Fault_DataAlignment`，该地址的边界检查根本不会被查询。
 
 <!-- PTO-READER-BLOCK: scalar-lr-h-inputs-outputs role=inputs-outputs -->
-## 输入与结果
+## 字段、源与目标
 
-`SrcL` 承载 Reg5 载入地址源；`SrcZero` 承载被忽略的 5 位别名字段；`RegDst` 承载 Reg5 载入值目的地；`aq` 承载获取排序位；`rl` 承载释放排序位；`far` 承载平坦地址路由提示。
+`SrcL@15:5` 提供载入地址，`RegDst@7:5` 接收发布的半字，`SrcZero@20:5`、`rl@25:1`、`aq@26:1` 与 `far@27:1` 补全编码；每项都给出指令中的低位与字段宽度。
 
-`aq` 与 `rl` 选择宽松、获取、释放或获取-释放排序；`far` 是配置档路由提示，在参考配置档中不改变架构结果。
+`SrcL` 接受所有 Reg5 源选择子：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`，读取队列项不会弹出它。`RegDst` 接受所有目标选择子：`1..23` 写入该 GPR，`0` 与 `24..29` 丢弃，`30` 压入 `U`，`31` 压入 `T`。`aq` 与 `rl` 选择载入排序，`far` 是路由提示，不改变地址。
+
+设计要点：没有任何代码路径读取 `SrcZero`，因此该字段的 `32` 个位模式选择同一条指令，而且该字段没有汇编写法；`LR.H` 无法通过它获得操作数。
 
 <!-- PTO-READER-BLOCK: scalar-lr-h-effects role=effects -->
 ## 效果与排序
 
-载入成功时，会在访问预检完成后发出一个带排序属性的载入事件、发布旧值并建立保留。
+成功载入会读取一个小端半字，在内存事件捕获启用时按 `aq` 与 `rl` 选定的顺序在翻译后的地址记录一个载入事件，通过 `RegDst` 发布零扩展后的 `16` 位，并把本地保留更新为原始地址、宽度 `2`。随后 `TPC` 前进 `4` 字节。
 
-载入后，包含该地址的 64 字节缓存行成为本地保留，`TPC` 前进 `4` 字节。
+设计要点：发布规则跟随访问宽度，而不是目标寄存器宽度。半字 `0x8000` 发布为 `0x0000000000008000`，而 `LR.W` 对字 `0x80000000` 发布 `0xffffffff80000000`，因此同样的最高位在这个宽度上得到零扩展值，在字宽度上得到负值。
 
 <!-- PTO-READER-BLOCK: scalar-lr-h-constraints role=constraints -->
 ## 合法性与精确故障
 
-有效地址必须按 `2` 字节对齐。对齐、地址翻译和权限检查都先于架构效果。
+访问预检在任何效果之前运行：先按 `2` 字节对齐，再翻译，然后检查读权限与边界。被拒绝的地址报告原始架构地址，在参考模型中 `TranslateDataAddress` 原样返回该地址。
 
-预检失败时不会发布目的值、内存事件、保留更新或退役效果；保存的原始 `TPC` 支持完整重新执行。
+发生故障时不会发布任何内容、不会记录载入事件、较早的保留得到保留，`TPC` 停在出错指令上。译码失败或所选 T/U 源不可用会在此前引发 `Fault_IllegalInstruction`。
+
+设计要点：奇数地址无法通过对齐检查，因此 `LR.H` 为它报告 `Fault_DataAlignment`，永远不会到达边界检查；而它上面紧邻的字节地址是偶数，确实会到达该检查。
 
 <!-- PTO-READER-BLOCK: scalar-lr-h-example role=example -->
 ## 非规范示例
 
 本示例只展示一种已接受写法；下方生成的契约仍是权威来源。
 
-初次阅读可从 `lr.h [SrcL], ->Rd` 开始，再只改变上文说明的排序或路由修饰位。
+当被寻址的半字为 `0x8000` 时，`lr.h [a0], ->a1` 在 `a1` 中发布 `0x0000000000008000`，保留覆盖包含该半字的 `64` 字节粒度。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,47 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-andiw-purpose role=purpose -->
 ## What ANDIW does
 
-`ANDIW` is a 32-bit scalar ALU instruction. It performs bitwise conjunction under the low 32-bit word, followed by sign-extension to XLEN result rules; its current instruction contract defines the result publication path and any additional state effect.
+`ANDIW` computes the bit-by-bit conjunction of the low `32` bits of a Reg5 source with the low `32` bits of a sign-extended immediate, and publishes the 32-bit result sign-extended to `PTO_XLEN`.
+
+Design point: `ANDIW` is the word form of `ANDI`, and its only difference is the width at which the conjunction is taken and published. The upper source bits are not masked away and kept, they are excluded from the operation entirely.
 
 <!-- PTO-READER-BLOCK: scalar-andiw-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then performs bitwise conjunction under the low 32-bit word, followed by sign-extension to XLEN result rules, and only afterward performs the destination effects.
+`simm12` is sign-extended to `PTO_XLEN`, its low `32` bits are combined with `SrcL[31:0]` by a bitwise AND, and result bit `31` is then copied into bits `63..32`.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: the published value always has bits `63..32` equal to bit `31`, whether or not the source had them. `andiw a0, -1, ->a0` therefore normalizes `a0` to a well-formed 32-bit value, exactly as `addiw a0, 0, ->a0` does.
+
+Design point: only the low word of the sign-extended immediate is used. For `simm12=-1` that word is all ones, so the conjunction returns `SrcL[31:0]` unchanged and only the extension differs from the source.
 
 <!-- PTO-READER-BLOCK: scalar-andiw-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 scalar result target or discards the result.
-- The 5-bit `SrcL` field selects a Reg5 scalar value whose low 32 bits participate.
-- The signed 12-bit `simm12` field carries the signed 12-bit immediate.
+- `SrcL` is a Reg5 source: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`, without consuming a queue entry. Only `SrcL[31:0]` participates.
+- `simm12` carries the signed immediate, from `-2048` through `2047`.
+- `RegDst` publishes the sign-extended word result: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero of `simm12` is numeric zero, so the conjunction is zero for every source. Encoded zero of `SrcL` reads the architectural zero GPR, and encoded zero of `RegDst` discards rather than writing it.
 
 <!-- PTO-READER-BLOCK: scalar-andiw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is read before the destination is written, so source and destination may name the same register without changing the result.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The word result is published or discarded, and then `TPC` advances by `4` bytes. `ANDIW` accesses no memory and changes no reservation, descriptor, numeric-status, trap, bundle, privilege, predicate or control-flow state beyond that advance.
 
 <!-- PTO-READER-BLOCK: scalar-andiw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every encoded value is assigned: all `32` `SrcL` codes, all `32` `RegDst` codes, and all `4096` immediate values from `-2048` through `2047`.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An undecodable form raises `Fault_IllegalInstruction` at `PC`; an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`; a fixed-bit mismatch or an unavailable selected T/U source raises `Fault_IllegalInstruction`. Each precedes the destination effect and the `TPC` advance.
+
+Design point: discarding the upper source word is not a fault condition and is not reported. `ANDIW` has no value-dependent traffic with the trap machinery.
 
 <!-- PTO-READER-BLOCK: scalar-andiw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `ANDIW` example, `SrcL=0xc` and `simm12=0xa` produce `0x8`.
+With `SrcL=4294967295` and `simm12=2047`, `ANDIW` publishes `2047`. With `SrcL=4294967295` and `simm12=-1`, the low word of the immediate is all ones, so the conjunction is all ones and the published value is `18446744073709551615`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

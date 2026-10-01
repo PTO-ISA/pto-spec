@@ -17,44 +17,59 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tmov-purpose role=purpose -->
-## Purpose
+## What TMOV does
 
-`TMOV` copies source payload and definedness into the destination.
+Local `TMOV` copies one persistent Local Tile into a newly renamed Local destination. It copies the payload and the per-element definedness exactly; it does not convert values.
+
+Design point: `TMOV` is selected by `BSTART.TMOV` (Function 2) and has no standalone opcode. The same `BSTART.TMOV` Function 2 also carries the canonical Shared forms: Local source to Shared destination, and Shared source to Local destination, with `B.SUBVIEW` or `B.ASSEMBLE` ranges. [BSTART.TMOV](../../../block/execution/BSTART.TMOV.md) owns those modes.
 
 <!-- PTO-READER-BLOCK: tile-tmov-mechanism role=mechanism -->
-## Execution mechanism
+## Copy mechanism
 
-The ASL DOC contract selects `TileHandler_TMOV` through the instruction's selector-encoded block carrier.
+Without an ExecutionMask, the destination receives the source payload and the source definedness record. An element that is undefined in the source stays undefined in the destination.
 
-Dimensions, descriptors, layouts, DataTypes, source definedness, consumed encodings, destination capacity, masks, and operation-specific indices or offsets are checked before any source snapshot.
+With an ExecutionMask, the source must be defined at the coordinates the mask requires. Each inactive valid element then receives the mask's zero or merge value, and the whole valid region is marked defined.
+
+Design point: the `BSTART` `DataType` is only a carrier interpretation. A source backing type may differ from it only at the same element width, and the destination keeps the source backing type. `TMOV` therefore never changes element bits; use `TCVT` for a numeric conversion.
 
 <!-- PTO-READER-BLOCK: tile-tmov-inputs-outputs role=inputs-outputs -->
 ## Operands and descriptors
 
-`destination0` is the destination; `source0` is the source.
+- `source0` is the persistent Local source.
+- `destination0` is the newly renamed Local destination.
 
-Sources remain persistent unless the current contract explicitly names a consumed or replaced state; destination descriptors are published only after complete preflight.
+The destination must match the source exactly in physical rows and columns, valid rows and columns, layout, and storage kind, and its type must equal the source backing type.
+
+`BSTART.TMOV` accepts `DTYPE_NONE` (code 31). When neither `B.DATR` nor `BSTART` gives a concrete type, the operation type is the source descriptor type. `B.DATR` may carry only a `Layout`, and its pad field must be zero.
+
+Carrier compatibility excludes 4-bit types: a 4-bit backing type is accepted only when it equals the operation type.
 
 <!-- PTO-READER-BLOCK: tile-tmov-effects role=effects -->
-## Publication and ordering
+## Effects and ordering
 
-Sources are snapshotted before construction, so allowed aliases observe complete pre-operation payload and definedness.
+The source persists unchanged. The destination payload, definedness, and descriptor become visible when the bundle completes; a rejected bundle has no destination effect.
 
-The complete destination payload, definedness, padding policy, and descriptor publish together; rejection publishes no partial destination.
+Local `TMOV` has no global-memory effect and records no numeric status.
 
 <!-- PTO-READER-BLOCK: tile-tmov-constraints role=constraints -->
-## Legality, padding, and faults
+## Legality and faults
 
-Malformed bindings, unsupported types or layouts, invalid shapes, undefined consumed elements, illegal attributes, or insufficient destination capacity are rejected before source snapshots or publication.
+A shape, layout, storage-kind, or carrier-width mismatch, a destination type that differs from the source backing type, or a nonzero `B.DATR` field other than `Layout` is rejected before architectural effects.
 
-Allocation failure raises the owner-defined Tile allocation fault; other rejected schema or value conditions raise the owner-defined legality, bundle-control, or memory fault without partial effects.
+Design point: an exact shape match is required rather than a resize. A program that needs a different valid region or padding must use an operation that owns that change.
 
 <!-- PTO-READER-BLOCK: tile-tmov-example role=example -->
 ## Non-normative contract sketch
 
 This is a non-normative contract schema sketch; it organizes fields and bindings but is not claimed to be directly assembleable.
 
-Read `BSTART.TLSU TMOV, DataType; B.DIM LB0; B.DIM (LB1/LB2 for 2D); B.IOT; BSTOP` as a non-normative binding walkthrough, then use the generated contract below for exact dimensions, attributes, and fault behavior.
+A source Tile holds 8 x 64 `FP32` elements in RowMajor, and element `[0,0]` holds `0x3f800000`. With the operation type `S32`, which has the same 32-bit width, the copy is legal: the destination is `FP32` 8 x 64 and element `[0,0]` still holds `0x3f800000`. With `FP16` the widths differ, and the bundle is rejected.
+
+In macro form, the copy with the matching type is written below. The destination holds 8 x 64 x 4 = 2048 bytes.
+
+```text
+TMOV <FP32>, T#1, ->T<2KB>
+```
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

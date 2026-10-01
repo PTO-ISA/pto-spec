@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-tlb-ia-purpose role=purpose -->
 ## TLB.IA 的作用
 
-`TLB.IA` 同步完成所分配的缓存或地址翻译维护请求，并记录精确操作令牌。
+`TLB.IA` 同步完成 16 位 ASID 的地址转换维护操作。它的操作数不是地址而是地址空间标识符：`SrcL` 的第 15:0 位携带该令牌，且第 63:16 位必须为零，该次尝试才被接受。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-ia-mechanism role=mechanism -->
 ## 系统机制
 
-ASL DOC 区域选择 `ScalarHandler_ExecuteMaintenance`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+该指令选择共用的维护处理程序（`asl/scalar/sys/TLB.IA.asl:18`）与令牌 `Maintenance_TLB_IA`（`asl/scalar/sys/TLB.IA.asl:30`）。该令牌在执行器中拥有自己的分支，与两个地址分支分开，因为它的操作数测试是位范围测试而不是规范性测试（`asl/scalar/model/sys/semantics.asl:148`）。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+`InstructionContractMaintenanceRequiresRootRing_TLB_IA` 返回 `TRUE`（`asl/scalar/sys/TLB.IA.asl:42`），这使该操作进入 `MaintenanceAccessPermitted` 中仅限 ACR0 的那一组。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-ia-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`SrcL` 承载 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。
+`SrcL` 是 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。该指令把它解释为打包令牌，因此任何在第 15 位以上有非零位的值都不是该形式的有效操作数。
 
-编码零是已分配的字段值，从不表示省略操作数。
+没有目的地操作数，也没有第二个字段。成功时该令牌被记录在维护记录中；任何被拒绝的情况下都不发布任何内容。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-ia-effects role=effects -->
 ## 架构效果
 
-成功时，维护记录接收 `Maintenance_TLB_IA` 和精确捕获的操作数令牌。
+成功的尝试把 TLB 纪元递增一，并把 `Maintenance_TLB_IA` 与操作数存入维护记录（`asl/scalar/model/sys/semantics.asl:148`）。一旦该次尝试报告成功，`TPC` 按指令长度前进。
 
-选中的缓存或 TLB 纪元恰好递增一次，然后 `TPC` 前进；该操作是同步完成的本地提示。
+设计要点：操作数检查是范围测试而不是掩码，因此带有多余高位的操作数会被拒绝，而不是被静默截断为低 16 位。把标识符打包进寄存器的软件因此必须把高位清零。
+
+该指令不执行普通标量内存访问，也不写任何寄存器、队列或系统寄存器。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-ia-constraints role=constraints -->
 ## 位置与拒绝边界
 
-TLB 维护只在 `ACR0` 接受；环权限先于操作数验证进行检查。操作数位 `63:16` 必须为零，位 `15:0` 承载ASID 令牌。
+维护路径上有三种拒绝，顺序如下。在活动 SYS 块体之外，派发器在执行器之前引发 `Fault_BundleControl`。ACR0 之外的环引发 `Fault_IllegalInstruction`。在 ACR0，第 63:16 位不全为零的操作数引发 `Fault_IllegalInstruction`，TLB 纪元保持不变（`asl/scalar/model/sys/semantics.asl:149`）。还有一次拒绝发生在位置检查与执行器之间：共用的操作数合法性检查会拒绝指名不可用临时队列项的 `SrcL` 选择器（`asl/scalar/model/types/operands.asl:6`）。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+设计要点：特权测试在操作数测试之前运行。因此非根环的尝试即使操作数同样格式错误，也走特权拒绝，并且永远到不了纪元推进那一步。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-ia-example role=example -->
 ## 非规范示例
 
 该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
 
-可从 `tlb.ia SrcL` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+在 ACR0 且源寄存器持有 3 时，`tlb.ia SrcL` 通过 ASID 位测试，把 TLB 纪元递增一，并以操作数 3 记录 `Maintenance_TLB_IA`。如果某个高位被置位，例如 0x10000，同一条指令在 ACR0 会引发 `Fault_IllegalInstruction`，TLB 纪元不动。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -17,48 +17,59 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-lwu-purpose role=purpose -->
-## What LWU does
+## What `LWU` does
 
-`LWU` is a standalone `32`-bit AGU instruction that forms a register-offset address and loads one aligned little-endian `4`-byte value.
+`LWU` loads one `4`-byte little-endian word from a base register plus a transformed and shifted register offset, then zero-extends the loaded `32` bits to `PTO_XLEN`. Its canonical assembly is `lwu [SrcL, SrcR<{.sw,.uw}><<<shamt>], ->{t, u, Rd}`.
+
+Design point: the trailing `U` in `LWU` describes the loaded value, not the address. The offset is transformed and shifted exactly as for `LW`, and only the extension differs. Elsewhere in this family the `.u` marker means something else: an unscaled address form such as `LWI.U`.
 
 <!-- PTO-READER-BLOCK: scalar-lwu-mechanism role=mechanism -->
-## Address and memory mechanism
+## How `LWU` forms the address and completes the access
 
-`LWU` transforms `SrcR` according to `SrcRType`, shifts the transformed value left by the encoded `shamt`, and adds it modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+`SrcL` supplies the base. `SrcR` is transformed by `SrcRType` — `0` keeps the complete `64`-bit value, `1` sign-extends the low `32` bits, `2` zero-extends them — and the result is shifted left by the encoded `shamt`. Base and offset are added modulo `2^PTO_XLEN`.
 
-After complete preflight, the instruction performs one little-endian `4`-byte load and zero-extends the loaded `4`-byte value to `PTO_XLEN` for destination publication.
+The sum is used by one little-endian `4`-byte load. There is no base writeback and no second destination. Bits `31`:`0` of the loaded word are zero-extended and written through `RegDst` only if the load reported no fault.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+Design point: zero extension forces bits `63`:`32` of the published value to zero regardless of the four loaded bytes, so the value always lies in `0`..`4294967295`; only the interpretation of the destination's upper `32` bits differs from `LW`.
 
 <!-- PTO-READER-BLOCK: scalar-lwu-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and where the value goes
 
-- `SrcL` supplies the base; `SrcR` supplies the offset; `SrcRType` supplies the offset transformation. Every encoded Reg5 source among `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- All `SrcRType` values `0..3` and all `shamt` values `0..31` are assigned; transformation precedes the encoded shift.
+- `SrcL` and `SrcR` are `5`-bit Reg5 sources. Codes `0`..`23` name absolute GPRs, `24`..`27` name `T#1`..`T#4`, and `28`..`31` name `U#1`..`U#4`. Reading a `T` or `U` slot neither consumes nor reorders it, and code `0` supplies the constant zero GPR.
+- `SrcRType` is assigned for `0`, `1`, and `2`; raw `3` is reserved. `shamt` is assigned for all `32` values `0`..`31`, and encoded zero performs no shift.
+- `RegDst` is a `5`-bit destination: codes `1`..`23` write absolute GPRs, code `30` pushes the `U` queue, code `31` pushes the `T` queue, and codes `0` and `24`..`29` discard the loaded value.
+
+Design point: `shamt` is `5` bits wide, so the largest scale it can express is `2^31`. A larger stride must be built by adding to the base or to the offset register before the load.
 
 <!-- PTO-READER-BLOCK: scalar-lwu-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+Both sources are read before any memory or destination effect, so an offset register that the destination also names still contributes its pre-instruction value.
 
-A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+Successful execution performs one relaxed `4`-byte load and records one load event. No memory byte changes and reservation state is preserved. `TPC` then advances by `4` bytes.
+
+Design point: a discarded destination is not a suppression. With `RegDst` code `0` or `24`..`29` the preflight, the load, and the load event all still happen, and only the publication step is dropped, so the form doubles as a checked probe.
 
 <!-- PTO-READER-BLOCK: scalar-lwu-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `4`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+Dispatch rejects the instruction with `Fault_IllegalInstruction` before any effect when the fixed encoding bits do not match, when `SrcRType` holds the reserved value `3`, or when a selected `T`/`U` source slot is unavailable because nothing has been pushed into it.
 
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+The preflight tests the low `2` bits of the effective address, and a nonzero value raises `Fault_DataAlignment` before translation and before the permission test. An aligned address that fails a permission or bounded-memory test raises `Fault_DataPage` at the original address; PTO v0 translation is the identity function, so there is no separate translation fault.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+A fault records no load event, writes no destination, and leaves `TPC` on the faulting instruction. Recovery reissues the whole operation: every source read, the address arithmetic, the preflight, the load, and the publication.
+
+Design point: `SrcRType=3` is refused during the encoding checks, so it cannot reach the address arithmetic. The reserved value behaves as an illegal instruction rather than as a fourth transformation.
 
 <!-- PTO-READER-BLOCK: scalar-lwu-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With base `0x100`, unchanged offset source `2`, and `shamt=1`, the offset is `4` and base plus offset is `0x104`. The memory access uses `0x104`. If aligned and permitted, the instruction loads `4` bytes from that address.
+- Take `lwu [2, 3<.uw><<<2], ->4` with GPR2 = `0x1000` and GPR3 = `0xFFFFFFFE`.
+- `SrcRType=2` zero-extends the low `32` bits, and `shamt=2` shifts the result left by `2`, giving `0x00000003FFFFFFF8`.
+- The address is `0x1000` plus `0x00000003FFFFFFF8`, which is `0x0000000400000FF8`. It is `4`-byte aligned but far outside the bounded memory region, so the attempt raises `Fault_DataPage` at that original address: no event, no destination write, and `TPC` stays put.
+- With `<.sw>` and the same `shamt=2`, GPR3 sign-extends to `-2`, the offset becomes `-8`, and the access reads the `4` bytes at `0x0FF8`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

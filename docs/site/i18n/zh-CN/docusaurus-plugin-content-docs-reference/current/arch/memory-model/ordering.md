@@ -13,53 +13,59 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: arch-memory-ordering-purpose-scope role=purpose-scope -->
-## 用途与范围
+## 目的与范围
 
-本单元决定一个已捕获的候选内存执行是否被保留 Store-to-Store 顺序的 PTO-RC 允许。它验证事件集合、构建必需的排序关系，并拒绝必需关系中存在环的任何候选执行。
+本单元判定一个被捕获的候选执行是否被 PTO-RC 允许。它的入口是 `MemoryExecutionAllowedRC`，即 `MemoryCandidateExecutionValid()`、`MemoryRelationAcyclic(TRUE)` 与 `MemoryRelationAcyclic(FALSE)` 的合取；没有任何 ASL 单元调用它，它的调用者是 `tests/asl/arch/memory-model/ordering/` 下的归档一致性测试。
 
-最终查询 `MemoryExecutionAllowedRC` 同时要求候选执行有效，并要求同一位置的执行关系和外部可见的保序关系都无环。
+它带有九个已接受条款，从 `PTO-ARCH-MEMORY-MODEL-SCOPE-001` 到 `PTO-ARCH-MEMORY-MODEL-OPEN-001`，并依赖 `PTO-ARCH-MEMORY-MODEL-ATOMICITY`。
 
 <!-- PTO-READER-BLOCK: arch-memory-ordering-concepts-state role=concepts-state -->
-## 事件关系
+## 本单元建立的关系
 
-- 一致性关系（coherence）按递增的 `coherence_rank` 排序同一位置上的写；读自关系（reads-from）把一次写连接到 `read_from` 字段指向该写的读。
-- 外部读自关系（external reads-from）只保留两类读：其来源写是初始写，或者来源写与该读属于不同的内存主体；读后关系（from-read）把一次读连接到它所观察写之后的另一个一致性后继写。
-- 同一内存主体在一个位置上的程序顺序，以及跨位置的保留程序顺序，构成两个无环检查所使用的程序顺序视图。
-- 只有当屏障位于同一内存主体的两个事件之间，并且两个事件类别分别匹配其前驱掩码和后继掩码时，该屏障才会贡献一条边。
+- `MemoryCoherenceBefore` 需要两次写入、一个共享位置，以及 `left.coherence_rank < right.coherence_rank`。
+- `MemoryReadsFromBefore` 需要一次写入、一次读，以及 `read.read_from == write_index`；`MemoryExternalReadsFromBefore` 还要求该写入是初始写入或具有不同的 `agent`。
+- `MemorySynchronizesWith` 需要 reads-from、两个代理、一次 `MemoryOrder_Release` 或 `MemoryOrder_AcquireRelease` 的写入，以及一次 `MemoryOrder_Acquire` 或 `MemoryOrder_AcquireRelease` 的读。
+- `MemoryProgramOrderLocationBefore` 需要索引递增、同一代理、两次非初始写入的访问，以及共享位置。
+- `MemoryPreservedProgramOrderBefore` 需要索引递增、同一代理与两次非初始写入的访问，然后接受两者都是写入、任一是 `MemoryEvent_Atomic`、左侧 `order` 为 acquire 或右侧 `order` 为 release，或由 `MemoryFenceOrders` 找到的栅栏。
+- `MemoryFenceOrders` 要求该对之间至少有一个事件，并接受该区间内第一个 `agent` 同时匹配两者、且 `fence_predecessor` 与 `fence_successor` 掩码都与对应类别相交的栅栏。
 
 <!-- PTO-READER-BLOCK: arch-memory-ordering-rules-interactions role=rules-interactions -->
-## 候选执行规则
+## 候选有效性规则
 
-每个被访问的位置恰好有一个初始写事件，并且每个初始写的 coherence rank 都是 `0`。
+- 每个访问事件在其地址与 `size_bytes` 上必须恰好有一个 `MemoryEvent_InitialWrite`；零个或两个都会拒绝该候选。
+- 每个非初始写入都需要非零的 `coherence_rank`，该 rank 不被该位置上任何其他写入共享，并且该位置上另有写入处于 rank `coherence_rank - 1`。
+- 每次读都必须指名同一位置上一个在范围内、且 `write_value` 相等的写入；执行了自身写入的原子读还额外需要 `source.coherence_rank + 1 == event.coherence_rank`。
+- `MemoryRelationAcyclic(uniproc)` 在 `uniproc` 为真时把 `MemoryProgramOrderLocationBefore` 与 `MemoryReadsFromBefore` 加入公共边，在为假时加入 `MemoryPreservedProgramOrderBefore` 与 `MemoryExternalReadsFromBefore`，然后传递地闭合该关系，并在出现任何自环时拒绝该候选。
 
-同一位置上的每个后续写都具有唯一的非零 coherence rank，并且在前一 rank 上存在直接前驱。
+设计要点：`MemoryPreservedProgramOrderBefore` 对两个事件都以 `MemoryEventIsAccess` 把关，因此栅栏永远不会成为保序边的一端；栅栏只能通过 `MemoryFenceOrders` 起作用，这也是两个之间没有事件严格相隔时返回假的原因。
 
-每个读都指向一个范围内、同位置的写，并携带该来源写入的值。成功的原子写在一致性顺序中紧接其读取来源。
-
-PTO-RC 只保留 Store-to-Store 程序顺序。不同位置的 Load-to-Load、Load-to-Store 与 Store-to-Load 默认放宽，除非原子事件、acquire/release 顺序、依赖、冲突、限定符或匹配的屏障恢复这条边。
+设计要点：两次无环性调用使用不同的程序序关系，且两者都必须通过：`MemoryProgramOrderLocationBefore` 只在单个位置内成立，而 `MemoryPreservedProgramOrderBefore` 跨位置，是原子与匹配栅栏所强化的关系，因此在任一视图中有环的候选都会被拒绝。
 
 <!-- PTO-READER-BLOCK: arch-memory-ordering-boundaries role=boundaries -->
-## 边界与保守拒绝情形
+## 边界与失败关闭情形
 
-当不同大小或部分重叠的访问，其范围相交却并未描述同一位置时，候选执行会被拒绝。因此这个所有者不会为此类候选执行静默补充字节级一致性规则。
+一旦两个不同访问部分重叠，即它们的区间重叠但地址与 `size_bytes` 并非都相同时，`MemoryCandidateExecutionValid` 就返回假。扫描会跳过事件自身的索引，而空事件集也无效，因为该函数在进入循环之前就返回假。
 
-原子事件不会为自身的写入侧创建读后边；读后关系只考虑另一个一致性后继写。
+设计要点：同一位置上的两次写入不能共享 rank，且每个非初始写入都需要处于前一个 rank 的前驱，因此某位置的 rank 从初始写入的 `0` 起构成无缺口的链。若一次捕获中的写入因冲刷失去了前驱，则没有任何候选能通过该检查。
 
-空事件集合不是有效的候选执行，尽管无环性辅助函数本身会把空关系视为无环。
+这些条款点名了主体并不包含的关系来源：`PTO-ARCH-MEMORY-MODEL-REQUEST-CLASS-001`（Scalar、Tile、IndexedGenerated、Prefetch）、`PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001`（`MemoryShareability_Private`、`MemoryShareability_IntraCore`、`MemoryShareability_InterCore`）、`PTO-ARCH-MEMORY-MODEL-RANGE-001`（`index_limit`）、`PTO-ARCH-MEMORY-MODEL-DEPENDENCY-001`（地址、数据与控制依赖）以及 `PTO-ARCH-MEMORY-MODEL-QUALIFIER-001`（`order_after_prior`、`order_before_later`）；这些名字没有一个出现在此处的可执行语句中。
 
 <!-- PTO-READER-BLOCK: arch-memory-ordering-example-usage role=example-usage -->
-## 非规范分析示例
+## 非规范性分析示例
 
-对于存储缓冲（store-buffering）候选执行，记录每个内存主体的写和后续读，把每个读指向它观察到的初始写，然后运行有效性与无环性查询。在没有更强边闭合成环时，可放宽的“写后读”组合可以使候选执行仍被允许。
+同一位置、同一代理：先一次 `MemoryOrder_Relaxed` 的 store 写入 `1`，随后一次 `MemoryOrder_Relaxed` 的 load 读回初始写入的 `0`。该候选是有效的，但 `MemoryProgramOrderLocationBefore` 给出 store 到 load 的边，`MemoryFromReadBefore` 给出反向边，因为该 store 是 load 所读到的写入的相干后继。这个自环使 `MemoryRelationAcyclic(TRUE)` 失败，于是 `MemoryExecutionAllowedRC` 拒绝该执行。
 
-如果在每组写与读之间插入匹配的屏障，`MemoryFenceOrders` 会贡献保留程序顺序边。每个读取初始写的读还带有一条读后边；`MemoryFromReadBefore` 根据该读的 `read_from` 来源以及同一位置上后续的一致性后继写推导这条边。这些边共同形成环，因此 `MemoryExecutionAllowedRC` 会拒绝该观察结果。
+把该 load 指向那次 store 并把 `read_value` 设为 `1`，from-read 边就会消失，只剩同一位置的程序序边，因此该候选被允许：同一位置内的 Store 到 Load 次序是可见的，尽管跨位置的 Load 到 Load 对被放松。
+
+本示例仅作为阅读辅助：先应用上面的规则，再到规范性 ASL 拥有者中确认结果。它不增加任何架构契约。
 
 <!-- PTO-READER-BLOCK: arch-memory-ordering-related-owners role=related-owners-navigation -->
-## 相关所有者
+## 相关拥有者
 
-- [原子性](atomicity.md)是本单元声明的依赖项，并定义排序所依赖的事件属性。
-- [内存事件](memory-events.md)定义事件的构造与捕获。
-- [执行上下文](../programming-model/execution-context.md)拥有已捕获的事件数组、事件计数、屏障选择器和当前内存主体。
+- [原子性](atomicity.md) 是声明的依赖；它分配 `coherence_rank` 与 `read_from`。
+- [内存事件](memory-events.md) 定义记录字段、类别掩码，以及谓词 `MemoryEventIsRead`、`MemoryEventIsWrite`、`MemoryEventIsAccess`、`MemoryEventsShareLocation` 与 `MemoryEventPartialOverlap`。
+- [故障精确性](fault-precision.md) 拥有 `FlushMemoryReplay`，它可能移除后续写入所需的相干前驱。
+- [全局内存访问](global-memory-access.md) 与 [地址空间](address-space.md) 描述事件最终到达本单元的层。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

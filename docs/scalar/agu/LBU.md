@@ -17,48 +17,59 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-lbu-purpose role=purpose -->
-## What LBU does
+## What `LBU` does
 
-`LBU` is a standalone `32`-bit AGU instruction that forms a register-offset address and loads one aligned little-endian `1`-byte value.
+`LBU` is the unsigned byte read of the indexed family: it forms the same `SrcL` base plus shifted `SrcR` offset as `LB`, but the loaded byte is zero-extended instead of sign-extended.
+
+The canonical assembly is `lbu [SrcL, SrcR<{.sw,.uw}><<<shamt>], ->{t, u, Rd}`.
+
+Design point: `LBU` and `LB` decode the same address from the same fields. The only difference is the extension applied to the loaded byte, so the two can be swapped without changing which address is touched or which faults are possible.
 
 <!-- PTO-READER-BLOCK: scalar-lbu-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address and the transfer are formed
 
-`LBU` transforms `SrcR` according to `SrcRType`, shifts the transformed value left by the encoded `shamt`, and adds it modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+The offset is the `SrcR` value after the `SrcRType` transformation, shifted left by `shamt` and added to the base modulo `2^PTO_XLEN`. The transformed index is a whole `64`-bit word, so a `.sw` or `.uw` reading of the low `32` bits is what the shift consumes.
 
-After complete preflight, the instruction performs one little-endian `1`-byte load and zero-extends the loaded `1`-byte value to `PTO_XLEN` for destination publication.
+The address is preflighted for `1`-byte alignment, then translated, then checked for permission and bounded memory. On success the instruction reads `1` byte little-endian, records one relaxed load event, and publishes the zero-extended byte.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+No base write-back happens; the form publishes only the loaded value.
+
+Design point: `RegDst` bits `8` and above are always `0` after an `LBU`, because the zero-extension replaces the whole destination word. A stored `0xFF` therefore reads as `255`, never as `-1`.
 
 <!-- PTO-READER-BLOCK: scalar-lbu-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `SrcL` supplies the base; `SrcR` supplies the offset; `SrcRType` supplies the offset transformation. Every encoded Reg5 source among `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- All `SrcRType` values `0..3` and all `shamt` values `0..31` are assigned; transformation precedes the encoded shift.
+- `SrcL` is the base selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `SrcR` is the index selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `SrcRType` values `0`, `1`, and `2` select unchanged, `.sw`, and `.uw`; the raw `3` is reserved. `shamt` covers `0`..`31` and is applied after the transformation.
+- `RegDst` is the destination selector. Codes `1`..`23` write GPRs, `30` pushes the `U` queue, `31` pushes the `T` queue, and `0` plus `24`..`29` publish nothing; code `0` is the architectural zero GPR, whose writes are discarded.
+- Design point: a destination code of `30` or `31` pushes the loaded byte onto the `U` or `T` queue instead of a GPR, and the entry previously held at `U#4` or `T#4` falls out of the queue.
 
 <!-- PTO-READER-BLOCK: scalar-lbu-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+All sources are snapshotted before the memory access, so a destination that aliases the base or the index does not change the address this load uses.
 
-A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+Success records one relaxed load event, changes no memory byte, publishes the zero-extended byte, and advances `TPC` by `4` bytes.
+
+Design point: the load event records the translated address, the `1`-byte size, the loaded value, and relaxed order, so the record describes exactly what was read and nothing more.
 
 <!-- PTO-READER-BLOCK: scalar-lbu-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `1`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch, the reserved `SrcRType` pattern, or an unavailable `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- The access must be `1`-byte aligned before translation or permission is consulted; a permission or bounded-memory failure then raises `Fault_DataPage` at the original effective address.
+- On any fault nothing is published, no event is recorded, and `TPC` stays on the faulting instruction so the whole attempt can be reissued.
+- Design point: since the transfer is one byte, the alignment stage cannot fail, and the generated alignment wording describes a check that no encoding of `LBU` can reach.
 
 <!-- PTO-READER-BLOCK: scalar-lbu-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With base `0x100`, unchanged offset source `2`, and `shamt=1`, the offset is `4` and base plus offset is `0x104`. The memory access uses `0x104`. If aligned and permitted, the instruction loads `1` byte from that address.
+- With `SrcL` = `0x100`, `SrcR` = `2`, `SrcRType` `0`, and `shamt` `0`, the effective address is `0x102`.
+- A byte `0x80` at that address publishes `0x80`, while the same byte through `LB` would publish `0xFFFFFFFFFFFFFF80`.
+- A base of `0x1000` with an index of `-1` and `shamt` `0` reads `0xFFF`, because the offset is added modulo `2^PTO_XLEN`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

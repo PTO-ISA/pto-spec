@@ -19,56 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-trem-purpose role=purpose -->
 ## TREM 的作用
 
-`TREM` 对对应元素计算 divisor-有符号 modulo，并发布一个新的 Local 目标。
+`TREM` 对两个 Local Tile 逐元素取模，并把结果写入一个新分配的 Local 目标 Tile。它与 `TDIV` 共用指令束模式、填充和发布规则（包括整数除零检查），并在 `SFU` 引擎上执行。
+
+设计要点：`TREM` 保留 TEPL 载体 Mode 0 Function 4（选择器 `0x004`），没有独立 opcode。其规范头部写作 `BSTART.SFU TREM, DataType`；`SFU` 拼写不增加任何编码位。
 
 <!-- PTO-READER-BLOCK: tile-c-trem-mechanism role=mechanism -->
-## 操作机制
+## 元素与 Tile 机制
 
-该操作只在有效矩形内按助记符选定的带类型的元素规则求值。
+完整预检之后，`ExecuteTileBinary` 为有效矩形 `ValidRow x ValidCol` 内的每个坐标计算一个取模结果。规则取决于 `DataType` 的种类：
 
-浮点结果与元素状态遵循当前具名数值配置档；可移植契约拥有选择、形状、发布与故障顺序。
+- 有符号整数使用向下取整取模。非零结果总是与除数同号，且其绝对值小于除数的绝对值。
+- 无符号整数使用普通的无符号余数。
+- 浮点类型使用浮点取模参考定义：`dividend - q * divisor`，其中 `q` 是向零截断的 `dividend / divisor`，并按固定默认舍入只舍入一次。
+
+设计要点：向下取整取模不同于许多编程语言中的截断余数。对有符号整数，这里 `-7 mod 3` 为 `2` 而不是 `-1`，`7 mod -3` 为 `-2` 而不是 `1`。对有符号整数，让结果符号跟随除数，使得除数为正时结果总是落在 0 到 `divisor - 1` 的有效索引范围内。
+
+有效除数矩形内任何位置出现整数零，都会在任何源快照或目标效果之前引发 `Fault_TileLegality`。除数的填充区不会被读取。整数类型没有表示 `x mod 0` 的编码，因此指令束被拒绝，而不是得到一个虚构的值。
+
+对浮点类型，任一操作数为 NaN、零除数或无穷被除数都会产生静默 NaN。除此之外，无穷除数或零被除数则原样返回被除数。
 
 <!-- PTO-READER-BLOCK: tile-c-trem-inputs-outputs role=inputs-outputs -->
-## 操作数、形状与类型
+## 操作数角色与描述符
 
-- `destination0` 标识新分配的目的 Tile。
+- `source0` 是被除数，必须是已分配的现有 Local Tile。
+- `source1` 是除数，其物理行数、物理列数、有效行数、有效列数和布局必须与 `source0` 相同。
+- `destination0` 是新分配的 Local Tile，其后备 `DataType` 为所选操作 `DataType`，形状与源一致。
 
-- `source0` 携带该助记符定义的操作数。
-
-- `source1` 携带该助记符定义的操作数。
-
-- 封闭的适用 DataType 集合为 `FP32`、`FP16`、`BF16`、`S32`、`S16`、`U32`、`U16`。
-
-- 除非该助记符显式选择其他允许布局，数据 Tile 使用行主序布局。
-
-- `LB0`、`LB1`、`LB2` 按该助记符契约补全有效形状与物理形状；所有必需有效范围都必须非零。
+三个 Tile 由同一条终止 `B.IOT` 绑定，并共享一个 `PE_MASK`。`PE_MASK=0000` 是严格无操作。源可以使用位宽相同、非打包的其他后备类型存储；此时这些位按所选 `DataType` 校验和解释。
 
 <!-- PTO-READER-BLOCK: tile-c-trem-effects role=effects -->
-## 已定义性、填充与发布
+## 发布、已定义性与填充
 
-所有源描述符与载荷都会在目标发布前完成验证和快照。
+只有在全部合法性检查与整数零检查通过之后，两个源才被快照，因此与目标别名的源会在被覆盖之前读取。目标描述符、有效区域内的结果、填充以及每个元素的已定义性同时发布。被拒绝的指令束不会改变描述符、载荷或分配状态。
 
-完整目标载荷、描述符、已定义性、填充状态与适用数值状态会原子发布；拒绝路径不发布任何部分。
+`ValidRow x ValidCol` 之外的物理元素接收所选 `PadValue`。`Zero` 写入零；`Max` 与 `Min` 写入该 `DataType` 的最大与最小有限值；`Null` 使这些元素保持未定义。省略 `B.DATR` 选择 `Null`，而显式编码 `00` 选择 `Zero`。
 
-Null 填充让有效矩形外的物理坐标保持未定义；显式非 Null 填充值会用选定带类型的值定义这些位置。
-
-源 Tile 在成功执行后保持不变。
+`TREM` 没有全局内存效果。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值，而不是结果。
 
 <!-- PTO-READER-BLOCK: tile-c-trem-constraints role=constraints -->
-## 合法性、故障与顺序边界
+## 类型、布局与故障边界
 
-完整绑定模式、维度、DataType、布局、源已定义性、数值编码、目标容量与分配都会在效果前预检。
+ASL 合法性谓词 `TileVecArithmeticDataTypeSupported` 接受 16 种类型：`FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16` 与 `U8`。下方生成的合法性列表更窄，只列出 `S32`、`U32`、`FP32`、`S16`、`U16`、`FP16` 与 `BF16`。浮点取模参考定义仅针对 `FP32`、`FP16` 与 `BF16`，因此代码应使用较窄列表中的类型。
 
-合法性或分配检查失败会引发相应 Tile 故障，不留下部分目标、状态或内存效果。
+默认布局为 `RowMajor`。显式 `Layout` 可以选择 `CUBE_M16` 或 `CUBE_M32`，所有操作数必须使用同一布局。`CUBE_N8`、Shared Tile 以及混合布局均非法。`TREM` 拒绝非默认的 `RMode`、`Sat` 与 `CMode`。
 
-`PE_MASK=0000` 是严格无操作，发生在操作数读取、分配、故障、数值状态或载荷效果之前。
+整数零除数、绑定格式错误、维度缺失或为零、源未定义或不匹配、`DataType` 不受支持或目标容量无效时，会在任何目标效果之前引发 `Fault_TileLegality`。
 
 <!-- PTO-READER-BLOCK: tile-c-trem-example role=example -->
-## 非规范示例
+## 非规范演算示例
 
 下面的示例只帮助理解当前 ASL 绑定契约，并不是第二份指令定义。
 
-`TREM <bundle operands>` 先完成完整预检与源快照，再原子发布助记符定义的结果与填充状态。
+对 `S32`，被除数行 `[7, -7, 7, -7]` 与除数行 `[3, 3, -3, -3]` 产生目标行 `[1, 2, -2, -1]`。每个非零结果都与其除数同号。
+
+对 `U32`，被除数行 `[7, 9]` 与除数行 `[3, 4]` 产生 `[1, 1]`。
+
+以宏形式表示，一个 8 x 64 的 `S32` 取模写作 `TREM <Row=8, Col=64, S32>, T#1, T#2, ->T<2KB>`，其中 `T#1` 是被除数，`T#2` 是除数。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

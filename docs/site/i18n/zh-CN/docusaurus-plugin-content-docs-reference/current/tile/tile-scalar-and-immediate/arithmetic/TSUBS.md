@@ -19,54 +19,64 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tsubs-purpose role=purpose -->
 ## TSUBS 的作用
 
-`TSUBS` 从每个有效源元素中减去一个标量，并发布一个新的 Local 目标。
+`TSUBS` 从 Local 源 Tile 有效矩形内的每个元素中减去一个标量，并把差写入一个新分配的 Local 目标 Tile。它由 TEPL Mode 1 Function 1（选择器 `0x021`）选中，规范写法为 `BSTART.VEC TSUBS, DataType`，没有独立 opcode。
+
+设计要点：标量是指令束操作数，而不是 Tile。Tile-Tile 形式 `TSUB` 需要第二个形状和布局都相同的源 Tile，因此用它施加同一个值时，必须先构造一个填满该值的 Tile，例如使用 `TEXPANDS`。`TSUBS` 直接从 GPR 读取该值，因此不需要分配广播 Tile，也不需要使其成为已定义。
 
 <!-- PTO-READER-BLOCK: tile-c-tsubs-mechanism role=mechanism -->
-## 操作机制
+## 标量来源与元素机制
 
-该操作只在有效矩形内按助记符选定的带类型的元素规则求值。
+标量来自 `B.IOR.RegSrc0`。每个参与的 PE 在自己的私有 GPR 文件中解析该选择器，因此同一 `PE_MASK` 选中的各 PE 可以使用不同的标量值。指令束中没有用于标量的立即数字段；省略 `B.IOR` 时标量为零。
+
+64 位 GPR 值由 `TileRawElementValue` 收窄：只保留与所选 `DataType` 元素位宽一致的低 8、16、32 或 64 位。不发生数值转换。浮点标量必须已经是所选类型的编码，有符号整数标量按元素位宽的补码值读取。
+
+预检通过后，`ExecuteTileScalar` 对 `ValidRow x ValidCol` 内的每个坐标计算 `source - scalar`。操作数顺序是固定的：Tile 元素始终是左操作数，因此结果是 `source - scalar`，绝不是 `scalar - source`。整数减法按元素位宽回绕；浮点减法遵循所选 `DataType` 的配置档及其固定默认舍入。
+
+设计要点：由于顺序固定，`TSUBS` 没有反向形式。需要计算 `scalar - source` 的程序，可以先用 `TEXPANDS` 构造一个填满该标量的 Tile，再以该 Tile 作为左源执行 `TSUB`。
+
+设计要点：包括标量检查在内的所有检查都在对源和标量做快照之前完成，并且只有在所有元素计算完成后才发布结果。因此与目标别名的源按其旧值读取。
 
 <!-- PTO-READER-BLOCK: tile-c-tsubs-inputs-outputs role=inputs-outputs -->
-## 操作数、形状与类型
+## 操作数角色与描述符
 
-- `destination0` 标识新分配的目的 Tile。
+- `source0` 是 Tile 操作数，必须是已存在的 Local 数值 Tile，并保持不变。
+- `scalar0` 是来自 `B.IOR.RegSrc0` 的逐 PE 标量。显式 `B.IOR` 必须使 `RegSrc1`、`RegSrc2` 和 `RegDst` 保持为零。
+- `destination0` 是新分配的 Local Tile，其后备 `DataType` 为所选 `DataType`，形状与布局与源一致。
 
-- `source0` 提供持久源 Tile。
+一条终止 `B.IOT` 绑定源与目标，二者使用同一个 `PE_MASK`。`B.IOS` 与额外的 Tile 绑定均非法。
 
-- `scalar0` 提供逐 PE 标量操作数。
+设计要点：`PE_MASK=0000` 是严格无操作。它在任何 GPR 读取、描述符读取、分配、故障或状态效果之前退出，因此没有 PE 参与的指令束永远不会读取标量寄存器。
 
-- 封闭的适用 DataType 集合为 `FP32`、`FP16`、`BF16`、`S32`、`S16`、`S8`、`U32`、`U16`、`U8`。
-
-- 除非该助记符显式选择其他允许布局，数据 Tile 使用行主序布局。
-
-- `LB0`、`LB1`、`LB2` 按该助记符契约补全有效形状与物理形状；所有必需有效范围都必须非零。
+设计要点：源可以使用位宽相同、非打包的其他后备类型存储，例如以 `FP16` 读取 `U16` 数据。此时源的位与标量都按所选 `DataType` 校验和解释，从而无需拷贝即可完成重解释读取。位宽不一致或打包四位载体仍然非法。
 
 <!-- PTO-READER-BLOCK: tile-c-tsubs-effects role=effects -->
-## 已定义性、填充与发布
+## 发布、已定义性与填充
 
-所有源描述符与载荷都会在目标发布前完成验证和快照。
+目标作为一个整体变为可见：描述符、有效区域结果、填充、每个元素的已定义性以及任何数值状态同时发布。被拒绝的指令束没有任何架构效果。
 
-完整目标载荷、描述符、已定义性、填充状态与适用数值状态会原子发布；拒绝路径不发布任何部分。
+`ValidRow x ValidCol` 之外的物理元素接收所选 `PadValue`。`Zero`、`Max` 与 `Min` 用该 `DataType` 的对应值定义这些元素；`Null` 使其保持未定义。省略 `B.DATR` 选择 `Null`，而显式编码 `00` 选择 `Zero`。
 
-Null 填充让有效矩形外的物理坐标保持未定义；显式非 Null 填充值会用选定带类型的值定义这些位置。
+省略 `B.IOR` 时标量为零，因此每个结果都是源元素减零。
 
-源 Tile 在成功执行后保持不变。
+`TSUBS` 没有全局内存效果。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值，而不是计算结果。
 
 <!-- PTO-READER-BLOCK: tile-c-tsubs-constraints role=constraints -->
-## 合法性、故障与顺序边界
+## 类型、布局与故障边界
 
-完整绑定模式、维度、DataType、布局、源已定义性、数值编码、目标容量与分配都会在效果前预检。
+合法性检查 `TileBinaryDataTypeSupported` 接受 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`；打包四位格式不在其中。它所调用的元素运算 `ScalarFPBinaryProfile` 只为 `FP64`、`FP32`、`FP16` 与 `BF16` 浮点类型定义，因此 ASL 对 `TF32`、`HF32`、`E4M3` 或 `E5M2` 不给出元素结果。低位不是所选类型合法编码的标量会被拒绝，例如低 13 位非零的 `TF32` 值。
 
-合法性或分配检查失败会引发相应 Tile 故障，不留下部分目标、状态或内存效果。
+默认布局为 `RowMajor`。显式 `B.DATR` `Layout` 可以选择 `CUBE_M16` 或 `CUBE_M32`；源与目标必须使用同一布局，`CUBE_N8` 与 Shared Tile 均非法。`B.DATR` 只接受 `PadValueOrByteId` 与 `Layout`，因此非默认的 `RMode`、`Sat`、`CMode`、`Canonicalize` 或次级 `DataType` 会被拒绝。
 
-`PE_MASK=0000` 是严格无操作，发生在操作数读取、分配、故障、数值状态或载荷效果之前。
+有效矩形内的每个源元素（存在 ExecutionMask 时为每个活动元素）都必须已定义。绑定格式错误、出现 `B.IOS`、`B.IOR` 字段多余、维度缺失或为零、`DataType` 不受支持、源或标量编码无效、容量或分配失败时，会在任何目标效果之前引发 `Fault_TileLegality` 或 `Fault_TileAllocation`。
 
 <!-- PTO-READER-BLOCK: tile-c-tsubs-example role=example -->
 ## 非规范示例
 
 下面的示例只帮助理解当前 ASL 绑定契约，并不是第二份指令定义。
 
-`TSUBS <bundle operands>` 先完成完整预检与源快照，再原子发布助记符定义的结果与填充状态。
+以 `S32` 为例：源行 `[10, -5]` 与标量 `3` 产生 `[7, -8]`。标量是右操作数，因此结果不是 `[-7, 8]`。
+
+完整 `S32` Tile 的宏形式写作 `TSUBS <Row=8, Col=64, S32>, T#1, a2, ->T<2KB>`。全部 8 x 64 = 512 个元素均有效，因此目标没有填充元素。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

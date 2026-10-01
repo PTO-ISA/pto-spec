@@ -19,39 +19,41 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-esave-purpose role=purpose -->
 ## ESAVE 的作用
 
-`ESAVE` 标识扩展拥有的原始载体族；PTO 只登记该族，从不接受其执行。
+在 PTO 中，`ESAVE` 除了引发故障之外不做任何事。其编码族保留给扩展所有的执行上下文保存命令。PTO 列出该编码族，使任何 PTO 指令都不会被分配冲突的编码，但从不执行它。
+
+匹配指令会引发 `Fault_IllegalInstruction`，但在存在待处理的系统 block 终止请求时例外，详见下文。配套编码族 [ERCOV](ERCOV.md) 以同样方式保留。
 
 <!-- PTO-READER-BLOCK: block-esave-mechanism role=mechanism -->
 ## 放置与执行机制
 
-所有匹配 `ESAVE` 族的原始载体在 PTO 中均属保留；它既不是独立命令，也不是 Block 体成员。
+该编码族是掩码位 `word & 0x06007fff` 等于 `0x00002031` 的所有 32 位字：位 `14:0` 为 `0x2031`，位 `26:25` 为零。`ESAVE` 在 block 内外都没有合法位置。
 
-匹配的原始载体使用 `L32` 编码类别，但 `RegSrc0`、`RegSrc1` 和 `RegSrc2` 始终不作解释。
+命令分派器译码该形式，找到其处理函数 `SaveExecutionContext`，并检查 `CommandHandlerSupported`。该函数对此处理函数返回 false，因此分派器引发 `Fault_IllegalInstruction`，在处理函数主体运行之前返回。
 
-配置拒绝无条件引发 `Fault_IllegalInstruction`，并发生在寄存器读取、字段解释、内存访问或架构效果之前。
+设计要点：ASL 确实在 [帧生命周期](../model/lifecycle/lifetime.md) 中定义了辅助函数 `SaveExecutionContextState`。它在 PTO 中不可达，因为支持检查会先拒绝该命令。其文本不描述 PTO 行为。
 
 <!-- PTO-READER-BLOCK: block-esave-inputs role=inputs-outputs -->
 ## 载体、绑定与输入
 
-- 编码操作数：`RegSrc0` — PTO 中保留且不解释的扩展字段; `RegSrc1` — PTO 中保留且不解释的扩展字段; `RegSrc2` — PTO 中保留且不解释的扩展字段。
-- 三个显示字段只是受冲突保护的扩展比特，不是 PTO 操作数，也不会被读取。
-- 每个显示字段的全部 `32` 个值都保持保留；零在 PTO 中没有操作数含义。
+- `RegSrc0`（位 `19:15`）、`RegSrc1`（位 `24:20`）与 `RegSrc2`（位 `31:27`）在规范拼写中显示为 `BasePtr`、`LenBytes` 与 `Kind`。
+- PTO 从不解释这些字段，也从不读取它们本应指定的寄存器。
+- 每个字段的全部 32 个值（包括零）都属于保留编码族。
+
+设计要点：没有默认值，编码零也没有含义，因为拒绝发生在任何字段被译码为操作数之前。
 
 <!-- PTO-READER-BLOCK: block-esave-effects role=effects -->
 ## 状态效果与顺序
 
-不会读取任何源，也不会改变寄存器、内存、恢复/保存、Block、事件或控制流状态。
-
-解码只保留已占用编码族的身份，以防 PTO 分配发生冲突的指令。
+除每次故障都会执行的陷阱投递之外没有其他效果。不读取任何寄存器，寄存器、内存、block 或内存命令状态都不改变。故障地址就是该 `ESAVE` 本身；`SetFault` 会保存陷阱上下文，并把 `TPC` 写到陷阱向量入口，在未配置陷阱向量基址时该入口就是故障地址。
 
 <!-- PTO-READER-BLOCK: block-esave-constraints role=constraints -->
 ## 合法性、故障与原子性
 
-完整匹配族均属保留，拒绝发生在所有架构效果之前。
+在普通上下文中，每个匹配字都在任何效果之前于当前 `TPC` 引发 `Fault_IllegalInstruction`。拒绝是无条件的：它不依赖字段值、特权环或是否有活动 block。没有重启或部分进度路径。
 
-当前归属单元通过 `Fault_IllegalInstruction` 报告无效模式、状态、地址或后继条件；本页说明文字不创建额外故障规则。
+分派器在到达支持检查之前会先检查待处理的系统 block 终止请求。因此在 `ACRC` 把系统 block 标记为终止之后，匹配字改为引发 `Fault_BundleControl`。
 
-拒绝是无条件的，不存在重启或保留进度路径。
+下方生成的合法性与异常章节具有权威性。
 
 <!-- PTO-READER-BLOCK: block-esave-example role=example -->
 ## 非规范示例
@@ -62,7 +64,7 @@ The current instruction contract is owned by the ASL source linked above.
 ESAVE [RegSrc0=BasePtr, RegSrc1=LenBytes, RegSrc2=Kind] (reserved in PTO)
 ```
 
-所示拼写命名保留扩展空间；PTO 会在解释任何显示字段之前拒绝。
+字 `0x00002031`（三个字段均为零）以及三个字段均设为 31 的同一字都匹配该编码族。二者都在该 `ESAVE` 地址引发 `Fault_IllegalInstruction`，不读取任何寄存器。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

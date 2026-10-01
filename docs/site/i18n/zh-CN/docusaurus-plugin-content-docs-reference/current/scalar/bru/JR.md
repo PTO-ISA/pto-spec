@@ -19,42 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-jr-purpose role=purpose -->
 ## JR 的作用
 
-`JR` 把控制流转移到寄存器基址加有符号半字位移形成的目标。
+`JR` 把控制流转移到一个由标量寄存器加有符号半字位移形成的地址。寄存器值是基址，因此目标是绝对的，不依赖当前 `PC`。
+
+设计要点：`jr Ra, 0` 是经由 `Ra` 的间接跳转，因为位移加在寄存器值上，而不是加在 `PC` 上。与 `J` 不同，目标并不锚定在指令地址上。
 
 <!-- PTO-READER-BLOCK: scalar-jr-mechanism role=mechanism -->
-## 执行机制
+## 目标计算与偶数目标规则
 
-先对标量源取快照，再把有符号立即数左移 `1` 位，并将二者相加形成目标。
+`SrcL` 按普通 `Reg5` 源规则读取，`simm12` 先符号扩展到 `PTO_XLEN` 再左移 `1` 位。二者在 `64` 位宽度内相加，并在 `2^64` 处回绕，所得和即候选目标。
 
-目标必须为偶数；奇数目标会引发 `Fault_InstructionPC`，且不会被写入 PC。
+只有当候选目标的最低位为 `0` 时才把它安装为新的 `PC`。当最低位为 `1` 时，`JumpRegister` 以该候选目标作为故障参数引发 `Fault_InstructionPC`，并且不写 `PC`。
+
+设计要点：移位后的位移一定是偶数，因此只有寄存器值会使和为奇数。检查这个和就用一次判断覆盖了两个输入，而且发生故障时不会安装任何目标，也不会替换成对齐后的地址。
 
 <!-- PTO-READER-BLOCK: scalar-jr-inputs-outputs role=inputs-outputs -->
-## 输入与输出
+## 操作数、别名字段与结果
 
-- `SrcL` 提供左侧标量源。
+- `SrcL` 按 `Reg5` 源规则提供基址：编码 `0` 到 `23` 读取绝对 GPR，编码 `24` 到 `27` 读取 T 队列，编码 `28` 到 `31` 读取 U 队列。若队列编码对应的项无效，指令会在任何读取之前被拒绝。
 
-- `SrcZero` 是该编码要求的显式零值选择器。
+- `simm12` 提供有符号半字位移，编码在两个片段中，宽度分别为 `7` 位和 `5` 位。
 
-- `simm12` 提供有符号编码立即数。
+- `SrcZero` 会被译码但从不被读取：操作中没有任何路径使用它，因此这 `5` 位的取值既不能改变目标，也不能改变故障判定。
+
+设计要点：`SrcZero` 是被忽略的别名字段，而不是操作数。规范汇编 `jr SrcL, label` 中没有它的位置，该字段的全部 `32` 个取值都译码为同一操作。
 
 <!-- PTO-READER-BLOCK: scalar-jr-effects role=effects -->
-## 效果与顺序
+## 效果、故障与顺序
 
-通过检查的目标会作为一次架构转换替换控制流 PC。
+`WritePC` 安装这个偶数目标。`JumpRegister` 属于会写 `TPC` 的处理程序，因此分派边界不会再叠加该 `32` 位形式的 `4` 字节长度。
 
-跳转没有标量目的位置，也不访问内存或保留状态。
+在故障路径上不会安装任何 `PC` 值，`TPC` 也不前进，`Fault_InstructionPC` 报告该候选目标。两条路径都不写寄存器、队列项、内存位置或 `BARG` 字段。
 
 <!-- PTO-READER-BLOCK: scalar-jr-constraints role=constraints -->
 ## 合法性与故障顺序
 
-编码和源可用性会在形成目标前检查；目标对齐会在更新 PC 前检查。
+该形式的固定位必须匹配，且所选的 `SrcL` 源必须可用，否则会在计算任何目标之前引发 `Fault_IllegalInstruction`。包括 `SrcZero` 在内，没有任何保留字段值。
+
+设计要点：只有在译码与操作数检查之后才读取源并计算目标，因此被拒绝的 `JR` 不会改动 `PC` 与源寄存器，恢复后可以重新执行该指令。
 
 <!-- PTO-READER-BLOCK: scalar-jr-example role=example -->
 ## 非规范示例
 
 下面的示例只帮助理解当前所有者，不构成第二份语义定义。
 
-`jr SrcL, label` 先按上述规则形成并检查目标，再替换 PC。
+当 `a0` 持有 `0x8000` 且 `PC` 为 `0x4000` 时，`jr a0, 4` 安装 `0x8008`。`jr a0, 0` 安装 `0x8000`；若 `a0` 持有的是 `0x8001`，同一编码会以 `0x8001` 作为参数引发 `Fault_InstructionPC`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

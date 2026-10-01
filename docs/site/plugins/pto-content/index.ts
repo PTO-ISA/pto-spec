@@ -842,7 +842,8 @@ function readerGuideProjection(
   guideContext: ReaderGuideContext,
   ndfOwners: PtoReaderGuideOwnerLink[],
 ): {documentation: PtoDocumentationIdentity; readerGuide: PtoReaderGuide} {
-  const target = unit.surface === 'arch' || unit.mnemonic !== null;
+  const target =
+    unit.surface === 'arch' || unit.mnemonic !== null || unit.classification[0] === 'model';
   const englishDocumentation: PtoDocumentationIdentity = {
     path: unit.documentation,
     sha256: englishDocumentationSha256,

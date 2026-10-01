@@ -19,49 +19,60 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-bfi-purpose role=purpose -->
 ## HL.BFI 的作用
 
-`HL.BFI` 是一条 48 位标量 ALU 指令。它把源值从低位开始的连续位插入基值中选定的闭合回绕区间；当前指令契约定义结果发布路径以及任何额外状态效果。
+`HL.BFI` 是一条 48 位标量 ALU 指令。它从源的第 0 位开始，把插入源的连续位升序复制到基值快照的一个闭合区间中，并发布一个 XLEN 结果。
+
+设计要点：该区间由两个 6 位字段指定，其宽度为 `(((imms - immr) + 64) MOD 64) + 1`。端点相等时恰好选择一个目标位，而 `imms` 位于 `immr` 之前时，区间会经过位 63 回绕到位 0。
 
 <!-- PTO-READER-BLOCK: scalar-hl-bfi-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后把源值从低位开始的连续位插入基值中选定的闭合回绕区间，最后才产生目标效果。
+`InsertBitfield` 复制基值，计算宽度，并从源位 0 开始升序地把源位 `i` 写到目标位 `(first + i) MOD 64`（`asl/scalar/model/alu/semantics.asl:311-321`）。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+取模正是区间能够回绕的原因：当 `immr=63`、`imms=0` 时宽度为 `2`，于是源位 0 落到目标位 63，源位 1 落到位 0。
+
+设计要点：结果以基值的副本为起点，因此只有被选中的位位置会改变；`immr=1, imms=0` 选中全部 `64` 位并替换整个值，而窄区间保留基值的其余位、并让源的高位保持不被使用。
 
 <!-- PTO-READER-BLOCK: scalar-hl-bfi-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择基值。
-- `SrcR` 是 5 位字段，通过 Reg5 选择插入位。
-- `immr` 是 6 位字段，编码闭合区间的首个目标位。
-- `imms` 是 6 位字段，编码闭合区间的最后目标位。
+- `RegDst` 选择 Reg5 结果目标，或丢弃结果。
+- `SrcL` 是基值源：编码 `0..23` 选择绝对 GPR，`24..27` 选择 `T#1..T#4`，`28..31` 选择 `U#1..U#4`。
+- `SrcR` 是插入源，使用同一套映射。
+- `immr` 是 6 位首个目标位。
+- `imms` 是 6 位最后目标位。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+对 `T` 或 `U` 的相对读取不会消费队列项。`SrcL` 或 `SrcR` 的零编码读取架构零 GPR，`RegDst` 的零编码丢弃结果，而 `immr` 或 `imms` 的零编码表示位位置 `0`，不是省略该操作数。
+
+设计要点：`immr` 与 `imms` 是位置而不是标志：`immr=0, imms=0` 选中单个位 `0`，因此 `hl.bfi a0, a1, 0, 0, ->a2` 只改变基值 `a0` 的这一位。
 
 <!-- PTO-READER-BLOCK: scalar-hl-bfi-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值只通过 `RegDst` 按当前标量目标映射发布；`immr` 与 `imms` 用于选择插入区间，并不是发布目标。
+两个源都在目标效果之前读取，因为派发把这两次读取作为执行写入那次调用的实参传入。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 6 字节。
+结果只通过 `RegDst` 发布：编码 `1..23` 写该 GPR，编码 `30` 压入 `U`，编码 `31` 压入 `T`；`immr` 与 `imms` 永远不是发布目标。压入使该值成为最新的队列项。
 
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+`HL.BFI` 没有内存效果，也不改变其他架构状态。目标效果之后，`TPC` 前进 `6` 字节（`asl/scalar/model/dispatch/top-level.asl:55-57`）。
+
+设计要点：`RegDst` 可能与 `SrcL` 指向同一个 GPR，因此先读后写的顺序是可观察的：`hl.bfi a0, a1, 8, 15, ->a0` 保留旧 `a0` 中所有未被选中的位。
 
 <!-- PTO-READER-BLOCK: scalar-hl-bfi-constraints role=constraints -->
 ## 合法性与故障边界
 
-位域选择可从位 63 回绕到位 0；宽度与起点的精确编码含义由下方生成的默认值和合法性表给出。
+`immr` 与 `imms` 从 `0` 至 `63` 的每个取值都已分配，因此宽度范围为 `1` 至 `64`；丢弃编码 `0` 与 `24..29` 是合法的，且不产生写入。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+固定编码位与 `HL48` 形式不匹配的编码不会被译码为 `HL.BFI`；不匹配任何已接受形式的编码会在读取任何寄存器之前，于 `PC` 处引发 `Fault_IllegalInstruction`。所选 `T` 或 `U` 源不可用会在目标效果之前、`TPC` 前进之前，于 `PC` 处引发 `Fault_IllegalInstruction`；即使两个源编码相同，它们也都会被预检。不适用于当前指令束的指令会在 `TPC` 处触发 `Fault_BundleControl`（`asl/scalar/model/dispatch/top-level.asl:17-37`，`asl/scalar/model/types/operands.asl:6-19`）。
+
+设计要点：区间由两个 6 位字段和一次取模得到，因此任何操作数取值都不会让它变成未定义。`HL.BFI` 不会引发算术、内存、对齐、权限或控制流异常。
 
 <!-- PTO-READER-BLOCK: scalar-hl-bfi-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `HL.BFI` 示例说明：基值 `0`、插入源 `0x7`、`immr=2` 与 `imms=4` 产生结果 `0x1c`。
+基值 `a0` 为 `0`、插入源 `a1` 为 `0xff`、`immr=8`、`imms=15` 时宽度为 `8`：源位 `0..7` 落到目标位 `8..15`，因此 `hl.bfi a0, a1, 8, 15, ->a2` 发布 `0xff00`。
+
+当 `immr=63`、`imms=0` 时宽度为 `2`，因此元数据示例 `hl.bfi t#1, u#1, 63, 0, ->t` 把 `U#1` 的位 0 放入结果的位 63、位 1 放入结果的位 0，其余各位都取自基值 `T#1`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

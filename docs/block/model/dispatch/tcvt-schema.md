@@ -7,8 +7,64 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tcvt-schema-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines the closed bundle schema for `TCVT`, the Tile type-conversion operation. A closed schema is the complete list of bindings, dimensions, types, and attributes that a bundle must carry for one operation. `SelectedBundleClosedTCVTSchemaLegal` returns true for every other operation, and for `TCVT` it returns true only when the whole bundle matches the schema.
+
+The generic Tile path in the tile-execution owner calls it through `SelectedBundleClosedSchemasLegal`. A false result there raises `Fault_TileLegality` before any destination is allocated.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tcvt-schema-concepts role=concepts-state -->
+## Concepts and visible state
+
+`TCVT` has two data types.
+
+- The source operation type comes from the operation descriptor, through `CurrentBundleTileOperationDataTypeCode`.
+- The destination type comes from `ResolveBundleEffectiveDataType`. It uses a concrete `B.DATR` data type when one is present, and otherwise the descriptor data type.
+
+The schema reads the Tile bindings (`B.IOT`), the scalar bindings (`B.IOR`), the three bundle dimensions, the execution mask, the `B.DATR` rounding mode, canonicalize flag, and data layout, and the descriptor of the source Tile. It writes no state.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tcvt-schema-rules role=rules-interactions -->
+## Rules and interactions
+
+The binding shape is one Tile binding and no Shared binding. That binding must name a destination with a legal size code, name `source0`, and be the last binding. `source1` is present only when the execution mask is a predicate Tile, and then that mask must be source ordinal 1. A scalar binding is present only when the execution mask is carried in a GPR, and then it must satisfy the GPR mask schema.
+
+All three dimensions must be in `1..65535`. The source must hold valid encodings of the source type. The type pair must pass `HardwareTCVTTypePairSupported`, and the resolved rounding mode must pass `HardwareTCVTRoundingModeSupported`.
+
+Design point: an encoded rounding field of zero means "use the operation default". The schema resolves that default to `NumericRound_RNE` here. The ASL comment explains why: `E6M2` and `RCPE6M2` accept only RNE and RNA, and resolving the mode during schema preflight stops an unsupported mode before destination allocation or any effect.
+
+The shape rules depend on the source layout.
+
+- For a `CUBE_M16` or `CUBE_M32` source, the requested valid columns and rows must equal the source's, dimension 2 must be 1, canonicalize must be off, the data layout must be `NORM`, and the destination type must be CUBE-capable. The destination keeps the same CUBE layout.
+- Any other CUBE layout is rejected.
+- For a non-CUBE source, the requested valid columns, valid rows, and physical columns must all equal the source's, canonicalize must be off, and the source layout must equal the bundle's source layout. The destination physical shape must also fit: normally its derived row count equals the source's rows, but when both types allow odd physical columns and the column count is not a power of two, the source rows must fit the destination capacity.
+
+Design point: for CUBE sources the schema does not check the destination geometry against dimension 2. The ASL comment states that destination physical geometry is derived later from the destination type and the requested size code, which the TCVT destination unit does.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tcvt-schema-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit only answers yes or no. It raises no fault itself, allocates nothing, and does not convert values. Destination allocation for CUBE sources belongs to the TCVT destination unit. The numeric conversion belongs to the Tile `TCVT` execution. Execution-mask capture belongs to the execution-mask schema owner, and the GPR mask binding rule `BundleExecutionMaskGPRBindingSchemaLegal` belongs to the scalar-schema owner.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tcvt-schema-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+A bundle converts a RowMajor FP32 source Tile with 16 valid rows, 32 valid columns, and 32 physical columns to FP16. The descriptor type is FP32 and `B.DATR` selects FP16. `B.DIM` sets dimension 0 to 32, dimension 1 to 16, and dimension 2 to 32. There is one `B.IOT` with a destination and `source0`, marked last, and no `B.IOR`. With no mask and rounding field zero, the mode resolves to RNE. The schema passes if the FP16 destination at the chosen size code derives 16 rows for 32 columns. Setting dimension 2 to 64 would fail, because it no longer equals the source's 32 physical columns.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tcvt-schema-related role=related-owners-navigation -->
+## Related owners
+
+- [TCVT destination](tcvt-destination.md) allocates the destination for CUBE sources.
+- [Tile execution](tile-execution.md) calls this schema before destination resolution.
+- [Execution-mask schema](execution-mask-schema.md) owns the mask carrier rules.
+- [TCVT](../../../tile/elementwise-tile-tile/format-conversion/TCVT.md) is the instruction page.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

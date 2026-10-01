@@ -19,56 +19,66 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-trems-purpose role=purpose -->
 ## TREMS 的作用
 
-`TREMS` 对每个有效元素与一个标量计算 divisor-有符号 modulo，并发布一个新的 Local 目标。
+`TREMS` 计算 Local 源 Tile 有效矩形内每个元素对一个标量除数的模，并把结果写入一个新分配的 Local 目标 Tile。它由 TEPL Mode 1 Function 4（选择器 `0x024`）选中，规范写法为 `BSTART.SFU TREMS, DataType`，没有独立 opcode。
+
+设计要点：标量是指令束操作数，而不是 Tile。Tile-Tile 形式 `TREM` 需要第二个形状和布局都相同的源 Tile，因此用它施加同一个值时，必须先构造一个填满该值的 Tile，例如使用 `TEXPANDS`。`TREMS` 直接从 GPR 读取该值，因此不需要分配广播 Tile，也不需要使其成为已定义。
 
 <!-- PTO-READER-BLOCK: tile-c-trems-mechanism role=mechanism -->
-## 操作机制
+## 标量来源与元素机制
 
-该操作只在有效矩形内按助记符选定的带类型的元素规则求值。
+标量来自 `B.IOR.RegSrc0`。每个参与的 PE 在自己的私有 GPR 文件中解析该选择器，因此同一 `PE_MASK` 选中的各 PE 可以使用不同的标量值。指令束中没有用于标量的立即数字段；省略 `B.IOR` 时标量为零。
 
-浮点结果与元素状态遵循当前具名数值配置档；可移植契约拥有选择、形状、发布与故障顺序。
+64 位 GPR 值由 `TileRawElementValue` 收窄：只保留与所选 `DataType` 元素位宽一致的低 8、16、32 或 64 位。不发生数值转换。浮点标量必须已经是所选类型的编码，有符号整数标量按元素位宽的补码值读取。
+
+预检通过后，`ExecuteTileScalar` 对 `ValidRow x ValidCol` 内的每个坐标计算 `source mod scalar`。操作数顺序是固定的：结果是 `source mod scalar`，标量是除数。对有符号整数，商向负无穷取整，因此每个非零结果都与除数同号。无符号类型使用普通无符号取模。浮点类型把商向零截断，因此非零浮点结果与被除数同号，而不是与除数同号。
+
+设计要点：对有符号整数，这不是许多编程语言中的截断余数。`TileSignedModulo` 先求截断余数；当它非零且符号与除数不同时，再加上一次除数。因此结果要么为零，要么与除数同号，且其绝对值小于除数的绝对值。
+
+当至少一个坐标处于活动状态时，整数零除数会在预检阶段被拒绝；没有活动坐标的 ExecutionMask 使该操作成为合法的无操作。浮点正零或负零除数是合法的；它产生规范静默 NaN 并置无效状态。
+
+设计要点：包括标量检查在内的所有检查都在对源和标量做快照之前完成，并且只有在所有元素计算完成后才发布结果。因此与目标别名的源按其旧值读取。
 
 <!-- PTO-READER-BLOCK: tile-c-trems-inputs-outputs role=inputs-outputs -->
-## 操作数、形状与类型
+## 操作数角色与描述符
 
-- `destination0` 标识新分配的目的 Tile。
+- `source0` 是 Tile 操作数，必须是已存在的 Local 数值 Tile，并保持不变。
+- `scalar0` 是来自 `B.IOR.RegSrc0` 的逐 PE 标量。显式 `B.IOR` 必须使 `RegSrc1`、`RegSrc2` 和 `RegDst` 保持为零。
+- `destination0` 是新分配的 Local Tile，其后备 `DataType` 为所选 `DataType`，形状与布局与源一致。
 
-- `source0` 提供持久源 Tile。
+一条终止 `B.IOT` 绑定源与目标，二者使用同一个 `PE_MASK`。`B.IOS` 与额外的 Tile 绑定均非法。
 
-- `scalar0` 提供逐 PE 标量操作数。
+设计要点：`PE_MASK=0000` 是严格无操作。它在任何 GPR 读取、描述符读取、分配、故障或状态效果之前退出，因此没有 PE 参与的指令束永远不会读取标量寄存器。
 
-- 封闭的适用 DataType 集合为 `FP32`、`FP16`、`BF16`、`S32`、`S16`、`U32`、`U16`。
-
-- 除非该助记符显式选择其他允许布局，数据 Tile 使用行主序布局。
-
-- `LB0`、`LB1`、`LB2` 按该助记符契约补全有效形状与物理形状；所有必需有效范围都必须非零。
+设计要点：源可以使用位宽相同、非打包的其他后备类型存储，例如以 `FP16` 读取 `U16` 数据。此时源的位与标量都按所选 `DataType` 校验和解释，从而无需拷贝即可完成重解释读取。位宽不一致或打包四位载体仍然非法。
 
 <!-- PTO-READER-BLOCK: tile-c-trems-effects role=effects -->
-## 已定义性、填充与发布
+## 发布、已定义性与填充
 
-所有源描述符与载荷都会在目标发布前完成验证和快照。
+目标作为一个整体变为可见：描述符、有效区域结果、填充、每个元素的已定义性以及任何数值状态同时发布。被拒绝的指令束没有任何架构效果。
 
-完整目标载荷、描述符、已定义性、填充状态与适用数值状态会原子发布；拒绝路径不发布任何部分。
+`ValidRow x ValidCol` 之外的物理元素接收所选 `PadValue`。`Zero`、`Max` 与 `Min` 用该 `DataType` 的对应值定义这些元素；`Null` 使其保持未定义。省略 `B.DATR` 选择 `Null`，而显式编码 `00` 选择 `Zero`。
 
-Null 填充让有效矩形外的物理坐标保持未定义；显式非 Null 填充值会用选定带类型的值定义这些位置。
+省略 `B.IOR` 时标量为零：对存在活动坐标的整数 `DataType`，它是非法除数；对浮点 `DataType`，它是合法的正零除数。
 
-源 Tile 在成功执行后保持不变。
+`TREMS` 没有全局内存效果。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值，而不是计算结果。
 
 <!-- PTO-READER-BLOCK: tile-c-trems-constraints role=constraints -->
-## 合法性、故障与顺序边界
+## 类型、布局与故障边界
 
-完整绑定模式、维度、DataType、布局、源已定义性、数值编码、目标容量与分配都会在效果前预检。
+合法性检查 `TileBinaryDataTypeSupported` 接受 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`；打包四位格式不在其中。它所调用的浮点取模 `ReferenceTileFloatingModulo` 只为 `FP32`、`FP16` 与 `BF16` 定义，因此 ASL 对 `FP64`、`TF32`、`HF32`、`E4M3` 或 `E5M2` 不给出元素结果。低位不是所选类型合法编码的标量会被拒绝，例如低 13 位非零的 `TF32` 值。
 
-合法性或分配检查失败会引发相应 Tile 故障，不留下部分目标、状态或内存效果。
+默认布局为 `RowMajor`。显式 `B.DATR` `Layout` 可以选择 `CUBE_M16` 或 `CUBE_M32`；源与目标必须使用同一布局，`CUBE_N8` 与 Shared Tile 均非法。`B.DATR` 只接受 `PadValueOrByteId` 与 `Layout`，因此非默认的 `RMode`、`Sat`、`CMode`、`Canonicalize` 或次级 `DataType` 会被拒绝。
 
-`PE_MASK=0000` 是严格无操作，发生在操作数读取、分配、故障、数值状态或载荷效果之前。
+有效矩形内的每个源元素（存在 ExecutionMask 时为每个活动元素）都必须已定义。绑定格式错误、出现 `B.IOS`、`B.IOR` 字段多余、维度缺失或为零、`DataType` 不受支持、源或标量编码无效、非法整数零除数、容量或分配失败时，会在任何目标效果之前引发 `Fault_TileLegality` 或 `Fault_TileAllocation`。
 
 <!-- PTO-READER-BLOCK: tile-c-trems-example role=example -->
 ## 非规范示例
 
 下面的示例只帮助理解当前 ASL 绑定契约，并不是第二份指令定义。
 
-`TREMS <bundle operands>` 先完成完整预检与源快照，再原子发布助记符定义的结果与填充状态。
+以 `S32` 为例：源行 `[-7, 7]` 与标量 `3` 产生 `[2, 1]`，与标量 `-3` 产生 `[-1, -2]`。截断余数对标量 `3` 则会给出 `[-1, 1]`。对 `FP32`，`-7.0 mod 3.0` 为 `-1.0`，因为浮点取模按截断计算。
+
+其宏形式为 `TREMS <Row=8, Col=64, S32>, T#1, a2, ->T<2KB>`。它使用规范的 `BSTART.SFU` 汇编，同时保留 TEPL Mode 1 Function 4 编码。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

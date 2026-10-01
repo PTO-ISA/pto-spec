@@ -19,34 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-b-iot-purpose role=purpose -->
 ## What B.IOT contributes
 
-`B.IOT` is a 32-bit block header command that records ordered Local tile sources and destinations for the selected block operation. It changes pending block metadata rather than executing a tile body operation immediately.
+`B.IOT` is a 32-bit block header command that binds Local Tiles to the operation of the current block. One `B.IOT` names up to two source Tiles, an optional new destination, a PE participation mode, and an `L` flag that ends the binding sequence. A Local Tile is a Tile register private to each PE.
+
+`B.IOT` executes nothing by itself. It appends one record to the block's Tile bindings, and the selected operation reads the complete set when the block commits. See [Tile bindings](../model/operands/tile-bindings.md).
 
 <!-- PTO-READER-BLOCK: block-b-iot-mechanism role=mechanism -->
 ## Placement and mechanism
 
-The command belongs to an active header before the first body instruction. Its effective order and arity are checked against the completed operation schema rather than inferred from this command in isolation.
+A participating `B.IOT` must appear in the header of an active block, after the block start and before the first body instruction. Records are kept in encoded order. A record with `L = 1` closes the sequence, and a later participating `B.IOT` raises `Fault_BundleControl`.
 
-The common PE-mode decoder forms the four-PE mask once. A zero mask is a strict no-op; an effective Local source is read-only, while an effective destination is recorded for atomic publication after complete validation.
+The handler checks the SizeCode encoding first, then zero participation, then placement, then the PE mask, and then appends the record. A TGPR2T block additionally requires both of its `B.IOR` records before any participating `B.IOT`. Every encoded source is stored as a relative selector, and the next non-modifier header command closes the range group that a following `B.SUBVIEW` or `B.ASSEMBLE` may modify.
+
+Design point: sources are resolved later, not by `B.IOT`. `ResolveBundleRelativeTileSources` maps each selector to a physical Tile during stage-2 preparation, before any destination is allocated. All sources therefore name the Tiles that the relative queues held before the operation, even when an earlier binding in the same block has a destination in the same hand.
 
 <!-- PTO-READER-BLOCK: block-b-iot-inputs role=inputs-outputs -->
-## Operands and header roles
+## Fields and encoded values
 
-- `SrcTile0` selects the first ordered Local source; its exact assigned domain remains in the generated contract below.
-- `SrcTile1` selects the second ordered Local source; its exact assigned domain remains in the generated contract below.
-- `L` terminates the effective Local-binding sequence; its exact assigned domain remains in the generated contract below.
-- `SizeCode` selects source-only or destination capacity; its exact assigned domain remains in the generated contract below.
-- `PEMode` encodes the participating-PE mode; its exact assigned domain remains in the generated contract below.
-- `DstTile` selects the Local destination hand; its exact assigned domain remains in the generated contract below.
+- `SrcTile0` (bits 25:20) and `SrcTile1` (bits 31:26) are 6-bit relative selectors. Bits 5:4 pick the hand T, U, M, or N, and bits 3:0 pick the distance. Distance 0 is the newest published Tile of that hand and is written `T#1`; distance 1 is `T#2`. Code zero therefore names `T#1`, not an absent source.
+- `L` (bit 19) ends the binding sequence after this record. It does not end the lifetime of any source.
+- `SizeCode` (bits 18:15) is 0 in source-only forms. Destination forms use 1 to 10 for 128 B, 256 B, 512 B, 1 KiB, 2 KiB, 4 KiB, 8 KiB, 16 KiB, 32 KiB, or 64 KiB per participating PE.
+- `PEMode` (bits 11:9) expands to a four-PE mask: `000` none, `001` PE0, `010` PE1, `011` PE2, `100` PE3, `101` PE0 and PE1, `110` PE0 to PE2, `111` all four.
+- `DstTile` (bits 8:7) selects the destination hand: 0 is T, 1 is U, 2 is M, 3 is N.
+
+Design point: a destination names only a hand, never a register. The allocator chooses the physical Tile, and publication makes it `#1` of that hand. The capacity is charged to each selected PE, so the Core-wide total is the per-PE size times the number of participating PEs.
 
 <!-- PTO-READER-BLOCK: block-b-iot-effects role=effects -->
-## Pending state and completion
+## Pending state and publication
 
-An accepted header command changes only its pending record or carrier. Architectural tile, Shared, GPR, memory, and completion effects remain deferred to the completed block unless this owner's contract explicitly identifies an immediate header-state update.
+An accepted `B.IOT` changes only the pending binding record. It reads no Tile and allocates nothing.
+
+After the block's operation succeeds, each destination that the block allocated without a `B.ASSEMBLE` modifier is published as the new `#1` of its hand. Older live Tiles of that hand shift one distance older, toward `#16`, and keep their descriptor and payload. Source Tiles stay allocated, because `B.IOT` never releases a source.
+
+Design point: `PEMode = 000` is a strict no-op once the SizeCode encoding is valid. Inside a header it records zero participation and opens a zero-mode range group; it then skips placement, stream, schema, allocation, and descriptor checks and advances `TPC`. No record is appended.
 
 <!-- PTO-READER-BLOCK: block-b-iot-constraints role=constraints -->
 ## Legality and fault boundary
 
-The contract separates raw decode failures, header-stream errors, and tile-legality failures. Zero-mask bindings bypass downstream schema, duplicate, allocation, descriptor, and memory checks as a strict no-op.
+- A source-only form with nonzero `SizeCode`, or a destination form with `SizeCode` 0 or 11 to 15, raises `Fault_IllegalInstruction`.
+- A participating `B.IOT` outside an active header, or after the sequence is closed, raises `Fault_BundleControl`.
+- A mask that differs from an earlier Tile binding in the same block raises `Fault_TileLegality`. The Tile-binding table holds 16 records; appending to a full table also raises `Fault_TileLegality`.
+- A relative source that names no live allocated Tile raises `Fault_TileLegality` at stage-2 preparation, before source reads, allocation, or operation effects.
+
+The operation schema decides how many records it accepts and which roles they carry. A mismatch raises the operation's legality fault at commit, before any destination effect.
 
 <!-- PTO-READER-BLOCK: block-b-iot-example role=example -->
 ## Non-normative worked example
@@ -54,10 +68,10 @@ The contract separates raw decode failures, header-stream errors, and tile-legal
 This worked example is non-normative; it illustrates the current owner without replacing it.
 
 ```asm
-B.IOT SrcTile0, mask=PE_MASK, <last>, ->DstTile<SizeCode>
+B.IOT T#1, T#2, mask=1111, <last>, ->T<2KB>
 ```
 
-Assume an active compatible header with no earlier conflicting `B.IOT` command. Placing `B.IOT SrcTile0, mask=PE_MASK, <last>, ->DstTile<SizeCode>` at the next header slot records this command's pending fields; it does not by itself execute the eventual body operation.
+This record binds the newest T Tile as the left source and the next older T Tile as the right source, with all four PEs and a 2 KiB destination per PE in hand T. Its fields are `SrcTile0 = 0`, `SrcTile1 = 1`, `L = 1`, `SizeCode = 5`, `PEMode = 111`, and `DstTile = 0`, which encode as `0x040ace13`. The Core-wide allocation is 4 x 2 KiB = 8 KiB. After a successful operation, the destination becomes `T#1`, the old `T#1` becomes `T#2`, and the old `T#2` becomes `T#3`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

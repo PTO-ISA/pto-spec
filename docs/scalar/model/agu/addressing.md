@@ -7,8 +7,77 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-SCALAR-MODEL-AGU-ADDRESSING}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-agu-addressing-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines direct scalar load, store, pair, and prefetch helpers. Each helper takes already-resolved register indexes and an offset, forms an address, and performs one memory transaction through the helpers in [scalar memory](memory.md).
+
+The unit contains four kinds of helper:
+
+- `EffectiveAddress`, which picks the accessed address for an update mode.
+- `ExecuteScalarLoad` and `ExecuteScalarStore`, which access one element and may write back an updated base.
+- `ExecuteScalarLoadPair` and `ExecuteScalarStorePair`, which access two adjacent elements.
+- `ScalarPrefetchAddress` and `ScalarPrefetch`, which form a prefetch address without touching memory.
+
+No ASL code calls `EffectiveAddress` or the four load, store, and pair helpers; the `ScalarHandler_*` handler names only label catalog forms. The decoded path in [AGU dispatch](../dispatch/agu.md) repeats the same rules with decoded fields, and it calls `ScalarPrefetch` and `ScalarPrefetchAddress` from this unit.
+
+<!-- PTO-READER-BLOCK: scalar-model-agu-addressing-concepts role=concepts-state -->
+## Concepts and visible state
+
+An address update mode is one of `AddressUpdate_None`, `AddressUpdate_PreIndex`, or `AddressUpdate_PostIndex`. The updated base is always `base + offset`. Pre-index and no-update accesses use the updated base as the address. Post-index accesses use the original base.
+
+All address arithmetic uses 64-bit `Word` values, so it wraps modulo 2^64.
+
+A load helper normalizes the loaded value to 64 bits. A signed load sign-extends from the access width; an unsigned load zero-extends.
+
+The helpers read GPRs through `ReadGPR` and write them through `WriteGPR`. They touch memory, memory events, the reservation, and `_LastFault`. They do not advance TPC; a fault raised through `SetFault` also records the fault address and trap context and redirects TPC to the trap vector.
+
+<!-- PTO-READER-BLOCK: scalar-model-agu-addressing-rules role=rules-interactions -->
+## Rules and interactions
+
+`ExecuteScalarLoad` reads the base, performs `LoadSigned` or `LoadUnsigned`, and then checks `_LastFault`. Only when no fault was raised does it write the destination and, for pre-index or post-index, the updated base. The destination is written before the base.
+
+`ExecuteScalarStore` reads the base and the data register, calls `Store`, and writes back the updated base only if `_LastFault` is still `Fault_None`.
+
+Design point: in the single-element helpers, every destination and base write is guarded by `_LastFault == Fault_None`. A faulting access therefore leaves the destination and base GPRs unchanged. Recovery can reissue the complete instruction from its original sources, because no partial base update has been published.
+
+The pair helpers never write back a base. They compute the second address as the first address plus the access size. They then probe the first address and the second address with `ProbeDataAccess`, in that order, before any data moves. The first failing probe raises its fault at its own original address and the helper returns.
+
+Design point: both probes finish before the first load or store. A pair store can therefore not write the first element and then fault on the second. On success, the pair loads both values, records two relaxed load events with the low element first, and writes the low destination before the high destination. A pair store reads both source registers before either store, then stores and records the low element before the high element.
+
+<!-- PTO-READER-BLOCK: scalar-model-agu-addressing-boundaries role=boundaries -->
+## Architectural boundaries
+
+`ScalarPrefetch` forms `base + offset` and discards it. It performs no translation, no permission check, no memory access, and records no event, so a prefetch cannot raise a data fault. Its `model` argument is not used by the helper. Legality of the encoded `model` value is decided before dispatch, by the catalog constraint on the form.
+
+Alignment, the bounded-memory limit, and the access-ring limit are owned by `ProbeDataAccess` in [scalar memory](memory.md), not by this unit.
+
+The direct helpers take absolute GPR indexes. They do not handle T/U queue selectors, compressed forms, PC-relative bases, or offset scaling; those belong to decoded dispatch.
+
+<!-- PTO-READER-BLOCK: scalar-model-agu-addressing-example role=example-usage -->
+## Non-normative reading example
+
+Consider `ExecuteScalarLoad` with destination GPR 5, base GPR 6 holding 0x100, offset 8, size 4, unsigned, and mode `AddressUpdate_PostIndex`.
+
+- `EffectiveAddress` returns the original base 0x100, because the mode is post-index.
+- `LoadUnsigned` probes 0x100. It is 4-byte aligned, so no alignment fault is raised.
+- If the access is permitted, GPR 5 receives the zero-extended 32-bit value, and then GPR 6 receives 0x108.
+- If the probe fails, `_LastFault` is set, and neither GPR 5 nor GPR 6 changes.
+
+With `AddressUpdate_PreIndex` the same call would access 0x108 and also write 0x108 to GPR 6.
+
+<!-- PTO-READER-BLOCK: scalar-model-agu-addressing-related role=related-owners-navigation -->
+## Related owners
+
+- [Scalar memory](memory.md) owns probing, byte access, normalization, and reservation invalidation.
+- [AGU dispatch](../dispatch/agu.md) owns decoded address formation, scaling, and queue operands.
+- [Fault precision](../../../arch/memory-model/fault-precision.md) owns the precise-fault and restart contract.
+- [Memory events](../../../arch/memory-model/memory-events.md) owns the recorded load and store events.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

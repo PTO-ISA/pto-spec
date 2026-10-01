@@ -19,47 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-addi-purpose role=purpose -->
 ## What HL.ADDI does
 
-`HL.ADDI` is a 48-bit scalar ALU instruction. It performs addition under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+`HL.ADDI` is the 48-bit form of XLEN addition with a constant. It reads one Reg5 source, zero-extends the encoded `uimm24` immediate to `PTO_XLEN`, adds the two values modulo `2^PTO_XLEN`, and publishes the sum through `RegDst`. The encoding is `48` bits wide, so successful execution advances `TPC` by `6` bytes.
+
+Design point: `uimm24` is unsigned, so this mnemonic can express every addend from `0` through `16777215` and no negative addend. A downward constant is a different mnemonic: `HL.SUBI` reads the same `SrcL` and `uimm24` fields and applies subtraction, so the two forms share one field layout and differ in the operation they apply.
 
 <!-- PTO-READER-BLOCK: scalar-hl-addi-mechanism role=mechanism -->
-## How the result is formed
+## How the sum is formed
 
-Execution snapshots the encoded inputs, then performs addition under the complete XLEN value result rules, and only afterward performs the destination effects.
+The encoder carries `uimm24` in two 12-bit pieces. Decode places the first piece in value bits `11:0` and the second in value bits `23:12`, so the reassembled constant is exact and all `16777216` patterns denote distinct addends.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: the immediate pieces occupy instruction bits `4..15` and `36..47`, while `RegDst` occupies instruction bits `23..27`. The fields cannot overlap, so no immediate bit can reselect the destination, and no immediate value has to be reserved for another role.
+
+After reassembly the constant is zero-extended to `PTO_XLEN` and added to the snapshotted source. The addition is fixed width: it wraps and raises no arithmetic exception.
 
 <!-- PTO-READER-BLOCK: scalar-hl-addi-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 scalar result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar value through Reg5.
-- The unsigned 24-bit `uimm24` field carries the unsigned split 24-bit immediate.
+- `SrcL` reads one Reg5 value: codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`. A relative read never removes the queue entry it names.
+- `uimm24` supplies the unsigned addend, `0` through `16777215`.
+- `RegDst` receives the `PTO_XLEN` sum: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: the three encoded zeros are three different things. `SrcL=0` reads GPR zero, which always reads as zero and has no storage; `uimm24=0` is the numeric addend `0`; `RegDst=0` names that same GPR zero, whose writes are dropped. So `hl.addi a0, 0, ->zero` publishes its sum to no register and no queue, and only `TPC` moves.
 
 <!-- PTO-READER-BLOCK: scalar-hl-addi-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` and `uimm24` are both resolved before the destination is written, so a form that names one register twice, such as `hl.addi a0, 1, ->a0`, adds to the pre-instruction `a0`. A relative source read leaves its queue untouched, and a discard destination leaves every register and queue untouched as well.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Publication is followed by the `TPC` advance of `6` bytes, including when `RegDst` discards the sum. `HL.ADDI` performs no memory access and changes no reservation, descriptor, numeric-status, `Tile`, bundle, privilege or branch-target state.
 
 <!-- PTO-READER-BLOCK: scalar-hl-addi-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every encoded value is assigned: all `32` `SrcL` codes, all `32` `RegDst` codes, and the complete unsigned `24`-bit addend range.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Three rejections are reachable, in model order. A `48`-bit word whose fixed bits match no form raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active bundle raises `Fault_BundleControl` at `TPC`. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`. Each precedes the destination effect and the `TPC` advance.
+
+Design point: the applicability test runs before the source test, so an encoding that is both inapplicable and carries an unavailable source reports `Fault_BundleControl` at `TPC` rather than the source fault. For an ALU operation the applicability test fails only while a system block has recorded a terminal close request.
+
+`HL.ADDI` adds no arithmetic exception of its own: a sum that overflows `PTO_XLEN` is discarded by wrapping.
 
 <!-- PTO-READER-BLOCK: scalar-hl-addi-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.ADDI` example, `SrcL=7` and `uimm24=3` produce `10`.
+With `a0` holding `1`, `hl.addi a0, 16777215, ->a0` writes `16777216`. With `a0` holding `18446744073709551615`, the largest `PTO_XLEN` value, `hl.addi a0, 1, ->a0` writes `0`, and `TPC` still advances by `6` bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

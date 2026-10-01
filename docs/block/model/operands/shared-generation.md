@@ -7,8 +7,69 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-shared-generation-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns Shared generations and Shared subviews. A Shared generation is a Shared Tile built by one or more writers with `B.ASSEMBLE`. A Shared subview is a `B.SUBVIEW` range of a published Shared Tile that each PE may place differently.
+
+The unit validates writer ranges, merges each writer's payload into a working copy, and publishes the complete object at LAST.
+
+<!-- PTO-READER-BLOCK: block-model-operands-shared-generation-concepts role=concepts-state -->
+## Concepts and visible state
+
+The unit updates the `_SharedGenerations` record of one Shared Tile ID and, at LAST, the published `_SharedTiles` entry.
+
+Coverage is tracked in 32-byte units, with 8192 units in a map. An ordinary `B.ASSEMBLE` offset and size code are in 128-byte CELLs, and the wrappers multiply by 4. The ASL comment states the reason: the finer unit lets specialized complete-row producers express the TIMG2COL row ranges without partial CELL rules. Weight `TLOAD` also commits through the same range entry point.
+
+`BundleSharedGenerationCapacity` returns the binding's size code, or, for a reused destination, the generation's `parent_size_code`.
+
+<!-- PTO-READER-BLOCK: block-model-operands-shared-generation-rules role=rules-interactions -->
+## Rules and interactions
+
+`ValidateBundleSharedGenerationRange` accepts a writer only when:
+
+- INIT names a destination with a size code of 1..12 and no generation is already open for that ID;
+- a continuation names a reused destination of an open, unclosed generation with the same participant mask and, for specialized producers, the same inputs and metadata;
+- the arriving PEs are a nonempty subset of the mask;
+- the range fits in the parent and, for a continuation, overlaps no covered unit;
+- at LAST, every parent unit is covered and every participant has arrived.
+
+`ValidateBundleSharedGeneration` applies this to ordinary writers during stage-2 preparation, with the whole binding mask arriving.
+
+`CommitBundleSharedGenerationCandidateRange` repeats the validation. INIT resets the record and starts a working Tile from the candidate with the parent capacity and no defined elements. A continuation requires matching columns, data type, and layout. The candidate's defined elements are copied into the working Tile at the writer's offset, and the valid region grows to cover them. Coverage, readiness, and arrival are updated. At LAST the working Tile becomes the published Shared Tile in the same commit step.
+
+Design point: `CommitBundleSharedGenerationCandidateRange` writes `_SharedTiles` only at LAST; earlier calls change only the generation record. The NDF `PTO-B-ASSEMBLE-SHARED-GENERATION-001` requires publication to replace descriptor and payload atomically and every rejection to preserve the prior published generation.
+
+Design point: participant arrival is tracked apart from coverage. A specialized cooperative producer passes one PE's arrival bit per writer, and a PE with zero rows can arrive without writing cells, so the collective can still close.
+
+`BeginBundleSharedGenerationProbe` saves the published record and hides it while a Shared `TLOAD` or a Local-to-Shared `TMOV` builds a candidate. On the fault-free `TLOAD` path, and always for `TMOV`, `RestoreBundleSharedGenerationProbe` puts it back before the commit. The Shared TLSU comment states that after a first fault the candidate record is left in place and is neither ready nor published.
+
+<!-- PTO-READER-BLOCK: block-model-operands-shared-generation-boundaries role=boundaries -->
+## Architectural boundaries
+
+`BundleSharedSubviewLegal` requires a size-code-0 source binding of a published, non-CUBE Shared Tile. For every selected PE, it evaluates `GPR[RegSrc] + uimm11` in that PE's own registers, then requires the range to fit the parent and to be either within one row or whole rows starting at column 0. `MaterializeBundleSharedSubviewForPE` builds that PE's view. One bad view rejects the operation.
+
+`AbortBundleSharedGenerationsForBundle` aborts every generation the bundle touched when a tile operation fails.
+
+<!-- PTO-READER-BLOCK: block-model-operands-shared-generation-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Shared Tile 3 is built by two ordinary writer bundles with mask `1111` and parent size code 7 (8192 bytes, 64 CELLs, 256 units). Bundle A carries INIT with writer size code 6 (32 CELLs) at offset 0. After A, units 0..127 are covered and all four PEs have arrived, because an ordinary writer arrives with its whole mask. Bundle B carries LAST with writer size code 6 at offset 32 and covers units 128..255. Coverage is then complete, and the working Tile replaces Shared Tile 3. If B used offset 16 instead, its range would overlap covered units, B would fault with `Fault_TileLegality`, the open generation would be aborted, and any previously published Shared Tile 3 would remain published.
+
+<!-- PTO-READER-BLOCK: block-model-operands-shared-generation-related role=related-owners-navigation -->
+## Related owners
+
+- [Shared generation state](../state/shared-generation-state.md) clears, resets, and aborts the records.
+- [Shared bindings](shared-bindings.md) defines reused destinations.
+- [Shared TLSU](../dispatch/shared-tlsu.md), [TIMG2COL execution](../dispatch/timg2col-execution.md), and [Weight-to-shared execution](../dispatch/weight-to-shared-execution.md) commit candidates.
+- [B.ASSEMBLE](../../operands/B.ASSEMBLE.md) is the command page.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -7,8 +7,76 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-SCALAR-MODEL-ALU-SEMANTICS}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-alu-semantics-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit holds the value rules for scalar integer, logic, shift, bitfield, multiply, and divide operations. Most functions are pure: they take `Word` values and return a `Word`. A few `Execute...Pair` functions also write two Reg5 destinations.
+
+Decoded ALU instructions reach these functions through [ALU dispatch](../dispatch/alu.md), which reads the operands. `ExecuteScalarBinary`, which reads absolute GPRs directly, has no caller in the ASL tree.
+
+<!-- PTO-READER-BLOCK: scalar-model-alu-semantics-concepts role=concepts-state -->
+## Concepts and visible state
+
+A `Word` is `PTO_XLEN` (64) bits. All 64-bit arithmetic wraps modulo 2^64. `MultiplyWord` returns the low 64 bits of the product; `MultiplyWideSigned` and `MultiplyWideUnsigned` return all 128 bits.
+
+A word operation (suffix W) works on the low 32 bits and sign-extends its 32-bit result to 64 bits. `ScalarBinaryW` uses shift counts from the low five bits of the right operand; `ScalarBinary` uses the low six bits.
+
+A right modifier transforms the right operand before use:
+
+- `ScalarRight_SignedWord` sign-extends bits 31:0.
+- `ScalarRight_UnsignedWord` zero-extends bits 31:0.
+- `ScalarRight_NegateOrNot` applies bitwise NOT for the logical family and two's-complement negation otherwise.
+
+`PrepareScalarRight` applies the modifier and then shifts left. `ApplyRestrictedCompareModifier` treats `ScalarRight_NegateOrNot` as no change. `ApplySelectModifier` treats it as negation and ignores the other modifiers.
+
+<!-- PTO-READER-BLOCK: scalar-model-alu-semantics-rules role=rules-interactions -->
+## Rules and interactions
+
+Division never raises a fault. A zero divisor gives quotient 0 and returns the dividend as the remainder. Signed division divides magnitudes and negates when the signs differ, so the quotient rounds toward zero and the remainder has the dividend's sign.
+
+Design point: the zero-divisor result is written out in the ASL instead of left to an exception. A program can divide by any value, including zero, and then test the result; no trap handler is involved. The signed-minimum overflow case is also defined without a fault: `0x8000000000000000` divided by -1 returns `0x8000000000000000` with remainder 0.
+
+The W division helpers first sign-extend (signed) or zero-extend (unsigned) the low 32 bits of both inputs, apply the 64-bit rule, and sign-extend bits 31:0 of the result.
+
+Bitfield helpers treat the value as a ring of 64 bits. `ExtractBitfield` rotates right by the offset and keeps `width` bits, sign-extending on request. `ModifyBitfield` sets or clears `width` bits starting at the offset. `InsertBitfield` computes its width from `first` and `last` modulo 64, so a field can wrap from bit 63 to bit 0. `ReverseBitfieldBytes` returns zero if the width is not a multiple of 8.
+
+The pair functions compute both results from their inputs before writing either destination. `ExecuteScalarDividePair` writes quotient then remainder; `ExecuteScalarRemainderPair` writes remainder then quotient; the multiply pairs write low then high.
+
+Design point: because the second write happens last, two destinations that name the same GPR end with the second result. Two pushes to the same T or U queue leave the second result newest.
+
+<!-- PTO-READER-BLOCK: scalar-model-alu-semantics-boundaries role=boundaries -->
+## Architectural boundaries
+
+`ScalarBinaryW` supports only ADD, SUB, AND, OR, XOR, SLL, SRL, and SRA; it asserts for MIN and MAX variants. Decoded dispatch only passes the supported operations.
+
+Apart from the uncalled `ExecuteScalarBinary`, this unit does not read operands. It does not decode fields or advance TPC. Operand snapshots and T/U queue selection belong to dispatch and [scalar operands](../types/operands.md).
+
+`NaturalToWord` converts a natural number of at most 262144 into a `Word`. Many other units use it for address offsets.
+
+<!-- PTO-READER-BLOCK: scalar-model-alu-semantics-example role=example-usage -->
+## Non-normative reading example
+
+Consider `ExecuteScalarDividePair` with dividend -7, divisor 2, signed.
+
+- Magnitudes are 7 and 2, so the unsigned quotient is 3.
+- The signs differ, so the quotient is -3.
+- The remainder is -7 - (-3 x 2) = -1, which has the dividend's sign.
+- The quotient destination is written first, then the remainder destination.
+
+With divisor 0 the same call writes quotient 0 and remainder -7.
+
+<!-- PTO-READER-BLOCK: scalar-model-alu-semantics-related role=related-owners-navigation -->
+## Related owners
+
+- [ALU dispatch](../dispatch/alu.md) maps each ALU form to these functions.
+- [Operation types](../types/operations.md) defines `ScalarBinaryOperation` and `ScalarRightModifier`.
+- [Scalar operands](../types/operands.md) owns Reg5 reads and destination writes.
+- [BRU dispatch](../dispatch/bru.md) applies these modifiers to comparison operands.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -7,8 +7,79 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-NUMERIC-PACKED-CONVERSION}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-numeric-packed-conversion-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns the reference encoders for three small formats (E2M1X2, E1M2X2, and E6M2). The encoders turn an exact real value into a code; the other helpers decode a lane or break ties.
+
+- `ReferencePacked4FiniteValue` decodes one four-bit E2M1X2 or E1M2X2 lane.
+- `ReferencePacked4Encoding` rounds a real value to one of those lanes.
+- `ReferenceE6M2Encoding` rounds a positive real value to an E6M2 scale code.
+- `ReferencePacked4CandidateBetter` and `ReferenceE6M2CandidateBetter` break ties between candidates.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-packed-conversion-concepts role=concepts-state -->
+## Concepts and visible state
+
+A four-bit lane has a sign bit (bit 3) and a three-bit magnitude code. Codes 8 to 15 are the negatives of codes 0 to 7, so code 8 is negative zero.
+
+| Magnitude code | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| E2M1X2 value | 0.0 | 0.5 | 1.0 | 1.5 | 2.0 | 3.0 | 4.0 | 6.0 |
+| E1M2X2 value | 0.0 | 0.25 | 0.5 | 0.75 | 1.0 | 1.25 | 1.5 | 1.75 |
+
+Neither four-bit format has infinity or NaN. E6M2 is unsigned, has no zero, and code `c` from 0 to 254 means (4 + low two bits) / 4 x 2^(high six bits - 48). Code `0xFF` is NaN.
+
+Flags use the constants `0x10` NX, `0x14` OF plus NX, and `0x18` UF plus NX.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-packed-conversion-rules role=rules-interactions -->
+## Rules and interactions
+
+`ReferencePacked4Encoding` returns code 0 for an exact zero. A magnitude above the format maximum (6.0 or 1.75) is overflow with OF and NX. The overflow result is code 6 or 14 for E2M1X2 and code 7 or 15 for E1M2X2; the `saturating` control is not consulted.
+
+Otherwise the encoder tries all 16 codes and keeps the best eligible one.
+
+- RTP keeps the smallest candidate not below the value, and RTM keeps the largest not above it.
+- RTZ and RTO keep the largest-magnitude candidate between zero and the value.
+- The nearest modes keep the closest candidate. On a tie, RNE prefers an even code, RNA the larger magnitude, and RHB the larger value.
+- RTO then moves an inexact even code up by one, to the odd neighbor.
+
+Design point: the encoder searches the code table instead of manipulating exponent bits. The consequence is that each rounding mode is defined by which listed values are eligible and how ties are broken, and the result is always one of the 16 table entries.
+
+Underflow is reported with UF and NX when the result is inexact and small. E2M1X2 tests the chosen value against 1.0. E1M2X2 tests the input magnitude against 0.25.
+
+`ReferenceE6M2Encoding` returns code 0 for an exact zero with no flags and asserts that other inputs are positive. A value above code `0xFE` (49152) overflows to `0xFF`, or `0xFE` with saturation, with OF and NX. Otherwise the nearest of codes 0 to 254 is chosen; RNE breaks ties by even code, and every other mode by the larger value. A value below code 0 (2^-48) that is inexact reports UF and NX.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-packed-conversion-boundaries role=boundaries -->
+## Architectural boundaries
+
+These encoders see only finite real values: the TCVT conversion wrappers handle NaN, infinity, and signed zero first. The four-bit encoder handles the sign of a finite value itself; only the E6M2 wrapper rejects negative inputs, with `0xFF` and NV. The matrix quantization encoder `ReferenceMatrixFloatingEncoding` also calls both encoders.
+
+TCVT legality allows only RNE and RNA when E6M2 is involved, so the other E6M2 tie rules are not reached through TCVT.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-packed-conversion-example role=example-usage -->
+## Non-normative reading example
+
+Encode 2.5 as E2M1X2.
+
+- The neighbors are 2.0 (code 4) and 3.0 (code 5), both at distance 0.5.
+- RNE picks the even code 4 (2.0), with NX.
+- RNA picks the larger magnitude, code 5 (3.0), with NX.
+- RTO first picks 2.0 (code 4), then moves to code 5 because 4 is even.
+
+Encode negative 0.3 as E1M2X2 with RNE. The nearest value is negative 0.25 (code 9). The result is inexact and 0.3 is not below 0.25, so the flags are NX only.
+
+<!-- PTO-READER-BLOCK: tile-model-numeric-packed-conversion-related role=related-owners-navigation -->
+## Related owners
+
+- [TCVT conversion](tcvt-conversion.md) wraps these encoders with special-value handling.
+- [Matrix quantization](../execution/matrix-quantization.md) owns `ReferenceMatrixFloatingEncoding`.
+- [E2M1X2 format](../../../arch/data-types/formats/e2m1x2.md) and [E1M2X2 format](../../../arch/data-types/formats/e1m2x2.md) own the lane encodings.
+- [E6M2 format](../../../arch/data-types/formats/e6m2.md) owns the scale encoding.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

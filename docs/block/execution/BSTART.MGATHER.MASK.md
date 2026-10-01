@@ -19,40 +19,47 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mgather-mask-purpose role=purpose -->
 ## What BSTART.MGATHER.MASK contributes
 
-`BSTART.MGATHER.MASK` is a 32-bit block-start command for the MGATHER.MASK form. It establishes the pending block identity and selectors; the completed block, not the start command alone, owns body execution and result commitment.
+`BSTART.MGATHER.MASK` opens a Tile memory block whose operation is `MGATHER_MASK`: an indexed load in which a Local predicate Tile decides, lane by lane, whether that lane is loaded. For each active lane whose predicate element is `0x01`, one transfer element is read from global memory (GM) at the base address plus that lane's byte displacement and written into the destination Tile. A lane whose predicate element is `0x00` is skipped.
+
+The command is one 32-bit word with match `0x00611181` under mask `0x07ffffff`, so `DataType` occupies bits 31 to 27 and the fixed low bits carry TLSU selector 6. `BundleMGATHERMASKSelected` matches that selector and `ExecuteBundleMGATHERMASKOperation` runs the operation `TileOperation_MGATHER_MASK`.
+
+Design point: the `B.IOT` `PE_MASK` and the predicate Tile select different things. `PE_MASK` selects which PEs take part at all, while the predicate Tile selects individual coordinates inside each participating PE. The predicate is therefore an operand Tile, not an encoding field, and it can be produced by an earlier operation in the same program.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-mask-mechanism role=mechanism -->
 ## Placement and mechanism
 
-Header commands execute sequentially after the start, while `BSTOP` or the next `BSTART` is the boundary that validates and retires the completed block. The current owner gives this exact composition checklist:
+The handler declines a `PE_MASK=0000` block as a strict no-op, decodes the selector, and validates the schema, the layout and physical shape rules, and the relation between the bundle dimensions, the index Tile, and the predicate Tile. The predicate Tile must be an ordinary Local `U8` carrier whose valid shape equals the index Tile's valid shape, and every predicate element must be `0x00` or `0x01`; any other value raises `Fault_TileLegality` before effects.
 
-```text
-BSTART.MGATHER.MASK DataType
-B.DATR PadValue, Layout (optional)
-B.DIM LB0=ValidCol
-B.DIM LB1=ValidRow (optional)
-B.DIM LB2=Col (optional)
-B.IOT IndexTile, MaskTile, mask=PE_MASK, <last>, ->DstTile<TSize>
-B.IOR BaseGPR, zero, zero, ->zero
-BSTOP
-```
+The Tile-level body `MGATHER_MASK` computes an address and probes it for read only when both the predicate element is `0x01` and the ExecutionMask leaves that coordinate active. It then loads exactly those lanes and records one load event for each.
 
-After any active predecessor is retired successfully, the command initializes the new pending `BARG` or operation descriptor and continues header execution at the sequential PC. No block destination or memory result becomes visible merely because the start decoded.
+Design point: a false predicate performs no address generation at all, so no translation, permission check, probe, event, or data-access fault can come from that lane. A skipped lane keeps the padding value in its destination element, which is what makes the mask usable for sparse patterns without a separate clearing step.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-mask-inputs role=inputs-outputs -->
 ## Operands and header roles
 
-- `DataType` selects the element data type or inheritance sentinel; its exact assigned domain remains in the generated contract below.
+- `DataType` is the transfer element type, and it need not match the predicate Tile's element type.
+- `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col (default `LB0`). The valid rows and valid columns must equal the index Tile's valid shape, and the predicate Tile must have the same valid rows and valid columns as the index Tile.
+- One terminating `B.IOT` carries the index Tile in `source0`, the predicate Tile in `source1`, the `PE_MASK`, `last`, and a destination with a size code. With a predicate-Tile ExecutionMask the destination moves to a second `B.IOT`.
+- The index Tile is `S32`, `U32`, `S64`, or `U64` with the bundle layout and byte displacements. The predicate Tile uses the bundle layout.
+- `B.IOR BaseGPR, zero, zero, ->zero` is required, with `RegSrc0` as the per-PE base GPR and the other three selectors encoding zero.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-mask-effects role=effects -->
 ## Pending state and completion
 
-The start transition is all-or-nothing with predecessor retirement for applicability and target checks. After the start succeeds, the later completion boundary validates the full composition before any body result can commit.
+Each enabled lane writes one loaded element into the destination element at the same row and column. For a packed four-bit type, one indexed byte supplies two adjacent logical nibbles and one predicate element controls the whole byte pair, so the destination valid columns are exactly twice the index valid columns.
+
+Before the loads, the complete physical destination region is defined: coordinates the ExecutionMask deactivates take the mask's zero or merge value, and every other element, including lanes skipped by the predicate, takes the bundle `PadValue`. On success the whole physical destination region is defined; a failing attempt publishes no destination.
+
+Design point: the padded and the skipped elements are indistinguishable in the published result, because both receive the same `PadValue`. A program that needs to know whether a lane was masked must keep the predicate Tile, not read the destination.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-mask-constraints role=constraints -->
 ## Legality and fault boundary
 
-Reserved selectors, invalid targets, malformed completed composition, or failed predecessor retirement are rejected before new-block or body effects.
+- `PE_MASK=0000` is a strict no-op before every schema, source, GPR, dimension, allocation, predicate, address, and fault check.
+- A reserved `DataType` code or an unknown TLSU selector raises `Fault_IllegalInstruction`.
+- A predicate element other than `0x00` or `0x01`, a predicate Tile whose valid shape differs from the index Tile's, a `B.IOS` binding, a missing `B.IOR`, a nonzero unused `B.IOR` selector, a malformed binding schema, a wrong index type, an undefined source, or a shape, layout, or dimension mismatch raises `Fault_TileLegality` before the first probe.
+- The layout is `ROWMAJOR`, `CUBE_M16`, or `CUBE_M32`; `CUBE_N8` is rejected, and record counts must match the presence of a predicate-Tile ExecutionMask.
+- If no free Local destination exists, resolution raises `Fault_TileAllocation`. An enabled lane whose address cannot be accessed raises its own memory fault, and the destination is rolled back.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-mask-example role=example -->
 ## Non-normative worked example
@@ -60,10 +67,16 @@ Reserved selectors, invalid targets, malformed completed composition, or failed 
 This worked example is non-normative; it illustrates the current owner without replacing it.
 
 ```asm
-BSTART.MGATHER.MASK DataType
+BSTART.MGATHER.MASK U32
+B.DIM zero, 4, ->LB0
+B.DIM zero, 1, ->LB1
+B.DIM zero, 4, ->LB2
+B.IOT T#1, T#2, mask=1111, last, ->T<16B>
+B.IOR a0, zero, zero, ->zero
+BSTOP
 ```
 
-Assume predecessor retirement and target checks succeed. `BSTART.MGATHER.MASK DataType` opens the pending `BSTART.MGATHER.MASK` form; subsequent header/body commands remain provisional until `BSTOP` or the next `BSTART` validates the complete composition.
+`T#1` is a 1 by 4 `S32` index Tile holding `0`, `4`, `8`, and `12`, `T#2` is a 1 by 4 `U8` predicate Tile holding `1`, `1`, `0`, and `0`, and `a0` holds `0x1000`. Only the first two lanes are probed and loaded, from `0x1000` and `0x1004`. The last two indices are never turned into addresses, so they cannot fault, and their destination elements keep the pad value.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

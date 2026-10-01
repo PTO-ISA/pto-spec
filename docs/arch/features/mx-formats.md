@@ -15,48 +15,55 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-mx-formats-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit implements the named hardware numeric profile's subnormal policy, encoding validation, value classification, canonical special values, and special comparison/min-max cases.
+This unit is the named hardware numeric profile for Tile data types: `17` `pure func` declarations, no variable, no instruction body, no fault, no queue. It fixes the profile's subnormal rules, the encoding validity of four formats, value classification, canonical special values, and the comparison and min/max cases decided without arithmetic.
 
-It centralizes profile behavior used by multiple scalar and tile numeric operations while leaving ordinary arithmetic to the active operation profile.
+Line 1 declares `depends_on` `PTO-ARCH-DATA-TYPES-NUMERIC-CLASSIFICATION`.
+
+Design point: the unit is classified `mx-formats`, but its executable ASL defines no MX block size, no scale word and no scale-sharing rule. The raw scale word is owned by `asl/arch/data-types/formats/hif4-scale.asl`, and the only scale-adjacent type named here, `TileDataType_E8M0`, is merely classified.
 
 <!-- PTO-READER-BLOCK: arch-mx-formats-concepts-state role=concepts-state -->
-## Concepts and visible state
+## Helpers, arguments and answers
 
-- `HardwareNumericTypeHasSubnormals` selects the declared floating formats with subnormal encodings; the three rule helpers map those types to preserve, gradual-underflow, and after-rounding policies.
-- `TileNumericEncodingValid` checks internal restrictions for `TF32`, `HF32`, `E3M2`, and `E2M3`; other declared types return valid at this boundary.
-- `TileNumericValueClass` dispatches floating, scale, signed-integer, and unsigned-integer carriers to exact classifiers.
+- `HardwareNumericTypeHasSubnormals` answers TRUE for `12` of the `27` declared `TileDataType` members, among them FP64, FP32, FP16, BF16 and E4M3, and FALSE for all other types.
+- `HardwareNumericInputSubnormalRule`, `HardwareNumericResultSubnormalRule` and `HardwareNumericTininessDetectionRule` map that predicate to `NumericInputSubnormal_Preserve`, `NumericResultSubnormal_GradualUnderflow` and `NumericTininessDetection_AfterRounding`, or to the matching `_NotApplicable` value.
+- `TileNumericEncodingValid` is FALSE only for TF32 (`value[12:0]` nonzero), HF32 (`value[11:0]` nonzero), E3M2 and E2M3 (`value[7:6]` nonzero). `TileNumericValueClass` tests it first and answers `NumericValue_InvalidEncoding`; otherwise a `27`-arm case covering all declared types calls the per-format classifier, `ClassifySignedInteger` or `ClassifyUnsignedInteger`.
+- `NumericValueClassFromFiniteSign` is declared here and called by the per-format classifiers; it answers one of `NumericValue_PositiveZero`, `NumericValue_NegativeZero`, `NumericValue_PositiveSubnormal`, `NumericValue_NegativeSubnormal`, `NumericValue_PositiveNormal` or `NumericValue_NegativeNormal`, never a NaN, an infinity or an invalid encoding.
+- `HardwareNumericSubnormalBoundaries` answers availability with three raw boundary encodings, `TileNumericCanonicalNaN` with the canonical NaN (wrapped by `HardwareNumericCanonicalNaNResult`), and `HardwareNumericSignedZeroEncodings` with the two signed zero encodings.
+- `HardwareNumericComparisonSpecial` and `HardwareNumericMinMaxSpecial` answer handled, a result carrier and an invalid-condition flag. `HardwareNumericMixedExpdifDiscriminator` answers handled and a result carrier; its caller is `TileProfileMixedExpdifFP32` in `asl/tile/model/execution/expdif.asl`.
 
 <!-- PTO-READER-BLOCK: arch-mx-formats-rules-interactions role=rules-interactions -->
 ## Rules and interactions
 
-The named profile requires `flush_to_zero = FALSE`, `denormals_are_zero = FALSE`, and `operation_override = FALSE`.
+`HardwareNumericSubnormalConfigurationValid` is TRUE only for the all-false triple: any TRUE among `flush_to_zero`, `denormals_are_zero` and `operation_override` makes it FALSE.
 
-`HardwareNumericSubnormalBoundaries` returns exact raw minimum subnormal, maximum subnormal, and minimum normal encodings only for supported formats.
+`HardwareNumericSubnormalBoundaries` answers availability TRUE for the same `12` types in `11` case arms, since E5M2 and E3M2 share one: FP32 `0x1`, `0x007fffff`, `0x00800000`; TF32 `0x00002000`, `0x007fe000`, `0x00800000`; other types answer FALSE with three zero carriers.
 
-`HardwareNumericCanonicalNaNResult` and `HardwareNumericSignedZeroEncodings` return availability. `HardwareNumericComparisonSpecial` and `HardwareNumericMinMaxSpecial` return handled, distinguishing fixed special cases from ordinary evaluation.
+Comparison (`HardwareNumericComparisonSpecial`): an operand class of `NumericValue_InvalidEncoding` makes the helper answer handled FALSE. Otherwise a NaN operand makes `TileComparison_NE` answer `1` and every other comparison `0`, with invalid TRUE only for a signaling NaN; two zeros answer `1` for `TileComparison_EQ`, `TileComparison_LE` and `TileComparison_GE`, otherwise `0`.
+
+Min/max (`HardwareNumericMinMaxSpecial`): one NaN selects the other operand's carrier unchanged, two NaNs take the canonical NaN under `assert available`, and two zeros make MIN return the `-0` operand when one exists and `0` otherwise, while MAX returns `0` unless both are `-0`, when it returns the left carrier; a signaling NaN's invalid flag comes back with a handled result.
 
 <!-- PTO-READER-BLOCK: arch-mx-formats-boundaries role=boundaries -->
 ## Architectural boundaries
 
-The boolean configuration inputs describe a candidate conformance configuration; they are not architecture mode bits and expose no FTZ/DAZ state.
+The unit declares no architectural state, raises no fault and touches no queue or register: every declaration is a `pure func`, and the file carries no `NDF-BEGIN` clause. Its one `assert` is the canonical-NaN check in the two-NaN min/max arm, which cannot fail: the `12` formats whose classifiers can answer `NumericValue_QuietNaN` or `NumericValue_SignalingNaN` are exactly those `TileNumericCanonicalNaN` answers TRUE for.
 
-Bits above a type's architectural element width are ignored because `Word` is a verification carrier. Only constraints inside the element are checked here.
+Design point: `Word` is a verification carrier, so bits above a type's architectural element width are ignored. `TileNumericEncodingValid` inspects `value[31:0]` for TF32 and HF32 and `value[7:0]` for E3M2 and E2M3, so nonzero bits above the element width are not rejected here.
 
-Availability-returning helpers such as `HardwareNumericSubnormalBoundaries`, `TileNumericCanonicalNaN`, and `HardwareNumericSignedZeroEncodings` use false to mean that no value is available for the requested type. `HardwareNumericComparisonSpecial` and `HardwareNumericMinMaxSpecial` instead return handled; false leaves the case to ordinary evaluation.
+Design point: the boolean means different things in the two helper groups: for `HardwareNumericSubnormalBoundaries`, `TileNumericCanonicalNaN` and `HardwareNumericSignedZeroEncodings`, FALSE means no value is available; for `HardwareNumericComparisonSpecial` and `HardwareNumericMinMaxSpecial`, it means the case is left to ordinary evaluation.
 
 <!-- PTO-READER-BLOCK: arch-mx-formats-example-usage role=example-usage -->
 ## Non-normative reading example
 
-For `TileDataType_TF32`, `TileNumericEncodingValid` rejects a carrier with nonzero low `13` bits before classification can treat it as a valid value.
+For `TileDataType_TF32`, a carrier whose low `13` bits are nonzero fails `TileNumericEncodingValid`, so `TileNumericValueClass` answers `NumericValue_InvalidEncoding` and both special helpers answer handled FALSE.
 
-For `TileDataType_S32`, `HardwareNumericSignedZeroEncodings` returns availability false. For ordinary non-special `FP32` inputs, `HardwareNumericComparisonSpecial` returns handled false so the caller continues ordinary comparison.
+`HardwareNumericSignedZeroEncodings` answers availability FALSE for `TileDataType_HiF8` while `TileNumericCanonicalNaN` answers TRUE, because the HiF8 format declares no signed zero. For one `-0` and one `0` `FP32` operand, MIN returns the `-0` carrier and MAX the `0` carrier; for an ordinary `FP32` pair with no NaN and no zero, both special helpers answer handled FALSE.
 
 <!-- PTO-READER-BLOCK: arch-mx-formats-related-owners role=related-owners-navigation -->
 ## Related owners
 
-- [Hardware numeric min/max](minmax.md)
-- [Numeric classification](../data-types/numeric-classification.md)
-- [Numeric format dispatch](../data-types/numeric-formats.md)
+- [Hardware numeric min/max](minmax.md) calls `HardwareNumericMinMaxSpecial` first and uses its order-key helper only when that answers handled FALSE.
+- [Numeric classification](../data-types/numeric-classification.md) declares `NumericValueClass` and the rule enumerations returned here.
+- [HiF4 scale format](../data-types/formats/hif4-scale.md) owns the scale word this unit does not define.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

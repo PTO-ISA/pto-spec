@@ -19,49 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-and-purpose role=purpose -->
 ## What AND does
 
-`AND` is a 32-bit scalar ALU instruction. It performs bitwise conjunction under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+`AND` prepares a right source and computes the bit-by-bit conjunction of that value with an unchanged left source over all `PTO_XLEN` bits, then publishes the result through a Reg5 destination.
+
+Design point: `AND` reuses the `ADD` field layout, so `SrcRType=10` is available here too. The shared modifier helper is called with the logical-family flag set, and that flag changes the meaning of that one code: in `AND` it is bitwise complement, in `ADD` it is negation. The identical encoding therefore produces a mask here and a subtraction there.
 
 <!-- PTO-READER-BLOCK: scalar-and-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then performs bitwise conjunction under the complete XLEN value result rules, and only afterward performs the destination effects.
+The right source is prepared in two steps, then the conjunction is taken.
 
-- `SrcRType` first transforms the right source; `shamt` then logically shifts that transformed value left before the arithmetic or logical operation.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+- `SrcRType` transforms `SrcR`: `00` sign-extends `SrcR[31:0]`, `01` zero-extends `SrcR[31:0]`, `10` complements every bit, and `11` leaves the value unchanged. An omitted assembly suffix encodes `SrcRType=11`.
+- `shamt` then shifts the transformed value logically left by `0` through `31` bits; bits shifted past bit `63` are discarded and the vacated low bits are zero.
+
+The result is `SrcL AND prepared-right`, computed independently for each of the `64` bit positions.
+
+Design point: shifting the right source before the conjunction moves the mask. `and a0, a1<<4, ->a2` ignores the low `4` bits of `a0` entirely, because the corresponding mask bits are zero.
+
+Design point: complement and shift compose in one encoding. `and a0, a1.not<<3, ->a2` clears the low `3` bits of `a0` and then keeps only the positions where `a1` was zero.
 
 <!-- PTO-READER-BLOCK: scalar-and-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the left operand through Reg5.
-- The 5-bit `SrcR` field selects the right operand through Reg5.
-- The 2-bit `SrcRType` field selects the transformation applied to the right source.
-- The 5-bit `shamt` field encodes the logical-left shift applied after right-source transformation.
+- `SrcL` and `SrcR` are Reg5 sources: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`. Reading a temporary source does not consume it.
+- `RegDst` publishes the result: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero of `SrcL` or `SrcR` reads the architectural zero GPR, which makes `and a0, zero, ->a1` a constant-zero materialization rather than a no-op, and makes `and a0, a0, ->a1` a copy. No field of `AND` can be omitted.
 
 <!-- PTO-READER-BLOCK: scalar-and-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are read before the destination is written, so `and a0, a0, ->a0` and any destination alias use the pre-instruction values.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The result is published or discarded, and then `TPC` advances by `4` bytes. `AND` performs no memory access and leaves reservation, descriptor, numeric-status, trap, bundle, privilege, predicate and control-flow state unchanged apart from the one `T` or `U` push selected by `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-and-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every encoded value is assigned: all four `SrcRType` codes and all `32` `shamt` values from `0` through `31`. There is no reserved modifier and no reserved shift amount.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An undecodable form raises `Fault_IllegalInstruction` at `PC`; an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`; a fixed-bit mismatch or an unavailable selected T/U source raises `Fault_IllegalInstruction`. Each precedes the destination effect and the `TPC` advance.
+
+Design point: a bitwise operation signals nothing, so `AND` has no fault beyond those checks. Complemented or shifted-out bits are simply absent from the result; there is no status flag that records them.
 
 <!-- PTO-READER-BLOCK: scalar-and-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `AND` example, `SrcL=0xc`, `SrcR=0xa`, `SrcRType=11`, and `shamt=0` produce `0x8`.
+With `SrcL=12`, `SrcR=10`, `SrcRType=11` and `shamt=0`, the conjunction is `12 AND 10 = 8`. With `SrcRType=10` on the same operands, the prepared right value is the complement of `10` and the published result is `12 AND NOT 10 = 4`. With `SrcRType=11` and `shamt=2`, the prepared right value is `40`, and `12 AND 40 = 8`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

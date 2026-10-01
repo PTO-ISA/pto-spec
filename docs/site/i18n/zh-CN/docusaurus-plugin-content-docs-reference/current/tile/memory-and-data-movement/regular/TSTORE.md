@@ -19,52 +19,66 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tstore-purpose role=purpose -->
 ## TSTORE 的作用
 
-`TSTORE` 把一个有效 Local 或 Shared 矩形存储到 GM，并保持源 Tile 不变。
+`TSTORE` 把一个 Tile 矩形写入全局内存（GM）。它是 TLSU Function 1，写作 `BSTART.TSTORE DataType`，并且没有独立 opcode。
+
+完成的指令束恰好有一个源域。Local 源通过一条终止源 `B.IOT` 到达；Shared 源通过一个源 `B.IOS` 到达，并且必须已经发布且达到 whole-parent-ready。Local CUBE 形式通过 `M322ND`、`M162ND` 或 `N82ND` 存储持久 CUBE 描述符。
 
 <!-- PTO-READER-BLOCK: tile-c-tstore-mechanism role=mechanism -->
-## 操作机制
+## 寻址与访问顺序
 
-选定 PE 的每个 GM 元素在访问时完成地址转换与权限检查；请求在首个故障处停止。
+每个被选中的 PE 与每个活动的有效坐标都通过 `TileMemoryStridedByteAddress` 写入 `base + row * row_stride_bytes + column * element_size`。对打包四位类型，列贡献 `floor(column / 2)` 字节，低半字节或高半字节由列奇偶性选择。
 
-每个有效源元素都按解析后的字节行步幅存储，直到首个故障；打包四位元素按列奇偶性选择字节半区。
+`B.IOR.RegSrc0` 提供每 PE 的 GM 基址，`B.IOR.RegSrc1` 提供字节行步幅。省略 `B.IOR` 时基址为零，步幅为从解析的物理 `Col` 与数据类型推导出的紧密步幅，即 `ceil(columns * element_bits / 8)`；显式编码的零选择子是真正的零步幅。
+
+设计要点：紧密默认值只在省略时生效。由于编码零读取零 GPR，把步幅编码为零的程序会让每一行都别名到 GM 的第 0 行，而不是得到紧密布局。
+
+模型 `TSTORE` 按行主序对每个活动元素探测、存储并记录一个带类型的 store 事件，并在首个内存故障处停止。在谓词 Tile ExecutionMask 下只有活动坐标被存储，因此非活动坐标不产生探测也不产生事件。
+
+设计要点：四位存储是对所在 GM 字节的读-改-写。ASL 载入该字节，只替换被选中的半字节，再写回，因此相邻的半字节总是得以保留。
 
 <!-- PTO-READER-BLOCK: tile-c-tstore-inputs-outputs role=inputs-outputs -->
-## 操作数、形状与类型
+## 操作数角色、形状与类型
 
-- `source0` 提供持久源 Tile。
+- `source0` 是 Local Tile 或绝对 Shared 源 S0 到 S63。它的 payload、描述符、生产者掩码、就绪状态与生命周期保持不变，其绑定由常规的指令束完成过程消费。
+- `address` 是每 PE 私有 GPR 的 GM 基址。
+- `scalar0` 是每 PE 私有 GPR 的字节行步幅。
 
-- `address` 提供逐 PE GM 基地址。
+`LB0`、`LB1` 与 `LB2` 在省略时有效值均为 1，解析出的维度会与源描述符核对，而不是从源描述符继承。Shared 源通过非零 `PE_MASK` 选择其消费者 PE，而 `B.SUBVIEW` 是唯一的部分源范围机制。
 
-- `scalar0` 提供字节行步长。
-
-- `LB0`、`LB1`、`LB2` 按该助记符契约补全有效形状与物理形状；所有必需有效范围都必须非零。
+设计要点：未发布、挂起或未完成的 Shared 源会让指令束等待，既不引发故障，也不产生任何 GM、绑定消费或描述符效果，因此消费者无法观察到写了一半的 Shared 父对象。
 
 <!-- PTO-READER-BLOCK: tile-c-tstore-effects role=effects -->
 ## 已定义性、填充与发布
 
-源载荷与描述符保持不变；故障前完成的 GM 写入与内存事件可以保留。
+源 payload 与描述符在成功之后以及被拒绝之后都持续存在；`TSTORE` 不分配目标，也不发布任何 Tile 状态。改变的只有 GM 与内存事件流。
 
-故障可能留下部分 GM 写入与内存事件前缀。
+内存转换、权限或对齐故障会在首个故障处停止请求，在此之前完成的 GM 写入与内存事件可能仍留在 GM 与事件流中可见。
 
-源 Tile 在成功执行后保持不变。
+设计要点：一旦所有请求的存储无故障完成，存储拍就没有架构定义的相对顺序。因此两个写同一段 GM 字节的被选中 PE 需要软件避免重叠，或另行建立顺序。
 
 <!-- PTO-READER-BLOCK: tile-c-tstore-constraints role=constraints -->
 ## 合法性、故障与顺序边界
 
-绑定模式、维度、DataType、布局和源描述符在效果前校验；选定 GM 访问逐项进行直到首个故障。
+`InstructionContractDataTypeLegal_TSTORE` 接受 `TileRegularTLSUDataTypeSupported` 允许的编码，即 `0` 到 `14`、`16` 到 `20`，以及 `24` 到 `28`；其余编码为保留值，在任何效果之前被拒绝。
 
-合法性故障不会留下部分 GM 效果；GM 访问故障可以保留较早写入与事件。TSTORE 不执行目标分配或目标发布。
+`ValidCol` 与 `ValidRow` 非零，`ValidCol` 不得超过物理 `Col`，并且解析出的有效矩形必须适配持久源描述符。普通形式与 Shared 形式要求 `PadValue` 为零；Local CUBE 编码 `24` 到 `26` 要求 `DTYPE_NONE`，接受全部四种 `PadValue` 编码，并只存储有效元素而忽略物理填充。
 
-`PE_MASK=0000` 是严格无操作，发生在操作数读取、描述符检查、故障、GM 写入或内存事件效果之前。
+绑定流错误、维度缺失、`DataType` 不受支持、源不是行主序、Local 源元素未定义、源编码非法或源几何不匹配，都会在任何效果之前引发 `Fault_TileLegality`。
 
-重叠的选定 PE GM 区域没有架构定义的存储拍顺序；软件必须避免重叠或另行建立顺序。
+`PE_MASK=0000` 在两个目标域中都是严格空操作：零 `B.IOT` 掩码使指令束不产生效果，零 `B.IOS` 掩码则在模式、描述符、GPR、内存、故障与源消费效果之前返回。
+
+设计要点：`SharedStorePEMaskLegal` 对 Function 1 接受任意非零掩码，并对其他所有 Function 拒绝非零掩码，因此 `B.IOS` 存储永远不会从掩码中悄悄推断出四分之一选择。
 
 <!-- PTO-READER-BLOCK: tile-c-tstore-example role=example -->
 ## 非规范示例
 
 下面的示例只帮助理解当前 ASL 绑定契约，并不是第二份指令定义。
 
-`TSTORE <bundle operands>` 先校验形状与描述符，再存储有效矩形直到首个 GM 故障；源 Tile 保持不变。
+取 `U8`，Local 源 `T#1` 具有 `Col=64`、`ValidCol=64` 与 `ValidRow=8`，`a1` 中为每 PE 的字节行步幅 `64`，GM 基址在 `a0` 中。
+
+- 规范宏写法是 `TSTORE <Row=8, Col=64, ValidRow=8, ValidCol=64, U8>, T#1, [base=a0, stride=a1]`，它对每个被选中的 PE 写入 `8 * 64 = 512` 个 GM 字节。
+- 若 `a1` 保存 `0`，八行都会写入相同的 64 个 GM 字节，而这些字节的最终内容没有架构定义。
+- 若第三行发生故障，前两行已经存储并可见；源 Tile 保持不变。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

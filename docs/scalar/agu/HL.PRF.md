@@ -17,51 +17,67 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-prf-purpose role=purpose -->
-## What HL.PRF does
+## What `HL.PRF` does
 
-`HL.PRF` is a standalone `48`-bit scalar AGU instruction that forms a non-binding prefetch hint without performing an architectural memory access using `Register` addressing.
+`HL.PRF` is a standalone `48`-bit scalar AGU instruction that issues a non-binding 1-byte-granularity prefetch hint and publishes no result.
+
+The canonical assembly is `hl.prf{.l1,.l2,.l3} [SrcL, SrcR<{.sw,.uw}><<<shamt>]`. The `.l1`, `.l2`, and `.l3` suffixes select the level named by the `model` field.
+
+Design point: the encoding has no destination field at all, so the effective address is formed and then discarded. A program that also needs the address it hinted must compute the same sum again with an ordinary add, because this instruction cannot give it back.
 
 <!-- PTO-READER-BLOCK: scalar-hl-prf-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How the address and the transfer are formed
 
-The register-offset path applies the encoded `SrcRType` transformation to `SrcR`, shifts that result left by `shamt`, and adds it to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+`SrcRType` transforms the `SrcR` snapshot, `shamt` shifts the result, and the shifted value is added to the `SrcL` snapshot modulo `2^PTO_XLEN`. The sum is the hinted address.
 
-A legal `model` selects the hint level. The hint performs no translation, permission check, alignment check, memory access, memory event, reservation update, ordering edge, or cache-placement guarantee.
+The model then does the address formation and nothing else: no translation, no alignment or permission check, no memory access, no memory event, and no reservation or ordering effect. The level named by `model` is a hint, not an allocation.
 
-The formed address is discarded after the hint; no result field publishes it.
+Design point: because the prefetch path never probes the address, a hint naming an address outside the permitted region is not a fault. The only architecturally visible results of a successful execution are the `6`-byte `TPC` step and the values of the source registers staying put.
 
 <!-- PTO-READER-BLOCK: scalar-hl-prf-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and the result
 
-- `SrcL` is a `5`-bit field selecting the address base.
-- `SrcR` is a `5`-bit field selecting the register offset.
-- `SrcRType` is a `2`-bit field selecting the register-offset transformation.
-- `model` is a `5`-bit field selecting the prefetch hint level.
-- `shamt` is a `5`-bit field selecting the post-transformation left shift.
+- `SrcL` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `SrcR` uses the same `5`-bit Reg5 domain as the register-offset source.
+- `SrcRType` is a `2`-bit register-offset transformation selector. Raw value `00` leaves the whole `SrcR` value unchanged, `01` replaces it with the signed reading of its low `32` bits, `10` with the unsigned reading of those bits, and `11` is reserved.
+- `shamt` is a `5`-bit unsigned shift amount applied after the transformation; encoded zero performs no shift.
+- `model` is a `5`-bit selector. Value `0` names `L1`, `1` names `L2`, and `2` names `L3`; values `3`..`31` are reserved.
+- No field of this form receives a value, so the instruction has no architectural result.
+
+Design point: a reserved `model` value rejects before the sources are read, so an instruction that names no legal level cannot consume a `T` or `U` entry or change anything a program can observe.
 
 <!-- PTO-READER-BLOCK: scalar-hl-prf-effects role=effects -->
-## Effects and completion order
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+Every scalar source is snapshotted before any effect, so the base and offset values used for the hint are the pre-instruction values.
 
-A legal hint records no architectural memory event and does not change reservation state.
+The hint records no memory event, changes no memory byte, and leaves reservation state and ordering untouched. No register is written by this form.
 
-After all result or writeback publication, `HL.PRF` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+`TPC` advances by `6` bytes. A rejected or faulting attempt does not retire.
+
+Design point: because there is no destination, the instruction has no architectural result at all, so the `6`-byte `TPC` step is the only observable consequence of a successful execution.
 
 <!-- PTO-READER-BLOCK: scalar-hl-prf-constraints role=constraints -->
 ## Legality, faults, and restart
 
-`model` values `0`, `1`, and `2` are assigned; values `3..31` are reserved and cause `Fault_IllegalInstruction` before source reads or address publication.
+A fixed-bit mismatch, or a source code selecting an unavailable `T` or `U` slot, raises `Fault_IllegalInstruction` before any instruction effect.
 
-A legal prefetch hint cannot raise a data-access fault because it performs no architectural access. Fixed-bit mismatches or unavailable selected T/U sources are rejected before effects.
+A reserved `model` value raises `Fault_IllegalInstruction` before the sources are read and before any address is formed for use.
+
+A legal hint raises no data-access fault. Recovery performs a full reissue: the snapshots and the address formation are recomputed with no retained progress.
+
+Design point: a reserved `model` and an unavailable queue source raise the same fault and are both decided before any read, so a failed prefetch can neither consume a queue entry nor act on a partly formed address.
 
 <!-- PTO-READER-BLOCK: scalar-hl-prf-example role=example -->
-## Non-normative reading walkthrough
+## Reading one encoding end to end
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `hl.prf{.l1,.l2,.l3} [SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>]` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Take `hl.prf.l2 [4, 8<<1]` with GPR4 = `0x4000` and GPR8 = `0x10`.
+- `SrcRType` is `00`, so the offset is `0x10` unchanged; `shamt` is `1`, so it becomes `0x20` and the hinted address is `0x4020`.
+- `model` is `1`, so the `.l2` suffix and the encoded field agree on the `L2` level.
+- No register is written, no memory event is recorded, and `TPC` becomes the instruction address plus `6`.
+- A later load from `0x4020` performs its own probe and can still fault; this instruction has already retired by then.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

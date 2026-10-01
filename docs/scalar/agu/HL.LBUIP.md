@@ -17,52 +17,59 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-lbuip-purpose role=purpose -->
-## What HL.LBUIP does
+## What `HL.LBUIP` does
 
-`HL.LBUIP` is a standalone `48`-bit scalar AGU instruction that loads two adjacent 1-byte little-endian values and zero-extends each transferred value when it is narrower than `PTO_XLEN` using `Immediate` addressing.
+`HL.LBUIP` is a `48`-bit load of a pair of adjacent bytes with zero-extended results. It adds a signed `17`-bit immediate to the `SrcL` base, reads the byte at that address and the byte at that address plus `1`, clears everything above bit `7` in each result, and publishes the lower byte to `Dst0` and the higher byte to `Dst1`.
+
+The canonical assembly is `hl.lbuip [SrcL, simm], ->Dst0, Dst1`.
+
+Design point: both results are unsigned, so a pair of bytes `FF FF` becomes `255` in `Dst0` and `255` in `Dst1`. The two destinations are filled by the same rule; the form has no way to publish one byte signed and the other unsigned.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbuip-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How the two addresses and the transfer are formed
 
-The address path sign-extends `simm17`, scales it by `1`, and adds the displacement to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+The immediate is sign-extended with a scale of `1` and added to the snapshot of `SrcL` modulo `2^PTO_XLEN`. The second address is the first plus `1`, because the access size is one byte.
 
-Both adjacent addresses are preflighted before either aligned little-endian `1`-byte load occurs. Each result is zero-extended; the two loads commit in increasing-address order.
+Both addresses are probed, in ascending order, before either byte is read. The handler returns on the first fault. When both probes succeed, it reads the two bytes, records two relaxed load events in address order, zero-extends both values, and publishes `Dst0` then `Dst1`.
 
-This form does not publish an address-base writeback.
+Design point: the two destination fields can name the same register or the same queue. The write order then decides the outcome: the second byte replaces the first, so the surviving value is the byte at the higher address. There is no encoding that reverses the order.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbuip-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and the two results
 
-- `RegDst0` is a `5`-bit field selecting the first loaded-value result.
-- `RegDst1` is a `5`-bit field selecting the second loaded-value result.
-- `SrcL` is a `5`-bit field selecting the address base.
-- `simm17` is a `17`-bit field selecting the signed displacement before the `1` scale factor.
+- `SrcL` is a `5`-bit Reg5 selector over absolute GPRs, `T#1`..`T#4`, and `U#1`..`U#4`; a queue source is read without being consumed.
+- `simm17` is a signed `17`-bit immediate covering `-65536` to `65535` with a scale of `1`.
+- `Dst0` receives the lower byte and `Dst1` the higher byte. Codes `1`..`23` write GPRs, `30` pushes `U`, `31` pushes `T`, and `0` and `24`..`29` discard that result alone.
+
+Design point: a queue push destination is available for each result independently, and each push moves the older queue entries one slot along. A pair load that pushes both results therefore advances the `T` queue twice, and the second push becomes the newest entry.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbuip-effects role=effects -->
-## Effects and completion order
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+`SrcL` is snapshotted before any memory or destination effect, so aliases between the base and either destination use pre-instruction values.
 
-Successful execution records two relaxed load events in address order; memory and reservation state are preserved.
+A successful execution records two relaxed `1`-byte load events in address order and leaves memory bytes and reservation state unchanged. `TPC` advances by `6` bytes after both publications; a rejected or faulting attempt does not retire.
 
-After all result or writeback publication, `HL.LBUIP` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+Design point: no base writeback exists for this form, so the two destinations are the only architectural effects on registers or queues, and a fault leaves even those untouched.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbuip-constraints role=constraints -->
 ## Legality, faults, and restart
 
-Each accessed address is aligned to the `1`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+A fixed-bit mismatch raises `Fault_IllegalInstruction` before any effect, and an unavailable `T` or `U` slot named by `SrcL` raises the same fault before execution.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
+The preflight applies the `1`-byte alignment requirement to both addresses, so neither can raise `Fault_DataAlignment`. The permission and bounded-memory test applies to each address in ascending order, and the first failure raises `Fault_DataPage` at that original address.
 
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+A fault records no load event, publishes neither byte, and leaves `TPC` on the faulting instruction. Recovery recomputes both addresses and both probes from the same `SrcL`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lbuip-example role=example -->
-## Non-normative reading walkthrough
+## Reading one encoding end to end
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `hl.lbuip [SrcL, simm], ->Dst0, Dst1` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Take `hl.lbuip [4, 6], ->9, 0` with GPR4 = `0xD000`. The immediate is `6`, so the first address is `0xD006` and the second is `0xD007`.
+- `Dst0` names GPR9 and `Dst1` is the discard code `0`, so only the first byte is published.
+- If the byte at `0xD006` is `FF`, GPR9 receives `255` with bits `63`:`8` all zero.
+- The byte at `0xD007` is still read and its load event is still recorded; only its publication is discarded.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,42 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ld-smax-purpose role=purpose -->
 ## What LD.SMAX does
 
-`LD.SMAX` atomically applies signed maximum to one doubleword, stores the result, and publishes the prior memory value.
+`LD.SMAX` replaces one 8-byte memory doubleword with the larger of that doubleword and a 64-bit operand, comparing both as signed two's-complement values. The value that was in memory before the instruction is published through `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-ld-smax-mechanism role=mechanism -->
-## Atomic mechanism
+## Choosing the larger signed value
 
-The ASL DOC contract selects `ScalarHandler_AtomicReadModifyWrite` with an access width of `8` bytes.
+The form runs through `ScalarHandler_AtomicReadModifyWrite` with access size `8` and atomic operation `Atomic_SMAX`: read probe, write probe, load, signed comparison, store of the winner, one atomic event with `write_performed` set to true, and the old doubleword returned for publication.
 
-Read and write access are preflighted before the same-location atomic read-modify-write is allowed to commit.
+A negative pattern loses to a small positive one. Storage holding `0xfffffffffffffffd`, which is `-3`, compared with `SrcR = 0x0000000000000005`, ends up holding `0x0000000000000005`.
+
+Design point: the sign bit decides the comparison. Compared under the unsigned rules of `LD.UMAX`, the same two patterns would keep `0xfffffffffffffffd` instead, because unsigned order reads it as an extremely large number; the two forms accept the same operands and differ in how they interpret them.
+
+Design point: only the winner's bytes are written. At access size `8` the values are used as loaded, so the stored doubleword is either the old pattern or the operand, never a converted form.
 
 <!-- PTO-READER-BLOCK: scalar-ld-smax-inputs-outputs role=inputs-outputs -->
-## Inputs and result
+## Fields and operand roles
 
-`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 atomic operand source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+`RegDst` is a `5`-bit field at instruction bits `7..11`, `SrcL` at bits `15..19`, `SrcR` at bits `20..24`, `rl` at bit `25`, `aq` at bit `26`, and `far` at bit `27`.
 
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+`SrcL` is the address source and `SrcR` the operand source. Encoded source zero reads the architectural zero register; selectors `24` to `27` read `T#1` to `T#4` and `28` to `31` read `U#1` to `U#4` without consuming an entry. Encoded destination zero discards the published value, as do codes `24` to `29`; code `30` pushes U and code `31` pushes T.
+
+Design point: `far` is a route hint only. It is decoded and passed to `AtomicAddress`, which returns the address unchanged, so a `.f` spelling cannot redirect the comparison to a different doubleword in the reference model.
 
 <!-- PTO-READER-BLOCK: scalar-ld-smax-effects role=effects -->
-## Effects and ordering
+## Effects
 
-The old memory value is published only after the read-modify-write commits; source aliases are captured before any destination effect.
+A completed `LD.SMAX` writes 8 bytes to the addressed location, records one atomic event with `write_performed` set to true, publishes the pre-instruction doubleword, and advances `TPC` by 4 bytes. A write overlapping the reserved 64-byte granule clears the local reservation.
 
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+Design point: the store is not conditional. When the operand is the smaller value, the old doubleword is written back unchanged, `write_performed` is still true, and an overlapping reservation is still cleared.
 
 <!-- PTO-READER-BLOCK: scalar-ld-smax-constraints role=constraints -->
-## Legality and precise faults
+## Legality and faults
 
-The effective address must be aligned to `8` bytes. Alignment, translation, and permission checks precede architectural effects.
-
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+The address must be 8-byte aligned. Alignment is checked before translation, and translation before the permission and bounds test; the write probe repeats that sequence for write access, and the two translated addresses must match. `Fault_DataAlignment` and `Fault_DataPage` are reported at the original address, and `Fault_IllegalInstruction` is raised earlier for an undecodable form or an unavailable selected T or U source. On a fault nothing is published, no byte is loaded or stored, no atomic event is recorded, no reservation changes, and `TPC` does not advance.
 
 <!-- PTO-READER-BLOCK: scalar-ld-smax-example role=example -->
 ## Non-normative example
 
 This example only shows one accepted spelling; the generated contract below remains authoritative.
 
-For a first reading, use `ld.smax [SrcL], SrcR, ->Rd` and then vary only the ordering or route modifiers described above.
+With `a0` holding an 8-byte aligned address, `ld.smax [a0], a1, ->a2` compares in place. If `[a0]` holds `0xfffffffffffffffd` and `a1` holds `0x0000000000000005`, the location receives `0x0000000000000005` and `a2` receives `0xfffffffffffffffd`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

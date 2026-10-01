@@ -15,46 +15,54 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-integer-types-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit names the fixed-width carriers and bounded index domains shared by scalar, block, tile, memory, system-register, and trap owners.
+This unit names the fixed-width carriers and bounded index domains shared by the scalar, block, tile, memory, system-register, and trap owners.
 
-Central type ownership lets ASL signatures expose which architectural domain an integer belongs to instead of passing unconstrained integers everywhere.
+It contains only type declarations, so it defines what an integer of each kind is and not what any instruction does with one.
 
 <!-- PTO-READER-BLOCK: arch-integer-types-concepts-state role=concepts-state -->
 ## Concepts and visible state
 
-- `Word`, `DoubleWord`, `HalfWord`, and `Byte` are `PTO_XLEN`, `PTO_XLEN * 2`, `32`, and `8` bits respectively; `PredicateWord` uses `PTO_PREDICATE_WIDTH`.
-- Register and binding indices are bounded by their owning count constants, including `GPRIndex`, `TileIndex`, `PredicateIndex`, and the bundle binding index types.
-- Address-facing types separate `ModelAddress`, 24-bit `SystemRegisterAddress`, and 16-bit-file `SystemRegisterFileIndex`; traps use six-bit `TrapNumber` and `0..63` `InterruptID`.
+`Word` is `PTO_XLEN` bits, `DoubleWord` is `PTO_XLEN * 2` bits, `HalfWord` is `32` bits, `Byte` is `8` bits, and `PredicateWord` is `PTO_PREDICATE_WIDTH` bits.
+
+The index domains are bounded by their owning counts: `GPRIndex` over the absolute GPR count, `TileIndex` over the Tile register count, `PredicateIndex` over the predicate register count, and the bundle dimension, scalar-binding, and Tile-binding indices over their own counts, while `BundleSharedBindingIndex` is bounded by the literal `0..3`.
+
+The address-facing and identity types are separate: `ModelAddress` indexes model memory bytes, `SystemRegisterAddress` is a twenty-four-bit carrier, `SystemRegisterFileIndex` is a sixteen-bit-file index in `0..65535`, `TrapNumber` is six bits, and `InterruptID` is an integer in `0..63`.
 
 <!-- PTO-READER-BLOCK: arch-integer-types-rules-interactions role=rules-interactions -->
 ## Rules and interactions
 
-Array types such as `PERegisterFile` and `CorePEWords` derive their extents from model constants rather than introducing new architectural counts.
+Design point: naming the domains in shared declarations means a width or a count is written once, so a consumer that reads `GPRIndex` cannot silently accept an index from a different namespace.
 
-`SharedTileID` is a six-bit carrier, while `SharedTileIndex` is a bounded integer index; callers must not treat those distinct roles as interchangeable.
+Array types such as `PERegisterFile`, `CorePEWords`, and `MemoryRelationMatrix` take their extents from model constants, so they describe this model rather than a portable hardware capacity.
 
-Packed tile indices have explicit model bounds: element `0..524287`, carrier `0..PTO_MODEL_TILE_ELEMENTS-1`, and lane `0..15`.
+`SharedTileID` is a six-bit carrier while `SharedTileIndex` is a bounded integer index, so a raw identifier must be mapped before it can index a shared Tile.
 
 <!-- PTO-READER-BLOCK: arch-integer-types-boundaries role=boundaries -->
 ## Architectural boundaries
 
-Bounds containing `PTO_MODEL_*` are verification-model bounds. They are not claims that every implementation has the same physical capacity.
+The packed Tile element, carrier, and lane indices have distinct bounds: `0..524287`, `0..PTO_MODEL_TILE_ELEMENTS-1`, and `0..15`.
 
-This unit defines types only; state allocation, access checks, faults, and instruction effects remain in the owners that consume them.
+Design point: separating an identifier carrier from a bounded index keeps a decoded field from being used as an array subscript without an explicit mapping step.
+
+This unit declares type names only and contains no functions, so the declarations above are the complete definition of each integer kind.
+
+Bounds that mention `PTO_MODEL_*` or a fixed element count are verification-model bounds, and they are not a claim that every implementation has the same physical capacity.
 
 <!-- PTO-READER-BLOCK: arch-integer-types-example-usage role=example-usage -->
 ## Non-normative reading example
 
-A function accepting `TileIndex` can only receive an index in `0..PTO_TILE_REGISTER_COUNT-1`; a six-bit `SharedTileID` still requires an explicit mapping before it can serve as a `SharedTileIndex`.
+This example illustrates the current ASL owner and does not replace the normative operation.
 
-Read a model-bound array extent as a type-checking contract for this ASL model, then follow the consuming state owner for architecture-visible capacity rules.
+`ModelAddress` is bounded by `PTO_MODEL_MEMORY_BYTES`, so it describes the memory of this model rather than any implementation's address space.
 
 <!-- PTO-READER-BLOCK: arch-integer-types-related-owners role=related-owners-navigation -->
 ## Related owners
 
-- [Tile data types](tile-data-types.md)
-- [Memory model types](memory-model.md)
-- [System register types](system-registers.md)
+- [Tile data types](tile-data-types.md) defines the assigned Tile data-type vocabulary.
+
+- [Memory model types](memory-model.md) defines the memory records built from these carriers.
+
+- [System register types](system-registers.md) defines the system-register vocabulary.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

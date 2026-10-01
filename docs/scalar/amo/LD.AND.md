@@ -19,42 +19,56 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ld-and-purpose role=purpose -->
 ## What LD.AND does
 
-`LD.AND` atomically applies bitwise AND to one doubleword, stores the result, and publishes the prior memory value.
+`LD.AND` replaces the 8-byte doubleword at a memory address with the bitwise AND of that doubleword and a 64-bit operand, and publishes the doubleword it replaced. The address is read from `SrcL`, the operand from `SrcR`, and the replaced value is published through `RegDst`. It is a standalone encoded form and advances `TPC` by 4 bytes after a successful execution.
 
 <!-- PTO-READER-BLOCK: scalar-ld-and-mechanism role=mechanism -->
-## Atomic mechanism
+## How the mask is applied in place
 
-The ASL DOC contract selects `ScalarHandler_AtomicReadModifyWrite` with an access width of `8` bytes.
+The form binds the semantic handler `ScalarHandler_AtomicReadModifyWrite`, access size `8`, and atomic operation `Atomic_AND`. The read probe and the write probe both run before a byte is touched; only then is the old doubleword loaded, ANDed with the operand, stored back to the same location, and recorded as one atomic event with `write_performed` set to true.
 
-Read and write access are preflighted before the same-location atomic read-modify-write is allowed to commit.
+The AND is bitwise over all 64 bits. A stored bit of `1` requires a `1` in both the old doubleword and the operand, so the result is a bitwise subset of each input: storage holding `0xf0f0f0f0f0f0f0f0` combined with `SrcR = 0x0ff00ff00ff00ff0` ends up holding `0x00f000f000f000f0`.
+
+Design point: access size `8` normalizes with the identity, so `SrcR` is used exactly as the register supplies it. No word truncation, sign extension, or masking happens before the AND, and an operand of `0xffffffffffffffff` cannot change any stored bit.
+
+Design point: the store is unconditional. An operand that leaves the doubleword unchanged still writes the same 8 bytes, still records an event with `write_performed` set to true, and still invalidates a reservation that overlaps the written range.
 
 <!-- PTO-READER-BLOCK: scalar-ld-and-inputs-outputs role=inputs-outputs -->
-## Inputs and result
+## Fields and operand roles
 
-`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 atomic operand source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+`RegDst` is a `5`-bit field at instruction bits `7..11`, `SrcL` at bits `15..19`, `SrcR` at bits `20..24`, `rl` at bit `25`, `aq` at bit `26`, and `far` at bit `27`.
 
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+- `SrcL` supplies the atomic address and accepts every Reg5 source selector.
+- `SrcR` supplies the mask; a selected T or U entry must be valid and is read without being consumed.
+- `RegDst` receives the old doubleword; code 0 and codes 24..29 discard it, code 30 pushes U, and code 31 pushes T.
+- `aq` and `rl` choose relaxed, acquire, release, or acquire-release ordering for the atomic event.
+- `far` is decoded into the address path as a routing hint.
+
+Design point: `AtomicAddress` returns its argument unchanged, so `far` does not move the access; in the reference model the `.f` spelling reads and writes the same doubleword as the plain spelling.
 
 <!-- PTO-READER-BLOCK: scalar-ld-and-effects role=effects -->
-## Effects and ordering
+## Effects
 
-The old memory value is published only after the read-modify-write commits; source aliases are captured before any destination effect.
+One completed execution writes 8 bytes, records one atomic event with `write_performed` set to true, publishes the pre-instruction doubleword, and advances `TPC` by 4 bytes.
 
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+Design point: the destination carries the value from before the mask, so comparing it with the stored doubleword shows which bits the AND cleared; the instruction itself reports no count and writes no status flag.
 
 <!-- PTO-READER-BLOCK: scalar-ld-and-constraints role=constraints -->
-## Legality and precise faults
+## Legality and faults
 
-The effective address must be aligned to `8` bytes. Alignment, translation, and permission checks precede architectural effects.
+The address must be a multiple of 8.
 
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+- `Fault_DataAlignment` for an address that is not a multiple of 8, reported at the original address before any load.
+- `Fault_DataPage` for an address outside the permitted region.
+- `Fault_IllegalInstruction` for an undecodable form or an unavailable selected T or U source, raised before any effect.
+
+Design point: both probes complete before the load, so a faulting `LD.AND` leaves memory unchanged, publishes nothing, records no atomic event, clears no reservation, and keeps `TPC` at its saved value for reissue.
 
 <!-- PTO-READER-BLOCK: scalar-ld-and-example role=example -->
 ## Non-normative example
 
 This example only shows one accepted spelling; the generated contract below remains authoritative.
 
-For a first reading, use `ld.and [SrcL], SrcR, ->Rd` and then vary only the ordering or route modifiers described above.
+`ld.and [a0], a1, ->a2` with `a0` holding an 8-byte aligned address performs the AND in place. If `[a0]` holds `0xf0f0f0f0f0f0f0f0` and `a1` holds `0x0ff00ff00ff00ff0`, the location receives `0x00f000f000f000f0` and `a2` receives `0xf0f0f0f0f0f0f0f0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

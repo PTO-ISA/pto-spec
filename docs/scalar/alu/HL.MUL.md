@@ -19,48 +19,57 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-mul-purpose role=purpose -->
 ## What HL.MUL does
 
-`HL.MUL` is a 48-bit scalar ALU instruction. It computes the complete unsigned 128-bit product and separates its low and high halves; its current instruction contract defines the result publication path and any additional state effect.
+`HL.MUL` is a 48-bit scalar ALU instruction that forms the signed 128-bit product of its two XLEN sources and publishes it as two XLEN halves. It takes no addend and no immediate.
+
+`RegDst0` receives the low half `product[63:0]` and `RegDst1` receives the high half `product[127:64]`, so the pair carries the exact product without rounding or saturation.
 
 <!-- PTO-READER-BLOCK: scalar-hl-mul-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then computes the complete unsigned 128-bit product and separates its low and high halves, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractProduct_HL_MUL`, which returns `MultiplyWideSigned(left, right)`. `InstructionContractLow_HL_MUL` slices bits `63:0` of that product and `InstructionContractHigh_HL_MUL` slices bits `127:64`. Dispatch reaches the same slices through `ExecuteScalarMultiplyPair` with `signed_operation` true.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+hl.mul SrcL, SrcR, ->Dst0, Dst1
+```
+
+Design point: the signed reading of the sources changes the high half but not the low half. Bits `63:0` of a two's-complement product depend only on the low `64` bits of the operands, so `HL.MUL` and `HL.MULU` publish the same `RegDst0` value for every input pair and can differ only in `RegDst1`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-mul-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst0` field selects the Reg5 target for the low product or accumulator half.
-- The 5-bit `RegDst1` field selects the Reg5 target for the high product or accumulator half.
-- The 5-bit `SrcL` field selects the left multiplicand or additive operand through Reg5.
-- The 5-bit `SrcR` field selects the right multiplicand through Reg5.
+- `RegDst0`, instruction slice `[23 +: 5]`, receives the low product half `product[63:0]`.
+- `RegDst1`, instruction slice `[11 +: 5]`, receives the high product half `product[127:64]`.
+- `SrcL`, instruction slice `[31 +: 5]`, supplies the left multiplicand.
+- `SrcR`, instruction slice `[36 +: 5]`, supplies the right multiplicand.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Both sources are Reg5 codes: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`. A temporary read does not consume the entry. The whole product is computed from the two snapshots before either destination is written.
+
+Design point: this form encodes no right-source modifier. Some other scalar ALU forms, for example `ADD`, `SUB`, `AND`, `OR` and `XOR`, carry a `SrcRType` field that can sign-extend, zero-extend or negate `SrcR` before use, and `HL.MUL` has no such field, so the register value enters the multiply unchanged.
 
 <!-- PTO-READER-BLOCK: scalar-hl-mul-effects role=effects -->
 ## Effects and ordering
 
-All results are computed before publication. The destinations are then updated in encoded order (`RegDst0`, `RegDst1`), which also defines the order of duplicate-register writes or queue pushes.
+Both sources are read before the first write, so a destination that also names a source still receives a result computed from pre-instruction values.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
+The two writes run in encoded order: `RegDst0` with `product[63:0]`, then `RegDst1` with `product[127:64]`. When both fields name one GPR the high half is what remains; when both push one queue the high half is newest.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+`TPC` advances by `6` bytes after the destination effects. `HL.MUL` performs no memory access and leaves reservation, descriptor, numeric-status, bundle, privilege and control-flow state unchanged apart from the queue pushes selected by the destinations.
 
 <!-- PTO-READER-BLOCK: scalar-hl-mul-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every `32`-code source encoding is assigned and every `32`-code destination encoding is accepted, so the only operand check that can fail is temporary source availability. Fixed encoding bits must match the canonical form; the two multiplicand fields carry no reserved value.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise a mismatching encoding raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before any destination write. The multiplication raises no arithmetic exception at any operand value.
+
+Design point: an unavailable selected `T` or `U` source is the only fault this instruction can take after decoding, and it is raised before either half of the product is published.
 
 <!-- PTO-READER-BLOCK: scalar-hl-mul-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.MUL` example, sources `6` and `7` produce low result `42`; wide pair forms also produce high result `0`.
+With `SrcL = 6` and `SrcR = 7` the product is `42`, so `RegDst0` receives `42` and `RegDst1` receives `0`. With `SrcL = 0xFFFFFFFFFFFFFFFF` and `SrcR = 2`, the signed product is `-2`: `RegDst0` receives `0xFFFFFFFFFFFFFFFE` and `RegDst1` receives `0xFFFFFFFFFFFFFFFF`. Repeating the second pair under `HL.MULU` changes only `RegDst1`, which would be `0x1`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

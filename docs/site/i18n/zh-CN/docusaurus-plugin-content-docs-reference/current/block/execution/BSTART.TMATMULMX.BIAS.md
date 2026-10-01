@@ -19,50 +19,107 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-bias-purpose role=purpose -->
 ## BSTART.TMATMULMX.BIAS 的作用
 
-`BSTART.TMATMULMX.BIAS` 打开一个活动 Block 描述符，其操作为 `TileOperation_TMATMUL_MX_BIAS`；Block 体在完成前提供所需属性与绑定。
+`BSTART.TMATMULMX.BIAS` 打开一个指令束，其操作是 CUBE 矩阵乘 `TMATMUL_MX_BIAS`。它是 32 位独立起始命令。其固定位选择 CUBE Function 5 与 `TileOperation_TMATMUL_MX_BIAS`，唯一的编码字段是位 31:27 中的 5 位 `DataType`。该字段成为 AType，即左操作数 A 的元素类型。
+
+结果 D 等于 A（M x K）与 B（K x N）的乘积再加上一行 1 x N 的 Bias；Bias 按输出列广播到每一个输出行。作为 MX 形式，它接受微缩放输入：类型不是 `FP16` 或 `BF16` 的一侧携带自己的缩放 Tile。
+
+设计要点：操作身份完全由起始命令确定。随后的命令（`B.DATR`、`B.FPATR`、`B.DIM`、`B.IOS`、`B.IOT` 与 `B.IOR`）只提供类型、形状与操作数。全部 12 个 CUBE 矩阵起始命令都通过同一个处理程序 `ExecuteBundleTMATMULOperation` 提交，该处理程序仅凭 function 编码区分 bias、累加、MX 与 GEMV 变体。
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-bias-mechanism role=mechanism -->
 ## 放置与执行机制
 
-`BSTART.TMATMULMX.BIAS` 必须位于所属 Block 的起始位置。后续属性、维度与绑定会累积到活动描述符中，直到 `BSTOP` 或下一条已接受的 `BSTART` 完成边界。
+起始时，`BSTART.TMATMULMX.BIAS` 构建一个 Tile 矩阵描述符，其选择器为 5，数据类型为编码的 `DataType`。`DataType` 编码 15、21 到 23 或 29 到 31 不在接受集合内，会被编码检查以 `Fault_IllegalInstruction` 拒绝。所有起始检查都在提交任何活动的前序指令束之前运行，因此被拒绝的起始命令会保留前序指令束。参见[指令束起始分派](../model/dispatch/start.md)。
 
-已接受载体使用 `L32` 编码类别；命令在读取绑定或改变状态前，会先解析所有显示字段。
+随后的 header 命令只记录指令束状态。在指令束于 `BSTOP` 或下一条 `BSTART` 处提交之前，不读取任何操作数，也不分配任何 Tile。
 
-完成时，只有模式、类型、维度、描述符、就绪状态、别名和容量预检全部成功，描述符才会执行 `TileOperation_TMATMUL_MX_BIAS`。
+提交时，[提交验证](../model/commit/validation.md)运行 Tile 操作，[Tile 执行](../model/dispatch/tile-execution.md)把它路由到 [CUBE TMATMUL 分派](../model/dispatch/cube-tmatmul.md)。`ExecuteBundleTMATMULOperation` 随后按以下顺序工作：
+
+1. 如果每个 Tile 与 Shared 绑定都不选择任何 PE，它直接返回，不产生任何效果。
+2. 缺少 `B.FPATR` 会引发 `Fault_BundleControl`。
+3. 类型、绑定数量、`B.DATR` 字段、`CCTRL`、维度与 PE 掩码一起检查。任一失败都会引发 `Fault_TileLegality`。
+4. 它在不引发故障的情况下等待，直到每个 Shared 源都已发布，然后检查 Shared schema。
+5. 它检查 Local 源、结果布局以及后处理源。
+6. 它分配目标组、对操作数做快照并计算结果。分配之后发生的故障会回滚这些目标。
+
+设计要点：分配是预检的最后一步。在预留第一个目标之前，所有字段、命令流、描述符、形状与容量规则都已检查完毕，因此被合法性检查拒绝的指令束不会留下已分配的目标，也不会改变任何源。
+
+设计要点：提交失败时，处理在指令束停止之前返回。指令束保持活动、header 保持不变，其后续地址也不会生效，因此陷阱上下文仍描述这个失败的指令束。
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-bias-inputs role=inputs-outputs -->
 ## 载体、绑定与输入
 
-- 编码操作数：`DataType` — Tile 元素数据类型选择器。
-- Block 模式由有序伴随载体 `BSTART.TMATMULMX.BIAS`, `B.DATR`, `B.FPATR`, `B.DIM`, `B.IOS`, `B.IOT`, `B.IOT/B.IOR` 补全；省略可选载体时，只采用本归属单元明确规定的默认值。
-- 编码零仍是已分配值或明确规定的拒绝值；它不会静默表示省略操作数。
+- 起始命令中的 `DataType` 是 AType。可选的 `B.DATR` 在其 `DataType` 字段中提供 BType；省略 `B.DATR` 时，BType 等于 AType，舍入为 RNE，饱和关闭。每个类型都必须是 MX 输入类型：`FP16`、`BF16`、`E4M3`、`E5M2`、`E2M1X2`、`E1M2X2` 或 `HiF4X2`。
+- `B.DATR` 可以设置 BType、`RMode`、`Sat` 以及通过其 `PadValueOrByteId` 字段传递的 `CCTRL`。其 `Layout` 与 `CMode` 必须为零，`Canonicalize` 必须关闭。
+- 必须恰好有一条 `B.FPATR`。全零字段表示不做转换、激活或归约；非零字段会增加其所启用的 RowMax、GroupMax、量化或 ReLU 操作数。
+- `B.DIM` 的 `LB0`、`LB1` 与 `LB2` 给出 M、N 与 K，省略时各自默认为 1。在协作式指令束中，`LB0` 是整个 Core 的 group_M。
+- `B.IOT` 按以下顺序绑定 Local 数学源：A、需要时的 A 缩放、B、需要时的 B 缩放，最后是 Bias。后处理源排在它们之后。
+- 目标绑定依次为 D，以及 `B.FPATR` 启用时的 RowMaxOut 与 GroupMaxOut。
+- 可选的 `B.IOS` 从 Shared Tile 提供右侧组（B 及其缩放）或两侧矩阵组。补充源与所有目标仍为 Local。
+
+Local A 使用 `CUBE_M16`（M 不超过 16）或 `CUBE_M32`（M 不超过 32），Local B 使用 `CUBE_N8`。Bias 是一个 Local `CUBE_N8` Tile，有 1 行、N 列结果类型的元素。Local 缩放以 `CUBE_M32` 存储。它是 `E8M0`，每 32 个 K 元素一组、每组一个值；对 `HiF4X2` 则是 `U32`，每 64 个一组、每组一个值。A 缩放有 M 行，B 缩放有 N 行。
+
+D 的元素类型为 `FP32`。非零的 `PreQuantMode` 会为 D 选择该模式指定的输出类型。
+
+设计要点：缩放 Tile 恰好在其所在一侧需要时出现。`FP16` 与 `BF16` 侧不携带缩放，因此预期的源数量取决于两侧类型。缺少或多出缩放会改变数量，并在分配之前以 `Fault_TileLegality` 被拒绝。
+
+设计要点：Bias 按结果类型而不是 AType 检查。类型、布局或形状不符的 Bias Tile 会在分配之前以 `Fault_TileLegality` 被拒绝，因此程序必须以结果类型保存 Bias。
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-bias-effects role=effects -->
 ## 状态效果与顺序
 
-启动 Block 会记录所选载体，并把操作执行推迟到完成边界。
+起始命令只改变指令束状态。它记录一个类型为 `TileMatrix` 的顺序执行 `BARG`，并安装描述符；Tile、Shared Tile 与内存都不改变。
 
-完成全部预检与计算后，所有启用输出按归属单元规定的原子组发布；除非契约明确消费，成功执行后的数学源仍保持可用。
+成功时，D 以及每个已启用的 RowMaxOut 与 GroupMaxOut 作为一个原子组发布。被拒绝的指令束不发布其中任何一个。任何源都不会被消耗或修改，成功的读取也不会改变任何 Shared 源的描述符、发布状态与载荷。
+
+D 按 A 的 M 布局分配。当 A 本身为 Shared 时，每个 PE 不超过 16 行时布局为 `CUBE_M16`，不超过 32 行时为 `CUBE_M32`。
+
+`CCTRL` 从 `B.DATR` 读取，缺少 `B.DATR` 时为 `00`。位 0 使 D 以原始累加器类型结果发布，并禁止量化、ReLU 以及 RowMax、GroupMax 与 max-abs 归约。位 1 必须为零，因为此形式没有 C 源。
+
+设计要点：省略 `B.DATR` 与编码填充值 `11` 不同。缺少 `B.DATR` 时 `BundleTMATMULCCTRL` 返回 `00`，因此没有 `B.DATR` 的指令束不会意外请求原始输出。参见[累加器路由](../model/dispatch/cube-accumulator-routing.md)。
+
+设计要点：缓存提示调用的是实现定义的钩子，在可移植模型中不做任何事。它们不能改变结果、故障、分配或发布；只有位 0 选择的输出类型是可观察的。
+
+该指令束没有全局内存效果。
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-bias-constraints role=constraints -->
 ## 合法性、故障与原子性
 
-固定比特、保留值、选择器取值域与必需的 Block 放置关系都在架构效果之前检查。
+带有任何 Shared 源的指令束是协作式的。此时每个绑定都必须使用 `PE_MASK` 1111，group_M 必须在 1 到 128 之间，N 与 K 必须是 2 的幂。group_M 不超过 64 时每个 PE 拥有 16 行，否则拥有 32 行。起始行位于 group_M 或其之后的 PE 会消耗其 Shared 绑定并在没有 Local 效果的情况下结束。参见 [Shared CUBE 矩阵](../model/dispatch/shared-cube-matrix.md)。
 
-当前归属单元通过 `Fault_BundleControl`, `Fault_IllegalInstruction`, `Fault_TileLegality` 报告无效模式、状态、地址或后继条件；本页说明文字不创建额外故障规则。
+只有当对应的主操作数为 Shared 时，`TransA` 与 `TransB` 才合法。尚未发布的 Shared 源会使提交在不引发故障的情况下返回，指令束保持活动。
 
-完整模式、绑定、就绪状态、别名、容量与分配预检发生在源快照和所有目的端发布之前。
+`CScaleEn` 必须为零，因为只有 CUBE Function 2 与 6 接受 CScale。
+
+所有绑定的 `PE_MASK` 均为 0000 时是严格无操作：矩阵处理程序不读取任何描述符，也不引发任何故障。
+
+不在接受集合内的 `DataType` 在起始时引发 `Fault_IllegalInstruction`。缺少 `B.FPATR` 会引发 `Fault_BundleControl`。类型、数量、形状、布局、别名或后处理检查失败会引发 `Fault_TileLegality`，目标手已满或容量不足会引发 `Fault_TileAllocation`。这些故障都发生在任何目标发布之前。
 
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-bias-example role=example -->
 ## 非规范示例
 
 该示例只演示放置关系与载体流；精确行为仍由当前 ASL 和指令契约定义。
 
-```asm
-BSTART.TMATMULMX.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn (exactly one); B.DIM LB0 M or cooperative group_M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; cooperative mask 1111); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary
+下面的规范宏计算一个 16 x 32 的结果，K 等于 64。A 是 `T#5`，即一个 16 x 64、位于 `CUBE_M16` 的 `E4M3` Tile；A 缩放 是 `T#4`，即一个 16 x 2、位于 `CUBE_M32` 的 `E8M0` Tile；B 是 `T#3`，即一个 64 x 32、位于 `CUBE_N8` 的 `E4M3` Tile；B 缩放 是 `T#2`，即一个 32 x 2、位于 `CUBE_M32` 的 `E8M0` Tile；Bias 是 `T#1`，即一个 1 x 32、位于 `CUBE_N8` 的 `FP32` Tile。
+
+```text
+TMATMUL_MX_BIAS <M=16, N=32, K=64, E4M3>, T#5, T#4, T#3, T#2, T#1, ->T<2KB>
 ```
 
-起始指令先建立描述符；后续载体按声明模式补充内容，最终完成边界触发验证与操作执行。
+下面是该宏对应的一个物理指令束。全零的 `B.FPATR` 仍然是必需的。
+
+```asm
+BSTART.TMATMULMX.BIAS E4M3
+B.FPATR None, None, 0, 0, 0, 0, 0, 0, 0, 0
+B.DIM zero, 16, ->LB0
+B.DIM zero, 32, ->LB1
+B.DIM zero, 64, ->LB2
+B.IOT T#5, T#4, mask=1111
+B.IOT T#3, T#2, mask=1111
+B.IOT T#1, mask=1111, last, ->T<5>
+BSTOP
+```
+
+结果类型为 `FP32`，由于 64 / 32 = 2，每侧使用 2 个缩放组。每个被选中的 PE 由 64 项乘积之和算出 16 x 32 = 512 个元素，每个输出行都加上同样的 32 个 Bias 值。D 是一个位于 `CUBE_M16` 的新 `FP32` Tile，占用 16 个 128 字节的单元，即 2KB，与 SizeCode 5 相符。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

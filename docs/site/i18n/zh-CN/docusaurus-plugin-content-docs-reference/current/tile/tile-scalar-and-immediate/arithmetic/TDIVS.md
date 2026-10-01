@@ -19,48 +19,64 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tdivs-purpose role=purpose -->
 ## TDIVS 的作用
 
-`TDIVS` 是一条由 `SFU` 执行、通过选择器编码的 Tile 操作。它按照所选解释，把每个有效 Tile 元素除以一个私有 GPR 标量；当前指令契约拥有精确的指令束形式和发布边界。
+`TDIVS` 把 Local 源 Tile 有效矩形内的每个元素除以一个标量，并把商写入一个新分配的 Local 目标 Tile。它由 TEPL Mode 1 Function 3（选择器 `0x023`）选中，规范写法为 `BSTART.SFU TDIVS, DataType`，没有独立 opcode。
+
+设计要点：标量是指令束操作数，而不是 Tile。Tile-Tile 形式 `TDIV` 需要第二个形状和布局都相同的源 Tile，因此用它施加同一个值时，必须先构造一个填满该值的 Tile，例如使用 `TEXPANDS`。`TDIVS` 直接从 GPR 读取该值，因此不需要分配广播 Tile，也不需要使其成为已定义。
 
 <!-- PTO-READER-BLOCK: tile-tdivs-mechanism role=mechanism -->
-## 元素与 Tile 机制
+## 标量来源与元素机制
 
-所有描述符与操作数检查成功后，所属 ASL 处理函数按照所选解释，把每个有效 Tile 元素除以一个私有 GPR 标量。当前契约允许别名时，源载荷会在目标写入前完成快照。
+标量来自 `B.IOR.RegSrc0`。每个参与的 PE 在自己的私有 GPR 文件中解析该选择器，因此同一 `PE_MASK` 选中的各 PE 可以使用不同的标量值。指令束中没有用于标量的立即数字段；省略 `B.IOR` 时标量为零。
 
-处理函数使用解析后的有效区域，不把物理填充区当作输入数据。操作专属的数据类型、布局、舍入、饱和与配置档钩子仍由可执行定义拥有。
+64 位 GPR 值由 `TileRawElementValue` 收窄：只保留与所选 `DataType` 元素位宽一致的低 8、16、32 或 64 位。不发生数值转换。浮点标量必须已经是所选类型的编码，有符号整数标量按元素位宽的补码值读取。
+
+预检通过后，`ExecuteTileScalar` 对 `ValidRow x ValidCol` 内的每个坐标计算 `source / scalar`。操作数顺序是固定的：Tile 元素是被除数，标量是除数，因此结果是 `source / scalar`，绝不是 `scalar / source`。有符号整数除法向零截断；无符号除法为普通无符号除法。浮点商遵循所选 `DataType` 的配置档及其固定默认舍入。
+
+设计要点：整数零除数在预检阶段被拒绝，而不是在某个元素实际除以它时才处理。由于同一个标量作用于每个元素，一次检查即可决定整个 Tile 的合法性，不存在部分结果。只有当 ExecutionMask 不留下任何活动坐标时才跳过该检查，此时操作是合法的无操作。浮点正零或负零除数是合法的，并产生配置档定义的商与状态。
+
+设计要点：包括标量检查在内的所有检查都在对源和标量做快照之前完成，并且只有在所有元素计算完成后才发布结果。因此与目标别名的源按其旧值读取。
 
 <!-- PTO-READER-BLOCK: tile-tdivs-inputs role=inputs-outputs -->
 ## 操作数角色与描述符
 
-- `destination0` 的精确契约角色是“新分配的 Local 数值目标”。
-- `source0` 的精确契约角色是“持久 Local 数值源”。
-- `scalar0` 的精确契约角色是“每个参与 PE 的私有 GPR 标量”。
+- `source0` 是 Tile 操作数，必须是已存在的 Local 数值 Tile，并保持不变。
+- `scalar0` 是来自 `B.IOR.RegSrc0` 的逐 PE 标量。显式 `B.IOR` 必须使 `RegSrc1`、`RegSrc2` 和 `RegDst` 保持为零。
+- `destination0` 是新分配的 Local Tile，其后备 `DataType` 为所选 `DataType`，形状与布局与源一致。
 
-参与操作的源与目标描述符采用当前契约规定的行优先布局和形状关系。
-操作读取的每个源坐标都必须在目标发布前处于已定义状态。
-`PE_MASK=0000` 是严格无操作，在描述符、分配、载荷、数值状态或内存效果之前即结束。
+一条终止 `B.IOT` 绑定源与目标，二者使用同一个 `PE_MASK`。`B.IOS` 与额外的 Tile 绑定均非法。
+
+设计要点：`PE_MASK=0000` 是严格无操作。它在任何 GPR 读取、描述符读取、分配、故障或状态效果之前退出，因此没有 PE 参与的指令束永远不会读取标量寄存器。
+
+设计要点：源可以使用位宽相同、非打包的其他后备类型存储，例如以 `FP16` 读取 `U16` 数据。此时源的位与标量都按所选 `DataType` 校验和解释，从而无需拷贝即可完成重解释读取。位宽不一致或打包四位载体仍然非法。
 
 <!-- PTO-READER-BLOCK: tile-tdivs-effects role=effects -->
 ## 发布、已定义性与填充
 
-只有完整预检后才发布目标可见状态；契约规定原子发布时，载荷、描述符、已定义性、填充和状态同时可见。
+目标作为一个整体变为可见：描述符、有效区域结果、填充、每个元素的已定义性以及任何数值状态同时发布。被拒绝的指令束没有任何架构效果。
 
-有效矩形之外的物理坐标遵循契约选择的填充规则；适用时，`Null` 填充保持未定义。
+`ValidRow x ValidCol` 之外的物理元素接收所选 `PadValue`。`Zero`、`Max` 与 `Min` 用该 `DataType` 的对应值定义这些元素；`Null` 使其保持未定义。省略 `B.DATR` 选择 `Null`，而显式编码 `00` 选择 `Zero`。
 
-该操作不产生 GM 内存效果；描述符、载荷、已定义性、填充和数值状态变化仅限于当前契约列出的项目。
+省略 `B.IOR` 时标量为零。对整数 `DataType`，只要至少一个坐标处于活动状态，它就是非法除数；对浮点 `DataType`，它是合法的除以正零。
+
+`TDIVS` 没有全局内存效果。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值，而不是计算结果。
 
 <!-- PTO-READER-BLOCK: tile-tdivs-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-可接受的数据类型集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。
+合法性检查 `TileBinaryDataTypeSupported` 接受 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`；打包四位格式不在其中。它所调用的元素运算 `ScalarFPBinaryProfile` 只为 `FP64`、`FP32`、`FP16` 与 `BF16` 浮点类型定义，因此 ASL 对 `TF32`、`HF32`、`E4M3` 或 `E5M2` 不给出元素结果。低位不是所选类型合法编码的标量会被拒绝，例如低 13 位非零的 `TF32` 值。
 
-下方生成的合法性与异常章节是数据类型组合、布局、维度、容量、已定义性、填充控制、配置档行为和故障类别的权威说明。合法性或分配失败发生在任何部分架构效果之前。
+默认布局为 `RowMajor`。显式 `B.DATR` `Layout` 可以选择 `CUBE_M16` 或 `CUBE_M32`；源与目标必须使用同一布局，`CUBE_N8` 与 Shared Tile 均非法。`B.DATR` 只接受 `PadValueOrByteId` 与 `Layout`，因此非默认的 `RMode`、`Sat`、`CMode`、`Canonicalize` 或次级 `DataType` 会被拒绝。
+
+有效矩形内的每个源元素（存在 ExecutionMask 时为每个活动元素）都必须已定义。绑定格式错误、出现 `B.IOS`、`B.IOR` 字段多余、维度缺失或为零、`DataType` 不受支持、源或标量编码无效、非法整数零除数、容量或分配失败时，会在任何目标效果之前引发 `Fault_TileLegality` 或 `Fault_TileAllocation`。
 
 <!-- PTO-READER-BLOCK: tile-tdivs-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `TDIVS` 示例说明：源元素 `8` 与标量除数 `2` 产生商 `4`。
+以 `S32` 为例：源行 `[-7, 9]` 与标量 `2` 产生 `[-3, 4]`，因为有符号除法向零截断。若标量为 `0`，同一指令束会在任何目标效果之前被拒绝。
+
+`FP32` 除法的宏形式写作 `TDIVS <Row=8, Col=64, FP32>, T#1, a2, ->T<2KB>`。它使用规范的 `BSTART.SFU` 汇编，同时保留 TEPL Mode 1 Function 3 编码。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

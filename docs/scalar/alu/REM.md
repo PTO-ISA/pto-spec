@@ -19,47 +19,65 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-rem-purpose role=purpose -->
 ## What REM does
 
-`REM` is a 32-bit scalar ALU instruction. It computes the signed remainder over the complete XLEN value; its current instruction contract defines the result publication path and any additional state effect.
+`REM` treats both complete `PTO_XLEN` sources as signed two's-complement integers and publishes the remainder of the signed division. It has three fields: `RegDst` at `[7 +: 5]`, `SrcL` at `[15 +: 5]` and `SrcR` at `[20 +: 5]`.
+
+The carrier matches `0x00004057` under mask `0xfe00707f`. There is no quotient destination and no encoded mode: the mnemonic fixes signedness, operand width and the remainder result.
+
+`REM` and `DIV` compute from the same signed division; `REM` publishes the difference `dividend - quotient * divisor` (`asl/scalar/model/alu/semantics.asl:59-64`).
 
 <!-- PTO-READER-BLOCK: scalar-rem-mechanism role=mechanism -->
-## How the result is formed
+## How the remainder is formed
 
-Execution snapshots the encoded inputs, then computes the signed remainder over the complete XLEN value, and only afterward performs the destination effects.
+Dispatch calls `ScalarRemainderSigned(left, right)` with both complete `PTO_XLEN` sources read through the Reg5 map (`asl/scalar/model/dispatch/alu.asl:234-239`). The helper answers a zero divisor with the unchanged dividend; otherwise it computes the truncated-toward-zero quotient with `ScalarDivideSigned` and returns `dividend - quotient * divisor`.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+rem SrcL, SrcR, ->{t, u, Rd}
+```
+
+Design point: Because the quotient truncates toward zero, the remainder takes the sign of the dividend, not of the divisor. `-7` divided by `3` publishes `-1`, while `7` divided by `-3` publishes `1`.
+
+Design point: The two special cases are total answers, not faults. A zero divisor returns the whole dividend. Signed minimum divided by negative one also returns `0`: the helper compares magnitudes, the minimum magnitude is its own pattern, so the quotient wraps back to the minimum and the product `quotient * divisor` cancels the dividend.
+
+`REM` computes no wide intermediate product that survives: only the remainder is published, and the quotient is discarded with the helper's local binding.
 
 <!-- PTO-READER-BLOCK: scalar-rem-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the dividend through Reg5.
-- The 5-bit `SrcR` field selects the divisor through Reg5.
+`SrcL` supplies the dividend, `SrcR` the divisor, and `RegDst` receives the remainder. All three are five-bit Reg5 fields.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+- `SrcL`, instruction slice `[15 +: 5]`: dividend; `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, `28..31` read `U#1..U#4`, non-consuming.
+- `SrcR`, instruction slice `[20 +: 5]`: divisor, same five-bit map. A zero divisor is answered by the helper, not by a fault.
+- `RegDst`, instruction slice `[7 +: 5]`: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+- Encoded zero of `SrcR` reads the architectural zero GPR, which is the zero divisor whose defined answer is the unchanged dividend.
+
+Design point: Encoded zero of `RegDst` discards the remainder but still performs the division and still advances `TPC`. The zero-divisor rule is therefore observable only through the destination, so a discarded destination hides it completely.
 
 <!-- PTO-READER-BLOCK: scalar-rem-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are read before `RegDst` is written, so a destination aliasing either source uses the pre-instruction values. The remainder is published and `TPC` advances by `4` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+`REM` reads no memory and leaves reservation, descriptor, numeric-flag, trap, bundle, privilege, branch-target and control-flow state unchanged. The only queue movement is the push selected by a `30` or `31` destination.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: The signed division is a restoring-division loop over `PTO_XLEN` steps, and `REM` records nothing about it. There is no sticky divide-by-zero flag that a later instruction could inspect.
 
 <!-- PTO-READER-BLOCK: scalar-rem-constraints role=constraints -->
 ## Legality and fault boundary
 
-A zero divisor returns the effective dividend as the remainder; the signed overflow combination returns zero. Neither case raises an arithmetic exception.
+Every `SrcL`, `SrcR` and `RegDst` code is assigned, so no selector value is reserved. The fixed encoding bits must match the canonical `32`-bit carrier.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unmatched carrier raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`, reachable for `REM` only while a system-block terminal request is pending. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`, before the destination effect and before `TPC` advances.
+
+Design point: Both special dividend/divisor pairs have defined results, so `REM` has no operand-selected trap. Its fault boundary is encoding validity and source availability alone.
 
 <!-- PTO-READER-BLOCK: scalar-rem-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `REM` example, dividend `13` and divisor `5` produce remainder `3`.
+With `a0` holding `-7` and `a1` holding `3`, `rem a0, a1, ->a2` publishes `-1`, because the truncated quotient is `-2` and `-7 - (-2 * 3)` is `-1`.
+
+With `a0` holding `-7` and `a1` holding `-3`, the truncated quotient is `2`, so `a2` receives `-1` as well; the remainder follows the dividend's sign. With `a1` holding `0`, `a2` receives `-7` itself.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

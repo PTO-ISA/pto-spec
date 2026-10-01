@@ -19,48 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ctz-purpose role=purpose -->
 ## What CTZ does
 
-`CTZ` is a 32-bit scalar ALU instruction. It counts trailing zeroes in the independently selected wrapping bit field; its current instruction contract defines the result publication path and any additional state effect.
+`CTZ` counts the zero bits that follow the first one bit at the least significant end of a selected field of one Reg5 source, and publishes that count as an XLEN value. An all-zero field has no one bit, and the published count is then the field width.
+
+Design point: `CTZ` and `CLZ` encode the same two field parameters and select the same bits; only the direction of the scan differs. A caller that wants both ends of one window writes both mnemonics with identical `M` and `N`.
 
 <!-- PTO-READER-BLOCK: scalar-ctz-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then counts trailing zeroes in the independently selected wrapping bit field, and only afterward performs the destination effects.
+The source is rotated right by the start bit `M` and the low `N` bits become the field, so the field wraps past bit `63` to bit `0` when it crosses the top of the register. The count starts at field bit zero and walks upward, adding one for each zero until a one bit stops it.
 
-- `imml` and `imms` independently select field width and starting bit; wrapping is part of the selected-field mechanism.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: the callback into the shared counting helper differs from the `CLZ` callback only in its direction flag, while both mnemonics pass the same width and start parameters. There is therefore no separate encoding of "count from the other end"; the mnemonic chooses it.
+
+Design point: because the scan walks upward and the field may wrap, a field that starts near the top of the register is traversed as source bit `M`, `M+1`, and so on, continuing at source bit `0`. The count is expressed in that wrapped order, not in ascending source-bit order from bit zero.
 
 <!-- PTO-READER-BLOCK: scalar-ctz-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar input through Reg5.
-- The 6-bit `imml` field encodes the selected field width as `N-1`.
-- The 6-bit `imms` field encodes selected-field starting bit `M`.
+- `SrcL` selects the Reg5 source: absolute GPRs for codes `0..23`, `T#1..T#4` for `24..27`, and `U#1..U#4` for `28..31`, read without consuming a queue entry.
+- `imms` directly encodes the field start bit `M` from `0` through `63`; encoded zero starts at source bit zero.
+- `imml` encodes the field width `N` minus one from `0` through `63`; encoded zero selects a width of one bit.
+- `RegDst` is the destination or discard selector: `0` and `24..29` discard, `1..23` write a GPR, `30` pushes `U`, `31` pushes `T`.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: the count is published as a complete XLEN value even though it can never exceed `64`, so the two fields of the encoding never interact with the result width. A one-bit field therefore publishes `0` or `1` and nothing else.
 
 <!-- PTO-READER-BLOCK: scalar-ctz-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+The source is read and snapshotted before the destination effect, so `ctz a0, 0, 64, ->a0` counts the old `a0` rather than the value it is about to write. The XLEN count is published through `RegDst`, and only a `T` or `U` destination push moves a temporary queue.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+`TPC` advances by `4` bytes after publication. No memory, reservation, descriptor, numeric-status, block, privilege, branch-target or other control state changes.
 
 <!-- PTO-READER-BLOCK: scalar-ctz-constraints role=constraints -->
 ## Legality and fault boundary
 
-Field selection may wrap from bit 63 to bit 0; the generated defaults and legality tables below give the exact width and starting-position encodings.
+Every `imml` and `imms` value is assigned: widths `1` through `64` and start bits `0` through `63` are all legal, and the fixed encoding bits must match the canonical form. No operand value of `CTZ` is reserved or unassigned.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before the destination effect and before `TPC` advances. `CTZ` raises no arithmetic, memory, alignment, permission or control-flow exception for any field selection.
+
+Design point: a source that is not available is rejected even though the instruction only reads it. The rejection happens before the destination effect, so a faulting `CTZ` leaves the source, the queues and `TPC` exactly as they were.
 
 <!-- PTO-READER-BLOCK: scalar-ctz-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `CTZ` example, the four-bit selected field `0010` has one trailing zero, so the result is `1`.
+With `a0` holding `256`, `ctz a0, 0, 64, ->a1` pushes `8`, because bits `0` through `7` are zero and bit `8` is the first one bit. With `T#1` holding `2^63`, `ctz t#1, 62, 4, ->a0` builds the field from source bits `62`, `63`, `0`, `1` in that ascending order and pushes `1`, because the first field bit is source bit `62`, which is zero, and the next field bit is source bit `63`, which is the first one bit.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

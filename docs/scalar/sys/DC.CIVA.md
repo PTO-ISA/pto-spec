@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-civa-purpose role=purpose -->
 ## What DC.CIVA does
 
-`DC.CIVA` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+`DC.CIVA` completes the data-cache clean-and-invalidate scope-token maintenance operation synchronously. Unusually for the data-cache group, the operand is a scope token rather than an address: the instruction reads `SrcL` and records it, but the portable model never interprets it as a memory location.
 
 <!-- PTO-READER-BLOCK: scalar-dc-civa-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+`InstructionContractHandler_DC_CIVA` returns `ScalarHandler_ExecuteMaintenance` (`asl/scalar/sys/DC.CIVA.asl:11`), and `InstructionContractMaintenanceOperation_DC_CIVA` fixes the token recorded for a successful attempt to `Maintenance_DC_CIVA` (`asl/scalar/sys/DC.CIVA.asl:23`). The executor itself is shared: `ExecuteMaintenance` dispatches on the operation token, and `Maintenance_DC_CIVA` sits in the data-cache group that advances `_DataCacheEpoch` (`asl/scalar/model/sys/semantics.asl:134`).
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+Like the other fifteen instructions that share this handler, `DC.CIVA` is applicable only inside an active SYS block body (`asl/scalar/model/sys/semantics.asl:322`).
 
 <!-- PTO-READER-BLOCK: scalar-dc-civa-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+`SrcL` is the single encoded operand, a Reg5 source drawn from R0..R23, T#1..T#4, or U#1..U#4. `DC.CIVA` has no destination field, so no register or queue receives a result.
 
-Encoded zero is an assigned field value, never an omitted operand.
+Encoded zero in `SrcL` selects the architectural zero GPR. It is a real operand value, and it is not an omission marker.
 
 <!-- PTO-READER-BLOCK: scalar-dc-civa-effects role=effects -->
 ## Architectural effects
 
-On success, the maintenance record receives `Maintenance_DC_CIVA` and the exact captured operand token.
+A successful attempt advances the data-cache epoch exactly once and stores `Maintenance_DC_CIVA` plus the operand token in the maintenance record. `TPC` advances afterwards, as the common dispatch tail advances it only for an attempt that reported success (`asl/scalar/model/dispatch/top-level.asl:55`).
 
-Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+Design point: the record is written only when the attempt is still fault-free, so a rejected `DC.CIVA` leaves the previous operation and operand visible in the record. Code that reads the record therefore sees the last attempt that actually completed.
+
+Nothing else in the architectural state moves. `DC.CIVA` performs no ordinary scalar memory access, writes no register or queue, and defines no cache contents.
 
 <!-- PTO-READER-BLOCK: scalar-dc-civa-constraints role=constraints -->
 ## Placement and rejection
 
-Cache maintenance is a synchronous local hint at every ACR and does not define additional implementation cache contents.
+Two checks protect the effect. The first is placement: outside an active SYS block body the attempt raises `Fault_BundleControl` (`asl/scalar/model/dispatch/top-level.asl:28`) and stops before the legality pass. The second is encoded legality: fixed bits and the Reg5 encoding are validated before the executor is called.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+All eight data-cache operations, `DC.CIVA` included, are permitted at every access ring (`asl/scalar/model/sys/semantics.asl:115`). The only maintenance operations that need ring 0 are the four TLB ones, so `DC.CIVA` raises no privilege fault on a non-root ring.
 
 <!-- PTO-READER-BLOCK: scalar-dc-civa-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `dc.civa SrcL` and trace its encoded fields through preflight before following the selected system effect.
+Inside a SYS block body, execute `dc.civa SrcL`. The attempt checks placement and encoding, reads `SrcL` into the operand, advances the data-cache epoch by one, and records `Maintenance_DC_CIVA` with that operand. The operand value itself never reaches the memory system.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

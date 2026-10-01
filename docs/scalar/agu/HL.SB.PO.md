@@ -17,53 +17,65 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-sb-po-purpose role=purpose -->
-## What HL.SB.PO does
+## What `HL.SB.PO` does
 
-`HL.SB.PO` is a standalone `48`-bit scalar AGU instruction that stores one 1-byte little-endian value using `Register` addressing.
+`HL.SB.PO` is a standalone `48`-bit scalar AGU instruction that stores one `1`-byte little-endian unit from `SrcD` through a register offset.
+
+The canonical assembly is `hl.sb.po SrcD, [SrcL, SrcR<{.sw,.uw}>], ->{t, u, Rd}`.
+
+Design point: this is the post-index form, so the access uses the original base and the updated base is published only after the store succeeds. A traversal can therefore store through a pointer and advance it in the same instruction, while a fault still leaves the pointer on the element it failed to store.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sb-po-mechanism role=mechanism -->
-## Address and transfer mechanism
+## Addressing
 
-The register-offset path applies the encoded `SrcRType` transformation to `SrcR` and adds the transformed offset to the snapshotted `SrcL` value modulo `2^PTO_XLEN`. The scale factor is fixed at `1`; no `shamt` field is encoded.
+The offset is the `SrcR` snapshot transformed by `SrcRType` and left-shifted by the fixed amount of `0`, then added to the `SrcL` snapshot modulo `2^PTO_XLEN`.
 
-After complete preflight, one aligned little-endian `1`-byte store commits at the selected address.
+This register-addressing form carries no `shamt` field, so the scale is fixed by the form rather than chosen per instruction.
 
-Post-index mode accesses the original base and publishes base plus offset only after the memory operation succeeds.
+The address is preflighted before the store. On success one `1`-byte little-endian store is performed and one relaxed store event is recorded.
+
+Design point: the post-index address is the base itself, so the offset does not move this access. The offset is added to the base for the write-back only, so the published value is `SrcL` plus the transformed offset.
+
+Design point: the write-back is gated on the store completing without fault. A program that retries a faulted `HL.SB.PO` gets the same base again, so the retry cannot advance past the element that failed.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sb-po-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields
 
-- `RegDst` is a `5`-bit field selecting the updated-base result.
-- `SrcD` is a `5`-bit field selecting the first store-data value.
-- `SrcL` is a `5`-bit field selecting the address base.
-- `SrcR` is a `5`-bit field selecting the register offset.
-- `SrcRType` is a `2`-bit field selecting the register-offset transformation.
+- `SrcD` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `SrcL` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `SrcR` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `SrcRType` is `2` bits: `00` leaves the whole `SrcR` value unchanged, `01` and `10` replace it with the signed and unsigned readings of its low `32` bits, and `11` is reserved.
+- `RegDst` is a `5`-bit selector. Codes `1`..`23` write absolute GPRs, code `30` pushes `U`, code `31` pushes `T`, and codes `0` and `24`..`29` discard that one result without suppressing the other effects.
+
+Design point: `SrcD`, `SrcL`, and `SrcR` all draw on the same Reg5 domain, so the value, the base, and the offset can come from any mix of absolute GPRs and `T` or `U` queue slots. A queue slot used as `SrcD` is read without being consumed, so a later instruction can still read the same entry.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sb-po-effects role=effects -->
-## Effects and completion order
+## Effects
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+Every scalar source is snapshotted before any memory or destination effect, so a source that a destination also names still contributes the pre-instruction value.
 
-Successful execution records one relaxed store event; an overlapping reservation is invalidated only after complete preflight.
+In memory, a successful execution changes only the bytes inside the stored range. The updated base is published to `RegDst` when the store completes without fault. A valid reservation is invalidated when the stored range overlaps the reservation's `64`-byte granule; a reservation whose granule the store leaves untouched stays valid.
 
-After all result or writeback publication, `HL.SB.PO` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+`TPC` advances by `6` bytes after the memory operation completes. A rejected or faulting attempt does not retire.
+
+Design point: only the low `8` bits of `SrcD` are written, so a wider value is truncated silently instead of faulting. The rest of the register is untouched.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sb-po-constraints role=constraints -->
-## Legality, faults, and restart
+## Legality and faults
 
-Each accessed address is aligned to the `1`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
-
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+- A fixed-bit mismatch, a reserved `SrcRType` value, or a source code selecting an unavailable `T` or `U` slot raises `Fault_IllegalInstruction` before any instruction effect.
+- Every address is a whole number of `1`-byte units, so preflight cannot raise `Fault_DataAlignment` for this form. A permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+- A fault records no store event, leaves memory and destination registers unchanged, and keeps `TPC` on the faulting instruction. Recovery recomputes the snapshot, the address, the probe, and the store from the beginning.
+- Design point: `0` is an assigned `RegDst` code rather than a reserved one, so `->0` performs the store and discards the updated base. The access still happens and still raises its own faults.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sb-po-example role=example -->
-## Non-normative reading walkthrough
+## Worked example
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `hl.sb.po SrcD, [SrcL, SrcR<{.sw,.uw,.neg}>], ->{t, u, Rd}` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Take `hl.sb.po 5, [6, 7], ->8` with GPR6 = `0x2000`, GPR7 = `0x11`, GPR5 = `0xABCD`.
+- The post-index address is `0x2000`, so the byte `0xCD` is stored there.
+- GPR8 receives the updated base `0x2011`, and `TPC` advances by `6` bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

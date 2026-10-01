@@ -7,8 +7,83 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-SCALAR-MODEL-FSU-SCALAR-FP}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-fsu-scalar-fp-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit fixes the parts of scalar floating-point execution that do not depend on a numeric implementation: carriers, type codes, rounding-mode and flag access, NaN classification, comparison, and `FMIN`/`FMAX`. Arithmetic that does need a numeric implementation crosses an explicit profile hook defined here, such as `ScalarFPBinaryProfile` or `ScalarFPConvertProfile`.
+
+[FSU dispatch](../dispatch/fsu.md) calls these functions. Tile units also call two hooks: `ScalarFPBinaryProfile` from elementwise execution and `ScalarFPFusedProfile` from fused multiply-add.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-scalar-fp-concepts role=concepts-state -->
+## Concepts and visible state
+
+A type code is a 5-bit number that names a data type. The unit converts the 2-bit instruction field into several code spaces:
+
+| Function | `00` | `01` | `10` | `11` |
+| --- | --- | --- | --- | --- |
+| `ScalarFPSourceTypeCode` | FP64 (0) | FP32 (1) | 31, unsupported | 31, unsupported |
+| `ScalarConvertFloatingTypeCode` | FP64 (0) | FP32 (1) | FP16 (2) | E4M3 (3) |
+| `ScalarSignedIntegerSourceTypeCode` | S64 (8) | S32 (9) | S16 (10) | S8 (11) |
+| `ScalarUnsignedIntegerSourceTypeCode` | U64 (0) | U32 (1) | U16 (2) | U8 (3) |
+
+`ScalarFPTypeCodeSupported` accepts codes 0 and 1. The conversion checks accept floating codes 0 through 3 and integer codes 0 through 3 and 8 through 11.
+
+A carrier normalizer shapes a value for its type. FP32 and narrower types are zero-extended from their width; signed integer sources are sign-extended; integer results of signed types are sign-extended.
+
+The active rounding mode comes from `CORE_STATE` bits 39:37: `001` selects RTM, `010` RTP, `011` RTZ, and every other value RNE. `FCVTA`, `FCVTM`, `FCVTN`, `FCVTP`, and `FCVTZ` do not use it; `ScalarFPFixedConversionRoundingMode` gives them RNA, RTM, RNE, RTP, and RTZ. Flags are recorded by ORing into `CORE_STATE` bits 36:32 through `RecordNumericStatusFlags`.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-scalar-fp-rules role=rules-interactions -->
+## Rules and interactions
+
+Comparison uses an order key. For a positive encoding the key sets the sign bit; for a negative encoding the key is the bitwise NOT. Unsigned comparison of keys then gives numeric order.
+
+`ScalarFPEncodingCompare` returns FALSE for every operation when either input is a NaN. Two zeros of any sign compare equal. Otherwise equality is bit equality and less-than is key order.
+
+Design point: comparisons are ordered, so `FNE` of a NaN is FALSE, not the negation of `FEQ`. Code that needs an unordered result must test for NaN separately.
+
+`ScalarFPMinMax` returns the other operand when exactly one input is a NaN, and the canonical quiet NaN when both are. For two zeros, `FMIN` returns negative zero if either is negative, and `FMAX` returns negative zero only if both are. Otherwise it uses key order.
+
+Design point: min and max give zero signs an order, so `FMIN(-0.0, +0.0)` and `FMIN(+0.0, -0.0)` both return -0.0. The result does not depend on operand order.
+
+Each profile hook asserts on the type codes it supports. `ScalarFPBinaryProfile` and `ScalarFPUnaryProfile` accept FP64, FP32, FP16 (code 4), and BF16 (code 5). `ScalarFPFusedProfile` accepts FP64, FP32, and FP16. The three conversion hooks delegate to `ReferenceCommonConvert` with saturation disabled.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-scalar-fp-boundaries role=boundaries -->
+## Architectural boundaries
+
+Decoded scalar FSU forms reach the binary, unary, and fused hooks only with FP64 or FP32; decoded conversions can also pass FP16 and E4M3 to the conversion hooks. The FP16 and BF16 codes of `ScalarFPBinaryProfile` and the FP16 code of `ScalarFPFusedProfile` serve tile elementwise execution and fused multiply-add. `ScalarFPUnaryProfile` has no tile caller, so its FP16 and BF16 codes are not reached.
+
+The `FloatingBinary_MIN` and `FloatingBinary_MAX` arms inside `ScalarFPBinaryProfile` are marked by an ASL comment as not reached by decoded `FMIN`/`FMAX`; dispatch uses `ScalarFPMinMax` instead.
+
+`NormalizeScalarFPResult` defines carrier widths for destination codes 0 through 14. Only codes 0 and 1 are produced by scalar arithmetic.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-scalar-fp-example role=example-usage -->
+## Non-normative reading example
+
+FP32 inputs, with keys computed from bits 31:0:
+
+| Input | Encoding | Key |
+| --- | --- | --- |
+| 1.0 | 0x3F800000 | 0xBF800000 |
+| -1.0 | 0xBF800000 | 0x407FFFFF |
+| NaN | 0x7FC00000 | not used |
+
+- `FLT(-1.0, 1.0)` is 1, since 0x407FFFFF is below 0xBF800000.
+- `FNE(NaN, 1.0)` is 0, and the quiet form records no NV flag.
+- `FMIN(NaN, 1.0)` returns 1.0.
+- `FMAX(-0.0, +0.0)` returns +0.0, encoded 0x00000000.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-scalar-fp-related role=related-owners-navigation -->
+## Related owners
+
+- [FSU dispatch](../dispatch/fsu.md) checks type legality and records flags.
+- [FSU arithmetic](arithmetic.md) resolves the active rounding mode.
+- [Reference quantization](reference-quantization.md) and [reference special values](reference-scalar-fp-specials.md) implement the reference profile behind the hooks.
+- [Numeric status](../../../arch/state/numeric-status.md) owns the sticky flag field.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

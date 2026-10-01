@@ -19,48 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tadds-purpose role=purpose -->
 ## What TADDS does
 
-`TADDS` is a selector-encoded Tile operation executed by `VEC`. It adds one participating PE private-GPR scalar to each valid Local source element; its current instruction contract owns the exact bundle form and publication boundary.
+`TADDS` adds one scalar to every element in the valid rectangle of a Local source Tile and writes the sums into a newly allocated Local destination Tile. It is selected by TEPL Mode 1 Function 0 (selector `0x020`), written canonically as `BSTART.VEC TADDS, DataType`, and has no standalone opcode.
+
+Design point: the scalar is a bundle operand, not a Tile. The Tile-Tile form `TADD` needs a second source Tile with the same shape and layout, so applying one value that way first requires a Tile filled with it, for example by `TEXPANDS`. `TADDS` reads the value directly from a GPR, so no broadcast Tile has to be allocated or made defined.
 
 <!-- PTO-READER-BLOCK: tile-tadds-mechanism role=mechanism -->
-## Element and Tile mechanism
+## Scalar source and element mechanism
 
-After all descriptor and operand checks succeed, the owning ASL handler adds one participating PE private-GPR scalar to each valid Local source element. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+The scalar comes from `B.IOR.RegSrc0`. Each participating PE resolves that selector in its own private GPR file, so PEs selected by one `PE_MASK` can use different scalar values. The bundle has no immediate field for the scalar; when `B.IOR` is omitted the scalar is zero.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+The 64-bit GPR value is narrowed by `TileRawElementValue`: only the low 8, 16, 32, or 64 bits, matching the element width of the selected `DataType`, are kept. No numeric conversion happens. A floating scalar must already be in the encoding of the selected type, and a signed integer scalar is read as a two's-complement value of the element width.
+
+After preflight, `ExecuteTileScalar` computes `source + scalar` for each coordinate in `ValidRow x ValidCol`. Integer addition wraps at the element width. Floating-point addition follows the numeric profile of the selected `DataType`, including its fixed default rounding, overflow, and special values.
+
+Design point: all checks, including the scalar checks, finish before the source and scalar are snapshotted, and the result is published only after every element is computed. A source that aliases the destination is therefore read with its old values.
 
 <!-- PTO-READER-BLOCK: tile-tadds-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` has the exact contract role **new Local numeric destination**.
-- `source0` has the exact contract role **persistent Local numeric source**.
-- `scalar0` has the exact contract role **per-participating-PE private-GPR scalar**.
+- `source0` is the Tile operand. It is an existing Local numeric Tile and persists unchanged.
+- `scalar0` is the per-PE scalar from `B.IOR.RegSrc0`. An explicit `B.IOR` must keep `RegSrc1`, `RegSrc2`, and `RegDst` zero.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected `DataType`, and its shape and layout match the source.
 
-Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
-Every source coordinate read by the operation must be defined before execution reaches destination publication.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+One terminating `B.IOT` binds the source and destination, and both use one `PE_MASK`. `B.IOS` and additional Tile bindings are illegal.
+
+Design point: `PE_MASK=0000` is a strict no-op. It exits before any GPR read, descriptor read, allocation, fault, or status effect, so a bundle with no participating PE never reads the scalar register.
+
+Design point: the source may be stored with a different same-width, non-packed backing type, for example `U16` data read as `FP16`. Its bits and the scalar are then validated and interpreted as the selected `DataType`, which allows a reinterpreting read without a copy. A width mismatch or a packed four-bit carrier remains illegal.
 
 <!-- PTO-READER-BLOCK: tile-tadds-effects role=effects -->
 ## Publication, definedness, and padding
 
-Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+The destination becomes visible as one unit: its descriptor, the valid-region results, the padding, the definedness of every element, and any numeric status are published together. A rejected bundle has no architectural effect.
 
-Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero`, `Max`, and `Min` define them with the corresponding value of the `DataType`; `Null` leaves them undefined. Omitting `B.DATR` selects `Null`, while explicit code `00` selects `Zero`.
 
-The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+Omitting `B.IOR` makes the scalar zero, so each valid result is the profile-defined sum of its source element and zero.
+
+`TADDS` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value instead of a computed result.
 
 <!-- PTO-READER-BLOCK: tile-tadds-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The accepted data-type set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
+The legality check `TileBinaryDataTypeSupported` accepts `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`; packed four-bit formats are excluded. The element arithmetic it reaches, `ScalarFPBinaryProfile`, is defined only for the `FP64`, `FP32`, `FP16`, and `BF16` floating types, so the ASL gives no element result for `TF32`, `HF32`, `E4M3`, or `E5M2`. A scalar whose low bits are not a valid encoding of the selected type, such as a `TF32` value with nonzero low 13 bits, is rejected.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+The layout is `RowMajor` by default. An explicit `B.DATR` `Layout` may select `CUBE_M16` or `CUBE_M32`; the source and destination must use the same layout, and `CUBE_N8` and Shared Tiles are illegal. `B.DATR` accepts only `PadValueOrByteId` and `Layout`, so nondefault `RMode`, `Sat`, `CMode`, `Canonicalize`, or a secondary `DataType` is rejected.
+
+Every source element in the valid rectangle (every active one, when an ExecutionMask is in force) must be defined. A malformed binding, `B.IOS`, a surplus `B.IOR` field, a missing or zero dimension, an unsupported `DataType`, an invalid source or scalar encoding, or a capacity or allocation failure raises `Fault_TileLegality` or `Fault_TileAllocation` before any destination effect.
 
 <!-- PTO-READER-BLOCK: tile-tadds-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `TADDS` example, source `[1, 2]` and scalar `3` produce `[4, 5]`.
+For a `U8` example, a source row `[250, 3]` and a GPR `a2` holding `0x107` use the scalar `0x07`, that is `7`, because only the low 8 bits are kept. The destination row is `[1, 10]`: 250 + 7 = 257 wraps to `1`.
+
+A partial `FP32` Tile is written in macro form as `TADDS <Row=8, Col=64, ValidRow=7, ValidCol=60, FP32, Zero>, T#1, a2, ->T<2KB>`. The 7 x 60 = 420 sums are computed, and the other 92 physical elements of the 8 x 64 destination are defined as zero.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

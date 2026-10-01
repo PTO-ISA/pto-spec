@@ -19,44 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-b-fpatr-purpose role=purpose -->
 ## B.FPATR 的作用
 
-`B.FPATR` 是一条 32 位 Block header 命令，用来记录必需的定点 Matrix 后处理描述符。它修改待处理 Block 元数据，不会立即执行 Tile body 操作。
+`B.FPATR`（定点后处理属性）是用于 CUBE 矩阵 Block（例如 `TMATMUL` 和 `TGEMV`）的 32 位 header 命令。它锁存一个描述符，控制累加器结果在发布之前的处理：预量化、激活、行最大值与分组最大值、Shared 输入的逻辑转置，以及显式 FP32 累加器 `C` 的缩放。
+
+每个 CUBE 矩阵 Block 必须恰好包含一条 `B.FPATR`。其他 Block 不得包含它。该描述符由 `SetBundleFixedPointAttributeState` 写入；见[属性 schema 模型](../model/schema/attributes.md)。
 
 <!-- PTO-READER-BLOCK: block-b-fpatr-mechanism role=mechanism -->
-## 位置与机制
+## 放置与机制
 
-该命令在 CUBE Matrix header 中恰好出现一次，位置在标量或 Tile 绑定以及 body 之前。操作数流角色由完成后的 Matrix schema 解释。
+只有当 Block 处于活动状态且位于 header 中、尚未锁存 `B.FPATR`、已选操作（若有）是矩阵操作，并且还不存在标量、Tile 或 Shared 绑定时，`BundleFixedPointAttributesCanBePlaced` 才接受该命令。否则该命令引发 `Fault_BundleControl`。
 
-命令被接受后，会在待处理 Block 状态中锁存一条带类型的属性记录。只有完整 header、绑定、维度和 body 满足所选操作 schema 后，该操作才会使用这些字段。
+随后写入器检查下面的跨字段规则。若检查失败，它引发 `Fault_TileLegality` 且不写入任何内容。
+
+设计要点：`B.FPATR` 必须位于绑定之前，因为它会改变操作数 schema。启用的 RowMax 输入、向量量化参数、向量 PReLU 参数和 `CScale` 会增加 Local 源，RowMax 与 GroupMax 会增加目标。之后的绑定按已经固定的 schema 检查。
 
 <!-- PTO-READER-BLOCK: block-b-fpatr-inputs role=inputs-outputs -->
-## 操作数与 header 角色
+## 编码字段
 
-- `PreQuantMode` 选择 Matrix 预量化和输出转换；其确切分配域仍以下方生成契约为准。
-- `ReluMode` 选择激活乘数；其确切分配域仍以下方生成契约为准。
-- `GroupNCode` 选择 group maximum 的列数；其确切分配域仍以下方生成契约为准。
-- `RowMaxEn` 启用 row maximum 输入和输出；其确切分配域仍以下方生成契约为准。
-- `GroupMaxEn` 启用 group maximum 输出；其确切分配域仍以下方生成契约为准。
-- `RowMaxInit` 启用从 RowMaxIn 初始化；其确切分配域仍以下方生成契约为准。
-- `MaxAbsEn` 选择最大绝对值归约；其确切分配域仍以下方生成契约为准。
-- `Func` 携带固定函数判别值；其确切分配域仍以下方生成契约为准。
-- `ElementWiseEn` 携带固定完整 Block 选择值；其确切分配域仍以下方生成契约为准。
-- `TransA` 启用 A 的逻辑转置；其确切分配域仍以下方生成契约为准。
-- `TransB` 启用 B 的逻辑转置；其确切分配域仍以下方生成契约为准。
-- `CScaleEn` 启用逐行 accumulator C 缩放；其确切分配域仍以下方生成契约为准。
-- `Reserved` 保持固定保留值；其确切分配域仍以下方生成契约为准。
-- `Opc1` 携带固定命令类别判别值；其确切分配域仍以下方生成契约为准。
-- `Opcode` 携带固定属性 opcode；其确切分配域仍以下方生成契约为准。
-- `W` 携带固定命令宽度判别值；其确切分配域仍以下方生成契约为准。
+固定位为 `W=1`（第 0 位）、`Opcode=1`（第 1 至 3 位）、`Opc1=2`（第 4 至 6 位）、`Reserved=0`（第 10 位）、`ElementWiseEn=0`（第 11 位）和 `Func=2`（第 12 至 14 位）。可变字段如下：
+
+- `TransA`（第 7 位）与 `TransB`（第 8 位）：对 Shared A 或 B 主操作数做逻辑转置。
+- `CScaleEn`，第 9 位：对显式 FP32 累加器 `C` 做逐行缩放。
+- `MaxAbsEn`，第 15 位：按最大绝对值而不是有符号最大值归约。
+- `RowMaxInit`，第 16 位；`GroupMaxEn`，第 17 位；`RowMaxEn`，第 18 位。
+- `GroupNCode`，第 19 至 22 位：编码 0 至 9 选择 0、8、16、32、48、64、80、96、112 或 128 列的分组宽度。
+- `ReluMode`，第 23 至 25 位：编码 0 至 3 依次选择无、ReLU、标量 LReLU/PReLU 和向量 PReLU。
+- `PreQuantMode`，第 26 至 31 位：编码 0 至 5、12、13、16 至 20、23 至 28 以及 32 至 39。
+
+不在这些编码集合中的值或固定位不匹配都无法译码，并引发 `Fault_IllegalInstruction`。
+
+设计要点：`PreQuantMode` 是封闭的编码表。ASL 注释指出 `U8` 不是 `S8` 的同义词。每个非零编码同时固定所需的累加器类别（`S32` 或 `FP32`）和输出类型；编码 0 接受 `FP32`、`S32` 或 `U32` 并保持该类型。
 
 <!-- PTO-READER-BLOCK: block-b-fpatr-effects role=effects -->
-## 待处理状态与完成
+## 默认值、状态与输出
 
-被接受的 header 命令只改变自己的待处理记录或 carrier。除非本所有者明确指出即时 header 状态更新，否则架构 Tile、Shared、GPR、内存和完成影响都推迟到完整 Block。
+全零字段表示：无预量化、无激活、无分组最大值、无行最大值、无转置、无 `CScale`。此时有效输出类型 `EffectiveDType` 即累加器类型。
+
+设计要点：省略 `B.FPATR` 与全零的 `B.FPATR` 不同。缺少它的矩阵 Block 会在完整预检时以 `Fault_BundleControl` 失败，因为矩阵操作数 schema 要求该描述符。全零命令才是请求普通输出的方式。
+
+Block 提交时，`D`、`RowMaxOut` 与 `GroupMaxOut` 作为一个输出组一起发布。被拒绝的 Block 一个都不发布。RowMax 与 GroupMax 在 `EffectiveDType` 中对最终编码的 `D` 值做归约。
+
+该描述符在 Block 提交时被清除，并在陷阱保存与恢复中随待处理 Block 一起保留。
 
 <!-- PTO-READER-BLOCK: block-b-fpatr-constraints role=constraints -->
-## 合法性与故障边界
+## 合法性与故障
 
-保留编码会在读取或待处理状态变化前被拒绝。位置、重复、角色或完成后 schema 不匹配，会在 body 影响前失败。
+由命令检查，失败时引发 `Fault_TileLegality`：
+
+- `RowMaxInit` 要求 `RowMaxEn`。
+- `GroupMaxEn` 与非零 `GroupNCode` 互为前提。
+- `MaxAbsEn` 要求 `RowMaxEn` 或 `GroupMaxEn`。
+
+由完整预检在任何效果之前检查，失败时引发 `Fault_TileLegality`：
+
+- 累加器类型必须与 `PreQuantMode` 类别匹配。启用 `RowMaxEn` 或 `GroupMaxEn` 时，`EffectiveDType` 必须是 `FP32`、`FP16` 或 `BF16`。
+- `TransA` 或 `TransB` 要求对应主操作数为 Shared。`CScaleEn` 只被 FP32 `TMATMUL.ACC` 与 `TMATMULMX.ACC` 接受。
+- 矩阵 `B.DATR` 只提供转换控制：`PreQuantMode` 为 0 或移位模式（12、13）时，`RMode` 与 `Sat` 必须为零；固定舍入模式时，`RMode` 必须为零。
+- 若 `B.DATR` 设置 `CCTRL[0]=1`（原始部分和输出），所有后处理与归约字段都必须为零；只保留合法的 `CScale`。
 
 <!-- PTO-READER-BLOCK: block-b-fpatr-example role=example -->
 ## 非规范示例
@@ -64,10 +82,12 @@ The current instruction contract is owned by the ASL source linked above.
 以下为非规范示例，仅用于说明当前所有者，不替代其定义。
 
 ```asm
-B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn
+B.FPATR None, None, 0, 0, 0, 0, 0, 0, 0, 0
 ```
 
-假设当前存在兼容的有效 header，并且之前没有冲突的 `B.FPATR` 命令。把 `B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn` 放在下一个 header 槽，会记录该命令的待处理字段；它本身不会执行最终的 body 操作。
+该命令请求普通输出：累加器为 `FP32` 时，`D` 以 `FP32` 发布。同一 header 中的第二条 `B.FPATR` 引发 `Fault_BundleControl`。
+
+再看 `PreQuantMode` 编码 16、`ReluMode` 1、`GroupNCode` 2、`RowMaxEn=1` 与 `GroupMaxEn=1`。编码 16 需要 `FP32` 累加器并输出 `BF16`，因此 `EffectiveDType` 为 `BF16`，两种归约都被允许；每个分组最大值覆盖 16 列。编码 16 使用固定舍入，因此矩阵 `B.DATR` 必须保持 `RMode` 为零。若改用 `PreQuantMode` 编码 2，输出类型为 `S8`，同样的归约使能会在预检时以 `Fault_TileLegality` 失败。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -17,44 +17,54 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tneg-purpose role=purpose -->
-## 用途
+## TNEG 的作用
 
-`TNEG` 对一个 Local Tile 源执行类型化逐元素算术取负。
+`TNEG` 对一个 Local Tile 的每个元素取负，并把结果写入一个新分配的 Local 目标 Tile。整数按元素位宽回绕取负；浮点值翻转其符号位。
+
+设计要点：`TNEG` 没有独立 opcode。它由 `BSTART.VEC` Mode 0 Function 17（TEPL 选择器 `0x011`）选中，并与 `TABS`、`TNOT` 和 `TRELU` 共用封闭的一元指令束模式。
 
 <!-- PTO-READER-BLOCK: tile-tneg-mechanism role=mechanism -->
-## 执行机制
+## 元素与 Tile 机制
 
-ASL DOC 契约通过该指令的选择器编码块载体选择 `TileHandler_ExecuteTileUnary`。
+完整预检通过后，`ExecuteTileUnary` 读取源，并变换有效矩形 `ValidRow x ValidCol` 内的每个坐标。
 
-源快照之前，必须检查绑定模式、维度、DataType、行主序布局、源已定义性与编码、PE_MASK、目的容量和适用属性。
+- 整数类型（有符号与无符号）：结果为按元素位宽取模的 `0 - source`。对 `U8`，1 变为 `0xFF`。对 `S8`，-128（`0x80`）仍为 `0x80`，因为 +128 无法表示。
+- 浮点类型：只翻转符号位。正零与负零互换编码，无穷大改变符号，NaN 保持其类别与载荷。
+
+设计要点：浮点 `TNEG` 是符号位翻转，而不是用零减去该值。因此它从不舍入，从不报告无效条件（即使遇到信号 NaN），并把正零映射为负零，而 `0 - x` 不会这样做。
+
+设计要点：在任何效果之前，有效区域内的每个源元素（存在 ExecutionMask 时为每个活动元素）都必须是所选 `DataType` 的合法编码。无效的浮点编码（例如低位尾数不为零的 `TF32` 值）会被拒绝，即使该变换只涉及符号位。
 
 <!-- PTO-READER-BLOCK: tile-tneg-inputs-outputs role=inputs-outputs -->
-## 操作数与描述符
+## 操作数角色与描述符
 
-`destination0` 是新 Local 目的地；`source0` 是取负源。
+- `source0` 是取负的源，必须是已分配的现有 Local Tile。
+- `destination0` 是新分配的 Local Tile，其后备 `DataType` 为所选操作 `DataType`，物理形状、有效形状和布局与源一致。
 
-除非当前契约明确指出状态被消费或替换，否则源保持持久；只有完整预检后才发布目的描述符。
+一条终止 `B.IOT` 在同一个 `PE_MASK` 下绑定两个 Tile；`B.IOR` 与 `B.IOS` 非法。源可以使用位宽相同、非打包的其他后备类型；此时其位按所选 `DataType` 校验和解释。
 
 <!-- PTO-READER-BLOCK: tile-tneg-effects role=effects -->
-## 发布与排序
+## 发布、已定义性与填充
 
-每个有效坐标都按所选元素类型执行操作；目的地发布之前会快照全部源和私有 GPR 标量操作数。
+源载荷在第一次写目标之前被快照，因此与目标互为别名的源按旧值读取。
 
-有效载荷、选中的物理填充的已定义性、描述符和适用的粘滞数值标志原子发布；拒绝时没有架构效果。
+目标描述符、有效区域结果、填充以及每个元素的已定义性同时发布。`ValidRow x ValidCol` 之外的元素接收所选 `PadValue`：`Zero`、`Max` 与 `Min` 为已定义值，而 `Null`（省略 `B.DATR` 时的值）使其保持未定义。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值。`TNEG` 没有全局内存效果。
 
 <!-- PTO-READER-BLOCK: tile-tneg-constraints role=constraints -->
-## 合法性、填充与故障
+## 类型、布局与故障边界
 
-绑定格式错误、类型或布局不受支持、形状无效、被消费元素未定义、属性非法或目的容量不足时，会在源快照或发布之前拒绝操作。
+ASL 类型谓词 `TileTNegDataTypeSupported` 接受 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。打包四位格式不在其中。默认布局为 `RowMajor`，显式 `Layout` 可选择 `CUBE_M16` 或 `CUBE_M32`；`CUBE_N8`、Shared Tile 以及混合布局均非法。
 
-`PE_MASK=0000` 是严格空操作，先于读取、分配、故障、数值状态、填充或描述符效果。分配失败触发所有者定义的 Tile 分配故障；其他被拒绝的绑定模式或值条件触发所有者定义的合法性、块控制或内存故障，且不产生部分效果。
+`PE_MASK=0000` 是严格无操作。否则，绑定格式错误、维度缺失或为零、源状态未定义或不匹配、`DataType` 不受支持、布局非所选布局、出现非默认的 `CMode`、`Sat`、`Canonicalize`、第二 `DataType` 或 `RMode`，或浮点源编码无效时，会在任何效果之前引发 `Fault_TileLegality`。目标形状无法表示或 `TSize` 容量不足时，会在分配之前引发 `Fault_TileAllocation`。
 
 <!-- PTO-READER-BLOCK: tile-tneg-example role=example -->
 ## 非规范契约草图
 
 这是非规范契约模式草图；它用于组织字段和绑定关系，不声称可以直接汇编。
 
-把 `BSTART.VEC TNEG, U64; B.DIM LB0=ValidCol; B.IOT Src, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP` 作为非规范绑定演练，再以下方生成契约确认精确维度、属性和故障行为。
+当 `DataType=S8` 时，有效元素 `[5, -3, 0, -128]` 变为 `[-5, 3, 0, -128]`。当 `DataType=FP32` 时，`0x3F800000`（1.0）变为 `0xBF800000`（-1.0），`0x00000000`（正零）变为 `0x80000000`（负零）。
+
+宏形式 `TNEG <Row=8, Col=64, FP32>, T#1, ->T<2KB>` 把一个 `FP32` Tile 的全部 8 x 64 个元素取负，写入新的 2 KB 目标。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

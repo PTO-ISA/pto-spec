@@ -19,48 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-maddw-purpose role=purpose -->
 ## What MADDW does
 
-`MADDW` is a 32-bit scalar ALU instruction. It adds a snapshotted addend to the product under the low 32-bit word, followed by sign-extension to XLEN arithmetic; its current instruction contract defines the result publication path and any additional state effect.
+`MADDW` is a 32-bit encoded scalar ALU instruction that adds `SrcL[31:0] * SrcR[31:0]` and `SrcD[31:0]` modulo `2^32`, sign-extends bit `31` of that 32-bit sum, and publishes the result through one Reg5 destination.
+
+Only the low word of each source participates. Bits `63:32` of `SrcL`, `SrcR` and `SrcD` cannot influence the published value.
 
 <!-- PTO-READER-BLOCK: scalar-maddw-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then adds a snapshotted addend to the product under the low 32-bit word, followed by sign-extension to XLEN arithmetic, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractResult_MADDW`, which returns `ScalarMultiplyAddW(addend, left, right)`. That helper multiplies with `MultiplyWord(left, right)`, takes `product[31:0]`, adds `addend[31:0]` into a 32-bit value, and applies `SignExtend{PTO_XLEN}` to the 32-bit sum.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+maddw SrcL, SrcR, SrcD, ->{t, u, Rd}
+```
+
+Design point: the addition is performed in `32` bits and only the finished value is widened. The carry out of bit `31` is therefore dropped instead of being propagated into the upper word: `SrcL = 70000`, `SrcR = 70000` and `SrcD = 0` publish `605032704`, not `4900000000`.
 
 <!-- PTO-READER-BLOCK: scalar-maddw-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcD` field selects the addend through Reg5.
-- The 5-bit `SrcL` field selects the left multiplicand or additive operand through Reg5.
-- The 5-bit `SrcR` field selects the right multiplicand through Reg5.
+- `RegDst`, instruction slice `[7 +: 5]`, receives the sign-extended 32-bit result.
+- `SrcD`, instruction slice `[27 +: 5]`, supplies the addend word.
+- `SrcL`, instruction slice `[15 +: 5]`, supplies the left multiplicand word.
+- `SrcR`, instruction slice `[20 +: 5]`, supplies the right multiplicand word.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Sources use the common Reg5 map, `0..23` for absolute GPRs, `24..27` for `T#1..T#4` and `28..31` for `U#1..U#4`, all read without consuming an entry. An encoded zero reads the architectural zero GPR.
+
+Design point: the sign extension happens after the accumulate, so the published word is not the zero-extended sum. A sum whose bit `31` is set arrives at the destination as an XLEN value with all upper bits set, which is why `maddw` can publish a negative result from two positive inputs.
 
 <!-- PTO-READER-BLOCK: scalar-maddw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+All three sources are snapshotted before the destination effect, so a destination that also names `SrcD`, `SrcL` or `SrcR` observes the pre-instruction value of that register.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The result is published through `RegDst` and `TPC` then advances by `4` bytes. `MADDW` has no memory effect and no numeric-status effect; the only state it can change besides `RegDst` and `TPC` is the single `T` or `U` queue push selected by the destination code.
 
 <!-- PTO-READER-BLOCK: scalar-maddw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every source code and every destination code of the 5-bit fields is assigned, and `ScalarDestinationSelectorLegal` accepts all `32` destination codes, so only an unavailable temporary source can fail the operand checks. Fixed encoding bits must match the canonical 32-bit form.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise the first fault in the ordered check sequence is `Fault_IllegalInstruction` at `PC` for an encoding that does not match the form, raised before the bundle body is entered, and the second is `Fault_IllegalInstruction` at `PC` for an unavailable selected `T` or `U` source, raised before the destination write.
+
+Design point: because the discarded bits are dropped before the add, `MADDW` needs no overflow rule and defines no exception for any operand triple. The whole fixed-width contract is the modulo `2^32` sum plus the final sign extension.
 
 <!-- PTO-READER-BLOCK: scalar-maddw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `MADDW` example, low-word multiplicands `6` and `7` with addend `1` produce the single sign-extended result `43`.
+With `SrcL = -3`, `SrcR = 5` and `SrcD = 1`, the low words give `-15 + 1 = -14`; `SignExtend(0xFFFFFFF2)` is `0xFFFFFFFFFFFFFFF2`, so the destination receives a negative XLEN word. With `SrcL = 0x100000000`, `SrcR = 5` and `SrcD = 7`, `SrcL[31:0]` is `0`, and the destination receives `7`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

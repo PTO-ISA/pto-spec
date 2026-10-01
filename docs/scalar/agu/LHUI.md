@@ -17,48 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-lhui-purpose role=purpose -->
-## What LHUI does
+## What `LHUI` does
 
-`LHUI` is a standalone `32`-bit AGU instruction that forms a signed-immediate address and loads one aligned little-endian `2`-byte value.
+`LHUI` loads one unsigned `2`-byte halfword at a scaled immediate distance from a base register. The immediate counts halfword slots and the result is zero-extended.
+
+The canonical assembly is `lhui [SrcL, simm], ->{t, u, Rd}`.
+
+Design point: the scale of `2` extends the reach of the `12`-bit field to `-4096`..`4094` bytes, and every displacement it produces is even.
 
 <!-- PTO-READER-BLOCK: scalar-lhui-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address and the transfer are formed
 
-`LHUI` sign-extends `simm12` from its complete `-2048..2047` domain, multiplies it by `2`, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+`LHUI` sign-extends `simm12`, shifts it left by `1`, and adds the result to the `SrcL` snapshot modulo `2^PTO_XLEN`.
 
-After complete preflight, the instruction performs one little-endian `2`-byte load and zero-extends the loaded `2`-byte value to `PTO_XLEN` for destination publication.
+Preflight tests `2`-byte alignment, then translation, then permission and bounded memory. On success `2` bytes are read little-endian and one relaxed load event is recorded.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+The halfword is zero-extended to `PTO_XLEN` and published through `RegDst`. No base write-back occurs.
+
+Design point: the displacement is always even, so `LHUI` inherits the alignment of the base exactly; it can address any even offset from an even base but can never correct an odd one.
 
 <!-- PTO-READER-BLOCK: scalar-lhui-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `SrcL` supplies the base; `simm12` supplies the signed displacement. Every encoded Reg5 source among `SrcL` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- `simm12` assigns every signed value from `-2048` through `2047`; encoded zero is a zero displacement, not omission.
+- `SrcL` is the base selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `simm12` is signed, covers `-2048`..`2047` units, and is scaled by `2`, so the byte displacement covers `-4096`..`4094`.
+- `RegDst` is the destination selector. Codes `1`..`23` write GPRs, `30` pushes the `U` queue, `31` pushes the `T` queue, and `0` plus `24`..`29` publish nothing; code `0` is the architectural zero GPR, whose writes are discarded.
+- Design point: a destination code of `30` or `31` pushes the halfword onto the `U` or `T` queue, so the loaded value can feed the queue without a GPR destination.
 
 <!-- PTO-READER-BLOCK: scalar-lhui-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+The base is snapshotted before the memory access and before publication, so a destination that aliases the base receives the loaded value only afterwards.
 
-A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+Success records one relaxed load event, leaves memory and the reservation unchanged, and advances `TPC` by `4` bytes.
+
+Design point: zero-extension means bits `16` and above of the result are always `0`, so a halfword `0xFFFF` reads as `65535` and never as `-1`.
 
 <!-- PTO-READER-BLOCK: scalar-lhui-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `2`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch, or a `SrcL` selector naming an unavailable `T`/`U` queue entry, raises `Fault_IllegalInstruction` before any effect.
+- An odd sum raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original effective address.
+- A fault records no event, publishes nothing, and keeps `TPC` on the faulting instruction for a full reissue.
+- Design point: the permission stage bounds the whole `2`-byte access, so a halfword at the last permitted byte is rejected instead of being read half inside and half outside the region.
 
 <!-- PTO-READER-BLOCK: scalar-lhui-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With the base set to `0x100` and the signed immediate set to `2`, the displacement is `4` and base plus displacement is `0x104`. The memory access uses `0x104`. If aligned and permitted, the instruction loads `2` bytes from that address.
+- With `SrcL` = `0x2000` and `simm12` = `-1`, the byte displacement is `-2` and the address is `0x1FFE`.
+- Bytes `FF FF` at `0x1FFE` are the halfword `0xFFFF`, which publishes as `0xFFFF`.
+- Because the displacement is always even, a base of `0x2001` would make this instruction raise `Fault_DataAlignment` for every encoded `simm12`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

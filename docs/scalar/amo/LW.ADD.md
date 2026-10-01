@@ -19,42 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-lw-add-purpose role=purpose -->
 ## What LW.ADD does
 
-`LW.ADD` atomically applies modular addition to one word, stores the result, and publishes the prior memory value.
+`LW.ADD` adds one operand to a 4-byte memory word, writes the low 32 bits of the sum back to the same word, and publishes the word that was there before the instruction. The address comes from `SrcL`, the operand from `SrcR`, and the published value from the pre-instruction memory contents.
 
 <!-- PTO-READER-BLOCK: scalar-lw-add-mechanism role=mechanism -->
-## Atomic mechanism
+## Adding into a 32-bit word
 
-The ASL DOC contract selects `ScalarHandler_AtomicReadModifyWrite` with an access width of `4` bytes.
+The form binds `ScalarHandler_AtomicReadModifyWrite` with access size `4` and atomic operation `Atomic_ADD`. A read probe and a write probe both cover the same 4 bytes; then the word is loaded, truncated to its low 32 bits, added to the low 32 bits of `SrcR`, and the 32-bit result is stored back. One atomic event is recorded with `write_performed` set to true.
 
-Read and write access are preflighted before the same-location atomic read-modify-write is allowed to commit.
+Arithmetic is modular in 32 bits. A word holding `0x7fffffff` plus `SrcR = 0x0000000000000001` stores `0x80000000`; a word holding `0xffffffff` plus the same operand stores `0x0`.
+
+Design point: the truncation happens before the addition and the carry out of bit 31 is dropped, so the upper 32 bits of `SrcR` never influence the stored word. Access size `4` also sets the alignment rule: the address must be a multiple of 4.
+
+Design point: the published value follows a different rule from the stored bytes. `RegDst` receives the old word sign-extended to `XLEN`, so a word holding `0xffffffff` publishes `0xffffffffffffffff` while the store writes `0x0`; reading the destination as a signed 64-bit value reproduces the replaced word.
 
 <!-- PTO-READER-BLOCK: scalar-lw-add-inputs-outputs role=inputs-outputs -->
-## Inputs and result
+## Fields and operand roles
 
-`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 atomic operand source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+`RegDst` is a `5`-bit field at instruction bits `7..11`, `SrcL` at bits `15..19`, `SrcR` at bits `20..24`, `rl` at bit `25`, `aq` at bit `26`, and `far` at bit `27`.
 
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+`SrcL` supplies the address and `SrcR` the operand; both accept every Reg5 source selector, and a selected T or U entry must be valid and is not consumed. `RegDst` takes the published value: code `0` and codes `24` to `29` discard it, code `30` pushes U, code `31` pushes T, and codes `1` to `23` write the named GPR.
+
+Design point: `aq` and `rl` select relaxed, acquire, release, or acquire-release ordering for the atomic event, while `far` is decoded and passed to `AtomicAddress`, which returns the address unchanged, so `lw.add` and `lw.add.f` address the same word in the reference model.
 
 <!-- PTO-READER-BLOCK: scalar-lw-add-effects role=effects -->
-## Effects and ordering
+## Effects
 
-The old memory value is published only after the read-modify-write commits; source aliases are captured before any destination effect.
+A completed `LW.ADD` writes 4 bytes, records one atomic event with `write_performed` set to true, publishes the sign-extended pre-instruction word, and advances `TPC` by 4 bytes. If the written 4 bytes overlap the reserved 64-byte granule, the local reservation is cleared.
 
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+Design point: only the addressed word changes. The neighbouring 4 bytes of the same 8-byte doubleword keep their contents even when the addition carries out of bit 31, because the store width is fixed at 4 bytes.
 
 <!-- PTO-READER-BLOCK: scalar-lw-add-constraints role=constraints -->
-## Legality and precise faults
+## Legality and faults
 
-The effective address must be aligned to `4` bytes. Alignment, translation, and permission checks precede architectural effects.
+The address must be a multiple of 4. The read probe reports `Fault_DataAlignment` for a misaligned address and `Fault_DataPage` for an address outside the permitted region, both before the load and both at the original address; the write probe repeats the tests, and the two translated addresses must match. An undecodable form or an unavailable selected T or U source raises `Fault_IllegalInstruction` before any effect. A fault publishes nothing, leaves memory unchanged, records no atomic event, keeps the reservation, and leaves `TPC` unchanged.
 
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+Design point: the two probes complete before the load, and the reference model takes its read and write decisions from the same bounds check, so a rejected access never reaches the word and the reported fault carries the address the program supplied rather than any translated form.
 
 <!-- PTO-READER-BLOCK: scalar-lw-add-example role=example -->
 ## Non-normative example
 
 This example only shows one accepted spelling; the generated contract below remains authoritative.
 
-For a first reading, use `lw.add [SrcL], SrcR, ->Rd` and then vary only the ordering or route modifiers described above.
+With `a0` holding a 4-byte aligned address, `lw.add [a0], a1, ->a2` adds the low 32 bits of `a1` to the word at `[a0]`. If the word holds `0x7fffffff` and `a1` holds `0x0000000000000001`, the location receives `0x80000000` and `a2` receives `0x000000007fffffff`.
+
+If the word holds `0xffffffff` and `a1` holds `0x0000000000000001`, the location receives `0x0` and `a2` receives `0xffffffffffffffff`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

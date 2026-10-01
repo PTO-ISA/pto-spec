@@ -19,46 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-movi-purpose role=purpose -->
 ## What C.MOVI does
 
-`C.MOVI` is a 16-bit scalar ALU instruction. It sign-extends the encoded immediate to XLEN without reading a scalar source; its current instruction contract defines the result publication path and any additional state effect.
+`C.MOVI` sign-extends its 5-bit immediate to `PTO_XLEN` and publishes the resulting word through the Reg5 destination. It reads no register at all.
+
+Design point: `C.MOVI` is the only form in this compressed group with an explicit destination field, so it can materialize a constant directly into a GPR instead of pushing it to `T`. That is why it needs a `RegDst` field while `C.ADD`, `C.AND` and `C.OR` do not.
 
 <!-- PTO-READER-BLOCK: scalar-c-movi-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then sign-extends the encoded immediate to XLEN without reading a scalar source, and only afterward performs the destination effects.
+`simm5` is sign-extended to `PTO_XLEN`: bit `4` is copied into bits `63..5`. The extended word is then published or discarded according to `RegDst`, with no arithmetic performed on it.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: because the immediate is sign-extended, five bits reach both small positive and small negative constants. `c.movi -1, ->a0` materializes `18446744073709551615`, all `64` bits set, which a zero-extending rule could not express.
+
+Design point: the destination field excludes code `10` by an explicit encoding constraint, because the 16-bit pattern that carries `RegDst=10` is the `C.SETRET` form. The constraint keeps the two compressed forms from overlapping, so a program that wants register `10` written must use a different instruction, such as `c.movr` or a 32-bit form.
 
 <!-- PTO-READER-BLOCK: scalar-c-movi-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The signed 5-bit `simm5` field carries the signed five-bit immediate.
+- `simm5` is the signed 5-bit immediate, from `-16` through `15`.
+- `RegDst` publishes the extended value: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero of `simm5` is numeric zero, so `c.movi 0, ->a0` writes `0` and is the compressed constant-zero materialization. Encoded zero of `RegDst` discards instead of writing the zero GPR, so a discarded `C.MOVI` changes nothing.
+
+Design point: there is no source field, so `C.MOVI` performs no source read and cannot fail a source-availability check.
 
 <!-- PTO-READER-BLOCK: scalar-c-movi-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+The immediate is extended and then published in one step; ordering against other registers is irrelevant because nothing is read.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 2 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+After publication or discard, `TPC` advances by `2` bytes. No memory, reservation, descriptor, numeric-status, bundle, privilege, predicate or control-flow state changes, and no queue moves except the single `T` or `U` push selected by `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-c-movi-constraints role=constraints -->
 ## Legality and fault boundary
 
-Materialization, movement, and extension are total at their fixed widths and do not raise arithmetic exceptions. A fixed-bit mismatch or unavailable selected T/U source faults before state effects.
+Every `simm5` value is assigned, and every `RegDst` code is assigned except `10`, which the encoding constraint rejects.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+A fixed-bit mismatch, including a `RegDst` value of `10`, raises `Fault_IllegalInstruction` before the destination effect and before `TPC` advances. An undecodable 16-bit form raises `Fault_IllegalInstruction` at `PC`, and an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`.
+
+Design point: materialization is total, so `C.MOVI` never faults on an operand value. Its only rejected operand is the destination code that belongs to another instruction, and that rejection happens before anything is written.
 
 <!-- PTO-READER-BLOCK: scalar-c-movi-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `C.MOVI` example, immediate `3` publishes XLEN value `3`.
+With `simm5=5` and `RegDst` naming a GPR, `C.MOVI` writes `5` to that GPR. With `simm5=-1`, it writes `18446744073709551615`. With `RegDst=31`, the same extended value is pushed to `T` as the newest entry instead of being written to a register.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

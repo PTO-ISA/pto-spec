@@ -7,8 +7,67 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-postprocess-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit converts one CUBE accumulator element into its final D value. It applies the B.FPATR activation, scale, offset, rounding, saturation, and special-value rules.
+
+`MatrixPostQuantBaseWithFlags` is the per-element entry point, reached through `TileProfileMatrixPostProcessWithFlags` in the post-processing unit. The unit also supplies `MatrixReductionAbsoluteWithFlags` for MaxAbs reductions. It carries NDF clause `PTO-MATRIX-POSTPROCESS-BITEXACT-001`.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-postprocess-concepts role=concepts-state -->
+## Concepts and visible state
+
+- The source type is the accumulator type seen by conversion: the output type when PreQuantMode is 0, S32 for the S32 modes, and FP32 otherwise.
+- ReluMode 0 selects no activation, 1 selects ReLU, and 2 or 3 select a leaky slope from a scalar or vector parameter.
+- The quantization scale is an FP19 value in parameter bits `[31:13]`. The signed offset width is 0, 5, 9, or 17 bits, chosen by `BundleFPATRModeOffsetWidth`.
+
+Flags use the bit order NV, DZ, OF, UF, NX from bit 0. `0x14` is OF plus NX.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-postprocess-rules role=rules-interactions -->
+## Rules and interactions
+
+When PreQuantMode and ReluMode are both 0, the value passes through unchanged. Shift modes 12 and 13 go straight to `MatrixShiftS32ToS16`, with a shift of parameter bits `[35:32]` plus one.
+
+For the other modes, `MatrixSelectedMultiplier` picks one multiplier. It is the scale for a non-negative source or for ReluMode 0. For a negative source it is 0 under ReluMode 1 and the FP19 ReLU parameter under ReluMode 2 or 3.
+
+A NaN or infinite FP32 source is handled by `MatrixPostQuantSpecialValue`. An integer destination receives 0 or the endpoint that the saturation rule selects, and raises NV or OF plus NX. A floating destination receives NaN, zero, infinity, or the largest finite value. Negative infinity with multiplier 0 is instead treated as 0.0.
+
+A finite source is multiplied by the multiplier. With a nonzero offset width, `MatrixQuantizedAffine` rounds and saturates at that width, adds the offset, and encodes the result. Otherwise the offset is added and `MatrixEncodeReal` encodes the sum.
+
+`MatrixFPATREffectiveControl` forces RHB for modes 25 and 28 and RNE for the other fixed-rounding modes. The remaining modes keep the B.DATR rounding.
+
+Design point: a negative-zero FP32 source with a nonzero multiplier, zero offset, and a floating destination returns `MatrixFloatingSignedZero(output_type, TRUE)`: negative zero for FP32, FP16, BF16, and E4M3, and `0x00` for HiF8. The sign survives where the format has a negative zero, which the real-number path would lose.
+
+Design point: apart from the shift modes, which use an arithmetic shift, each step is written in exact real arithmetic with one defined rounding point per stage; the NDF requires the result to be bit-exact, so every implementation publishes the same D.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-postprocess-boundaries role=boundaries -->
+## Architectural boundaries
+
+`MatrixFloatingLargestFinite` has no FP64 or E5M2 entry, and `MatrixFloatingInfinity` returns the canonical NaN for every type other than FP32, FP16, BF16, and HiF8. For a nonzero PreQuantMode, the destination type is the one that `BundleFPATROutputType` lists for that mode.
+
+For MaxAbs, `MatrixReductionAbsoluteWithFlags` maps S32 `0x80000000` to `0x7fffffff` with OF. Legality only admits FP32, FP16, and BF16 reductions, which use the floating ABS.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-postprocess-example role=example-usage -->
+## Non-normative reading example
+
+A TMATMUL has an FP32 accumulator, PreQuantMode 1, and ReluMode 1. Mode 1 outputs FP16, uses no scale parameter, and fixes RNE.
+
+1. Accumulator element 2.5 is non-negative, so the multiplier is 1.0. The result 2.5 encodes exactly as FP16 `0x4100`.
+2. Accumulator element -3.0 is negative under ReLU, so the multiplier is 0. The result 0.0 encodes as `0x0000`.
+3. Accumulator element negative infinity with multiplier 0 is treated as 0.0, so ReLU also yields `0x0000` with no flags.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-matrix-postprocess-related role=related-owners-navigation -->
+## Related owners
+
+- [Matrix quantization](matrix-quantization.md) owns the rounding, saturation, and encoding helpers.
+- [Post-processing](postprocess.md) routes the parameters and publishes the results.
+- [B.FPATR](../../../block/attributes/B.FPATR.md) defines the mode tables.
+- [Reference quantization](../../../scalar/model/fsu/reference-quantization.md) owns FP32 finite value decoding.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

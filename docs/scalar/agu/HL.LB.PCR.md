@@ -17,50 +17,63 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-lb-pcr-purpose role=purpose -->
-## What HL.LB.PCR does
+## What `HL.LB.PCR` does
 
-`HL.LB.PCR` is a standalone `48`-bit scalar AGU instruction that loads one 1-byte little-endian value and sign-extends the transferred bits when the result is narrower than `PTO_XLEN` using `PCRelative` addressing.
+`HL.LB.PCR` is a `48`-bit PC-relative load of one byte. It computes its address from the current program counter rather than from a register, reads one byte, sign-extends it to `PTO_XLEN`, and publishes the result through the single `RegDst` field.
+
+The canonical assembly is `hl.lb.pcr [<symbol>], ->{t, u, Rd}`. The assembly names a symbol, while the encoding carries a signed `29`-bit displacement that the instruction scales by `4`.
+
+Design point: the form has no source-register field at all. Nothing in the instruction depends on a GPR, `T`, or `U` value, so there is no source snapshot to take and no queue-availability check to run before the access. The only architectural state read is the program counter.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lb-pcr-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How the address and the transfer are formed
 
-The PC-relative path first clears bits `1:0` of the current `TPC`, then adds the sign-extended `simm` displacement scaled by `4`, modulo `2^PTO_XLEN`.
+The base is the current `TPC` with bits `1`:`0` cleared, and the offset is the sign-extended `29`-bit displacement shifted left by `2` bits. The two are added modulo `2^PTO_XLEN`.
 
-After complete preflight, one aligned little-endian `1`-byte load is performed. Its result is sign-extended before destination publication.
+The access uses that address directly; there is no base writeback, because the form has no second destination and no update mode.
 
-This form does not publish an address-base writeback.
+After the encoding checks and the address preflight pass, the handler performs one `1`-byte little-endian load, sign-extends bit `7` of the byte, and publishes the extended value to `RegDst`.
+
+Design point: clearing `TPC[1:0]` makes the base `4`-byte aligned, and the displacement is scaled by `4`, so every address this form can reach is `4`-byte aligned. A `1`-byte access requires no alignment, so no reachable address is refused by the alignment rule; the rule is nevertheless evaluated, because the preflight always runs before translation.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lb-pcr-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and where the byte goes
 
-- `RegDst` is a `5`-bit field selecting the loaded-value result.
-- `simm` is a `29`-bit field selecting the signed displacement before the `4` scale factor.
+- `RegDst` is a `5`-bit selector. Codes `1`..`23` write absolute GPRs, code `30` pushes the `U` queue, code `31` pushes the `T` queue, and codes `0` and `24`..`29` discard the loaded value without suppressing the rest of the instruction.
+- The signed `29`-bit displacement is a word displacement: its assembled byte value runs from `-1073741824` to `1073741820` in steps of `4`.
+- The base is implicit: it is the current `TPC`, aligned down to a `4`-byte boundary.
+
+Design point: an encoded `RegDst` of `0` is an explicit discard, not omission. The load, its preflight, and its event all still happen; only the publication step is dropped. A program can therefore use this form as a checked memory probe whose result it does not need.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lb-pcr-effects role=effects -->
-## Effects and completion order
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+Successful execution performs one relaxed `1`-byte load and records one load event. Memory bytes and any reservation state are unchanged.
 
-Successful execution records one relaxed load event; memory and reservation state are preserved.
+Publication writes the destination only after the memory operation reported no fault, so a faulting load leaves the destination selector unmodified.
 
-After all result or writeback publication, `HL.LB.PCR` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+After publication, `HL.LB.PCR` advances `TPC` by `6` bytes. The address was formed from the pre-instruction `TPC`, so the advance does not move the location that was read.
+
+Design point: the destination selector is not a source, but if it names the same queue that a later instruction reads, the push happens once and unconditionally on success; the value is sign-extended before the push, so the queue never holds the raw `8` bits.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lb-pcr-constraints role=constraints -->
 ## Legality, faults, and restart
 
-Each accessed address is aligned to the `1`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+A fixed-bit mismatch in the `48`-bit encoding raises `Fault_IllegalInstruction` before any effect. There is no base-register selector to check and therefore no unavailable-`T`/`U` rejection path for a source.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
+The preflight applies the alignment requirement of the access itself. For a `1`-byte transfer every address satisfies it, so this form never raises `Fault_DataAlignment`. The address is then translated and tested for permission, and a permission or bounded-memory failure raises `Fault_DataPage` at the original address.
 
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+A fault records no load event, writes no destination, and leaves `TPC` on the faulting instruction. Recovery recomputes the aligned base, the scaled displacement, the preflight, and the load from the beginning.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lb-pcr-example role=example -->
-## Non-normative reading walkthrough
+## Reading one encoding end to end
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `hl.lb.pcr [<symbol>], ->{t, u, Rd}` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Take `hl.lb.pcr [<symbol>], ->5` executing at `TPC` = `0x1002`, with the encoded displacement equal to `7`. Clearing the low `2` bits gives the base `0x1000`, and the displacement assembles to `28`.
+- The effective address is `0x1000` plus `28`, which is `0x101C`.
+- The instruction reads the single byte at `0x101C` and sign-extends bit `7` into GPR5.
+- `TPC` becomes `0x1002` plus `6`, which is `0x1008`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,34 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-std-purpose role=purpose -->
 ## BSTART.STD 的作用
 
-`BSTART.STD` 是 `STD` 形式的 32 位 Block 起始命令。它建立待处理 Block 的身份和选择参数；真正执行 Block body 并提交结果的是完成后的整个 Block，而不是起始命令本身。
+`BSTART.STD` 打开一个 Standard 块。块（也称指令束）是一段 header 命令和标量主体指令，结束于提交边界：`BSTOP` 或下一条 `BSTART`。Standard 块不运行任何 Tile 操作。它的职责是控制流：记录块提交时程序从哪里继续执行。
+
+该助记符有六种被接受的 32 位形式：`FALL`、`DIRECT`、`COND`、`CALL`、`IND` 和 `RET`。匹配值的位 `14:12` 选择形式（`1`、`2`、`3`、`4`、`5` 和 `7`），其中 `FALL`、`DIRECT`、`COND` 和 `CALL` 在位 `31:15` 携带有符号 17 位 `simm17`。
 
 <!-- PTO-READER-BLOCK: block-bstart-std-mechanism role=mechanism -->
 ## 位置与机制
 
-起始命令之后的 header 命令按顺序执行；`BSTOP` 或下一条 `BSTART` 是验证并退休完整 Block 的边界。当前所有者给出以下确切组成检查表：
+分派器对每种形式都运行[指令束启动分派](../model/dispatch/start.md)。它先计算候选目标：
 
-```text
-BSTART.STD retires any active predecessor block, then opens one standard block whose header commands execute sequentially until BSTOP or the next BSTART selects the BARG continuation.
-COND publishes a candidate BPCN but SETC may update TAKEN before commit; IND requires and snapshots a retiring Standard or Floating BARG.BPCN, while RET snapshots architectural ra before predecessor retirement.
-```
+- `FALL` 使用顺序地址，即 `BSTART` 地址加 4。
+- `DIRECT`、`COND` 和 `CALL` 使用 `BSTART` 地址加上左移 1 位的 `simm17`。
+- `IND` 使用即将退休的块的 `BARG.BPCN`。
+- `RET` 使用 `_ReturnAddress`。
 
-任何有效前序 Block 成功退休后，该命令初始化新的待处理 `BARG` 或操作描述符，并从顺序 PC 继续执行 header。仅仅成功解码起始命令，不会让 Block 目的结果或内存结果变得可见。
+之后它才提交有效的前驱块，并且只有当该提交选择本 `BSTART` 地址作为下一个 `TPC` 时才打开新块。随后[开始](../model/lifecycle/begin.md)写入 `BARG`：块类型 Standard、转移类型、`BPCN` 中的目标以及 `taken`，并把 `TPC` 移到下一条指令。
+
+设计要点：`BSTART.STD` 执行时从不跳转。目标保存在 `BARG.BPCN` 中直到提交，由 `BARGCommitPC` 选择。主体中的 `SETC.TGT` 仍可替换 `BPCN`，主体中的 `SETC` 条件为 `COND` 设置 `taken`，因此最终决定只在整个块运行之后做出一次。
+
+设计要点：`IND` 和 `RET` 在前驱提交之前读取目标。`IND` 保存退休块 `BPCN` 的快照，因为该提交会重置 `BARG`；`RET` 在同一时点读取 `_ReturnAddress`。
 
 <!-- PTO-READER-BLOCK: block-bstart-std-inputs role=inputs-outputs -->
 ## 操作数与 header 角色
 
-- `simm17` 提供编码偏移或加数；其确切分配域仍以下方生成契约为准。
+- `simm17` 是以半字为单位的有符号位移。字节偏移为 `simm17` 乘以 2，因此相对 `BSTART` 的可达范围是 -131072 到 +131070 字节。
+- `FALL` 必须编码 `simm17=0`。非零值保留给扩展。
+- `IND` 和 `RET` 没有操作数字段；它们的目标来自架构状态。
+- `CALL` 还会把返回目标（即顺序地址）记录到 `_ReturnAddress` 和 GPR 10。
+
+Standard 块不安装 Tile 描述符，因此其 header 中的 `B.DIM`、`B.DATR` 或 Tile 绑定不会被任何 Tile 操作使用。
 
 <!-- PTO-READER-BLOCK: block-bstart-std-effects role=effects -->
 ## 待处理状态与完成
 
-对适用性和目标检查而言，起始状态转换与前序 Block 退休是全有或全无的。起始命令成功后，后续完成边界会在任何 body 结果提交前验证完整组成。
+成功的 `BSTART.STD` 把 `BPC` 设为自身地址，把 `BARG` 块类型设为 Standard，记录转移类型和候选 `BPCN`，并且只对 `COND` 把 `taken` 设为假。header 和主体指令随后在顺序 PC 处执行。
+
+提交时，`BARG` 对 `DIRECT`、`CALL`、`IND` 和 `RET` 选择 `BPCN`，对 `COND` 仅在 `taken` 置位时选择。`FALL` 以及 `taken` 为假的 `COND` 在顺序后续地址继续。该形式没有内存效果。
 
 <!-- PTO-READER-BLOCK: block-bstart-std-constraints role=constraints -->
 ## 合法性与故障边界
 
-保留选择器、无效目标、完成后的组成错误或前序退休失败，都会在新 Block 或 body 影响之前被拒绝。
+以下检查都在前驱提交之前运行，因此被拒绝的 `BSTART.STD` 会保留有效前驱及其后续地址：
+
+- 非零的 `FALL` 载荷不是合法操作数值，引发 `Fault_IllegalInstruction`。
+- 没有可退休的有效 Standard 或 Floating 块时，`IND` 引发 `Fault_BundleControl`，因为只有这两类携带候选 `BPCN`。
+- 位 0 置位的目标引发 `Fault_InstructionPC`。
+
+设计要点：PC 相对目标总是偶数，因为它是偶数的 `BSTART` 地址加上左移 1 位的位移。因此奇数目标检查实际上针对 `IND` 和 `RET`，它们的目标来自状态。
+
+如果前驱提交失败，或选择了另一个下一 PC，则不会安装 Standard 块，前驱的结果保持有效。
 
 <!-- PTO-READER-BLOCK: block-bstart-std-example role=example -->
 ## 非规范示例
@@ -57,7 +78,7 @@ COND publishes a candidate BPCN but SETC may update TAKEN before commit; IND req
 BSTART.STD COND, <label>
 ```
 
-假设前序 Block 退休和目标检查成功，`BSTART.STD COND, <label>` 会打开待处理的 `BSTART.STD` 形式；后续 header/body 命令仍是暂定状态，直到 `BSTOP` 或下一条 `BSTART` 验证完整组成。
+假设这条 `BSTART.STD COND` 位于 `0x1000`，`<label>` 为 `0x1040`。汇编器编码 `simm17 = 0x20`，指令字为 `0x00103001`。开始之后，`BPC` 为 `0x1000`，`BPCN` 为 `0x1040`，`taken` 为假，`TPC` 为 `0x1004`。如果主体中的 `SETC` 置位 `taken`，并由位于 `0x1010` 的 4 字节 `BSTOP` 提交，`TPC` 变为 `0x1040`。如果 `taken` 保持为假，`TPC` 变为 `0x1014`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

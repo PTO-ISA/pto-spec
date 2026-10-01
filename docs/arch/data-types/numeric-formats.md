@@ -15,47 +15,60 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-numeric-formats-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit is the central dispatcher from `TileDataType` to each floating or scale format descriptor and exact finite decomposition.
+`TileNumericFormatDescriptor` and `TileNumericFiniteDecomposition` are the two entry points that turn a `TileDataType` into format metadata and into an exact finite decomposition. Both are `pure func`s that `case` over the same seventeen floating and scale members, `TileDataType_FP64` through `TileDataType_E6M2` plus the derived `TileDataType_RCPE6M2`.
 
-It gives consumers one typed entry point while preserving each format file as the owner of its own raw encoding.
+The unit owns the dispatch only. Each arm returns what the named format owner produces, so no carrier width, lane count, bias, or special-value rule is decided on this page.
+
+Design point: the dispatcher narrows the `Word` carrier itself, `value[31:0]` for `FP32`, `TF32`, and `HF32`, `value[15:0]` for `FP16` and `BF16`, and `value[7:0]` for the eight-bit formats. A caller therefore cannot make an eight-bit format read a bit above bit 7, and each helper receives exactly the carrier its own descriptor declares.
 
 <!-- PTO-READER-BLOCK: arch-numeric-formats-concepts-state role=concepts-state -->
 ## Concepts and visible state
 
-- `TileNumericFormatDescriptor` dispatches all declared floating and scale data types from `FP64` through `HiF4X2` to their format-specific descriptors.
-- `TileNumericFiniteDecomposition` dispatches the same formats to exact finite decomposition and narrows the `Word` carrier to the architectural width where required.
-- The decomposition tuple is availability, sign, integer significand, and integer exponent, representing `(-1)^sign * UInt(significand) * 2^exponent`.
+- `TileNumericFormatDescriptor` and `TileNumericFiniteDecomposition` each have seventeen `when` arms; the descriptor's `otherwise` arm returns `UnavailableNumericFormatDescriptor()` and the decomposition's returns the four-tuple `(FALSE, FALSE, Zeros{PTO_XLEN}, 0)`.
+- The decomposition result is availability, sign, integer significand, and integer exponent, with the exact value `(-1)^sign * UInt(significand) * 2^exponent`. The exponent is typed `integer {-1074..1023}`.
+- Four arms pass the whole `Word` unchanged: `TileDataType_FP64`, `TileDataType_E2M1X2`, `TileDataType_E1M2X2`, and `TileDataType_HiF4X2`. Of those, the three `X2` helpers read `value[3:0]` only, so one call decomposes one 4-bit lane and not the two lanes their descriptors count.
+
+Design point: the exponent is typed `integer {-1074..1023}`, one range shared by every arm. `-1074` is what the `FP64` arm returns for a subnormal and `1023` is the declared upper bound, so a consumer can compare exponents from any arm against the same two limits.
 
 <!-- PTO-READER-BLOCK: arch-numeric-formats-rules-interactions role=rules-interactions -->
 ## Rules and interactions
 
-Valid finite floating or scale encodings decompose without host floating-point arithmetic.
+The owning NDF clause `PTO-NUMERIC-FINITE-DECOMPOSITION-001` requires every valid finite floating or scale encoding with a finite-binary decomposition to decompose, without host floating-point arithmetic, into availability, sign, integer significand, and integer exponent.
 
-Invalid internal encodings, infinities, NaNs, and integer `TileDataType` members report unavailable.
+An encoding that is invalid for its own type reports `available = FALSE` from the format helper, and so does an infinity or a NaN encoding where the type has one; the owning NDF clause requires exactly that. The ten integer members, `TileDataType_S64`, `TileDataType_S32`, `TileDataType_S16`, `TileDataType_S8`, `TileDataType_S4X2`, `TileDataType_U64`, `TileDataType_U32`, `TileDataType_U16`, `TileDataType_U8`, and `TileDataType_U4X2`, have no arm at all, so they reach `otherwise`.
 
-An unhandled descriptor request returns `UnavailableNumericFormatDescriptor`; an unhandled decomposition returns `(FALSE, FALSE, Zeros{PTO_XLEN}, 0)`.
+`UnavailableNumericFormatDescriptor()` sets `available = FALSE`, `kind = NumericFormatKind_Unavailable`, and every bit count, bit position, and special-value flag to `FALSE` or `0`.
+
+Design point: the dispatcher never inspects an exponent or fraction field; each helper applies its own validity rule first, as `TF32FiniteDecomposition` does when it requires `value[12:0]` to be zero. Two data types can therefore both be dispatched and still disagree about availability, because the answer is produced one level below the `case`.
 
 <!-- PTO-READER-BLOCK: arch-numeric-formats-boundaries role=boundaries -->
 ## Architectural boundaries
 
-This unit does not reinterpret the returned tuple with host arithmetic. The integer significand and exponent are the exact interchange contract.
+A returned descriptor is metadata about an encoding, not a statement that an instruction accepts the data type. A consuming instruction or a named profile may accept less than the format family offers.
 
-Format availability is not the same as operation support. A consuming instruction or named profile may further restrict accepted data types.
+This unit does not reinterpret the returned tuple with host arithmetic: the integer significand and the integer exponent are the whole interchange contract, so a consumer that needs a rounded value must round it itself.
+
+`TileDataType_RCPE6M2` is where the two entry points answer differently on purpose: its descriptor arm returns `RCPE6M2NumericFormatDescriptor()` with `available = TRUE`, while `RCPE6M2FiniteDecomposition` returns `(FALSE, FALSE, Zeros{PTO_XLEN}, 0)` for every input, which `PTO-NUMERIC-FINITE-DECOMPOSITION-001` allows for a derived exact-real source whose exact real decoder, `RCPE6M2FiniteValue`, is exposed to the operation profile instead.
+
+Design point: because descriptor availability and decomposition availability are separate answers, a consumer must ask for the one it needs. Reading `available = TRUE` for `TileDataType_RCPE6M2` and then expecting a binary significand would treat a derived exact-real type as an ordinary fixed-binary one.
 
 <!-- PTO-READER-BLOCK: arch-numeric-formats-example-usage role=example-usage -->
 ## Non-normative reading example
 
-For `TileDataType_TF32`, the dispatcher passes `value[31:0]` to `TF32FiniteDecomposition`; required low-zero bits are therefore checked by the `TF32` owner.
+Take `TileDataType_TF32` and the encoding `0x3F800000`. The dispatcher passes `value[31:0]` to `TF32FiniteDecomposition`; the low thirteen bits are zero, the exponent field is `0x7F`, and the fraction field is zero, so the helper returns availability `TRUE`, sign `FALSE`, significand `1024`, and exponent `-10`. The exact value is `1024 * 2^-10`, which is one.
 
-For `TileDataType_S32`, no floating decomposition branch exists, so availability is false rather than an invented integer decomposition.
+For `TileDataType_S32` the dispatcher finds no arm, so availability is `FALSE`, sign is `FALSE`, the significand is `Zeros{PTO_XLEN}`, and the exponent is `0`. No integer decomposition is invented for it.
+
+For `TileDataType_E2M1X2` the dispatcher passes the whole `Word` while `E2M1X2FiniteDecomposition` reads only `value[3:0]`, so a caller holding two four-bit lanes in one byte gets the low lane decomposed and the high lane untouched.
 
 <!-- PTO-READER-BLOCK: arch-numeric-formats-related-owners role=related-owners-navigation -->
 ## Related owners
 
 - [Tile data-type namespace](tile-data-types.md)
 - [Numeric classification](numeric-classification.md)
+- [Format descriptor record](format-descriptor.md)
 - [TF32 format](formats/tf32.md)
-- [HiF8 format](formats/hif8.md)
+- [RCPE6M2 format](formats/rcpe6m2.md)
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

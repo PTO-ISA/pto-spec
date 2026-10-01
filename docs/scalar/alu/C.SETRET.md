@@ -19,45 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-setret-purpose role=purpose -->
 ## What C.SETRET does
 
-`C.SETRET` is a 16-bit scalar ALU instruction. It forms the halfword-scaled TPC-relative return address and records it in both the return register and captured return state; its current instruction contract defines the result publication path and any additional state effect.
+`C.SETRET` computes a return address from the current `TPC` plus a scaled unsigned immediate and captures it in both the architectural `ra` register (GPR `10`) and the block's saved return-address state.
+
+Design point: the destination is fixed by the opcode. The 16-bit form uses its five payload bits for the displacement, so `ra` is implied; there is no destination field to select, and the instruction never forms a call by itself.
 
 <!-- PTO-READER-BLOCK: scalar-c-setret-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then forms the halfword-scaled TPC-relative return address and records it in both the return register and captured return state, and only afterward performs the destination effects.
+- `uimm5` is zero-extended and shifted left by `1`, giving an even byte offset from `0` through `62`.
+- `TPC` is read before the sequential advance, so the target is `TPC + (uimm5 * 2)`.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+The same target is written to `ra` and to the captured return-address state in one step, and then the ordinary `2`-byte `TPC` advance happens.
+
+Design point: the displacement is scaled by `2`, so the recorded target is always an even offset from the instruction's own address. An odd target cannot be encoded, which is why this instruction needs no alignment check.
+
+Design point: encoded `uimm5` zero is a real zero displacement, so `c.setret 0, ->ra` records the address of the `C.SETRET` itself, not the following instruction.
+
+Design point: `ra` and the captured return-address state are written together but are not the same storage. The block return path reads the captured state, so a later ordinary write to `ra` changes the register without changing where a return goes.
 
 <!-- PTO-READER-BLOCK: scalar-c-setret-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The unsigned 5-bit `uimm5` field carries the unsigned five-bit halfword displacement from the pre-increment `TPC`.
+- `uimm5` is the only encoded operand, an unsigned halfword displacement from `0` through `31`.
+- The destination is fixed: architectural `ra`, which is GPR `10`, together with the captured return-address state.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: the source of the value is `TPC`, not a register, so `C.SETRET` reads no operand storage. That is why it has no source-availability fault and no discard form; the `->ra` in the assembly text names a destination that cannot be changed.
 
 <!-- PTO-READER-BLOCK: scalar-c-setret-effects role=effects -->
 ## Effects and ordering
 
-The return address is computed before the return register and captured return state are updated.
+`TPC` is snapshotted first, then `ra` and the captured return-address state are published together, and then `TPC` advances by `2` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 2 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+No other state changes: no queue moves, no memory access, and no reservation, descriptor, numeric-status, bundle, privilege, predicate or control-flow state is affected.
 
 <!-- PTO-READER-BLOCK: scalar-c-setret-constraints role=constraints -->
 ## Legality and fault boundary
 
-Every encoded immediate is assigned; the instruction does not dereference the target and does not form a call by itself.
+Every `uimm5` value from `0` through `31` is assigned, so `C.SETRET` has no reserved displacement.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An undecodable 16-bit form raises `Fault_IllegalInstruction` at `PC`, and an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`. Beyond those checks `C.SETRET` has no fault of its own: it dereferences nothing, so no alignment, memory or permission fault can come from it.
+
+Design point: the instruction validates neither the target nor the surrounding frame. It only records an address, so the correctness of the chosen displacement is the caller's responsibility and not something the architecture can reject.
 
 <!-- PTO-READER-BLOCK: scalar-c-setret-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `C.SETRET` example, pre-increment `TPC=0x100` and `uimm5=1` produce return address `0x102` in both `ra` and captured return state.
+At `TPC=4096`, `c.setret 2, ->ra` records `4096 + 4 = 4100` in `ra` and in the captured return-address state, then advances `TPC` to `4098`. With `uimm5=0` the recorded value is `4096`; with `uimm5=31` it is `4158`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

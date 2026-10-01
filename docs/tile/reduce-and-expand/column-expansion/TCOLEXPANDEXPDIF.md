@@ -19,48 +19,66 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tcolexpandexpdif-purpose role=purpose -->
 ## What TCOLEXPANDEXPDIF does
 
-`TCOLEXPANDEXPDIF` is a selector-encoded Tile operation executed by `SFU`. It computes the typed exponential of each full-shape element minus its same-column broadcast value; its current instruction contract owns the exact bundle form and publication boundary.
+`TCOLEXPANDEXPDIF` is a Tile reduce-and-expand operation executed by the `SFU` engine. It combines a full-shape source with one broadcast value per valid column: for each destination coordinate `[r,c]` it computes `exp(source0[r,c] - BroadcastTile[0,c])`, so the broadcast Tile contributes one value per valid column. It is selected by `TEPL` Mode 2 Function 27 (selector `0x05B`) and has no standalone opcode.
+
+Design point: a column expansion and the matching column reduction are inverse in shape: the reduction produces one value per valid column, while the expansion consumes one value per valid column and reuses it in every valid row, which is why the broadcast operand is a Tile rather than a scalar.
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandexpdif-mechanism role=mechanism -->
 ## Element and Tile mechanism
 
-After all descriptor and operand checks succeed, the owning ASL handler computes the typed exponential of each full-shape element minus its same-column broadcast value. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+After complete preflight, `ExecuteTileExpand` computes each destination coordinate `[r,c]` as `exp(source0[r,c] - BroadcastTile[0,c])`, interpreting both operands as `SrcDataType`. For a same-type pair the subtraction and the exponential run in that type; for mixed `FP16` or `BF16` to `FP32` pairs both values are widened exactly to `FP32` first.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+Design point: widening `FP16` or `BF16` to `FP32` is exact, so it is an interpretation step rather than a conversion and adds no conversion status. The difference is rounded once, at `FP32` precision, and the two stages OR their status into one transaction.
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandexpdif-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` has the exact contract role **new Local DstDataType destination**.
-- `source0` has the exact contract role **persistent Local full-shape numeric source**.
-- `source1` has the exact contract role **persistent Local one-row broadcast source**.
+- `source0` is the persistent Local full-shape source. Its logical valid geometry and layout must match the destination.
 
-Participating source and destination descriptors use the selected RowMajor, CUBE_M16, or CUBE_M32 layout and the logical-shape relationships stated by the current contract.
-Every source coordinate read by the operation must be defined before execution reaches destination publication.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+- `source1` is the persistent Local column-broadcast source. Only `BroadcastTile[0,c]` supplies values; later valid rows are ignored and are not encoding-validated, and they must be defined only when no ExecutionMask is in force.
+
+- `destination0` is a newly allocated Local Tile whose backing type is `DstDataType`; no destination alias and no source descriptor retag is introduced.
+
+- All operands use the same layout, and only `RowMajor`, `CUBE_M16`, and `CUBE_M32` are admitted.
+
+- The operands share one `PE_MASK`. `PE_MASK=0000` is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
+
+Design point: the broadcast source is checked only where it is consumed. Its valid column count must equal the destination's; without an ExecutionMask the whole broadcast valid region must be defined, and under an ExecutionMask only the `BroadcastTile[0,c]` of a column with at least one active destination coordinate must be defined. The other broadcast elements are not encoding-validated.
+
+Design point: an expansion does accept the shared Local CUBE ExecutionMask, unlike a reduction. Inactive destination coordinates take the mask's zero or merge value instead of a computed value and contribute no source read and no numeric status, and a masked full-shape source must match the mask's layout and both valid extents.
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandexpdif-effects role=effects -->
 ## Publication, definedness, and padding
 
-Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+The destination is published as one unit: descriptor, every valid result, definedness, padding outside the valid rectangle, and accumulated numeric status appear together, and a rejected execution publishes none of them. Both source payloads are snapshotted before the first destination write, so a legal alias reads the old source values and the sources persist unchanged.
 
-Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+Physical destination coordinates outside the `ValidRow x ValidCol` valid region receive the selected `PadValue`. `Zero`, `Max`, and `Min` define those coordinates; `Null` leaves them undefined.
 
-The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+Design point: omitting `B.DATR` selects `Null`, while an explicit `PadValue` code `00` selects `Zero`. Omission and encoded zero differ, so a program that reads the whole physical destination must ask for `Zero`, `Max`, or `Min`.
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandexpdif-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The exact accepted type or type-pair set is owned by the generated legality section below; this guide does not widen it.
+`TROWEXPANDEXPDIF` and `TCOLEXPANDEXPDIF` accept exactly `(FP16,FP16)`, `(BF16,BF16)`, `(FP32,FP32)`, `(FP16,FP32)`, and `(BF16,FP32)` as `(SrcDataType,DstDataType)` pairs. `BSTART` selects `SrcDataType`; an omitted `B.DATR` or an explicit `DataType` equal to `DTYPE_NONE` selects `DstDataType` equal to `SrcDataType`, while a concrete `B.DATR` `DataType` selects `DstDataType`.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+Design point: an encoded `DataType` of zero names `FP64` and is never absence, so inheritance needs the separate `DTYPE_NONE` sentinel; a program that wants the source type must omit `B.DATR` or encode `DTYPE_NONE` deliberately.
+
+- Exactly one terminating Local `B.IOT` supplies the operands and one newly allocated Local destination; `B.IOR` and `B.IOS` are illegal.
+
+- A malformed binding stream, a missing or zero dimension, an unsupported DataType, an unsupported or mixed layout, an undefined source element, a mismatched source geometry, or an invalid consumed operation-view encoding raises `Fault_TileLegality` before effects. An unrepresentable destination shape, insufficient `TSize`, an unavailable renamed destination, or exhausted Tile capacity raises `Fault_TileAllocation` before publication.
+
+Design point: the exponential stage accepts only `FP32`, `FP16`, and `BF16`, and every legal pair of this operation maps onto those types, so legality and the executable definition agree on the accepted pair set.
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandexpdif-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `TCOLEXPANDEXPDIF` example, equal full-shape and broadcast values have difference zero, so their exponential result is one.
+For a small `TCOLEXPANDEXPDIF` example, the full-shape rows `[1, 2]` and `[3, 4]` minus the broadcast row 0 `[1, 2]` give the differences `[[0, 0], [2, 2]]`, so the destination holds `[[1, 1], [e^2, e^2]]`.
+
+For an 8 x 64 `FP32` source whose valid region is 7 x 60 with `Zero` padding, the destination valid region is 7 x 60, so 420 elements are computed and 92 of the 512 coordinates receive the padding value.
+
+In macro form the same operation is written `TCOLEXPANDEXPDIF <Row=8, Col=64, ValidRow=7, ValidCol=60, FP32, Zero>, T#1, T#2, ->T<2KB>`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

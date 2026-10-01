@@ -19,42 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-cisw-purpose role=purpose -->
 ## What DC.CISW does
 
-`DC.CISW` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+`DC.CISW` completes the data-cache clean-and-invalidate set/way maintenance operation synchronously. The instruction carries one operand, `SrcL` (`asl/scalar/sys/DC.CISW.asl:29`), which supplies the scope token that the maintenance record captures.
 
 <!-- PTO-READER-BLOCK: scalar-dc-cisw-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+`InstructionContractHandler_DC_CISW` selects `ScalarHandler_ExecuteMaintenance` (`asl/scalar/sys/DC.CISW.asl:11`), and `InstructionContractMaintenanceOperation_DC_CISW` fixes the operation to `Maintenance_DC_CISW` (`asl/scalar/sys/DC.CISW.asl:23`). That handler is shared with every other cache, bundle-cache, and TLB maintenance instruction, so the difference between them is only the operation token and the operand rule.
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+The instruction occupies one scalar operation position in the body of an active SYS block (`asl/scalar/model/sys/semantics.asl:322`). Every fixed bit and operand constraint is checked during the legality pass, before the handler runs.
 
 <!-- PTO-READER-BLOCK: scalar-dc-cisw-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+`SrcL` is a Reg5 source: R0..R23, T#1..T#4, or U#1..U#4. The dispatcher reads it through `ReadDecodedScalarRegister` and passes the value to the executor as the operand (`asl/scalar/model/dispatch/sys.asl:42`). Encoded zero names the architectural zero GPR, so it is an assigned value and never an omitted operand.
 
-Encoded zero is an assigned field value, never an omitted operand.
+`DC.CISW` produces no scalar destination. The only output is the maintenance record.
 
 <!-- PTO-READER-BLOCK: scalar-dc-cisw-effects role=effects -->
 ## Architectural effects
 
-On success, the maintenance record receives `Maintenance_DC_CISW` and the exact captured operand token.
+On success the maintenance record receives `Maintenance_DC_CISW` and the exact operand token (`asl/scalar/model/sys/semantics.asl:159`), and the data-cache epoch advances by one (`asl/scalar/model/sys/semantics.asl:137`). `TPC` then advances by the instruction length, because the dispatcher advances `TPC` only after the execution reports success (`asl/scalar/model/dispatch/top-level.asl:55`).
 
-Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+Design point: the operand is snapshotted before the epoch changes, so the recorded token is the value the source held when the instruction read it. Later writes to that source cannot rewrite what the log says this instruction requested.
+
+No ordinary scalar memory access is performed, so data memory is unchanged.
 
 <!-- PTO-READER-BLOCK: scalar-dc-cisw-constraints role=constraints -->
 ## Placement and rejection
 
-Cache maintenance is a synchronous local hint at every ACR and does not define additional implementation cache contents.
+Placement is checked first. If the bundle is not active, or its body is not a System block, the attempt raises `Fault_BundleControl` before any legality check, so the record and the data-cache epoch keep their previous values.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+Cache maintenance is permitted at every access ring; only the TLB operations are restricted to ring 0. `DC.CISW` therefore has no privilege gate, and an implementation's own cache contents are not defined by this instruction.
+
+Design point: the operation publishes an operation token and an epoch instead of naming cache lines, so the scope token in `SrcL` is recorded as evidence rather than interpreted as a set/way index by the portable model.
 
 <!-- PTO-READER-BLOCK: scalar-dc-cisw-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `dc.cisw SrcL` and trace its encoded fields through preflight before following the selected system effect.
+Run `dc.cisw SrcL` inside a SYS block body. If the source register holds 10, the attempt first passes placement and encoding checks, then reads that register into the operand, then advances the data-cache epoch, and finally records `Maintenance_DC_CISW` with operand 10.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

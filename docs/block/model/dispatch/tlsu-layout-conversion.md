@@ -7,8 +7,74 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-layout-conversion-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit is the bundle-level handler for `TLOAD` and `TSTORE` bundles that convert between an ordinary memory layout and a Local CUBE layout. It is called CUBE transport in the ASL.
+
+`BundleCubeTransportSelected` recognizes the bundle: a valid `TileMemory` descriptor with a `B.DATR` command present whose `Layout` code is in `21..26`. `ExecuteBundleCubeTransportOperation` validates the bundle, then either loads into a new CUBE Tile (function `0`) or stores an existing CUBE Tile (function `1`).
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-layout-conversion-concepts role=concepts-state -->
+## Concepts and visible state
+
+The `B.DATR` layout code chooses both the direction and the CUBE layout.
+
+| Code | Name | Direction | Local layout |
+| --- | --- | --- | --- |
+| `21` | `ND2M32` | load | `CUBE_M32` |
+| `22` | `ND2M16` | load | `CUBE_M16` |
+| `23` | `ND2N8` | load | `CUBE_N8` |
+| `24` | `M322ND` | store | `CUBE_M32` |
+| `25` | `M162ND` | store | `CUBE_M16` |
+| `26` | `N82ND` | store | `CUBE_N8` |
+
+`B.DIM` gives valid columns in `LB0` and valid rows in `LB1`, each in `1..65535`. `LB2` must be `1`, because the CUBE layout derives its own physical geometry. An optional `B.IOR` gives the base address in `source0` and the byte row stride in `source1`. Without it, the base is zero and the stride is the dense row size of the valid columns.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-layout-conversion-rules role=rules-interactions -->
+## Rules and interactions
+
+The handler first returns success with no effect when `SelectedBundleTileMaskIsZero` holds. The ASL comment places this before every schema, GPR, descriptor, allocation, and memory check.
+
+An unknown TLSU operation code raises `Fault_IllegalInstruction`. The following raise `Fault_TileLegality`: illegal dimensions; a `B.DATR` data type other than `DTYPE_NONE`; nonzero comparison or rounding mode; saturation or canonicalization set; a load layout code with function `1` or a store code with function `0`; a function other than `0` or `1`; a present `B.FPATR`; and a wrong binding schema.
+
+For a load, the single `B.IOT` carries a destination and `last`, and a source only as a predicate-Tile execution mask. For a store, it carries the CUBE source Tile and `last`, with no destination.
+
+The effective data type must pass `TileCubeDataTypeSupported` and must not be HiF4X2. U64 is accepted only for a load into `CUBE_N8`, as the ASL comment states.
+
+A load resolves its destination through `ResolveBundleCubeTransportDestination`. A reused generation destination with a mismatched descriptor raises `Fault_TileLegality`. An illegal CUBE shape, a capacity overflow on a selected PE, or no free Tile slot in the destination hand raises `Fault_TileAllocation`. The handler then validates Local generation writers and calls `TLOAD`. A store checks that the source is a legal defined CUBE Tile with the selected type, layout, and valid shape, allocated on every selected PE, and calls `TSTORE`.
+
+Design point: the load path calls `RollBackBundleTileDestinations` after a memory fault. The ASL comment states that the fault keeps the beats completed before it but must not publish the speculative Local destination.
+
+Design point: this handler checks every `B.DATR` field except the pad value. The generic data-attribute check in the Tile schema states that only these Local CUBE conversion forms may carry a nonzero pad value for `TLOAD` and `TSTORE`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-layout-conversion-boundaries role=boundaries -->
+## Architectural boundaries
+
+`ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules` tests this selector after the TIMG2COL, weight-load, and matrix selectors and before `GMOV` and the indexed TLSU selectors. Because it depends only on the layout code, a `TileMemory` bundle with another function and a conversion layout also arrives here and is rejected.
+
+The element placement inside a CUBE layout belongs to the Tile load and store owner.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-layout-conversion-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Suppose a `TLOAD` bundle has `B.DATR` layout `ND2M16`, operation type FP16, `LB0` equal to 64, and `LB1` equal to 16, with no `B.IOR`. The base is zero and the row stride is 64 times 2, which is 128 bytes. The handler allocates a `CUBE_M16` destination in the first free slot of the destination hand and loads 16 rows.
+
+If the same bundle also set `LB2` to 64, it raises `Fault_TileLegality` before allocation.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-layout-conversion-related role=related-owners-navigation -->
+## Related owners
+
+- [Tile schema dispatch](tile-schema.md) holds the pad-value rule for other `TLOAD` and `TSTORE` bundles.
+- [Tile execution dispatch](tile-execution.md) orders the specialized selectors.
+- [Load and store memory](../../../tile/model/memory/load-store.md) defines `TLOAD` and `TSTORE`.
+- [BSTART.TLOAD](../../execution/BSTART.TLOAD.md) and [BSTART.TSTORE](../../execution/BSTART.TSTORE.md) are the instruction pages.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

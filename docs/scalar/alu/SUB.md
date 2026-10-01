@@ -19,49 +19,69 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-sub-purpose role=purpose -->
 ## What SUB does
 
-`SUB` is a 32-bit scalar ALU instruction. It performs subtraction under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+`SUB` transforms the right source with `SrcRType`, shifts it logically left by `shamt`, and subtracts the result from `SrcL` modulo `2^PTO_XLEN`. It carries `RegDst`, `SrcL`, `SrcR`, `SrcRType` and `shamt`.
+
+The carrier matches `0x00001005` under mask `0x0000707f`. The mnemonic is in the arithmetic family, so its modifier is a negation rather than a complement.
+
+There is no encoded add/subtract mode: the mnemonic fixes the direction, and the companion `ADD` uses the same field layout.
 
 <!-- PTO-READER-BLOCK: scalar-sub-mechanism role=mechanism -->
-## How the result is formed
+## How the operands are formed
 
-Execution snapshots the encoded inputs, then performs subtraction under the complete XLEN value result rules, and only afterward performs the destination effects.
+Dispatch calls `ExecuteDecodedBinary` with `ScalarBinary_SUB`, `logical_family` false and `word_operation` false (`asl/scalar/model/dispatch/alu.asl:84-85`). That path reads `SrcL`, the unmodified `SrcR`, `SrcRType` and `shamt`, forms the right operand with `PrepareScalarRight(right, modifier, shift_amount, FALSE)`, and returns `left - right` from `ScalarBinary` (`asl/scalar/model/alu/semantics.asl:452`).
 
-- `SrcRType` first transforms the right source; `shamt` then logically shifts that transformed value left before the arithmetic or logical operation.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+sub SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>, ->{t, u, Rd}
+```
+
+- `SrcRType=00` selects `.sw`: `SignExtend{PTO_XLEN}(SrcR[31:0])`.
+- `SrcRType=01` selects `.uw`: `ZeroExtend{PTO_XLEN}(SrcR[31:0])`.
+- `SrcRType=10` selects `.neg`: `Zeros{PTO_XLEN} - SrcR`, the two's-complement negation of the complete register.
+- `SrcRType=11` selects no modifier and leaves `SrcR` unchanged; an omitted assembly suffix encodes this value.
+- `shamt` shifts the transformed value logically left by `0` through `31`.
+
+Design point: Because `SUB` is in the arithmetic family, `SrcRType=10` negates instead of complementing. The same two-bit selector value in `OR` complements, so an encoding copied between the two mnemonics changes meaning without changing its bits.
+
+Design point: `.neg` negates the whole `PTO_XLEN` register, while `.sw` and `.uw` first replace the upper half from bit `31`. Subtracting with `.neg` therefore differs from subtracting with `.sw` whenever the upper half of `SrcR` is not the sign extension of its low word.
 
 <!-- PTO-READER-BLOCK: scalar-sub-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the left operand through Reg5.
-- The 5-bit `SrcR` field selects the right operand through Reg5.
-- The 2-bit `SrcRType` field selects the transformation applied to the right source.
-- The 5-bit `shamt` field encodes the logical-left shift applied after right-source transformation.
+Both operands are Reg5 sources, the two suffix fields are decoded from the carrier, and `RegDst` selects the destination.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+- `SrcL` at `[15 +: 5]` is the minuend and `SrcR` at `[20 +: 5]` the subtrahend; both use the map `0..23` absolute GPRs, `24..27` `T#1..T#4`, `28..31` `U#1..U#4`, without consuming an entry.
+- `SrcRType` at `[25 +: 2]` selects the transformation applied to `SrcR`, and `shamt` at `[27 +: 5]` the logical left shift applied afterwards.
+- `RegDst` at `[7 +: 5]`: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+- Encoded zero of `SrcL` or `SrcR` reads the architectural zero GPR, and encoded zero of `shamt` performs no shift.
+
+Design point: The transformation and the shift are applied to `SrcR` only. `SrcL` is used unchanged, so no valid encoding lets `SUB` shift or negate the left operand; a program that needs the difference the other way round swaps the two selectors.
 
 <!-- PTO-READER-BLOCK: scalar-sub-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are snapshotted before the destination write, so a destination aliasing either source computes from pre-instruction values. The difference is published modulo `2^PTO_XLEN` and `TPC` advances by `4` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+`SUB` reads no memory and changes no reservation, descriptor, numeric-flag, trap, bundle, privilege, predicate or control-flow state; a `30` or `31` destination is the only case in which it moves a temporary queue.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: The subtraction wraps rather than saturating, and no carry or borrow flag is recorded. `SUB` with `SrcL = 0` and `SrcR = 1` publishes the all-ones word, and a later instruction cannot tell that a borrow occurred.
 
 <!-- PTO-READER-BLOCK: scalar-sub-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+All four `SrcRType` codes and all `32` `shamt` values are assigned, as are every source and destination code of the Reg5 maps. The form has no constraint entry beyond its fixed bits.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unmatched carrier raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`, reachable for `SUB` only while a system-block terminal request is pending. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`. Every check precedes the destination effect and the `TPC` advance.
+
+Design point: The transformation, the shift and the wrapping subtraction are total, so `SUB` has no operand-selected trap. Its fault boundary is encoding validity plus source availability.
 
 <!-- PTO-READER-BLOCK: scalar-sub-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `SUB` example, `SrcL=7`, `SrcR=3`, `SrcRType=11`, and `shamt=0` produce `4`.
+With `a0` holding `7` and `a1` holding `3`, `sub a0, a1, ->a2` publishes `4`, and `sub a0, a1<.neg>, ->a2` publishes `10`, because the negated subtrahend is `-3`.
+
+With `a0` holding `0` and `a1` holding `1`, `sub a0, a1<.uw>, ->a2` publishes `0xFFFFFFFFFFFFFFFF`, the wrapped difference. With `a1` holding `1` and `shamt` equal to `4`, `sub a0, a1<<<4>, ->a2` publishes `-16`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,47 +19,77 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tcvt-purpose role=purpose -->
 ## TCVT 的作用
 
-`TCVT` 是一条由 `VEC` 执行、通过选择器编码的 Tile 操作。它把每个有效逻辑元素转换为独立选择的目标类型和布局；当前指令契约拥有精确的指令束形式和发布边界。
+`TCVT` 把一个 Local 源 Tile 的每个有效元素转换为另一种元素类型，并把结果写入一个新分配的 Local 目标 Tile。与 `TADD` 不同，它的目标类型独立于源类型选择，并接受逐指令的 `RMode` 与 `Sat` 控制。
+
+设计要点：`TCVT` 由 `BSTART.VEC` Mode 0 Function 27（TEPL 选择器 `0x01B`）选中，没有独立 opcode。`BSTART` 头部给出源类型 `SrcDataType`；目标类型 `DstDataType` 来自 `B.DATR`。
 
 <!-- PTO-READER-BLOCK: tile-tcvt-mechanism role=mechanism -->
 ## 元素与 Tile 机制
 
-所有描述符与操作数检查成功后，所属 ASL 处理函数把每个有效逻辑元素转换为独立选择的目标类型和布局。当前契约允许别名时，源载荷会在目标写入前完成快照。
+首先解析目标类型。具体的 `B.DATR` `DataType` 选择 `DstDataType`。省略 `B.DATR`，或把 `DataType` 编码为 `DTYPE_NONE`（代码 31），会使目标继承 `SrcDataType`。编码为零的 `DataType` 选择 `FP64`，并不表示缺省。
 
-处理函数使用解析后的有效区域，不把物理填充区当作输入数据。操作专属的数据类型、布局、舍入、饱和与配置档钩子仍由可执行定义拥有。
+设计要点：代码 0 已经表示 `FP64`，因此继承需要一个单独的哨兵值。这使“未请求目标类型”与显式请求 `FP64` 保持区分。
+
+接着解析舍入方式。`RMode` 代码 0 是操作默认值：当 `SrcDataType` 为浮点类型且 `DstDataType` 为整数类型时使用向零舍入（RTZ），其他所有需要舍入的转换使用就近舍入到偶数（RNE）。代码 1 至 7 分别显式选择 RNE、RTZ、RTM、RTP、RNA、RTO 与 RHB，并总是覆盖默认值。
+
+设计要点：RTZ 默认值使默认的浮点到整数转换直接舍弃小数部分，而浮点到浮点的变窄转换保留 RNE 默认值。
+
+`Sat` 控制范围溢出。`Sat=0` 时，溢出的浮点结果在目标格式有无穷时变为无穷，溢出的整数结果只保留舍入值的低位。`Sat=1` 时，结果被钳位到目标类型的最大或最小有限值。
+
+完整预检之后，源被快照，每个有效逻辑元素独立转换。源与目标都属于共享集合 `FP64`、`FP32`、`FP16`、`E4M3`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16` 与 `U8` 的转换，使用与标量转换族完全相同的结果与标志规则。`E8M0`、`E6M2`、`RCPE6M2`、`E2M1X2` 与 `E1M2X2` 使用约束块中描述的专用规则。这些规则之外的其他合法类型对，例如涉及 `BF16`、`TF32`、`HF32` 或 `E5M2` 的类型对，会进入 `TileProfileConvert` 中的回退路径：浮点目标直接返回源的原始位，整数目标则截断原始位，因此 ASL 不为它们给出数值转换。
 
 <!-- PTO-READER-BLOCK: tile-tcvt-inputs role=inputs-outputs -->
 ## 操作数角色与描述符
 
-- `destination0` 的精确契约角色是“采用独立类型与布局的新 Local 目标”。
-- `source0` 的精确契约角色是“持久 Local 源”。
-- `numeric_control` 的精确契约角色是“已解析的舍入与饱和控制”。
+- `source0` 是持久的 Local 源，其位按 `SrcDataType` 解释。
+- `destination0` 是新分配的 Local Tile，其后备类型为解析得到的 `DstDataType`。
+- `numeric_control` 不是 Tile，而是由 `RMode` 与 `Sat` 解析得到的舍入方式与饱和设置。
 
-操作读取的每个源坐标都必须在目标发布前处于已定义状态。
-`PE_MASK=0000` 是严格无操作，在描述符、分配、载荷、数值状态或内存效果之前即结束。
+一条终止 `B.IOT` 绑定源与目标。`B.IOR`、`B.IOS`、第二个源以及第二条绑定均非法。`PE_MASK=0000` 是严格无操作，发生在模式、描述符、分配或载荷检查之前。
+
+只有当两种类型都非打包、元素位宽相同且载体兼容时，源的后备类型才可以不同于 `SrcDataType`。源描述符永远不会被重新标记类型。
+
+对普通源，目标的 `Row`、`Col`、`ValidRow` 与 `ValidCol` 与源相同。显式 `Layout` 代码同时给出源必须具有的布局以及目标得到的布局；`NORM` 使两侧都保持 `RowMajor`。
+
+对 `CUBE_M16` 或 `CUBE_M32` 源，`B.DATR` `Layout` 必须保持 `NORM`，且必须省略 `LB2`。目标保持相同的 CUBE 布局以及相同的 `ValidRow` 与 `ValidCol`，而其物理形状、CELL 数量与最小 `TSize` 由 `DstDataType` 推导。
+
+设计要点：CUBE 物理几何取决于元素位宽。为目标独立推导几何，使得例如 `FP32` 的 CUBE Tile 可以转换为更窄的类型，而无需先做布局转换。
 
 <!-- PTO-READER-BLOCK: tile-tcvt-effects role=effects -->
 ## 发布、已定义性与填充
 
-只有完整预检后才发布目标可见状态；契约规定原子发布时，载荷、描述符、已定义性、填充和状态同时可见。
+转换后的载荷、累积的数值状态、填充、每个元素的已定义性以及目标描述符作为一次操作发布。被拒绝的指令束没有任何目标效果，源也保持不变。
 
-有效矩形之外的物理坐标遵循契约选择的填充规则；适用时，`Null` 填充保持未定义。
+数值状态使用五个标志 NV、DZ、OF、UF 与 NX。每个被转换元素的标志按位或累积，并在发布时记录。
 
-该操作不产生 GM 内存效果；描述符、载荷、已定义性、填充和数值状态变化仅限于当前契约列出的项目。
+`ValidRow x ValidCol` 之外的物理元素接收所选 `PadValue`。`Zero` 写入零；`Max` 与 `Min` 写入 `DstDataType` 的最大与最小有限值；`Null` 使这些元素保持未定义。省略 `B.DATR` 选择 `Null`，而显式编码 `00` 选择 `Zero`。
+
+源可以与目标别名，执行时观察到完整的执行前源值。`TCVT` 没有全局内存效果。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值，且不贡献状态。
 
 <!-- PTO-READER-BLOCK: tile-tcvt-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-源采用 BSTART `DataType`；目标采用显式 B.DATR `DataType`，未显式给出时继承源类型。所有已分配类型都可接受，但必须满足精确的类型组合、布局、规范化与 E8M0 配置档规则。
+除 `HiF4X2` 外，每个已分配的 `DataType` 都可以作为 `TCVT` 类型，但受以下类型对限制约束：
 
-下方生成的合法性与异常章节是数据类型组合、布局、维度、容量、已定义性、填充控制、配置档行为和故障类别的权威说明。合法性或分配失败发生在任何部分架构效果之前。
+- `E2M1X2` 与 `E1M2X2` 只能与 `FP32`、`FP16` 或 `BF16` 互相转换，且恰好一侧必须是打包类型。
+- `E6M2` 只能与 `FP16` 或 `BF16` 互相转换，且只能使用 RNE 或 RNA 舍入。
+- `RCPE6M2` 只能作为源，只能转换为 `FP16` 或 `BF16`，且只能使用 RNE 或 RNA 舍入。
+- `E8M0` 只能与 `FP16`、`BF16` 或 `FP32` 互相转换。
+
+对 `E8M0` 目标，零、负值与 NaN 产生 `0xFF` 并记录 NV。正的有限值在按 `RMode` 舍入其二进制指数后产生代码 `exponent+127`。正无穷以及高于范围的值在 `Sat=0` 时产生 `0xFF`，在 `Sat=1` 时产生 `0xFE`；低于范围的值产生 `0xFF` 或 `0x00`。`E8M0` 源代码 `0xFF` 产生目标的规范静默 NaN，且不记录 NV。
+
+`Canonicalize=1` 为保留值，会在任何效果之前被拒绝。维度缺失或为零，类型、形状、容量、布局、编码或已定义性不匹配，或类型对与舍入方式不受支持时，会在目标分配之前引发 `Fault_TileLegality`。对逻辑形状已被接受的 CUBE 源，目标 `TSize` 不足时引发 `Fault_TileAllocation`。
 
 <!-- PTO-READER-BLOCK: tile-tcvt-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `TCVT` 示例说明：精确 FP32 值 `2.0` 转换为 FP16 后仍为 `2.0`。
+把 `FP32` 转换为 `S32` 并使用默认 `RMode` 时，源行 `[2.7, -2.7, 3.0e9]` 使用 RTZ。在 `Sat=1` 下目标行为 `[2, -2, 2147483647]`，记录的状态包含 OF 与 NX。
+
+把 `FP32` 转换为 `FP16` 并使用默认 RNE 时，值 `65536.0` 超过 `FP16` 的最大有限值 65504。`Sat=0` 时它变为 `+inf`；`Sat=1` 时它变为 `65504`。两者都记录 OF 与 NX。
+
+对 8 x 64 的 `RowMajor` Tile，头部写作 `BSTART.VEC TCVT, FP32`，`B.DATR` 选择目标 `DataType` `FP16`。源占 8 x 64 x 4 = 2048 字节，目标需要 8 x 64 x 2 = 1024 字节。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

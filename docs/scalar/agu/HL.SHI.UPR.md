@@ -17,48 +17,74 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-shi-upr-purpose role=purpose -->
-## What HL.SHI.UPR does
+## What `HL.SHI.UPR` stores
 
-`HL.SHI.UPR` is a standalone `48`-bit AGU instruction that forms a signed-immediate address and stores one aligned little-endian `2`-byte value.
+`HL.SHI.UPR` is a standalone `48`-bit scalar AGU instruction that stores one `2`-byte little-endian unit from `SrcD` at the `SrcR` base plus an unscaled `simm17` displacement.
+
+The canonical assembly is `hl.shi.upr SrcD, [SrcR, simm], ->{t, u, Rd}`.
+
+Design point: the access address and the published base are the same sum, so an unaligned displacement fails as a fault instead of publishing a base that does not describe the stored range.
 
 <!-- PTO-READER-BLOCK: scalar-hl-shi-upr-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address is formed
 
-`HL.SHI.UPR` sign-extends `simm17` from its complete `-65536..65535` domain, uses it without scaling, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcR` base.
+The displacement is the sign-extended `simm17` value, which is already a byte count, and it is added to the `SrcR` snapshot modulo `2^PTO_XLEN`, which gives the computed address.
 
-After complete preflight, the instruction performs one little-endian `2`-byte store from its snapshotted store-data source.
+The scale is `0`, so the displacement is a byte count and the low bit of the offset is not cleared before the addition.
 
-Pre-index mode accesses the updated base and publishes that same updated base only after successful memory completion.
+The update mode is pre-index: the access uses the sum `SrcR` plus the offset, and that same sum is published to `RegDst` after the store succeeds.
+
+The address is probed before the store, and `SrcD` is read before that probe; on success one `2`-byte little-endian store and one relaxed store event are performed.
+
+Design point: a negative displacement is added modulo `2^PTO_XLEN`, so moving below address `0` wraps rather than saturating.
 
 <!-- PTO-READER-BLOCK: scalar-hl-shi-upr-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Operands
 
-- `SrcR` supplies the base; `simm17` supplies the signed displacement. Every encoded Reg5 source among `SrcD`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcD` supplies store data; `RegDst` receives the updated base; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- `simm17` assigns every signed value from `-65536` through `65535`; encoded zero is a zero displacement, not omission.
+- `SrcD` and `SrcR` are `5`-bit Reg5 source selectors: codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed, and code `0` reads the architectural zero GPR.
+
+- `simm17` is a `17`-bit signed field that assigns every value from `-65536` through `65535`; the encoded byte displacement is that value multiplied by `1`, and encoded zero is a zero displacement rather than omission.
+
+- `RegDst` is a `5`-bit destination selector: codes `1`..`23` write absolute GPRs, code `30` pushes `U`, code `31` pushes `T`, and codes `0` and `24`..`29` discard that one result without suppressing the store.
+
+Design point: the base and the displacement are both read before the store, so `RegDst` may name `SrcR` without changing the address the access used.
 
 <!-- PTO-READER-BLOCK: scalar-hl-shi-upr-effects role=effects -->
 ## Effects and ordering
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+`SrcR` and `SrcD` are read before the store, so a `RegDst` naming one of them cannot change the base or the stored data.
 
-A successful attempt records one relaxed store event, invalidates an overlapping reservation but preserves a nonoverlapping one, and advances `TPC` by `6` bytes.
+A successful execution records one relaxed store event and changes only the `2` bytes of the unit.
+
+A valid reservation is invalidated when the stored range overlaps the reservation's `64`-byte granule; a reservation whose granule the store leaves untouched stays valid.
+
+The updated base is published after the store, and `TPC` then advances by `6` bytes. A rejected or faulting attempt does not retire.
+
+Design point: a successful store writes the low `2` bytes of `SrcD` and then publishes the sum, so the pointer and the memory range advance together.
 
 <!-- PTO-READER-BLOCK: scalar-hl-shi-upr-constraints role=constraints -->
 ## Alignment, faults, and restart
 
-Each effective address must satisfy `2`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+- The effective address must be a multiple of `2`. A misaligned address raises `Fault_DataAlignment` before translation or permission; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
 
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+- A fixed-bit mismatch, or a source selector naming an unavailable `T` or `U` entry, raises `Fault_IllegalInstruction` at `PC` before any instruction effect.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fault records no store event and publishes no base: memory, `SrcD`, `RegDst`, and `TPC` keep their values, so recovery recomputes the snapshot, the address, the probe, and the store.
+
+Design point: with the scale `0` a displacement of `1` is encodable, so this form can express an unaligned access; the alignment probe turns that into a fault instead of a partial `2`-byte store.
 
 <!-- PTO-READER-BLOCK: scalar-hl-shi-upr-example role=example -->
-## Non-normative address example
+## Worked example
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With the base set to `0x100` and the signed immediate set to `2`, the displacement is `2` and base plus displacement is `0x102`. The memory access uses `0x102`. If aligned and permitted, the instruction stores `2` bytes at that address.
+- `hl.shi.upr 20, [2, 4], ->4` with GPR2 = `0x1000` and GPR20 = `0xbeef`.
+
+- The displacement `4` multiplied by `1` is `4`, so the effective address is `0x1004` and the same value is published to `RegDst` `4`.
+
+- The store writes `0xef`, `0xbe` at `0x1004` through `0x1005` in increasing address order.
+
+- `SrcD` and `SrcR` keep their pre-instruction values, and `TPC` advances by `6` bytes after `RegDst` `4` receives `0x1004`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

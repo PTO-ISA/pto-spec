@@ -19,42 +19,49 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-bwe-purpose role=purpose -->
 ## What BWE does
 
-`BWE` publishes its assigned nonblocking execution-control request using a snapshotted scalar operand.
+`BWE` publishes one execution-control request to the architecture, carrying its source value as the request operand. The request is `ExecutionControl_WaitEvent`.
+
+It is a nonblocking request: the instruction publishes the request and retires. It does not suspend the thread and it does not wait for a wakeup before the next instruction.
 
 <!-- PTO-READER-BLOCK: scalar-bwe-mechanism role=mechanism -->
-## System mechanism
+## How the instruction is placed and executed
 
-The ASL DOC region selects `ScalarHandler_ExecuteControlRequest`. Placement and encoded legality are checked before sources or system state can change.
+This instruction is one scalar operation of an active SYS block. The scalar dispatcher first checks that a bundle is active and that its body is active with block kind System; a SYS form outside such a block is rejected with `Fault_BundleControl`, before any encoded-field check and before any architectural effect.
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+Encoded legality and source availability are then checked, and only then does the handler run.
+
+The handler reads `SrcL`, then publishes the request through the shared execution-control rule. That rule stores the request kind, stores the exact XLEN operand, and advances the architecture-request epoch by one. It consults no permission table, so the request is published unconditionally once the placement and operand checks have passed.
+
+Design point: only the request kind and its operand are recorded, and the model defines no asleep, mailbox, timeout-counter, or pending-wake state for this request. That is what makes the request nonblocking in a testable sense: there is no additional architectural state that a later instruction could observe, so retiring immediately is the complete behavior.
 
 <!-- PTO-READER-BLOCK: scalar-bwe-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
-
-Encoded zero is an assigned field value, never an omitted operand.
+- `SrcL` is the source selector and supplies the complete XLEN request operand.
+- Source selectors `0`..`23` read GPRs, `24`..`27` read `T#1`..`T#4`, and `28`..`31` read `U#1`..`U#4`. Reading a temporary never consumes or reorders it.
+- Source selector `0` always reads XLEN zero, and zero is a legal operand value: it is recorded as the operand, not treated as an omission.
+- There is no destination field, so the instruction never writes a GPR and never pushes `T` or `U`.
 
 <!-- PTO-READER-BLOCK: scalar-bwe-effects role=effects -->
 ## Architectural effects
 
-The snapshotted `SrcL` value is published with `ExecutionControl_WaitEvent`, and the architecture-request epoch increments before `TPC` advances.
+The published effects are the recorded request kind, the recorded operand and one increment of the architecture-request epoch. The source register and its queue entry, if any, are unchanged, because the instruction only reads them.
 
-The request is nonblocking in the portable model and creates no separate sleep, mailbox, timeout-counter, or pending-wake state.
+`TPC` advances by `4` bytes. The instruction performs no memory access and leaves no reservation, so it cannot itself be the reason a later atomic or load-linked operation fails.
 
 <!-- PTO-READER-BLOCK: scalar-bwe-constraints role=constraints -->
 ## Placement and rejection
 
-Every assigned Reg5 selector follows the common scalar-source rule.
+Invalid block placement is rejected first, with `Fault_BundleControl`, before the encoded field is even considered.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+Every assigned Reg5 source selector follows the common scalar-source availability rule: `0`..`23` are always available, and a `T` or `U` selector is available only while that queue slot holds a value. An unavailable selector raises `Fault_IllegalInstruction` before the request is published, so a rejected `BWE` records nothing and does not advance the request epoch.
+
+There is no per-request permission test in the handler, so the operand value itself never causes a rejection.
 
 <!-- PTO-READER-BLOCK: scalar-bwe-example role=example -->
 ## Non-normative example
 
-This spelling example is illustrative; exact legality and effects remain in the generated contract below.
-
-Start with `bwe SrcL` and trace its encoded fields through preflight before following the selected system effect.
+`bwe a0` reads the operand from `a0`, publishes `ExecutionControl_WaitEvent` with that operand, advances the architecture-request epoch by one, and advances `TPC` by `4` bytes. Execution continues with the next instruction without waiting.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

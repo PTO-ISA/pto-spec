@@ -17,48 +17,59 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-lh-purpose role=purpose -->
-## What LH does
+## What `LH` does
 
-`LH` is a standalone `32`-bit AGU instruction that forms a register-offset address and loads one aligned little-endian `2`-byte value.
+`LH` loads one signed `2`-byte little-endian halfword from a base register plus a transformed, shifted index, and sign-extends it to the full destination width.
+
+The canonical assembly is `lh [SrcL, SrcR<{.sw,.uw}><<<shamt>], ->{t, u, Rd}`.
+
+Design point: `LH` is the signed halfword read of the family, so a stored `0x8000` comes back as a negative `64`-bit value. Its unsigned twin `LHU` shares the addressing and differs only in the extension.
 
 <!-- PTO-READER-BLOCK: scalar-lh-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address and the transfer are formed
 
-`LH` transforms `SrcR` according to `SrcRType`, shifts the transformed value left by the encoded `shamt`, and adds it modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+The offset is the `SrcR` index after the `SrcRType` transformation, shifted left by the encoded `shamt`, then added to the `SrcL` snapshot modulo `2^PTO_XLEN`.
 
-After complete preflight, the instruction performs one little-endian `2`-byte load and sign-extends the loaded `2`-byte value to `PTO_XLEN` for destination publication.
+Preflight checks `2`-byte alignment, then translation, then permission and bounded memory. On success `2` bytes are read little-endian, the low-addressed byte becoming the least significant byte, and one relaxed load event is recorded.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+The halfword is sign-extended to `PTO_XLEN` and published through `RegDst`. No base register is updated.
+
+Design point: with `shamt` at least `1` the offset is even, so the parity of the effective address is the parity of the base. Only `shamt` `0` lets an odd index produce an odd sum, and the sum is what the alignment stage judges.
 
 <!-- PTO-READER-BLOCK: scalar-lh-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `SrcL` supplies the base; `SrcR` supplies the offset; `SrcRType` supplies the offset transformation. Every encoded Reg5 source among `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- All `SrcRType` values `0..3` and all `shamt` values `0..31` are assigned; transformation precedes the encoded shift.
+- `SrcL` is the base selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `SrcR` is the index selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `SrcRType` selects unchanged, `.sw`, or `.uw` and reserves `3`; `shamt` covers `0`..`31` and is applied after the transformation.
+- `RegDst` is the destination selector. Codes `1`..`23` write GPRs, `30` pushes the `U` queue, `31` pushes the `T` queue, and `0` plus `24`..`29` publish nothing; code `0` is the architectural zero GPR, whose writes are discarded.
+- Design point: `SrcRType` is a `2`-bit field with one reserved pattern, and the reserved pattern is rejected in the legality stage instead of being treated as a fourth transformation.
 
 <!-- PTO-READER-BLOCK: scalar-lh-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+Every source is snapshotted before the memory access, so an encoding whose destination is also its base still computes the address from the pre-instruction base.
 
-A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+Success records one relaxed load event, leaves memory and the reservation unchanged, publishes the sign-extended halfword, and advances `TPC` by `4` bytes.
+
+Design point: publication happens only after the probe passes, so a faulting `LH` leaves `RegDst` at its previous value even when the destination names the base register.
 
 <!-- PTO-READER-BLOCK: scalar-lh-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `2`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch, a reserved `SrcRType`, or an unavailable `T`/`U` source raises `Fault_IllegalInstruction` at the instruction address before any instruction effect.
+- A sum that is not a multiple of `2` raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original effective address.
+- A fault records no event, publishes nothing, and leaves `TPC` on the faulting instruction for a full reissue.
+- Design point: a misaligned halfword address is reported before translation and before permission, so an address that would also fail the permission check is reported as `Fault_DataAlignment`.
 
 <!-- PTO-READER-BLOCK: scalar-lh-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With base `0x100`, unchanged offset source `2`, and `shamt=1`, the offset is `4` and base plus offset is `0x104`. The memory access uses `0x104`. If aligned and permitted, the instruction loads `2` bytes from that address.
+- With `SrcL` = `0x100`, `SrcR` = `1`, `shamt` `1`, and `SrcRType` `0`, the offset is `2` and the address is `0x102`.
+- Bytes `00 80` at `0x102` are the little-endian halfword `0x8000`, which sign-extends to `0xFFFFFFFFFFFF8000` in `RegDst`.
+- Changing `shamt` to `0` and using an odd index would move the access to an odd address and raise `Fault_DataAlignment`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

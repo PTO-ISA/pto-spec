@@ -19,42 +19,67 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-cash-purpose role=purpose -->
 ## What CASH does
 
-`CASH` atomically compares the halfword at `SrcL` with `SrcR`; equality stores `SrcD`, while both paths publish the prior 16-bit value.
+`CASH` compares the 2-byte halfword at the address named by `SrcL` with the low `2` bytes of `SrcR`, and stores the low `2` bytes of `SrcD` at that address only when the two halfwords are equal.
+
+The prior halfword reaches `RegDst` on a match and on a mismatch, zero-extended to XLEN. `CASH` is a 32-bit encoded form, and a successful execution advances `TPC` by `4` bytes.
 
 <!-- PTO-READER-BLOCK: scalar-cash-mechanism role=mechanism -->
-## Atomic mechanism
+## Reading, comparing, and conditionally storing
 
-The ASL DOC contract selects `ScalarHandler_CompareAndSwap` with an access width of `2` bytes.
+The dispatch passes `SrcL`, `SrcR`, and `SrcD` and the access size `2` to the shared `CompareAndSwap` helper. The helper runs a read probe and then a write probe over the same 2 bytes, and it refuses to continue when the two probes translate to different addresses.
 
-Match and mismatch both emit one ordered atomic event; only the matching path marks a write as performed.
+`LoadTranslatedUnsigned` builds the loaded value from `Zeros{PTO_XLEN}` and fills bits `15:0` from memory, so the memory side of the comparison is already zero-extended. The expected side is normalized the same way, and the store writes the low `2` bytes of `SrcD`.
+
+Design point: both sides of the comparison are zero-extended from `16` bits, so bits `16` to `63` of `SrcR` are ignored. `SrcR` holding `0xffffffffffff1234` still matches a memory halfword of `0x1234`, because the upper bits take no part in the comparison.
+
+Design point: the write probe repeats the `2`-byte size and therefore the same alignment test on the same address, so an odd address raises `Fault_DataAlignment` in the read probe before any byte is loaded or stored.
 
 <!-- PTO-READER-BLOCK: scalar-cash-inputs-outputs role=inputs-outputs -->
-## Inputs and result
+## Fields, ordering, and selectors
 
-`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 expected halfword source; `SrcD` carries the Reg5 desired halfword source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit.
+| Field | Low instruction bit | Width | Role |
+| --- | --- | --- | --- |
+| `SrcL` | `15` | `5` | atomic address source |
+| `SrcR` | `20` | `5` | expected halfword source |
+| `SrcD` | `27` | `5` | desired halfword source |
+| `RegDst` | `7` | `5` | prior halfword destination |
+| `rl` | `25` | `1` | release ordering bit |
+| `aq` | `26` | `1` | acquire ordering bit |
 
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering.
+`aq=0,rl=0` selects relaxed ordering, `aq=1,rl=0` acquire, `aq=0,rl=1` release, and `aq=1,rl=1` acquire-release. The recorded event carries the same setting for a match and for a mismatch.
+
+Design point: source selectors `24` to `27` read `T#1` to `T#4` and selectors `28` to `31` read `U#1` to `U#4` without consuming the entry, so a form may take its expected halfword from the queue and leave that entry in place for the next instruction.
 
 <!-- PTO-READER-BLOCK: scalar-cash-effects role=effects -->
-## Effects and ordering
+## What the instruction changes
 
-After successful preflight, the old value is published even on comparison mismatch; memory changes only on equality.
+A matching `CASH` stores the low `2` bytes of `SrcD`; a mismatching `CASH` stores nothing. One atomic event is recorded either way, with `write_performed` equal to the comparison result.
 
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+`RegDst` receives `ZeroExtend{PTO_XLEN}(old_value[15:0])` after any nonfaulting run, so a memory halfword of `0xabcd` is published as `0x000000000000abcd`.
+
+Design point: the register result and the memory result are normalized independently. `NormalizeAtomicReturn` widens the `16`-bit value for `RegDst`, while `StoreTranslated` writes `desired[(byte_index * 8) +: 8]` for each of the `2` bytes, so the published register value is `64` bits wide even though memory keeps only `2` bytes.
+
+A match also clears the reservation when the stored `2` bytes overlap the reserved 64-byte granule, and a successful execution advances `TPC` by `4` bytes.
 
 <!-- PTO-READER-BLOCK: scalar-cash-constraints role=constraints -->
-## Legality and precise faults
+## Alignment and the order of faults
 
-The effective address must be aligned to `2` bytes. Alignment, translation, and permission checks precede architectural effects.
+`CASH` requires an even address: `ProbeDataAccess` reports `Fault_DataAlignment` when `UInt(address) MOD 2` is nonzero, and that test runs before translation and before the permission check.
 
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+The read probe is evaluated first, so its fault is reported first. If it passes, the write probe repeats the size and alignment test, and the two translated addresses must then be equal or `Fault_DataPage` is raised.
+
+A fault carries the original `SrcL` address. The helper returns before the load, so nothing is stored, no atomic event is recorded, no reservation changes, and `RegDst` keeps its former value.
+
+`TPC` stays on the faulting instruction, so the compare-and-swap can be reissued whole. A decode failure or an unavailable selected `T#1` to `T#4` or `U#1` to `U#4` source raises `Fault_IllegalInstruction` before the handler runs.
 
 <!-- PTO-READER-BLOCK: scalar-cash-example role=example -->
-## Non-normative example
+## A halfword that matches
 
 This example only shows one accepted spelling; the generated contract below remains authoritative.
 
-For a first reading, use `cash [SrcL], SrcR, SrcD, ->Rd` and then vary only the ordering or route modifiers described above.
+Take a memory halfword of `0x1234`, `SrcR` holding `0x1234` in its low `2` bytes, and `SrcD` holding `0xabcd`. The comparison succeeds, so `CASH` stores `0xabcd` at the address, publishes `0x0000000000001234` in `RegDst`, and records one atomic event with `write_performed=true`.
+
+With `0x1235` in the low `2` bytes of `SrcR` instead, the comparison fails: memory keeps `0x1234`, the recorded event has `write_performed=false`, and `RegDst` still receives `0x0000000000001234`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

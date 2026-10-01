@@ -19,30 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-b-dim-purpose role=purpose -->
 ## B.DIM 的作用
 
-`B.DIM` 是一条 32 位 Block header 命令，用来在构造 header 时写入一个 Block 局部维度寄存器。它修改待处理 Block 元数据，不会立即执行 Tile body 操作。
+`B.DIM` 是 32 位 header 命令，用于写入一个指令束局部维度寄存器：`LB0`、`LB1` 或 `LB2`。写入值是某个绝对 GPR 与一个无符号 17 位立即数之和的低 16 位，并做零扩展。
+
+`B.DIM` 本身不赋予寄存器任何含义。完成后的操作 schema 决定 `LB` 寄存器表示有效列数、行数、物理列数，还是 M、N 或 K 维度。例如，`TADD` 把 `LB0` 读作 `ValidCol`，把 `LB1` 读作 `ValidRow`，把 `LB2` 读作 `Col`。
 
 <!-- PTO-READER-BLOCK: block-b-dim-mechanism role=mechanism -->
-## 位置与机制
+## 放置与机制
 
-该命令位于有效 header 中，并且在第一条 body 指令之前。它的有效顺序和数量由完成后的操作 schema 检查，而不是由本命令单独推断。
+命令分派器只在 Block 处于活动状态且仍在 header 中时接受 `B.DIM`。否则引发 `Fault_BundleControl`。随后它计算 `GPR[RegSrc] + uimm17`，保留第 15 至 0 位，并调用 `SetBundleDimension`。
 
-该命令把无符号立即数与选中的绝对 GPR 相加，保留低 16 位并做零扩展，然后一次性写入选中的 `LB0`、`LB1` 或 `LB2` 槽。
+`SetBundleDimension` 检查目标的存在位。若该位已置位，则引发 `Fault_BundleControl` 并保留第一个值。否则置位存在位并保存该值。见[维度 schema 模型](../model/schema/dimensions.md)。
+
+设计要点：每个 `LB` 寄存器在每个 Block 中只能写入一次，并且 `B.DIM` 与压缩形式 `C.B.DIMI` 为每个寄存器共用一个存在位。任一形式的第二次写入都会被拒绝，而不是静默覆盖第一次写入，因此操作读取的值总是 header 中写入的唯一值。
 
 <!-- PTO-READER-BLOCK: block-b-dim-inputs role=inputs-outputs -->
-## 操作数与 header 角色
+## 编码字段
 
-- `RegSrc` 标识输入源或源角色选择；其确切分配域仍以下方生成契约为准。
-- `uimm17` 提供编码偏移或加数；其确切分配域仍以下方生成契约为准。
+- 目标寄存器由形式通过第 12 至 14 位固定：`0x00000043` 写 `LB0`，`0x00001043` 写 `LB1`，`0x00002043` 写 `LB2`。
+- `RegSrc`，第 15 至 19 位：绝对 GPR 选择器 0 至 23。选择器 0 读取架构零寄存器。编码 24 至 31 不是绝对 GPR；在其他命令中它们表示 Block 相对队列项。与范围修饰符 `B.SUBVIEW` 和 `B.ASSEMBLE` 不同（它们在读取任何 GPR 之前就拒绝这些编码），`B.DIM` 的命令路径中没有任何可执行检查把 `RegSrc` 限制在 0 至 23。
+- `uimm17`，第 20 至 31 位（值的第 0 至 11 位）与第 7 至 11 位（值的第 12 至 16 位）：无符号加数。编码零表示加零。
+
+两个字段总是被编码；`B.DIM` 没有可选部分。
 
 <!-- PTO-READER-BLOCK: block-b-dim-effects role=effects -->
-## 待处理状态与完成
+## 默认值与写入值
 
-被接受的 header 命令只改变自己的待处理记录或 carrier。除非本所有者明确指出即时 header 状态更新，否则架构 Tile、Shared、GPR、内存和完成影响都推迟到完整 Block。
+写入值为 `ZeroExtend((GPR[RegSrc] + uimm17)[15:0])`。和被截断到 16 位，因此 65536 及以上的值会回绕。
+
+设计要点：从未写入的 `LB` 寄存器有效值为 1，显式写入（包括写 0）会替换该默认值。写入 0 的程序得到 0 而不是 1，然后由操作 schema 决定 0 是否合法。例如，`TADD` 拒绝显式出现的零维度。
+
+某些操作 schema 也会读取存在位。对于 `TADD`，缺省的 `LB2` 选择 `Col = ValidCol` 而不是 1，并且 `LB0` 是必需的。每个操作的页面给出其确切默认值。
+
+维度值和存在位在 Block 提交时被清除，因此不会带入下一个 Block。`B.DIM` 没有内存效果，也不改变 Tile 状态。
 
 <!-- PTO-READER-BLOCK: block-b-dim-constraints role=constraints -->
-## 合法性与故障边界
+## 合法性与故障
 
-保留编码会在读取或待处理状态变化前被拒绝。位置、重复、角色或完成后 schema 不匹配，会在 body 影响前失败。
+- 形式元数据把 `RegSrc` 编码 24 至 31 标为保留，但当前处理器不执行该检查：它直接读取译码得到的选择器（`asl/block/model/dispatch/commands.asl:123-138`）。因此保留选择器故障并非本页归属单元的可执行结果。
+- 位于活动 Block header 之外的 `B.DIM` 引发 `Fault_BundleControl`。
+- 通过 `B.DIM` 或 `C.B.DIMI` 再次写同一 `LB` 寄存器会引发 `Fault_BundleControl`，并保留第一个值。
+- 取值范围限制（例如非零或 2 的幂要求）属于操作 schema，在 Block 预检时检查。
 
 <!-- PTO-READER-BLOCK: block-b-dim-example role=example -->
 ## 非规范示例
@@ -50,10 +66,11 @@ The current instruction contract is owned by the ASL source linked above.
 以下为非规范示例，仅用于说明当前所有者，不替代其定义。
 
 ```asm
-B.DIM RegSrc, uimm, ->LB2
+B.DIM a0, 16, ->LB0
+B.DIM zero, 0, ->LB2
 ```
 
-假设当前存在兼容的有效 header，并且之前没有冲突的 `B.DIM` 命令。把 `B.DIM RegSrc, uimm, ->LB2` 放在下一个 header 槽，会记录该命令的待处理字段；它本身不会执行最终的 body 操作。
+若 `a0 = 0x10010`，第一行计算得 `0x10020`，保留低 16 位，把 `0x0020`（即 32）写入 `LB0`。第二行把 0 写入 `LB2` 并置位其存在位，因此 `LB2` 不再具有默认值 1。`LB1` 保持默认值 1。同一 header 中之后的 `C.B.DIMI 8, ->LB0` 会访问同一存在位，并因重复写入引发 `Fault_BundleControl`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

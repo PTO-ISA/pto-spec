@@ -19,48 +19,56 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tand-purpose role=purpose -->
 ## TAND 的作用
 
-`TAND` 是一条由 `VEC` 执行、通过选择器编码的 Tile 操作。它对相应有效整数元素执行元素位宽的按位与；当前指令契约拥有精确的指令束形式和发布边界。
+`TAND` 对两个 Local 整数 Tile 的对应元素计算按位与（AND），并把结果写入一个新分配的 Local 目标 Tile。按位与的规则是：仅当两个源的某一位都为 1 时结果该位才为 1。
+
+设计要点：`TAND` 没有独立 opcode。它由 `BSTART.VEC` Mode 0 Function 6（TEPL 选择器 `0x006`）选中。其操作数合法性与执行遵循与 `TADD` 相同的封闭 Local 二元 Tile 契约，与 `TOR` 与 `TXOR` 只在位运算上不同。
 
 <!-- PTO-READER-BLOCK: tile-tand-mechanism role=mechanism -->
 ## 元素与 Tile 机制
 
-所有描述符与操作数检查成功后，所属 ASL 处理函数对相应有效整数元素执行元素位宽的按位与。当前契约允许别名时，源载荷会在目标写入前完成快照。
+预检阶段先检查完整指令束：操作数模式、维度、`DataType`、布局、源已定义性以及目标容量。只有全部通过后，`ExecuteTileBinary` 才读取两个源，并对有效矩形 `ValidRow x ValidCol` 内的每个坐标计算 `left AND right`。
 
-处理函数使用解析后的有效区域，不把物理填充区当作输入数据。操作专属的数据类型、布局、舍入、饱和与配置档钩子仍由可执行定义拥有。
+对于 8、16、32 或 64 位的元素位宽 `W`，结果为 AND 结果的低 `W` 位，`W` 以上的载体位为零。符号性不改变运算：`S8` 与 `U8` 产生相同的位。
+
+设计要点：`TAND` 是原始载体操作。`TADD` 等算术操作要求每个源元素都是所选 `DataType` 的合法编码；`TAND` 跳过这种数值校验，按原样使用存储的位。位运算没有需要校验的数值含义，也不产生舍入、饱和或数值状态。
 
 <!-- PTO-READER-BLOCK: tile-tand-inputs role=inputs-outputs -->
 ## 操作数角色与描述符
 
-- `destination0` 的精确契约角色是“新分配的 Local 目标”。
-- `source0` 的精确契约角色是“有序左 Local 源”。
-- `source1` 的精确契约角色是“有序右 Local 源”。
+- `source0` 是左操作数，必须是已分配的现有 Local Tile。
+- `source1` 是右操作数，其物理形状、有效形状和布局必须与 `source0` 相同。
+- `destination0` 是新分配的 Local Tile，其后备 `DataType` 为所选操作 `DataType`，形状与源一致。
 
-参与操作的源与目标描述符采用当前契约规定的行优先布局和形状关系。
-操作读取的每个源坐标都必须在目标发布前处于已定义状态。
-`PE_MASK=0000` 是严格无操作，在描述符、分配、载荷、数值状态或内存效果之前即结束。
+一条终止 `B.IOT` 在同一个 `PE_MASK` 下绑定全部三个 Tile；不接受 `B.IOR` 与 `B.IOS`。`PE_MASK=0000` 是严格无操作，发生在读取、分配或故障之前。
+
+设计要点：每个源都可以使用位宽相同、非打包的其他后备类型存储，其位按原样使用。例如，把 `FP32` 数据按 `U32` 读取并与 `0x7FFFFFFF` 相与，会清除每个符号位，得到绝对值的 `U32` 编码。
 
 <!-- PTO-READER-BLOCK: tile-tand-effects role=effects -->
 ## 发布、已定义性与填充
 
-只有完整预检后才发布目标可见状态；契约规定原子发布时，载荷、描述符、已定义性、填充和状态同时可见。
+两个源载荷都在第一次写目标之前被快照。任一源都可以与目标互为别名，两个源也可以指向同一个 Tile；结果总是按旧值计算。
 
-有效矩形之外的物理坐标遵循契约选择的填充规则；适用时，`Null` 填充保持未定义。
+目标描述符、有效区域结果、填充以及每个元素的已定义性作为一次提交发布。被拒绝的 `TAND` 不改变描述符、载荷与分配状态。
 
-该操作不产生 GM 内存效果；描述符、载荷、已定义性、填充和数值状态变化仅限于当前契约列出的项目。
+`ValidRow x ValidCol` 之外的元素接收所选 `PadValue`。`Zero` 写入零，`Max` 与 `Min` 写入该整数 `DataType` 的数值最大值与最小值；`Null`（省略 `B.DATR` 时的选择）使其保持未定义。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值。`TAND` 没有全局内存效果。
 
 <!-- PTO-READER-BLOCK: tile-tand-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-可接受的数据类型集合为 `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`。
+可接受的数据类型集合为 `S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。浮点与打包操作类型会在效果之前被拒绝；如上所述，浮点数据仍可通过同位宽的整数操作类型处理。
 
-下方生成的合法性与异常章节是数据类型组合、布局、维度、容量、已定义性、填充控制、配置档行为和故障类别的权威说明。合法性或分配失败发生在任何部分架构效果之前。
+默认布局为 `RowMajor`，显式 `Layout` 可选择 `CUBE_M16` 或 `CUBE_M32`。`CUBE_N8`、Shared Tile 以及混合布局均非法。
+
+有效矩形内的每个源元素（存在 ExecutionMask 时为每个活动元素）都必须已定义，即使其编码不被校验。绑定格式错误、维度缺失或为零、源未定义或不匹配、布局不受支持、`DataType` 不受支持或目标容量无效时，会在效果之前引发 `Fault_TileLegality`。非默认的 `CMode`、`Sat`、`Canonicalize`、第二 `DataType` 或 `RMode` 均非法。
 
 <!-- PTO-READER-BLOCK: tile-tand-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `TAND` 示例说明：整数元素 `0xc` 与 `0xa` 产生 `0x8`。
+当 `DataType=U8` 时，左源行 `[0x0F, 0xF0, 0xFF]` 与右源行 `[0x3C, 0x3C, 0x81]` 产生目标行 `[0x0C, 0x30, 0x81]`。
+
+宏形式 `TAND <Row=8, Col=64, U32>, T#1, T#2, ->T<2KB>` 把两个 `U32` Tile 的全部 8 x 64 个结果计算到新的 2 KB 目标中。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

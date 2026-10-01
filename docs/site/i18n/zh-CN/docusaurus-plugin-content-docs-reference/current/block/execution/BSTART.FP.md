@@ -19,45 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-fp-purpose role=purpose -->
 ## BSTART.FP 的作用
 
-`BSTART.FP` 是 `FP` 形式的 32 位 Block 起始命令。它建立待处理 Block 的身份和选择参数；真正执行 Block body 并提交结果的是完成后的整个 Block，而不是起始命令本身。
+`BSTART.FP` 关闭当前活动的指令束，并把下一个指令束作为 Floating 指令束打开。它有六种编码拼写：`BSTART.FP FALL`、`BSTART.FP DIRECT, <label>`、`BSTART.FP COND, <label>`、`BSTART.FP CALL, <label>`、`BSTART.FP IND` 与 `BSTART.FP RET`。`InstructionContractBundleKind_BSTART_FP` 返回 `BundleKind_Floating`，因此该命令选择的是指令束种类与转移规则，而不是一个 Tile 操作。
+
+只有 `DIRECT`、`COND` 与 `CALL` 携带载荷：指令第 31 至 15 位中的有符号 17 位 `simm17` 标签位移。`FALL` 把该字段固定为零，而 `IND` 与 `RET` 完全没有字段。
+
+设计要点：`BSTART.FP` 与 `BSTART.STD` 接受同样的六种转移和同样的目标规则，二者的差别在于安装的指令束种类，即 `BundleKind_Floating`（编码 `0001`）对 `BundleKind_Standard`（编码 `0000`）。该差别在新指令束主体内可观察：`LSRGET` 标识符 2 返回的打包 BARG 控制字在其低四位中携带该种类。
 
 <!-- PTO-READER-BLOCK: block-bstart-fp-mechanism role=mechanism -->
 ## 位置与机制
 
-起始命令之后的 header 命令按顺序执行；`BSTOP` 或下一条 `BSTART` 是验证并退休完整 Block 的边界。当前所有者给出以下确切组成检查表：
+命令先被译码，其描述符由 `BundleOperationDescriptorLegal` 检查，转移取自形式或取自描述符的分支类型。候选目标随后由该转移决定：`FALL` 在下一个字继续；`DIRECT`、`COND` 与 `CALL` 计算 `PC + 2 * simm17`；`IND` 读取正在退役指令束的 `BARG.BPCN`；`RET` 读取架构返回地址。
 
-```text
-BSTART.FP retires any active predecessor block, then opens one FP block whose header commands execute sequentially until BSTOP or the next BSTART selects the BARG continuation.
-COND publishes a candidate BPCN but SETC may update TAKEN before commit; IND requires and snapshots a retiring Standard or Floating BARG.BPCN, while RET snapshots architectural ra before predecessor retirement.
-```
+只有在这些检查之后，该启动才通过 `CompleteBundleAtWithAcceptedApplicabilityRules` 提交活动的先行指令束。仅当该提交把程序计数器留在本指令处时，取到的 `BSTART.FP` 才会被安装，因此位于未选中路径上的 `BSTART.FP` 不安装任何东西。
 
-任何有效前序 Block 成功退休后，该命令初始化新的待处理 `BARG` 或操作描述符，并从顺序 PC 继续执行 header。仅仅成功解码起始命令，不会让 Block 目的结果或内存结果变得可见。
+设计要点：`IND` 与 `RET` 使用的是先行指令束仍然拥有的状态，即 `BARG.BPCN` 与返回地址，而 `start.asl` 在退役该指令束之前把两者快照到局部值中。因此提交失败的先行指令束无法破坏它自己选出的延续。
 
 <!-- PTO-READER-BLOCK: block-bstart-fp-inputs role=inputs-outputs -->
 ## 操作数与 header 角色
 
-- `simm17` 提供编码偏移或加数；其确切分配域仍以下方生成契约为准。
+- `simm17` 是 `DIRECT`、`COND` 与 `CALL` 第 31 至 15 位中的有符号 17 位指令束目标位移；字节目标为 `PC + 2 * simm17`，编码零提供零位移。
+- `FALL` 携带的同一字段固定为零，因此 `FALL` 的目标是顺序字。
+- `IND` 与 `RET` 不携带编码字段；它们的延续来自正在退役指令束的 `BARG.BPCN` 以及返回地址。
 
 <!-- PTO-READER-BLOCK: block-bstart-fp-effects role=effects -->
 ## 待处理状态与完成
 
-对适用性和目标检查而言，起始状态转换与前序 Block 退休是全有或全无的。起始命令成功后，后续完成边界会在任何 body 结果提交前验证完整组成。
+成功的启动把 `BSTART.FP` 的地址记入 `BARG.BPC`，把 `BARG.BlockType` 置为 `BundleKind_Floating`，把转移存入 `BARG.TYPE`，把候选目标存入 `BARG.BPCN`，并且只对 `COND` 把 `BARG.TAKEN` 置为假。随后 header 执行在顺序字处继续。
+
+候选目标还不是下一个程序计数器。只有当 `BSTOP` 或下一个 `BSTART` 提交本指令束，并且 `BARGSelectsBPCN` 对记录的转移成立时，`BARG.BPCN` 才成为延续。
+
+设计要点：`CALL` 还会发布返回地址，由于该形式没有 `uimm5` 字段，返回地址就是顺序字，而调用目标留在 `BARG.BPCN` 中。两次发布属于同一个启动转换，因此适用性检查失败的 `CALL` 既不留目标，也不留返回地址。
 
 <!-- PTO-READER-BLOCK: block-bstart-fp-constraints role=constraints -->
 ## 合法性与故障边界
 
-保留选择器、无效目标、完成后的组成错误或前序退休失败，都会在新 Block 或 body 影响之前被拒绝。
+- 恰好接受 `FALL`、`DIRECT`、`COND`、`CALL`、`IND` 与 `RET`；非零的 `FALL` 载荷、保留的分支类型以及不受支持的形式在先行指令束退役之前引发 `Fault_IllegalInstruction`。
+- `IND` 在缺少活动的正在退役 Standard 或 Floating 指令束时，在本指令处引发 `Fault_BundleControl`，早于任何目标或指令束效果。
+- 计算目标的最低位置位时引发 `Fault_InstructionPC`。
+- 若先行指令束提交失败，旧指令束及其延续保持权威，且不安装任何 Floating 指令束。
 
 <!-- PTO-READER-BLOCK: block-bstart-fp-example role=example -->
 ## 非规范示例
 
-以下为非规范示例，仅用于说明当前所有者，不替代其定义。
+该演算示例是非规范的；它说明当前 owner，而不替代它。
 
 ```asm
-BSTART.FP RET
+BSTART.FP CALL, target
 ```
 
-假设前序 Block 退休和目标检查成功，`BSTART.FP RET` 会打开待处理的 `BSTART.FP` 形式；后续 header/body 命令仍是暂定状态，直到 `BSTOP` 或下一条 `BSTART` 验证完整组成。
+`BSTART.FP CALL, target` 关闭活动指令束，并打开一个 Floating 指令束，其候选延续为 `PC + 2 * simm17`，返回地址为 `PC + 4`。此后关闭新指令束的 `BSTART.FP RET` 会把返回地址记为自己的候选延续，而 `BSTART.FP IND` 则会从正在退役指令束的 `BARG.BPCN` 取目标，而不是从编码位移取目标。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -7,8 +7,66 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit is the bundle-level handler for plain `MGATHER`, the indexed load that reads one global-memory element per index into a new Local Tile.
+
+`BundleMGATHERSelected` recognizes the bundle: a valid `TileMemory` operation descriptor whose selector function (bits `4:0`) is `4`. `ExecuteBundleMGATHEROperation` validates the complete bundle, resolves the destination, and calls the Tile-level `MGATHER` effect. The unit also defines `BundleMGATHERDimensionsLegal`, which the other indexed TLSU handlers reuse.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-concepts role=concepts-state -->
+## Concepts and visible state
+
+An `MGATHER` bundle has this schema.
+
+- One `B.IOR` record is required. Its `source0` selects the GPR that holds the base address, read for the current memory agent.
+- One `B.IOT` binding with a destination, the index Tile in `source0`, and the `last` flag. It carries `source1` only when a predicate-Tile execution mask is in force. No `B.IOS` binding is allowed.
+- `B.DIM` gives valid columns, valid rows, and physical columns for the destination.
+- The index Tile must be S32, U32, S64, or U64, and must have the bundle layout. The transfer data type must pass `IndexedTLSUOrdinaryTransferDataTypeLegal`.
+
+`BundleMGATHERDimensionsLegal` requires every dimension in `1..65535`, valid rows times valid columns not above `PTO_MODEL_TILE_ELEMENTS`, and, for the RowMajor layout, valid columns not above physical columns and physical columns a nonzero power of two.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-rules role=rules-interactions -->
+## Rules and interactions
+
+The handler first returns success with no effect when `SelectedBundleTileMaskIsZero` holds. The ASL comment calls a `B.IOT` PE mask of `0000` a strict no-op before schema, source, GPR, dimension, allocation, and memory checks.
+
+An unknown TLSU operation code raises `Fault_IllegalInstruction`. Schema, type, and shape failures raise `Fault_TileLegality`. These checks all run before the destination is resolved. The data shape must match the index shape through `IndexedTLSUDataShapeMatchesIndex`, and the physical shape must pass `IndexedTLSUPhysicalShapeLegal`.
+
+The handler then resolves the destination with the `B.DIM` shape and the operation data type, and validates Local generation writers. A failure after resolution calls `RollBackBundleTileDestinations`. So does a memory fault raised inside `MGATHER`. On success it calls `FinalizeBundleTileAttempt`, which publishes a bundle-allocated destination.
+
+Design point: the pad value comes from `CurrentBundlePadValue`, so an absent `B.DATR` gives `TilePad_Null`. The Tile-level `MGATHER` writes it into destination elements outside the valid region; elements that an execution mask makes inactive take a separate value.
+
+Design point: `MGATHER` probes every active index address before it writes the result. A translation fault therefore leaves the destination unpublished, and the rollback releases it.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit runs only after `ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules` finds no earlier specialized selector. In that order `BundleMGATHERSelected` is tested after the `MGATHER.CAS`, atomic-or-reduction, and `MGATHER.MASK` selectors. The caller commits or aborts Local generations after the handler returns.
+
+Address arithmetic, the index-to-byte displacement rule, and pad filling belong to the Tile gather and scatter owner.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Suppose the bundle gathers FP32 values with `LB0` equal to 32, `LB1` equal to 4, and `LB2` equal to 32 in RowMajor layout. The index Tile is U32, RowMajor, with 4 valid rows and 32 valid columns. The shapes match, 32 is a power of two, and 4 times 32 is 128 elements. The destination is resolved as a 4 by 32 FP32 Tile and receives 128 gathered elements.
+
+If the index Tile were FP32, the bundle raises `Fault_TileLegality` before any destination is allocated.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-related role=related-owners-navigation -->
+## Related owners
+
+- [Tile execution dispatch](tile-execution.md) orders the specialized selectors.
+- [MGATHER.MASK dispatch](tlsu-mgather-mask.md) and [MGATHER.CAS dispatch](tlsu-mgather-cas.md) reuse this unit's dimension check.
+- [Gather and scatter memory](../../../tile/model/memory/gather-scatter.md) defines the Tile-level `MGATHER`.
+- [BSTART.MGATHER](../../execution/BSTART.MGATHER.md) is the instruction page for the start form.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

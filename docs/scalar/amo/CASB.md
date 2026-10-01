@@ -19,42 +19,60 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-casb-purpose role=purpose -->
 ## What CASB does
 
-`CASB` atomically compares the byte at `SrcL` with `SrcR`; equality stores `SrcD`, while both paths publish the prior 8-bit value.
+`CASB` compares the byte at the address named by `SrcL` with the low byte of `SrcR`, and writes the low byte of `SrcD` back to that address when the two bytes are equal. A mismatch leaves memory untouched.
+
+Either nonfaulting outcome publishes the byte that memory held before the instruction into `RegDst`. `CASB` is one 32-bit encoded form, and a successful execution advances `TPC` by `4` bytes.
 
 <!-- PTO-READER-BLOCK: scalar-casb-mechanism role=mechanism -->
-## Atomic mechanism
+## How the byte compare-and-swap runs
 
-The ASL DOC contract selects `ScalarHandler_CompareAndSwap` with an access width of `1` byte.
+The dispatch reads `SrcL`, `SrcR`, and `SrcD`, then calls the shared `CompareAndSwap` helper with an access size of `1` byte. The helper probes the address for read access, probes it again for write access, and requires one translated address from both probes.
 
-Match and mismatch both emit one ordered atomic event; only the matching path marks a write as performed.
+It loads the byte at that translated address and compares it with the expected value. Equality stores the desired byte; inequality stores nothing. Either way it records one atomic event whose `write_performed` flag is the comparison result.
+
+Design point: `NormalizeAtomicUnsigned` extends only `value[7:0]`, so bits `8` to `63` of `SrcR` never reach the comparison. An expected value of `0xffffffffffffff7f` still matches a memory byte of `0x7f`, so an unmasked machine word in `SrcR` behaves as written.
+
+Design point: the read probe demands `1`-byte alignment, and `ProbeDataAccess` reports `Fault_DataAlignment` only when `UInt(address) MOD 1` is nonzero. That remainder is always zero, so the alignment fault is unreachable for `CASB`; the first address fault it can raise is the `Fault_DataPage` permission and bounds result.
 
 <!-- PTO-READER-BLOCK: scalar-casb-inputs-outputs role=inputs-outputs -->
-## Inputs and result
+## Encoded fields and selectors
 
-`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 expected byte source; `SrcD` carries the Reg5 desired byte source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit.
+The form encodes `SrcL` at instruction bit `15`, `SrcR` at bit `20`, `SrcD` at bit `27`, and `RegDst` at bit `7`, each `5` bits wide, plus `rl` at bit `25` and `aq` at bit `26`.
 
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering.
+`aq=0,rl=0` records relaxed ordering, `aq=1,rl=0` acquire, `aq=0,rl=1` release, and `aq=1,rl=1` acquire-release, for a match and for a mismatch alike.
+
+`SrcL`, `SrcR`, and `SrcD` accept every Reg5 source selector, and reading a T or U entry leaves it in place on the queue. `RegDst` accepts every Reg5 destination selector.
+
+Design point: the 32-bit form carries no `far` bit, so the encoding cannot ask for a routing hint. An absent field decodes as zero, and `AtomicAddress` returns its argument unchanged, so the byte named by `SrcL` is the byte the instruction touches.
 
 <!-- PTO-READER-BLOCK: scalar-casb-effects role=effects -->
-## Effects and ordering
+## What the instruction changes
 
-After successful preflight, the old value is published even on comparison mismatch; memory changes only on equality.
+A match stores the low byte of `SrcD` and records one atomic event with `write_performed=true`; a mismatch records one atomic event with `write_performed=false` and leaves memory alone.
 
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+`RegDst` receives `ZeroExtend{PTO_XLEN}(old_value[7:0])` on both nonfaulting paths, so the prior byte is always reported. A match also clears the reservation when the stored byte overlaps the reserved 64-byte granule.
+
+Design point: a value zero-extended from `8` bits can never be negative. A stored byte of `0x80` publishes `0x0000000000000080`, not `0xffffffffffffff80`, so software that needs the signed byte must sign-extend bit `7` itself.
+
+A successful execution advances `TPC` by `4` bytes.
 
 <!-- PTO-READER-BLOCK: scalar-casb-constraints role=constraints -->
-## Legality and precise faults
+## Alignment, faults, and reissue
 
-Every byte address is naturally aligned. Alignment, translation, and permission checks precede architectural effects.
+`CASB` completes the read probe, the write probe, and the translated-address equality test before touching memory, so a failing access leaves no partial effect.
 
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+A reported fault carries the original `SrcL` address. After a fault the helper returns before the load: no atomic event, no reservation change and no destination write, because the dispatch publishes only while `_LastFault` is `Fault_None`.
+
+`TPC` does not advance, so the whole compare-and-swap can be reissued. A decode failure, or an unavailable `T#1` to `T#4` or `U#1` to `U#4` source, raises `Fault_IllegalInstruction` before the handler runs.
 
 <!-- PTO-READER-BLOCK: scalar-casb-example role=example -->
-## Non-normative example
+## A byte that matches
 
 This example only shows one accepted spelling; the generated contract below remains authoritative.
 
-For a first reading, use `casb [SrcL], SrcR, SrcD, ->Rd` and then vary only the ordering or route modifiers described above.
+Suppose the addressed byte holds `0x7f`, `SrcR` supplies `0x7f` in its low byte, and `SrcD` supplies `0x80`. The comparison succeeds: `CASB` stores `0x80`, records one atomic event with `write_performed=true`, and publishes `0x000000000000007f` in `RegDst`.
+
+With `0x00` in the low byte of `SrcR` instead, memory keeps `0x7f`, the event records `write_performed=false`, and `RegDst` still receives `0x000000000000007f`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

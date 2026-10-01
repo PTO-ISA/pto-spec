@@ -17,22 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tpermute-purpose role=purpose -->
-**Why use it.** `TPERMUTE` provides a two-source byte table within each CUBE CELL so every valid destination byte can be chosen independently without interpreting the payload numerically.
+## What TPERMUTE does
+
+`TPERMUTE` builds each destination byte from one byte of two data sources, chosen by a `U8` index Tile. It works on raw bytes of Local `CUBE_M16` or `CUBE_M32` Tiles and performs no numeric conversion.
+
+Design point: `TPERMUTE` is selected by `BSTART.SFU` with TEPL Mode 3 Function 21 (selector `0x075`) and has no standalone opcode.
 
 <!-- PTO-READER-BLOCK: tile-tpermute-mechanism role=mechanism -->
-**How it works.** The lookup resets at every CUBE CELL: its per-source table width is `4` bytes for `CUBE_M32` and `8` bytes for `CUBE_M16`; indices below that width select the same CELL in `source0`, and the following equal-sized range selects the same CELL in `source1`.
+## Byte selection rule
+
+The row bytes of a cell are 8 for `CUBE_M16` and 4 for `CUBE_M32`. Each row's valid bytes are split into segments of that size, and each destination byte reads one index byte at the same row and byte position.
+
+An index v below the row bytes selects byte `segment base + v` of `source0`. An index from the row bytes to twice the row bytes selects byte `segment base + v - row bytes` of `source1`.
+
+Design point: a byte can move only within its own row and its own segment. An index of twice the row bytes or more is illegal rather than wrapped, so every accepted index names exactly one source byte.
+
+Design point: every active destination byte is checked before any effect: its index byte must be defined and in range, and the selected source byte must be defined. A bad index rejects with `Fault_TileLegality` and leaves no partial destination. [Layout rearrangement legality](../../model/legality/layout-rearrangement.md) owns these checks.
 
 <!-- PTO-READER-BLOCK: tile-tpermute-inputs-outputs role=inputs-outputs -->
-**Inputs and result.** The two Local data sources have the same supported non-64-bit dtype, CUBE layout, and geometry, while the matching Local `U8` index Tile supplies one index for every valid destination byte and the destination is fresh.
+## Operands and descriptors
+
+- `source0` and `source1` are the data sources. They share one type, valid shape, and layout with the destination, and they may be the same Tile.
+- `source2` is the index Tile: `U8`, the same layout and valid rows, one valid column per valid destination byte, and the same cell count. It must differ from both data sources.
+- `destination0` is fresh and keeps the source type, valid shape, and layout. It must differ from every source.
+
+The data type may be any CUBE type except a 64-bit type. The first `B.IOT` carries `source0` and `source1`; the second carries the index Tile and the destination. `B.IOR` is present only when a GPR carries the ExecutionMask, and `B.DATR` may carry only a `Layout`.
 
 <!-- PTO-READER-BLOCK: tile-tpermute-effects role=effects -->
-**Effects.** All indices and selected source bytes are validated and read before the complete valid destination region is published; the sources and index Tile persist, padding is `Null`, and there is no memory effect.
+## Effects
+
+All index checks and source reads come before publication. Every valid destination element becomes defined, and physical elements outside the valid region receive `Null` padding, which stays undefined.
+
+Under an ExecutionMask, an inactive destination element reads no index or source byte and receives the mask's zero or merge value. The sources persist, and the operation has no memory or numeric-status effect.
 
 <!-- PTO-READER-BLOCK: tile-tpermute-constraints role=constraints -->
-**What is rejected.** Each index must be below the combined per-CELL bound—`8` for `CUBE_M32` or `16` for `CUBE_M16`; an out-of-range index, an undefined selected byte, mismatched layout, dtype, or geometry, aliasing between the index Tile and either source, or destination aliasing rejects before any destination effect.
+## What is rejected
+
+A non-CUBE_M16/M32 layout, a 64-bit type, a mismatched type, shape, layout, or cell count, an index Tile that is not `U8` or aliases a data source, a destination that aliases a source, an out-of-range or undefined index, or an undefined selected source byte raises `Fault_TileLegality` before any destination effect.
+
+A malformed binding structure raises `Fault_BundleControl`; [cell rearrangement schema](../../../block/model/dispatch/cell-rearrangement-schema.md) owns that check.
 
 <!-- PTO-READER-BLOCK: tile-tpermute-example role=example -->
-**Concrete example.** For one `CUBE_M32` row with source words `0x04030201` and `0x08070605`, byte indices `[0, 4, 1, 5]` produce destination word `0x06020501`.
+## Concrete example
+
+Take one `U8` `CUBE_M32` row with 4 valid bytes, so the row bytes are 4 and legal indices are 0 to 7. `source0` holds bytes `0x01`, `0x02`, `0x03`, `0x04` (word `0x04030201`) and `source1` holds `0x05` to `0x08` (word `0x08070605`).
+
+Index bytes `[0, 4, 1, 5]` select `source0` byte 0, `source1` byte 0, `source0` byte 1, and `source1` byte 1. The destination bytes are `0x01`, `0x05`, `0x02`, `0x06`, which is the word `0x06020501`. An index of 8 would reject the bundle.
+
+In macro form, `T#1` and `T#2` are the data sources and `T#3` is the index Tile:
+
+```text
+TPERMUTE <U8>, T#1, T#2, T#3, ->T<128B>
+```
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

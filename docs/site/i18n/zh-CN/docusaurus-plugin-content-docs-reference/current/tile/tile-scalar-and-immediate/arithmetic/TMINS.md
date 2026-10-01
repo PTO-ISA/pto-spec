@@ -17,44 +17,64 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tmins-purpose role=purpose -->
-## 用途
+## TMINS 的作用
 
-`TMINS` 选择每个有效 Local Tile 元素与一个标量的类型化最小值。
+`TMINS` 对 Local 源 Tile 有效矩形内的每个元素与一个标量取按类型比较的最小值，并把结果写入一个新分配的 Local 目标 Tile。它由 TEPL Mode 1 Function 12（选择器 `0x02C`）选中，规范写法为 `BSTART.VEC TMINS, DataType`，没有独立 opcode。
+
+设计要点：标量是指令束操作数，而不是 Tile。Tile-Tile 形式 `TMIN` 需要第二个形状和布局都相同的源 Tile，因此用它施加同一个值时，必须先构造一个填满该值的 Tile，例如使用 `TEXPANDS`。`TMINS` 直接从 GPR 读取该值，因此不需要分配广播 Tile，也不需要使其成为已定义。
 
 <!-- PTO-READER-BLOCK: tile-tmins-mechanism role=mechanism -->
-## 执行机制
+## 标量来源与元素机制
 
-ASL DOC 契约通过该指令的选择器编码块载体选择 `TileHandler_ExecuteTileScalar`。
+标量来自 `B.IOR.RegSrc0`。每个参与的 PE 在自己的私有 GPR 文件中解析该选择器，因此同一 `PE_MASK` 选中的各 PE 可以使用不同的标量值。指令束中没有用于标量的立即数字段；省略 `B.IOR` 时标量为零。
 
-源快照之前，必须检查绑定模式、维度、DataType、行主序布局、源已定义性与编码、PE_MASK、目的容量和适用属性。
+64 位 GPR 值由 `TileRawElementValue` 收窄：只保留与所选 `DataType` 元素位宽一致的低 8、16、32 或 64 位。不发生数值转换。浮点标量必须已经是所选类型的编码，有符号整数标量按元素位宽的补码值读取。
+
+预检通过后，`ExecuteTileScalar` 对 `ValidRow x ValidCol` 内的每个坐标计算 `min(source, scalar)`。有符号整数类型按有符号值比较，无符号类型按无符号值比较。对浮点类型，一个操作数为 NaN 时原样选择另一个操作数，两个 NaN 产生规范 NaN，信号 NaN 置无效状态，`+0.0` 与 `-0.0` 相比时产生 `-0.0`。
+
+设计要点：包括标量检查在内的所有检查都在对源和标量做快照之前完成，并且只有在所有元素计算完成后才发布结果。因此与目标别名的源按其旧值读取。
 
 <!-- PTO-READER-BLOCK: tile-tmins-inputs-outputs role=inputs-outputs -->
-## 操作数与描述符
+## 操作数角色与描述符
 
-`destination0` 是新 Local 数值目的地；`source0` 是持久 Local 数值源；`scalar0` 是每个参与 PE 的私有 GPR 标量。
+- `source0` 是 Tile 操作数，必须是已存在的 Local 数值 Tile，并保持不变。
+- `scalar0` 是来自 `B.IOR.RegSrc0` 的逐 PE 标量。显式 `B.IOR` 必须使 `RegSrc1`、`RegSrc2` 和 `RegDst` 保持为零。
+- `destination0` 是新分配的 Local Tile，其后备 `DataType` 为所选 `DataType`，形状与布局与源一致。
 
-除非当前契约明确指出状态被消费或替换，否则源保持持久；只有完整预检后才发布目的描述符。
+一条终止 `B.IOT` 绑定源与目标，二者使用同一个 `PE_MASK`。`B.IOS` 与额外的 Tile 绑定均非法。
+
+设计要点：`PE_MASK=0000` 是严格无操作。它在任何 GPR 读取、描述符读取、分配、故障或状态效果之前退出，因此没有 PE 参与的指令束永远不会读取标量寄存器。
+
+设计要点：源可以使用位宽相同、非打包的其他后备类型存储，例如以 `FP16` 读取 `U16` 数据。此时源的位与标量都按所选 `DataType` 校验和解释，从而无需拷贝即可完成重解释读取。位宽不一致或打包四位载体仍然非法。
 
 <!-- PTO-READER-BLOCK: tile-tmins-effects role=effects -->
-## 发布与排序
+## 发布、已定义性与填充
 
-每个有效坐标都按所选元素类型执行操作；目的地发布之前会快照全部源和私有 GPR 标量操作数。
+目标作为一个整体变为可见：描述符、有效区域结果、填充、每个元素的已定义性以及任何数值状态同时发布。被拒绝的指令束没有任何架构效果。
 
-有效载荷、选中的物理填充的已定义性、描述符和适用的粘滞数值标志原子发布；拒绝时没有架构效果。
+`ValidRow x ValidCol` 之外的物理元素接收所选 `PadValue`。`Zero`、`Max` 与 `Min` 用该 `DataType` 的对应值定义这些元素；`Null` 使其保持未定义。省略 `B.DATR` 选择 `Null`，而显式编码 `00` 选择 `Zero`。
+
+设计要点：省略 `B.IOR` 时提供所选类型的全零编码，对浮点类型即 `+0.0`。因此不带标量的 `TMINS` 会把每个正的有效元素钳位到零；浮点 NaN 元素变为 `+0.0`，而 `-0.0` 保持不变。对无符号类型，每个结果都为零。
+
+`TMINS` 没有全局内存效果。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值，而不是计算结果。
 
 <!-- PTO-READER-BLOCK: tile-tmins-constraints role=constraints -->
-## 合法性、填充与故障
+## 类型、布局与故障边界
 
-绑定格式错误、类型或布局不受支持、形状无效、被消费元素未定义、属性非法或目的容量不足时，会在源快照或发布之前拒绝操作。
+可执行 ASL 检查 `TileBinaryDataTypeSupported` 接受 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。打包四位格式不在其中。低位不是所选类型合法编码的标量会被拒绝，例如低 13 位非零的 `TF32` 值。
 
-`PE_MASK=0000` 是严格空操作，先于读取、分配、故障、数值状态、填充或描述符效果。分配失败触发所有者定义的 Tile 分配故障；其他被拒绝的绑定模式或值条件触发所有者定义的合法性、块控制或内存故障，且不产生部分效果。
+默认布局为 `RowMajor`。显式 `B.DATR` `Layout` 可以选择 `CUBE_M16` 或 `CUBE_M32`；源与目标必须使用同一布局，`CUBE_N8` 与 Shared Tile 均非法。`B.DATR` 只接受 `PadValueOrByteId` 与 `Layout`，因此非默认的 `RMode`、`Sat`、`CMode`、`Canonicalize` 或次级 `DataType` 会被拒绝。
+
+有效矩形内的每个源元素（存在 ExecutionMask 时为每个活动元素）都必须已定义。绑定格式错误、出现 `B.IOS`、`B.IOR` 字段多余、维度缺失或为零、`DataType` 不受支持、源或标量编码无效、容量或分配失败时，会在任何目标效果之前引发 `Fault_TileLegality` 或 `Fault_TileAllocation`。
 
 <!-- PTO-READER-BLOCK: tile-tmins-example role=example -->
 ## 非规范契约草图
 
 这是非规范契约模式草图；它用于组织字段和绑定关系，不声称可以直接汇编。
 
-把 `BSTART.VEC TMINS, DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP` 作为非规范绑定演练，再以下方生成契约确认精确维度、属性和故障行为。
+以省略 `B.IOR` 的 `S32` 为例：源行 `[-3, 5]` 产生 `[-3, 0]`。对标量为 `+0.0` 的 `FP32`，元素 `-0.0` 产生 `-0.0`。
+
+若要把 `U16` 元素上限设为 1000，可在 `a2` 中放入 `1000`，并写作 `TMINS <Row=8, Col=64, U16>, T#1, a2, ->T<1KB>`；全部 512 个元素均有效。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

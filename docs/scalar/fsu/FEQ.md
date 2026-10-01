@@ -19,54 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-feq-purpose role=purpose -->
 ## What FEQ does
 
-`FEQ` performs ordered quiet equality and publishes canonical XLEN one or zero.
+`FEQ` tests two selected floating-point carriers for equality and writes a canonical `0` or `1` to a Reg5 destination.
+
+It is the quiet equality member of the compare group, so an unordered input produces a definite false result instead of an exception.
 
 <!-- PTO-READER-BLOCK: scalar-feq-mechanism role=mechanism -->
-## Numeric mechanism
+## Ordered equality with a false result for NaN
 
-`SrcType=00` selects a complete FP64 carrier; `SrcType=01` selects the zero-extended low 32-bit FP32 carrier.
+`SrcType` selects the carrier for both sides: encoded `00` selects FP64 and encoded `01` selects an FP32 carrier in the low word. Each source is normalised to that carrier before any test runs.
 
-Any NaN input makes the ordered comparison false.
+If either normalised operand is a NaN the comparison returns false, whatever the other operand is. Otherwise the model compares the carriers with the encoding rule that treats a positive zero and a negative zero as equal encodings of the same value, and it derives the ordered cases from a fixed word-order key rather than from a numeric library.
 
-The quiet form records sticky `NV` only for a signaling NaN.
+Design point: every NaN, quiet or signaling, compares false here, but the quiet form records the invalid-operation flag only when a signaling NaN was an input. A quiet NaN therefore flows through `FEQ` without setting sticky status, which is what distinguishes this mnemonic from the signaling form `FEQS`.
 
 <!-- PTO-READER-BLOCK: scalar-feq-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `RegDst` selects the encoded destination or discard behavior.
+- `SrcL` supplies the left Reg5 source.
+- `SrcR` supplies the right Reg5 source.
+- `SrcType` selects the source carrier for both sides.
+- `RegDst` selects the destination: codes `1..23` write the named absolute GPR, code `30` pushes the `U` queue, code `31` pushes the `T` queue, and code `0` plus codes `24..29` discard the result.
 
-- `SrcL` supplies the left scalar source.
-
-- `SrcR` supplies the right scalar source.
-
-- `SrcType` selects the source-carrier width.
-
-- Reg5 source selectors may read GPR, T, or U state without consuming temporary entries.
-
-- The destination selector writes a GPR, pushes T/U, or discards only the result.
+Reg5 sources read absolute GPRs, `T#1..T#4`, or `U#1..U#4` without consuming a queue entry. Encoded zero in a source reads the architectural zero GPR.
 
 <!-- PTO-READER-BLOCK: scalar-feq-effects role=effects -->
 ## Effects and ordering
 
-All explicit sources are snapshotted before numeric-status or destination effects.
+The destination receives exactly `1` when the comparison holds and exactly `0` when it does not, normalised to the full XLEN word. Flags, if any were recorded, are ORed into the sticky numeric status, and `TPC` advances by `4` bytes.
 
-Any architecture-produced `NV` is ORed into sticky numeric state before destination publication.
-
-The result is published or discarded, then `TPC` advances by `4` bytes. The instruction has no memory or reservation effect.
+The instruction has no memory, reservation, or descriptor effect. Existing `NV`, `DZ`, `OF`, `UF`, and `NX` state is unchanged unless this instruction records a flag of its own.
 
 <!-- PTO-READER-BLOCK: scalar-feq-constraints role=constraints -->
-## Type and profile boundaries
+## Carrier legality and quiet-form behavior
 
-`SrcType=10` and `SrcType=11` are reserved. Reserved types and unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+`SrcType` codes `0` and `1` are assigned and codes `2` and `3` are reserved. The carrier check runs before the first architectural source read, so a reserved `SrcType`, a fixed-bit mismatch, or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before any source, profile, destination, flag, queue, or `TPC` effect.
 
-Numeric flag updates do not themselves raise a synchronous PTO trap.
+Every Reg5 destination code is assigned. Numeric status flags update sticky status and never raise a synchronous PTO trap.
 
 <!-- PTO-READER-BLOCK: scalar-feq-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
 
-`feq.fd a0, a1, ->a2` applies the architecture-owned special-value rule and publishes canonical output before advancing `TPC`.
+The canonical FP64 example is `feq.fd a0, a1, ->a2` with GPR `a0` holding `0x3ff0000000000000` and GPR `a1` holding `0x3ff0000000000000`, both standing for `1.0`: GPR `a2` receives `1`.
+
+Setting GPR `a1` to `0xbff0000000000000`, standing for `-1.0`, writes `0`, and setting GPR `a1` to a quiet NaN encoding such as `0x7ff8000000000000` also writes `0` and leaves the sticky status unchanged.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

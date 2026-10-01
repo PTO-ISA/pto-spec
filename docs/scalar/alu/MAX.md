@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-max-purpose role=purpose -->
 ## What MAX does
 
-`MAX` is a 32-bit scalar ALU instruction. It compares the complete operands as signed values and selects the maximum bit pattern; its current instruction contract defines the result publication path and any additional state effect.
+`MAX` is a 32-bit encoded scalar ALU instruction that compares two XLEN values as signed integers and publishes the larger of the two unchanged through one Reg5 destination.
+
+The published word is one of the two operand bit patterns, not a newly computed value. Both sources are compared at full XLEN width, so the `L32` class describes the instruction length rather than the operand width.
 
 <!-- PTO-READER-BLOCK: scalar-max-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then compares the complete operands as signed values and selects the maximum bit pattern, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractResult_MAX`, which returns `left` when `SInt(left) > SInt(right)` and `right` otherwise, and `InstructionContractUsesSignedComparison_MAX`, which returns true. Dispatch reaches the same helper through `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MAX, FALSE)`, which reads `SrcL` and `SrcR` and writes the selected operand.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+max SrcL, SrcR, ->{t, u, Rd}
+```
+
+Design point: the comparison is strict, so equal operands fall through to the `right` branch. That choice is invisible because two's-complement values that compare equal have identical bit patterns; there is no separate tie case to define.
 
 <!-- PTO-READER-BLOCK: scalar-max-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the left operand through Reg5.
-- The 5-bit `SrcR` field selects the right operand through Reg5.
+- `RegDst`, instruction slice `[7 +: 5]`, receives the selected operand or discards it.
+- `SrcL`, instruction slice `[15 +: 5]`, supplies the left operand.
+- `SrcR`, instruction slice `[20 +: 5]`, supplies the right operand.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Both sources use the common Reg5 map: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4` without consuming an entry. Encoded zero reads the architectural zero GPR for either source.
+
+Design point: this form has no right-source modifier, so `SrcR` is compared exactly as read. Some other scalar ALU forms, for example `ADD`, `SUB`, `AND`, `OR` and `XOR`, carry a `SrcRType` field that can sign-extend, zero-extend or negate the right source before use; `MAX` has no such field and compares the complete register contents.
 
 <!-- PTO-READER-BLOCK: scalar-max-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are snapshotted before the destination effect, so `max a0, a0, ->a0` and a destination that aliases one source both operate on pre-instruction values.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The selected operand is published through `RegDst`, and `TPC` then advances by `4` bytes. `MAX` reads and writes no memory, sets no numeric flag, and changes no reservation, descriptor, bundle, privilege or control-flow state; the only possible queue change is the `T` or `U` push selected by `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-max-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every `32`-code source encoding and every `32`-code destination encoding is assigned, and every XLEN bit pattern is a legal operand, so only an unavailable temporary source can fail the operand checks. Instruction bits `31:25` and `14:12` are fixed by the accepted form.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise a mismatching encoding raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before the destination write. The comparison itself raises no arithmetic exception.
+
+Design point: selecting between two operands cannot overflow, so no operand pair has a fault. A maximum of two registers is exact at every value, including the signed minimum and maximum, because no arithmetic is performed on them.
 
 <!-- PTO-READER-BLOCK: scalar-max-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `MAX` example, operands `7` and `3` select result `7`.
+With `SrcL = 0xFFFFFFFFFFFFFFFF` and `SrcR = 0`, the signed reading makes `SrcL` equal to `-1`, which is not greater than `0`, so `RegDst` receives `SrcR`, the word `0`. With `SrcL = 5` and `SrcR = 5` the comparison is false and `RegDst` receives `5`. With `SrcL = 4` and `SrcR = 7`, `RegDst` receives `7`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

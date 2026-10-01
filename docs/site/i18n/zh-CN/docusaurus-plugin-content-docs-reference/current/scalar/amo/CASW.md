@@ -19,49 +19,61 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-casw-purpose role=purpose -->
 ## CASW 的作用
 
-`CASW` 原子读取一个对齐的 4 字节字，将其与期望字比较，按条件写入待写字，并在无故障的匹配或不匹配路径上都发布原内存值。
+`CASW` 原子读取 `SrcL` 指向地址处的 4 字节字，将其与 `SrcR` 的低 `4` 字节比较，并在比较成功时把 `SrcD` 的低 `4` 字节写入该处。
+
+无故障的匹配与无故障的不匹配都会通过 `RegDst` 发布原来的字。`CASW` 是一个 32 位形式，成功执行使 `TPC` 前进 `4` 字节。
 
 <!-- PTO-READER-BLOCK: scalar-casw-mechanism role=mechanism -->
-## 比较并交换机制
+## 比较并交换的执行序列
 
-在产生任何效果前，`CASW` 先对地址源 `SrcL`、期望源 `SrcR` 和待写源 `SrcD` 取快照，然后针对同一个转换后位置完成对齐、读写地址转换和权限预检。
+`ExecuteDecodedCompareAndSwap` 先读取 `SrcL`、`SrcR` 和 `SrcD`，然后以访问宽度 `4` 调用 `CompareAndSwap`，因此操作数在第一次探测之前就已取好快照。该辅助函数先探测地址的读访问，再探测写访问，并要求两次探测给出同一个转换后地址。
 
-比较使用 `SrcR` 的低 4 字节。相等时，指令写入待写源 `SrcD` 的低 4 字节；不相等时，内存保持不变。
+辅助函数载入该转换后地址处的字，并与规范化后的期望值比较。相等时执行写入，不相等时跳过写入；两种情况都会记录一个原子事件，携带载入的字、规范化后的待写值，以及取比较结果的 `write_performed`。
 
-两种结果都会发出一个有序原子事件。匹配事件记录 `write_performed=true`；不匹配事件记录 `write_performed=false`，它作为有序原子读参与排序，但不产生一致性写。
+设计要点：在此宽度下 `NormalizeAtomicReturn` 施加 `SignExtend{PTO_XLEN}(value[31:0])`，因此内存字 `0x80000001` 到达 `RegDst` 时是 `0xffffffff80000001`。`CASW` 可以发布负的 XLEN 值；`CASB` 和 `CASH` 不能。
 
-原来的 32 位字会在目的发布前符号扩展到 XLEN。
+设计要点：比较使用 `NormalizeAtomicUnsigned(SrcR, 4)`，它从 `32` 位零扩展，因此 `SrcR` 的高 `32` 位被忽略。内存字为 `0x00000001` 时，`SrcR = 0xdeadbeef00000001` 能够匹配。
 
 <!-- PTO-READER-BLOCK: scalar-casw-inputs role=inputs-outputs -->
-## 输入、排序与输出
+## 操作数、排序与目的地
 
-- `SrcL`、`SrcR` 和 `SrcD` 接受全部 Reg5 源选择器，包括不消费的 T/U 源；`RegDst` 接受全部 Reg5 目的或丢弃选择器。
-- `aq=0,rl=0` 选择 relaxed 排序，`aq=1,rl=0` 选择 acquire，`aq=0,rl=1` 选择 release，`aq=1,rl=1` 选择 acquire-release。
+- `SrcL` 提供原子地址，`SrcR` 提供期望字，`SrcD` 提供待写字；三者都接受绝对 GPR、T 和 U 选择器，且读取队列条目不会消费它。
+- `RegDst` 决定原字的去处：编码 `1` 到 `23` 写入对应 GPR，编码 `0` 和编码 `24` 到 `29` 丢弃该值，编码 `30` 和 `31` 将其压入 U 队列或 T 队列。
 
-短形式没有远地址字段，始终使用默认平坦地址路径。
+`aq=0,rl=0` 记录 relaxed 排序，`aq=1,rl=0` 为 acquire，`aq=0,rl=1` 为 release，`aq=1,rl=1` 为 acquire-release，匹配和不匹配都一样。
+
+设计要点：这个 32 位形式没有 `far` 位，所以编码只提供默认平坦地址路径。缺失字段解码为零，而 `AtomicAddress` 原样返回其参数，因此这里的任何路由选择都无法移动访问位置。
 
 <!-- PTO-READER-BLOCK: scalar-casw-effects role=effects -->
 ## 架构效果
 
-匹配时，`CASW` 写入待写低字，发出一个读写原子事件，并使与写入范围重叠的本地 64 字节粒度保留状态失效。
+匹配时把待写低字写入内存，并记录一个 `write_performed=true` 的原子事件；不匹配时记录一个 `write_performed=false` 的原子事件，内存保持不变。
 
-不匹配时，它保持内存和保留状态不变，但仍发出有序原子读事件。
+设计要点：目的写入由载入的字驱动，且只在故障被置位时跳过，因此未能替换该字的指令仍然报告内存中原有的内容，重试时可以从 `RegDst` 取得该值，而无需再载入一次。
 
-每个无故障结果都会发布符号扩展后的原字，并让 `TPC` 前进 `4` 字节；故障时不发布目的值。
+设计要点：记录的事件携带 `NormalizeAtomicUnsigned(desired, 4)`，而不是 XLEN 寄存器值，因此其中的新值正是写入实际提交的低 `32` 位。
+
+两种无故障结果都会使 `TPC` 前进 `4` 字节；匹配时，若写入的字与保留的 64 字节粒度重叠，还会清除保留状态。
 
 <!-- PTO-READER-BLOCK: scalar-casw-constraints role=constraints -->
-## 对齐与精确故障
+## 对齐、访问检查与故障顺序
 
-有效地址必须按 `4` 字节对齐。对齐、读访问、写访问和转换后地址相等性，都会在内存、目的位置、事件、保留状态或 `TPC` 效果之前完成检查。
+地址必须是 `4` 的倍数。`ProbeDataAccess` 在地址转换之前、权限检查之前测试 `UInt(address) MOD 4`，并在余数非零时报告 `Fault_DataAlignment`。
 
-发生故障时，陷阱入口保存原始 `TPC`；恢复过程还原该值，使完整指令能够在不保留进度的情况下重新执行。
+读探测先执行，因此先报告它的对齐结果或 `Fault_DataPage`。写探测随后以同样的宽度和对齐要求进行，之后两次转换后的地址必须一致，否则抛出 `Fault_DataPage`。
+
+设计要点：这些检查都在载入之前完成，因此出错时 `CASW` 不写入内存、不记录原子事件、不清除保留状态、不写目的寄存器，并让 `TPC` 停在同一指令上。参考模型把地址转换为其自身，所以那里该比较不会失败，而边界检查仍可能失败。
+
+报告的故障携带原始 `SrcL` 地址。解码失败，或所选 `T#1` 到 `T#4`、`U#1` 到 `U#4` 源不可用，会在处理函数运行之前抛出 `Fault_IllegalInstruction`。
 
 <!-- PTO-READER-BLOCK: scalar-casw-example role=example -->
-## 非规范演示
+## 一个匹配的字，和一个不匹配的字
 
 下面的演示只帮助理解当前契约，并不替代原子操作。
 
-假设内存中的字是 `0x80000001`，期望字与其相等，待写 XLEN 值是 `0x1122334455667788`。`CASW.aqrl` 写入 `0x55667788`，发布符号扩展到 XLEN 的原字，发出一个 `write_performed=true` 的 acquire-release 原子事件，并使重叠的保留状态失效。
+假设该地址处的字为 `0x80000001`，`SrcR` 的低 `4` 字节为 `0x80000001`，`SrcD` 为 `0x55667788`。比较成功，于是 `CASW` 写入 `0x55667788`，在 `RegDst` 中发布 `0xffffffff80000001`，并记录一个 `write_performed=true` 的原子事件。
+
+设内存中仍是同一个字 `0x80000001`，但 `SrcR` 的低 `4` 字节为 `0x00000002`。比较失败，内存保持 `0x80000001`，记录的事件为 `write_performed=false`，`RegDst` 仍然收到 `0xffffffff80000001`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

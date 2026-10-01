@@ -7,8 +7,83 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-legality-memory-schema-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines the operand legality predicates for Tile move, regular load and store, prefetch, and indexed gather and scatter. The `PTO-INSTRUCTION` metadata names them as legality handlers:
+
+- `TileOperandsLegal_TMOV` for TMOV.
+- `TileOperandsLegal_TLOAD` and `TileOperandsLegal_TSTORE` for TLOAD and TSTORE.
+- `TileOperandsLegal_TPREFETCH` for TPREFETCH.
+- `TileOperandsLegal_MGATHER`, `TileOperandsLegal_MSCATTER`, `TileOperandsLegal_MGATHER_MASK`, and `TileOperandsLegal_MSCATTER_MASK` for the four indexed transfers.
+
+It also defines `TileOperandsLegal_MGATHER_CAS` and the shared definedness helper `IndexedTLSUExecutionMaskContentsDefined`.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-memory-schema-concepts role=concepts-state -->
+## Concepts and visible state
+
+All predicates are `readonly`. They read Tile descriptors, Tile payload definedness, and the bundle ExecutionMask, and do not touch memory.
+
+An index Tile holds one byte displacement from the base address per transfer. A mask Tile holds one U8 value per element that must be 0 or 1. A packed four-bit data Tile holds two elements per byte, so one index covers a pair of data elements.
+
+`IndexedTLSUExecutionMaskContentsDefined` first requires `IndexedTLSUNumericDescriptorLegal`. Without an ExecutionMask it returns `contents_defined`. With one, the Tile must share the mask's layout and valid rows, and its valid columns must equal the mask's, or twice the mask's for a packed type. Each active coordinate must then be defined; for a packed type both nibbles of the pair must be defined.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-memory-schema-rules role=rules-interactions -->
+## Rules and interactions
+
+`TileOperandsLegal_TMOV` resolves the operation type with `ResolveTileCarrierOperationType`, requires matching logical shape and storage kind, a same-width source, and a destination backing type equal to the source backing type.
+
+Design point: TMOV is the only operation for which `TileOperationUsesSourceBackingDestination` is TRUE. The destination is allocated with the source's backing type, and legality requires that equality, so TMOV copies raw bits and never retags them.
+
+TLOAD and TSTORE require a legal descriptor and a type accepted by `TileRegularTLSUDataTypeSupported`. That table lists 25 types, including the five packed types. E6M2 and RCPE6M2 are not in it.
+
+The indexed transfers require:
+
+- A RowMajor, CUBE_M16, or CUBE_M32 numeric data Tile and matching layouts across data, index, and mask Tiles.
+- An index type of S32, U32, S64, or U64.
+- Matching valid rows, and valid columns related by `IndexedTLSUDataShapeMatchesIndex`: equal, or twice the index columns for a packed data type.
+- For the masked forms, a mask that passes `IndexedTLSUPredicateValuesLegal` with the index Tile's valid shape.
+
+`TileOperandsLegal_MGATHER_CAS` requires non-packed data and equal data types across destination, expected, and replacement Tiles.
+
+TPREFETCH has no Tile operand. Its predicate requires `ValidCol <= Col`, a power-of-two `Col`, and `ValidRow x ValidCol` no larger than `PTO_MODEL_TILE_ELEMENTS`. The six-argument form also requires `TileCarrierOrPackedBaselineDataTypeSupported`, which excludes 64-bit types.
+
+Design point: source and index payloads are checked for definedness before any memory request. Under an ExecutionMask only active coordinates must be defined, so inactive lanes can hold undefined values without rejecting the bundle.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-memory-schema-boundaries role=boundaries -->
+## Architectural boundaries
+
+These predicates run in preflight. In the block dispatch paths for MGATHER, MGATHER_MASK, and MGATHER_CAS, the destination is resolved first; if the predicate then fails, the destination allocation is rolled back and `Fault_TileLegality` is raised before the gather reads memory.
+
+They check operands only. Address translation, permissions, and memory faults belong to the memory units.
+
+The metadata names `GM_ATOM_CAS` as the legality handler for MGATHER_CAS. The block dispatch path calls `TileOperandsLegal_MGATHER_CAS` from this unit and separately restricts the data type to U16, U32, or U64.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-memory-schema-example role=example-usage -->
+## Non-normative reading example
+
+An MGATHER destination is U4X2, RowMajor, with valid region 8 x 32. The index Tile is S32, RowMajor, with valid region 8 x 16. There is no ExecutionMask.
+
+- Valid rows match: 8 and 8.
+- U4X2 is packed, so the data columns must be even and equal 2 x 16 = 32. They are.
+- S32 is a legal index type, and both Tiles are RowMajor.
+- The index Tile must be fully defined because no mask is in force.
+
+Each of the 8 x 16 = 128 index elements covers one pair of 4-bit destination elements. A destination with 16 valid columns would fail the pairing rule, and the bundle would be rejected.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-memory-schema-related role=related-owners-navigation -->
+## Related owners
+
+- [Indexed layout](indexed-layout.md) owns the indexed descriptor, index type, and shape-pairing helpers.
+- [Predicate carriers](predicate-carriers.md) owns `IndexedTLSUPredicateValuesLegal`.
+- [Data type and layout tables](dtype-layout.md) owns the TLOAD and TPREFETCH type tables.
+- [Gather and scatter](../memory/gather-scatter.md) executes the indexed transfers.
+- [MGATHER dispatch](../../../block/model/dispatch/tlsu-mgather.md) shows where the predicate runs in a bundle.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -7,8 +7,59 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-state-descriptor-state-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines two transitions: installing the operation descriptor of a new bundle, and clearing the per-bundle header state.
+
+The operation descriptor records the exact `BSTART` form and its operation fields. The header state is everything that header commands accumulate for one bundle.
+
+<!-- PTO-READER-BLOCK: block-model-state-descriptor-state-concepts role=concepts-state -->
+## Concepts and visible state
+
+A `BundleOperationDescriptor` holds a valid flag, the 7-bit form identity, an operation class, and four optional fields, each with its own valid flag: a 10-bit selector, a 5-bit data type, a 2-bit mode, and a 3-bit branch type.
+
+`ClearBundleHeaderState` resets the descriptor, the dimensions, the binding arrays, the range group, the zero-participation marker, the control, data, hint, and fixed-point attributes, the execution-mask binding, the bundle argument, and the three per-bundle markers.
+
+<!-- PTO-READER-BLOCK: block-model-state-descriptor-state-rules role=rules-interactions -->
+## Rules and interactions
+
+`InstallBundleOperationDescriptor` stores the descriptor. If the descriptor carries a data type and no `B.DATR` has been seen, it also copies that data type into the data attributes.
+
+`ClearBundleHeaderState` sets every dimension to 1 and marks it absent. It sets the pad field to `11` and the data type to `DTYPE_NONE`, and it marks every binding invalid.
+
+Design point: the pad field is cleared to `11`, which reads as `Null`, not to `00`. The ASL comment says absence is distinct from an explicitly encoded zero pad value. A bundle without `B.DATR` leaves padding undefined, while `B.DATR` with pad code `00` requests zeros.
+
+Design point: omitted dimensions clear to 1 rather than 0. A bundle that never writes `LB1` reads 1 there, while an explicit `B.DIM` of 0 reaches the operation's legality checks as 0.
+
+Design point: the start data type fills in the data attributes only when `B.DATR` is absent. A bundle without `B.DATR` therefore still has a data type, taken from its start form. A later `B.DATR` writes its own data-type field over the copied value; if that field is `DTYPE_NONE`, the effective type falls back to the start data type.
+
+<!-- PTO-READER-BLOCK: block-model-state-descriptor-state-boundaries role=boundaries -->
+## Architectural boundaries
+
+`ClearBundleHeaderState` leaves `_LocalGenerations`, `_SharedGenerations`, `BARG`, the templates, and the active flags alone. Begin and stop write the active flags and `BARG`. Generations close only through their own paths or reset.
+
+The clear does not zero every field. For example, a scalar binding keeps its old register selectors but is marked invalid.
+
+<!-- PTO-READER-BLOCK: block-model-state-descriptor-state-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+`BSTART.VEC TADD, FP32` installs a descriptor with a valid selector and data type `FP32`. With no `B.DATR`, `FP32` is copied into the data attributes, and the pad value stays `Null`. At commit, `ClearBundleHeaderState` erases the descriptor and all bindings, so the next bundle starts empty.
+
+<!-- PTO-READER-BLOCK: block-model-state-descriptor-state-related role=related-owners-navigation -->
+## Related owners
+
+- [Bundle start dispatch](../dispatch/start.md) calls both transitions.
+- [Descriptor legality](../dispatch/descriptor-legality.md) validates a descriptor before installation.
+- [Enter and stop](../lifecycle/enter-stop.md) clears the header at commit.
+- [Control state](control-state.md) lists the members.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

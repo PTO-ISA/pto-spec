@@ -19,56 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fmadd-purpose role=purpose -->
 ## What FMADD does
 
-`FMADD` computes fused left times right plus addend through the active numeric profile.
+`FMADD` evaluates a three-operand floating-point expression of the form `product + addend` and publishes one result carrier. `SrcL` is multiplied by `SrcR`; the third source `SrcA` is the addend that is added to or subtracted from that product.
+
+The whole expression is one fused operation: the product is never rounded to a carrier of its own before the addend participates.
 
 <!-- PTO-READER-BLOCK: scalar-fmadd-mechanism role=mechanism -->
-## Numeric mechanism
+## How the fused operation is performed
 
-`SrcType=00` selects a complete FP64 carrier; `SrcType=01` selects the zero-extended low 32-bit FP32 carrier.
+`SrcType=00` selects a complete 64-bit FP64 carrier. `SrcType=01` selects FP32 and uses only the low 32 bits of each source word, zero-extended to XLEN.
 
-The active profile receives snapshotted operands and the mnemonic-selected operation, then returns a result and exact `NV`, `DZ`, `OF`, `UF`, `NX` vector.
+The contract names `FloatingFused_MADD`. The handler reads `SrcA`, `SrcL` and `SrcR`, applies the selected carrier to each, and asks the profile for one result and one exact `NV`, `DZ`, `OF`, `UF`, `NX` vector. In the `pto-v0` reference profile the addend, the left operand and the right operand become real values, `left * right` is formed exactly, `product + addend` is formed from that exact product, and the final real value is encoded once with the rounding mode encoded in `CORE_STATE[39:37]`.
 
-In the `pto-v0` reference profile, carrier multiplication plus the addend is evaluated modulo the selected width. This deterministic reference rule is not an IEEE-754 or target-hardware claim.
+Special inputs are answered before the finite kernel. A NaN in any of the three sources publishes the canonical quiet NaN and records `NV` only when at least one of the three was a signaling NaN. `0` times an infinity publishes the canonical quiet NaN and records `NV`. A product infinity and an addend infinity of opposite effective sign also publish the canonical quiet NaN with `NV`; otherwise an infinite product or an infinite addend publishes the signed infinity that the effective sign selects.
+
+Design point: for `FMSUB` and `FNMSUB` the addend sign is inverted for the sign analysis, and for `FNMADD` and `FNMSUB` the final sign is inverted after that analysis. This is what lets one shared special-value rule cover all four mnemonics without a separate rule per mnemonic.
 
 <!-- PTO-READER-BLOCK: scalar-fmadd-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `RegDst` selects the encoded destination or discard behavior.
-
-- `SrcA` supplies the addend source.
-
-- `SrcL` supplies the left scalar source.
-
-- `SrcR` supplies the right scalar source.
-
-- `SrcType` selects the source-carrier width.
-
-- Reg5 source selectors may read GPR, T, or U state without consuming temporary entries.
-
-- The destination selector writes a GPR, pushes T/U, or discards only the result.
+- `RegDst` selects the destination selector: codes `1`..`23` write a GPR, `30` pushes `U`, `31` pushes `T`, and `0` plus `24`..`29` discard the result.
+- `SrcL` is the left multiplicand selector.
+- `SrcR` is the right multiplicand selector.
+- `SrcA` is the addend selector.
+- `SrcType` selects the carrier that all three sources are read with.
+- Source selectors `0`..`23` read GPRs, `24`..`27` read `T#1`..`T#4`, and `28`..`31` read `U#1`..`U#4`. Reading a temporary never consumes or reorders it.
+- Source selector `0` always reads XLEN zero, and destination selector `0` writes nothing.
 
 <!-- PTO-READER-BLOCK: scalar-fmadd-effects role=effects -->
 ## Effects and ordering
 
-All explicit sources are snapshotted before numeric-status or destination effects.
+All three sources are read before any write, so `SrcL`, `SrcR`, `SrcA` and `RegDst` may name the same register or queue slot and the operation still uses the pre-instruction values. A push into `T` or `U` happens only after all three reads, so a read-then-push of the same queue observes the entry that was already present.
 
-All five profile-returned flags are ORed into sticky numeric state; the operation cannot clear an existing flag.
-
-The result is published or discarded, then `TPC` advances by `4` bytes. The instruction has no memory or reservation effect.
+All five returned flag bits are ORed into `CORE_STATE[36:32]`, so the operation can set a sticky flag but never clear one. The destination is written or discarded, and only then does `TPC` advance by `4` bytes. No memory access and no reservation is involved.
 
 <!-- PTO-READER-BLOCK: scalar-fmadd-constraints role=constraints -->
-## Type and profile boundaries
+## Reserved types and rejection
 
-`SrcType=10` and `SrcType=11` are reserved. Reserved types and unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+`SrcType=10` and `SrcType=11` are reserved. The handler checks the carrier type before the first read of any source register, so a reserved type raises `Fault_IllegalInstruction` with no source read, no profile call, no flag, no queue change, no destination write, and no `TPC` advance.
 
-The portable instruction contract owns carrier selection, snapshots, flag accumulation, publication, and fault order; the active named profile owns the numeric result and produced flags.
+A source selector that names an unavailable `T` or `U` slot is rejected the same way, at the same point.
+
+Because the whole expression is fused, there is no intermediate carrier and therefore no intermediate rounding step that a programmer could observe or rely on. Reserved numeric flags never raise a synchronous PTO trap by themselves.
 
 <!-- PTO-READER-BLOCK: scalar-fmadd-example role=example -->
 ## Non-normative example
 
-This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
+`fmadd.fd a0, a1, a2, ->a3` reads `a0`, `a1` and `a2` as complete FP64 carriers, forms `a0 * a1 + a2` with a single rounding, records the returned flags in `CORE_STATE[36:32]`, and writes the result to `a3`.
 
-`fmadd.fd a0, a1, a2, ->a3` selects its carriers, snapshots its sources, invokes the active profile, accumulates returned flags, publishes the result, and then advances `TPC`.
+With `SrcL` holding FP64 `2.0`, `SrcR` holding FP64 `3.0` and `SrcA` holding FP64 `1.0`, the published value is FP64 `7.0`, the exact result of `2.0 * 3.0 + 1.0`. No memory traffic is generated and `TPC` advances by `4` bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

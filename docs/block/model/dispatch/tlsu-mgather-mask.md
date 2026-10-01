@@ -7,8 +7,67 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-mask-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit is the bundle-level handler for `MGATHER.MASK`, the indexed load that reads global memory only for lanes whose predicate Tile bit is set.
+
+`BundleMGATHERMASKSelected` recognizes the bundle: a valid `TileMemory` operation descriptor whose selector function (bits `4:0`) is `6`. `ExecuteBundleMGATHERMASKOperation` validates the complete bundle, resolves the destination, and calls the Tile-level `MGATHER_MASK` effect.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-mask-concepts role=concepts-state -->
+## Concepts and visible state
+
+The operands are a base address, an index Tile, and a mask Tile. The mask Tile is the operation's own predicate operand, distinct from an optional execution mask.
+
+- One `B.IOR` record is required. Its `source0` selects the GPR that holds the base address for the current memory agent.
+- Without a predicate-Tile execution mask, one `B.IOT` carries the destination, the index Tile in `source0`, the mask Tile in `source1`, and `last`.
+- With a predicate-Tile execution mask, the first `B.IOT` carries the index and mask Tiles but no destination and no `last`. A second `B.IOT` carries the destination, one source, no `source1`, and `last`.
+- `B.DIM` gives the destination valid columns, valid rows, and physical columns, checked by `BundleMGATHERDimensionsLegal`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-mask-rules role=rules-interactions -->
+## Rules and interactions
+
+The handler first returns success with no effect when `SelectedBundleTileMaskIsZero` holds. The ASL comment places this before every schema, source, GPR, dimension, allocation, predicate, address, and fault check.
+
+An unknown TLSU operation code raises `Fault_IllegalInstruction`. Every other check below raises `Fault_TileLegality` before the destination is resolved.
+
+- No `B.IOS` binding, a present `B.IOR`, complete and legal `B.IOR` values, a uniform PE mask, legal dimensions, and the binding layout from `BundleMGATHERMASKBindingsLegal`.
+- The index Tile has defined contents, an S32, U32, S64, or U64 type, and the bundle layout.
+- The mask Tile passes `IndexedTLSUPredicateValuesLegal` and has the bundle layout.
+- The data shape matches the index shape, the mask has the destination valid rows and the index valid columns, and the physical shape is legal.
+
+After these checks the handler resolves the destination and validates Local generation writers. Under a predicate-Tile execution mask the destination is taken from the second binding. A later failure or a memory fault inside `MGATHER_MASK` calls `RollBackBundleTileDestinations`. Success calls `FinalizeBundleTileAttempt`.
+
+Design point: the mask Tile is checked with the predicate-value helper before any address is formed. `MGATHER_MASK` then probes only lanes that are active under the execution mask and whose predicate bit is set. A lane with a clear predicate bit issues no memory access and keeps the pad value from `CurrentBundlePadValue`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-mask-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit runs only after `ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules` finds no earlier specialized selector. `BundleMGATHERMASKSelected` is tested after the `MGATHER.CAS` and atomic-or-reduction selectors and before plain `MGATHER`.
+
+The meaning of a predicate bit, the byte-displacement address rule, and the load-event order belong to the Tile gather and scatter owner.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-mask-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Suppose a bundle with no execution mask gathers U16 values into a RowMajor destination with `LB0` equal to 16, `LB1` equal to 2, and `LB2` equal to 16. The single `B.IOT` names a U32 index Tile and a mask Tile, both 2 by 16. If the mask sets 20 of the 32 lanes, the gather probes and loads 20 addresses. The other 12 destination elements hold the pad value.
+
+If the mask Tile had 3 valid rows, the bundle raises `Fault_TileLegality` before the destination is allocated.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-mask-related role=related-owners-navigation -->
+## Related owners
+
+- [MGATHER dispatch](tlsu-mgather.md) defines the shared dimension check.
+- [Tile execution dispatch](tile-execution.md) orders the specialized selectors.
+- [Gather and scatter memory](../../../tile/model/memory/gather-scatter.md) defines `MGATHER_MASK`.
+- [BSTART.MGATHER.MASK](../../execution/BSTART.MGATHER.MASK.md) is the instruction page for the start form.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

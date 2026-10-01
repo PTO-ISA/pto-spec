@@ -19,39 +19,39 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-xb-purpose role=purpose -->
 ## What XB does
 
-`XB` identifies extension-owned encoding space that PTO inventories but always rejects before field interpretation or architectural effects.
+`XB` names a 32-bit encoding family that belongs to an extension, not to PTO. The spelling `XB ACR-ID, C-ID` is listed so that the family is inventoried and protected from collisions. In PTO it is not executable: a matching instruction raises `Fault_IllegalInstruction`, unless an earlier block-control check described below rejects it first.
 
 <!-- PTO-READER-BLOCK: block-xb-mechanism role=mechanism -->
-## Placement and execution mechanism
+## Decode and rejection mechanism
 
-`XB` executes as a standalone `32`-bit command and does not require placement inside a `BSTART`/`BSTOP` body.
+The family is every 32-bit word whose low 15 bits match `0x6f81` under mask `0x00007fff`. Bits 24:15 hold a 10-bit field `ACR-ID`, and bits 31:25 hold a 7-bit field `CROSS-BID`. The assembly spelling writes the second field as `C-ID`.
 
-The matched raw family uses the `L32` encoding class, but PTO rejects it before either displayed field is interpreted.
+Decode still recognizes the form and maps it to the handler `ExecuteCrossBlockTransfer`. The command dispatcher then asks `CommandHandlerSupported`, which returns false for this handler. The dispatcher raises `Fault_IllegalInstruction` at the current `TPC` and returns before the handler case is reached.
 
-Decode retains only collision identity; profile rejection precedes operand interpretation, memory, Block state, and control-flow effects.
+Design point: the form keeps a decode identity even though PTO never executes it. The ASL states that the identity is retained only for collision inventory and fail-closed dispatch. A tool that checks encoding overlaps therefore sees the family as occupied, and any matching word reaches the explicit `CommandHandlerSupported` rejection.
 
 <!-- PTO-READER-BLOCK: block-xb-inputs role=inputs-outputs -->
-## Carrier, bindings, and inputs
+## Fields and operands
 
-- Encoded operands: `ACR-ID` — uninterpreted extension field reserved in PTO; `CROSS-BID` — uninterpreted extension field reserved in PTO.
-- All operands are resolved from the accepted carrier or named architectural state; no body-local hidden operand stream is created.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+- `ACR-ID` is 10 bits wide. PTO does not interpret it, including encoded zero.
+- `CROSS-BID` is 7 bits wide. PTO does not interpret it, including encoded zero.
+- `XB` has no PTO default and no placement rule. It is not a header command, and its rejection does not depend on whether a block is active.
+
+Design point: all 1024 `ACR-ID` values and all 128 `CROSS-BID` values stay reserved. PTO must not allocate another instruction anywhere in this raw family, so a later extension can define the fields without colliding with PTO.
 
 <!-- PTO-READER-BLOCK: block-xb-effects role=effects -->
 ## State effects and ordering
 
-The form always raises `Fault_IllegalInstruction` and changes no Block, memory, or control-flow state.
+In PTO the form has no state effect. The rejection precedes operand interpretation, memory access, block state changes, and control-flow changes.
 
-The occupied raw encoding remains collision-protected for its complete field family.
+The handler body that the dispatcher would call records the two fields and marks the `BARG` transfer as indirect. That body is unreachable in PTO, because `CommandHandlerSupported` rejects `ExecuteCrossBlockTransfer` first.
 
 <!-- PTO-READER-BLOCK: block-xb-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+Every matching 32-bit word raises `Fault_IllegalInstruction` with the current `TPC`. `TPC` does not advance. One earlier top-level check can take precedence: while an `ACRC` request has left the system-block terminal marker set, the top-level dispatcher rejects every command other than a block start or stop with `Fault_BundleControl`, and that check runs before the handler-support check.
 
-The current owner reports invalid schema, state, address, or continuation conditions through `Fault_IllegalInstruction`; no prose on this page creates an additional fault rule.
-
-Rejection occurs before effects unless the current owner explicitly defines a restart boundary with retained progress; completion order remains the ASL order.
+The fault comes before `ACR-ID` or `CROSS-BID` is read. No field value can change the outcome, so there is no field-specific fault.
 
 <!-- PTO-READER-BLOCK: block-xb-example role=example -->
 ## Non-normative worked example
@@ -62,7 +62,7 @@ This example demonstrates placement and carrier flow only; exact behavior remain
 XB ACR-ID, C-ID (reserved in PTO)
 ```
 
-The shown spelling identifies occupied extension space only; PTO rejects every matching carrier before interpreting either displayed field.
+The word `0x00006f81` has both fields zero and matches the family. The word `0x0202ef81` has `ACR-ID = 5` and `CROSS-BID = 1` and also matches. Both raise `Fault_IllegalInstruction` at their own address, and neither changes any block, memory, or control-flow state.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

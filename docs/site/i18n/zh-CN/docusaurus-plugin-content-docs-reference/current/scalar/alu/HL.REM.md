@@ -19,48 +19,57 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-rem-purpose role=purpose -->
 ## HL.REM 的作用
 
-`HL.REM` 是一条 48 位标量 ALU 指令。它根据源快照同时计算有符号余数和商；当前指令契约定义结果发布路径以及任何额外状态效果。
+`HL.REM` 是一条 48 位标量 ALU 指令，它把两个有符号 XLEN 值相除，并发布两个结果：余数通过 `RegDst0`，商通过 `RegDst1`。
+
+除法是全定义的。除数为零以及有符号最小值除以 `-1` 都有定义结果，因此该助记符没有算术故障情形。
 
 <!-- PTO-READER-BLOCK: scalar-hl-rem-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后根据源快照同时计算有符号余数和商，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractQuotient_HL_REM` 与 `InstructionContractRemainder_HL_REM`，它们分别调用 `ScalarDivideSigned` 与 `ScalarRemainderSigned`。分派路径以 `signed_operation` 为真调用 `ExecuteScalarRemainderPair`；该辅助函数先算出 `quotient` 与 `remainder`，再把余数写入 `RegDst0`、把商写入 `RegDst1`。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+hl.rem SrcL, SrcR, ->Dst0, Dst1
+```
+
+设计要点：`ScalarDivideSigned` 对绝对值做除法，只在两个符号不同时取负，因此商向零截断。`ScalarRemainderSigned` 是 `dividend - quotient * divisor`，这使余数带上被除数的符号，而不是除数的符号。
 
 <!-- PTO-READER-BLOCK: scalar-hl-rem-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst0` 是 5 位字段，选择余数的 Reg5 目标，或丢弃余数。
-- `RegDst1` 是 5 位字段，选择商的 Reg5 目标，或丢弃商。
-- `SrcL` 是 5 位字段，通过 Reg5 选择被除数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择除数。
+- `RegDst0`，指令切片 `[23 +: 5]`，接收余数，或丢弃它。
+- `RegDst1`，指令切片 `[11 +: 5]`，接收商，或丢弃它。
+- `SrcL`，指令切片 `[31 +: 5]`，提供被除数。
+- `SrcR`，指令切片 `[36 +: 5]`，提供除数。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+两个源都使用通用 Reg5 映射：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4` 且不消耗表项。编码零除数读取体系结构零 GPR，因此会选择已定义的零除数结果。
+
+设计要点：两个目标字段相互独立，因此这一对可以丢弃其中一半、把一个写进 GPR 而把另一个推入队列，或者把两者都推入同一队列。重复推送是有定义的，因为先推余数、后推商。
 
 <!-- PTO-READER-BLOCK: scalar-hl-rem-effects role=effects -->
 ## 效果与顺序
 
-所有结果都在发布前计算完成。随后按编码顺序（`RegDst0`, `RegDst1`）更新目标；目标重复指向同一寄存器或队列时也采用这一顺序。
+两个源都取快照，两个结果都在任一目标写入之前算出，因此与 `SrcL` 或 `SrcR` 同名的目标无法干扰这一对结果。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 6 字节。
+发布顺序是 `RegDst0` 之后 `RegDst1`：先余数，后商。如果两个字段指向同一个 GPR，商是最终值；如果两者推入同一队列，商是最新表项，余数是次新表项。
 
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+目标效果之后 `TPC` 前进 `6` 字节。`HL.REM` 不读写内存，除选定的队列推送之外，数值状态、保留、描述符、Tile、指令束、特权与控制流状态都不改变。
 
 <!-- PTO-READER-BLOCK: scalar-hl-rem-constraints role=constraints -->
 ## 合法性与故障边界
 
-除数为零和有符号最小值除以负一均使用总定义；两个结果都在任何目标写入前计算完成。
+每个 `32` 编码的源编码与每个 `32` 编码的目标编码都有定义，重复目标也合法，因此操作数合法性只可能因临时源不可用而失败。固定编码位必须与规范的 48 位形式匹配。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+适用性只在系统块终止请求挂起时失败，并在 `TPC` 触发 `Fault_BundleControl`。否则，不匹配的编码在进入指令束主体之前于 `PC` 触发 `Fault_IllegalInstruction`，所选 `T` 或 `U` 源不可用时则在任一目标写入之前于 `PC` 触发 `Fault_IllegalInstruction`。
+
+设计要点：这里没有任何操作数值会触发算术故障。除数为零时发布商 `0`、余数等于被除数；有符号最小值除以 `-1` 时发布有符号最小值作为商、余数为 `0`，因为绝对值路径是回绕而不是陷入。
 
 <!-- PTO-READER-BLOCK: scalar-hl-rem-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `HL.REM` 示例说明：被除数 `13` 与除数 `5` 产生余数 `3`，随后产生商 `2`。
+取 `SrcL = 13`、`SrcR = 5` 时商为 `2`、余数为 `3`，因此 `RegDst0` 收到 `3`，`RegDst1` 收到 `2`。取 `SrcL = -7`、`SrcR = 3` 时商为 `-2`、余数为 `-1`，因此 `RegDst0` 收到 `0xFFFFFFFFFFFFFFFF`，`RegDst1` 收到 `0xFFFFFFFFFFFFFFFE`。`SrcR` 取体系结构零 GPR、`SrcL = 13` 时，`RegDst0` 收到 `13`，`RegDst1` 收到 `0`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

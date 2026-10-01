@@ -7,8 +7,63 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns the portable carrier rules of a Local `B.ASSEMBLE` generation: consumer readiness, writer completion, publication, speculation squash, and which producer operations may take part. A generation is a Local Tile built by several writer bundles. A consumer is a later bundle that reads that Tile as a source.
+
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-concepts role=concepts-state -->
+## Concepts and visible state
+
+The unit updates fields of the `_LocalGenerations` slots:
+
+- per-writer `ready` flags and per-PE `per_pe_ready_cells` maps;
+- `per_pe_published` flags and the slot's `published`, `published_destination`, `committed_destination`, and `committed_valid`;
+- up to 16 consumer records. Each holds the source, participant mask, generation instance, execution-domain token, consumer instruction instance, the required CELL set, a mode (`WholeParent` or `Range`), and a state (`Waiting`, `Eligible`, `Retired`, or `Cancelled`).
+
+An execution domain identifies one dynamic execution of a bundle. `BeginBundleAt` takes a fresh token for every dynamic bundle execution, and trap-context recovery restores the saved token.
+
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-rules role=rules-interactions -->
+## Rules and interactions
+
+A consumer's source is checked by `BundlePrepareConsumerSource`. If the source is not a generation, it is ready. Otherwise the consumer requires either the CELL range selected by its `B.SUBVIEW` or, without a subview, every parent CELL. `BundleConsumerDependencyReady` is TRUE when each participating PE has every required CELL ready, and in whole-parent mode also has the generation published. The first call registers the consumer; a repeat call from the same consumer instance finds the same record.
+
+A consumer that is not ready makes stage-2 preparation return FALSE without a fault. The NDF `PTO-B-ASSEMBLE-CONSUMER-READINESS-001` calls this a non-faulting, no-effect waiting state.
+
+`CompleteBundleLocalGenerationWriterEvent` is the event that marks one registered writer complete. It sets that writer's ready cells, recomputes `ready_cells` from all completed writers, and updates per-PE publication. If the generation is closed, unpublished, and eligible, it publishes it: the committed mapping moves to the working destination, and the destination is published into its hand's relative queue if it is not already there. It then re-evaluates waiting consumers.
+
+Design point: registration and completion are separate events. The ASL comment states that coverage and readiness therefore remain separate even when writers complete out of order. A consumer of the generation waits until its required CELLs are ready, not merely covered.
+
+`SquashBundleExecutionDomain` invalidates every writer and consumer of the squashed domain, rebuilds coverage and readiness from the survivors, and aborts an open generation that has no writers left. The abort path keeps the older committed mapping, as the NDF `PTO-B-ASSEMBLE-SPECULATION-001` requires.
+
+`BundleProducerEffectEligible` rejects, with `Fault_TileLegality`, an operation whose handler class is `NonRollbackAuxiliary` when a Local Tile binding of the bundle carries an assemble modifier. That class covers `TSTORE`, `TPREFETCH`, `TSCATTER`, `MSCATTER`, `MSCATTER_MASK`, and the GM atomic and reduction handlers.
+
+Design point: tile execution checks eligibility, for every operation except TIMG2COL, before descriptor preparation, body execution, allocation, or auxiliary effects. A generation writer that could not be rolled back is rejected before it has done anything.
+
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-boundaries role=boundaries -->
+## Architectural boundaries
+
+The completion and squash entry points are architecture events, not encoded instructions. In the current ASL they are driven by tests. `RetireBundleConsumerDependencies` retires every eligible consumer after a successful operation.
+
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+A generation has 32 CELLs, and writers for CELLs 0..15 and 16..31 are registered and closed by LAST. A consumer uses `B.SUBVIEW` for CELLs 0..3. Before any completion event it waits and has no effect. After the first writer completes, CELLs 0..15 are ready, so the consumer becomes eligible and may run. A second consumer without a subview needs the whole parent. It stays waiting until the second writer completes and the generation is published.
+
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-related role=related-owners-navigation -->
+## Related owners
+
+- [Local generation](local-generation.md) registers writers and aborts generations.
+- [Local generation CUBE](local-generation-cube.md) owns CUBE finalization.
+- [Subview descriptor](subview-descriptor.md) calls the consumer check before copying a view.
+- [Tile execution](../dispatch/tile-execution.md) calls eligibility and retirement.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

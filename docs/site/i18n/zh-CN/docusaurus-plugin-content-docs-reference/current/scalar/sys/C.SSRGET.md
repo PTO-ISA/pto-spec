@@ -19,42 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-ssrget-purpose role=purpose -->
 ## C.SSRGET 的作用
 
-`C.SSRGET` 读取一个已分配的短系统寄存器 ID，并把完整 XLEN 值压入 T。
+`C.SSRGET` 读取一个系统寄存器，并把读到的值压入 `T` 队列。它是压缩形式的系统寄存器读取：目的位置是隐式的，寄存器由短标识符指名。
+
+只分配了三个标识符，因此该指令只能到达三个寄存器：`THREAD_PTR`、`GLOBAL_PTR` 和 `TIME`。
 
 <!-- PTO-READER-BLOCK: scalar-c-ssrget-mechanism role=mechanism -->
-## 系统机制
+## 指令如何放置与执行
 
-ASL DOC 区域选择 `ScalarHandler_ExecuteCompressedSystemRegisterGet`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+本指令是活动 SYS 块体中的一个标量操作。标量分派器先检查是否存在活动指令束，以及其块体是否活动且块类型为 System；处于这种块之外的 SYS 形式会以 `Fault_BundleControl` 被拒绝，这发生在任何编码字段检查之前，也发生在任何架构效果之前。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+随后检查编码合法性与源可用性，之后处理程序才运行。
+
+5 位标识符被当作系统寄存器地址的低位，因此标识符 `0`、`1` 和 `16` 指名地址 `0x0000`、`0x0001` 和 `0x0010`。它们分别是 `THREAD_PTR`、`GLOBAL_PTR` 和 `TIME` 的地址。其他每个五位标识符都是保留的。
+
+随后读取走通用系统寄存器读取规则，该规则按顺序施加两项检查。第一项是环检查：低十二位小于 `0x0f00` 的地址在每个环上都可读，其他任何地址都要求根环。三个已分配地址都属于小于 `0x0f00` 的那一组，因此它们都不需要根环。第二项检查拒绝访问类别为未知或只写的地址；三个已分配地址都可读，因此它们也都不在这里被拒绝。
+
+如果两项检查都通过，读到的值作为完整 XLEN 字被压入 `T` 队列。如果任一项检查失败，处理程序引发 `Fault_IllegalInstruction` 并且不压入，因此 `T` 队列保持其顺序与内容。
+
+设计要点：目的位置是 `T` 队列而不是 GPR 选择器。这正是压缩形式能够去掉目的字段的原因；它也意味着只要在压入之前而不是之后做测试，被拒绝的读取就可以做到对队列无副作用。
 
 <!-- PTO-READER-BLOCK: scalar-c-ssrget-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`SSRID` 承载短系统寄存器标识符。
-
-编码零是已分配的字段值，从不表示省略操作数。
+- `SSRID` 是唯一的编码操作数：5 位短系统寄存器标识符。已分配取值是 `0`、`1` 和 `16`；其他每个取值都是保留的。编码零是已分配取值并指名 `THREAD_PTR`，不是被省略的操作数。
+- 目的位置是隐式的：完整 XLEN 值被压入 `T` 队列，成为最新表项；队列满时会丢弃最旧的表项。
+- 不写任何 GPR 和 `U` 队列表项，也不读取任何标量寄存器。
 
 <!-- PTO-READER-BLOCK: scalar-c-ssrget-effects role=effects -->
 ## 架构效果
 
-直接 ID `0`、`1` 和 `16` 分别读取 `THREAD_PTR`、`GLOBAL_PTR` 或 `TIME`，并把完整 XLEN 值压入 T。
+成功时发生一次 `T` 压入，`TPC` 前进 `2` 字节。队列压入会把已有表项整体移动一个位置，因此在 `T#1`..`T#4` 中保留早先结果的程序必须考虑这种移动。
 
-读取被拒绝时，除普通陷阱进入外，不会改变所选目的地或临时队列顺序。
+读取本身没有内存效果，也不获取保留状态。`TIME` 返回架构时间值，模型对每次已解码执行尝试推进该值一次，因此读 `TIME` 观察到的是源被读取那一刻的尝试计数。
 
 <!-- PTO-READER-BLOCK: scalar-c-ssrget-constraints role=constraints -->
-## 位置与拒绝边界
+## 放置与拒绝
 
-其他所有 5 位 ID 都是保留值；拒绝访问时，除普通陷阱进入外，访问与队列状态保持不变。
+无效的块放置首先被拒绝，以 `Fault_BundleControl` 报出，此时连编码字段都还没有被考虑。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+保留的标识符会在隐式 `T` 目的效果之前引发 `Fault_IllegalInstruction`，因此被拒绝的 `C.SSRGET` 除普通陷阱进入之外不会改动 `T` 队列的顺序与内容。访问规则拒绝的读取也由同一拒绝覆盖。
+
+访问规则看到的是完整编码地址，而不只是五位标识符，因此环检查与访问类别检查都作用于该标识符指名的地址。
 
 <!-- PTO-READER-BLOCK: scalar-c-ssrget-example role=example -->
 ## 非规范示例
 
-该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
-
-可从 `c.ssrget SSR-ID, ->t` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+`c.ssrget SSR-ID, ->t` 在 `SSRID=16` 时读取 `TIME`，并把完整的 XLEN 时间值压入 `T` 队列。在 `SSRID=2` 时该标识符是保留的：指令引发 `Fault_IllegalInstruction`，不压入任何值，已有的 `T` 表项保持各自位置。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

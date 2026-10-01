@@ -19,48 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-geui-purpose role=purpose -->
 ## What SETC.GEUI does
 
-`SETC.GEUI` evaluates unsigned greater-than-or-equal and publishes the result as the current Conditional bundle commit decision.
+`SETC.GEUI` compares one scalar register against an encoded immediate as unsigned integers and publishes the answer as the commit decision of the Conditional bundle it sits in.
+
+The right operand is built from the instruction word rather than from a register, so a bound known at assembly time needs no register to hold it.
 
 <!-- PTO-READER-BLOCK: scalar-setc-geui-mechanism role=mechanism -->
-## Mechanism
+## Building the right operand from `uimm12` and `shamt`
 
-Placement and the single-setter rule are checked before source readiness or reads.
+`uimm12` is zero-extended to the full word width, then logically shifted left by the `shamt` field, which the model reads as the low `6` bits of that encoded field. The shifted word is the value the unsigned relation `UInt(left) >= UInt(right)` tests.
 
-`uimm12` is zero-extended to XLEN before any shift or comparison.
+The left operand `SrcL` is read as a complete word and is never shifted.
 
-The decoded immediate is logically shifted left by `shamt` before the condition is evaluated.
-
-The snapshotted operands are evaluated for unsigned greater-than-or-equal and canonicalized to XLEN one or zero.
+Design point: the shift makes the immediate field cover values that a plain `12`-bit field cannot reach, while `shamt` fixes the low bits of the comparison value to zero — an immediate is always compared as a multiple of `2` raised to the `shamt` value, so no encoded pair produces an odd value at a nonzero shift.
 
 <!-- PTO-READER-BLOCK: scalar-setc-geui-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `SrcL` supplies the left scalar source.
+- `SrcL` is a Reg5 source read as a complete word: codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`.
+- `shamt` supplies the shift amount applied to the immediate; encoded zero performs no shift.
+- `uimm12` supplies the unsigned encoded immediate; encoded zero supplies numeric zero.
 
-- `shamt` supplies the encoded shift amount.
-
-- `uimm12` supplies an unsigned encoded immediate.
+`SrcL` is not consumed, and the instruction writes no `GPR`, `T`, or `U` destination.
 
 <!-- PTO-READER-BLOCK: scalar-setc-geui-effects role=effects -->
 ## Effects and ordering
 
-The canonical condition is written atomically to `_CommitArgument` and `BARG.TAKEN`, and the condition-set marker becomes true.
+On success the commit argument receives exactly `1` or `0`, `BARG.TAKEN` follows the same truth value when a bundle is active, and the block condition is marked as set. `TPC` then advances by `4` bytes.
 
-On success, `SETC.GEUI` advances `TPC` by `4` bytes. It has no scalar destination and no memory or reservation effect.
+No memory, reservation, descriptor, or numeric-status state changes, and `BARG.BPC`, `BARG.BPCN`, `BARG.BlockType`, and `BARG.TYPE` are preserved.
 
 <!-- PTO-READER-BLOCK: scalar-setc-geui-constraints role=constraints -->
-## Legality and fault order
+## Block placement, ordering, and faults
 
-The instruction is valid only in the applicable Conditional bundle context, and only one successful condition setter may occur.
+Applicability is confined to the body of an active Conditional block, and the shared one-setter marker allows at most one successful `SETC` condition setter per block.
 
-Wrong placement or a repeated setter raises an Illegal Block Exception before source reads; encoding or unavailable-source failures raise `Fault_IllegalInstruction` before commit or `TPC` effects.
+Wrong placement or a repeated successful setter raises `Fault_BundleControl` (trap number `5`, `BUNDLE_TRAP`) before operand legality and before any source read. A fixed-bit mismatch or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before commit state, `BARG`, queue, or `TPC` effects. A rejected occurrence leaves the shared marker unconsumed.
 
 <!-- PTO-READER-BLOCK: scalar-setc-geui-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not create a second semantic definition.
 
-`setc.geui SrcL, uimm` evaluates the described condition, writes the canonical decision to commit state, and advances `TPC` only after that update.
+Place `128` in GPR1 and execute the form whose encoded fields are `SrcL=1`, `shamt=4`, and `uimm12=8`. The immediate becomes `8` shifted left by `4`, that is `128`, and the unsigned relation `128 >= 128` commits `1`. With GPR1 set to `127` the same form commits `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

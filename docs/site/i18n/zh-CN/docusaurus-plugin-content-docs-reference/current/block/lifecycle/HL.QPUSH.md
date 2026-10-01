@@ -19,39 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-hl-qpush-purpose role=purpose -->
 ## HL.QPUSH 的作用
 
-`HL.QPUSH` 是独立的通用队列管理命令；队列更新、状态结果与可选事件构成一个有序指令效果。
+`HL.QPUSH` 向通用队列管理（GQM）队列添加一个 64 位条目，默认加在队尾，使用 `.h` 时加在队头。它在结果寄存器中报告结果，而不是进入陷阱。队列由 [HL.QMT](HL.QMT.md) 创建，由 [HL.QPOP](HL.QPOP.md) 取出；其行为定义见 [通用队列管理](../../arch/programming-model/general-queue-management.md)。
 
 <!-- PTO-READER-BLOCK: block-hl-qpush-mechanism role=mechanism -->
 ## 放置与执行机制
 
-`HL.QPUSH` 作为独立的 `48` 位命令执行，不要求放在 `BSTART`/`BSTOP` Block 体内。
+`HL.QPUSH` 是独立的 48 位命令。它不打开、不要求也不提交 block，并把 `TPC` 推进 6。
 
-已接受载体使用 `HL48` 编码类别；命令在读取绑定或改变状态前，会先解析所有显示字段。
+合法性检查之后，它从 `SrcL` 读取队列地址，从 `SrcR` 读取条目。随后验证队列。若队列接受该条目，则插入条目，若 `e=1` 则广播事件，并把结果字写入 `RegDst`。否则只写入结果字。
 
-命令会在第一个可见效果前快照所有必需源，随后遵循归属单元定义的提交或重启边界。
+设计要点：两个源都在写入 `RegDst` 之前读取。因此即使目标与某个源是同一寄存器，也不会改变推入所使用的地址或条目。
 
 <!-- PTO-READER-BLOCK: block-hl-qpush-inputs role=inputs-outputs -->
 ## 载体、绑定与输入
 
-- 编码操作数：`SrcL` — 提供队列地址的 Reg5 源; `SrcR` — 提供 64 位条目的 Reg5 源; `RegDst` — 接收操作结果的 Reg5 目的端; `h` — 头部插入选择器; `e` — 成功事件选择器; `r` — relaxed 顺序选择器。
-- 所有操作数都来自已接受载体或命名架构状态；命令不会创建 Block 体私有的隐藏操作数流。
-- 编码零仍是已分配值或明确规定的拒绝值；它不会静默表示省略操作数。
+- `RegDst`，位 `27:23`：结果字的目标。
+- `SrcL`，位 `35:31`：队列地址的来源。
+- `SrcR`，位 `40:36`：64 位条目的来源。
+- `e`（位 41）、`r`（位 42）、`h`（位 43）：标志。全部八种组合都已分配，由后缀拼写，例如 `.her`。
+
+每个寄存器字段都是 Reg5 选择器，见 [标量操作数](../../scalar/model/types/operands.md)。代码 0 至 23 指 R0 至 R23。作为源时，代码 24 至 31 读取 `T#1` 至 `T#4` 与 `U#1` 至 `U#4`。作为目标时，代码 30 推入 U 队列，代码 31 推入 T 队列，代码 24 至 29 丢弃结果。
+
+设计要点：裸形式是不带事件、具有 release 顺序的队尾插入。每个标志的编码零都选择对应默认值：`h=0` 为队尾，`e=0` 为无事件，`r=0` 为 release。置位 `r` 请求 relaxed 顺序，因此顺序边是需要显式放弃的，而不是需要显式请求的。
 
 <!-- PTO-READER-BLOCK: block-hl-qpush-effects role=effects -->
 ## 状态效果与顺序
 
-源验证与快照发生在所有寄存器、队列、栈帧、内存、事件或控制流效果之前。
+- 成功的推入存储条目，在位 `9:0` 返回推入后的剩余容量，并在位 `63:62` 写入状态 `00`。
+- 已满或已挂起的队列以当前剩余容量返回状态 `01`；不存储任何内容。
+- 缺失或损坏的队列返回状态 `10`；不存储任何内容。状态 3 保留。
 
-命令把状态与结果作为一个有序指令效果发布，再按归属单元规定前移或转移控制。
+只有 `e=1` 的成功推入才会广播事件。队列更新、事件与结果写入是一个原子指令效果。
+
+设计要点：当 `r=0` 时，成功的推入是一次 release。条目记录一个 release 纪元，取出该条目的非 relaxed 弹出会 acquire 推入之前排序的内存操作。当 `r=1` 时，条目不记录 release 边。`HL.QPUSH` 本身不直接访问内存。
 
 <!-- PTO-READER-BLOCK: block-hl-qpush-constraints role=constraints -->
 ## 合法性、故障与原子性
 
-固定比特、保留值、选择器取值域与必需的 Block 放置关系都在架构效果之前检查。
+相对 `SrcL` 或 `SrcR` 源所指队列条目无效时，在源读取、队列观察、事件、目标写入或 `TPC` 推进之前引发 `Fault_IllegalInstruction`。
 
-当前归属单元通过 `Fault_IllegalInstruction` 报告无效模式、状态、地址或后继条件；本页说明文字不创建额外故障规则。
+已满、已挂起、缺失与损坏的队列在 `RegDst` 中报告，不会进入陷阱。容量为 0 的队列总是已满，因此向其推入会返回状态 `01`。
 
-除非当前归属单元明确规定带保留进度的重启边界，否则拒绝发生在效果之前；完成顺序始终采用 ASL 顺序。
+事件后缀是 `e`；`b` 不是别名。下方生成的合法性与异常章节具有权威性。
 
 <!-- PTO-READER-BLOCK: block-hl-qpush-example role=example -->
 ## 非规范示例
@@ -62,7 +71,7 @@ The current instruction contract is owned by the ASL source linked above.
 hl.qpush a0, a1, ->a2
 ```
 
-所示已接受拼写从当前载体解析字段，快照必需源，再执行归属单元规定的状态与顺序转换。
+假设 `a0` 指向一个已有 3 个条目的 16 条目队列，`a1` 保存 `0x55`。推入把 `0x55` 追加到队尾，并以状态 `00` 写入 `a2 = 12`。若使用 `hl.qpush.h`，`0x55` 会被插入到当前队头之前，因此下一次弹出会先返回它。若队列已挂起，`a2` 会接收状态 `01`，位 `9:0` 为 13，队列保持不变。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

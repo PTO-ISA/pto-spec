@@ -19,46 +19,56 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-add-purpose role=purpose -->
 ## What ADD does
 
-`ADD` is a standalone 32-bit scalar instruction that prepares its right source, adds it to the unchanged left source modulo `2^PTO_XLEN`, and publishes one XLEN result.
+`ADD` prepares a right source, adds it to an unchanged left source at `PTO_XLEN` width, and publishes the sum through a Reg5 destination. `PTO_XLEN` is `64`, so the published value is one 64-bit word.
+
+Design point: `ADD` shares its five encoded fields with `AND`, `OR`, `XOR` and with the `W` word forms of those mnemonics. One field layout means one decoder and one operand-legality check serve the whole family, and the mnemonic alone selects both the element operation and, for `SrcRType=10`, whether that modifier means negation or bitwise complement.
 
 <!-- PTO-READER-BLOCK: scalar-add-mechanism role=mechanism -->
 ## How the result is formed
 
-The instruction applies the selected `SrcRType` transformation to `SrcR`, performs the encoded logical left shift on that transformed value, and only then adds the prepared right value to `SrcL`.
+Execution prepares the right source in two ordered steps, then adds.
 
-- `SrcRType=00` selects signed-word extension, `01` selects unsigned-word extension, `10` selects negation for `ADD`, and `11` leaves the complete right source unchanged.
-- `shamt` is a logical left-shift amount from `0` through `31`; `0` leaves the transformed value unshifted.
+- `SrcRType` transforms `SrcR`: `00` sign-extends `SrcR[31:0]`, `01` zero-extends `SrcR[31:0]`, `10` negates the complete value, and `11` leaves it unchanged. An omitted assembly suffix encodes `SrcRType=11`.
+- `shamt` then shifts the transformed value logically left by `0` through `31` bits.
 
-Negation, shifting, and addition are fixed-width operations. They wrap modulo `2^PTO_XLEN` and do not raise an arithmetic exception.
+The prepared right value is added to the snapshotted `SrcL` modulo `2^PTO_XLEN`, so the sum wraps and no arithmetic exception is raised.
+
+Design point: the shift applies to the right operand, not to the sum. The single encoding `add a0, a1.neg<<3, ->a0` therefore computes `a0 - 8*a1`, and `add a0, a1<<4` adds sixteen times the right source.
+
+Design point: negation is `Zeros - value` at XLEN width, so negating the most negative word returns that same word. The instruction has no overflow or saturation form to select.
 
 <!-- PTO-READER-BLOCK: scalar-add-inputs role=inputs-outputs -->
 ## Inputs and destination
 
-- `SrcL` and `SrcR` use the full Reg5 source domain: `0..23` select GPRs, `24..27` select `T#1..T#4`, and `28..31` select `U#1..U#4`; temporary sources are read without consumption.
-- `RegDst` values `1..23` write a GPR, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard the result.
+- `SrcL` and `SrcR` are Reg5 sources: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`. Reading a temporary source does not consume it.
+- `RegDst` publishes the result: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-Every displayed field is encoded. An omitted assembly modifier denotes `SrcRType=11`; encoded `shamt=0` means no shift rather than an omitted operation.
+Design point: destination code `0` discards rather than writing the zero GPR, and codes `24..29` discard even though `24..27` name T sources. The same five-bit field is therefore not symmetric between reads and writes.
+
+Design point: encoded zero of `SrcL` or `SrcR` reads the architectural zero GPR, so `add zero, a0, ->a1` is an ordinary copy. No field can be omitted from the encoding; the assembly suffix is the only optional spelling.
 
 <!-- PTO-READER-BLOCK: scalar-add-effects role=effects -->
 ## Effects and ordering
 
-Both sources are snapshotted before the destination effect, so a destination alias or queue push cannot change either value consumed by the same instruction.
+Both sources are read before the destination is written, so `add a0, a0, ->a0` and a destination that aliases a source both use the pre-instruction values.
 
-After computing the result, `ADD` publishes or discards it according to `RegDst`, then advances `TPC` by `4` bytes.
-
-`ADD` does not read or write memory and does not change reservation, descriptor, numeric-status, trap, block, privilege, predicate, or control-flow state beyond the successful `TPC` advance.
+After the sum is published or discarded, `TPC` advances by `4` bytes. Nothing else changes. `ADD` reads and writes no memory, and it leaves reservation, descriptor, numeric-status, trap, bundle, privilege, predicate and control-flow state untouched apart from the one `T` or `U` push selected by `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-add-constraints role=constraints -->
 ## Legality and fault boundary
 
-All four `SrcRType` values and all `32` shift amounts are assigned. A fixed-bit mismatch or an unavailable selected T/U source raises `Fault_IllegalInstruction` before destination publication and before `TPC` advances.
+Every encoded value is assigned: all four `SrcRType` codes and all `32` `shamt` values from `0` through `31` are legal, so `ADD` has no reserved encoding of its own.
+
+The checks run in a fixed order before any result exists. An undecodable form raises `Fault_IllegalInstruction` at `PC`; an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`; a fixed-bit mismatch or an unavailable selected T/U source raises `Fault_IllegalInstruction`. After any fault the destination is not written and `TPC` stays at the faulting instruction, so a reissue recomputes address, sources and result with no retained progress.
+
+Design point: source availability is checked before the sources are read. That is why `add t#1, a0, ->a0` on an empty T queue faults instead of reading an undefined value: the check turns an uninitialized temporary into a defined trap.
 
 <!-- PTO-READER-BLOCK: scalar-add-example role=example -->
 ## Non-normative walkthrough
 
 This walkthrough illustrates the current owner; it does not replace the normative operation above.
 
-With `SrcL=10`, `SrcR=3`, `SrcRType=10`, and `shamt=1`, `ADD` negates the right source, shifts the result left once, and computes `10 + (-6) = 4` modulo `2^PTO_XLEN`. If the destination aliases the left GPR, the calculation still uses the original value `10`.
+With `SrcL=10`, `SrcR=3`, `SrcRType=10` and `shamt=1`, `ADD` first negates the right source to `-3`, then shifts it left once to `-6`, and finally computes `10 + (-6) = 4` modulo `2^PTO_XLEN`. The published word is `4`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

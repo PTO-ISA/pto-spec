@@ -15,39 +15,60 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-fault-precision-purpose role=purpose-scope -->
 ## Purpose and scope
 
-This unit centralizes fault, service-request, and interrupt entry plus trap-status packing. For synchronous `SetFaultWithCause`, context save and redirection to a target `AccessControlRing` occur only when the code is not `Fault_None`.
+This unit owns the replay checkpoint that lets a retry re-execute a whole Tile memory request, and the funnel from memory faults to architectural trap state. It carries `PTO-ARCH-MEMORY-MODEL-REPLAY-001` and `PTO-ARCH-MEMORY-MODEL-FLUSH-001`, and depends on `PTO-ARCH-STATE-TRAP-CONTEXT`.
+
+The body writes `_MemoryReplayState`, the trap bank arrays, `_LastFault`, `_FaultAddress`, `TPC` and one `_ExtendedSystemRegisters` entry.
 
 <!-- PTO-READER-BLOCK: arch-fault-precision-concepts role=concepts-state -->
-## Trap-entry state
+## Replay checkpoint and the trap bank
 
-- `SetFaultWithCause` records the fault code, address, cause, and trap status for every input code.
-- When the code is not `Fault_None`, it saves context, selects the target `AccessControlRing` as current, and redirects `TPC`. For `Fault_None`, it keeps the source ring and performs neither the save nor the redirect.
-- `RaiseServiceRequest` checks permission, saves a resume `TPC` four bytes past the source `TPC`, and enters the service target.
-- `RaiseInterrupt` marks the interrupt pending and enters only when that interrupt is enabled.
+- `_MemoryReplayState` is a four-field record defined in `asl/arch/data-types/memory-model.asl`: `active`, `request`, `committed_event_count` and `epoch`.
+- `BeginMemoryReplay(request)` sets `active` true, stores `request`, copies `_MemoryEventCount` into `committed_event_count` and increments `epoch`.
+- `CommitMemoryReplayEffect` moves `committed_event_count` up to `_MemoryEventCount`, only while `active` is true.
+- `FlushMemoryReplay` rewinds `_MemoryEventCount` to `committed_event_count` and clears `active`; `CompleteMemoryReplay` moves it up and clears `active`.
+- The trap bank is five per-ring arrays: `_ACRTrapAsynchronous`, `_ACRTrapArgumentValid`, `_ACRTrapCause` as `bits(24)`, `_ACRTrapNumber` as `TrapNumber` and `_ACRTrapArgument0` as `Word`.
 
 <!-- PTO-READER-BLOCK: arch-fault-precision-rules role=rules-interactions -->
-## State-transition rules
+## What each entry point writes
 
-- Synchronous fault entry sets asynchronous false and makes the trap argument valid for nonzero faults.
-- Interrupt entry sets asynchronous true, records trap number `44`, and places the `InterruptID` in argument `0`.
-- `ClearFault` clears current-ring fault reporting without reconstructing an earlier context.
-- `PackTrapStatus` and `UnpackTrapStatus` map asynchronous, argument-valid, 24-bit cause, and 6-bit number fields.
+- `SetFaultWithCause(code, address, cause)` calls `SaveTrapContext(ring, source_ring)` and writes `TPC` only for nonzero `code`, where `ring = TrapTargetForFault(CurrentACR())` and is the source ring otherwise.
+- It records `code` in `_LastFault`, `address` in `_FaultAddress` and `cause` in `_ACRTrapCause`, and sets `_ACRTrapArgumentValid[[ring]]` from `code != Fault_None`.
+- The `case code of` statement gives `Fault_None` and `Fault_ExecutionStateCheck` trap number `0`, `Fault_IllegalInstruction` `4`, the four tile and bundle codes a shared `5`, `Fault_ServiceRequest` `6`, and the remaining instruction, data and debug faults distinct numbers from `32` to `52`.
+- For nonzero `code` it calls `SetCurrentACR(ring)` and `WriteTPC(TrapVectorEntry(ring, address))`; `TrapVectorEntry` returns `EVBASE` when nonzero and `address` otherwise.
+- `ClearFault` resets the current ring's bank to `Fault_None`, zero cause, trap number and argument, false flags, and clears `_FaultAddress` too.
+- `RaiseServiceRequest(request_type)` checks `ServiceRequestPermitted(source_ring, request_type)`: on refusal it raises `Fault_IllegalInstruction` at `ReadTPC()` and returns false; on success it saves context for `ServiceRequestTarget`, resumes `4` bytes past the source TPC and enters with trap number `6` and argument `source_tpc` through `TrapVectorEntry`.
+- `RaiseInterrupt(interrupt_id, cause)` marks the interrupt pending and, when `InterruptEnabled` is true, saves context and enters the target ring asynchronously with trap number `44`.
+- `PackTrapStatus(ring)` builds one `Word`: bit `63` asynchronous, bit `62` argument-valid, `value[24 +: 24]` cause, `value[0 +: 6]` trap number; `UnpackTrapStatus` restores those fields.
+
+Design point: `FlushMemoryReplay` rewrites `_MemoryEventCount` and nothing else, so it cannot undo a GM write or a tile payload element; the caller wrote those before recording the event. Records above the checkpoint stay in `_MemoryEvents` but unreachable: readers bound themselves by `_MemoryEventCount`, and `AddMemoryEvent` overwrites that slot next.
+
+Design point: `MemoryReplayCanRetryWholeRequest` requires inactive replay state and either a saved request equal to the supplied `request` or a saved request of `Zeros{PTO_XLEN}`. A saved zero is a wildcard that accepts any supplied request; supplying zero does not bypass a nonzero saved request. `FlushMemoryReplay` and `CompleteMemoryReplay` clear `active`, and reset also starts with inactive state and a zero saved request.
+
+Design point: `SetFaultWithCause` writes the supplied `address` and `cause` before the `case`, even for `Fault_None`. That code leaves argument-valid false and trap number `0`, but `_FaultAddress` becomes the supplied address and the current bank stores the supplied cause. `ClearFault` instead zeroes the fault address and the bank's cause.
 
 <!-- PTO-READER-BLOCK: arch-fault-precision-boundaries role=boundaries -->
-## Commit boundaries
+## Boundaries
 
-`Fault_BundlePostCommit` is represented as a successful-commit boundary trap: the continuation has already been chosen when the context is saved. A denied service request instead raises `Fault_IllegalInstruction` and returns false.
+`Fault_BundlePostCommit` is a success boundary, not a failed instruction: it shares trap number `5` with the tile and bundle faults, and its only ASL producer is `SetFault(Fault_BundlePostCommit, next_pc)` in `asl/block/model/lifecycle/enter-stop.asl`.
+
+`RaiseInterrupt` is called by no ASL unit, only by tests; `RaiseServiceRequest` is called for example from `ArchitectureCloseRequest` in `asl/scalar/model/sys/semantics.asl`. The `PTO-ARCH-MEMORY-MODEL-REPLAY-001` clause calls the faulting instruction the restart point, but this unit writes the trap vector entry, and for a service request an address `4` bytes past it.
+
+The flush writes no fault state and the fault entry writes no replay state other than the context copy, so a fault without `FlushMemoryReplay` leaves `active` true.
 
 <!-- PTO-READER-BLOCK: arch-fault-precision-example role=example-usage -->
-## Non-normative reading example
+## Non-normative replay example
+
+A Tile load opens the record with `BeginMemoryReplay(ReadBPC())` at `_MemoryEventCount` `4`, commits two events and reaches checkpoint `6`. When a later element fails its probe, `FlushMemoryReplay` returns `_MemoryEventCount` to `6`, and the committed events and GM writes stay in place.
 
 Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
 
 <!-- PTO-READER-BLOCK: arch-fault-precision-related role=related-owners-navigation -->
 ## Related owners
 
-- `PTO-ARCH-STATE-TRAP-CONTEXT` owns the saved-context representation.
-- Trap-context recovery defines the inverse profile path for a recoverable saved context.
+- `PTO-ARCH-STATE-TRAP-CONTEXT` owns `_TrapContexts` and `SaveTrapContext`.
+- `PTO-ARCH-SYSTEM-REGISTERS-ACCESS-CONTROL` owns `CurrentACR`, `TrapTargetForFault`, `ServiceRequestPermitted`, `ServiceRequestTarget` and `TrapVectorEntry`.
+- [Memory events](memory-events.md) owns `_MemoryEventCount` and the event array.
+- `PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT` declares `_MemoryReplayState` and the trap bank arrays.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

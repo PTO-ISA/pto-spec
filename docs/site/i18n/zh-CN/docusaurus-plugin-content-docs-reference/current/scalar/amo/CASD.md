@@ -19,42 +19,66 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-casd-purpose role=purpose -->
 ## CASD 的作用
 
-`CASD` 把 `SrcL` 指向的双字与 `SrcR` 进行原子比较；相等时写入 `SrcD`，而两条路径都会发布先前的 64 位值。
+`CASD` 是 8 字节的比较并交换：它读取 `SrcL` 指向地址处的双字，把全部 `64` 位与 `SrcR` 比较，仅当两个双字完全相同时才把 `SrcD` 写入该地址。
+
+匹配与不匹配都会把原来的双字发布到 `RegDst`。`CASD` 是一个 32 位编码形式，成功执行使 `TPC` 前进 `4` 字节。
 
 <!-- PTO-READER-BLOCK: scalar-casd-mechanism role=mechanism -->
-## 原子机制
+## 比较整个双字
 
-ASL DOC 契约选择 `ScalarHandler_CompareAndSwap`，访问宽度为 `8` 字节。
+分发逻辑以 `size_bytes = 8` 调用 `CompareAndSwap`，因此读探测和写探测各覆盖 `8` 字节，并且只要地址不是 `8` 的倍数，两者都无法通过对齐检查。
 
-匹配与不匹配都会发出一个带排序属性的原子事件；只有匹配路径会把写入标记为已执行。
+`LoadTranslatedUnsigned` 从内存填满 `64` 位，而 `NormalizeAtomicUnsigned` 与 `NormalizeAtomicReturn` 都原样返回 `8` 字节值，因此载入的双字与发布的双字之间不存在扩展或截断步骤。
+
+设计要点：宽度 `8` 在两个规范化函数中都是恒等情况，所以 `SrcR` 的每一位都参与比较，`SrcD` 的每一位都可被写入。高半部写错的期望值会匹配失败；较窄的形式则不同，它们在比较前就丢弃了那些位。
+
+设计要点：`StoreTranslated` 逐字节写入 `SrcD` 的低 `8` 字节，而原子事件携带 `NormalizeAtomicUnsigned(desired, 8)`，即 `SrcD` 原值。因此事件中的新值与写入提交的字节是同一个值。
 
 <!-- PTO-READER-BLOCK: scalar-casd-inputs-outputs role=inputs-outputs -->
-## 输入与结果
+## 字段、排序与选择器
 
-`SrcL` 承载 Reg5 原子地址源；`SrcR` 承载 Reg5 期望双字源；`SrcD` 承载 Reg5 目标双字源；`RegDst` 承载 Reg5 旧值目的地；`aq` 承载获取排序位；`rl` 承载释放排序位。
+该形式把 `SrcL` 编码在指令位 `15`，`SrcR` 在第 `20` 位，`SrcD` 在第 `27` 位，`RegDst` 在第 `7` 位，各宽 `5` 位，另有第 `25` 位的 `rl` 和第 `26` 位的 `aq`。
 
-`aq` 与 `rl` 选择宽松、获取、释放或获取-释放排序。
+四种设置是 relaxed（`aq=0,rl=0`）、acquire（`aq=1,rl=0`）、release（`aq=0,rl=1`）和 acquire-release（`aq=1,rl=1`）；记录的原子事件在匹配与不匹配时携带相同的设置。
+
+`SrcL`、`SrcR` 和 `SrcD` 接受全部 Reg5 源选择器，包括 T 与 U 选择器，读取它们不会消费队列条目。`RegDst` 接受全部 Reg5 目的选择器。
+
+设计要点：编码为零的源读取架构零寄存器，因此 `casd` 在 `SrcR` 与 `SrcD` 都编码为零时，只与全零双字匹配，并在匹配时写入零。
 
 <!-- PTO-READER-BLOCK: scalar-casd-effects role=effects -->
-## 效果与排序
+## 架构效果
 
-预检成功后，即使比较不匹配也会发布旧值；只有相等时内存才会改变。
+匹配时把 `SrcD` 写入该地址，并记录一个 `write_performed=true` 的原子事件；不匹配时不写入任何内容，并记录一个 `write_performed=false` 的原子事件。
 
-完成的写入会使重叠的本地 64 字节缓存行保留失效，保留不重叠的保留，并让 `TPC` 前进 `4` 字节。
+设计要点：在这一组里，只有这个宽度的发布值既不做零扩展也不做符号扩展。`RegDst` 收到的是内存中原有的 `64` 位，因此软件可以把目的值直接与全宽期望值比较。
+
+设计要点：两条路径都会记录事件，而且即使 `write_performed=false`，事件中的新值仍是待写双字；事件读者既能看出提议写入的内容，也能看出内存中原有的内容。
+
+两种无故障结果都会使 `TPC` 前进 `4` 字节；匹配时，若访问的 `8` 字节与保留的 64 字节粒度重叠，还会清除保留状态。
 
 <!-- PTO-READER-BLOCK: scalar-casd-constraints role=constraints -->
-## 合法性与精确故障
+## 对齐、访问与故障顺序
 
-有效地址必须按 `8` 字节对齐。对齐、地址翻译和权限检查都先于架构效果。
+地址必须是 `8` 的倍数。`ProbeDataAccess` 在地址转换之前、以及在报告 `Fault_DataPage` 的权限检查之前执行该测试。
 
-预检失败时不会发布目的值、内存事件、保留更新或退役效果；保存的原始 `TPC` 支持完整重新执行。
+读探测先于写探测求值，并且在载入任何字节之前，两次转换后的地址必须一致。
+
+发生故障时辅助函数立即返回：不载入、不写入、不记录原子事件、不改变保留状态、不写目的寄存器，也不前进 `TPC`，因此整个比较并交换可以重新执行。
+
+报告的故障携带原始 `SrcL` 地址。解码失败，或所选 `T#1` 到 `T#4`、`U#1` 到 `U#4` 源不可用，会在处理函数运行之前抛出 `Fault_IllegalInstruction`。
 
 <!-- PTO-READER-BLOCK: scalar-casd-example role=example -->
-## 非规范示例
+## 一个匹配的双字
 
 本示例只展示一种已接受写法；下方生成的契约仍是权威来源。
 
-初次阅读可从 `casd [SrcL], SrcR, SrcD, ->Rd` 开始，再只改变上文说明的排序或路由修饰位。
+```asm
+casd [a0], a1, a2, ->a3
+```
+
+假设该地址处的双字为 `0x0123456789abcdef`，`SrcR` 为 `0x0123456789abcdef`，`SrcD` 为 `0xffffffffffffffff`。全部 `64` 位都相等，于是 `CASD` 写入 `0xffffffffffffffff`，在 `RegDst` 中发布 `0x0123456789abcdef`，并记录一个 `write_performed=true` 的原子事件。
+
+如果 `SrcR` 改为 `0x0123456789abcdee`，比较会在最后一位失败：内存保持 `0x0123456789abcdef`，记录的事件为 `write_performed=false`，`RegDst` 仍然收到 `0x0123456789abcdef`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

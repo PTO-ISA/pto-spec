@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-purpose role=purpose -->
 ## What TLB.IAV does
 
-`TLB.IAV` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+`TLB.IAV` completes the canonical 48-bit virtual address with address-space-identifier scope translation-maintenance operation. The encoded operand is the same kind of 48-bit address that `TLB.IV` takes; the difference is the scope the maintenance request is issued for, which the operation token `Maintenance_TLB_IAV` names.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+`InstructionContractHandler_TLB_IAV` returns the shared maintenance handler (`asl/scalar/sys/TLB.IAV.asl:18`), and the token `Maintenance_TLB_IAV` is grouped with `Maintenance_TLB_IV` in the executor's address case (`asl/scalar/model/sys/semantics.asl:142`). Both share the canonical-address test and the same privilege rule.
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+`InstructionContractMaintenanceRequiresRootRing_TLB_IAV` returns `TRUE` (`asl/scalar/sys/TLB.IAV.asl:42`), so the operation rejects any ring other than ACR0 before the operand is examined by the executor.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+`SrcL` is the single encoded operand, a Reg5 source from R0..R23, T#1..T#4, or U#1..U#4. This form has no separate identifier field, so the encoded operand is only the address; the address-space scope the operation names is not carried in the instruction (`asl/scalar/sys/TLB.IAV.asl:1`).
 
-Encoded zero is an assigned field value, never an omitted operand.
+No destination is written. On success the operand appears in the maintenance record; on rejection nothing is published.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-effects role=effects -->
 ## Architectural effects
 
-On success, the maintenance record receives `Maintenance_TLB_IAV` and the exact captured operand token.
+On success the TLB epoch increases by one and `Maintenance_TLB_IAV` plus the captured address enter the maintenance record (`asl/scalar/model/sys/semantics.asl:146`). `TPC` advances afterwards, from the dispatcher's success path.
 
-Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+Design point: the record keeps the operation token, so a reader can distinguish this address-space-scoped request from the plain `TLB.IV` request even though the two advance the same counter.
+
+No ordinary scalar memory access occurs, and no register, temporary queue, or system register is written.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-constraints role=constraints -->
 ## Placement and rejection
 
-TLB maintenance is accepted only at `ACR0`; ring permission is checked before operand validation. The operand must be a canonical 48-bit virtual address carrying the ASID scope.
+As with every SYS-block instruction, an attempt outside an active SYS block body raises `Fault_BundleControl` before legality or effects. Encoded legality then covers the fixed bits and the `SrcL` selector.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+At the executor, a non-root ring raises `Fault_IllegalInstruction` first. Only an ACR0 attempt reaches the canonical-address check, and a non-canonical value there raises `Fault_DataPage` with the operand as the trap argument, leaving the TLB epoch unchanged (`asl/scalar/model/sys/semantics.asl:143`).
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `tlb.iav SrcL` and trace its encoded fields through preflight before following the selected system effect.
+At ACR0 with the source register holding 0x1234, `tlb.iav SrcL` advances the TLB epoch by one and records `Maintenance_TLB_IAV` with operand 0x1234. If the register instead holds a value whose bits 63:48 are not the sign extension of bit 47, the attempt raises `Fault_DataPage` and the TLB epoch stays where it was.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

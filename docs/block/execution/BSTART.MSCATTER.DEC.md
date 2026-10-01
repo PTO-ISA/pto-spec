@@ -19,32 +19,60 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-dec-purpose role=purpose -->
 ## Purpose and scope
 
-`BSTART.MSCATTER.DEC` is the stable reader entry point for this accepted operation. The normative `ASL` source and the generated contract sections on this page remain the only owners of architectural behavior.
+`BSTART.MSCATTER.DEC` opens a Tile memory block whose operation is `MSCATTER_DEC`: one indexed atomic reduction per lane that decrements a global memory (GM) counter under a per-lane limit, and leaves the new count in memory. The block publishes no Tile and consumes neither source Tile.
+
+The command is one 32-bit word with match `0x01711181` under mask `0x07ffffff`, so `DataType` occupies bits 31 to 27 and the fixed low bits carry TLSU selector 23. `ExecuteBundleGMAtomRedOperation` decodes selector 23 into the reduction operation `GMReduction_DEC` and calls `GM_RED_VALUE(...)`. A reserved `DataType` code raises `Fault_IllegalInstruction` at the `BSTART`, before the block commits.
+
+Design point: `GMDecValue` returns the limit for a zero element and for an element above the limit, and `old - 1` otherwise. A countdown therefore never wraps below zero, and lowering the limit of a live counter repairs it on the next decrement instead of leaving it out of range.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-dec-mechanism role=mechanism -->
 ## How to read the operation
 
-Read the generated Decode and Operation sections together to locate the selected form and semantic handler. This guide adds no alternate execution algorithm.
+At commit the block runs the Tile-level body `GM_RED_VALUE`, which first visits every active lane address and probes it for read and then for write. Two probes whose translations differ raise `Fault_DataPage`. Only after all lanes pass does it update them one at a time in an `ARBITRARY` order: load the old element, compute the new element, store it, and record one atomic event.
+
+`GMReductionResult` computes the new element with `GMDecValue(old, value)`, which compares the two as unsigned quantities and returns the limit when the old element is zero or above the limit, and `old - 1` otherwise.
+
+Design point: an element that reaches zero reloads the limit rather than staying at zero, so the countdown is cyclic. A program that treats zero as an exhausted state can therefore rely on the next decrement restarting the cycle from the limit.
+
+Design point: all probes run before the first decrement, so a faulting address leaves every counter untouched and records no event. A retry cannot skip a count or apply one twice.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-dec-inputs role=inputs-outputs -->
 ## Inputs and outputs
 
-Use the generated Operands and results table and Block composition section as the complete map of encoded and architectural roles. Do not infer an omitted operand or result from this summary.
+- `DataType` must be `U32`; every other code, including `S32` and the floating types, is rejected for this operation.
+- `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col. All three must equal the index Tile's and the limit Tile's valid columns and valid rows, and `LB2` is the physical column count the layout rule uses.
+- One terminating `B.IOT` carries the index Tile in `source0` and the limit Tile in `source1`, with no destination and with `last`. With a predicate-Tile ExecutionMask the first `B.IOT` carries both sources without `last`, and a second `B.IOT` carries the mask Tile and `last`.
+- `B.IOR BaseGPR, zero, zero, ->zero` is required: `RegSrc0` selects the per-PE base GPR, the other three selectors encode zero, and a `RegSrc0` of `zero` supplies base address zero.
+- The index Tile is `S32`, `U32`, `S64`, or `U64` with byte displacements. The limit Tile uses `U32` and the same valid shape as the index Tile.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-dec-effects role=effects -->
 ## Effects and state
 
-Use the generated State effects and Memory effects and ordering sections for the complete effect boundary. Executable points are evidence that the owner is exercised, not another source of meaning.
+Every active lane writes one new count into its GM element and records one atomic event. No Tile is published, no Local allocation is created, and both source Tiles keep their contents. The GM results stay visible: a reduction does not roll memory back.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-dec-constraints role=constraints -->
 ## Boundaries and failures
 
-Defaults, Legality, and Exceptions below define the accepted domain and failure boundary. Reserved values and unsupported combinations remain governed by those generated sections.
+`PE_MASK=0000` exits at the start of the atom/red dispatcher, before its schema, GPR, descriptor, type, and memory checks.
+
+An unknown TLSU code raises `Fault_IllegalInstruction`. A binding count other than the one or two records above raises `Fault_BundleControl`. A missing `B.IOR`, a Shared binding, a nonzero unused `B.IOR` selector, a dimension outside `1..65535`, a `DataType` other than `U32`, a wrong layout or shape, or an undefined active index or limit element raises `Fault_TileLegality` before the first probe. A memory fault keeps its own kind.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-dec-example role=example -->
 ## Non-normative usage example
 
 Treat the generated `BSTART.MSCATTER.DEC` example as a spelling and navigation aid. Substitute operands only within the legality and state contracts owned below.
+
+```asm
+BSTART.MSCATTER.DEC U32
+B.DIM zero, 2, ->LB0
+B.DIM zero, 1, ->LB1
+B.DIM zero, 2, ->LB2
+B.IOT T#1, T#2, mask=1111, last
+B.IOR a0, zero, zero, ->zero
+BSTOP
+```
+
+`T#1` is a 1 by 2 `S32` index Tile holding `0` and `4`, `T#2` is the 1 by 2 `U32` limit Tile holding `5` and `5`, and `a0` holds `0x1000`. If GM holds `3` at `0x1000` and `0` at `0x1004`, the two reductions leave `2` at `0x1000` and `5` at `0x1004`, because the second counter had reached zero and reloads its limit. The block returns no Tile.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

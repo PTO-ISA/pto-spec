@@ -19,48 +19,56 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tand-purpose role=purpose -->
 ## What TAND does
 
-`TAND` is a selector-encoded Tile operation executed by `VEC`. It applies element-width bitwise AND to corresponding valid integer elements; its current instruction contract owns the exact bundle form and publication boundary.
+`TAND` computes the bitwise AND of corresponding elements of two Local integer Tiles and writes the results into a newly allocated Local destination Tile. Bitwise AND keeps a bit only where both sources have it set.
+
+Design point: `TAND` has no standalone opcode. It is selected by `BSTART.VEC` Mode 0 Function 6 (TEPL selector `0x006`). Its operand legality and execution follow the same closed Local binary Tile contract as `TADD`, and it differs from `TOR` and `TXOR` only in the bit operation.
 
 <!-- PTO-READER-BLOCK: tile-tand-mechanism role=mechanism -->
 ## Element and Tile mechanism
 
-After all descriptor and operand checks succeed, the owning ASL handler applies element-width bitwise AND to corresponding valid integer elements. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+Preflight checks the complete bundle first: operand schema, dimensions, `DataType`, layout, source definedness, and destination capacity. Only then does `ExecuteTileBinary` read both sources and compute `left AND right` for each coordinate of the valid rectangle `ValidRow x ValidCol`.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+For an element width `W` of 8, 16, 32, or 64 bits, the result is the low `W` bits of the AND, and carrier bits above `W` are zero. Signedness does not change the operation: `S8` and `U8` produce the same bits.
+
+Design point: `TAND` is a raw-carrier operation. Arithmetic operations such as `TADD` require every source element to be a valid encoding of the selected `DataType`; `TAND` skips that numeric validation and consumes the stored bits as they are. A bit operation has no numeric meaning to validate, and it produces no rounding, saturation, or numeric status.
 
 <!-- PTO-READER-BLOCK: tile-tand-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` has the exact contract role **new Local destination**.
-- `source0` has the exact contract role **ordered left Local source**.
-- `source1` has the exact contract role **ordered right Local source**.
+- `source0` is the left operand. It is an existing, allocated Local Tile.
+- `source1` is the right operand. Its physical shape, valid shape, and layout must match `source0`.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected operation `DataType`, and its shape matches the sources.
 
-Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
-Every source coordinate read by the operation must be defined before execution reaches destination publication.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+One terminating `B.IOT` binds all three Tiles under a single `PE_MASK`; `B.IOR` and `B.IOS` are not accepted. `PE_MASK=0000` is a strict no-op before reads, allocation, or faults.
+
+Design point: each source may be stored with a different same-width, non-packed backing type, and its bits are used unchanged. For example, `FP32` data read as `U32` and ANDed with `0x7FFFFFFF` clears each sign bit and yields the `U32` encodings of the absolute values.
 
 <!-- PTO-READER-BLOCK: tile-tand-effects role=effects -->
 ## Publication, definedness, and padding
 
-Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+Both source payloads are snapshotted before the first destination write. Either source may alias the destination, and both sources may name the same Tile; the result is always computed from the old values.
 
-Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+The destination descriptor, the valid-region results, the padding, and every element's definedness publish as one commit. A rejected `TAND` leaves descriptors, payloads, and allocation state unchanged.
 
-The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+Elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero` writes zero, and `Max` and `Min` write the numeric maximum and minimum of the integer `DataType`; `Null`, selected when `B.DATR` is omitted, leaves them undefined. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value. `TAND` has no global-memory effect.
 
 <!-- PTO-READER-BLOCK: tile-tand-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The accepted data-type set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
+The accepted data-type set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Floating and packed operation types are rejected before effects; floating data can still be processed through a same-width integer operation type, as shown above.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+The layout is `RowMajor` by default, or `CUBE_M16` or `CUBE_M32` when an explicit `Layout` selects it. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal.
+
+Every source element in the valid rectangle (every active one, when an ExecutionMask is in force) must be defined, even though its encoding is not validated. Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported `DataType`, or invalid destination capacity raises `Fault_TileLegality` before effects. A nondefault `CMode`, `Sat`, `Canonicalize`, secondary `DataType`, or `RMode` is illegal.
 
 <!-- PTO-READER-BLOCK: tile-tand-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `TAND` example, integer elements `0xc` and `0xa` produce `0x8`.
+With `DataType=U8`, a left source row `[0x0F, 0xF0, 0xFF]` and a right source row `[0x3C, 0x3C, 0x81]` produce the destination row `[0x0C, 0x30, 0x81]`.
+
+In macro form, `TAND <Row=8, Col=64, U32>, T#1, T#2, ->T<2KB>` computes all 8 x 64 results of two `U32` Tiles into a new 2 KB destination.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

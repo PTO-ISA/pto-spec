@@ -17,51 +17,60 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-sbi-purpose role=purpose -->
-## What HL.SBI does
+## What `HL.SBI` does
 
-`HL.SBI` is a standalone `48`-bit scalar AGU instruction that stores one 1-byte little-endian value using `Immediate` addressing.
+`HL.SBI` is a standalone `48`-bit scalar AGU instruction that stores one `1`-byte little-endian unit from `SrcD` at a signed `simm22` displacement from the `SrcR` base.
+
+The canonical assembly is `hl.sbi SrcD, [SrcR, simm]`.
+
+Design point: the displacement is unscaled, so this form counts bytes. The wider `22`-bit field is what pays for the finer step: it still reaches `-2097152`..`2097151` bytes.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sbi-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How the address and the transfer are formed
 
-The address path sign-extends `simm22`, scales it by `1`, and adds the displacement to the snapshotted `SrcR` value modulo `2^PTO_XLEN`.
+The displacement is the sign-extended `simm22` value with a shift of `0` and is added to the `SrcR` snapshot modulo `2^PTO_XLEN`. The base is read before any memory effect, so a later write-back of the same register cannot change the address this store uses.
 
-After complete preflight, one aligned little-endian `1`-byte store commits at the selected address.
+The address is preflighted before the store. On success one `1`-byte little-endian store is performed and one relaxed store event is recorded.
 
-This form does not publish an address-base writeback.
+Because the update mode is none, the form has no `RegDst` field and publishes nothing. The base and the value are the only registers it reads.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sbi-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and the effect
 
-- `SrcD` is a `5`-bit field selecting the first store-data value.
-- `SrcR` is a `5`-bit field selecting the address base.
-- `simm22` is a `22`-bit field selecting the signed displacement before the `1` scale factor.
+- `SrcD` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `SrcR` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `simm22` is a signed `22`-bit displacement carried in the encoding as three pieces at bits `41`..`47`, bits `23`..`27`, and bits `6`..`15`, covering `-2097152`..`2097151` bytes.
+- This form has no `RegDst` field, so no register receives a result and no updated base is published.
+- Design point: `SrcR` and `SrcD` draw on the same Reg5 domain, so the base and the stored value may come from absolute GPRs or from `T` and `U` queue slots in any combination, and no entry is consumed by being read.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sbi-effects role=effects -->
-## Effects and completion order
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+Every scalar source is snapshotted before any memory or destination effect, so a source that a destination also names still contributes the pre-instruction value.
 
-Successful execution records one relaxed store event; an overlapping reservation is invalidated only after complete preflight.
+In memory, a successful execution changes only the bytes inside the stored range. A valid reservation is invalidated when the stored range overlaps the reservation's `64`-byte granule; a reservation whose granule the store leaves untouched stays valid.
 
-After all result or writeback publication, `HL.SBI` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+`TPC` advances by `6` bytes after the memory operation completes. A rejected or faulting attempt does not retire.
+
+Design point: only the low `8` bits of `SrcD` are written, so a wider value is truncated silently instead of faulting.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sbi-constraints role=constraints -->
 ## Legality, faults, and restart
 
-Each accessed address is aligned to the `1`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
-
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+- A fixed-bit mismatch, or a source code selecting an unavailable `T` or `U` slot, raises `Fault_IllegalInstruction` before any instruction effect.
+- Every address is a whole number of `1`-byte units, so preflight cannot raise `Fault_DataAlignment` for this form. A permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+- A fault records no store event, leaves memory and destination registers unchanged, and keeps `TPC` on the faulting instruction. Recovery recomputes the snapshot, the address, the probe, and the store from the beginning.
+- Design point: with no update mode there is no write-back to gate, so a fault leaves memory unchanged, the reservation valid, and every source register and `TPC` unchanged. A retry recomputes the same base and the same displacement.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sbi-example role=example -->
-## Non-normative reading walkthrough
+## Reading one encoding end to end
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `hl.sbi SrcD, [SrcR, simm]` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Suppose `hl.sbi 5, [6, -1]` runs with GPR6 = `0x2000` and GPR5 = `0xABCD`.
+- The address is `0x1FFF`, so the byte `0xCD` is stored there.
+- No register changes.
+- No other memory byte changes either, and `TPC` becomes the instruction address plus `6`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

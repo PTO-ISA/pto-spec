@@ -195,6 +195,22 @@ def exact_keys(value: dict, required: set[str], optional: set[str], where: str) 
     require(not unknown, f"{where}: unknown fields {sorted(unknown)}")
 
 
+def is_reader_guide_target(unit: dict) -> bool:
+    """Return whether a unit requires reviewed English and zh-CN reader guides."""
+    return unit.get("surface") in SURFACES and (
+        unit.get("surface") == "arch"
+        or unit.get("mnemonic") is not None
+        or list(unit.get("classification", []))[:1] == ["model"]
+    )
+
+
+def expected_page_contract(unit: dict) -> str:
+    """Architecture and model pages describe a concept; mnemonic pages describe one instruction."""
+    if unit.get("surface") == "arch" or unit.get("mnemonic") is None:
+        return "architecture-reader-v1"
+    return "mnemonic-reader-v1"
+
+
 def required_roles(page_contract: str) -> set[str]:
     if page_contract == "mnemonic-reader-v1":
         return MNEMONIC_REQUIRED_ROLES
@@ -547,7 +563,7 @@ def validate_unit_shard(shard: dict, expected: dict, repo_root: pathlib.Path,
     require(shard["surface"] == expected["surface"] in SURFACES,
             f"invalid surface for {expected['id']}")
     require(shard["page_contract"] ==
-            ("architecture-reader-v1" if expected["surface"] == "arch" else "mnemonic-reader-v1"),
+            expected_page_contract(expected),
             f"wrong page contract for {expected['id']}")
     require(shard["status"] in {"pending", "complete", "decision-gap"},
             f"invalid status for {expected['id']}")
@@ -1112,11 +1128,7 @@ def validate_reviews(review_root: pathlib.Path, units: dict[str, dict], require_
 def run_check(repo_root: pathlib.Path, archive: pathlib.Path | None, traceability_path: pathlib.Path,
               evidence_root: pathlib.Path, require_complete: bool) -> dict:
     traceability = json.loads(traceability_path.read_text(encoding="utf-8"))
-    current_list = [
-        unit for unit in traceability["units"]
-        if unit.get("surface") == "arch"
-        or (unit.get("mnemonic") is not None and unit.get("surface") in SURFACES)
-    ]
+    current_list = [unit for unit in traceability["units"] if is_reader_guide_target(unit)]
     current_ids = [unit["id"] for unit in current_list]
     require(len(current_ids) == len(set(current_ids)), "duplicate current unit IDs")
     current = {unit["id"]: unit for unit in current_list}

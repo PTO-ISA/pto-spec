@@ -1,0 +1,574 @@
+<!-- GENERATED FROM: asl/block/model/operands/portable-carriers.asl -->
+# Portable Carriers
+
+**Normative ASL source:** `asl/block/model/operands/portable-carriers.asl`
+
+This page is a generated reference view of the normative ASL unit.
+
+## ASL unit identity {#PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS}
+
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-purpose role=purpose-scope -->
+## 用途与范围
+
+本单元拥有 Local `B.ASSEMBLE` 代次的可移植载体规则：使用者就绪性、写者完成、发布、推测 squash，以及哪些生产者操作可以参与。代次是由多个写者指令束构建的一个 Local Tile。使用者是之后把该 Tile 作为源读取的指令束。
+
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-concepts role=concepts-state -->
+## 概念与可见状态
+
+本单元更新 `_LocalGenerations` 槽位中的以下字段：
+
+- 每个写者的 `ready` 标志和每个 PE 的 `per_pe_ready_cells` 位图；
+- `per_pe_published` 标志，以及槽位的 `published`、`published_destination`、`committed_destination` 和 `committed_valid`；
+- 至多 16 条使用者记录。每条保存源、参与者掩码、代次实例、执行域令牌、使用者指令实例、所需 CELL 集合、一个模式（`WholeParent` 或 `Range`）和一个状态（`Waiting`、`Eligible`、`Retired` 或 `Cancelled`）。
+
+执行域标识一个指令束的一次动态执行。`BeginBundleAt` 为每次动态指令束执行取一个新令牌，陷阱上下文恢复会还原保存的令牌。
+
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-rules role=rules-interactions -->
+## 规则与交互
+
+使用者的源由 `BundlePrepareConsumerSource` 检查。如果源不是代次，它就是就绪的。否则使用者需要其 `B.SUBVIEW` 所选的 CELL 范围，或在没有 subview 时需要每个父 CELL。当每个参与 PE 的每个所需 CELL 都已就绪，并且在整体父级模式下该代次也已发布时，`BundleConsumerDependencyReady` 为 TRUE。第一次调用登记该使用者；来自同一使用者实例的重复调用会找到同一条记录。
+
+未就绪的使用者使第 2 阶段准备返回 FALSE，但不引发故障。NDF `PTO-B-ASSEMBLE-CONSUMER-READINESS-001` 称之为不产生故障、不产生效果的等待状态。
+
+`CompleteBundleLocalGenerationWriterEvent` 是把一个已登记写者标记为完成的事件。它设置该写者的就绪单元，根据所有已完成写者重新计算 `ready_cells`，并更新每 PE 的发布状态。如果该代次已关闭、未发布且满足条件，它就发布该代次：已提交映射移到工作目标，并且如果目标尚不在其 hand 的相对队列中，就把它发布进去。随后它重新评估等待中的使用者。
+
+设计要点：登记和完成是两个独立的事件。ASL 注释说明，因此即使写者乱序完成，覆盖和就绪也保持分离。该代次的使用者要等到其所需 CELL 已就绪，而不仅是已覆盖。
+
+`SquashBundleExecutionDomain` 使被 squash 的执行域中的每个写者和使用者失效，根据剩余写者重建覆盖和就绪，并中止没有剩余写者的打开代次。如 NDF `PTO-B-ASSEMBLE-SPECULATION-001` 所要求，中止路径保留较早的已提交映射。
+
+当指令束的某个 Local Tile 绑定带有 assemble 修饰符时，`BundleProducerEffectEligible` 以 `Fault_TileLegality` 拒绝处理程序类别为 `NonRollbackAuxiliary` 的操作。该类别包括 `TSTORE`、`TPREFETCH`、`TSCATTER`、`MSCATTER`、`MSCATTER_MASK`，以及 GM 原子和归约处理程序。
+
+设计要点：除 TIMG2COL 外，Tile 执行在描述符准备、主体执行、分配或辅助效果之前检查该条件。无法回滚的代次写者会在它做任何事情之前被拒绝。
+
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-boundaries role=boundaries -->
+## 架构边界
+
+完成和 squash 入口点是架构事件，而不是编码指令。在当前 ASL 中，它们由测试驱动。`RetireBundleConsumerDependencies` 在操作成功后使每个满足条件的使用者退役。
+
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-example role=example-usage -->
+## 非规范阅读示例
+
+本示例只用于演示当前 ASL 所有者，不替代规范操作。
+
+一个代次有 32 个 CELL，覆盖 CELL 0..15 和 16..31 的写者已登记，并由 LAST 关闭。一个使用者用 `B.SUBVIEW` 选择 CELL 0..3。在任何完成事件之前，它处于等待状态且不产生效果。第一个写者完成后，CELL 0..15 已就绪，因此该使用者变为满足条件并可以运行。另一个不带 subview 的使用者需要整个父 Tile。它保持等待，直到第二个写者完成且该代次被发布。
+
+<!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Local 代次](local-generation.md)登记写者并中止代次。
+- [Local 代次 CUBE](local-generation-cube.md) 拥有 CUBE 最终确定。
+- [Subview 描述符](subview-descriptor.md)在复制视图之前调用使用者检查。
+- [Tile 执行](../dispatch/tile-execution.md)调用条件检查和退役。
+<!-- SUPPLEMENTARY-END -->
+
+## Normative ASL
+
+<!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/operands/portable-carriers.asl -->
+```asl
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","surface":"block","classification":["model","operands","portable-carriers"],"depends_on":["PTO-BLOCK-MODEL-STATE-TYPES","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE"]}
+
+// NDF-BEGIN: PTO-B-ASSEMBLE-CONSUMER-READINESS-001
+// ndf: kind=contract level=L1 layer=block status=accepted
+// A decoded Local consumer binds either a selected CELL range or the complete
+// descriptor-required CELL set after LAST. Waiting is a non-faulting,
+// no-effect state; a consumer reads only after its required set is ready.
+// NDF-END: PTO-B-ASSEMBLE-CONSUMER-READINESS-001
+
+// NDF-BEGIN: PTO-B-ASSEMBLE-SPECULATION-001
+// ndf: kind=contract level=L1 layer=block status=accepted
+// Dynamic writers carry an opaque instruction-instance plus execution-domain
+// identity. A squash cancels every unretired contribution in that domain and
+// preserves the older committed mapping.
+// NDF-END: PTO-B-ASSEMBLE-SPECULATION-001
+
+// NDF-BEGIN: PTO-B-ASSEMBLE-PRODUCER-EFFECT-ELIGIBILITY-001
+// ndf: kind=contract level=L1 layer=block status=accepted
+// Each accepted Tile semantic-handler group has exactly one generated effect
+// class. Nonrollback auxiliary effects are rejected before B.ASSEMBLE body or
+// auxiliary effects; rollback-safe and atomic-auxiliary effects participate in
+// the same transaction.
+// NDF-END: PTO-B-ASSEMBLE-PRODUCER-EFFECT-ELIGIBILITY-001
+
+readonly func BundleLocalGenerationReplay(
+    slot: integer {0..63}, offset_cells: integer {0..2047},
+    writer_cells: integer {1..2048}, instance: Word,
+    execution_domain_token: integer) => boolean
+begin
+    for prior = 0 to _LocalGenerations[[slot]].writer_count - 1
+        looplimit 16 do
+        if _LocalGenerations[[slot]].writers[[prior]].valid &&
+           _LocalGenerations[[slot]].writers[[prior]].offset_cells == offset_cells &&
+           _LocalGenerations[[slot]].writers[[prior]].cell_count == writer_cells then
+            return _LocalGenerations[[slot]].writers[[prior]].identity
+                .instruction_instance == instance &&
+                _LocalGenerations[[slot]].writers[[prior]].identity
+                    .execution_domain_token == execution_domain_token;
+        end;
+    end;
+    return FALSE;
+end;
+
+readonly func BundleLocalGenerationPublicationEligible(
+    slot: integer {0..63}) => boolean
+begin
+    if !_LocalGenerations[[slot]].last_seen ||
+       (BundleLocalGenerationCubeLayout(
+            _LocalGenerations[[slot]].parent_descriptor.layout) &&
+        !_LocalGenerations[[slot]].descriptor_finalized) then
+        return FALSE;
+    end;
+    for pe = 0 to 3 do
+        if _LocalGenerations[[slot]].participant_mask[
+               PTOPEMaskBitOfPEIdentity(pe)] == '1' &&
+           !BundleLocalGenerationPEPublicationEligible(slot, pe) then
+            return FALSE; end;
+    end;
+    return TRUE;
+end;
+
+readonly func BundleLocalGenerationSlotForSource(source: TileIndex)
+    => integer {0..64}
+begin
+    return BundleLocalGenerationSlotForDestination(source);
+end;
+
+readonly func BundleConsumerDependencyReady(
+    slot: integer {0..63}, index: integer {0..15}) => boolean
+begin
+    let dependency = _LocalGenerations[[slot]].consumers[[index]];
+    for pe = 0 to 3 do
+        if dependency.participant_mask[PTOPEMaskBitOfPEIdentity(pe)] == '1' then
+            if dependency.mode == BundleConsumerDependency_WholeParent &&
+               !_LocalGenerations[[slot]].per_pe_published[[pe]] then
+                return FALSE;
+            end;
+            for cell = 0 to 2047 do
+                if dependency.required_cells[cell] == '1' &&
+                   _LocalGenerations[[slot]].per_pe_ready_cells[[pe]][cell] == '0' then
+                    return FALSE; end;
+            end;
+        end;
+    end;
+    return TRUE;
+end;
+
+func BundleConsumerDependencyRequiredRange(
+    slot: integer {0..63}, source: TileIndex, offset: Word,
+    size_code: integer {0..15}, whole: boolean,
+    participant_mask: bits(4), consumer_instance: Word) => boolean
+begin
+    let raw_offset = UInt(offset);
+    if raw_offset > 2047 then return FALSE; end;
+    let offset_cells = raw_offset as integer {0..2047};
+    let parent_cells = if _LocalGenerations[[slot]].descriptor_finalized &&
+        BundleLocalGenerationCubeLayout(
+            _LocalGenerations[[slot]].parent_descriptor.layout) then
+        _LocalGenerations[[slot]].parent_descriptor.cube_cell_count
+        else _LocalGenerations[[slot]].parent_cell_count;
+    if parent_cells == 0 || parent_cells > 2048 then return FALSE; end;
+    var required: bits(2048) = Zeros{2048};
+    var required_count: integer = 0;
+    if whole then
+        for cell = 0 to 2047 do
+            if cell < parent_cells then
+                required[cell] = '1';
+                required_count = required_count + 1;
+            end;
+        end;
+    else
+        if size_code == 0 then return FALSE; end;
+        let selected = BundleLocalGenerationCellCount(
+            size_code as integer {1..12});
+        var end_cell: integer = 2048;
+        if offset_cells + selected < parent_cells then
+            end_cell = offset_cells + selected;
+        elsif parent_cells < 2048 then
+            end_cell = parent_cells;
+        end;
+        for cell = 0 to 2047 do
+            if cell >= offset_cells && cell < end_cell then
+                required[cell] = '1';
+                required_count = required_count + 1;
+            end;
+        end;
+    end;
+    var found = FALSE;
+    for index = 0 to _LocalGenerations[[slot]].consumer_count - 1
+        looplimit 16 do
+        if _LocalGenerations[[slot]].consumers[[index]].valid &&
+           _LocalGenerations[[slot]].consumers[[index]]
+               .consumer_instruction_instance == consumer_instance &&
+           _LocalGenerations[[slot]].consumers[[index]]
+               .generation_instance ==
+               _LocalGenerations[[slot]].generation_instance &&
+           _LocalGenerations[[slot]].consumers[[index]]
+               .execution_domain_token == _BundleExecutionDomainToken &&
+           _LocalGenerations[[slot]].consumers[[index]].source == source &&
+           _LocalGenerations[[slot]].consumers[[index]].participant_mask ==
+               participant_mask &&
+           _LocalGenerations[[slot]].consumers[[index]].required_cells ==
+               required then
+            found = TRUE;
+            if _LocalGenerations[[slot]].consumers[[index]].state ==
+                   BundleConsumerDependency_Waiting then
+                if BundleConsumerDependencyReady(
+                       slot, index as integer {0..15}) then
+                    _LocalGenerations[[slot]].consumers[[index]].state =
+                        BundleConsumerDependency_Eligible;
+                end;
+            end;
+            return _LocalGenerations[[slot]].consumers[[index]].state !=
+                BundleConsumerDependency_Waiting;
+        end;
+    end;
+    if !found && _LocalGenerations[[slot]].consumer_count < 16 then
+        let index = _LocalGenerations[[slot]].consumer_count;
+        _LocalGenerations[[slot]].consumers[[index]].valid = TRUE;
+        _LocalGenerations[[slot]].consumers[[index]].source = source;
+        _LocalGenerations[[slot]].consumers[[index]].participant_mask =
+            participant_mask;
+        _LocalGenerations[[slot]].consumers[[index]].generation_instance =
+            _LocalGenerations[[slot]].generation_instance;
+        _LocalGenerations[[slot]].consumers[[index]].execution_domain_token =
+            _BundleExecutionDomainToken;
+        _LocalGenerations[[slot]].consumers[[index]].mode = if whole then
+            BundleConsumerDependency_WholeParent
+            else BundleConsumerDependency_Range;
+        _LocalGenerations[[slot]].consumers[[index]].required_cells = required;
+        _LocalGenerations[[slot]].consumers[[index]].required_cell_count =
+            required_count as integer {0..2048};
+        _LocalGenerations[[slot]].consumers[[index]].after_last = TRUE;
+        _LocalGenerations[[slot]].consumers[[index]]
+            .consumer_instruction_instance = consumer_instance;
+        _LocalGenerations[[slot]].consumer_count = (index + 1)
+            as integer {0..16};
+        let ready = BundleConsumerDependencyReady(
+            slot, index as integer {0..15});
+        _LocalGenerations[[slot]].consumers[[index]].state = if ready then
+            BundleConsumerDependency_Eligible
+            else BundleConsumerDependency_Waiting;
+        return ready;
+    end;
+    return FALSE;
+end;
+
+func BundlePrepareConsumerSource(
+    source: TileIndex, modifier_valid: boolean, offset: Word,
+    size_code: integer {0..15}, participant_mask: bits(4)) => boolean
+begin
+    let slot = BundleLocalGenerationSlotForSource(source);
+    if slot == 64 || !_LocalGenerations[[slot]].generation_identity_valid then
+        return TRUE;
+    end;
+    return BundleConsumerDependencyRequiredRange(
+        slot as integer {0..63}, source, offset, size_code,
+        !modifier_valid, participant_mask, ReadBPC());
+end;
+
+func PrepareBundleConsumerDependencies() => boolean
+begin
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            if _BundleTileBindings[[binding]].source0_valid &&
+               !BundlePrepareConsumerSource(
+                   _BundleTileBindings[[binding]].source0,
+                   _BundleTileBindings[[binding]].source0_subview.valid,
+                   _BundleTileBindings[[binding]].source0_subview.offset,
+                   _BundleTileBindings[[binding]].source0_subview.size_code,
+                   _BundleTileBindings[[binding]].pe_mask) then
+                return FALSE;
+            end;
+            if _BundleTileBindings[[binding]].source1_valid &&
+               !BundlePrepareConsumerSource(
+                   _BundleTileBindings[[binding]].source1,
+                   _BundleTileBindings[[binding]].source1_subview.valid,
+                   _BundleTileBindings[[binding]].source1_subview.offset,
+                   _BundleTileBindings[[binding]].source1_subview.size_code,
+                   _BundleTileBindings[[binding]].pe_mask) then
+                return FALSE;
+            end;
+        end;
+    end;
+    return TRUE;
+end;
+
+func RetireBundleConsumerDependencies()
+begin
+    for slot = 0 to 63 do
+        if _LocalGenerations[[slot]].consumer_count > 0 then
+            for index = 0 to _LocalGenerations[[slot]].consumer_count - 1
+                looplimit 16 do
+                if _LocalGenerations[[slot]].consumers[[index]].valid &&
+               _LocalGenerations[[slot]].consumers[[index]].state ==
+                   BundleConsumerDependency_Eligible then
+                    _LocalGenerations[[slot]].consumers[[index]].state =
+                        BundleConsumerDependency_Retired;
+                    _LocalGenerations[[slot]].consumers[[index]].valid = FALSE;
+                end;
+            end;
+        end;
+    end;
+end;
+
+// PTO-NDF: PTO-B-ASSEMBLE-CONSUMER-READINESS-001
+// Architecture event entry point for completion of one registered writer.
+// Registration contributes coverage only.  This event contributes readiness
+// and, when LAST has closed the writer set, performs the one atomic mapping
+// publication transition.  The event is not instruction encoded.
+func CompleteBundleLocalGenerationWriterEvent(
+    slot: integer {0..63}, execution_domain_token: integer,
+    offset_cells: integer {0..2047}, cell_count: integer {1..2048})
+    => boolean
+begin
+    var matched = FALSE;
+    for writer = 0 to _LocalGenerations[[slot]].writer_count - 1
+        looplimit 16 do
+        if _LocalGenerations[[slot]].writers[[writer]].valid &&
+           _LocalGenerations[[slot]].writers[[writer]].identity
+               .execution_domain_token == execution_domain_token &&
+           _LocalGenerations[[slot]].writers[[writer]].offset_cells ==
+               offset_cells &&
+           _LocalGenerations[[slot]].writers[[writer]].cell_count ==
+               cell_count then
+            _LocalGenerations[[slot]].writers[[writer]].ready = TRUE;
+            for pe = 0 to 3 do
+                if _LocalGenerations[[slot]].writers[[writer]].pe_mask[
+                       PTOPEMaskBitOfPEIdentity(pe)] == '1' then
+                    var pe_ready = _LocalGenerations[[slot]].per_pe_ready_cells[[pe]];
+                    for cell = 0 to 2047 do
+                        if cell < _LocalGenerations[[slot]].writers[[writer]].cell_count &&
+                           _LocalGenerations[[slot]].writers[[writer]].offset_cells + cell < 2048 then
+                            pe_ready[_LocalGenerations[[slot]].writers[[writer]].offset_cells + cell] = '1';
+                        end;
+                    end;
+                    _LocalGenerations[[slot]].per_pe_ready_cells[[pe]] = pe_ready;
+                end;
+            end;
+            matched = TRUE;
+        end;
+    end;
+    if !matched then return FALSE; end;
+
+    // Recompute readiness from writer completion records.  Coverage and
+    // readiness therefore remain separate even when completion is OoO.
+    var ready = Zeros{2048};
+    for writer = 0 to _LocalGenerations[[slot]].writer_count - 1
+        looplimit 16 do
+        if _LocalGenerations[[slot]].writers[[writer]].valid &&
+           _LocalGenerations[[slot]].writers[[writer]].ready then
+            for cell = 0 to 2047 do
+                if cell < _LocalGenerations[[slot]].writers[[writer]].cell_count &&
+                   _LocalGenerations[[slot]].writers[[writer]].offset_cells +
+                       cell < 2048 then
+                    ready[_LocalGenerations[[slot]].writers[[writer]].offset_cells +
+                        cell] = '1';
+                end;
+            end;
+        end;
+    end;
+    _LocalGenerations[[slot]].ready_cells = ready;
+    for pe = 0 to 3 do
+        if BundleLocalGenerationPEPublicationEligible(slot, pe) then
+            _LocalGenerations[[slot]].per_pe_published[[pe]] = TRUE;
+        end;
+    end;
+    if _LocalGenerations[[slot]].closed &&
+       !_LocalGenerations[[slot]].published &&
+       BundleLocalGenerationPublicationEligible(slot) then
+        // The mapping, destination hand, and publication bit become visible
+        // together only after precise LAST retirement and complete readiness.
+        _LocalGenerations[[slot]].open = FALSE;
+        _LocalGenerations[[slot]].published = TRUE;
+        _LocalGenerations[[slot]].published_destination =
+            _LocalGenerations[[slot]].working_destination;
+        _LocalGenerations[[slot]].committed_destination =
+            _LocalGenerations[[slot]].working_destination;
+        _LocalGenerations[[slot]].committed_valid = TRUE;
+        PublishRelativeTileDestination(_LocalGenerations[[slot]].working_destination);
+    end;
+    // Publication is part of whole-parent readiness, so re-evaluate waiting
+    // consumers only after the delayed publication transition above.
+    for index = 0 to _LocalGenerations[[slot]].consumer_count - 1
+        looplimit 16 do
+        if _LocalGenerations[[slot]].consumers[[index]].valid &&
+           _LocalGenerations[[slot]].consumers[[index]].state ==
+               BundleConsumerDependency_Waiting &&
+           BundleConsumerDependencyReady(
+               slot, index as integer {0..15}) then
+            _LocalGenerations[[slot]].consumers[[index]].state =
+                BundleConsumerDependency_Eligible;
+        end;
+    end;
+    return TRUE;
+end;
+
+func SquashBundleExecutionDomain(domain: integer)
+begin
+    for slot = 0 to 63 do
+        var covered: bits(2048) = Zeros{2048};
+        var ready: bits(2048) = Zeros{2048};
+        var writers_left: integer {0..16} = 0;
+        for writer = 0 to _LocalGenerations[[slot]].writer_count - 1
+            looplimit 16 do
+            if _LocalGenerations[[slot]].writers[[writer]].valid &&
+               _LocalGenerations[[slot]].writers[[writer]].identity
+                   .execution_domain_token == domain then
+                _LocalGenerations[[slot]].writers[[writer]].valid = FALSE;
+                _LocalGenerations[[slot]].writers[[writer]].ready = FALSE;
+            end;
+        end;
+        for writer = 0 to _LocalGenerations[[slot]].writer_count - 1
+            looplimit 16 do
+            if _LocalGenerations[[slot]].writers[[writer]].valid then
+                writers_left = (writers_left + 1) as integer {0..16};
+                for cell = 0 to 2047 do
+                    if cell < _LocalGenerations[[slot]].writers[[writer]]
+                        .cell_count then
+                        let index = _LocalGenerations[[slot]].writers[[writer]]
+                            .offset_cells + cell;
+                        if index < 2048 then
+                            covered[index] = '1';
+                            if _LocalGenerations[[slot]].writers[[writer]].ready then
+                                ready[index] = '1';
+                            end;
+                        end;
+                    end;
+                end;
+            end;
+        end;
+        _LocalGenerations[[slot]].covered_cells = covered;
+        _LocalGenerations[[slot]].ready_cells = ready;
+        _LocalGenerations[[slot]].writer_count = writers_left as integer {0..16};
+        for index = 0 to _LocalGenerations[[slot]].consumer_count - 1
+            looplimit 16 do
+            if _LocalGenerations[[slot]].consumers[[index]].valid &&
+               _LocalGenerations[[slot]].consumers[[index]]
+                   .execution_domain_token == domain then
+                _LocalGenerations[[slot]].consumers[[index]].state =
+                    BundleConsumerDependency_Cancelled;
+                _LocalGenerations[[slot]].consumers[[index]].valid = FALSE;
+            end;
+        end;
+        for pe = 0 to 3 do
+            var pe_covered = Zeros{2048};
+            var pe_ready = Zeros{2048};
+            for writer = 0 to _LocalGenerations[[slot]].writer_count - 1
+                looplimit 16 do
+                if _LocalGenerations[[slot]].writers[[writer]].valid &&
+                   _LocalGenerations[[slot]].writers[[writer]].pe_mask[
+                       PTOPEMaskBitOfPEIdentity(pe)] == '1' then
+                    for cell = 0 to 2047 do
+                        if cell < _LocalGenerations[[slot]].writers[[writer]].cell_count &&
+                           _LocalGenerations[[slot]].writers[[writer]].offset_cells + cell < 2048 then
+                            let index = _LocalGenerations[[slot]].writers[[writer]].offset_cells + cell;
+                            pe_covered[index] = '1';
+                            if _LocalGenerations[[slot]].writers[[writer]].ready then
+                                pe_ready[index] = '1';
+                            end;
+                        end;
+                    end;
+                end;
+            end;
+            _LocalGenerations[[slot]].per_pe_covered_cells[[pe]] = pe_covered;
+            _LocalGenerations[[slot]].per_pe_ready_cells[[pe]] = pe_ready;
+        end;
+        if writers_left == 0 && _LocalGenerations[[slot]].open then
+            AbortBundleLocalGeneration(slot);
+        end;
+    end;
+end;
+
+// PTO-NDF: PTO-B-ASSEMBLE-SPECULATION-001
+// Architecture event entry point for an execution-domain squash.  The event
+// is not instruction-encoded; a control-flow, fault, or interrupt mechanism
+// invokes this procedure after the decoded writer path has registered its
+// portable identity.
+func EnterBundleExecutionDomainSquashEvent(domain: integer)
+begin
+    SquashBundleExecutionDomain(domain);
+end;
+
+func BundleHasAssembleModifier() => boolean
+begin
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].destination_assemble.valid then
+            return TRUE;
+        end;
+    end;
+    return FALSE;
+end;
+
+pure func BundleProducerEffectClassOfHandler(
+    handler: TileSemanticHandler) => BundleProducerEffectClass
+begin
+    case handler of
+        when TileHandler_ExecuteTileBinary, TileHandler_ExecuteTileExpdif,
+             TileHandler_ExecuteTileCompare,
+             TileHandler_ExecuteTileCompareScalar,
+             TileHandler_ExecuteTileExpand,
+             TileHandler_ExecuteTileFillScalar,
+             TileHandler_ExecuteTileReduction,
+             TileHandler_ExecuteTileScalar,
+             TileHandler_ExecuteTileSelect,
+             TileHandler_ExecuteTileSelectScalar,
+             TileHandler_ExecuteTileUnary,
+             TileHandler_GMOV,
+             TileHandler_MGATHER,
+             TileHandler_MGATHER_MASK,
+             TileHandler_TCI,
+             TileHandler_TCVT,
+             TileHandler_TFMA,
+             TileHandler_TGATHER,
+             TileHandler_TLOAD,
+             TileHandler_TMOV,
+             TileHandler_TPERMUTE,
+             TileHandler_TSHUF,
+             TileHandler_TPACK,
+             TileHandler_TGPR2T,
+             TileHandler_TUNPACK,
+             TileHandler_TTRI =>
+            return BundleProducerEffect_RollbackSafe;
+        when TileHandler_GM_ATOM_CAS,
+             TileHandler_GM_ATOM_VALUE, TileHandler_GM_RED_VALUE,
+             TileHandler_GM_RED_POPC,
+             TileHandler_MSCATTER,
+             TileHandler_MSCATTER_MASK,
+             TileHandler_TPREFETCH,
+             TileHandler_TSCATTER,
+             TileHandler_TSTORE =>
+            return BundleProducerEffect_NonRollbackAuxiliary;
+        when TileHandler_TGEMV, TileHandler_TGEMV_ACC,
+             TileHandler_TGEMV_BIAS, TileHandler_TGEMV_MX,
+             TileHandler_TGEMV_MX_ACC, TileHandler_TGEMV_MX_BIAS,
+             TileHandler_TMATMUL, TileHandler_TMATMUL_ACC,
+             TileHandler_TMATMUL_BIAS, TileHandler_TMATMUL_MX,
+             TileHandler_TMATMUL_MX_ACC, TileHandler_TMATMUL_MX_BIAS =>
+            return BundleProducerEffect_AtomicAuxiliary;
+    end;
+end;
+pure func BundleProducerEffectClassOfOperation(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1})
+    => BundleProducerEffectClass
+begin
+    return BundleProducerEffectClassOfHandler(TileHandlerOfIndex(operation));
+end;
+
+func BundleProducerEffectEligible(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+begin
+    if !BundleHasAssembleModifier() then return TRUE; end;
+    if BundleProducerEffectClassOfOperation(operation) ==
+           BundleProducerEffect_NonRollbackAuxiliary then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    return TRUE;
+end;
+```
+<!-- GENERATED-ASL-END: unit -->

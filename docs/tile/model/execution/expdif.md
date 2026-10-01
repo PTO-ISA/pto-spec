@@ -7,8 +7,83 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-EXECUTION-EXPDIF}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-expdif-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns the natural-expansion-difference sequence: the exponential of left minus right. `ExecuteTileExpdif` is the handler for the TEXPDIF instruction. `TileExpdifValueWithTypesAndFlags` computes one element and is shared with the TROWEXPANDEXPDIF and TCOLEXPANDEXPDIF broadcast forms through the expansion unit.
+
+It carries the accepted clause `PTO-TILE-MODEL-EXECUTION-MASK-EXPDIF-001`.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-expdif-concepts role=concepts-state -->
+## Concepts and visible state
+
+Two types are involved. The source operation type comes from the bundle's selected DataType, or from the first source Tile when no bundle operation is selected. The destination type is the destination Tile's `data_type`.
+
+`TileExpdifTypePairLegal` admits five pairs:
+
+| Source operation type | Destination type |
+| --- | --- |
+| FP16 | FP16 or FP32 |
+| BF16 | BF16 or FP32 |
+| FP32 | FP32 |
+
+Each element returns a value and five status flags, NV, DZ, OF, UF, and NX from bit 0 to bit 4.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-expdif-rules role=rules-interactions -->
+## Rules and interactions
+
+For a same-type pair, the element is computed in the destination type:
+
+1. SUB left minus right through `TileProfileBinaryWithFlags`.
+2. Apply the TEXP special-value rules to the difference.
+3. Otherwise compute the finite exponential with `TileProfileUnary`.
+
+The flags of both steps are ORed.
+
+For a mixed pair, both sources are widened exactly to FP32 by `ExactWidenFP16ToFP32` or `ExactWidenBF16ToFP32`. The same SUB and EXP steps then run in FP32. `HardwareNumericMixedExpdifDiscriminator` fixes the result for two specific widened input pairs before those steps.
+
+Design point: the widening is an exact reinterpretation, not TCVT. It preserves the represented value, including NaN payloads, and contributes no conversion status. Only the FP32 SUB and EXP can set flags.
+
+Design point: both source records are captured before any result is built. `ExecuteTileExpdif` copies both source `TileInfo` records and builds the result privately, so a destination that names either source still reads old values.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-expdif-boundaries role=boundaries -->
+## Architectural boundaries
+
+Under an ExecutionMask, an inactive coordinate reads no source, performs no arithmetic, and contributes no flags. It takes the ZERO or MERGE value.
+
+After the loop the handler marks the valid region defined, applies the bundle padding, records the ORed flags, and publishes the destination.
+
+Every type in the legal pair set is FP32, FP16, or BF16. Both the SUB helper and the finite EXP helper accept these types.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-expdif-example role=example-usage -->
+## Non-normative reading example
+
+Take TEXPDIF with FP32 sources and an FP32 destination of 32 by 4 elements with one valid row:
+
+```text
+TEXPDIF <Row=32, Col=4, ValidRow=1, FP32>, T#1, T#2, ->T<512B>
+```
+
+Two of the four valid columns show the special paths.
+
+1. Left 3.0, right 3.0: the difference is +0. EXP of a zero is 1.0, encoded `0x3f800000`, with no flags.
+2. Left 1.0, right +inf: the difference is -inf with no flags. EXP of -inf is +0, encoded `0x00000000`.
+
+Neither column records a flag, so the sticky status is unchanged by these two elements.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-expdif-related role=related-owners-navigation -->
+## Related owners
+
+- [TEXPDIF](../../elementwise-tile-tile/transcendental/TEXPDIF.md) is the instruction that reaches `ExecuteTileExpdif`.
+- [EXPDIF operand legality](../legality/expdif-operands.md) owns the source operation type.
+- [Expansion execution](expansion.md) reuses the element helper for broadcast forms.
+- [Unary execution](unary.md) owns the TEXP special values.
+- [Elementwise execution](elementwise.md) owns the SUB helper.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

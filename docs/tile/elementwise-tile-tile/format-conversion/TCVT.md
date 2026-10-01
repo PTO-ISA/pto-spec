@@ -19,47 +19,77 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tcvt-purpose role=purpose -->
 ## What TCVT does
 
-`TCVT` is a selector-encoded Tile operation executed by `VEC`. It converts every valid logical element to the separately selected destination type and layout; its current instruction contract owns the exact bundle form and publication boundary.
+`TCVT` converts every valid element of one Local source Tile to another element type and writes the results into a newly allocated Local destination Tile. Unlike `TADD`, its destination type is chosen independently of the source type, and it accepts per-instruction `RMode` and `Sat` controls.
+
+Design point: `TCVT` is selected by `BSTART.VEC` Mode 0 Function 27 (TEPL selector `0x01B`) and has no standalone opcode. The `BSTART` header names the source type `SrcDataType`; the destination type `DstDataType` comes from `B.DATR`.
 
 <!-- PTO-READER-BLOCK: tile-tcvt-mechanism role=mechanism -->
 ## Element and Tile mechanism
 
-After all descriptor and operand checks succeed, the owning ASL handler converts every valid logical element to the separately selected destination type and layout. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+The destination type is resolved first. A concrete `B.DATR` `DataType` selects `DstDataType`. Omitting `B.DATR`, or encoding `DataType` as `DTYPE_NONE` (code 31), makes the destination inherit `SrcDataType`. An encoded `DataType` of zero selects `FP64`; it does not mean absence.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+Design point: code 0 already names `FP64`, so inheritance needs a separate sentinel. This keeps "no destination type requested" distinct from an explicit request for `FP64`.
+
+Rounding is resolved next. `RMode` code 0 is the operation default: round toward zero (RTZ) when `SrcDataType` is a floating type and `DstDataType` is an integer type, and round to nearest even (RNE) for every other conversion that needs rounding. Codes 1 to 7 select RNE, RTZ, RTM, RTP, RNA, RTO, and RHB explicitly and always override the default.
+
+Design point: the RTZ default makes a default float-to-integer conversion discard the fractional part, while float-to-float narrowing keeps the RNE default.
+
+`Sat` controls range overflow. With `Sat=0`, a floating result that overflows becomes an infinity where the destination format has one, and an overflowing integer result keeps only the low bits of the rounded value. With `Sat=1`, the result is clamped to the largest or smallest finite value of the destination type.
+
+After complete preflight, the source is snapshotted and each valid logical element is converted independently. Conversions whose source and destination are both in the shared set `FP64`, `FP32`, `FP16`, `E4M3`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, and `U8` use exactly the same result and flag rule as the scalar conversion family. `E8M0`, `E6M2`, `RCPE6M2`, `E2M1X2`, and `E1M2X2` use dedicated rules described in the constraints block. Other legal pairs outside these rules, such as those involving `BF16`, `TF32`, `HF32`, or `E5M2`, reach a fallback in `TileProfileConvert` that returns the raw source bits for a floating destination or truncates them for an integer destination, so the ASL gives no numeric conversion for them.
 
 <!-- PTO-READER-BLOCK: tile-tcvt-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` has the exact contract role **new typed and laid-out Local destination**.
-- `source0` has the exact contract role **persistent Local source**.
-- `numeric_control` has the exact contract role **resolved rounding and saturation**.
+- `source0` is the persistent Local source. Its bits are interpreted as `SrcDataType`.
+- `destination0` is a newly allocated Local Tile whose backing type is the resolved `DstDataType`.
+- `numeric_control` is not a Tile. It is the resolved pair of rounding mode and saturation taken from `RMode` and `Sat`.
 
-Every source coordinate read by the operation must be defined before execution reaches destination publication.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+One terminating `B.IOT` binds the source and the destination. `B.IOR`, `B.IOS`, a second source, and a second binding are illegal. `PE_MASK=0000` is a strict no-op before schema, descriptor, allocation, or payload checks.
+
+The source backing type may differ from `SrcDataType` only when both types are non-packed, have the same element width, and are carrier-compatible. The source descriptor is never retagged.
+
+For an ordinary source, the destination has the same `Row`, `Col`, `ValidRow`, and `ValidCol` as the source. An explicit `Layout` code names both the layout the source must have and the layout the destination receives; `NORM` keeps `RowMajor` on both sides.
+
+For a `CUBE_M16` or `CUBE_M32` source, `B.DATR` `Layout` must stay `NORM` and `LB2` must be omitted. The destination keeps the same CUBE layout and the same `ValidRow` and `ValidCol`, while its physical shape, CELL count, and minimum `TSize` are derived from `DstDataType`.
+
+Design point: CUBE physical geometry depends on element width. Deriving it independently for the destination lets, for example, an `FP32` CUBE Tile convert to a narrower type without first converting the layout.
 
 <!-- PTO-READER-BLOCK: tile-tcvt-effects role=effects -->
 ## Publication, definedness, and padding
 
-Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+The converted payload, the accumulated numeric status, the padding, the definedness of every element, and the destination descriptor are published as one operation. A rejected bundle has no destination effect, and the source persists unchanged.
 
-Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+Numeric status uses the five flags NV, DZ, OF, UF, and NX. The flags of every converted element are ORed together and recorded at publication.
 
-The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero` writes zero; `Max` and `Min` write the largest and smallest finite value of `DstDataType`; `Null` leaves those elements undefined. Omitting `B.DATR` selects `Null`, while an explicit code `00` selects `Zero`.
+
+The source may alias the destination, and execution observes the complete pre-execution source. `TCVT` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value and contribute no status.
 
 <!-- PTO-READER-BLOCK: tile-tcvt-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The source uses the BSTART `DataType`, while the destination uses the explicit B.DATR `DataType` or inherits the source type. Every assigned type is accepted subject to exact pairing, layout, canonicalization, and E8M0 profile rules.
+Every assigned `DataType` except `HiF4X2` may name a `TCVT` type, subject to these pair restrictions:
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+- `E2M1X2` and `E1M2X2` convert only to or from `FP32`, `FP16`, or `BF16`, and exactly one side must be packed.
+- `E6M2` converts only to or from `FP16` or `BF16`, and only with RNE or RNA rounding.
+- `RCPE6M2` is source-only, converts only to `FP16` or `BF16`, and only with RNE or RNA rounding.
+- `E8M0` converts only to or from `FP16`, `BF16`, or `FP32`.
+
+For an `E8M0` destination, zero, negative values, and NaNs produce `0xFF` with NV. A positive finite value produces the code `exponent+127` after rounding its base-two exponent under `RMode`. Positive infinity and values above the range produce `0xFF` when `Sat=0` or `0xFE` when `Sat=1`; values below the range produce `0xFF` or `0x00`. An `E8M0` source code `0xFF` produces the destination canonical quiet NaN without NV.
+
+`Canonicalize=1` is reserved and rejects before effects. A missing or zero dimension, a type, shape, capacity, layout, encoding, or definedness mismatch, or an unsupported pair or rounding mode raises `Fault_TileLegality` before destination allocation. For a CUBE source whose logical shape is accepted, an insufficient destination `TSize` raises `Fault_TileAllocation`.
 
 <!-- PTO-READER-BLOCK: tile-tcvt-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `TCVT` example, exact FP32 value `2.0` converted to FP16 remains `2.0`.
+Converting `FP32` to `S32` with the default `RMode`, a source row `[2.7, -2.7, 3.0e9]` uses RTZ. With `Sat=1` the destination row is `[2, -2, 2147483647]`, and the recorded status includes OF and NX.
+
+Converting `FP32` to `FP16` with the default RNE, the value `65536.0` exceeds the largest finite `FP16` value, 65504. With `Sat=0` it becomes `+inf`; with `Sat=1` it becomes `65504`. Both record OF and NX.
+
+For an 8 x 64 `RowMajor` Tile, the header is `BSTART.VEC TCVT, FP32` and `B.DATR` selects the destination `DataType` `FP16`. The source holds 8 x 64 x 4 = 2048 bytes, and the destination needs 8 x 64 x 2 = 1024 bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

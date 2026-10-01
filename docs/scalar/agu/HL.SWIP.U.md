@@ -17,48 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-swip-u-purpose role=purpose -->
-## What HL.SWIP.U does
+## What `HL.SWIP.U` does
 
-`HL.SWIP.U` is a standalone `48`-bit AGU instruction that forms a signed-immediate address and stores two adjacent aligned little-endian `4`-byte values.
+`HL.SWIP.U` stores two adjacent `4`-byte little-endian units from `SrcD` and `SrcD1` at an unscaled signed-immediate distance from the `SrcR` base, in one instruction.
+
+The canonical assembly is `hl.swip.u SrcD, SrcD1, [SrcR, simm]`.
+
+Design point: the `.u` form removes the `4`-byte scale, so `simm17` counts bytes and covers `-65536`..`65535`. The pair is still two `4`-byte units at `address` and `address + 4`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swip-u-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the two addresses and the transfers are formed
 
-`HL.SWIP.U` sign-extends `simm17` from its complete `-65536..65535` domain, uses it without scaling, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcR` base.
+`SrcR` is the base because the address kind is an immediate store. The sign-extended `simm17` is added to it modulo `2^PTO_XLEN`, giving the first address; the second address is the first plus `4`.
 
-The instruction preflights two adjacent `4`-byte addresses, then stores the two snapshotted data values in increasing-address order.
+Both addresses are probed, in order and before either store is issued: alignment, translation, permission. Only after both probes pass are `SrcD` and `SrcD1` read and the two relaxed `4`-byte stores committed in address order.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+There is no destination selector, so no register records either address.
+
+Design point: because the second address is validated before the first store commits, a fault on the second unit leaves the first unit unwritten; a pair is never half performed.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swip-u-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `SrcR` supplies the base; `simm17` supplies the signed displacement. Every encoded Reg5 source among `SrcD`, `SrcD1`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcD` supplies first store value; `SrcD1` supplies second store value.
-- `simm17` assigns every signed value from `-65536` through `65535`; encoded zero is a zero displacement, not omission.
+- `SrcD` supplies the unit at the first address and `SrcD1` the unit at the second. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `SrcR` supplies the base. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `simm17` is signed and covers `-65536`..`65535` bytes because it is not scaled.
+- Design point: neither `SrcD` nor `SrcD1` is consumed by the store, so a value used as the second half of one pair can be the first half of the next.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swip-u-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+All sources are snapshotted before the first store, so the stored bytes do not depend on anything written by this instruction.
 
-After both addresses pass preflight, success records two relaxed store events in address order, updates overlapping reservation state only after complete preflight, and advances `TPC` by `6` bytes.
+Success writes two adjacent `4`-byte ranges, records two relaxed store events in address order, and advances `TPC` by `6` bytes.
+
+Design point: only those two ranges change; a reservation is invalidated only if one of them overlaps its `64`-byte granule.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swip-u-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `4`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch or an unavailable `T`/`U` source raises `Fault_IllegalInstruction` before any instruction effect.
+- A first or second address that is not a multiple of `4` raises `Fault_DataAlignment` before either store; a later permission or bounded-memory failure raises `Fault_DataPage` at the address that failed.
+- A fault records no store event, writes no byte of either unit, and leaves `TPC` on the faulting instruction for a complete reissue.
+- Design point: an unscaled immediate can be odd, so this form can produce an address that fails alignment even from an aligned base; the immediate, not the base, decides the residue.
 
 <!-- PTO-READER-BLOCK: scalar-hl-swip-u-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With the base set to `0x100` and the signed immediate set to `4`, the displacement is `4` and base plus displacement is `0x104`. The memory access uses `0x104`. After both addresses pass preflight, the second `4`-byte store uses `0x108`.
+- With GPR `6` = `0x2000` and `simm` = `2`, the two addresses are `0x2002` and `0x2006`; the first is not a multiple of `4`, so `Fault_DataAlignment` is raised.
+- With `simm` = `4` the addresses become `0x2004` and `0x2008`, and both units are written.
+- With `SrcD` = `0x0000000011223344` and `SrcD1` = `0x0000000055667788`, the bytes `44 33 22 11` land at `0x2004` and `88 77 66 55` at `0x2008`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -7,8 +7,69 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-cas-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit is the bundle-level handler for `MGATHER.CAS`, the indexed compare-and-swap. For each active lane it reads the old global-memory value, writes the replacement when the old value equals the expected value, and returns the old value in a new Local Tile.
+
+`BundleMGATHERCASSelected` recognizes the bundle: a valid `TileMemory` operation descriptor whose selector function (bits `4:0`) is `8`. `ExecuteBundleMGATHERCASOperation` validates the complete bundle, resolves the destination, and calls the Tile-level `MGATHER_CAS` effect.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-cas-concepts role=concepts-state -->
+## Concepts and visible state
+
+A compare-and-swap needs three Tile sources, so the schema uses two `B.IOT` commands. `BundleMGATHERCASBindingsLegal` requires exactly two Tile bindings.
+
+- The first `B.IOT` carries the index Tile in `source0` and the expected-value Tile in `source1`. It has no destination, a destination size of zero, and no `last` flag.
+- The second `B.IOT` carries the destination, the replacement Tile in `source0`, and `last`. It carries `source1` only when a predicate-Tile execution mask is in force.
+- One `B.IOR` record is required. Its `source0` selects the GPR that holds the base address for the current memory agent.
+- `B.DIM` gives valid columns, valid rows, and physical columns, checked by `BundleMGATHERDimensionsLegal`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-cas-rules role=rules-interactions -->
+## Rules and interactions
+
+The handler first returns success with no effect when `SelectedBundleTileMaskIsZero` holds.
+
+An unknown TLSU operation code raises `Fault_IllegalInstruction`. Every other check below raises `Fault_TileLegality` before the destination is resolved.
+
+- No `B.IOS` binding, a present and legal `B.IOR`, a uniform PE mask, legal dimensions, and the two-binding schema.
+- The index, expected, and replacement Tiles all have defined contents and the bundle layout. The index Tile is S32, U32, S64, or U64.
+- The operation data type is U16, U32, or U64, and the expected and replacement Tiles have that type.
+- All three source Tiles have exactly the `B.DIM` valid rows and valid columns, and the physical shape is legal.
+
+The handler then resolves the destination with the `B.DIM` shape and the operation data type, and validates Local generation writers. The destination comes from the second binding. A later failure, or a memory fault inside `MGATHER_CAS`, calls `RollBackBundleTileDestinations`. Success calls `FinalizeBundleTileAttempt`, which publishes the destination.
+
+Design point: the data type set is restricted to unsigned 16, 32, and 64 bit values. The comparison is a bit-pattern equality, and floating or signed types are not admitted by this handler.
+
+Design point: `MGATHER_CAS` probes each active address for both read and write before it performs the first store. A permission or translation fault therefore occurs before any compare-and-swap takes effect.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-cas-boundaries role=boundaries -->
+## Architectural boundaries
+
+`ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules` tests `BundleMGATHERCASSelected` right after `BundleGMOVSelected` and before `BundleGMAtomRedSelected`. The atomic-and-reduction selector also covers function `8`, but because this selector is tested first, a function `8` bundle that no earlier selector (such as CUBE transport) claims reaches this handler.
+
+The comparison, store, and atomic-event record belong to the Tile atomics owner.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-cas-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Suppose a U32 bundle sets `LB0` to 8, `LB1` to 1, and `LB2` to 8. The first `B.IOT` names a U64 index Tile and a U32 expected Tile, both 1 by 8. The second names a U32 replacement Tile of 1 by 8 and a destination. Each of the 8 lanes reads its old word. A lane whose old word equals its expected word stores the replacement. The destination receives all 8 old words.
+
+If the expected Tile were S32, the bundle raises `Fault_TileLegality` before the destination is allocated.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-mgather-cas-related role=related-owners-navigation -->
+## Related owners
+
+- [MGATHER dispatch](tlsu-mgather.md) defines the shared dimension check.
+- [GM atomic and reduction dispatch](tlsu-gm-atom-red.md) handles the other atomic functions.
+- [Atomics memory](../../../tile/model/memory/atomics.md) defines `MGATHER_CAS`.
+- [BSTART.MGATHER.CAS](../../execution/BSTART.MGATHER.CAS.md) is the instruction page for the start form.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

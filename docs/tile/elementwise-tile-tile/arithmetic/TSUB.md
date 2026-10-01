@@ -19,52 +19,58 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tsub-purpose role=purpose -->
 ## What TSUB does
 
-`TSUB` subtracts each right-source element from the corresponding left-source element and publishes a new Local destination.
+`TSUB` subtracts one Local Tile from another element by element and writes the differences into a newly allocated Local destination Tile. It shares the bundle schema, preflight, padding, and publication rules of `TADD`; only the element operation and the operand order differ.
+
+Design point: `TSUB` is selected by `BSTART.VEC` Mode 0 Function 1 (TEPL selector `0x001`) and has no standalone opcode. Subtraction is not commutative, so the binding order carries meaning: the first source of the terminating `B.IOT` is always the minuend.
 
 <!-- PTO-READER-BLOCK: tile-c-tsub-mechanism role=mechanism -->
-## Operation mechanism
+## Element and Tile mechanism
 
-The operation evaluates only the valid rectangle using the mnemonic-selected typed element rule.
+Preflight checks the complete bundle first: the selected `DataType`, the layout, both source descriptors, source definedness and encodings, the destination capacity, and the operand schema. Only after every check passes does `ExecuteTileBinary` compute `left - right` for each coordinate in the valid rectangle `ValidRow x ValidCol`.
+
+Integer subtraction wraps. Both operands are first sign-extended or zero-extended according to the `DataType`, and the difference is truncated back to the element width. For example, with `U8`, `3 - 5` produces `254`.
+
+Floating-point subtraction uses the numeric profile of the selected `DataType` with its fixed default rounding. `TSUB` rejects any nondefault `RMode`, `Sat`, or `CMode`, so there is no per-instruction rounding or saturation control.
+
+Design point: both sources are read completely before the first destination element is written. A destination that aliases either source therefore still receives `old left - old right`.
 
 <!-- PTO-READER-BLOCK: tile-c-tsub-inputs-outputs role=inputs-outputs -->
-## Operands, shape, and type
+## Operand roles and descriptors
 
-- `destination0` identifies a newly allocated destination.
+- `source0` is the minuend, the left operand. It is an existing, allocated Local Tile.
+- `source1` is the subtrahend, the right operand. It must match `source0` in physical rows, physical columns, valid rows, valid columns, and layout.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected operation `DataType`, and its shape matches the sources.
 
-- `source0` carries its mnemonic-defined operand.
+All three Tiles are bound by one terminating `B.IOT` and share one `PE_MASK`. `PE_MASK=0000` is a strict no-op: no descriptor, allocation, or payload is produced.
 
-- `source1` carries its mnemonic-defined operand.
-
-- The closed applicable DataType set is `FP32`, `FP16`, `BF16`, `S32`, `S16`, `S8`, `U32`, `U16`, `U8`.
-
-- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
-
-- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+Design point: a source may be stored with a different same-width, non-packed backing type. Its bits are then validated and interpreted as the selected `DataType`, which allows a reinterpreting read without a separate copy.
 
 <!-- PTO-READER-BLOCK: tile-c-tsub-effects role=effects -->
-## Definedness, padding, and publication
+## Publication, definedness, and padding
 
-All source descriptors and payloads are validated and snapshotted before destination publication.
+The destination descriptor, the valid-region differences, the padding, and the definedness of every element are published together. A rejected bundle publishes none of them, and both sources persist unchanged.
 
-The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero` writes zero; `Max` and `Min` write the largest and smallest finite value of the `DataType`; `Null` leaves those elements undefined. Omitting `B.DATR` selects `Null`, while an explicit code `00` selects `Zero`.
 
-Null padding leaves physical coordinates outside the valid rectangle undefined; an explicit non-Null PadValue defines those coordinates with the selected typed value.
-
-Source Tiles persist and are not modified by successful execution.
+`TSUB` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value instead of a difference.
 
 <!-- PTO-READER-BLOCK: tile-c-tsub-constraints role=constraints -->
-## Legality, fault, and order boundaries
+## Type, layout, and fault boundary
 
-Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+The ASL legality predicate `TileVecArithmeticDataTypeSupported` accepts the same 16 types as `TADD`: `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, and `U8`. Packed four-bit formats are excluded. The floating element arithmetic that `TSUB` reaches, `ScalarFPBinaryProfile`, is defined only for `FP64`, `FP32`, `FP16`, and `BF16`, so the ASL gives no element result for `TF32`, `HF32`, `E4M3`, or `E5M2`. The generated legality list below is narrower and names only `S32`, `U32`, `FP32`, `S16`, `U16`, `FP16`, `BF16`, `S8`, and `U8`. Code that must satisfy both should use a type from the narrower list.
 
-A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`, and all operands must use that same layout. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal.
+
+Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported `DataType`, or an invalid destination capacity raise `Fault_TileLegality` before any destination effect.
 
 <!-- PTO-READER-BLOCK: tile-c-tsub-example role=example -->
-## Non-normative example
+## Non-normative worked example
 
 This example illustrates the current ASL-bound contract and is not a second instruction definition.
 
-`TSUB <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+For `S32`, a left source row `[10, -4]` and a right source row `[3, 6]` produce the destination row `[7, -10]`. Swapping the two sources produces `[-7, 10]`.
+
+In macro form, an 8 x 64 `S32` subtraction is `TSUB <Row=8, Col=64, S32>, T#1, T#2, ->T<2KB>`, where `T#1` is the minuend and `T#2` is the subtrahend. The destination payload is 8 x 64 x 4 = 2048 bytes, exactly the 2KB capacity.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

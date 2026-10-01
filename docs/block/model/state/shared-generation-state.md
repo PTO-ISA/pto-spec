@@ -7,8 +7,60 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-STATE-SHARED-GENERATION}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-state-shared-generation-state-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines how the pending Shared generation records are cleared, reset, queried, and aborted. A Shared generation is an in-progress `B.ASSEMBLE` build of one Shared Tile, which several bundles or participating PEs may fill before it is published.
+
+<!-- PTO-READER-BLOCK: block-model-state-shared-generation-state-concepts role=concepts-state -->
+## Concepts and visible state
+
+`_SharedGenerations` has one record per Shared Tile ID, `PTO_SHARED_TILE_COUNT` records in all. Each record tracks:
+
+- lifecycle flags `open`, `closed`, and `published`;
+- the Shared Tile ID, participant mask, parent size code, and parent cell count;
+- `covered_cells` and `ready_cells` bitmaps and the `arrived_participants` mask;
+- specialized producer inputs and metadata, with a valid flag;
+- `last_seen`;
+- a working copy of the Tile (`working_tile`), with `working_valid` and `working_initialized_mask`.
+
+<!-- PTO-READER-BLOCK: block-model-state-shared-generation-state-rules role=rules-interactions -->
+## Rules and interactions
+
+`ClearBundleSharedGenerationState(id)` resets the record for one ID: it keeps the Shared Tile ID, and all other flags, masks, bitmaps, and inputs become zero or false. `working_tile` is reloaded from the current published Shared Tile.
+
+`ResetBundleSharedGenerationState` clears every record. `BundleSharedGenerationOpen(id)` reports the `open` flag. `AbortBundleSharedGeneration(id)` is the same as clearing that record.
+
+Design point: abort discards only the working copy. The published Shared Tile is not touched, and the working copy is reloaded from it. A rejected or faulted assembly therefore leaves the previously published Shared object exactly as it was, which is what the Shared-generation contract `PTO-B-ASSEMBLE-SHARED-GENERATION-001` requires.
+
+Design point: pending Shared generations stay outside the architectural `S` register file until complete collective publication. Other readers see either the old object or the complete new one, never a partly assembled Tile.
+
+<!-- PTO-READER-BLOCK: block-model-state-shared-generation-state-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit does not open, extend, or publish a generation. Those steps, and the coverage and participant checks, are owned by the Shared-generation operand unit.
+
+Shared generation records are not cleared by `ClearBundleHeaderState`. They survive commit and are closed by abort, publication, or reset.
+
+<!-- PTO-READER-BLOCK: block-model-state-shared-generation-state-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+A two-bundle assembly of Shared Tile 3 has half its cells covered when the second bundle faults. Tile execution aborts the generation for ID 3. All flags of the record return to false, its coverage is empty, its working copy equals the published Shared Tile 3, and readers of Shared Tile 3 still see the old object.
+
+<!-- PTO-READER-BLOCK: block-model-state-shared-generation-state-related role=related-owners-navigation -->
+## Related owners
+
+- [Shared generation](../operands/shared-generation.md) opens, extends, and publishes generations.
+- [Shared registers](../../../tile/model/state/shared-registers.md) own the published Shared Tiles.
+- [Tile execution](../dispatch/tile-execution.md) aborts generations after a failed operation.
+- [B.ASSEMBLE](../../operands/B.ASSEMBLE.md) is the command page.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

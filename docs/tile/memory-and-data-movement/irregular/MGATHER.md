@@ -19,47 +19,56 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-mgather-purpose role=purpose -->
 ## What MGATHER does
 
-`MGATHER` is a selector-encoded Tile operation executed by `TLSU`. It uses each integer index as a signed or unsigned GM byte displacement and gathers the addressed elements into a new Local Tile; its current instruction contract owns the exact bundle form and publication boundary.
+`MGATHER` reads global memory (GM) at one address per lane and writes the loaded elements into a new Local destination Tile. It is a selector-encoded Tile operation of engine `TLSU`, selected by TLSU Function 4 and spelled `BSTART.MGATHER DataType`. The block dispatcher `ExecuteBundleMGATHEROperation` checks the bundle and then calls the shared tile model `MGATHER`.
+
+A lane is one coordinate of the index Tile's valid region. Its address is `BaseGPR` plus that lane's index value used as a byte displacement. `MGATHER` has no standalone opcode.
+
+Design point: the number of lanes follows the index Tile's valid rectangle and not a memory layout, so the shape of the result is statically known even though the addresses are not. Four indices always produce a four-element valid region, however scattered those four addresses are.
 
 <!-- PTO-READER-BLOCK: tile-mgather-mechanism role=mechanism -->
-## Element and Tile mechanism
+## Addressing and two-phase mechanism
 
-After all descriptor and operand checks succeed, the owning ASL handler uses each integer index as a signed or unsigned GM byte displacement and gathers the addressed elements into a new Local Tile. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+The model makes two passes over the index Tile. The preflight pass visits every active coordinate of the valid region, builds the address with `TileMemoryByteDisplacementAddress` as base plus `TileIndexByteDisplacement`, and probes it with `ProbeTileMemoryAccess`. A failing probe raises its own fault through `RaiseDataAccessFault`. The displacement is the full index value in bytes: `S32` sign-extends and `U32` zero-extends, and it is never multiplied by the element width.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+The commit pass fills every physical destination element, then loads only the preflighted lanes with `LoadTranslatedUnsigned`, records one load event per load through `RecordLoadEvent`, marks the region with `MarkTilePhysicalRegionDefined`, and installs the completed tile with one assignment.
+
+Design point: the probe is a read probe only and touches neither memory nor the destination. Every lane address is therefore resolved, translated, and alignment-checked before the first load event and before any destination element changes. A faulting request leaves no partial destination, so retrying it cannot double-apply anything.
 
 <!-- PTO-READER-BLOCK: tile-mgather-inputs role=inputs-outputs -->
-## Operand roles and descriptors
+## Operand roles and bindings
 
-- `destination0` has the exact contract role **destination**.
-- `address` has the exact contract role **base-address**.
-- `source0` has the exact contract role **indices**.
+- `destination0` is a new Local Tile with the bundle `DataType` and the `B.DIM` shape. It receives the loaded elements.
+- `address` is the base address, read from the GPR named by `B.IOR.RegSrc0` in the current memory agent's register file.
+- `source0` is the index Tile: `S32`, `U32`, `S64`, or `U64`, sharing the bundle layout and the `B.DIM` valid rows and valid columns.
 
-Every source coordinate read by the operation must be defined before execution reaches destination publication.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+`B.IOR` is required, and `RegSrc1`, `RegSrc2`, and `RegDst` must encode zero. Without a predicate-Tile ExecutionMask one terminating `B.IOT` carries the index Tile and the destination. With a predicate-Tile ExecutionMask the same command carries that predicate Tile as an additional Local source, so `ExecuteBundleMGATHEROperation` still sees exactly one tile binding. The index Tile is a Local operand and is never written.
 
 <!-- PTO-READER-BLOCK: tile-mgather-effects role=effects -->
 ## Publication, definedness, and padding
 
-After complete address preflight, the selected PadValue carrier initializes every physical destination coordinate; gathered valid values then overwrite their coordinates.
+Before the first load, the model initializes every physical destination element. Elements outside the valid region receive the bundle `PadValue` through `TilePadValueForDataType`. Under an ExecutionMask, a valid-region coordinate that the mask does not activate receives `IndexedGatherInactiveDestinationValue` instead: zero bits when the mask selects zero, otherwise the merge base element at the same coordinate. Preflighted lanes then overwrite their own element with the loaded value.
 
-On success the full physical destination is marked defined and `contents_defined=TRUE`; payload, definedness, and descriptor publish together.
+Design point: `TilePadValueForDataType` returns zero bits for `TilePad_Null`, and an omitted `B.DATR` makes `CurrentBundlePadValue` return `TilePad_Null`. Omitting the command and encoding pad code `00` therefore both write zero bits here, and every physical element is marked defined either way. A later read of a non-valid element returns zero rather than being undefined, so a consumer needs no validity test for the padding region.
 
-The operation preflights every enabled GM address before the first load, atomic event, or destination update; a failed access leaves no partial destination or event.
+On success the complete physical destination region is defined and `contents_defined` is true. If a probe faults, the model returns before its first load and the dispatcher calls `RollBackBundleTileDestinations`, so no destination is published.
 
 <!-- PTO-READER-BLOCK: tile-mgather-constraints role=constraints -->
-## Type, layout, and fault boundary
+## Types, shape, and fault boundary
 
-Index Tiles use `S32`, `U32`, `S64`, or `U64`. Packed four-bit transfer types `E2M1X2`, `E1M2X2`, `HiF4X2`, `S4X2`, and `U4X2` are rejected because this indexed transfer has no nibble selector.
+Index Tiles must be `S32`, `U32`, `S64`, or `U64` through `IndexedTLSUMemoryIndexDataTypeLegal`. The transfer `DataType` must pass `IndexedTLSUOrdinaryTransferDataTypeLegal`, which admits every type `TileDataTypeIsFourBit` rejects plus the five four-bit types `E2M1X2`, `E1M2X2`, `HiF4X2`, `S4X2`, and `U4X2`. For one of those five, valid columns must be even and equal twice the index valid columns, and the one indexed byte carries both logical nibbles.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+Layouts are `ROWMAJOR`, `CUBE_M16`, and `CUBE_M32`; `IndexedTLSULayoutSupported` rejects `CUBE_N8`. Every `B.DIM` value must lie in `1..65535`, valid rows times valid columns may not exceed `PTO_MODEL_TILE_ELEMENTS`, and `ROWMAJOR` requires valid columns no greater than the physical columns, which must be a nonzero power of two.
+
+A selector code that decodes to nothing raises `Fault_IllegalInstruction`. A wrong number of tile bindings, a Shared binding, a missing `B.IOR`, or a bad dimension, layout, index type, or transfer type raises `Fault_TileLegality`. `PE_MASK=0000` exits at the top of the dispatcher, before all of those checks.
 
 <!-- PTO-READER-BLOCK: tile-mgather-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `MGATHER` example, with one valid index `4`, the destination receives the element loaded from `base + 4`.
+Take a 1 by 4 `U32` index Tile holding `8, 0, 8, 4`, a base address `0x1000` in `a0`, and GM holding the `U32` values `1, 2, 3, 4` at `0x1000`, `0x1004`, `0x1008`, and `0x100c`. Each index is a byte displacement, so lanes `0` and `2` both load from `0x1008`, lane `1` loads from `0x1000`, and lane `3` loads from `0x1004`. The valid region of the destination holds `3, 1, 3, 2`.
+
+In macro form this is `MGATHER <Col=4, U32>, [base=a0], T#1, ->T<128B>`, with `T#1` as the index Tile. The 128-byte destination holds 32 `U32` physical elements: the 4 valid ones receive the loaded values and the other 28 receive zero bits from the default pad value.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

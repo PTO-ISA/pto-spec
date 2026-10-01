@@ -19,39 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-c-bstart-fp-purpose role=purpose -->
 ## C.BSTART.FP 的作用
 
-`C.BSTART.FP` 打开一个活动 Block 描述符；Block 体在完成前提供所需属性与绑定。
+`C.BSTART.FP` 是 Floating 块的 16 位启动命令，其后继不是 PC 相对标签。它有三种形式：`C.BSTART.FP FALL`、`C.BSTART.FP IND` 与 `C.BSTART.FP RET`。块（也称指令束）是一组头部命令与主体指令，在 `BSTOP` 或下一条块启动处作为一个整体提交。
+
+该命令把候选后继记录到指令束参数寄存器 `BARG` 中，本身不跳转。模型页面[指令束启动分派](../model/dispatch/start.md)与[开始](../model/lifecycle/begin.md)定义了共用的启动序列。
 
 <!-- PTO-READER-BLOCK: block-c-bstart-fp-mechanism role=mechanism -->
-## 放置与执行机制
+## 编码与启动序列
 
-`C.BSTART.FP` 必须位于所属 Block 的起始位置。后续属性、维度与绑定会累积到活动描述符中，直到 `BSTOP` 或下一条已接受的 `BSTART` 完成边界。
+该命令占一个半字，只有一个字段 `BrType`，位于位 13:11。其余位由掩码 `0xc7ff` 下的匹配值 `0x0080` 固定。与 `C.BSTART.STD` 的唯一区别是位 7，它选择 Floating 块类型。`BrType` 1 为 FALL，5 为 IND，7 为 RET。
 
-已接受载体使用 `C16` 编码类别；命令在读取绑定或改变状态前，会先解析所有显示字段。
+候选目标取决于 `BrType`：
 
-完成时，只有全部模式与状态预检成功，描述符才会执行所选 Block 操作。
+- FALL 使用顺序地址 `P + 2`，其中 `P` 是该 `C.BSTART.FP` 的地址。
+- IND 使用退休块 `BARG.BPCN` 的快照。
+- RET 使用返回地址状态 `_ReturnAddress` 的快照。例如，`SETRET`、调用启动以及对 `ra` 的帧加载会同时写入它与 GPR 10；普通的 GPR 10 写入不会更新它。
+
+在任何活动前驱提交之前先检查目标对齐。只有当前驱提交选择了本地址作为下一 PC 时，才打开新的 Floating 块。随后头部执行从 `P + 2` 继续。
+
+设计要点：IND 在退休块提交之前读取其 `BPCN`，并把该值保存为提交无法改变的快照。因此前驱留在其 `BPCN` 中的目标（例如通过 `SETC.TGT` 写入）会成为新块的候选目标。
 
 <!-- PTO-READER-BLOCK: block-c-bstart-fp-inputs role=inputs-outputs -->
-## 载体、绑定与输入
+## 字段与 BARG 取值
 
-- 编码操作数：`BrType` — 编码的转移类型：FALL、IND 或 RET。
-- 前驱退休后，该载体打开一个 Floating Block；FALL 和 RET 可在没有前驱时启动，IND 则要求活动的退役 Standard 或 Floating BARG。
-- 编码零仍是已分配值或明确规定的拒绝值；它不会静默表示省略操作数。
+- `BrType` 总是被编码，没有省略形式或默认形式。
+- 每种形式都写入 `BARG.BPC = P`，并把 `BlockType` 设为 Floating 类型。
+- FALL 写入 `TYPE = FALL` 与 `BPCN = P + 2`。`BARGSelectsBPCN` 对 FALL 为假，因此提交在顺序 PC 处继续。
+- IND 写入 `TYPE = IND` 与退休 `BPCN` 的快照。RET 写入 `TYPE = RET` 与返回地址的快照。二者在提交时都选择 `BPCN`。
+
+设计要点：FALL、IND 与 RET 以 `TAKEN = 1` 开始；启动路径只对 COND 转移把 `TAKEN` 置为假。`TAKEN` 不影响这些转移类型的后继选择，因为 `BARGSelectsBPCN` 只对 COND 查看它；`LSRGET` 标识符 2 仍在位 7 报告它。
 
 <!-- PTO-READER-BLOCK: block-c-bstart-fp-effects role=effects -->
 ## 状态效果与顺序
 
-启动 Block 会记录所选载体，并把操作执行推迟到完成边界。
+成功的启动会清除之前的头部状态，把新块标记为处于头部阶段的活动块，写入 `BARG` 与 `BPC`，并取得新的执行域令牌。`C.BSTART.FP` 不访问内存，也不写 GPR。
 
-完成全部预检与计算后，所有启用输出按归属单元规定的原子组发布；除非契约明确消费，成功执行后的数学源仍保持可用。
+写入的候选目标保持挂起，直到 `BSTOP` 或下一条块启动提交新块。与 Standard 块一样，Floating 块带有候选字：主体中的 `SETC.TGT` 仍可在提交前替换 `BPCN`，`LSRGET` 标识符 1 也可以读取它。
+
+设计要点：前驱先提交，新 `BARG` 后安装。若前驱提交失败，前驱保持权威，不安装 Floating `BARG`。若前驱转移到别处，本命令位于未被选择的路径上，不打开任何块。
 
 <!-- PTO-READER-BLOCK: block-c-bstart-fp-constraints role=constraints -->
-## 合法性、故障与原子性
+## 合法性与故障边界
 
-固定比特、保留值、选择器取值域与必需的 Block 放置关系都在架构效果之前检查。
+`BrType` 只接受 1、5 与 7。编码 0、2、3、4 与 6 不会译码为独立的 `C.BSTART.FP`，并在效果之前引发 `Fault_IllegalInstruction`。融合的 `BSTART.ICALL` 形式不使用该字段：它是独立的 32 位形式，其间接调用转移由形式本身固定。
 
-当前归属单元通过 `Fault_BundleControl`, `Fault_IllegalInstruction`, `Fault_InstructionPC` 报告无效模式、状态、地址或后继条件；本页说明文字不创建额外故障规则。
+设计要点：与 `C.BSTART.STD` 不同，这里的编码零没有其他所有者。`C.BSTOP` 只拥有全零半字，而每个 `C.BSTART.FP` 位模式都置位位 7，因此 `BrType` 0 只是保留值并被拒绝。
 
-完整模式、绑定、就绪状态、别名、容量与分配预检发生在源快照和所有目的端发布之前。
+没有活动的退休 Standard 或 Floating 块时，IND 引发 `Fault_BundleControl`。System 块没有候选字，因此无法提供间接目标。快照目标为奇数时引发 `Fault_InstructionPC`。这两种故障都发生在前驱提交之前。
 
 <!-- PTO-READER-BLOCK: block-c-bstart-fp-example role=example -->
 ## 非规范示例
@@ -59,10 +72,10 @@ The current instruction contract is owned by the ASL source linked above.
 该示例只演示放置关系与载体流；精确行为仍由当前 ASL 和指令契约定义。
 
 ```asm
-C.BSTART.FP FALL
+C.BSTART.FP RET
 ```
 
-起始指令先建立描述符；后续载体按声明模式补充内容，最终完成边界触发验证与操作执行。
+`C.BSTART.FP RET` 编码 `BrType = 7`，即半字 `0x3880`。假设它位于 `0x4000`，`_ReturnAddress` 保存 `0x5200`，例如由 `SETRET` 写入该值之后。新的 Floating 块的 `BPC = 0x4000`、`BPCN = 0x5200`、`TYPE = RET`。头部执行从 `0x4002` 继续，该块提交时在 `0x5200` 继续。若 `_ReturnAddress` 保存奇数值，该命令会在前驱提交之前引发 `Fault_InstructionPC`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

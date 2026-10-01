@@ -7,8 +7,80 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-SCALAR-MODEL-AMO-SEMANTICS}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-amo-semantics-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines the scalar atomic memory operations: load-reserved and store-conditional (LR/SC), atomic read-modify-write (RMW), compare-and-swap (CAS), and the 64-byte `DMA` copy. RMW, CAS, and `DMA` probe their addresses before they read or write memory. LR and SC follow the reservation rules below.
+
+[AMO dispatch](../dispatch/amo.md) reads the decoded operands and calls these helpers. It writes the returned value to the destination only when no fault was raised.
+
+<!-- PTO-READER-BLOCK: scalar-model-amo-semantics-concepts role=concepts-state -->
+## Concepts and visible state
+
+The reservation is `_ReservationValid`, `_ReservationAddress`, and `_ReservationSize`. A successful LR sets all three. The reservation granule is the 64-byte line that contains `_ReservationAddress`.
+
+`AtomicAddress` maps an address and the `far` hint to a flat address. In this model it returns the address unchanged, so `far` has no effect.
+
+`AtomicValueSized` computes the new memory value at the access width:
+
+- `SWAP` installs the operand.
+- `ADD`, `AND`, `OR`, and `XOR` work on zero-extended width values and truncate the result.
+- `SMIN` and `SMAX` compare sign-extended width values; `UMIN` and `UMAX` compare zero-extended ones.
+
+`NormalizeAtomicReturn` shapes the old value for the destination. It zero-extends 1-byte and 2-byte values, sign-extends 4-byte values, and returns 8-byte values unchanged.
+
+<!-- PTO-READER-BLOCK: scalar-model-amo-semantics-rules role=rules-interactions -->
+## Rules and interactions
+
+`LoadReserved` performs an ordered load. If the load faults, it leaves the reservation untouched, so an older reservation survives.
+
+`StoreConditional` first compares granules. If the reservation is valid and the SC address falls in the same 64-byte line, it clears the reservation, probes the store, and on success stores the value, records a store event, and returns 0. On a miss it clears the reservation and returns 1 without probing.
+
+Design point: a reservation miss is probe-free. An SC that cannot succeed never reports an alignment or page fault, even for a bad address; it simply returns 1. A matching SC clears the reservation before it probes, so a faulting SC also loses the reservation. A reissue after recovery then returns 1 unless software runs a new LR.
+
+`AtomicReadModifyWrite` and `CompareAndSwap` probe the address for read and then for write. Both probes must pass, and the two translated addresses must be equal; otherwise the operation raises `Fault_DataPage`. Only then do they read the old value and write the new one. Both return the raw old value.
+
+`CompareAndSwap` compares the old value with the width-normalized expected value. On a match it stores the desired value. It records an atomic event in both outcomes, with a success flag.
+
+Design point: both probes and the translated-address check happen before the read. No old value is read and no byte is written unless both the read and the write can complete, so a faulting RMW or CAS leaves memory unchanged.
+
+`ExecuteScalarDMACopy64` probes the 64-byte source for read and the 64-byte destination for write, with 1-byte alignment. It snapshots all 64 source bytes, records eight 8-byte load events, writes all 64 bytes, and records eight store events.
+
+Design point: the snapshot happens before the first destination write, so overlapping source and destination ranges behave like `memmove`. A fault in either probe leaves memory unchanged.
+
+<!-- PTO-READER-BLOCK: scalar-model-amo-semantics-boundaries role=boundaries -->
+## Architectural boundaries
+
+`PTO_RESERVATION_GRANULE_BYTES` is 64. With a valid reservation, SC success depends only on the line; the SC width and exact byte address need not match the LR.
+
+Plain stores in [scalar memory](../agu/memory.md) also clear the reservation when the stored range overlaps its 64-byte granule. `FENCE.D` and `FENCE.I` clear it unconditionally.
+
+`CompareAndSwap` stores the desired operand through `StoreTranslated`, which writes only `size_bytes` bytes. The atomic event records the desired value normalized to the width.
+
+<!-- PTO-READER-BLOCK: scalar-model-amo-semantics-example role=example-usage -->
+## Non-normative reading example
+
+A program executes `LR.W` at 0x104, then `SC.D` at 0x138.
+
+- `LoadReserved` succeeds and records reservation address 0x104, size 4.
+- The reservation granule is 0x100, because 0x104 rounds down to a multiple of 64.
+- The SC granule is also 0x100, so the SC matches.
+- The reservation is cleared, the 8-byte probe at 0x138 passes, the value is stored, and the SC returns 0.
+
+A second `SC.D` at 0x138 now misses, returns 1, and performs no probe.
+
+<!-- PTO-READER-BLOCK: scalar-model-amo-semantics-related role=related-owners-navigation -->
+## Related owners
+
+- [AMO dispatch](../dispatch/amo.md) maps AMO forms, widths, and ordering bits to these helpers.
+- [Scalar memory](../agu/memory.md) owns probing, raw access, and reservation invalidation by stores.
+- [Atomicity](../../../arch/memory-model/atomicity.md) owns memory-event recording.
+- [SYS semantics](../sys/semantics.md) owns the fences that clear the reservation.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

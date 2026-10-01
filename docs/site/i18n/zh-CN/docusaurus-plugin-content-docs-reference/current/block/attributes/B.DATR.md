@@ -19,35 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-b-datr-purpose role=purpose -->
 ## B.DATR 的作用
 
-`B.DATR` 是一条 32 位 Block header 命令，用来记录可选的数据布局、数据类型、转换和数值属性。它修改待处理 Block 元数据，不会立即执行 Tile body 操作。
+`B.DATR`（Block 数据属性）是可选的 32 位 header 命令。它锁存 Block 的 Tile 操作要读取的数据属性：元素 `DataType`、`Layout`、`PadValueOrByteId`、比较模式 `CMode`、舍入模式 `RMode`、`Sat`、`Canonicalize`，以及两个 ExecutionMask 控制 `PredInv` 和 `Zero`。它不改变任何 Tile、寄存器或内存状态。
+
+`B.DATR` 只记录取值。每个 Tile 操作自行决定接受哪些非零字段以及它们的含义；这些由该操作的页面列出。
 
 <!-- PTO-READER-BLOCK: block-b-datr-mechanism role=mechanism -->
-## 位置与机制
+## 放置与机制
 
-该命令位于有效 Block header 中，并且在第一条 body 指令之前。重复或位置错误的使用会在待处理 header 状态变化前被拒绝。
+命令分派器只在 Block 处于活动状态且仍在 header 中（`BSTART` 之后、第一条 body 指令之前）时接受 `B.DATR`，并且每个 Block 只接受一次。否则引发 `Fault_BundleControl`。契约还要求 `B.DATR` 位于任何 `B.IOR`、`B.IOT` 或 `B.IOS` 之前。
 
-命令被接受后，会在待处理 Block 状态中锁存一条带类型的属性记录。只有完整 header、绑定、维度和 body 满足所选操作 schema 后，该操作才会使用这些字段。
+写入器 `SetBundleDataAttributeState` 保存七个数据字段。随后 `SetBundleDataAttributesFromCommand` 保存 `PredInv` 与 `Zero` 并置位存在标志。见[数据属性分派模型](../model/dispatch/command-data-attributes.md)和[控制状态模型](../model/state/control-state.md)。
+
+设计要点：取值的合法性在之后完整 Block 执行预检时才检查。`B.DATR` 在操作数绑定之前执行，因此无法知道适用哪些操作特定规则；操作 schema 会在任何目标效果之前以 `Fault_TileLegality` 拒绝不适用的非零字段。
 
 <!-- PTO-READER-BLOCK: block-b-datr-inputs role=inputs-outputs -->
-## 操作数与 header 角色
+## 编码字段
 
-- `Layout` 选择 Tile 布局或已分配的转换布局；其确切分配域仍以下方生成契约为准。
-- `DataType` 选择元素数据类型或继承哨兵；其确切分配域仍以下方生成契约为准。
-- `PadValueOrByteId` 提供由操作选择的填充值或字节标识符；其确切分配域仍以下方生成契约为准。
-- `CMode` 选择比较谓词；其确切分配域仍以下方生成契约为准。
-- `RMode` 选择舍入模式；其确切分配域仍以下方生成契约为准。
-- `Sat` 启用饱和；其确切分配域仍以下方生成契约为准。
-- `Canonicalize` 启用私有格式规范化；其确切分配域仍以下方生成契约为准。
+- `Layout`，第 7 至 11 位：Tile 布局或布局转换。编码 0 为 `NORM`。编码 21 至 26 选择 `ND2M32`、`ND2M16`、`ND2N8`、`M322ND`、`M162ND` 和 `N82ND`。编码 29 选择直接 Local `CUBE_M32`，编码 31 选择 `CUBE_M16`。编码 10 与 11 是权重模式 `TLOAD` 布局。
+- `Zero`（第 13 位）与 `PredInv`（第 14 位）：ExecutionMask 控制。第 12 位固定为一。
+- `RMode`，第 15 至 17 位：编码 0 至 7 依次为操作默认、`RNE`、`RTZ`、`RTM`、`RTP`、`RNA`、`RTO` 和 `RHB`。
+- `DataType`，第 20 至 24 位：编码 0 至 21 与 24 至 28 是具体元素类型，编码 31 为 `DTYPE_NONE`。编码 0 为 `FP64`。
+- `Canonicalize`（第 25 位）与 `Sat`（第 26 位）。
+- `PadValueOrByteId`，第 27 与 28 位：对带填充值的操作依次为 `Zero`、`Max`、`Min`、`Null`，或为字节标识符。
+- `CMode`，第 29 至 31 位：编码 0 至 5 依次为 `EQ`、`NE`、`LT`、`GT`、`LE`、`GE`。
+
+保留的 `DataType` 编码 22、23、29、30，未分配的 `Layout` 编码，以及 `CMode` 编码 6 与 7 无法译码；该命令引发 `Fault_IllegalInstruction`。
 
 <!-- PTO-READER-BLOCK: block-b-datr-effects role=effects -->
-## 待处理状态与完成
+## 默认值、省略与编码零
 
-被接受的 header 命令只改变自己的待处理记录或 carrier。除非本所有者明确指出即时 header 状态更新，否则架构 Tile、Shared、GPR、内存和完成影响都推迟到完整 Block。
+省略 `B.DATR` 时适用 Block 复位值：`PadValueOrByteId` 读作 `Null`，`Layout`、`CMode`、`RMode`、`Sat`、`Canonicalize`、`PredInv` 与 `Zero` 读作零。元素类型来自 `BSTART` 描述符。
+
+设计要点：显式 `B.DATR` 会编码每个字段，因此省略与编码零不同。省略时填充为 `Null`，使有效区域之外的元素保持未定义；显式编码 `00` 选择 `Zero` 填充。同样，显式 `DataType` 为 0 表示 `FP64`，而不是“继承”。
+
+设计要点：编码 31（`DTYPE_NONE`）用于锁存其他字段而不覆盖类型。有效类型按以下顺序解析：具体的 `B.DATR` 类型，然后是具体的 `BSTART` 类型，然后（仅对 `TMOV`）是已配置源的类型。若都无法解析，完整预检引发 `Fault_TileLegality`。
+
+在矩阵与 CUBE schema 中，两个填充位是 `CCTRL`：第 0 位选择原始部分和 `D` 输出并附带缓存替换提示，第 1 位是显式 C 的缓存使用或预取提示。省略时为 `CCTRL=00`，即最终输出路径。
 
 <!-- PTO-READER-BLOCK: block-b-datr-constraints role=constraints -->
-## 合法性与故障边界
+## 合法性与故障
 
-保留编码会在读取或待处理状态变化前被拒绝。位置、重复、角色或完成后 schema 不匹配，会在 body 影响前失败。
+- 放置错误或重复的 `B.DATR` 在锁存字段改变之前引发 `Fault_BundleControl`。
+- 只有当完整 Block 为合格的 Local `CUBE_M16` 或 `CUBE_M32` 操作绑定了显式 ExecutionMask 时，非零 `PredInv` 或 `Zero` 才合法。否则预检引发 `Fault_TileLegality`。
+- `Canonicalize` 只被 `TCVT` 接受。对于 `CUBE_M16` 或 `CUBE_M32` 上的 `TROWEXPAND` 及其七个算术变体，`RMode` 是 `BroadcastByteOffset`；`RowMajor` 要求为零。
+- 所选操作不接受的任何其他非零字段都会在效果之前引发 `Fault_TileLegality`。
 
 <!-- PTO-READER-BLOCK: block-b-datr-example role=example -->
 ## 非规范示例
@@ -55,10 +70,11 @@ The current instruction contract is owned by the ASL source linked above.
 以下为非规范示例，仅用于说明当前所有者，不替代其定义。
 
 ```asm
-B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}
+B.DATR {NORM, FP32, Zero, None, RNE, 0, 0, 0, 0}
+B.DATR {ND2M16, DTYPE_NONE, Null, None, Default, 0, 0, 0, 0}
 ```
 
-假设当前存在兼容的有效 header，并且之前没有冲突的 `B.DATR` 命令。把 `B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}` 放在下一个 header 槽，会记录该命令的待处理字段；它本身不会执行最终的 body 操作。
+第一行用 `FP32` 覆盖 `BSTART` 类型，选择 `Zero` 填充，并请求 `RNE` 舍入。像 `TADD` 这样只接受 `PadValueOrByteId` 与 `Layout` 为非零字段的操作，会在预检时以 `Fault_TileLegality` 拒绝该 `RNE` 编码。第二行通过 `DTYPE_NONE` 保留 `BSTART` 类型，选择 GM 到 `CUBE_M16` 的转换（编码 22），并保持填充为 `Null`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

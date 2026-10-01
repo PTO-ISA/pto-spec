@@ -7,8 +7,73 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit is the bundle handler for the CUBE matrix family: `TMATMUL`, `TGEMV`, and their `_ACC`, `_BIAS`, and `MX` forms. `ExecuteBundleTMATMULOperation` validates the complete bundle, allocates the destination group, reads the operands, and runs the matrix operation.
+
+Tile execution dispatch calls it at bundle commit when `BundleCubeMatrixSelected` holds: the installed descriptor has the Tile matrix class and a valid selector whose low 5 bits name an assigned matrix function.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-concepts role=concepts-state -->
+## Concepts and visible state
+
+- `LB0`, `LB1`, and `LB2` carry M, N, and K.
+- The left type comes from the `BSTART` data type. The right type comes from `B.DATR` when present, and otherwise equals the left type.
+- `CCTRL` is the 2-bit `B.DATR` pad field, read as zero without `B.DATR`. Bit 0 selects raw accumulator-type output. Bit 1 is an accumulator prefetch hint.
+- A cooperative bundle is a non-GEMV matrix bundle with at least one Shared source. `LB0` then holds the Core-total group M, from 1 to 128. Each PE takes 16 rows when group M is at most 64 and 32 rows otherwise, PE `i` owns at most that many rows, starting at row `i` times that count and stopping at group M.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-rules role=rules-interactions -->
+## Rules and interactions
+
+The handler runs these stages in order.
+
+1. If the PE masks select no PE, it returns success with no effect.
+2. It requires `B.FPATR`, else `Fault_BundleControl`, and a decodable CUBE operation, else `Fault_IllegalInstruction`.
+3. It checks the bundle structure. The type pair, source and destination counts, `B.DATR` fields, `CCTRL` use, dimensions, and PE masks must be legal. All masks must agree, and a cooperative bundle needs mask `1111`. A GEMV function needs M equal to 1. Failures raise `Fault_TileLegality`.
+4. It waits, without a fault, until every Shared source is published, and then checks the Shared schemas.
+5. A cooperative PE with zero rows consumes its Shared bindings and returns success.
+6. Otherwise it resolves relative sources and subviews and checks Local sources, CScale, accumulator and CScale aliasing, the result layout, and post-processing sources. Dispatch clause `PTO-CUBE-ACCUMULATOR-OUTPUT-001` requires the encoded C selector to differ from the zero-extended destination hand before rename. The current executable instead performs the accumulator check after resolution and compares the physical C `TileIndex` with D's destination hand (`DstTile MOD 4`); issue #367 tracks this conflict.
+7. It allocates the destination group, snapshots operands, and runs the operation. A fault then rolls the destinations back.
+
+The result type is `FP32` for MX functions. Otherwise it is `S32`, `U32`, or `FP32` for signed, unsigned, and other left types. `CCTRL` bit 1 is legal only for an accumulator function. Bit 0 requires `pre_quant_mode`, `relu_mode`, and `group_n_code` to be zero and `row_max_en`, `group_max_en`, and `max_abs_en` to be false.
+
+Design point: a zero-row PE keeps the group checks of stages 1 to 4 but skips all Local work. The NDF clause requires this, and the ASL comment says Local preparation starts only after group and Shared preflight derive a nonzero fragment. A PE with no rows therefore still faults on group and Shared errors, but changes no Local Tile.
+
+Design point: allocation happens after every rule is closed and before the first operand snapshot, as the ASL comment states. A legality fault therefore leaves no allocated destination.
+
+Design point: the bit 1 prefetch hint and the replacement hint that accompanies bit 0 call implementation-defined hooks that do nothing in the portable model; the hooks do not change the published result, and bit 0 changes it only by selecting raw accumulator-type output.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit does not compute the matrix product; `TMATMULShared` and `TMATMULMXSharedWithOptionalScales` do. Destination layout and allocation belong to the CUBE destination unit, and Shared operand schemas belong to the shared CUBE matrix unit. After a success, dispatch commits Local generations and retires consumer dependencies, except for a zero-row cooperative PE.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+```text
+TMATMUL_ACC <M=16, N=16, K=16, FP16>, T#3, T#2, T#1, ->T<1KB>
+```
+
+All sources are Local, so the bundle is not cooperative. Source ordinal 0 is the accumulator `T#3`, ordinal 1 is the left matrix `T#2`, and ordinal 2 is the right matrix `T#1`. The example is executable under the current ASL only when queue resolution maps `T#3` to a physical `TileIndex` different from the `->T` destination hand; the encoded spelling alone does not prove that check. The left type is `FP16`, and with no `B.DATR` the right type is also `FP16`, so the result type is `FP32`.
+
+Now suppose a cooperative `TMATMUL` with a Shared right group and group M of 40. Each PE takes 16 rows. PE0 owns 16 rows, PE1 owns 16, PE2 owns 8, and PE3 owns 0. PE3 passes stages 1 to 4 and then stops at stage 5.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-related role=related-owners-navigation -->
+## Related owners
+
+- [Tile execution dispatch](tile-execution.md) selects this handler and commits after it.
+- [CUBE destination](cube-destination.md) resolves and allocates the destination group.
+- [Shared CUBE matrix](shared-cube-matrix.md) owns cooperative row distribution and Shared schemas.
+- [CUBE accumulator routing](cube-accumulator-routing.md) owns the `CCTRL` rules.
+- [TMATMUL_ACC](../../../tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.md) is the accumulating instruction page.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

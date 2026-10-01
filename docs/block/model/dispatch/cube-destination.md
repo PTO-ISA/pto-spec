@@ -7,8 +7,75 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-destination-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit allocates the destination group of a matrix multiply bundle such as `TMATMUL`. A destination group is the ordered set of `B.IOT` destinations of one matrix bundle: the primary result D, then optional RowMax and GroupMax auxiliary outputs enabled by `B.FPATR`.
+
+It defines three overloads of `ResolveBundleTMATMULDestination`, the CUBE group allocator `ResolveBundleTMATMULCubeDestinationGroup`, and the capacity check `BundleTMATMULDestinationCapacityGroupFits`. Its current caller is the CUBE matrix owner, which passes `cube_primary` true.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-destination-concepts role=concepts-state -->
+## Concepts and visible state
+
+The output type is `BundleFPATREffectiveDataType(pre_quant_mode, accumulator_type)`: the accumulator type when `pre_quant_mode` is zero, otherwise the quantized output type.
+
+The shape of each destination depends on its ordinal:
+
+| Ordinal | Role | Valid shape |
+| --- | --- | --- |
+| 0 | primary D | `m` rows by `n` columns |
+| 1 | RowMax if `row_max_en`, else GroupMax if `group_max_en` | `m` by 1, or `m` by `ceil(n / group_n)` |
+| 2 | GroupMax when both are enabled | `m` by `ceil(n / group_n)` |
+
+In the CUBE path, each destination uses the output type and the primary CUBE layout. A successful allocation writes a CUBE Tile descriptor for each fresh destination, stores its absolute index in the binding, and sets `destination_allocated_by_bundle`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-destination-rules role=rules-interactions -->
+## Rules and interactions
+
+The CUBE allocator works in three passes.
+
+1. Reserve. For each fresh destination, it takes the first register of the encoded hand that is neither allocated nor already reserved in this pass. A full hand raises `Fault_TileAllocation`.
+2. Check. It sums the capacity of all fresh destinations and checks, for each PE in the allocation mask, that current use plus that sum stays within the limit. It then checks each destination shape. For the primary D it also requires `m` to be at most 16 for `CUBE_M16` or 32 for `CUBE_M32`.
+3. Configure. Only after every check passes does it call `ConfigureCubeTileForMask` for each fresh destination.
+
+Design point: the whole group is checked before the first descriptor is written. Pass 1 only records choices in a local reserved array, and pass 3 runs only after every capacity and shape check has passed. A group whose second destination does not fit therefore leaves no partial allocation.
+
+Design point: registers reserved in pass 1 are excluded from later searches in the same pass. Two destinations with the same hand therefore receive different registers even though neither is allocated yet.
+
+A destination reused by an assemble generation is not allocated. Its existing descriptor must be a legal CUBE descriptor that matches the capacity, valid shape, output type, and layout, and its allocation mask must include every PE of the allocation mask; a mismatch raises `Fault_TileLegality`. For a fresh destination, an illegal shape raises `Fault_TileAllocation`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-destination-boundaries role=boundaries -->
+## Architectural boundaries
+
+The CUBE matrix owner calls this unit after every field, stream, descriptor, shape, and capacity rule is closed, and before it takes the first payload snapshot. If writer validation or the matrix operation fails afterwards, the caller runs `RollBackBundleTileDestinations`, which releases the destinations marked by this unit.
+
+With no destination binding, the resolver raises `Fault_BundleControl`. When `cube_primary` is false, the resolver checks a row-major D shape and then delegates to the generic `ResolveBundleTileDestinationsWithShape`. The unit computes no matrix values.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-destination-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Suppose a `TMATMUL` bundle has `m` 16, `n` 64, an `FP32` accumulator, `pre_quant_mode` 0, layout `CUBE_M16`, `row_max_en` false, `group_max_en` true, and `group_n` 16. There are two destinations.
+
+- Ordinal 0 is D: 16 by 64 `FP32` in `CUBE_M16`.
+- Ordinal 1 is GroupMax: 16 by `ceil(64 / 16)`, which is 16 by 4, also `FP32` in `CUBE_M16`.
+
+If the two capacities together exceed the remaining capacity of a selected PE, neither is allocated and `Fault_TileAllocation` is raised.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-destination-related role=related-owners-navigation -->
+## Related owners
+
+- [CUBE TMATMUL dispatch](cube-tmatmul.md) validates the matrix bundle and calls this unit.
+- [Destination auxiliary helpers](destination-auxiliary.md) define `BundleGroupMaxColumns`.
+- [Destination shape](destination-shape.md) owns the generic resolver used by the non-CUBE path.
+- [Rollback](../faults/rollback.md) releases destinations allocated by the bundle.
+- [Tile allocation](../../../tile/model/state/allocation.md) defines `ConfigureCubeTileForMask`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

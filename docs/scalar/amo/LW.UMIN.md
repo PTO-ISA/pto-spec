@@ -18,43 +18,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-lw-umin-purpose role=purpose -->
 ## What LW.UMIN does
-
-`LW.UMIN` atomically applies unsigned minimum to one word, stores the result, and publishes the prior memory value.
+`LW.UMIN` atomically updates one aligned 4-byte memory value and also publishes the value that was replaced. The summary recorded for this form is: LW.UMIN atomically stores the width-sized unsigned minimum and publishes the prior memory value.
+The `LW` prefix marks the width, 4 bytes of memory per operation. The prior value is published through the Reg5 destination named by `RegDst`, which may be a GPR or a temporary queue.
 
 <!-- PTO-READER-BLOCK: scalar-lw-umin-mechanism role=mechanism -->
 ## Atomic mechanism
-
-The ASL DOC contract selects `ScalarHandler_AtomicReadModifyWrite` with an access width of `4` bytes.
-
-Read and write access are preflighted before the same-location atomic read-modify-write is allowed to commit.
+The instruction contract selects `ScalarHandler_AtomicReadModifyWrite` at width `4` and maps this operation to `Atomic_UMIN`. Scalar dispatch calls `AtomicReadModifyWrite`, which preflights the same address twice, reads, combines, and writes back, and returns the prior memory value.
+`Atomic_UMIN` compares `UInt(old_value)` with `UInt(operand)` and returns the smaller.
+Here the dispatch passes `write_result` as `TRUE`, so the helper return value passes through `NormalizeAtomicReturn` into `RegDst`. At size `4` that helper sign-extends the low 32 bits to `PTO_XLEN`.
+Design point: both sources are read before the destination is written. `RegDst` may name `SrcL` itself, so the old value can overwrite the register that supplied the address, but the address and operand are already captured and the atomic commit is unaffected.
 
 <!-- PTO-READER-BLOCK: scalar-lw-umin-inputs-outputs role=inputs-outputs -->
 ## Inputs and result
-
-`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 atomic operand source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
-
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+`SrcL` is the Reg5 source that supplies the atomic address. `SrcR` supplies the atomic operand, an old value is read from that address, and the stored value comes from the value already at the address, compared as unsigned integers with the smaller value kept. `RegDst` is the Reg5 destination that receives the prior memory value.
+`aq` is the acquire bit and `rl` the release bit: together they select relaxed, acquire, release, or acquire-release ordering for the atomic event. `far` is a route hint only: `AtomicAddress` returns its `address` argument unchanged, so `far` does not change the architectural address, the ordering, or the result.
+All 32 Reg5 destination codes are assigned and all are legal: `0` and `24`..`29` discard the published value, `30` pushes the `U` queue, `31` pushes the `T` queue, and `1`..`23` write the named absolute GPR. Source codes `0`..`23` name GPRs, `24`..`27` name `T#1`..`T#4`, and `28`..`31` name `U#1`..`U#4`.
 
 <!-- PTO-READER-BLOCK: scalar-lw-umin-effects role=effects -->
-## Effects and ordering
-
-The old memory value is published only after the read-modify-write commits; source aliases are captured before any destination effect.
-
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+## Effects, publication, and ordering
+A successful operation reads the old value, computes the unsigned minimum, writes the result back, records one atomic memory event, and publishes the sign-extended old value through `RegDst` after the atomic commit. The helper returns the old value unchanged; the caller applies the sign extension.
+The completed write invalidates a local reservation that overlaps the written range, and leaves a nonoverlapping one untouched; the check happens inside `StoreTranslated` against the 64-byte reservation granule. Success then advances `TPC` by `4` bytes.
+Design point: the same 4 bytes are handled differently. The store writes the raw 32-bit result, while the published value is sign-extended to `PTO_XLEN`, so a caller that wants the untouched 32-bit pattern must read the low half of the published value.
 
 <!-- PTO-READER-BLOCK: scalar-lw-umin-constraints role=constraints -->
 ## Legality and precise faults
-
-The effective address must be aligned to `4` bytes. Alignment, translation, and permission checks precede architectural effects.
-
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+The effective address must be aligned to `4` bytes. `ProbeDataAccess` compares the address against the access width before it consults translation, so misalignment is reported ahead of a translation or permission fault, and a failing probe reports the original architectural address.
+On any fault the instruction publishes no destination and performs no load, store, memory event, reservation update, or `TPC` advance. One further outcome exists when both probes pass but resolve to different translated addresses: the helper sets `Fault_DataPage` on the original address and changes no memory.
+`Fault_IllegalInstruction` is raised before any effect when no form decodes the 32-bit pattern (this one matches `0x7000200b` under mask `0xf000707f`), and also when a named source selects a temporary queue entry that is not currently valid. Encoded zero in `SrcL` reads the architectural zero register as the address, and encoded zero in `SrcR` supplies numeric zero as the operand.
+Design point: the destination is written only when the whole operation succeeded, so a trap can never leave a caller holding an old value that the failed attempt did not actually replace.
 
 <!-- PTO-READER-BLOCK: scalar-lw-umin-example role=example -->
 ## Non-normative example
-
-This example only shows one accepted spelling; the generated contract below remains authoritative.
-
-For a first reading, use `lw.umin [SrcL], SrcR, ->Rd` and then vary only the ordering or route modifiers described above.
+This example illustrates the current ASL owner and does not replace the normative operation.
+The eight accepted spellings combine the optional `.aq`, `.rl`, and `.f` suffixes; the destination may also be written `->t` or `->u`.
+```text
+lw.umin [SrcL], SrcR, ->Rd
+lw.umin.aq [SrcL], SrcR, ->Rd
+lw.umin.rl [SrcL], SrcR, ->Rd
+lw.umin.f [SrcL], SrcR, ->Rd
+lw.umin.aqrl [SrcL], SrcR, ->Rd
+lw.umin.aqf [SrcL], SrcR, ->Rd
+lw.umin.rlf [SrcL], SrcR, ->Rd
+lw.umin.aqrlf [SrcL], SrcR, ->Rd
+```
+The low 32 bits read from memory are `0xffffffff`; the register named by `SrcR` holds `1`.
+Read as unsigned integers the operand is smaller, so `1` is stored.
+The published value is the prior `0xffffffff` sign-extended to all ones.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

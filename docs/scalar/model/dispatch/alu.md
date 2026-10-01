@@ -7,8 +7,88 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-SCALAR-MODEL-DISPATCH-ALU}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-alu-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit executes every decoded scalar ALU form. `ExecuteDecodedALUForm` switches on the operation. For most operations it reads the decoded operands and calls a value function from [ALU semantics](../alu/semantics.md).
+
+Five shared helpers cover the common shapes:
+
+- `ExecuteDecodedBinary` for register forms with `SrcRType` and `shamt`, such as `ADD` and `XORW`;
+- `ExecuteDecodedImmediateBinary` for immediate forms, such as `ADDI` and `HL.ORI`;
+- `ExecuteDecodedSimpleBinary` for register shifts and `MIN`/`MAX`;
+- `ExecuteDecodedShiftImmediate` for immediate shifts;
+- `ExecuteDecodedCompressedBinary` for 16-bit `C.ADD`, `C.SUB`, `C.AND`, and `C.OR`.
+
+The remaining operations, including divide, multiply, bitfield, select, and immediate-materialization forms, are handled inline.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-alu-concepts role=concepts-state -->
+## Concepts and visible state
+
+A Reg5 selector is a 5-bit register code. As a source, 0 through 23 name GPRs, 24 through 27 name T#1 through T#4, and 28 through 31 name U#1 through U#4. As a destination, 1 through 23 write GPRs, 30 pushes U, 31 pushes T, and the rest discard.
+
+Most compressed ALU forms, such as `C.ADD`, `C.ADDI`, and `C.SEXT.B`, have no destination field; `WriteCompressedTResult` pushes their result to T. `C.MOVI` and `C.MOVR` have a `RegDst` field. `C.SLLI` and `C.SRLI` read T#1 as their left operand.
+
+The immediate field depends on the operation. `ADDI`, `SUBI`, and their W and `HL` versions use unsigned immediates (`uimm12`, `uimm24`); `ANDI`, `ORI`, `XORI`, and their versions use signed ones (`simm12`, `simm24`).
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-alu-rules role=rules-interactions -->
+## Rules and interactions
+
+`ExecuteDecodedBinary` reads `SrcL` and `SrcR`, decodes the binary right modifier, applies it, shifts the result left by `shamt`, and then performs the 64-bit or word operation. AND, OR, and XOR pass `logical_family` TRUE, so modifier `.not` inverts the right operand; ADD and SUB use `.neg`.
+
+Design point: each handler reads every source into a local value before it calls `WriteScalarDestination`. A destination that is also a source, or a push to the queue that a source reads, cannot change the value used in the same instruction.
+
+Pair forms write two destinations in a fixed order:
+
+| Operation | First write | Second write |
+| --- | --- | --- |
+| `HL.MUL`, `HL.MULU`, `HL.MADD`, `HL.MADDW` | `RegDst0` low | `RegDst1` high |
+| `HL.DIV`, `HL.DIVU`, and W forms | `RegDst0` quotient | `RegDst1` remainder |
+| `HL.REM`, `HL.REMU`, and W forms | `RegDst0` remainder | `RegDst1` quotient |
+| `HL.CCAT`, `HL.CCATW` | `RegDst0` low | `RegDst1` high |
+
+Design point: a fixed write order makes aliased destinations deterministic. If both fields name the same GPR, the second write is the final value.
+
+`CSEL` reads `SrcP`, `SrcL`, and `SrcR`. It returns `SrcL` if `SrcP` is nonzero, otherwise `SrcR`, negated when the raw `SrcRType` is `11`.
+
+`C.SETC.TGT` and `C.SETRET` are ALU forms with control effects. They call `SetCompressedCommitTarget` and `SetReturnAddress`.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-alu-boundaries role=boundaries -->
+## Architectural boundaries
+
+No ALU value operation faults. Division by zero returns defined values. Faults can still come from top-level legality, for example an unavailable T/U source, and from `C.SETC.TGT` when there is no active Standard or Floating bundle or the bundle's compressed commit target is already set.
+
+This unit does not advance TPC; top-level dispatch does that after the handler returns.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-alu-example role=example-usage -->
+## Non-normative reading example
+
+Take the 16-bit word 0xC0C8. Its low six bits are 0x08, the `C.ADD` match under mask 0x3F.
+
+| Field | Bits | Raw | Meaning |
+| --- | --- | --- | --- |
+| `SrcL` | 10:6 | 3 | GPR 3 |
+| `SrcR` | 15:11 | 24 | T#1 |
+
+Suppose GPR 3 holds 10 and T#1 holds 5.
+
+- Top-level dispatch confirms that T#1 is valid.
+- The handler reads 10 and 5, adds them, and pushes 15 to T.
+- The old T#1 becomes T#2, and the new T#1 is 15.
+- TPC advances by 2.
+
+<!-- PTO-READER-BLOCK: scalar-model-dispatch-alu-related role=related-owners-navigation -->
+## Related owners
+
+- [ALU semantics](../alu/semantics.md) owns every value rule used here.
+- [Scalar decode helpers](decode.md) own field decoding and the `SrcRType` tables.
+- [Scalar operands](../types/operands.md) owns Reg5 reads, pushes, and discards.
+- [SYS semantics](../sys/semantics.md) owns `SetCompressedCommitTarget`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -15,43 +15,48 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-system-register-types-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit defines the shared symbolic namespaces for base system registers, access classes, and cache/TLB maintenance operations.
+This unit defines three symbolic namespaces: `SystemRegister` for the base system registers, `SystemRegisterAccess` for access classes, and `MaintenanceOperation` for cache and TLB maintenance operations. It declares no register storage and no read or write function.
 
-It supplies typed identities; address mapping, access control, register state, and maintenance effects are owned elsewhere.
+The line-1 record also carries the `system-registers` catalog projection, which assigns an address to every base register, declares the register-file widths, and groups the registers into behavior classes.
+
+Design point: the enumeration member and the address are stored separately, the member in the ASL type and the address in the projection, so a member's position in the type declaration carries no address information and a reader must take an address from the projection.
 
 <!-- PTO-READER-BLOCK: arch-system-register-types-concepts-state role=concepts-state -->
 ## Concepts and visible state
 
-- `SystemRegister` names thread/global pointers, time/cycle, core and thread identity, vendor/version/features, tile capacity, and block identity registers.
-- `SystemRegisterAccess` distinguishes unknown, read-only, write-only, and read-write access classes.
-- `MaintenanceOperation` names data-cache, instruction-cache, bundle-cache, and TLB invalidation or cleaning variants.
+- `SystemRegister` has fourteen members: `SystemRegister_THREAD_PTR`, `SystemRegister_GLOBAL_PTR`, `SystemRegister_TIME`, `SystemRegister_CORE_STATE`, `SystemRegister_CORE_ID`, `SystemRegister_THREAD_ID`, `SystemRegister_VENDOR`, `SystemRegister_VERSION`, `SystemRegister_CORE_FEATURE`, `SystemRegister_CORE_FEATURE_ENABLE`, `SystemRegister_TILE_CAPACITY`, `SystemRegister_BLOCKNUM`, `SystemRegister_BLOCKID` and `SystemRegister_CYCLE`.
+- `SystemRegisterAccess` has four members: `SystemRegisterAccess_Unknown`, `SystemRegisterAccess_ReadOnly`, `SystemRegisterAccess_WriteOnly`, and `SystemRegisterAccess_ReadWrite`.
+- `MaintenanceOperation` has sixteen members: data-cache, instruction-cache, bundle-cache and TLB forms, among them `Maintenance_DC_IALL`, `Maintenance_DC_ZVA`, `Maintenance_IC_IALL`, `Maintenance_IC_IVA`, `Maintenance_BC_IALL`, `Maintenance_BC_IVA` and `Maintenance_TLB_IALL`.
+- The projection declares `system_register_address_bits` as `24` and `system_register_file_index_bits` as `16`, and it assigns addresses from `0x0000` for `THREAD_PTR` through `0x0C00` for `CYCLE`.
+
+Design point: `SystemRegisterAccess` contains `SystemRegisterAccess_Unknown` next to the three real classes. A resolver therefore has a distinct answer for an address that is not a register, and the read path in `asl/scalar/model/sys/registers.asl` reports `Fault_IllegalInstruction` for `SystemRegisterAccess_Unknown` and for `SystemRegisterAccess_WriteOnly` before any register value is produced.
 
 <!-- PTO-READER-BLOCK: arch-system-register-types-rules-interactions role=rules-interactions -->
 ## Rules and interactions
 
-An enum member identifies a register or operation but does not assign its encoded address.
+Every base member appears in the projection with one address, one access class and one behavior class, and the behavior class states what a read returns and what a write does.
 
-Access classification is separate from the current access-control ring and concrete read/write behavior.
+The projection separates registers that store a value from registers that report one: `THREAD_PTR`, `GLOBAL_PTR`, `CORE_STATE` and `CORE_FEATURE_ENABLE` read the stored value and accept a store, while `CORE_ID`, `VENDOR`, `VERSION`, `CORE_FEATURE`, `THREAD_ID`, `BLOCKNUM`, `BLOCKID` and `TILE_CAPACITY` are read as `fixed-value` and reject a write.
 
-Maintenance variants remain distinct, including whole-cache, virtual-address, and set/way forms where declared.
+Both `SystemRegister_TIME` and `SystemRegister_CYCLE` have read behavior `architectural-time`, the recorded side effect `advances-on-every-execution-attempt` and write behavior `reject-read-only`. A `CORE_STATE` write is the one base write with a recorded side effect, `write-selects-current-acr`.
+
+Design point: `SystemRegister_TIME` is a member of the enumeration but has no field in the base register state record `BaseSystemRegisterState`, which carries one field for each of the other thirteen members. A consumer that treats every member as a loaded word is therefore wrong for exactly one member, and the value of that member comes from the timer owner.
 
 <!-- PTO-READER-BLOCK: arch-system-register-types-boundaries role=boundaries -->
 ## Architectural boundaries
 
-This unit does not create the system-register file and does not state reset values. Follow the state and addressing owners for those contracts.
+This unit does not create the system-register file and does not define address decoding. Reset intentions such as `zero` and `one` are recorded as catalog data in the projection, not as ASL state transitions.
 
-A declared maintenance identity does not by itself guarantee instruction availability or define epoch changes; the executing owner supplies those effects.
+A declared maintenance identity does not by itself guarantee that an instruction can invoke it and does not define an epoch change. The executing instruction owns its own legality, and the maintenance owner owns the effect.
+
+Design point: the enumeration and the projection do not cover the same set, and a reader must not treat `SystemRegister` as the complete list of system registers. The projection also lists `context-family` registers such as `ECSTATE_ACRn` at low index `0xF00` and `TTBR0_ACR1` at low index `0xF10`, none of which is a `SystemRegister` member, while all fourteen members do appear in the projection.
 
 <!-- PTO-READER-BLOCK: arch-system-register-types-example-usage role=example-usage -->
 ## Non-normative reading example
 
-`SystemRegister_TIME` names a system register.
+`SystemRegister_TIME` names a system register. The projection assigns it the address `0x0010` and the access class `RO`, so a reader looking for its value must follow the timer owner and not a stored field.
 
-The addressing and timer/state owners define its architectural address and value behavior.
-
-`Maintenance_TLB_IALL` identifies the all-entry TLB operation.
-
-The invoking instruction still owns legality, operands, and visible maintenance state changes.
+`Maintenance_TLB_IALL` identifies the all-entry TLB operation and nothing more. Its operand, its legality and the epoch it advances are owned by the instruction that executes it; for example, `asl/scalar/model/sys/semantics.asl` is where that identity receives its ring restriction and its epoch increment.
 
 <!-- PTO-READER-BLOCK: arch-system-register-types-related-owners role=related-owners-navigation -->
 ## Related owners

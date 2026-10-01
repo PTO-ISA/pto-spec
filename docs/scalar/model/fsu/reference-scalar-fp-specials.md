@@ -7,8 +7,81 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-SCALAR-MODEL-FSU-REFERENCE-SCALAR-FP-SPECIALS}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-scalar-fp-specials-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit handles the special values of the reference scalar floating-point profile: NaNs, infinities, and zeros. Each operation first asks a special-case function whether the inputs force a fixed result. Only when they do not does the operation compute a finite result: `ABS` clears a sign bit, and the other operations evaluate a real value and encode it through [reference quantization](reference-quantization.md) or, for BF16, `ReferenceBinary16Encoding`.
+
+It defines the unary and fused special cases and profiles: `ReferenceScalarFPUnarySpecial`, `ReferenceScalarFPUnaryProfile`, `ReferenceScalarFPFusedSpecial`, and `ReferenceScalarFPFusedProfile`. The binary special cases live in reference quantization as `ReferenceScalarFPBinarySpecial`.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-scalar-fp-specials-concepts role=concepts-state -->
+## Concepts and visible state
+
+Each special function returns three values: a handled flag, the result encoding, and a 5-bit flag vector. Flag value 1 is NV (invalid operation) and flag value 2 is DZ (division by zero).
+
+Inputs are classified with `ReferenceScalarFPClass`, which returns classes such as quiet NaN, signaling NaN, positive infinity, negative zero, or negative normal.
+
+A signaling NaN is a NaN whose encoding requests an invalid-operation signal when used. A quiet NaN does not.
+
+Every NaN result is the canonical quiet NaN of the type, so input NaN payloads are not propagated.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-scalar-fp-specials-rules role=rules-interactions -->
+## Rules and interactions
+
+Unary special cases:
+
+| Operation | Input | Result | Flags |
+| --- | --- | --- | --- |
+| any | quiet NaN | quiet NaN | none |
+| any | signaling NaN | quiet NaN | NV |
+| `EXP` | +infinity or -infinity | +infinity or +0.0 | none |
+| `RECIP` | a zero | infinity with the zero's sign | DZ |
+| `RECIP` | an infinity | zero with the infinity's sign | none |
+| `SQRT` | a zero | the same zero | none |
+| `SQRT` | +infinity | +infinity | none |
+| `SQRT` | any other negative value | quiet NaN | NV |
+
+The NaN rows apply to `ABS` too. For any other `ABS` input the special function reports no special case, and `ReferenceScalarFPUnaryProfile` clears bit 31 for FP32 and bit 63 for every other type code. No current caller reaches this arm, because FSU dispatch handles `FABS` without calling the unary profile.
+
+Design point: `SQRT(-0.0)` returns -0.0 without a flag, while `SQRT(-1.0)` returns NaN with NV. The zero check runs before the negative check, so a negative zero is not treated as a negative number.
+
+Fused special cases run in this order: any NaN gives a quiet NaN, with NV if any input is signaling. An infinity times a zero gives NaN with NV. An infinite product plus an infinite addend of the opposite effective sign gives NaN with NV. Otherwise an infinite product or an infinite addend gives an infinity with the correct sign.
+
+Design point: the effective addend sign flips for `MSUB` and `NMSUB`, and the final sign flips for `NMADD` and `NMSUB`. This makes the special results agree with the finite formula `-(product - addend)` for `NMSUB`.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-scalar-fp-specials-boundaries role=boundaries -->
+## Architectural boundaries
+
+`ReferenceScalarFPFusedSpecial` returns no special result for a zero product with a finite addend. That case goes to the finite path. For FP32 and FP64 the finite encoder returns +0.0 whenever the exact result is zero, whatever the operand signs.
+
+These functions are reached through `ScalarFPUnaryProfile` and `ScalarFPFusedProfile`. Those hooks assert the supported type codes: FP64, FP32, FP16, and BF16 for unary, and FP64, FP32, and FP16 for fused.
+
+`FABS` in decoded dispatch clears the sign bit itself and does not call the unary profile.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-scalar-fp-specials-example role=example-usage -->
+## Non-normative reading example
+
+`FNMSUB` on FP32 computes `-(left x right - addend)`. Take left = +infinity, right = 2.0, addend = +infinity.
+
+- No input is a NaN, and no infinity is multiplied by zero.
+- The product is +infinity, so the product is not negative.
+- `NMSUB` flips the addend sign, so the effective addend is negative.
+- The signs differ and both are infinite, so the result is the quiet NaN 0x7FC00000 with NV.
+
+With addend = -infinity instead, the effective addend is positive, and the result is an infinity. Its sign is negative, because `NMSUB` negates the positive product, giving 0xFF800000.
+
+<!-- PTO-READER-BLOCK: scalar-model-fsu-reference-scalar-fp-specials-related role=related-owners-navigation -->
+## Related owners
+
+- [Reference quantization](reference-quantization.md) owns the binary special cases, the special encodings, and the finite path.
+- [Scalar FP](scalar-fp.md) defines the profile hooks that call these functions.
+- [FSU arithmetic](arithmetic.md) owns the real-number operations used after this layer.
+- [FSU dispatch](../dispatch/fsu.md) records the returned flags.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

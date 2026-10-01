@@ -19,40 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-tlb-iall-purpose role=purpose -->
 ## TLB.IALL 的作用
 
-`TLB.IALL` 同步完成所分配的缓存或地址翻译维护请求，并记录精确操作令牌。
+`TLB.IALL` 同步完成所有地址转换条目的维护操作。作为最宽的 TLB 请求，它不需要操作数：其编码没有字段（`asl/scalar/sys/TLB.IALL.asl:1`），语义操作数是全零的 XLEN 值。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iall-mechanism role=mechanism -->
 ## 系统机制
 
-ASL DOC 区域选择 `ScalarHandler_ExecuteMaintenance`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+`InstructionContractHandler_TLB_IALL` 选择共用的维护处理程序（`asl/scalar/sys/TLB.IALL.asl:18`），而令牌 `Maintenance_TLB_IALL` 位于执行器的最后一个分支，推进 TLB 纪元且完全没有操作数测试（`asl/scalar/model/sys/semantics.asl:154`）。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+`InstructionContractMaintenanceUsesOperand_TLB_IALL` 为 `FALSE`（`asl/scalar/sys/TLB.IALL.asl:36`），因此派发器传入 `Zeros{PTO_XLEN}`，不读取任何标量寄存器（`asl/scalar/model/dispatch/sys.asl:59`）。
+
+环特权仍然适用：`InstructionContractMaintenanceRequiresRootRing_TLB_IALL` 返回 `TRUE`（`asl/scalar/sys/TLB.IALL.asl:42`）。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iall-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-该编码没有显式操作数字段；操作完全由固定指令位选择。
+没有编码操作数，也没有目的地。该 32 位形式的每一位都由单条目录记录固定，因此该指令无法被收窄到某个作用域、某个标识符或某个地址。
+
+被记录的操作数为零，不向寄存器、临时队列或系统寄存器写入任何内容。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iall-effects role=effects -->
 ## 架构效果
 
-成功时，维护记录接收 `Maintenance_TLB_IALL` 和精确捕获的操作数令牌。
+成功时 TLB 纪元递增一，`Maintenance_TLB_IALL` 与操作数零被写入维护记录（`asl/scalar/model/sys/semantics.asl:155`）。随后 `TPC` 前进 4 字节，即该 32 位形式的长度。
 
-选中的缓存或 TLB 纪元恰好递增一次，然后 `TPC` 前进；该操作是同步完成的本地提示。
+设计要点：所有条目的请求没有操作数需要校验，但特权检查仍然先运行。这使地址转换维护统一保持仅限管理者，因此非特权尝试甚至无法到达纪元推进那一步。
+
+该指令不执行普通标量内存访问，也不定义地址转换表的内容。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iall-constraints role=constraints -->
 ## 位置与拒绝边界
 
-TLB 维护只在 `ACR0` 接受；环权限先于操作数验证进行检查。该形式没有操作数令牌。
+在活动 SYS 块体之外，该次尝试在处理程序之前引发 `Fault_BundleControl`。在块体内部，当前环不是 ACR0 会引发 `Fault_IllegalInstruction`，并且 TLB 纪元保持先前值，因为执行器在纪元推进之前就返回了（`asl/scalar/model/sys/semantics.asl:130`）。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+没有保留编码，也没有操作数形状的拒绝，因为所有位都是固定的且不读取操作数。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iall-example role=example -->
 ## 非规范示例
 
 该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
 
-可从 `tlb.iall` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+在 ACR0，SYS 块体内部的 `tlb.iall` 把 TLB 纪元递增一，以操作数零记录 `Maintenance_TLB_IALL`，并把 `TPC` 推进 4 字节。同一条指令在 ACR1 会引发 `Fault_IllegalInstruction`，而另外三个纪元计数器在两种情况下都不受影响。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

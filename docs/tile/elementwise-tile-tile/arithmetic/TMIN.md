@@ -17,44 +17,65 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tmin-purpose role=purpose -->
-## Purpose
+## What TMIN does
 
-`TMIN` selects typed minima from corresponding Local Tile elements.
+`TMIN` compares two Local Tiles element by element and writes the smaller element of each pair into a newly allocated Local destination Tile. It shares the bundle schema, preflight, padding, and publication rules of `TADD`; the element operation is a typed selection instead of arithmetic.
+
+Design point: `TMIN` is selected by `BSTART.VEC` Mode 0 Function 12 (TEPL selector `0x00C`) and has no standalone opcode. The same selection rules apply to its partner `TMAX`, which differs only in direction and in the sign it picks for a zero tie.
 
 <!-- PTO-READER-BLOCK: tile-tmin-mechanism role=mechanism -->
-## Execution mechanism
+## Element and Tile mechanism
 
-The ASL DOC contract selects `TileHandler_ExecuteTileBinary` through the instruction's selector-encoded block carrier.
+After complete preflight, `ExecuteTileBinary` computes one result for each coordinate in the valid rectangle `ValidRow x ValidCol`. The result is always one of the two source values or a fixed special value; no rounding occurs.
 
-Binding schema, dimensions, DataType, row-major layout, source definedness and encoding, PE_MASK, destination capacity, and applicable attributes are checked before source snapshots.
+Integer ordering follows the `DataType`. Signed types compare as signed values and unsigned types compare as unsigned values, so for `U8` the byte `0xFF` is 255 and loses against 1, while for `S8` the same byte is -1 and wins.
+
+Floating ordering applies fixed special-value rules first:
+
+- If exactly one operand is a NaN, the result is the other operand, unchanged.
+- If both operands are NaNs, the result is the canonical NaN of the `DataType`.
+- If both operands are zeros with different signs, the result is negative zero. Two zeros with the same sign keep that sign.
+- Otherwise the numerically smaller operand is selected.
+
+Design point: these rules make the result independent of operand order. Swapping `source0` and `source1` never changes a destination element, even for NaNs and signed zeros. A signaling NaN does not change the selected result either.
 
 <!-- PTO-READER-BLOCK: tile-tmin-inputs-outputs role=inputs-outputs -->
-## Operands and descriptors
+## Operand roles and descriptors
 
-`destination0` is the new Local destination; `source0` is the left comparison source; `source1` is the right comparison source.
+- `source0` is the left comparison source. It is an existing, allocated Local Tile.
+- `source1` is the right comparison source. It must match `source0` in physical rows, physical columns, valid rows, valid columns, and layout.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected operation `DataType`, and its shape matches the sources.
 
-Sources remain persistent unless the current contract explicitly names a consumed or replaced state; destination descriptors are published only after complete preflight.
+All three Tiles are bound by one terminating `B.IOT` and share one `PE_MASK`. `PE_MASK=0000` is a strict no-op. Both sources are read completely before the first destination write, so either source may alias the destination.
+
+Design point: a source may be stored with a different same-width, non-packed backing type. Its bits are then validated and ordered as the selected `DataType`. Because signedness decides the order, reading `U8` data as `S8` can change which element wins.
 
 <!-- PTO-READER-BLOCK: tile-tmin-effects role=effects -->
-## Publication and ordering
+## Publication, definedness, and padding
 
-Every valid coordinate applies the operation at the selected element type; all sources and private-GPR scalar operands are snapshotted before destination publication.
+The destination descriptor, the valid-region results, the padding, and the definedness of every element are published together. A rejected bundle publishes none of them, and both sources persist unchanged.
 
-The valid payload, selected physical padding definedness, descriptor, and applicable sticky numeric flags publish atomically; rejection has no architectural effect.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero` writes zero; `Max` and `Min` write the largest and smallest finite value of the `DataType`; `Null` leaves those elements undefined. Omitting `B.DATR` selects `Null`, while an explicit code `00` selects `Zero`.
+
+`TMIN` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value instead of a selected value.
 
 <!-- PTO-READER-BLOCK: tile-tmin-constraints role=constraints -->
-## Legality, padding, and faults
+## Type, layout, and fault boundary
 
-Malformed bindings, unsupported types or layouts, invalid shapes, undefined consumed elements, illegal attributes, or insufficient destination capacity are rejected before source snapshots or publication.
+The ASL legality predicate `TileVecArithmeticDataTypeSupported` accepts the 16 types `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, and `U8`. The generated legality list below is narrower and names only `S32`, `U32`, `FP32`, `S16`, `U16`, `FP16`, `BF16`, `S8`, and `U8`. Code that must satisfy both should use a type from the narrower list.
 
-`PE_MASK=0000` is a strict no-op before reads, allocation, faults, numeric status, padding, or descriptor effects. Allocation failure raises the owner-defined Tile allocation fault; other rejected schema or value conditions raise the owner-defined legality, bundle-control, or memory fault without partial effects.
+The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`, and all operands must use that same layout. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal.
+
+Every valid source element must be defined and, for floating types, must be a valid encoding of the selected `DataType`. Malformed bindings, missing or zero dimensions, mismatched sources, an unsupported `DataType`, an invalid encoding, or an invalid destination capacity raise `Fault_TileLegality` before any destination effect.
 
 <!-- PTO-READER-BLOCK: tile-tmin-example role=example -->
-## Non-normative contract sketch
+## Non-normative worked example
 
 This is a non-normative contract schema sketch; it organizes fields and bindings but is not claimed to be directly assembleable.
 
-Read `BSTART.VEC TMIN, FP32; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP` as a non-normative binding walkthrough, then use the generated contract below for exact dimensions, attributes, and fault behavior.
+For `FP32`, a left source row `[1.5, NaN, -0.0, 2.0]` and a right source row `[-3.0, 4.0, +0.0, NaN]` produce the destination row `[-3.0, 4.0, -0.0, 2.0]`. Each NaN is ignored in favor of the numeric operand, and the mixed-sign zero pair produces negative zero.
+
+In macro form, an 8 x 64 `FP32` minimum is `TMIN <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>`. The destination payload is 8 x 64 x 4 = 2048 bytes, exactly the 2KB capacity.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

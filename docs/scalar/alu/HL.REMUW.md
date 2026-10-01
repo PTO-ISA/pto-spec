@@ -19,48 +19,57 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-remuw-purpose role=purpose -->
 ## What HL.REMUW does
 
-`HL.REMUW` is a 48-bit scalar ALU instruction. It computes the unsigned remainder and quotient together from source snapshots; its current instruction contract defines the result publication path and any additional state effect.
+`HL.REMUW` is a 48-bit scalar ALU instruction that divides the unsigned low words of its two sources and publishes the remainder through `RegDst0` and the quotient through `RegDst1`, each re-extended to XLEN.
+
+The operands are zero-extended words, but each `32`-bit result is sign-extended before publication, so a result word with bit `31` set reaches its destination as an XLEN value with all upper bits set.
 
 <!-- PTO-READER-BLOCK: scalar-hl-remuw-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then computes the unsigned remainder and quotient together from source snapshots, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractQuotient_HL_REMUW` and `InstructionContractRemainder_HL_REMUW`, which call `ScalarDivideUnsignedW` and `ScalarRemainderUnsignedW`. Both zero-extend the two low words, divide, and return `SignExtend{PTO_XLEN}` of the `32`-bit result. Dispatch calls `ExecuteScalarRemainderPairW` with `signed_operation` false, writing the remainder before the quotient.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+hl.remuw SrcL, SrcR, ->Dst0, Dst1
+```
+
+Design point: the extensions on the two sides of the division differ. Inputs are widened as unsigned, results as signed, so `hl.remuw` with a dividend word of `0xFFFFFFFF` and a divisor word of `1` publishes the quotient `0xFFFFFFFFFFFFFFFF`, which reads as `-1` even though the division was unsigned.
 
 <!-- PTO-READER-BLOCK: scalar-hl-remuw-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst0` field selects the remainder Reg5 target or discards the remainder.
-- The 5-bit `RegDst1` field selects the quotient Reg5 target or discards the quotient.
-- The 5-bit `SrcL` field selects the dividend through Reg5.
-- The 5-bit `SrcR` field selects the divisor through Reg5.
+- `RegDst0`, instruction slice `[23 +: 5]`, receives the sign-extended remainder or discards it.
+- `RegDst1`, instruction slice `[11 +: 5]`, receives the sign-extended quotient or discards it.
+- `SrcL`, instruction slice `[31 +: 5]`, supplies the dividend; only bits `31:0` participate.
+- `SrcR`, instruction slice `[36 +: 5]`, supplies the divisor; only bits `31:0` participate.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Both sources use the common Reg5 map, `0..23` for absolute GPRs, `24..27` for `T#1..T#4` and `28..31` for `U#1..U#4`, leaving each entry in place. Encoded zero reads the architectural zero GPR.
+
+Design point: the quotient and remainder destinations are separate encoded fields, so one may be discarded while the other is published. Discarding one result does not change the value published through the other.
 
 <!-- PTO-READER-BLOCK: scalar-hl-remuw-effects role=effects -->
 ## Effects and ordering
 
-All results are computed before publication. The destinations are then updated in encoded order (`RegDst0`, `RegDst1`), which also defines the order of duplicate-register writes or queue pushes.
+Both low words are read before either write, and both results are complete before the first write, so aliasing between a source and a destination cannot corrupt either value.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
+The remainder is published to `RegDst0` first and the quotient to `RegDst1` second; a duplicate GPR ends up holding the quotient, and a duplicate queue push places the quotient at the newest index and the remainder at the next one.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+`TPC` advances by `6` bytes once the writes finish. No memory and no other architectural state changes.
 
 <!-- PTO-READER-BLOCK: scalar-hl-remuw-constraints role=constraints -->
 ## Legality and fault boundary
 
-A zero divisor uses the defined quotient and remainder outcomes; both outputs are computed before either destination is written.
+Every `32`-code source encoding and every `32`-code destination encoding is assigned, and duplicate destinations are legal, so only an unavailable temporary source can fail the operand checks. Fixed encoding bits must match the canonical 48-bit form.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise a mismatching encoding raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before either destination write.
+
+Design point: the unsigned word division has no arithmetic fault case at all. A zero divisor word publishes quotient `0` and a remainder of `SignExtend(dividend[31:0])`, whose upper bits follow the dividend word's bit `31` rather than the sign of the division.
 
 <!-- PTO-READER-BLOCK: scalar-hl-remuw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.REMUW` example, dividend `13` and divisor `5` produce remainder `3` followed by quotient `2`.
+With `SrcL = 13` and `SrcR = 5`, the quotient word is `2` and the remainder word is `3`, so `RegDst0` receives `3` and `RegDst1` receives `2`. With `SrcL = 0xFFFFFFFF` and `SrcR = 1`, the quotient word is `0xFFFFFFFF`, so `RegDst1` receives `0xFFFFFFFFFFFFFFFF` and `RegDst0` receives `0`. With `SrcR` held at the architectural zero GPR and `SrcL = 0xFFFFFFFF`, the remainder is `SignExtend(0xFFFFFFFF)` = `0xFFFFFFFFFFFFFFFF`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

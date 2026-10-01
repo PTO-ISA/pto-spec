@@ -15,45 +15,59 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-tile-data-types-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit owns tile hands, the public five-bit data-type namespace, tile data-layout and storage-layout enums, and pad values. Portable Local tile state records layout only; residency is not an architectural field.
+This unit owns the `TileHand` enumeration, the `TileDataType` namespace and its five-bit encoding, the `TileDataLayout` transformation names, the physical `TileLayout` enumeration, and `TilePadValue`.
 
-It is the boundary between encoded `DataType` fields and the typed values consumed by numeric and tile execution owners.
+It is the boundary between an encoded data-type field and the typed values that numeric and Tile execution owners consume, and its line-1 record declares the field domain `PTO-FIELD-BLOCK-DATATYPE` for Block data attributes and typed Block starts.
+
+Design point: one unit declares both the `bits(5)` encoding type and the two conversion functions. The code space is therefore a real five-bit value with 32 possible codes, so the 27 named members and the 5 unassigned codes are two countable, disjoint sets instead of a list whose gaps are invisible.
 
 <!-- PTO-READER-BLOCK: arch-tile-data-types-concepts-state role=concepts-state -->
 ## Concepts and visible state
 
-- `TileHand` names `T`, `U`, `M`, and `N`; `TileDataType` contains 15 floating/scale members, five signed integer members, and five unsigned integer members.
-- `TileDataTypeEncoding` is `bits(5)`. Codes `0..14`, `16..20`, and `24..28` are assigned; `15`, `21..23`, and `29..31` are reserved.
-- The unit separately defines transformation-oriented `TileDataLayout`, physical `TileLayout`, and `TilePadValue` namespaces; portable Local legality is layout-based rather than residency-based.
+- `TileHand` has four members: `TileHand_T`, `TileHand_U`, `TileHand_M`, and `TileHand_N`.
+- `TileDataType` has 27 members: 16 floating and scale members carrying codes `0` through `15`, 5 signed integer members carrying codes `16` through `20`, the derived member `TileDataType_RCPE6M2` carrying code `21`, and 5 unsigned integer members carrying codes `24` through `28`.
+- `TileDataTypeEncoding` is `bits(5)`, and `TileDataTypeEncodingValid` accepts the three assigned ranges, so codes `22`, `23`, `29`, `30`, and `31` are reserved.
+- `TileDataLayout` has 23 transformation names from `TileDataLayout_NORM` to `TileDataLayout_CUBE_M16`, `TilePadValue` has four members `TilePad_Zero`, `TilePad_Max`, `TilePad_Min`, and `TilePad_Null`, and `TileLayout` has 8 members `TileLayout_RowMajor`, `TileLayout_ColumnMajor`, `TileLayout_ZN`, `TileLayout_NZ`, `TileLayout_CUBE_M16`, `TileLayout_CUBE_M32`, `TileLayout_CUBE_N8`, and `TileLayout_ImplementationDefined`.
+
+Design point: the declared field meaning of code `0` is `FP64`, and the record states that zero never means absent, inherited, `NONE`, or `NULL`. A data-type field of zero is therefore a complete and usable 64-bit floating format, and "no data type" needs a different code, which the unit supplies as the separate sentinel `DTYPE_NONE` rather than as a zero value.
 
 <!-- PTO-READER-BLOCK: arch-tile-data-types-rules-interactions role=rules-interactions -->
 ## Rules and interactions
 
-`TileDataTypeEncodingValid` accepts exactly the three assigned code ranges; `TileDataTypeFromEncoding` requires validity before mapping.
+`TileDataTypeFromEncoding` opens with `assert TileDataTypeEncodingValid(encoded)` and ends its `case` with `otherwise => unreachable`, so a reserved code cannot produce a data type through this function. The field domain states that reserved values reject before architectural effects.
 
-`TileDataTypeToEncoding` is the reverse mapping. Code `0` means `TileDataType_FP64`, not absent or inherited.
+`TileDataTypeToEncoding` is the reverse mapping and returns explicit constants instead of enum positions. The gap between the two directions is visible at `TileDataType_RCPE6M2`, which encodes to `21`, and the next declared member `TileDataType_U64`, which encodes to `24`.
 
-`DTYPE_NONE` is code `31` and is only a field-level sentinel; it is deliberately not a `TileDataType` and has no width, format, or arithmetic semantics.
+`DTYPE_NONE` is the five-bit constant `'11111'`, which is code `31`. It is deliberately not a `TileDataType`, so it has no width, no format, and no arithmetic semantics.
+
+Design point: separating the validity predicate from the mapping function lets an owner test a code before calling the mapping function, which can then treat every other value as unreachable rather than inventing a fallback. A reserved code is consequently rejected at the check instead of becoming a default data type.
 
 <!-- PTO-READER-BLOCK: arch-tile-data-types-boundaries role=boundaries -->
 ## Architectural boundaries
 
-Reserved data-type codes reject before architectural effects and remain available for future extension.
+Reserved codes are held for future extension and reject before architectural effects. This unit assigns them no meaning and does not say what a consuming instruction does with them.
 
-`TileLayout_ImplementationDefined` exists for non-architectural model fixtures; no assigned `B.DATR` layout code maps to it.
+One member is explicitly non-architectural. `TileLayout_ImplementationDefined` exists so that model fixtures can prove that generic execution rejects an opaque implementation layout, and the file records that no assigned `B.DATR` layout code maps to it.
+
+`TileDataLayout` and `TileLayout` are separate namespaces with separate members. The 23 transformation names such as `TileDataLayout_ND2M32` are not members of the physical `TileLayout`, whose 8 members are the two major orders, `ZN`, `NZ`, the three `CUBE` forms, and the implementation-defined fixture.
+
+Design point: keeping the transformation name apart from the storage layout means an encoded conversion name cannot be mistaken for the layout a Tile is stored in: a consumer that needs the stored layout must ask the Tile state owner for a `TileLayout`, while a decoded conversion name is a `TileDataLayout`.
 
 <!-- PTO-READER-BLOCK: arch-tile-data-types-example-usage role=example-usage -->
 ## Non-normative reading example
 
-Encoding `2` passes validation and maps to `TileDataType_TF32`; encoding `31` does not map to a data type even though the separate `DTYPE_NONE` sentinel has that bit pattern.
+Take the code `2`. `TileDataTypeEncodingValid` accepts it, because it falls in the range `0` through `16`, and `TileDataTypeFromEncoding` returns `TileDataType_TF32`. Take the code `31` instead: it is outside all three ranges, the validity predicate returns false, and the `assert` fails, so `31` never becomes a data type and the bit pattern `'11111'` is meaningful only as `DTYPE_NONE`.
 
-After decoding a data type, follow `TileNumericFormatDescriptor` for format metadata and the consuming instruction for operation support.
+In the other direction, `TileDataTypeToEncoding(TileDataType_U4X2)` returns `Zeros{5} + 28`, which is the same code the field domain assigns to `U4X2`.
+
+Once a code has been decoded, format metadata comes from `TileNumericFormatDescriptor` and operation support comes from the consuming instruction. This unit decides neither.
 
 <!-- PTO-READER-BLOCK: arch-tile-data-types-related-owners role=related-owners-navigation -->
 ## Related owners
 
 - [Numeric format dispatch](numeric-formats.md)
 - [Packed concept](packed.md)
+- [Format descriptor record](format-descriptor.md)
 - [Hardware numeric profile](../features/mx-formats.md)
 <!-- SUPPLEMENTARY-END -->
 

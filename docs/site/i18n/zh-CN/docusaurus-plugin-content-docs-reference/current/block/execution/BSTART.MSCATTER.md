@@ -19,40 +19,49 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-purpose role=purpose -->
 ## BSTART.MSCATTER 的作用
 
-`BSTART.MSCATTER` 是 `MSCATTER` 形式的 32 位 Block 起始命令。它建立待处理 Block 的身份和选择参数；真正执行 Block body 并提交结果的是完成后的整个 Block，而不是起始命令本身。
+`BSTART.MSCATTER` 打开一个 Tile 内存指令束，其操作为 `MSCATTER`：一种索引存储。Local 数据 Tile 的每个元素写入全局内存（GM）中基址加字节位移的位置，位移取自 Local 索引 Tile。该命令是一个 32 位字（匹配值 `0x00511181`，掩码 `0x07ffffff`），`DataType` 位于位 31 到 27。它携带固定的 TLSU 选择器 5。
+
+散射不产生 Tile。两个源都不会被消耗或修改。
+
+设计要点：起始命令不写内存。[指令束启动分派](../model/dispatch/start.md)先验证描述符并提交任何有效的前驱；散射在指令束被提交时执行，例如在 `BSTOP`、下一条 `BSTART`、trace `B.HINT` 或架构进入请求处。保留的 `DataType` 编码在 `BSTART` 处、前驱提交之前引发 `Fault_IllegalInstruction`。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-mechanism role=mechanism -->
 ## 位置与机制
 
-起始命令之后的 header 命令按顺序执行；`BSTOP` 或下一条 `BSTART` 是验证并退休完整 Block 的边界。当前所有者给出以下确切组成检查表：
+提交时，[Tile 执行](../model/dispatch/tile-execution.md)在包括普通 `MGATHER` 在内的较早专用选择器都不匹配之后，到达 [MSCATTER 处理程序](../model/dispatch/tlsu-mscatter.md)。处理程序验证完整的指令束，并调用 Tile 层的 [MSCATTER](../../tile/memory-and-data-movement/irregular/MSCATTER.md)。
 
-```text
-BSTART.MSCATTER DataType
-B.DATR Layout (optional)
-B.DIM LB0=ValidCol
-B.DIM LB1=ValidRow (optional)
-B.DIM LB2=Col (optional)
-B.IOT DataTile, IndexTile, mask=PE_MASK, <last>
-B.IOR BaseGPR, zero, zero, ->zero
-BSTOP
-```
+对每个有效通道，地址为 `BaseGPR` 加上索引值。索引是字节位移：一个 S32、U32、S64 或 U64 值，不按元素大小缩放，也不做分解。
 
-任何有效前序 Block 成功退休后，该命令初始化新的待处理 `BARG` 或操作描述符，并从顺序 PC 继续执行 header。仅仅成功解码起始命令，不会让 Block 目的结果或内存结果变得可见。
+设计要点：Tile 层的 `MSCATTER` 在提交任何存储之前，探测每个有效通道的写权限。因此探测中发现的转换或权限故障不会在 GM 中留下本次散射的任何存储。只有所有探测都成功之后，存储才被提交并记录其存储事件。
+
+设计要点：当两个通道指向同一地址时，胜出的通道由实现定义。ASL 中通道的提交顺序是任意选择的，`B.CATR` 的 atomic 属性也不会选定其中之一。需要确定结果的程序必须避免重复索引。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-inputs role=inputs-outputs -->
 ## 操作数与 header 角色
 
-- `DataType` 选择元素数据类型或继承哨兵；其确切分配域仍以下方生成契约为准。
+- `DataType` 是传输元素类型。数据 Tile 的类型必须恰好为该类型。
+- `B.DIM` 的 `LB0`、`LB1` 和 `LB2` 必须等于数据 Tile 的 ValidCol、ValidRow 和物理 Col。
+- 第一条 `B.IOT` 没有目标，`SizeCode` 为零。它在 `source0` 中携带数据 Tile，在 `source1` 中携带索引 Tile。没有谓词 Tile ExecutionMask 时，它是唯一的绑定并携带 `last`。
+- `B.IOR` 是必需的。`RegSrc0` 选择每个 PE 的 `BaseGPR`；`RegSrc1`、`RegSrc2` 与 `RegDst` 必须编码为零。`RegSrc0` 为 `zero` 时提供基址零。
+- 可选的 `B.DATR` 选择布局：`ROWMAJOR`、`CUBE_M16` 或 `CUBE_M32`；`CUBE_N8` 被拒绝。两个 Tile 都必须使用指令束布局。
+
+设计要点：`B.DIM` 重述一个已有 Tile 的形状，而不是描述新的目标。处理程序把数据 Tile 的有效行数、有效列数与物理列数和维度值比较，因此指令束必须精确描述该 Tile。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-effects role=effects -->
 ## 待处理状态与完成
 
-对适用性和目标检查而言，起始状态转换与前序 Block 退休是全有或全无的。起始命令成功后，后续完成边界会在任何 body 结果提交前验证完整组成。
+每个有效通道存储一个传输元素。对打包四位 `DataType`，每个索引指定一个字节，其低半字节来自数据列 `2 * c`，高半字节来自列 `2 * c + 1`。此时数据的 ValidCol 必须恰好是索引 ValidCol 的两倍，因此不存在不完整的配对。
+
+成功时处理程序结束本次尝试；不发布任何 Tile。PTO 内存顺序不变，只有重复地址之间的顺序由实现定义。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-constraints role=constraints -->
 ## 合法性与故障边界
 
-保留选择器、无效目标、完成后的组成错误或前序退休失败，都会在新 Block 或 body 影响之前被拒绝。
+`PE_MASK=0000` 是严格无操作，发生在 schema、源、GPR、维度、地址或内存检查之前。否则所有绑定必须使用同一个 `PE_MASK`。
+
+未知的 TLSU 操作编码引发 `Fault_IllegalInstruction`。存在 `B.IOS` 绑定、缺少 `B.IOR` 或其字段非零、绑定 schema 格式错误、源元素未定义、类型或布局错误、形状不匹配，或维度不满足 `BundleMGATHERDimensionsLegal`，都在第一次探测之前引发 `Fault_TileLegality`。对 `ROWMAJOR`，该检查要求 ValidCol 不大于 Col，且 Col 是非零的 2 的幂。
+
+内存故障保持其自身类型。没有需要回滚的目标，并且如[提交验证](../model/commit/validation.md)所述，指令束保持有效以便重试。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-example role=example -->
 ## 非规范示例
@@ -60,10 +69,16 @@ BSTOP
 以下为非规范示例，仅用于说明当前所有者，不替代其定义。
 
 ```asm
-BSTART.MSCATTER DataType
+BSTART.MSCATTER FP32
+B.DIM zero, 16, ->LB0
+B.DIM zero, 2, ->LB1
+B.DIM zero, 16, ->LB2
+B.IOT T#2, T#1, mask=1111, last
+B.IOR a0, zero, zero, ->zero
+BSTOP
 ```
 
-假设前序 Block 退休和目标检查成功，`BSTART.MSCATTER DataType` 会打开待处理的 `BSTART.MSCATTER` 形式；后续 header/body 命令仍是暂定状态，直到 `BSTOP` 或下一条 `BSTART` 验证完整组成。
+数据 Tile `T#2` 是一个具有 16 个物理列的 2 x 16 `FP32` 行主序 Tile，索引 Tile `T#1` 是一个 2 x 16 的 `S32` Tile。在每个 PE 上，先探测 32 个通道，再提交 32 次存储。索引为 40 的通道在 `a0 + 40` 处写入 4 字节；索引不会乘以 4。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

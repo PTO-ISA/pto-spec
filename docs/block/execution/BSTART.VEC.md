@@ -19,39 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-vec-purpose role=purpose -->
 ## What BSTART.VEC does
 
-`BSTART.VEC` opens an active Block descriptor; the body supplies the attributes and bindings required before completion.
+`BSTART.VEC` is the canonical spelling for starting a block whose operation runs on the VEC engine, for example `TADD`, `TSUB`, `TMUL`, or `TMAX`. It is an encoding alias: it has no bits of its own. `BSTART.VEC TileOp, DataType` resolves `TileOp` to its `Mode:Function` selector and emits the [BSTART.TEPL](BSTART.TEPL.md) word with that selector and `DataType`.
+
+Canonical assembly and disassembly use `BSTART.VEC` for every VEC operation, and [BSTART.SFU](BSTART.SFU.md) for every SFU operation.
 
 <!-- PTO-READER-BLOCK: block-bstart-vec-mechanism role=mechanism -->
 ## Placement and execution mechanism
 
-`BSTART.VEC` must appear as the starter of its Block. Later attributes, dimensions, and bindings accumulate in the active descriptor until `BSTOP` or the next accepted `BSTART` completion boundary.
+The alias owner maps each piece to `BSTART.TEPL`: `InstructionContractMatches_BSTART_VEC` matches the TEPL form, and `InstructionContractHandler_BSTART_VEC` returns the TEPL handler, `CommandHandler_ExecuteBundleStart`. Execution is therefore exactly the TEPL path.
 
-The accepted carrier uses the `encoding-alias` encoding class and resolves every displayed field before the command reads bindings or changes state.
+1. [Bundle start dispatch](../model/dispatch/start.md) checks the decoded descriptor before it commits any predecessor.
+2. It commits the predecessor, opens a Tile-element block, and installs the descriptor.
+3. At `BSTOP` or the next `BSTART`, [Tile execution dispatch](../model/dispatch/tile-execution.md) validates the bundle and runs the operation.
 
-At completion, the descriptor runs its selected Block operation only after all schema and state preflight succeeds.
+`TileTEPLAliasAcceptsOperation(TileTEPLAlias_VEC, operation)` defines which names the alias accepts: the operation must use the TEPL carrier and its execution engine must be VEC.
+
+Design point: the engine name lives in the spelling, not in the bits. One encoding carries both engines, and the assembler picks `BSTART.VEC` or `BSTART.SFU` from the operation's engine, so a reader sees which engine runs the block without adding an encoding field.
 
 <!-- PTO-READER-BLOCK: block-bstart-vec-inputs role=inputs-outputs -->
 ## Carrier, bindings, and inputs
 
-- Encoded operands: `TileOp` — assigned VEC operation mnemonic that resolves the Mode:Function selector; `DataType` — tile element data type selector.
-- `BSTART.VEC` resolves `TileOp` through the `BSTART.TEPL` carrier and then uses that owner's descriptor, body composition, commit, and rollback rules.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+- `TileOp` names a VEC operation carried by TEPL. It becomes `Mode` and `Function`; `TADD` is `Mode` 0 `Function` 0, `TSUB` is `Function` 1, and `TMAX` is `Function` 11.
+- `DataType` is the element type, encoded as in `BSTART.TEPL`. It must be concrete.
+
+The remaining header commands are those of the selected operation. For `TADD`, they are `B.DIM LB0`, optional `LB1`, `LB2`, and `B.DATR`, and one terminating `B.IOT` with two Local sources and a new Local destination.
 
 <!-- PTO-READER-BLOCK: block-bstart-vec-effects role=effects -->
 ## State effects and ordering
 
-Starting the Block records the selected carrier and leaves operation execution deferred until the completion boundary.
+The alias adds no state. After the predecessor commits, the start installs exactly the TEPL descriptor for the resolved selector and `DataType`, sets the block kind to Tile element, and moves `TPC` to the next instruction.
 
-After complete preflight and computation, every enabled output publishes as the owner-defined atomic group; successful mathematical sources remain available unless the contract explicitly consumes them.
+The selected VEC operation runs only when the block commits. On success it publishes its destination atomically. On failure the block stays active and its destinations are rolled back. The start has no memory effect.
 
 <!-- PTO-READER-BLOCK: block-bstart-vec-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+`BSTART.VEC` accepts only a name that `TileTEPLAliasAcceptsOperation` admits for VEC. An unknown name, an SFU operation such as `TEXP`, or a TLSU or CUBE operation has no `BSTART.VEC` spelling.
 
-The current owner reports invalid schema, state, address, or continuation conditions through the owner-defined fault; no prose on this page creates an additional fault rule.
+For the emitted word, the TEPL checks apply before predecessor commit: a reserved `DataType` code or an unassigned selector raises `Fault_IllegalInstruction`, and the active predecessor is left in place.
 
-Complete schema, binding, readiness, alias, capacity, and allocation preflight precedes source snapshots and every destination publication.
+Design point: because the alias and `BSTART.TEPL` produce identical bits, no program can observe a difference between them. Both install the same descriptor and fault in the same way.
 
 <!-- PTO-READER-BLOCK: block-bstart-vec-example role=example -->
 ## Non-normative worked example
@@ -62,7 +69,7 @@ This example demonstrates placement and carrier flow only; exact behavior remain
 BSTART.VEC TADD, FP32
 ```
 
-The starter establishes the descriptor first; the following carriers fill its declared schema, and the final completion boundary triggers validation and operation execution.
+`TADD` resolves to `Mode` 0 `Function` 0, and `FP32` is `DataType` 1, so the emitted word is `0x08019181`, the same word as `BSTART.TEPL 0, 0, FP32`. A complete bundle adds `B.DIM` commands and one `B.IOT` naming the two sources and the destination, then `BSTOP`. The same bundle is written in macro form as `TADD <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Alias contract

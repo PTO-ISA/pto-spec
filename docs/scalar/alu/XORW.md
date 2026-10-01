@@ -17,51 +17,67 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-xorw-purpose role=purpose -->
-## What XORW does
+## What XORW computes
 
-`XORW` is a 32-bit scalar ALU instruction. It performs bitwise exclusive OR under the low 32-bit word, followed by sign-extension to XLEN result rules; its current instruction contract defines the result publication path and any additional state effect.
+`XORW` is the word form of the register exclusive OR. It prepares `SrcR` with the selected transformation and shift, keeps only the low 32 bits of that prepared value and of `SrcL`, exclusive-ORs them, sign-extends the result to `PTO_XLEN`, and publishes it through `RegDst`.
+
+Two things therefore differ from `XOR`: the operands are narrowed to their low words, and the published value is the sign-extended word. `XORW` advances `TPC` by `4` bytes, reads no memory and raises no arithmetic exception.
+
+Design point: the prepared value stays 64 bits wide, but the two extension modifiers cannot change the outcome. `.sw` and `.uw` rewrite only bits above bit 31, the word window discards exactly those bits, and a left shift never moves a bit downward. `xorw a0, a1.sw, ->a2` and `xorw a0, a1.uw, ->a2` therefore publish the same value as `xorw a0, a1, ->a2`; only `.not` changes it.
 
 <!-- PTO-READER-BLOCK: scalar-xorw-mechanism role=mechanism -->
-## How the result is formed
+## Preparing the right source, then narrowing to a word
 
-Execution snapshots the encoded inputs, then performs bitwise exclusive OR under the low 32-bit word, followed by sign-extension to XLEN result rules, and only afterward performs the destination effects.
+Execution reads `SrcL` and `SrcR`, transforms `SrcR` as `SrcRType` selects, shifts the result left by `shamt`, then takes the low 32 bits of that prepared value and exclusive-ORs them with the low 32 bits of `SrcL`. The 32-bit result is sign-extended before publication.
 
-- `SrcRType` first transforms the right source; `shamt` then logically shifts that transformed value left before the arithmetic or logical operation.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+The four `SrcRType` encodings have the same meaning as for `XOR`:
+
+- `00` (`.sw`) sign-extends `SrcR[31:0]` to `PTO_XLEN`.
+- `01` (`.uw`) zero-extends `SrcR[31:0]` to `PTO_XLEN`.
+- `10` (`.not`) complements all `PTO_XLEN` bits.
+- `11` (omitted suffix) leaves `SrcR` unchanged.
+
+Design point: `.not` complements all 64 bits, and the low word of that complement enters the operation: with `SrcR=0x0000000000000001` the prepared value is `0xfffffffffffffffe` and the window holds `0xfffffffe`.
+
+Design point: the shift runs before the narrowing, so a low-word bit shifted past bit 31 leaves the result. With `SrcR=0x0000000080000000` and `shamt=1` the window holds `0x00000000`, and that zero reaches the exclusive OR.
+
+Design point: bit 31 of the word exclusive OR decides the upper half of the published value, so `XORW` can publish `0xffffffff80000000` from a source whose low word is `0x80000000`.
 
 <!-- PTO-READER-BLOCK: scalar-xorw-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Encoded operands
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the left operand through Reg5.
-- The 5-bit `SrcR` field selects the right operand through Reg5.
-- The 2-bit `SrcRType` field selects the transformation applied to the right source.
-- The 5-bit `shamt` field encodes the logical-left shift applied after right-source transformation.
+- `RegDst` is a 5-bit field at instruction bits `7..11`: codes `1..23` write that absolute GPR, code `0` and codes `24..29` discard, code `30` pushes the U queue and code `31` pushes the T queue.
+- `SrcL` is a 5-bit field at bits `15..19` and `SrcR` at bits `20..24`. Codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4` and `28..31` read `U#1..U#4`.
+- `SrcRType` is a 2-bit field at bits `25..26`; `shamt` is a 5-bit field at bits `27..31`.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+A queue source is read without being consumed and source code `0` reads zero. `XORW` has no address operand, no ordering bit and no `far` field.
 
 <!-- PTO-READER-BLOCK: scalar-xorw-effects role=effects -->
-## Effects and ordering
+## Destination and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are read before the destination is written, and the published value is computed from those pre-instruction values.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+Design point: `xorw a0, a1, ->a0` publishes the word exclusive OR of the old `a0` with the prepared `a1`, and `xorw a0, a0, ->a1` publishes `0x0` whatever `a0` held. The narrowing happens inside the operation, so the discarded upper halves never affect the result.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+A successful execution advances `TPC` by `4` bytes. No memory location, reservation, descriptor, numeric flag, trap, block, privilege or control-flow state changes.
 
 <!-- PTO-READER-BLOCK: scalar-xorw-constraints role=constraints -->
-## Legality and fault boundary
+## Legality and the fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every `SrcRType` encoding and every `shamt` value from `0` through `31` is assigned, and so is every source and destination code, so `XORW` has no reserved field value. Word exclusive OR and the final sign extension are total, so no arithmetic exception is raised.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Before any effect the form is decoded, its encoded fields are checked, and each selected T/U source must hold a valid queue entry. An encoding owned by no form, or an unavailable `T#1..T#4` or `U#1..U#4` entry, raises `Fault_IllegalInstruction` before the destination write and before `TPC` advances.
+
+Design point: `XORW` forms no address, so it can raise neither an alignment fault nor an access fault. After a successful decode, applicability is checked first: while the system-block terminal marker `_SystemBlockTerminalPending` is set, that check rejects any scalar operation with `Fault_BundleControl`. Apart from that, the remaining reason to reject `XORW` is operand availability, and the truncation to 32 bits is not a fault condition.
 
 <!-- PTO-READER-BLOCK: scalar-xorw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `XORW` example, `SrcL=0xc`, `SrcR=0xa`, `SrcRType=11`, and `shamt=0` produce `0x6`.
+With `SrcL=0x0000000000000000`, `SrcR=0x0000000080000000`, `SrcRType=11` and `shamt=0`, the prepared right source is `0x0000000080000000`, its low word `0x80000000` is exclusive-ORed with the low word of `SrcL`, and the published value is `0xffffffff80000000`.
+
+With the same operands but `shamt=1`, the prepared value is `0x0000000100000000`, the window holds `0x00000000`, and the published value is `0x0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

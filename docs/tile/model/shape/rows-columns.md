@@ -7,8 +7,80 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-SHAPE-ROWS-COLUMNS}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-shape-rows-columns-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit decides how many physical rows a Tile has, given its byte capacity, its column count, and its element type. Other shape checks build on it.
+
+It defines four helpers:
+
+- `IsNonzeroPowerOfTwo`, which tests a 16-bit count.
+- `TileDataTypeAllowsOddPhysicalColumns`, which names the types that may use a column count that is not a power of two.
+- `DerivedTileRows` and `TileShapeMatchesCapacity`, which derive and check the row count.
+
+<!-- PTO-READER-BLOCK: tile-model-shape-rows-columns-concepts role=concepts-state -->
+## Concepts and visible state
+
+Capacity (`capacity_bytes`, also called TSize) is a per-PE byte budget. It is not a logical dimension. For power-of-two columns, rows are derived from it; for admitted odd column counts, it bounds the stored rows.
+
+There are two column profiles:
+
+- Power-of-two columns, legal for every type. Except for the row-paired E2M1X2 and E1M2X2, the Tile must fill its capacity exactly.
+- Other positive column counts, legal only for FP32, FP16, BF16, and the row-paired packed types E2M1X2 and E1M2X2. Capacity is then an upper bound on the storage of complete rows.
+
+For E2M1X2 and E1M2X2 in the row-paired form, each row stores `(columns + 1) / 2` bytes, rounded down after adding one. An odd final column still reserves a whole byte.
+
+<!-- PTO-READER-BLOCK: tile-model-shape-rows-columns-rules role=rules-interactions -->
+## Rules and interactions
+
+`DerivedTileRows(capacity_bytes, columns, data_type)` returns 0, meaning "no legal shape", when the capacity or column count is 0, or when the columns are not a power of two and the type is not admitted.
+
+Otherwise:
+
+1. For row-paired packed types, rows are `capacity_bytes / row_bytes`, rounded down.
+2. For other types, rows are `capacity_bits / (columns x element_bits)`, rounded down.
+3. With power-of-two columns, a nonzero remainder in step 2 returns 0.
+4. A result of 0 or more than 65535 returns 0.
+
+`TileShapeMatchesCapacity` then compares a stored `rows` with the derived value. Power-of-two profiles require equality. Admitted non-power-of-two profiles only require `rows <= derived_rows`.
+
+Design point: the power-of-two profile keeps the exact capacity contract, so rows are fully determined by capacity, columns, and type. The admitted odd profiles instead use the complete rows that fit, leaving unused capacity as a descriptor tail, as the source comment states.
+
+Design point: row-paired storage is row-local. Because each row rounds its own byte count up, padding for an odd final column never shares a byte with the next row.
+
+<!-- PTO-READER-BLOCK: tile-model-shape-rows-columns-boundaries role=boundaries -->
+## Architectural boundaries
+
+These helpers are pure. They do not check valid regions, capacity legality, or pool space; the valid-region and allocation owners do that.
+
+`HiF4X2`, `S4X2`, and `U4X2` are four-bit but not row-paired. They follow the generic rule in step 2 and must use power-of-two columns.
+
+The 65535 bound is the width of the 16-bit row field, not a capacity rule.
+
+<!-- PTO-READER-BLOCK: tile-model-shape-rows-columns-example role=example-usage -->
+## Non-normative reading example
+
+| Capacity | Columns | Type | Derived rows | Why |
+| --- | --- | --- | --- | --- |
+| 4096 | 16 | FP32 | 64 | 32768 bits / 512 bits per row, no remainder |
+| 4096 | 12 | FP32 | 85 | 32768 / 384 = 85, remainder allowed for FP32 |
+| 4096 | 12 | S32 | 0 | 12 is not a power of two and S32 is not admitted |
+| 128 | 5 | E2M1X2 | 42 | each row stores 3 bytes; 128 / 3 = 42 |
+
+For the second row, a stored `rows` of 80 also matches, because the admitted profile only requires `rows <= 85`.
+
+<!-- PTO-READER-BLOCK: tile-model-shape-rows-columns-related role=related-owners-navigation -->
+## Related owners
+
+- [Valid region](valid-region.md) builds descriptor and storage checks on `DerivedTileRows`.
+- [Packed boundary](../definedness/packed-boundary.md) defines `PackedTileRowStorageBytes`.
+- [Descriptors](../state/descriptors.md) supplies `TileElementBits`.
+- [Allocation](../state/allocation.md) chooses between derived and caller rows.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

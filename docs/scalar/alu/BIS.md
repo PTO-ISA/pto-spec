@@ -19,48 +19,53 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-bis-purpose role=purpose -->
 ## What BIS does
 
-`BIS` is a 32-bit scalar ALU instruction. It sets every bit in the independently selected wrapping destination field; its current instruction contract defines the result publication path and any additional state effect.
+`BIS` sets every bit of a selected bit field inside one Reg5 source and publishes the modified XLEN value through a Reg5 destination.
+
+Design point: `BIS` is the exact complement of `BIC`: both take the field from the same two immediate fields and both preserve everything outside it, and only the value written into the field differs. The pair therefore covers field-scoped set and clear without a mask operand.
 
 <!-- PTO-READER-BLOCK: scalar-bis-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then sets every bit in the independently selected wrapping destination field, and only afterward performs the destination effects.
+- `imms` is the field start bit `M`, from `0` through `63`.
+- `imml` encodes the field width `N` minus one, so raw values `0` through `63` select widths `1` through `64`.
 
-- `imml` and `imms` independently select field width and starting bit; wrapping is part of the selected-field mechanism.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+The `N` bits beginning at bit `M` are written as `1`. Every bit outside the selected field keeps the value it had in the source.
+
+Design point: `imml` stores `N - 1` so that a `64`-bit field fits in six bits. Encoded zero therefore sets one bit rather than doing nothing, which is why `bis a0, 0, 1, ->a1` is a defined single-bit set operation.
+
+Design point: the field wraps when `M + N` exceeds `64`; the implementation rotates the source, writes the low `N` bits, and rotates back. As a result `N=64` sets every bit for every `M`, and `bis a0, 63, 2, ->a1` sets bits `63` and `0`.
 
 <!-- PTO-READER-BLOCK: scalar-bis-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar input through Reg5.
-- The 6-bit `imml` field encodes the selected field width as `N-1`.
-- The 6-bit `imms` field encodes selected-field starting bit `M`.
+- `SrcL` is a Reg5 source: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`. Reading a temporary source does not consume it.
+- `imml` and `imms` describe the field and read no storage.
+- `RegDst` publishes the modified value: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero of `SrcL` reads the architectural zero GPR, and a set of any field of it publishes exactly the selected bits. Encoded zero of `RegDst` discards the result instead of writing it to the zero GPR, so the discarded encoding is not a way to set bits in place.
 
 <!-- PTO-READER-BLOCK: scalar-bis-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is read before the destination is written, so a destination that aliases the source still uses the pre-instruction value as its base.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The result is published or discarded, and then `TPC` advances by `4` bytes. `BIS` accesses no memory and leaves reservation, descriptor, numeric-status, trap, bundle, privilege, predicate and control-flow state unchanged apart from the one `T` or `U` push selected by `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-bis-constraints role=constraints -->
 ## Legality and fault boundary
 
-Field selection may wrap from bit 63 to bit 0; the generated defaults and legality tables below give the exact width and starting-position encodings.
+Every encoded value is assigned: all `32` `SrcL` codes, all `32` `RegDst` codes, and every `imml` and `imms` value.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An undecodable form raises `Fault_IllegalInstruction` at `PC`; an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`; a fixed-bit mismatch or an unavailable selected T/U source raises `Fault_IllegalInstruction`. Each precedes the destination effect and the `TPC` advance.
+
+Design point: setting bits cannot produce an exceptional value, so `BIS` has no value-dependent fault. A field that overlaps bits another part of the program owns is a programming error, and the architecture reports nothing.
 
 <!-- PTO-READER-BLOCK: scalar-bis-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `BIS` example, setting selected bits `1..2` of base `0` produces `0x6`.
+With `SrcL=0`, `M=4` and `N=4`, `bis a0, 4, 4, ->a1` publishes `240`, the sum of bits `4`, `5`, `6` and `7`. With `SrcL=4095` and `M=0`, `N=64`, the published value is `18446744073709551615`, because the whole register is selected.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

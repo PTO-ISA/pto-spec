@@ -19,42 +19,67 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-cash-purpose role=purpose -->
 ## CASH 的作用
 
-`CASH` 把 `SrcL` 指向的半字与 `SrcR` 进行原子比较；相等时写入 `SrcD`，而两条路径都会发布先前的 16 位值。
+`CASH` 把 `SrcL` 指向地址处的 2 字节半字与 `SrcR` 的低 `2` 字节比较，仅当两个半字相等时才把 `SrcD` 的低 `2` 字节写入该地址。
+
+匹配与不匹配都会把原来的半字零扩展到 XLEN 后发布到 `RegDst`。`CASH` 是一个 32 位编码形式，成功执行使 `TPC` 前进 `4` 字节。
 
 <!-- PTO-READER-BLOCK: scalar-cash-mechanism role=mechanism -->
-## 原子机制
+## 读取、比较与条件写入
 
-ASL DOC 契约选择 `ScalarHandler_CompareAndSwap`，访问宽度为 `2` 字节。
+分发逻辑把 `SrcL`、`SrcR`、`SrcD` 以及访问宽度 `2` 传给共享的 `CompareAndSwap` 辅助函数。该函数先对同样的 2 字节做读探测，再做写探测；当两次探测转换出的地址不同时，它不会继续执行。
 
-匹配与不匹配都会发出一个带排序属性的原子事件；只有匹配路径会把写入标记为已执行。
+`LoadTranslatedUnsigned` 从 `Zeros{PTO_XLEN}` 构造载入值，并从内存填入第 `15:0` 位，因此比较中内存一侧本身已经零扩展。期望一侧用同样的方式规范化，写入则取 `SrcD` 的低 `2` 字节。
+
+设计要点：比较的两侧都由 `16` 位零扩展而来，所以 `SrcR` 的第 `16` 到第 `63` 位被忽略。`SrcR` 为 `0xffffffffffff1234` 时仍与内存半字 `0x1234` 匹配，因为高位不参与比较。
+
+设计要点：写探测重复同样的 `2` 字节宽度，因而对同一地址做同样的对齐检查；于是奇数地址会在读探测中就抛出 `Fault_DataAlignment`，此时尚未载入或写入任何字节。
 
 <!-- PTO-READER-BLOCK: scalar-cash-inputs-outputs role=inputs-outputs -->
-## 输入与结果
+## 字段、排序与选择器
 
-`SrcL` 承载 Reg5 原子地址源；`SrcR` 承载 Reg5 期望半字源；`SrcD` 承载 Reg5 目标半字源；`RegDst` 承载 Reg5 旧值目的地；`aq` 承载获取排序位；`rl` 承载释放排序位。
+| 字段 | 指令低位 | 宽度 | 作用 |
+| --- | --- | --- | --- |
+| `SrcL` | `15` | `5` | 原子地址源 |
+| `SrcR` | `20` | `5` | 期望半字源 |
+| `SrcD` | `27` | `5` | 待写半字源 |
+| `RegDst` | `7` | `5` | 原半字目的地 |
+| `rl` | `25` | `1` | 释放排序位 |
+| `aq` | `26` | `1` | 获取排序位 |
 
-`aq` 与 `rl` 选择宽松、获取、释放或获取-释放排序。
+`aq=0,rl=0` 选择 relaxed 排序，`aq=1,rl=0` 为 acquire，`aq=0,rl=1` 为 release，`aq=1,rl=1` 为 acquire-release。记录的事件在匹配与不匹配时携带相同的排序设置。
+
+设计要点：源选择器 `24` 到 `27` 读取 `T#1` 到 `T#4`，选择器 `28` 到 `31` 读取 `U#1` 到 `U#4`，且不消费该条目；因此某条形式可以从队列取用期望半字，并让该条目留给下一条指令。
 
 <!-- PTO-READER-BLOCK: scalar-cash-effects role=effects -->
-## 效果与排序
+## 指令产生的改变
 
-预检成功后，即使比较不匹配也会发布旧值；只有相等时内存才会改变。
+匹配的 `CASH` 写入 `SrcD` 的低 `2` 字节；不匹配的 `CASH` 不写入任何内容。两种情况都会记录一个原子事件，其 `write_performed` 等于比较结果。
 
-完成的写入会使重叠的本地 64 字节缓存行保留失效，保留不重叠的保留，并让 `TPC` 前进 `4` 字节。
+任何无故障执行之后 `RegDst` 都会收到 `ZeroExtend{PTO_XLEN}(old_value[15:0])`，所以内存半字 `0xabcd` 发布为 `0x000000000000abcd`。
+
+设计要点：寄存器结果与内存结果各自独立地规范化。`NormalizeAtomicReturn` 为 `RegDst` 拓宽这个 `16` 位值，而 `StoreTranslated` 对 `2` 个字节中的每一个写入 `desired[(byte_index * 8) +: 8]`，因此发布的寄存器值是 `64` 位宽，而内存只保留 `2` 字节。
+
+匹配时，若写入的 `2` 字节与保留的 64 字节粒度重叠，还会清除保留状态；成功执行使 `TPC` 前进 `4` 字节。
 
 <!-- PTO-READER-BLOCK: scalar-cash-constraints role=constraints -->
-## 合法性与精确故障
+## 对齐与故障顺序
 
-有效地址必须按 `2` 字节对齐。对齐、地址翻译和权限检查都先于架构效果。
+`CASH` 要求地址为偶数：当 `UInt(address) MOD 2` 非零时，`ProbeDataAccess` 报告 `Fault_DataAlignment`，而该检查先于地址转换，也先于权限检查。
 
-预检失败时不会发布目的值、内存事件、保留更新或退役效果；保存的原始 `TPC` 支持完整重新执行。
+读探测先被求值，因此先报告它的故障。若读探测通过，写探测重复同样的宽度与对齐检查，随后两次转换后的地址必须相等，否则抛出 `Fault_DataPage`。
+
+故障携带原始 `SrcL` 地址。辅助函数在载入之前返回，因此不会写入任何内容，不会记录原子事件，保留状态不变，`RegDst` 保持原值。
+
+`TPC` 停在出错指令上，因此整个比较并交换可以重新执行。解码失败，或所选 `T#1` 到 `T#4`、`U#1` 到 `U#4` 源不可用，会在处理函数运行之前抛出 `Fault_IllegalInstruction`。
 
 <!-- PTO-READER-BLOCK: scalar-cash-example role=example -->
-## 非规范示例
+## 一个匹配的半字
 
 本示例只展示一种已接受写法；下方生成的契约仍是权威来源。
 
-初次阅读可从 `cash [SrcL], SrcR, SrcD, ->Rd` 开始，再只改变上文说明的排序或路由修饰位。
+设内存半字为 `0x1234`，`SrcR` 的低 `2` 字节为 `0x1234`，`SrcD` 为 `0xabcd`。比较成功，于是 `CASH` 把 `0xabcd` 写入该地址，在 `RegDst` 中发布 `0x0000000000001234`，并记录一个 `write_performed=true` 的原子事件。
+
+如果 `SrcR` 的低 `2` 字节改为 `0x1235`，比较失败：内存保持 `0x1234`，记录的事件为 `write_performed=false`，`RegDst` 仍然收到 `0x0000000000001234`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

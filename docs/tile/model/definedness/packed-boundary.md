@@ -7,8 +7,71 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-definedness-packed-boundary-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines how the model stores Tiles whose logical element count is larger than its payload array, and Tiles with four-bit elements. It maps each logical element to a lane of a 64-bit carrier Word and keeps a separate definedness bit for it.
+
+It also defines the row-paired storage of E2M1X2 and E1M2X2, including the padding lane at the end of an odd row.
+
+<!-- PTO-READER-BLOCK: tile-model-definedness-packed-boundary-concepts role=concepts-state -->
+## Concepts and visible state
+
+A carrier is one 64-bit payload Word. It holds `64 / element_bits` logical elements: 16 four-bit, 8 eight-bit, 4 sixteen-bit, 2 thirty-two-bit, or 1 sixty-four-bit. `TilePackedCarrierIndex` is the element index divided by that count, and `TilePackedLaneIndex` is the remainder.
+
+`TileUsesPackedCarrierRepresentation` is TRUE for a non-CUBE Tile with a four-bit type, or with more than `PTO_MODEL_TILE_ELEMENTS` physical elements. Such a Tile records definedness in `packed_defined_elements`, which has 524288 bits.
+
+Design point: the carrier representation makes every accepted 256 KiB descriptor representable without a 524288-Word `TileInfo`. 524288 is the logical element count of a 256 KiB four-bit Tile, and the 32768 payload Words are enough when each Word carries several elements. `PTO_MODEL_TILE_ELEMENTS` is a model bound, not an architectural element limit.
+
+<!-- PTO-READER-BLOCK: tile-model-definedness-packed-boundary-rules role=rules-interactions -->
+## Rules and interactions
+
+`TileReadLogicalElement` and `TileInfoWithLogicalElementAndDefined` choose the representation automatically. With the carrier representation, they read or replace only the selected lane and bit. Otherwise, they use one payload Word and one `defined_elements` bit per element.
+
+For a packed four-bit RowMajor Tile using row-local pairs, the linear index is `(row x pair_columns + column / 2) x 2 + column mod 2`, where `pair_columns` is `(columns + 1) / 2` rounded down. Other packed Tiles use the ordinary RowMajor, ColumnMajor, ZN, or NZ order.
+
+Design point: E2M1X2 and E1M2X2 pair adjacent columns inside a row. When the column count is odd, the second lane of the last pair is physical row padding. Keeping the pair row-local prevents that padding lane from aliasing the first element of the next row.
+
+Design point: that padding lane is storage, not a logical element. `TilePackedRowPaddingColumn` makes column `columns` addressable as a definedness query, and the element definedness owner always reports it undefined. `ApplyTilePadding` may still write it with the pad value.
+
+<!-- PTO-READER-BLOCK: tile-model-definedness-packed-boundary-boundaries role=boundaries -->
+## Architectural boundaries
+
+CUBE layouts never use this representation; they have their own CELL indexing.
+
+`HiF4X2`, `S4X2`, and `U4X2` are four-bit and use the carrier, but they do not use row-local pairs.
+
+`TileWithPackedZeroValidRegionDefined` and `TileWithPackedZeroSelectedMaxRegionDefined` are shortcuts used by the load and Shared-movement paths when every loaded byte is zero. The source comment states that the first is a fast path of the executable model, never an architectural alternate representation; it produces the same result as an ordinary load.
+
+<!-- PTO-READER-BLOCK: tile-model-definedness-packed-boundary-example role=example-usage -->
+## Non-normative reading example
+
+An E2M1X2 RowMajor Tile has 5 columns. Each row has 3 pairs, which is 6 lanes.
+
+| Element | Linear index | Carrier | Lane |
+| --- | --- | --- | --- |
+| row 0, column 4 | 4 | 0 | 4 |
+| row 0, padding lane | 5 | 0 | 5 |
+| row 1, column 0 | 6 | 0 | 6 |
+| row 2, column 4 | 16 | 1 | 0 |
+
+Row 1 starts at index 6, not 5, because the padding lane of row 0 is reserved. Each carrier holds 16 lanes, so index 16 begins the second carrier.
+
+An FP32 Tile with 65536 physical elements (a 256 KiB Shared Tile) exceeds 32768 and also uses carriers, with 2 elements per Word.
+
+<!-- PTO-READER-BLOCK: tile-model-definedness-packed-boundary-related role=related-owners-navigation -->
+## Related owners
+
+- [Element definedness](elements.md) builds generic reads, writes, and padding on these helpers.
+- [Rows and columns](../shape/rows-columns.md) uses `PackedTileRowStorageBytes` to derive rows.
+- [Types](../state/types.md) defines `PackedTileDefinedElements`.
+- [Load and store](../memory/load-store.md) uses the zero-load shortcut.
+- [Packed data types](../../../arch/data-types/packed.md) describes the packed formats.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

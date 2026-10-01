@@ -19,54 +19,66 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-purpose role=purpose -->
 ## What TROWEXPAND does
 
-`TROWEXPAND` broadcasts a selected in-cell row value bit-for-bit across each valid row.
+`TROWEXPAND` is a Tile reduce-and-expand operation executed by the `SFU` engine. It broadcasts one value per valid row of a Local source Tile down every valid column: for each destination coordinate `[r,c]` it copies `BroadcastTile[r,BroadcastSlot]`. It is selected by `TEPL` Mode 2 Function 4 (selector `0x044`) and has no standalone opcode.
+
+Design point: the broadcast source is an ordinary two-dimensional Tile whose later valid columns are ignored. The contract requires exactly the destination's valid row count and at least one valid column, so a full-shape Tile can be passed unchanged and only the selected slot of each valid row supplies values.
 
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-mechanism role=mechanism -->
 ## Operation mechanism
 
-For a Local CUBE source, the selected slot is within the first bound CELL; `B.SUBVIEW` can select a later CELL first. Other columns do not supply the broadcast value.
+After complete preflight, `ExecuteTileExpand` walks the destination valid rectangle in increasing row order and, inside each row, increasing column order. Each coordinate copies the raw operation-view bits of `BroadcastTile[r,BroadcastSlot]`; the copy performs no conversion, rounding, saturation, canonicalization, or numeric-status update.
 
-TROWEXPAND has no full-shape source Tile. Its only input Tile persists and is snapshotted before bit-copy construction.
+Design point: the copy is bit-for-bit through the operation view. A broadcast backing may differ from the operation DataType only through an equal-width, non-packed carrier view, so the copied bits are reinterpreted under the operation DataType.
 
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-inputs-outputs role=inputs-outputs -->
 ## Operands, shape, and type
 
-- `destination0` identifies a newly allocated destination.
+- `source0` is the persistent Local broadcast source, bound once by the terminating `B.IOT`. Its valid row count must equal the destination's, only the selected slot of each valid row supplies values, and the other valid columns are ignored and must be defined only when no ExecutionMask is in force.
 
-- `source0` supplies a persistent source Tile.
+- `destination0` is a newly allocated Local Tile with the operation DataType and the `B.DIM`-derived geometry; `LB0` is required and supplies a nonzero `ValidCol`, omitted `LB1` selects `ValidRow` one, and omitted `LB2` selects `Col` equal to `ValidCol`. Its other physical coordinates are padding coordinates.
 
-- The closed applicable DataType set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
+- All operands use the same layout, and only `RowMajor`, `CUBE_M16`, and `CUBE_M32` are admitted. The slot is logical column 0 for `RowMajor` and the `B.DATR.RMode`-selected operation-typed slot for `CUBE_M16` and `CUBE_M32`.
 
-- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
+- The operands share one `PE_MASK`. `PE_MASK=0000` is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
-- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+Design point: a broadcast copy has no full-shape source, so the destination geometry comes from the `B.DIM`-derived geometry instead of being copied from a second operand. The broadcast Tile only has to agree on the valid row count, and its valid column count may exceed one.
+
+Design point: an expansion does accept the shared Local CUBE ExecutionMask, unlike a reduction. Inactive destination coordinates take the mask's zero or merge value instead of a computed value and contribute no source read and no numeric status, and a masked full-shape source must match the mask's layout and both valid extents.
 
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-effects role=effects -->
 ## Definedness, padding, and publication
 
-All source descriptors and payloads are validated and snapshotted before destination publication.
+The destination is published as one unit: descriptor, every valid result, definedness, padding outside the valid rectangle, and accumulated numeric status appear together, and a rejected execution publishes none of them. The source payload is snapshotted before the first destination write, so a legal alias reads the old source values and the source persists unchanged.
 
-The copied bit payload, destination descriptor, definedness, and padding state publish atomically; TROWEXPAND performs no numeric-profile evaluation or numeric-status update.
+Physical destination coordinates outside the `ValidRow x ValidCol` valid region receive the selected `PadValue`. `Zero`, `Max`, and `Min` define those coordinates; `Null` leaves them undefined.
 
-Null padding leaves physical coordinates outside the valid rectangle undefined; an explicit non-Null PadValue defines those coordinates with the selected typed value.
-
-Source Tiles persist and are not modified by successful execution.
+Design point: omitting `B.DATR` selects `Null`, while an explicit `PadValue` code `00` selects `Zero`. Omission and encoded zero differ, so a program that reads the whole physical destination must ask for `Zero`, `Max`, or `Min`.
 
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-constraints role=constraints -->
 ## Legality, fault, and order boundaries
 
-Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+The accepted operation types are `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, and `U8`, and the `BSTART` DataType is both the source operation DataType and the destination DataType. Each source backing may differ from it only through an equal-width, non-packed carrier view; raw bits are interpreted under the operation DataType without retagging or numeric conversion.
 
-A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+- Exactly one terminating Local `B.IOT` supplies the operands and one newly allocated Local destination; `B.IOR` and `B.IOS` are illegal.
 
-`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+- A malformed binding stream, a missing or zero dimension, an unsupported DataType, an unsupported or mixed layout, an undefined source element, a mismatched source geometry, or an invalid consumed operation-view encoding raises `Fault_TileLegality` before effects. An unrepresentable destination shape, insufficient `TSize`, an unavailable renamed destination, or exhausted Tile capacity raises `Fault_TileAllocation` before publication.
+
+Design point: a broadcast copy validates no arithmetic encodings at all, so a copied element is never rejected as a non-canonical encoding of its type; only definedness, the descriptor, the carrier width, and the geometry are checked.
+
+Design point: for `CUBE_M32` and `CUBE_M16`, `B.DATR.RMode` is the unsigned `BroadcastByteOffset` and not a numeric rounding selector, `RowMajor` requires it to be zero, and the offset must be element-aligned and stay inside one `CELL` slice.
+
+- An illegal CUBE byte offset, alignment, `CELL` slot, or valid-column selection raises `Fault_TileLegality` before the source snapshot, destination allocation or publication, numeric status, or payload effects; `PE_MASK=0000` skips this operation-specific selector check on its strict no-effect path.
 
 <!-- PTO-READER-BLOCK: tile-c-trowexpand-example role=example -->
 ## Non-normative example
 
 This example illustrates the current ASL-bound contract and is not a second instruction definition.
 
-`TROWEXPAND <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+For a small `TROWEXPAND` example, a broadcast source whose logical column 0 is `[10, 20]` fills the two valid destination rows as `[10, 10]` and `[20, 20]`, so a 2 x 2 destination holds `[[10, 10], [20, 20]]` even when its logical column 1 holds `[99, 99]`.
+
+For an 8 x 64 `FP32` source whose valid region is 7 x 60 with `Zero` padding, the destination valid region is 7 x 60, so 420 elements are computed and 92 of the 512 coordinates receive the padding value.
+
+In macro form the same operation is written `TROWEXPAND <Row=8, Col=64, ValidRow=7, ValidCol=60, FP32, Zero>, T#1, ->T<2KB>`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

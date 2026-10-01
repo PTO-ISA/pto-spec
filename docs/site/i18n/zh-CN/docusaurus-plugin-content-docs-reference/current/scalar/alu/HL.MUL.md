@@ -19,48 +19,57 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-mul-purpose role=purpose -->
 ## HL.MUL 的作用
 
-`HL.MUL` 是一条 48 位标量 ALU 指令。它计算完整的无符号 128 位乘积，并拆分低、高两半；当前指令契约定义结果发布路径以及任何额外状态效果。
+`HL.MUL` 是一条 48 位标量 ALU 指令，它形成两个 XLEN 源的有符号 128 位乘积，并以两个 XLEN 半部发布。它没有加数，也没有立即数。
+
+`RegDst0` 接收低半部 `product[63:0]`，`RegDst1` 接收高半部 `product[127:64]`，因此目标对承载精确乘积，没有舍入或饱和。
 
 <!-- PTO-READER-BLOCK: scalar-hl-mul-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后计算完整的无符号 128 位乘积，并拆分低、高两半，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractProduct_HL_MUL`，它返回 `MultiplyWideSigned(left, right)`。`InstructionContractLow_HL_MUL` 取该乘积的 `63:0` 位，`InstructionContractHigh_HL_MUL` 取 `127:64` 位。分派路径以 `signed_operation` 为真调用 `ExecuteScalarMultiplyPair`，得到相同的切片。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+hl.mul SrcL, SrcR, ->Dst0, Dst1
+```
+
+设计要点：源的有符号解释会改变高半部，但不改变低半部。补码乘积的 `63:0` 位只取决于操作数的低 `64` 位，因此对任意输入对，`HL.MUL` 与 `HL.MULU` 发布的 `RegDst0` 完全相同，差异只能出现在 `RegDst1`。
 
 <!-- PTO-READER-BLOCK: scalar-hl-mul-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst0` 是 5 位字段，选择乘积或累加结果低半部的 Reg5 目标。
-- `RegDst1` 是 5 位字段，选择乘积或累加结果高半部的 Reg5 目标。
-- `SrcL` 是 5 位字段，通过 Reg5 选择左乘数或加法操作数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择右乘数。
+- `RegDst0`，指令切片 `[23 +: 5]`，接收乘积低半部 `product[63:0]`。
+- `RegDst1`，指令切片 `[11 +: 5]`，接收乘积高半部 `product[127:64]`。
+- `SrcL`，指令切片 `[31 +: 5]`，提供左乘数。
+- `SrcR`，指令切片 `[36 +: 5]`，提供右乘数。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+两个源都是 Reg5 编码：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`。读取临时项不会消耗该表项。完整乘积在任一目标写入之前由这两份快照算出。
+
+设计要点：该形式不编码右源修饰。部分其他标量 ALU 形式（例如 `ADD`、`SUB`、`AND`、`OR` 与 `XOR`）带有 `SrcRType` 字段，可以在使用前对 `SrcR` 做符号扩展、零扩展或取反，而 `HL.MUL` 没有这个字段，因此寄存器值原样进入乘法。
 
 <!-- PTO-READER-BLOCK: scalar-hl-mul-effects role=effects -->
 ## 效果与顺序
 
-所有结果都在发布前计算完成。随后按编码顺序（`RegDst0`, `RegDst1`）更新目标；目标重复指向同一寄存器或队列时也采用这一顺序。
+两个源都在第一次写入之前读取，因此与某个源同名的目标收到的仍是由执行前的值算出的结果。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 6 字节。
+两次写入按编码顺序执行：先用 `product[63:0]` 写 `RegDst0`，再用 `product[127:64]` 写 `RegDst1`。当两个字段指向同一个 GPR 时，保留下来的是高半部；当两者推入同一队列时，高半部是最新表项。
 
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+目标效果之后 `TPC` 前进 `6` 字节。`HL.MUL` 不做内存访问，除目标选择的队列推送之外，保留、描述符、数值状态、指令束、特权与控制流状态都不改变。
 
 <!-- PTO-READER-BLOCK: scalar-hl-mul-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+每个 `32` 编码的源编码都有定义，每个 `32` 编码的目标编码都被接受，因此唯一可能失败的操作数检查是临时源可用性。固定编码位必须与规范形式匹配；两个乘数字段没有任何保留值。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+适用性只在系统块终止请求挂起时失败，并在 `TPC` 触发 `Fault_BundleControl`。否则，不匹配的编码在进入指令束主体之前于 `PC` 触发 `Fault_IllegalInstruction`，所选 `T` 或 `U` 源不可用时则在任一目标写入之前于 `PC` 触发 `Fault_IllegalInstruction`。乘法在任何操作数值上都不触发算术异常。
+
+设计要点：所选 `T` 或 `U` 源不可用是该指令在译码之后唯一能触发的故障，而且它在乘积的任一半部发布之前触发。
 
 <!-- PTO-READER-BLOCK: scalar-hl-mul-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `HL.MUL` 示例说明：源值 `6` 与 `7` 产生低部结果 `42`；宽结果对形式还产生高部结果 `0`。
+取 `SrcL = 6`、`SrcR = 7` 时乘积为 `42`，因此 `RegDst0` 收到 `42`，`RegDst1` 收到 `0`。取 `SrcL = 0xFFFFFFFFFFFFFFFF`、`SrcR = 2` 时有符号乘积为 `-2`：`RegDst0` 收到 `0xFFFFFFFFFFFFFFFE`，`RegDst1` 收到 `0xFFFFFFFFFFFFFFFF`。把后一组输入改用 `HL.MULU` 执行只会改变 `RegDst1`，它会变成 `0x1`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

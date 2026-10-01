@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-purpose role=purpose -->
 ## TLB.IAV 的作用
 
-`TLB.IAV` 同步完成所分配的缓存或地址翻译维护请求，并记录精确操作令牌。
+`TLB.IAV` 同步完成带地址空间标识作用域的规范 48 位虚拟地址维护操作。它的编码操作数与 `TLB.IV` 取的是同一类 48 位地址；区别在于维护请求所针对的作用域，这由操作令牌 `Maintenance_TLB_IAV` 指明。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-mechanism role=mechanism -->
 ## 系统机制
 
-ASL DOC 区域选择 `ScalarHandler_ExecuteMaintenance`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+`InstructionContractHandler_TLB_IAV` 返回共用的维护处理程序（`asl/scalar/sys/TLB.IAV.asl:18`），而令牌 `Maintenance_TLB_IAV` 与 `Maintenance_TLB_IV` 一起位于执行器的地址分支（`asl/scalar/model/sys/semantics.asl:142`）。两者共用规范地址测试和同一条特权规则。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+`InstructionContractMaintenanceRequiresRootRing_TLB_IAV` 返回 `TRUE`（`asl/scalar/sys/TLB.IAV.asl:42`），因此该操作在执行器检查操作数之前就拒绝 ACR0 之外的任何环。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`SrcL` 承载 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。
+`SrcL` 是唯一编码操作数，即来自 R0..R23、T#1..T#4 或 U#1..U#4 的 Reg5 源。该形式没有单独的标识符字段，因此编码操作数只是地址；该操作所指名的地址空间作用域并不携带在指令中（`asl/scalar/sys/TLB.IAV.asl:1`）。
 
-编码零是已分配的字段值，从不表示省略操作数。
+不写任何目的地。成功时操作数出现在维护记录中；被拒绝时什么都不发布。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-effects role=effects -->
 ## 架构效果
 
-成功时，维护记录接收 `Maintenance_TLB_IAV` 和精确捕获的操作数令牌。
+成功时 TLB 纪元递增一，`Maintenance_TLB_IAV` 与已捕获的地址进入维护记录（`asl/scalar/model/sys/semantics.asl:146`）。随后 `TPC` 从派发器的成功路径前进。
 
-选中的缓存或 TLB 纪元恰好递增一次，然后 `TPC` 前进；该操作是同步完成的本地提示。
+设计要点：记录保留操作令牌，因此读者能够把这条按地址空间限定作用域的请求与普通 `TLB.IV` 请求区分开，即使两者推进同一个计数器。
+
+不发生普通标量内存访问，也不写任何寄存器、临时队列或系统寄存器。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-constraints role=constraints -->
 ## 位置与拒绝边界
 
-TLB 维护只在 `ACR0` 接受；环权限先于操作数验证进行检查。操作数必须是携带 ASID 作用域的规范 48 位虚拟地址。
+与每条 SYS 块指令一样，在活动 SYS 块体之外的尝试会在合法性检查和效果之前引发 `Fault_BundleControl`。随后编码合法性覆盖固定位与 `SrcL` 选择器。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+在执行器处，非根环先引发 `Fault_IllegalInstruction`。只有 ACR0 的尝试才会到达规范地址检查，那里的非规范值会引发 `Fault_DataPage`，并以该操作数作为陷阱参数，同时 TLB 纪元不改变（`asl/scalar/model/sys/semantics.asl:143`）。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-example role=example -->
 ## 非规范示例
 
 该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
 
-可从 `tlb.iav SrcL` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+在 ACR0 且源寄存器持有 0x1234 时，`tlb.iav SrcL` 把 TLB 纪元递增一并以操作数 0x1234 记录 `Maintenance_TLB_IAV`。如果该寄存器持有的值的第 63:48 位不是第 47 位的符号扩展，该次尝试会引发 `Fault_DataPage`，TLB 纪元保持原值。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

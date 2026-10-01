@@ -7,8 +7,65 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-EXECUTION-REARRANGEMENT}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines four byte- and lane-level rearrangements of Local CUBE_M16 and CUBE_M32 Tiles. `TPERMUTE` builds each destination byte from a byte of one of two sources. `TSHUF` moves elements between rows (lanes) inside a CUBE cell. `TPACK` joins selected bytes of two sources into one 32-bit word. `TUNPACK` extracts selected bytes of each source word.
+
+It also owns the byte accessors `TileInfoWithCellByte`, `TileReadCellWord`, and `TileInfoWithCellWord`. A cell word is 4 consecutive bytes of one row's valid data.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-concepts role=concepts-state -->
+## Concepts and visible state
+
+Row bytes are the byte width of one CUBE cell row: 8 for CUBE_M16 and 4 for CUBE_M32. The valid bytes of a row are `valid_columns x element bits`, rounded up to whole bytes. Words per row are the valid bytes divided by 4, rounded up.
+
+Each of the four operations reads the source `TileInfo` records at entry and builds the result in a local copy, assigned to `_Tiles` once. Legality forbids the destination from naming a data source, and `TSHUF` also forbids it from naming the control Tile.
+
+Each of the four operations ends with `TileWithValidRegionDefined` and `TileWithPadding` using `TilePad_Null`, so padding is zero and undefined.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-rules role=rules-interactions -->
+## Rules and interactions
+
+`TPERMUTE` reads one U8 index per destination byte. An index below row bytes selects that byte of source 0; an index from row bytes to twice row bytes selects source 1. The selected byte comes from the same cell-row chunk as the destination byte.
+
+`TSHUF` takes mode, segment code, and boundary from control bits 7 to 0, 15 to 8, and 23 to 16. Segments are 2, 4, 8, 16, or 32 lanes; 32 requires CUBE_M32. Per element, a 5-bit value from the U32 control Tile shifts down (mode 0), shifts up (mode 1), XORs (mode 2), or selects lane `b` modulo the segment width (mode 3) within the segment. If the candidate lane is outside the segment or beyond the valid rows, boundary 0 keeps the element's own row and boundary 1 writes zero.
+
+`TPACK` takes the byte count of source 0 from control bits 7 to 0 and of source 1 from bits 15 to 8. `TUNPACK` takes a byte offset and a byte count from the same fields.
+
+Design point: `TileOperandsLegal_TPERMUTE` checks every active destination byte before any effect: its index must be defined and below twice row bytes, and the source byte it selects must be defined. An illegal index therefore rejects with Fault_TileLegality and leaves the destination unpublished; the handler repeats the range check as an assertion before building the result.
+
+Design point: under an ExecutionMask, an inactive coordinate reads no index, control, or source byte, except that a `TPERMUTE` byte holding two 4-bit elements is read when either element is active. `TPERMUTE` and `TSHUF` use destination element coordinates; `TPACK` and `TUNPACK` use (source row, word index), and one bit gates the whole destination word group: 4 U8, 2 U16, or 1 U32 elements.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-boundaries role=boundaries -->
+## Architectural boundaries
+
+All four operations are CUBE_M16 or CUBE_M32 only. `TPACK` and `TUNPACK` destinations are U8, U16, or U32, with `valid_columns` equal to words per row times elements per word. 64-bit element types are excluded.
+
+The inactive path of `TPERMUTE` and `TSHUF` calls `BundleExecutionMaskDestinationValue`. The inactive path of `TPACK` and `TUNPACK` reads `_BundleExecutionMask.merge_base` directly when ZERO is not selected. It does not assert `merge_base_valid`; dispatch establishes the merge base in `PrepareSelectedBundleExecutionMaskMerge`.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-example role=example-usage -->
+## Non-normative reading example
+
+`TPACK` uses CUBE_M16 U8 sources with 8 valid columns, so each row has 8 valid bytes and 2 words. The destination is U16 with 4 valid columns. The control word selects 2 bytes from each source. Row 0 of source 0 holds bytes `0x01` to `0x08`, and row 0 of source 1 holds `0x11` to `0x18`.
+
+1. Word 0 packs source 0 bytes 0 and 1, then source 1 bytes 0 and 1: `0x01`, `0x02`, `0x11`, `0x12`.
+2. The destination receives elements `0x0201` and `0x1211`.
+3. Word 1 starts at byte 4 and gives `0x0605` and `0x1615`.
+
+With no ExecutionMask, all 4 elements are written and become defined.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-related role=related-owners-navigation -->
+## Related owners
+
+- [Layout rearrangement legality](../legality/layout-rearrangement.md) owns row bytes, byte reads, and the operand checks.
+- [Layout and rearrangement dispatch](../dispatch/layout-and-rearrangement.md) routes the instructions here.
+- [TPERMUTE](../../layout-and-rearrangement/layout/TPERMUTE.md), [TSHUF](../../layout-and-rearrangement/layout/TSHUF.md), [TPACK](../../layout-and-rearrangement/layout/TPACK.md), and [TUNPACK](../../layout-and-rearrangement/layout/TUNPACK.md) own instruction contracts.
+- [ExecutionMask schema](../../../block/model/dispatch/execution-mask-schema.md) prepares the mask and merge base.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

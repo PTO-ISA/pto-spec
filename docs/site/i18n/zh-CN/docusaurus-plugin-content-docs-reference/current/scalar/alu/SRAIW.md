@@ -19,47 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-sraiw-purpose role=purpose -->
 ## SRAIW 的作用
 
-`SRAIW` 是一条 32 位标量 ALU 指令。它按照低 32 位字，再符号扩展到 XLEN移位规则对源值执行算术右移；当前指令契约定义结果发布路径以及任何额外状态效果。
+`SRAIW` 按常量 `shamt`（`0` 到 `31`）对 `SrcL` 的低 `32` 位做算术右移，并发布符号扩展到 `PTO_XLEN` 的 `32` 位结果。它有三个字段：`RegDst` 位于 `[7 +: 5]`、`SrcL` 位于 `[15 +: 5]`、五位的 `shamt` 位于 `[20 +: 5]`。
+
+该载体在掩码 `0xfe00707f` 下匹配 `0x00006035`，因此 `31:25` 位是固定的，移位量是五位。
+
+被复制的符号是字的第 `31` 位，因为移位在最终扩展之前按 `32` 位宽度进行。
 
 <!-- PTO-READER-BLOCK: scalar-sraiw-mechanism role=mechanism -->
-## 结果形成方式
+## 字移位形成方式
 
-执行时先对编码输入做快照，然后按照低 32 位字，再符号扩展到 XLEN移位规则对源值执行算术右移，最后才产生目标效果。
+分派路径以为真的 `word_operation` 调用 `ExecuteDecodedShiftImmediate`（`asl/scalar/model/dispatch/alu.asl:198-199`）。`ScalarBinaryW` 把 `left32` 绑定为 `left[31:0]`，执行 `ASR(left32, UInt(right[4:0]))`，并返回 `SignExtend{PTO_XLEN}(result32)`（`asl/scalar/model/alu/semantics.asl:483`）。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+sraiw SrcL, shamt, ->{t, u, Rd}
+```
+
+设计要点：收窄发生在移位之前，因此即使 `SrcL` 的第 `63` 位不同，字的第 `31` 位仍是符号来源。低字为 `0x80000000` 的源移位后得到负字，而字位 `31` 为零的同一源移位后得到非负字。
+
+设计要点：最终的符号扩展把负值恢复到完整宽度。字为 `0xFFFFFFF0`、移位量为 `1` 时，`SRAIW` 发布 `0xFFFFFFFFFFFFFFF8`，而不是 `0x00000000FFFFFFF8`。
 
 <!-- PTO-READER-BLOCK: scalar-sraiw-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择标量输入，其中使用低 32 位。
-- `shamt` 是 5 位字段，编码五位移位量。
+`SrcL` 提供该字，`shamt` 由载体译出，`RegDst` 接收符号扩展后的字。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+- `SrcL`，指令切片 `[15 +: 5]`：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`，非消耗。只有 `SrcL[31:0]` 参与运算。
+- `shamt`，指令切片 `[20 +: 5]`：`0` 到 `31`；编码零执行恒等字移位。
+- `RegDst`，指令切片 `[7 +: 5]`：`1..23` 写入对应 GPR，`30` 压入 `U`，`31` 压入 `T`，`0` 与 `24..29` 丢弃。
+- `SrcL` 的编码零读取体系结构零 GPR，其字符号位为零，因此任何移位量都发布 `0`。
+
+设计要点：只有当被移位的值已经是其低字的符号扩展时，字形式才与全宽度 `SRAI` 得到相同结果。对于 `0x00000000FFFFFFFF` 这样的取值，两种形式并不一致，因为 `SRAIW` 把它当作 `-1`，而 `SRAI` 把它当作一个很大的正数。
 
 <!-- PTO-READER-BLOCK: scalar-sraiw-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+`SrcL` 在写入之前读取，因此同名目标对执行前的值移位。符号扩展后的字发布后 `TPC` 推进 `4` 字节。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
+`SRAIW` 不读内存，也不改变保留、描述符、数值标志、陷阱、指令束、特权、谓词或控制流状态；仅当目标是 `30` 或 `31` 时临时队列才会移动。
 
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+设计要点：该指令只写入一个 `PTO_XLEN` 字，不记录其他内容。由于字级移位不可能产生超出有符号字范围的取值，发布的高半部始终是字位 `31` 的副本。
 
 <!-- PTO-READER-BLOCK: scalar-sraiw-constraints role=constraints -->
 ## 合法性与故障边界
 
-编码移位量的 5 位全部已分配，范围为 `0..31`；该移位按固定位宽获得总定义，不产生算术异常。
+全部 `32` 个 `SrcL` 编码、全部 `32` 个 `RegDst` 编码以及全部 `32` 个移位量都有定义；该形式除固定位 `31:25` 与 `14:12` 外没有约束条目。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+不匹配的载体在 `PC` 触发 `Fault_IllegalInstruction`。对活动块不适用的指令在 `TPC` 触发 `Fault_BundleControl`，对 `SRAIW` 而言仅在系统块终止请求挂起期间可达。所选 `T` 或 `U` 源不可用时在 `PC` 触发 `Fault_IllegalInstruction`，先于目标效果与 `TPC` 推进。
+
+设计要点：每个可编码的移位量都有定义的字结果，最终的扩展也不会触发故障，因此 `SRAIW` 没有依赖取值的陷阱路径。
 
 <!-- PTO-READER-BLOCK: scalar-sraiw-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `SRAIW` 示例说明：源值 `-8` 算术右移 `2` 位后得到 `-2`。
+当 `a0` 为 `-16` 时，`sraiw a0, 2, ->a2` 发布 `-4`。
+
+当 `a0` 为 `0x00000000FFFFFFF0`、移位量为 `1` 时，该字为负，因此 `a2` 收到 `0xFFFFFFFFFFFFFFF8`。当 `a0` 为 `0x00000000FFFFFFFF`、移位量为 `0` 时，`a2` 收到 `0xFFFFFFFFFFFFFFFF`，因为最终的扩展复制了字位 `31`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

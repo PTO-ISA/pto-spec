@@ -19,47 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tcolexpand-purpose role=purpose -->
 ## What TCOLEXPAND does
 
-`TCOLEXPAND` is a selector-encoded Tile operation executed by `SFU`. It copies the one-row broadcast source bit-for-bit into every valid destination row; its current instruction contract owns the exact bundle form and publication boundary.
+`TCOLEXPAND` is a Tile reduce-and-expand operation executed by the `SFU` engine. It broadcasts one value per valid column of a Local source Tile down every valid row: for each destination coordinate `[r,c]` it copies `BroadcastTile[0,c]`. It is selected by `TEPL` Mode 2 Function 20 (selector `0x054`) and has no standalone opcode.
+
+Design point: the broadcast source is an ordinary two-dimensional Tile whose later valid rows are ignored. The contract requires at least one valid row and exactly the destination's valid column count, so a full-shape Tile can be passed unchanged and only its first logical row supplies values.
 
 <!-- PTO-READER-BLOCK: tile-tcolexpand-mechanism role=mechanism -->
 ## Element and Tile mechanism
 
-After all descriptor and operand checks succeed, the owning ASL handler copies the one-row broadcast source bit-for-bit into every valid destination row. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+After complete preflight, `ExecuteTileExpand` walks the destination valid rectangle in increasing row order and, inside each row, increasing column order. Each coordinate copies the raw operation-view bits of `BroadcastTile[0,c]`; the copy performs no conversion, rounding, saturation, canonicalization, or numeric-status update.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+Design point: the copy is bit-for-bit through the operation view. A broadcast backing may differ from the operation DataType only through an equal-width, non-packed carrier view, so the copied bits are reinterpreted under the operation DataType.
 
 <!-- PTO-READER-BLOCK: tile-tcolexpand-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` has the exact contract role **new Local same-type numeric destination**.
-- `source0` has the exact contract role **persistent Local one-row broadcast source**.
+- `source0` is the persistent Local broadcast source, bound once by the terminating `B.IOT`. Its logical row 0 supplies every value, its later valid rows are ignored and must be defined only when no ExecutionMask is in force, and its valid column count must equal the destination's.
 
-Participating source and destination descriptors use the selected RowMajor, CUBE_M16, or CUBE_M32 layout and the logical-shape relationships stated by the current contract.
-Every source coordinate read by the operation must be defined before execution reaches destination publication.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+- `destination0` is a newly allocated Local Tile with the operation DataType and the `B.DIM`-derived geometry; `LB0` is required and supplies a nonzero `ValidCol`, omitted `LB1` selects `ValidRow` one, and omitted `LB2` selects `Col` equal to `ValidCol`. Its other physical coordinates are padding coordinates.
+
+- All operands use the same layout, and only `RowMajor`, `CUBE_M16`, and `CUBE_M32` are admitted.
+
+- The operands share one `PE_MASK`. `PE_MASK=0000` is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
+
+Design point: a broadcast copy has no full-shape source, so the destination geometry comes from the `B.DIM`-derived geometry instead of being copied from a second operand. The broadcast Tile only has to agree on the valid column count, and its valid row count may exceed one.
+
+Design point: an expansion does accept the shared Local CUBE ExecutionMask, unlike a reduction. Inactive destination coordinates take the mask's zero or merge value instead of a computed value and contribute no source read and no numeric status, and a masked full-shape source must match the mask's layout and both valid extents.
 
 <!-- PTO-READER-BLOCK: tile-tcolexpand-effects role=effects -->
 ## Publication, definedness, and padding
 
-Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+The destination is published as one unit: descriptor, every valid result, definedness, padding outside the valid rectangle, and accumulated numeric status appear together, and a rejected execution publishes none of them. The source payload is snapshotted before the first destination write, so a legal alias reads the old source values and the source persists unchanged.
 
-Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+Physical destination coordinates outside the `ValidRow x ValidCol` valid region receive the selected `PadValue`. `Zero`, `Max`, and `Min` define those coordinates; `Null` leaves them undefined.
 
-The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+Design point: omitting `B.DATR` selects `Null`, while an explicit `PadValue` code `00` selects `Zero`. Omission and encoded zero differ, so a program that reads the whole physical destination must ask for `Zero`, `Max`, or `Min`.
 
 <!-- PTO-READER-BLOCK: tile-tcolexpand-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The exact accepted type or type-pair set is owned by the generated legality section below; this guide does not widen it.
+The accepted operation types are `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, and `U8`, and the `BSTART` DataType is both the source operation DataType and the destination DataType. Each source backing may differ from it only through an equal-width, non-packed carrier view; raw bits are interpreted under the operation DataType without retagging or numeric conversion.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+- Exactly one terminating Local `B.IOT` supplies the operands and one newly allocated Local destination; `B.IOR` and `B.IOS` are illegal.
+
+- A malformed binding stream, a missing or zero dimension, an unsupported DataType, an unsupported or mixed layout, an undefined source element, a mismatched source geometry, or an invalid consumed operation-view encoding raises `Fault_TileLegality` before effects. An unrepresentable destination shape, insufficient `TSize`, an unavailable renamed destination, or exhausted Tile capacity raises `Fault_TileAllocation` before publication.
+
+Design point: a broadcast copy validates no arithmetic encodings at all, so a copied element is never rejected as a non-canonical encoding of its type; only definedness, the descriptor, the carrier width, and the geometry are checked.
 
 <!-- PTO-READER-BLOCK: tile-tcolexpand-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `TCOLEXPAND` example, one-row source `[10, 20]` broadcasts unchanged into each valid destination row.
+For a small `TCOLEXPAND` example, a broadcast source whose logical row 0 is `[10, 20]` fills both valid destination rows with `[10, 20]`, so a 2 x 2 destination holds `[[10, 20], [10, 20]]` even when its logical row 1 holds `[99, 99]`.
+
+For an 8 x 64 `FP32` source whose valid region is 7 x 60 with `Zero` padding, the destination valid region is 7 x 60, so 420 elements are computed and 92 of the 512 coordinates receive the padding value.
+
+In macro form the same operation is written `TCOLEXPAND <Row=8, Col=64, ValidRow=7, ValidCol=60, FP32, Zero>, T#1, ->T<2KB>`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

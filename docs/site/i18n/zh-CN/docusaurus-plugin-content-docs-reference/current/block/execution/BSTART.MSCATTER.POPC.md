@@ -19,32 +19,58 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-popc-purpose role=purpose -->
 ## 目的与范围
 
-`BSTART.MSCATTER.POPC` 是该已接受操作的稳定阅读入口。规范 `ASL` 源文件和本页生成的 contract 章节仍是架构行为的唯一 owner。
+`BSTART.MSCATTER.POPC` 打开一个 Tile memory 指令束，其操作为 `MSCATTER_POPC`：每个通道一次索引原子递增，给一个 `U32` 全局内存（GM）元素加一。该指令束不发布 Tile，其唯一的源是索引 Tile。
+
+该命令是一个 32 位字，在掩码 `0x07ffffff` 下匹配 `0x01b11181`，因此 `DataType` 占据第 31 至 27 位，固定的低位携带 TLSU 选择子 27。`ExecuteBundleGMAtomRedOperation` 把选择子 27 译码为 `GMReduction_POPC` 并调用 `GM_RED_POPC(...)`。保留的 `DataType` 编码在 `BSTART` 处、指令束提交之前引发 `Fault_IllegalInstruction`。
+
+设计要点：递增的量由操作固定，而不是来自值 Tile，因此这一归约比它的同族形式少绑定一个源。于是元素达到的计数恰好是指名它的活动通道数，包括重复同一地址的通道。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-popc-mechanism role=mechanism -->
 ## 如何阅读操作
 
-应结合生成的 Decode 与 Operation 章节定位所选形式和语义 handler。本指南不增加另一套执行算法。
+提交时，指令束运行 Tile 级执行体 `GM_RED_POPC`，它先访问每个活动通道地址，并先以读、再以写探测该地址。两次转换结果不同会引发 `Fault_DataPage`。只有全部通道通过之后，它才按 `ARBITRARY` 顺序给每个元素加一，并为每个通道记录一个原子事件。
+
+设计要点：即使两个通道指名同一元素，每个通道也都会存储，因此该操作计的是出现次数而不是不同地址数。通道顺序是任意的，但最终计数不是，因为更新是重复地加一。
+
+设计要点：所有探测都在第一次递增之前运行，因此发生故障的地址不改变任何元素，也不记录事件。重试因此对每个活动通道恰好计数一次，而不会重复计算已通过探测的通道。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-popc-inputs role=inputs-outputs -->
 ## 输入与输出
 
-以生成的 Operands and results 表和 Block composition 章节作为编码角色与架构角色的完整映射，不应从本摘要推断省略的操作数或结果。
+- `DataType` 必须是 `U32`；其他所有编码（包括 `S32` 与浮点类型）对该操作都被拒绝。
+- `B.DIM` 的 `LB0` 是 ValidCol，`LB1` 是 ValidRow（默认 1），`LB2` 是物理 Col。这些取值必须等于索引 Tile 的有效列数与有效行数，而 `LB2` 是布局规则所使用的物理列数。
+- 一条终止 `B.IOT` 在 `source0` 中携带索引 Tile，并携带 `PE_MASK` 与 `last`。它不携带目标，也不携带第二个源，并且本操作不存在值 Tile。
+- `B.IOR BaseGPR, zero, zero, ->zero` 是必需的：`RegSrc0` 选择每个 PE 的基地址 GPR，另外三个选择子编码为零，而 `RegSrc0` 为 `zero` 时提供基地址零。
+- 索引 Tile 是 `S32`、`U32`、`S64` 或 `U64`，保存字节位移并具有指令束布局。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-popc-effects role=effects -->
 ## 效果与状态
 
-完整效果边界由生成的 State effects 以及 Memory effects and ordering 章节给出。可执行点只证明 owner 得到覆盖，不构成另一份语义来源。
+每个活动通道给一个 GM 元素加一，并记录一个原子事件。不发布任何 Tile，不创建任何 Local 分配，索引 Tile 也保持其内容。GM 结果保持可见：归约不回滚内存。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-popc-constraints role=constraints -->
 ## 边界与故障
 
-下方 Defaults、Legality 与 Exceptions 规定接受域和故障边界。保留值及不支持的组合仍由这些生成章节管理。
+`PE_MASK=0000` 在 atom/red 分派器开头退出，早于其 schema、GPR、描述符、类型与内存检查。
+
+未知的 TLSU 编码引发 `Fault_IllegalInstruction`。绑定条数不是一条记录会引发 `Fault_BundleControl`。缺少 `B.IOR`、Shared 绑定、非零的未使用 `B.IOR` 选择子、超出 `1..65535` 的维度、非 `U32` 的 `DataType`、错误的布局或形状，或活动的索引元素未定义，都会在第一次探测之前引发 `Fault_TileLegality`。内存故障保留其自身种类。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-popc-example role=example -->
 ## 非规范用法示例
 
 生成的 `BSTART.MSCATTER.POPC` 示例仅用于拼写与导航。替换操作数时必须遵守下方 owner 定义的 legality 和状态合同。
+
+```asm
+BSTART.MSCATTER.POPC U32
+B.DIM zero, 3, ->LB0
+B.DIM zero, 1, ->LB1
+B.DIM zero, 3, ->LB2
+B.IOT T#1, mask=1111, last
+B.IOR a0, zero, zero, ->zero
+BSTOP
+```
+
+`T#1` 是 1 x 3 的 `S32` 索引 Tile，保存 `0`、`4` 与 `4`，`a0` 保存 `0x1000`。若 GM 在 `0x1000` 处保存 `10`、在 `0x1004` 处保存 `20`，该指令束把指名 `0x1004` 的两个通道分别计数，因此内存最终为 `11` 与 `22`。该指令束不返回任何 Tile，事后也无法把这两个重复通道与两个不同地址区分开。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

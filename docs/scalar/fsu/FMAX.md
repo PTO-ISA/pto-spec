@@ -19,54 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fmax-purpose role=purpose -->
 ## What FMAX does
 
-`FMAX` applies architecture-owned ordered maximum, NaN, and signed-zero rules to selected carriers.
+`FMAX` selects one of two floating-point scalars and publishes it unchanged. It is an architecture-owned ordered maximum: floating-point `fmax` never traps and never rounds, and it returns one of the two input encodings it was given except when both operands are NaNs, where it publishes the carrier's canonical quiet NaN instead.
+
+Because the winner is copied rather than recomputed, no rounding happens on the selected value and no inexact flag can come from the selection itself.
 
 <!-- PTO-READER-BLOCK: scalar-fmax-mechanism role=mechanism -->
-## Numeric mechanism
+## How the selection is decided
 
-`SrcType=00` selects a complete FP64 carrier; `SrcType=01` selects the zero-extended low 32-bit FP32 carrier.
+`SrcType=00` selects a complete 64-bit FP64 carrier. `SrcType=01` selects FP32 and uses only the low 32 bits of each source word, zero-extended to XLEN.
 
-One NaN selects the numeric operand; two NaNs select the width-specific canonical quiet NaN. A signaling NaN records sticky `NV`.
+The contract names `FloatingBinary_MAX` and reports that this form does not use profile flags and does not use the active rounding mode. The handler therefore does not call the numeric profile at all; it calls the architecture-owned NaN and signed-zero selection rule and forms its own flag vector.
 
-Signed-zero selection follows the architecture-owned `FMAX` rule.
+The NaN rule is asymmetric by design: if exactly one operand is a NaN the other operand is returned, and the returned value is an input encoding, never a fresh computation. If both operands are NaNs the canonical quiet NaN for the selected carrier is returned instead. Only a signaling NaN input sets sticky `NV`; a quiet NaN is silent.
+
+Signed zero is ordered explicitly rather than left to the host: `+0` and `-0` compare equal by value, so maximum prefers `+0` and minimum prefers `-0`, while two `-0` inputs under maximum stay `-0`. For two non-zero operands the ordering uses the same encoding order key as the compare family, so the greater value wins.
+
+Design point: returning the numeric operand when the other one is a NaN keeps a NaN from silently eating a valid value, and copying the winner instead of recomputing it keeps the payload and the sign of zero intact.
 
 <!-- PTO-READER-BLOCK: scalar-fmax-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `RegDst` selects the encoded destination or discard behavior.
-
-- `SrcL` supplies the left scalar source.
-
-- `SrcR` supplies the right scalar source.
-
-- `SrcType` selects the source-carrier width.
-
-- Reg5 source selectors may read GPR, T, or U state without consuming temporary entries.
-
-- The destination selector writes a GPR, pushes T/U, or discards only the result.
+- `RegDst` selects the destination selector: codes `1`..`23` write a GPR, `30` pushes `U`, `31` pushes `T`, and `0` plus `24`..`29` discard the result.
+- `SrcL` is the left source selector.
+- `SrcR` is the right source selector.
+- `SrcType` selects the carrier that both sources are read with.
+- Source selectors `0`..`23` read GPRs, `24`..`27` read `T#1`..`T#4`, and `28`..`31` read `U#1`..`U#4`. Reading a temporary never consumes or reorders it.
+- Source selector `0` always reads XLEN zero, and destination selector `0` writes nothing.
 
 <!-- PTO-READER-BLOCK: scalar-fmax-effects role=effects -->
 ## Effects and ordering
 
-All explicit sources are snapshotted before numeric-status or destination effects.
+Both sources are read before any write, so `SrcL`, `SrcR` and `RegDst` may name the same register or queue slot and the selection still uses the pre-instruction values. A push into `T` or `U` happens only after both reads, so a read-then-push of the same queue observes the entry that was already present.
 
-Any architecture-produced `NV` is ORed into sticky numeric state before destination publication.
-
-The result is published or discarded, then `TPC` advances by `4` bytes. The instruction has no memory or reservation effect.
+At most one flag bit is ever produced here: `NV`, when a signaling NaN is an input. It is ORed into `CORE_STATE[36:32]`, so an earlier flag is never cleared. The selected value is written or discarded, and only then does `TPC` advance by `4` bytes. No memory access and no reservation is involved.
 
 <!-- PTO-READER-BLOCK: scalar-fmax-constraints role=constraints -->
-## Type and profile boundaries
+## Reserved types and rejection
 
-`SrcType=10` and `SrcType=11` are reserved. Reserved types and unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+`SrcType=10` and `SrcType=11` are reserved. The handler checks the carrier type before the first read of either source register, so a reserved type raises `Fault_IllegalInstruction` with no source read, no flag, no queue change, no destination write, and no `TPC` advance.
 
-Numeric flag updates do not themselves raise a synchronous PTO trap.
+A source selector that names an unavailable `T` or `U` slot is rejected the same way, at the same point.
+
+Because this form never consults the profile, the active rounding mode cannot change its result, and no `DZ`, `OF`, `UF` or `NX` bit can be produced by it.
 
 <!-- PTO-READER-BLOCK: scalar-fmax-example role=example -->
 ## Non-normative example
 
-This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
+`fmax.fs a0, a1, ->a2` reads the low 32 bits of `a0` and `a1` as FP32 carriers and writes the selected encoding to `a2`.
 
-`fmax.fd a0, a1, ->a2` applies the architecture-owned special-value rule and publishes canonical output before advancing `TPC`.
+With `a0` holding FP32 `-0.0` and `a1` holding FP32 `+0.0`, the two are equal by value; `FMAX` returns `+0.0`, with no flag recorded. With `a0` holding a signaling NaN and `a1` holding FP32 `3.0`, the instruction writes the FP32 encoding of `3.0` and sets sticky `NV`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

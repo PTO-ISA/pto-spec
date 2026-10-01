@@ -19,47 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-addiw-purpose role=purpose -->
 ## What HL.ADDIW does
 
-`HL.ADDIW` is a 48-bit scalar ALU instruction. It performs addition under the low 32-bit word, followed by sign-extension to XLEN result rules; its current instruction contract defines the result publication path and any additional state effect.
+`HL.ADDIW` is the word form of the same 48-bit addition. It takes `SrcL[31:0]` and the low `32` bits of the zero-extended `uimm24`, adds them modulo `2^32`, sign-extends the `32`-bit sum to `PTO_XLEN`, and publishes the result through `RegDst`. Successful execution advances `TPC` by `6` bytes.
+
+Design point: the word boundary belongs to the operation and not to the source register. Bits `63:32` of `SrcL` are never read, so no carry can leave bit `31`. With `a0` holding `18446744069414584320`, `hl.addiw a0, 1, ->a0` writes `1`, and the whole upper half of the source is gone from the result.
 
 <!-- PTO-READER-BLOCK: scalar-hl-addiw-mechanism role=mechanism -->
-## How the result is formed
+## How the word result is formed
 
-Execution snapshots the encoded inputs, then performs addition under the low 32-bit word, followed by sign-extension to XLEN result rules, and only afterward performs the destination effects.
+Decode reassembles the two 12-bit immediate pieces into one exact `uimm24` value and zero-extends it to `PTO_XLEN`. The word helper then keeps bits `31:0` of both operands, performs the addition in `32`-bit arithmetic, and sign-extends bit `31` of the sum through bit `63`.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: the extension happens after the wrap, so bits `63:32` of the result are copies of result bit `31`. Every published value therefore lies in the signed range `-2147483648` through `2147483647`, whatever the source held.
+
+`HL.ADDIW` shares its immediate field and its destination map with `HL.ADDI`. The two forms differ in how much of the source and of the result take part.
 
 <!-- PTO-READER-BLOCK: scalar-hl-addiw-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 scalar result target or discards the result.
-- The 5-bit `SrcL` field selects a Reg5 scalar value whose low 32 bits participate.
-- The unsigned 24-bit `uimm24` field carries the unsigned split 24-bit immediate.
+- `SrcL` reads one Reg5 value and only bits `31:0` of it participate: codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`, without consuming a queue entry.
+- `uimm24` supplies the unsigned addend, `0` through `16777215`.
+- `RegDst` receives the sign-extended word: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: `uimm24=0` is not a no-operation for this form. `hl.addiw a0, 0, ->a0` replaces `a0` with `SrcL[31:0]` sign-extended, so an `a0` of `4294967295` becomes `18446744073709551615`. The encoded zero is a numeric addend that the word operation still extends.
 
 <!-- PTO-READER-BLOCK: scalar-hl-addiw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is resolved before the destination is written, so `hl.addiw a0, 1, ->a0` adds to the pre-instruction `a0`. When `RegDst` is `30` or `31`, the push makes the new value `U#1` or `T#1` and discards the entry that was `U#4` or `T#4`.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Publication is followed by the `TPC` advance of `6` bytes. `HL.ADDIW` performs no memory access and changes no reservation, descriptor, numeric-status, `Tile`, bundle, privilege or branch-target state.
 
 <!-- PTO-READER-BLOCK: scalar-hl-addiw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every encoded value is assigned: all `32` `SrcL` codes, all `32` `RegDst` codes, and all `16777216` unsigned `24`-bit addends.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Three rejections are reachable, in model order. A `48`-bit word whose fixed bits match no form raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active bundle raises `Fault_BundleControl` at `TPC`. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`. None of them publishes a partial word.
+
+Design point: the `32`-bit addition is total, so a carry out of bit `31` is discarded rather than reported. With the low word `4294967295`, `hl.addiw a0, 1, ->a0` produces a low word of `0` and therefore publishes `0`, with no overflow indication to read.
 
 <!-- PTO-READER-BLOCK: scalar-hl-addiw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.ADDIW` example, `SrcL=7` and `uimm24=3` produce `10`.
+With `a0` holding `18446744069414584320`, `hl.addiw a0, 1, ->a0` publishes `1`, because only the low word took part. With `a0` holding `4294967295` and `uimm24=0`, `hl.addiw a0, 0, ->a0` publishes `18446744073709551615`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

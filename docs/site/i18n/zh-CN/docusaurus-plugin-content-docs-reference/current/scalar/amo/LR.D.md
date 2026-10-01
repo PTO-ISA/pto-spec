@@ -19,42 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-lr-d-purpose role=purpose -->
 ## LR.D 的作用
 
-`LR.D` 载入一个双字，发布其零扩展值，并把本地保留替换为包含该地址的 64 字节缓存行。
+`LR.D` 从 `SrcL` 中的地址载入一个 `8` 字节的双字，通过 `RegDst` 发布它，并在被载入的位置上建立保留。成功执行会把 `TPC` 前进 `4` 字节。
+
+设计要点：载入的 `64` 位原样发布，因此目标中保存的正是内存字。`LR.B`、`LR.H` 与 `LR.W` 会扩展载入的位以填满寄存器，而这个宽度本身已经填满。
 
 <!-- PTO-READER-BLOCK: scalar-lr-d-mechanism role=mechanism -->
-## 原子机制
+## 双字载入如何排序
 
-ASL DOC 契约选择 `ScalarHandler_LoadReserved`，访问宽度为 `8` 字节。
+分派调用 `ExecuteDecodedLoadReserved(instruction, form, 8)`。该辅助函数快照 `SrcL`，从 `aq` 与 `rl` 导出内存顺序，并调用 `LoadReserved(address, 8, order)`；若故障标志清零，它把原样返回其参数的 `NormalizeAtomicReturn(old_value, 8)` 写入 `RegDst`。
 
-`SrcZero` 是被忽略的 5 位别名字段：全部 32 个编码选择同一操作，并且不会通过该字段消费源。
+`LoadWithOrder` 探测 `8` 字节对齐、翻译与读权限，读取八个小端字节，并按请求的顺序在翻译后的地址记录一个载入事件。只有无故障返回才会置保留有效标志，并保存原始地址与宽度 `8`。
+
+设计要点：`SrcL` 在访问之前只读取一次，同一个值既成为探测地址也成为保留地址；与 `SrcL` 同名的目标在之后才被写入，无法改变已经保留的地址。
 
 <!-- PTO-READER-BLOCK: scalar-lr-d-inputs-outputs role=inputs-outputs -->
-## 输入与结果
+## 字段、源与目标
 
-`SrcL` 承载 Reg5 载入地址源；`SrcZero` 承载被忽略的 5 位别名字段；`RegDst` 承载 Reg5 载入值目的地；`aq` 承载获取排序位；`rl` 承载释放排序位；`far` 承载平坦地址路由提示。
+编码字段为 `RegDst@7:5`、`SrcL@15:5`、`SrcZero@20:5`、`rl@25:1`、`aq@26:1` 与 `far@27:1`；每项都给出指令中的低位与字段宽度。
 
-`aq` 与 `rl` 选择宽松、获取、释放或获取-释放排序；`far` 是配置档路由提示，在参考配置档中不改变架构结果。
+`SrcL` 读取任意 Reg5 源：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`，且队列读取不会弹出该项。`RegDst` 写入任意 Reg5 目标：`1..23` 写入该 GPR，`0` 与 `24..29` 丢弃，`30` 压入 `U`，`31` 压入 `T`。编码零源读取架构零寄存器，因此 `lr.d [zero], ->a1` 寻址 `0`。`aq` 与 `rl` 选择载入排序，`far` 是路由提示，在参考模型中不改变地址。
+
+设计要点：`SrcZero@20:5` 是被忽略的别名，因此这些位的 `32` 个取值都译码为同一个形式；该字段没有任何取值会选择寄存器、队列项或故障。
 
 <!-- PTO-READER-BLOCK: scalar-lr-d-effects role=effects -->
 ## 效果与排序
 
-载入成功时，会在访问预检完成后发出一个带排序属性的载入事件、发布旧值并建立保留。
+成功载入会读取一个小端双字，在内存事件捕获启用时按 `aq` 与 `rl` 选定的顺序在翻译后的地址记录一个载入事件，通过 `RegDst` 原样发布 `64` 个载入位，并使保留在原始地址上保持有效、宽度为 `8`。随后 `TPC` 前进 `4` 字节。
 
-载入后，包含该地址的 64 字节缓存行成为本地保留，`TPC` 前进 `4` 字节。
+设计要点：保留会记录载入宽度，但 `StoreConditional` 只比较包含它的 `64` 字节粒度与保留有效标志，因此该宽度从不缩小哪些条件存储会匹配。
 
 <!-- PTO-READER-BLOCK: scalar-lr-d-constraints role=constraints -->
 ## 合法性与精确故障
 
-有效地址必须按 `8` 字节对齐。对齐、地址翻译和权限检查都先于架构效果。
+该形式要求 `8` 字节对齐，因此地址必须是 `8` 的倍数。`LoadWithOrder` 依次检查对齐、翻译、读权限与边界，并报告原始架构地址；在参考模型中翻译原样返回该地址。
 
-预检失败时不会发布目的值、内存事件、保留更新或退役效果；保存的原始 `TPC` 支持完整重新执行。
+发生故障时不会发布任何内容、不会记录载入事件、较早的保留得到保留，`TPC` 停在出错指令上；译码失败或所选 T/U 源不可用会在此前引发 `Fault_IllegalInstruction`。
+
+设计要点：故障置位时会跳过目标写入，因此发生故障的 `lr.d` 不改变 `RegDst`，包括编码 `30` 与 `31`；它们不压入任何内容，队列深度保持原样。
 
 <!-- PTO-READER-BLOCK: scalar-lr-d-example role=example -->
 ## 非规范示例
 
 本示例只展示一种已接受写法；下方生成的契约仍是权威来源。
 
-初次阅读可从 `lr.d [SrcL], ->Rd` 开始，再只改变上文说明的排序或路由修饰位。
+当被寻址的双字为 `0xffffffff00000000` 时，`lr.d [a0], ->a1` 在 `a1` 中原样发布 `0xffffffff00000000`，并在包含它的 `64` 字节粒度上建立保留。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

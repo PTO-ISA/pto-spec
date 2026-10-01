@@ -19,49 +19,59 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-gmov-purpose role=purpose -->
 ## BSTART.GMOV 的作用
 
-`BSTART.GMOV` 是 `GMOV` 形式的 32 位 Block 起始命令。它建立待处理 Block 的身份和选择参数；真正执行 Block body 并提交结果的是完成后的整个 Block，而不是起始命令本身。
+`BSTART.GMOV` 打开一个 Tile-memory 类指令束，其操作为 `GMOV`：在一个 Core 的四个 PE 之间集体复制 Local 片段。每个 PE 用自己的 `peer_tid` 解析出一个源片段，每个被选中的 PE 发布一个目标，该目标逐字节接收该片段的载荷与已定义性。该命令不进行全局内存访问，也不产生 Shared 寄存器效果。
+
+唯一的形式是 `BSTART.GMOV DataType`，一个 32 位字，在掩码 `0x07ffffff` 下匹配 `0x00d11181`，因此 `DataType` 位于第 31 至 27 位，固定的低位携带 TLSU 选择子 13，由 `BundleGMOVSelected` 匹配。该操作是 `TileOperation_GMOV`，且 `InstructionContractStartsTileBundle_BSTART_GMOV` 返回 TRUE。
+
+设计要点：与同样发布 Local 目标的 `MGATHER` 不同，`GMOV` 没有索引 Tile，也没有基地址。它复制的源是经过 peer 解析的快照，因此目标采用源自身的有效形状、物理列数与容量，而不是 `B.DIM` 形状。
 
 <!-- PTO-READER-BLOCK: block-bstart-gmov-mechanism role=mechanism -->
 ## 位置与机制
 
-起始命令之后的 header 命令按顺序执行；`BSTOP` 或下一条 `BSTART` 是验证并退休完整 Block 的边界。当前所有者给出以下确切组成检查表：
+Tile 执行在 CAS、atom、gather 与 scatter 选择子之前测试 `BundleGMOVSelected`，因此选择子 13 总是到达 `ExecuteBundleGMOVOperation`。该 handler 要求恰好一个 Local 绑定，且带有目标、`source0`，没有 `source1`，并带有 `last`；Shared 绑定、不完整的绑定或非零的未使用 `B.IOR` 字段会引发 `Fault_TileLegality`。
 
-```text
-BSTART.GMOV DataType; optional B.DATR Layout; one terminating B.IOT with one Local source and one Local destination; optional B.IOR peer_tid; BSTOP
-B.IOS and B.DIM are not members of a GMOV schema.
-```
+随后该 handler 从 `B.IOR.RegSrc0` 指定的私有 GPR 中为四个 PE 分别读取 `peer_tid`，并要求每个值都小于 4。重复的 peer 标识是合法的，因此两个 PE 可以读取同一个片段。三个 `B.DIM` 通道都必须等于 1，因为目标形状来自源而不是来自维度。
 
-任何有效前序 Block 成功退休后，该命令初始化新的待处理 `BARG` 或操作描述符，并从顺序 PC 继续执行 header。仅仅成功解码起始命令，不会让 Block 目的结果或内存结果变得可见。
+设计要点：就绪性是一个集体见证。`BundleGMOVCore4SourceReady` 要求源内容已定义且其分配掩码为 `1111`，因此只有当四个 PE 都已分配该片段时复制才会执行。复制本身是对该快照的读旧值写新值，因此任何 PE 都无法观察到更新到一半的片段。
+
+设计要点：与 gather、scatter 和 atom handler 不同，`ExecuteBundleGMOVOperation` 没有 `PE_MASK=0000` 提前退出。因此对每个到达该 handler 的编码，无论掩码的非零取值如何，其 schema、就绪性、peer 范围、维度、类型与容量检查都会执行。`PE_MASK=0000` 永远不会到达该 handler：零掩码下 `B.IOT` 不记录任何绑定，随后 `ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules` 在 `asl/block/model/dispatch/tile-execution.asl:143` 处直接返回真。
 
 <!-- PTO-READER-BLOCK: block-bstart-gmov-inputs role=inputs-outputs -->
 ## 操作数与 header 角色
 
-- `DataType` 选择元素数据类型或继承哨兵；其确切分配域仍以下方生成契约为准。
-- `B.IOT source` 标识输入源或源角色选择；其确切分配域仍以下方生成契约为准。
-- `B.IOT destination` 标识目的位置或发布选择；其确切分配域仍以下方生成契约为准。
-- `B.IOT PE_MASK` 标识目的位置或发布选择；其确切分配域仍以下方生成契约为准。
-- `B.IOR.RegSrc0` 选择具名的绝对 GPR 角色；其确切分配域仍以下方生成契约为准。
+- 第 31 至 27 位的 `DataType` 选择被复制片段的元素类型；约束接受编码 0 到 14、16 到 20 与 24 到 28，其他编码都是保留的。该 handler 还要求该类型满足 `TileCarrierOrPackedBaselineDataTypeSupported`，并且两个 Tile 都必须使用它。
+- 一条终止 `B.IOT` 必须携带源片段与一个目标，且不得携带第二个源。其 `PE_MASK` 选择目标参与者，其 size 编码必须恰好描述源的字节容量。
+- `B.IOR` 是可选的。存在时，`RegSrc0` 选择保存该 PE `peer_tid` 的 GPR，且 `RegSrc1`、`RegSrc2` 与 `RegDst` 必须编码为零。省略 `B.IOR` 时，四个 PE 中的 `peer_tid` 都为零。
+- `B.DATR` 选择布局。源必须已经使用该布局，目标也按该布局解析。
 
 <!-- PTO-READER-BLOCK: block-bstart-gmov-effects role=effects -->
 ## 待处理状态与完成
 
-对适用性和目标检查而言，起始状态转换与前序 Block 退休是全有或全无的。起始命令成功后，后续完成边界会在任何 body 结果提交前验证完整组成。
+对被掩码选中的每个 PE，该指令束分配一个具有源形状的 Local 目标，并把经 peer 解析的载荷、已定义性与物理区域复制进去。掩码之外的 PE 仍参与 peer 选择、会合与就绪性预检，但不请求、不分配、不写入也不完成任何目标。Shared 状态不变。
+
+该复制不发布任何内存事件，因为它从不访问全局内存。分配之后的失败会调用 `RollBackBundleTileDestinations`，因此被拒绝的尝试不会暴露部分目标。
 
 <!-- PTO-READER-BLOCK: block-bstart-gmov-constraints role=constraints -->
 ## 合法性与故障边界
 
-保留选择器、无效目标、完成后的组成错误或前序退休失败，都会在新 Block 或 body 影响之前被拒绝。
+- 未知的 TLSU 编码引发 `Fault_IllegalInstruction`；Shared 绑定、畸形绑定、非法 `B.IOR` 取值、非 1 的维度通道、未定义或未完全分配的源、类型或布局不匹配，或目标 size 不等于源容量，都会在复制之前引发 `Fault_TileLegality`。
+- 任一 PE 中的 `peer_tid` 大于或等于 4，会在分配之前、任何请求之前引发 `Fault_TileLegality`。
+- 若不存在空闲的 Local 目标，解析会引发 `Fault_TileAllocation`。
+- 任何非零 `PE_MASK` 都是合法的，并且只控制目标的请求、分配、写入与完成参与。
 
 <!-- PTO-READER-BLOCK: block-bstart-gmov-example role=example -->
 ## 非规范示例
 
-以下为非规范示例，仅用于说明当前所有者，不替代其定义。
+该演算示例是非规范的；它说明当前 owner，而不替代它。
 
 ```asm
-BSTART.GMOV DataType
+BSTART.GMOV U8
+B.IOT T#1, mask=0011, size=1, ->T
+B.IOR a1, zero, zero, ->zero
+BSTOP
 ```
 
-假设前序 Block 退休和目标检查成功，`BSTART.GMOV DataType` 会打开待处理的 `BSTART.GMOV` 形式；后续 header/body 命令仍是暂定状态，直到 `BSTOP` 或下一条 `BSTART` 验证完整组成。
+`T#1` 是经 peer 解析的源片段，`mask=0011` 为四个 PE 中的两个选择目标，`a1` 保存 `peer_tid`。若每个 PE 中的 `a1` 都保存 1，则四个 PE 就 PE 1 发布的片段进行会合，每个被选中的 PE 都发布它的副本；某个 PE 的 `a1` 若保存 2，则解析 PE 2 的片段。两个未选中的 PE 仍要为自己的解析证明就绪性，但不发布任何东西。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

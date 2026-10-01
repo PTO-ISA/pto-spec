@@ -19,48 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-maddw-purpose role=purpose -->
 ## MADDW 的作用
 
-`MADDW` 是一条 32 位标量 ALU 指令。它在低 32 位字，再符号扩展到 XLEN算术下把已快照加数加入乘积；当前指令契约定义结果发布路径以及任何额外状态效果。
+`MADDW` 是一条 32 位编码的标量 ALU 指令，它把 `SrcL[31:0] * SrcR[31:0]` 与 `SrcD[31:0]` 按模 `2^32` 相加，对该 32 位和的第 `31` 位做符号扩展，并通过一个 Reg5 目标发布结果。
+
+每个源只有低字参与。`SrcL`、`SrcR` 与 `SrcD` 的 `63:32` 位无法影响发布值。
 
 <!-- PTO-READER-BLOCK: scalar-maddw-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后在低 32 位字，再符号扩展到 XLEN算术下把已快照加数加入乘积，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractResult_MADDW`，它返回 `ScalarMultiplyAddW(addend, left, right)`。该辅助函数用 `MultiplyWord(left, right)` 做乘法，取 `product[31:0]`，把 `addend[31:0]` 加进一个 32 位值，再对 32 位和应用 `SignExtend{PTO_XLEN}`。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+maddw SrcL, SrcR, SrcD, ->{t, u, Rd}
+```
+
+设计要点：加法在 `32` 位内完成，只有最终值才被加宽。因此第 `31` 位的进位被丢弃，而不会传播到高位字：`SrcL = 70000`、`SrcR = 70000`、`SrcD = 0` 发布 `605032704`，而不是 `4900000000`。
 
 <!-- PTO-READER-BLOCK: scalar-maddw-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcD` 是 5 位字段，通过 Reg5 选择加数。
-- `SrcL` 是 5 位字段，通过 Reg5 选择左乘数或加法操作数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择右乘数。
+- `RegDst`，指令切片 `[7 +: 5]`，接收符号扩展后的 32 位结果。
+- `SrcD`，指令切片 `[27 +: 5]`，提供加数字。
+- `SrcL`，指令切片 `[15 +: 5]`，提供左乘数字。
+- `SrcR`，指令切片 `[20 +: 5]`，提供右乘数字。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+源使用通用 Reg5 映射：`0..23` 为绝对 GPR，`24..27` 为 `T#1..T#4`，`28..31` 为 `U#1..U#4`，全部非消耗读取。编码零读取体系结构零 GPR。
+
+设计要点：符号扩展发生在累加之后，因此发布字不是零扩展的和。第 `31` 位被置位的和会以高位全为 1 的 XLEN 值到达目标，这就是 `maddw` 能由两个正输入发布负结果的原因。
 
 <!-- PTO-READER-BLOCK: scalar-maddw-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+三个源都在目标效果之前取快照，因此与 `SrcD`、`SrcL` 或 `SrcR` 同名的目标观察到的仍是该寄存器执行前的值。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
-
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+结果通过 `RegDst` 发布，随后 `TPC` 前进 `4` 字节。`MADDW` 没有内存效果，也没有数值状态效果；除 `RegDst` 与 `TPC` 之外，它能改变的唯一状态是由目标编码选择的一次 `T` 或 `U` 队列推送。
 
 <!-- PTO-READER-BLOCK: scalar-maddw-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+5 位字段的每个源编码与每个目标编码都有定义，且 `ScalarDestinationSelectorLegal` 接受全部 `32` 个目标编码，因此只有临时源不可用会使操作数检查失败。固定编码位必须与规范的 32 位形式匹配。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+适用性只在系统块终止请求挂起时失败，并在 `TPC` 触发 `Fault_BundleControl`。否则该有序检查序列中的第一个故障是与形式不匹配的编码在进入指令束主体之前于 `PC` 触发的 `Fault_IllegalInstruction`，第二个是所选 `T` 或 `U` 源不可用时在目标写入之前于 `PC` 触发的 `Fault_IllegalInstruction`。
+
+设计要点：由于被丢弃的位在加法之前就已去掉，`MADDW` 不需要溢出规则，也不为任何操作数三元组定义异常。它的全部固定宽度契约就是模 `2^32` 的和加上最后的符号扩展。
 
 <!-- PTO-READER-BLOCK: scalar-maddw-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `MADDW` 示例说明：低字乘数 `6` 与 `7` 加上加数 `1`，产生符号扩展后的单一结果 `43`。
+取 `SrcL = -3`、`SrcR = 5`、`SrcD = 1` 时，低字给出 `-15 + 1 = -14`；`SignExtend(0xFFFFFFF2)` 为 `0xFFFFFFFFFFFFFFF2`，因此目标收到一个负的 XLEN 字。取 `SrcL = 0x100000000`、`SrcR = 5`、`SrcD = 7` 时 `SrcL[31:0]` 为 `0`，目标收到 `7`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

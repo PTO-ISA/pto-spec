@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-mul-purpose role=purpose -->
 ## MUL 的作用
 
-`MUL` 是一条 32 位标量 ALU 指令。它按照完整 XLEN 值结果规则计算无符号乘积的低部；当前指令契约定义结果发布路径以及任何额外状态效果。
+`MUL` 是一条 32 位编码的标量 ALU 指令，它把两个 XLEN 源相乘，并通过一个 Reg5 目标发布完整乘积的低 `PTO_XLEN` 位。
+
+该形式的 `L32` 类指的是指令长度，因此源操作数仍以完整的 `64` 位值进入乘法。它不产生乘积高半部，也不编码立即数。
 
 <!-- PTO-READER-BLOCK: scalar-mul-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后按照完整 XLEN 值结果规则计算无符号乘积的低部，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractResult_MUL`，它返回 `MultiplyWord(left, right)`。该辅助函数从零开始，对 `right` 的每个置位位置把 `LSL(left, bit_index)` 加到一个 `Word` 累加器上，因此每个部分和都已按模 `2^PTO_XLEN` 约简。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+mul SrcL, SrcR, ->{t, u, Rd}
+```
+
+设计要点：无论采用哪种符号解释，保留下来的半部都相同，而且可执行分派把 `MUL` 与 `MULU` 绑定到同一个辅助函数。因此 `SrcL = 0xFFFFFFFFFFFFFFFF` 与 `SrcR = 0xFFFFFFFFFFFFFFFF` 在两个助记符下都发布 `1`。
 
 <!-- PTO-READER-BLOCK: scalar-mul-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择左乘数或加法操作数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择右乘数。
+- `RegDst`，指令切片 `[7 +: 5]`，接收乘积的低 XLEN 位。
+- `SrcL`，指令切片 `[15 +: 5]`，提供左乘数。
+- `SrcR`，指令切片 `[20 +: 5]`，提供右乘数。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+两个源都使用通用 Reg5 映射：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`。读取不消耗队列表项，编码零读取体系结构零 GPR。
+
+设计要点：该形式不编码 `SrcRType` 或移位字段，因此 `SrcR` 原样进入乘法。携带这些字段的形式（例如 `ADD`）把它们写成右源上的后缀（`.sw`、`.uw`、`.neg` 以及移位）；`MUL` 只有三个操作数字段。
 
 <!-- PTO-READER-BLOCK: scalar-mul-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+两个源都在目标效果之前取快照，因此 `mul a0, a0, ->a0` 用执行前的 `a0` 自乘。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
-
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+结果发布之后，`TPC` 前进 `4` 字节。`MUL` 不做内存访问，也不改变数值状态、保留、描述符、指令束、特权与控制流状态；唯一可能的队列变化是由 `RegDst` 选择的那一次 `T` 或 `U` 推送。
 
 <!-- PTO-READER-BLOCK: scalar-mul-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+每个 `32` 编码的源编码都有定义，每个 `32` 编码的目标编码都被接受，因此临时源不可用是唯一可能失败的操作数条件。固定编码位必须与规范的 32 位形式匹配。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+适用性只在系统块终止请求挂起时失败，并在 `TPC` 触发 `Fault_BundleControl`。否则，不匹配的编码在进入指令束主体之前于 `PC` 触发 `Fault_IllegalInstruction`，所选 `T` 或 `U` 源不可用时则在目标写入之前于 `PC` 触发 `Fault_IllegalInstruction`。
+
+设计要点：被丢弃的乘积高位不留痕迹，也不设置标志，因此 `MUL` 无法上报溢出。需要检测溢出的代码必须与更宽的形式比较或重建乘积，因为对任何操作数对都没有定义异常。
 
 <!-- PTO-READER-BLOCK: scalar-mul-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `MUL` 示例说明：源值 `6` 与 `7` 产生单一的乘积低部结果 `42`。
+取 `SrcL = 6`、`SrcR = 7` 时累加器为 `42`，`RegDst` 收到 `42`。取 `SrcL = SrcR = 0xFFFFFFFFFFFFFFFF` 时精确乘积为 `2^128 - 2^65 + 1`，其低 `PTO_XLEN` 位是 `1`，因此 `RegDst` 在 `MUL` 与 `MULU` 下同样收到 `1`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

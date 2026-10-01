@@ -7,8 +7,79 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-cell-rearrangement-schema-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns the bundle operand schema and destination allocation for the four CUBE cell-rearrangement operations: `TPERMUTE`, `TSHUF`, `TPACK`, and `TUNPACK`. These operations move bytes or words within Local CUBE Tiles without numeric conversion.
+
+It defines three functions:
+
+- `TileOperationUsesCellRearrangementSchema` recognizes the four operations.
+- `SelectedBundleCellRearrangementSchemaLegal` checks that the collected `B.IOT` and `B.IOR` records have the exact shape the selected operation requires.
+- `ResolveBundleCellRearrangementDestination` derives the destination descriptor from the source Tile and allocates or checks the destination register.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cell-rearrangement-schema-concepts role=concepts-state -->
+## Concepts and visible state
+
+The schema check reads header state, for example `_BundleTileBindings` (the `B.IOT` records), `_BundleScalarBindings` (the `B.IOR` records), `_BundleExecutionMask`, and the Shared binding count.
+
+The destination resolver reads the source descriptors in `_Tiles` and, when it succeeds, writes three things:
+
+- a new CUBE Tile descriptor through `ConfigureCubeTileForMask`;
+- the resolved absolute index into the destination binding's `destination` field;
+- `destination_allocated_by_bundle` set to true on that binding.
+
+For `TPACK` and `TUNPACK`, the destination data type is the operation `DataType` selected by the bundle, and it must be `U8`, `U16`, or `U32`. For `TPERMUTE` and `TSHUF`, the destination keeps the source data type and valid column count. In all four cases, the destination keeps the source valid row count and layout.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cell-rearrangement-schema-rules role=rules-interactions -->
+## Rules and interactions
+
+The schema check returns true immediately when `SelectedBundleTileMaskIsZero` holds, for example when every valid Tile binding has PE mask `0000`. Otherwise it applies one of two shapes.
+
+- `TPERMUTE` needs exactly two Tile bindings. The first carries two sources and no destination. The second carries a third source and the new destination and ends the sequence. Its source must differ from both first-binding sources. A `B.IOR` record is present only when the ExecutionMask is carried in a GPR.
+- `TSHUF`, `TPACK`, and `TUNPACK` need one `B.IOR` record for the control word and one Tile binding, or two bindings when a Tile-carried ExecutionMask is added to a two-source operation. `TSHUF` and `TPACK` use two sources; `TUNPACK` uses one.
+
+Design point: the Tile execution owner calls this schema check before the generic closed-schema check and maps its failure to `Fault_BundleControl`. The ASL comment states the reason: a missing or surplus `B.IOR` or `B.IOT` control is bundle structure. A malformed bundle is therefore reported as a bundle-control fault, not as a Tile legality fault.
+
+For `TPACK` and `TUNPACK`, the destination column count is the source words per row times the destination elements per word: 4 for `U8`, 2 for `U16`, and 1 for `U32`. Words per row come from the source valid bytes rounded up to 4-byte words. `TPACK` also requires the second source to have the same layout, valid row count, and words per row as the first.
+
+Design point: the destination shape is derived from the source descriptor, not from `B.DIM`. The macro assembly reference records the consequence: `TPACK` and `TUNPACK` have no encoded shape, so their Row and Col depend on runtime descriptor state.
+
+A missing role, an illegal source descriptor or type, or a reused-destination mismatch raises `Fault_TileLegality`. More than 65535 destination columns, an illegal CUBE shape, no free register, or insufficient capacity raises `Fault_TileAllocation`.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cell-rearrangement-schema-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit performs no data movement. The byte and word semantics, control-word checks, and source definedness belong to the Tile legality and execution owners.
+
+When the destination binding is reused by an assemble generation, the resolver allocates nothing. It only checks that the existing descriptor matches the derived capacity, shape, type, layout, and PE mask.
+
+Design point: the resolver marks a fresh destination with `destination_allocated_by_bundle`. `RollBackBundleTileDestinations` releases exactly those marked registers, so when a later writer validation or the operation itself fails, the Tile execution owner releases the new Tile.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cell-rearrangement-schema-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+```text
+TPACK <U32>, T#1, T#2, a0, ->T<2KB>
+```
+
+Suppose `T#1` and `T#2` are Local `U32` `CUBE_M16` Tiles with 8 valid rows and 8 valid columns. Each source row holds 32 valid bytes, which is 8 words. `U32` places 1 element in each word, so the destination is `U32` `CUBE_M16` with 8 valid rows and 8 valid columns. The resolver takes the first free register among the 16 of the encoded destination hand and allocates it with 2048 bytes, provided that CUBE shape fits.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cell-rearrangement-schema-related role=related-owners-navigation -->
+## Related owners
+
+- [Tile execution dispatch](tile-execution.md) orders this schema check before generic schemas and destination resolution.
+- [Destination operation routing](destination-operation.md) sends the four operations to this resolver.
+- [Layout rearrangement legality](../../../tile/model/legality/layout-rearrangement.md) defines descriptor, type, and words-per-row helpers.
+- [Rollback](../faults/rollback.md) releases destinations marked as allocated by the bundle.
+- [TPACK](../../../tile/layout-and-rearrangement/layout/TPACK.md) is the instruction page for one of the four operations.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

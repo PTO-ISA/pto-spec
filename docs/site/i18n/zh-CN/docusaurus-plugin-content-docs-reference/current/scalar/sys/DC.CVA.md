@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-cva-purpose role=purpose -->
 ## DC.CVA 的作用
 
-`DC.CVA` 同步完成所分配的缓存或地址翻译维护请求，并记录精确操作令牌。
+`DC.CVA` 是按地址清洗数据缓存的操作。它从 `SrcL` 取得要清洗的地址并同步完成请求，同时记录操作与确切的操作数令牌（`asl/scalar/sys/DC.CVA.asl:23`）。
 
 <!-- PTO-READER-BLOCK: scalar-dc-cva-mechanism role=mechanism -->
 ## 系统机制
 
-ASL DOC 区域选择 `ScalarHandler_ExecuteMaintenance`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+`InstructionContractHandler_DC_CVA` 选择 `ScalarHandler_ExecuteMaintenance`，即整个缓存与地址转换维护组共用的那一个处理程序（`asl/scalar/sys/DC.CVA.asl:11`）。使这条指令与众不同的是它的操作令牌：`Maintenance_DC_CVA` 选中 `ExecuteMaintenance` 的数据缓存分支，该分支把 `_DataCacheEpoch` 递增一（`asl/scalar/model/sys/semantics.asl:135`）。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+位置是机制的一部分，而不是事后补充。该指令只在活动 SYS 块体中适用，派发器会在流程到达处理程序之前拒绝其他一切情况（`asl/scalar/model/sys/semantics.asl:321`）。
 
 <!-- PTO-READER-BLOCK: scalar-dc-cva-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`SrcL` 承载 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。
+`SrcL` 承载 Reg5 源，即 R0..R23、T#1..T#4 或 U#1..U#4 之一。由于 `DC.CVA` 是按地址清洗，该寄存器提供请求所用的地址。
 
-编码零是已分配的字段值，从不表示省略操作数。
+该指令没有目的地操作数。它的输出是维护记录项，其中存入的是纪元推进之前捕获的操作数值。
 
 <!-- PTO-READER-BLOCK: scalar-dc-cva-effects role=effects -->
 ## 架构效果
 
-成功时，维护记录接收 `Maintenance_DC_CVA` 和精确捕获的操作数令牌。
+执行器递增数据缓存纪元，随后仅在未引发故障时把 `Maintenance_DC_CVA` 与操作数存入维护记录（`asl/scalar/model/sys/semantics.asl:156`）。派发器的公共尾部随后按指令长度推进 `TPC`（`asl/scalar/model/dispatch/top-level.asl:56`）。
 
-选中的缓存或 TLB 纪元恰好递增一次，然后 `TPC` 前进；该操作是同步完成的本地提示。
+该指令不执行普通标量内存访问。对同一地址的加载或存储不受影响，也不写任何目的地寄存器或临时队列。
+
+设计要点：基于地址的维护请求被记录，而不是针对建模缓存执行，因此可观测的契约是纪元推进与已记录的令牌，而不是某个具体缓存行的状态。
 
 <!-- PTO-READER-BLOCK: scalar-dc-cva-constraints role=constraints -->
 ## 位置与拒绝边界
 
-缓存维护在每个 ACR 都是同步本地提示，并不定义额外的实现缓存内容。
+位置优先：在活动 SYS 块体之外，该次尝试引发 `Fault_BundleControl`（`asl/scalar/model/dispatch/top-level.asl:28`），不触碰任何执行器状态。编码合法性随后进行，覆盖固定位与 `SrcL` 选择器。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+环权限在这里不构成约束。`MaintenanceAccessPermitted` 在每个 ACR 都允许数据缓存操作，并把 ring 0 保留给 TLB 操作（`asl/scalar/model/sys/semantics.asl:120`）。`SrcL` 中的地址同样不做范围检查，因为该操作不属于规范地址路径。
 
 <!-- PTO-READER-BLOCK: scalar-dc-cva-example role=example -->
 ## 非规范示例
 
 该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
 
-可从 `dc.cva SrcL` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+在 GPR 持有 0x1234 时，SYS 块体内部的 `dc.cva SrcL` 会快照 0x1234，推进数据缓存纪元一次，并使维护记录保持为 `Maintenance_DC_CVA` 与操作数 0x1234。没有任何机制按地址规则校验 0x1234，也没有任何机制把该指令限制在特定环上。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

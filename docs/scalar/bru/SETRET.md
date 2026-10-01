@@ -19,38 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setret-purpose role=purpose -->
 ## What SETRET does
 
-`SETRET` computes and records the architectural return address relative to the current `TPC`.
+`SETRET` computes a return target from the current `TPC` and an encoded displacement, and records it in architectural and bundle-local return state.
+
+It records the address without transferring control: the instruction does not branch to the target it computes, and the sequential path continues at the following instruction. A later control transfer must read `R10` or the retained bundle return state to use the recorded address.
 
 <!-- PTO-READER-BLOCK: scalar-setret-mechanism role=mechanism -->
-## Mechanism
+## How the target is computed
 
-The unsigned `20`-bit immediate is zero-extended, shifted left by `1`, and added to the snapshotted current `TPC`.
+The immediate is zero-extended to the full word width, shifted left by `1` to scale a halfword offset into a byte offset, and added to the `TPC` read at execution time. The same computed word is written to GPR `R10`, the architectural return-address register, and to the bundle-local return address.
 
-The same target is written to GPR `R10` and bundle-local return-address state; execution does not branch to that target.
+Design point: the shift is a fixed `1`, not a field, so the computed target is always even. A return site is therefore always halfword-aligned by construction and the program never has to mask the value before use.
+
+Design point: the base is the `TPC` of this instruction, so the displacement is relative to the `SETRET` site itself rather than to the next instruction.
 
 <!-- PTO-READER-BLOCK: scalar-setret-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `imm20` supplies the encoded immediate or displacement.
+- `imm20` supplies the encoded displacement, treated as unsigned and scaled by `2`; encoded zero supplies numeric zero.
+- The current `TPC` supplies the base address.
+- The computed target is written to GPR `R10` and to the retained bundle return state.
 
 <!-- PTO-READER-BLOCK: scalar-setret-effects role=effects -->
 ## Effects and ordering
 
-The return target is published before the normal successful `TPC` advance of `4` bytes.
+The target is published to `R10` and to the bundle-local return address as one update, and the instruction then retires along the normal sequential path with `TPC` advanced by `4` bytes.
 
-No memory, reservation, numeric-status, or predicate state changes.
+No memory, reservation, descriptor, numeric-status, or predicate state changes, and the instruction has no source operand whose readiness could be checked. Later writes to `R10` are ordinary GPR writes and are not coupled back to the bundle-local return address.
 
 <!-- PTO-READER-BLOCK: scalar-setret-constraints role=constraints -->
-## Legality and fault order
+## Which faults this instruction can raise
 
-Encoding, reserved field values, and source availability are checked before destination, control, or `TPC` effects.
+The instruction carries one unconstrained `20`-bit field, so every encoding of that field is assigned and no field value is reserved. A fixed-bit mismatch raises `Fault_IllegalInstruction` before any effect.
+
+`SETRET` has no encoded register operand to validate and no memory access, and `SetReturnAddress` raises no fault of its own. Apart from the applicability check that every scalar form passes, a mismatch of the fixed bits is the only fault this encoding can add.
 
 <!-- PTO-READER-BLOCK: scalar-setret-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not create a second semantic definition.
 
-`setret uimm, ->Ra` records the return target without transferring control to it.
+At `TPC=1000`, execute the form whose encoded field is `imm20=64`. The displacement scales to `128`, so `R10` and the bundle-local return address both receive `1128`, and execution continues with `TPC=1004`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

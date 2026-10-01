@@ -19,39 +19,47 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-c-bstart-purpose role=purpose -->
 ## C.BSTART 的作用
 
-`C.BSTART` 打开一个活动 Block 描述符；Block 体在完成前提供所需属性与绑定。
+`C.BSTART` 是带 PC 相对目标的 Standard 块的 16 位启动命令，有两种形式：`C.BSTART DIRECT, label` 与 `C.BSTART COND, label`。块（也称指令束）是一组头部命令与主体指令，在 `BSTOP` 或下一条块启动处作为一个整体提交。
+
+该命令本身不跳转。它把候选目标记录到指令束参数寄存器 `BARG` 中，跳转只在新块提交时发生。模型页面[指令束启动分派](../model/dispatch/start.md)与[开始](../model/lifecycle/begin.md)定义了共用的启动序列。
 
 <!-- PTO-READER-BLOCK: block-c-bstart-mechanism role=mechanism -->
-## 放置与执行机制
+## 编码与启动序列
 
-`C.BSTART` 必须位于所属 Block 的起始位置。后续属性、维度与绑定会累积到活动描述符中，直到 `BSTOP` 或下一条已接受的 `BSTART` 完成边界。
+两种形式都只占一个半字。低四位选择形式：`0x2` 为 DIRECT，`0x4` 为 COND。位 15:4 保存 `simm12`，即以半字计数的 12 位有符号位移。
 
-已接受载体使用 `C16` 编码类别；命令在读取绑定或改变状态前，会先解析所有显示字段。
+候选目标为 `P + (SignExtend(simm12) << 1)`，其中 `P` 是该 `C.BSTART` 自身的地址。因此可达范围是相对 `P` 的 -4096 至 +4094 字节。
 
-完成时，只有全部模式与状态预检成功，描述符才会执行所选 Block 操作。
+执行遵循共用的启动顺序。首先计算目标并检查对齐。然后提交任何活动前驱块。只有当该提交选择了本 `C.BSTART` 的地址作为下一 PC 时，才会打开新的 Standard 块。随后头部执行从 `P + 2` 继续。
+
+设计要点：位移加在 `P` 上，而不是加在下一条指令地址上。编码零是真实的零位移，因此 `simm12 = 0` 的 `C.BSTART DIRECT` 以自身地址为目标，提交时执行回到这条 `C.BSTART`。
 
 <!-- PTO-READER-BLOCK: block-c-bstart-inputs role=inputs-outputs -->
-## 载体、绑定与输入
+## 字段与 BARG 取值
 
-- 编码操作数：`simm12` — 12 位有符号束目标位移。
-- 活动前驱成功提交后，该载体打开一个 Standard Block；其头部执行到 `BSTOP` 或下一条 `BSTART` 完成边界。
-- 编码零仍是已分配值或明确规定的拒绝值；它不会静默表示省略操作数。
+- `simm12` 总是被编码，没有省略形式，也没有默认值。
+- DIRECT 写入 `BARG.BPC = P`、`BlockType = STD`、`BPCN =` 计算出的目标、`TYPE = DIRECT` 与 `TAKEN = 1`。
+- COND 写入相同的 `BPC`、`BlockType` 与 `BPCN`，并写入 `TYPE = COND` 与 `TAKEN = 0`。
+
+设计要点：COND 以 `TAKEN = 0` 开始，因此没有执行任何 `SETC` 条件的条件块在提交时顺序继续。在块提交之前，主体中的 `SETC` 条件可以置位 `TAKEN`，`SETC.TGT` 可以替换 `BPCN`。参见 [BARG 辅助函数](../model/state/barg.md)。
 
 <!-- PTO-READER-BLOCK: block-c-bstart-effects role=effects -->
 ## 状态效果与顺序
 
-启动 Block 会记录所选载体，并把操作执行推迟到完成边界。
+成功的启动会清除之前的头部状态，把新块标记为处于头部阶段的活动块，写入 `BARG` 与 `BPC`，并取得新的执行域令牌。`C.BSTART` 不访问内存，也不写 GPR。
 
-完成全部预检与计算后，所有启用输出按归属单元规定的原子组发布；除非契约明确消费，成功执行后的数学源仍保持可用。
+候选目标只在 `BSTOP` 或下一条块启动处被选择。`BARGSelectsBPCN` 对 DIRECT 为真，对 COND 仅在 `TAKEN` 置位时为真；否则提交在顺序 PC 处继续。
+
+设计要点：前驱先提交，新 `BARG` 后安装。若前驱提交失败，前驱保持权威，不安装 Standard `BARG`。若前驱转移到别处，本 `C.BSTART` 位于未被选择的路径上，不打开任何块。
 
 <!-- PTO-READER-BLOCK: block-c-bstart-constraints role=constraints -->
-## 合法性、故障与原子性
+## 合法性与故障边界
 
-固定比特、保留值、选择器取值域与必需的 Block 放置关系都在架构效果之前检查。
+只有低四位值 `0x2` 与 `0x4` 属于 `C.BSTART`。`simm12` 的每个取值都已分配。
 
-当前归属单元通过 `Fault_InstructionPC` 报告无效模式、状态、地址或后继条件；本页说明文字不创建额外故障规则。
+计算出的目标为奇数时，在前驱提交之前、任何新 `BARG` 效果之前引发 `Fault_InstructionPC`。由于启动检查在前驱退休之前执行，被拒绝的 `C.BSTART` 会保留活动前驱。
 
-完整模式、绑定、就绪状态、别名、容量与分配预检发生在源快照和所有目的端发布之前。
+由 `SETC.TGT` 改写的最终 `BPCN` 会在提交时再次检查；被选中的奇数目标会在块效果可见之前引发 `Fault_InstructionPC`。
 
 <!-- PTO-READER-BLOCK: block-c-bstart-example role=example -->
 ## 非规范示例
@@ -59,10 +67,10 @@ The current instruction contract is owned by the ASL source linked above.
 该示例只演示放置关系与载体流；精确行为仍由当前 ASL 和指令契约定义。
 
 ```asm
-C.BSTART DIRECT, label
+C.BSTART COND, label
 ```
 
-起始指令先建立描述符；后续载体按声明模式补充内容，最终完成边界触发验证与操作执行。
+假设这条 `C.BSTART COND` 位于 `0x1000`，`label` 为 `0x1040`。编码的 `simm12` 为 `0x20`，因为 `0x1000 + (0x20 << 1) = 0x1040`。启动后，`BARG.BPCN` 为 `0x1040`，`TAKEN` 为 0，头部执行从 `0x1002` 继续。若主体中的 `SETC` 条件置位 `TAKEN`，提交在 `0x1040` 继续；否则在块之后继续。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

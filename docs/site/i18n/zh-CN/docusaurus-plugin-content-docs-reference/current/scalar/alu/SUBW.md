@@ -19,49 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-subw-purpose role=purpose -->
 ## SUBW 的作用
 
-`SUBW` 是一条 32 位标量 ALU 指令。它按照低 32 位字，再符号扩展到 XLEN结果规则执行减法；当前指令契约定义结果发布路径以及任何额外状态效果。
+`SUBW` 按与 `SUB` 完全相同的方式变换 `SrcR`，从 `SrcL` 的低 `32` 位中模 `2^32` 减去该移位后的值，并发布符号扩展到 `PTO_XLEN` 的字。它包含 `RegDst`、`SrcL`、`SrcR`、`SrcRType` 与 `shamt`。
+
+该载体在掩码 `0x0000707f` 下匹配 `0x00001025`。处理函数是带算术族标志的 `ScalarBinaryW`，因此 `SrcRType=10` 取负完整的右操作数。
+
+变换与移位按完整宽度作用于 `SrcR`；收窄只施加于减法与发布。
 
 <!-- PTO-READER-BLOCK: scalar-subw-mechanism role=mechanism -->
-## 结果形成方式
+## 字结果形成方式
 
-执行时先对编码输入做快照，然后按照低 32 位字，再符号扩展到 XLEN结果规则执行减法，最后才产生目标效果。
+`ExecuteDecodedBinary` 读取两个源与两个后缀字段，用 `PrepareScalarRight(right, modifier, shift_amount, FALSE)` 构造右操作数，并在 `word_operation` 为真时调用 `ScalarBinaryW(ScalarBinary_SUB, left, right)`（`asl/scalar/model/dispatch/alu.asl:86-87`）。该辅助函数按 `32` 位计算差值并返回 `SignExtend{PTO_XLEN}(result32)`（`asl/scalar/model/alu/semantics.asl:477`）。
 
-- `SrcRType` 先转换右源；`shamt` 再对转换后的值执行逻辑左移，随后才进行算术或逻辑操作。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+subw SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>, ->{t, u, Rd}
+```
+
+设计要点：`.neg` 在收窄之前对完整的 `PTO_XLEN` 寄存器取负，因此只要 `SrcR` 的低字不为零，取负后取值的低字就是 `SrcR` 低字的补码取负。当 `shamt` 为 `31` 时，只有变换后取值原来的第 `0` 位能到达字位 `31`。
+
+设计要点：`SrcL` 的高半部从不进入减法。当源的低字为零、右操作数为 `1` 时，无论源的高半部是什么，`subw` 都发布 `-1`。
 
 <!-- PTO-READER-BLOCK: scalar-subw-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择左操作数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择右操作数。
-- `SrcRType` 是 2 位字段，选择应用到右源的转换。
-- `shamt` 是 5 位字段，编码右源转换后执行的逻辑左移量。
+两个操作数都是 Reg5 源，后缀字段来自载体，`RegDst` 选择目标。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+- `SrcL` 位于 `[15 +: 5]`、`SrcR` 位于 `[20 +: 5]`：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`，非消耗。只减去各自的低字。
+- `SrcRType` 位于 `[25 +: 2]`：`00` 为 `.sw`，`01` 为 `.uw`，`10` 为 `.neg`，`11` 为无修饰；省略后缀时编码为 `11`。
+- `shamt` 位于 `[27 +: 5]`：施加于变换后右操作数的逻辑左移量，取值 `0` 到 `31`。
+- `RegDst` 位于 `[7 +: 5]`：`1..23` 写入对应 GPR，`30` 压入 `U`，`31` 压入 `T`，`0` 与 `24..29` 丢弃。
+
+设计要点：两个宽度决定彼此独立，因此当某个操作数的高半部不是其低字的符号扩展时，`subw` 与 `sub` 就可能不一致。`subw` 减去变换后右操作数的低字再扩展字结果，而 `sub` 减去整个变换后的寄存器。
 
 <!-- PTO-READER-BLOCK: scalar-subw-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+两个源都在写目标之前取快照，因此同名目标基于执行前的值计算。符号扩展后的字发布后 `TPC` 推进 `4` 字节。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
+`SUBW` 不访问内存，保留、描述符、数值标志、陷阱、指令束、特权、谓词与控制流状态都保持不变；仅当目标是 `30` 或 `31` 时临时队列才会移动。
 
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+设计要点：字级差值按模 `2^32` 回绕，最终的扩展把回绕后的字重新解释为有符号 `32` 位取值。因此字外的借位会改变发布值的符号，而不是被丢弃。
 
 <!-- PTO-READER-BLOCK: scalar-subw-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+全部四个 `SrcRType` 编码与全部 `32` 个 `shamt` 值都有定义，Reg5 映射的每个源编码与目标编码也都有定义。该形式除固定位外没有约束。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+不匹配的载体在 `PC` 触发 `Fault_IllegalInstruction`。对活动块不适用的指令在 `TPC` 触发 `Fault_BundleControl`，对 `SUBW` 而言仅在系统块终止请求挂起期间可达。所选 `T` 或 `U` 源不可用时在 `PC` 触发 `Fault_IllegalInstruction`，先于目标效果与 `TPC` 推进。
+
+设计要点：没有任何操作数取值会选择陷阱：修饰、移位、字级减法与符号扩展都是全定义的。`SUBW` 的故障边界是编码有效性加上源可用性。
 
 <!-- PTO-READER-BLOCK: scalar-subw-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `SUBW` 示例说明：`SrcL=7`、`SrcR=3`、`SrcRType=11` 且 `shamt=0` 产生 `4`。
+当 `a0` 为 `7`、`a1` 为 `3` 时，`subw a0, a1, ->a2` 发布 `4`，`subw a0, a1<.neg>, ->a2` 发布 `10`。
+
+当 `a0` 为 `3`、`a1` 为 `7` 时，字差值是 `0xFFFFFFFC`，因此 `a2` 收到 `0xFFFFFFFFFFFFFFFC`。当 `a1` 为 `1`、`shamt` 为 `4` 时，`subw a0, a1<<<4>, ->a2` 发布 `-13`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

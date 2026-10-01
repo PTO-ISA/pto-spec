@@ -17,48 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-lwu-pcr-purpose role=purpose -->
-## What LWU.PCR does
+## What `LWU.PCR` does
 
-`LWU.PCR` is a standalone `32`-bit AGU instruction that forms a PC-relative address and loads one aligned little-endian `4`-byte value.
+`LWU.PCR` loads one `4`-byte little-endian word from a PC-relative address and zero-extends it to `PTO_XLEN`. It has no source-register field: the base comes from the current `TPC`. Its canonical assembly is `lwu.pcr [symbol], ->{t, u, Rd}`.
+
+Design point: the loaded word is zero-extended, so the published value always has bits `63`:`32` set to `0` and lies in `0`..`4294967295`. A `32`-bit pattern that must stay negative needs the sign-extending PC-relative load form instead.
 
 <!-- PTO-READER-BLOCK: scalar-lwu-pcr-mechanism role=mechanism -->
-## Address and memory mechanism
+## How `LWU.PCR` forms the address and completes the access
 
-`LWU.PCR` clears `TPC[1:0]`, sign-extends `simm17` from `-65536..65535`, multiplies it by `4`, and adds the displacement modulo `2^PTO_XLEN` to the aligned `TPC` base.
+The base is the pre-instruction `TPC` with bits `1`:`0` cleared, which makes it `4`-byte aligned. The `simm17` field is sign-extended to `PTO_XLEN` and shifted left by `2`, and the two values are added modulo `2^PTO_XLEN`.
 
-After complete preflight, the instruction performs one little-endian `4`-byte load and zero-extends the loaded `4`-byte value to `PTO_XLEN` for destination publication.
+The sum is used by one little-endian `4`-byte load. There is no base writeback and no second destination. Bits `31`:`0` of the loaded word are zero-extended and written through `RegDst` only if the load reported no fault.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+Design point: clearing `TPC[1:0]` gives the displacement one stable base even when a variable-length instruction leaves `TPC` on the second halfword of a word. Instructions at `0x1002` and `0x1006` with the same field therefore address locations `4` bytes apart, and both addresses stay `4`-byte aligned.
 
 <!-- PTO-READER-BLOCK: scalar-lwu-pcr-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and where the value goes
 
-- `TPC` supplies the aligned implicit base; `simm17` supplies the signed displacement.
-- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- `simm17` assigns every signed value from `-65536` through `65535`; encoded zero is a zero displacement, not omission.
+- `simm17` is a signed `17`-bit word displacement, so all `131072` encodings are values. The byte displacement it produces is a multiple of `4` in the range `-262144` through `262140`.
+- `RegDst` is a `5`-bit destination: codes `1`..`23` write absolute GPRs, code `30` pushes the `U` queue, code `31` pushes the `T` queue, and codes `0` and `24`..`29` discard the loaded value.
+
+Design point: there is no base selector to validate, so this form has no unavailable `T`/`U` rejection path even though its destination can still push a queue entry. The fixed opcode pattern is the only encoded value that can be illegal.
 
 <!-- PTO-READER-BLOCK: scalar-lwu-pcr-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+The base is read from `TPC` before the memory and destination effects, and the `TPC` advance is the last step, so the address is never affected by the instruction's own retirement.
 
-A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+Successful execution performs one relaxed `4`-byte load and records one load event. No memory byte changes and reservation state is preserved. `TPC` then advances by `4` bytes.
+
+Design point: a displacement of `0` reads the `4` bytes of the aligned word that contains the instruction itself, so self-referential data access needs no register setup. The base is aligned down, so the accessed word is not necessarily the one the instruction occupies.
 
 <!-- PTO-READER-BLOCK: scalar-lwu-pcr-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `4`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+Dispatch rejects the instruction with `Fault_IllegalInstruction` before any effect when the fixed encoding bits do not match.
 
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+The base is `4`-byte aligned and the scaled displacement is a multiple of `4`, so a `4`-byte access is always aligned and `Fault_DataAlignment` is unreachable for this form. An aligned address that fails a permission or bounded-memory test raises `Fault_DataPage` at the original address; PTO v0 translation is the identity function, so there is no separate translation fault.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+A fault records no load event, writes no destination, and leaves `TPC` on the faulting instruction, so reissue recomputes the same aligned base from the same `TPC`.
+
+Design point: the alignment outcome is fixed by the encoding rather than by the address, so `Fault_DataPage` is the only data fault this form can raise. A handler that catches `Fault_DataAlignment` will never see it from here.
 
 <!-- PTO-READER-BLOCK: scalar-lwu-pcr-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With aligned `TPC=0x100` and the encoded displacement set to `2`, the byte displacement is `8` and the effective address is `0x108`. The memory access uses `0x108`. If aligned and permitted, the instruction loads `4` bytes from that address.
+- Take `lwu.pcr [symbol], ->5` executing at `TPC` = `0x1002`, with the encoded `simm17` equal to `3`.
+- Clearing the low `2` bits of `0x1002` gives the base `0x1000`; the displacement is `3` times `4`, which is `12`.
+- The effective address is `0x1000` plus `12`, which is `0x100C`.
+- `0x100C` is `4`-byte aligned, so the preflight passes; the `4` bytes at `0x100C` through `0x100F` are zero-extended into GPR5, and `TPC` becomes `0x1006`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,42 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-assert-purpose role=purpose -->
 ## What ASSERT does
 
-`ASSERT` tests a snapshotted scalar condition and raises the architecture assertion trap when it is zero.
+`ASSERT` is an architectural assertion check. It reads one scalar value and raises the assertion trap when that value is exactly zero. A non-zero value is accepted silently.
+
+It has no destination: the only two possible outcomes are a normal retirement and the assertion trap.
 
 <!-- PTO-READER-BLOCK: scalar-assert-mechanism role=mechanism -->
-## System mechanism
+## How the instruction is placed and executed
 
-The ASL DOC region selects `ScalarHandler_ArchitectureAssert`. Placement and encoded legality are checked before sources or system state can change.
+This instruction is one scalar operation of an active SYS block. The scalar dispatcher first checks that a bundle is active and that its body is active with block kind System; a SYS form outside such a block is rejected with `Fault_BundleControl`, before any encoded-field check and before any architectural effect.
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+Encoded legality and source availability are then checked, and only then does the handler run.
+
+The handler reads `SrcL` once and tests it for zero. Zero raises `Fault_Assert` with the request site as the fault address. Any non-zero value, including a value whose low bits are zero but whose high bits are set, passes the test.
+
+Design point: the check is placed on the snapshot of the source rather than on a flag or a condition register. That keeps the assertion self-contained: the value that decides the outcome is exactly the value the program computed into that register, with no hidden state between the computation and the check.
 
 <!-- PTO-READER-BLOCK: scalar-assert-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
-
-Encoded zero is an assigned field value, never an omitted operand.
+- `SrcL` is the source selector. Encoded zero names the architectural zero GPR, whose read value is always XLEN zero, so a zero selector always raises the assertion trap.
+- Source selectors `0`..`23` read GPRs, `24`..`27` read `T#1`..`T#4`, and `28`..`31` read `U#1`..`U#4`. Reading a temporary never consumes or reorders it.
+- There is no destination field, so the instruction never writes a GPR and never pushes `T` or `U`.
 
 <!-- PTO-READER-BLOCK: scalar-assert-effects role=effects -->
 ## Architectural effects
 
-The scalar condition is snapshotted; zero raises `Fault_Assert` at the faulting PC, while nonzero retires without another architectural effect.
+On a zero source the instruction raises `Fault_Assert`, does not advance `TPC`, and retires nothing; the trap entry records the fault address as the request site. On a non-zero source the only effect is a successful retirement, and `TPC` advances by `4` bytes.
 
-The condition is read only after placement and decode checks, and `TPC` advances only on the nonfaulting path.
+The source register and any queue entry it names are unchanged in both outcomes: the instruction reads, it never writes.
+
+The instruction has no memory effect and leaves no reservation behind, so it cannot be the reason a later atomic or load-linked operation fails.
 
 <!-- PTO-READER-BLOCK: scalar-assert-constraints role=constraints -->
 ## Placement and rejection
 
-Every available Reg5 source selector is assigned.
+Invalid block placement is rejected first, with `Fault_BundleControl`, before the encoded field is even considered.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+Every available Reg5 source selector is assigned, so no source selector is reserved. A selector that names an unavailable `T` or `U` slot is rejected with `Fault_IllegalInstruction` before the zero test runs, which keeps the fault order stable: an unavailable source is never reported as an assertion failure.
 
 <!-- PTO-READER-BLOCK: scalar-assert-example role=example -->
 ## Non-normative example
 
-This spelling example is illustrative; exact legality and effects remain in the generated contract below.
-
-Start with `assert SrcL` and trace its encoded fields through preflight before following the selected system effect.
+`assert a0` retires normally when `a0` holds any non-zero value. When `a0` holds XLEN zero, the instruction raises `Fault_Assert` at its own site and `TPC` stays where it was.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

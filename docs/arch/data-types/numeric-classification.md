@@ -15,46 +15,56 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-numeric-classification-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit defines the common value classes and numeric-policy records used across every tile numeric format.
+This unit defines the value-class vocabulary and the numeric-policy records shared by every Tile numeric format.
 
-A shared classification vocabulary lets format owners report exact bit-pattern categories without selecting an arithmetic result or target implementation.
+It is a type and helper unit, so it describes what a value is and how a policy is selected, not what any operation computes.
 
 <!-- PTO-READER-BLOCK: arch-numeric-classification-concepts-state role=concepts-state -->
 ## Concepts and visible state
 
-- `NumericValueClass` includes invalid encoding; signed zero, subnormal, normal, and infinity; plus quiet and signaling NaN.
-- Input and result subnormal policies are separate: `NumericInputSubnormalRule` and `NumericResultSubnormalRule` do not collapse into one switch.
-- `TileNumericSelection` carries whether an operation default is used, the selected `NumericRoundingMode`, and a saturating flag.
+`NumericValueClass` contains `NumericValue_InvalidEncoding`, the signed zero and subnormal and normal and infinity classes, and `NumericValue_QuietNaN` together with `NumericValue_SignalingNaN`.
+
+The subnormal rules are separate for inputs and results: `NumericInputSubnormalRule` holds `NumericInputSubnormal_NotApplicable` or `NumericInputSubnormal_Preserve`, and `NumericResultSubnormalRule` holds `NumericResultSubnormal_NotApplicable` or `NumericResultSubnormal_GradualUnderflow`.
+
+`TileNumericSelection` records whether an operation default is used, the selected `NumericRoundingMode`, and whether the operation saturates.
 
 <!-- PTO-READER-BLOCK: arch-numeric-classification-rules-interactions role=rules-interactions -->
 ## Rules and interactions
 
-`NumericValueClassIsNaN`, `NumericValueClassIsInfinity`, `NumericValueClassIsZero`, and `NumericValueClassIsSubnormal` test only their named class pairs.
+Design point: inputs and results keep separate subnormal rules because preserving a subnormal operand and producing a gradual-underflow result are different behaviours, so one switch could not express a configuration that does one without the other.
 
-`NumericTininessDetectionRule` distinguishes not-applicable from after-rounding detection.
+`NumericValueClassIsNaN`, `NumericValueClassIsInfinity`, `NumericValueClassIsZero`, and `NumericValueClassIsSubnormal` each test only their own named class pair and return a boolean.
 
-Classification is a format property. It does not itself choose exception flags, rounding, saturation, or an operation result.
+`NumericTininessDetectionRule` distinguishes `NumericTininessDetection_NotApplicable` from `NumericTininessDetection_AfterRounding`, and the integer classifiers `ClassifySignedInteger` and `ClassifyUnsignedInteger` are owned by the hardware numeric profile rather than by this unit.
 
 <!-- PTO-READER-BLOCK: arch-numeric-classification-boundaries role=boundaries -->
 ## Architectural boundaries
 
-The input/result subnormal enums describe the named hardware numeric profile, not general `pto-v0` arithmetic behavior.
+Classification is a format property: it reports which category a raw carrier falls into and does not itself choose an exception flag, a rounding mode, a saturation decision, or a result value.
 
-A value class does not prove that an operation supports the corresponding data type; support remains with the active operation and profile owner.
+`NumericValue_InvalidEncoding` is a class of its own, so a carrier that a format rejects is distinguishable from a carrier that denotes a NaN.
+
+This unit has no format descriptor and no decomposition function, so the value-class declarations and the four boolean class tests above are the complete definition.
 
 <!-- PTO-READER-BLOCK: arch-numeric-classification-example-usage role=example-usage -->
 ## Non-normative reading example
 
-`NumericValue_NegativeZero` makes `NumericValueClassIsZero` true, but it does not make `NumericValueClassIsSubnormal` true.
+This example illustrates the current ASL owner and does not replace the normative operation.
 
-A consumer may branch on NaN classification before ordinary comparison, then return to its own profile owner for the exact selected result.
+Design point: invalid encoding is separated from the value classes because rejection happens before any numeric interpretation, so a consumer can tell a malformed carrier from a well-formed non-finite one.
+
+The input and result subnormal enumerations describe the named hardware numeric profile, and the comment in the owner states that they are not general `pto-v0` arithmetic behaviour.
+
+A value class does not prove that an operation supports the corresponding data type, because support remains with the active operation and profile owner.
 
 <!-- PTO-READER-BLOCK: arch-numeric-classification-related-owners role=related-owners-navigation -->
 ## Related owners
 
-- [Numeric format dispatch](numeric-formats.md)
-- [Rounding types](rounding.md)
-- [Hardware numeric profile](../features/mx-formats.md)
+- [Numeric format dispatch](numeric-formats.md) dispatches a Tile data type to its descriptor and finite decomposition.
+
+- [Rounding types](rounding.md) defines the rounding modes named by a selection record.
+
+- [Hardware numeric profile](../features/mx-formats.md) applies these rules to declared types.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

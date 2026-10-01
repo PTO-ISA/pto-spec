@@ -19,33 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-b-assemble-purpose role=purpose -->
 ## B.ASSEMBLE 的作用
 
-`B.ASSEMBLE` 是一条 32 位 Block header 命令，用来把一个汇编范围修饰符附加到已打开的 Local 或 Shared 绑定组。它修改待处理 Block 元数据，不会立即执行 Tile body 操作。
+`B.ASSEMBLE` 是一条 32 位头部命令，把紧邻其前的绑定命令的目标变为多块构建中的一个写入者。绑定命令是 `B.IOT` 或 `B.IOS`。这种构建称为世代：一个父 Tile 由多个块或多个 PE 按范围写入，并在 LAST 时发布一次。
+
+与 `B.SUBVIEW` 一样，该命令是范围修饰符。它附着于绑定命令并记录字段；执行时不分配任何内容。参见[范围修饰符](../model/operands/range-modifiers.md)、[Local 世代](../model/operands/local-generation.md)与 [Shared 世代](../model/operands/shared-generation.md)。
 
 <!-- PTO-READER-BLOCK: block-b-assemble-mechanism role=mechanism -->
-## 位置与机制
+## 阶段与机制
 
-该修饰符必须与打开其 carrier 的 `B.IOT` 或 `B.IOS` 绑定组保持连续。若中间插入其他命令、顺序反转或重复使用，会在 carrier 状态变化前被拒绝。
+`INIT` 与 `LAST` 选择四个阶段之一：
 
-该命令把原始选择与范围字段以及派生的 XLEN 偏移记录到已打开的 binder carrier。若 binder 解码后的 PE mask 为零，则只保留一个随后丢弃的语法组，不读取源，也不产生角色影响。
+- INIT（`INIT = 1`，`LAST = 0`）开始一个世代。绑定命令的目标 `SizeCode` 成为父容量，并分配父 Tile。
+- MIDDLE（`INIT = 0`，`LAST = 0`）向打开的世代添加一个写入者。
+- LAST（`INIT = 0`，`LAST = 1`）添加最后一个写入者并关闭世代。
+- INIT_LAST（`INIT = 1`，`LAST = 1`）在一个块中开始并关闭世代。
+
+续写阶段（MIDDLE 或 LAST）在两类存储上以不同方式指定父 Tile。对 Local Tile，绑定命令没有目标，绑定命令的最后一个源槽位成为父引用，而不是数据源。对 Shared Tile，`SizeCode = 0` 的最后一条 `B.IOS` 被复用为打开世代的目标。
+
+设计要点：Local 父 Tile 通过 `T#1` 这类普通相对选择器指定。INIT 把父 Tile 发布到普通相对队列中，不存在私有的组装命名空间。因此续写阶段查找父 Tile 的方式与任何源查找 Tile 的方式相同。
 
 <!-- PTO-READER-BLOCK: block-b-assemble-inputs role=inputs-outputs -->
-## 操作数与 header 角色
+## 字段与编码值
 
-- `INIT` 标记第一个 assembler carrier；其确切分配域仍以下方生成契约为准。
-- `LAST` 标记最后一个 assembler carrier；其确切分配域仍以下方生成契约为准。
-- `RegSrc` 选择具名的绝对 GPR 角色；其确切分配域仍以下方生成契约为准。
-- `uimm11` 提供编码偏移或加数；其确切分配域仍以下方生成契约为准。
-- `ParentSizeCode` 提供父范围大小编码；其确切分配域仍以下方生成契约为准。
+- `INIT`（位 31）为 1 时选择 INIT 或 INIT_LAST，为 0 时选择 MIDDLE 或 LAST。
+- `uimm11`（位 30:20）是无符号加数，零扩展。零是真实的零。
+- `RegSrc`（位 19:15）指定绝对 GPR 0 至 23。编码零指零 GPR。
+- `LAST`（位 11）标记最后一个写入者。
+- `WriterSizeCode`（位 10:7）是本写入者范围的大小：Local 范围组为 1 至 10，Shared 范围组为 1 至 12，从 128 B 起。原始编码 13 至 15 保留。
+
+写入者偏移为 `GPR[RegSrc] + uimm11`（模 2^XLEN），以父 Tile 的 128 字节 CELL 计数。处理程序把原始字段与该偏移存入目标的范围记录。
+
+设计要点：在每个阶段，`WriterSizeCode` 都是当前写入者的大小，而不是父 Tile 的大小。父容量来自 INIT 绑定命令的 `SizeCode`，因此一个父 Tile 可以由多个较小的写入者填充，它们的范围必须位于父 Tile 之内，并且在共享 PE 上不得重叠。
 
 <!-- PTO-READER-BLOCK: block-b-assemble-effects role=effects -->
-## 待处理状态与完成
+## 记录的状态与发布
 
-被接受的 header 命令只改变自己的待处理记录或 carrier。除非本所有者明确指出即时 header 状态更新，否则架构 Tile、Shared、GPR、内存和完成影响都推迟到完整 Block。
+被接受的 `B.ASSEMBLE` 只改变绑定命令的范围记录；对于 Local 续写阶段，它还把最后一个源移入父引用。它不读取 Tile 载荷。
+
+操作成功后，写入者的 CELL 被标记为已覆盖。在 LAST 时世代关闭。只有当每个参与 PE 都满足条件时，世代才被标记为已发布，这要求每个必需 CELL 对该 PE 既已覆盖也已就绪。
+
+设计要点：零参与的绑定命令（`PEMode = 000`）会打开零模式范围组。在该组中，每条原始字段合法的 `B.ASSEMBLE` 只经过范围组已打开的检查，不读取 GPR，也不记录任何内容。
 
 <!-- PTO-READER-BLOCK: block-b-assemble-constraints role=constraints -->
 ## 合法性与故障边界
 
-保留编码会在读取或待处理状态变化前被拒绝。位置、重复、角色或完成后 schema 不匹配，会在 body 影响前失败。
+- `RegSrc` 编码为 24 至 31、原始 `WriterSizeCode` 为 13 至 15，或固定位非零时，在读取任何 GPR 之前引发 `Fault_IllegalInstruction`。
+- 附着于参与的 Local 范围组的 `WriterSizeCode` 11 或 12 引发 `Fault_TileLegality`。
+- 没有打开的范围组、INIT 所在绑定命令没有未使用的目标角色、续写阶段所在绑定命令带有目标，或参与范围组中写入者大小编码为 0 时，引发 `Fault_BundleControl`。
+- 在阶段 2 准备期间，范围超出父 Tile、范围在共享 PE 上与较早写入者重叠、写入者掩码不是世代掩码的子集，或父引用未指向打开的世代时，在操作效果之前引发故障。
+- 有多个参与 PE 且没有 `B.ASSEMBLE` 的 Shared 目标引发 `Fault_TileLegality`。
 
 <!-- PTO-READER-BLOCK: block-b-assemble-example role=example -->
 ## 非规范示例
@@ -53,11 +74,11 @@ The current instruction contract is owned by the ASL source linked above.
 以下为非规范示例，仅用于说明当前所有者，不替代其定义。
 
 ```asm
-B.IOT mask=PE_MASK, <last>, ->DstTile<SizeCode>
-B.ASSEMBLE INIT, LAST, RegSrc, uimm11, ParentSizeCode
+B.IOT T#2, mask=1111, <last>, ->T<4KB>
+B.ASSEMBLE 1, 0, zero, 0, 5
 ```
 
-目的形式的 `B.IOT` 打开确切的目的 carrier 组。紧随其后的 `B.ASSEMBLE` 把 assembler range 应用于该目的 carrier；中间插入任何命令都会破坏连续性，使修饰符组无效。
+该块开始一个 Local 世代。绑定命令的 `SizeCode` 6 产生 4 KiB 父 Tile，即 32 个 CELL。修饰符是 INIT 而非 LAST，偏移为 0 + 0 = 0，写入者大小编码为 5，即 2 KiB 或 16 个 CELL，编码为 `0x800012d3`。提交后，CELL 0 至 15 已覆盖，父 Tile 成为新的 `T#1`。之后的块 `B.IOT T#2, T#1, mask=1111, <last>` 接 `B.ASSEMBLE 0, 1, zero, 16, 5`（编码 `0x01001ad3`）以 `T#1` 作为父引用，从其源 `T#2` 写入 CELL 16 至 31，并关闭世代。若第二个块的偏移为 8，将与 CELL 8 至 15 重叠并引发故障。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

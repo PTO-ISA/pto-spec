@@ -17,52 +17,61 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-ldi-pr-purpose role=purpose -->
-## What HL.LDI.PR does
+## What `HL.LDI.PR` does
 
-`HL.LDI.PR` is a standalone `48`-bit scalar AGU instruction that loads one 8-byte little-endian value and zero-extends the transferred bits when the result is narrower than `PTO_XLEN` using `Immediate` addressing.
+`HL.LDI.PR` is a `48`-bit pre-indexed load of one `8`-byte little-endian value with an immediate displacement. It scales the immediate by `8`, adds it to the `SrcL` base, reads eight bytes at the sum, publishes the `64`-bit pattern to `Dst0`, and publishes the same sum to `Dst1`.
+
+The canonical assembly is `hl.ldi.pr [SrcL, simm], ->Dst0, Dst1`.
+
+Design point: because the offset is always a multiple of `8`, an `8`-byte-aligned base stays `8`-byte aligned after the update. A loop that feeds `Dst1` back into `SrcL` therefore keeps every access aligned, and no iteration can be rejected for misalignment as long as the first base was aligned.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ldi-pr-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How the address and the transfer are formed
 
-The address path sign-extends `simm17`, scales it by `8`, and adds the displacement to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+The signed `17`-bit immediate is sign-extended and shifted left by `3` bits, then added to the snapshot of `SrcL` modulo `2^PTO_XLEN`. That sum is the access address and the value delivered to `Dst1`.
 
-After complete preflight, one aligned little-endian `8`-byte load is performed. Its result is kept as the complete 64-bit pattern before destination publication.
+`SrcL` is only read. The register file changes only through the destination fields, and the base change reaches it only if `Dst1` names a register.
 
-Pre-index mode accesses the updated address and publishes that same updated base only after the memory operation succeeds.
+After the encoding checks and the address preflight pass, the handler performs one `8`-byte little-endian load and publishes `Dst0` before `Dst1`.
+
+Design point: the scale makes the immediate an element index rather than a byte count. An immediate of `1` means one element, which is `8` bytes, so a single-byte step is impossible to express here: every reachable displacement is a multiple of `8`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ldi-pr-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and the two results
 
-- `RegDst0` is a `5`-bit field selecting the first loaded-value result.
-- `RegDst1` is a `5`-bit field selecting the updated-base result.
-- `SrcL` is a `5`-bit field selecting the address base.
-- `simm17` is a `17`-bit field selecting the signed displacement before the `8` scale factor.
+- `SrcL` is the base and a `5`-bit Reg5 selector over absolute GPRs, `T#1`..`T#4`, and `U#1`..`U#4`.
+- `simm17` is a signed `17`-bit immediate covering `-65536` to `65535` elements, which is `-524288` to `524280` bytes after scaling by `8`.
+- `Dst0` receives the loaded pattern and `Dst1` the updated base; codes `1`..`23` write GPRs, `30` pushes `U`, `31` pushes `T`, and `0` and `24`..`29` discard that result alone.
+
+Design point: an immediate of `0` leaves `SrcL` unchanged and the access at the base, so `Dst1` republishes the base. The zero is an element count, not an absent displacement, and this form has no alternative address source to fall back on.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ldi-pr-effects role=effects -->
-## Effects and completion order
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+`SrcL` is read before any memory or destination effect, so `SrcL` aliasing either destination still supplies the pre-instruction base to the address.
 
-Successful execution records one relaxed load event; memory and reservation state are preserved.
+Success records one relaxed `8`-byte load event and leaves memory bytes and reservation state unchanged. `TPC` advances by `6` bytes after both publications, and a rejected or faulting attempt does not retire.
 
-After all result or writeback publication, `HL.LDI.PR` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+Design point: the loaded bytes are published unchanged, so the destination holds the exact memory image of the eight bytes; no normalization step can alter the value at this width.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ldi-pr-constraints role=constraints -->
 ## Legality, faults, and restart
 
-Each accessed address is aligned to the `8`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+A fixed-bit mismatch raises `Fault_IllegalInstruction` before any effect, and an unavailable `T` or `U` slot named by `SrcL` raises the same fault before execution. The encoding has no transform or shift field, so no other value can be reserved.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
+The preflight tests the low `3` bits of the effective address, which here is the sum, and raises `Fault_DataAlignment` before translation and before the permission check. An `8`-byte-aligned address that fails the permission or bounded-memory test raises `Fault_DataPage` at the original address.
 
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+A fault records no load event, publishes neither result, and leaves `TPC` on the faulting instruction. Recovery rescales the immediate and recomputes the complete sum, because `SrcL` was never advanced.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ldi-pr-example role=example -->
-## Non-normative reading walkthrough
+## Reading one encoding end to end
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `hl.ldi.pr [SrcL, simm], ->Dst0, Dst1` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Take `hl.ldi.pr [13, 2], ->14, 13` with GPR13 = `0x9000`. The immediate is `2` elements, scaled by `8` gives `16`.
+- The effective address is `0x9000` plus `16`, which is `0x9010` and is `8`-byte aligned.
+- GPR14 receives the `8` bytes at `0x9010` through `0x9017`, and GPR13 receives `0x9010` because `Dst1` names the base register.
+- `TPC` becomes the instruction address plus `6`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

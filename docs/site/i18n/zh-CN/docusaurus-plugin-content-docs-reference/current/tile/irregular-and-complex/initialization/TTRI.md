@@ -19,52 +19,60 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-ttri-purpose role=purpose -->
 ## TTRI 的作用
 
-`TTRI` 在新的 Local Tile 中生成精确带类型的下三角或上三角矩阵。
+`TTRI` 把一个由类型化的一和零组成的三角掩码写入新分配的 Local RowMajor Tile。它不读取任何源 Tile；对角线与方向来自 GPR。
+
+设计要点：`TTRI` 由 `BSTART.SFU` 以 TEPL Mode 3 Function 7（选择器 `0x067`）选中，没有独立 opcode。
 
 <!-- PTO-READER-BLOCK: tile-c-ttri-mechanism role=mechanism -->
-## 操作机制
+## 生成公式
 
-下三角方向在 `c <= r + diagonal` 时写带类型的一；上三角方向在 `c >= r + diagonal` 时写带类型的一。
+对位于第 r 行、第 c 列的每个有效元素，下三角方向在 `c <= r + diagonal` 时写入一，上三角方向在 `c >= r + diagonal` 时写入一。其他所有有效元素接收零。
 
-有符号边界比较不回绕，其余有效坐标写带类型的零。
+一是精确的类型化编码：FP32 为 `0x3f800000`，FP16 为 `0x3c00`，整数类型为整数 1。零为正零。
+
+设计要点：边界比较使用有符号整数，并且不回绕。因此当对角线小于等于 -ValidRow 时，下三角方向的所有元素都为零；而很大的正对角线使下三角方向的所有元素都为一。
 
 <!-- PTO-READER-BLOCK: tile-c-ttri-inputs-outputs role=inputs-outputs -->
 ## 操作数、形状与类型
 
-- `destination0` 标识新分配的目的 Tile。
+- `destination0` 是新分配的 Local RowMajor Tile，类型为 `FP32`、`FP16`、`S32`、`S16`、`U32` 或 `U16`。
+- `diagonal` 是从 RegSrc0 读取的有符号位移；它必须位于 -65535 到 65535 之间。
+- `flag0` 是从 RegSrc1 读取的方向：0 选择下三角，1 选择上三角。RegSrc2 与 RegDst 必须为零。
 
-- `flag0` 选择下三角或上三角方向。
+省略 `B.DIM` LB0 时取架构默认值一；显式编码的零非法，因为 ValidCol 必须非零。LB1 默认使 ValidRow 为 1，LB2 默认为 Col = ValidCol。省略 `B.IOR` 选择对角线 0 与下三角方向；显式全零 `B.IOR` 读取 GPR0，并给出相同的值。
 
-- `diagonal` 提供有符号对角线位移。
-
-- 封闭的适用 DataType 集合为 `FP32`、`FP16`、`S32`、`S16`、`U32`、`U16`。
-
-- 除非该助记符显式选择其他允许布局，数据 Tile 使用行主序布局。
-
-- `LB0`、`LB1`、`LB2` 按该助记符契约补全有效形状与物理形状；所有必需有效范围都必须非零。
+存在的 `B.DATR` 必须所有字段为零。只允许恰好一条终止的仅目标 `B.IOT`。
 
 <!-- PTO-READER-BLOCK: tile-c-ttri-effects role=effects -->
 ## 已定义性、填充与发布
 
-该操作没有源 Tile，也不执行源快照。类型、维度、方向、对角线、掩码、容量与分配会在生成前完成预检。
+没有源 Tile，也没有源快照。三角载荷、目标描述符以及每个元素的已定义性作为一次操作发布；每个有效元素都变为已定义。
 
-三角载荷、目标描述符、有效区域已定义性与未定义 Null 填充会原子发布；拒绝路径不发布任何部分。
+有效区域之外的物理元素接收 `Null` 填充：一个保持未定义的零载体。`TTRI` 没有全局内存、GPR 或数值状态效果。
 
 <!-- PTO-READER-BLOCK: tile-c-ttri-constraints role=constraints -->
 ## 合法性、故障与顺序边界
 
-仅目标绑定、维度、DataType、行主序布局、全零 B.DATR、方向、对角线、容量与分配都会在效果前预检。
+绑定格式错误、`B.IOS`、不支持的类型、非 RowMajor 布局、维度缺失或无效、方向不是 0 或 1、对角线超出 -65535 到 65535，或非零 `B.DATR` 字段，会在分配之前引发 `Fault_TileLegality`。
 
-合法性或分配检查失败会引发相应 Tile 故障，不留下部分目标、状态或内存效果。
+形状无法表示、目标寄存器不可用、TSize 过小或 Tile 容量耗尽，会在分配之前引发 `Fault_TileAllocation`。
 
-`PE_MASK=0000` 是严格无操作，发生在操作数读取、分配、故障、数值状态或载荷效果之前。
+`PE_MASK=0000` 在 `B.IOT` 的 size code 编码检查之后是严格无操作：不再进行 GPR 读取、描述符检查、分配或操作故障，但非法的 `B.IOT` size code 仍会引发 `Fault_IllegalInstruction`。
 
 <!-- PTO-READER-BLOCK: tile-c-ttri-example role=example -->
 ## 非规范示例
 
 下面的示例只帮助理解当前 ASL 绑定契约，并不是第二份指令定义。
 
-`TTRI <bundle operands>` 只执行目标侧预检，不读取或快照源 Tile；随后生成三角载荷，并与 Null 填充一起原子发布。
+一个 FP32 目标有 3 个有效行、4 个有效列，下三角方向，对角线为 0，保存下面各行，其中 1 表示 `0x3f800000`。若对角线改为 1，每行多一个一：1 1 0 0，然后 1 1 1 0，然后 1 1 1 1。
+
+```text
+row 0: 1 0 0 0
+row 1: 1 1 0 0
+row 2: 1 1 1 0
+```
+
+同样的对角线 0 在上三角方向下，在 `c >= r` 处写入一：1 1 1 1，然后 0 1 1 1，然后 0 0 1 1。两种方向下主对角线都为一。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

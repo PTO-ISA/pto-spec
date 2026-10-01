@@ -17,44 +17,70 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-casb-purpose role=purpose -->
-## HL.CASB 的作用
+## `HL.CASB` 做什么
 
-`HL.CASB` 把 `SrcL` 指向的字节与 `SrcR` 进行原子比较；相等时写入 `SrcD`，而两条路径都会发布先前的 8 位值。
+`HL.CASB` 是一个在一次比较之下交换一个字节的 48 位标量原子形式。它把 `SrcL` 中地址处的字节与 `SrcR` 的低字节比较，并且只在相等时把 `SrcD` 的低字节写入该地址。无论结果如何，它都会把读出的字节以零扩展补齐到 64 位 `PTO_XLEN` 宽度后，通过 `RegDst` 发布。
+
+该形式由匹配值 `0x0000600b000e` 与掩码 `0xf000707ff83f` 选出。它的访问宽度固定为 `1` 字节，处理程序是 `ScalarHandler_CompareAndSwap`。
 
 <!-- PTO-READER-BLOCK: scalar-hl-casb-mechanism role=mechanism -->
-## 原子机制
+## 字节操作的执行顺序
 
-ASL DOC 契约选择 `ScalarHandler_CompareAndSwap`，访问宽度为 `1` 字节。
+分派器解码 Reg5 字段，读取 `far` 位，并以 `1` 字节的宽度进入 `CompareAndSwap`：
 
-匹配与不匹配都会发出一个带排序属性的原子事件；只有匹配路径会把写入标记为已执行。
+1. `ProbeDataAccess(address, 1, 1, FALSE)` 先检查对齐，再检查读权限。
+2. `ProbeDataAccess(address, 1, 1, TRUE)` 先检查对齐，再检查写权限。
+3. 两个翻译后的地址不一致时抛出 `Fault_DataPage`。
+4. `LoadTranslatedUnsigned` 读取被寻址的那一个字节。
+5. 该字节与 `NormalizeAtomicUnsigned(SrcR, 1)` 比较，后者是零扩展的 `SrcR[7:0]`。
+6. 相等时 `StoreTranslated` 写入 `SrcD[7:0]`；一个原子事件记录选定的排序与 `write_performed`，随后返回读出的字节。
+
+设计要点：三个源都在进入 `CompareAndSwap` 之前读出，而目的地只在它返回之后才写入，因此与 `SrcR` 或 `SrcD` 相同的 `RegDst` 不会干扰这次比较。
 
 <!-- PTO-READER-BLOCK: scalar-hl-casb-inputs-outputs role=inputs-outputs -->
-## 输入与结果
+## 字段、选择符与路由位
 
-`SrcL` 承载 Reg5 原子地址源；`SrcR` 承载 Reg5 期望字节源；`SrcD` 承载 Reg5 目标字节源；`RegDst` 承载 Reg5 旧值目的地；`aq` 承载获取排序位；`rl` 承载释放排序位；`far` 承载平坦地址路由提示。
+四个寄存器字段都是 Reg5 选择符：编码 `0`..`23` 命名绝对 GPR，`24`..`27` 读取 `T#1`..`T#4`，`28`..`31` 读取 `U#1`..`U#4`，且不会移除该条目。作为目的地时，`RegDst` 在 `1`..`23` 写入 GPR，在 `0` 与 `24`..`29` 丢弃，在编码 `30` 压入 `U`，在编码 `31` 压入 `T`。
 
-`aq` 与 `rl` 选择宽松、获取、释放或获取-释放排序；`far` 是配置档路由提示，在参考配置档中不改变架构结果。
+| 字段 | Lsb | 宽度 | 在本指令中的角色 |
+| --- | ---: | ---: | --- |
+| `SrcD` | 6 | 5 | 期望写入的字节源 |
+| `RegDst` | 23 | 5 | 旧值目的地 |
+| `SrcL` | 31 | 5 | 原子地址源 |
+| `SrcR` | 36 | 5 | 期望字节源 |
+| `rl` | 41 | 1 | release 排序位 |
+| `aq` | 42 | 1 | acquire 排序位 |
+| `far` | 43 | 1 | 配置档路由提示 |
+
+设计要点：`far` 从指令第 43 位译出并交给 `AtomicAddress`，后者原样返回其参数。在参考配置档中，`hl.casb.f [a0], a1, a2, ->a3` 与 `hl.casb [a0], a1, a2, ->a3` 读写相同的地址并发布相同的值；`.f` 写法只改变编码中的路由提示。
 
 <!-- PTO-READER-BLOCK: scalar-hl-casb-effects role=effects -->
-## 效果与排序
+## 会改变什么
 
-预检成功后，即使比较不匹配也会发布旧值；只有相等时内存才会改变。
+匹配时被寻址的字节收到 `SrcD[7:0]`；不匹配时内存保持不变。两条路径都把读出的字节以零扩展的 64 位值提供给 `RegDst`，因此结果永远不是负数：`0xff` 发布为 `0x00000000000000ff`。
 
-完成的写入会使重叠的本地 64 字节缓存行保留失效，保留不重叠的保留，并让 `TPC` 前进 `6` 字节。
+完成的匹配还会在保留的 64 字节颗粒与所存字节重叠时使本地保留失效；不匹配不执行写入，因此不会使其失效。
+
+设计要点：该形式编码为 48 位，分派器按 `length_bits DIV 8` 推进 `TPC`，因此一条完成的 `HL.CASB` 让程序计数器前进 6 字节。该推进只在处理程序无故障之后发生，所以故障时 `TPC` 仍停在该形式开头，恢复后重新执行同样的 6 字节。
 
 <!-- PTO-READER-BLOCK: scalar-hl-casb-constraints role=constraints -->
-## 合法性与精确故障
+## 在哪些情况下被拒绝
 
-每个字节地址都天然对齐。对齐、地址翻译和权限检查都先于架构效果。
+- 每个字段值都已分配：`SrcL`、`SrcR`、`SrcD` 和 `RegDst` 的全部 `32` 个选择符编码，以及 `aq`、`rl` 与 `far` 的全部 `8` 种组合。
+- 被选中的 `T` 或 `U` 队列条目不可用时操作数非法，固定位模式无法译码时译码失败；两者都在任何架构效果之前于 `ReadPC()` 抛出 `Fault_IllegalInstruction`。
+- 每个字节地址都天然对齐，因此这里的对齐检查不会报出 `Fault_DataAlignment`；边界检查仍可能报出 `Fault_DataPage`。
+- 抛出故障时不向目的地提供值、不记录原子事件、不改变保留状态，也不推进 `TPC`。
 
-预检失败时不会发布目的值、内存事件、保留更新或退役效果；保存的原始 `TPC` 支持完整重新执行。
+设计要点：只对期望值的低字节做归一化，所以在第 `7` 位以上不同的 `SrcR` 取值与同一个内存字节比较时结果相同；低字节同为 `0x7f` 的两种编码行为一致。
 
 <!-- PTO-READER-BLOCK: scalar-hl-casb-example role=example -->
-## 非规范示例
+## 一个匹配的字节，一个不匹配的字节
 
 本示例只展示一种已接受写法；下方生成的契约仍是权威来源。
 
-初次阅读可从 `hl.casb [SrcL], SrcR, SrcD, ->Rd` 开始，再只改变上文说明的排序或路由修饰位。
+假设被寻址的字节存放 `0x7f`，`SrcR` 的低字节为 `0x7f`，`SrcD` 的低字节为 `0x80`。比较匹配，该字节变为 `0x80`，目的地收到 `0x000000000000007f`。记录的原子事件报告 `write_performed=true`。
+
+若内存字节仍为 `0x7f`，而 `SrcR` 的低字节为 `0x7e`，比较失败：不写入任何内容，目的地仍收到 `0x000000000000007f`，事件报告 `write_performed=false`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

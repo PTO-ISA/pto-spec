@@ -7,8 +7,76 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-EXECUTION-REDUCTION}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-reduction-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns `ExecuteTileReduction`, the shared handler for row and column reductions. It is reached by TROWSUM, TROWPROD, TROWMIN, TROWMAX, TROWARGMIN, and TROWARGMAX, and by the six matching TCOL forms.
+
+A row reduction produces one value per valid row. A column reduction produces one value per valid column.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-reduction-concepts role=concepts-state -->
+## Concepts and visible state
+
+The operation type is the bundle's selected DataType, or the source Tile's `data_type` when no bundle operation is selected.
+
+The outer index walks the kept axis and the inner index walks the reduced axis. Each outer position starts an accumulator:
+
+- SUM starts at an all-zero encoding and PRODUCT starts at the one encoding of the type. Both then fold every inner element from index 0.
+- MIN, MAX, ARGMIN, and ARGMAX start with the first element and fold from inner index 1.
+
+Each step calls `TileProfileBinaryWithFlags` with ADD, MUL, MIN, or MAX. The flags NV, DZ, OF, UF, and NX, from bit 0 to bit 4, are ORed across all steps.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-reduction-rules role=rules-interactions -->
+## Rules and interactions
+
+The fold is strictly sequential in increasing inner index. Floating SUM and PRODUCT round after every step, so the order is part of the result.
+
+ARGMIN and ARGMAX track an index. A step updates it only when the result equals the new element and differs from the old accumulator. A later element with the same encoding as the accumulator leaves the result unchanged, so the first index of a bit-identical extreme is kept. Floating signed zeros are not ties: for example, TROWARGMAX moves to a later +0 after a -0 because MAX returns +0. The destination stores that index as a U32 value.
+
+The destination is a single column for a row reduction and a single row for a column reduction. After the loop the handler marks the valid region defined, applies the bundle padding, records the ORed flags, and publishes the destination.
+
+Design point: legality rejects a destination that names the source. The handler reads a snapshot of the source and builds the result privately, so no element of the source is overwritten while it is still needed.
+
+Design point: MIN and MAX start from the first element, so every step compares two source values and the result is one of them, except that two NaN inputs give the canonical quiet NaN. SUM and PRODUCT start from an identity, so every source element passes through exactly one ADD or MUL step.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-reduction-boundaries role=boundaries -->
+## Architectural boundaries
+
+The reduction operations are not in `TileOperationExecutionMaskEligible`, so an ExecutionMask cannot be bound to them. The handler reads every valid source element.
+
+ARGMIN and ARGMAX accept S32, U32, FP32, S16, U16, FP16, BF16, S8, and U8 sources. Other reductions accept the 16 arithmetic types, but floating ADD and MUL go through `ScalarFPBinaryProfile`, which accepts FP64, FP32, FP16, and BF16.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-reduction-example role=example-usage -->
+## Non-normative reading example
+
+Take TROWARGMAX on an S32 RowMajor source with one valid row of four columns:
+
+```text
+TROWARGMAX <Row=32, Col=4, ValidRow=1, S32>, T#1, ->T<128B>
+```
+
+The source row is 3, 7, 7, 2.
+
+1. The accumulator starts at 3 with index 0.
+2. Inner 1: MAX of 3 and 7 is 7, which equals the new element and differs from 3, so the index becomes 1.
+3. Inner 2: MAX of 7 and 7 is 7, which equals the old accumulator, so the index stays 1.
+4. Inner 3: MAX of 7 and 2 is 7, so the index stays 1.
+
+The destination element is U32 1. A TROWSUM of the same row starts at 0 and gives 0 + 3 + 7 + 7 + 2 = 19.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-reduction-related role=related-owners-navigation -->
+## Related owners
+
+- [Reduction and expansion legality](../legality/reduction-and-expansion.md) owns the shape and type checks.
+- [Elementwise execution](elementwise.md) owns the binary step helper.
+- [Expansion execution](expansion.md) owns the matching broadcast operations.
+- [Predicate carriers](predicate-carriers.md) owns the ExecutionMask eligibility list.
+- [Numeric status](../../../arch/state/numeric-status.md) owns the sticky flags.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

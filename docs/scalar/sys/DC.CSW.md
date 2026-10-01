@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-csw-purpose role=purpose -->
 ## What DC.CSW does
 
-`DC.CSW` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+`DC.CSW` performs the data-cache clean-by-set/way scope-token maintenance operation and completes it synchronously, so the attempt is finished when the instruction retires. Its single operand, `SrcL`, carries the token that identifies the scope the request was issued for (`asl/scalar/sys/DC.CSW.asl:29`).
 
 <!-- PTO-READER-BLOCK: scalar-dc-csw-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+The instruction is bound to the shared maintenance handler (`asl/scalar/sys/DC.CSW.asl:11`) and to the operation token `Maintenance_DC_CSW` (`asl/scalar/sys/DC.CSW.asl:23`). `ExecuteMaintenance` compares that token against the privilege table and the operation table, and the `Maintenance_DC_CSW` case is one of the eight data-cache cases that advance `_DataCacheEpoch` (`asl/scalar/model/sys/semantics.asl:134`).
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+This is a System-block instruction. Its applicability rule requires the bundle to be active with an active body of block kind `BundleKind_System` (`asl/scalar/model/sys/semantics.asl:321`).
 
 <!-- PTO-READER-BLOCK: scalar-dc-csw-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+`SrcL` is a Reg5 source: R0..R23, T#1..T#4, or U#1..U#4. The dispatcher captures the decoded register value and hands it to the executor as the operand (`asl/scalar/model/dispatch/sys.asl:39`).
 
-Encoded zero is an assigned field value, never an omitted operand.
+`DC.CSW` writes no destination. It records the operand instead of returning it, and encoded zero is an assigned value, not an omitted operand.
 
 <!-- PTO-READER-BLOCK: scalar-dc-csw-effects role=effects -->
 ## Architectural effects
 
-On success, the maintenance record receives `Maintenance_DC_CSW` and the exact captured operand token.
+On a fault-free attempt the data-cache epoch increases by one and the maintenance record is overwritten with `Maintenance_DC_CSW` and the operand value. The record update is guarded by the fault check inside the executor, so a faulting attempt does not touch it (`asl/scalar/model/sys/semantics.asl:156`).
 
-Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+Design point: instruction completion is modelled as an epoch step plus a recorded token. That gives software a defined, observable completion point without constraining how many cache lines an implementation actually cleans.
+
+`TPC` advances after the attempt reports success; the increment is worth one instruction length, not one epoch (`asl/scalar/model/dispatch/top-level.asl:56`).
 
 <!-- PTO-READER-BLOCK: scalar-dc-csw-constraints role=constraints -->
 ## Placement and rejection
 
-Cache maintenance is a synchronous local hint at every ACR and does not define additional implementation cache contents.
+A `DC.CSW` outside an active SYS block body is rejected with `Fault_BundleControl` before operand legality is evaluated, so neither the epoch nor the record changes. Inside the block body the fixed bits and the `SrcL` encoding are validated before the executor runs.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+Data-cache maintenance carries no ring restriction: `MaintenanceAccessPermitted` returns `TRUE` for every operation except the four TLB ones (`asl/scalar/model/sys/semantics.asl:123`). There is therefore no `Fault_IllegalInstruction` path in `DC.CSW` for ring, address, or access class.
 
 <!-- PTO-READER-BLOCK: scalar-dc-csw-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `dc.csw SrcL` and trace its encoded fields through preflight before following the selected system effect.
+Execute `dc.csw SrcL` from a SYS block body with the source register holding the token 7. Placement and encoding pass, the register is snapshotted, the data-cache epoch advances by one, and the maintenance record then reads `Maintenance_DC_CSW` with operand 7. Repeating the same instruction advances the epoch again and rewrites the record with the same token.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

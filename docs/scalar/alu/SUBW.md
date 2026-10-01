@@ -19,49 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-subw-purpose role=purpose -->
 ## What SUBW does
 
-`SUBW` is a 32-bit scalar ALU instruction. It performs subtraction under the low 32-bit word, followed by sign-extension to XLEN result rules; its current instruction contract defines the result publication path and any additional state effect.
+`SUBW` transforms `SrcR` exactly as `SUB` does, subtracts the shifted value from the low `32` bits of `SrcL` modulo `2^32`, and publishes the word sign-extended to `PTO_XLEN`. It carries `RegDst`, `SrcL`, `SrcR`, `SrcRType` and `shamt`.
+
+The carrier matches `0x00001025` under mask `0x0000707f`. The handler is `ScalarBinaryW` with the arithmetic-family flag, so `SrcRType=10` negates the complete right operand.
+
+The transformation and the shift run at full width on `SrcR`; the narrowing applies to the subtraction and the publication.
 
 <!-- PTO-READER-BLOCK: scalar-subw-mechanism role=mechanism -->
-## How the result is formed
+## How the word result is formed
 
-Execution snapshots the encoded inputs, then performs subtraction under the low 32-bit word, followed by sign-extension to XLEN result rules, and only afterward performs the destination effects.
+`ExecuteDecodedBinary` reads both sources and the two suffix fields, forms the right operand with `PrepareScalarRight(right, modifier, shift_amount, FALSE)`, and with `word_operation` true calls `ScalarBinaryW(ScalarBinary_SUB, left, right)` (`asl/scalar/model/dispatch/alu.asl:86-87`). That helper computes the difference at `32` bits and returns `SignExtend{PTO_XLEN}(result32)` (`asl/scalar/model/alu/semantics.asl:477`).
 
-- `SrcRType` first transforms the right source; `shamt` then logically shifts that transformed value left before the arithmetic or logical operation.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+subw SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>, ->{t, u, Rd}
+```
+
+Design point: `.neg` negates the whole `PTO_XLEN` register before the narrowing, so the low word of the negated value is the two's-complement negation of the low word of `SrcR` whenever that low word is not zero. With a `shamt` of `31`, only the former bit `0` of the transformed value can reach word bit `31`.
+
+Design point: The upper half of `SrcL` never enters the subtraction. `subw` with a source whose low word is zero and a right operand of `1` publishes `-1`, whatever the upper half of the source holds.
 
 <!-- PTO-READER-BLOCK: scalar-subw-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the left operand through Reg5.
-- The 5-bit `SrcR` field selects the right operand through Reg5.
-- The 2-bit `SrcRType` field selects the transformation applied to the right source.
-- The 5-bit `shamt` field encodes the logical-left shift applied after right-source transformation.
+Both operands are Reg5 sources, the suffix fields come from the carrier, and `RegDst` selects the destination.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+- `SrcL` at `[15 +: 5]` and `SrcR` at `[20 +: 5]`: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, `28..31` read `U#1..U#4`, non-consuming. Only the low word of each is subtracted.
+- `SrcRType` at `[25 +: 2]`: `00` `.sw`, `01` `.uw`, `10` `.neg`, `11` no modifier; an omitted suffix encodes `11`.
+- `shamt` at `[27 +: 5]`: the logical left shift applied to the transformed right operand, `0` through `31`.
+- `RegDst` at `[7 +: 5]`: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+
+Design point: The two width decisions are independent, so `subw` and `sub` can disagree when an operand upper half is not the sign extension of its low word. `subw` subtracts the low word of the transformed right operand and then extends the word result, while `sub` subtracts the whole transformed register.
 
 <!-- PTO-READER-BLOCK: scalar-subw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are snapshotted before the write, so aliasing destinations compute from pre-instruction values. The sign-extended word is published and `TPC` advances by `4` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+`SUBW` accesses no memory and leaves reservation, descriptor, numeric-flag, trap, bundle, privilege, predicate and control-flow state unchanged; a `30` or `31` destination is the only case in which a temporary queue moves.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: The word difference wraps modulo `2^32`, and the final extension reinterprets the wrapped word as a signed `32`-bit value. A borrow out of the word therefore changes the sign of the published value instead of being dropped.
 
 <!-- PTO-READER-BLOCK: scalar-subw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+All four `SrcRType` codes and all `32` `shamt` values are assigned, as are every source and destination code of the Reg5 maps. The form carries no constraint beyond its fixed bits.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unmatched carrier raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`, reachable for `SUBW` only while a system-block terminal request is pending. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`, before the destination effect and before `TPC` advances.
+
+Design point: No operand value selects a trap: the modifier, the shift, the word subtraction and the sign extension are all total. The fault boundary of `SUBW` is encoding validity plus source availability.
 
 <!-- PTO-READER-BLOCK: scalar-subw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `SUBW` example, `SrcL=7`, `SrcR=3`, `SrcRType=11`, and `shamt=0` produce `4`.
+With `a0` holding `7` and `a1` holding `3`, `subw a0, a1, ->a2` publishes `4`, and `subw a0, a1<.neg>, ->a2` publishes `10`.
+
+With `a0` holding `3` and `a1` holding `7`, the word difference is `0xFFFFFFFC`, so `a2` receives `0xFFFFFFFFFFFFFFFC`. With `a1` holding `1` and `shamt` equal to `4`, `subw a0, a1<<<4>, ->a2` publishes `-13`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

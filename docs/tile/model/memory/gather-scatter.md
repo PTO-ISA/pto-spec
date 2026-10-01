@@ -7,8 +7,74 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-MEMORY-GATHER-SCATTER}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns indexed GM transfers and the prefetch body.
+
+- `MGATHER` loads one element per index into a destination Tile.
+- `MSCATTER` stores one source element per index to GM.
+- `MGATHER_MASK` and `MSCATTER_MASK` add a predicate Tile that switches individual lanes off.
+- `TPREFETCHCore` probes and reads a strided region for all four PEs without producing a Tile.
+
+An index Tile holds one GM byte displacement per lane. A lane is one valid coordinate of the index Tile.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-concepts role=concepts-state -->
+## Concepts and visible state
+
+The address of a lane is `base + displacement`, computed by `TileMemoryByteDisplacementAddress`. Index Tiles must be S32, U32, S64, or U64; signed indices sign-extend. The displacement is not scaled by the element size.
+
+The data type is checked by `IndexedTLSUOrdinaryTransferDataTypeLegal`, which accepts the ordinary non-packed types and also the four-bit types. For a four-bit data type, one index addresses one byte that holds two adjacent data columns, so the data Tile has exactly twice as many valid columns as the index Tile.
+
+A lane is active when the ExecutionMask (if any) marks it active and, for the MASK forms, bit 0 of the predicate element is 1.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-rules role=rules-interactions -->
+## Rules and interactions
+
+All four indexed bodies first check their operands by assertion: defined contents, matching valid shapes (twice the index columns for four-bit data), equal layouts, and the index and data types. The two gather bodies also assert destination descriptor legality.
+
+Design point: every body probes all active lanes before the first memory access or event. If any probe fails, the body returns with GM, memory events, and the destination Tile unchanged. The consequence is that a faulting indexed request has no partial memory effect, unlike dense `TSTORE`.
+
+`MGATHER` then fills every physical destination element: inactive valid coordinates receive the ExecutionMask zero or merge value, and every other coordinate receives the `PadValue` for the data type. It then overwrites each active lane with the loaded value, records a load event, and marks the whole physical region defined.
+
+Design point: the destination is fully written before publication, so `MarkTilePhysicalRegionDefined` is correct even with `PadValue` Null. `TilePadValueForDataType` gives zero bits for Null, so a Null pad publishes defined zero bits here, not undefined elements.
+
+`MSCATTER` captures every active lane's address and value during the probe phase, then commits the stores through `CommitIndexedScatterTransactions`. For four-bit data, the two adjacent source nibbles are combined into one byte and the whole byte is stored.
+
+Design point: the commit order is chosen by `ARBITRARY` choices, so row-major order is not guaranteed. When two lanes target the same address, which value remains is implementation-defined. Software that needs a defined result must avoid duplicate scatter addresses or use an atomic form.
+
+`TPREFETCHCore` computes addresses with an element row stride and `TileMemoryIndexedAddress`. It probes every element of all four PEs before recording any load event, and it writes no Tile state.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-boundaries role=boundaries -->
+## Architectural boundaries
+
+Bundle dispatch rejects malformed schemas, allocates the gather destination, and releases it if a fault occurs later. `B.CATR` atomic makes the whole block non-interleavable, but, as the ASL comment says, it does not choose a lane order or a duplicate-address winner.
+
+Indexed gathers and scatters are not atomic read-modify-write operations. The atomic forms are in the atomics and GM atom/red units.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-example role=example-usage -->
+## Non-normative reading example
+
+`MGATHER` of FP32 with base `0x4000` and a 1 by 4 S32 index Tile holding `0, 8, -4, 8`:
+
+- Lane addresses are `0x4000`, `0x4008`, `0x3FFC`, and `0x4008`. All four are multiples of 4, so the 4-byte alignment probe passes.
+- The two lanes at `0x4008` each read the same value; duplicate gather addresses are harmless.
+
+`MSCATTER` of FP32 with the same index Tile and source values `1.0, 2.0, 3.0, 4.0` stores four times. The locations `0x4000` and `0x3FFC` receive `1.0` and `3.0`. Location `0x4008` ends with either `2.0` or `4.0`; the ASL does not fix which.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-related role=related-owners-navigation -->
+## Related owners
+
+- [Addressing](addressing.md) owns byte-displacement and indexed address arithmetic.
+- [Indexed layout legality](../legality/indexed-layout.md) owns the index and data type rules.
+- [Atomics](atomics.md) owns the atomic compare-and-swap gather.
+- [Execution mask state](../execution/execution-mask-state.md) owns active lanes and inactive values.
+- [Memory atomicity](../../../arch/memory-model/atomicity.md) and [ordering](../../../arch/memory-model/ordering.md) own event semantics.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

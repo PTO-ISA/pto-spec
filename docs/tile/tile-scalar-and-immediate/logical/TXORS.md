@@ -19,54 +19,64 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-txors-purpose role=purpose -->
 ## What TXORS does
 
-`TXORS` computes bitwise XOR between every valid integer element and one scalar and publishes a new Local destination.
+`TXORS` computes the bitwise XOR of every element in the valid rectangle of an integer Local source Tile with one scalar, and writes the results into a newly allocated Local destination Tile. It is selected by TEPL Mode 1 Function 8 (selector `0x028`), written canonically as `BSTART.VEC TXORS, DataType`, and has no standalone opcode.
+
+Design point: the scalar is a bundle operand, not a Tile. The Tile-Tile form `TXOR` needs a second source Tile with the same shape and layout, so applying one value that way first requires a Tile filled with it, for example by `TEXPANDS`. `TXORS` reads the value directly from a GPR, so no broadcast Tile has to be allocated or made defined.
 
 <!-- PTO-READER-BLOCK: tile-c-txors-mechanism role=mechanism -->
-## Operation mechanism
+## Scalar source and element mechanism
 
-The operation evaluates only the valid rectangle using the mnemonic-selected typed element rule.
+The scalar comes from `B.IOR.RegSrc0`. Each participating PE resolves that selector in its own private GPR file, so PEs selected by one `PE_MASK` can use different scalar values. The bundle has no immediate field for the scalar; when `B.IOR` is omitted the scalar is zero.
+
+The 64-bit GPR value is narrowed by `TileRawElementValue`: only the low 8, 16, 32, or 64 bits, matching the element width of the selected `DataType`, are kept. No numeric conversion happens. The retained bits are used as a raw element-width pattern.
+
+After preflight, `ExecuteTileScalar` computes `source XOR scalar` for each coordinate in `ValidRow x ValidCol`. Only the low element-width bits of each element and of the scalar take part. Signedness does not change the bit operation, and no numeric-status flag is produced.
+
+Design point: because the GPR is narrowed to the element width, a GPR holding `-1` (all 64 bits set) acts as an all-ones mask for every integer type. `TXORS` with that scalar is a bitwise NOT of the valid region.
+
+Design point: all checks, including the scalar checks, finish before the source and scalar are snapshotted, and the result is published only after every element is computed. A source that aliases the destination is therefore read with its old values.
 
 <!-- PTO-READER-BLOCK: tile-c-txors-inputs-outputs role=inputs-outputs -->
-## Operands, shape, and type
+## Operand roles and descriptors
 
-- `destination0` identifies a newly allocated destination.
+- `source0` is the Tile operand. It is an existing Local numeric Tile and persists unchanged.
+- `scalar0` is the per-PE scalar from `B.IOR.RegSrc0`. An explicit `B.IOR` must keep `RegSrc1`, `RegSrc2`, and `RegDst` zero.
+- `destination0` is a newly allocated Local Tile. Its backing `DataType` is the selected `DataType`, and its shape and layout match the source.
 
-- `source0` supplies a persistent source Tile.
+One terminating `B.IOT` binds the source and destination, and both use one `PE_MASK`. `B.IOS` and additional Tile bindings are illegal.
 
-- `scalar0` supplies the per-PE scalar operand.
+Design point: `PE_MASK=0000` is a strict no-op. It exits before any GPR read, descriptor read, allocation, fault, or status effect, so a bundle with no participating PE never reads the scalar register.
 
-- The closed applicable DataType set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
-
-- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
-
-- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+Design point: the source may be stored with a different same-width, non-packed backing type. Bitwise and shift operations consume the stored carrier bits directly, so the bits are not validated as numbers; a width mismatch or a packed four-bit carrier remains illegal.
 
 <!-- PTO-READER-BLOCK: tile-c-txors-effects role=effects -->
-## Definedness, padding, and publication
+## Publication, definedness, and padding
 
-All source descriptors and payloads are validated and snapshotted before destination publication.
+The destination becomes visible as one unit: its descriptor, the valid-region results, the padding, and the definedness of every element are published together. The operation produces no numeric status, and a rejected bundle has no architectural effect.
 
-The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`. `Zero`, `Max`, and `Min` define them with the corresponding value of the `DataType`; `Null` leaves them undefined. Omitting `B.DATR` selects `Null`, while explicit code `00` selects `Zero`.
 
-Null padding leaves physical coordinates outside the valid rectangle undefined; an explicit non-Null PadValue defines those coordinates with the selected typed value.
+Omitting `B.IOR` supplies zero, so every valid source encoding is copied unchanged.
 
-Source Tiles persist and are not modified by successful execution.
+`TXORS` has no global-memory effect. When an ExecutionMask is in force, inactive coordinates receive the mask's zero or merge value instead of a computed result.
 
 <!-- PTO-READER-BLOCK: tile-c-txors-constraints role=constraints -->
-## Legality, fault, and order boundaries
+## Type, layout, and fault boundary
 
-Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+The accepted data-type set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Floating, packed, and other encodings are rejected before effects.
 
-A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+The layout is `RowMajor` by default. An explicit `B.DATR` `Layout` may select `CUBE_M16` or `CUBE_M32`; the source and destination must use the same layout, and `CUBE_N8` and Shared Tiles are illegal. `B.DATR` accepts only `PadValueOrByteId` and `Layout`, so nondefault `RMode`, `Sat`, `CMode`, `Canonicalize`, or a secondary `DataType` is rejected.
 
-`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+Every source element in the valid rectangle (every active one, when an ExecutionMask is in force) must be defined. A malformed binding, `B.IOS`, a surplus `B.IOR` field, a missing or zero dimension, an unsupported `DataType`, a carrier-width mismatch, or a capacity or allocation failure raises `Fault_TileLegality` or `Fault_TileAllocation` before any destination effect.
 
 <!-- PTO-READER-BLOCK: tile-c-txors-example role=example -->
 ## Non-normative example
 
 This example illustrates the current ASL-bound contract and is not a second instruction definition.
 
-`TXORS <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+For a `U8` example, a source row `[0x0F, 0xA5]` and scalar `0xFF` produce `[0xF0, 0x5A]`.
+
+The macro form is `TXORS <Row=8, Col=64, S16>, T#1, a2, ->T<1KB>`. With `a2` holding `-1`, the low 16 bits are `0xFFFF` and each of the 512 results is the complement of its source element.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

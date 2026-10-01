@@ -19,32 +19,45 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-b-ior-purpose role=purpose -->
 ## B.IOR 的作用
 
-`B.IOR` 是一条 32 位 Block header 命令，用来记录标量 GPR 输入以及可选标量目的位置。它修改待处理 Block 元数据，不会立即执行 Tile body 操作。
+`B.IOR` 是一条 32 位块头部命令，把通用寄存器（GPR）绑定到当前块的操作。一条记录最多指定三个 GPR 输入和一个 GPR 输出。操作把它们用作标量操作数，例如全局内存基地址、行跨距、标量参数或标量结果。
+
+`B.IOR` 执行时不读取任何 GPR。它记录选择器，所选操作在提交时读取这些寄存器。参见[标量绑定](../model/operands/scalar-bindings.md)。
 
 <!-- PTO-READER-BLOCK: block-b-ior-mechanism role=mechanism -->
-## 位置与机制
+## 放置与机制
 
-该命令位于有效 header 中，并且在第一条 body 指令之前。它的有效顺序和数量由完成后的操作 schema 检查，而不是由本命令单独推断。
+`B.IOR` 必须出现在活动块的头部，位于块启动之后、第一条主体指令之前。普通块只接受一条记录。有三类操作接受紧邻的第二条记录：TGPR2T、TIMG2COL，以及从 GPR 获取 ExecutionMask 的合格 Local CUBE 形式。
 
-该命令记录一条待处理标量绑定。所选操作之后才读取源；单独执行 `B.IOR` 不会写入 GPR 目的位置。
+完整操作模式决定消费多少个选择器以及每个选择器的含义。记录本身总是保存四个选择器。输入按操作定义的顺序紧密排列到 `RegSrc0`、`RegSrc1` 与 `RegSrc2` 中，GPR ExecutionMask 字位于所有操作自有输入之后。
+
+设计要点：省略与编码零不同。省略 `B.IOR` 时，每个被消费的槽位取操作自身的默认值。存在 `B.IOR` 时，选择器编码 0 指架构零 GPR，读出 0。对于 `TLOAD` 与 `TSTORE`，省略提供基地址零以及由列数和 `DataType` 计算出的紧密行跨距，而显式的 `RegSrc1 = zero` 提供跨距 0。
 
 <!-- PTO-READER-BLOCK: block-b-ior-inputs role=inputs-outputs -->
-## 操作数与 header 角色
+## 字段与编码值
 
-- `RegDst` 标识目的位置或发布选择；其确切分配域仍以下方生成契约为准。
-- `RegSrc0` 标识输入源或源角色选择；其确切分配域仍以下方生成契约为准。
-- `RegSrc1` 标识输入源或源角色选择；其确切分配域仍以下方生成契约为准。
-- `RegSrc2` 标识输入源或源角色选择；其确切分配域仍以下方生成契约为准。
+- `RegSrc0`（位 19:15）、`RegSrc1`（位 24:20）与 `RegSrc2`（位 31:27）是输入选择器。
+- `RegDst`（位 11:7）是输出选择器。
+- 每个选择器都写作绝对 GPR 编码 0 至 23：`zero`、`sp`、`a0` 至 `a7`、`ra`、`s0` 至 `s8` 以及 `x0` 至 `x3`。编码 24 至 31 在 `B.IOR` 中保留；相对 T 或 U 队列选择器永远不是合法的 `B.IOR` 字段，拒绝这些保留编码的是上面点名的那些 schema 检查。
+- `ExecMaskPresent`（位 26）标记携带 GPR ExecutionMask 字的记录。位 25 固定为零。
+
+设计要点：`ExecMaskPresent` 用于区分值为 `zero` 的掩码选择器与未使用的零选择器。它只在最后一条 `B.IOR` 记录上置位，且只在模式绑定 GPR ExecutionMask 时置位。`PredInv` 以及清零与合并的选择属于 `B.DATR` 控制，不是 `B.IOR` 字段。
 
 <!-- PTO-READER-BLOCK: block-b-ior-effects role=effects -->
-## 待处理状态与完成
+## 挂起状态
 
-被接受的 header 命令只改变自己的待处理记录或 carrier。除非本所有者明确指出即时 header 状态更新，否则架构 Tile、Shared、GPR、内存和完成影响都推迟到完整 Block。
+被接受的 `B.IOR` 写入一个标量绑定条目：四个选择器、一个源容量以及 `ExecMaskPresent` 标志。它不修改任何 GPR，也不访问内存。
+
+操作在发布任何目标之前读取所绑定的输入。当操作定义了标量结果时，目标选择器接收该结果。源可以重复；当模式允许目标时，源也可以与目标指向同一个 GPR。
 
 <!-- PTO-READER-BLOCK: block-b-ior-constraints role=constraints -->
 ## 合法性与故障边界
 
-保留编码会在读取或待处理状态变化前被拒绝。位置、重复、角色或完成后 schema 不匹配，会在 body 影响前失败。
+- 选择器编码 24 至 31 保留。记录仍会保存这些编码；只有在操作特定检查要求绝对 GPR 或掩码源时才会出现故障，例如 CUBE `TCI` 与 `TGPR2T`，它们在预检时以 `Fault_TileLegality` 拒绝。
+- `B.IOR` 位于活动头部之外、在只允许一条记录的操作中出现第二条记录、出现第三条记录，或破坏 TGPR2T 或 TIMG2COL 流规则时，引发 `Fault_BundleControl`。
+- 模式未消费的槽位中出现非零选择器、`ExecMaskPresent` 不在最后一条记录上或不适用，或其他模式不匹配时，在操作效果之前引发该操作的合法性故障。
+- 带索引的 TLSU 操作要求显式的 `B.IOR`，其中 `RegSrc0` 为基地址，`RegSrc1`、`RegSrc2` 与 `RegDst` 全为零。
+
+设计要点：多余的选择器必须为零。由于模式会拒绝非零的未使用字段，写在操作忽略的槽位中的多余寄存器名会被报告，而不是被悄悄丢弃。
 
 <!-- PTO-READER-BLOCK: block-b-ior-example role=example -->
 ## 非规范示例
@@ -52,10 +65,10 @@ The current instruction contract is owned by the ASL source linked above.
 以下为非规范示例，仅用于说明当前所有者，不替代其定义。
 
 ```asm
-B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>]
+B.IOR a0, a1, zero, ->zero
 ```
 
-假设当前存在兼容的有效 header，并且之前没有冲突的 `B.IOR` 命令。把 `B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>]` 放在下一个 header 槽，会记录该命令的待处理字段；它本身不会执行最终的 body 操作。
+在 `TLOAD` 块中，这条记录从 `a0` 提供基地址，从 `a1` 提供以字节计的行跨距。`RegSrc2` 与 `RegDst` 为 `zero`，即未使用槽位的选择器。其字段为 `RegSrc0 = 2`、`RegSrc1 = 3`、`RegSrc2 = 0`、`RegDst = 0`、`ExecMaskPresent = 0`，编码为 `0x00310013`。若块改为省略 `B.IOR`，加载将使用基地址零和紧密行跨距。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,42 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-lr-b-purpose role=purpose -->
 ## What LR.B does
 
-`LR.B` loads one byte, publishes its zero-extended value, and replaces the local reservation with the containing 64-byte line.
+`LR.B` loads one byte from the address in `SrcL`, publishes it through the Reg5 destination `RegDst`, and establishes a reservation on the loaded location. It is a standalone encoded 32-bit form, so a successful execution advances `TPC` by `4` bytes.
+
+Design point: the published value is the loaded byte zero-extended to `PTO_XLEN` bits, so the byte `0x80` is published as `0x0000000000000080`. A byte load never sign-extends, and a program that wants a signed byte must extend the published value itself.
 
 <!-- PTO-READER-BLOCK: scalar-lr-b-mechanism role=mechanism -->
-## Atomic mechanism
+## How the load and reservation are ordered
 
-The ASL DOC contract selects `ScalarHandler_LoadReserved` with an access width of `1` byte.
+Dispatch calls `ExecuteDecodedLoadReserved(instruction, form, 1)`, where `1` is this mnemonic's access width. The helper reads `SrcL`, decodes `aq` and `rl` into a memory order, and calls `LoadReserved(address, 1, order)`; when no fault has been recorded, it writes `NormalizeAtomicReturn(old_value, 1)` to `RegDst`.
 
-`SrcZero` is an ignored five-bit alias field: all 32 encodings select the same operation and consume no source through that field.
+`LoadReserved` calls `LoadWithOrder`, which runs the access preflight, reads the byte and records one load event at the translated address with the requested order. Only then, and only when `_LastFault` is `Fault_None`, does `LoadReserved` set `_ReservationValid` and store the original address with the width `1`.
+
+Design point: the reservation update sits inside the fault-free branch, so a faulting `lr.b` preserves an older reservation instead of replacing or clearing it; a retry after a fault starts from the reservation state the program already had.
 
 <!-- PTO-READER-BLOCK: scalar-lr-b-inputs-outputs role=inputs-outputs -->
-## Inputs and result
+## Fields, sources and destinations
 
-`SrcL` carries the Reg5 load address source; `SrcZero` carries the ignored 5-bit alias field; `RegDst` carries the Reg5 loaded-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+The encoded fields are `RegDst@7:5`, `SrcL@15:5`, `SrcZero@20:5`, `rl@25:1`, `aq@26:1` and `far@27:1`; each entry names the low instruction bit and the field width.
 
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+`SrcL` is a Reg5 source: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`. `RegDst` is a Reg5 destination: `1..23` write that GPR, `0` and `24..29` discard the value, `30` pushes `U`, and `31` pushes `T`. `aq` and `rl` select relaxed, acquire, release or acquire-release ordering; `far` is a routing hint, and `AtomicAddress` returns the address unchanged whichever value it takes.
+
+Design point: `SrcZero` is decoded as a five-bit field but no code path reads it. All `32` encodings of that field select the same operation, no encoding of it is reserved, and the field is absent from the assembly spelling `lr.b [SrcL], ->Rd`.
 
 <!-- PTO-READER-BLOCK: scalar-lr-b-effects role=effects -->
 ## Effects and ordering
 
-A successful load emits one ordered load event, publishes the old value, and establishes the reservation only after access preflight completes.
+A successful load reads one little-endian byte, records one load event at the translated address while memory-event capture is enabled, publishes the zero-extended byte through `RegDst`, and leaves the local reservation valid, addressed at the original `SrcL` value, with the recorded width `1`. `TPC` then advances by `4` bytes.
 
-After the load, the containing 64-byte line becomes the local reservation and `TPC` advances by `4` bytes.
+The reservation is later matched by the containing `64`-byte granule, not by the byte that was loaded.
+
+Design point: `StoreConditional` compares only the containing granule and the reservation-valid flag, so the recorded width never narrows a match; a conditional store anywhere in the same `64`-byte granule still matches a reservation taken by this byte load.
 
 <!-- PTO-READER-BLOCK: scalar-lr-b-constraints role=constraints -->
 ## Legality and precise faults
 
-Every byte address is naturally aligned. Alignment, translation, and permission checks precede architectural effects.
+`LoadWithOrder` probes alignment first, then translation, then read permission and bounds. This form loads one byte, so its alignment requirement is one byte: every byte address passes the alignment test and `LR.B` cannot report `Fault_DataAlignment`, while a rejected address reports `Fault_DataPage`.
 
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+On a fault nothing is published, no load event is recorded, the prior reservation is preserved, and `TPC` does not advance. A decode failure or an unavailable selected T/U source raises `Fault_IllegalInstruction` before those checks.
+
+Design point: since a fault publishes nothing through `RegDst`, a destination that pushes a queue (codes `30` and `31`) pushes nothing either, so a faulting byte load leaves the `T` and `U` queue depths unchanged.
 
 <!-- PTO-READER-BLOCK: scalar-lr-b-example role=example -->
 ## Non-normative example
 
 This example only shows one accepted spelling; the generated contract below remains authoritative.
 
-For a first reading, use `lr.b [SrcL], ->Rd` and then vary only the ordering or route modifiers described above.
+When the addressed byte holds `0x80`, `lr.b [a0], ->a1` publishes `0x0000000000000080` in `a1` and establishes a reservation covering the `64`-byte granule that contains the byte.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

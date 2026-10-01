@@ -17,48 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-lbi-purpose role=purpose -->
-## What LBI does
+## What `LBI` does
 
-`LBI` is a standalone `32`-bit AGU instruction that forms a signed-immediate address and loads one aligned little-endian `1`-byte value.
+`LBI` loads one signed `1`-byte unit at a signed immediate distance from a base register. It is the immediate form of the byte read: the displacement is encoded, so no index register is read at all.
+
+The canonical assembly is `lbi [SrcL, simm], ->{t, u, Rd}`.
+
+Design point: `simm12` counts bytes, so this form reaches `2048` bytes below the base and `2047` bytes above it, a window `4096` bytes wide, with no register consumed for the offset.
 
 <!-- PTO-READER-BLOCK: scalar-lbi-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address and the transfer are formed
 
-`LBI` sign-extends `simm12` from its complete `-2048..2047` domain, uses it without scaling, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+`LBI` sign-extends the `12`-bit `simm12` field to `PTO_XLEN` and adds it, unscaled, to the `SrcL` snapshot modulo `2^PTO_XLEN`. Each encoded unit is worth `1` byte of address.
 
-After complete preflight, the instruction performs one little-endian `1`-byte load and sign-extends the loaded `1`-byte value to `PTO_XLEN` for destination publication.
+The effective address passes the `1`-byte alignment stage and then the permission and bounded-memory check. On success one little-endian byte is read and one relaxed load event is recorded.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+The byte is sign-extended to `PTO_XLEN` and published through `RegDst`; the base register is never modified.
+
+Design point: sign extension happens on the field before the addition, so an encoding of `0x800` means `-2048` bytes and not `2048`. Negative and positive half-windows are therefore asymmetric: `2048` below the base, `2047` above.
 
 <!-- PTO-READER-BLOCK: scalar-lbi-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `SrcL` supplies the base; `simm12` supplies the signed displacement. Every encoded Reg5 source among `SrcL` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- `simm12` assigns every signed value from `-2048` through `2047`; encoded zero is a zero displacement, not omission.
+- `SrcL` is the only register source. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `simm12` is a signed `12`-bit displacement covering `-2048`..`2047`; encoded zero is a zero displacement and not an omitted operand.
+- `RegDst` is the destination selector. Codes `1`..`23` write GPRs, `30` pushes the `U` queue, `31` pushes the `T` queue, and `0` plus `24`..`29` publish nothing; code `0` is the architectural zero GPR, whose writes are discarded.
+- Design point: `SrcL` code `0` reads the architectural zero GPR, so a zero base with a non-negative `simm12` reads the low `2048` bytes of the address space directly; a negative displacement wraps modulo `2^PTO_XLEN` to the top of the space instead.
 
 <!-- PTO-READER-BLOCK: scalar-lbi-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+The base snapshot is taken before the memory access, so nothing that happens later in the instruction can move the address.
 
-A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+A successful attempt records one relaxed load event, writes no memory, changes no reservation, publishes the sign-extended byte, and advances `TPC` by `4` bytes.
+
+Design point: a negative displacement that wraps below zero wraps modulo `2^PTO_XLEN` and is then judged by the permission check, so the wrap itself is silent and the resulting address decides the outcome.
 
 <!-- PTO-READER-BLOCK: scalar-lbi-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `1`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch or a `SrcL` code naming an unavailable `T` or `U` entry raises `Fault_IllegalInstruction` at the instruction address before the base is read.
+- The address must satisfy `1`-byte alignment before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original effective address.
+- A fault records no load event, publishes nothing, and keeps `TPC` on the faulting instruction for full reissue.
+- Design point: `Fault_DataAlignment` cannot fire for a `1`-byte access, so the only data-side rejection `LBI` can produce is `Fault_DataPage` from the permission stage.
 
 <!-- PTO-READER-BLOCK: scalar-lbi-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With the base set to `0x100` and the signed immediate set to `2`, the displacement is `2` and base plus displacement is `0x102`. The memory access uses `0x102`. If aligned and permitted, the instruction loads `1` byte from that address.
+- With GPR `6` = `0x1000` and an encoded `simm12` of `-1`, the effective address is `0xFFF` and one byte is read from there.
+- With the same base and `simm12` = `2047`, the address is `0x17FF`, which shows the `2047` byte positive edge of the window.
+- A byte `0xFF` read at either address publishes `0xFFFFFFFFFFFFFFFF`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,48 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-ltui-purpose role=purpose -->
 ## What SETC.LTUI does
 
-`SETC.LTUI` evaluates unsigned less-than and publishes the result as the current Conditional bundle commit decision.
+`SETC.LTUI` compares one scalar register against an encoded unsigned immediate and publishes the answer as the commit decision of the Conditional bundle it sits in.
+
+Both sides are treated as unsigned, which is what a range or capacity check against a constant needs.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ltui-mechanism role=mechanism -->
-## Mechanism
+## Why the compared bound is always scaled
 
-Placement and the single-setter rule are checked before source readiness or reads.
+`uimm12` is zero-extended to the full word width, then logically shifted left by `shamt`, read as the low `6` bits of that encoded field. The relation `UInt(left) < UInt(right)` is tested against the shifted value, so the comparison value is always a multiple of `2` raised to the `shamt` value.
 
-`uimm12` is zero-extended to XLEN before any shift or comparison.
+The left operand is read as a complete word and is never shifted.
 
-The decoded immediate is logically shifted left by `shamt` before the condition is evaluated.
-
-The snapshotted operands are evaluated for unsigned less-than and canonicalized to XLEN one or zero.
+Design point: zero extension plus a logical shift keeps the immediate non-negative for every encoding, so a limit check written against this mnemonic cannot reject a bound because of a sign bit.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ltui-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `SrcL` supplies the left scalar source.
+- `SrcL` is a Reg5 source read as a complete word: codes `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`.
+- `shamt` supplies the shift amount applied to the immediate; encoded zero performs no shift.
+- `uimm12` supplies the unsigned encoded immediate; encoded zero supplies numeric zero.
 
-- `shamt` supplies the encoded shift amount.
-
-- `uimm12` supplies an unsigned encoded immediate.
+`SrcL` is not consumed and no `GPR`, `T`, or `U` destination is written.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ltui-effects role=effects -->
 ## Effects and ordering
 
-The canonical condition is written atomically to `_CommitArgument` and `BARG.TAKEN`, and the condition-set marker becomes true.
+On success the commit argument receives exactly `1` or `0`, `BARG.TAKEN` takes the same truth value while a bundle is active, the block condition marker becomes set, and `TPC` advances by `4` bytes.
 
-On success, `SETC.LTUI` advances `TPC` by `4` bytes. It has no scalar destination and no memory or reservation effect.
+No memory, reservation, descriptor, or numeric-status state changes, and `BARG.BPC`, `BARG.BPCN`, `BARG.BlockType`, and `BARG.TYPE` are preserved.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ltui-constraints role=constraints -->
-## Legality and fault order
+## What the setter marker and placement check reject
 
-The instruction is valid only in the applicable Conditional bundle context, and only one successful condition setter may occur.
+The operation is applicable only in the body of an active Conditional block, and the shared marker allows at most one successful `SETC` condition setter in that block.
 
-Wrong placement or a repeated setter raises an Illegal Block Exception before source reads; encoding or unavailable-source failures raise `Fault_IllegalInstruction` before commit or `TPC` effects.
+Wrong placement or a repeated successful setter raises `Fault_BundleControl` (trap number `5`, `BUNDLE_TRAP`) before operand legality and before any source read. A fixed-bit mismatch or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before commit state, `BARG`, queue, or `TPC` effects. A rejected occurrence leaves the shared marker unconsumed.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ltui-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not create a second semantic definition.
 
-`setc.ltui SrcL, uimm` evaluates the described condition, writes the canonical decision to commit state, and advances `TPC` only after that update.
+Place `255` in GPR1 and execute the form whose encoded fields are `SrcL=1`, `shamt=0`, and `uimm12=256`. The immediate is compared unscaled, and unsigned `255 < 256` holds, so the form commits `1`. With GPR1 set to `256` the same form commits `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

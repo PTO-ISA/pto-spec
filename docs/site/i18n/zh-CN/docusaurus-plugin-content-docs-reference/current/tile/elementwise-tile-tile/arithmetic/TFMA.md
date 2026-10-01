@@ -17,44 +17,63 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tfma-purpose role=purpose -->
-## 用途
+## TFMA 的作用
 
-`TFMA` 对三个 Local Tile 源执行融合的逐元素乘加。
+`TFMA` 在三个 Local Tile 上逐元素计算 `left * right + addend`，并把结果写入一个新分配的 Local 目标 Tile。与 `TADD` 不同，它读取三个源。
+
+设计要点：`TFMA` 由 `BSTART.VEC` Mode 0 Function 28（TEPL 选择器 `0x01C`）选中，没有独立 opcode。一条 `B.IOT` 最多携带两个源，因此 `TFMA` 使用两条 `B.IOT` 绑定：第一条携带两个乘数，第二条携带加数和目标。
 
 <!-- PTO-READER-BLOCK: tile-tfma-mechanism role=mechanism -->
-## 执行机制
+## 元素与 Tile 机制
 
-ASL DOC 契约通过该指令的选择器编码块载体选择 `TileHandler_TFMA`。
+完整预检之后，三个源都被快照，有效矩形 `ValidRow x ValidCol` 内的每个坐标独立计算。
 
-源快照之前，必须检查绑定模式、维度、DataType、行主序布局、源已定义性与编码、PE_MASK、目的容量和适用属性。
+对浮点类型，该运算是融合的。精确积 `left * right` 不经舍入就与 `addend` 相加，只有最终和被舍入，使用配置档固定的默认舍入（就近舍入到偶数）。
+
+设计要点：融合运算只舍入一次，而 `TMUL` 后接 `TADD` 会舍入两次。因此两种序列可能得到不同结果；下方演算示例展示了一个分开计算会完全丢失答案的情形。
+
+对整数类型，结果是 `left * right + addend` 对元素位宽取模，位宽之上的载体位为零。整数不产生状态标志。
+
+某些浮点输入会产生静默 NaN 并记录无效标志：任一操作数为信号 NaN、零乘无穷、无穷乘零，以及无穷积与符号相反的无穷相加。所有元素的状态标志按位或累积，并在结果发布时记录；它们从不引起同步陷入。
 
 <!-- PTO-READER-BLOCK: tile-tfma-inputs-outputs role=inputs-outputs -->
-## 操作数与描述符
+## 操作数角色与描述符
 
-`destination0` 是新重命名 Local 目的地；`source0` 是左乘数 Local 源；`source1` 是右乘数 Local 源；`source2` 是融合加数 Local 源。
+- `source0` 是左乘数，绑定为第一条 `B.IOT` 的第一个源。
+- `source1` 是右乘数，绑定为第一条 `B.IOT` 的第二个源。
+- `source2` 是加数，绑定为第二条即终止 `B.IOT` 的源。
+- `destination0` 是新分配的 Local Tile，由第二条 `B.IOT` 绑定。
 
-除非当前契约明确指出状态被消费或替换，否则源保持持久；只有完整预检后才发布目的描述符。
+第一条 `B.IOT` 不得带目标或终止标记；第二条必须携带目标并终止序列。所有参与的 `B.IOT` 绑定必须使用同一个 `PE_MASK`，`PE_MASK=0000` 是严格无操作。
+
+设计要点：四个 Tile 的后备 `DataType`、形状和布局必须完全相同。与 `TADD` 不同，`TFMA` 不接受以不同后备类型存储的同位宽源，因此不会对任何源做重解释。
 
 <!-- PTO-READER-BLOCK: tile-tfma-effects role=effects -->
-## 发布与排序
+## 发布、已定义性与填充
 
-每个有效坐标都按所选元素类型执行操作；目的地发布之前会快照全部源和私有 GPR 标量操作数。
+目标描述符、有效区域内的结果、填充、每个元素的已定义性以及累积的数值状态作为一次操作发布。被拒绝的指令束没有任何架构效果，三个源也保持不变。
 
-有效载荷、选中的物理填充的已定义性、描述符和适用的粘滞数值标志原子发布；拒绝时没有架构效果。
+`ValidRow x ValidCol` 之外的物理元素接收所选 `PadValue`。`Zero` 写入零；`Max` 与 `Min` 写入该 `DataType` 的最大与最小有限值；`Null` 使这些元素保持未定义。省略 `B.DATR` 选择 `Null`，而显式编码 `00` 选择 `Zero`。
+
+重复的源以及与目标别名的源都观察到完整的操作前值。`TFMA` 没有全局内存效果。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值，且不贡献状态。
 
 <!-- PTO-READER-BLOCK: tile-tfma-constraints role=constraints -->
-## 合法性、填充与故障
+## 类型、布局与故障边界
 
-绑定格式错误、类型或布局不受支持、形状无效、被消费元素未定义、属性非法或目的容量不足时，会在源快照或发布之前拒绝操作。
+ASL 合法性谓词 `TileFusedMultiplyAddDataTypeSupported` 接受 16 种类型：`FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16` 与 `U8`。下方生成的合法性列表更窄，只列出 `FP16`、`FP32` 与 `BF16`。`TFMA` 所调用的浮点元素运算 `ScalarFPFusedProfile` 只为 `FP64`、`FP32` 与 `FP16` 定义，因此 ASL 对 `TF32`、`HF32`、`BF16`、`E4M3` 或 `E5M2` 不给出元素结果。需要同时满足两者的代码应使用 `FP16` 或 `FP32`。
 
-`PE_MASK=0000` 是严格空操作，先于读取、分配、故障、数值状态、填充或描述符效果。分配失败触发所有者定义的 Tile 分配故障；其他被拒绝的绑定模式或值条件触发所有者定义的合法性、块控制或内存故障，且不产生部分效果。
+默认布局为 `RowMajor`。显式 `Layout` 可以选择 `CUBE_M16` 或 `CUBE_M32`，所有操作数必须使用同一布局。`CUBE_N8`、Shared Tile 以及混合布局均非法。`TFMA` 拒绝非默认的 `RMode`、`Sat`、`CMode` 与 `Canonicalize`。
+
+绑定格式错误或多余、出现 `B.IOR` 或 `B.IOS`、掩码不相等、维度错误、`DataType` 不受支持、布局不匹配、源未定义或浮点编码无效时，会引发 `Fault_TileLegality`。目标形状无法表示或容量不足时，会引发 `Fault_TileAllocation`。两种故障都发生在任何目标效果之前。
 
 <!-- PTO-READER-BLOCK: tile-tfma-example role=example -->
-## 非规范契约草图
+## 非规范演算示例
 
 这是非规范契约模式草图；它用于组织字段和绑定关系，不声称可以直接汇编。
 
-把 `BSTART.VEC TFMA, FP32; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK; B.IOT SrcAddend, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP` 作为非规范绑定演练，再以下方生成契约确认精确维度、属性和故障行为。
+对 `FP16`，取 `left = right = 1.0009765625`，`addend = -1.001953125`。精确积为 `1.001953125 + 2^-20`，因此 `TFMA` 返回 `2^-20`，它在 `FP16` 中可精确表示。若单独使用 `TMUL`，积会被舍入为 `1.001953125`，随后的 `TADD` 将返回 `0`。
+
+以宏形式表示，一个 8 x 64 的 `FP16` 融合乘加写作 `TFMA <Row=8, Col=64, FP16>, T#1, T#2, T#3, ->T<1KB>`，其中 `T#1` 与 `T#2` 是乘数，`T#3` 是加数。目标载荷为 8 x 64 x 2 = 1024 字节。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

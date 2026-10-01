@@ -7,8 +7,64 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-DISPATCH-WEIGHT-TO-SHARED-SCHEMA}
 
-<!-- SUPPLEMENTARY-BEGIN -->
+## Reader guide
 
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-schema-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines how the model recognizes a weight-mode `TLOAD` and the pure geometry that mode uses. A weight-mode `TLOAD` copies a crop of a convolution weight tensor from global memory (GM) into a Shared Tile, laid out as an N by K matrix. N is the output channel and K is the flattened kernel position and input channel.
+
+The unit reads no registers and changes no state. [Weight-to-shared execution](weight-to-shared-execution.md) uses these helpers to validate and build the result.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-schema-concepts role=concepts-state -->
+## Selection and derived quantities
+
+`BundleWeightTLOADSelected` is true when the bundle is a Tile-memory operation with decode code zero (the `TLOAD` function), and `B.DATR` is present with layout `OHWI2NK` (code 10) or `OIHW2NK` (code 11). Without such a `B.DATR` layout, the ordinary `TLOAD` path handles the bundle.
+
+- `C0` is the number of elements in 32 bytes: 32 divided by the element size in bytes. FP16 gives 16 and FP32 gives 8.
+- `C1` is `Cin` divided by `C0`, rounded up.
+- The full K extent is `KernelH * KernelW * C1 * C0`, so each kernel position owns a `C0`-padded channel span.
+- `BundleWeightTLOADShape` holds ValidCol, ValidRow, and TotalCol from `B.DIM`, the data type, and the decoded `Cin`, `Cout`, `KernelH`, `KernelW`, NStart, and KStart.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-schema-rules role=rules-interactions -->
+## Shape and row-split rules
+
+`BundleWeightTLOADDataTypeSupported` accepts FP32, TF32, HF32, FP16, BF16, HiF8, E4M3, E5M2, E8M0, S32, S16, S8, U32, U16, and U8.
+
+`BundleWeightTLOADShapeLegal` requires a supported type, ValidCol no larger than TotalCol, `NStart + ValidRow <= Cout`, `KStart + ValidCol` no larger than the full K extent, KStart and ValidCol that are multiples of `C0`, and a TotalCol that is a nonzero power of two.
+
+Design point: KStart and ValidCol are `C0`-aligned, so a crop never splits a 32-byte channel group. Each K window therefore begins on a whole group of the padded channel span.
+
+The row split serves the cooperative case, where several PEs each write part of the N rows. `BundleWeightTLOADRowsForRank` gives each selected PE `ValidRow DIVRM count` rows, plus one more row for each rank below the remainder. `BundleWeightTLOADRowStartForRank` sums the rows of the lower ranks. `BundleWeightTLOADCurrentPERank` counts selected PEs with a lower PE number than the current PE, and asserts that the current PE is selected. `BundleWeightTLOADFirstPE` and `BundleWeightTLOADLastPE` return the lowest and highest selected PE.
+
+Design point: row ranges are contiguous and follow PE order. The NDF clause `PTO-BSTART-TLOAD-WEIGHT-COOPERATIVE-001` requires this, and it lets the first PE open and the last PE close the assembly.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-schema-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit does not read `B.IOR` registers, check `B.DATR` fields, or probe memory. It does not define the GM index of a cell; [weight-to-shared GM access](../memory/weight-to-shared-gm.md) does. It does not decide publication; the execution unit does.
+
+`BundleWeightTLOADSelected` is also read outside this unit. For example, [Tile schema](tile-schema.md) rejects a weight layout on any other operation, and [Tile execution](tile-execution.md) uses it to route the bundle before generic stage-2 preparation.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-schema-example role=example-usage -->
+## Non-normative reading example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+Take FP16 weights with `Cin` 20, `Cout` 64, and a 3 by 3 kernel. `C0` is 16, `C1` is 2, and the full K extent is 9 * 2 * 16 = 288. KStart 32 and ValidCol 64 are legal because both are multiples of 16 and 96 <= 288. KStart 40 is illegal because it is not a multiple of 16.
+
+With four selected PEs and ValidRow 10, the base is 2 and the remainder is 2. Ranks 0 and 1 get 3 rows, and ranks 2 and 3 get 2 rows. Their row starts are 0, 3, 6, and 8.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-weight-to-shared-schema-related role=related-owners-navigation -->
+## Related owners
+
+- [Weight-to-shared execution](weight-to-shared-execution.md) validates the bundle and publishes the Shared Tile.
+- [Weight-to-shared parameters](../operands/weight-to-shared-parameters.md) unpacks the shape and start words.
+- [Weight-to-shared GM access](../memory/weight-to-shared-gm.md) maps each cell to an OHWI or OIHW GM index.
+- [BSTART.TLOAD](../../execution/BSTART.TLOAD.md) is the instruction page for the load bundle.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

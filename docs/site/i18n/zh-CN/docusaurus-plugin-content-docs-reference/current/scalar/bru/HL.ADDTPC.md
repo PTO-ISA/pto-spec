@@ -19,40 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-addtpc-purpose role=purpose -->
 ## HL.ADDTPC 的作用
 
-`HL.ADDTPC` 根据当前 `TPC` 形成页相对地址，但不执行控制转移。
+`HL.ADDTPC` 把一个有符号 `32` 位页位移加到当前指令的 `TPC` 上，并把和作为数据通过目的选择子发布。它不转移控制流：写入之后，执行继续走向后续指令。
+
+设计要点：结果是算出的地址，而不是跳转目标。因此程序可以在不改变执行去向的前提下生成页相对基址或表地址，而 `48` 位形式的 `6` 字节顺序前进依然发生。同一 `48` 位骨架下的姊妹形式 `HL.SETRET` 则改为记录返回目标。
 
 <!-- PTO-READER-BLOCK: scalar-hl-addtpc-mechanism role=mechanism -->
-## 执行机制
+## 页地址的形成方式
 
-有符号 `32` 位立即数先扩展并左移 `12` 位，再与快照的当前 `TPC` 按 `2^PTO_XLEN` 取模相加。
+`32` 位 `imm32` 先符号扩展到 `PTO_XLEN`（`64` 位），再左移 `12` 位，然后与当前 `TPC` 相加。加法在 `64` 位宽度内进行，因此在 `2^64` 处回绕，从第 `63` 位进出的进位被丢弃。
 
-计算出的地址通过编码目的位置发布，不会被安装为下一条 `TPC`。
+设计要点：左移 `12` 位使立即数以 `4096` 字节的页为单位，因此该编码字段以 `4` KiB 页为步长。编码零不是特殊标记：它贡献零页位移，写入的值就是未改变的 `TPC`。
+
+被读取的 `TPC` 就是 `HL.ADDTPC` 自身的地址，因为此前没有任何步骤推进它。目的写入与 `6` 字节顺序前进是两个独立步骤，顺序为先写后进。
 
 <!-- PTO-READER-BLOCK: scalar-hl-addtpc-inputs-outputs role=inputs-outputs -->
-## 输入与输出
+## 操作数与目的编码
 
-- `RegDst` 选择编码指定的目的位置或丢弃行为。
+- `imm32` 提供有符号页位移。它由两个指令片段拼装而成，宽度分别为 `20` 位和 `12` 位。
 
-- `imm32` 提供编码立即数或位移。
+- `RegDst` 按普通 `Reg5` 规则选择目的：编码 `0` 到 `23` 指定绝对 GPR，编码 `24` 到 `29` 不写入任何位置，编码 `30` 压入 U 队列，编码 `31` 压入 T 队列。
+
+- 没有源寄存器操作数。计算的基址就是该指令的 `TPC`。
+
+设计要点：`RegDst` 的编码值 `10` 被保留，因为同一 `48` 位编码空间中该目的槽位由窄形式 `hl.setret` 占用。`RegDst` 为 `10` 的编码选中的是 `HL.SETRET`，而不是 `HL.ADDTPC`。
+
+设计要点：编码 `24` 到 `29` 是非写入目的，因此使用其中之一编码的 `HL.ADDTPC` 只会让 `TPC` 前进 `6` 字节，所有寄存器与队列项都保持不变。
 
 <!-- PTO-READER-BLOCK: scalar-hl-addtpc-effects role=effects -->
 ## 效果与顺序
 
-结果先通过编码目的位置发布，成功分派随后让 `TPC` 前进 `6` 字节。
+回绕后的和通过所选目的写入。`AddToPC` 不修改 `TPC`，因此写入之后由分派边界让 `TPC` 前进 `6` 字节，即该 `48` 位形式的编码长度。
 
-该指令不分支，也不访问内存或保留状态。
+`HL.ADDTPC` 不修改提交状态、任何 `BARG` 字段、任何内存位置或保留状态，并且 `AddToPC` 自身不引发故障。
 
 <!-- PTO-READER-BLOCK: scalar-hl-addtpc-constraints role=constraints -->
 ## 合法性与故障顺序
 
-编码、保留字段值和源可用性都会在目的、控制或 `TPC` 效果前检查。
+该形式的固定位必须匹配，否则该编码不会译码为本指令，并引发 `Fault_IllegalInstruction`。`RegDst` 的取值 `10` 是本形式唯一的保留字段值；`imm32` 的全部 `32` 位都已分配。
+
+设计要点：合法性检查发生在读取 `TPC` 与写入目的之前，因此被拒绝的编码不发布任何值，并让 `TPC` 停在该指令处，以便恢复后完整重新执行。
 
 <!-- PTO-READER-BLOCK: scalar-hl-addtpc-example role=example -->
 ## 非规范示例
 
 下面的示例只帮助理解当前所有者，不构成第二份语义定义。
 
-`hl.addtpc imm, ->{t, u, Rd}` 把页相对地址作为数据发布，随后继续顺序执行。
+当 `TPC` 为 `0x1000` 时，`hl.addtpc 1, ->a1` 把 `0x2000` 写入 `a1`，下一条指令从 `0x1006` 取指。`hl.addtpc -1, ->a2` 写入 `0x0000`，`hl.addtpc 0, ->a3` 写入未改变的 `0x1000`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

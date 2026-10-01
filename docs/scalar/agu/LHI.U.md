@@ -17,48 +17,58 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-lhi-u-purpose role=purpose -->
-## What LHI.U does
+## What `LHI.U` does
 
-`LHI.U` is a standalone `32`-bit AGU instruction that forms a signed-immediate address and loads one aligned little-endian `2`-byte value.
+`LHI.U` loads one signed `2`-byte halfword at an unscaled immediate distance from a base register. The `.u` suffix marks the unscaled addressing form, so `simm12` counts bytes.
+
+The canonical assembly is `lhi.u [SrcL, simm], ->{t, u, Rd}`.
+
+Design point: the field is still signed, so the window is `2048` bytes below the base and `2047` bytes above it. The two halves are not the same size.
 
 <!-- PTO-READER-BLOCK: scalar-lhi-u-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address and the transfer are formed
 
-`LHI.U` sign-extends `simm12` from its complete `-2048..2047` domain, uses it without scaling, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+The displacement is the sign-extended `simm12` added, with no shift, to the `SrcL` snapshot modulo `2^PTO_XLEN`. Each encoded unit is worth `1` byte of address.
 
-After complete preflight, the instruction performs one little-endian `2`-byte load and sign-extends the loaded `2`-byte value to `PTO_XLEN` for destination publication.
+Preflight tests `2`-byte alignment, then translation, then permission and bounded memory. On success `2` bytes are read little-endian and one relaxed load event is recorded.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+The halfword is sign-extended and published through `RegDst`; there is no base write-back.
+
+Design point: because the displacement is not scaled, it can change the low bit of the sum. An odd base plus an odd displacement is still `2`-byte aligned, which the scaled `LHI` cannot achieve.
 
 <!-- PTO-READER-BLOCK: scalar-lhi-u-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and roles
 
-- `SrcL` supplies the base; `simm12` supplies the signed displacement. Every encoded Reg5 source among `SrcL` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- `simm12` assigns every signed value from `-2048` through `2047`; encoded zero is a zero displacement, not omission.
+- `SrcL` is the base selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; queue entries are read without being consumed.
+- `simm12` is signed, covers `-2048`..`2047`, and is used unscaled.
+- `RegDst` is the destination selector. Codes `1`..`23` write GPRs, `30` pushes the `U` queue, `31` pushes the `T` queue, and `0` plus `24`..`29` publish nothing; code `0` is the architectural zero GPR, whose writes are discarded.
+- Design point: there is no `SrcRType` and no `shamt`; the only way this form can change its address beyond the base is the `12`-bit displacement itself.
 
 <!-- PTO-READER-BLOCK: scalar-lhi-u-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+The base is snapshotted before the memory operation and before publication, so the value read never depends on a write performed by this instruction.
 
-A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+Success records one relaxed load event, preserves memory and the reservation, publishes the sign-extended halfword, and advances `TPC` by `4` bytes.
+
+Design point: the destination value depends on the access size and the load's signedness only, not on the addressing form, so `LHI` and `LHI.U` publish identical patterns for identical bytes.
 
 <!-- PTO-READER-BLOCK: scalar-lhi-u-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `2`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch, or a `SrcL` selector naming an unavailable `T`/`U` entry, raises `Fault_IllegalInstruction` before any source value is read.
+- An odd sum raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original effective address.
+- A fault records no event, publishes nothing, and leaves `TPC` on the faulting instruction so that reissue recomputes the same address.
+- Design point: scaling is the only difference from the scaled form, so the fault set is identical; an odd sum is still reported as `Fault_DataAlignment`.
 
 <!-- PTO-READER-BLOCK: scalar-lhi-u-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With the base set to `0x100` and the signed immediate set to `2`, the displacement is `2` and base plus displacement is `0x102`. The memory access uses `0x102`. If aligned and permitted, the instruction loads `2` bytes from that address.
+- With `SrcL` = `0x1001` and `simm12` = `1`, the address is `0x1002`, which is `2`-byte aligned because the unscaled displacement supplied the missing low bit.
+- With the same base and `simm12` = `2`, the address is `0x1003`, which is odd, so `Fault_DataAlignment` is raised.
+- The signed halfword read at `0x1002` sign-extends into `RegDst`, exactly as `LHI` would.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

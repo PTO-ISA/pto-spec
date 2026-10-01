@@ -19,46 +19,59 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-swi-purpose role=purpose -->
 ## What SWI does
 
-`SWI` is a standalone `32`-bit AGU instruction that forms a signed-immediate address and stores one aligned little-endian `4`-byte value.
+`SWI` forms one address from a Reg5 base plus a scaled signed displacement and stores the low `4` bytes of another Reg5 source there, little-endian.
+
+Design point: `SWI` has no destination field at all. Its address-update mode is none, so the base register keeps its value and the instruction cannot be used to walk a pointer; a traversal needs an explicit address computation or a post-index form.
 
 <!-- PTO-READER-BLOCK: scalar-swi-mechanism role=mechanism -->
 ## Address and memory mechanism
 
-`SWI` sign-extends `simm12` from its complete `-2048..2047` domain, multiplies it by `4`, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcR` base.
+The address is formed in three steps, and every step happens before the memory access.
 
-After complete preflight, the instruction performs one little-endian `4`-byte store from its snapshotted store-data source.
+- `simm12` is sign-extended, giving a displacement value from `-2048` through `2047`.
+- That value is shifted left by `2`, so the byte displacement is `simm12 * 4`, in the range `-8192` through `8188`.
+- The scaled displacement is added to the `SrcR` base modulo `2^PTO_XLEN`.
 
-This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+Preflight then checks the address before any byte is written: a `4`-byte misaligned address raises `Fault_DataAlignment` at the original address, and a later permission or bounded-memory failure raises `Fault_DataPage`. Only after the probe succeeds are the `4` bytes stored from the low byte upward, together with one relaxed store event; a store that overlaps a valid reservation invalidates that reservation.
+
+Design point: the displacement is scaled by `4`, so the low two address bits come entirely from the base register. Choosing a different `simm12` cannot repair a misaligned base, and every address `SWI` can reach has the same alignment as `SrcR`.
+
+Design point: the scaled displacement covers `8192` bytes below and `8188` bytes above the base in steps of `4`, so it reaches a `16` KiB window around the base. Because every scaled displacement is a multiple of `4`, a `4`-byte aligned base keeps the access aligned for every `simm12`.
 
 <!-- PTO-READER-BLOCK: scalar-swi-inputs role=inputs-outputs -->
 ## Inputs and outputs
 
-- `SrcR` supplies the base; `simm12` supplies the signed displacement. Every encoded Reg5 source among `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcL` supplies store data.
-- `simm12` assigns every signed value from `-2048` through `2047`; encoded zero is a zero displacement, not omission.
+- `SrcL` is the Reg5 store-data source.
+- `SrcR` is the Reg5 address base.
+- `simm12` is the signed displacement.
+- There is no `RegDst` field, so `SWI` writes no register, GPR, `T` or `U`.
+
+Design point: encoded zero of `SrcL` or `SrcR` reads the architectural zero GPR, so `swi zero, [a0, 0]` stores four zero bytes. Encoded zero of `simm12` is a real zero displacement and never means omission; every displayed field is encoded explicitly.
 
 <!-- PTO-READER-BLOCK: scalar-swi-effects role=effects -->
 ## Effects and ordering
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+Both scalar sources are snapshotted before the memory effect, so a store whose data source is also the base uses the pre-instruction value of that register for both roles.
 
-A successful attempt records one relaxed store event, invalidates an overlapping reservation but preserves a nonoverlapping one, and advances `TPC` by `4` bytes.
+On success the `4` bytes are committed and the reservation state is updated, then `TPC` advances by `4` bytes. A successful store whose written range overlaps the reservation granule holding the reserved address clears the reservation; a non-overlapping store leaves it valid. On a fault no byte is written, the reservation is left unchanged, and `TPC` stays at the faulting instruction, because the address probe completes before the memory operation. Recovery is a full reissue: address formation, source snapshot, preflight and the memory operation all run again with no retained progress. `SWI` changes no descriptor, numeric-status, block, privilege, predicate or control-flow state.
 
 <!-- PTO-READER-BLOCK: scalar-swi-constraints role=constraints -->
 ## Alignment, faults, and restart
 
-Each effective address must satisfy `4`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+The `4`-byte access is the complete transfer unit. Both Reg5 source fields use the full common domain: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4` without consuming a queue entry.
 
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+The checks run in order. An undecodable form raises `Fault_IllegalInstruction` at `PC`; an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`; an unavailable selected T/U source raises `Fault_IllegalInstruction`; then the address probe raises `Fault_DataAlignment` for a misaligned address, and `Fault_DataPage` for an address outside the permitted, bounded region.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+Design point: alignment is checked before translation and permission, so a misaligned address in an otherwise inaccessible page reports `Fault_DataAlignment` at the original address and never `Fault_DataPage`.
+
+Design point: `simm12` covers every signed 12-bit value, so there is no reserved displacement and no illegal immediate. The displacement can be any multiple of `4` in its range, including zero.
 
 <!-- PTO-READER-BLOCK: scalar-swi-example role=example -->
 ## Non-normative address example
 
 This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
 
-With the base set to `0x100` and the signed immediate set to `2`, the displacement is `8` and base plus displacement is `0x108`. The memory access uses `0x108`. If aligned and permitted, the instruction stores `4` bytes at that address.
+With `SrcR` holding `256` and `simm12=2`, the displacement is `8` and the access address is `264`. With `simm12=-2` on the same base the address is `248`, and both addresses have the same low two bits as the base, so both are aligned exactly when `256` is. `swi a0, [a1, 2]` stores the low `4` bytes of `a0` at `a1 + 8`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

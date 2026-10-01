@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-iva-purpose role=purpose -->
 ## DC.IVA 的作用
 
-`DC.IVA` 同步完成所分配的缓存或地址翻译维护请求，并记录精确操作令牌。
+`DC.IVA` 是按虚拟地址清洗并使数据缓存失效的操作。地址位于唯一的 Reg5 源 `SrcL` 中，该指令在完成时记录操作令牌与该操作数（`asl/scalar/sys/DC.IVA.asl:23`）。
 
 <!-- PTO-READER-BLOCK: scalar-dc-iva-mechanism role=mechanism -->
 ## 系统机制
 
-ASL DOC 区域选择 `ScalarHandler_ExecuteMaintenance`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+DOC 区域把该指令绑定到 `ScalarHandler_ExecuteMaintenance`（`asl/scalar/sys/DC.IVA.asl:11`），操作令牌 `Maintenance_DC_IVA` 在执行器内选中数据缓存分支（`asl/scalar/model/sys/semantics.asl:134`）。派发器为该形式读取源寄存器，因为 `InstructionContractMaintenanceUsesOperand_DC_IVA` 为 `TRUE`（`asl/scalar/sys/DC.IVA.asl:29`）。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+块位置是适用性规则的一部分：在操作数合法性被考虑之前，bundle 必须活动，且其块体必须是 System 块（`asl/scalar/model/sys/semantics.asl:321`）。
 
 <!-- PTO-READER-BLOCK: scalar-dc-iva-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`SrcL` 承载 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。
+`SrcL` 接受 Reg5 源编码 R0..R23、T#1..T#4 和 U#1..U#4，并提供请求的虚拟地址。该指令没有目的地字段。
 
-编码零是已分配的字段值，从不表示省略操作数。
+唯一的输出是维护记录项。`SrcL` 中的编码零命名架构零 GPR，因此零地址是通过指名该寄存器来表达的，而不是通过省略操作数。
 
 <!-- PTO-READER-BLOCK: scalar-dc-iva-effects role=effects -->
 ## 架构效果
 
-成功时，维护记录接收 `Maintenance_DC_IVA` 和精确捕获的操作数令牌。
+该次尝试推进一次数据缓存纪元，随后在未引发故障的前提下把 `Maintenance_DC_IVA` 与已快照的操作数写入维护记录（`asl/scalar/model/sys/semantics.asl:156`）。`TPC` 在该次尝试报告成功后前进（`asl/scalar/model/dispatch/top-level.asl:56`）。
 
-选中的缓存或 TLB 纪元恰好递增一次，然后 `TPC` 前进；该操作是同步完成的本地提示。
+地址被记录而不是被使用：`DC.IVA` 不执行普通标量内存访问，因此随后对同一虚拟地址的加载或存储看到的是未变的内存。不写任何寄存器、临时队列或系统寄存器。
 
 <!-- PTO-READER-BLOCK: scalar-dc-iva-constraints role=constraints -->
 ## 位置与拒绝边界
 
-缓存维护在每个 ACR 都是同步本地提示，并不定义额外的实现缓存内容。
+在活动 SYS 块体之外的尝试会在处理程序之前引发 `Fault_BundleControl`，因此纪元和记录都不被修改。在块体内部，固定位与 `SrcL` 选择器在执行器运行之前完成校验。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+`DC.IVA` 不施加环门，也不施加地址形状门。数据缓存操作在每个 ACR 都允许，而规范地址测试只属于 TLB 操作（`asl/scalar/model/sys/semantics.asl:115`）。即使操作数带高位，也会被记录而不是被拒绝。
+
+设计要点：同一个处理程序同时服务基于地址和基于令牌的数据缓存请求。把调用方的操作数原样保留在记录里，正是事后能够区分这两类请求的原因。
 
 <!-- PTO-READER-BLOCK: scalar-dc-iva-example role=example -->
 ## 非规范示例
 
 该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
 
-可从 `dc.iva SrcL` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+在 GPR 持有 0x1234 时，SYS 块体内部的 `dc.iva SrcL` 会快照 0x1234，把数据缓存纪元递增一，并以操作数 0x1234 记录 `Maintenance_DC_IVA`。像 0xffff000000001234 这样的操作数会被同一路径接受并原样记录，因为只有 TLB 操作会测试地址规范性。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
