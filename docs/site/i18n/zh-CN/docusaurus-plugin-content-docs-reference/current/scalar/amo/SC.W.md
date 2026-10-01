@@ -18,7 +18,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-sc-w-purpose role=purpose -->
 ## SC.W 的作用
-`SC.W` 有条件地向内存写入 4 字节值。只有当本地保留仍覆盖存储地址所在的 64 字节缓存行时才会写入；否则 `SC.W` 报告未命中且不改动内存。该形式记录的摘要为：SC.W conditionally stores one word when the local 64-byte-line reservation matches. 
+`SC.W` 有条件地向内存写入 4 字节值。只有当本地保留仍覆盖存储地址所在的 64 字节缓存行时才会写入；否则 `SC.W` 报告未命中且不改动内存。该形式记录的摘要为：SC.W conditionally stores one word when the local 64-byte-line reservation matches.
 只有先前的 `LR` 加载才能建立保留，而每次尝试都会清除它，因此 `SC.W` 报告结果而不是无条件更新内存。该结果写入 `RegDst` 命名的 Reg5 目的。
 
 <!-- PTO-READER-BLOCK: scalar-sc-w-mechanism role=mechanism -->

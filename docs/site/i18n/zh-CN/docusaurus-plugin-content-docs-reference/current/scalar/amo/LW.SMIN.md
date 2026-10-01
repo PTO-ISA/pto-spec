@@ -18,7 +18,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-lw-smin-purpose role=purpose -->
 ## LW.SMIN 的作用
-`LW.SMIN` 原子地更新一个对齐的 4 字节内存值，并同时发布被替换的值。该形式记录的摘要为：LW.SMIN atomically stores the width-sized signed minimum and publishes the prior memory value. 
+`LW.SMIN` 原子地更新一个对齐的 4 字节内存值，并同时发布被替换的值。该形式记录的摘要为：LW.SMIN atomically stores the width-sized signed minimum and publishes the prior memory value.
 `LW` 前缀标明宽度：每次操作 4 字节内存。旧值经 `RegDst` 命名的 Reg5 目的发布，该目的可以是 GPR 或临时队列。
 
 <!-- PTO-READER-BLOCK: scalar-lw-smin-mechanism role=mechanism -->
