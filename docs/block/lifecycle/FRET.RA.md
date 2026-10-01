@@ -19,39 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-fret-ra-purpose role=purpose -->
 ## What FRET.RA does
 
-`FRET.RA` is a standalone frame-lifecycle command that validates its register range and stack state before publishing frame or control-flow effects.
+`FRET.RA` removes a stack frame and returns, in one command. It restores registers exactly like [FEXIT](FEXIT.md), and then transfers to the return address that was current before the restore began.
+
+The return address is the return-address state `_ReturnAddress`. Call-form block starts and [SETRET](../../scalar/bru/SETRET.md) write the same value to it and to R10 (`ra`). The stack pointer is GPR 1 (`sp`). The shared frame template is described in [frame lifetime](../model/lifecycle/lifetime.md).
 
 <!-- PTO-READER-BLOCK: block-fret-ra-mechanism role=mechanism -->
 ## Placement and execution mechanism
 
-`FRET.RA` executes as a standalone `32`-bit command and does not require placement inside a `BSTART`/`BSTOP` body.
+`FRET.RA` is a standalone 32-bit command. It does not open or commit a block and does not write `BARG`.
 
-The accepted carrier uses the `L32` encoding class and resolves every displayed field before the command reads bindings or changes state.
+Execution follows a fixed order:
 
-The command snapshots every required source before its first visible effect, then follows the owner-defined commit or restart boundary.
+1. Check the endpoints and frame size.
+2. Snapshot `_ReturnAddress` as the return target. An odd target raises `Fault_InstructionPC`.
+3. Compute `caller_sp = sp + size` and write it to `sp`.
+4. Load the registers in range order from `caller_sp - 8`, `caller_sp - 16`, and so on.
+5. After the last load, decrement the frame depth if it is nonzero, record the last-frame tuple, and write the snapshotted target to `TPC`.
+
+Design point: the target is captured before any register is restored. If the range includes R10, the restore changes `ra` and `_ReturnAddress`, but the command still returns to the address that was current when it started.
 
 <!-- PTO-READER-BLOCK: block-fret-ra-inputs role=inputs-outputs -->
 ## Carrier, bindings, and inputs
 
-- Encoded operands: `DstBegin` — first register in the inclusive R2..R23 ring range; `DstEnd` — last register in the inclusive R2..R23 ring range; `uimm` — frame byte count, encoded in multiples of eight.
-- All operands are resolved from the accepted carrier or named architectural state; no body-local hidden operand stream is created.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+- `DstBegin`, bits `19:15`, is the first register of the range.
+- `DstEnd`, bits `24:20`, is the last register of the range.
+- `uimm` is a 12-bit field split across bits `31:25` (value bits `6:0`) and bits `11:7` (value bits `11:7`). The frame size in bytes is `uimm << 3`.
+
+The range is inclusive over the ring `R2..R23` and wraps from R23 to R2. Every field is always encoded; there is no default. Encoded zero in an endpoint names R0 and is reserved. Encoded zero in `uimm` is a real zero-byte frame and is illegal.
 
 <!-- PTO-READER-BLOCK: block-fret-ra-effects role=effects -->
 ## State effects and ordering
 
-Source validation and snapshot precede every register, queue, frame, memory, event, or control-flow effect.
+Each load reads one aligned 8 bytes as a relaxed load event and writes its register. As with `FEXIT`, each load and its progress step form one restart event, and a retried command does not add to `sp` twice or repeat an earlier load.
 
-The command commits at the restart boundaries named by its memory contract; earlier committed steps remain visible only where the owner explicitly permits restart progress.
+Completion decrements `_FrameDepth` when it is nonzero, records the last frame, and writes `TPC` with the target. There is no sequential `TPC` increment.
+
+Design point: the transfer is written only after the last register is restored. A fault part-way through leaves `TPC` at the `FRET.RA`, so recovery re-executes it and continues the restore before returning.
 
 <!-- PTO-READER-BLOCK: block-fret-ra-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+- An endpoint outside `2..23`, or a frame smaller than 8 bytes per register, raises `Fault_IllegalInstruction` before any effect.
+- An odd return target raises `Fault_InstructionPC` before any `sp`, memory, register, frame, or return effect.
+- A load follows the ordinary data-access fault rules and faults precisely at its step.
+- While a frame template is in progress, a frame command of another kind, or one at another PC, raises `Fault_IllegalInstruction` instead of continuing it.
 
-The current owner reports invalid schema, state, address, or continuation conditions through `Fault_IllegalInstruction`, `Fault_InstructionPC`; no prose on this page creates an additional fault rule.
-
-Rejection occurs before effects unless the current owner explicitly defines a restart boundary with retained progress; completion order remains the ASL order.
+The generated legality and exception sections below are authoritative.
 
 <!-- PTO-READER-BLOCK: block-fret-ra-example role=example -->
 ## Non-normative worked example
@@ -62,7 +75,7 @@ This example demonstrates placement and carrier flow only; exact behavior remain
 FRET.RA [RegDst0 ~ RegDstn], sp!, uimm
 ```
 
-The shown accepted spelling resolves its fields from the current carrier, snapshots required sources, and then follows the owner-defined state and ordering transition.
+A function saved R8 to R11 in a 48-byte frame, so `sp` is `0x7FD0`, and `_ReturnAddress` is `0x3000`. `FRET.RA` with `DstBegin = 8`, `DstEnd = 11`, and encoded `uimm` 6 snapshots `0x3000`, sets `sp` to `0x8000`, and restores R8 to R11. R10 receives the saved value from `0x7FE8`, which also updates `_ReturnAddress`. `TPC` still becomes `0x3000`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

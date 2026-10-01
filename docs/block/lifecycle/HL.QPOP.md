@@ -19,39 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-hl-qpop-purpose role=purpose -->
 ## What HL.QPOP does
 
-`HL.QPOP` is a standalone General Queue Management command whose queue update, status result, and optional event are one ordered instruction effect.
+`HL.QPOP` removes the head entry of a General Queue Management (GQM) queue. It writes the entry to one register and a result word to a second register, and reports an empty or missing queue in that result instead of trapping. Entries arrive through [HL.QPUSH](HL.QPUSH.md); queue behavior is defined in [General queue management](../../arch/programming-model/general-queue-management.md).
 
 <!-- PTO-READER-BLOCK: block-hl-qpop-mechanism role=mechanism -->
 ## Placement and execution mechanism
 
-`HL.QPOP` executes as a standalone `48`-bit command and does not require placement inside a `BSTART`/`BSTOP` body.
+`HL.QPOP` is a standalone 48-bit command. It does not open, require, or commit a block, and it advances `TPC` by 6.
 
-The accepted carrier uses the `HL48` encoding class and resolves every displayed field before the command reads bindings or changes state.
+After the legality checks, it reads the queue address from `SrcL` and validates the queue. If there is an entry, it removes the head, broadcasts an event if `e=1`, and then writes the entry to `RegDst0` and the result word to `RegDst1`, in that order.
 
-The command snapshots every required source before its first visible effect, then follows the owner-defined commit or restart boundary.
+Design point: the two writes are ordered. If `RegDst0` and `RegDst1` name the same absolute register, it ends up holding the result word. If both push to the same relative queue, the data is pushed first and the result second.
 
 <!-- PTO-READER-BLOCK: block-hl-qpop-inputs role=inputs-outputs -->
 ## Carrier, bindings, and inputs
 
-- Encoded operands: `SrcL` — Reg5 source of the queue address; `RegDst0` — Reg5 destination for popped data; `RegDst1` — Reg5 destination for the operation result; `e` — success-event selector; `r` — relaxed-ordering selector.
-- All operands are resolved from the accepted carrier or named architectural state; no body-local hidden operand stream is created.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+- `RegDst1`, bits `15:11`: destination for the result word.
+- `RegDst0`, bits `27:23`: destination for the popped entry.
+- `SrcL`, bits `35:31`: source of the queue address.
+- `e` (bit 41), `r` (bit 42): the flags. All four combinations are assigned.
+- Bits `40:36` are fixed reserved-zero bits, not an operand.
+
+Each register field is a Reg5 selector, described in [scalar operands](../../scalar/model/types/operands.md). Codes 0 to 23 name R0 to R23; as a source, codes 24 to 31 read `T#1` to `T#4` and `U#1` to `U#4`. As a destination, code 30 pushes to the U queue, code 31 pushes to the T queue, and codes 24 to 29 discard the value.
+
+Design point: the bare form has acquire ordering and no event. `e=0` suppresses the event and `r=0` selects acquire, so an encoded zero keeps the ordered default. A destination of R0 discards its value, which lets a program pop without keeping the data.
 
 <!-- PTO-READER-BLOCK: block-hl-qpop-effects role=effects -->
 ## State effects and ordering
 
-Source validation and snapshot precede every register, queue, frame, memory, event, or control-flow effect.
+- A successful pop removes the head entry, writes its value to `RegDst0`, and writes status `00` with the remaining entry count in bits `12:0` of `RegDst1`. It succeeds even while the queue is suspended.
+- An empty queue writes status `01` and count 0; a missing or corrupt queue writes status `10` and count 0. In both cases `RegDst0` receives zero and the queue is unchanged. Status 3 is reserved.
 
-The command publishes its state and result as one ordered instruction effect, then advances or transfers control as defined by the owner.
+Only a successful pop with `e=1` broadcasts an event. The queue update and both writes are one instruction effect.
+
+Design point: with `r=0`, a successful pop is an acquire. If the entry was pushed with release ordering, the pop acquires the memory operations ordered before that push. With `r=1`, no acquire edge is recorded. `HL.QPOP` itself makes no direct memory access.
 
 <!-- PTO-READER-BLOCK: block-hl-qpop-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+- A nonzero value in bits `40:36` does not decode as `HL.QPOP` and raises `Fault_IllegalInstruction`.
+- A relative `SrcL` source whose queue entry is not valid raises `Fault_IllegalInstruction`.
+- Both faults occur before source reads, queue observation, events, destination writes, or `TPC` advance.
 
-The current owner reports invalid schema, state, address, or continuation conditions through `Fault_IllegalInstruction`; no prose on this page creates an additional fault rule.
-
-Rejection occurs before effects unless the current owner explicitly defines a restart boundary with retained progress; completion order remains the ASL order.
+Empty, missing, and corrupt queues are reported in `RegDst1` and do not trap. The generated legality and exception sections below are authoritative.
 
 <!-- PTO-READER-BLOCK: block-hl-qpop-example role=example -->
 ## Non-normative worked example
@@ -62,7 +71,7 @@ This example demonstrates placement and carrier flow only; exact behavior remain
 hl.qpop a0, ->a1, a2
 ```
 
-The shown accepted spelling resolves its fields from the current carrier, snapshots required sources, and then follows the owner-defined state and ordering transition.
+Suppose `a0` names a queue holding `0x55` at the head and one more entry behind it. The pop writes `a1 = 0x55` and `a2` with status `00` and count 1. A second pop removes the last entry and reports count 0. A third pop finds the queue empty: `a1` receives 0 and `a2` receives status `01`, without a fault.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

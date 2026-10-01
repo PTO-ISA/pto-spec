@@ -19,39 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-mset-purpose role=purpose -->
 ## MSET 的作用
 
-`MSET` 是独立的全有或全无内存命令：填充前会预检完整目的范围；任何故障都要求完整重发，不保留部分进度。
+`MSET` 用一条命令以一个字节值填充一段字节范围。它在写入任何内容之前检查整个目的范围，因此要么填满整个范围，要么在故障时保持内存不变。
 
 <!-- PTO-READER-BLOCK: block-mset-mechanism role=mechanism -->
 ## 放置与执行机制
 
-`MSET` 作为独立的 `32` 位命令执行，不要求放在 `BSTART`/`BSTOP` Block 体内。
+`MSET` 是独立的 32 位命令。它不打开或提交 block，也不写 `BARG`。
 
-已接受载体使用 `L32` 编码类别；命令在读取绑定或改变状态前，会先解析所有显示字段。
+执行按固定顺序进行：
 
-命令先快照目的地址、填充值和完整无符号 XLEN 长度，再在第一次存储前预检完整目的范围。
+1. 从三个 GPR 读取目的地址、填充值与长度。
+2. 拒绝越过地址空间顶端而回绕的非零范围。
+3. 长度非零时，对完整目的范围预检写访问。
+4. 按地址递增顺序，把填充值的低字节写入每个字节。
+5. 记录最近内存命令，并把 `TPC` 推进 4。
+
+设计要点：完整范围在第一次存储之前完成预检。与 [MCOPY](MCOPY.md) 不同，`MSET` 不保存进度状态。发生故障的 `MSET` 没有写入任何内容，因此再次执行会完成整个填充。
 
 <!-- PTO-READER-BLOCK: block-mset-inputs role=inputs-outputs -->
 ## 载体、绑定与输入
 
-- 编码操作数：`RegSrc0` — 保存目的字节地址的绝对 GPR; `RegSrc1` — 低八位会被复制的绝对 GPR; `RegSrc2` — 保存完整无符号字节长度的绝对 GPR。
-- 所有操作数都来自已接受载体或命名架构状态；命令不会创建 Block 体私有的隐藏操作数流。
-- 编码零仍是已分配值或明确规定的拒绝值；它不会静默表示省略操作数。
+- `RegSrc0`，位 `19:15`，指定保存目的字节地址的 GPR。
+- `RegSrc1`，位 `24:20`，指定其低八位作为填充字节的 GPR。更高位被忽略。
+- `RegSrc2`，位 `31:27`，指定保存字节数的 GPR，该字节数是完整的无符号 XLEN 值。
+
+位 `14:0` 为 `0x1031`，位 `26:25` 为零。每个选择器只接受绝对 GPR `0..23`；代码 `24..31` 属于保留值。
+
+设计要点：三个字段都是必需的，编码零读取架构零寄存器。因此 `MSET [zero, zero, zero]` 是合法的零长度命令：它不访问内存，但仍把目的地址 0 与大小 0 记录为最近内存命令。
 
 <!-- PTO-READER-BLOCK: block-mset-effects role=effects -->
 ## 状态效果与顺序
 
-三个 GPR 值都在范围验证或内存效果之前完成快照。
+成功的非零填充写入范围内每个字节，若范围与本地加载保留的粒度重叠，则使该保留失效。零长度不执行任何内存或保留访问。
 
-完整范围预检后，按地址递增顺序填充字节；成功时使重叠保留失效、记录命令状态，并在不保存进度的情况下退休一次。
+任何成功完成之后，`_LastMemoryCommandAddress` 接收目的地址，`_LastMemoryCommandSize` 接收长度。
+
+此处内存按字节寻址：写预检使用一字节对齐，因此目的地址可以具有任意对齐。
 
 <!-- PTO-READER-BLOCK: block-mset-constraints role=constraints -->
 ## 合法性、故障与原子性
 
-固定比特、保留值、选择器取值域与必需的 Block 放置关系都在架构效果之前检查。
+- 选择器代码在 `24..31` 内时，在任何寄存器、内存、保留、最近命令或 `TPC` 效果之前引发 `Fault_IllegalInstruction`。
+- 回绕的非零目的范围在任何内存或最近命令效果之前引发 `Fault_IllegalInstruction`。
+- 在可执行 ASL 中，长度超过 262144 字节或超过建模内存大小时，在任何存储之前以目的地址引发 `Fault_DataPage`。
+- 预检中的写访问故障在第一次存储之前报告。
 
-当前归属单元通过 `Fault_IllegalInstruction` 报告无效模式、状态、地址或后继条件；本页说明文字不创建额外故障规则。
-
-预检期间发生 `Fault_DataPage` 时，完整范围、保留、最后命令状态和 `TPC` 都保持不变；恢复会完整重发。
+每种故障都使内存、保留、最近命令状态和 `TPC` 保持不变。下方生成的合法性与异常章节具有权威性。
 
 <!-- PTO-READER-BLOCK: block-mset-example role=example -->
 ## 非规范示例
@@ -62,7 +75,7 @@ The current instruction contract is owned by the ASL source linked above.
 MSET [a0, a1, a2]
 ```
 
-所示已接受拼写从当前载体解析字段，快照必需源，再执行归属单元规定的状态与顺序转换。
+假设 `a0` 保存 `0x9001`，`a1` 保存 `0x1234`，`a2` 保存 5。预检覆盖 `0x9001` 至 `0x9005`。若预检通过，这五个字节接收 `a1` 的低字节 `0x34`，最近内存命令变为地址 `0x9001`、大小 5。若预检在这五个字节中的任一字节上失败，则一个字节都不会被写入。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

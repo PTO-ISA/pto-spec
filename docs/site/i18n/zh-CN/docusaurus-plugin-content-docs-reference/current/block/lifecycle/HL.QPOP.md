@@ -19,39 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-hl-qpop-purpose role=purpose -->
 ## HL.QPOP 的作用
 
-`HL.QPOP` 是独立的通用队列管理命令；队列更新、状态结果与可选事件构成一个有序指令效果。
+`HL.QPOP` 取出通用队列管理（GQM）队列的队头条目。它把条目写入一个寄存器，把结果字写入第二个寄存器，并在该结果中报告队列为空或缺失，而不是进入陷阱。条目通过 [HL.QPUSH](HL.QPUSH.md) 进入；队列行为定义见 [通用队列管理](../../arch/programming-model/general-queue-management.md)。
 
 <!-- PTO-READER-BLOCK: block-hl-qpop-mechanism role=mechanism -->
 ## 放置与执行机制
 
-`HL.QPOP` 作为独立的 `48` 位命令执行，不要求放在 `BSTART`/`BSTOP` Block 体内。
+`HL.QPOP` 是独立的 48 位命令。它不打开、不要求也不提交 block，并把 `TPC` 推进 6。
 
-已接受载体使用 `HL48` 编码类别；命令在读取绑定或改变状态前，会先解析所有显示字段。
+合法性检查之后，它从 `SrcL` 读取队列地址并验证队列。若存在条目，它移除队头，若 `e=1` 则广播事件，然后依次把条目写入 `RegDst0`、把结果字写入 `RegDst1`。
 
-命令会在第一个可见效果前快照所有必需源，随后遵循归属单元定义的提交或重启边界。
+设计要点：两次写入是有序的。若 `RegDst0` 与 `RegDst1` 指同一个绝对寄存器，该寄存器最终保存结果字。若二者都推入同一个相对队列，则先推入数据，再推入结果。
 
 <!-- PTO-READER-BLOCK: block-hl-qpop-inputs role=inputs-outputs -->
 ## 载体、绑定与输入
 
-- 编码操作数：`SrcL` — 提供队列地址的 Reg5 源; `RegDst0` — 接收弹出数据的 Reg5 目的端; `RegDst1` — 接收操作结果的 Reg5 目的端; `e` — 成功事件选择器; `r` — relaxed 顺序选择器。
-- 所有操作数都来自已接受载体或命名架构状态；命令不会创建 Block 体私有的隐藏操作数流。
-- 编码零仍是已分配值或明确规定的拒绝值；它不会静默表示省略操作数。
+- `RegDst1`，位 `15:11`：结果字的目标。
+- `RegDst0`，位 `27:23`：弹出条目的目标。
+- `SrcL`，位 `35:31`：队列地址的来源。
+- `e`（位 41）、`r`（位 42）：标志。全部四种组合都已分配。
+- 位 `40:36` 是固定的保留零位，不是操作数。
+
+每个寄存器字段都是 Reg5 选择器，见 [标量操作数](../../scalar/model/types/operands.md)。代码 0 至 23 指 R0 至 R23；作为源时，代码 24 至 31 读取 `T#1` 至 `T#4` 与 `U#1` 至 `U#4`。作为目标时，代码 30 推入 U 队列，代码 31 推入 T 队列，代码 24 至 29 丢弃该值。
+
+设计要点：裸形式具有 acquire 顺序且不带事件。`e=0` 抑制事件，`r=0` 选择 acquire，因此编码零保持有序的默认值。目标为 R0 时丢弃其值，程序因此可以弹出而不保留数据。
 
 <!-- PTO-READER-BLOCK: block-hl-qpop-effects role=effects -->
 ## 状态效果与顺序
 
-源验证与快照发生在所有寄存器、队列、栈帧、内存、事件或控制流效果之前。
+- 成功的弹出移除队头条目，把其值写入 `RegDst0`，并在 `RegDst1` 中写入状态 `00`，位 `12:0` 为剩余条目数。即使队列已挂起，弹出也会成功。
+- 空队列写入状态 `01` 与计数 0；缺失或损坏的队列写入状态 `10` 与计数 0。两种情况下 `RegDst0` 都接收零，队列保持不变。状态 3 保留。
 
-命令把状态与结果作为一个有序指令效果发布，再按归属单元规定前移或转移控制。
+只有 `e=1` 的成功弹出才会广播事件。队列更新与两次写入构成一个指令效果。
+
+设计要点：当 `r=0` 时，成功的弹出是一次 acquire。若该条目以 release 顺序推入，弹出会 acquire 该推入之前排序的内存操作。当 `r=1` 时，不记录 acquire 边。`HL.QPOP` 本身不直接访问内存。
 
 <!-- PTO-READER-BLOCK: block-hl-qpop-constraints role=constraints -->
 ## 合法性、故障与原子性
 
-固定比特、保留值、选择器取值域与必需的 Block 放置关系都在架构效果之前检查。
+- 位 `40:36` 中的非零值不会译码为 `HL.QPOP`，并引发 `Fault_IllegalInstruction`。
+- 相对 `SrcL` 源所指队列条目无效时，引发 `Fault_IllegalInstruction`。
+- 两种故障都发生在源读取、队列观察、事件、目标写入或 `TPC` 推进之前。
 
-当前归属单元通过 `Fault_IllegalInstruction` 报告无效模式、状态、地址或后继条件；本页说明文字不创建额外故障规则。
-
-除非当前归属单元明确规定带保留进度的重启边界，否则拒绝发生在效果之前；完成顺序始终采用 ASL 顺序。
+空、缺失与损坏的队列在 `RegDst1` 中报告，不会进入陷阱。下方生成的合法性与异常章节具有权威性。
 
 <!-- PTO-READER-BLOCK: block-hl-qpop-example role=example -->
 ## 非规范示例
@@ -62,7 +71,7 @@ The current instruction contract is owned by the ASL source linked above.
 hl.qpop a0, ->a1, a2
 ```
 
-所示已接受拼写从当前载体解析字段，快照必需源，再执行归属单元规定的状态与顺序转换。
+假设 `a0` 指向一个队列，其队头为 `0x55`，其后还有一个条目。弹出写入 `a1 = 0x55`，并在 `a2` 中写入状态 `00` 与计数 1。第二次弹出移除最后一个条目并报告计数 0。第三次弹出发现队列为空：`a1` 接收 0，`a2` 接收状态 `01`，不产生故障。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

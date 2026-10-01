@@ -19,39 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-fret-stk-purpose role=purpose -->
 ## What FRET.STK does
 
-`FRET.STK` is a standalone frame-lifecycle command that validates its register range and stack state before publishing frame or control-flow effects.
+`FRET.STK` removes a stack frame and returns, in one command, using a return address saved in the frame itself. The range must begin at R10 (`ra`). The value in the first frame slot is both the restored `ra` and the return target.
+
+It pairs with an [FENTRY](FENTRY.md) whose range also began at R10. The stack pointer is GPR 1 (`sp`). The shared frame template is described in [frame lifetime](../model/lifecycle/lifetime.md).
 
 <!-- PTO-READER-BLOCK: block-fret-stk-mechanism role=mechanism -->
 ## Placement and execution mechanism
 
-`FRET.STK` executes as a standalone `32`-bit command and does not require placement inside a `BSTART`/`BSTOP` body.
+`FRET.STK` is a standalone 32-bit command. It does not open or commit a block and does not write `BARG`.
 
-The accepted carrier uses the `L32` encoding class and resolves every displayed field before the command reads bindings or changes state.
+Execution follows a fixed order:
 
-The command snapshots every required source before its first visible effect, then follows the owner-defined commit or restart boundary.
+1. Check the endpoints and frame size, including `DstBegin = 10`.
+2. Compute `caller_sp = sp + size` and write it to `sp`.
+3. Load slot zero from `caller_sp - 8`. An odd value raises `Fault_InstructionPC`. Otherwise the value becomes the return target and is written to R10 and `_ReturnAddress`.
+4. Load the remaining registers in range order from `caller_sp - 16` onward.
+5. After the last load, decrement the frame depth if it is nonzero, record the last-frame tuple, and write the target to `TPC`.
+
+Design point: slot zero is validated before it is written to `ra`. A bad saved address therefore never reaches `ra`, `_ReturnAddress`, or `TPC`.
 
 <!-- PTO-READER-BLOCK: block-fret-stk-inputs role=inputs-outputs -->
 ## Carrier, bindings, and inputs
 
-- Encoded operands: `DstBegin` — first register in the inclusive R2..R23 ring range; `DstEnd` — last register in the inclusive R2..R23 ring range; `uimm` — frame byte count, encoded in multiples of eight.
-- All operands are resolved from the accepted carrier or named architectural state; no body-local hidden operand stream is created.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+- `DstBegin`, bits `19:15`, must encode 10. Other ring endpoints are reserved for this command.
+- `DstEnd`, bits `24:20`, is the last register of the range, in `2..23`.
+- `uimm` is a 12-bit field split across bits `31:25` (value bits `6:0`) and bits `11:7` (value bits `11:7`). The frame size in bytes is `uimm << 3`.
+
+Every field is always encoded; there is no default. Encoded zero in an endpoint names R0 and is reserved. Encoded zero in `uimm` is a real zero-byte frame and is illegal.
 
 <!-- PTO-READER-BLOCK: block-fret-stk-effects role=effects -->
 ## State effects and ordering
 
-Source validation and snapshot precede every register, queue, frame, memory, event, or control-flow effect.
+Each load reads one aligned 8 bytes as a relaxed load event and writes its register. Each load and its progress step form one restart event.
 
-The command commits at the restart boundaries named by its memory contract; earlier committed steps remain visible only where the owner explicitly permits restart progress.
+Completion decrements `_FrameDepth` when it is nonzero, records the last frame, and writes `TPC` with the slot-zero target. There is no sequential `TPC` increment.
+
+Design point: `sp` is restored before slot zero is read. If slot zero faults, the `sp` update stays committed and is visible to the trap handler. The template records that `sp` was adjusted, so re-executing `FRET.STK` does not adjust it again.
 
 <!-- PTO-READER-BLOCK: block-fret-stk-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+- `DstBegin` other than 10, an endpoint outside `2..23`, or a frame smaller than 8 bytes per register raises `Fault_IllegalInstruction` before any effect.
+- An odd slot-zero value raises `Fault_InstructionPC` before `ra`, target, slot-zero progress, or later-register effects.
+- A load follows the ordinary data-access fault rules and faults precisely at its step.
+- While a frame template is in progress, a frame command of another kind, or one at another PC, raises `Fault_IllegalInstruction` instead of continuing it.
 
-The current owner reports invalid schema, state, address, or continuation conditions through `Fault_IllegalInstruction`, `Fault_InstructionPC`; no prose on this page creates an additional fault rule.
-
-Rejection occurs before effects unless the current owner explicitly defines a restart boundary with retained progress; completion order remains the ASL order.
+The generated legality and exception sections below are authoritative.
 
 <!-- PTO-READER-BLOCK: block-fret-stk-example role=example -->
 ## Non-normative worked example
@@ -62,7 +75,7 @@ This example demonstrates placement and carrier flow only; exact behavior remain
 FRET.STK [ra ~ RegDstn], sp!, uimm
 ```
 
-The shown accepted spelling resolves its fields from the current carrier, snapshots required sources, and then follows the owner-defined state and ordering transition.
+An `FENTRY` saved R10 to R12 in a 24-byte frame from `sp = 0x8000`, so `sp` is now `0x7FE8` and slot zero at `0x7FF8` holds `0x3000`. `FRET.STK` with `DstEnd = 12` and encoded `uimm` 3 sets `sp` to `0x8000`, loads `0x3000` into R10 as the target, then restores R11 from `0x7FF0` and R12 from `0x7FE8`. `TPC` becomes `0x3000`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
