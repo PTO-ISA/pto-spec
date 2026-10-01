@@ -19,46 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-gmov-purpose role=purpose -->
 ## What GMOV does
 
-`GMOV` is a selector-encoded Tile operation executed by `TLSU`. It resolves one peer-selected read-old Local fragment for each PE and byte-copies it into the selected new Local fragments; its current instruction contract owns the exact bundle form and publication boundary.
+`GMOV` copies one peer-selected Local fragment from inside a Core4 PE group into newly allocated Local destinations. It is TLSU Function 13, written `BSTART.GMOV DataType`, and it has no standalone opcode.
+
+Each PE supplies its own `peer_tid`, the identity of the PE whose Local fragment it wants, and receives that fragment's bytes. `PE_MASK` decides which PEs receive a destination. The operation records no memory effects: it never translates an address, checks a permission, or emits a load, store, atomic, or fence event.
 
 <!-- PTO-READER-BLOCK: tile-gmov-mechanism role=mechanism -->
-## Element and Tile mechanism
+## Peer resolution and readiness
 
-After all descriptor and operand checks succeed, the owning ASL handler resolves one peer-selected read-old Local fragment for each PE and byte-copies it into the selected new Local fragments. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+The dispatcher `ExecuteBundleGMOVOperation` reads one absolute `peer_tid` per PE from the GPR named by the bundle scalar binding. An omitted `B.IOR` supplies `peer_tid` zero in every PE; an explicitly encoded zero selector reads the zero GPR, which also names PE 0 but is a different schema state.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+No destination write starts before `BundleGMOVCore4SourceReady` accepts the source snapshot. That helper requires the source to be content-defined and allocated in all four PEs, because it checks `_TileAllocationMasks[[source]] == '1111'`. Every PE also checks its own `peer_tid` against the range `0..3`.
+
+The model `GMOV` then copies the source payload, the defined elements, the packed defined elements, the defined valid element count, and the `contents_defined` flag, so bytes and definedness travel together.
+
+Design point: readiness is a property of the whole Core4 group. A single PE whose Local fragment is not allocated or not fully defined holds back the whole rendezvous, so a partial `PE_MASK` cannot read a fragment that another PE has not produced yet.
 
 <!-- PTO-READER-BLOCK: tile-gmov-inputs role=inputs-outputs -->
-## Operand roles and descriptors
+## Operand roles and bindings
 
-- `destination0` has the exact contract role **selected Local destination fragments**.
-- `source0` has the exact contract role **Core4 peer-resolved read-old Local source snapshot**.
-- `scalar0` has the exact contract role **each PE's absolute peer_tid**.
+- `destination0` is the selected Local destination fragment. The bundle allocates it under its `B.IOT` with the source's valid rows, valid columns, physical columns, and data type.
+- `source0` is the Core4 peer-resolved read-old Local source snapshot. The destination `TSize` must equal this source's per-PE capacity.
+- `scalar0` is each PE's absolute `peer_tid`.
 
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+Exactly one terminating `B.IOT` carries the source and the destination, with `L=1`. The bundle takes no second Tile source and no `B.IOS`, and a Shared binding is rejected.
+
+Design point: `GMOV` has no independent shape operands. Every resolved `B.DIM` value must equal `1` and the destination descriptor comes from the source, so a copy cannot reshape the payload.
 
 <!-- PTO-READER-BLOCK: tile-gmov-effects role=effects -->
-## Publication, definedness, and padding
+## What changes
 
-Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+On success each selected PE's newly allocated destination holds a byte-preserving copy of the resolved source fragment, with the same defined elements and the same `contents_defined` flag. Unselected destinations and all Shared and GM state stay unchanged.
 
-No padding behavior beyond the current handler contract is implied.
-
-The collective changes selected Local destination fragments only; Shared and GM state remain unchanged.
+Design point: definedness is copied rather than recomputed, so a later consumer inherits the source fragment's definedness boundary instead of re-deriving it.
 
 <!-- PTO-READER-BLOCK: tile-gmov-constraints role=constraints -->
-## Type, layout, and fault boundary
+## Types, layouts, and faults
 
-The exact accepted type or type-pair set is owned by the generated legality section below; this guide does not widen it.
+`InstructionContractDataTypeLegal_GMOV` accepts exactly the types `TileCarrierOrPackedBaselineDataTypeSupported` admits: non-four-bit carriers up to 4 bytes wide, plus the packed four-bit types. `B64` carriers such as `U64` and `FP64` are outside that set.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+Source and destination must agree on data type, layout, storage kind, rows, columns, valid rows, and valid columns (`TileOperandsLegal_GMOV`). The layout must be `RowMajor`, `CUBE_M16`, or `CUBE_M32`; `CUBE_N8` and Shared operands are illegal.
+
+A `peer_tid` outside `0..3` in any PE, an incomplete Core4 source, a `B.DIM` value other than `1`, a `TSize` mismatch, a surplus or nonterminating binding, or a `B.IOS` raises `Fault_TileLegality` before the copy, and a failed collective preflight allocates and writes no destination.
+
+`PE_MASK` may be any nonzero value, and a partial mask selects only those PEs' destinations. A zero mask selects no PE. Unlike the atom/red, gather, and scatter dispatchers, `ExecuteBundleGMOVOperation` has no zero-mask early return, so the readiness, peer-range, type, layout, and dimension checks still run and can still fault.
+
+Design point: the `peer_tid` range test runs for every PE, including PEs that `PE_MASK` does not select, because peer identities are validated as one collective step before the destination exists.
 
 <!-- PTO-READER-BLOCK: tile-gmov-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `GMOV` example, if PE 1 resolves `peer_tid=0`, the selected destination fragment receives PE 0 source bytes and the same definedness.
+Take `U8`, a source `T#1` with a 1 KB per-PE capacity and a fully defined payload, `PE_MASK` naming PE 0 and PE 1, and `peer_tid` 1 in every PE.
+
+- Preflight: `T#1` must be allocated and fully defined in all four PEs, and the `peer_tid` in `a2` must be in `0..3` in every PE.
+- Every resolved `B.DIM` value must be `1`, and the destination `TSize` must equal the 1 KB per-PE capacity of `T#1`.
+- The canonical macro spelling is `GMOV <U8, PE0_1>, T#1, a2, ->T<1KB>`. PE 0 and PE 1 each receive a new destination whose bytes and definedness are copies of the resolved PE 1 fragment; PE 2 and PE 3 are unchanged.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

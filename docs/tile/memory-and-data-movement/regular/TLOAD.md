@@ -17,44 +17,67 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tload-purpose role=purpose -->
-## Purpose
+## What TLOAD does
 
-`TLOAD` loads one ordinary Local or Shared rectangle, or converts GM data into persistent Local CUBE storage.
+`TLOAD` reads one typed rectangle from global memory (GM) into a Tile. It is TLSU Function 0, written `BSTART.TLOAD DataType`, and it has no standalone opcode.
+
+The bundle schema selects one of four destination domains: an ordinary Local Tile, a Shared parent, a Local CUBE Tile, or a Shared convolution-weight view. They share the strided GM rectangle and differ in destination representation and padding rule.
 
 <!-- PTO-READER-BLOCK: tile-tload-mechanism role=mechanism -->
-## Execution mechanism
+## Addressing and access order
 
-The ASL DOC contract selects `TileHandler_TLOAD` through the instruction's selector-encoded block carrier.
+Each selected PE and valid coordinate uses the address `base + row * row_stride_bytes + column * element_size` built by `TileMemoryStridedByteAddress`. For the packed four-bit types the column contributes `floor(column / 2)` bytes and the nibble is chosen by column parity.
 
-The completed schema chooses exactly one Local or Shared destination domain; GM base, row stride, dimensions, layout, DataType, and capacity are resolved before element accesses proceed until the first fault.
+`B.IOR.RegSrc0` supplies the per-PE GM base and `B.IOR.RegSrc1` the byte row stride. An omitted `B.IOR` gives base zero and the dense stride `TileDenseRowStrideBytes(physical Col, data_type)`, that is `ceil(columns * element_bits / 8)`.
+
+Design point: the dense default is omission-only. An explicitly encoded zero selector reads the zero GPR, so it is a real stride of zero and every row aliases row 0 in GM.
+
+The model `TLOAD` probes, loads, and records one typed load event per element in row-major order, and stops at the first fault. Once every access succeeds the valid region is marked defined, and a CUBE destination then receives `CurrentBundlePadValue()` in its physical CELL tails.
+
+Design point: unlike `MGATHER` and `MSCATTER`, `TLOAD` does not preflight the whole rectangle before its first load (NDF `PTO-TLOAD-MEMORY-001`), so a fault leaves a partially defined destination that is not published as complete.
 
 <!-- PTO-READER-BLOCK: tile-tload-inputs-outputs role=inputs-outputs -->
-## Operands and descriptors
+## Operand roles and bindings
 
-`destination0` is the new Local destination or absolute Shared destination; `address` is the per-PE private-GPR GM base address; `scalar0` is the per-PE private-GPR byte row stride.
+- `destination0` is the new Local destination or the absolute Shared destination.
+- `address` is the per-PE private-GPR GM base address.
+- `scalar0` is the per-PE private-GPR byte row stride in the ordinary and CUBE forms, and the packed ShapeGPR in weight mode.
+- `scalar1` is the weight-mode packed StartGPR and does not apply to the other forms.
 
-Sources remain persistent unless the current contract explicitly names a consumed or replaced state; a destination may retain completed reads but is not complete until the request succeeds.
+The completed block has exactly one destination domain: one terminating destination `B.IOT` for a Local destination, or one destination `B.IOS` for a Shared destination. It has no Tile source and consumes at most one `B.IOR`.
+
+Design point: the destination domain is chosen by the binding kind, not by a data attribute, so one block cannot publish a Local Tile and a Shared parent together.
 
 <!-- PTO-READER-BLOCK: tile-tload-effects role=effects -->
-## Publication and ordering
+## Publication and partial results
 
-Success publishes the complete Local destination or complete Shared parent, including descriptor, payload, definedness, and CUBE padding when requested. A first fault may leave a partial destination or generation that is not complete or whole-parent-ready; multi-PE Shared producers publish only through complete B.ASSEMBLE.LAST.
+A successful Local form allocates or renames one destination Tile, installs the derived descriptor, and defines the valid region. A singleton Shared issuer publishes the complete parent; several issuers must use `B.ASSEMBLE` with explicit writer ranges.
 
-Memory events use the block ordering attributes. Encoded-zero stride is a real zero stride, while omission selects the derived dense stride.
+A CUBE form writes raw valid values through CUBE storage indices and applies `Zero`, `Max`, `Min`, or undefined `Null` to physical tails, which are not counted as valid elements. A fault stops the request at the first failing translation, permission, or alignment check, and completed reads may remain in a partially defined destination.
+
+Design point: NDF `PTO-TLOAD-CUBE-001` applies the encoded `PadValue` only after all valid GM reads complete without a fault, so a faulting CUBE load leaves its physical tails undefined instead of padded.
 
 <!-- PTO-READER-BLOCK: tile-tload-constraints role=constraints -->
-## Legality, padding, and faults
+## Types, shapes, and faults
 
-Malformed bindings, unsupported types or layouts, invalid shapes, undefined consumed elements, illegal attributes, or insufficient destination capacity are rejected before source snapshots or publication.
+`InstructionContractDataTypeLegal_TLOAD` accepts the codes that `TileRegularTLSUDataTypeSupported` admits, namely `0` through `14`, `16` through `20`, and `24` through `28`; codes `15`, `21` through `23`, and `29` through `31` reject before effects.
 
-`PE_MASK=0000` is a strict no-op before reads, allocation, faults, numeric status, padding, or descriptor effects. Allocation failure raises the owner-defined Tile allocation fault; other rejected schema or value conditions raise the owner-defined legality or bundle-control fault without partial effects. A memory fault may retain completed reads.
+`ValidCol` and `ValidRow` are nonzero, `ValidCol` may not exceed the physical `Col`, and the derived `Rows` and `Col` are powers of two large enough to contain the valid rectangle. Ordinary and Shared forms permit only `Layout` as a nonzero attribute and require `PadValue` zero; the Local CUBE layouts require `DTYPE_NONE` and accept all four `PadValue` encodings. Weight mode is explicit-only and carries GMBase, ShapeGPR, and StartGPR in one `B.IOR`.
+
+`PE_MASK=0000` is a strict no-op on the Local path, which returns before the operand schema, GPR reads, destination allocation, and GM access, and on the Shared path, which returns as soon as the shared binding mask is zero.
+
+Design point: CUBE forms require explicit nonzero `LB0` and `LB1` and an absent `LB2` (`InstructionContractCubeDimensionsLegal_TLOAD`), because CELL geometry comes from the layout, the data type, and the valid shape rather than from a physical column count.
 
 <!-- PTO-READER-BLOCK: tile-tload-example role=example -->
 ## Non-normative contract sketch
 
 This is a non-normative contract schema sketch; it organizes fields and bindings but is not claimed to be directly assembleable.
 
-Read `BSTART.TLOAD U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR zero, a0; B.IOT mask=1111, ->T<1>; BSTOP` as a non-normative binding walkthrough, then use the generated contract below for exact dimensions, attributes, and fault behavior.
+Take `U8`, `Col=64`, `ValidCol=64`, and `ValidRow=8`, with `a0` holding the GM base and `a1` holding the byte row stride `64`.
+
+- The canonical macro spelling is `TLOAD <Row=8, Col=64, U8>, [base=a0, stride=a1], ->T<512B>`, a 512-byte destination holding 8 rows of 64 elements.
+- Omitting the `B.IOR` derives the dense stride `64`; encoding `a1` as zero instead makes every row read the same 64 GM bytes.
+- The destination is published only when all `512` element loads and their load events complete without a fault.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

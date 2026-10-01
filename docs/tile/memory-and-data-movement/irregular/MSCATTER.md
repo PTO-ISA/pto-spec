@@ -19,47 +19,65 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-mscatter-purpose role=purpose -->
 ## What MSCATTER does
 
-`MSCATTER` is a selector-encoded Tile operation executed by `TLSU`. It uses each integer index as a GM byte displacement and stores the corresponding valid source element; its current instruction contract owns the exact bundle form and publication boundary.
+`MSCATTER` is TLSU Function 5, written `BSTART.MSCATTER DataType`. It reads one Local data Tile and one Local index Tile and stores one transfer element, or one packed byte, per active valid coordinate of the index Tile, at the per-PE base address named by `B.IOR.RegSrc0` plus that coordinate's index value read as a byte displacement. A coordinate is active when no ExecutionMask is in force or when `BundleExecutionMaskActiveAt` selects it.
+
+The owner declares `InstructionContractUsesByteDisplacements_MSCATTER` TRUE, `InstructionContractUsesMaskTile_MSCATTER` FALSE, `InstructionContractWritesMemory_MSCATTER` TRUE, and `InstructionContractIsAtomicMemoryOperation_MSCATTER` FALSE. The dispatcher `ExecuteBundleMSCATTEROperation` decodes Function 5, checks the binding shape, the dimensions, and the descriptors, then calls `TileOperandsLegal_MSCATTER` and the body `MSCATTER`.
+
+Design point: `InstructionContractUsesMaskTile_MSCATTER` is FALSE and there is no per-lane predicate operand, so every active valid coordinate of the index Tile stores. The only per-coordinate filter this form accepts is the bundle ExecutionMask, whose coordinate source here is the index Tile.
 
 <!-- PTO-READER-BLOCK: tile-mscatter-mechanism role=mechanism -->
-## Element and Tile mechanism
+## Addressing, preflight, and store commit
 
-After all descriptor and operand checks succeed, the owning ASL handler uses each integer index as a GM byte displacement and stores the corresponding valid source element. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+Each address is `base + displacement`, where the displacement is the complete index value in bytes. `S32` sign-extends, `U32` zero-extends, and `S64` and `U64` are used unchanged. It is never multiplied by the element size and never divided by `ValidCol` (NDF `PTO-INDEXED-TLSU-STRIDE-001`), so element-scaled addressing must be produced by scaling the indices.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+The body runs two passes. Preflight walks the active coordinates, builds each address with `TileMemoryByteDisplacementAddress`, probes it for write access at element-width alignment with `ProbeTileMemoryAccess`, and records the original address, the translated address, and the source element bits; `RaiseDataAccessFault` ends the body at the first failing probe. The commit pass `CommitIndexedScatterTransactions` then stores those recorded values and records one store event per lane. `StoreTileMemoryElement` normalizes the value to the element width; a packed four-bit lane instead writes one assembled byte with `StoreTranslated`, taking the low nibble from the first logical element and the high nibble from the second.
+
+Design point: the commit pass is entered only after preflight completes, so no store and no store event can precede a failing probe. A scatter with one bad active address leaves GM unchanged, and repeating it after the fault is fixed cannot apply a partial update.
+
+Design point: the commit pass visits lanes in an order drawn from `ARBITRARY` choices, so duplicate or overlapping target addresses have an implementation-defined winner. NDF `PTO-MSCATTER-DUPLICATE-ORDER-001` states that `B.CATR.atomic` does not impose an internal lane order; it only makes the complete block effect non-interleavable. Two lanes storing different values to one address therefore leave a result that depends on the chosen order.
 
 <!-- PTO-READER-BLOCK: tile-mscatter-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `address` has the exact contract role **base-address**.
-- `source0` has the exact contract role **source data**.
-- `source1` has the exact contract role **byte-displacement indices**.
+- `address` is the base address, read from the GPR named by `B.IOR.RegSrc0` in the executing PE's own register file; `B.IOR` is required and `RegSrc1`, `RegSrc2`, and `RegDst` must encode zero.
+- `source0` is the data Tile: bundle `DataType`, `LB1` valid rows, `LB0` valid columns, `LB2` physical columns, and the bundle layout.
+- `source1` is the index Tile: `S32`, `U32`, `S64`, or `U64` elements, a valid shape that matches the data Tile, the bundle layout, and physical columns that are not compared with `LB2`.
 
-Every source coordinate read by the operation must be defined before execution reaches destination publication.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+Without a predicate-Tile ExecutionMask, one terminating `B.IOT` carries the data Tile and the index Tile and has no destination. With one, the first `B.IOT` carries both sources and is not `last`, and a second `B.IOT` carries the mask Tile as its only source and is `last`. All bindings must carry the same `PE_MASK`, and `PE_MASK=0000` on every binding is a strict no-op at the top of the dispatcher, before the decode, schema, GPR, dimension, descriptor, and memory checks.
+
+The base register is read from the executing PE's own register file (`ReadPEAbsoluteGPROperand`), so PEs selected by one `PE_MASK` can use one index Tile to reach different GM regions.
 
 <!-- PTO-READER-BLOCK: tile-mscatter-effects role=effects -->
-## Publication, definedness, and padding
+## Effects, definedness, and padding
 
-GM writes and memory events begin only after complete source, predicate, address, and permission preflight; the operation has no Tile destination.
+On success only GM and memory-event state change. No destination Tile is allocated, and the data Tile and the index Tile keep their descriptors and payloads after success or rejection.
 
-Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+Without an ExecutionMask, `IndexedTLSUExecutionMaskContentsDefined` requires the whole valid region of both Tiles to be defined. With one, it requires the same layout and valid shape as the mask and checks definedness only at the mask's active coordinates, so an undefined element that the mask excludes is tolerated.
 
-The operation preflights every enabled GM address before the first store or memory event and allocates no destination Tile.
+`B.DATR` may set only `Layout` here: an explicit nonzero `PadValue` field is rejected because this form's pad union is `must-zero`, and there is no destination whose physical padding could receive a pad value. For the same reason a merge-mode ExecutionMask has nothing to write, and `PrepareSelectedBundleExecutionMaskMerge` finds no destination binding in this block.
 
 <!-- PTO-READER-BLOCK: tile-mscatter-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-Index Tiles use `S32`, `U32`, `S64`, or `U64`. Packed four-bit transfer types `E2M1X2`, `E1M2X2`, `HiF4X2`, `S4X2`, and `U4X2` are rejected because this indexed transfer has no nibble selector.
+The bundle `DataType` is carried by `BSTART.MSCATTER` and must equal the data Tile's type. NDF `PTO-MSCATTER-BYTE-DISPLACEMENT-001` requires `B8-NP`, `B16`, `B32`, `B64`, and packed four-bit transfer data with `S32`, `U32`, `S64`, or `U64` index elements, and requires raw carrier bits to move without numeric-validity rejection. The index Tile is never a four-bit carrier.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+A packed four-bit transfer needs the data Tile's valid columns to be exactly twice the index Tile's, so `Data.ValidCol == 2 * Index.ValidCol` and an incomplete nibble pair is rejected. Layouts are `RowMajor`, `CUBE_M16`, and `CUBE_M32`; `CUBE_N8` is rejected, and `RowMajor` needs `ValidCol <= Col` with `Col` a nonzero power of two. Every `B.DIM` value must be in `1..65535`.
+
+An unknown TLSU code raises `Fault_IllegalInstruction`. A missing `B.IOR`, a wrong `B.IOT` binding shape, an out-of-range dimension, a type, layout, or shape mismatch, or an undefined active source element raises `Fault_TileLegality`, the fault `ExecuteBundleMSCATTEROperation` uses for all of its schema checks. A failing probe raises `Fault_DataAlignment` or `Fault_DataPage` before the first store.
 
 <!-- PTO-READER-BLOCK: tile-mscatter-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `MSCATTER` example, index `4` and source value `7` store `7` at `base + 4` after complete preflight.
+Take `U32`, `ValidRow=1`, `ValidCol=2`, `Col=4`, base `0x1000` in `a0`, a 1 by 2 data Tile holding `7, 9`, and a 1 by 2 `U32` index Tile holding `4, 0`.
+
+- Coordinate (0, 0) has displacement `4`, so `0x1004` receives `7`.
+- Coordinate (0, 1) has displacement `0`, so `0x1000` receives `9`.
+- Both probes must succeed first: `0x1000` and `0x1004` are 4-byte aligned and writable here, and one failing probe would suppress both stores.
+- If both coordinates carried displacement `0`, both would store to `0x1000`, and the final content there would be `7` or `9` according to the implementation-defined commit order.
+
+The macro spelling is `MSCATTER <Col=4, ValidCol=2, U32>, [base=a0], T#1, T#2`, where `T#1` is the data Tile and `T#2` is the index Tile.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

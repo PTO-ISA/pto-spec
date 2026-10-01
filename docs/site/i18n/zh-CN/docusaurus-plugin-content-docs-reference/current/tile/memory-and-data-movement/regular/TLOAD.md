@@ -17,44 +17,67 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tload-purpose role=purpose -->
-## 用途
+## TLOAD 的作用
 
-`TLOAD` 从 GM 载入普通 Local/Shared 矩形，或显式转换为持久 Local CUBE 存储。
+`TLOAD` 把全局内存（GM）中一个带类型的矩形读入 Tile。它是 TLSU Function 0，写作 `BSTART.TLOAD DataType`，并且没有独立 opcode。
+
+指令束模式在四个目标域中选择一个：普通 Local Tile、Shared 父对象、Local CUBE Tile，或 Shared 卷积权重视图。它们共享同一个带步幅的 GM 矩形，只在目标表示与填充规则上不同。
 
 <!-- PTO-READER-BLOCK: tile-tload-mechanism role=mechanism -->
-## 执行机制
+## 寻址与访问顺序
 
-ASL DOC 契约通过该指令的选择器编码块载体选择 `TileHandler_TLOAD`。
+每个被选中的 PE 与每个有效坐标使用由 `TileMemoryStridedByteAddress` 构造的地址 `base + row * row_stride_bytes + column * element_size`。对打包四位类型，列贡献 `floor(column / 2)` 字节，半字节由列奇偶性选择。
 
-完成的绑定模式只选择一个 Local 或 Shared 目的域；第一次载入前解析 GM 基址、行步幅、维度、布局、DataType 与容量，随后逐元素访问直到首个故障。
+`B.IOR.RegSrc0` 提供每 PE 的 GM 基址，`B.IOR.RegSrc1` 提供字节行步幅。省略 `B.IOR` 时基址为零，步幅为紧密宽度 `TileDenseRowStrideBytes(physical Col, data_type)`，即 `ceil(columns * element_bits / 8)`。
+
+设计要点：紧密默认值只在省略时生效。显式编码的零选择子读取零 GPR，因此它是真正的零步幅，每一行都别名到 GM 的第 0 行。
+
+模型 `TLOAD` 按行主序对每个元素探测、载入并记录一个带类型的 load 事件，并在首个故障处停止。一旦所有访问成功，有效区域被标记为已定义，随后 CUBE 目标在其物理 CELL 尾部接收 `CurrentBundlePadValue()`。
+
+设计要点：与 `MGATHER` 和 `MSCATTER` 不同，`TLOAD` 不会在首次载入之前预检整个矩形（NDF `PTO-TLOAD-MEMORY-001`），因此故障会留下部分定义的目标，而该目标不会被发布为完整结果。
 
 <!-- PTO-READER-BLOCK: tile-tload-inputs-outputs role=inputs-outputs -->
-## 操作数与描述符
+## 操作数角色与绑定
 
-`destination0` 是新 Local 目的地或绝对 Shared 目的地；`address` 是每 PE 私有 GPR 的 GM 基址；`scalar0` 是每 PE 私有 GPR 的字节行步幅。
+- `destination0` 是新的 Local 目标或绝对 Shared 目标。
+- `address` 是每 PE 私有 GPR 的 GM 基址。
+- `scalar0` 在普通形式与 CUBE 形式中是每 PE 私有 GPR 的字节行步幅，在权重模式中是打包的 ShapeGPR。
+- `scalar1` 是权重模式打包的 StartGPR，不适用于其他形式。
 
-除非当前契约明确指出状态被消费或替换，否则源保持持久；目的地可以保留已完成的读取，但只有成功完成后才是完整结果。
+完成的指令束恰好有一个目标域：Local 目标对应一条终止目标 `B.IOT`，Shared 目标对应一个目标 `B.IOS`。它没有 Tile 源，并且最多消费一个 `B.IOR`。
+
+设计要点：目标域由绑定种类而不是数据属性选择，因此一个指令束不能同时发布 Local Tile 与 Shared 父对象。
 
 <!-- PTO-READER-BLOCK: tile-tload-effects role=effects -->
-## 发布与排序
+## 发布与部分结果
 
-成功时发布完整 Local 目的地或完整 Shared 父对象，其中包括描述符、载荷、已定义性，以及请求时的 CUBE 填充。首个故障可以留下未完成、未达到 whole-parent-ready 的部分目的地或代际。
+成功的 Local 形式分配或重命名一个目标 Tile，安装推导出的描述符，并把有效区域标记为已定义。单发布者 Shared 形式发布完整的父对象；多个发布者必须使用带显式写入者范围的 `B.ASSEMBLE`。
 
-内存事件使用块排序属性。编码零步幅是真正的零步幅，而省略步幅会选择推导出的紧密步幅。
+CUBE 形式通过 CUBE 存储索引写入原始有效值，并把 `Zero`、`Max`、`Min` 或未定义的 `Null` 施加到物理尾部，这些尾部不计为有效元素。故障时请求在首个失败的转换、权限或对齐检查处停止，已完成的读取可能留在部分定义的目标中。
+
+设计要点：NDF `PTO-TLOAD-CUBE-001` 只在所有有效 GM 读取无故障完成后才施加编码的 `PadValue`，因此发生故障的 CUBE 载入会使其物理尾部保持未定义，而不是被填充。
 
 <!-- PTO-READER-BLOCK: tile-tload-constraints role=constraints -->
-## 合法性、填充与故障
+## 类型、形状与故障
 
-绑定格式错误、类型或布局不受支持、形状无效、被消费元素未定义、属性非法或目的容量不足时，会在源快照或发布之前拒绝操作。
+`InstructionContractDataTypeLegal_TLOAD` 接受 `TileRegularTLSUDataTypeSupported` 允许的编码，即 `0` 到 `14`、`16` 到 `20`，以及 `24` 到 `28`；编码 `15`、`21` 到 `23` 与 `29` 到 `31` 在任何效果之前被拒绝。
 
-`PE_MASK=0000` 是严格空操作，先于读取、分配、故障、数值状态、填充或描述符效果。分配失败触发所有者定义的 Tile 分配故障；其他被拒绝的绑定模式或值条件触发所有者定义的合法性或块控制故障且不产生部分效果；内存故障可以保留已完成的读取。
+`ValidCol` 与 `ValidRow` 非零，`ValidCol` 不得超过物理 `Col`，并且推导出的 `Rows` 与 `Col` 是 2 的幂且大到足以包含有效矩形。普通形式与 Shared 形式只允许 `Layout` 作为非零属性，并要求 `PadValue` 为零；Local CUBE 布局还要求 `DTYPE_NONE`，并接受全部四种 `PadValue` 编码。权重模式仅限显式使用，并在一个 `B.IOR` 中携带 GMBase、ShapeGPR 与 StartGPR。
+
+`PE_MASK=0000` 在 Local 路径上是严格空操作，它在操作数模式、GPR 读取、目标分配与 GM 访问之前返回；在 Shared 路径上，共享绑定掩码为零时立即返回。
+
+设计要点：CUBE 形式要求显式非零的 `LB0` 与 `LB1`，并且 `LB2` 必须缺省（`InstructionContractCubeDimensionsLegal_TLOAD`），因为 CELL 几何来自布局、数据类型与有效形状，而不是来自物理列数。
 
 <!-- PTO-READER-BLOCK: tile-tload-example role=example -->
 ## 非规范契约草图
 
 这是非规范契约模式草图；它用于组织字段和绑定关系，不声称可以直接汇编。
 
-把 `BSTART.TLOAD U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR zero, a0; B.IOT mask=1111, ->T<1>; BSTOP` 作为非规范绑定演练，再以下方生成契约确认精确维度、属性和故障行为。
+取 `U8`、`Col=64`、`ValidCol=64` 与 `ValidRow=8`，其中 `a0` 保存 GM 基址，`a1` 保存字节行步幅 `64`。
+
+- 规范宏写法是 `TLOAD <Row=8, Col=64, U8>, [base=a0, stride=a1], ->T<512B>`，即一个 512 字节、8 行 64 列元素的目标。
+- 省略 `B.IOR` 会推导出紧密步幅 `64`；若把 `a1` 编码为零，则每一行都读取相同的 64 个 GM 字节。
+- 只有当全部 `512` 个元素载入及其 load 事件无故障完成时，目标才会被发布。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

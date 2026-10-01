@@ -19,52 +19,66 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tstore-purpose role=purpose -->
 ## What TSTORE does
 
-`TSTORE` stores one valid Local or Shared rectangle to GM without modifying the source Tile.
+`TSTORE` writes one Tile rectangle to global memory (GM). It is TLSU Function 1, written `BSTART.TSTORE DataType`, and it has no standalone opcode.
+
+The completed block has exactly one source domain. A Local source arrives through one terminating source `B.IOT`; a Shared source arrives through one source `B.IOS` and must already be published and whole-parent-ready. A Local CUBE form stores a persistent CUBE descriptor through `M322ND`, `M162ND`, or `N82ND`.
 
 <!-- PTO-READER-BLOCK: tile-c-tstore-mechanism role=mechanism -->
-## Operation mechanism
+## Addressing and access order
 
-Each selected-PE GM element is translated and permission-checked as the request proceeds; the request stops at the first fault.
+Each selected PE and each active valid coordinate is written at `base + row * row_stride_bytes + column * element_size` through `TileMemoryStridedByteAddress`. For the packed four-bit types the column contributes `floor(column / 2)` bytes and the low or high nibble is chosen by column parity.
 
-Every valid source element is stored with the resolved byte row stride until the first fault; packed four-bit elements select the byte half by column parity.
+`B.IOR.RegSrc0` supplies the per-PE GM base and `B.IOR.RegSrc1` the byte row stride. An omitted `B.IOR` gives base zero and the dense stride derived from the resolved physical `Col` and the data type, that is `ceil(columns * element_bits / 8)`; an explicitly encoded zero selector is a real stride of zero.
+
+Design point: the dense default is omission-only. Because an encoded zero reads the zero GPR, a program that encodes zero stride aliases every row onto row 0 in GM instead of getting the dense layout.
+
+The model `TSTORE` probes, stores, and records one typed store event per active element in row-major order, and stops at the first memory fault. Under a predicate-Tile ExecutionMask only the active coordinates are stored, so inactive coordinates produce no probe and no event.
+
+Design point: a four-bit store is a read-modify-write of the containing GM byte. The ASL loads that byte, replaces only the selected nibble, and stores it back, so the neighbouring nibble always survives.
 
 <!-- PTO-READER-BLOCK: tile-c-tstore-inputs-outputs role=inputs-outputs -->
-## Operands, shape, and type
+## Operand roles, shape, and type
 
-- `source0` supplies a persistent source Tile.
+- `source0` is a Local Tile or the absolute Shared source S0 through S63. Its payload, descriptor, producer mask, readiness, and lifetime are left unchanged, and the binding is consumed by normal block completion.
+- `address` is the per-PE private-GPR GM base address.
+- `scalar0` is the per-PE private-GPR byte row stride.
 
-- `address` supplies the per-PE GM base address.
+`LB0`, `LB1`, and `LB2` each have effective value one when omitted, and the resolved dimensions are checked against the source descriptor rather than inherited from it. A Shared source selects its consumer PEs through a nonzero `PE_MASK`, and `B.SUBVIEW` is the only partial-source range mechanism.
 
-- `scalar0` supplies the byte row stride.
-
-- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+Design point: an unpublished, pending, or incomplete Shared source makes the block wait without raising a fault and without any GM, binding-consumption, or descriptor effect, so a consumer cannot observe a half-written Shared parent.
 
 <!-- PTO-READER-BLOCK: tile-c-tstore-effects role=effects -->
 ## Definedness, padding, and publication
 
-The source payload and descriptor persist. GM and memory-event effects completed before a fault may remain visible.
+The source payload and descriptor persist after success and after rejection; `TSTORE` allocates no destination and publishes no Tile state. Only GM and the memory-event stream change.
 
-A fault may leave a partial GM write and memory-event prefix.
+A memory translation, permission, or alignment fault stops the request at the first fault, and the GM writes and memory events completed before it may remain visible in GM and in the event stream.
 
-Source Tiles persist and are not modified by successful execution.
+Design point: once every requested store completes without a fault, store beats have no architecture-defined relative order. Two selected PEs that write the same GM bytes therefore need software to avoid the overlap or to establish order separately.
 
 <!-- PTO-READER-BLOCK: tile-c-tstore-constraints role=constraints -->
 ## Legality, fault, and order boundaries
 
-Binding schema, dimensions, DataType, layout, and source descriptor are validated before effects; selected GM accesses proceed until the first fault.
+`InstructionContractDataTypeLegal_TSTORE` accepts the codes that `TileRegularTLSUDataTypeSupported` admits, namely `0` through `14`, `16` through `20`, and `24` through `28`; the remaining codes are reserved and reject before effects.
 
-A legality fault produces no partial GM effect; a GM-access fault retains earlier writes and events. TSTORE performs no destination allocation or destination publication.
+`ValidCol` and `ValidRow` are nonzero, `ValidCol` may not exceed the physical `Col`, and the resolved valid rectangle must fit the persistent source descriptor. Ordinary and Shared forms require `PadValue` zero; the Local CUBE codes `24` through `26` require `DTYPE_NONE`, accept all four `PadValue` encodings, and store only valid elements while ignoring physical padding.
 
-`PE_MASK=0000` is a strict no-op before operand reads, descriptor checks, faults, GM writes, or memory-event effects.
+A malformed binding stream, missing dimensions, an unsupported `DataType`, a non-row-major source, an undefined Local source element, an invalid source encoding, or mismatched source geometry raises `Fault_TileLegality` before effects.
 
-Overlapping selected-PE GM regions have no architecture-defined store-beat order; software must avoid overlap or establish ordering separately.
+`PE_MASK=0000` is a strict no-op in both destination domains: a zero `B.IOT` mask leaves the block without effect, and a zero `B.IOS` mask returns before schema, descriptor, GPR, memory, fault, and source-consumption effects.
+
+Design point: `SharedStorePEMaskLegal` accepts any nonzero mask for Function 1 and rejects a nonzero mask for every other function, so a `B.IOS` store can never silently infer quarter selection from the mask.
 
 <!-- PTO-READER-BLOCK: tile-c-tstore-example role=example -->
 ## Non-normative example
 
 This example illustrates the current ASL-bound contract and is not a second instruction definition.
 
-`TSTORE <bundle operands>` validates its shape and descriptor, then stores the valid rectangle until the first GM fault; the source Tile remains unchanged.
+Take `U8`, a Local source `T#1` with `Col=64`, `ValidCol=64`, and `ValidRow=8`, and a per-PE byte row stride of `64` in `a1` with the GM base in `a0`.
+
+- The canonical macro spelling is `TSTORE <Row=8, Col=64, ValidRow=8, ValidCol=64, U8>, T#1, [base=a0, stride=a1]`, which writes `8 * 64 = 512` GM bytes per selected PE.
+- If `a1` holds `0`, all eight rows write the same 64 GM bytes, and the final content of those bytes is not architecture-defined.
+- A fault at the third row leaves the first two rows stored and visible; the source Tile is unchanged.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

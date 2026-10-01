@@ -17,44 +17,66 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tprefetch-purpose role=purpose -->
-## Purpose
+## What TPREFETCH does
 
-`TPREFETCH` prefetches a typed, strided GM rectangle for all four PEs without a Tile destination.
+`TPREFETCH` reads a typed, strided GM rectangle for all four PEs and produces no destination. It is TLSU Function 3, written `BSTART.TPREFETCH DataType`, and it has no standalone opcode.
+
+The block has implicit PE participation `1111` and binds no Local or Shared Tile: any `B.IOT` or `B.IOS` in the block is a malformed schema and faults.
 
 <!-- PTO-READER-BLOCK: tile-tprefetch-mechanism role=mechanism -->
-## Execution mechanism
+## Footprint and ordering
 
-The ASL DOC contract selects `TileHandler_TPREFETCH` through the instruction's selector-encoded block carrier.
+For each of the four PEs the footprint is the same typed `ValidRow` by `ValidCol` rectangle that `TLOAD` would read from that PE's private base and row-stride GPR values. The address is built by `TileMemoryIndexedAddress`, so `scalar0` counts logical elements: that helper multiplies by `TileElementBytes` for ordinary types and shifts the index right by one bit for the packed four-bit types, where one logical element therefore advances half a byte.
 
-All four PE address footprints are preflighted before the first request or event; no Tile or Shared destination exists.
+`TPREFETCHCore` runs two passes. The first probes every typed element of every PE for read access; the second loads each translated address and records one typed load event for that PE with `CurrentBundleMemoryOrder()`.
+
+Design point: all four PE footprints are probed before the first event, so a fault in any PE rejects the whole prefetch and leaves no partial event prefix. `TLOAD` behaves differently: it stops at the first fault and keeps the events it already recorded.
+
+An omitted `B.IOR` gives base zero and the dense row stride, which is the resolved physical `Col` counted in elements, for every PE. An explicitly encoded zero selector is a real zero stride, so every row then aliases row 0.
 
 <!-- PTO-READER-BLOCK: tile-tprefetch-inputs-outputs role=inputs-outputs -->
-## Operands and descriptors
+## Operand roles and bindings
 
-`address` is the per-PE GM base; `scalar0` is the per-PE logical row stride in elements; `positive0` is the ValidCol; `positive1` is the ValidRow; `positive2` is the physical Col.
+- `address` is the per-PE GM base.
+- `scalar0` is the per-PE logical row stride in elements.
+- `positive0` is `ValidCol`.
+- `positive1` is `ValidRow`.
+- `positive2` is the physical `Col`.
 
-`TPREFETCH` produces no destination descriptor or Tile state; its only successful architectural contribution is the typed memory-event sequence.
+`LB0`, `LB1`, and `LB2` supply these dimensions. An omitted `LB0` or `LB1` selects `1`, and an omitted `LB2` selects the resolved `ValidCol`.
+
+Design point: each PE reads its base and stride from its own private GPR file, so one prefetch can cover four different GM regions while the shape stays common to all of them.
 
 <!-- PTO-READER-BLOCK: tile-tprefetch-effects role=effects -->
-## Publication and ordering
+## What changes
 
-Success emits TLOAD-equivalent typed load events for the strided rectangle but exposes no architectural cache placement or retention state.
+A successful prefetch changes no Tile, Shared, descriptor, payload, definedness, or allocation state. Its only architectural contribution is the typed memory-access and ordering event sequence.
 
-The block aq/rl attributes provide the same PTO-RC ordering used by TLOAD.
+Those events are the typed element load events that `TLOAD` would record for the same footprint, but no value is published anywhere.
+
+Design point: `InstructionContractPublishesTileDestination_TPREFETCH` is `FALSE` and the contract states that cache placement and retention are not architecturally visible, so the observable result is the event sequence rather than the presence of data in any cache.
 
 <!-- PTO-READER-BLOCK: tile-tprefetch-constraints role=constraints -->
-## Legality, padding, and faults
+## Types, shapes, and faults
 
-Dimensions, data attributes, and the combined four-PE memory footprint are validated before the first request or event.
+`InstructionContractDataTypeLegal_TPREFETCH` accepts the types `TileCarrierOrPackedBaselineDataTypeSupported` admits: non-four-bit carriers up to 4 bytes wide, plus the packed four-bit types.
 
-Any memory fault rejects the whole prefetch without a partial event sequence and without changing Tile, Shared, descriptor, payload, definedness, or allocation state.
+`ValidCol` and `ValidRow` are positive, `Col` is a nonzero power of two and at least `ValidCol`, and `ValidRow * ValidCol` may not exceed `PTO_MODEL_TILE_ELEMENTS`. `B.DATR` permits only `Layout` as a nonzero operation attribute and requires the pad union to remain zero.
+
+A malformed dimension, an unsupported data attribute, any `B.IOT` or `B.IOS`, or a memory fault in the combined four-PE footprint rejects before the first event and changes no Tile, Shared, descriptor, payload, definedness, or allocation state.
+
+Design point: participation is implicit `1111` and the schema accepts no Tile binding, so a block can neither restrict a prefetch to a subset of PEs nor attach a destination to it.
 
 <!-- PTO-READER-BLOCK: tile-tprefetch-example role=example -->
 ## Non-normative contract sketch
 
 This is a non-normative contract schema sketch; it organizes fields and bindings but is not claimed to be directly assembleable.
 
-Read `BSTART.TPREFETCH U8; B.DIM zero, 16, ->LB0; B.DIM zero, 4, ->LB1; B.DIM zero, 32, ->LB2; B.IOR zero, a0; BSTOP` as a non-normative binding walkthrough, then use the generated contract below for exact dimensions, attributes, and fault behavior.
+Take `U8`, `Row=4`, `Col=16`, `ValidRow=4`, and `ValidCol=16`, with `a0` holding each PE's GM base and `a1` the dense row stride of `16` elements. The canonical macro spelling is `TPREFETCH <Row=4, Col=16, ValidCol=16, U8>, [base=a0, stride=a1]`.
+
+- Per PE the footprint is `4 * 16 = 64` typed elements, so the four PEs together probe and record `256` element events.
+- Omitting the `B.IOR` gives base `0` and stride `16` for every PE; an encoded zero selector supplies a real zero value instead.
+- A fault at any element of any PE produces no event at all, because the probe pass over all four PEs runs first.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine
