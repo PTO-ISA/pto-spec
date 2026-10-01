@@ -19,32 +19,60 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-and-purpose role=purpose -->
 ## Purpose and scope
 
-`BSTART.MSCATTER.AND` is the stable reader entry point for this accepted operation. The normative `ASL` source and the generated contract sections on this page remain the only owners of architectural behavior.
+`BSTART.MSCATTER.AND` opens a Tile memory block whose operation is `MSCATTER_AND`: one indexed atomic reduction per lane that replaces a global memory (GM) element with the bitwise AND of that element and a value Tile element, and leaves the masked result in memory. The block publishes no Tile and consumes neither source Tile.
+
+The command is one 32-bit word with match `0x01811181` under mask `0x07ffffff`, so `DataType` occupies bits 31 to 27 and the fixed low bits carry TLSU selector 24. `ExecuteBundleGMAtomRedOperation` decodes selector 24 into the reduction operation `GMReduction_AND` and calls `GM_RED_VALUE(...)`. A reserved `DataType` code raises `Fault_IllegalInstruction` at the `BSTART`, before the block commits.
+
+Design point: the atom sibling `BSTART.MGATHER.AND` performs the same masking and additionally reports the old values. Clearing bits is destructive, so the reduction form is the one to use only when the previous contents are irrelevant.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-and-mechanism role=mechanism -->
 ## How to read the operation
 
-Read the generated Decode and Operation sections together to locate the selected form and semantic handler. This guide adds no alternate execution algorithm.
+At commit the block runs the Tile-level body `GM_RED_VALUE`, which first visits every active lane address and probes it for read and then for write. Two probes whose translations differ raise `Fault_DataPage`. Only after all lanes pass does it update them one at a time in an `ARBITRARY` order: load the old element, compute the new element, store it, and record one atomic event.
+
+`GMReductionResult` computes the new element as the raw bitwise `old AND value` of the two element-width words, with no numeric interpretation of either operand.
+
+Design point: `AND` is commutative and idempotent, so duplicate effective addresses converge on one value. Two lanes naming the same element leave it equal to `old AND value1 AND value2` in either commit order, which makes the result well defined even though the lane order is not.
+
+Design point: all probes run before the first store, so a faulting address leaves memory unchanged and records no event. A retry therefore applies the mask exactly once per lane instead of leaving a partially masked element.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-and-inputs role=inputs-outputs -->
 ## Inputs and outputs
 
-Use the generated Operands and results table and Block composition section as the complete map of encoded and architectural roles. Do not infer an omitted operand or result from this summary.
+- `DataType` must be `U32` or `U64`; every other code, including the floating, signed, and packed four-bit types, is rejected for this operation.
+- `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col. All three must equal the index Tile's and the value Tile's valid columns and valid rows, and `LB2` is the physical column count the layout rule uses.
+- One terminating `B.IOT` carries the index Tile in `source0` and the mask Tile in `source1`, with no destination and with `last`. With a predicate-Tile ExecutionMask the first `B.IOT` carries both sources without `last`, and a second `B.IOT` carries the mask Tile and `last`.
+- `B.IOR BaseGPR, zero, zero, ->zero` is required: `RegSrc0` selects the per-PE base GPR, the other three selectors encode zero, and a `RegSrc0` of `zero` supplies base address zero.
+- The index Tile is `S32`, `U32`, `S64`, or `U64` with byte displacements. The mask Tile uses the operation `DataType` and the same valid shape as the index Tile.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-and-effects role=effects -->
 ## Effects and state
 
-Use the generated State effects and Memory effects and ordering sections for the complete effect boundary. Executable points are evidence that the owner is exercised, not another source of meaning.
+Every active lane leaves the masked element in one GM element and records one atomic event. No Tile is published, no Local allocation is created, and both source Tiles keep their contents. The GM results stay visible: a reduction does not roll memory back.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-and-constraints role=constraints -->
 ## Boundaries and failures
 
-Defaults, Legality, and Exceptions below define the accepted domain and failure boundary. Reserved values and unsupported combinations remain governed by those generated sections.
+`PE_MASK=0000` exits at the start of the atom/red dispatcher, before its schema, GPR, descriptor, type, and memory checks.
+
+An unknown TLSU code raises `Fault_IllegalInstruction`. A binding count other than the one or two records above raises `Fault_BundleControl`. A missing `B.IOR`, a Shared binding, a nonzero unused `B.IOR` selector, a dimension outside `1..65535`, a `DataType` other than `U32` or `U64`, a wrong layout or shape, or an undefined active index or mask element raises `Fault_TileLegality` before the first probe. A memory fault keeps its own kind.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-and-example role=example -->
 ## Non-normative usage example
 
 Treat the generated `BSTART.MSCATTER.AND` example as a spelling and navigation aid. Substitute operands only within the legality and state contracts owned below.
+
+```asm
+BSTART.MSCATTER.AND U32
+B.DIM zero, 2, ->LB0
+B.DIM zero, 1, ->LB1
+B.DIM zero, 2, ->LB2
+B.IOT T#1, T#2, mask=1111, last
+B.IOR a0, zero, zero, ->zero
+BSTOP
+```
+
+`T#1` is a 1 by 2 `S32` index Tile holding `0` and `4`, `T#2` is the 1 by 2 `U32` mask Tile holding `0x33` and `0x0F`, and `a0` holds `0x1000`. If GM holds `0x0F` at `0x1000` and `0xF0` at `0x1004`, the reductions leave `0x0F AND 0x33`, which is `0x03`, and `0xF0 AND 0x0F`, which is `0x00`. The block returns no Tile, and the cleared bits are not reported anywhere.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

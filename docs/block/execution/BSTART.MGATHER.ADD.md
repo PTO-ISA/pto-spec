@@ -19,32 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mgather-add-purpose role=purpose -->
 ## Purpose and scope
 
-`BSTART.MGATHER.ADD` is the stable reader entry point for this accepted operation. The normative `ASL` source and the generated contract sections on this page remain the only owners of architectural behavior.
+`BSTART.MGATHER.ADD` opens a Tile memory block whose operation is `MGATHER_ADD`: one atomic read-modify-write per lane that adds a value Tile element to a global memory (GM) element and returns the observed old value in a new Local destination Tile.
+
+The command is one 32-bit word with match `0x00c11181` under mask `0x07ffffff`, so `DataType` occupies bits 31 to 27 and the fixed low bits carry TLSU selector 12. `ExecuteBundleGMAtomRedOperation` maps selector 12 through `GMAtomicOperationFromFunction` to `GMAtomic_ADD` and calls `GM_ATOM_VALUE(...)`. A reserved `DataType` code raises `Fault_IllegalInstruction` at the `BSTART`, before the block commits.
+
+Design point: the sibling `BSTART.MSCATTER.ADD` performs the same addition but publishes no Tile, because `GMReduction_ADD` has no destination. The atom form costs one more operand record and returns the value each lane observed; that old value is the only result this form adds.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-add-mechanism role=mechanism -->
 ## How to read the operation
 
-Read the generated Decode and Operation sections together to locate the selected form and semantic handler. This guide adds no alternate execution algorithm.
+At commit the block runs the Tile-level body through `GM_ATOM_VALUE`, which calls the shared atom body `GMRunAtomic`. That body first visits every active lane, computes the address as `BaseGPR` plus the lane's byte displacement, and probes it for read and then for write. Two probes whose translations differ raise `Fault_DataPage`. Only after all lanes pass does it apply the updates one lane at a time in an `ARBITRARY` order: load the old element, compute the new element, store it, write the old value into the destination, and record one atomic event.
+
+For an integer `DataType`, `GMAtomicResult` adds the element-width raw values and the element-width store truncates the sum, so the result wraps. For `FP16`, `BF16`, `FP32`, and `FP64`, the sum comes from `GMFloatingAddPTX`, an implementation-defined hook whose comment names a PTX-derived profile with round-to-nearest-even and a flush-to-zero policy that depends on the type; its model body only adds the raw words.
+
+Design point: all probes run before the first update, so a translation or permission fault on any lane leaves GM unchanged and records no event. A retry after the fault is fixed cannot apply an update twice.
+
+Design point: each lane reloads the current element instead of reusing a value read during preflight. Two lanes with the same address therefore both contribute, and because the commit order is arbitrary, a program must not depend on which of them runs first.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-add-inputs role=inputs-outputs -->
 ## Inputs and outputs
 
-Use the generated Operands and results table and Block composition section as the complete map of encoded and architectural roles. Do not infer an omitted operand or result from this summary.
+- `DataType` must be `FP16`, `BF16`, `FP32`, `FP64`, `S32`, `U32`, or `U64`; every other code, including the packed four-bit types, is rejected for this operation.
+- `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col. All three must equal the index Tile's and the value Tile's valid columns, valid rows, and the destination's physical columns.
+- `B.IOR BaseGPR, zero, zero, ->zero` is required: `RegSrc0` selects the per-PE base GPR, the other three selectors encode zero, and a `RegSrc0` of `zero` supplies base address zero.
+- Without a predicate-Tile ExecutionMask, one terminating `B.IOT` carries the index Tile, the value Tile, and the destination. With one, the first `B.IOT` carries the two sources with no destination and no `last`, and a second `B.IOT` carries the mask Tile, the destination, and `last`.
+- The index Tile is `S32`, `U32`, `S64`, or `U64` with byte displacements. The value Tile uses the operation `DataType` and the same valid shape as the index Tile.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-add-effects role=effects -->
 ## Effects and state
 
-Use the generated State effects and Memory effects and ordering sections for the complete effect boundary. Executable points are evidence that the owner is exercised, not another source of meaning.
+Each active lane updates one GM element and publishes the old value into the destination element at the same row and column. The complete physical destination region is defined before those results: coordinates the ExecutionMask deactivates take the mask's zero or merge value, and every other element outside the active lanes takes the bundle `PadValue`, which is zero bits for an omitted `B.DATR`.
+
+On success each active lane has performed one atomic update and recorded one atomic event, and the destination is fully defined. The GM results stay visible; the atom form does not roll memory back.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-add-constraints role=constraints -->
 ## Boundaries and failures
 
-Defaults, Legality, and Exceptions below define the accepted domain and failure boundary. Reserved values and unsupported combinations remain governed by those generated sections.
+`PE_MASK=0000` exits at the start of the atom/red dispatcher, before its schema, GPR, descriptor, type, and memory checks.
+
+An unknown TLSU code raises `Fault_IllegalInstruction`. A binding count other than the one or two records above raises `Fault_BundleControl`. A missing `B.IOR`, a Shared binding, a nonzero unused `B.IOR` selector, a dimension outside `1..65535`, an unsupported type, layout, or shape, or an undefined active index or value element raises `Fault_TileLegality` before the first probe. A failed destination allocation raises `Fault_TileAllocation`, and a memory fault keeps its own kind.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-add-example role=example -->
 ## Non-normative usage example
 
 Treat the generated `BSTART.MGATHER.ADD` example as a spelling and navigation aid. Substitute operands only within the legality and state contracts owned below.
+
+```asm
+BSTART.MGATHER.ADD U32
+B.DIM zero, 3, ->LB0
+B.DIM zero, 1, ->LB1
+B.DIM zero, 3, ->LB2
+B.IOT T#1, T#2, mask=1111, last, ->T<12B>
+B.IOR a0, zero, zero, ->zero
+BSTOP
+```
+
+`T#1` is a 1 by 3 `S32` index Tile holding `0`, `4`, and `0`, `T#2` is the 1 by 3 `U32` value Tile holding `5`, `7`, and `1`, and `a0` holds `0x1000`. Lanes 0 and 2 both address `0x1000`; lane 1 addresses `0x1004`. If GM holds `10` at `0x1000` and `20` at `0x1004`, the two addresses end at `16` and `27` in either lane order. The destination, 12 bytes holding three `U32` elements, receives `10`, `20`, and `15` when lane 0 commits first, or `16`, `20`, and `10` when lane 2 commits first.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,40 +19,47 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mgather-purpose role=purpose -->
 ## What BSTART.MGATHER contributes
 
-`BSTART.MGATHER` is a 32-bit block-start command for the MGATHER form. It establishes the pending block identity and selectors; the completed block, not the start command alone, owns body execution and result commitment.
+`BSTART.MGATHER` opens a Tile memory block whose operation is `MGATHER`: an indexed load. Each active lane reads one transfer element from global memory (GM) at a base address plus that lane's byte displacement and writes it into a new Local destination Tile. The block returns the destination and writes no memory.
+
+The command is one 32-bit word with match `0x00411181` under mask `0x07ffffff`, so `DataType` occupies bits 31 to 27 and the fixed low bits carry TLSU selector 4. `BundleMGATHERSelected` matches that selector and `ExecuteBundleMGATHEROperation` runs the operation, whose decoded identity is `TileOperation_MGATHER`.
+
+Design point: an index is a byte displacement and is never scaled by the element size. A program that wants element-strided addresses multiplies its own indices, so the same index Tile can serve several transfer types without changing.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-mechanism role=mechanism -->
 ## Placement and mechanism
 
-Header commands execute sequentially after the start, while `BSTOP` or the next `BSTART` is the boundary that validates and retires the completed block. The current owner gives this exact composition checklist:
+`ExecuteBundleMGATHEROperation` first declines a `PE_MASK=0000` block as a strict no-op, then decodes the TLSU selector and validates the schema: no Shared binding, exactly one Local binding, a valid `B.IOR`, complete bindings, legal GPR values, legal tile masks, and legal dimensions. It then checks the transfer data type, the index data type, the shape relation between the dimensions and the index Tile, the physical shape rule of the layout, and the bundle layout of every participating Tile.
 
-```text
-BSTART.MGATHER DataType
-B.DATR PadValue, Layout (optional)
-B.DIM LB0=ValidCol
-B.DIM LB1=ValidRow (optional)
-B.DIM LB2=Col (optional)
-B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>
-B.IOR BaseGPR, zero, zero, ->zero
-BSTOP
-```
+The Tile-level body `MGATHER` probes every active lane address for read. Only after all probes succeed does it define the whole physical destination and load the active lanes, recording one load event per lane.
 
-After any active predecessor is retired successfully, the command initializes the new pending `BARG` or operation descriptor and continues header execution at the sequential PC. No block destination or memory result becomes visible merely because the start decoded.
+Design point: all probes run before the first load and before the destination is filled. A disabled or faulting address therefore stops the attempt with no partial destination: the dispatcher calls `RollBackBundleTileDestinations` and the block publishes nothing.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-inputs role=inputs-outputs -->
 ## Operands and header roles
 
-- `DataType` selects the element data type or inheritance sentinel; its exact assigned domain remains in the generated contract below.
+- `DataType` is the transfer element type; it also fixes the width of each load.
+- `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col (default `LB0`). The valid rows and valid columns must equal the index Tile's own valid shape.
+- One terminating `B.IOT` carries the index Tile in `source0`, the `PE_MASK`, `last`, and a destination with a size code. A predicate-Tile ExecutionMask instead moves the destination into a second `B.IOT`, and the first record then carries the index Tile without a destination and without `last`.
+- The index Tile is `S32`, `U32`, `S64`, or `U64`, uses the bundle layout, and holds byte displacements.
+- `B.IOR BaseGPR, zero, zero, ->zero` is required: `RegSrc0` selects the per-PE base address GPR, `RegSrc1`, `RegSrc2`, and `RegDst` must encode zero, and a `RegSrc0` of `zero` supplies base address zero.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-effects role=effects -->
 ## Pending state and completion
 
-The start transition is all-or-nothing with predecessor retirement for applicability and target checks. After the start succeeds, the later completion boundary validates the full composition before any body result can commit.
+For each active lane, the destination element at the same row and column receives the loaded element. For a packed four-bit type, one indexed byte supplies two adjacent logical nibbles, so the destination valid columns are exactly twice the index valid columns and no nibble pair is incomplete.
+
+Before the loads, the complete physical destination region is defined: coordinates the ExecutionMask deactivates take the mask's zero or merge value, and every other element outside the active lanes takes the bundle `PadValue`. On success the full physical destination region is defined; a failing attempt publishes no destination.
+
+Design point: because the destination is a new allocation rather than an existing Tile, the padding rule is what makes the result deterministic outside the valid region. A caller that reads the whole physical Tile never sees undefined bits, even where no lane wrote.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-constraints role=constraints -->
 ## Legality and fault boundary
 
-Reserved selectors, invalid targets, malformed completed composition, or failed predecessor retirement are rejected before new-block or body effects.
+- `PE_MASK=0000` is a strict no-op before every schema, source, GPR, dimension, allocation, and memory check.
+- A reserved `DataType` code or an unknown TLSU selector raises `Fault_IllegalInstruction`.
+- A `B.IOS` binding, a missing `B.IOR`, a nonzero unused `B.IOR` selector, a malformed binding schema, an index type other than `S32`, `U32`, `S64`, or `U64`, an undefined source, or a shape, layout, or dimension mismatch raises `Fault_TileLegality` before the first probe.
+- The layout is `ROWMAJOR`, `CUBE_M16`, or `CUBE_M32`; `CUBE_N8` is rejected. For `ROWMAJOR` the physical columns must be a nonzero power of two and may not be smaller than the valid columns.
+- If no free Local destination exists, resolution raises `Fault_TileAllocation`. A memory fault keeps its own kind, and no memory is modified by a gather.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-example role=example -->
 ## Non-normative worked example
@@ -60,10 +67,16 @@ Reserved selectors, invalid targets, malformed completed composition, or failed 
 This worked example is non-normative; it illustrates the current owner without replacing it.
 
 ```asm
-BSTART.MGATHER DataType
+BSTART.MGATHER U32
+B.DIM zero, 4, ->LB0
+B.DIM zero, 1, ->LB1
+B.DIM zero, 4, ->LB2
+B.IOT T#1, mask=1111, last, ->T<16B>
+B.IOR a0, zero, zero, ->zero
+BSTOP
 ```
 
-Assume predecessor retirement and target checks succeed. `BSTART.MGATHER DataType` opens the pending `BSTART.MGATHER` form; subsequent header/body commands remain provisional until `BSTOP` or the next `BSTART` validates the complete composition.
+`T#1` is a 1 by 4 `S32` index Tile holding the byte displacements `0`, `4`, `8`, and `12`, and `a0` holds `0x1000`. The four active lanes load from `0x1000`, `0x1004`, `0x1008`, and `0x100C`. The destination is a 1 by 4 `U32` Tile of 16 bytes, so all four elements receive a loaded value and the padding rule has no visible effect.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

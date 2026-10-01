@@ -19,32 +19,60 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-min-purpose role=purpose -->
 ## Purpose and scope
 
-`BSTART.MSCATTER.MIN` is the stable reader entry point for this accepted operation. The normative `ASL` source and the generated contract sections on this page remain the only owners of architectural behavior.
+`BSTART.MSCATTER.MIN` opens a Tile memory block whose operation is `MSCATTER_MIN`: one indexed atomic reduction per lane that keeps the smaller of the global memory (GM) element and a value Tile element, and leaves it in memory. The block publishes no Tile and consumes neither source Tile.
+
+The command is one 32-bit word with match `0x01411181` under mask `0x07ffffff`, so `DataType` occupies bits 31 to 27 and the fixed low bits carry TLSU selector 20. `ExecuteBundleGMAtomRedOperation` decodes selector 20 into the reduction operation `GMReduction_MIN` and calls `GM_RED_VALUE(...)`. A reserved `DataType` code raises `Fault_IllegalInstruction` at the `BSTART`, before the block commits.
+
+Design point: the atom sibling `BSTART.MGATHER.MIN` performs the same comparison and also reports the old values. This form keeps only the running minimum, so it needs no destination operand, no Local allocation, and no rollback path.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-min-mechanism role=mechanism -->
 ## How to read the operation
 
-Read the generated Decode and Operation sections together to locate the selected form and semantic handler. This guide adds no alternate execution algorithm.
+At commit the block runs the Tile-level body `GM_RED_VALUE`, which first visits every active lane address and probes it for read and then for write. Two probes whose translations differ raise `Fault_DataPage`. Only after all lanes pass does it update them one at a time in an `ARBITRARY` order: load the old element, compute the new element, store it, and record one atomic event.
+
+`GMReductionResult` selects the comparison from the value Tile's element type: when `TileDataTypeIsSigned` holds it compares `SInt` values, and otherwise it compares `UInt` values. It returns the old element when that one is smaller and the value Tile element otherwise.
+
+Design point: the signedness comes from the operation `DataType`, so the same bytes can lose under `S32` and win under `U32`. A program that changes the `DataType` of a live reduction changes which element survives, without changing a single index or value.
+
+Design point: all probes run before the first update, so a faulting lane leaves GM unchanged and records no event. A retry after the fault is repaired cannot lower an element twice, because nothing was lowered before the probes passed.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-min-inputs role=inputs-outputs -->
 ## Inputs and outputs
 
-Use the generated Operands and results table and Block composition section as the complete map of encoded and architectural roles. Do not infer an omitted operand or result from this summary.
+- `DataType` must be `S32`, `S64`, `U32`, or `U64`; every other code, including the floating and packed four-bit types, is rejected for this operation.
+- `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col. All three must equal the index Tile's and the value Tile's valid columns and valid rows, and `LB2` is the physical column count the layout rule uses.
+- One terminating `B.IOT` carries the index Tile in `source0` and the value Tile in `source1`, with no destination and with `last`. With a predicate-Tile ExecutionMask the first `B.IOT` carries both sources without `last`, and a second `B.IOT` carries the mask Tile and `last`.
+- `B.IOR BaseGPR, zero, zero, ->zero` is required: `RegSrc0` selects the per-PE base GPR, the other three selectors encode zero, and a `RegSrc0` of `zero` supplies base address zero.
+- The index Tile is `S32`, `U32`, `S64`, or `U64` with byte displacements. The value Tile uses the operation `DataType` and the same valid shape as the index Tile.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-min-effects role=effects -->
 ## Effects and state
 
-Use the generated State effects and Memory effects and ordering sections for the complete effect boundary. Executable points are evidence that the owner is exercised, not another source of meaning.
+Every active lane leaves the smaller of the two values in one GM element and records one atomic event. No Tile is published, no Local allocation is created, and both source Tiles keep their contents. The GM results stay visible: a reduction does not roll memory back.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-min-constraints role=constraints -->
 ## Boundaries and failures
 
-Defaults, Legality, and Exceptions below define the accepted domain and failure boundary. Reserved values and unsupported combinations remain governed by those generated sections.
+`PE_MASK=0000` exits at the start of the atom/red dispatcher, before its schema, GPR, descriptor, type, and memory checks.
+
+An unknown TLSU code raises `Fault_IllegalInstruction`. A binding count other than the one or two records above raises `Fault_BundleControl`. A missing `B.IOR`, a Shared binding, a nonzero unused `B.IOR` selector, a dimension outside `1..65535`, an unsupported type, layout, or shape, or an undefined active index or value element raises `Fault_TileLegality` before the first probe. A memory fault keeps its own kind.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-min-example role=example -->
 ## Non-normative usage example
 
 Treat the generated `BSTART.MSCATTER.MIN` example as a spelling and navigation aid. Substitute operands only within the legality and state contracts owned below.
+
+```asm
+BSTART.MSCATTER.MIN S32
+B.DIM zero, 2, ->LB0
+B.DIM zero, 1, ->LB1
+B.DIM zero, 2, ->LB2
+B.IOT T#1, T#2, mask=1111, last
+B.IOR a0, zero, zero, ->zero
+BSTOP
+```
+
+`T#1` is a 1 by 2 `S32` index Tile holding `0` and `4`, `T#2` is the 1 by 2 `S32` value Tile holding `-9` and `3`, and `a0` holds `0x1000`. If GM holds `-5` at `0x1000` and `2` at `0x1004`, lane 0 lowers its element to `-9`, and lane 1 keeps `2` because `2` is smaller than `3`. Memory ends at `-9` and `2`, and the block returns no Tile.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

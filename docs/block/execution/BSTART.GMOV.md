@@ -19,38 +19,45 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-gmov-purpose role=purpose -->
 ## What BSTART.GMOV contributes
 
-`BSTART.GMOV` is a 32-bit block-start command for the GMOV form. It establishes the pending block identity and selectors; the completed block, not the start command alone, owns body execution and result commitment.
+`BSTART.GMOV` opens a Tile-memory-class block whose operation is `GMOV`: a collective copy of Local fragments between the four PEs of one Core. Each PE resolves a source fragment with its own `peer_tid`, and each selected PE publishes a destination that receives that fragment payload and definedness byte for byte. The command performs no global-memory access and no Shared-register effect.
+
+The single form is `BSTART.GMOV DataType`, one 32-bit word with match `0x00d11181` under mask `0x07ffffff`, so `DataType` sits in bits 31 to 27 and the fixed low bits carry TLSU selector 13, which `BundleGMOVSelected` matches. The operation is `TileOperation_GMOV` and `InstructionContractStartsTileBundle_BSTART_GMOV` returns TRUE.
+
+Design point: `GMOV` has no index Tile and no base address, unlike `MGATHER`, which also publishes a Local destination. The source it copies is a peer-resolved snapshot, so the destination takes the source's own valid shape, physical columns, and capacity instead of the `B.DIM` shape.
 
 <!-- PTO-READER-BLOCK: block-bstart-gmov-mechanism role=mechanism -->
 ## Placement and mechanism
 
-Header commands execute sequentially after the start, while `BSTOP` or the next `BSTART` is the boundary that validates and retires the completed block. The current owner gives this exact composition checklist:
+Tile execution tests `BundleGMOVSelected` before the CAS, atom, gather, and scatter selectors, so selector 13 always reaches `ExecuteBundleGMOVOperation`. That handler requires exactly one Local binding with a destination, a `source0`, no `source1`, and `last`; a Shared binding, an incomplete binding, or a nonzero unused `B.IOR` field raises `Fault_TileLegality`.
 
-```text
-BSTART.GMOV DataType; optional B.DATR Layout; one terminating B.IOT with one Local source and one Local destination; optional B.IOR peer_tid; BSTOP
-B.IOS and B.DIM are not members of a GMOV schema.
-```
+The handler then reads `peer_tid` for each of the four PEs from the private GPR named by `B.IOR.RegSrc0` and requires every value to be below 4. Repeated peer identifiers are legal, so two PEs may read the same fragment. All three `B.DIM` lanes must equal 1, because the destination shape comes from the source rather than from dimensions.
 
-After any active predecessor is retired successfully, the command initializes the new pending `BARG` or operation descriptor and continues header execution at the sequential PC. No block destination or memory result becomes visible merely because the start decoded.
+Design point: readiness is one collective witness. `BundleGMOVCore4SourceReady` requires the source contents to be defined and its allocation mask to be `1111`, so the copy runs only when all four PEs have allocated the fragment. The copy itself is read-old and write-new from that snapshot, so no PE can observe a half-updated fragment.
+
+Design point: `ExecuteBundleGMOVOperation` has no `PE_MASK=0000` early exit, unlike the gather, scatter, and atom handlers. Its schema, readiness, peer-range, dimension, type, and capacity checks therefore run for every encoding that reaches the handler, whatever the nonzero mask is. `PE_MASK=0000` never reaches it: `B.IOT` records no binding for a zero mask, and `ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules` then returns true at `asl/block/model/dispatch/tile-execution.asl:143`.
 
 <!-- PTO-READER-BLOCK: block-bstart-gmov-inputs role=inputs-outputs -->
 ## Operands and header roles
 
-- `DataType` selects the element data type or inheritance sentinel; its exact assigned domain remains in the generated contract below.
-- `B.IOT source` identifies an input source or source-role selector; its exact assigned domain remains in the generated contract below.
-- `B.IOT destination` identifies a destination or publication selector; its exact assigned domain remains in the generated contract below.
-- `B.IOT PE_MASK` identifies a destination or publication selector; its exact assigned domain remains in the generated contract below.
-- `B.IOR.RegSrc0` selects the named absolute GPR role; its exact assigned domain remains in the generated contract below.
+- `DataType` in bits 31 to 27 selects the element type of the copied fragment; the constraint accepts codes 0 to 14, 16 to 20, and 24 to 28, and every other code is reserved. The handler also requires `TileCarrierOrPackedBaselineDataTypeSupported` for that type, and both Tiles must use it.
+- One terminating `B.IOT` must carry the source fragment and a destination, and must not carry a second source. Its `PE_MASK` selects the destination participants and its size code must describe exactly the source capacity in bytes.
+- `B.IOR` is optional. When present, `RegSrc0` selects the per-PE GPR that holds that PE's `peer_tid`, and `RegSrc1`, `RegSrc2`, and `RegDst` must encode zero. Omitting `B.IOR` supplies `peer_tid` zero in all four PEs.
+- `B.DATR` selects the layout. The source must already use that layout, and the destination is resolved with it.
 
 <!-- PTO-READER-BLOCK: block-bstart-gmov-effects role=effects -->
 ## Pending state and completion
 
-The start transition is all-or-nothing with predecessor retirement for applicability and target checks. After the start succeeds, the later completion boundary validates the full composition before any body result can commit.
+For each PE that the mask selects, the bundle allocates a Local destination with the source shape and copies the peer-resolved payload, definedness, and physical region into it. PEs outside the mask still take part in the peer selection, rendezvous, and readiness preflight but request, allocate, write, and complete no destination. Shared state is unchanged.
+
+The copy publishes no memory event because it never touches global memory. A failure after allocation calls `RollBackBundleTileDestinations`, so a rejected attempt exposes no partial destination.
 
 <!-- PTO-READER-BLOCK: block-bstart-gmov-constraints role=constraints -->
 ## Legality and fault boundary
 
-Reserved selectors, invalid targets, malformed completed composition, or failed predecessor retirement are rejected before new-block or body effects.
+- An unknown TLSU code raises `Fault_IllegalInstruction`; a Shared binding, a malformed binding, an illegal `B.IOR` value, a dimension lane other than 1, an undefined or not-fully-allocated source, a type or layout mismatch, or a destination size that is not the source capacity raises `Fault_TileLegality` before the copy.
+- A `peer_tid` of 4 or more in any PE raises `Fault_TileLegality` before allocation and before any request.
+- If no free Local destination exists, the resolution raises `Fault_TileAllocation`.
+- Any nonzero `PE_MASK` is legal and controls only destination request, allocation, write, and completion participation.
 
 <!-- PTO-READER-BLOCK: block-bstart-gmov-example role=example -->
 ## Non-normative worked example
@@ -58,10 +65,13 @@ Reserved selectors, invalid targets, malformed completed composition, or failed 
 This worked example is non-normative; it illustrates the current owner without replacing it.
 
 ```asm
-BSTART.GMOV DataType
+BSTART.GMOV U8
+B.IOT T#1, mask=0011, size=1, ->T
+B.IOR a1, zero, zero, ->zero
+BSTOP
 ```
 
-Assume predecessor retirement and target checks succeed. `BSTART.GMOV DataType` opens the pending `BSTART.GMOV` form; subsequent header/body commands remain provisional until `BSTOP` or the next `BSTART` validates the complete composition.
+`T#1` is the peer-resolved source fragment, `mask=0011` selects two of the four PEs for the destination, and `a1` holds `peer_tid`. If `a1` holds 1 in every PE, all four PEs rendezvous on the fragment published by PE 1 and every selected PE publishes a copy of it; a PE whose `a1` holds 2 instead resolves PE 2's fragment. The two unselected PEs still prove readiness for their own resolution but publish nothing.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

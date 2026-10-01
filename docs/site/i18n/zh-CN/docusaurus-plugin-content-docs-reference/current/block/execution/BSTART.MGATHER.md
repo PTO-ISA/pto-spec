@@ -19,51 +19,64 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mgather-purpose role=purpose -->
 ## BSTART.MGATHER 的作用
 
-`BSTART.MGATHER` 是 `MGATHER` 形式的 32 位 Block 起始命令。它建立待处理 Block 的身份和选择参数；真正执行 Block body 并提交结果的是完成后的整个 Block，而不是起始命令本身。
+`BSTART.MGATHER` 打开一个 Tile memory 指令束，其操作为 `MGATHER`：一次索引装载。每个活动通道从全局内存（GM）中按基地址加上该通道的字节位移读取一个传输元素，并把它写入一个新的 Local 目标 Tile。该指令束返回目标，且不写入内存。
+
+该命令是一个 32 位字，在掩码 `0x07ffffff` 下匹配 `0x00411181`，因此 `DataType` 占据第 31 至 27 位，固定的低位携带 TLSU 选择子 4。`BundleMGATHERSelected` 匹配该选择子，`ExecuteBundleMGATHEROperation` 运行该操作，其译码身份为 `TileOperation_MGATHER`。
+
+设计要点：索引是字节位移，从不按元素大小缩放。需要按元素步进地址的程序自行缩放索引，因此同一个索引 Tile 无需改动即可服务多种传输类型。
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-mechanism role=mechanism -->
 ## 位置与机制
 
-起始命令之后的 header 命令按顺序执行；`BSTOP` 或下一条 `BSTART` 是验证并退休完整 Block 的边界。当前所有者给出以下确切组成检查表：
+`ExecuteBundleMGATHEROperation` 先把 `PE_MASK=0000` 的指令束作为严格无操作直接返回，然后译码 TLSU 选择子并校验 schema：没有 Shared 绑定、恰好一个 Local 绑定、有效的 `B.IOR`、完整的绑定、合法的 GPR 取值、合法的 tile 掩码以及合法的维度。随后它检查传输数据类型、索引数据类型、维度与索引 Tile 之间的形状关系、布局的物理形状规则，以及每个参与 Tile 的指令束布局。
 
-```text
-BSTART.MGATHER DataType
-B.DATR PadValue, Layout (optional)
-B.DIM LB0=ValidCol
-B.DIM LB1=ValidRow (optional)
-B.DIM LB2=Col (optional)
-B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>
-B.IOR BaseGPR, zero, zero, ->zero
-BSTOP
-```
+Tile 级执行体 `MGATHER` 为每个活动通道地址做读探测。只有全部探测成功之后，它才定义整个物理目标并装载活动通道，每个通道记录一个 load 事件。
 
-任何有效前序 Block 成功退休后，该命令初始化新的待处理 `BARG` 或操作描述符，并从顺序 PC 继续执行 header。仅仅成功解码起始命令，不会让 Block 目的结果或内存结果变得可见。
+设计要点：所有探测都在第一次装载之前、目标填充之前运行。因此被禁用或发生故障的地址会让该次尝试停止而不产生部分目标：分派器调用 `RollBackBundleTileDestinations`，该指令束不发布任何东西。
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-inputs role=inputs-outputs -->
 ## 操作数与 header 角色
 
-- `DataType` 选择元素数据类型或继承哨兵；其确切分配域仍以下方生成契约为准。
+- `DataType` 是传输元素类型；它也固定每次装载的位宽。
+- `B.DIM` 的 `LB0` 是 ValidCol，`LB1` 是 ValidRow（默认 1），`LB2` 是物理 Col（默认 `LB0`）。有效行数与有效列数必须等于索引 Tile 自身的有效形状。
+- 一条终止 `B.IOT` 在 `source0` 中携带索引 Tile，并携带 `PE_MASK`、`last` 以及带 size 编码的目标。若改用谓词 Tile ExecutionMask，则目标移入第二条 `B.IOT`，此时第一条记录只携带索引 Tile，没有目标也没有 `last`。
+- 索引 Tile 是 `S32`、`U32`、`S64` 或 `U64`，使用指令束布局，并保存字节位移。
+- `B.IOR BaseGPR, zero, zero, ->zero` 是必需的：`RegSrc0` 选择每个 PE 的基地址 GPR，`RegSrc1`、`RegSrc2` 与 `RegDst` 必须编码为零，而 `RegSrc0` 为 `zero` 时提供基地址零。
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-effects role=effects -->
 ## 待处理状态与完成
 
-对适用性和目标检查而言，起始状态转换与前序 Block 退休是全有或全无的。起始命令成功后，后续完成边界会在任何 body 结果提交前验证完整组成。
+对每个活动通道，同一行同一列的目标元素接收装载到的元素。对打包四位类型，一个索引字节提供两个相邻的逻辑半字节，因此目标有效列数恰好是索引有效列数的两倍，不会出现不完整的半字节对。
+
+在装载之前，整个物理目标区域已被定义：被 ExecutionMask 停用的坐标取该掩码的零值或合并值，活动通道之外的其他每个元素取指令束 `PadValue`。成功时整个物理目标区域都是已定义的；失败的尝试不发布任何目标。
+
+设计要点：由于目标是新分配而不是既有 Tile，填充规则正是让有效区域之外的结果确定的原因。读取整个物理 Tile 的调用方即使在没有任何通道写入的位置也看不到未定义的位。
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-constraints role=constraints -->
 ## 合法性与故障边界
 
-保留选择器、无效目标、完成后的组成错误或前序退休失败，都会在新 Block 或 body 影响之前被拒绝。
+- `PE_MASK=0000` 是严格无操作，早于所有 schema、源、GPR、维度、分配与内存检查。
+- 保留的 `DataType` 编码或未知的 TLSU 选择子引发 `Fault_IllegalInstruction`。
+- `B.IOS` 绑定、缺少 `B.IOR`、非零的未使用 `B.IOR` 选择子、畸形绑定 schema、非 `S32`、`U32`、`S64` 或 `U64` 的索引类型、未定义的源，或形状、布局、维度不匹配，都会在第一次探测之前引发 `Fault_TileLegality`。
+- 布局为 `ROWMAJOR`、`CUBE_M16` 或 `CUBE_M32`；`CUBE_N8` 被拒绝。对 `ROWMAJOR`，物理列数必须是非零的 2 的幂，且不得小于有效列数。
+- 若不存在空闲的 Local 目标，解析会引发 `Fault_TileAllocation`。内存故障保留其自身种类，而 gather 不修改任何内存。
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-example role=example -->
 ## 非规范示例
 
-以下为非规范示例，仅用于说明当前所有者，不替代其定义。
+该演算示例是非规范的；它说明当前 owner，而不替代它。
 
 ```asm
-BSTART.MGATHER DataType
+BSTART.MGATHER U32
+B.DIM zero, 4, ->LB0
+B.DIM zero, 1, ->LB1
+B.DIM zero, 4, ->LB2
+B.IOT T#1, mask=1111, last, ->T<16B>
+B.IOR a0, zero, zero, ->zero
+BSTOP
 ```
 
-假设前序 Block 退休和目标检查成功，`BSTART.MGATHER DataType` 会打开待处理的 `BSTART.MGATHER` 形式；后续 header/body 命令仍是暂定状态，直到 `BSTOP` 或下一条 `BSTART` 验证完整组成。
+`T#1` 是 1 x 4 的 `S32` 索引 Tile，保存字节位移 `0`、`4`、`8` 与 `12`，`a0` 保存 `0x1000`。四个活动通道分别从 `0x1000`、`0x1004`、`0x1008` 与 `0x100C` 装载。目标是 16 字节的 1 x 4 `U32` Tile，因此四个元素都接收装载值，填充规则没有可见效果。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

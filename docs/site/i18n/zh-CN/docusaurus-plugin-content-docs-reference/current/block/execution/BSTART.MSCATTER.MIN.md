@@ -19,32 +19,60 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-min-purpose role=purpose -->
 ## 目的与范围
 
-`BSTART.MSCATTER.MIN` 是该已接受操作的稳定阅读入口。规范 `ASL` 源文件和本页生成的 contract 章节仍是架构行为的唯一 owner。
+`BSTART.MSCATTER.MIN` 打开一个 Tile memory 指令束，其操作为 `MSCATTER_MIN`：每个通道一次索引原子归约，保留全局内存（GM）元素与值 Tile 元素中较小的那个，并把它留在内存中。该指令束不发布 Tile，也不消耗任何源 Tile。
+
+该命令是一个 32 位字，在掩码 `0x07ffffff` 下匹配 `0x01411181`，因此 `DataType` 占据第 31 至 27 位，固定的低位携带 TLSU 选择子 20。`ExecuteBundleGMAtomRedOperation` 把选择子 20 译码为归约操作 `GMReduction_MIN` 并调用 `GM_RED_VALUE(...)`。保留的 `DataType` 编码在 `BSTART` 处、指令束提交之前引发 `Fault_IllegalInstruction`。
+
+设计要点：atom 同族形式 `BSTART.MGATHER.MIN` 执行同样的比较并额外报告旧值。本形式只保留当前最小值，因此不需要目标操作数、不需要 Local 分配，也没有回滚路径。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-min-mechanism role=mechanism -->
 ## 如何阅读操作
 
-应结合生成的 Decode 与 Operation 章节定位所选形式和语义 handler。本指南不增加另一套执行算法。
+提交时，指令束运行 Tile 级执行体 `GM_RED_VALUE`，它先访问每个活动通道地址，并先以读、再以写探测该地址。两次转换结果不同会引发 `Fault_DataPage`。只有全部通道通过之后，它才按 `ARBITRARY` 顺序逐个更新：装载旧元素、计算新元素、存储它，并记录一个原子事件。
+
+`GMReductionResult` 依据值 Tile 的元素类型选择比较方式：当 `TileDataTypeIsSigned` 成立时比较 `SInt` 值，否则比较 `UInt` 值。当旧元素更小时它返回旧元素，否则返回值 Tile 元素。
+
+设计要点：符号性来自操作 `DataType`，因此同样的字节在 `S32` 下可能落败、在 `U32` 下可能胜出。改变一个活动归约的 `DataType` 的程序会改变哪个元素存活下来，而无需改动任何一个索引或值。
+
+设计要点：所有探测都在第一次更新之前运行，因此发生故障的通道不改变 GM，也不记录事件。故障修复后重试不会把某个元素降低两次，因为在探测通过之前没有任何元素被降低。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-min-inputs role=inputs-outputs -->
 ## 输入与输出
 
-以生成的 Operands and results 表和 Block composition 章节作为编码角色与架构角色的完整映射，不应从本摘要推断省略的操作数或结果。
+- `DataType` 必须是 `S32`、`S64`、`U32` 或 `U64`；其他所有编码（包括浮点与打包四位类型）对该操作都被拒绝。
+- `B.DIM` 的 `LB0` 是 ValidCol，`LB1` 是 ValidRow（默认 1），`LB2` 是物理 Col。三者都必须等于索引 Tile 与值 Tile 的有效列数与有效行数，而 `LB2` 是布局规则所使用的物理列数。
+- 一条终止 `B.IOT` 在 `source0` 中携带索引 Tile，在 `source1` 中携带值 Tile，没有目标并带有 `last`。使用谓词 Tile ExecutionMask 时，第一条 `B.IOT` 携带两个源但没有 `last`，第二条 `B.IOT` 携带掩码 Tile 与 `last`。
+- `B.IOR BaseGPR, zero, zero, ->zero` 是必需的：`RegSrc0` 选择每个 PE 的基地址 GPR，另外三个选择子编码为零，而 `RegSrc0` 为 `zero` 时提供基地址零。
+- 索引 Tile 是 `S32`、`U32`、`S64` 或 `U64` 并保存字节位移。值 Tile 使用操作 `DataType`，并与索引 Tile 具有相同的有效形状。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-min-effects role=effects -->
 ## 效果与状态
 
-完整效果边界由生成的 State effects 以及 Memory effects and ordering 章节给出。可执行点只证明 owner 得到覆盖，不构成另一份语义来源。
+每个活动通道把一个 GM 元素保留为两个值中较小的那个，并记录一个原子事件。不发布任何 Tile，不创建任何 Local 分配，两个源 Tile 也保持其内容。GM 结果保持可见：归约不回滚内存。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-min-constraints role=constraints -->
 ## 边界与故障
 
-下方 Defaults、Legality 与 Exceptions 规定接受域和故障边界。保留值及不支持的组合仍由这些生成章节管理。
+`PE_MASK=0000` 在 atom/red 分派器开头退出，早于其 schema、GPR、描述符、类型与内存检查。
+
+未知的 TLSU 编码引发 `Fault_IllegalInstruction`。绑定条数不是上述的一条或两条记录会引发 `Fault_BundleControl`。缺少 `B.IOR`、Shared 绑定、非零的未使用 `B.IOR` 选择子、超出 `1..65535` 的维度、不支持的类型、布局或形状，或活动的索引或值元素未定义，都会在第一次探测之前引发 `Fault_TileLegality`。内存故障保留其自身种类。
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-min-example role=example -->
 ## 非规范用法示例
 
 生成的 `BSTART.MSCATTER.MIN` 示例仅用于拼写与导航。替换操作数时必须遵守下方 owner 定义的 legality 和状态合同。
+
+```asm
+BSTART.MSCATTER.MIN S32
+B.DIM zero, 2, ->LB0
+B.DIM zero, 1, ->LB1
+B.DIM zero, 2, ->LB2
+B.IOT T#1, T#2, mask=1111, last
+B.IOR a0, zero, zero, ->zero
+BSTOP
+```
+
+`T#1` 是 1 x 2 的 `S32` 索引 Tile，保存 `0` 与 `4`，`T#2` 是 1 x 2 的 `S32` 值 Tile，保存 `-9` 与 `3`，`a0` 保存 `0x1000`。若 GM 在 `0x1000` 处保存 `-5`、在 `0x1004` 处保存 `2`，通道 0 把其元素降低为 `-9`，通道 1 保留 `2`，因为 `2` 小于 `3`。内存最终为 `-9` 与 `2`，该指令束不返回任何 Tile。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
