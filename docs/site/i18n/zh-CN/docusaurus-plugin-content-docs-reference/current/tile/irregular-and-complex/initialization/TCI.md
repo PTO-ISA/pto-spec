@@ -19,47 +19,72 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tci-purpose role=purpose -->
 ## TCI 的作用
 
-`TCI` 是一条由 `SFU` 执行、通过选择器编码的 Tile 操作。它从绑定起始值形成一行有类型序列，并按逻辑列递增或递减；当前指令契约拥有精确的指令束形式和发布边界。
+`TCI` 把一个整数索引序列写入新分配的 Local Tile。它不读取任何源 Tile；唯一的输入是从通用寄存器（GPR）取得的起始值以及方向或步长字。
+
+它有两种形式。RowMajor 形式写一行。CUBE 形式把二维模式写入 `CUBE_M16` 或 `CUBE_M32` Tile。
+
+设计要点：`TCI` 由 `BSTART.SFU` 以 TEPL Mode 3 Function 6（选择器 `0x066`）选中，没有独立 opcode。CUBE 形式只能由显式 `B.DATR` `Layout` 为 `CUBE_M32`（29）或 `CUBE_M16`（31）选中，因此不带该元组的指令束始终保持 RowMajor 形式。
 
 <!-- PTO-READER-BLOCK: tile-tci-mechanism role=mechanism -->
-## 元素与 Tile 机制
+## 生成公式
 
-所有描述符与操作数检查成功后，所属 ASL 处理函数从绑定起始值形成一行有类型序列，并按逻辑列递增或递减。当前契约允许别名时，源载荷会在目标写入前完成快照。
+每个生成值都被截断到元素位宽：只保留其低 16 位或低 32 位。因此每个序列都按元素位宽取模回绕，而不会引发故障或饱和。
 
-处理函数使用解析后的有效区域，不把物理填充区当作输入数据。操作专属的数据类型、布局、舍入、饱和与配置档钩子仍由可执行定义拥有。
+RowMajor 形式：方向为递增（0）时，逻辑列 k 接收 `start + k`；方向为递减（1）时接收 `start - k`。只有第 0 行有效。
+
+CUBE 形式：第二个 GPR 是打包的 Step2D 字。位 63 到 32 保存有符号 RowStep，位 31 到 0 保存有符号 ColStep；两者都必须为 -1、0 或 +1。元素 (r, c) 接收 `trunc_W(Start + r*RowStep + c*ColStep)`，并通过 CUBE cell 映射写入。
+
+设计要点：运算是原始载体算术再加截断。越过 65535 的 U16 递增序列会从 0 继续，并且不记录任何数值状态。
+
+CUBE 形式会参考 ExecutionMask：活动坐标接收生成值，非活动坐标接收该掩码规定的零值或合并值。[生成执行](../../model/execution/generation.md)拥有这两个辅助函数。
 
 <!-- PTO-READER-BLOCK: tile-tci-inputs role=inputs-outputs -->
 ## 操作数角色与描述符
 
-- `destination0` 的精确契约角色是“采用 S32、S16、U32 或 U16 的新 Local 目标”。
-- `scalar0` 的精确契约角色是“有类型序列起点”。
-- `flag0` 的精确契约角色是“递增或递减方向”。
+- `destination0` 是新分配的 Local `S32`、`S16`、`U32` 或 `U16` Tile。
+- `scalar0` 是起始值，从 RegSrc0 指定的 GPR 读取。
+- `flag0` 是 RowMajor 方向或 CUBE Step2D 字，从 RegSrc1 指定的 GPR 读取。
 
-参与操作的源与目标描述符采用当前契约规定的行优先布局和形状关系。
-`PE_MASK=0000` 是严格无操作，在描述符、分配、载荷、数值状态或内存效果之前即结束。
+RowMajor 形状：`B.DIM` LB0 是必需的，给出非零 ValidCol。LB1 默认为 1，显式 LB1 也必须等于 1。LB2 默认为 Col = ValidCol。省略 `B.IOR` 选择起始值 0 与递增方向；显式全零 `B.IOR` 给出相同的值。
+
+CUBE 形状：LB1 给出正的 ValidRow，`CUBE_M16` 时不超过 16。显式 LB2 是精确的物理 Col，必须按 cell 列粒度对齐；省略 LB2 时把 ValidCol 向上对齐到该粒度。存在的 `B.DATR` 必须使用 `DataType=DTYPE_NONE`，且 Pad、CMode、RMode、Sat 与 Canonicalize 全为 0；并且恰好一条 `B.IOR` 必须依次指定 StartGPR、Step2DGPR、zero 与 `->zero`。
+
+目标保持 `BSTART` 数据类型。只允许恰好一条终止的 `B.IOT`：除非由 PredicateCell 提供 ExecutionMask，否则它只绑定目标；此时同一条 `B.IOT` 还必须把该谓词 Tile 绑定为源。第二条 `B.IOT`、`B.IOS` 或任何其他源绑定均非法。
 
 <!-- PTO-READER-BLOCK: tile-tci-effects role=effects -->
 ## 发布、已定义性与填充
 
-只有完整预检后才发布目标可见状态；契约规定原子发布时，载荷、描述符、已定义性、填充和状态同时可见。
+序列载荷、目标描述符以及每个元素的已定义性作为一次操作发布。每个有效元素都变为已定义。
 
-有效矩形之外的物理坐标遵循契约选择的填充规则；适用时，`Null` 填充保持未定义。
+有效区域之外的物理元素接收 `Null` 填充：它们保存零载体但保持未定义。`TCI` 不携带 `PadValue`，因此之后的已定义性检查不会把填充视为生成的数据。
 
-该操作不产生 GM 内存效果；描述符、载荷、已定义性、填充和数值状态变化仅限于当前契约列出的项目。
+`TCI` 没有全局内存效果，不写任何 GPR，也不记录数值状态。被拒绝的指令束不发布任何内容。
 
 <!-- PTO-READER-BLOCK: tile-tci-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-可接受的数据类型集合为 `S32`, `S16`, `U32`, `U16`。
+可接受的数据类型为 `S32`、`S16`、`U32` 与 `U16`。
 
-下方生成的合法性与异常章节是数据类型组合、布局、维度、容量、已定义性、填充控制、配置档行为和故障类别的权威说明。合法性或分配失败发生在任何部分架构效果之前。
+- RowMajor 形式：绑定格式错误、`B.IOS`、不支持的类型、维度缺失或无效、方向不是 0 或 1，或非零的不适用 `B.DATR` 字段，会引发 `Fault_TileLegality`。
+- CUBE 形式：命令或 `B.IOR` 结构格式错误引发 `Fault_BundleControl`；无效的选择器、元组、维度、步长或对齐引发 `Fault_TileLegality`；几何合法但 TSize 过小或 Tile 容量耗尽时引发 `Fault_TileAllocation`。
+- `PE_MASK=0000` 在 `B.IOT` 的 size code 编码检查之后是严格无操作：不再进行模式验证、GPR 读取、分配或操作故障，但非法的 `B.IOT` size code 仍会引发 `Fault_IllegalInstruction`。
+
+所有拒绝都发生在分配或发布之前，因此故障不会留下部分序列。
 
 <!-- PTO-READER-BLOCK: tile-tci-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `TCI` 示例说明：起点 `2` 在递增模式下覆盖三个有效列时产生 `[2, 3, 4]`。
+U16 RowMajor 目标有 4 个有效列，起始寄存器保存 `0x1fffe`，方向为递增。起始值被截断为 65534，因此该行为 65534、65535、0、1；第三个值是 65536 截断到 16 位的结果。
+
+U16 `CUBE_M16` 目标的 ValidRow 为 2、ValidCol 为 3，起始值为 5，Step2D 为 `0xFFFFFFFF00000001`，即 RowStep -1、ColStep +1。第 0 行为 5、6、7，第 1 行为 4、5、6。
+
+以宏形式表示，使用默认起始值与方向的 64 元素 U32 序列写作下面的形式。256B 目标容纳 64 x 4 = 256 字节。
+
+```text
+TCI <Row=1, Col=64, U32>, ->T<256B>
+```
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

@@ -17,44 +17,62 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tgather-purpose role=purpose -->
-## Purpose
+## What TGATHER does
 
-`TGATHER` gathers values from independently selected source rows.
+`TGATHER` builds a new Local Tile by reading, for each destination element, a source row chosen by an index Tile. The column never changes: destination `[r,c]` receives source `[index[r,c], c]`.
+
+Design point: `TGATHER` is selected by `BSTART.SFU` with TEPL Mode 3 Function 15 (selector `0x06F`) and has no standalone opcode.
 
 <!-- PTO-READER-BLOCK: tile-tgather-mechanism role=mechanism -->
-## Execution mechanism
+## Index rule
 
-The ASL DOC contract selects `TileHandler_TGATHER` through the instruction's selector-encoded block carrier.
+Each index element is read as an unsigned row number from its low 16, 32, or 64 bits, after a signed index has been checked to be nonnegative. The selected source element is copied bit for bit; no numeric conversion runs, and an unusual floating encoding is not rejected.
 
-Dimensions, descriptors, layouts, DataTypes, source definedness, consumed encodings, destination capacity, masks, and operation-specific indices or offsets are checked before any source snapshot.
+Design point: the index selects a logical source row and never flattens, wraps, clamps, or selects another column. The source must therefore have at least as many valid columns as the destination, but it may have more.
+
+Design point: every index is checked before any write. A negative index, an index at or above the source ValidRow, an undefined index, or an undefined selected source element rejects the bundle, so a bad index never leaves a partial result. [Indexed rearrangement legality](../../model/legality/indexed-rearrangement.md) owns these checks.
 
 <!-- PTO-READER-BLOCK: tile-tgather-inputs-outputs role=inputs-outputs -->
-## Operands and descriptors
+## Operands, shape, and type
 
-`destination0` is the new Local value destination; `source0` is the persistent Local value source; `source1` is the persistent Local S16, U16, S32, U32, S64, or U64 row-index source.
+- `source0` is the persistent Local value source.
+- `source1` is the persistent Local row-index source, of type `S16`, `U16`, `S32`, `U32`, `S64`, or `U64`.
+- `destination0` is the newly allocated value destination, with the same type as `source0`.
 
-Sources remain persistent unless the current contract explicitly names a consumed or replaced state; destination descriptors are published only after complete preflight.
+The value type may be any non-packed 8-, 16-, 32-, or 64-bit type: HiF8, E4M3, E5M2, E3M2, E2M3, E8M0, E6M2, RCPE6M2, S8, U8, FP16, BF16, S16, U16, FP32, TF32, HF32, S32, U32, FP64, S64, or U64.
+
+`B.DIM` LB0 gives the destination ValidCol; an omitted LB0 takes the architectural default one, and an explicitly encoded zero is illegal. LB1 defaults to ValidRow 1, and LB2 defaults to Col = ValidCol. The index and destination valid shapes must be equal and nonzero.
+
+One terminating `B.IOT` carries both sources and the destination; `B.IOS` is illegal, and any `B.IOR` whose selectors are not all zero is illegal (an explicitly all-zero `B.IOR` names GPR0 only, consumes no operand, and is accepted). All three operands must pass the generic descriptor check, which excludes CUBE layouts. `B.DATR` may carry only a `Layout`, which changes only the destination physical placement.
 
 <!-- PTO-READER-BLOCK: tile-tgather-effects role=effects -->
-## Publication and ordering
+## Publication and definedness
 
-Sources are snapshotted before construction, so allowed aliases observe complete pre-operation payload and definedness.
+Both sources are snapshotted after complete preflight. The complete destination payload, definedness, `Null` padding, and descriptor then publish as one operation. Every valid destination element becomes defined, and physical elements outside the valid region stay undefined.
 
-The complete destination payload, definedness, padding policy, and descriptor publish together; rejection publishes no partial destination.
+Both sources persist unchanged. `TGATHER` has no global-memory effect and records no numeric status; a rejected bundle publishes no destination state.
 
 <!-- PTO-READER-BLOCK: tile-tgather-constraints role=constraints -->
-## Legality, padding, and faults
+## Legality and fault boundary
 
-Malformed bindings, unsupported types or layouts, invalid shapes, undefined consumed elements, illegal attributes, or insufficient destination capacity are rejected before source snapshots or publication.
+Malformed bindings, `B.IOR`, `B.IOS`, an unsupported value or index type, a zero or mismatched valid shape, too few source columns, a negative, out-of-range, or undefined index, an undefined selected source element, a reserved `Layout`, or insufficient destination capacity raise the applicable Tile fault before effects.
 
-Allocation failure raises the owner-defined Tile allocation fault; other rejected schema or value conditions raise the owner-defined legality, bundle-control, or memory fault without partial effects.
+All three bindings use the same `PE_MASK`; the three-bit PEMode encodes only `1000`, `0100`, `0010`, `0001`, `1100`, `1110`, `1111`, and `0000`. `PE_MASK=0000` is a strict no-op after the `B.IOT` size-code encoding check: no Tile read, index check, allocation, or operation fault follows, but an illegal `B.IOT` size code still raises `Fault_IllegalInstruction`.
 
 <!-- PTO-READER-BLOCK: tile-tgather-example role=example -->
 ## Non-normative contract sketch
 
 This is a non-normative contract schema sketch; it organizes fields and bindings but is not claimed to be directly assembleable.
 
-Read `BSTART.SFU TGATHER, U16; B.DIM LB0=2; B.DIM LB1=2; B.IOT ValueSrc, IndexSrc, mask=1111, <last>, ->Dst<2>; BSTOP` as a non-normative binding walkthrough, then use the generated contract below for exact dimensions, attributes, and fault behavior.
+A U32 value source has 3 valid rows and 2 valid columns: row 0 is 10, 11; row 1 is 20, 21; row 2 is 30, 31. The U16 index Tile has 2 rows: 2, 0 and 1, 1.
+
+Destination `[0,0]` reads source `[2,0]` = 30 and `[0,1]` reads source `[0,1]` = 11. Row 1 reads source `[1,0]` and `[1,1]`, which are 20 and 21. An index of 3 anywhere would reject the bundle, because the source has only 3 valid rows.
+
+In macro form, an 8 x 16 U32 gather with `T#1` as the value source and `T#2` as the index Tile is written below. The destination holds 8 x 16 x 4 = 512 bytes.
+
+```text
+TGATHER <Row=8, Col=16, U32>, T#1, T#2, ->T<512B>
+```
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

@@ -17,44 +17,59 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tmov-purpose role=purpose -->
-## 用途
+## TMOV 的作用
 
-`TMOV` 把源 Tile 的载荷和已定义性一起复制到目的 Tile。
+Local `TMOV` 把一个持久的 Local Tile 复制到一个新重命名的 Local 目标中。它精确复制载荷与逐元素已定义性；它不转换数值。
+
+设计要点：`TMOV` 由 `BSTART.TMOV`（Function 2）选中，没有独立 opcode。同一个 `BSTART.TMOV` Function 2 也承载规范的 Shared 形式：Local 源到 Shared 目标，以及 Shared 源到 Local 目标，并配合 `B.SUBVIEW` 或 `B.ASSEMBLE` 范围。[BSTART.TMOV](../../../block/execution/BSTART.TMOV.md)拥有这些模式。
 
 <!-- PTO-READER-BLOCK: tile-tmov-mechanism role=mechanism -->
-## 执行机制
+## 复制机制
 
-ASL DOC 契约通过该指令的选择器编码块载体选择 `TileHandler_TMOV`。
+没有 ExecutionMask 时，目标接收源载荷与源已定义性记录。在源中未定义的元素在目标中仍保持未定义。
 
-任何源快照之前，必须检查维度、描述符、布局、DataType、源已定义性、被消费的编码、目的容量、掩码，以及操作专用索引或偏移。
+存在 ExecutionMask 时，源必须在掩码要求的坐标上已定义。随后每个非活动有效元素接收该掩码规定的零值或合并值，并且整个有效区域被标记为已定义。
+
+设计要点：`BSTART` `DataType` 只是载体解释。源后备类型只能在元素位宽相同时与之不同，并且目标保持源后备类型。因此 `TMOV` 从不改变元素位；数值转换请使用 `TCVT`。
 
 <!-- PTO-READER-BLOCK: tile-tmov-inputs-outputs role=inputs-outputs -->
 ## 操作数与描述符
 
-`destination0` 是目的地；`source0` 是源。
+- `source0` 是持久的 Local 源。
+- `destination0` 是新重命名的 Local 目标。
 
-除非当前契约明确指出状态被消费或替换，否则源保持持久；只有完整预检后才发布目的描述符。
+目标必须在物理行列、有效行列、布局与存储类别上与源完全一致，其类型必须等于源后备类型。
+
+`BSTART.TMOV` 接受 `DTYPE_NONE`（代码 31）。当 `B.DATR` 与 `BSTART` 都没有给出具体类型时，操作类型为源描述符类型。`B.DATR` 只能携带 `Layout`，其填充字段必须为零。
+
+载体兼容性排除 4 位类型：4 位后备类型只有在等于操作类型时才被接受。
 
 <!-- PTO-READER-BLOCK: tile-tmov-effects role=effects -->
-## 发布与排序
+## 效果与顺序
 
-构造结果之前会先快照源，因此允许的别名看到完整的操作前载荷与已定义性。
+源保持不变。目标载荷、已定义性与描述符在指令束完成时变为可见；被拒绝的指令束没有任何目标效果。
 
-完整目的载荷、已定义性、填充 策略和描述符一同发布；拒绝时不会发布部分目的地。
+Local `TMOV` 没有全局内存效果，也不记录数值状态。
 
 <!-- PTO-READER-BLOCK: tile-tmov-constraints role=constraints -->
-## 合法性、填充与故障
+## 合法性与故障
 
-绑定格式错误、类型或布局不受支持、形状无效、被消费元素未定义、属性非法或目的容量不足时，会在源快照或发布之前拒绝操作。
+形状、布局、存储类别或载体位宽不匹配，目标类型不同于源后备类型，或 `Layout` 之外的非零 `B.DATR` 字段，都会在任何架构效果之前被拒绝。
 
-分配失败触发所有者定义的 Tile 分配故障；其他被拒绝的绑定模式或值条件触发所有者定义的合法性、块控制或内存故障，且不产生部分效果。
+设计要点：这里要求形状完全一致，而不是调整大小。需要不同有效区域或填充的程序必须使用拥有该变化的操作。
 
 <!-- PTO-READER-BLOCK: tile-tmov-example role=example -->
 ## 非规范契约草图
 
 这是非规范契约模式草图；它用于组织字段和绑定关系，不声称可以直接汇编。
 
-把 `BSTART.TLSU TMOV, DataType; B.DIM LB0; B.DIM (LB1/LB2 for 2D); B.IOT; BSTOP` 作为非规范绑定演练，再以下方生成契约确认精确维度、属性和故障行为。
+源 Tile 以 RowMajor 保存 8 x 64 个 `FP32` 元素，元素 `[0,0]` 保存 `0x3f800000`。操作类型为同样 32 位宽的 `S32` 时，该复制合法：目标为 8 x 64 的 `FP32`，元素 `[0,0]` 仍保存 `0x3f800000`。若为 `FP16`，位宽不同，该指令束会被拒绝。
+
+以宏形式表示，类型匹配的复制写作下面的形式。目标容纳 8 x 64 x 4 = 2048 字节。
+
+```text
+TMOV <FP32>, T#1, ->T<2KB>
+```
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

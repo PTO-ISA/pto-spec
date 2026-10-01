@@ -17,22 +17,59 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tshuf-purpose role=purpose -->
-**使用场景。** `TSHUF` 在彼此独立、宽度为二次幂的 CUBE CELL 分段内跨行移动原始 32 位字组，无需另设谓词步骤或数值转换步骤。
+## TSHUF 的作用
+
+`TSHUF` 在 Local `CUBE_M16` 或 `CUBE_M32` Tile 的行之间移动元素。每一行是 CUBE cell 的一个通道，通道被分成相互独立的 2 的幂大小的段。列从不改变。
+
+设计要点：`TSHUF` 由 `BSTART.SFU` 以 TEPL Mode 3 Function 22（选择器 `0x076`）选中，没有独立 opcode。
 
 <!-- PTO-READER-BLOCK: tile-tshuf-mechanism role=mechanism -->
-**工作方式。** 标量控制值选择 `UP`、`DOWN`、`BFLY` 或 `IDX`；每个 `U32` 控制 Tile 字通过位 `[4:0]` 提供其行操作数，而位 `[31:5]` 会被接受但忽略；当所选行不可用时，边界选项决定保留当前字（`SELF`）还是写入零（`ZERO`）。
+## 洗牌规则
+
+标量控制字在位 7 到 0 给出模式，在位 15 到 8 给出段代码，在位 23 到 16 给出边界标志。段代码 0 到 4 选择宽度 2、4、8、16 与 32。
+
+第 r 行的通道是 r 对 cell 行数（16 或 32）取模。对每个元素，5 位值 b 来自覆盖该元素的控制 Tile 字的位 4 到 0。在段内，模式 0 读取通道 `lane - b`，模式 1 读取 `lane + b`，模式 2 读取 `segment base + (local lane XOR b)`，模式 3 读取 `segment base + (b mod width)`。
+
+当候选通道离开该段，或其所在行大于等于源 ValidRow 时，边界 0 保留元素自身行的值，边界 1 写入零。
+
+设计要点：一行中每个 32 位字由一个控制字覆盖，因此打包在该字中的所有元素按同一个 b 移动。于是该操作在行之间洗牌原始 32 位字，从不在字内部置换字节。
 
 <!-- PTO-READER-BLOCK: tile-tshuf-inputs-outputs role=inputs-outputs -->
-**输入与结果。** `source` 与新的 `destination` 采用相同的受支持非 64 位 dtype、Local `CUBE_M16` 或 `CUBE_M32` 布局及几何形状；Local `U32` `controls` Tile 与两者具有相同的布局、有效行数和 CUBE CELL 数，而其有效列数等于每个数据行中 32 位字组的数量。
+## 操作数与描述符
+
+- `source0` 是数据源：数值 `CUBE_M16` 或 `CUBE_M32` Tile，类型可以是除 64 位类型之外的任何 CUBE 类型。
+- `source1` 是控制 Tile：`U32`，布局与有效行相同，源行的每个 32 位字对应一个有效列，cell 数量相同。
+- `scalar0` 是来自一条 `B.IOR` 的控制字；RegSrc1、RegSrc2 与 RegDst 为零。
+- `destination0` 是新的，保持源类型、有效形状与布局。它必须不同于源与控制 Tile。
+
+`B.DATR` 只能携带 `Layout`。控制字的位 63 到 32 必须为零。
 
 <!-- PTO-READER-BLOCK: tile-tshuf-effects role=effects -->
-**效果。** 源 Tile 与控制 Tile 均在完整目标有效区域发布前完成快照；两个输入保持不变，目标填充为 `Null`，且该操作不产生内存效果。
+## 效果
+
+源与控制快照都在发布之前完成。每个有效目标元素都变为已定义，有效区域之外的物理元素接收 `Null` 填充并保持未定义。
+
+存在 ExecutionMask 时，非活动元素不读取任何控制字或源元素，并接收该掩码规定的零值或合并值。源保持不变，该操作没有内存或数值状态效果。
 
 <!-- PTO-READER-BLOCK: tile-tshuf-constraints role=constraints -->
-**拒绝条件。** 标量控制值中 `mode > 3`、`segment_code > 4`、`boundary > 1` 或位 `63:32` 非零时会被拒绝；不受支持的 dtype 或布局、未定义的输入数据、几何形状不匹配以及目标重叠同样会被拒绝。分段宽度 `32` 仅适用于 `CUBE_M32`。
+## 被拒绝的情况
+
+模式大于 3、边界大于 1、段代码大于 4、`CUBE_M16` 下的段代码 4、控制字位 63 到 32 非零、描述符不匹配、目标别名、控制字未定义，或将被读取的源元素未定义，都会在任何效果之前引发 `Fault_TileLegality`。
+
+设计要点：只对实际将被读取的元素检查已定义性。边界为 1 时，越出段的元素写入零且不读取任何内容，因此没有任何通道选中的未定义元素不会使该指令束非法。
 
 <!-- PTO-READER-BLOCK: tile-tshuf-example role=example -->
-**具体示例。** 在 `BFLY` 模式下，分段宽度为 `16`、逐行操作数为 `1` 时，源行 `[1, 2, 3, 4]` 为对应字组发布结果 `[2, 1, 4, 3]`。
+## 具体示例
+
+一个 `U32` `CUBE_M16` 源有 4 个有效行、1 个有效列，保存 1、2、3、4。每个控制 Tile 字的 b = 1。控制字 `0x00000302` 选择模式 2、宽度 16 与边界 0。
+
+模式 2 按与 1 异或来配对通道，因此目标列为 2、1、4、3。模式 1 且边界为 1（`0x00010301`）时，每行读取下一行：第 3 行将读取第 4 行，而它超出了 4 个有效行，因此结果为 2、3、4、0。边界为 0（`0x00000301`）时，第 3 行保留自身的值，结果为 2、3、4、4。
+
+以宏形式表示，`T#1` 是数据源，`T#2` 是控制 Tile，`a0` 保存控制字：
+
+```text
+TSHUF <U32>, T#1, T#2, a0, ->T<128B>
+```
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

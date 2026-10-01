@@ -19,47 +19,72 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tci-purpose role=purpose -->
 ## What TCI does
 
-`TCI` is a selector-encoded Tile operation executed by `SFU`. It forms one typed single-row sequence from the bound start value, increasing or decreasing by logical column; its current instruction contract owns the exact bundle form and publication boundary.
+`TCI` writes an integer index sequence into a newly allocated Local Tile. It reads no source Tile; the only inputs are a start value and a direction or step word taken from general-purpose registers (GPRs).
+
+It has two forms. The RowMajor form writes one row. The CUBE form writes a two-dimensional pattern into a `CUBE_M16` or `CUBE_M32` Tile.
+
+Design point: `TCI` is selected by `BSTART.SFU` with TEPL Mode 3 Function 6 (selector `0x066`) and has no standalone opcode. The CUBE form is selected only by an explicit `B.DATR` `Layout` of `CUBE_M32` (29) or `CUBE_M16` (31), so a bundle without that tuple always keeps the RowMajor form.
 
 <!-- PTO-READER-BLOCK: tile-tci-mechanism role=mechanism -->
-## Element and Tile mechanism
+## Generation formula
 
-After all descriptor and operand checks succeed, the owning ASL handler forms one typed single-row sequence from the bound start value, increasing or decreasing by logical column. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+Each generated value is truncated to the element width: only its low 16 or 32 bits are kept. Every sequence therefore wraps modulo the element width instead of faulting or saturating.
 
-The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+RowMajor form: logical column k receives `start + k` when the direction is ascending (0) and `start - k` when it is descending (1). Only row 0 is valid.
+
+CUBE form: the second GPR is a packed Step2D word. Bits 63 to 32 hold the signed RowStep and bits 31 to 0 hold the signed ColStep; each must be -1, 0, or +1. Element (r, c) receives `trunc_W(Start + r*RowStep + c*ColStep)`, written through the CUBE cell mapping.
+
+Design point: the arithmetic is raw carrier arithmetic followed by truncation. A U16 ascending sequence that passes 65535 continues at 0, and no numeric status is recorded.
+
+The CUBE form consults the ExecutionMask: an active coordinate receives the generated value, and an inactive one receives the mask's zero or merge value. [Generation execution](../../model/execution/generation.md) owns both helpers.
 
 <!-- PTO-READER-BLOCK: tile-tci-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` has the exact contract role **new Local S32, S16, U32, or U16 destination**.
-- `scalar0` has the exact contract role **typed sequence start**.
-- `flag0` has the exact contract role **ascending or descending direction**.
+- `destination0` is a newly allocated Local `S32`, `S16`, `U32`, or `U16` Tile.
+- `scalar0` is the start value, read from the GPR named by RegSrc0.
+- `flag0` is the RowMajor direction or the CUBE Step2D word, read from the GPR named by RegSrc1.
 
-Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
-`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+RowMajor shape: `B.DIM` LB0 is required and gives a nonzero ValidCol. LB1 defaults to 1, and an explicit LB1 must also equal 1. LB2 defaults to Col = ValidCol. Omitting `B.IOR` selects start 0 and ascending direction; an explicit all-zero `B.IOR` gives the same values.
+
+CUBE shape: LB1 gives a positive ValidRow, at most 16 for `CUBE_M16`. An explicit LB2 is the exact physical Col and must be aligned to the cell column quantum; an omitted LB2 aligns ValidCol up to that quantum. The present `B.DATR` must use `DataType=DTYPE_NONE` with Pad, CMode, RMode, Sat, and Canonicalize all 0, and exactly one `B.IOR` must name StartGPR, Step2DGPR, zero, and `->zero`.
+
+The destination keeps the `BSTART` data type. Exactly one terminating `B.IOT` is legal: it is destination-only unless a PredicateCell supplies the ExecutionMask, in which case the same `B.IOT` must also bind that predicate Tile as its source. A second `B.IOT`, `B.IOS`, or any other source binding is illegal.
 
 <!-- PTO-READER-BLOCK: tile-tci-effects role=effects -->
 ## Publication, definedness, and padding
 
-Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+The sequence payload, the destination descriptor, and the definedness of every element publish as one operation. Every valid element becomes defined.
 
-Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+Physical elements outside the valid region receive `Null` padding: they hold a zero carrier but stay undefined. `TCI` carries no `PadValue`, so a later definedness check does not treat padding as generated data.
 
-The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+`TCI` has no global-memory effect, writes no GPR, and records no numeric status. A rejected bundle publishes nothing.
 
 <!-- PTO-READER-BLOCK: tile-tci-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The accepted data-type set is `S32`, `S16`, `U32`, `U16`.
+The accepted data types are `S32`, `S16`, `U32`, and `U16`.
 
-The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+- RowMajor form: a malformed binding, `B.IOS`, an unsupported type, a missing or invalid dimension, a direction other than 0 or 1, or a nonzero inapplicable `B.DATR` field raises `Fault_TileLegality`.
+- CUBE form: a malformed command or `B.IOR` structure raises `Fault_BundleControl`; an invalid selector, tuple, dimension, step, or alignment raises `Fault_TileLegality`; a legal geometry with too small a TSize or exhausted Tile capacity raises `Fault_TileAllocation`.
+- `PE_MASK=0000` is a strict no-op after the `B.IOT` size-code encoding check: no schema validation, GPR read, allocation, or operation fault follows, but an illegal `B.IOT` size code still raises `Fault_IllegalInstruction`.
+
+Every rejection happens before allocation or publication, so a fault leaves no partial sequence.
 
 <!-- PTO-READER-BLOCK: tile-tci-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `TCI` example, start `2` in ascending mode over three valid columns produces `[2, 3, 4]`.
+A U16 RowMajor destination has 4 valid columns, the start register holds `0x1fffe`, and the direction is ascending. The start is truncated to 65534, so the row is 65534, 65535, 0, 1; the third value is 65536 truncated to 16 bits.
+
+A U16 `CUBE_M16` destination has ValidRow 2 and ValidCol 3, start 5, and Step2D `0xFFFFFFFF00000001`, which is RowStep -1 and ColStep +1. Row 0 is 5, 6, 7 and row 1 is 4, 5, 6.
+
+In macro form, a 64-element U32 sequence with the default start and direction is written below. The 256B destination holds 64 x 4 = 256 bytes.
+
+```text
+TCI <Row=1, Col=64, U32>, ->T<256B>
+```
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

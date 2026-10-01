@@ -17,22 +17,52 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tpack-purpose role=purpose -->
-**使用场景。** `TPACK` 将两个对应的 Local `U32` CUBE 字中的低位字节字段拼接起来，适用于按原始存储形式重排字段而不进行数值转换的场景。
+## TPACK 的作用
+
+`TPACK` 把两个 Local CUBE 源中对应 32 位字的低字节字段拼接成一个目标字。它重排原始字节，不执行任何数值转换。
+
+设计要点：`TPACK` 由 `BSTART.SFU` 以 TEPL Mode 3 Function 23（选择器 `0x077`）选中。`BSTART` 类型 `U8`、`U16` 或 `U32` 是目标类型；它不必与源类型一致。
 
 <!-- PTO-READER-BLOCK: tile-tpack-mechanism role=mechanism -->
-**工作方式。** 对于每个活动字位置，`source0` 中选定的低位字节占据目标的低位字节，`source1` 中选定的低位字节紧随其后，目标中其余所有位均为零。
+## 打包规则
+
+每个源行按原始字读取：该行的有效字节数 `ValidCol x element bits / 8`（向上取整）被分组为 32 位字，最后一个字可以是部分字。
+
+控制字在位 7 到 0 给出 n0，在位 15 到 8 给出 n1。对每行的第 w 个字，目标字节 0 到 n0-1 接收 `source0` 第 w 个字的低 n0 个字节，接下来的 n1 个字节接收 `source1` 第 w 个字的低 n1 个字节，其余每个目标字节为零。
+
+设计要点：只读取被选中的字节。参与的字中每个被选字节必须位于其字的有效字节内，并属于已定义的元素；未选中的字节（包括物理填充）从不被读取，因此它们的已定义性无关紧要。
 
 <!-- PTO-READER-BLOCK: tile-tpack-inputs-outputs role=inputs-outputs -->
-**输入与结果。** `source0` 和 `source1` 是布局与几何形状匹配的 Local `U32` `CUBE_M16` 或 `CUBE_M32` Tile，`pack_control` 提供两个字段宽度，`destination` 是具有匹配布局与几何形状的新 Tile。
+## 输入与结果
+
+- `source0` 与 `source1` 是 Local 数值 `CUBE_M16` 或 `CUBE_M32` Tile，元素为非打包的 8、16 或 32 位。它们共用一个布局、相同的有效行数与每行相同的字数；类型可以不同。
+- `scalar0` 是来自一条 `B.IOR` 的打包控制字；RegSrc1、RegSrc2 与 RegDst 为零。
+- `destination0` 是新的，类型为 `BSTART` 类型，布局与有效行与源相同，有效列数为 `words per row x elements per word`：`U8` 为 4，`U16` 为 2，`U32` 为 1。
+
+设计要点：目标形状由源描述符推导，而不是来自 `B.DIM`。因此宏形式没有形状字段，静态反汇编器无法打印 Row 或 Col。
 
 <!-- PTO-READER-BLOCK: tile-tpack-effects role=effects -->
-**效果。** 完整的控制信息与源数据校验先于完整定义的目标有效区域发布；源 Tile 保持不变，目标填充为 `Null`，且该操作不产生内存效果。
+## 效果
+
+控制与源验证都在发布之前完成。每对源字产生一个完整的目标字，每个有效目标元素都变为已定义，填充为 `Null`。
+
+存在 ExecutionMask 时，位于 (row, word index) 的一个掩码位控制整个目标字组，即 4 个 `U8`、2 个 `U16` 或 1 个 `U32` 元素；非活动组不读取任何源字节，并接收该掩码规定的零值或合并值。源保持不变，该操作没有内存或数值状态效果。
 
 <!-- PTO-READER-BLOCK: tile-tpack-constraints role=constraints -->
-**拒绝条件。** 每个字段宽度必须在 `1` 到 `3` 之间，两者之和不得超过 `4`，控制位 `63:32` 必须为零，并且目标不得与任一源重叠；任何拒绝都发生在目标产生效果之前。
+## 被拒绝的情况
+
+每个字段宽度必须在 `1` 到 `3` 之间，两者之和不得超过 `4`，控制位 `63:32` 必须为零。不支持的存储、布局或源位宽、字数不相等、目标与源别名，或被选字节未定义，同样会在任何目标效果之前引发 `Fault_TileLegality`。
 
 <!-- PTO-READER-BLOCK: tile-tpack-example role=example -->
-**具体示例。** 对于对应的源字 `0x00001234` 和 `0x00ABCDEF`，控制值 `0x00000202` 从每个源中选择两个低位字节，得到 `0xCDEF1234`。
+## 具体示例
+
+对于对应的源字 `0x00001234` 与 `0x00ABCDEF`，控制值 `0x00000202` 从每个源中选择两个低字节。目标字节为 `0x34`、`0x12`、`0xEF`、`0xCD`，即字 `0xCDEF1234`。
+
+当 `U32` `CUBE_M16` 源有 8 个有效行、8 个有效列时，每行有 32 字节，即 8 个字。因此 `U32` 目标有 8 个有效行、8 个有效列；`U16` 目标则有 16 个有效列。
+
+```text
+TPACK <U32>, T#1, T#2, a0, ->T<2KB>
+```
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

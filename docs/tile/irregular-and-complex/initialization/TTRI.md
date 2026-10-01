@@ -19,52 +19,60 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-ttri-purpose role=purpose -->
 ## What TTRI does
 
-`TTRI` generates an exact typed lower or upper triangular matrix in a new Local Tile.
+`TTRI` writes a triangular mask of typed ones and zeros into a newly allocated Local RowMajor Tile. It reads no source Tile; the diagonal and the orientation come from GPRs.
+
+Design point: `TTRI` is selected by `BSTART.SFU` with TEPL Mode 3 Function 7 (selector `0x067`) and has no standalone opcode.
 
 <!-- PTO-READER-BLOCK: tile-c-ttri-mechanism role=mechanism -->
-## Operation mechanism
+## Generation formula
 
-Lower orientation writes typed one when `c <= r + diagonal`; upper orientation writes typed one when `c >= r + diagonal`.
+For each valid element at row r and column c, the lower orientation writes one when `c <= r + diagonal`, and the upper orientation writes one when `c >= r + diagonal`. Every other valid element receives zero.
 
-The signed boundary comparison does not wrap, and all other valid coordinates receive typed zero.
+One is the exact typed encoding: `0x3f800000` for FP32, `0x3c00` for FP16, and the integer 1 for the integer types. Zero is positive zero.
+
+Design point: the boundary comparison uses signed integers and does not wrap. A diagonal of -ValidRow or less therefore makes every lower-orientation element zero, and a large positive diagonal makes every lower-orientation element one.
 
 <!-- PTO-READER-BLOCK: tile-c-ttri-inputs-outputs role=inputs-outputs -->
 ## Operands, shape, and type
 
-- `destination0` identifies a newly allocated destination.
+- `destination0` is a newly allocated Local RowMajor Tile of type `FP32`, `FP16`, `S32`, `S16`, `U32`, or `U16`.
+- `diagonal` is the signed displacement read from RegSrc0; it must lie in -65535 to 65535.
+- `flag0` is the orientation read from RegSrc1: 0 selects lower and 1 selects upper. RegSrc2 and RegDst must be zero.
 
-- `flag0` selects lower or upper orientation.
+An omitted `B.DIM` LB0 takes the architectural default one, and an explicitly encoded zero is illegal because ValidCol must be nonzero. LB1 defaults to ValidRow 1, and LB2 defaults to Col = ValidCol. Omitting `B.IOR` selects diagonal 0 and lower orientation; an explicit all-zero `B.IOR` reads GPR0 and gives the same values.
 
-- `diagonal` supplies the signed diagonal displacement.
-
-- The closed applicable DataType set is `FP32`, `FP16`, `S32`, `S16`, `U32`, `U16`.
-
-- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
-
-- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+A present `B.DATR` must have every field zero. Exactly one terminating destination-only `B.IOT` is legal.
 
 <!-- PTO-READER-BLOCK: tile-c-ttri-effects role=effects -->
 ## Definedness, padding, and publication
 
-There is no source Tile or source snapshot. Complete type, dimension, orientation, diagonal, mask, capacity, and allocation preflight precedes generation.
+There is no source Tile and no source snapshot. The triangular payload, the destination descriptor, and the definedness of every element publish as one operation; every valid element becomes defined.
 
-The triangular payload, destination descriptor, valid-region definedness, and undefined Null padding publish atomically; rejection publishes none.
+Physical elements outside the valid region receive `Null` padding: a zero carrier that stays undefined. `TTRI` has no global-memory, GPR, or numeric-status effect.
 
 <!-- PTO-READER-BLOCK: tile-c-ttri-constraints role=constraints -->
 ## Legality, fault, and order boundaries
 
-The destination-only binding, dimensions, DataType, row-major layout, all-zero B.DATR, orientation, diagonal, capacity, and allocation are preflighted before effects.
+A malformed binding, `B.IOS`, an unsupported type, a non-RowMajor layout, a missing or invalid dimension, an orientation other than 0 or 1, a diagonal outside -65535 to 65535, or a nonzero `B.DATR` field raises `Fault_TileLegality` before allocation.
 
-A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+An unrepresentable shape, an unavailable destination register, too small a TSize, or exhausted Tile capacity raises `Fault_TileAllocation` before allocation.
 
-`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+`PE_MASK=0000` is a strict no-op after the `B.IOT` size-code encoding check: no GPR read, descriptor check, allocation, or operation fault follows, but an illegal `B.IOT` size code still raises `Fault_IllegalInstruction`.
 
 <!-- PTO-READER-BLOCK: tile-c-ttri-example role=example -->
 ## Non-normative example
 
 This example illustrates the current ASL-bound contract and is not a second instruction definition.
 
-`TTRI <bundle operands>` performs destination-only preflight, generates the triangular payload without a source snapshot, and atomically publishes the result with Null padding.
+An FP32 destination with 3 valid rows, 4 valid columns, lower orientation, and diagonal 0 holds the rows below, where 1 means `0x3f800000`. With diagonal 1 instead, each row gains one more one: 1 1 0 0, then 1 1 1 0, then 1 1 1 1.
+
+```text
+row 0: 1 0 0 0
+row 1: 1 1 0 0
+row 2: 1 1 1 0
+```
+
+The same diagonal 0 with upper orientation writes one where `c >= r`: 1 1 1 1, then 0 1 1 1, then 0 0 1 1. The main diagonal is one in both orientations.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

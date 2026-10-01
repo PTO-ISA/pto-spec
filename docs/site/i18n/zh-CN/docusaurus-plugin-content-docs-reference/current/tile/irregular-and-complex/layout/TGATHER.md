@@ -17,44 +17,62 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: tile-tgather-purpose role=purpose -->
-## 用途
+## TGATHER 的作用
 
-`TGATHER` 在每个目的坐标独立选择源行并收集对应值。
+`TGATHER` 为每个目标元素读取由索引 Tile 选择的源行，从而构建一个新的 Local Tile。列从不改变：目标 `[r,c]` 接收源 `[index[r,c], c]`。
+
+设计要点：`TGATHER` 由 `BSTART.SFU` 以 TEPL Mode 3 Function 15（选择器 `0x06F`）选中，没有独立 opcode。
 
 <!-- PTO-READER-BLOCK: tile-tgather-mechanism role=mechanism -->
-## 执行机制
+## 索引规则
 
-ASL DOC 契约通过该指令的选择器编码块载体选择 `TileHandler_TGATHER`。
+每个索引元素在有符号索引已被检查为非负之后，按其低 16、32 或 64 位读作无符号行号。所选源元素被逐位复制；不执行任何数值转换，也不会因为不寻常的浮点编码而拒绝。
 
-任何源快照之前，必须检查维度、描述符、布局、DataType、源已定义性、被消费的编码、目的容量、掩码，以及操作专用索引或偏移。
+设计要点：索引选择逻辑源行，从不展平、回绕、钳位或选择另一列。因此源的有效列数至少要与目标相同，但可以更多。
+
+设计要点：所有索引都在任何写入之前检查。负索引、大于等于源 ValidRow 的索引、未定义的索引或未定义的所选源元素都会拒绝该指令束，因此错误索引绝不会留下部分结果。[索引重排合法性](../../model/legality/indexed-rearrangement.md)拥有这些检查。
 
 <!-- PTO-READER-BLOCK: tile-tgather-inputs-outputs role=inputs-outputs -->
-## 操作数与描述符
+## 操作数、形状与类型
 
-`destination0` 是新 Local 值目的地；`source0` 是持久 Local 值源；`source1` 是持久 Local 行索引源，类型为 S16、U16、S32、U32、S64 或 U64。
+- `source0` 是持久的 Local 值源。
+- `source1` 是持久的 Local 行索引源，类型为 `S16`、`U16`、`S32`、`U32`、`S64` 或 `U64`。
+- `destination0` 是新分配的值目标，类型与 `source0` 相同。
 
-除非当前契约明确指出状态被消费或替换，否则源保持持久；只有完整预检后才发布目的描述符。
+值类型可以是任何非打包的 8、16、32 或 64 位类型：HiF8、E4M3、E5M2、E3M2、E2M3、E8M0、E6M2、RCPE6M2、S8、U8、FP16、BF16、S16、U16、FP32、TF32、HF32、S32、U32、FP64、S64 或 U64。
+
+`B.DIM` LB0 给出目标 ValidCol；省略 LB0 时取架构默认值一，显式编码的零非法。LB1 默认使 ValidRow 为 1，LB2 默认为 Col = ValidCol。索引与目标的有效形状必须相等且非零。
+
+一条终止 `B.IOT` 同时携带两个源与目标；`B.IOS` 非法，任何选择子不全为零的 `B.IOR` 也非法（显式全零 `B.IOR` 只命名 GPR0，不消耗操作数，因此被接受）。三个操作数都必须通过通用描述符检查，该检查排除 CUBE 布局。`B.DATR` 只能携带 `Layout`，它只改变目标的物理摆放。
 
 <!-- PTO-READER-BLOCK: tile-tgather-effects role=effects -->
-## 发布与排序
+## 发布与已定义性
 
-构造结果之前会先快照源，因此允许的别名看到完整的操作前载荷与已定义性。
+完整预检之后，两个源都被快照。随后完整的目标载荷、已定义性、`Null` 填充与描述符作为一次操作发布。每个有效目标元素都变为已定义，有效区域之外的物理元素保持未定义。
 
-完整目的载荷、已定义性、填充 策略和描述符一同发布；拒绝时不会发布部分目的地。
+两个源都保持不变。`TGATHER` 没有全局内存效果，不记录数值状态；被拒绝的指令束不发布任何目标状态。
 
 <!-- PTO-READER-BLOCK: tile-tgather-constraints role=constraints -->
-## 合法性、填充与故障
+## 合法性与故障边界
 
-绑定格式错误、类型或布局不受支持、形状无效、被消费元素未定义、属性非法或目的容量不足时，会在源快照或发布之前拒绝操作。
+绑定格式错误、`B.IOR`、`B.IOS`、不支持的值或索引类型、有效形状为零或不匹配、源列数不足、索引为负、越界或未定义、所选源元素未定义、保留的 `Layout`，或目标容量不足，会在任何效果之前引发相应的 Tile 故障。
 
-分配失败触发所有者定义的 Tile 分配故障；其他被拒绝的绑定模式或值条件触发所有者定义的合法性、块控制或内存故障，且不产生部分效果。
+三个绑定使用相同的 `PE_MASK`；三位 PEMode 只能编码 `1000`、`0100`、`0010`、`0001`、`1100`、`1110`、`1111` 与 `0000`。`PE_MASK=0000` 在 `B.IOT` 的 size code 编码检查之后是严格无操作：不再进行 Tile 读取、索引检查、分配或操作故障，但非法的 `B.IOT` size code 仍会引发 `Fault_IllegalInstruction`。
 
 <!-- PTO-READER-BLOCK: tile-tgather-example role=example -->
 ## 非规范契约草图
 
 这是非规范契约模式草图；它用于组织字段和绑定关系，不声称可以直接汇编。
 
-把 `BSTART.SFU TGATHER, U16; B.DIM LB0=2; B.DIM LB1=2; B.IOT ValueSrc, IndexSrc, mask=1111, <last>, ->Dst<2>; BSTOP` 作为非规范绑定演练，再以下方生成契约确认精确维度、属性和故障行为。
+U32 值源有 3 个有效行、2 个有效列：第 0 行为 10、11；第 1 行为 20、21；第 2 行为 30、31。U16 索引 Tile 有 2 行：2、0 与 1、1。
+
+目标 `[0,0]` 读取源 `[2,0]` = 30，`[0,1]` 读取源 `[0,1]` = 11。第 1 行读取源 `[1,0]` 与 `[1,1]`，即 20 与 21。任何位置出现索引 3 都会拒绝该指令束，因为源只有 3 个有效行。
+
+以宏形式表示，以 `T#1` 为值源、`T#2` 为索引 Tile 的 8 x 16 U32 gather 写作下面的形式。目标容纳 8 x 16 x 4 = 512 字节。
+
+```text
+TGATHER <Row=8, Col=16, U32>, T#1, T#2, ->T<512B>
+```
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine
