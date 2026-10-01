@@ -16,12 +16,12 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-<!-- PTO-READER-BLOCK: hl-ldi-purpose role=purpose -->
+<!-- PTO-READER-BLOCK: scalar-hl-ldi-purpose role=purpose -->
 ## What `HL.LDI` does
 
 `HL.LDI` is a standalone 48-bit load that adds an immediate displacement to the `SrcL` base. It loads one 8-byte value into one destination.
 
-<!-- PTO-READER-BLOCK: hl-ldi-mechanism role=mechanism -->
+<!-- PTO-READER-BLOCK: scalar-hl-ldi-mechanism role=mechanism -->
 ## Address and load mechanism
 
 The decoded `simm22` is sign-extended and shifted left by `3`, so each encoded unit is worth `8` bytes of address.
@@ -36,7 +36,7 @@ The byte at the accessed address becomes bits `7:0` of the result and later byte
 
 **Design point:** storing the displacement divided by `8` lets a 22-bit `simm22` reach far more addresses than an unscaled field of the same width, at the cost of a displacement that is always a multiple of `8`. The shift happens before the modulo `2^PTO_XLEN` addition, so a negative `simm22` still subtracts.
 
-<!-- PTO-READER-BLOCK: hl-ldi-inputs role=inputs-outputs -->
+<!-- PTO-READER-BLOCK: scalar-hl-ldi-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
 - `SrcL` is the address base and uses the complete Reg5 source domain, where codes `0..23` name absolute GPRs, codes `24..27` name `T#1..T#4`, and codes `28..31` name `U#1..U#4`.
@@ -45,7 +45,7 @@ The byte at the accessed address becomes bits `7:0` of the result and later byte
 - `RegDst` is the only destination field: codes `1..23` write absolute GPRs, code `30` pushes U, code `31` pushes T, and codes `0` and `24..29` discard only the loaded value.
 - Every displayed operand field is encoded explicitly, so encoded zero is a value and never denotes omission.
 
-<!-- PTO-READER-BLOCK: hl-ldi-effects role=effects -->
+<!-- PTO-READER-BLOCK: scalar-hl-ldi-effects role=effects -->
 ## Effects and ordering
 
 The base register is read before the memory operation and before any destination write.
@@ -54,7 +54,7 @@ A successful attempt records one relaxed load event, leaves memory and reservati
 
 **Design point:** the base is snapshotted before the destination write, so naming the same register in `SrcL` and `RegDst` loads from the pre-instruction value and then overwrites it. One register can therefore serve as both pointer and result.
 
-<!-- PTO-READER-BLOCK: hl-ldi-constraints role=constraints -->
+<!-- PTO-READER-BLOCK: scalar-hl-ldi-constraints role=constraints -->
 ## Alignment, faults, and restart
 
 The effective address must be aligned to the `8`-byte transfer size. Misalignment raises `Fault_DataAlignment` before translation; a translation or bounded-memory failure after that raises `Fault_DataPage` at the original address.
@@ -65,7 +65,7 @@ A fault emits no load event and writes no destination, and the address it record
 
 **Design point:** the alignment check runs before translation, so an access that is both unaligned and outside the permitted region reports `Fault_DataAlignment`, not `Fault_DataPage`. The fault saves its address as the trap argument and redirects `TPC` to the trap entry, which is what lets a handler reissue the instruction with no retained progress.
 
-<!-- PTO-READER-BLOCK: hl-ldi-example role=example -->
+<!-- PTO-READER-BLOCK: scalar-hl-ldi-example role=example -->
 ## Non-normative address example
 
 This example illustrates the current address and publication rule and does not replace the normative load contract.

@@ -16,12 +16,12 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-<!-- PTO-READER-BLOCK: hl-ldip-purpose role=purpose -->
+<!-- PTO-READER-BLOCK: scalar-hl-ldip-purpose role=purpose -->
 ## What `HL.LDIP` does
 
 `HL.LDIP` is a standalone 48-bit load that adds an immediate displacement to the `SrcL` base. It loads two adjacent 8-byte values into two destinations.
 
-<!-- PTO-READER-BLOCK: hl-ldip-mechanism role=mechanism -->
+<!-- PTO-READER-BLOCK: scalar-hl-ldip-mechanism role=mechanism -->
 ## Address and load mechanism
 
 The decoded `simm17` is sign-extended and shifted left by `3`, so each encoded unit is worth `8` bytes of address.
@@ -36,7 +36,7 @@ The byte at the accessed address becomes bits `7:0` of the result and later byte
 
 **Design point:** storing the displacement divided by `8` lets a 17-bit `simm17` reach far more addresses than an unscaled field of the same width, at the cost of a displacement that is always a multiple of `8`. The shift happens before the modulo `2^PTO_XLEN` addition, so a negative `simm17` still subtracts.
 
-<!-- PTO-READER-BLOCK: hl-ldip-inputs role=inputs-outputs -->
+<!-- PTO-READER-BLOCK: scalar-hl-ldip-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
 - `SrcL` is the address base and uses the complete Reg5 source domain, where codes `0..23` name absolute GPRs, codes `24..27` name `T#1..T#4`, and codes `28..31` name `U#1..U#4`.
@@ -46,7 +46,7 @@ The byte at the accessed address becomes bits `7:0` of the result and later byte
 - Both destination fields use the complete Reg5 destination domain: codes `1..23` write absolute GPRs, code `30` pushes U, code `31` pushes T, and codes `0` and `24..29` discard only that result without suppressing the rest of the instruction.
 - Every displayed operand field is encoded explicitly, so encoded zero is a value and never denotes omission.
 
-<!-- PTO-READER-BLOCK: hl-ldip-effects role=effects -->
+<!-- PTO-READER-BLOCK: scalar-hl-ldip-effects role=effects -->
 ## Effects and ordering
 
 The base register is read before the memory operation and before any destination write.
@@ -55,7 +55,7 @@ A successful attempt records two relaxed load events in address order, leaves me
 
 **Design point:** both values rest on the one base snapshot, so even when a destination names `SrcL` the second address is still the first plus the access size. The pair always reads two adjacent locations.
 
-<!-- PTO-READER-BLOCK: hl-ldip-constraints role=constraints -->
+<!-- PTO-READER-BLOCK: scalar-hl-ldip-constraints role=constraints -->
 ## Alignment, faults, and restart
 
 The effective address must be aligned to the `8`-byte transfer size. Misalignment raises `Fault_DataAlignment` before translation; a translation or bounded-memory failure after that raises `Fault_DataPage` at the original address.
@@ -66,7 +66,7 @@ A fault emits no load event and writes no destination, and the address it record
 
 **Design point:** both probes complete before either load is committed, so the pair cannot publish one destination and leave the other holding a pre-instruction value; a fault on the second probe therefore costs the first result as well.
 
-<!-- PTO-READER-BLOCK: hl-ldip-example role=example -->
+<!-- PTO-READER-BLOCK: scalar-hl-ldip-example role=example -->
 ## Non-normative address example
 
 This example illustrates the current address and publication rule and does not replace the normative load contract.

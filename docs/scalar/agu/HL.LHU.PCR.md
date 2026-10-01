@@ -16,12 +16,12 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-<!-- PTO-READER-BLOCK: hl-lhu-pcr-purpose role=purpose -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pcr-purpose role=purpose -->
 ## What `HL.LHU.PCR` does
 
 `HL.LHU.PCR` is a standalone 48-bit load whose address is relative to the current instruction position instead of a register. It loads one 2-byte value into one destination.
 
-<!-- PTO-READER-BLOCK: hl-lhu-pcr-mechanism role=mechanism -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pcr-mechanism role=mechanism -->
 ## Address and load mechanism
 
 The base is the current instruction position with bits `1:0` cleared, so it is aligned to `4` bytes even when the instruction starts on the second halfword of a word.
@@ -36,7 +36,7 @@ The byte at the accessed address becomes bits `7:0` of the result and later byte
 
 **Design point:** clearing bits `1:0` of the instruction position before adding the displacement makes the base independent of which halfword the instruction starts at, so moving the instruction between halfword offsets still reaches the same target.
 
-<!-- PTO-READER-BLOCK: hl-lhu-pcr-inputs role=inputs-outputs -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pcr-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
 - The address base is implicit: the current instruction position with bits `1:0` cleared. No base register is encoded, so this form reads no scalar register for its address.
@@ -44,7 +44,7 @@ The byte at the accessed address becomes bits `7:0` of the result and later byte
 - `RegDst` is the only destination field: codes `1..23` write absolute GPRs, code `30` pushes U, code `31` pushes T, and codes `0` and `24..29` discard only the loaded value.
 - Every displayed operand field is encoded explicitly, so encoded zero is a value and never denotes omission.
 
-<!-- PTO-READER-BLOCK: hl-lhu-pcr-effects role=effects -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pcr-effects role=effects -->
 ## Effects and ordering
 
 The current instruction position is read once at the start of the attempt and the displacement is applied to that snapshot, so the address that faults and the address that is accessed are the same address even though the position later advances.
@@ -53,7 +53,7 @@ A successful attempt records one relaxed load event, leaves memory and reservati
 
 **Design point:** the position is snapshotted at the start of the attempt because the same attempt later advances `TPC` by `6` bytes. Forming the address after that advance would make a reissue compute a different target.
 
-<!-- PTO-READER-BLOCK: hl-lhu-pcr-constraints role=constraints -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pcr-constraints role=constraints -->
 ## Alignment, faults, and restart
 
 The effective address must be aligned to the `2`-byte transfer size. Misalignment raises `Fault_DataAlignment` before translation; a translation or bounded-memory failure after that raises `Fault_DataPage` at the original address.
@@ -64,7 +64,7 @@ A fault emits no load event and writes no destination, and the address it record
 
 **Design point:** the alignment check runs before translation, so an access that is both unaligned and outside the permitted region reports `Fault_DataAlignment`, not `Fault_DataPage`. The fault saves its address as the trap argument and redirects `TPC` to the trap entry, which is what lets a handler reissue the instruction with no retained progress.
 
-<!-- PTO-READER-BLOCK: hl-lhu-pcr-example role=example -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pcr-example role=example -->
 ## Non-normative address example
 
 This example illustrates the current address and publication rule and does not replace the normative load contract.

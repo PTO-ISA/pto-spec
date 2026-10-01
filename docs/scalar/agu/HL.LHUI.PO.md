@@ -16,12 +16,12 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-<!-- PTO-READER-BLOCK: hl-lhui-po-purpose role=purpose -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhui-po-purpose role=purpose -->
 ## What `HL.LHUI.PO` does
 
 `HL.LHUI.PO` is a standalone 48-bit load that adds an immediate displacement to the `SrcL` base. It loads one 2-byte value into one destination.
 
-<!-- PTO-READER-BLOCK: hl-lhui-po-mechanism role=mechanism -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhui-po-mechanism role=mechanism -->
 ## Address and load mechanism
 
 The decoded `simm17` is sign-extended and shifted left by `1`, so each encoded unit is worth `2` bytes of address.
@@ -36,7 +36,7 @@ The byte at the accessed address becomes bits `7:0` of the result and later byte
 
 **Design point:** storing the displacement divided by `2` lets a 17-bit `simm17` reach far more addresses than an unscaled field of the same width, at the cost of a displacement that is always a multiple of `2`. The shift happens before the modulo `2^PTO_XLEN` addition, so a negative `simm17` still subtracts.
 
-<!-- PTO-READER-BLOCK: hl-lhui-po-inputs role=inputs-outputs -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhui-po-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
 - `SrcL` is the address base and uses the complete Reg5 source domain, where codes `0..23` name absolute GPRs, codes `24..27` name `T#1..T#4`, and codes `28..31` name `U#1..U#4`.
@@ -46,7 +46,7 @@ The byte at the accessed address becomes bits `7:0` of the result and later byte
 - Both destination fields use the complete Reg5 destination domain: codes `1..23` write absolute GPRs, code `30` pushes U, code `31` pushes T, and codes `0` and `24..29` discard only that result without suppressing the rest of the instruction.
 - Every displayed operand field is encoded explicitly, so encoded zero is a value and never denotes omission.
 
-<!-- PTO-READER-BLOCK: hl-lhui-po-effects role=effects -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhui-po-effects role=effects -->
 ## Effects and ordering
 
 The base register is read before the memory operation and before any destination write.
@@ -55,7 +55,7 @@ A successful attempt records one relaxed load event, leaves memory and reservati
 
 **Design point:** the loaded value is published first, and the update uses the base snapshot rather than the register just written. When `Dst0` and `Dst1` name the same register the update wins; when either names `SrcL` the address still came from the pre-instruction value.
 
-<!-- PTO-READER-BLOCK: hl-lhui-po-constraints role=constraints -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhui-po-constraints role=constraints -->
 ## Alignment, faults, and restart
 
 The effective address must be aligned to the `2`-byte transfer size. Misalignment raises `Fault_DataAlignment` before translation; a translation or bounded-memory failure after that raises `Fault_DataPage` at the original address.
@@ -66,7 +66,7 @@ A fault emits no load event and writes no destination, and the address it record
 
 **Design point:** the alignment check runs before translation, so an access that is both unaligned and outside the permitted region reports `Fault_DataAlignment`, not `Fault_DataPage`. The fault saves its address as the trap argument and redirects `TPC` to the trap entry, which is what lets a handler reissue the instruction with no retained progress.
 
-<!-- PTO-READER-BLOCK: hl-lhui-po-example role=example -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhui-po-example role=example -->
 ## Non-normative address example
 
 This example illustrates the current address and publication rule and does not replace the normative load contract.

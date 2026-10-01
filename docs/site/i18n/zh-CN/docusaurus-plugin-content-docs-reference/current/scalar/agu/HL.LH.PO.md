@@ -16,12 +16,12 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-<!-- PTO-READER-BLOCK: hl-lh-po-purpose role=purpose -->
+<!-- PTO-READER-BLOCK: scalar-hl-lh-po-purpose role=purpose -->
 ## `HL.LH.PO` 的作用
 
 `HL.LH.PO` 是一条独立编码的 48 位加载指令。它的基址来自 `SrcL`，偏移来自 `SrcR`，并在使用前先经变换和移位；它把一个 2 字节宽的值加载到一个目的。
 
-<!-- PTO-READER-BLOCK: hl-lh-po-mechanism role=mechanism -->
+<!-- PTO-READER-BLOCK: scalar-hl-lh-po-mechanism role=mechanism -->
 ## 地址与加载机制
 
 `SrcR` 先被读取，再按 `SrcRType` 变换，然后按编码的 `shamt` 左移，结果就是偏移；`shamt` 为零时该偏移是按字节粒度的。
@@ -36,7 +36,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 **设计要点：** `HL.LH.PO` 的偏移来自寄存器，因此地址在运行时可变而编码固定不变。`SrcRType` 只改写 `SrcR` 的 `31:0` 位，因此同一条形式可服务于全宽、有符号 `32` 位或无符号 `32` 位偏移；而 `shamt=0` 是普通的按字节偏移，不是保留编码。
 
-<!-- PTO-READER-BLOCK: hl-lh-po-inputs role=inputs-outputs -->
+<!-- PTO-READER-BLOCK: scalar-hl-lh-po-inputs role=inputs-outputs -->
 ## 输入与目的
 
 - `SrcL` 是地址基址，`SrcR` 是寄存器偏移；两者都使用完整的 Reg5 源域，其中编码 `0..23` 指定绝对 GPR，`24..27` 指定 `T#1..T#4`，`28..31` 指定 `U#1..U#4`。
@@ -47,7 +47,7 @@ The current instruction contract is owned by the ASL source linked above.
 - 两个目的字段都使用完整的 Reg5 目的域：编码 `1..23` 写入绝对 GPR，编码 `30` 压入 U，编码 `31` 压入 T，而编码 `0` 与 `24..29` 只丢弃该结果，不抑制指令的其余部分。
 - 每个显示的操数字段都是显式编码的，因此编码零是一个值，绝不表示省略。
 
-<!-- PTO-READER-BLOCK: hl-lh-po-effects role=effects -->
+<!-- PTO-READER-BLOCK: scalar-hl-lh-po-effects role=effects -->
 ## 效果与顺序
 
 基址和偏移寄存器都在内存操作之前、任何目的写入之前读取。
@@ -56,7 +56,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 **设计要点：** `SrcR` 在目的写入之前完成变换，因此当目的与 `SrcR` 命名同一寄存器时，被变换的是指令执行前的值，而不是即将发布的值。一次访问使用的偏移在指令开始时就已经固定。
 
-<!-- PTO-READER-BLOCK: hl-lh-po-constraints role=constraints -->
+<!-- PTO-READER-BLOCK: scalar-hl-lh-po-constraints role=constraints -->
 ## 对齐、故障与重试
 
 `SrcRType=3` 是保留值，会在读取任何源之前、任何架构效果之前引发 `Fault_IllegalInstruction`。
@@ -69,7 +69,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 **设计要点：** 保留的 `SrcRType` 值在该形式解码时、读取偏移寄存器之前就被拒绝，因此即使编码的 `SrcR` 是合法选择器，非法编码也不会通过队列读取变得架构可见。
 
-<!-- PTO-READER-BLOCK: hl-lh-po-example role=example -->
+<!-- PTO-READER-BLOCK: scalar-hl-lh-po-example role=example -->
 ## 非规范地址示例
 
 本示例说明当前的地址与发布规则，并不替代规范加载契约。

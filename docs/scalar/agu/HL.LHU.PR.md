@@ -16,12 +16,12 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-<!-- PTO-READER-BLOCK: hl-lhu-pr-purpose role=purpose -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pr-purpose role=purpose -->
 ## What `HL.LHU.PR` does
 
 `HL.LHU.PR` is a standalone 48-bit load. It takes its base from `SrcL` and its offset from `SrcR`, which it transforms and shifts, and it loads one 2-byte value into one destination.
 
-<!-- PTO-READER-BLOCK: hl-lhu-pr-mechanism role=mechanism -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pr-mechanism role=mechanism -->
 ## Address and load mechanism
 
 `SrcR` is read, transformed by `SrcRType`, and then shifted left by the encoded `shamt`. That result is the offset, and it is byte-granular whenever `shamt` is zero.
@@ -36,7 +36,7 @@ The byte at the accessed address becomes bits `7:0` of the result and later byte
 
 **Design point:** `HL.LHU.PR` takes its offset from a register, so the address varies at run time while the encoding stays fixed. `SrcRType` rewrites only bits `31:0` of `SrcR`, so one form serves a full-width, a signed `32`-bit, or an unsigned `32`-bit offset, and `shamt=0` is an ordinary byte-granular offset rather than a reserved encoding.
 
-<!-- PTO-READER-BLOCK: hl-lhu-pr-inputs role=inputs-outputs -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pr-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
 - `SrcL` is the address base and `SrcR` is the register offset; both use the complete Reg5 source domain, where codes `0..23` name absolute GPRs, codes `24..27` name `T#1..T#4`, and codes `28..31` name `U#1..U#4`.
@@ -47,7 +47,7 @@ The byte at the accessed address becomes bits `7:0` of the result and later byte
 - Both destination fields use the complete Reg5 destination domain: codes `1..23` write absolute GPRs, code `30` pushes U, code `31` pushes T, and codes `0` and `24..29` discard only that result without suppressing the rest of the instruction.
 - Every displayed operand field is encoded explicitly, so encoded zero is a value and never denotes omission.
 
-<!-- PTO-READER-BLOCK: hl-lhu-pr-effects role=effects -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pr-effects role=effects -->
 ## Effects and ordering
 
 The base and the offset register are both read before the memory operation and before any destination write.
@@ -56,7 +56,7 @@ A successful attempt records one relaxed load event, leaves memory and reservati
 
 **Design point:** `SrcR` is transformed before the destination write, so a destination that names `SrcR` transforms the pre-instruction value, not the value about to be published. The offset for one access is fixed when the instruction starts.
 
-<!-- PTO-READER-BLOCK: hl-lhu-pr-constraints role=constraints -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pr-constraints role=constraints -->
 ## Alignment, faults, and restart
 
 `SrcRType=3` is reserved and raises `Fault_IllegalInstruction` before any source is read and before any architectural effect.
@@ -69,7 +69,7 @@ A fault emits no load event and writes no destination, and the address it record
 
 **Design point:** the reserved `SrcRType` value is rejected while the form is being decoded, before the offset register is read, so an illegal encoding cannot become architecturally visible through a queue read even when the encoded `SrcR` is a legal selector.
 
-<!-- PTO-READER-BLOCK: hl-lhu-pr-example role=example -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pr-example role=example -->
 ## Non-normative address example
 
 This example illustrates the current address and publication rule and does not replace the normative load contract.

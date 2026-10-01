@@ -16,12 +16,12 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-<!-- PTO-READER-BLOCK: hl-lhip-u-purpose role=purpose -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhip-u-purpose role=purpose -->
 ## `HL.LHIP.U` 的作用
 
 `HL.LHIP.U` 是一条独立编码的 48 位加载指令，它把一个立即数位移加到 `SrcL` 基址上。它把两个相邻的 2 字节宽的值加载到两个目的。
 
-<!-- PTO-READER-BLOCK: hl-lhip-u-mechanism role=mechanism -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhip-u-mechanism role=mechanism -->
 ## 地址与加载机制
 
 解码出的 `simm17` 先符号扩展再按不缩放的方式使用，因此每个编码单位代表 `1` 字节的地址。
@@ -36,7 +36,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 **设计要点：** `HL.LHIP.U` 按不缩放方式使用，把全部 17 个编码位都作为位移，因此可以指向距基址 `-65536` 到 `65535` 字节范围内的任意字节。编码的位移不是访问大小的倍数，所以只有当基址与位移之和是访问大小的倍数时，有效地址才是对齐的。
 
-<!-- PTO-READER-BLOCK: hl-lhip-u-inputs role=inputs-outputs -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhip-u-inputs role=inputs-outputs -->
 ## 输入与目的
 
 - `SrcL` 是地址基址，使用完整的 Reg5 源域，其中编码 `0..23` 指定绝对 GPR，`24..27` 指定 `T#1..T#4`，`28..31` 指定 `U#1..U#4`。
@@ -46,7 +46,7 @@ The current instruction contract is owned by the ASL source linked above.
 - 两个目的字段都使用完整的 Reg5 目的域：编码 `1..23` 写入绝对 GPR，编码 `30` 压入 U，编码 `31` 压入 T，而编码 `0` 与 `24..29` 只丢弃该结果，不抑制指令的其余部分。
 - 每个显示的操数字段都是显式编码的，因此编码零是一个值，绝不表示省略。
 
-<!-- PTO-READER-BLOCK: hl-lhip-u-effects role=effects -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhip-u-effects role=effects -->
 ## 效果与顺序
 
 基址寄存器在内存操作之前、任何目的写入之前读取。
@@ -55,7 +55,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 **设计要点：** 两个值都建立在同一份基址快照上，因此即使某个目的与 `SrcL` 命名同一寄存器，第二个地址仍是第一个地址加访问大小。这一对操作总是读取两个相邻位置。
 
-<!-- PTO-READER-BLOCK: hl-lhip-u-constraints role=constraints -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhip-u-constraints role=constraints -->
 ## 对齐、故障与重试
 
 有效地址必须按 `2` 字节传送大小对齐。未对齐会在地址转换之前引发 `Fault_DataAlignment`；此后的转换或有界内存失败会在原始地址处引发 `Fault_DataPage`。
@@ -66,7 +66,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 **设计要点：** 两次探测都在提交任何一次加载之前完成，因此这一对操作不会出现一个目的已发布、另一个仍保持指令执行前值的情况；第二次探测上的故障因此也会让第一个结果一并作废。
 
-<!-- PTO-READER-BLOCK: hl-lhip-u-example role=example -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhip-u-example role=example -->
 ## 非规范地址示例
 
 本示例说明当前的地址与发布规则，并不替代规范加载契约。

@@ -16,12 +16,12 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-<!-- PTO-READER-BLOCK: hl-lh-pcr-purpose role=purpose -->
+<!-- PTO-READER-BLOCK: scalar-hl-lh-pcr-purpose role=purpose -->
 ## `HL.LH.PCR` 的作用
 
 `HL.LH.PCR` 是一条独立编码的 48 位加载指令，其地址相对于当前指令位置而不是某个寄存器。它把一个 2 字节宽的值加载到一个目的。
 
-<!-- PTO-READER-BLOCK: hl-lh-pcr-mechanism role=mechanism -->
+<!-- PTO-READER-BLOCK: scalar-hl-lh-pcr-mechanism role=mechanism -->
 ## 地址与加载机制
 
 基址是当前指令位置把 `1:0` 位清零后的值，因此即使指令从某个字的第二个半字开始，基址也按 `4` 字节对齐。
@@ -36,7 +36,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 **设计要点：** 在加上位移之前把指令位置的 `1:0` 位清零，使基址不取决于指令从哪个半字开始；因此把该指令放到不同的半字偏移处仍然到达同一目标。
 
-<!-- PTO-READER-BLOCK: hl-lh-pcr-inputs role=inputs-outputs -->
+<!-- PTO-READER-BLOCK: scalar-hl-lh-pcr-inputs role=inputs-outputs -->
 ## 输入与目的
 
 - 地址基址是隐含的：`1:0` 位清零后的当前指令位置。该形式不编码基址寄存器，因此它的地址不读取任何标量寄存器。
@@ -44,7 +44,7 @@ The current instruction contract is owned by the ASL source linked above.
 - `RegDst` 是唯一目的字段：编码 `1..23` 写入绝对 GPR，编码 `30` 压入 U，编码 `31` 压入 T，而编码 `0` 与 `24..29` 只丢弃加载值。
 - 每个显示的操数字段都是显式编码的，因此编码零是一个值，绝不表示省略。
 
-<!-- PTO-READER-BLOCK: hl-lh-pcr-effects role=effects -->
+<!-- PTO-READER-BLOCK: scalar-hl-lh-pcr-effects role=effects -->
 ## 效果与顺序
 
 当前指令位置在该次尝试开始时只读取一次，位移施加在该快照上；因此即使位置随后前进，引发故障的地址与被访问的地址仍是同一个地址。
@@ -53,7 +53,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 **设计要点：** 位置在该次尝试开始时被快照，因为同一次尝试随后会把 `TPC` 前进 `6` 字节。若在那次前进之后才形成地址，重发就会算出不同的目标。
 
-<!-- PTO-READER-BLOCK: hl-lh-pcr-constraints role=constraints -->
+<!-- PTO-READER-BLOCK: scalar-hl-lh-pcr-constraints role=constraints -->
 ## 对齐、故障与重试
 
 有效地址必须按 `2` 字节传送大小对齐。未对齐会在地址转换之前引发 `Fault_DataAlignment`；此后的转换或有界内存失败会在原始地址处引发 `Fault_DataPage`。
@@ -64,7 +64,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 **设计要点：** 对齐检查在地址转换之前执行，因此既未对齐又超出允许区域的访问报告 `Fault_DataAlignment`，而不是 `Fault_DataPage`。故障把出错地址保存为陷阱参数并把 `TPC` 重定向到陷阱入口，这正是处理程序能够在不保留任何进度的前提下重发该指令的原因。
 
-<!-- PTO-READER-BLOCK: hl-lh-pcr-example role=example -->
+<!-- PTO-READER-BLOCK: scalar-hl-lh-pcr-example role=example -->
 ## 非规范地址示例
 
 本示例说明当前的地址与发布规则，并不替代规范加载契约。

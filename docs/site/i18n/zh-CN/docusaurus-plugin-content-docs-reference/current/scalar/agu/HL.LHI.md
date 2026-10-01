@@ -16,12 +16,12 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-<!-- PTO-READER-BLOCK: hl-lhi-purpose role=purpose -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhi-purpose role=purpose -->
 ## `HL.LHI` 的作用
 
 `HL.LHI` 是一条独立编码的 48 位加载指令，它把一个立即数位移加到 `SrcL` 基址上。它把一个 2 字节宽的值加载到一个目的。
 
-<!-- PTO-READER-BLOCK: hl-lhi-mechanism role=mechanism -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhi-mechanism role=mechanism -->
 ## 地址与加载机制
 
 解码出的 `simm22` 先符号扩展再左移 `1` 位，因此每个编码单位代表 `2` 字节的地址。
@@ -36,7 +36,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 **设计要点：** 把位移按除以 `2` 的形式存储，使 22 位的 `simm22` 覆盖远超同宽度不缩放字段的地址范围，代价是位移总是 `2` 的倍数。移位发生在按 `2^PTO_XLEN` 取模的加法之前，所以负 `simm22` 仍然表现为减法。
 
-<!-- PTO-READER-BLOCK: hl-lhi-inputs role=inputs-outputs -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhi-inputs role=inputs-outputs -->
 ## 输入与目的
 
 - `SrcL` 是地址基址，使用完整的 Reg5 源域，其中编码 `0..23` 指定绝对 GPR，`24..27` 指定 `T#1..T#4`，`28..31` 指定 `U#1..U#4`。
@@ -45,7 +45,7 @@ The current instruction contract is owned by the ASL source linked above.
 - `RegDst` 是唯一目的字段：编码 `1..23` 写入绝对 GPR，编码 `30` 压入 U，编码 `31` 压入 T，而编码 `0` 与 `24..29` 只丢弃加载值。
 - 每个显示的操数字段都是显式编码的，因此编码零是一个值，绝不表示省略。
 
-<!-- PTO-READER-BLOCK: hl-lhi-effects role=effects -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhi-effects role=effects -->
 ## 效果与顺序
 
 基址寄存器在内存操作之前、任何目的写入之前读取。
@@ -54,7 +54,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 **设计要点：** 基址在目的写入之前快照，因此在 `SrcL` 与 `RegDst` 上命名同一寄存器时，加载使用的是指令执行前的值，之后该寄存器被覆盖。同一个寄存器因此可以既作指针又作结果。
 
-<!-- PTO-READER-BLOCK: hl-lhi-constraints role=constraints -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhi-constraints role=constraints -->
 ## 对齐、故障与重试
 
 有效地址必须按 `2` 字节传送大小对齐。未对齐会在地址转换之前引发 `Fault_DataAlignment`；此后的转换或有界内存失败会在原始地址处引发 `Fault_DataPage`。
@@ -65,7 +65,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 **设计要点：** 对齐检查在地址转换之前执行，因此既未对齐又超出允许区域的访问报告 `Fault_DataAlignment`，而不是 `Fault_DataPage`。故障把出错地址保存为陷阱参数并把 `TPC` 重定向到陷阱入口，这正是处理程序能够在不保留任何进度的前提下重发该指令的原因。
 
-<!-- PTO-READER-BLOCK: hl-lhi-example role=example -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhi-example role=example -->
 ## 非规范地址示例
 
 本示例说明当前的地址与发布规则，并不替代规范加载契约。
