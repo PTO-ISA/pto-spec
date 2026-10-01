@@ -13,42 +13,59 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: arch-format-descriptor-purpose role=purpose-scope -->
-## 用途与范围
+## 目的与范围
 
-`NumericFormatDescriptor` 记录数值格式元数据是否可用；可用时，它描述载体宽度、逻辑 lane、字段宽度与位置、必须为零的约束位、指数偏置和受支持的值类别。
+`NumericFormatDescriptor` 是公共记录，用来说明某个 Tile 数据类型是否有可用的数值格式元数据；可用时，它精确描述该格式。
+
+一条记录承载载体宽度、逻辑 lane 宽度、每个载体的 lane 数量、符号、指数和尾数字段、必须为零的约束位、指数偏置，以及该格式支持的特殊值类别。
 
 <!-- PTO-READER-BLOCK: arch-format-descriptor-concepts role=concepts-state -->
-## 描述符结构
+## 概念与可见状态
 
-`NumericFormatKind` 区分不可用元数据、固定二进制格式、`HiF8` 和 `E8M0`。宽度字段描述载体、每个逻辑 lane、lane 数量，以及符号、指数和尾数字段。
+`NumericFormatKind` 区分 `NumericFormatKind_Unavailable`、各固定二进制格式、`HiF8` 和 `E8M0`，因此调用方可以分辨自己读到的是哪一种字段描述风格。
 
-其余字段说明是否存在指数偏置、有多少高位或低位必须为零，以及是否存在零、带符号零、次正规数、无穷大、静默 NaN 和信号 NaN 类别。
+宽度字段 `carrier_bits`、`lane_bits` 和 `lanes_per_carrier` 说明一个载体有多少原始位、一个逻辑值占多少位，以及多少个值共享一个载体。
+
+字段描述 `sign_bits`、`sign_bit`、`exponent_bits_min` 到 `exponent_bits_max`、`fraction_bits_min` 到 `fraction_bits_max`、`exponent_bias_available` 和 `exponent_bias` 给出 lane 各部分的位置与宽度，或者在格式会改变它们时给出范围。
 
 <!-- PTO-READER-BLOCK: arch-format-descriptor-rules role=rules-interactions -->
-## 使用方式
+## 规则与交互
 
-嵌入的 `PTO-NUMERIC-FORMAT-DESCRIPTOR-001` 契约为每个浮点或缩放 Tile 数据类型分配一个确切描述符，并为整数 Tile 数据类型分配不可用结果。
+设计要点：像 `HiF8` 这样的动态格式报告指数范围而不是单一宽度，因此该记录描述的是格式族而不是某一个载体，具体字段宽度来自该格式自己的解码器。
 
-描述符报告能力和布局；原始编码的解释仍由各格式自己的分解和分类函数定义。
+`required_low_zero_bits` 和 `required_high_zero_bits` 统计合法载体中必须为零的位数，这正是让 `TF32` 这样的截断载体与同宽度的全精度载体保持区别的方式。
+
+其余布尔值说明是否存在零、带符号零、次正规数、无穷大、静默 NaN 和信号 NaN 编码，从而在解码某个原始载体之前告诉调用方它可以表示什么。
+
+嵌入的 `PTO-NUMERIC-FORMAT-DESCRIPTOR-001` 条款要求每个已分配的浮点或缩放 Tile 数据类型暴露一个这种形状的确切描述符，并要求整数 Tile 数据类型报告不存在浮点格式描述符。
 
 <!-- PTO-READER-BLOCK: arch-format-descriptor-boundaries role=boundaries -->
-## 不可用描述符
+## 架构边界
 
-`UnavailableNumericFormatDescriptor` 把 `available` 设为 false，选择 `NumericFormatKind_Unavailable`，把所有宽度、位置、偏置和约束位字段清零，并关闭全部特殊值能力。
+设计要点：为每个已分配类型都要求描述符，而不是让字段保持未指定，意味着调用方永远不必猜测缺失值是表示窄格式还是表示缺失元数据。
 
-聚焦的边界 AVS 检查上面列出的不可用描述符字段；这句话记录证据范围，不定义另一条描述符规则。
+描述符报告布局和能力；某个值的原始编码仍由该格式自己的分解和分类函数解释。
+
+`UnavailableNumericFormatDescriptor` 把 `available` 设为 false，选择 `NumericFormatKind_Unavailable`，把所有宽度、位置、偏置和约束位字段清零，并清除全部特殊值能力。
+
+按函数顺序阅读本页：先从描述符取得字段位置，然后用受限位计数选择各格式自己的有效性、分解和分类归属函数。
 
 <!-- PTO-READER-BLOCK: arch-format-descriptor-example role=example-usage -->
 ## 非规范阅读示例
 
-下面是一种检查路径，不增加格式规则。
+本例说明当前的 ASL 归属单元，不替代规范操作。
+
+设计要点：不可用结果是字段齐全、能力全部清除的记录，因此忽略可用性的调用方读到的是零宽度和不支持任何类别，而不是任意一种格式。
+
+阅读一个格式时先看 `available` 和 `kind`，再看字段宽度，然后是约束位计数，最后才看该格式自己的辅助函数。
 
 在把 Tile 数据类型按浮点格式解码之前，先检查 `available` 和 `kind`；再依据字段宽度与约束位计数，找到该格式的有效性、分解和分类所有者。
 
 <!-- PTO-READER-BLOCK: arch-format-descriptor-related role=related-owners-navigation -->
-## 相关所有者
+## 相关归属单元
 
 - [Tile 数据类型](tile-data-types.md)定义已分配的 Tile 数据类型词汇。
+
 - [数值格式](numeric-formats.md)把已分配类型分派到确切的描述符和值辅助函数。
 <!-- SUPPLEMENTARY-END -->
 

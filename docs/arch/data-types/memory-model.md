@@ -15,45 +15,54 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-memory-model-types-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit defines the typed records and enumerations used to represent data-access probes, memory orders, memory events, and event relations.
+This unit defines the typed records and enumerations used to represent data-access probes, memory orders, memory events, and the replay state of a memory request.
 
-It provides the vocabulary consumed by executable memory owners without itself deciding whether a complete execution is accepted.
+It provides the vocabulary that executable memory owners consume, and it does not itself decide whether a complete execution is accepted.
 
 <!-- PTO-READER-BLOCK: arch-memory-model-types-concepts-state role=concepts-state -->
 ## Concepts and visible state
 
-- `DataAccessProbe` pairs a `FaultCode` with the translated `Word` address.
-- `MemoryOrder` distinguishes `Relaxed`, `Acquire`, `Release`, and `AcquireRelease`; `MemoryEventKind` distinguishes initial write, load, store, atomic, and fence events.
-- A `MemoryEvent` records agent, address, size, read and write values, whether a write occurred, order, reads-from index, coherence rank, and fence predecessor/successor masks.
+`DataAccessProbe` pairs a `FaultCode` with the translated `Word` address, and `MemoryReplayState` records whether a replay is active, the request word, the committed event count, and an epoch.
+
+`MemoryOrder` distinguishes `MemoryOrder_Relaxed`, `MemoryOrder_Acquire`, `MemoryOrder_Release`, and `MemoryOrder_AcquireRelease`; `MemoryEventKind` distinguishes `MemoryEvent_InitialWrite`, `MemoryEvent_Load`, `MemoryEvent_Store`, `MemoryEvent_Atomic`, and `MemoryEvent_Fence`.
+
+A `MemoryEvent` records the kind, the agent, the address, the access size, the read and write values, whether a write was performed, the order, the reads-from event index, the coherence rank, and the fence predecessor and successor masks.
 
 <!-- PTO-READER-BLOCK: arch-memory-model-types-rules-interactions role=rules-interactions -->
 ## Rules and interactions
 
-Memory event sizes are limited to `1`, `2`, `4`, or `8` bytes.
+Design point: a load and a store carry both a read value and a write value field, so one record shape can express a load that reads, a store that writes, and an atomic that does both without three separate records.
 
-Agent IDs, event indices, and coherence ranks are bounded by `PTO_MODEL_MEMORY_AGENTS` and `PTO_MODEL_MEMORY_EVENTS`.
+Memory event sizes are limited to `1`, `2`, `4`, or `8` bytes, so a modeled access always has one of four widths.
 
-`MemoryRelationMatrix` stores one relation row per modeled event as `bits(PTO_MODEL_MEMORY_EVENTS)`.
+`MemoryShareability` separates `MemoryShareability_Private`, `MemoryShareability_IntraCore`, and `MemoryShareability_InterCore`, and `MemoryFenceStrength` derives no, release, acquire, or acquire-release strength from a mask pair.
 
 <!-- PTO-READER-BLOCK: arch-memory-model-types-boundaries role=boundaries -->
 ## Architectural boundaries
 
-These declarations describe representation, not ordering acceptance. Program order, reads-from validity, coherence, fences, and cycle rejection are owned by the memory-ordering ASL.
+Agent IDs, event indices, and coherence ranks are bounded by `PTO_MODEL_MEMORY_AGENTS` and `PTO_MODEL_MEMORY_EVENTS`, and `MemoryRelationMatrix` stores one row per modeled event as `bits(PTO_MODEL_MEMORY_EVENTS)`.
 
-`PTO_MODEL_MEMORY_EVENTS` is a model bound, not a portable maximum event count for hardware.
+Design point: shareability is stated as an architecture-visible classification rather than a cache or interconnect tier, so a consumer reasons about who observes an access instead of about a particular memory hierarchy.
+
+This unit declares types and no functions, so nothing here is evaluated at run time: the check that accepts or rejects a complete execution is owned by the memory-ordering unit.
 
 <!-- PTO-READER-BLOCK: arch-memory-model-types-example-usage role=example-usage -->
 ## Non-normative reading example
 
-`MemoryEvent_Load` entries carry their source in `read_from`. Events that perform writes carry their `coherence_rank`; the ordering owner validates both fields in the complete relation set.
+This example illustrates the current ASL owner and does not replace the normative operation.
 
-When debugging a memory result, inspect the event record first, then follow its indices into the matrices built by the ordering owner.
+These declarations describe representation, not ordering acceptance; program order, reads-from validity, coherence, fences, and cycle rejection belong to the memory-ordering ASL.
+
+A `MemoryReplayState` with `active` false is the state left after a replay ends, so a consumer must not read the replay window as still in progress.
 
 <!-- PTO-READER-BLOCK: arch-memory-model-types-related-owners role=related-owners-navigation -->
 ## Related owners
 
-- [Memory ordering](../memory-model/ordering.md)
-- [Memory operation selectors](memory-operations.md)
+- [Memory ordering](../memory-model/ordering.md) consumes these event records.
+
+- [Memory operation selectors](memory-operations.md) names the atomic and address-update selectors.
+
+- [Integer types](integer.md) defines `Word`, the address carrier these records use.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

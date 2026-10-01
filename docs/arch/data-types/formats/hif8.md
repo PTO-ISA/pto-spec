@@ -15,47 +15,62 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-hif8-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit gives `HiF8` its exact eight-bit format description, dynamic dot-field decoding, finite decomposition, value classification, and canonical NaN.
+`HiF8` is an assigned PTO numeric format stored in an eight-bit carrier, and this unit owns its descriptor, dot-field decoding, finite decomposition, value classification, and canonical NaN.
 
-It exists so consumers can reason from raw carriers without substituting a host floating-point type for the architecture-defined encoding.
+`HiF8` is not a fixed-width-exponent format: the position of the dot between exponent and fraction depends on the value itself, so the format spends fewer exponent bits on small magnitudes and more on large ones.
+
+Design point: the record keeps the carrier width and the logical lane width separate, so a packed type reports two lanes in one carrier while a single-lane type reports only its own lane width in its carrier.
 
 <!-- PTO-READER-BLOCK: arch-hif8-concepts-state role=concepts-state -->
-## Concepts and visible state
+## Carrier and fields
 
-- `HiF8NumericFormatDescriptor` records one sign bit, a variable `0..4`-bit exponent, a `1..3`-bit fraction, one eight-bit lane, and no fixed exponent bias.
-- `HiF8DecodeDotField` maps the carrier's dot field to `HiF8DotField_Denormal` or `HiF8DotField_D0` through `HiF8DotField_D4`, together with the active exponent and fraction widths.
-- `HiF8FiniteDecomposition` returns availability, sign, an integer significand, and a base-two exponent; `ClassifyHiF8` supplies the corresponding value class.
+The descriptor uses a `8`-bit carrier, a `8`-bit logical lane, and `1` lane per carrier, with `0` to `4` exponent bits, `1` to `3` fraction bits, and no fixed exponent bias.
+
+The descriptor reports positive zero, subnormals, infinities, and quiet NaN, but not signed zero and not signaling NaN, and it selects `NumericFormatKind_HiF8`.
+
+Design point: the exponent width is reported as a range rather than a single number, so a consumer that needs the field widths for one carrier must call `HiF8DecodeDotField` instead of reading the descriptor.
+
+A reader that only needs a value class can stop after classification, because classification never requires an available decomposition.
 
 <!-- PTO-READER-BLOCK: arch-hif8-rules-interactions role=rules-interactions -->
-## Rules and interactions
+## Decomposition and classification
 
-The raw carriers `0x80`, `0x6f`, and `0xef` are non-finite: the first is the quiet NaN and the latter two are positive and negative infinity.
+`HiF8DecodeDotField` maps carrier bits `6:3` to one dot field from `HiF8DotField_Denormal` and `HiF8DotField_D0` through `HiF8DotField_D4`, together with the exponent-bit count and the fraction-bit count active for that carrier.
 
-The all-zero carrier is positive zero. Carriers whose low seven bits are in `1..7` classify as signed subnormals; the remaining finite carriers classify as signed normals.
+`HiF8FiniteDecomposition` first excludes the three non-finite carriers, then returns availability, the sign, an integer significand, and a binary exponent such that the exact value is `(-1)^sign * UInt(significand) * 2^exponent`, and `ClassifyHiF8` returns the matching value class.
 
-`HiF8CanonicalNaN` returns `0x80`, matching the classification rule rather than inventing a second NaN encoding.
+The carriers `0x80`, `0x6f`, and `0xef` are non-finite: `0x80` is quiet NaN, `0x6f` is positive infinity, and `0xef` is negative infinity; every other carrier is finite.
+
+Design point: writing `FALSE` for availability instead of an arbitrary significand keeps a consumer from reading the placeholder fields of a non-finite carrier as a number, so the availability flag must be consulted first.
 
 <!-- PTO-READER-BLOCK: arch-hif8-boundaries role=boundaries -->
-## Architectural boundaries
+## Boundaries and exact encodings
 
-The descriptor advertises zero, subnormal, infinity, and quiet NaN support, but not signed zero or signaling NaN support.
+The all-zero carrier is positive zero, and a carrier whose low seven bits are in `1` through `7` classifies as a signed subnormal; the remaining finite carriers classify as signed normals.
 
-The decomposition reports unavailable for every non-finite carrier; callers must consult availability before using its significand and exponent outputs.
+Design point: the deferred dot-field lookup is what makes a first non-finite check possible, so the decoder only runs on a carrier whose decomposition is still meaningful.
+
+Design point: only the all-zero carrier denotes zero, because a carrier with the sign bit set and an all-zero magnitude field is assigned to quiet NaN, so the descriptor reports no signed zero.
+
+Read this page in the order of the functions: take the field positions from the descriptor, call the classification function when the value class matters, and call the decomposition function when the exact significand and exponent are needed.
 
 <!-- PTO-READER-BLOCK: arch-hif8-example-usage role=example-usage -->
 ## Non-normative reading example
 
-For `0x01`, the decoder selects `HiF8DotField_Denormal`; the value is available, positive, and subnormal, with the exact magnitude represented by the returned integer significand and exponent.
+This example illustrates the current ASL owner and does not replace the normative operation.
 
-For `0x80`, classification returns `NumericValue_QuietNaN` and finite decomposition reports unavailable.
+`HiF8CanonicalNaN` returns `0x80`, which is the same carrier that classification reports as quiet NaN, so there is no second NaN encoding to reconcile.
 
-This is a reading example of the two APIs, not a new arithmetic rule.
+`0x01` decodes through `HiF8DotField_Denormal` and decomposes to significand `1` with exponent `-22`, which is `2^-22`; `0x10` decodes through `HiF8DotField_D1` and decomposes to significand `8` with exponent `-2`, which is `2`.
 
 <!-- PTO-READER-BLOCK: arch-hif8-related-owners role=related-owners-navigation -->
 ## Related owners
 
-- [Numeric format dispatch](../numeric-formats.md)
-- [Numeric classification](../numeric-classification.md)
+- [Numeric format descriptor](../format-descriptor.md) defines the common metadata record.
+
+- [Numeric formats](../numeric-formats.md) dispatches Tile data types to their format-specific helpers.
+
+- [Numeric classification](../numeric-classification.md) defines the classes returned here.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

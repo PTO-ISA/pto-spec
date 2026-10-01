@@ -15,41 +15,60 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-hif4-scale-purpose role=purpose-scope -->
 ## 用途与范围
 
-HiF4 Matrix 缩放值采用一个 `32` 位原始字，与 `64` 个逻辑 HiF4 lane 配合使用。本页说明 E6M2 基础字段如何与两级指数选择位组合；确切行为仍由 `PTO-CUBE-HIF4-SCALE-001` 及其 ASL 函数定义。
+HiF4 Matrix 缩放是一个原始 `32` 位字，它为 `64` 个逻辑 HiF4 lane 提供基准缩放和逐 lane 指数增量；本单元拥有它的字段布局、索引选择和有限值规则。
+
+契约 `PTO-CUBE-HIF4-SCALE-001` 固定该字的布局，本单元的 ASL 函数实现它。
+
+设计要点：缩放字本身不是一种 Tile 数据类型，因此描述符函数没有它的条目；一个原始缩放字改而固定 `64` 个逻辑 HiF4 lane 共享的增量。
 
 <!-- PTO-READER-BLOCK: arch-hif4-scale-concepts role=concepts-state -->
-## 缩放字布局
+## 载体与字段
 
-`7:0` 位保存一个 E6M2 基础缩放值，`15:8` 位保存 8 个 E1_8 指数位，`31:16` 位保存 16 个 E1_16 指数位。
+该字在 `7:0` 位保存一个 `E6M2` 基准值，在 `15:8` 位保存八个 E1_8 指数位，在 `31:16` 位保存十六个 E1_16 指数位。
 
-对于 `0..63` 范围内的 lane 索引 `q`，`HiF4ScaleExponentIncrement` 选择第 `8 + (q DIVRM 8)` 位和第 `16 + (q DIVRM 4)` 位，再把两位相加，得到 `0` 到 `2` 的增量。
+对于 `0..63` 范围内的 lane 索引 `q`，`HiF4ScaleExponentIncrement` 读取 `8 + (q DIVRM 8)` 位和 `16 + (q DIVRM 4)` 位，然后返回二者之和，即 `0..2` 范围内的增量。
+
+设计要点：每个 E1_8 位由八个连续 lane 共享，每个 E1_16 位由四个 lane 共享，因此该增量是粗粒度项与细粒度项之和，而不是逐 lane 字段。
 
 <!-- PTO-READER-BLOCK: arch-hif4-scale-rules role=rules-interactions -->
-## 基础值与 lane 缩放
+## 分解与分类
 
-E6M2 编码 `0x00` 到 `0xfe` 是偏置为 `48`、具有 2 个尾数位的正有限值。`0xff` 是合法的静默 NaN 缩放值。
+`HiF4E6M2ValueClass` 转发到 `ClassifyE6M2`，`HiF4E6M2FiniteValue` 转发到 `E6M2FiniteValue`，因此两个函数都保持 `E6M2` 编码含义不变。
 
-基础值有限时，`HiF4ScaleFiniteValue` 把 `HiF4E6M2FiniteValue` 与 `FP19PowerOfTwo(increment)` 相乘，其中 `increment` 由 `HiF4ScaleExponentIncrement` 返回。该函数要求基础字段分类为 `NumericValue_PositiveNormal`。
+`HiF4ScaleFiniteValue` 断言基准字段分类为 `NumericValue_PositiveNormal`，然后把 `E6M2` 有限值乘以增量的 `FP19PowerOfTwo`。
+
+`E6M2` 编码 `0x00` 到 `0xfe` 是偏置为 `48`、带两位尾数的有限正值，`0xff` 是合法的静默 NaN 缩放。
+
+设计要点：本单元不返回可用性标志；`E6M2` 基准编码 `0xff` 由 `HiF4E6M2FiniteValue` 中的断言排除，因此非有限基准是已定义性失败，而不是调用方可以检测的值。
 
 <!-- PTO-READER-BLOCK: arch-hif4-scale-boundaries role=boundaries -->
-## 边界
+## 边界与确切编码
 
-`0x00` 表示 `2^-48`；`0xfe` 表示 `1.5 * 2^15`；`0xff` 是静默 NaN 编码，因此 `HiF4E6M2FiniteValue` 不接受它。
+基准字段必须是正规格化数，因此 `E6M2` 字段为 `0xff` 的缩放字不能作为有限缩放求值；对某个 lane 索引只有被选中的那一对指数位起作用。
 
-每个 E1_8 位由连续 8 个逻辑 lane 共享，每个 E1_16 位由连续 4 个 lane 共享。对给定 `q` 起作用的是选中的这一对，而不是字中的其他指数位。
+设计要点：`HiF4ScaleFiniteValue` 在乘法之前断言基准类别，因此 `E6M2` 字段不是正规格化数的缩放字会在断言处停止，而不会返回逐 lane 的缩放值。
+
+设计要点：`E6M2` 基准字段没有零编码，因为 `E6M2` 描述符不声明零编码，分类也从不返回零类别。
+
+按函数顺序阅读本页：字段位置取自 `PTO-CUBE-HIF4-SCALE-001` 契约，在需要基准值类别时调用 `HiF4E6M2ValueClass`，并且只对分类为 `NumericValue_PositiveNormal` 的基准编码调用 `HiF4ScaleFiniteValue`。
 
 <!-- PTO-READER-BLOCK: arch-hif4-scale-example role=example-usage -->
 ## 非规范阅读示例
 
-下面只演示索引方式，不增加缩放规则。
+本例说明当前的 ASL 归属单元，不替代规范操作。
 
-当基础值为 `0x00`、E1_8 的第 `8` 位和 E1_16 的第 `16` 位均置 1 时，lane `q = 0` 得到增量 `2` 和缩放值 `2^-46`；在 AVS 夹具中，lane `q = 8` 选择另外的指数位，因此增量为 `0`。
+`0x00` 表示 `2^-48`，`0xfe` 表示 `1.5 * 2^15`；这是缩放字能承载的最小和最大有限基准值。
+
+`HiF4E6M2ValueClass` 对 `0xff` 报告静默 NaN 类别，对其他每个基准编码报告正规格化数类别，因此 `HiF4E6M2FiniteValue` 对 `0xff` 触发断言。
 
 <!-- PTO-READER-BLOCK: arch-hif4-scale-related role=related-owners-navigation -->
-## 相关所有者
+## 相关归属单元
 
-- [FP19](../fp19.md)提供 `FP19PowerOfTwo`。
-- [HiF4X2](hif4x2.md)定义打包的 HiF4 逻辑 lane 数值格式。
+- [数值格式描述符](../format-descriptor.md)定义公共元数据记录。
+
+- [数值格式](../numeric-formats.md)把 Tile 数据类型分派到各格式自己的辅助函数。
+
+- [HiF4X2](hif4x2.md)定义该缩放字相乘的打包逻辑 lane。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

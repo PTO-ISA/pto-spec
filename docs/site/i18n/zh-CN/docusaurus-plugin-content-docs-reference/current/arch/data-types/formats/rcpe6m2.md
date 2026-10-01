@@ -15,42 +15,58 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-format-rcpe6m2-purpose role=purpose-scope -->
 ## 用途与范围
 
-RCPE6M2 是一种仅作源使用的派生 PTO 数值类型，通过精确倒数重新解释 E6M2 原始编码空间。本页帮助读者把共享载体、倒数值规则和值分类联系起来；ASL 所有者仍是确切定义。
+`RCPE6M2` 是已分配的 PTO 数值类型，把 `E6M2` 编码空间重新解释为精确倒数；本单元拥有它的描述符、精确有限值、分解可用性、分类和规范 NaN。
+
+它是仅作源类型使用的类型：原始八位编码不变，只有该编码的数值解释与 `E6M2` 不同。
 
 <!-- PTO-READER-BLOCK: arch-format-rcpe6m2-concepts role=concepts-state -->
 ## 载体与字段
 
-描述符使用 `8` 位载体、`8` 位逻辑 lane，并且每个载体包含 `1` 个 lane。它保留 E6M2 的六位指数、两位尾数、偏置 `48` 和无符号字段布局，因此两种类型解释相同的原始编码。
+描述符使用 `8` 位载体、`8` 位逻辑 lane，并且每个载体包含 `1` 个 lane。
 
-描述符不包含零、带符号零、次正规数、无穷大或信号 NaN 编码，编码 `0xff` 仍是静默 NaN 编码。
+它保留 `E6M2` 的形状：`6` 个指数位位于 `7:2`，`2` 个尾数位位于 `1:0`，指数偏置为 `48`，没有符号位，并且 `required_low_zero_bits` 与 `required_high_zero_bits` 都是 `0`。
+
+设计要点：描述符重复写出 `E6M2` 的字段宽度，而不是引用它们，因此读者从一条记录就能看出两种类型消费完全相同的原始编码。
 
 <!-- PTO-READER-BLOCK: arch-format-rcpe6m2-rules role=rules-interactions -->
-## 倒数值与分类
+## 分解与分类
 
-对于编码 `0x00` 至 `0xfe`，`RCPE6M2FiniteValue` 返回相同原始编码对应 `E6M2FiniteValue` 的精确数学倒数。每个此类编码都归类为正正规数，而 `0xff` 归类为静默 NaN。
+`RCPE6M2FiniteValue` 对不是 `0xff` 的编码返回 `1.0 / E6M2FiniteValue(value)`，而 `RCPE6M2FiniteDecomposition` 始终报告分解不可用。
 
-一般倒数的精确值是有理数，不是普通有限值分解使用的整数有效数二进制形式。因此 `RCPE6M2FiniteDecomposition` 报告分解不可用，参考转换直接使用精确倒数值。
+`ClassifyRCPE6M2` 对 `0xff` 返回静默 NaN，对其他每个编码返回正规格化数类别，因此没有编码是零、次正规数、无穷大或信号 NaN。
+
+分解对所有编码都不可用，包括有限编码，因为一般有效数的倒数是精确有理数，而不是整数有效数乘以 2 的幂的形式。
+
+设计要点：分解不可用并不是针对特殊编码的说明；`RCPE6M2FiniteDecomposition` 对每个编码都返回 `FALSE`，包括有限编码，因此调用方改为从 `RCPE6M2FiniteValue` 取值。
 
 <!-- PTO-READER-BLOCK: arch-format-rcpe6m2-boundaries role=boundaries -->
-## 边界与转换边界
+## 边界与确切编码
 
-`0xff` 既是唯一的静默 NaN 编码，也是所有者返回的规范 NaN。其余所有原始编码都是有限倒数输入。
+设计要点：报告不可用而不是把倒数舍入到最近的二进制值，可以把精确有理数留给消费它的转换使用，因此后续舍入只在目标格式发生一次。
 
-TCVT 使用 RCPE6M2 时只执行一次最终目标舍入，不会先物化一个经过舍入的中间浮点值。
+`0x00` 表示最小 `E6M2` 值 `2^-48` 的精确倒数，即 `2^48`；`0xfe` 表示 `1.5 * 2^15` 的倒数。
+
+设计要点：该格式根本不声明零编码，因此需要零的调用方必须通过转换得到，而不是通过本类型中的原始编码。
+
+按函数顺序阅读本页：字段位置取自描述符，在需要值类别时调用 `ClassifyRCPE6M2`，并从 `RCPE6M2FiniteValue` 取值，因为本类型从不报告可用的分解。
 
 <!-- PTO-READER-BLOCK: arch-format-rcpe6m2-example role=example-usage -->
 ## 非规范阅读示例
 
-下面的示例只演示如何阅读所有者函数，不增加转换规则。
+本例说明当前的 ASL 归属单元，不替代规范操作。
 
-例如，E6M2 编码 `0x00` 表示 `2^-48`，所以 RCPE6M2 编码 `0x00` 表示其精确倒数 `2^48`；原始编码不变，只有数值解释不同。
+`0xff` 既是唯一的静默 NaN 编码，也是 `RCPE6M2CanonicalNaN` 返回的规范 NaN，并且 `RCPE6M2FiniteValue` 断言其参数不是 `0xff`。
+
+参考转换直接消费精确倒数值而不是分解结果，因此调用方不得要求分解可用才使用本类型。
 
 <!-- PTO-READER-BLOCK: arch-format-rcpe6m2-related role=related-owners-navigation -->
-## 相关所有者
+## 相关归属单元
 
-- [E6M2](./e6m2.md)定义 RCPE6M2 所表示倒数的原始编码值。
 - [数值格式描述符](../format-descriptor.md)定义公共元数据记录。
+
 - [数值格式](../numeric-formats.md)把 Tile 数据类型分派到各格式自己的辅助函数。
+
+- [E6M2](e6m2.md)定义本类型取倒数所依据的原始编码值。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

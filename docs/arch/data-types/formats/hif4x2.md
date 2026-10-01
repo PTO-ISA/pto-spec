@@ -15,41 +15,60 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-format-hif4x2-purpose role=purpose-scope -->
 ## Purpose and scope
 
-HiF4X2 is an assigned PTO numeric format. This page helps a reader connect its carrier layout, finite-value decomposition, and value classification; the exact contract remains in `HiF4X2NumericFormatDescriptor`, `HiF4X2FiniteDecomposition`, and `ClassifyHiF4X2` in the ASL owner.
+`HiF4X2` is an assigned PTO numeric format whose values are four-bit lanes packed two per eight-bit carrier, and this unit owns its descriptor, finite decomposition, value classification, and signed zero encodings.
+
+The owner exposes one lane at a time through `value[3:0]`, so a consumer that reads both halves of a carrier must slice the upper lane itself.
+
+Design point: the record keeps the carrier width and the logical lane width separate, so a packed type reports two lanes in one carrier while a single-lane type reports only its own lane width in its carrier.
 
 <!-- PTO-READER-BLOCK: arch-format-hif4x2-concepts role=concepts-state -->
 ## Carrier and fields
 
-The descriptor uses a `8`-bit carrier, a `4`-bit logical lane, and `2` lane(s) per carrier. The lane has one sign bit at position `3`, `1` exponent bit(s), `2` fraction bit(s), and exponent bias `1`.
+The descriptor uses a `8`-bit carrier, a `4`-bit logical lane, and `2` lanes per carrier.
 
-The descriptor covers one four-bit logical lane at a time; two lanes share the eight-bit carrier.
+The lane has one sign bit at position `3`, `1` exponent bit(s) in `2:2`, `2` fraction bit(s) in `1:0`, and exponent bias `1`.
+
+The descriptor sets `required_low_zero_bits` and `required_high_zero_bits` to `0`, so every eight-bit carrier holds two defined lane encodings.
+
+A reader that only needs a value class can stop after classification, because classification never requires an available decomposition.
 
 <!-- PTO-READER-BLOCK: arch-format-hif4x2-rules role=rules-interactions -->
 ## Decomposition and classification
 
-`HiF4X2FiniteDecomposition` reports whether a finite decomposition is available and, when available, returns the sign, an integer significand, and a binary exponent. `ClassifyHiF4X2` separately assigns the raw lane to zero, subnormal, normal, infinity, or NaN classes supported by this format.
+`HiF4X2FiniteDecomposition` returns availability, the sign, an integer significand, and a binary exponent such that the exact value is `(-1)^sign * UInt(significand) * 2^exponent`; the lane exponent bit is read at `2:2` and the fraction at `1:0`.
 
-It has signed zero but no subnormal class, infinity, or NaN class. Every nonzero four-bit lane is classified as a signed normal value.
+`ClassifyHiF4X2` assigns the lane to a zero or a signed normal class; the format has no infinity, no NaN, and no subnormal encoding, so every non-zero lane is a signed normal value.
+
+An exponent bit of zero with a zero fraction selects a signed zero, while every other lane is a signed normal value.
 
 <!-- PTO-READER-BLOCK: arch-format-hif4x2-boundaries role=boundaries -->
 ## Boundaries and exact encodings
 
-Lane encodings `0x0` and `0x8` are positive and negative zero.
+The owner returns exponent `-2` for both non-zero cases: a set exponent bit gives significand `4` plus the fraction, and a clear exponent bit with a nonzero fraction gives the fraction alone; lane `0x1` therefore denotes `0.25` and lane `0x5` denotes `1.25`, while lanes `0x4` and `0x6` determine `1` and `1.5`.
 
-The finite-decomposition function reports availability with its returned tuple; value classification is a separate function result.
+Design point: the exponent bit selects between two significand constructions at the same scale, so the lane field widens the set of representable magnitudes without widening the exponent range.
+
+Design point: `0x00` and the negative encoding are separate encodings of the same magnitude, so a consumer that preserves the sign bit can still tell which one produced a result even when both compare equal to zero.
+
+Read this page in the order of the functions: take the field positions from the descriptor, call the classification function when the value class matters, and call the decomposition function only after encoding validity has passed.
 
 <!-- PTO-READER-BLOCK: arch-format-hif4x2-example role=example-usage -->
 ## Non-normative reading example
 
-This example illustrates how to read the functions; it does not add an encoding rule.
+This example illustrates the current ASL owner and does not replace the normative operation.
 
-For example, lane `0x1` decomposes to positive significand `1` with exponent `-2`; lane `0x9` has the same magnitude and a negative sign.
+Lane `0x0` is positive zero and lane `0x8` is negative zero; there is no infinity and no NaN lane.
+
+Lane `0x1` is the smallest positive non-zero value and decomposes to significand `1` with exponent `-2`, and lane `0x7` is the largest magnitude and decomposes to significand `7` with exponent `-2`, which is `1.75`.
 
 <!-- PTO-READER-BLOCK: arch-format-hif4x2-related role=related-owners-navigation -->
 ## Related owners
 
 - [Numeric format descriptor](../format-descriptor.md) defines the common metadata record.
+
 - [Numeric formats](../numeric-formats.md) dispatches Tile data types to their format-specific helpers.
+
+- [HiF4 scale](hif4-scale.md) applies a shared scale word to HiF4 lanes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL
