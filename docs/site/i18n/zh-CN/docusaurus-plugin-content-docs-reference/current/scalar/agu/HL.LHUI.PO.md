@@ -16,53 +16,64 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-<!-- PTO-READER-BLOCK: scalar-hl-lhui-po-purpose role=purpose -->
-## HL.LHUI.PO 的作用
+<!-- PTO-READER-BLOCK: hl-lhui-po-purpose role=purpose -->
+## `HL.LHUI.PO` 的作用
 
-`HL.LHUI.PO` 是一条独立的 `48` 位标量 AGU 指令，使用 `Immediate` 寻址，按小端序加载一个 `2` 字节值；当结果窄于 `PTO_XLEN` 时，对传输位进行零扩展。
+`HL.LHUI.PO` 是一条独立编码的 48 位加载指令，它把一个立即数位移加到 `SrcL` 基址上。它把一个 2 字节宽的值加载到一个目的。
 
-<!-- PTO-READER-BLOCK: scalar-hl-lhui-po-mechanism role=mechanism -->
-## 地址与传输机制
+<!-- PTO-READER-BLOCK: hl-lhui-po-mechanism role=mechanism -->
+## 地址与加载机制
 
-地址路径先对 `simm17` 做符号扩展并乘以 `2`，再把位移与快照中的 `SrcL` 相加，结果按 `2^PTO_XLEN` 取模。
+解码出的 `simm17` 先符号扩展再左移 `1` 位，因此每个编码单位代表 `2` 字节的地址。
 
-完整预检通过后，执行一次对齐的小端序 `2` 字节加载。结果在发布到目的位置前会零扩展。
+缩放后的位移按 `2^PTO_XLEN` 取模加到快照后的 `SrcL` 值上。
 
-后索引模式访问原始基址，并且只在内存操作成功后发布“基址加偏移”的结果。
+该 `2` 字节地址依次通过对齐检查与转换和权限检查之后，指令执行一次小端 `2` 字节加载，并记录一个 relaxed 加载事件。
 
-<!-- PTO-READER-BLOCK: scalar-hl-lhui-po-inputs role=inputs-outputs -->
-## 编码输入与输出
+后索引模式访问原始基址，并通过 `Dst1` 发布基址加偏移。
 
-- `RegDst0` 是一个 `5` 位字段，用来选择第一个加载值结果。
-- `RegDst1` 是一个 `5` 位字段，用来选择更新后基址结果。
-- `SrcL` 是一个 `5` 位字段，用来选择地址基址。
-- `simm17` 是一个 `17` 位字段，用来选择乘以 `2` 缩放因子之前的有符号位移。
+被访问地址处的字节成为结果的 `7:0` 位，后续字节填充更高的位，因此该值是小端序，指令会把加载值零扩展到 `PTO_XLEN`，即保留低 `16` 位并把每个更高位设为零。
 
-<!-- PTO-READER-BLOCK: scalar-hl-lhui-po-effects role=effects -->
-## 影响与完成顺序
+**设计要点：** 把位移按除以 `2` 的形式存储，使 17 位的 `simm17` 覆盖远超同宽度不缩放字段的地址范围，代价是位移总是 `2` 的倍数。移位发生在按 `2^PTO_XLEN` 取模的加法之前，所以负 `simm17` 仍然表现为减法。
 
-所有显式和隐式标量源都会在任何内存或目的位置影响之前完成快照，因此别名读取指令执行前的值。
+<!-- PTO-READER-BLOCK: hl-lhui-po-inputs role=inputs-outputs -->
+## 输入与目的
 
-执行成功时记录一个 relaxed 加载事件；内存和保留状态保持不变。
+- `SrcL` 是地址基址，使用完整的 Reg5 源域，其中编码 `0..23` 指定绝对 GPR，`24..27` 指定 `T#1..T#4`，`28..31` 指定 `U#1..U#4`。
+- 读取 `T` 或 `U` 选择器不会消费或移动它所命名的队列；队列下标 `1..4` 只被当作源值使用。
+- `simm17` 覆盖从 `-65536` 到 `65535` 的全部有符号 17 位值，编码出的字节位移是该值乘以 `2`。
+- `Dst0` 接收加载值，`Dst1` 接收更新后的基址，因此 `Dst1` 收到的是地址而不是加载数据。
+- 两个目的字段都使用完整的 Reg5 目的域：编码 `1..23` 写入绝对 GPR，编码 `30` 压入 U，编码 `31` 压入 T，而编码 `0` 与 `24..29` 只丢弃该结果，不抑制指令的其余部分。
+- 每个显示的操数字段都是显式编码的，因此编码零是一个值，绝不表示省略。
 
-所有结果或回写发布完成后，`HL.LHUI.PO` 把 `TPC` 前进 `6` 字节；被拒绝或发生故障的尝试不会退休。
+<!-- PTO-READER-BLOCK: hl-lhui-po-effects role=effects -->
+## 效果与顺序
 
-<!-- PTO-READER-BLOCK: scalar-hl-lhui-po-constraints role=constraints -->
-## 合法性、故障与重启
+基址寄存器在内存操作之前、任何目的写入之前读取。
 
-每个访问地址都按 `2` 字节传输单元对齐。未对齐会在翻译前选择 `Fault_DataAlignment`；之后的权限或有界内存失败会在原始地址选择 `Fault_DataPage`。
+成功的尝试记录一个 relaxed 加载事件，保持内存与保留状态不变，发布加载值，并把 `TPC` 前进 `6` 字节。
 
-固定位不匹配、字段取保留值或选中的 T/U 源不可用，会在指令影响之前选择 `Fault_IllegalInstruction`。
+**设计要点：** 加载值先发布，而更新使用的是基址快照，而不是刚被写入的寄存器。当 `Dst0` 与 `Dst1` 命名同一寄存器时更新胜出；当其中任一个与 `SrcL` 命名同一寄存器时，地址仍来自指令执行前的值。
 
-发生故障时不记录成功内存事件，也不提交部分内存、结果或回写影响。重新执行会从头重新计算源快照、地址、预检、传输和发布。
+<!-- PTO-READER-BLOCK: hl-lhui-po-constraints role=constraints -->
+## 对齐、故障与重试
 
-<!-- PTO-READER-BLOCK: scalar-hl-lhui-po-example role=example -->
-## 非规范阅读步骤
+有效地址必须按 `2` 字节传送大小对齐。未对齐会在地址转换之前引发 `Fault_DataAlignment`；此后的转换或有界内存失败会在原始地址处引发 `Fault_DataPage`。
 
-下面只说明如何使用本页，不增加指令行为。
+固定编码位不匹配、字段取保留值或选中的 `T` 或 `U` 源不可用，都会在任何指令效果之前引发 `Fault_IllegalInstruction`。
 
-- 从规范汇编形式 `hl.lhui.po [SrcL, simm], ->Dst0, Dst1` 开始，找出已编码的地址字段。
-- 然后把上面的寻址模式、传输动作、完成影响和故障边界，与下方确切的生成 ASL 契约逐项对照。
+故障不会发出加载事件，也不会写入任何目的，它记录的地址就是出错的地址。恢复过程会重发整条指令：地址、源快照、每一次探测、加载以及每个目的都从头重新计算，不保留任何进度。
+
+**设计要点：** 对齐检查在地址转换之前执行，因此既未对齐又超出允许区域的访问报告 `Fault_DataAlignment`，而不是 `Fault_DataPage`。故障把出错地址保存为陷阱参数并把 `TPC` 重定向到陷阱入口，这正是处理程序能够在不保留任何进度的前提下重发该指令的原因。
+
+<!-- PTO-READER-BLOCK: hl-lhui-po-example role=example -->
+## 非规范地址示例
+
+本示例说明当前的地址与发布规则，并不替代规范加载契约。
+
+取 `SrcL=0x100`、解码出的 `simm17` 为 `1` 时，字节位移是 `2`，因此被访问地址是 `0x102`。
+
+若该地址对齐且有访问权限，`Dst0` 收到加载值，`Dst1` 收到更新后的基址 `0x102`，`TPC` 前进 `6` 字节。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

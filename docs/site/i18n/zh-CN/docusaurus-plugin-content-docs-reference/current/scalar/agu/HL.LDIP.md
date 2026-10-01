@@ -16,53 +16,64 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-<!-- PTO-READER-BLOCK: scalar-hl-ldip-purpose role=purpose -->
-## HL.LDIP 的作用
+<!-- PTO-READER-BLOCK: hl-ldip-purpose role=purpose -->
+## `HL.LDIP` 的作用
 
-`HL.LDIP` 是一条独立的 `48` 位标量 AGU 指令，使用 `Immediate` 寻址，按小端序加载两个相邻的 `8` 字节值；当结果窄于 `PTO_XLEN` 时，分别对两个传输值进行零扩展。
+`HL.LDIP` 是一条独立编码的 48 位加载指令，它把一个立即数位移加到 `SrcL` 基址上。它把两个相邻的 8 字节宽的值加载到两个目的。
 
-<!-- PTO-READER-BLOCK: scalar-hl-ldip-mechanism role=mechanism -->
-## 地址与传输机制
+<!-- PTO-READER-BLOCK: hl-ldip-mechanism role=mechanism -->
+## 地址与加载机制
 
-地址路径先对 `simm17` 做符号扩展并乘以 `8`，再把位移与快照中的 `SrcL` 相加，结果按 `2^PTO_XLEN` 取模。
+解码出的 `simm17` 先符号扩展再左移 `3` 位，因此每个编码单位代表 `8` 字节的地址。
 
-两个相邻地址会在任一次对齐的小端序 `8` 字节加载发生前全部完成预检。每个结果都会保留完整 64 位模式；两次加载按地址递增顺序提交。
+缩放后的位移按 `2^PTO_XLEN` 取模加到快照后的 `SrcL` 值上。
 
-该形式不发布地址基址回写。
+两个地址在任何一次加载之前都完成预检：第二个地址是第一个地址加 `8` 字节。只有两个探测都通过后，指令才读取两个小端值，并按地址顺序记录两个 relaxed 加载事件。
 
-<!-- PTO-READER-BLOCK: scalar-hl-ldip-inputs role=inputs-outputs -->
-## 编码输入与输出
+这里没有基址回写：`Dst0` 与 `Dst1` 都是加载值，`Dst1` 不是地址。
 
-- `RegDst0` 是一个 `5` 位字段，用来选择第一个加载值结果。
-- `RegDst1` 是一个 `5` 位字段，用来选择第二个加载值结果。
-- `SrcL` 是一个 `5` 位字段，用来选择地址基址。
-- `simm17` 是一个 `17` 位字段，用来选择乘以 `8` 缩放因子之前的有符号位移。
+被访问地址处的字节成为结果的 `7:0` 位，后续字节填充更高的位，因此该值是小端序，指令会保留完整的 `64` 位加载位模式。
 
-<!-- PTO-READER-BLOCK: scalar-hl-ldip-effects role=effects -->
-## 影响与完成顺序
+**设计要点：** 把位移按除以 `8` 的形式存储，使 17 位的 `simm17` 覆盖远超同宽度不缩放字段的地址范围，代价是位移总是 `8` 的倍数。移位发生在按 `2^PTO_XLEN` 取模的加法之前，所以负 `simm17` 仍然表现为减法。
 
-所有显式和隐式标量源都会在任何内存或目的位置影响之前完成快照，因此别名读取指令执行前的值。
+<!-- PTO-READER-BLOCK: hl-ldip-inputs role=inputs-outputs -->
+## 输入与目的
 
-执行成功时记录两个按地址顺序排列的 relaxed 加载事件；内存和保留状态保持不变。
+- `SrcL` 是地址基址，使用完整的 Reg5 源域，其中编码 `0..23` 指定绝对 GPR，`24..27` 指定 `T#1..T#4`，`28..31` 指定 `U#1..U#4`。
+- 读取 `T` 或 `U` 选择器不会消费或移动它所命名的队列；队列下标 `1..4` 只被当作源值使用。
+- `simm17` 覆盖从 `-65536` 到 `65535` 的全部有符号 17 位值，编码出的字节位移是该值乘以 `8`。
+- `Dst0` 接收从第一个地址加载的值，`Dst1` 接收从第二个地址加载的值；两者都是加载值目的，都不是基址回写。
+- 两个目的字段都使用完整的 Reg5 目的域：编码 `1..23` 写入绝对 GPR，编码 `30` 压入 U，编码 `31` 压入 T，而编码 `0` 与 `24..29` 只丢弃该结果，不抑制指令的其余部分。
+- 每个显示的操数字段都是显式编码的，因此编码零是一个值，绝不表示省略。
 
-所有结果或回写发布完成后，`HL.LDIP` 把 `TPC` 前进 `6` 字节；被拒绝或发生故障的尝试不会退休。
+<!-- PTO-READER-BLOCK: hl-ldip-effects role=effects -->
+## 效果与顺序
 
-<!-- PTO-READER-BLOCK: scalar-hl-ldip-constraints role=constraints -->
-## 合法性、故障与重启
+基址寄存器在内存操作之前、任何目的写入之前读取。
 
-每个访问地址都按 `8` 字节传输单元对齐。未对齐会在翻译前选择 `Fault_DataAlignment`；之后的权限或有界内存失败会在原始地址选择 `Fault_DataPage`。
+成功的尝试按地址顺序记录两个 relaxed 加载事件，保持内存与保留状态不变，发布两个加载值，并把 `TPC` 前进 `6` 字节。
 
-固定位不匹配、字段取保留值或选中的 T/U 源不可用，会在指令影响之前选择 `Fault_IllegalInstruction`。
+**设计要点：** 两个值都建立在同一份基址快照上，因此即使某个目的与 `SrcL` 命名同一寄存器，第二个地址仍是第一个地址加访问大小。这一对操作总是读取两个相邻位置。
 
-发生故障时不记录成功内存事件，也不提交部分内存、结果或回写影响。重新执行会从头重新计算源快照、地址、预检、传输和发布。
+<!-- PTO-READER-BLOCK: hl-ldip-constraints role=constraints -->
+## 对齐、故障与重试
 
-<!-- PTO-READER-BLOCK: scalar-hl-ldip-example role=example -->
-## 非规范阅读步骤
+有效地址必须按 `8` 字节传送大小对齐。未对齐会在地址转换之前引发 `Fault_DataAlignment`；此后的转换或有界内存失败会在原始地址处引发 `Fault_DataPage`。
 
-下面只说明如何使用本页，不增加指令行为。
+固定编码位不匹配、字段取保留值或选中的 `T` 或 `U` 源不可用，都会在任何指令效果之前引发 `Fault_IllegalInstruction`。
 
-- 从规范汇编形式 `hl.ldip [SrcL, simm], ->Dst0, Dst1` 开始，找出已编码的地址字段。
-- 然后把上面的寻址模式、传输动作、完成影响和故障边界，与下方确切的生成 ASL 契约逐项对照。
+故障不会发出加载事件，也不会写入任何目的，它记录的地址就是出错的地址。恢复过程会重发整条指令：地址、源快照、每一次探测、加载以及每个目的都从头重新计算，不保留任何进度。
+
+**设计要点：** 两次探测都在提交任何一次加载之前完成，因此这一对操作不会出现一个目的已发布、另一个仍保持指令执行前值的情况；第二次探测上的故障因此也会让第一个结果一并作废。
+
+<!-- PTO-READER-BLOCK: hl-ldip-example role=example -->
+## 非规范地址示例
+
+本示例说明当前的地址与发布规则，并不替代规范加载契约。
+
+解码出的 `simm17` 为 `1` 时对应字节位移 `8`，因此取 `SrcL=0x1000` 时两次访问分别位于 `0x1008` 与 `0x1010`。
+
+若两个地址都对齐且有访问权限，`Dst0` 收到第一个值，`Dst1` 收到第二个值，`TPC` 前进 `6` 字节。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -16,55 +16,67 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-<!-- PTO-READER-BLOCK: scalar-hl-lh-pr-purpose role=purpose -->
-## What HL.LH.PR does
+<!-- PTO-READER-BLOCK: hl-lh-pr-purpose role=purpose -->
+## What `HL.LH.PR` does
 
-`HL.LH.PR` is a standalone `48`-bit scalar AGU instruction that loads one 2-byte little-endian value and sign-extends the transferred bits when the result is narrower than `PTO_XLEN` using `Register` addressing.
+`HL.LH.PR` is a standalone 48-bit load. It takes its base from `SrcL` and its offset from `SrcR`, which it transforms and shifts, and it loads one 2-byte value into one destination.
 
-<!-- PTO-READER-BLOCK: scalar-hl-lh-pr-mechanism role=mechanism -->
-## Address and transfer mechanism
+<!-- PTO-READER-BLOCK: hl-lh-pr-mechanism role=mechanism -->
+## Address and load mechanism
 
-The register-offset path applies the encoded `SrcRType` transformation to `SrcR`, shifts that result left by `shamt`, and adds it to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+`SrcR` is read, transformed by `SrcRType`, and then shifted left by the encoded `shamt`. That result is the offset, and it is byte-granular whenever `shamt` is zero.
 
-After complete preflight, one aligned little-endian `2`-byte load is performed. Its result is sign-extended before destination publication.
+The offset is added to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
 
-Pre-index mode accesses the updated address and publishes that same updated base only after the memory operation succeeds.
+Once the `2`-byte address passes the alignment check and then the translation and permission check, the instruction performs one little-endian `2`-byte load and records one relaxed load event.
 
-<!-- PTO-READER-BLOCK: scalar-hl-lh-pr-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+Pre-index mode accesses the updated base and publishes that same value through `Dst1`.
 
-- `RegDst0` is a `5`-bit field selecting the first loaded-value result.
-- `RegDst1` is a `5`-bit field selecting the updated-base result.
-- `SrcL` is a `5`-bit field selecting the address base.
-- `SrcR` is a `5`-bit field selecting the register offset.
-- `SrcRType` is a `2`-bit field selecting the register-offset transformation.
-- `shamt` is a `5`-bit field selecting the post-transformation left shift.
+The byte at the accessed address becomes bits `7:0` of the result and later bytes fill higher bits, so the value is little-endian, and the instruction will sign-extend the loaded value to `PTO_XLEN`, keeping the low `16` bits and copying bit `15` into every higher bit.
 
-<!-- PTO-READER-BLOCK: scalar-hl-lh-pr-effects role=effects -->
-## Effects and completion order
+**Design point:** `HL.LH.PR` takes its offset from a register, so the address varies at run time while the encoding stays fixed. `SrcRType` rewrites only bits `31:0` of `SrcR`, so one form serves a full-width, a signed `32`-bit, or an unsigned `32`-bit offset, and `shamt=0` is an ordinary byte-granular offset rather than a reserved encoding.
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+<!-- PTO-READER-BLOCK: hl-lh-pr-inputs role=inputs-outputs -->
+## Inputs and destinations
 
-Successful execution records one relaxed load event; memory and reservation state are preserved.
+- `SrcL` is the address base and `SrcR` is the register offset; both use the complete Reg5 source domain, where codes `0..23` name absolute GPRs, codes `24..27` name `T#1..T#4`, and codes `28..31` name `U#1..U#4`.
+- Reading a `T` or `U` selector does not consume or shift the queue it names; the queue index `1..4` is used as a source value only.
+- `SrcRType` selects the transformation: encoded `0` leaves `SrcR` unchanged, encoded `1` sign-extends `SrcR[31:0]`, and encoded `2` zero-extends `SrcR[31:0]`.
+- `shamt` assigns every value `0..31` and is a logical left shift applied after the modifier; encoded zero shifts by nothing.
+- `Dst0` receives the loaded value and `Dst1` the updated base, so `Dst1` receives an address rather than loaded data.
+- Both destination fields use the complete Reg5 destination domain: codes `1..23` write absolute GPRs, code `30` pushes U, code `31` pushes T, and codes `0` and `24..29` discard only that result without suppressing the rest of the instruction.
+- Every displayed operand field is encoded explicitly, so encoded zero is a value and never denotes omission.
 
-After all result or writeback publication, `HL.LH.PR` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+<!-- PTO-READER-BLOCK: hl-lh-pr-effects role=effects -->
+## Effects and ordering
 
-<!-- PTO-READER-BLOCK: scalar-hl-lh-pr-constraints role=constraints -->
-## Legality, faults, and restart
+The base and the offset register are both read before the memory operation and before any destination write.
 
-Each accessed address is aligned to the `2`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+A successful attempt records one relaxed load event, leaves memory and reservation state unchanged, publishes the loaded value, and advances `TPC` by `6` bytes.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
+**Design point:** `SrcR` is transformed before the destination write, so a destination that names `SrcR` transforms the pre-instruction value, not the value about to be published. The offset for one access is fixed when the instruction starts.
 
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+<!-- PTO-READER-BLOCK: hl-lh-pr-constraints role=constraints -->
+## Alignment, faults, and restart
 
-<!-- PTO-READER-BLOCK: scalar-hl-lh-pr-example role=example -->
-## Non-normative reading walkthrough
+`SrcRType=3` is reserved and raises `Fault_IllegalInstruction` before any source is read and before any architectural effect.
 
-This walkthrough explains how to use the page and does not add instruction behavior.
+The effective address must be aligned to the `2`-byte transfer size. Misalignment raises `Fault_DataAlignment` before translation; a translation or bounded-memory failure after that raises `Fault_DataPage` at the original address.
 
-- Start with the canonical assembly `hl.lh.pr [SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>], ->Dst0, Dst1` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+A fixed-bit mismatch, a reserved field value, or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before any instruction effect.
+
+A fault emits no load event and writes no destination, and the address it records is the address that failed. Recovery reissues the whole instruction: the address, the source snapshot, every probe, the load, and every destination are recomputed with no retained progress.
+
+**Design point:** the reserved `SrcRType` value is rejected while the form is being decoded, before the offset register is read, so an illegal encoding cannot become architecturally visible through a queue read even when the encoded `SrcR` is a legal selector.
+
+<!-- PTO-READER-BLOCK: hl-lh-pr-example role=example -->
+## Non-normative address example
+
+This example illustrates the current address and publication rule and does not replace the normative load contract.
+
+With `SrcL=0x2000`, `SrcR=0x4`, `SrcRType=2`, and `shamt=1`, `SrcR` is below `2^31` so the zero-extension leaves it unchanged, the shift doubles it to `0x8`, and the original base `0x2000` plus that offset is `0x2008`.
+
+If that address is aligned and permitted, `Dst0` receives the loaded value, `Dst1` receives the updated base `0x2008`, and `TPC` advances by `6` bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

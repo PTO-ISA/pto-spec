@@ -16,53 +16,64 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-<!-- PTO-READER-BLOCK: scalar-hl-lhip-purpose role=purpose -->
-## What HL.LHIP does
+<!-- PTO-READER-BLOCK: hl-lhip-purpose role=purpose -->
+## What `HL.LHIP` does
 
-`HL.LHIP` is a standalone `48`-bit scalar AGU instruction that loads two adjacent 2-byte little-endian values and sign-extends each transferred value when it is narrower than `PTO_XLEN` using `Immediate` addressing.
+`HL.LHIP` is a standalone 48-bit load that adds an immediate displacement to the `SrcL` base. It loads two adjacent 2-byte values into two destinations.
 
-<!-- PTO-READER-BLOCK: scalar-hl-lhip-mechanism role=mechanism -->
-## Address and transfer mechanism
+<!-- PTO-READER-BLOCK: hl-lhip-mechanism role=mechanism -->
+## Address and load mechanism
 
-The address path sign-extends `simm17`, scales it by `2`, and adds the displacement to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+The decoded `simm17` is sign-extended and shifted left by `1`, so each encoded unit is worth `2` bytes of address.
 
-Both adjacent addresses are preflighted before either aligned little-endian `2`-byte load occurs. Each result is sign-extended; the two loads commit in increasing-address order.
+The scaled displacement is added to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
 
-This form does not publish an address-base writeback.
+Both addresses are preflighted before either load: the second address is the first address plus `2` bytes. Only after both probes pass does the instruction read the two little-endian values and record two relaxed load events in address order.
 
-<!-- PTO-READER-BLOCK: scalar-hl-lhip-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+There is no base writeback: `Dst0` and `Dst1` are both loaded values, and `Dst1` is not an address.
 
-- `RegDst0` is a `5`-bit field selecting the first loaded-value result.
-- `RegDst1` is a `5`-bit field selecting the second loaded-value result.
-- `SrcL` is a `5`-bit field selecting the address base.
-- `simm17` is a `17`-bit field selecting the signed displacement before the `2` scale factor.
+The byte at the accessed address becomes bits `7:0` of the result and later bytes fill higher bits, so the value is little-endian, and the instruction will sign-extend the loaded value to `PTO_XLEN`, keeping the low `16` bits and copying bit `15` into every higher bit.
 
-<!-- PTO-READER-BLOCK: scalar-hl-lhip-effects role=effects -->
-## Effects and completion order
+**Design point:** storing the displacement divided by `2` lets a 17-bit `simm17` reach far more addresses than an unscaled field of the same width, at the cost of a displacement that is always a multiple of `2`. The shift happens before the modulo `2^PTO_XLEN` addition, so a negative `simm17` still subtracts.
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+<!-- PTO-READER-BLOCK: hl-lhip-inputs role=inputs-outputs -->
+## Inputs and destinations
 
-Successful execution records two relaxed load events in address order; memory and reservation state are preserved.
+- `SrcL` is the address base and uses the complete Reg5 source domain, where codes `0..23` name absolute GPRs, codes `24..27` name `T#1..T#4`, and codes `28..31` name `U#1..U#4`.
+- Reading a `T` or `U` selector does not consume or shift the queue it names; the queue index `1..4` is used as a source value only.
+- `simm17` covers every signed 17-bit value from `-65536` through `65535`, and the encoded byte displacement is that value multiplied by `2`.
+- `Dst0` receives the value loaded from the first address and `Dst1` the value loaded from the second; both are loaded-value destinations, and neither is a base writeback.
+- Both destination fields use the complete Reg5 destination domain: codes `1..23` write absolute GPRs, code `30` pushes U, code `31` pushes T, and codes `0` and `24..29` discard only that result without suppressing the rest of the instruction.
+- Every displayed operand field is encoded explicitly, so encoded zero is a value and never denotes omission.
 
-After all result or writeback publication, `HL.LHIP` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+<!-- PTO-READER-BLOCK: hl-lhip-effects role=effects -->
+## Effects and ordering
 
-<!-- PTO-READER-BLOCK: scalar-hl-lhip-constraints role=constraints -->
-## Legality, faults, and restart
+The base register is read before the memory operation and before any destination write.
 
-Each accessed address is aligned to the `2`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+A successful attempt records two relaxed load events in address order, leaves memory and reservation state unchanged, publishes both loaded values, and advances `TPC` by `6` bytes.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
+**Design point:** both values rest on the one base snapshot, so even when a destination names `SrcL` the second address is still the first plus the access size. The pair always reads two adjacent locations.
 
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+<!-- PTO-READER-BLOCK: hl-lhip-constraints role=constraints -->
+## Alignment, faults, and restart
 
-<!-- PTO-READER-BLOCK: scalar-hl-lhip-example role=example -->
-## Non-normative reading walkthrough
+The effective address must be aligned to the `2`-byte transfer size. Misalignment raises `Fault_DataAlignment` before translation; a translation or bounded-memory failure after that raises `Fault_DataPage` at the original address.
 
-This walkthrough explains how to use the page and does not add instruction behavior.
+A fixed-bit mismatch, a reserved field value, or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before any instruction effect.
 
-- Start with the canonical assembly `hl.lhip [SrcL, simm], ->Dst0, Dst1` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+A fault emits no load event and writes no destination, and the address it records is the address that failed. Recovery reissues the whole instruction: the address, the source snapshot, every probe, the load, and every destination are recomputed with no retained progress.
+
+**Design point:** both probes complete before either load is committed, so the pair cannot publish one destination and leave the other holding a pre-instruction value; a fault on the second probe therefore costs the first result as well.
+
+<!-- PTO-READER-BLOCK: hl-lhip-example role=example -->
+## Non-normative address example
+
+This example illustrates the current address and publication rule and does not replace the normative load contract.
+
+A decoded `simm17` of `1` becomes a byte displacement of `2`, so with `SrcL=0x1000` the two accesses are at `0x1002` and `0x1004`.
+
+If both addresses are aligned and permitted, `Dst0` receives the first value, `Dst1` receives the second, and `TPC` advances by `6` bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
