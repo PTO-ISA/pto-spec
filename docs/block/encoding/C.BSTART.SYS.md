@@ -19,39 +19,45 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-c-bstart-sys-purpose role=purpose -->
 ## What C.BSTART.SYS does
 
-`C.BSTART.SYS` opens an active Block descriptor; the body supplies the attributes and bindings required before completion.
+`C.BSTART.SYS` is the 16-bit start command for a System block. It has one spelling, `C.BSTART.SYS FALL`, and no operand field. A block (also called a bundle) is a group of header commands and body instructions that commits as one unit at `BSTOP` or at the next block start.
+
+A System block always continues sequentially. It has no branch target. The model pages [Bundle start dispatch](../model/dispatch/start.md) and [Begin](../model/lifecycle/begin.md) define the shared start sequence.
 
 <!-- PTO-READER-BLOCK: block-c-bstart-sys-mechanism role=mechanism -->
-## Placement and execution mechanism
+## Encoding and start sequence
 
-`C.BSTART.SYS` must appear as the starter of its Block. Later attributes, dimensions, and bindings accumulate in the active descriptor until `BSTOP` or the next accepted `BSTART` completion boundary.
+The complete halfword `0x0840` is the only encoding. The mask `0xffff` fixes every bit, so there is nothing to decode beyond the form itself.
 
-The accepted carrier uses the `C16` encoding class and resolves every displayed field before the command reads bindings or changes state.
+Execution follows the common start order. Any active predecessor commits first. The new System block opens only if that commit selected this `C.BSTART.SYS` address as the next PC. Header execution then continues at `P + 2`, where `P` is the address of the command.
 
-At completion, the descriptor runs its selected Block operation only after all schema and state preflight succeeds.
+Design point: the System kind is the block kind in which the scalar system operations, such as `FENCE.I`, `FENCE.D`, and the data-cache maintenance operations, are applicable. `ScalarOperationApplicable` accepts them only in the body of an active System block. `C.BSTART.SYS` is the compressed way to open such a block.
 
 <!-- PTO-READER-BLOCK: block-c-bstart-sys-inputs role=inputs-outputs -->
-## Carrier, bindings, and inputs
+## Fields and BARG values
 
-- The instruction has no encoded operand field.
-- After an active predecessor commits successfully, this carrier opens one sequential System Block whose header runs until `BSTOP` or the next `BSTART`.
-- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+- There is no encoded operand, so there is no default and no encoded-zero meaning. The form fixes the FALL transfer and the zero `BPCN`.
+- The start installs `BARG.BPC = P` and `BlockType = SYS`.
+- `BARG.TYPE` is FALL, `TAKEN` is 0, and `BPCN` is 0.
+
+Design point: `BeginBundleAt` ignores the supplied transfer for a System block and stores this fixed non-selecting value. A System `BARG` can therefore never select `BPCN` at commit. The same rule means `SETC.TGT` and `LSRGET` identifier 1 are not applicable in a System block, because only Standard and Floating blocks carry a candidate word.
 
 <!-- PTO-READER-BLOCK: block-c-bstart-sys-effects role=effects -->
 ## State effects and ordering
 
-Starting the Block records the selected carrier and leaves operation execution deferred until the completion boundary.
+A successful start clears the previous header state, marks the new block active in its header phase, writes `BARG` and `BPC`, and takes a fresh execution-domain token. `C.BSTART.SYS` performs no memory access and writes no GPR.
 
-After complete preflight and computation, every enabled output publishes as the owner-defined atomic group; successful mathematical sources remain available unless the contract explicitly consumes them.
+At `BSTOP` or the next block start, the System block commits to its sequential continuation.
+
+Design point: the predecessor commits before the System `BARG` is installed. If the predecessor commit fails, the predecessor stays authoritative and no System `BARG` is installed. If the predecessor transfers elsewhere, this command was on an unselected path and opens nothing.
 
 <!-- PTO-READER-BLOCK: block-c-bstart-sys-constraints role=constraints -->
-## Legality, faults, and atomicity
+## Legality and fault boundary
 
-Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+Any halfword other than `0x0840` belongs to another instruction or is illegal. It is not an operand variation of `C.BSTART.SYS`.
 
-The current owner reports invalid schema, state, address, or continuation conditions through the owner-defined fault; no prose on this page creates an additional fault rule.
+`C.BSTART.SYS` has no operand that can fail. The shared start path still checks that its sequential target `P + 2` is even, and an odd value raises `Fault_InstructionPC`. Other faults at this command come from dispatcher checks on the active predecessor, such as an incomplete TGPR2T or TIMG2COL header stream (`Fault_BundleControl`), or from the predecessor commit; in each case the predecessor stays in place.
 
-Complete schema, binding, readiness, alias, capacity, and allocation preflight precedes source snapshots and every destination publication.
+After an `ACRC` request in the body sets the system-block terminal marker, the command dispatcher accepts only a block stop or a block start as the next command. Every other command raises `Fault_BundleControl`.
 
 <!-- PTO-READER-BLOCK: block-c-bstart-sys-example role=example -->
 ## Non-normative worked example
@@ -62,7 +68,7 @@ This example demonstrates placement and carrier flow only; exact behavior remain
 C.BSTART.SYS FALL
 ```
 
-The starter establishes the descriptor first; the following carriers fill its declared schema, and the final completion boundary triggers validation and operation execution.
+If `C.BSTART.SYS FALL` sits at `0x6000`, the new block has `BPC = 0x6000`, `BlockType = SYS`, and `BPCN = 0`. Header execution continues at `0x6002`. A `BSTOP` at `0x6010` commits the block and execution continues at `0x6014`, the instruction after that 4-byte `BSTOP`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
