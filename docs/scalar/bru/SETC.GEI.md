@@ -19,46 +19,60 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-gei-purpose role=purpose -->
 ## What SETC.GEI does
 
-`SETC.GEI` evaluates signed greater-than-or-equal and publishes the result as the current Conditional bundle commit decision.
+`SETC.GEI` compares a scalar register with a shifted `12`-bit immediate using signed greater-than-or-equal and commits the outcome to the enclosing Conditional block. It is the immediate form of the signed relational setter; `SETC.GEUI` is its unsigned twin.
+
+Design point: signedness is fixed by the mnemonic and cannot be changed by an operand, so the block branch condition is fully visible in the instruction spelling.
 
 <!-- PTO-READER-BLOCK: scalar-setc-gei-mechanism role=mechanism -->
-## Mechanism
+## How the signed greater-or-equal decision is formed
 
-Placement and the single-setter rule are checked before source readiness or reads.
+`SrcL` is read and `simm12` is sign-extended to `PTO_XLEN` and shifted left by `shamt`. The handler evaluates signed greater-than-or-equal on the two `64`-bit words as two's-complement values, committing `1` when the relation holds and `0` otherwise.
 
-The decoded immediate is logically shifted left by `shamt` before the condition is evaluated.
+Design point: the relation includes equality, so a boundary value commits `1`. `setc.gei a0, 0` is a test of the sign bit of `a0`, because an all-ones word is `-1`.
 
-The snapshotted operands are evaluated for signed greater-than-or-equal and canonicalized to XLEN one or zero.
+Design point: the commit value is canonicalized to `1` or `0` before it is stored, so the bundle decision does not depend on which nonzero operand values produced it.
 
 <!-- PTO-READER-BLOCK: scalar-setc-gei-inputs-outputs role=inputs-outputs -->
-## Inputs and output
+## Operands and result location
 
-- `SrcL` supplies the left scalar source.
+- `SrcL` supplies the left operand through the `Reg5` source rules: codes `0` to `23` read absolute GPRs, codes `24` to `27` read the T queue, and codes `28` to `31` read the U queue. A queue code whose entry is not valid rejects the instruction before any read.
 
-- `shamt` supplies the encoded shift amount.
+- `shamt` is the decoded `5`-bit shift amount applied to the immediate, ranging from `0` to `31`. The canonical assembly `setc.gei SrcL, simm` has no shift operand, so the amount comes only from the encoding.
 
-- `simm12` supplies a signed encoded immediate.
+- `simm12` supplies the `12`-bit signed bound.
+
+Design point: there is no destination register field. The comparison decision goes to the block commit state, so a setter cannot be encoded with a discarded, GPR, or queue destination and cannot be confused with a value-producing compare.
+
+Design point: the immediate is sign-extended and then shifted, so a negative immediate reaches the comparison with an all-ones upper half and the low `shamt` bits of the compared value are zero.
 
 <!-- PTO-READER-BLOCK: scalar-setc-gei-effects role=effects -->
-## Effects and ordering
+## Commit state and ordering
 
-The canonical condition is written atomically to `_CommitArgument` and `BARG.TAKEN`, and the condition-set marker becomes true.
+The canonical `1` or `0` is written to the block commit argument, the block's taken flag receives the same truth value, and the shared condition-set marker is then set. All three writes happen in one handler step.
 
-On success, `SETC.GEI` advances `TPC` by `4` bytes. It has no scalar destination and no memory or reservation effect.
+Design point: the commit argument is written before the taken flag is derived from it, and nothing can fault between the two, so no observable bundle state exists in which they disagree.
+
+Because the handler does not write `TPC`, the dispatch boundary then advances `TPC` by `4` bytes, the encoded length of the `32`-bit form. No register, memory location, or numeric status is written.
 
 <!-- PTO-READER-BLOCK: scalar-setc-gei-constraints role=constraints -->
-## Legality and fault order
+## Placement, single-setter rule, and fault order
 
-The instruction is valid only in the applicable Conditional bundle context, and only one successful condition setter may occur.
+`SETC.GEI` is applicable only while an active Conditional block has not yet set its condition. The applicability test also names an active body, and the dispatch entry activates the body of an active block immediately before that test, so a body that is not yet active is not a rejection case by itself. A block that is not active, a block whose transfer type is not `Conditional`, or a bundle that has already accepted one condition setter raises `Fault_BundleControl` (trap number `5`, `BUNDLE_TRAP`) before a source is read and before any commit state is written.
 
-Wrong placement or a repeated setter raises an Illegal Block Exception before source reads; encoding or unavailable-source failures raise `Fault_IllegalInstruction` before commit or `TPC` effects.
+Design point: the block keeps one shared condition-set marker, and only a successful occurrence sets it. A `SETC.GEI` rejected by an encoding or operand check leaves the marker clear, so a later condition setter in the same block can still commit. The rejected occurrence consumes nothing.
+
+The fixed bits of the form must match and every selected source code must be usable, otherwise `Fault_IllegalInstruction` is raised with `TPC` unchanged. No field value is reserved.
+
+Design point: entering the bundle body happens before applicability is checked, so a rejected setter leaves the body active. The rejection does not roll that transition back.
 
 <!-- PTO-READER-BLOCK: scalar-setc-gei-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not create a second semantic definition.
 
-`setc.gei SrcL, simm` evaluates the described condition, writes the canonical decision to commit state, and advances `TPC` only after that update.
+With `a0` holding `0x0000000000000005` and `shamt` zero, `setc.gei a0, 5` commits `1`, because equality satisfies the relation, and `setc.gei a0, 6` commits `0`.
+
+At the end of the block the taken flag selects the continuation: a taken Conditional block continues at the candidate next `PC`, and an untaken one continues sequentially.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

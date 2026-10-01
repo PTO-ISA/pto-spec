@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-divu-purpose role=purpose -->
 ## What DIVU does
 
-`DIVU` is a 32-bit scalar ALU instruction. It computes the unsigned quotient over the complete XLEN value; its current instruction contract defines the result publication path and any additional state effect.
+`DIVU` is the unsigned partner of `DIV`: a 32-bit L32 form that reads two Reg5 operands and publishes one quotient through `RegDst`. Both complete `PTO_XLEN` words are read as unsigned integers from `0` through `2^64 - 1`, so the truncated quotient is also the floor of the exact ratio.
+
+Design point: the top bit of a source is data here, not a sign. With `a0` holding all `64` bits set and `a1` holding `2`, `divu a0, a1, ->a2` publishes `9223372036854775807`, while `DIV` on those same two register values would read them as `-1` and `2` and publish `0`.
 
 <!-- PTO-READER-BLOCK: scalar-divu-mechanism role=mechanism -->
-## How the result is formed
+## How the quotient is formed
 
-Execution snapshots the encoded inputs, then computes the unsigned quotient over the complete XLEN value, and only afterward performs the destination effects.
+Execution reads `SrcL` and `SrcR` and calls the unsigned divider.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+- A zero divisor returns `0` immediately, before any division loop runs.
+- Otherwise the restoring loop walks the dividend from bit `63` down to bit `0`, shifting a partial remainder left, bringing in one dividend bit, and subtracting the divisor whenever the partial remainder has reached it.
+
+The quotient is published unchanged. There is no extension step, because the unsigned quotient of two `PTO_XLEN` operands is already a complete `PTO_XLEN` value.
+
+Design point: only the quotient leaves the divider. The partial remainder the loop builds is a local value that is never written, so `DIVU` cannot report how much of the dividend was left over; the pair form `HL.DIVU` is the spelling that returns both halves.
 
 <!-- PTO-READER-BLOCK: scalar-divu-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the dividend through Reg5.
-- The 5-bit `SrcR` field selects the divisor through Reg5.
+- `SrcL` is the dividend and `SrcR` is the divisor, both read through the Reg5 source map: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`.
+- `RegDst` publishes the quotient: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: a source read does not consume a queue entry and a discard destination still lets the instruction retire. While `t#1` and `t#2` are both available, `divu t#1, t#2, ->u` therefore leaves those two slots in place and appends one new `U` entry.
 
 <!-- PTO-READER-BLOCK: scalar-divu-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+The two reads happen before `RegDst` is written, so `divu a0, a1, ->a1` stores the quotient over the divisor using the divisor's pre-instruction value.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+Once the quotient is published or discarded, `TPC` advances by `4` bytes. No memory, reservation, descriptor, numeric-status, bundle, privilege, predicate or control-flow state changes.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: only the destination push touches a temporary queue, so an unsigned divide aimed at a GPR or at a discard code leaves both queues exactly as they were; a later read of `T#1` sees the same word it would have seen before the instruction.
 
 <!-- PTO-READER-BLOCK: scalar-divu-constraints role=constraints -->
 ## Legality and fault boundary
 
-A zero divisor returns quotient zero and does not raise an arithmetic exception.
+All `32` codes of `SrcL`, `SrcR` and `RegDst` are assigned, and the only fixed requirement is that the 32-bit word matches the `DIVU` mask and match, so the unsigned mnemonic reserves no operand value of its own.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An undecodable form raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active bundle raises `Fault_BundleControl` at `TPC`. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before the destination effect and before `TPC` advances.
+
+Design point: the model never derives an arithmetic fault from the divisor. A zero divisor is answered inside the unsigned divider with `0`, so `DIVU` has no divisor value that traps or that leaves the result unwritten.
 
 <!-- PTO-READER-BLOCK: scalar-divu-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `DIVU` example, dividend `13` and divisor `5` produce quotient `2`.
+With `a0=13` and `a1=5`, `divu a0, a1, ->a2` writes `2` to `a2`. With `a0` holding all `64` bits set and `a1=2`, the same instruction writes `9223372036854775807`, because the dividend is read as `18446744073709551615`; `DIV` on those two register values would return `0` instead.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

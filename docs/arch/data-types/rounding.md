@@ -15,44 +15,53 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-rounding-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit defines the semantic rounding-mode namespace and the common execution-control record used after encoded selectors have been resolved.
+`NumericRoundingMode` is the semantic enumeration of rounding modes, and `NumericExecutionControl` is the two-field record that pairs one mode with a `saturating` flag. The same file also declares the bounded `NumericApplicabilityRuleSet` enumeration.
 
-It separates mathematical mode identity from scalar `FRM`, fixed conversion overrides, bundle `RMode`, and public API selector encodings.
+The unit owns meanings only. It reads no selector field and rounds no value, so a consumer must resolve its encoded selector into `NumericRoundingMode` first and then hand the record to the operation.
+
+Design point: scalar `FRM`, the fixed conversion overrides, bundle `RMode`, and the public API controls are four different encodings of the same small set of meanings, and each meaning appears once in this enumeration. The consequence is that an enum position is never an encoding anywhere, and the same three bits can mean two different modes in two namespaces: `010` selects `NumericRound_RTP` for scalar `FRM` in `ResolveScalarFPActiveRoundingMode`, while `010` selects `NumericRound_RTZ` for bundle `RMode` in `DecodeBundleRoundingSelection`.
 
 <!-- PTO-READER-BLOCK: arch-rounding-concepts-state role=concepts-state -->
 ## Concepts and visible state
 
-- `NumericRoundingMode` contains `RNE`, `RTM`, `RTP`, `RTZ`, `RNA`, `RTO`, and `RHB` semantic modes.
-- `NumericExecutionControl` pairs a `NumericRoundingMode` with a `saturating` boolean.
-- `NumericApplicabilityRuleSet` names no extra rejection or the bounded `MxRejection` rule set.
+- `NumericRoundingMode` has seven members: `NumericRound_RNE`, `NumericRound_RTM`, `NumericRound_RTP`, `NumericRound_RTZ`, `NumericRound_RNA`, `NumericRound_RTO`, and `NumericRound_RHB`.
+- `NumericExecutionControl` has exactly two fields, `rounding_mode: NumericRoundingMode` and `saturating: boolean`.
+- `NumericApplicabilityRuleSet` has two members, `NumericApplicabilityRules_None` and `NumericApplicabilityRules_MxRejection`.
+
+Design point: `DefaultNumericExecutionControl()` returns `NumericRound_RNE` together with `saturating = FALSE` as one value, not as two independent defaults. A consumer that needs the architectural default obtains both fields from a single call, so the default mode cannot be paired with a different saturation setting by choosing only one of them.
 
 <!-- PTO-READER-BLOCK: arch-rounding-rules-interactions role=rules-interactions -->
 ## Rules and interactions
 
-`DefaultNumericExecutionControl` selects `NumericRound_RNE` with `saturating = FALSE`.
+The architectural default is `NumericRound_RNE` with `saturating = FALSE`. `DefaultNumericExecutionControl` is a `pure func` that takes no argument, so its result depends on no register and on no encoded field.
 
-Every encoded selector namespace must resolve explicitly into `NumericRoundingMode`; enum position is not an implicit wire encoding.
+Resolving an instruction default is a separate step with its own owner. `ResolveTileNumericExecutionControl` copies the operand control and, when the instruction asks for the operation default, replaces `rounding_mode` with `NumericRound_RNE`, or with `NumericRound_RTZ` when the operation is `TileOperation_TCVT` with a floating source and a non-floating destination. That branch does not change `saturating`.
 
-The applicability enum is only a bounded negative-rule selector. Lack of rejection does not claim target support or select result semantics.
+Design point: the operation default is applied by the resolver rather than by editing `DefaultNumericExecutionControl`. The consequence is that the two situations stay distinguishable: an explicit control keeps the mode the caller encoded, and a defaulted control has only its `rounding_mode` replaced while `saturating` is carried over unchanged from the operand control.
 
 <!-- PTO-READER-BLOCK: arch-rounding-boundaries role=boundaries -->
 ## Architectural boundaries
 
-These types do not define how an arithmetic operation rounds a particular value. Exact result algorithms remain with operation/profile owners.
+This unit defines no algorithm. Which value an operation rounds, and how a rounded result becomes a `Word`, belong to the operation and profile ASL.
 
-`MxRejection` is a named negative applicability rule set, not portable PTO behavior that can be applied outside its selecting owner.
+`NumericApplicabilityRuleSet` selects only a bounded set of accepted negative applicability rules. A missing rejection does not claim that a target supports anything, and it does not select result semantics.
+
+Design point: `NumericApplicabilityRules_MxRejection` is a named rule set rather than a boolean "rejected" flag. Because the enumeration names which negative rules are active, the value has no meaning outside the owner that selected the rule set, and that owner still decides whether a particular operand is rejected.
 
 <!-- PTO-READER-BLOCK: arch-rounding-example-usage role=example-usage -->
 ## Non-normative reading example
 
-A bundle `RMode` code is first decoded by its owner and only then becomes, for example, `NumericRound_RTZ`; this page does not equate their numeric encodings.
+A scalar floating-point operation reads its active mode from an encoded field: `ScalarFPActiveRoundingMode` passes `core_state[39:37]` to `ResolveScalarFPActiveRoundingMode`, which maps `001` to `NumericRound_RTM`, `010` to `NumericRound_RTP`, `011` to `NumericRound_RTZ`, and every other value to `NumericRound_RNE`.
 
-A consumer that needs the architectural default can call `DefaultNumericExecutionControl` rather than reproducing `RNE` and non-saturating defaults locally.
+A fixed conversion does not consult that field. `ScalarFPFixedConversionRoundingMode` maps `ScalarOperation_FCVTA` to `NumericRound_RNA`, `ScalarOperation_FCVTM` to `NumericRound_RTM`, `ScalarOperation_FCVTN` to `NumericRound_RNE`, `ScalarOperation_FCVTP` to `NumericRound_RTP`, and `ScalarOperation_FCVTZ` to `NumericRound_RTZ`.
+
+A bundle selector reaches the same type through two steps: `DecodeBundleRoundingSelection` turns the three-bit `RMode` into a selection whose `rounding_mode` is one of the seven members, and `ResolveTileNumericExecutionControl` reads that selection from the operands and produces the `NumericExecutionControl` this unit declares.
 
 <!-- PTO-READER-BLOCK: arch-rounding-related-owners role=related-owners-navigation -->
 ## Related owners
 
 - [Numeric classification](numeric-classification.md)
+- [Floating point](floating-point.md)
 - [Hardware numeric profile](../features/mx-formats.md)
 <!-- SUPPLEMENTARY-END -->
 

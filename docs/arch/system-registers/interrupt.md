@@ -15,42 +15,53 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-interrupt-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit owns pending-interrupt updates, top-pending selection, enable checks, timer refresh on reads, and end-of-interrupt state changes.
+This unit owns the interrupt bookkeeping of one ring: where the pending set lives, how the highest-priority pending interrupt is derived, which configuration bits gate trap entry, and what an end-of-interrupt write changes.
+
+It does not put an interrupt into the trap envelope. The timer owner and `RaiseInterrupt` in the fault-precision owner are the other callers of these functions: the timer owner sets or clears the timer bit, and `RaiseInterrupt` sets the pending bit before it tests the enable gate.
 
 <!-- PTO-READER-BLOCK: arch-interrupt-concepts-state role=concepts-state -->
-## Context-register layout used here
+## Pending set and its derived priority
 
-For each ACR, low index `0x0f07` holds interrupt configuration, `0x0f08` holds the pending bitmap, and `0x0f09` holds the selected top-pending interrupt ID.
+For each ring, three context-register offsets carry the interrupt state: `0x0f07` holds the interrupt configuration, `0x0f08` holds the pending bitmap, and `0x0f09` holds the selected top pending interrupt.
 
-`RefreshTopPendingInterrupt` scans pending bits from interrupt ID `0` through `63` and records the first set ID. If no bit is set, the stored top value remains `0`.
+`RefreshTopPendingInterrupt` scans bit positions 0 through 63 of the pending bitmap and stores the position of the first set bit. The scan starts at position 0, so the stored value is the numerically lowest pending interrupt.
+
+Design point: the top pending value is a derived cache of the bitmap rather than a second source of truth, and every function here that changes the bitmap recomputes it in the same call. The stored value therefore stays consistent with the bitmap without a separate software update.
 
 <!-- PTO-READER-BLOCK: arch-interrupt-rules-interactions role=rules-interactions -->
 ## Pending, enable, and read behavior
 
-`SetInterruptPending` sets one pending bit; `ClearInterruptPending` clears one. Both immediately recompute the top-pending value.
+`SetInterruptPending` sets one pending bit and recomputes the top value. `ClearInterruptPending` clears one pending bit and also recomputes the top value.
 
-`InterruptEnabled` tests configuration bit `1` for the ring's timer interrupt and bit `0` for every other interrupt ID.
+`InterruptEnabled` reads the configuration word: it tests bit 1 for the ring's timer interrupt and bit 0 for every other interrupt ID, so the two interrupt sources are gated separately.
 
-`ReadInterruptPending` and `ReadTopPendingInterrupt` call `RefreshTimerPending` before returning their respective context-register values.
+`ReadInterruptPending` and `ReadTopPendingInterrupt` call `RefreshTimerPending` before returning the pending bitmap or the top value, so both reads reflect the current cycle count against the timer comparison.
+
+Design point: because the read functions refresh the timer first, a reader of the interrupt registers sees an up-to-date timer state without the timer source having to post it at the moment the threshold is crossed.
 
 <!-- PTO-READER-BLOCK: arch-interrupt-boundaries role=boundaries -->
 ## End-of-interrupt boundary
 
-`EndOfInterrupt` clears a pending interrupt only when bits `63:6` of its input are zero; the low six bits then select the ID. Regardless of that encoding check, it clears `_ACRTrapAsynchronous` and `_ACRTrapArgumentValid` for the ring.
+`EndOfInterrupt` takes one word. The low six bits select the interrupt ID, and the remaining bits 6 through 63 must all be zero for the pending bit to be cleared.
 
-Top-pending value `0` alone does not distinguish no pending interrupt from pending interrupt ID `0`; the pending bitmap provides that information.
+The interrupt trap status flags are cleared for the ring whether or not the encoding check passed, so a write with a high bit set still leaves the ring's asynchronous trap status clear.
+
+Design point: a timer interrupt can be reasserted, because the pending refresh runs again on the next read of `0x0f08` or `0x0f09` while the comparison still matches the cycle count. Clearing a timer interrupt for good takes a comparison value that fails the timer rule, that is, zero or a value greater than the current cycle count.
 
 <!-- PTO-READER-BLOCK: arch-interrupt-example-usage role=example-usage -->
 ## Non-normative priority example
 
-If pending IDs `5` and `9` are both set, refresh records `5` because the scan stops at the first set bit. Clearing ID `5` recomputes the top value as `9`.
+If the pending bitmap has bits for interrupt IDs 2 and 7 set, the top value is 2. Setting the bit for interrupt ID 0 changes the top value to 0, and clearing that bit returns the top value to 2.
+
+Every function in this unit is called with a ring, so the same sequences applied to ACR1 act on the pending bitmap and configuration of ACR1.
 
 <!-- PTO-READER-BLOCK: arch-interrupt-related-owners role=related-owners-navigation -->
 ## Related owners
 
-- [Timer registers](timer.md) is the declared dependency and drives timer-pending refresh.
-- [Context registers](context.md) defines the index arithmetic for per-ACR registers.
-- [Access control](access-control.md) defines portable interrupt trap targeting.
+- [Timer registers](timer.md) is the declared dependency and drives one pending bit from the cycle count.
+- [Context registers](context.md) defines the index arithmetic used for the interrupt offsets.
+- [Access control](access-control.md) defines the ring routing that a raised interrupt follows.
+- [Trap context](../state/trap-context.md) records the state taken when an enabled interrupt enters the trap envelope.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

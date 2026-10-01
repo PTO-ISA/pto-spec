@@ -19,42 +19,49 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ld-add-purpose role=purpose -->
 ## What LD.ADD does
 
-`LD.ADD` atomically applies modular addition to one doubleword, stores the result, and publishes the prior memory value.
+`LD.ADD` adds one 64-bit operand to the doubleword stored at a memory address, writes the sum back to that address, and publishes the doubleword it replaced. The address comes from `SrcL`, the operand from `SrcR`, and the replaced value is published through `RegDst`. It is a standalone 32-bit encoded form with a memory effect, so a successful execution advances `TPC` by 4 bytes.
 
 <!-- PTO-READER-BLOCK: scalar-ld-add-mechanism role=mechanism -->
-## Atomic mechanism
+## How the sum reaches memory
 
-The ASL DOC contract selects `ScalarHandler_AtomicReadModifyWrite` with an access width of `8` bytes.
+The form binds the semantic handler `ScalarHandler_AtomicReadModifyWrite`, access size `8`, and atomic operation `Atomic_ADD`. Dispatch runs a read probe and a write probe for the same address first, then loads the old doubleword, computes the 64-bit sum, stores it, records one atomic event with `write_performed` set to true, and returns the old value.
 
-Read and write access are preflighted before the same-location atomic read-modify-write is allowed to commit.
+Design point: the addition is `old + operand` at `XLEN` width, so it wraps. Storage holding `0xffffffffffffffff` combined with `SrcR = 0x0000000000000001` ends up holding `0x0`; the carry out of bit 63 is discarded, and no scalar status flag records that it happened.
+
+Design point: the value published to `RegDst` is the pre-instruction doubleword, not the sum just written. One execution therefore both replaces the contents and reports what they were, so the new sum is visible only by reading the location again.
 
 <!-- PTO-READER-BLOCK: scalar-ld-add-inputs-outputs role=inputs-outputs -->
-## Inputs and result
+## Fields and operand roles
 
-`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 atomic operand source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+`RegDst` is a `5`-bit field at instruction bits `7..11`, `SrcL` at bits `15..19`, `SrcR` at bits `20..24`, `rl` at bit `25`, `aq` at bit `26`, and `far` at bit `27`.
 
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+- `SrcL` reads the address; encoded zero selects the architectural zero register, so the access targets address zero.
+- `SrcR` reads the operand; a T or U selector is read without consuming a queue entry.
+- `RegDst` receives the old value; destination code 0 discards it, code 30 pushes U, and code 31 pushes T.
+- `aq` and `rl` select relaxed, acquire, release, or acquire-release ordering for the recorded event.
+
+Design point: `far` is decoded and handed to `AtomicAddress`, which returns its argument unchanged, so `ld.add [a0], a1, ->a2` and `ld.add.f [a0], a1, ->a2` reach the same address and produce the same result in the reference model; the bit only selects a route hint.
 
 <!-- PTO-READER-BLOCK: scalar-ld-add-effects role=effects -->
-## Effects and ordering
+## Effects
 
-The old memory value is published only after the read-modify-write commits; source aliases are captured before any destination effect.
+A successful execution writes 8 bytes to the addressed location, records one atomic event with `write_performed` set to true, and publishes the old doubleword unless `RegDst` encodes a discarding destination. The store also invalidates the local reservation when the written 8-byte range overlaps the reserved 64-byte granule; a reservation elsewhere is untouched. `TPC` advances by 4 bytes.
 
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+Design point: the store is unconditional, even when the sum equals the old doubleword, for example when `SrcR` reads the architectural zero register. That store still clears an overlapping reservation, so a later conditional store to the same granule fails even though the bytes did not change.
 
 <!-- PTO-READER-BLOCK: scalar-ld-add-constraints role=constraints -->
-## Legality and precise faults
+## Legality and faults
 
-The effective address must be aligned to `8` bytes. Alignment, translation, and permission checks precede architectural effects.
+The address must be a multiple of 8. A decoding failure or an unavailable selected T or U source raises `Fault_IllegalInstruction` before any effect. Address misalignment then reports `Fault_DataAlignment`; an address outside the permitted region reports `Fault_DataPage`. Both are reported at the original, pre-translation address, and a fault publishes no destination, performs no load or store, records no event, and does not advance `TPC`.
 
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+Design point: because the alignment test happens inside the read probe and both probes complete before the load, a misaligned address never reads or writes a byte, and the saved `TPC` lets software correct the address and reissue the same instruction.
 
 <!-- PTO-READER-BLOCK: scalar-ld-add-example role=example -->
 ## Non-normative example
 
 This example only shows one accepted spelling; the generated contract below remains authoritative.
 
-For a first reading, use `ld.add [SrcL], SrcR, ->Rd` and then vary only the ordering or route modifiers described above.
+With `a0` holding an 8-byte aligned address, `ld.add [a0], a1, ->a2` adds `a1` to the doubleword at `[a0]`. If that doubleword holds `0xffffffffffffffff` and `a1` holds `0x0000000000000001`, memory receives `0x0` and `a2` receives `0xffffffffffffffff`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

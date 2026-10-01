@@ -19,42 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-acrc-purpose role=purpose -->
 ## What ACRC does
 
-`ACRC` requests architecture-context close and marks the active SYS block terminal.
+`ACRC` is the context-close request. It carries a 4-bit record type and, when the current access-control ring permits that request type, marks the end of the active SYS block and hands control to the architecture through a service-request trap.
+
+It does not return a value and does not write any destination. On an accepted request its whole effect is the request it publishes and the final-position marker it sets on the block.
 
 <!-- PTO-READER-BLOCK: scalar-acrc-mechanism role=mechanism -->
-## System mechanism
+## How the instruction is placed and executed
 
-The ASL DOC region selects `ScalarHandler_ArchitectureCloseRequest`. Placement and encoded legality are checked before sources or system state can change.
+This instruction is one scalar operation of an active SYS block. The scalar dispatcher first checks that a bundle is active and that its body is active with block kind System; a SYS form outside such a block is rejected with `Fault_BundleControl`, before any encoded-field check and before any architectural effect.
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+Encoded legality and source availability are then checked, and only then does the handler run.
+
+`RST_Type` is a 4-bit field whose every value is an assigned encoding. The handler does not test the encoded value directly; it hands it to the architecture close-request rule, which asks the access-control table whether the current ring may issue this request type.
+
+When the request is permitted, the handler first sets the block's terminal marker and then enters the service-request trap. The trap saves the pre-instruction context of the target ring, records the request type as the trap cause, sets trap number `6`, sets the fault address to the request site, and switches the current ring to the trap target. Request types `0` and `1` differ only in their target ring.
+
+Design point: the terminal marker is set before the trap entry, not after. That is what makes the final-position rule survive the trap: once the trap returns, the block still knows that its last scalar position was consumed, so it cannot silently continue executing further scalar operations.
 
 <!-- PTO-READER-BLOCK: scalar-acrc-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`RST_Type` carries the return-stack record type.
-
-Encoded zero is an assigned field value, never an omitted operand.
+- `RST_Type` is the only encoded operand: a 4-bit return-stack record type. All sixteen values are assigned encodings; encoded zero is a real request type, not an omission.
+- There is no destination field, so the instruction never pushes `T` or `U` and never writes a GPR.
+- There is no source field, so no scalar register or queue entry is read.
 
 <!-- PTO-READER-BLOCK: scalar-acrc-effects role=effects -->
 ## Architectural effects
 
-A permitted close publishes the service-request trap and request type, increments the request epoch, and marks the SYS block terminal before trap entry.
+On a permitted request the published effects are the service-request trap, the recorded request type, and one increment of the architecture-request epoch. The current ring becomes the trap target and `TPC` takes that ring's trap vector entry, so the ordinary `4`-byte advance does not apply.
 
-After recovery, only `BSTOP` or a following `BSTART` may commit; another instruction is rejected before effects.
+After recovery, the block's terminal marker is still set. While it is set, a command instruction that is neither a bundle stop nor a bundle start is rejected with `Fault_BundleControl`, and a scalar instruction is rejected the same way. Only a bundle stop or a following bundle start can commit the block.
+
+If the request is not permitted, the handler faults with `Fault_IllegalInstruction` before the terminal marker is set, so a rejected request leaves the block fully usable: no request is published, the epoch does not advance, and no trap cause is recorded.
 
 <!-- PTO-READER-BLOCK: scalar-acrc-constraints role=constraints -->
 ## Placement and rejection
 
-Routing and current-ACR permission are established before the terminal marker changes.
+Invalid block placement is rejected first, with `Fault_BundleControl`, before the encoded field is even considered. A SYS operation outside the body of an active SYS block falls in that class.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+The instruction is a terminating scalar position: it must be the final scalar operation of its block.
+
+The permission table is what decides instruction-local acceptance, and it is consulted before the terminal marker is set. At the root ring no request type is permitted at all. At ring `1` only request types `0` and `2` are permitted. At rings `2` through `15` request types `0`, `1` and `2` are permitted. Every other four-bit value is rejected in every ring. The same encoded `RST_Type` therefore has different outcomes in different rings: only at the root ring is every value rejected.
 
 <!-- PTO-READER-BLOCK: scalar-acrc-example role=example -->
 ## Non-normative example
 
-This spelling example is illustrative; exact legality and effects remain in the generated contract below.
-
-Start with `acrc rst_type` and trace its encoded fields through preflight before following the selected system effect.
+`acrc rst_type` names the request through its `RST_Type` field. With `RST_Type=0` at a ring other than the root ring the request is accepted: the terminal marker is set and the service-request trap switches the current ring to the trap target. At the root ring the same instruction raises `Fault_IllegalInstruction` before the terminal marker is set, and the block keeps executing.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

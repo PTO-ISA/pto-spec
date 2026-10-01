@@ -15,51 +15,57 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-memory-ordering-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit decides whether a captured candidate memory execution is allowed by PTO-RC with preserved Store-to-Store order. It validates the event set, builds the required ordering relations, and rejects any candidate whose required relation contains a cycle.
+This unit decides whether a captured candidate execution is allowed by PTO-RC. Its entry point is `MemoryExecutionAllowedRC`, the conjunction of `MemoryCandidateExecutionValid()`, `MemoryRelationAcyclic(TRUE)` and `MemoryRelationAcyclic(FALSE)`, which no ASL unit calls; its callers are the archived conformance tests under `tests/asl/arch/memory-model/ordering/`.
 
-The final query, `MemoryExecutionAllowedRC`, requires candidate validity and acyclicity of both the same-location execution relation and the externally visible preserved-order relation.
+It carries nine accepted clauses, from `PTO-ARCH-MEMORY-MODEL-SCOPE-001` through `PTO-ARCH-MEMORY-MODEL-OPEN-001`, and depends on `PTO-ARCH-MEMORY-MODEL-ATOMICITY`.
 
 <!-- PTO-READER-BLOCK: arch-memory-ordering-concepts-state role=concepts-state -->
-## Event relations
+## The relations this unit builds
 
-- Coherence orders writes to the same location by increasing `coherence_rank`; reads-from connects a write to a read whose `read_from` field names that write.
-- External reads-from keeps reads whose source is an initial write or belongs to a different agent; from-read connects a read to a distinct coherence successor of the write it observed.
-- Same-agent program order at one location and preserved program order across locations provide the two program-order views used by the acyclicity checks.
-- A fence contributes an edge only when it lies between two events from the same agent and both event classes match its predecessor and successor masks.
+- `MemoryCoherenceBefore` needs two writes, a shared location and `left.coherence_rank < right.coherence_rank`.
+- `MemoryReadsFromBefore` needs a write, a read and `read.read_from == write_index`; `MemoryExternalReadsFromBefore` adds an initial write or another `agent`.
+- `MemorySynchronizesWith` needs reads-from, two agents, a `MemoryOrder_Release` or `MemoryOrder_AcquireRelease` write and a `MemoryOrder_Acquire` or `MemoryOrder_AcquireRelease` read.
+- `MemoryProgramOrderLocationBefore` needs increasing indices, one agent, two non-initial-write accesses and a shared location.
+- `MemoryPreservedProgramOrderBefore` needs increasing indices, one agent and two non-initial-write accesses, then accepts two writes, either event `MemoryEvent_Atomic`, an acquire left or release right `order`, or a fence found by `MemoryFenceOrders`.
+- `MemoryFenceOrders` needs at least one event strictly between the pair and accepts the first fence in that span whose `agent` matches both and whose `fence_predecessor` and `fence_successor` masks intersect the matching class.
 
 <!-- PTO-READER-BLOCK: arch-memory-ordering-rules-interactions role=rules-interactions -->
-## Candidate rules
+## Candidate validity rules
 
-Every accessed location has exactly one initial-write event, and each initial write has coherence rank `0`.
+- Every access event must have exactly one `MemoryEvent_InitialWrite` at its address and `size_bytes`; zero or two reject the candidate.
+- Every non-initial write needs a nonzero `coherence_rank` no other write at the location shares, with another write there at rank `coherence_rank - 1`.
+- Every read must name an in-range write at the same location with an equal `write_value`; an atomic read that wrote additionally needs `source.coherence_rank + 1 == event.coherence_rank`.
+- `MemoryRelationAcyclic(uniproc)` adds `MemoryProgramOrderLocationBefore` and `MemoryReadsFromBefore` when `uniproc` is true and `MemoryPreservedProgramOrderBefore` and `MemoryExternalReadsFromBefore` when it is false, then closes the relation transitively and rejects any self-loop.
 
-Every later write to a location has a unique nonzero coherence rank with an immediate predecessor at the preceding rank.
+Design point: `MemoryPreservedProgramOrderBefore` gates on `MemoryEventIsAccess` for both events, so a fence is never an end of a preserved-order edge; fences contribute only through `MemoryFenceOrders`, which is why two events with nothing strictly between them return false.
 
-Every read names an in-range write to the same location and carries the value written by that source. A successful atomic write immediately follows its read source in coherence order.
-
-PTO-RC preserves Store-to-Store program order. Load-to-Load, Load-to-Store, and Store-to-Load pairs to different locations are relaxed unless an atomic event, acquire/release order, dependency, conflict, qualifier, or matching fence restores the edge.
+Design point: the two acyclicity calls use different program-order relations and both must pass: `MemoryProgramOrderLocationBefore` holds only within one location, while `MemoryPreservedProgramOrderBefore` spans locations and is what atomics and matching fences strengthen, so a candidate cyclic in either view is rejected.
 
 <!-- PTO-READER-BLOCK: arch-memory-ordering-boundaries role=boundaries -->
 ## Boundaries and fail-closed cases
 
-Mixed-size or partially overlapping accesses are rejected when their ranges overlap but they do not describe the same location. This owner therefore does not silently invent byte-level coherence for such candidates.
+`MemoryCandidateExecutionValid` returns false as soon as two distinct accesses partially overlap: their ranges overlap but their address and `size_bytes` do not both match. The scan skips the event's own index, and an empty event set is invalid because the function returns false before its loop.
 
-An atomic event does not create a from-read edge to its own write side; from-read considers only a distinct coherence successor.
+Design point: two writes at one location cannot share a rank and every non-initial write needs a predecessor at the preceding rank, so ranks at a location form a gapless chain from the initial write's `0`. A capture whose write lost its predecessor to a flush passes no candidate.
 
-An empty event set is not a valid candidate execution, although the acyclicity helper itself treats an empty relation as acyclic.
+The clauses name relation sources the body does not contain: `PTO-ARCH-MEMORY-MODEL-REQUEST-CLASS-001` (Scalar, Tile, IndexedGenerated, Prefetch), `PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001` (`MemoryShareability_Private`, `MemoryShareability_IntraCore`, `MemoryShareability_InterCore`), `PTO-ARCH-MEMORY-MODEL-RANGE-001` (`index_limit`), `PTO-ARCH-MEMORY-MODEL-DEPENDENCY-001` (address, data and control dependencies) and `PTO-ARCH-MEMORY-MODEL-QUALIFIER-001` (`order_after_prior`, `order_before_later`); none of those names appears in an executable statement here.
 
 <!-- PTO-READER-BLOCK: arch-memory-ordering-example-usage role=example-usage -->
 ## Non-normative analysis example
 
-For a store-buffering candidate, record each agent's store and later read, assign each read to the initial write it observed, and run the validity and acyclicity queries. The relaxed write-to-read pair can leave the candidate allowed when no stronger edge closes a cycle.
+One location, one agent: a `MemoryOrder_Relaxed` store of `1`, then a `MemoryOrder_Relaxed` load that reads the initial write's `0`. The candidate is valid, but `MemoryProgramOrderLocationBefore` gives a store-to-load edge and `MemoryFromReadBefore` the reverse edge, because the store is the coherence successor of the write the load read. The self-loop fails `MemoryRelationAcyclic(TRUE)`, so `MemoryExecutionAllowedRC` rejects the execution.
 
-If matching fences are inserted between each store and read, `MemoryFenceOrders` contributes preserved-program-order edges. Each read of an initial write also has a from-read edge, which `MemoryFromReadBefore` derives from the read's `read_from` source and the later coherence successor at that location; together these edges form a cycle, so `MemoryExecutionAllowedRC` rejects the observed outcome.
+Point the load at the store with `read_value` `1` and the from-read edge disappears, leaving only the same-location program-order edge, so the candidate is allowed: Store to Load order is visible within one location, though Load to Load pairs to different locations are relaxed.
+
+Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
 
 <!-- PTO-READER-BLOCK: arch-memory-ordering-related-owners role=related-owners-navigation -->
 ## Related owners
 
-- [Atomicity](atomicity.md) is this unit's declared dependency and defines the event properties on which ordering relies.
-- [Memory events](memory-events.md) defines event construction and capture.
-- [Execution context](../programming-model/execution-context.md) owns the captured event array, event count, fence selectors, and current memory agent.
+- [Atomicity](atomicity.md) is the declared dependency; it assigns `coherence_rank` and `read_from`.
+- [Memory events](memory-events.md) defines the record fields, class masks and predicates `MemoryEventIsRead`, `MemoryEventIsWrite`, `MemoryEventIsAccess`, `MemoryEventsShareLocation` and `MemoryEventPartialOverlap`.
+- [Fault precision](fault-precision.md) owns `FlushMemoryReplay`, which can remove the coherence predecessor a later write needs.
+- [Global memory access](global-memory-access.md) and [Address space](address-space.md) describe the layers whose events reach this unit.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

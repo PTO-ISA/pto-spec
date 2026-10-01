@@ -19,49 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-andw-purpose role=purpose -->
 ## What ANDW does
 
-`ANDW` is a 32-bit scalar ALU instruction. It performs bitwise conjunction under the low 32-bit word, followed by sign-extension to XLEN result rules; its current instruction contract defines the result publication path and any additional state effect.
+`ANDW` prepares a right source as `AND` does, computes the conjunction over the low `32` bits, and publishes that word sign-extended to `PTO_XLEN`.
+
+Design point: `ANDW` and `AND` share all five fields, so a program can switch between full-width and word masking without changing its operand layout. Only the width of the conjunction and of the publication differ.
 
 <!-- PTO-READER-BLOCK: scalar-andw-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then performs bitwise conjunction under the low 32-bit word, followed by sign-extension to XLEN result rules, and only afterward performs the destination effects.
+`SrcRType` transforms the complete `SrcR` value: `00` sign-extends `SrcR[31:0]`, `01` zero-extends `SrcR[31:0]`, `10` complements every bit, and `11` leaves it unchanged. `shamt` then shifts the transformed value logically left by `0` through `31` bits.
 
-- `SrcRType` first transforms the right source; `shamt` then logically shifts that transformed value left before the arithmetic or logical operation.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+The conjunction is taken on the low `32` bits of both operands, and result bit `31` is copied into bits `63..32` of the published value.
+
+Design point: because the family flag marks `ANDW` as logical, `SrcRType=10` is a complement here, while the same code in `ADDW` is a negation. The two mnemonics differ in that one behaviour as well as in the operation itself.
+
+Design point: bits `63..32` of `SrcL` are excluded before the conjunction, so a source whose upper word is set cannot keep those bits in the result.
 
 <!-- PTO-READER-BLOCK: scalar-andw-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the left operand through Reg5.
-- The 5-bit `SrcR` field selects the right operand through Reg5.
-- The 2-bit `SrcRType` field selects the transformation applied to the right source.
-- The 5-bit `shamt` field encodes the logical-left shift applied after right-source transformation.
+- `SrcL` and `SrcR` are Reg5 sources: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`, without consuming a queue entry.
+- `SrcRType` selects the right-source transformation and `shamt` its post-transformation logical left shift. An omitted assembly suffix encodes `SrcRType=11`.
+- `RegDst` publishes the sign-extended word result: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero reads the architectural zero GPR for both sources and discards for the destination; encoded zero of `SrcRType` selects `.sw`, so the modifier must be encoded explicitly when `.not` is wanted.
 
 <!-- PTO-READER-BLOCK: scalar-andw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are read before the destination is written, so an alias between source and destination observes the pre-instruction value.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The result is published or discarded, and then `TPC` advances by `4` bytes. `ANDW` accesses no memory and leaves reservation, descriptor, numeric-status, trap, bundle, privilege, predicate and control-flow state unchanged apart from the one `T` or `U` push selected by `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-andw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every encoded value is assigned: all four `SrcRType` codes and all `32` `shamt` values from `0` through `31`.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An undecodable form raises `Fault_IllegalInstruction` at `PC`; an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`; a fixed-bit mismatch or an unavailable selected T/U source raises `Fault_IllegalInstruction`. Each precedes the destination effect and the `TPC` advance.
+
+Design point: neither the truncation to `32` bits nor the final sign extension can fault, so `ANDW` has no value-dependent trap. Its whole fault boundary is encoding and source availability.
 
 <!-- PTO-READER-BLOCK: scalar-andw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `ANDW` example, `SrcL=0xc`, `SrcR=0xa`, `SrcRType=11`, and `shamt=0` produce `0x8`.
+With `SrcL=4294967295`, `SrcR=15`, `SrcRType=11` and `shamt=0`, `ANDW` publishes `15`. With `SrcL=18446744073709551615` and `SrcR=3`, the published value is `3`, because only the low word of the source takes part in the conjunction.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

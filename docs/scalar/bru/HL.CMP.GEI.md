@@ -19,42 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-gei-purpose role=purpose -->
 ## What HL.CMP.GEI does
 
-`HL.CMP.GEI` evaluates signed greater-than-or-equal over decoded scalar operands and publishes canonical XLEN one or zero.
+`HL.CMP.GEI` compares a scalar register with a `24`-bit immediate using signed greater-than-or-equal and writes `1` or `0` as the result. The unsigned counterpart is `HL.CMP.GEUI`.
+
+Design point: the relation includes equality, so `hl.cmp.gei a0, imm` and `hl.cmp.lti a0, imm` are exact complements for the same operands. No separate equality test is needed to cover both outcomes.
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-gei-mechanism role=mechanism -->
-## Mechanism
+## How the signed greater-or-equal test is evaluated
 
-The instruction snapshots its operands, prepares the decoded immediate, and then evaluates signed greater-than-or-equal.
+`SrcL` is read and `simm24` is sign-extended to `PTO_XLEN`. The handler evaluates signed greater-than-or-equal on the two `64`-bit words, so the comparison uses two's-complement values. True produces `1`, false produces `0`.
 
-A true relation becomes XLEN one; a false relation becomes XLEN zero.
+Design point: an all-ones word is the signed value `-1`, so `hl.cmp.gei a0, 0` is false for it, even though the same word is the largest unsigned value.
+
+Design point: the written word is always `1` or `0`, never an all-ones mask, so a consumer can add it to a counter, shift it, or test it without masking.
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-gei-inputs-outputs role=inputs-outputs -->
-## Inputs and output
+## Operands and destination codes
 
-- `RegDst` selects the encoded destination or discard behavior.
+- `SrcL` supplies the left operand through the `Reg5` source rules: codes `0` to `23` read absolute GPRs, codes `24` to `27` read the T queue, and codes `28` to `31` read the U queue. A queue code whose entry is not valid rejects the instruction before any read.
 
-- `SrcL` supplies the left scalar source.
+- `simm24` supplies the `24`-bit signed bound, encoded in two pieces of `12` bits and `12` bits.
 
-- `simm24` supplies a signed encoded immediate.
+- `RegDst` selects the destination with the ordinary `Reg5` rules: codes `0` to `23` name absolute GPRs, codes `24` to `29` write nothing, code `30` pushes the U queue, and code `31` pushes the T queue.
+
+Design point: this form has no right-source modifier field, so it has no `.sw`, `.uw`, or `.not` spelling. The left operand is used exactly as read, and the only transformation is the extension of the immediate.
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-gei-effects role=effects -->
 ## Effects and ordering
 
-The canonical boolean is published through the encoded destination, then `TPC` advances by `6` bytes.
+The canonical `1` or `0` is written through the selected destination, and nothing else is written. Because the handler does not write `TPC`, the dispatch boundary then advances `TPC` by `6` bytes, the encoded length of the `48`-bit form.
 
-The instruction does not modify commit state and does not access memory or reservation state.
+`HL.CMP.GEI` is not a condition setter, so it never touches `_CommitArgument`, `BARG.TAKEN`, or the bundle condition marker, and no Conditional-block placement is required for it. The relational commit twin with the same condition is `HL.SETC.GEI`.
+
+The handler reads no memory, takes no reservation, and records no numeric status, so the only architectural difference an accepted execution makes is the destination word and the advanced `TPC`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-gei-constraints role=constraints -->
 ## Legality and fault order
 
-Encoding, reserved field values, and source availability are checked before destination, control, or `TPC` effects.
+The fixed bits of the form must match, otherwise the pattern does not decode as this instruction and raises `Fault_IllegalInstruction`. No field value is reserved: all `32` `RegDst` codes and all values of the `24`-bit immediate field are assigned. The selected `SrcL` code must also be usable, so a T or U queue code whose entry is not valid raises the same fault.
+
+Design point: the decode, source, and destination checks all run before an operand is read and before the destination is written, so a rejected encoding changes neither the destination nor `TPC`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-gei-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not create a second semantic definition.
 
-`hl.cmp.gei SrcL, simm, ->{t, u, Rd}` publishes XLEN one when its condition is true and XLEN zero otherwise.
+With `a0` holding `0xFFFFFFFFFFFFFFFF`, `hl.cmp.gei a0, 0, ->a1` writes `0`, and `hl.cmp.gei a0, -1, ->a1` writes `1`, because equality satisfies the relation.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

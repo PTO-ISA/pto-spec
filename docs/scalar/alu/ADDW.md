@@ -19,49 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-addw-purpose role=purpose -->
 ## What ADDW does
 
-`ADDW` is a 32-bit scalar ALU instruction. It performs addition under the low 32-bit word, followed by sign-extension to XLEN result rules; its current instruction contract defines the result publication path and any additional state effect.
+`ADDW` prepares a right source exactly as `ADD` does, adds it to the left source at 32-bit width, and publishes the low `32` bits sign-extended to `PTO_XLEN`.
+
+Design point: `ADDW` keeps the whole `ADD` field layout, including `SrcRType` and `shamt`, and changes only the width of the final addition. A program that needs both full-width and word arithmetic therefore uses two mnemonics with one operand model rather than two instruction shapes.
 
 <!-- PTO-READER-BLOCK: scalar-addw-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then performs addition under the low 32-bit word, followed by sign-extension to XLEN result rules, and only afterward performs the destination effects.
+The right source is prepared first, at `PTO_XLEN` width: `SrcRType` applies `00` sign-extension of `SrcR[31:0]`, `01` zero-extension of `SrcR[31:0]`, `10` negation, or `11` no change, and `shamt` then shifts that value logically left by `0` through `31` bits.
 
-- `SrcRType` first transforms the right source; `shamt` then logically shifts that transformed value left before the arithmetic or logical operation.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Only then are both operands truncated to their low `32` bits. `ScalarBinaryW` adds `SrcL[31:0]` and the prepared right word modulo `2^32` and sign-extends the result, so bits `63..32` of the published value are copies of result bit `31`.
+
+Design point: the transformation and the shift run before the truncation, so `.sw`, `.uw` and `.neg` see the complete `64`-bit right source and the shifted-out bits are dropped only by the word addition.
+
+Design point: bits `63..32` of `SrcL` are ignored, so `ADDW` is not the low half of `ADD` for large operands. `addw a0, zero, ->a0` is the canonical way to sign-extend `a0[31:0]`.
 
 <!-- PTO-READER-BLOCK: scalar-addw-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the left operand through Reg5.
-- The 5-bit `SrcR` field selects the right operand through Reg5.
-- The 2-bit `SrcRType` field selects the transformation applied to the right source.
-- The 5-bit `shamt` field encodes the logical-left shift applied after right-source transformation.
+- `SrcL` and `SrcR` are Reg5 sources: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`, without consuming a queue entry.
+- `SrcRType` selects the right-source transformation and `shamt` its post-transformation logical left shift. An omitted assembly suffix encodes `SrcRType=11`.
+- `RegDst` publishes the sign-extended word result: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero reads the architectural zero GPR for `SrcL` and `SrcR` and discards for `RegDst`; encoded zero of `SrcRType` selects `.sw`, and encoded zero of `shamt` performs no shift.
 
 <!-- PTO-READER-BLOCK: scalar-addw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are read before the destination is written, so aliases between source and destination use the pre-instruction values.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The result is published or discarded, and then `TPC` advances by `4` bytes. `ADDW` accesses no memory and leaves reservation, descriptor, numeric-status, trap, bundle, privilege, predicate and control-flow state unchanged apart from the one `T` or `U` push selected by `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-addw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every encoded value is assigned: all four `SrcRType` codes and all `32` `shamt` values from `0` through `31`.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An undecodable form raises `Fault_IllegalInstruction` at `PC`; an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`; a fixed-bit mismatch or an unavailable selected T/U source raises `Fault_IllegalInstruction`. Each precedes the destination effect and the `TPC` advance.
+
+Design point: the word addition cannot fault. A sum beyond `2^32` keeps its low `32` bits and sign-extends them, so no overflow trap exists and `ADDW` needs no saturation control.
 
 <!-- PTO-READER-BLOCK: scalar-addw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `ADDW` example, `SrcL=7`, `SrcR=3`, `SrcRType=11`, and `shamt=0` produce `10`.
+With `SrcL=4294967295`, `SrcR=1`, `SrcRType=11` and `shamt=0`, the word sum wraps to `0` and `ADDW` publishes `0`, while `ADD` with the same operands publishes `4294967296`. With `SrcL=3` and `SrcR=3` under `SrcRType=10`, the prepared right value is `-3` and the published word is `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

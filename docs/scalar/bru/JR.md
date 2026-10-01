@@ -19,42 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-jr-purpose role=purpose -->
 ## What JR does
 
-`JR` transfers control to a register-based target plus a signed halfword displacement.
+`JR` transfers control to an address formed from a scalar register plus a signed halfword displacement. The register value is the base, so the target is absolute and does not depend on the current `PC`.
+
+Design point: `jr Ra, 0` is an indirect jump through `Ra`, because the displacement is added to the register value rather than to the `PC`. Unlike `J`, the target is not anchored to the instruction address.
 
 <!-- PTO-READER-BLOCK: scalar-jr-mechanism role=mechanism -->
-## Mechanism
+## Target computation and the even-target rule
 
-The scalar source is snapshotted, the signed immediate is shifted left by `1`, and the values are added to form the target.
+`SrcL` is read through the ordinary `Reg5` source rules, and `simm12` is sign-extended to `PTO_XLEN` and shifted left by `1`. The two are added in `64` bits, wrapping at `2^64`, and the sum is the candidate target.
 
-The target must be even. An odd target raises `Fault_InstructionPC` without installing that target.
+The candidate is installed as the new `PC` only when its lowest bit is `0`. When the lowest bit is `1`, `JumpRegister` raises `Fault_InstructionPC` with the candidate as the fault argument and does not write `PC`.
+
+Design point: the shifted displacement is always even, so only the register value can make the sum odd. Testing the sum therefore covers both inputs with one check, and a fault installs no target at all rather than an aligned substitute.
 
 <!-- PTO-READER-BLOCK: scalar-jr-inputs-outputs role=inputs-outputs -->
-## Inputs and output
+## Operands, alias field, and result
 
-- `SrcL` supplies the left scalar source.
+- `SrcL` supplies the base address through the `Reg5` source rules: codes `0` to `23` read absolute GPRs, codes `24` to `27` read the T queue, and codes `28` to `31` read the U queue. A queue code whose entry is not valid rejects the instruction before any read.
 
-- `SrcZero` is the explicit zero-valued selector required by this encoding.
+- `simm12` supplies the signed halfword displacement, encoded in two pieces of `7` bits and `5` bits.
 
-- `simm12` supplies a signed encoded immediate.
+- `SrcZero` is decoded but never read: no path in the operation uses it, so the value of those `5` bits cannot change the target or the fault decision.
+
+Design point: `SrcZero` is an ignored alias field rather than an operand. The canonical assembly `jr SrcL, label` has no place for it, and all `32` values of the field decode to the same operation.
 
 <!-- PTO-READER-BLOCK: scalar-jr-effects role=effects -->
-## Effects and ordering
+## Effects, faults, and ordering
 
-The accepted target replaces the control-flow PC as one architectural transition.
+`WritePC` installs the even target. `JumpRegister` is a handler that writes `TPC`, so the dispatch boundary does not add the `4`-byte length of this `32`-bit form.
 
-The jump has no scalar destination and does not access memory or reservation state.
+On the fault path no `PC` value is installed and `TPC` does not advance, and `Fault_InstructionPC` reports the candidate target. Neither path writes a register, a queue entry, a memory location, or a `BARG` field.
 
 <!-- PTO-READER-BLOCK: scalar-jr-constraints role=constraints -->
 ## Legality and fault order
 
-Encoding and source availability are checked before target formation; target alignment is checked before the PC update.
+The fixed bits of the form must match and the selected `SrcL` source must be usable, otherwise `Fault_IllegalInstruction` is raised before any target is computed. No field value is reserved, including `SrcZero`.
+
+Design point: the source is read and the target computed only after the decode and operand checks, so a rejected `JR` leaves `PC` and the source register untouched and the instruction can be re-executed after recovery.
 
 <!-- PTO-READER-BLOCK: scalar-jr-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not create a second semantic definition.
 
-`jr SrcL, label` forms and validates the target described above before replacing the PC.
+With `a0` holding `0x8000` and `PC` equal to `0x4000`, `jr a0, 4` installs `0x8008`. `jr a0, 0` installs `0x8000`, and if `a0` instead held `0x8001` the same encoding would raise `Fault_InstructionPC` with the argument `0x8001`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

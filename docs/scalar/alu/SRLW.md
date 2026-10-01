@@ -19,47 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-srlw-purpose role=purpose -->
 ## What SRLW does
 
-`SRLW` is a 32-bit scalar ALU instruction. It logically shifts the source right under the low 32-bit word, followed by sign-extension to XLEN shift rules; its current instruction contract defines the result publication path and any additional state effect.
+`SRLW` shifts the low `32` bits of `SrcL` logically right by an amount taken from the low five bits of `SrcR` and publishes the `32`-bit result sign-extended to `PTO_XLEN`. It has three fields: `RegDst` at `[7 +: 5]`, `SrcL` at `[15 +: 5]` and `SrcR` at `[20 +: 5]`.
+
+The carrier matches `0x00005025` under mask `0xfe00707f`.
+
+The count source can be computed at run time, while the value being shifted is truncated to its low word.
 
 <!-- PTO-READER-BLOCK: scalar-srlw-mechanism role=mechanism -->
-## How the result is formed
+## How the word shift is formed
 
-Execution snapshots the encoded inputs, then logically shifts the source right under the low 32-bit word, followed by sign-extension to XLEN shift rules, and only afterward performs the destination effects.
+Dispatch reaches `ScalarBinaryW(ScalarBinary_SRL, left, right)` through `ExecuteDecodedSimpleBinary` with `word_operation` true (`asl/scalar/model/dispatch/alu.asl:182-183`). The helper binds `left32` to `left[31:0]`, shifts with `LSR(left32, UInt(right[4:0]))`, and returns `SignExtend{PTO_XLEN}(result32)` (`asl/scalar/model/alu/semantics.asl:482`).
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+srlw SrcL, SrcR, ->{t, u, Rd}
+```
+
+Design point: The count comes from the full `SrcR`, so a count value with bits above bit `4` set still supplies its low five bits. A count register holding `5` shifts by `5`, and a count register holding `37` also shifts by `5`.
+
+Design point: The final sign extension means the published word is a signed value even though the shift is logical. A program that wants an unsigned word result treats the low `32` bits of the destination as the answer and ignores the upper half.
 
 <!-- PTO-READER-BLOCK: scalar-srlw-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the scalar value through Reg5.
-- The 5-bit `SrcR` field selects the register shift count through Reg5.
+`SrcL` is the shifted value, `SrcR` the count source, and `RegDst` the destination.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+- `SrcL`, instruction slice `[15 +: 5]`: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, `28..31` read `U#1..U#4`, non-consuming. Only `SrcL[31:0]` participates.
+- `SrcR`, instruction slice `[20 +: 5]`: count source, same map; every value is legal and only bits `4:0` are used.
+- `RegDst`, instruction slice `[7 +: 5]`: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+- Encoded zero of `SrcR` reads the architectural zero GPR, which supplies amount `0`.
+
+Design point: A count whose low five bits are `0` publishes the sign extension of the source word, which need not be the same as the source register. With `a0 = 0x00000000FFFFFFFF`, `srlw a0, a1, ->a2` with `a1 = 0` publishes `0xFFFFFFFFFFFFFFFF`, because the word is `-1` as a signed value.
 
 <!-- PTO-READER-BLOCK: scalar-srlw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are snapshotted before the destination write, so a destination aliasing either source shifts pre-instruction values. The sign-extended word is published and `TPC` advances by `4` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+`SRLW` accesses no memory and leaves reservation, descriptor, numeric-flag, trap, bundle, privilege, predicate and control-flow state unchanged; a `30` or `31` destination is the only case in which a temporary queue moves.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: The instruction has one destination and records no status. The low word of the destination holds the shifted pattern and the upper half repeats its bit `31`, so the raw shifted word is always recoverable from the published value.
 
 <!-- PTO-READER-BLOCK: scalar-srlw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Register shifting uses only the low 5 right-source bits, so the effective amount is `0..31`; every result is defined at the fixed width.
+Every Reg5 source code and every Reg5 destination code is assigned, and the form carries no constraint entry beyond the fixed carrier bits.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unmatched carrier raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`, reachable for `SRLW` only while a system-block terminal request is pending. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`, before the destination effect and before `TPC` advances.
+
+Design point: Both the count truncation and the value truncation are total, so `SRLW` has no operand-selected trap. Its fault boundary is encoding validity plus source availability.
 
 <!-- PTO-READER-BLOCK: scalar-srlw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `SRLW` example, source `16` shifted logically right by `2` produces `4`.
+With `a0` holding `16` and `a1` holding `2`, `srlw a0, a1, ->a2` publishes `4`.
+
+With `a0` holding `0x0000000080000000` and `a1` holding `31`, the word result is `1` and `a2` receives `1`. With `a1` holding `32`, the low five bits of the count are `0`, so the result word is `0x80000000` and `a2` receives `0xFFFFFFFF80000000`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

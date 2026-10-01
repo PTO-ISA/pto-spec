@@ -17,44 +17,67 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-casw-purpose role=purpose -->
-## HL.CASW 的作用
+## `HL.CASW` 做什么
 
-`HL.CASW` 把 `SrcL` 指向的字与 `SrcR` 进行原子比较；相等时写入 `SrcD`，而两条路径都会发布先前的 32 位值。
+`HL.CASW` 有条件地替换 `SrcL` 中地址处的 32 位字。它把该字与 `SrcR` 的低字比较，并且只在两者相等时存入 `SrcD` 的低字。无论结果如何，内存原先持有的字都会通过 `RegDst` 发布，并且该发布值是符号扩展补齐到 64 位 `PTO_XLEN` 宽度，而不是零扩展。
+
+该形式由匹配值 `0x2000600b000e` 与掩码 `0xf000707ff83f` 选出。它的访问宽度为 `4` 字节，因此两次预检都要求地址是 `4` 的倍数，处理程序是 `ScalarHandler_CompareAndSwap`。
 
 <!-- PTO-READER-BLOCK: scalar-hl-casw-mechanism role=mechanism -->
-## 原子机制
+## 先比较，再写入
 
-ASL DOC 契约选择 `ScalarHandler_CompareAndSwap`，访问宽度为 `4` 字节。
+分派器让 `SrcL` 经过 `ScalarDecodedAtomicAddress`，后者读取该寄存器与 `far` 位并调用 `AtomicAddress`。随后 `CompareAndSwap` 以 `4` 字节宽度执行：
 
-匹配与不匹配都会发出一个带排序属性的原子事件；只有匹配路径会把写入标记为已执行。
+- 读预检测试 `UInt(address) MOD 4`，再检查读权限；写预检对同一地址重复这两项测试。
+- 两个翻译后的地址不一致时抛出 `Fault_DataPage`。
+- `LoadTranslatedUnsigned` 把四个字节读成一个 32 位字。
+- 该字与 `NormalizeAtomicUnsigned(SrcR, 4)` 比较，后者是零扩展的 `SrcR[31:0]`。
+- 相等时 `StoreTranslated` 写入 `SrcD` 的低四个字节。一个原子事件记录选定的排序与是否发生写入，随后返回读出的字。
+
+设计要点：只有 `SrcR` 的低 `32` 位进入比较，因此 `SrcR = 0xdeadbeef00000001` 会匹配内存字 `0x00000001`；高 `32` 位无法携带比较所检查的标记。
 
 <!-- PTO-READER-BLOCK: scalar-hl-casw-inputs-outputs role=inputs-outputs -->
-## 输入与结果
+## 字段与路由位
 
-`SrcL` 承载 Reg5 原子地址源；`SrcR` 承载 Reg5 期望字源；`SrcD` 承载 Reg5 目标字源；`RegDst` 承载 Reg5 旧值目的地；`aq` 承载获取排序位；`rl` 承载释放排序位；`far` 承载平坦地址路由提示。
+- `SrcD` 位于指令第 6 位，宽度 `5`：要写入的字源。
+- `RegDst` 位于指令第 23 位，宽度 `5`：旧值的目的地。
+- `SrcL` 位于指令第 31 位，宽度 `5`：原子地址源。
+- `SrcR` 位于指令第 36 位，宽度 `5`：期望字源。
+- `rl` 位于指令第 41 位：release 排序位。
+- `aq` 位于指令第 42 位：acquire 排序位。
+- `far` 位于指令第 43 位：配置档路由提示。
 
-`aq` 与 `rl` 选择宽松、获取、释放或获取-释放排序；`far` 是配置档路由提示，在参考配置档中不改变架构结果。
+设计要点：`far` 位于 `aq` 与 `rl` 位之上，并被交给 `AtomicAddress`，后者原样返回其参数。因此包括 `hl.casw.f`、`hl.casw.aqf`、`hl.casw.rlf` 与 `hl.casw.aqrlf` 在内的全部 `8` 种规范写法都选择同一个形式并访问同一个字：`.f` 写法把 `far=1` 编码，在参考配置档中既不改变地址，也不改变写入值或发布值。
 
 <!-- PTO-READER-BLOCK: scalar-hl-casw-effects role=effects -->
-## 效果与排序
+## 发布值与内存
 
-预检成功后，即使比较不匹配也会发布旧值；只有相等时内存才会改变。
+匹配时该地址处的四个字节变成 `SrcD` 的低四个字节；不匹配时它们保持不变。匹配的写入在所存四个字节与保留的 64 字节颗粒重叠时使本地保留失效。
 
-完成的写入会使重叠的本地 64 字节缓存行保留失效，保留不重叠的保留，并让 `TPC` 前进 `6` 字节。
+设计要点：发布值采用符号扩展，因此第 `31` 位为 1 的字会变成负的 64 位值：内存字 `0x80000001` 发布为 `0xffffffff80000001`。比较是无符号的，因为两侧都做零扩展，所以同一个 `0x80000001` 会精确匹配；需要零扩展副本的程序必须自行对发布值做掩码。
 
 <!-- PTO-READER-BLOCK: scalar-hl-casw-constraints role=constraints -->
-## 合法性与精确故障
+## 合法性与故障
 
-有效地址必须按 `4` 字节对齐。对齐、地址翻译和权限检查都先于架构效果。
+`SrcL`、`SrcR`、`SrcD` 和 `RegDst` 的全部 `32` 个选择符编码都已分配，`aq`、`rl` 与 `far` 的每一种组合都能译码为该形式。`T` 或 `U` 队列条目不可用时操作数非法，固定位模式无法译码时译码失败；两者都在任何架构效果之前于 `ReadPC()` 抛出 `Fault_IllegalInstruction`。
 
-预检失败时不会发布目的值、内存事件、保留更新或退役效果；保存的原始 `TPC` 支持完整重新执行。
+地址必须是 `4` 的倍数；否则读预检以原始地址报出 `Fault_DataAlignment`。预检故障不发布目的地值、不记录原子事件、不改变保留状态，也不推进 `TPC`。
+
+设计要点：决定步长的是 48 位编码本身。分派器加上 `length_bits DIV 8`，对 `HL.CASW` 而言是 6，因此下一条指令从本条之后 6 字节开始，发生故障的实例会重新执行同样的 6 字节。
 
 <!-- PTO-READER-BLOCK: scalar-hl-casw-example role=example -->
-## 非规范示例
+## 交换一个看起来为负的字
 
 本示例只展示一种已接受写法；下方生成的契约仍是权威来源。
 
-初次阅读可从 `hl.casw [SrcL], SrcR, SrcD, ->Rd` 开始，再只改变上文说明的排序或路由修饰位。
+当 `SrcL` 处的字等于 `0x80000001`、`SrcR` 的低字等于 `0x80000001`、`SrcD` 的低字等于 `0x55667788` 时，比较匹配：四个字节变成 `0x55667788`，`RegDst` 收到 `0xffffffff80000001`，事件报告 `write_performed=true`。
+
+当 `SrcR` 的低字等于 `0x00000002` 时，比较失败：内存保持 `0x80000001`，`RegDst` 仍收到 `0xffffffff80000001`，事件报告 `write_performed=false`。而 `SrcR = 0xdeadbeef00000001` 与内存字 `0x00000001` 的情形表明，`SrcR` 的高位不在比较范围内。
+
+```asm
+hl.casw.aqrlf [a0], a1, a2, ->a3
+hl.casw.aqrl [a0], a1, a2, ->a3
+```
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

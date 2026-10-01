@@ -19,56 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fcvtn-purpose role=purpose -->
 ## FCVTN 的作用
 
-`FCVTN` 通过当前数值配置档使用固定最近值舍入，把 FP64、FP32、FP16 或 E4M3 输入转换到原始 DstType 编码 `0..7`（UD/UW/UH/UB 或 SD/SW/SH/SB）。
+`FCVTN` 把浮点载体转换为整数载体，并按最近舍入且平局取偶规则把结果写入 Reg5 目的。
+
+舍入规则由助记符固定，不从寄存器字段读取，因此需要该舍入方式的程序可以直接指名它。
 
 <!-- PTO-READER-BLOCK: scalar-fcvtn-mechanism role=mechanism -->
-## 数值机制
+## 把有限源舍入到整数目的
 
-`SrcType=00`、`01`、`10` 和 `11` 分别选择 FP64、FP32、FP16 和 E4M3 载体。
+`SrcType` 选择源载体，编码 `0..3` 全部已分配，依次表示 FP64、FP32、FP16 和 E4M3。`DstType` 是原始五位字段：原始编码 `0..3` 选择无符号目的 `UD`、`UW`、`UH`、`UB`，原始编码 `4..7` 选择对应的有符号目的 `SD`、`SW`、`SH`、`SB`，原始编码 `8..31` 为保留值。
 
-当前配置档接收已经快照的操作数和助记符选定的操作，再返回结果以及精确的 `NV`、`DZ`、`OF`、`UF`、`NX` 向量。
+源在配置档运行之前规范化到完整字。结果把已有限的值舍入到整数目的，因此舍入决策只发生一次：在小数部分被丢弃的时候。舍入到最近整数，并在恰好半值时取偶数结果，因此 `2.5` 变为 `2`，`3.5` 变为 `4`。
 
-`pto-v0` 参考配置档对所有共享类型组合使用与 `TCVT` 相同的确定性数值、舍入、范围、特殊值、饱和和标志规则；标量转换关闭饱和。
+设计要点：由于该规则是契约的固定部分，同一源值对本助记符总是产生同一整数，与当前舍入模式字段无关；需要不同平局规则的两个程序只需指名不同助记符。
 
 <!-- PTO-READER-BLOCK: scalar-fcvtn-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `DstType` 选择目的载体编码。
+- `SrcL` 提供唯一的 Reg5 源。
+- `SrcType` 选择源载体；编码 `0..3` 全部已分配。
+- `DstType` 选择目的整数宽度与符号性；编码 `0..7` 已分配，编码 `8..31` 为保留值。
+- `RegDst` 选择目的：编码 `1..23` 写所指的绝对 GPR，编码 `30` 压入 `U` 队列，编码 `31` 压入 `T` 队列，编码 `0` 以及编码 `24..29` 丢弃结果。
 
-- `RegDst` 选择编码指定的目的位置或丢弃行为。
-
-- `SrcL` 提供左侧标量源。
-
-- `SrcType` 选择源载体宽度。
-
-- Reg5 源选择器可以读取 GPR、T 或 U 状态，且不会消费临时队列项。
-
-- 目的选择器可以写 GPR、压入 T/U，或只丢弃结果。
+Reg5 源码读取绝对 GPR、`T#1..T#4` 或 `U#1..U#4`，且不消费队列项。`SrcL` 中的编码零读取架构零 GPR。
 
 <!-- PTO-READER-BLOCK: scalar-fcvtn-effects role=effects -->
 ## 效果与顺序
 
-所有显式源都会在数值状态或目的效果前完成快照。
+整数结果被规范化到选定的目的宽度并写入一次，配置档返回的标志按位或进粘性数值状态。随后 `TPC` 前进 `4` 字节。内存、保留状态和描述符状态都不改变。
 
-配置档返回的五个标志全部按位或到粘滞数值状态；该操作不能清除已有标志。
-
-结果完成发布或丢弃后，`TPC` 前进 `4` 字节。该指令不产生内存或保留状态效果。
+NaN 源为目的发布零，无穷源发布目的端点值，两种情形都记录 `NV` 而不是引发陷阱。该助记符不会对结果做饱和处理；标量转换中饱和是关闭的。
 
 <!-- PTO-READER-BLOCK: scalar-fcvtn-constraints role=constraints -->
-## 类型与配置档边界
+## 类型合法性与舍入字段
 
-四个 `SrcType` 值均已分配。不可用 T/U 源会在读取源、调用配置档、更新标志或队列、写入目的以及改变 `TPC` 前引发 `Fault_IllegalInstruction`。
+类型合法性在第一次架构源读取之前确定：每个 `SrcType` 都合法，且 `DstType` 必须至多为 `7`。保留的目的类型、固定位不匹配或所选的 `T`、`U` 源不可用，都会在任何源、配置档、目的、标志、队列或 `TPC` 效果之前引发 `Fault_IllegalInstruction`。
 
-原始 DstType 编码 `0..7` 已分配；`8..31` 为保留值，并在产生效果前拒绝。
-
-可移植指令契约拥有载体选择、源快照、标志累积、发布和故障顺序；当前具名配置档拥有数值结果和产生的标志。
+每个 Reg5 目的编码都已分配，因此没有非法的目的编码。该助记符不查询当前舍入字段，因此改变该字段不会改变本条指令的结果。数值状态标志只更新粘性状态，永远不会引发同步 PTO 陷阱。
 
 <!-- PTO-READER-BLOCK: scalar-fcvtn-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不会脱离规范规则或当前配置档另行定义算术。
+This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
 
-`fcvtn.fd2sd a0, ->a1` 选择载体，对源取快照，调用当前配置档，累积返回标志，发布结果，最后推进 `TPC`。
+规范示例是 `fcvtn.fd2sd a0, ->a1`：GPR `a0` 保存 `0x4004000000000000`，表示 `2.5`，而编码 `DstType` 选择 `SD` 的形式会把 `2` 写入目的，因为 `2` 是偶数邻居。
+
+配套示例 `fcvtn.fs2sw t#1, ->u` 把 `T#1` 项低字中的 FP32 载体转换为有符号 32 位整数，并把结果压入 `U` 队列。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

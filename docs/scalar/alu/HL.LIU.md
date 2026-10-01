@@ -19,46 +19,49 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-liu-purpose role=purpose -->
 ## What HL.LIU does
 
-`HL.LIU` is a 48-bit scalar ALU instruction. It assembles the split 32-bit immediate and zero-extends it to XLEN; its current instruction contract defines the result publication path and any additional state effect.
+`HL.LIU` materializes an unsigned constant. It encodes no source register. Decode reassembles the `uimm32` immediate from two pieces, zero-fills every result bit above bit `31`, and publishes the value through `RegDst`. Successful execution advances `TPC` by `6` bytes.
+
+Design point: the zero fill is unconditional, so no result of this mnemonic has a bit set above bit `31` and every published value lies in `0` through `4294967295`. `hl.liu 4294967295, ->a0` writes `4294967295`, while the same `32` encoded bits through `hl.lis -1, ->a0` write `18446744073709551615`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-liu-mechanism role=mechanism -->
-## How the result is formed
+## How the constant is formed
 
-Execution snapshots the encoded inputs, then assembles the split 32-bit immediate and zero-extends it to XLEN, and only afterward performs the destination effects.
+One immediate piece carries value bits `19:0` and the other carries bits `31:20`; the reassembled pattern is exact. That `32`-bit pattern is then placed in the low half of a `PTO_XLEN` word, with zeros above it.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: the encoded field is `32` bits wide and the destination word is `64` bits wide, so bits `63:32` are not encoded at all and are always zero. A constant that needs one of those bits set has to come from another form, because no `uimm32` pattern can supply it.
 
 <!-- PTO-READER-BLOCK: scalar-hl-liu-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The unsigned 32-bit `uimm32` field carries the unsigned split 32-bit immediate.
+- `uimm32` carries the unsigned `32`-bit value.
+- `RegDst` publishes it: codes `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: `uimm32=0` materializes the numeric value `0`, so `hl.liu 0, ->t` pushes a zero `T` entry instead of performing nothing. The pushed entry is valid, so a later relative read of `T#1` finds the `0`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-liu-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Nothing is read before publication, because the form selects no source. The materialized value goes to the selected destination: a GPR write, a `U` or `T` push that makes the new value index `1` and discards whatever was at index `4`, or a discard that leaves register and queue state alone.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Publication is followed by the `TPC` advance of `6` bytes. `HL.LIU` performs no memory access and changes no reservation, descriptor, numeric-status, `Tile`, bundle, privilege or branch-target state.
 
 <!-- PTO-READER-BLOCK: scalar-hl-liu-constraints role=constraints -->
 ## Legality and fault boundary
 
-Materialization, movement, and extension are total at their fixed widths and do not raise arithmetic exceptions. A fixed-bit mismatch or unavailable selected T/U source faults before state effects.
+Every encoded value is assigned: all `32` `RegDst` codes and all `4294967296` patterns of the `32`-bit immediate field.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Two rejections are reachable, in model order. A `48`-bit word whose fixed bits match no form raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active bundle raises `Fault_BundleControl` at `TPC`. Both precede the destination effect and the `TPC` advance.
+
+Design point: the source-availability rejection of the register forms is absent here, because there is no source selector for the model to test. The destination side is equally open: every one of the `32` destination codes is assigned, and codes `24..29` are discard values of the destination map rather than reserved encodings.
+
+`HL.LIU` adds no arithmetic exception: zero extension of a `32`-bit value cannot overflow.
 
 <!-- PTO-READER-BLOCK: scalar-hl-liu-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.LIU` example, split immediate value `1` materializes XLEN value `1`.
+`hl.liu 4294967295, ->u` pushes `4294967295` as the newest `U` entry, with bits `63:32` left zero. `hl.liu 1, ->a0` writes `1`, which is also what `hl.lis 1, ->a0` would write, because the two forms differ only once bit `31` of the immediate is set.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,42 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-lr-h-purpose role=purpose -->
 ## What LR.H does
 
-`LR.H` loads one halfword, publishes its zero-extended value, and replaces the local reservation with the containing 64-byte line.
+`LR.H` loads one halfword from the address in `SrcL`, publishes it through `RegDst`, and establishes a reservation on the loaded location. Successful execution advances `TPC` by `4` bytes.
+
+Design point: the two loaded bytes land in the low half of the destination and the upper `48` bits are cleared, so the halfword `0x8000` is never published as a negative XLEN value.
 
 <!-- PTO-READER-BLOCK: scalar-lr-h-mechanism role=mechanism -->
-## Atomic mechanism
+## How the halfword load is ordered
 
-The ASL DOC contract selects `ScalarHandler_LoadReserved` with an access width of `2` bytes.
+Dispatch routes the form to `ExecuteDecodedLoadReserved(instruction, form, 2)`. That helper snapshots `SrcL`, converts `aq` and `rl` into a memory order with `ScalarDecodedMemoryOrder`, and calls `LoadReserved(address, 2, order)`; on a fault-free return it writes `NormalizeAtomicReturn(old_value, 2)` to `RegDst`.
 
-`SrcZero` is an ignored five-bit alias field: all 32 encodings select the same operation and consume no source through that field.
+Inside `LoadReserved`, `LoadWithOrder` performs the access: `ProbeDataAccess(address, 2, 2, FALSE)` for alignment, translation and read permission, then a two-byte little-endian read, then one load event at the translated address. The reservation is written only while the fault flag stays clear.
+
+Design point: `ProbeDataAccess` tests `UInt(address) MOD alignment_bytes` before it calls `TranslateDataAddress`, so an odd address reports `Fault_DataAlignment` here and the bounds check is never consulted for that address.
 
 <!-- PTO-READER-BLOCK: scalar-lr-h-inputs-outputs role=inputs-outputs -->
-## Inputs and result
+## Fields, sources and destinations
 
-`SrcL` carries the Reg5 load address source; `SrcZero` carries the ignored 5-bit alias field; `RegDst` carries the Reg5 loaded-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+`SrcL@15:5` supplies the load address, `RegDst@7:5` receives the published halfword, and `SrcZero@20:5`, `rl@25:1`, `aq@26:1` and `far@27:1` complete the encoding; each entry names the low instruction bit and the field width.
 
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+`SrcL` accepts every Reg5 source selector: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`, and reading a queue entry does not pop it. `RegDst` accepts every destination selector: `1..23` write that GPR, `0` and `24..29` discard, `30` pushes `U`, and `31` pushes `T`. `aq` and `rl` select the load order, and `far` is a routing hint that leaves the address unchanged.
+
+Design point: no code path reads `SrcZero`, so the `32` bit patterns of that field select one instruction, and the field has no assembly spelling; `LR.H` cannot be given an operand through it.
 
 <!-- PTO-READER-BLOCK: scalar-lr-h-effects role=effects -->
 ## Effects and ordering
 
-A successful load emits one ordered load event, publishes the old value, and establishes the reservation only after access preflight completes.
+A successful load reads one little-endian halfword, records one load event at the translated address with the order selected by `aq` and `rl` while memory-event capture is enabled, publishes the loaded `16` bits zero-extended through `RegDst`, and updates the local reservation to the original address with the width `2`. `TPC` then advances by `4` bytes.
 
-After the load, the containing 64-byte line becomes the local reservation and `TPC` advances by `4` bytes.
+Design point: the publication rule follows the access width, not the destination register width. The halfword `0x8000` is published as `0x0000000000008000`, while `LR.W` publishes `0xffffffff80000000` for the word `0x80000000`, so the same top bit set gives a zero-extended value at this width and a negative value at word width.
 
 <!-- PTO-READER-BLOCK: scalar-lr-h-constraints role=constraints -->
 ## Legality and precise faults
 
-The effective address must be aligned to `2` bytes. Alignment, translation, and permission checks precede architectural effects.
+The access preflight runs before any effect: alignment to `2` bytes, then translation, then read permission and bounds. A rejected address reports the original architectural address, which `TranslateDataAddress` returns unchanged in the reference model.
 
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+After a fault nothing is published, no load event is recorded, an older reservation is preserved, and `TPC` stays on the instruction. A decode failure or an unavailable selected T/U source raises `Fault_IllegalInstruction` earlier.
+
+Design point: an odd address fails the alignment test, so `LR.H` reports `Fault_DataAlignment` for it and never reaches the bounds check, while the next byte address above it is even and does reach that check.
 
 <!-- PTO-READER-BLOCK: scalar-lr-h-example role=example -->
 ## Non-normative example
 
 This example only shows one accepted spelling; the generated contract below remains authoritative.
 
-For a first reading, use `lr.h [SrcL], ->Rd` and then vary only the ordering or route modifiers described above.
+When the addressed halfword holds `0x8000`, `lr.h [a0], ->a1` publishes `0x0000000000008000` in `a1`, and the reservation covers the `64`-byte granule that contains the halfword.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

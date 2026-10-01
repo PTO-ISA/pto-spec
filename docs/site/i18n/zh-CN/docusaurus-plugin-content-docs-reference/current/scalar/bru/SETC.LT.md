@@ -19,44 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-lt-purpose role=purpose -->
 ## SETC.LT 的作用
 
-`SETC.LT` 判断有符号小于，并把结果发布为当前条件指令束的提交判定。
+`SETC.LT` 把两个标量寄存器当作有符号整数比较，并把结果发布为所在 Conditional 指令束的提交判定。
+
+该判定写入提交参数（commit argument），指令束在条件转移时读取它，同时它也驱动 `BARG.TAKEN`。
 
 <!-- PTO-READER-BLOCK: scalar-setc-lt-mechanism role=mechanism -->
-## 执行机制
+## 在同一设置者路径下的有符号小于
 
-在检查源就绪状态或读取源之前，先检查放置和单次设置规则。
+该指令没有目的寄存器。它对 `SrcL` 和准备好的右侧操作数做快照，测试 `ConditionHolds(ScalarCondition_LT, left, right)`，关系成立时存入恰好 `1`，不成立时存入恰好 `0`。
 
-指令对源取快照，判断有符号小于，再规范化为 XLEN 一或零。
+`ConditionHolds` 比较 `SInt(left) < SInt(right)`，因此两个字都按二进制补码有符号值解释。最高位为一的字表示负数。
+
+设计要点：有符号解释正是与 `SETC.LTU` 的全部区别。两个助记符运行同一设置者路径，只是契约返回的条件不同，因此程序选择的是它想要比较的语义，而不是它手头操作数的排布。
 
 <!-- PTO-READER-BLOCK: scalar-setc-lt-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `SrcL` 提供左侧标量源。
+- `SrcL` 提供左侧绝对 GPR 源。
+- `SrcR` 提供右侧绝对 GPR 源。
+- `SrcRType` 在测试关系之前变换 `SrcR` 快照：值 `1` 代入低 `32` 位的符号扩展结果，值 `2` 代入低 `32` 位的零扩展结果，值 `0` 和 `3` 保持完整字不变。
 
-- `SrcR` 提供右侧标量源。
-
-- `SrcRType` 选择右源变换。
+`SrcL` 或 `SrcR` 中的编码零指向架构零 GPR。源按值读取且不会被消费，也不写任何 `GPR`、`T` 或 `U` 目的。
 
 <!-- PTO-READER-BLOCK: scalar-setc-lt-effects role=effects -->
 ## 效果与顺序
 
-规范化条件会原子写入 `_CommitArgument` 和 `BARG.TAKEN`，同时置位条件已设置标记。
+成功时提交参数收到规范化条件，指令束处于活动状态时 `BARG.TAKEN` 取同一真值，指令束条件标记变为已设置，随后 `TPC` 前进 `4` 字节。
 
-成功时，`SETC.LT` 让 `TPC` 前进 `4` 字节；它没有标量目的位置，也不产生内存或保留状态效果。
+该指令没有内存、保留状态、描述符或数值状态效果。`BARG.BPC`、`BARG.BPCN`、`BARG.BlockType` 和 `BARG.TYPE` 保持不变。
 
 <!-- PTO-READER-BLOCK: scalar-setc-lt-constraints role=constraints -->
-## 合法性与故障顺序
+## 合法性、放置与故障顺序
 
-该指令只在适用的条件指令束上下文中合法，并且只能有一个条件设置操作成功。
+适用性限于活动 Conditional 指令束的束体，共享标记允许该指令束中最多一个成功的 `SETC` 条件设置者。
 
-放置错误或重复设置会在读取源之前引发非法指令束异常；编码或源不可用会在提交状态或 `TPC` 效果前引发 `Fault_IllegalInstruction`。
+错误的放置位置或第二个成功的设置者会在操作数合法性检查和任何源读取之前引发 `Fault_BundleControl`（陷阱编号 `5`，`BUNDLE_TRAP`）。固定位不匹配或所选的 `T`、`U` 源不可用会在提交状态、`BARG`、队列或 `TPC` 效果之前引发 `Fault_IllegalInstruction`。被拒绝的一次出现不会消耗共享标记。
 
 <!-- PTO-READER-BLOCK: scalar-setc-lt-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不构成第二份语义定义。
+This example illustrates the current owner and does not create a second semantic definition.
 
-`setc.lt SrcL, SrcR<{.sw, .uw}>` 按上述规则计算条件，把规范化判定写入提交状态，并且只在更新完成后推进 `TPC`。
+把 `-1` 放入 GPR1、`1` 放入 GPR2，然后执行 `setc.lt R1, R2`。有符号比较 `-1 < 1` 成立，因此提交参数和 `BARG.TAKEN` 变为 `1`。同样的操作数在无符号形式 `SETC.LTU` 下提交 `0`，因为 `-1` 表示最大的无符号值。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

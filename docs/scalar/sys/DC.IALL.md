@@ -19,40 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-iall-purpose role=purpose -->
 ## What DC.IALL does
 
-`DC.IALL` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+`DC.IALL` is the data-cache all-entry scope maintenance operation. It removes any operand question entirely: the encoding is a single fixed 32-bit form with no field at all (`asl/scalar/sys/DC.IALL.asl:1`), so the semantic operand is the all-zero XLEN value.
 
 <!-- PTO-READER-BLOCK: scalar-dc-iall-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+The instruction selects the shared maintenance handler (`asl/scalar/sys/DC.IALL.asl:11`) and the operation token `Maintenance_DC_IALL` (`asl/scalar/sys/DC.IALL.asl:23`). Because `InstructionContractMaintenanceUsesOperand_DC_IALL` returns `FALSE` (`asl/scalar/sys/DC.IALL.asl:29`), the dispatcher passes `Zeros{PTO_XLEN}` instead of reading a register (`asl/scalar/model/dispatch/sys.asl:23`).
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+That dispatch line is the practical difference from `DC.IVA` and its siblings: no scalar register is read at all, so a temporary queue that happens to be empty cannot make this instruction illegal.
+
+The instruction still needs an active SYS block body to be applicable (`asl/scalar/model/sys/semantics.asl:322`).
 
 <!-- PTO-READER-BLOCK: scalar-dc-iall-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-The encoding has no explicit operand field; the operation is selected entirely by its fixed instruction bits.
+There is no encoded operand. The mask `0xffffffff` of the single catalog record leaves no variable bits, so every 32-bit word that matches the form means exactly one thing.
+
+The recorded operand is zero, and the instruction writes no destination register and no temporary queue entry.
 
 <!-- PTO-READER-BLOCK: scalar-dc-iall-effects role=effects -->
 ## Architectural effects
 
-On success, the maintenance record receives `Maintenance_DC_IALL` and the exact captured operand token.
+A successful attempt advances the data-cache epoch by one (`asl/scalar/model/sys/semantics.asl:137`) and stores `Maintenance_DC_IALL` together with the zero operand in the maintenance record (`asl/scalar/model/sys/semantics.asl:159`). `TPC` then advances by 4 bytes, the length of this 32-bit form (`asl/scalar/model/dispatch/top-level.asl:56`).
 
-Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+Design point: an all-entry request has no scope token to preserve, but the record is still written. The record therefore always describes the most recent successful maintenance operation, whether or not that operation had an operand worth naming.
+
+No ordinary scalar memory access happens, and no data is installed into or removed from a modelled cache.
 
 <!-- PTO-READER-BLOCK: scalar-dc-iall-constraints role=constraints -->
 ## Placement and rejection
 
-Cache maintenance is a synchronous local hint at every ACR and does not define additional implementation cache contents.
+The only rejection path that reaches this instruction is placement. Outside an active SYS block body the dispatcher raises `Fault_BundleControl` and never calls the executor, so the record and the epoch hold their prior values.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+There are no reserved encodings to reject, because every bit is fixed. There is also no ring restriction: `MaintenanceAccessPermitted` returns `TRUE` for the data-cache operations at every ACR (`asl/scalar/model/sys/semantics.asl:123`).
 
 <!-- PTO-READER-BLOCK: scalar-dc-iall-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `dc.iall` and trace its encoded fields through preflight before following the selected system effect.
+Execute `dc.iall` inside a SYS block body. The attempt checks its fixed bits, advances the data-cache epoch by one, records `Maintenance_DC_IALL` with operand zero, and advances `TPC` by 4 bytes. Executing it in any other block kind, for example a Standard block body, raises `Fault_BundleControl` instead.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,46 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-ori-purpose role=purpose -->
 ## SETC.ORI 的作用
 
-`SETC.ORI` 计算按位或条件，并把它发布为当前条件指令束的提交判定。
+`SETC.ORI` 用一个编码立即数对某个标量寄存器做按位 OR 组合，并把组合结果是否非零发布为所在 Conditional 指令束的提交判定。
+
+立即数是由指令携带的常量掩码，因此“任何非零寄存器都满足”的测试不需要第二个寄存器。
 
 <!-- PTO-READER-BLOCK: scalar-setc-ori-mechanism role=mechanism -->
-## 执行机制
+## 符号扩展后的常量掩码
 
-放置和单次设置检查通过后，指令对操作数取快照并执行按位或。
+有符号字段 `simm12` 先符号扩展到完整字宽，再按 `shamt`（模型读作该编码字段的低 `6` 位）逻辑左移。该指令把完整左侧字与该移位后的值做 OR，组合为零时存入恰好 `0`，否则存入恰好 `1`。
 
-在计算条件前，解码立即数会按 `shamt` 进行逻辑左移。
+左侧操作数按完整字读取，从不移位。
 
-组合值为零时提交条件为假，任何非零值都表示真。
+设计要点：由于立即数在移位之前先做符号扩展，全一立即数经缩放后仍然保留，使 OR 对左侧操作数的任何取值都非零；这是用立即数形式无条件提交一个条件的方法。
 
 <!-- PTO-READER-BLOCK: scalar-setc-ori-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `SrcL` 提供左侧标量源。
+- `SrcL` 提供左侧绝对 GPR 源，按完整字读取。
+- `shamt` 提供施加于立即数的移位量；编码零表示不移位。
+- `simm12` 提供有符号编码立即数；编码零提供数值零。
 
-- `shamt` 提供编码指定的移位量。
-
-- `simm12` 提供有符号编码立即数。
+`SrcL` 不会被消费，也不写任何 `GPR`、`T` 或 `U` 目的。
 
 <!-- PTO-READER-BLOCK: scalar-setc-ori-effects role=effects -->
 ## 效果与顺序
 
-规范化条件会原子写入 `_CommitArgument` 和 `BARG.TAKEN`，同时置位条件已设置标记。
+成功时提交参数保存恰好 `1` 或 `0`，指令束处于活动状态时 `BARG.TAKEN` 镜像该真值，指令束条件标记变为已设置，`TPC` 前进 `4` 字节。
 
-成功时，`SETC.ORI` 让 `TPC` 前进 `4` 字节；它没有标量目的位置，也不产生内存或保留状态效果。
+没有内存、保留状态、描述符或数值状态效果，`BARG.BPC`、`BARG.BPCN`、`BARG.BlockType` 和 `BARG.TYPE` 保持不变。
 
 <!-- PTO-READER-BLOCK: scalar-setc-ori-constraints role=constraints -->
-## 合法性与故障顺序
+## 设置者标记与放置检查拒绝什么
 
-该指令只在适用的条件指令束上下文中合法，并且只能有一个条件设置操作成功。
+该操作只适用于活动 Conditional 指令束的束体，那里最多只能有一个成功的 `SETC` 条件设置者完成。
 
-放置错误或重复设置会在读取源之前引发非法指令束异常；编码或源不可用会在提交状态或 `TPC` 效果前引发 `Fault_IllegalInstruction`。
+错误的放置位置或重复的成功设置者会在操作数合法性检查和任何源读取之前引发 `Fault_BundleControl`（陷阱编号 `5`，`BUNDLE_TRAP`）。固定位不匹配或所选的 `T`、`U` 源不可用会在提交状态、`BARG`、队列或 `TPC` 效果之前引发 `Fault_IllegalInstruction`。被拒绝的一次出现不会消耗共享标记。
 
 <!-- PTO-READER-BLOCK: scalar-setc-ori-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不构成第二份语义定义。
+This example illustrates the current owner and does not create a second semantic definition.
 
-`setc.ori SrcL, simm` 按上述规则计算条件，把规范化判定写入提交状态，并且只在更新完成后推进 `TPC`。
+把 `0` 放入 GPR1，并执行编码字段为 `SrcL=1`、`shamt=0`、`simm12=-1` 的形式。立即数符号扩展为全一字，OR 对任何左侧操作数都非零，因此该形式提交 `1`。若 `simm12=0` 且 GPR1 仍为 `0`，同一形式则提交 `0`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-oriw-purpose role=purpose -->
 ## HL.ORIW 的作用
 
-`HL.ORIW` 是一条 48 位标量 ALU 指令。它按照低 32 位字，再符号扩展到 XLEN结果规则执行按位或；当前指令契约定义结果发布路径以及任何额外状态效果。
+`HL.ORIW` 是一条 48 位标量 ALU 指令，它对 `SrcL[31:0]` 与符号扩展后 `simm24` 的低字做字或运算，再把 32 位结果符号扩展到 XLEN，并通过一个 Reg5 目标发布。
+
+只计算 `32` 个结果位，但发布字是完整的 XLEN 值，其高半部重复该结果的第 `31` 位。
 
 <!-- PTO-READER-BLOCK: scalar-hl-oriw-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后按照低 32 位字，再符号扩展到 XLEN结果规则执行按位或，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractResult_HL_ORIW`，它构造 `right = SignExtend{PTO_XLEN}(immediate)` 并返回 `ScalarBinaryW(ScalarBinary_OR, left, right)`。`ScalarBinaryW` 取 `left[31:0]` 与 `right[31:0]`，把它们或合成 32 位值，并返回该值的 `SignExtend{PTO_XLEN}`。分派路径用 `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_OR, ScalarField_simm24, TRUE)` 选择它。
 
-- 立即数宽度与扩展规则由下方编码字段确定；除非生成契约给出其他零值含义，编码零提供数值零。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+hl.oriw SrcL, simm, ->{t, u, Rd}
+```
+
+设计要点：符号扩展后立即数的高半部在或运算之前就被丢弃，因此在这里扩展立即数不改变任何东西。真正被结果符号扩展改变的是发布的高半部：`a0 = 0x00000000FFFFFFFF` 时 `hl.oriw a0, 0, ->a0` 发布 `0xFFFFFFFFFFFFFFFF`，因为字结果的第 `31` 位是 `1`。
 
 <!-- PTO-READER-BLOCK: scalar-hl-oriw-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 标量结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择标量值，其中只有低 32 位参与。
-- `simm24` 是 24 位有符号字段，携带有符号分段 24 位立即数。
+- `RegDst`，指令切片 `[23 +: 5]`，接收符号扩展后的字结果，或丢弃它。
+- `SrcL`，指令切片 `[31 +: 5]`，提供只有 `31:0` 位参与的值。
+- `simm24`，指令切片 `[36 +: 12]` 与 `[4 +: 12]`，提供数值位 `11:0` 与 `23:12`。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+`SrcL` 通过通用 Reg5 映射读取：`0..23` 为绝对 GPR，`24..27` 为 `T#1..T#4`，`28..31` 为 `U#1..U#4`，不消耗队列表项。编码零读取体系结构零 GPR。
+
+设计要点：操作数字是符号扩展后立即数的低 `32` 位，因此该操作数的 `31:24` 位重复 `simm24` 的第 `23` 位。所以非负立即数在第 `23` 位以上贡献零，负立即数贡献一。
 
 <!-- PTO-READER-BLOCK: scalar-hl-oriw-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+`SrcL` 在目标效果之前取快照，因此与 `SrcL` 同名的目标收到的是执行前值算出的结果。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 6 字节。
-
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+符号扩展后的结果通过 `RegDst` 发布，随后 `TPC` 前进 `6` 字节。该指令没有内存效果，也没有数值状态效果；只有目标选择的 `T` 或 `U` 推送能改变队列。
 
 <!-- PTO-READER-BLOCK: scalar-hl-oriw-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+全部 `32` 个 `SrcL` 编码与全部 `32` 个 `RegDst` 编码都有定义，每个有符号 24 位立即数也都合法，因此只有临时源不可用会使操作数检查失败。固定编码位必须与规范的 48 位形式匹配。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+适用性只在系统块终止请求挂起时失败，并在 `TPC` 触发 `Fault_BundleControl`。否则，不匹配的编码在进入指令束主体之前于 `PC` 触发 `Fault_IllegalInstruction`，所选 `T` 或 `U` 源不可用时则在目标写入之前于 `PC` 触发 `Fault_IllegalInstruction`。任何操作数对都不定义算术异常。
+
+设计要点：字形式承担与 XLEN 形式相同的故障面。把算术收窄到 `32` 位去掉的是结果位，而不是合法性检查，因此 `-8388608` 到 `8388607` 的立即数范围不变。
 
 <!-- PTO-READER-BLOCK: scalar-hl-oriw-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `HL.ORIW` 示例说明：`SrcL=0xc` 与 `simm24=0xa` 产生 `0xe`。
+取 `SrcL = 0x00000000FFFFFFFF`、`simm24 = 0` 时或运算让字保持 `0xFFFFFFFF` 不变，而该字的 `SignExtend` 是 `0xFFFFFFFFFFFFFFFF`，因此 `RegDst` 收到 `0xFFFFFFFFFFFFFFFF`。取 `SrcL = 0`、`simm24 = 8388607` 时操作数字为 `0x007FFFFF`，字结果为 `0x007FFFFF`，`RegDst` 收到 `0x00000000007FFFFF`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

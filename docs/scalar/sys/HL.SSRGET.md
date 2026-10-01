@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-purpose role=purpose -->
 ## What HL.SSRGET does
 
-`HL.SSRGET` reads an assigned system-register address and publishes the complete XLEN value.
+`HL.SSRGET` is the wide-address form of the system-register read. It behaves like `SSRGET`, but its address field is 24 bits instead of 12, so the same instruction covers a much larger register space.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteSystemRegisterGet`. Placement and encoded legality are checked before sources or system state can change.
+`InstructionContractHandler_HL_SSRGET` selects `ScalarHandler_ExecuteSystemRegisterGet` (`asl/scalar/sys/HL.SSRGET.asl:18`), the same helper used by the 32-bit form. What changes is the address: `InstructionContractSystemAddressWidth_HL_SSRGET` fixes the width at 24 (`asl/scalar/sys/HL.SSRGET.asl:36`), and the assembly is a 48-bit form (`asl/scalar/sys/HL.SSRGET.asl:1`).
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+The dispatcher builds that 24-bit address from two 12-bit pieces before calling the get helper (`asl/scalar/model/dispatch/sys.asl:91`).
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`RegDst` carries the Reg5 destination: discard, R1..R23, push U, or push T; `SSR_ID` carries the system-register identifier.
+`SSR_ID` is the 24-bit system-register address and `RegDst` is the destination selector `discard, R1..R23, push U, or push T` (`asl/scalar/sys/HL.SSRGET.asl:1`). `InstructionContractPushesTemporaryT_HL_SSRGET` returns `FALSE` (`asl/scalar/sys/HL.SSRGET.asl:42`), and the destination selector alone decides whether the value lands in a GPR or on a temporary queue.
 
-Encoded zero is an assigned field value, never an omitted operand.
+Encoded zero in `SSR_ID` is the base register at address 0, and encoded zero in `RegDst` names the architectural zero GPR.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-effects role=effects -->
 ## Architectural effects
 
-After address and access preflight, the complete XLEN system-register value is published through the common Reg5 destination mapping.
+On success the complete register value is published through the Reg5 destination mapping and `TPC` advances by the instruction length. The destination is written only when the read reported no fault (`asl/scalar/model/sys/registers.asl:148`), so a rejected wide read leaves the destination and the temporary queues untouched.
 
-A rejected read does not modify the selected destination or temporary-queue order beyond ordinary trap entry.
+Design point: the read path accepts only addresses whose bits 23:16 are zero for the stored extended file, and `SystemRegisterFileIndexOf` asserts that condition (`asl/scalar/model/sys/registers.asl:56`). An address in that part of the space is therefore admitted or rejected by the access-class table before the index is formed.
+
+The instruction does not modify the system-register file and performs no ordinary scalar memory access.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-constraints role=constraints -->
 ## Placement and rejection
 
-The complete address is checked for assigned access class and current-ACR permission before destination or queue effects.
+Placement in an active SYS block body is checked first, and an attempt elsewhere raises `Fault_BundleControl`. The read path then rejects with `Fault_IllegalInstruction` when the ring lacks permission for the address or when the access class is unknown or write-only (`asl/scalar/model/sys/registers.asl:66`).
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+Design point: the wider address field does not widen the permission rule. Addresses whose low 12 bits are below 0x0F00 stay reachable from every ring, while the context, translation, and debug families need ACR0, exactly as for the 12-bit form.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `hl.ssrget SSR_ID, ->{t, u, Rd}` and trace its encoded fields through preflight before following the selected system effect.
+`hl.ssrget SSR_ID, ->{t, u, Rd}` with `SSR_ID` 0x1F02 and a destination of R2 reads the ring-1 trap-status register at ACR0 and publishes its packed value into R2; that word carries the trap number in bits 5:0 together with the trap cause and the status flags. Reading `SSR_ID` 0x0F04 with the same destination is rejected with `Fault_IllegalInstruction`, because that address has no assigned access class, and R2 keeps its previous value.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

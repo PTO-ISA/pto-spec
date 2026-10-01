@@ -15,45 +15,66 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-dispatch-top-level-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-`ExecutePTOInstruction` is the total entry point for one encoded `PTO` instruction and returns either `PTOInstruction_Executed` or `PTOInstruction_Rejected`.
+`ExecutePTOInstruction` is the single decoded-instruction entry point on this page. It takes an already-fetched carrier as `instruction: bits(64)` plus `length_bits: integer {16,32,48,64}`, and returns `PTOInstruction_Executed` or `PTOInstruction_Rejected`.
 
-It separates command-form dispatch from scalar dispatch and provides one explicit rejection path for unmatched 64-bit inputs.
+`ExecuteNextPTOInstruction` is the fetch side: it reads the program counter, probes and fetches the bytes, then calls `ExecutePTOInstruction`.
 
 <!-- PTO-READER-BLOCK: arch-dispatch-top-level-concepts-state role=concepts-state -->
-## Concepts and visible state
+## The decision order
 
-- The input carrier is `bits(64)` and `length_bits` is restricted to `16`, `32`, `48`, or `64`.
-- `DecodeCommandForm` is tried first. A recognized command form is passed to `ExecuteCommandInstruction`.
-- If no command form matches and length is not `64`, the low `48` bits are passed to `ExecuteScalarInstruction` with the original `16`/`32`/`48` length.
+The dispatcher asks one question first: `DecodeCommandForm(instruction, length_bits)`. That result is tested before `length_bits` is examined, and a length that yields a form goes to `ExecuteCommandInstruction` with the whole `bits(64)` carrier.
+
+- `length_bits != 64`: the low `48` bits, `instruction[47:0]`, go to `ExecuteScalarInstruction`, and `length_bits` is narrowed to `16`, `32`, or `48`.
+- `length_bits == 64`: no second decoder runs. The dispatcher calls `BeginArchitecturalInstructionAttempt()`, then `SetFault(Fault_IllegalInstruction, ReadTPC())`, and returns `PTOInstruction_Rejected`.
+- In the two delegating branches a non-`Executed` owner status becomes `PTOInstruction_Rejected`.
+
+Design point: the unmatched `64`-bit case is separated from the scalar case even though `ExecuteScalarInstruction` would accept a `48`-bit slice. A `64`-bit value with no command form therefore cannot reach scalar decoding, and is never silently decoded from its low `48` bits.
 
 <!-- PTO-READER-BLOCK: arch-dispatch-top-level-rules-interactions role=rules-interactions -->
 ## Rules and interactions
 
-A command execution status maps directly to the top-level executed/rejected status.
+`ExecuteNextPTOInstruction` reads `ReadTPC()` once and rejects an odd address before any memory probe: if `instruction_pc[0] == '1'`, it raises `Fault_InstructionPC` there and returns `PTOInstruction_Rejected`.
 
-A scalar execution status maps in the same way after the command decoder reports no form.
+Otherwise it probes `2` bytes, fetches a `16`-bit prefix, and derives the length from `prefix[15:0]` through `DeterminePTOInstructionLength`; the table below lists the four corners of that rule.
 
-An unmatched `64`-bit input begins an architectural instruction attempt, sets `Fault_IllegalInstruction` at `ReadTPC()`, and returns rejected.
+A second probe covers the whole selected range, `size_bytes = length_bits DIV 8`, one of `2`, `4`, `6`, or `8`. It must be permitted and must report the same `physical_address` as the prefix probe, or the fetch raises `Fault_InstructionPage` at the original TPC. `TranslateInstructionAddress` returns its argument unchanged, so in this model that address equality always holds.
+
+Design point: the complete-range probe runs after the `16`-bit prefix read and before the remaining bytes. `FetchPTOInstruction` asserts `probe.permitted` and assembles only the probed `size_bytes` into a `Zeros{64}` carrier, so a range that fails the second probe faults at the original TPC with no further byte read.
+
+Design point: exactly one architectural attempt is begun per call. The command and scalar owners each begin their own attempt inside their bodies, and the dispatcher begins one only on the unmatched `64`-bit path, so architectural time advances by one unit per dispatch and `_LastFault` is cleared once before the selected owner runs.
 
 <!-- PTO-READER-BLOCK: arch-dispatch-top-level-boundaries role=boundaries -->
 ## Architectural boundaries
 
-This dispatcher does not duplicate command or scalar legality and operation semantics; it delegates them to their current owners.
+`ExecutePTOInstruction` performs no legality check of its own. A matched command form is checked by `ExecuteCommandInstruction`: `Fault_IllegalInstruction` when `CommandFormOperandsLegal` fails, `Fault_BundleControl` when a pending terminal block state forbids the selected handler. A matched scalar form is checked by `ExecuteScalarInstruction`: `Fault_BundleControl` for an inapplicable operation, `Fault_IllegalInstruction` for form, register, and implicit-source legality failures.
 
-The explicit illegal-instruction path applies only after command decoding fails and the selected length is `64`.
+The scalar owner reports illegal-instruction faults at `ReadPC()` and the dispatcher reports the unmatched `64`-bit fault at `ReadTPC()`; both read the same `_PC` variable.
+
+Design point: `DecodeCommandForm` is called twice for a matched command form, once by the dispatcher and once inside `ExecuteCommandInstruction`. It is a pure function of carrier and length, so both calls return the same form; the dispatcher passes no decoded form, and the command owner stays correct when entered directly.
+
+What stays unchanged: the dispatcher writes no register itself. On the unmatched `64`-bit path the changes come from its callees: `BeginArchitecturalInstructionAttempt` clears `_LastFault` and `_FaultAddress` and advances architectural time, and `SetFault` records the per-ring trap fields, switches the current ACR, and redirects TPC to the trap vector entry.
 
 <!-- PTO-READER-BLOCK: arch-dispatch-top-level-example-usage role=example-usage -->
 ## Non-normative reading example
 
-A recognized 48-bit scalar form first fails command-form recognition, then reaches `ExecuteScalarInstruction`; its final status is projected back to `PTOInstructionExecutionStatus`.
+The length rule has four corners; each fixes how many bytes the complete probe covers.
 
-A random 64-bit carrier that matches no command form does not fall through to scalar decoding; it takes the explicit illegal-instruction path.
+| first halfword | selected length | bytes probed |
+| --- | --- | --- |
+| bits `3:1` are `'111'`, bit `0` is `'1'` | `64` | `8` |
+| bits `3:1` are `'111'`, bit `0` is `'0'` | `48` | `6` |
+| bits `3:1` are not `'111'`, bit `0` is `'0'` | `16` | `2` |
+| bits `3:1` are not `'111'`, bit `0` is `'1'` | `32` | `4` |
+
+For a `16`-bit length the carrier is assembled into a `Zeros{64}` value, so bits `15:0` hold the two bytes and bits `63:16` stay `0`; with no command form, `ExecutePTOInstruction` passes `instruction[47:0]` to `ExecuteScalarInstruction` with length `16`.
 
 <!-- PTO-READER-BLOCK: arch-dispatch-top-level-related-owners role=related-owners-navigation -->
 ## Related owners
 
-- [Command dispatch owner](../../block/model/dispatch/top-level.md)
-- [Scalar dispatch owner](../../scalar/model/dispatch/top-level.md)
+- [Instruction fetch](../memory-model/instruction-fetch.md) owns both probes and the length rule.
+- [Command dispatch owner](../../block/model/dispatch/top-level.md) owns command-form legality and bundle effects.
+- [Scalar dispatch owner](../../scalar/model/dispatch/top-level.md) owns scalar decode and the TPC advance.
+- [Program counter](../state/program-counter.md) defines the shared `_PC` behind `ReadTPC()` and `ReadPC()`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

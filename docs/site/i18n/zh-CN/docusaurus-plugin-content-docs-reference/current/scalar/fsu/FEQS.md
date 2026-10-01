@@ -19,54 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-feqs-purpose role=purpose -->
 ## FEQS 的作用
 
-`FEQS` 执行有序相等比较（信号 NaN 形式），并发布规范化 XLEN 一或零。
+`FEQS` 测试两个选定的浮点载体是否相等，并把规范化的 `0` 或 `1` 写入 Reg5 目的；只要有 NaN 参与，就记录无效操作标志。
+
+结尾的 `s` 后缀表示发信比较。结果值的计算与静默形式完全一致；不同的是该指令报告的标志。
 
 <!-- PTO-READER-BLOCK: scalar-feqs-mechanism role=mechanism -->
-## 数值机制
+## 报告 NaN 的有序相等
 
-`SrcType=00` 选择完整 FP64 载体；`SrcType=01` 选择零扩展后的低 32 位 FP32 载体。
+`SrcType` 为两侧选择载体，编码 `00` 表示 FP64，编码 `01` 表示低字中的 FP32 载体，每个源都先规范化到该载体。
 
-任一输入为 NaN 时，有序比较结果为假。
+任何 NaN 操作数都使比较返回假。此外，只要任一操作数是 NaN，该形式就记录 `NV`，而静默形式只在发信 NaN 时才记录 `NV`。有序情形仍由区分正负零的相等规则和固定的字序键给出。
 
-信号 NaN 形式对任意 NaN 记录粘滞 `NV`。
+设计要点：多出的这个标志是与 `FEQ` 的唯一区别。因此同一个比较存在两种合法编码，程序在希望意外出现的 NaN 不经单独测试就体现在粘性状态中时，选择发信的那一种。
 
 <!-- PTO-READER-BLOCK: scalar-feqs-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `RegDst` 选择编码指定的目的位置或丢弃行为。
+- `SrcL` 提供左侧 Reg5 源。
+- `SrcR` 提供右侧 Reg5 源。
+- `SrcType` 为两侧选择源载体。
+- `RegDst` 选择目的：编码 `1..23` 写所指的绝对 GPR，编码 `30` 压入 `U` 队列，编码 `31` 压入 `T` 队列，编码 `0` 以及编码 `24..29` 丢弃结果。
 
-- `SrcL` 提供左侧标量源。
-
-- `SrcR` 提供右侧标量源。
-
-- `SrcType` 选择源载体宽度。
-
-- Reg5 源选择器可以读取 GPR、T 或 U 状态，且不会消费临时队列项。
-
-- 目的选择器可以写 GPR、压入 T/U，或只丢弃结果。
+Reg5 源读取绝对 GPR、`T#1..T#4` 或 `U#1..U#4`，且不消费队列项。源中的编码零读取架构零 GPR。
 
 <!-- PTO-READER-BLOCK: scalar-feqs-effects role=effects -->
 ## 效果与顺序
 
-所有显式源都会在数值状态或目的效果前完成快照。
+目的收到恰好 `1` 或 `0`，并规范化到完整 XLEN 字。任何被记录的 `NV` 都按位或进粘性数值状态，因此会一直保留到软件清除它，随后 `TPC` 前进 `4` 字节。
 
-架构产生的 `NV` 会在目的发布前按位或到粘滞数值状态。
-
-结果完成发布或丢弃后，`TPC` 前进 `4` 字节。该指令不产生内存或保留状态效果。
+没有内存、保留状态或描述符效果，该指令也不产生其他数值状态标志。
 
 <!-- PTO-READER-BLOCK: scalar-feqs-constraints role=constraints -->
-## 类型与配置档边界
+## 载体合法性与发信形式行为
 
-`SrcType=10` 和 `SrcType=11` 为保留值。保留类型或不可用 T/U 源会在读取源、调用配置档、更新标志或队列、写入目的以及改变 `TPC` 前引发 `Fault_IllegalInstruction`。
+`SrcType` 编码 `0` 和 `1` 已分配，编码 `2` 和 `3` 为保留值。载体检查在第一次架构源读取之前运行，因此保留的 `SrcType`、固定位不匹配或所选的 `T`、`U` 源不可用，都会在任何源、配置档、目的、标志、队列或 `TPC` 效果之前引发 `Fault_IllegalInstruction`。
 
-数值标志更新本身不会引发同步 PTO 陷阱。
+每个 Reg5 目的编码都已分配。数值状态标志只更新粘性状态，永远不会引发同步 PTO 陷阱。
 
 <!-- PTO-READER-BLOCK: scalar-feqs-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不会脱离规范规则或当前配置档另行定义算术。
+This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
 
-`feqs.fd a0, a1, ->a2` 应用架构定义的特殊值规则，在推进 `TPC` 前发布规范化输出。
+规范 FP64 示例是 `feqs.fd a0, a1, ->a2`，其中 GPR `a0` 保存 `0x3ff0000000000000`，GPR `a1` 保存 `0x3ff0000000000000`，都表示 `1.0`：GPR `a2` 收到 `1`，且不记录任何标志。
+
+把 GPR `a1` 设为某个 NaN 编码，目的仍写入 `0`，而这次该指令会记录 `NV`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

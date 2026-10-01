@@ -19,40 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-bc-iall-purpose role=purpose -->
 ## What BC.IALL does
 
-`BC.IALL` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+`BC.IALL` is the bundle-cache maintenance operation for the all-entry scope. It completes synchronously as one scalar operation of a SYS block and advances the bundle-cache epoch.
+
+It carries no address: the all-entry scope means every entry, so there is nothing to encode.
 
 <!-- PTO-READER-BLOCK: scalar-bc-iall-mechanism role=mechanism -->
-## System mechanism
+## How the instruction is placed and executed
 
-The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+This instruction is one scalar operation of an active SYS block. The scalar dispatcher first checks that a bundle is active and that its body is active with block kind System; a SYS form outside such a block is rejected with `Fault_BundleControl`, before any encoded-field check and before any architectural effect.
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+Encoded legality and source availability are then checked, and only then does the handler run.
+
+The handler runs the shared maintenance rule for the `Maintenance_BC_IALL` operation with an all-zero operand. The rule first asks whether the operation is permitted at the current ring.
+
+The all-entry cache scopes are local hints and are permitted at every ring, so for this operation the permission test cannot be the failing step. The rule then advances the bundle-cache epoch. Only when no fault was raised does it record the operation and its operand token as the last maintenance effect.
+
+Design point: the epoch is the completion effect, and the recorded operation and operand are what make that effect auditable. A reader of `CORE_STATE`-style model state can see both that bundle-cache maintenance happened and exactly which operation and operand produced it.
 
 <!-- PTO-READER-BLOCK: scalar-bc-iall-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-The encoding has no explicit operand field; the operation is selected entirely by its fixed instruction bits.
+- The form has no operand field. The semantic operand is the all-zero XLEN value, and it is recorded as the last maintenance operand.
+- There is no destination field, so the instruction never writes a GPR and never pushes `T` or `U`.
+- No scalar register and no queue entry is read.
 
 <!-- PTO-READER-BLOCK: scalar-bc-iall-effects role=effects -->
 ## Architectural effects
 
-On success, the maintenance record receives `Maintenance_BC_IALL` and the exact captured operand token.
+On success exactly one epoch advances, and for this operation it is the bundle-cache epoch. One data-cache, one instruction-cache, one bundle-cache and one TLB epoch exist in the model, and a maintenance operation that completes advances exactly one of them.
 
-Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+The instruction performs no ordinary scalar memory access: it does not load, store, or probe an address, and it raises no data-access fault. `TPC` advances by `4` bytes on success. No reservation is taken or dropped.
 
 <!-- PTO-READER-BLOCK: scalar-bc-iall-constraints role=constraints -->
 ## Placement and rejection
 
-Cache maintenance is a synchronous local hint at every ACR and does not define additional implementation cache contents.
+Invalid block placement is rejected first, with `Fault_BundleControl`, before the encoded field is even considered.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+Because the all-entry cache scope is a local hint completion at every ring, this operation is never rejected by the maintenance permission rule. The reachable `Fault_IllegalInstruction` paths for this form are therefore the placement and encoded-legality checks, not a ring restriction.
+
+The operation carries no address, so no address-canonicality or address-range check applies to it.
 
 <!-- PTO-READER-BLOCK: scalar-bc-iall-example role=example -->
 ## Non-normative example
 
-This spelling example is illustrative; exact legality and effects remain in the generated contract below.
-
-Start with `bc.iall` and trace its encoded fields through preflight before following the selected system effect.
+`bc.iall` advances the bundle-cache epoch by one, records `Maintenance_BC_IALL` with a zero operand token, and advances `TPC` by `4` bytes. It generates no memory traffic and touches no scalar register.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

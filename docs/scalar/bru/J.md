@@ -19,38 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-j-purpose role=purpose -->
 ## What J does
 
-`J` transfers control to a signed PC-relative halfword target.
+`J` transfers control to a PC-relative target. Its displacement is signed and counts halfwords, and it is applied to the address of the `J` instruction itself.
+
+Design point: `J` writes `TPC` directly and the dispatch boundary adds no sequential advance afterwards, so the jump replaces the continuation instead of being applied on top of it.
 
 <!-- PTO-READER-BLOCK: scalar-j-mechanism role=mechanism -->
-## Mechanism
+## Target computation
 
-The current PC is snapshotted, the signed displacement is shifted left by `1`, and the values are added to form the target.
+`simm22` is sign-extended to `PTO_XLEN` and shifted left by `1`, and the sum with the current `PC` becomes the new `PC`. The addition is `64` bits wide and wraps at `2^64`.
 
-The target PC is written directly; the ordinary sequential advance is not added afterward.
+Design point: the displacement is measured from the address of `J` itself rather than from the following instruction, so the encoded value `0` produces a self-loop that re-executes the same jump.
+
+Design point: `JumpRelative` performs no test on the computed target, so an accepted `J` always installs its target; the target-parity check belongs to the register jump `JR`, not to `J`.
 
 <!-- PTO-READER-BLOCK: scalar-j-inputs-outputs role=inputs-outputs -->
-## Inputs and output
+## Operands and result
 
-- `simm22` supplies a signed encoded immediate.
+- `simm22` supplies the signed halfword displacement. It is encoded in two instruction pieces, `17` bits and `5` bits wide.
+
+- The base of the computation is the current `PC`, read inside the handler. `J` has no register operand and no immediate base operand.
+
+- The only output is the new `PC`. No register, queue entry, or memory location is written.
 
 <!-- PTO-READER-BLOCK: scalar-j-effects role=effects -->
-## Effects and ordering
+## Control-flow effect
 
-The accepted target replaces the control-flow PC as one architectural transition.
+`WritePC` replaces the program counter with the computed target, so the next instruction is fetched from the target. Because `JumpRelative` is one of the handlers that writes `TPC`, the dispatch boundary does not add the `4`-byte length of this `32`-bit form.
 
-The jump has no scalar destination and does not access memory or reservation state.
+`J` writes no register, no queue entry, no memory location, no commit argument, and no `BARG` field. No Conditional-block placement is required for it, because it is not a condition setter.
 
 <!-- PTO-READER-BLOCK: scalar-j-constraints role=constraints -->
 ## Legality and fault order
 
-Encoding, reserved field values, and source availability are checked before destination, control, or `TPC` effects.
+A pattern that does not match the fixed bits of the form raises `Fault_IllegalInstruction` and leaves `TPC` unchanged. No field value is reserved: every `simm22` value is assigned, including `0`.
+
+Design point: the displacement is read from the instruction and the target is computed and installed in a single step, so a rejected decode cannot leave a half-applied control transfer behind.
 
 <!-- PTO-READER-BLOCK: scalar-j-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not create a second semantic definition.
 
-`j label` forms and validates the target described above before replacing the PC.
+For a `J` at `0x4000`, `j 8` installs `0x4010` as the new `PC`, while the sequential continuation would have been `0x4004`. `j -3` installs `0x3FFA`, and `j 0` installs `0x4000`, re-executing the same jump.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

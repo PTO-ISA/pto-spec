@@ -19,48 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-geui-purpose role=purpose -->
 ## SETC.GEUI 的作用
 
-`SETC.GEUI` 判断无符号大于等于，并把结果发布为当前条件指令束的提交判定。
+`SETC.GEUI` 把一个标量寄存器与一个编码立即数当作无符号整数比较，并把结果发布为所在 Conditional 指令束的提交判定。
+
+右侧操作数由指令字构造，而不是来自寄存器，因此汇编期已知的边界不需要占用寄存器。
 
 <!-- PTO-READER-BLOCK: scalar-setc-geui-mechanism role=mechanism -->
-## 执行机制
+## 由 `uimm12` 与 `shamt` 构造右侧操作数
 
-在检查源就绪状态或读取源之前，先检查放置和单次设置规则。
+`uimm12` 先零扩展到完整字宽，再按 `shamt` 字段逻辑左移，模型把该字段读作其编码值的低 `6` 位。移位后的字就是无符号关系 `UInt(left) >= UInt(right)` 所测试的值。
 
-`uimm12` 会在任何移位或比较前零扩展到 XLEN。
+左侧操作数 `SrcL` 作为完整字读取，从不移位。
 
-在计算条件前，解码立即数会按 `shamt` 进行逻辑左移。
-
-指令对源取快照，判断无符号大于等于，再规范化为 XLEN 一或零。
+设计要点：移位让立即数字段覆盖普通 `12` 位字段无法达到的值，同时 `shamt` 把比较值的低位固定为零——立即数总是按 `2` 的 `shamt` 次幂的倍数比较，因此在非零移位下没有任何编码对能产生奇数值。
 
 <!-- PTO-READER-BLOCK: scalar-setc-geui-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `SrcL` 提供左侧标量源。
+- `SrcL` 提供左侧绝对 GPR 源，按完整字读取。
+- `shamt` 提供施加于立即数的移位量；编码零表示不移位。
+- `uimm12` 提供无符号编码立即数；编码零提供数值零。
 
-- `shamt` 提供编码指定的移位量。
-
-- `uimm12` 提供无符号编码立即数。
+`SrcL` 不会被消费，该指令也不写任何 `GPR`、`T` 或 `U` 目的。
 
 <!-- PTO-READER-BLOCK: scalar-setc-geui-effects role=effects -->
 ## 效果与顺序
 
-规范化条件会原子写入 `_CommitArgument` 和 `BARG.TAKEN`，同时置位条件已设置标记。
+成功时提交参数收到恰好 `1` 或 `0`，在指令束处于活动状态时 `BARG.TAKEN` 跟随同一真值，并把指令束条件标记为已设置。随后 `TPC` 前进 `4` 字节。
 
-成功时，`SETC.GEUI` 让 `TPC` 前进 `4` 字节；它没有标量目的位置，也不产生内存或保留状态效果。
+内存、保留状态、描述符和数值状态都不改变，`BARG.BPC`、`BARG.BPCN`、`BARG.BlockType` 和 `BARG.TYPE` 均保持不变。
 
 <!-- PTO-READER-BLOCK: scalar-setc-geui-constraints role=constraints -->
-## 合法性与故障顺序
+## 指令束放置、顺序与故障
 
-该指令只在适用的条件指令束上下文中合法，并且只能有一个条件设置操作成功。
+适用性限于活动 Conditional 指令束的束体，共享的“仅一次设置”标记允许每个指令束最多一个成功的 `SETC` 条件设置者。
 
-放置错误或重复设置会在读取源之前引发非法指令束异常；编码或源不可用会在提交状态或 `TPC` 效果前引发 `Fault_IllegalInstruction`。
+错误的放置位置或重复的成功设置者会在操作数合法性检查和任何源读取之前引发 `Fault_BundleControl`（陷阱编号 `5`，`BUNDLE_TRAP`）。固定位不匹配或所选的 `T`、`U` 源不可用会在提交状态、`BARG`、队列或 `TPC` 效果之前引发 `Fault_IllegalInstruction`。被拒绝的一次出现不会消耗共享标记。
 
 <!-- PTO-READER-BLOCK: scalar-setc-geui-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不构成第二份语义定义。
+This example illustrates the current owner and does not create a second semantic definition.
 
-`setc.geui SrcL, uimm` 按上述规则计算条件，把规范化判定写入提交状态，并且只在更新完成后推进 `TPC`。
+把 `128` 放入 GPR1 并执行编码字段为 `SrcL=1`、`shamt=4`、`uimm12=8` 的形式。立即数变为 `8` 左移 `4` 位，即 `128`，无符号关系 `128 >= 128` 提交 `1`。把 GPR1 设为 `127`，同一形式则提交 `0`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

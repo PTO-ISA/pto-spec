@@ -19,42 +19,58 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-setc-eq-purpose role=purpose -->
 ## What C.SETC.EQ does
 
-`C.SETC.EQ` evaluates equality and publishes the result as the current Conditional bundle commit decision.
+`C.SETC.EQ` compares two scalar sources for equality and uses the answer as the commit condition of the Conditional block that is currently executing.
+
+It produces no register value. Its result is a decision: the bundle commit argument and the taken bit of the block argument.
 
 <!-- PTO-READER-BLOCK: scalar-c-setc-eq-mechanism role=mechanism -->
 ## Mechanism
 
-Placement and the single-setter rule are checked before source readiness or reads.
+The contract returns `ScalarHandler_ExecuteSetCommit` with the condition `ScalarCondition_EQ`. The model snapshots both sources, evaluates `left == right`, canonicalizes the answer to XLEN `1` or `0`, and writes that value into the commit argument.
 
-The snapshotted operands are evaluated for equality and canonicalized to XLEN one or zero.
+Applicability is checked before any source is read. `C.SETC.EQ` is a commit-condition setter, so it runs only while a block is active, its body is active, the block's transfer type is `Conditional`, and no earlier setter has already succeeded in this block.
+
+When the check passes, the model also copies the canonical answer into the taken bit of the block argument and marks the block condition as set. The other block-argument fields are preserved.
+
+Design point: the setter marker is a single block-private occurrence flag shared by the whole setter family, so a Conditional block can express exactly one commit condition and cannot be made to depend on two comparisons in sequence.
 
 <!-- PTO-READER-BLOCK: scalar-c-setc-eq-inputs-outputs role=inputs-outputs -->
-## Inputs and output
+## Inputs and result
 
-- `SrcL` supplies the left scalar source.
+`SrcL` supplies the left scalar source and `SrcR` supplies the right scalar source. Both are complete `32`-way Reg5 sources: codes `0..23` select absolute GPRs, `24..27` select `T#1..T#4`, and `28..31` select `U#1..U#4`.
 
-- `SrcR` supplies the right scalar source.
+Encoded zero in either source names the architectural zero GPR, so the instruction can compare a register against zero.
+
+Neither source is consumed, because both are read as values rather than as queue pops.
+
+There is no destination field. The only observers of the result are the commit condition of the block and anything that reads the block argument afterwards.
 
 <!-- PTO-READER-BLOCK: scalar-c-setc-eq-effects role=effects -->
 ## Effects and ordering
 
-The canonical condition is written atomically to `_CommitArgument` and `BARG.TAKEN`, and the condition-set marker becomes true.
+On success one update covers the commit argument, the taken bit of the block argument, and the occurrence marker, and then `TPC` advances by `2` bytes, the encoded length of the `16`-bit form.
 
-On success, `C.SETC.EQ` advances `TPC` by `2` bytes. It has no scalar destination and no memory or reservation effect.
+The state contract preserves the block's `BARG.BPC`, `BARG.BPCN`, `BARG.BlockType`, and `BARG.TYPE` fields. There is no memory effect, no reservation effect, no descriptor effect, no numeric status flag, and no destination-register effect.
+
+Design point: the commit argument already carries a canonical XLEN `1` or `0`, which is the same shape a compare writes to a register. That is what lets a later consumer read the bundle predicate and a register result through the same kind of test.
 
 <!-- PTO-READER-BLOCK: scalar-c-setc-eq-constraints role=constraints -->
-## Legality and fault order
+## Legality and precise faults
 
-The instruction is valid only in the applicable Conditional bundle context, and only one successful condition setter may occur.
+Wrong block placement raises `Fault_BundleControl` at the current `TPC`: no active block, an inactive body, a transfer type other than `Conditional`, or a `C.SETC.EQ` after another setter has already succeeded in the same block.
 
-Wrong placement or a repeated setter raises an Illegal Block Exception before source reads; encoding or unavailable-source failures raise `Fault_IllegalInstruction` before commit or `TPC` effects.
+That placement check runs before scalar source readiness and before any source read, so a misplaced setter changes neither the commit argument nor the occurrence marker.
+
+A fixed-bit mismatch or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before commit state, queues, or `TPC` change. A failed first occurrence does not consume the shared marker, so the instruction can be reissued and still set the condition.
 
 <!-- PTO-READER-BLOCK: scalar-c-setc-eq-example role=example -->
 ## Non-normative example
 
-This example illustrates the current owner and does not create a second semantic definition.
+Inside a Conditional block, set GPR1 to `5` and GPR2 to `5`.
 
-`c.setc.eq srcL, srcR` evaluates the described condition, writes the canonical decision to commit state, and advances `TPC` only after that update.
+`c.setc.eq 1, 2` finds the condition holds, so the commit argument becomes `1` and the block's taken bit becomes `1`.
+
+A second `C.SETC.EQ` in the same block is rejected with `Fault_BundleControl` instead of overwriting that decision.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-xoriw-purpose role=purpose -->
 ## What HL.XORIW does
 
-`HL.XORIW` is a 48-bit scalar ALU instruction. It performs bitwise exclusive OR under the low 32-bit word, followed by sign-extension to XLEN result rules; its current instruction contract defines the result publication path and any additional state effect.
+`HL.XORIW` is a 48-bit scalar ALU instruction that applies word exclusive-or to `SrcL[31:0]` and the low word of the sign-extended `simm24`, then sign-extends the 32-bit result to XLEN and publishes it through one Reg5 destination.
+
+The result is a `32`-bit value that is widened afterwards, so the published high half is a copy of result bit `31` rather than a copy of `SrcL[63:32]`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-xoriw-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then performs bitwise exclusive OR under the low 32-bit word, followed by sign-extension to XLEN result rules, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractResult_HL_XORIW`, which builds `right = SignExtend{PTO_XLEN}(immediate)` and returns `ScalarBinaryW(ScalarBinary_XOR, left, right)`. `ScalarBinaryW` exclusive-ors `left[31:0]` with `right[31:0]` into a 32-bit value and returns `SignExtend{PTO_XLEN}` of it. Dispatch selects the path with `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_XOR, ScalarField_simm24, TRUE)`.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+hl.xoriw SrcL, simm, ->{t, u, Rd}
+```
+
+Design point: the word result clears the source's upper half unless the word result sets bit `31`. With `a0 = 0x00000000F0F0F0F0` and `simm24 = -1`, the operand word is `0xFFFFFFFF`, the word result is `0x0F0F0F0F`, and the published value is `0x000000000F0F0F0F`, while `hl.xori` on the same source publishes `0xFFFFFFFF0F0F0F0F`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-xoriw-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 scalar result target or discards the result.
-- The 5-bit `SrcL` field selects a Reg5 scalar value whose low 32 bits participate.
-- The signed 24-bit `simm24` field carries the signed split 24-bit immediate.
+- `RegDst`, instruction slice `[23 +: 5]`, receives the sign-extended word result or discards it.
+- `SrcL`, instruction slice `[31 +: 5]`, supplies a value whose bits `31:0` participate.
+- `simm24`, instruction slices `[36 +: 12]` and `[4 +: 12]`, supplies value bits `11:0` and `23:12`.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+`SrcL` is read through the common Reg5 map, `0..23` for absolute GPRs, `24..27` for `T#1..T#4` and `28..31` for `U#1..U#4`, leaving the entry in place. Encoded zero reads the architectural zero GPR.
+
+Design point: only the low word of the immediate operand reaches the exclusive-or, so the sign extension of the immediate is invisible here while the sign extension of the result is not. Bits `31:24` of that operand word are copies of `simm24` bit `23`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-xoriw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is snapshotted before the destination effect, so a destination that also names `SrcL` receives a value derived from the pre-instruction register contents.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The widened word is published through `RegDst`, and `TPC` then advances by `6` bytes. No memory is accessed, and no numeric-status, reservation, descriptor, Tile, bundle, privilege or control-flow state changes; only the `T` or `U` push selected by the destination can alter a queue.
 
 <!-- PTO-READER-BLOCK: scalar-hl-xoriw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+All `32` `SrcL` codes and all `32` `RegDst` codes are assigned, and every signed 24-bit immediate is legal, so only an unavailable temporary source can fail the operand checks. Fixed encoding bits must match the canonical 48-bit form.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise a mismatching encoding raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before the destination write.
+
+Design point: the word form and the XLEN form share the same immediate range and the same two fault checks. The `W` suffix narrows which bits are combined and widens the result again by sign extension; it does not add or remove any legality rule.
 
 <!-- PTO-READER-BLOCK: scalar-hl-xoriw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.XORIW` example, `SrcL=0xc` and `simm24=0xa` produce `0x6`.
+With `SrcL = 0x00000000F0F0F0F0` and `simm24 = -1`, the operand word is `0xFFFFFFFF`, the word result is `0x0F0F0F0F`, and `RegDst` receives `0x000000000F0F0F0F`. With `SrcL = 0xFFFFFFFF00000000` and `simm24 = 0`, only the low words participate: the word result is `0`, so `RegDst` receives `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,49 +19,58 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-madd-purpose role=purpose -->
 ## HL.MADD 的作用
 
-`HL.MADD` 是一条 48 位标量 ALU 指令。它把所选加数加入有符号乘积，再把宽结果拆分为低、高XLEN两半；当前指令契约定义结果发布路径以及任何额外状态效果。
+`HL.MADD` 是一条 48 位标量 ALU 指令，以 128 位宽度计算 `SrcL * SrcR + SrcD`。两个乘数按有符号 XLEN 值读取，加数被符号扩展到 128 位，和值以两个 XLEN 半部发布。
+
+它没有舍入、饱和或标志输出。低半部写入 `RegDst0`，高半部写入 `RegDst1`。这一对目标形态正是它与 `MADD` 的区别：`MADD` 把同一个加数加到乘积上并按模 `2^PTO_XLEN` 回绕，只发布一个目标。
 
 <!-- PTO-READER-BLOCK: scalar-hl-madd-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后把所选加数加入有符号乘积，再把宽结果拆分为低、高XLEN两半，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractAccumulator_HL_MADD`：`MultiplyWideSigned(left, right)` 产生 128 位乘积，`SignExtend{PTO_XLEN * 2}(addend)` 把 `SrcD` 扩展到相同宽度，再由一次 128 位加法合并。分派路径以 `word_operation` 为假调用 `ExecuteScalarMultiplyAddPair`，得到同一个累加值。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+hl.madd SrcL, SrcR, SrcD, ->Dst0, Dst1
+```
+
+设计要点：加数被符号扩展到 `128` 位，既不做零扩展，也不截断到 `64` 位。因此 `SrcD = -1` 会从完整的 128 位乘积中减去 1，借位可以影响到 `RegDst1` 收到的高半部。
 
 <!-- PTO-READER-BLOCK: scalar-hl-madd-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst0` 是 5 位字段，选择乘积或累加结果低半部的 Reg5 目标。
-- `RegDst1` 是 5 位字段，选择乘积或累加结果高半部的 Reg5 目标。
-- `SrcD` 是 5 位字段，通过 Reg5 选择加数。
-- `SrcL` 是 5 位字段，通过 Reg5 选择左乘数或加法操作数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择右乘数。
+- `RegDst0`，指令切片 `[23 +: 5]`，接收 `accumulator[63:0]`。
+- `RegDst1`，指令切片 `[11 +: 5]`，接收 `accumulator[127:64]`。
+- `SrcD`，指令切片 `[43 +: 5]`，提供加数。
+- `SrcL`，指令切片 `[31 +: 5]`，提供左乘数。
+- `SrcR`，指令切片 `[36 +: 5]`，提供右乘数。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+每个源都是 Reg5 编码：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`。读取临时项不会把它从队列中移除，并且三个源都在任一目标被写入之前读取。
+
+设计要点：两个目标字段各自独立写入，因此 `->Dst0, Dst1` 取编码 `30` 和 `31` 时，低半部先推入 `U`，高半部随后推入 `T`。重复目标合法，因为这两次写入只是按 `RegDst0`、`RegDst1` 的顺序发生。
 
 <!-- PTO-READER-BLOCK: scalar-hl-madd-effects role=effects -->
 ## 效果与顺序
 
-所有结果都在发布前计算完成。随后按编码顺序（`RegDst0`, `RegDst1`）更新目标；目标重复指向同一寄存器或队列时也采用这一顺序。
+三个源都在任何写入之前读取，因此即使某个源与某个目标同名，它贡献的仍是本指令执行前的值。128 位累加值在第一次写入之前就已完整。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 6 字节。
+随后写入按编码顺序进行：先用 `accumulator[63:0]` 写 `RegDst0`，再用 `accumulator[127:64]` 写 `RegDst1`。当两个名称指向同一个 GPR 时，高半部是最终值；当两者都是队列推送时，高半部是最新表项。
 
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+目标效果之后，`TPC` 前进 `6` 字节。`HL.MADD` 不读写内存，也不改变其他体系结构状态；它能造成的唯一队列变化是由 `RegDst0` 与 `RegDst1` 选择的一次或两次推送。
 
 <!-- PTO-READER-BLOCK: scalar-hl-madd-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+`32` 个源编码全部有定义：`0..23` 选择 GPR，`24..31` 选择必须有效的临时队列表项。`32` 个目标编码全部被接受，因此 `ScalarDestinationSelectorLegal` 不会失败。该形式的固定位是对整个 48 位编码的匹配与掩码测试，没有任何操作数值被保留。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+检查按固定顺序执行。适用性只在系统块终止请求挂起时失败，此时在 `TPC` 触发 `Fault_BundleControl`。否则，与形式不匹配的编码会在进入指令束主体之前于 `PC` 触发 `Fault_IllegalInstruction`，所选 `T` 或 `U` 源不可用时则在任何目标写入之前于 `PC` 触发 `Fault_IllegalInstruction`。算术本身不触发任何故障：128 位和值按模 `2^128` 回绕。
+
+设计要点：不可用的临时项由合法性检查拒绝，而不是被读取，因此累加值绝不会由未定义的队列表项构成。这就是 `hl.madd t#1, t#1, zero, ->a0, a1` 在空 `T` 队列上触发故障、而不是发布一个数值的原因。
 
 <!-- PTO-READER-BLOCK: scalar-hl-madd-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `HL.MADD` 示例说明：乘数 `6` 与 `7` 加上加数 `1` 得到累加值 `43`；宽结果对形式把 `43` 放入低部结果，把 `0` 放入高部结果。
+取 `SrcL = 6`、`SrcR = 7`、`SrcD = 1` 时，`MultiplyWideSigned` 产生 `42`，符号扩展后的加数为 `1`，累加值为 `43`，因此 `RegDst0` 收到 `43`，`RegDst1` 收到 `0`。取负数输入 `SrcL = -3`、`SrcR = 5`、`SrcD = 1` 时累加值为 `-14`：低半部是 `0xFFFFFFFFFFFFFFF2`，高半部是 `0xFFFFFFFFFFFFFFFF`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

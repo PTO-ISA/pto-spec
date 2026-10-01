@@ -19,46 +19,53 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-lui-purpose role=purpose -->
 ## LUI 的作用
 
-`LUI` 是一条 32 位标量 ALU 指令。它符号扩展编码的 20 位立即数，再左移 12 位；当前指令契约定义结果发布路径以及任何额外状态效果。
+`LUI` 是一条 32 位编码的标量 ALU 指令，它物化 `SignExtend(imm20) << 12` 并通过一个 Reg5 目标发布 XLEN 值。它不读取任何标量寄存器。
+
+发布值总是 `4096` 的倍数，其绝对值不超过 `2^31`，因此该指令物化的是位于一个字高 `20` 位上的有符号立即数。
 
 <!-- PTO-READER-BLOCK: scalar-lui-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后符号扩展编码的 20 位立即数，再左移 12 位，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractResult_LUI`，它返回 `MaterializeLUI(encoded_immediate)`。该辅助函数是 `LSL(SignExtend{PTO_XLEN}(immediate), 12)`：先对 `20` 位字段做符号扩展，然后左移。分派路径从 `ScalarOperation_LUI` 以 `ScalarDecodedBits20(instruction, form, ScalarField_imm20)` 调用它。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+lui simm, ->{t, u, Rd}
+```
+
+设计要点：移位发生在符号扩展之后，因此负字段会把字的高位填满，而不是留下零。`imm20 = 0x80000` 物化出 `0xFFFFFFFF80000000`，而不是 `0x0000000080000000`。
 
 <!-- PTO-READER-BLOCK: scalar-lui-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `imm20` 是 20 位字段，携带有符号高 20 位立即数。
+- `RegDst`，指令切片 `[7 +: 5]`，接收 XLEN 结果，或丢弃它。
+- `imm20`，指令切片 `[12 +: 20]`，提供有符号的高位立即数。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+没有 `SrcL` 或 `SrcR` 字段。目标使用通用映射：编码 `1..23` 写绝对 GPR，编码 `30` 推入 `U`，编码 `31` 推入 `T`，编码 `0` 与编码 `24..29` 丢弃。
+
+设计要点：没有源字段，`LUI` 就没有可快照的读取，也没有需要检查的临时源可用性。唯一能影响结果的操作数是立即数，唯一被写入的状态是目标。
 
 <!-- PTO-READER-BLOCK: scalar-lui-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+结果仅由编码立即数算出，随后通过 `RegDst` 发布。它没有更早的体系结构状态需要观察，因此顺序问题归结为这一次目标写入。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
-
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+目标效果之后 `TPC` 前进 `4` 字节。`LUI` 不访问内存，也不改变数值状态、保留、描述符、Tile、指令束、特权与控制流状态；唯一可能的队列变化是由 `RegDst` 选择的那一次 `T` 或 `U` 推送。
 
 <!-- PTO-READER-BLOCK: scalar-lui-constraints role=constraints -->
 ## 合法性与故障边界
 
-物化、移动或扩展按固定位宽获得总定义，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在状态效果前触发 `Fault_IllegalInstruction`。
+两个编码字段都完全有定义：全部 `32` 个 `RegDst` 编码都被接受，`imm20` 的全部 `2^20` 个取值都合法。只有低位操作码字段是固定的，因此一旦形式译码成功，操作数合法性检查就没有可拒绝的对象。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+适用性只在系统块终止请求挂起时失败，并在 `TPC` 触发 `Fault_BundleControl`。否则唯一可达的故障是与形式不匹配的编码在进入指令束主体之前于 `PC` 触发的 `Fault_IllegalInstruction`。不存在临时源不可用的故障，因为没有 Reg5 源。
+
+设计要点：立即数是 `20` 位，因此 `SignExtend(imm20)` 的绝对值不超过 `2^19`，左移 `12` 位后不超过 `2^31`。所以对每个 `imm20` 取值，移位都停留在 XLEN 之内，从寄存器顶端移出的位是冗余符号位，每个 `imm20` 取值都物化出 `-2147483648` 到 `2147479552` 范围内一个不同的 `4096` 的倍数。
 
 <!-- PTO-READER-BLOCK: scalar-lui-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `LUI` 示例说明：立即数 `1` 左移 12 位后得到 XLEN 值 `0x1000`。
+取 `imm20 = 1` 时 `SignExtend(1)` 为 `1`，移位产生 `4096`，因此 `RegDst` 收到 `4096`。取 `imm20 = 0x80000` 时该字段为负，`SignExtend` 产生 `0xFFFFFFFFFFF80000`，发布值是 `0xFFFFFFFF80000000`。最大的正字段 `imm20 = 0x7FFFF` 发布 `0x7FFFF000`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

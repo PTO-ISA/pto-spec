@@ -19,47 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-sraiw-purpose role=purpose -->
 ## What SRAIW does
 
-`SRAIW` is a 32-bit scalar ALU instruction. It arithmetically shifts the source right under the low 32-bit word, followed by sign-extension to XLEN shift rules; its current instruction contract defines the result publication path and any additional state effect.
+`SRAIW` shifts the low `32` bits of `SrcL` arithmetically right by a constant `shamt` of `0` through `31` and publishes the `32`-bit result sign-extended to `PTO_XLEN`. It has three fields: `RegDst` at `[7 +: 5]`, `SrcL` at `[15 +: 5]` and the five-bit `shamt` at `[20 +: 5]`.
+
+The carrier matches `0x00006035` under mask `0xfe00707f`, so bits `31:25` are fixed and the amount is five bits.
+
+The sign that is copied is bit `31` of the word, because the shift happens at `32`-bit width before the final extension.
 
 <!-- PTO-READER-BLOCK: scalar-sraiw-mechanism role=mechanism -->
-## How the result is formed
+## How the word shift is formed
 
-Execution snapshots the encoded inputs, then arithmetically shifts the source right under the low 32-bit word, followed by sign-extension to XLEN shift rules, and only afterward performs the destination effects.
+Dispatch calls `ExecuteDecodedShiftImmediate` with `word_operation` true (`asl/scalar/model/dispatch/alu.asl:198-199`). `ScalarBinaryW` binds `left32` to `left[31:0]`, performs `ASR(left32, UInt(right[4:0]))`, and returns `SignExtend{PTO_XLEN}(result32)` (`asl/scalar/model/alu/semantics.asl:483`).
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+sraiw SrcL, shamt, ->{t, u, Rd}
+```
+
+Design point: The narrowing happens before the shift, so bit `31` of the word is the sign source even when bit `63` of `SrcL` differs. A source whose low word is `0x80000000` shifts to a negative word, while the same source with a clear word bit `31` shifts to a non-negative one.
+
+Design point: The final sign extension restores the negative value to full width. `SRAIW` with a word of `0xFFFFFFF0` and an amount of `1` publishes `0xFFFFFFFFFFFFFFF8`, not `0x00000000FFFFFFF8`.
 
 <!-- PTO-READER-BLOCK: scalar-sraiw-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects a Reg5 scalar input whose low 32 bits are used.
-- The 5-bit `shamt` field encodes the five-bit shift amount.
+`SrcL` supplies the word, `shamt` is decoded from the carrier, and `RegDst` receives the sign-extended word.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+- `SrcL`, instruction slice `[15 +: 5]`: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, `28..31` read `U#1..U#4`, non-consuming. Only `SrcL[31:0]` participates.
+- `shamt`, instruction slice `[20 +: 5]`: `0` through `31`; encoded zero performs an identity word shift.
+- `RegDst`, instruction slice `[7 +: 5]`: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+- Encoded zero of `SrcL` reads the architectural zero GPR, whose word sign bit is clear, so every amount publishes `0`.
+
+Design point: The word form reaches the same result as a full-width `SRAI` only when the shifted value is already the sign extension of its low word. For a value such as `0x00000000FFFFFFFF` the two forms disagree, because `SRAIW` treats the value as `-1` while `SRAI` treats it as a large positive number.
 
 <!-- PTO-READER-BLOCK: scalar-sraiw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is read before the write, so an aliasing destination shifts the pre-instruction value. The sign-extended word is published and `TPC` advances by `4` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+`SRAIW` reads no memory and changes no reservation, descriptor, numeric-flag, trap, bundle, privilege, predicate or control-flow state; a `30` or `31` destination is the only case in which a temporary queue moves.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: The instruction writes exactly one `PTO_XLEN` word and records nothing else. Because the word shift cannot produce a value outside the signed word range, the published upper half is always a copy of word bit `31`.
 
 <!-- PTO-READER-BLOCK: scalar-sraiw-constraints role=constraints -->
 ## Legality and fault boundary
 
-All 5 encoded shift bits are assigned, giving amounts `0..31`; fixed-width shifting is total and raises no arithmetic exception.
+All `32` `SrcL` codes, all `32` `RegDst` codes and all `32` shift amounts are assigned; the form has no constraint entry beyond the fixed bits `31:25` and `14:12`.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unmatched carrier raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`, reachable for `SRAIW` only while a system-block terminal request is pending. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`, before the destination effect and before `TPC` advances.
+
+Design point: Every encodable amount has a defined word result and the final extension cannot fault, so `SRAIW` has no value-dependent trap path.
 
 <!-- PTO-READER-BLOCK: scalar-sraiw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `SRAIW` example, source `-8` shifted arithmetically right by `2` produces `-2`.
+With `a0` holding `-16`, `sraiw a0, 2, ->a2` publishes `-4`.
+
+With `a0` holding `0x00000000FFFFFFF0` and an amount of `1`, the word is negative, so `a2` receives `0xFFFFFFFFFFFFFFF8`. With `a0` holding `0x00000000FFFFFFFF` and an amount of `0`, `a2` receives `0xFFFFFFFFFFFFFFFF`, because the final extension copies word bit `31`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

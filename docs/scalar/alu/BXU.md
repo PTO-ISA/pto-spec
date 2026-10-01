@@ -19,48 +19,53 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-bxu-purpose role=purpose -->
 ## What BXU does
 
-`BXU` is a 32-bit scalar ALU instruction. It extracts the independently selected wrapping field and zero-extends it to XLEN; its current instruction contract defines the result publication path and any additional state effect.
+`BXU` extracts a bit field from one Reg5 source, zero-fills every bit above it, and publishes the XLEN result through a Reg5 destination.
+
+Design point: `BXU` and `BXS` share their field syntax and their field selection exactly, and differ only in the fill of the bits above the field. A program chooses between them by what it wants to do with the extracted value, not by how it wants to slice it.
 
 <!-- PTO-READER-BLOCK: scalar-bxu-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then extracts the independently selected wrapping field and zero-extends it to XLEN, and only afterward performs the destination effects.
+- `imms` is the field start bit `M`, from `0` through `63`.
+- `imml` encodes the field width `N` minus one, so raw values `0` through `63` select widths `1` through `64`.
 
-- `imml` and `imms` independently select field width and starting bit; wrapping is part of the selected-field mechanism.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+The `N` bits beginning at bit `M` become result bits `0` through `N-1`, and every bit from `N` upward is `0`.
+
+Design point: the field wraps, so `M + N` may exceed `64` and the field continues from bit `0`; the implementation rotates the source right by `M` and reads the low `N` bits. Consequently `N=64` selects the whole register for every `M`, and `bxu a0, 60, 8, ->a1` reads bits `60..63` before bits `0..3`.
+
+Design point: the zero fill makes the published value a pure unsigned field. It cannot exceed `2^N - 1`, so a caller that needs an unsigned small integer from a packed word does not need a second masking instruction.
 
 <!-- PTO-READER-BLOCK: scalar-bxu-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar input through Reg5.
-- The 6-bit `imml` field encodes the selected field width as `N-1`.
-- The 6-bit `imms` field encodes selected-field starting bit `M`.
+- `SrcL` is a Reg5 source: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`. Reading a temporary source does not consume it.
+- `imml` and `imms` describe the field and read no storage.
+- `RegDst` publishes the extracted value: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero of `SrcL` reads the architectural zero GPR, whose every field extracts to `0`. Encoded zero of `RegDst` discards the extracted value rather than writing it to the zero GPR, so the discard is a real choice and not a silent store.
 
 <!-- PTO-READER-BLOCK: scalar-bxu-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is read before the destination is written, so a destination that aliases the source does not disturb the extracted bits.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The result is published or discarded, and then `TPC` advances by `4` bytes. `BXU` accesses no memory and leaves reservation, descriptor, numeric-status, trap, bundle, privilege, predicate and control-flow state unchanged apart from the one `T` or `U` push selected by `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-bxu-constraints role=constraints -->
 ## Legality and fault boundary
 
-Field selection may wrap from bit 63 to bit 0; the generated defaults and legality tables below give the exact width and starting-position encodings.
+Every encoded value is assigned: all `32` `SrcL` codes, all `32` `RegDst` codes, and every `imml` and `imms` value.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An undecodable form raises `Fault_IllegalInstruction` at `PC`; an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`; a fixed-bit mismatch or an unavailable selected T/U source raises `Fault_IllegalInstruction`. Each precedes the destination effect and the `TPC` advance.
+
+Design point: the extraction and the zero fill are total for every source value, so `BXU` has no value-dependent fault. A field that crosses a packed boundary is still just a bit range; the architecture does not interpret it.
 
 <!-- PTO-READER-BLOCK: scalar-bxu-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `BXU` example, extracting four-bit field `1110` zero-extends to XLEN value `14`.
+With `SrcL=18446744073709551615`, `M=0` and `N=8`, `bxu a0, 0, 8, ->a1` publishes `255`. With `SrcL=8`, `M=60` and `N=8`, the field is bits `60..63` followed by bits `0..3`; its value is `128`, so the published value is `128`, while `BXS` on the same operands publishes `18446744073709551488`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

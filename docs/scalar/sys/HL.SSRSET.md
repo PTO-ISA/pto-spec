@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-purpose role=purpose -->
 ## What HL.SSRSET does
 
-`HL.SSRSET` writes a complete XLEN value to an assigned writable system register.
+`HL.SSRSET` is the wide-address form of the system-register write. It stores the complete XLEN value of the Reg5 source into the system register named by a 24-bit address.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteSystemRegisterSet`. Placement and encoded legality are checked before sources or system state can change.
+`InstructionContractHandler_HL_SSRSET` selects `ScalarHandler_ExecuteSystemRegisterSet` (`asl/scalar/sys/HL.SSRSET.asl:18`), and `InstructionContractSystemAddressWidth_HL_SSRSET` fixes the address width at 24 (`asl/scalar/sys/HL.SSRSET.asl:36`). The 48-bit assembly carries the address as two 12-bit pieces, which the dispatcher recombines before the call (`asl/scalar/model/dispatch/sys.asl:96`).
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+The helper preflights write permission and only then reads the source, so the source is not consumed by an attempt that cannot store (`asl/scalar/model/sys/registers.asl:160`).
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SSR_ID` carries the system-register identifier; `SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+`SrcL` is the Reg5 source from R0..R23, T#1..T#4, or U#1..U#4, and `SSR_ID` is the 24-bit register address (`asl/scalar/sys/HL.SSRSET.asl:1`). There is no destination operand.
 
-Encoded zero is an assigned field value, never an omitted operand.
+`InstructionContractPushesTemporaryT_HL_SSRSET` returns `FALSE` (`asl/scalar/sys/HL.SSRSET.asl:42`), and the instruction has no destination operand, so no temporary queue is written. Encoded zero in `SrcL` names the architectural zero GPR, which is an assigned value and a legal way to write zero.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-effects role=effects -->
 ## Architectural effects
 
-After writable-access preflight, the complete XLEN source replaces the selected system register and then `TPC` advances.
+A successful attempt stores the source value into the addressed register and advances `TPC` by the length of the 48-bit form. When the address is a base pointer register such as 0x0000, the store lands in that register; when it is `CORE_STATE`, the store also updates the current access ring from bits 3:0 (`asl/scalar/model/sys/semantics.asl:63`).
 
-A rejected write preserves both the source and target register beyond ordinary trap entry.
+Design point: a store to a read-only or unknown address faults before the source read, so a rejected wide write leaves both the source register and the target register exactly as they were. Nothing about the wider address field changes that ordering.
+
+The instruction performs no ordinary scalar memory access.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-constraints role=constraints -->
 ## Placement and rejection
 
-Address, current-ACR permission, and writable access class are checked before `SrcL` is read.
+The attempt must sit in an active SYS block body; otherwise it raises `Fault_BundleControl` before any address work. The write path then rejects with `Fault_IllegalInstruction` when the current ring lacks permission for the address, or when the access class is unknown or read-only (`asl/scalar/model/sys/registers.asl:105`).
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+Design point: the permission rule keys on the low 12 bits of the address, so a 24-bit address whose low index is below 0x0F00 remains open to every ring, while the context and debug families stay ACR0-only. The extra address bits do not create a second privilege rule.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `hl.ssrset SrcL, SSR_ID` and trace its encoded fields through preflight before following the selected system effect.
+`hl.ssrset SrcL, SSR_ID` with `SSR_ID` 0x0001 stores the source value into the global pointer register. Using `SSR_ID` 0x0C00 instead is rejected with `Fault_IllegalInstruction`, because `CYCLE` is read-only, and the source read never happens.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

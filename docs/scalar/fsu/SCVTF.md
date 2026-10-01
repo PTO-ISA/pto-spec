@@ -19,56 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-scvtf-purpose role=purpose -->
 ## What SCVTF does
 
-`SCVTF` converts S64, S32, S16, or S8 input to FP64, FP32, FP16, or E4M3 through the active numeric profile.
+`SCVTF` converts one scalar signed integer into a floating-point carrier and publishes that carrier. It is the scalar integer-to-floating direction; the floating-to-integer direction is owned by the separate conversion mnemonics.
 
 <!-- PTO-READER-BLOCK: scalar-scvtf-mechanism role=mechanism -->
-## Numeric mechanism
+## How the conversion is performed
 
-`SrcType=00`, `01`, `10`, and `11` select S64, S32, S16, and S8 with source-width sign extension.
+`SrcType` selects the source integer carrier: code `0` selects the 64-bit type, `1` the 32-bit type, `2` the 16-bit type and `3` the 8-bit type, which here means S64, S32, S16 and S8. Sign extension is used for the source carrier, so a narrow source is read as the signed value it names.
 
-The active profile receives snapshotted operands and the mnemonic-selected operation, then returns a result and exact `NV`, `DZ`, `OF`, `UF`, `NX` vector.
+`DstType` selects the destination floating carrier: code `0` selects FP64, `1` selects FP32, `2` selects FP16 and `3` selects E4M3. Codes `4` through `31` are reserved.
 
-The `pto-v0` reference profile uses the same deterministic value, rounding, range, special-value, saturation, and flag rules as `TCVT` for every shared type pair; scalar conversion supplies saturation disabled.
+The conversion runs through the same shared scalar and tile conversion reference that the tile conversion family uses, with saturation disabled. The rounding mode is the one encoded in `CORE_STATE[39:37]`, and the profile returns the result together with an exact `NV`, `DZ`, `OF`, `UF`, `NX` vector.
+
+The conversion is not limited to exact values. When the integer magnitude cannot be represented exactly in the destination carrier, the destination carrier is the nearest representable value under the active rounding mode and the inexact flag `NX` is recorded; when it is out of range the result is the infinity of the matching sign and `OF` is recorded, except for the `E4M3` destination, which has no infinity encoding and publishes its canonical quiet NaN instead.
+
+Design point: the destination carrier is chosen by an encoded field rather than by the destination register, so the same source value can be converted to FP64, FP32, FP16 or E4M3 without changing any register role. Saturation is disabled for scalar conversion, so an overflowing value is never clamped to the largest finite value.
 
 <!-- PTO-READER-BLOCK: scalar-scvtf-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `DstType` selects the destination-carrier code.
-
-- `RegDst` selects the encoded destination or discard behavior.
-
-- `SrcL` supplies the left scalar source.
-
-- `SrcType` selects the source-carrier width.
-
-- Reg5 source selectors may read GPR, T, or U state without consuming temporary entries.
-
-- The destination selector writes a GPR, pushes T/U, or discards only the result.
+- `RegDst` selects the destination selector: codes `1`..`23` write a GPR, `30` pushes `U`, `31` pushes `T`, and `0` plus `24`..`29` discard the result.
+- `SrcL` is the source selector. There is no second source field.
+- `SrcType` selects the source integer carrier.
+- `DstType` selects the destination floating carrier.
+- Source selectors `0`..`23` read GPRs, `24`..`27` read `T#1`..`T#4`, and `28`..`31` read `U#1`..`U#4`. Reading a temporary never consumes or reorders it.
+- Source selector `0` always reads XLEN zero, and destination selector `0` writes nothing.
+- The published word is the destination encoding zero-extended to XLEN, so the upper bits above the selected carrier width are zero.
 
 <!-- PTO-READER-BLOCK: scalar-scvtf-effects role=effects -->
 ## Effects and ordering
 
-All explicit sources are snapshotted before numeric-status or destination effects.
+The source is read after both encoded types have been validated, and it is read before any write. `SrcL` and `RegDst` may therefore name the same register or queue slot and the conversion still uses the pre-instruction value. A push into `T` or `U` happens only after the read.
 
-All five profile-returned flags are ORed into sticky numeric state; the operation cannot clear an existing flag.
-
-The result is published or discarded, then `TPC` advances by `4` bytes. The instruction has no memory or reservation effect.
+The returned flags are ORed into `CORE_STATE[36:32]`, so the conversion can set a sticky flag but never clear one. The destination is written or discarded, and only then does `TPC` advance by `4` bytes. No memory access and no reservation is involved.
 
 <!-- PTO-READER-BLOCK: scalar-scvtf-constraints role=constraints -->
-## Type and profile boundaries
+## Reserved types and rejection
 
-All four `SrcType` values are assigned. Unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+All four `SrcType` codes are assigned, so no source type is reserved for this mnemonic. `DstType` codes `4` through `31` are reserved. The handler resolves both type codes before the first read of the source register, so a reserved `DstType` raises `Fault_IllegalInstruction` with no source read, no profile call, no flag, no queue change, no destination write, and no `TPC` advance.
 
-Raw `DstType=0..3` select FP64, FP32, FP16, and E4M3; `4..31` are reserved and reject before effects.
+A source selector that names an unavailable `T` or `U` slot is rejected the same way, at the same point.
 
-The portable instruction contract owns carrier selection, snapshots, flag accumulation, publication, and fault order; the active named profile owns the numeric result and produced flags.
+A recorded numeric flag never raises a synchronous PTO trap by itself.
 
 <!-- PTO-READER-BLOCK: scalar-scvtf-example role=example -->
 ## Non-normative example
 
-This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
+`scvtf.sd2fd a0, ->a1` reads `a0` as an S64 source and writes the FP64 encoding of the same numeric value to `a1`.
 
-`scvtf.sd2fd a0, ->a1` selects its carriers, snapshots its sources, invokes the active profile, accumulates returned flags, publishes the result, and then advances `TPC`.
+With `a0` holding the S64 value `-2`, the published FP64 value is `-2.0` and `NX` stays clear because that value is exact. With `a0` holding the S64 maximum and `DstType` selecting FP32, that magnitude is not exactly representable, so the published value is the nearest FP32 value and `NX` is recorded, while `OF` stays clear because the magnitude is still far below the FP32 range. Overflow needs a narrow destination: with `DstType` selecting E4M3, a magnitude above `448` overflows.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

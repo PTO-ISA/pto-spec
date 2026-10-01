@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ic-iva-purpose role=purpose -->
 ## What IC.IVA does
 
-`IC.IVA` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+`IC.IVA` performs the instruction-cache virtual-address scope-token maintenance operation and completes it synchronously. The scope token arrives in the single source operand `SrcL`, which the instruction captures and records (`asl/scalar/sys/IC.IVA.asl:29`).
 
 <!-- PTO-READER-BLOCK: scalar-ic-iva-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+The instruction is bound to `ScalarHandler_ExecuteMaintenance` (`asl/scalar/sys/IC.IVA.asl:11`) and to the token `Maintenance_IC_IVA` (`asl/scalar/sys/IC.IVA.asl:23`). Inside `ExecuteMaintenance` that token selects the instruction-cache case, which advances `_InstructionCacheEpoch` exactly once (`asl/scalar/model/sys/semantics.asl:138`).
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+Placement is enforced by applicability: the bundle must be active with a System block body, otherwise the attempt stops before operand legality (`asl/scalar/model/sys/semantics.asl:321`).
 
 <!-- PTO-READER-BLOCK: scalar-ic-iva-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+`SrcL` accepts the Reg5 source encodings R0..R23, T#1..T#4, and U#1..U#4, and supplies the address token for the request. The instruction has no destination operand, so no result is published to a register or queue.
 
-Encoded zero is an assigned field value, never an omitted operand.
+Encoded zero selects the architectural zero GPR. It is an assigned value, and the zero token is recorded like any other.
 
 <!-- PTO-READER-BLOCK: scalar-ic-iva-effects role=effects -->
 ## Architectural effects
 
-On success, the maintenance record receives `Maintenance_IC_IVA` and the exact captured operand token.
+After a successful attempt the instruction-cache epoch is one higher and the maintenance record reads `Maintenance_IC_IVA` with the snapshotted operand (`asl/scalar/model/sys/semantics.asl:156`). `TPC` then advances by the instruction length.
 
-Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+Design point: the token is recorded rather than range-checked. The portable model exposes one epoch and one record for instruction-cache maintenance, so the recorded operand is what preserves the caller's scope information.
+
+`IC.IVA` performs no ordinary scalar memory access and does not itself make any instruction byte visible; the epoch is the observable point. No register, queue, or system register is written.
 
 <!-- PTO-READER-BLOCK: scalar-ic-iva-constraints role=constraints -->
 ## Placement and rejection
 
-Cache maintenance is a synchronous local hint at every ACR and does not define additional implementation cache contents.
+Two gates precede the effect. An attempt outside an active SYS block body raises `Fault_BundleControl` and returns without touching the executor. Inside the body, the fixed bits and the `SrcL` selector are validated before the handler runs.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+There is no ring gate for instruction-cache maintenance and no canonical-address requirement. Only `TLB.IV` and `TLB.IAV` test canonical form, and only the TLB operations require ring 0 (`asl/scalar/model/sys/semantics.asl:115`).
 
 <!-- PTO-READER-BLOCK: scalar-ic-iva-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `ic.iva SrcL` and trace its encoded fields through preflight before following the selected system effect.
+With the source register holding 0x1234, `ic.iva SrcL` in a SYS block body snapshots 0x1234, advances the instruction-cache epoch by one, and records `Maintenance_IC_IVA` with operand 0x1234. The same instruction executed at any access ring behaves identically, because instruction-cache maintenance is not ring-restricted.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

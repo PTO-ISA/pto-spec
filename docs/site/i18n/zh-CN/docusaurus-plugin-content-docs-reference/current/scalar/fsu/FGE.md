@@ -19,54 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fge-purpose role=purpose -->
 ## FGE 的作用
 
-`FGE` 执行有序大于等于比较（静默 NaN 形式），并发布规范化 XLEN 一或零。
+`FGE` 测试左侧选定的浮点载体是否大于或等于右侧，并把规范化的 `0` 或 `1` 写入 Reg5 目的。
+
+它是比较组中的静默大于或等于成员。
 
 <!-- PTO-READER-BLOCK: scalar-fge-mechanism role=mechanism -->
-## 数值机制
+## 大于或等于作为小于的取反
 
-`SrcType=00` 选择完整 FP64 载体；`SrcType=01` 选择零扩展后的低 32 位 FP32 载体。
+`SrcType` 为两侧选择载体，编码 `00` 表示 FP64，编码 `01` 表示低字中的 FP32 载体，两个源在测试前都规范化到该载体。
 
-任一输入为 NaN 时，有序比较结果为假。
+任何 NaN 操作数都使结果为假。否则模型求值 `!less`，其中序关系由固定的字序键导出，因此 `FGE` 对相等的编码为真，包括正零与负零相比较的情形。
 
-静默 NaN 形式只对信号 NaN 记录粘滞 `NV`。
+设计要点：对有序操作数，`FGE` 是严格小于序的取反，而不是独立的“大于或等于”原语，因此 `FLT` 与 `FGE` 不会同时为真；当任一操作数为 NaN 时，共享比较对两个助记符都返回假。
 
 <!-- PTO-READER-BLOCK: scalar-fge-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `RegDst` 选择编码指定的目的位置或丢弃行为。
+- `SrcL` 提供左侧 Reg5 源。
+- `SrcR` 提供右侧 Reg5 源。
+- `SrcType` 为两侧选择源载体。
+- `RegDst` 选择目的：编码 `1..23` 写所指的绝对 GPR，编码 `30` 压入 `U` 队列，编码 `31` 压入 `T` 队列，编码 `0` 以及编码 `24..29` 丢弃结果。
 
-- `SrcL` 提供左侧标量源。
-
-- `SrcR` 提供右侧标量源。
-
-- `SrcType` 选择源载体宽度。
-
-- Reg5 源选择器可以读取 GPR、T 或 U 状态，且不会消费临时队列项。
-
-- 目的选择器可以写 GPR、压入 T/U，或只丢弃结果。
+Reg5 源读取绝对 GPR、`T#1..T#4` 或 `U#1..U#4`，且不消费队列项。源中的编码零读取架构零 GPR。
 
 <!-- PTO-READER-BLOCK: scalar-fge-effects role=effects -->
 ## 效果与顺序
 
-所有显式源都会在数值状态或目的效果前完成快照。
+目的收到恰好 `1` 或 `0`，并规范化到完整 XLEN 字，随后 `TPC` 前进 `4` 字节。若记录了标志，则按位或进粘性数值状态。
 
-架构产生的 `NV` 会在目的发布前按位或到粘滞数值状态。
-
-结果完成发布或丢弃后，`TPC` 前进 `4` 字节。该指令不产生内存或保留状态效果。
+谓词、内存、保留状态和描述符状态都不改变，除可能的 `NV` 外不产生其他数值标志。
 
 <!-- PTO-READER-BLOCK: scalar-fge-constraints role=constraints -->
-## 类型与配置档边界
+## 载体合法性与静默形式行为
 
-`SrcType=10` 和 `SrcType=11` 为保留值。保留类型或不可用 T/U 源会在读取源、调用配置档、更新标志或队列、写入目的以及改变 `TPC` 前引发 `Fault_IllegalInstruction`。
+`SrcType` 编码 `0` 和 `1` 已分配，编码 `2` 和 `3` 为保留值。载体检查在第一次架构源读取之前运行，因此保留的 `SrcType`、固定位不匹配或所选的 `T`、`U` 源不可用，都会在任何源、配置档、目的、标志、队列或 `TPC` 效果之前引发 `Fault_IllegalInstruction`。
 
-数值标志更新本身不会引发同步 PTO 陷阱。
+每个 Reg5 目的编码都已分配。数值状态标志只更新粘性状态，永远不会引发同步 PTO 陷阱。
 
 <!-- PTO-READER-BLOCK: scalar-fge-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不会脱离规范规则或当前配置档另行定义算术。
+This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
 
-`fge.fd a0, a1, ->a2` 应用架构定义的特殊值规则，在推进 `TPC` 前发布规范化输出。
+规范 FP64 示例是 `fge.fd a0, a1, ->a2`，其中 GPR `a0` 保存 `0x4000000000000000`，表示 `2.0`，GPR `a1` 保存 `0x3ff0000000000000`，表示 `1.0`：GPR `a2` 收到 `1`。
+
+对调两个源寄存器会写入 `0`，而比较两个零编码（一个正零、一个负零）会写入 `1`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

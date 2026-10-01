@@ -19,49 +19,58 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-maddw-purpose role=purpose -->
 ## HL.MADDW 的作用
 
-`HL.MADDW` 是一条 48 位标量 ALU 指令。它把所选加数加入有符号乘积，再把宽结果拆分为低、高字两半；当前指令契约定义结果发布路径以及任何额外状态效果。
+`HL.MADDW` 是一条 48 位标量 ALU 指令。它把三个源的低字按有符号值读取，形成 64 位累加值 `signed32(SrcL) * signed32(SrcR) + signed32(SrcD)`，并发布它的两个 32 位半部，每个半部都符号扩展到 XLEN。
+
+两个半部都会被发布，因此目标对承载完整的 64 位累加值：`RegDst0` 收到 `SignExtend(result[31:0])`，`RegDst1` 收到 `SignExtend(result[63:32])`。
 
 <!-- PTO-READER-BLOCK: scalar-hl-maddw-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后把所选加数加入有符号乘积，再把宽结果拆分为低、高字两半，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractResult_HL_MADDW`：它把 `addend[31:0]`、`left[31:0]` 与 `right[31:0]` 符号扩展到 XLEN，取 `MultiplyWideSigned` 的低 `64` 位，再加上扩展后的加数。分派路径以 `word_operation` 为真调用 `ExecuteScalarMultiplyAddPair`，得到同一个 64 位累加值。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+hl.maddw SrcL, SrcR, SrcD, ->Dst0, Dst1
+```
+
+设计要点：字截断发生在乘法之前，而不是乘法之后。取 `SrcL = 0x100000000`、`SrcR = 2`、`SrcD = 0` 时，因为 `SrcL` 的低字是 `0`，`HL.MADDW` 在两个半部都发布 `0`，而 `HL.MADD` 会发布 `0x200000000`；源中高于第 `31` 位的任何位都无法影响 `HL.MADDW` 的两个目标。
 
 <!-- PTO-READER-BLOCK: scalar-hl-maddw-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst0` 是 5 位字段，选择符号扩展后 `result[31:0]` 的 Reg5 目标。
-- `RegDst1` 是 5 位字段，选择符号扩展后 `result[63:32]` 的 Reg5 目标。
-- `SrcD` 是 5 位字段，通过 Reg5 选择加数。
-- `SrcL` 是 5 位字段，通过 Reg5 选择左乘数或加法操作数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择右乘数。
+- `RegDst0`，指令切片 `[23 +: 5]`，接收 `SignExtend(result[31:0])`。
+- `RegDst1`，指令切片 `[11 +: 5]`，接收 `SignExtend(result[63:32])`。
+- `SrcD`，指令切片 `[43 +: 5]`，提供加数字。
+- `SrcL`，指令切片 `[31 +: 5]`，提供左乘数字。
+- `SrcR`，指令切片 `[36 +: 5]`，提供右乘数字。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+源使用通用 Reg5 映射：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4` 且不消耗表项。三次读取都发生在任一目标写入之前。
+
+设计要点：由于两个半部各自独立地符号扩展，负的累加值会在 `RegDst1` 发布 `0xFFFFFFFFFFFFFFFF`，而不是原始高字。因此高目标与低目标使用同一种 XLEN 值格式，而不是一个无符号字段。
 
 <!-- PTO-READER-BLOCK: scalar-hl-maddw-effects role=effects -->
 ## 效果与顺序
 
-所有结果都在发布前计算完成。随后按编码顺序（`RegDst0`, `RegDst1`）更新目标；目标重复指向同一寄存器或队列时也采用这一顺序。
+完整的 64 位累加值在第一次目标写入之前由源快照形成，因此重复的目标名称以及源与目标同名的情况都只能观察到本指令执行前的值。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 6 字节。
+发布顺序是 `RegDst0` 之后 `RegDst1`。如果两个选择子指向同一个 GPR，第二个高字结果是最终值；如果两者推入同一队列，`SignExtend(result[63:32])` 是最新表项，`SignExtend(result[31:0])` 是次新表项。
 
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+发布之后，`TPC` 前进 `6` 字节。不读写内存，`RegDst0`、`RegDst1` 与 `TPC` 之外的任何状态都不改变。
 
 <!-- PTO-READER-BLOCK: scalar-hl-maddw-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+每个 `32` 编码的源编码都有定义，每个 `32` 编码的目标编码都被接受，因此只有源可用性会使操作数检查失败。固定编码位必须与规范的 48 位形式匹配；除此之外没有操作数值被保留。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+适用性只在系统块终止请求挂起时失败，并在 `TPC` 触发 `Fault_BundleControl`。与形式不匹配的编码在进入指令束主体之前于 `PC` 触发 `Fault_IllegalInstruction`。所选 `T` 或 `U` 源不可用时，在任一目标写入之前于 `PC` 触发 `Fault_IllegalInstruction`，`TPC` 停留在出错指令上。
+
+设计要点：累加值在 `64` 位内计算，而两个目标都是 XLEN 字。两个目标都使用成对形式共用的目标映射，因此即使算术更窄，丢弃与队列推送目标编码的行为与其他成对形式完全一致。
 
 <!-- PTO-READER-BLOCK: scalar-hl-maddw-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `HL.MADDW` 示例说明：乘数 `6` 与 `7` 加上加数 `1` 得到累加值 `43`；宽结果对形式把 `43` 放入低部结果，把 `0` 放入高部结果。
+取 `SrcL = -3`、`SrcR = 5`、`SrcD = 1` 时，有符号字乘积为 `-15`，结果为 `-14`，`RegDst0` 收到 `SignExtend(0xFFFFFFF2)` = `0xFFFFFFFFFFFFFFF2`，而 `RegDst1` 收到 `SignExtend(0xFFFFFFFF)` = `0xFFFFFFFFFFFFFFFF`。取 `SrcL = 70000`、`SrcR = 70000`、`SrcD = 0` 时，64 位结果是 `4900000000`，即 `0x124101100`，因此 `RegDst0` 收到 `605032704`，`RegDst1` 收到 `1`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

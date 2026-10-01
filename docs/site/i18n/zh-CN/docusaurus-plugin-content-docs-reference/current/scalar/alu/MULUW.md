@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-muluw-purpose role=purpose -->
 ## MULUW 的作用
 
-`MULUW` 是一条 32 位标量 ALU 指令。它按照低 32 位字，再符号扩展到 XLEN结果规则计算无符号乘积的低部；当前指令契约定义结果发布路径以及任何额外状态效果。
+`MULUW` 是一条 32 位编码的标量 ALU 指令，它把两个源的低字相乘，保留该乘积的低 `32` 位，并把第 `31` 位符号扩展到 XLEN，再通过一个 Reg5 目标发布。
+
+任一源的 `63:32` 位都在操作之外，因此只在第 `31` 位以上不同的源会产生相同的发布字。
 
 <!-- PTO-READER-BLOCK: scalar-muluw-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后按照低 32 位字，再符号扩展到 XLEN结果规则计算无符号乘积的低部，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractResult_MULUW`，它返回 `ScalarMultiplyW(left, right)`。该辅助函数把 `left[31:0]` 与 `right[31:0]` 零扩展，用 `MultiplyWord` 相乘，并对 `product[31:0]` 应用 `SignExtend{PTO_XLEN}`。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+muluw SrcL, SrcR, ->{t, u, Rd}
+```
+
+设计要点：源做零扩展，而结果做符号扩展，两种扩展并不对称。第 `31` 位被置位的乘积会作为负的 XLEN 字发布：`SrcL = SrcR = 0xFFFFFFFF` 的 32 位乘积是 `1`，因此目标收到 `1`；而同样的源值在 `MULU` 下产生 `0xFFFFFFFE00000001`。
 
 <!-- PTO-READER-BLOCK: scalar-muluw-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择左乘数或加法操作数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择右乘数。
+- `RegDst`，指令切片 `[7 +: 5]`，接收 `SignExtend(product[31:0])`。
+- `SrcL`，指令切片 `[15 +: 5]`，提供左乘数字。
+- `SrcR`，指令切片 `[20 +: 5]`，提供右乘数字。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+源使用通用 Reg5 映射：`0..23` 为绝对 GPR，`24..27` 为 `T#1..T#4`，`28..31` 为 `U#1..U#4`，非消耗读取。编码零读取体系结构零 GPR，因此编码零乘数会让整个乘积为零。
+
+设计要点：目标映射就是常用的那一张：编码 `1..23` 写 GPR，`30` 与 `31` 推入 `U` 与 `T`，`0` 与 `24..29` 丢弃。丢弃结果之前仍然会读取源，因此被丢弃的 `muluw` 执行后队列状态不变。
 
 <!-- PTO-READER-BLOCK: scalar-muluw-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+两份源快照都在目标效果之前取得，因此源与目标同名不会改变进入乘法的值。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
-
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+目标收到符号扩展后的低字，随后 `TPC` 前进 `4` 字节。该指令没有内存效果，也没有数值状态效果；除 `RegDst` 与 `TPC` 之外，只有目标编码选择的 `T` 或 `U` 推送能改变状态。
 
 <!-- PTO-READER-BLOCK: scalar-muluw-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+每个源编码与每个目标编码都有定义，且目标选择子检查接受全部 `32` 个编码，因此临时源不可用是唯一可能失败的操作数条件。固定编码位必须与规范的 32 位形式匹配。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+适用性只在系统块终止请求挂起时失败，并在 `TPC` 触发 `Fault_BundleControl`。否则，与形式不匹配的编码在进入指令束主体之前于 `PC` 触发 `Fault_IllegalInstruction`，所选 `T` 或 `U` 源不可用时则在目标写入之前于 `PC` 触发 `Fault_IllegalInstruction`。乘法本身是全定义的，不触发任何故障。
+
+设计要点：源的零扩展与结果的符号扩展是两个独立步骤，因此没有任何操作数值会引发异常，也没有任何操作数值被保留。唯一反直觉的情形是结果第 `31` 位为 1，它把一个看似很小的 32 位乘积变成负的 XLEN 字。
 
 <!-- PTO-READER-BLOCK: scalar-muluw-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `MULUW` 示例说明：无符号低字源值 `6` 与 `7` 产生符号扩展后的单一结果 `42`。
+取 `SrcL = 0xFFFFFFFF`、`SrcR = 0xFFFFFFFF` 时，两个低字相乘得到 `0xFFFFFFFE00000001`，其低 `32` 位是 `1`，因此 `RegDst` 收到 `1`。取 `SrcL = 0x0000000180000000`、`SrcR = 2` 时只有低字参与：乘积 `0x80000000 * 2` 是 `0x100000000`，其低 `32` 位为 `0x00000000`，因此目标收到 `0`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

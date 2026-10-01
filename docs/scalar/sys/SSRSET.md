@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ssrset-purpose role=purpose -->
 ## What SSRSET does
 
-`SSRSET` writes a complete XLEN value to an assigned writable system register.
+`SSRSET` writes one system register. It takes the value to store from the Reg5 source `SrcL` and the target from the 12-bit address `SSR_ID`, and it writes the complete XLEN value into the addressed register.
 
 <!-- PTO-READER-BLOCK: scalar-ssrset-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteSystemRegisterSet`. Placement and encoded legality are checked before sources or system state can change.
+`InstructionContractHandler_SSRSET` selects `ScalarHandler_ExecuteSystemRegisterSet` (`asl/scalar/sys/SSRSET.asl:18`), and `InstructionContractSystemAddressWidth_SSRSET` fixes the address width at 12 (`asl/scalar/sys/SSRSET.asl:36`). The dispatcher decodes `SrcL` as a Reg5 selector and `SSR_ID` as a system-register address (`asl/scalar/model/dispatch/sys.asl:111`).
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+The helper checks before it reads: `ExecuteSystemRegisterSet` rejects the attempt when `SystemRegisterWritePermitted` is false, and only then reads the source register (`asl/scalar/model/sys/registers.asl:157`).
 
 <!-- PTO-READER-BLOCK: scalar-ssrset-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SSR_ID` carries the system-register identifier; `SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+`SrcL` accepts the Reg5 source encodings R0..R23, T#1..T#4, and U#1..U#4, and supplies the value to store. `SSR_ID` is the 12-bit system-register identifier (`asl/scalar/sys/SSRSET.asl:1`).
 
-Encoded zero is an assigned field value, never an omitted operand.
+`SSRSET` has no destination operand, so no register or queue receives a result. Encoded zero in `SrcL` names the architectural zero GPR, which is a legal way to write zero, and encoded zero in `SSR_ID` is the base register at address 0.
 
 <!-- PTO-READER-BLOCK: scalar-ssrset-effects role=effects -->
 ## Architectural effects
 
-After writable-access preflight, the complete XLEN source replaces the selected system register and then `TPC` advances.
+A successful attempt writes the complete source value into the addressed register and then advances `TPC` by 4 bytes. Some addresses have side effects inside the write path, and address 0x0020 is the clearest example: storing into `CORE_STATE` also sets the current access ring from bits 3:0 of the stored value (`asl/scalar/model/sys/semantics.asl:63`).
 
-A rejected write preserves both the source and target register beyond ordinary trap entry.
+Design point: the write permission check runs before the source read, so an attempt that will be rejected consumes no source value and changes no system register. A rejected `SSRSET` therefore leaves its source operand and the target register unchanged; a Reg5 source read never consumes a temporary-queue entry.
+
+The instruction performs no ordinary scalar memory access.
 
 <!-- PTO-READER-BLOCK: scalar-ssrset-constraints role=constraints -->
 ## Placement and rejection
 
-Address, current-ACR permission, and writable access class are checked before `SrcL` is read.
+Placement is checked first: outside an active SYS block body the attempt raises `Fault_BundleControl` before any address or operand work. The write path then rejects with `Fault_IllegalInstruction` when the current ring lacks permission for the address, or when the access class is unknown or read-only (`asl/scalar/model/sys/registers.asl:105`).
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+Design point: an address such as 0x0021 is readable from every ring but never writable, because its access class is read-only. The same address therefore succeeds for `ssrget` and faults for `ssrset`, which is why the access class and not the ring alone decides a write.
 
 <!-- PTO-READER-BLOCK: scalar-ssrset-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `ssrset SrcL, SSR_ID` and trace its encoded fields through preflight before following the selected system effect.
+`ssrset SrcL, SSR_ID` with `SSR_ID` 0x0020 and a source holding the value 2 stores into `CORE_STATE`, and because bits 3:0 of the stored value are 2 the current access ring becomes ACR2 for later attempts. Using `SSR_ID` 0x0021 instead is rejected with `Fault_IllegalInstruction`, because that address is read-only, and the source register is never read.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

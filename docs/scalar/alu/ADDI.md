@@ -19,47 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-addi-purpose role=purpose -->
 ## What ADDI does
 
-`ADDI` is a 32-bit scalar ALU instruction. It performs addition under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+`ADDI` adds a zero-extended unsigned 12-bit immediate to a Reg5 source and publishes the sum through a Reg5 destination. It is the immediate form of the same XLEN addition that `ADD` performs with a register right source.
+
+Design point: `ADDI` has no `SrcR`, `SrcRType` or `shamt` field, so its 32-bit encoding spends twelve bits on a constant instead of two five-bit register selectors plus a modifier and a shift. The trade is exact: one compact constant, and no right-source transformation.
 
 <!-- PTO-READER-BLOCK: scalar-addi-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then performs addition under the complete XLEN value result rules, and only afterward performs the destination effects.
+The immediate is zero-extended to `PTO_XLEN` and added to the snapshotted source value modulo `2^PTO_XLEN`.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: `uimm12` is unsigned and covers `0` through `4095`, so the encoding contains no negative constant. `addi a0, 4095, ->a0` adds `4095`; a mnemonic whose immediate field is signed, such as `ANDI` with its `simm12`, is the way to encode a small negative constant.
+
+Addition is fixed width and total. It wraps and raises no arithmetic exception.
 
 <!-- PTO-READER-BLOCK: scalar-addi-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 scalar result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar value through Reg5.
-- The unsigned 12-bit `uimm12` field carries the unsigned 12-bit immediate.
+- `SrcL` is a Reg5 source: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`, without consuming a queue entry.
+- `uimm12` carries the unsigned addend.
+- `RegDst` publishes the result: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero means three different things on this page. `SrcL=0` reads the architectural zero GPR, `uimm12=0` is the numeric addend zero, and `RegDst=0` discards the result instead of writing the zero GPR. All three are values, not omissions, and the encoding has no omitted form.
 
 <!-- PTO-READER-BLOCK: scalar-addi-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is read before the destination is written, so a repeated source and destination selector such as `addi a0, 1, ->a0` still reads the pre-instruction `a0`.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The result is published or discarded, and then `TPC` advances by `4` bytes. `ADDI` performs no memory access and changes no reservation, descriptor, numeric-status, trap, bundle, privilege, predicate or control-flow state beyond that advance.
 
 <!-- PTO-READER-BLOCK: scalar-addi-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every encoded value is assigned: all `32` `SrcL` codes, all `32` `RegDst` codes, and all `4096` immediate values from `0` through `4095`.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An undecodable form raises `Fault_IllegalInstruction` at `PC`; an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`; a fixed-bit mismatch or an unavailable selected T/U source raises `Fault_IllegalInstruction`. Each of these precedes the destination effect and the `TPC` advance. `ADDI` adds no fault of its own.
+
+Design point: because the immediate is unsigned and fully assigned, no constant is illegal and none is reserved. Code that needs a signed 12-bit addend must use a mnemonic whose immediate is signed, or split the constant across two instructions.
 
 <!-- PTO-READER-BLOCK: scalar-addi-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `ADDI` example, `SrcL=7` and `uimm12=3` produce `10`.
+With `SrcL` holding `10` and `uimm12=4095`, `ADDI` publishes `10 + 4095 = 4105`. With `uimm12=1` and `RegDst` naming the same GPR as `SrcL`, it increments that GPR by `1`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

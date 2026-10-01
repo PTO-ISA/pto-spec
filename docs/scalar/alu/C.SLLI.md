@@ -19,45 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-slli-purpose role=purpose -->
 ## What C.SLLI does
 
-`C.SLLI` is a 16-bit scalar ALU instruction. It logically shifts the source left under the complete XLEN value shift rules; its current instruction contract defines the result publication path and any additional state effect.
+`C.SLLI` shifts the current `T#1` value logically left by an encoded amount and pushes the result to `T` as the newest temporary value.
+
+Design point: neither operand is encoded. The source is fixed to `T#1` and the destination to `T`, so the five payload bits of this 16-bit form can all be spent on the shift amount. That is what makes a two-byte shift instruction possible.
 
 <!-- PTO-READER-BLOCK: scalar-c-slli-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then logically shifts the source left under the complete XLEN value shift rules, and only afterward performs the destination effects.
+- `uimm5` is zero-extended and used as a logical left-shift amount from `0` through `31`.
+- The pre-instruction `T#1` value is the shifted operand. Bits shifted past bit `63` are discarded and the vacated low bits are zero.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+The shifted value is pushed as the newest `T` entry.
+
+Design point: the read happens before the push, so the instruction cannot shift its own result. `c.slli t#1, 1, ->t` doubles the old `T#1` and moves the original to `T#2`.
+
+Design point: an encoded amount of `0` republishes the unchanged value as a fresh entry. It is a real shift by zero, not a no-op, so it still produces one new `T` entry and still advances `TPC`.
 
 <!-- PTO-READER-BLOCK: scalar-c-slli-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The unsigned 5-bit `uimm5` field carries the unsigned five-bit logical-left shift amount.
+- `uimm5` is the only encoded operand: an unsigned shift amount from `0` through `31`.
+- The source is implicitly `T#1` and the destination is implicitly `T`, so exactly one XLEN result is pushed per successful execution.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: the fixed `T#1` source must already hold a value. That requirement is checked before the shift, so a `C.SLLI` executed with an empty `T` queue raises a fault instead of shifting stale bits.
+
+Design point: the source is not consumed by the read; only the push changes the queue, moving the previous `T#1` to `T#2` and discarding the previous `T#4`.
 
 <!-- PTO-READER-BLOCK: scalar-c-slli-effects role=effects -->
 ## Effects and ordering
 
-Any scalar source is snapshotted before publication, and the completed instruction pushes exactly one result to T.
+`T#1` is read before the push, so the value that is shifted is the pre-instruction `T#1`.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 2 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+After the push, `TPC` advances by `2` bytes. No GPR, `U` entry, memory, reservation, descriptor, numeric-status, bundle, privilege, predicate or control-flow state changes.
 
 <!-- PTO-READER-BLOCK: scalar-c-slli-constraints role=constraints -->
 ## Legality and fault boundary
 
-All 6 encoded shift bits are assigned, giving amounts `0..63`; fixed-width shifting is total and raises no arithmetic exception.
+Every `uimm5` value from `0` through `31` is assigned, so `C.SLLI` has no reserved shift amount.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+If `T#1` is unavailable, `Fault_IllegalInstruction` is raised before the push, before `TPC` advances, and before any other effect. An undecodable 16-bit form raises `Fault_IllegalInstruction` at `PC`, and an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`.
+
+Design point: a logical shift is total for every amount in its encoded range, so `C.SLLI` has no value-dependent fault. Bits that leave the top of the register are simply dropped; nothing records them.
 
 <!-- PTO-READER-BLOCK: scalar-c-slli-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `C.SLLI` example, source `1` shifted left by `3` produces `8`.
+With `T#1` holding `3` and `uimm5=2`, `c.slli t#1, 2, ->t` pushes `12` to `T#1` and moves the old value `3` to `T#2`. With `T#1` holding `1` and `uimm5=31`, the pushed value is `2147483648`. With `uimm5=0`, the pushed value is the unchanged old `T#1`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

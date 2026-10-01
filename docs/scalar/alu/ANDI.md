@@ -19,47 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-andi-purpose role=purpose -->
 ## What ANDI does
 
-`ANDI` is a 32-bit scalar ALU instruction. It performs bitwise conjunction under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+`ANDI` sign-extends a signed 12-bit immediate to `PTO_XLEN`, computes the bit-by-bit conjunction of that value with a Reg5 source, and publishes the result through a Reg5 destination.
+
+Design point: the immediate field is signed here, while `ADDI` spends the same twelve bits on an unsigned value. The two mnemonics share their encoding shape and differ in the interpretation of one field, so the sign rule is part of the mnemonic, not of the field.
 
 <!-- PTO-READER-BLOCK: scalar-andi-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then performs bitwise conjunction under the complete XLEN value result rules, and only afterward performs the destination effects.
+`simm12` is sign-extended to `PTO_XLEN` and combined with the source value by a bitwise AND.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: sign extension makes the immediate all ones for every negative value. `andi a0, -1, ->a0` therefore preserves every bit of `a0`: the operation is defined and still advances `TPC`, but no bit of the result differs from the source.
+
+Design point: the usable mask range is `0` through `2047` when the constant must be written directly, because a sign-extended `simm12` sets bits `63..11` for every value above `2047`. Masking a wider field requires a value produced at run time or a different mnemonic.
 
 <!-- PTO-READER-BLOCK: scalar-andi-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 scalar result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar value through Reg5.
-- The signed 12-bit `simm12` field carries the signed 12-bit immediate.
+- `SrcL` is a Reg5 source: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`, without consuming a queue entry.
+- `simm12` carries the signed immediate, from `-2048` through `2047`.
+- `RegDst` publishes the result: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero is numeric zero for `simm12`, so `andi a0, 0, ->a1` publishes `0` rather than copying the source. Encoded zero of `RegDst` discards, which is again different from writing the zero GPR.
 
 <!-- PTO-READER-BLOCK: scalar-andi-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is read before the destination is written, so a selector that is both source and destination keeps the pre-instruction value.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The result is published or discarded, and then `TPC` advances by `4` bytes. `ANDI` accesses no memory and changes no reservation, descriptor, numeric-status, trap, bundle, privilege, predicate or control-flow state beyond that advance.
 
 <!-- PTO-READER-BLOCK: scalar-andi-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every encoded value is assigned: all `32` `SrcL` codes, all `32` `RegDst` codes, and all `4096` immediate values from `-2048` through `2047`.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An undecodable form raises `Fault_IllegalInstruction` at `PC`; an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`; a fixed-bit mismatch or an unavailable selected T/U source raises `Fault_IllegalInstruction`. Each precedes the destination effect and the `TPC` advance.
+
+Design point: the conjunction is defined for every bit pattern of both operands, so `ANDI` has no value-dependent fault. A mask that clears bits the program still needs is a programming error, not an architectural exception.
 
 <!-- PTO-READER-BLOCK: scalar-andi-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `ANDI` example, `SrcL=0xc` and `simm12=0xa` produce `0x8`.
+With `SrcL=4095` and `simm12=2047`, `ANDI` publishes `4095 AND 2047 = 2047`. With `simm12=-1` on the same source, the sign-extended immediate is all ones and the published value is `4095` unchanged.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

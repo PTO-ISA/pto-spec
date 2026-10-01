@@ -15,48 +15,55 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-mx-formats-purpose-scope role=purpose-scope -->
 ## 目的与范围
 
-本单元实现命名硬件数值配置的次正规数策略、编码验证、数值分类、规范特殊值，以及特殊比较和最小值/最大值情况。
+本单元是 Tile 数据类型所使用的命名硬件数值配置：`17` 个 `pure func` 声明，没有变量、没有指令体、没有故障、没有队列。它固定该配置的次正规数规则、四种格式的编码有效性、数值分类、规范特殊值，以及无需算术即可判定的比较与最小值/最大值情况。
 
-它集中定义多项标量与 Tile 数值操作共用的配置行为，普通算术仍由当前操作配置负责。
+第 1 行声明 `depends_on` `PTO-ARCH-DATA-TYPES-NUMERIC-CLASSIFICATION`。
+
+Design point: 本单元的归类是 `mx-formats`，但其可执行 ASL 未定义任何 MX 块大小、任何缩放字和任何共享缩放规则。原始缩放字由 `asl/arch/data-types/formats/hif4-scale.asl` 拥有，而本文件唯一涉及的与缩放相关的类型 `TileDataType_E8M0` 仅被分类。
 
 <!-- PTO-READER-BLOCK: arch-mx-formats-concepts-state role=concepts-state -->
-## 概念与可见状态
+## 辅助函数、参数与结果
 
-- `HardwareNumericTypeHasSubnormals` 选择具有次正规数编码的已声明浮点格式；三个规则辅助函数分别映射到保留、渐进下溢和舍入后检测策略。
-- `TileNumericEncodingValid` 检查 `TF32`、`HF32`、`E3M2` 和 `E2M3` 的内部限制；其他已声明类型在此边界返回有效。
-- `TileNumericValueClass` 将浮点、缩放、有符号整数和无符号整数载体分派到精确分类函数。
+- `HardwareNumericTypeHasSubnormals` 对已声明的 `27` 个 `TileDataType` 成员中的 `12` 个返回 TRUE，其中包括 FP64、FP32、FP16、BF16 与 E4M3；其余类型都返回 FALSE。
+- `HardwareNumericInputSubnormalRule`、`HardwareNumericResultSubnormalRule` 与 `HardwareNumericTininessDetectionRule` 把该谓词映射为 `NumericInputSubnormal_Preserve`、`NumericResultSubnormal_GradualUnderflow` 与 `NumericTininessDetection_AfterRounding`，对没有次正规数的类型则返回对应的 `_NotApplicable` 值。
+- `TileNumericEncodingValid` 只对四种类型返回 FALSE：TF32（`value[12:0]` 非零）、HF32（`value[11:0]` 非零）、E3M2 与 E2M3（`value[7:6]` 非零）。`TileNumericValueClass` 先检查它，失败时返回 `NumericValue_InvalidEncoding`；否则由一个覆盖全部已声明类型的 `27` 分支 case 调用各格式分类函数、`ClassifySignedInteger` 或 `ClassifyUnsignedInteger`。
+- `NumericValueClassFromFiniteSign` 在本单元声明，并被各格式分类函数调用；它的结果是 `NumericValue_PositiveZero`、`NumericValue_NegativeZero`、`NumericValue_PositiveSubnormal`、`NumericValue_NegativeSubnormal`、`NumericValue_PositiveNormal` 或 `NumericValue_NegativeNormal` 之一，绝不会是 NaN、无穷或无效编码。
+- `HardwareNumericSubnormalBoundaries` 以可用性加上三个原始边界编码作答，`TileNumericCanonicalNaN` 以规范 NaN 作答（由包装函数 `HardwareNumericCanonicalNaNResult` 返回），`HardwareNumericSignedZeroEncodings` 以两个带符号零编码作答。
+- `HardwareNumericComparisonSpecial` 与 `HardwareNumericMinMaxSpecial` 返回是否已处理、结果载体和无效条件标志。`HardwareNumericMixedExpdifDiscriminator` 返回是否已处理与结果载体；它的调用方是 `asl/tile/model/execution/expdif.asl` 中的 `TileProfileMixedExpdifFP32`。
 
 <!-- PTO-READER-BLOCK: arch-mx-formats-rules-interactions role=rules-interactions -->
 ## 规则与交互
 
-该命名配置要求 `flush_to_zero = FALSE`、`denormals_are_zero = FALSE` 且 `operation_override = FALSE`。
+`HardwareNumericSubnormalConfigurationValid` 只对三个输入全为假的情形返回 TRUE：`flush_to_zero`、`denormals_are_zero` 与 `operation_override` 中任何一个为真都会使其返回 FALSE。
 
-`HardwareNumericSubnormalBoundaries` 只为受支持格式返回精确的原始最小次正规数、最大次正规数和最小正规数编码。
+`HardwareNumericSubnormalBoundaries` 对同样的 `12` 个类型返回可用性为真，共 `11` 个 case 分支，因为 E5M2 与 E3M2 共用一个分支：FP32 为 `0x1`、`0x007fffff`、`0x00800000`；TF32 为 `0x00002000`、`0x007fe000`、`0x00800000`；其他类型返回假以及三个零载体。
 
-`HardwareNumericCanonicalNaNResult` 与 `HardwareNumericSignedZeroEncodings` 返回可用性；`HardwareNumericComparisonSpecial` 与 `HardwareNumericMinMaxSpecial` 返回是否已处理，从而区分固定特殊结果与普通求值。
+比较（`HardwareNumericComparisonSpecial`）：任一操作数类别为 `NumericValue_InvalidEncoding` 时，该辅助函数返回未处理。否则只要存在一个 NaN 操作数，`TileComparison_NE` 就返回 `1`，其他比较返回 `0`，且只有存在信号 NaN 时无效标志才为真；两个零对 `TileComparison_EQ`、`TileComparison_LE` 与 `TileComparison_GE` 返回 `1`，其他情况返回 `0`。
+
+最小值/最大值（`HardwareNumericMinMaxSpecial`）：单个 NaN 使另一个操作数的载体原样被选中，两个 NaN 在 `assert available` 下取该类型的规范 NaN，两个零时 MIN 在存在 `-0` 操作数时返回它、否则返回 `0`，而 MAX 返回 `0`，除非两者都是 `-0`，此时返回左操作数载体；信号 NaN 产生的无效标志会与已处理的结果一同返回。
 
 <!-- PTO-READER-BLOCK: arch-mx-formats-boundaries role=boundaries -->
 ## 架构边界
 
-这些布尔配置输入描述候选一致性配置；它们不是架构模式位，也不暴露 FTZ/DAZ 状态。
+本单元不声明任何架构状态、不引发任何故障、也不触碰任何队列或寄存器：每个声明都是 `pure func`，并且该文件不含 `NDF-BEGIN` 子句。它唯一的 `assert` 是两个 NaN 的最小值/最大值分支中的规范 NaN 检查，该断言不可能失败：能够返回 `NumericValue_QuietNaN` 或 `NumericValue_SignalingNaN` 的 `12` 种格式，正是 `TileNumericCanonicalNaN` 返回 TRUE 的那些格式。
 
-高于某类型架构元素宽度的位会被忽略，因为 `Word` 是验证载体；这里只检查元素内部约束。
+Design point: `Word` 是验证载体，因此高于某类型架构元素宽度的位会被忽略。`TileNumericEncodingValid` 对 TF32 与 HF32 检查 `value[31:0]`，对 E3M2 与 E2M3 检查 `value[7:0]`，所以元素宽度以上的非零位不会在此被拒绝。
 
-`HardwareNumericSubnormalBoundaries`、`TileNumericCanonicalNaN` 和 `HardwareNumericSignedZeroEncodings` 等函数以假表示请求类型没有可用值；`HardwareNumericComparisonSpecial` 与 `HardwareNumericMinMaxSpecial` 返回假则表示该情况尚未处理，应继续普通求值。
+Design point: 布尔量在两组辅助函数中含义不同：对 `HardwareNumericSubnormalBoundaries`、`TileNumericCanonicalNaN` 与 `HardwareNumericSignedZeroEncodings`，假表示该类型没有可用值；对 `HardwareNumericComparisonSpecial` 与 `HardwareNumericMinMaxSpecial`，假表示该情况留给普通求值处理。
 
 <!-- PTO-READER-BLOCK: arch-mx-formats-example-usage role=example-usage -->
 ## 非规范阅读示例
 
-对于 `TileDataType_TF32`，若载体低 `13` 位非零，`TileNumericEncodingValid` 会在分类前将其拒绝。
+对于 `TileDataType_TF32`，低 `13` 位非零的载体无法通过 `TileNumericEncodingValid`，因此 `TileNumericValueClass` 返回 `NumericValue_InvalidEncoding`，两个特殊辅助函数也都返回未处理。
 
-对于 `TileDataType_S32`，`HardwareNumericSignedZeroEncodings` 返回可用性为假。对于普通的非特殊 `FP32` 输入，`HardwareNumericComparisonSpecial` 返回未处理，因此调用方继续执行普通比较。
+对 `TileDataType_HiF8`，`HardwareNumericSignedZeroEncodings` 返回可用性为假，而 `TileNumericCanonicalNaN` 返回 TRUE，因为 HiF8 格式声明没有带符号零。对于一个 `-0` 和一个 `0` 的 `FP32` 操作数，MIN 返回 `-0` 载体，MAX 返回 `0` 载体；对于既无 NaN 也无零的普通 `FP32` 操作数对，两个特殊辅助函数都返回未处理。
 
 <!-- PTO-READER-BLOCK: arch-mx-formats-related-owners role=related-owners-navigation -->
 ## 相关归属单元
 
-- [硬件数值最小值/最大值](minmax.md)
-- [数值分类](../data-types/numeric-classification.md)
-- [数值格式分派](../data-types/numeric-formats.md)
+- [硬件数值最小值/最大值](minmax.md) 先调用 `HardwareNumericMinMaxSpecial`，只有在其返回未处理时才使用其序键辅助函数。
+- [数值分类](../data-types/numeric-classification.md) 声明 `NumericValueClass` 以及此处返回的规则枚举。
+- [HiF4 缩放格式](../data-types/formats/hif4-scale.md) 拥有本单元未定义的缩放字。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-subiw-purpose role=purpose -->
 ## HL.SUBIW 的作用
 
-`HL.SUBIW` 是一条 48 位标量 ALU 指令。它按照低 32 位字，再符号扩展到 XLEN结果规则执行减法；当前指令契约定义结果发布路径以及任何额外状态效果。
+`HL.SUBIW` 是一条 48 位标量 ALU 指令，它从 `SrcL[31:0]` 中减去零扩展 `uimm24` 的低字并按模 `2^32` 回绕，对该字差的第 `31` 位做符号扩展，并通过一个 Reg5 目标发布 XLEN 结果。
+
+`SrcL` 只有低 `32` 位参与，立即数只有低 `24` 位参与，因为零扩展字段的其余部分都是零。
 
 <!-- PTO-READER-BLOCK: scalar-hl-subiw-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后按照低 32 位字，再符号扩展到 XLEN结果规则执行减法，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractResult_HL_SUBIW`，它构造 `right = ZeroExtend{PTO_XLEN}(immediate)` 并返回 `ScalarBinaryW(ScalarBinary_SUB, left, right)`。`ScalarBinaryW` 把两个低字相减得到 32 位值，并返回它的 `SignExtend{PTO_XLEN}`。分派路径用 `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_SUB, ScalarField_uimm24, TRUE)` 选择它。
 
-- 立即数宽度与扩展规则由下方编码字段确定；除非生成契约给出其他零值含义，编码零提供数值零。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+hl.subiw SrcL, uimm, ->{t, u, Rd}
+```
+
+设计要点：下溢被限制在字内，随后由符号扩展广播出去。`hl.subiw zero, 1, ->a0` 发布 `0xFFFFFFFFFFFFFFFF`，`64` 位全为 1，尽管低字中只产生了一位借位。
 
 <!-- PTO-READER-BLOCK: scalar-hl-subiw-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 标量结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择标量值，其中只有低 32 位参与。
-- `uimm24` 是 24 位无符号字段，携带无符号分段 24 位立即数。
+- `RegDst`，指令切片 `[23 +: 5]`，接收符号扩展后的字结果，或丢弃它。
+- `SrcL`，指令切片 `[31 +: 5]`，提供只有 `31:0` 位参与的值。
+- `uimm24`，指令切片 `[36 +: 12]` 与 `[4 +: 12]`，提供数值位 `11:0` 与 `23:12`。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+`SrcL` 通过通用 Reg5 映射读取：`0..23` 为绝对 GPR，`24..27` 为 `T#1..T#4`，`28..31` 为 `U#1..U#4`，不消耗表项。编码零读取体系结构 GPR 零。
+
+设计要点：`SrcL[63:32]` 在操作之外。低字相同的两个寄存器在 `HL.SUBIW` 下产生相同的发布值，无论它们的高半部差别多大。
 
 <!-- PTO-READER-BLOCK: scalar-hl-subiw-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+`SrcL` 在目标效果之前取快照，因此与 `SrcL` 同名的目标观察到的是执行前的值。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 6 字节。
-
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+符号扩展后的差值通过 `RegDst` 发布，随后 `TPC` 前进 `6` 字节。`HL.SUBIW` 不做内存访问，也不改变数值状态、保留、描述符、Tile、指令束、特权与控制流状态；它能造成的唯一队列变化是由 `RegDst` 选择的 `T` 或 `U` 推送。
 
 <!-- PTO-READER-BLOCK: scalar-hl-subiw-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+全部 `32` 个 `SrcL` 编码与全部 `32` 个 `RegDst` 编码都有定义，每个无符号 24 位立即数也都合法，因此只有临时源不可用会使操作数检查失败。固定编码位必须与规范的 48 位形式匹配。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+适用性只在系统块终止请求挂起时失败，并在 `TPC` 触发 `Fault_BundleControl`。否则，不匹配的编码在进入指令束主体之前于 `PC` 触发 `Fault_IllegalInstruction`，所选 `T` 或 `U` 源不可用时则在目标写入之前于 `PC` 触发 `Fault_IllegalInstruction`。字下溢不是异常。
+
+设计要点：立即数的扩展仍然是零扩展，因此字形式沿用 `HL.SUBI` 的无符号规则，而不是 `HL.ORIW` 的有符号规则。`W` 后缀带来的唯一差别是保留哪些源位与哪些结果位。
 
 <!-- PTO-READER-BLOCK: scalar-hl-subiw-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `HL.SUBIW` 示例说明：`SrcL=7` 与 `uimm24=3` 产生 `4`。
+取 `SrcL = 3`、`uimm24 = 5` 时字差为 `-2`，`SignExtend(0xFFFFFFFE)` 是 `0xFFFFFFFFFFFFFFFE`，`RegDst` 收到该值。`SrcL` 取体系结构零 GPR、`uimm24 = 1` 时字下溢为 `0xFFFFFFFF`，因此 `RegDst` 收到 `0xFFFFFFFFFFFFFFFF`。取 `uimm24 = 0` 时发布值是 `SignExtend(SrcL[31:0])`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

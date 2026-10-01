@@ -19,46 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-nei-purpose role=purpose -->
 ## What SETC.NEI does
 
-`SETC.NEI` evaluates inequality and publishes the result as the current Conditional bundle commit decision.
+`SETC.NEI` compares one scalar register against an encoded immediate for inequality and publishes the answer as the commit decision of the Conditional bundle it sits in.
+
+The value to compare against is carried by the instruction, so the block does not need a register holding the constant.
 
 <!-- PTO-READER-BLOCK: scalar-setc-nei-mechanism role=mechanism -->
-## Mechanism
+## Comparing against the scaled signed immediate
 
-Placement and the single-setter rule are checked before source readiness or reads.
+The signed `simm12` field is sign-extended to the full word width, then logically shifted left by `shamt`, read as the low `6` bits of that encoded field. The instruction tests whether the complete left word differs from that shifted value.
 
-The decoded immediate is logically shifted left by `shamt` before the condition is evaluated.
+The left operand is read as a complete word and is never shifted.
 
-The snapshotted operands are evaluated for inequality and canonicalized to XLEN one or zero.
+Design point: the comparison is against the shifted value, not against the raw field, so the reachable constants are scaled by `2` raised to the `shamt` value and the low bits of the compared constant are always zero at a nonzero shift.
 
 <!-- PTO-READER-BLOCK: scalar-setc-nei-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `SrcL` supplies the left scalar source.
+- `SrcL` supplies the left absolute GPR source, read as a complete word.
+- `shamt` supplies the shift amount applied to the immediate; encoded zero performs no shift.
+- `simm12` supplies the signed encoded immediate; encoded zero supplies numeric zero.
 
-- `shamt` supplies the encoded shift amount.
-
-- `simm12` supplies a signed encoded immediate.
+`SrcL` is not consumed and no `GPR`, `T`, or `U` destination is written.
 
 <!-- PTO-READER-BLOCK: scalar-setc-nei-effects role=effects -->
 ## Effects and ordering
 
-The canonical condition is written atomically to `_CommitArgument` and `BARG.TAKEN`, and the condition-set marker becomes true.
+On success the commit argument holds exactly `1` or `0`, `BARG.TAKEN` takes that truth value while a bundle is active, the block condition marker becomes set, and `TPC` advances by `4` bytes.
 
-On success, `SETC.NEI` advances `TPC` by `4` bytes. It has no scalar destination and no memory or reservation effect.
+There is no memory, reservation, descriptor, or numeric-status effect, and `BARG.BPC`, `BARG.BPCN`, `BARG.BlockType`, and `BARG.TYPE` are preserved.
 
 <!-- PTO-READER-BLOCK: scalar-setc-nei-constraints role=constraints -->
-## Legality and fault order
+## Fault classes and their order
 
-The instruction is valid only in the applicable Conditional bundle context, and only one successful condition setter may occur.
+The operation is applicable only in the body of an active Conditional block, where at most one successful `SETC` condition setter may complete.
 
-Wrong placement or a repeated setter raises an Illegal Block Exception before source reads; encoding or unavailable-source failures raise `Fault_IllegalInstruction` before commit or `TPC` effects.
+Wrong placement or a repeated successful setter raises `Fault_BundleControl` (trap number `5`, `BUNDLE_TRAP`) before operand legality and before any source read. A fixed-bit mismatch or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before commit state, `BARG`, queue, or `TPC` effects. A rejected occurrence leaves the shared marker unconsumed.
 
 <!-- PTO-READER-BLOCK: scalar-setc-nei-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not create a second semantic definition.
 
-`setc.nei SrcL, simm` evaluates the described condition, writes the canonical decision to commit state, and advances `TPC` only after that update.
+Place `0` in GPR1 and execute the form whose encoded fields are `SrcL=1`, `shamt=0`, and `simm12=0`. The compared constant is `0`, the words are equal, so the form commits `0`. Set GPR1 to `1` and the same form commits `1`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

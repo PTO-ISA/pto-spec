@@ -19,47 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-remuw-purpose role=purpose -->
 ## What REMUW does
 
-`REMUW` is a 32-bit scalar ALU instruction. It computes the unsigned remainder over the low 32-bit word, followed by sign-extension to XLEN; its current instruction contract defines the result publication path and any additional state effect.
+`REMUW` takes the unsigned remainder of the low `32` bits of two sources and publishes that `32`-bit result sign-extended to `PTO_XLEN`. It has three fields: `RegDst` at `[7 +: 5]`, `SrcL` at `[15 +: 5]` and `SrcR` at `[20 +: 5]`.
+
+The carrier matches `0x00007057` under mask `0xfe00707f` and routes to `ScalarRemainderUnsignedW`.
+
+Two narrowings happen: the operands are zero-extended from `32` bits before the division, and the result is sign-extended from `32` bits after it. The second one is not an unsigned extension.
 
 <!-- PTO-READER-BLOCK: scalar-remuw-mechanism role=mechanism -->
-## How the result is formed
+## How the word remainder is formed
 
-Execution snapshots the encoded inputs, then computes the unsigned remainder over the low 32-bit word, followed by sign-extension to XLEN, and only afterward performs the destination effects.
+`ScalarRemainderUnsignedW` binds `dividend32` to `ZeroExtend{PTO_XLEN}(dividend[31:0])` and `divisor32` to `ZeroExtend{PTO_XLEN}(divisor[31:0])`, calls `ScalarRemainderUnsigned(dividend32, divisor32)`, and returns `SignExtend{PTO_XLEN}(remainder[31:0])` (`asl/scalar/model/alu/semantics.asl:74-80`). Dispatch reaches it through `ScalarOperation_REMUW` at `asl/scalar/model/dispatch/alu.asl:252-257`.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+remuw SrcL, SrcR, ->{t, u, Rd}
+```
+
+Design point: The zero extension of the operands is what makes the word unsigned: source bit `31` contributes `2147483648` to the dividend rather than a sign. The final sign extension then reinterprets result bit `31`, so an unsigned word remainder of `0xFFFFFFFF` is published as `0xFFFFFFFFFFFFFFFF`.
+
+Design point: Because the operands stop at `32` bits, two registers that agree in their low words publish the same remainder whatever their upper halves hold. The upper word of a source cannot change the quotient or the remainder.
 
 <!-- PTO-READER-BLOCK: scalar-remuw-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the dividend through Reg5.
-- The 5-bit `SrcR` field selects the divisor through Reg5.
+`SrcL` holds the dividend, `SrcR` the divisor, and `RegDst` receives the sign-extended word remainder.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+- `SrcL`, instruction slice `[15 +: 5]`: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, `28..31` read `U#1..U#4`, non-consuming. Only `SrcL[31:0]` reaches the divider.
+- `SrcR`, instruction slice `[20 +: 5]`: same five-bit map. Only `SrcR[31:0]` reaches the divider.
+- `RegDst`, instruction slice `[7 +: 5]`: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+- Encoded zero of `SrcR` reads the architectural zero GPR; its low word is `0`, which selects the zero-divisor answer.
+
+Design point: A zero low-word divisor answers with the sign-extended low word of the dividend, not with zero. For a dividend whose low word is `0xFFFFFFFF` the published word is `0xFFFFFFFFFFFFFFFF`, so the zero-divisor case does not bound the published magnitude.
 
 <!-- PTO-READER-BLOCK: scalar-remuw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are read before the write, so an aliasing destination divides the pre-instruction low words. The sign-extended remainder is published and `TPC` advances by `4` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+`REMUW` reads no memory and changes no reservation, descriptor, numeric-flag, trap, bundle, privilege, branch-target or control-flow state. A `30` or `31` destination is the only case in which it moves a temporary queue.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: The word division discards the upper half of the quotient and records nothing about it. The published word is the only architectural trace, and it is a sign-extended `32`-bit value rather than a full unsigned result.
 
 <!-- PTO-READER-BLOCK: scalar-remuw-constraints role=constraints -->
 ## Legality and fault boundary
 
-A zero divisor returns the effective dividend as the remainder; the signed overflow combination returns zero. Neither case raises an arithmetic exception.
+Every Reg5 source code and every Reg5 destination code is assigned, and the form has no constraint entry beyond its fixed encoding bits.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unmatched carrier raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`, reachable for `REMUW` only while a system-block terminal request is pending. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`, before the destination effect and before `TPC` advances.
+
+Both dividend and divisor are total inputs: a zero low-word divisor is answered with the extended dividend, and no operand pair raises an arithmetic exception.
 
 <!-- PTO-READER-BLOCK: scalar-remuw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `REMUW` example, dividend `13` and divisor `5` produce remainder `3`.
+With `a0` whose low `32` bits are `10` and `a1` whose low `32` bits are `4`, `remuw a0, a1, ->a2` publishes `2`.
+
+With `a0` holding `0x10000000A` and `a1` holding `4`, only the low words participate, so the dividend word is `10` and `a2` receives `2`. With `a1` whose low word is `0`, the word remainder is the whole dividend word, so `a2` receives `10`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,42 +19,53 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-cmp-nei-purpose role=purpose -->
 ## What CMP.NEI does
 
-`CMP.NEI` evaluates inequality over decoded scalar operands and publishes canonical XLEN one or zero.
+`CMP.NEI` evaluates inequality and writes a canonical XLEN boolean to a destination: `1` when the condition holds, `0` when it does not.
+
+The result is ordinary data. `CMP.NEI` does not set the commit condition of the enclosing block and does not touch any predicate register.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-nei-mechanism role=mechanism -->
 ## Mechanism
 
-The instruction snapshots its operands, prepares the decoded immediate, and then evaluates inequality.
+The contract returns `ScalarHandler_ExecuteCompare`. The model reads the left source, prepares the right operand, tests the condition `ScalarCondition_NE`, and writes `Zeros{PTO_XLEN} + 1` or `Zeros{PTO_XLEN}` through the destination selector.
 
-A true relation becomes XLEN one; a false relation becomes XLEN zero.
+The right operand is `simm12`, a `12`-bit signed immediate that the decoder sign-extends to XLEN, so values from `-2048` to `2047` are available.
+
+Design point: canonicalizing to exactly `1` or `0` rather than to an arbitrary nonzero value means two comparisons can be combined arithmetically, and a single test of the destination is enough to recover the relation.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-nei-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `RegDst` selects the encoded destination or discard behavior.
+- `SrcL` supplies the left absolute GPR source.
+- `simm12` supplies the `12`-bit signed immediate.
 
-- `SrcL` supplies the left scalar source.
+`RegDst` names the destination: codes `1..23` write the named absolute GPR, code `0` and codes `24..29` discard the result, code `30` pushes it to the `U` queue, and code `31` pushes it to the `T` queue.
 
-- `simm12` supplies a signed encoded immediate.
+Encoded zero in `SrcL` names the architectural zero GPR. Sources are read as values and are not consumed.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-nei-effects role=effects -->
 ## Effects and ordering
 
-The canonical boolean is published through the encoded destination, then `TPC` advances by `4` bytes.
+On success the instruction writes exactly one destination value and advances `TPC` by `4` bytes, the encoded length of the `32`-bit form.
 
-The instruction does not modify commit state and does not access memory or reservation state.
+It has no memory effect, no reservation effect, no descriptor effect, and no numeric status flag. It leaves the commit argument, the block argument, and the block condition marker unchanged, because it is not a condition setter.
+
+Design point: because the comparison cannot observe the commit condition or install a control-flow target, a compiler can reorder it freely among other pure scalar operations up to the point where its destination is read.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-nei-constraints role=constraints -->
 ## Legality and fault order
 
-Encoding, reserved field values, and source availability are checked before destination, control, or `TPC` effects.
+Decode runs first, and a fixed-bit mismatch raises `Fault_IllegalInstruction` at the instruction address before any effect.
+
+All `4096` patterns of `simm12` are assigned; there is no reserved immediate.
+
+A selected `T` or `U` source that is not available is rejected during operand legality, before the destination is written. A rejected instruction changes neither the destination nor `TPC`, and trap entry saves the original `TPC` so it can be reissued.
 
 <!-- PTO-READER-BLOCK: scalar-cmp-nei-example role=example -->
 ## Non-normative example
 
-This example illustrates the current owner and does not create a second semantic definition.
+Set GPR1 to `5`.
 
-`cmp.nei SrcL, simm, ->{t, u, Rd}` publishes XLEN one when its condition is true and XLEN zero otherwise.
+`cmp.nei 1, 6, ->0` writes `1` into the destination. With `simm12` set to `5` the same form writes `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

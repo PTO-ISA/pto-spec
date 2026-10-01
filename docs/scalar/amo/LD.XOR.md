@@ -19,42 +19,49 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ld-xor-purpose role=purpose -->
 ## What LD.XOR does
 
-`LD.XOR` atomically applies bitwise XOR to one doubleword, stores the result, and publishes the prior memory value.
+`LD.XOR` toggles selected bits of one 8-byte memory doubleword. Each bit that is `1` in the 64-bit operand is inverted in the stored value, each `0` bit leaves the stored bit alone, and the doubleword from before the instruction is published through `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-ld-xor-mechanism role=mechanism -->
-## Atomic mechanism
+## Toggling the addressed doubleword
 
-The ASL DOC contract selects `ScalarHandler_AtomicReadModifyWrite` with an access width of `8` bytes.
+The form selects `ScalarHandler_AtomicReadModifyWrite` with access size `8` and the atomic operation `Atomic_XOR`. Read preflight and write preflight both complete before the load; then the old doubleword and `SrcR` are combined with XOR, the 64-bit result is stored to the same address, one atomic event is recorded with `write_performed` set to true, and the old doubleword is returned for publication.
 
-Read and write access are preflighted before the same-location atomic read-modify-write is allowed to commit.
+The XOR covers all 64 bits with no truncation: storage holding `0x000000000000ff00` combined with `SrcR = 0x0000000000000f0f` ends up holding `0x000000000000f00f`.
+
+Design point: XOR is its own inverse. Executing the same operand twice against the same location leaves the stored bits exactly as they were before the first execution, but the second execution still performs a store and still publishes the toggled intermediate value through `RegDst`.
+
+Design point: the operand and the address are snapshotted before any memory or destination effect, so `RegDst` may name the same register as `SrcR`; the mask used by the XOR is the pre-instruction register content.
 
 <!-- PTO-READER-BLOCK: scalar-ld-xor-inputs-outputs role=inputs-outputs -->
-## Inputs and result
+## Fields and operand roles
 
-`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 atomic operand source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+`RegDst` is a `5`-bit field at instruction bits `7..11`, `SrcL` at bits `15..19`, `SrcR` at bits `20..24`, `rl` at bit `25`, `aq` at bit `26`, and `far` at bit `27`.
 
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+- `SrcL` reads the atomic address; encoded zero reads the architectural zero register.
+- `SrcR` reads the toggle mask; encoded zero supplies numeric zero, which leaves every stored bit unchanged.
+
+Design point: `aq` and `rl` pick relaxed, acquire, release, or acquire-release order for the event, while `far` is handed to `AtomicAddress`, which returns its argument unchanged. The reference model therefore gives `ld.xor [a0], a1, ->a2` and `ld.xor.f [a0], a1, ->a2` the same address and the same stored bits.
 
 <!-- PTO-READER-BLOCK: scalar-ld-xor-effects role=effects -->
-## Effects and ordering
+## Effects
 
-The old memory value is published only after the read-modify-write commits; source aliases are captured before any destination effect.
+A completed `LD.XOR` writes 8 bytes, records one atomic event with `write_performed` set to true, sends the pre-instruction doubleword to `RegDst`, and advances `TPC` by 4 bytes. If the written range overlaps the reserved 64-byte granule, the local reservation is cleared.
 
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+Design point: a zero toggle mask still stores the old bits back and still records a performed write, so the memory contents are unchanged while the reservation and event effects are not.
 
 <!-- PTO-READER-BLOCK: scalar-ld-xor-constraints role=constraints -->
-## Legality and precise faults
+## Legality and faults
 
-The effective address must be aligned to `8` bytes. Alignment, translation, and permission checks precede architectural effects.
+The address must be a multiple of 8. The alignment test runs inside the read probe before translation and before the load, and the write probe repeats the same tests for write access. `Fault_DataAlignment` and `Fault_DataPage` are both reported at the original, pre-translation address.
 
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+A fault leaves the doubleword untouched: no destination is written, no atomic event is recorded, no reservation changes, and `TPC` does not advance, so the instruction can be reissued. `Fault_IllegalInstruction` is raised earlier for an undecodable form or an unavailable selected T or U source.
 
 <!-- PTO-READER-BLOCK: scalar-ld-xor-example role=example -->
 ## Non-normative example
 
 This example only shows one accepted spelling; the generated contract below remains authoritative.
 
-For a first reading, use `ld.xor [SrcL], SrcR, ->Rd` and then vary only the ordering or route modifiers described above.
+With `a0` holding an 8-byte aligned address, `ld.xor [a0], a1, ->a2` toggles the bits selected by `a1`. If `[a0]` holds `0x000000000000ff00` and `a1` holds `0x0000000000000f0f`, the location receives `0x000000000000f00f` and `a2` receives `0x000000000000ff00`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

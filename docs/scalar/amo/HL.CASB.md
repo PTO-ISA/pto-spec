@@ -17,44 +17,70 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-casb-purpose role=purpose -->
-## What HL.CASB does
+## What `HL.CASB` does
 
-`HL.CASB` atomically compares the byte at `SrcL` with `SrcR`; equality stores `SrcD`, while both paths publish the prior 8-bit value.
+`HL.CASB` is a 48-bit scalar atomic form that swaps one byte under a comparison. It compares the byte at the address in `SrcL` with the low byte of `SrcR`, and writes the low byte of `SrcD` there only on equality. Either way it publishes the byte it read, zero-extended to the 64-bit `PTO_XLEN` width, through `RegDst`.
+
+The form is selected by the match `0x0000600b000e` under the mask `0xf000707ff83f`. Its access width is fixed at `1` byte and its handler is `ScalarHandler_CompareAndSwap`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-casb-mechanism role=mechanism -->
-## Atomic mechanism
+## The order of the byte operation
 
-The ASL DOC contract selects `ScalarHandler_CompareAndSwap` with an access width of `1` byte.
+The dispatcher decodes the Reg5 fields, reads the `far` bit, and enters `CompareAndSwap` at a width of `1` byte:
 
-Match and mismatch both emit one ordered atomic event; only the matching path marks a write as performed.
+1. `ProbeDataAccess(address, 1, 1, FALSE)` checks alignment, then read permission.
+2. `ProbeDataAccess(address, 1, 1, TRUE)` checks alignment, then write permission.
+3. A difference between the two translated addresses raises `Fault_DataPage`.
+4. `LoadTranslatedUnsigned` reads the one addressed byte.
+5. The byte is compared with `NormalizeAtomicUnsigned(SrcR, 1)`, the zero-extended `SrcR[7:0]`.
+6. On equality `StoreTranslated` writes `SrcD[7:0]`; one atomic event records the selected order and `write_performed`, and the loaded byte is returned.
+
+Design point: the three sources are read before `CompareAndSwap` is entered, and the destination is written only after it returns, so a `RegDst` that aliases `SrcR` or `SrcD` cannot disturb the comparison.
 
 <!-- PTO-READER-BLOCK: scalar-hl-casb-inputs-outputs role=inputs-outputs -->
-## Inputs and result
+## Fields, selectors and the routing bit
 
-`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 expected byte source; `SrcD` carries the Reg5 desired byte source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+All four register fields are Reg5 selectors: codes `0`..`23` name absolute GPRs, `24`..`27` read `T#1`..`T#4` and `28`..`31` read `U#1`..`U#4`, without removing the entry. As a destination, `RegDst` writes GPRs `1`..`23`, discards codes `0` and `24`..`29`, pushes onto `U` for code `30` and onto `T` for code `31`.
 
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+| Field | Lsb | Width | Role in this instruction |
+| --- | ---: | ---: | --- |
+| `SrcD` | 6 | 5 | desired byte source |
+| `RegDst` | 23 | 5 | prior-value destination |
+| `SrcL` | 31 | 5 | atomic address source |
+| `SrcR` | 36 | 5 | expected byte source |
+| `rl` | 41 | 1 | release ordering bit |
+| `aq` | 42 | 1 | acquire ordering bit |
+| `far` | 43 | 1 | profile routing hint |
+
+Design point: `far` is decoded from instruction bit 43 and handed to `AtomicAddress`, which returns its argument unchanged. In the reference profile `hl.casb.f [a0], a1, a2, ->a3` and `hl.casb [a0], a1, a2, ->a3` read and write the same address and publish the same value; the `.f` spelling changes only the encoded routing hint.
 
 <!-- PTO-READER-BLOCK: scalar-hl-casb-effects role=effects -->
-## Effects and ordering
+## What changes
 
-After successful preflight, the old value is published even on comparison mismatch; memory changes only on equality.
+On a match the addressed byte receives `SrcD[7:0]`; a mismatch leaves memory alone. Both paths offer the loaded byte to `RegDst`, zero-extended to 64 bits, so the result is never negative: `0xff` is published as `0x00000000000000ff`.
 
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `6` bytes.
+A completed match also invalidates the local reservation when the reserved 64-byte granule overlaps the stored byte; a mismatch stores nothing and cannot invalidate it.
+
+Design point: this form is encoded in 48 bits and the dispatcher advances `TPC` by `length_bits DIV 8`, so a completed `HL.CASB` moves the program counter on by 6 bytes. The advance happens only after a fault-free handler, so a fault leaves `TPC` at the start of the form and recovery re-executes the same 6 bytes.
 
 <!-- PTO-READER-BLOCK: scalar-hl-casb-constraints role=constraints -->
-## Legality and precise faults
+## Where it is rejected
 
-Every byte address is naturally aligned. Alignment, translation, and permission checks precede architectural effects.
+- Every field value is assigned: all `32` selector codes for `SrcL`, `SrcR`, `SrcD` and `RegDst`, and all `8` combinations of `aq`, `rl` and `far`.
+- An unavailable selected `T` or `U` queue entry makes the operands illegal, and an undecodable fixed-bit pattern fails the decode; both raise `Fault_IllegalInstruction` at `ReadPC()` before any architectural effect.
+- Every byte address is naturally aligned, so the alignment test cannot report `Fault_DataAlignment` here; the bounds test can still report `Fault_DataPage`.
+- A fault offers no destination value, records no atomic event, changes no reservation and does not advance `TPC`.
 
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+Design point: only the low byte of the expected value is normalized, so `SrcR` values that differ above bit `7` compare equal to the same memory byte; two encodings that share the low byte `0x7f` behave identically.
 
 <!-- PTO-READER-BLOCK: scalar-hl-casb-example role=example -->
-## Non-normative example
+## A byte that matches, and one that does not
 
 This example only shows one accepted spelling; the generated contract below remains authoritative.
 
-For a first reading, use `hl.casb [SrcL], SrcR, SrcD, ->Rd` and then vary only the ordering or route modifiers described above.
+Suppose the addressed byte holds `0x7f`, the low byte of `SrcR` is `0x7f`, and the low byte of `SrcD` is `0x80`. The comparison matches, the byte becomes `0x80`, and the destination receives `0x000000000000007f`. The recorded atomic event reports `write_performed=true`.
+
+With the same memory byte `0x7f` and a low byte of `SrcR` equal to `0x7e`, the comparison fails: nothing is written, the destination still receives `0x000000000000007f`, and the event reports `write_performed=false`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

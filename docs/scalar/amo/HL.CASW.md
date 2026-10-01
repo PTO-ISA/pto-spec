@@ -17,44 +17,67 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-casw-purpose role=purpose -->
-## What HL.CASW does
+## What `HL.CASW` does
 
-`HL.CASW` atomically compares the word at `SrcL` with `SrcR`; equality stores `SrcD`, while both paths publish the prior 32-bit value.
+`HL.CASW` conditionally replaces the 32-bit word at the address in `SrcL`. It compares that word with the low word of `SrcR` and stores the low word of `SrcD` only when the two are equal. The word that memory held is published through `RegDst` in both cases, and that published value is sign-extended to the 64-bit `PTO_XLEN` width rather than zero-extended.
+
+The form matches `0x2000600b000e` under the mask `0xf000707ff83f`. Its access width is `4` bytes, so both probes require an address that is a multiple of `4`, and its handler is `ScalarHandler_CompareAndSwap`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-casw-mechanism role=mechanism -->
-## Atomic mechanism
+## Compare, then store
 
-The ASL DOC contract selects `ScalarHandler_CompareAndSwap` with an access width of `4` bytes.
+The dispatcher passes `SrcL` through `ScalarDecodedAtomicAddress`, which reads the register and the `far` bit and calls `AtomicAddress`. `CompareAndSwap` then runs at a width of `4` bytes:
 
-Match and mismatch both emit one ordered atomic event; only the matching path marks a write as performed.
+- The read probe tests `UInt(address) MOD 4` and then read permission; the write probe repeats both tests on the same address.
+- A mismatch between the two translated addresses raises `Fault_DataPage`.
+- `LoadTranslatedUnsigned` reads the four bytes as one 32-bit word.
+- That word is compared with `NormalizeAtomicUnsigned(SrcR, 4)`, the zero-extended `SrcR[31:0]`.
+- On equality `StoreTranslated` writes the low four bytes of `SrcD`. One atomic event records the selected order and whether a write happened, and the loaded word is returned.
+
+Design point: only the low `32` bits of `SrcR` reach the comparison, so `SrcR = 0xdeadbeef00000001` matches a memory word of `0x00000001`; the upper `32` bits cannot carry a tag that the comparison checks.
 
 <!-- PTO-READER-BLOCK: scalar-hl-casw-inputs-outputs role=inputs-outputs -->
-## Inputs and result
+## Fields and the routing bit
 
-`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 expected word source; `SrcD` carries the Reg5 desired word source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+- `SrcD` at instruction bit 6, width `5`: the desired word source.
+- `RegDst` at instruction bit 23, width `5`: the destination of the prior word.
+- `SrcL` at instruction bit 31, width `5`: the atomic address source.
+- `SrcR` at instruction bit 36, width `5`: the expected word source.
+- `rl` at instruction bit 41: the release ordering bit.
+- `aq` at instruction bit 42: the acquire ordering bit.
+- `far` at instruction bit 43: the profile routing hint.
 
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+Design point: `far` sits above the `aq` and `rl` bits and is passed to `AtomicAddress`, which returns its argument unchanged. All `8` canonical spellings, including `hl.casw.f`, `hl.casw.aqf`, `hl.casw.rlf` and `hl.casw.aqrlf`, therefore select this one form and reach the same word: a `.f` spelling encodes `far=1` and, in the reference profile, changes neither the address nor the stored or published value.
 
 <!-- PTO-READER-BLOCK: scalar-hl-casw-effects role=effects -->
-## Effects and ordering
+## Published value and memory
 
-After successful preflight, the old value is published even on comparison mismatch; memory changes only on equality.
+On a match the four bytes at the address become the low four bytes of `SrcD`; a mismatch leaves them untouched. A matching store invalidates the local reservation when the stored four bytes overlap the reserved 64-byte granule.
 
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `6` bytes.
+Design point: the published word is sign-extended, so a word whose bit `31` is set becomes a negative 64-bit value: the memory word `0x80000001` is published as `0xffffffff80000001`. The comparison is unsigned, because both sides are zero-extended, so that same `0x80000001` matches exactly; a program needing a zero-extended copy must mask the published value.
 
 <!-- PTO-READER-BLOCK: scalar-hl-casw-constraints role=constraints -->
-## Legality and precise faults
+## Legality and faults
 
-The effective address must be aligned to `4` bytes. Alignment, translation, and permission checks precede architectural effects.
+All `32` selector codes are assigned for `SrcL`, `SrcR`, `SrcD` and `RegDst`, and every combination of `aq`, `rl` and `far` decodes to this form. An unavailable `T` or `U` queue entry makes the operands illegal, and an undecodable fixed-bit pattern fails the decode; both raise `Fault_IllegalInstruction` at `ReadPC()` before any architectural effect.
 
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+The address must be a multiple of `4`; otherwise the read probe reports `Fault_DataAlignment` with the original address. A probe fault publishes no destination value, records no atomic event, changes no reservation and does not advance `TPC`.
+
+Design point: the 48-bit encoding is what sets the step. The dispatcher adds `length_bits DIV 8`, which is 6 for `HL.CASW`, so the next instruction begins 6 bytes after this one, and a faulted instance re-executes those same 6 bytes.
 
 <!-- PTO-READER-BLOCK: scalar-hl-casw-example role=example -->
-## Non-normative example
+## Swapping a word that looks negative
 
 This example only shows one accepted spelling; the generated contract below remains authoritative.
 
-For a first reading, use `hl.casw [SrcL], SrcR, SrcD, ->Rd` and then vary only the ordering or route modifiers described above.
+With the word at `SrcL` equal to `0x80000001`, the low word of `SrcR` equal to `0x80000001` and the low word of `SrcD` equal to `0x55667788`, the comparison matches: the four bytes become `0x55667788`, `RegDst` receives `0xffffffff80000001`, and the event reports `write_performed=true`.
+
+With a low word of `SrcR` equal to `0x00000002`, the comparison fails: memory keeps `0x80000001`, `RegDst` still receives `0xffffffff80000001`, and the event reports `write_performed=false`. The case with `SrcR = 0xdeadbeef00000001` and a memory word of `0x00000001` shows that the upper bits of `SrcR` lie outside the comparison.
+
+```asm
+hl.casw.aqrlf [a0], a1, a2, ->a3
+hl.casw.aqrl [a0], a1, a2, ->a3
+```
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

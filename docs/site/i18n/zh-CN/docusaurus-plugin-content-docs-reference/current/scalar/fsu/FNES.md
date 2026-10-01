@@ -19,54 +19,53 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fnes-purpose role=purpose -->
 ## FNES 的作用
 
-`FNES` 执行有序不相等比较（信号 NaN 形式），并发布规范化 XLEN 一或零。
+`FNES` 比较两个浮点标量并写出整数判定结果。它是有序的 signaling 不等比较：当两个操作数不同时，目的位置得到规范 XLEN `1`；当两者相等或任一为 NaN 时，得到规范 XLEN `0`。
+
+这个整数结果就是 Reg5 目的位置中的普通字，因此用于判定的比较可以直接驱动后续整数控制流，无需任何转换步骤。
 
 <!-- PTO-READER-BLOCK: scalar-fnes-mechanism role=mechanism -->
-## 数值机制
+## 比较如何判定
 
-`SrcType=00` 选择完整 FP64 载体；`SrcType=01` 选择零扩展后的低 32 位 FP32 载体。
+`SrcType=00` 选择完整的 64 位 FP64 载体。`SrcType=01` 选择 FP32，只使用每个源字的低 32 位，并零扩展到 XLEN。
 
-任一输入为 NaN 时，有序比较结果为假。
+指令契约指定 `FloatingCompare_NE`，并声明自己是一次 signaling 比较。只要任一输入是 NaN（无论 quiet 还是 signaling），处理程序都会记录 `NV`，因为本形式属于 signaling。
 
-信号 NaN 形式对任意 NaN 记录粘滞 `NV`。
+相等性按值而不是按原始编码判定：`-0` 与 `+0` 的编码不同，但按值相等，因此该组合发布的判定结果是 `0`。这里只需要不等测试，所以结果就是相等测试的取反。
+
+设计要点：NaN 与任何值比较都是无序的，而本形式被声明为 signaling，因此无序情况既体现在结果侧，也体现在状态侧。到达 signaling 比较的 quiet NaN 因此会在 `CORE_STATE[32]` 中可见，这正是让程序知道比较中有 NaN 参与的信号。
 
 <!-- PTO-READER-BLOCK: scalar-fnes-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `RegDst` 选择编码指定的目的位置或丢弃行为。
-
-- `SrcL` 提供左侧标量源。
-
-- `SrcR` 提供右侧标量源。
-
-- `SrcType` 选择源载体宽度。
-
-- Reg5 源选择器可以读取 GPR、T 或 U 状态，且不会消费临时队列项。
-
-- 目的选择器可以写 GPR、压入 T/U，或只丢弃结果。
+- `RegDst` 选择目的选择器：编码 `1`..`23` 写入 GPR，`30` 压入 `U`，`31` 压入 `T`，`0` 以及 `24`..`29` 丢弃结果。
+- `SrcL` 是左源选择器。
+- `SrcR` 是右源选择器。
+- `SrcType` 选择两个源共同使用的载体。
+- 源选择器 `0`..`23` 读取 GPR，`24`..`27` 读取 `T#1`..`T#4`，`28`..`31` 读取 `U#1`..`U#4`。读取临时队列不会消费或重排它。
+- 源选择器 `0` 始终读到 XLEN 零，目的选择器 `0` 不写入任何内容。
 
 <!-- PTO-READER-BLOCK: scalar-fnes-effects role=effects -->
 ## 效果与顺序
 
-所有显式源都会在数值状态或目的效果前完成快照。
+两次源读取都在任何写入之前完成，因此 `SrcL`、`SrcR` 与 `RegDst` 可以指向同一个寄存器或队列槽，比较仍然看到指令执行前的值。压入 `T` 或 `U` 只在两次读取之后发生，因此同一条指令中既读取又被压入的选择器看到的是原本就在那里的表项。
 
-架构产生的 `NV` 会在目的发布前按位或到粘滞数值状态。
-
-结果完成发布或丢弃后，`TPC` 前进 `4` 字节。该指令不产生内存或保留状态效果。
+粘滞标志更新以按位或的方式写入 `CORE_STATE[36:32]`，因此先前的标志绝不会被清除。随后目的位置被写入或丢弃，之后 `TPC` 才前进 `4` 字节。该指令不进行内存访问，也不留下保留状态。
 
 <!-- PTO-READER-BLOCK: scalar-fnes-constraints role=constraints -->
-## 类型与配置档边界
+## 保留类型与拒绝
 
-`SrcType=10` 和 `SrcType=11` 为保留值。保留类型或不可用 T/U 源会在读取源、调用配置档、更新标志或队列、写入目的以及改变 `TPC` 前引发 `Fault_IllegalInstruction`。
+`SrcType=10` 和 `SrcType=11` 是保留值。处理程序在两个源寄存器第一次被读取之前检查载体类型，因此保留类型会引发 `Fault_IllegalInstruction`，且不读取源、不置标志、不改变队列、不写目的位置、不推进 `TPC`。
 
-数值标志更新本身不会引发同步 PTO 陷阱。
+指名不可用 `T` 或 `U` 槽的源选择器在同一位置以同样方式被拒绝。
+
+本形式不使用当前舍入模式，因为比较两个载体并不是舍入操作。数值标志只是状态：已记录的 `NV` 本身绝不会引发同步 PTO 陷阱。
 
 <!-- PTO-READER-BLOCK: scalar-fnes-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不会脱离规范规则或当前配置档另行定义算术。
+`fnes.fd a0, a1, ->a2` 把 `a0` 和 `a1` 读作完整 FP64 载体，并把判定结果写入 `a2`。
 
-`fnes.fd a0, a1, ->a2` 应用架构定义的特殊值规则，在推进 `TPC` 前发布规范化输出。
+当 `a0` 保存 FP64 `+0.0`、`a1` 保存 FP64 `-0.0` 时，两者按值相等，因此写入 `0`，且不记录任何标志。当 `a0` 保存 quiet NaN、`a1` 保存 FP64 `1.0` 时，写入 `0`，并且`CORE_STATE[32]` 中置位粘滞 `NV`，因为本形式属于 signaling。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

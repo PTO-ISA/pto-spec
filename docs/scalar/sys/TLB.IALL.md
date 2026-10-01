@@ -19,40 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-tlb-iall-purpose role=purpose -->
 ## What TLB.IALL does
 
-`TLB.IALL` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+`TLB.IALL` completes the all-translation-entries maintenance operation synchronously. Being the widest TLB request, it needs no operand: the encoding has no field (`asl/scalar/sys/TLB.IALL.asl:1`), and the semantic operand is the all-zero XLEN value.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iall-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+`InstructionContractHandler_TLB_IALL` selects the shared maintenance handler (`asl/scalar/sys/TLB.IALL.asl:18`), and the token `Maintenance_TLB_IALL` has the last case in the executor, advancing the TLB epoch with no operand test at all (`asl/scalar/model/sys/semantics.asl:154`).
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+`InstructionContractMaintenanceUsesOperand_TLB_IALL` is `FALSE` (`asl/scalar/sys/TLB.IALL.asl:36`), so the dispatcher passes `Zeros{PTO_XLEN}` and reads no scalar register (`asl/scalar/model/dispatch/sys.asl:59`).
+
+Ring privilege still applies: `InstructionContractMaintenanceRequiresRootRing_TLB_IALL` returns `TRUE` (`asl/scalar/sys/TLB.IALL.asl:42`).
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iall-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-The encoding has no explicit operand field; the operation is selected entirely by its fixed instruction bits.
+There is no encoded operand and no destination. Every bit of the 32-bit form is fixed by the single catalog record, so the instruction cannot be narrowed to a scope, an identifier, or an address.
+
+The recorded operand is zero, and nothing is written to a register, temporary queue, or system register.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iall-effects role=effects -->
 ## Architectural effects
 
-On success, the maintenance record receives `Maintenance_TLB_IALL` and the exact captured operand token.
+On success the TLB epoch advances by one and `Maintenance_TLB_IALL` with operand zero is written into the maintenance record (`asl/scalar/model/sys/semantics.asl:155`). `TPC` then advances by 4 bytes for this 32-bit form.
 
-Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+Design point: an all-entries request has no operand to validate, but the privilege check still runs first. That keeps translation maintenance uniformly manager-only, so an unprivileged attempt cannot even reach the epoch step.
+
+The instruction performs no ordinary scalar memory access and does not define translation-table contents.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iall-constraints role=constraints -->
 ## Placement and rejection
 
-TLB maintenance is accepted only at `ACR0`; ring permission is checked before operand validation. This form has no operand token.
+Outside an active SYS block body the attempt raises `Fault_BundleControl` before the handler. Inside the body, a current ring other than ACR0 raises `Fault_IllegalInstruction`, and the TLB epoch keeps its previous value because the executor returns before the epoch step (`asl/scalar/model/sys/semantics.asl:130`).
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+There is no reserved encoding and no operand-shape rejection, since all bits are fixed and no operand is read.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iall-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `tlb.iall` and trace its encoded fields through preflight before following the selected system effect.
+At ACR0, `tlb.iall` in a SYS block body advances the TLB epoch by one, records `Maintenance_TLB_IALL` with operand zero, and advances `TPC` by 4 bytes. The same instruction at ACR1 raises `Fault_IllegalInstruction`, and the three other epoch counters are untouched in both cases.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

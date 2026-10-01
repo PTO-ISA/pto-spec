@@ -19,40 +19,58 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-cmp-eqi-purpose role=purpose -->
 ## What C.CMP.EQI does
 
-`C.CMP.EQI` evaluates equality over decoded scalar operands and publishes canonical XLEN one or zero.
+`C.CMP.EQI` compares the value in `T#1` with the sign-extended `5`-bit immediate `simm5` and pushes the boolean equality result into `T`.
+
+It is a compact compare: the source and the destination are both implied by the encoding, and the only encoded operand is the immediate.
 
 <!-- PTO-READER-BLOCK: scalar-c-cmp-eqi-mechanism role=mechanism -->
 ## Mechanism
 
-The compact form snapshots implicit `T#1` as its left operand, compares it with the decoded signed immediate, and pushes the canonical result to T.
+The contract returns `ScalarHandler_ExecuteCompare` with the condition `ScalarCondition_EQ`. The model evaluates `left == right` and converts the answer to a canonical XLEN value: `1` when the condition holds and `0` when it does not.
 
-The source snapshot precedes the T push, so queue publication cannot change the value already selected.
+Both operands are read before the queue write. The left operand is fixed by the handler, not by an encoded field: the model reads `T#1` as register code `24`, which selects temporary queue index zero without consuming it. The right operand is `simm5`, sign-extended from `5` bits to XLEN.
+
+The destination is fixed too: register code `31`, which the destination model maps to a push onto the `T` queue. The model reads the implicit `T#1` source without consulting its queue-validity flag, so no fault is defined for reading an empty `T` queue: that requirement is an architectural precondition on software, not a check the executable model performs.
+
+Design point: read-then-push ordering is what makes the single queue both the source and the result carrier. The push shifts the existing entries toward older indices, so the value that was `T#1` becomes `T#2` and the new result becomes `T#1`, while the compared value is already snapshotted.
 
 <!-- PTO-READER-BLOCK: scalar-c-cmp-eqi-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- Implicit `T#1` is the left source, and the implicit output is a T push.
+- `simm5` supplies the signed `5`-bit immediate, sign-extended to XLEN, so `-1` compares as the all-ones pattern rather than as `31`.
+- Implicit `T#1` supplies the left operand; it is read, not consumed.
+- The result is pushed onto `T` as the new `T#1`.
 
-- `simm5` supplies a signed encoded immediate.
+There are no other encoded fields. In particular there is no destination field and no right-source modifier field, so a `C.CMP.EQI` operand cannot be sign- or zero-extended the way a register-form compare operand can.
+
+Encoded zero in `simm5` supplies numeric zero, so the instruction can test the source against zero.
 
 <!-- PTO-READER-BLOCK: scalar-c-cmp-eqi-effects role=effects -->
 ## Effects and ordering
 
-The canonical boolean is pushed implicitly to T, then `TPC` advances by `2` bytes.
+On success the instruction writes exactly one queue entry and advances `TPC` by `2` bytes, the encoded length of the `16`-bit form.
 
-There is no encoded destination field; the instruction does not modify commit state or access memory or reservation state.
+It does not read or write memory, does not change reservation state, does not update the bundle commit condition, and records no numeric status flag. `C.CMP.EQI` is not a condition setter, so it can appear in any block placement that accepts an ordinary scalar instruction.
+
+Design point: the result is a data value, not a commit decision. A program that wants to act on the comparison must still route it through a branch or through one of the commit-condition setters.
 
 <!-- PTO-READER-BLOCK: scalar-c-cmp-eqi-constraints role=constraints -->
 ## Legality and fault order
 
-Encoding, reserved field values, and source availability are checked before destination, control, or `TPC` effects.
+All `32` values of `simm5` are assigned; there is no reserved immediate and nothing for a reserved-encoding check to reject.
+
+The check order is decode, then operand legality, then scalar source availability. Operand legality covers encoded fields only, and this form encodes no source selector: register code `24` is written into the handler, not into the instruction. There is therefore no source-availability check to fail, and an empty `T` queue is not rejected with `Fault_IllegalInstruction`.
+
+An instruction rejected for a fixed-bit mismatch leaves the `T` queue contents and the push order unchanged, and trap entry saves the original `TPC`.
 
 <!-- PTO-READER-BLOCK: scalar-c-cmp-eqi-example role=example -->
 ## Non-normative example
 
-This example illustrates the current owner and does not create a second semantic definition.
+Push `7` into `T` with a preceding instruction, so `T#1` holds `7`, and place `C.CMP.EQI` at `TPC = 4096`.
 
-`c.cmp.eqi t#1, simm, ->t` publishes XLEN one when its condition is true and XLEN zero otherwise.
+`c.cmp.eqi t#1, 7, ->t` compares `7` against `7`, finds the condition holds, and pushes `1` onto `T`.
+
+The following instruction is fetched from `4096 + 2 = 4098`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

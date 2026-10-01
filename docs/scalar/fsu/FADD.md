@@ -19,47 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fadd-purpose role=purpose -->
 ## What FADD does
 
-`FADD` adds two selected FP64 or FP32 carriers through the active numeric profile, publishes the profile result, and accumulates the returned five-bit status vector into sticky numeric state.
+`FADD` adds two selected floating-point carriers and publishes the rounded sum to a Reg5 destination.
+
+The addition is performed by the active numeric profile, so the sum is the profile's rounded result rather than an unbounded real value.
 
 <!-- PTO-READER-BLOCK: scalar-fadd-mechanism role=mechanism -->
-## Profile-mediated mechanism
+## How the sum is produced
 
-`SrcType=00` selects complete FP64 carriers, while `SrcType=01` selects FP32 carriers from the zero-extended low 32 bits. The instruction calls the active profile's binary-add operation using active rounding.
+`SrcType` selects the carrier: encoded `00` selects FP64 and encoded `01` selects an FP32 carrier in the low word of each source. Both sources are normalised to that carrier before anything else happens, then the model computes the binary addition with the active rounding mode, which it reads from `core_state[39:37]`.
 
-The selected profile returns a result plus `NV`, `DZ`, `OF`, `UF`, and `NX`; `FADD` ORs those bits into the existing sticky `CORE_STATE[36:32]` field.
+The special-value rules decide the result before any finite arithmetic runs. If either input is a NaN the result is a quiet NaN. If both inputs are infinities of opposite sign the result is a quiet NaN. If exactly one input is an infinity the result is that infinity with its sign. Two finite inputs whose exact sum is beyond the destination format also produce an infinity, and that overflow records `OF` and `NX`.
 
-In the `pto-v0` reference profile, addition is deterministic raw-carrier modular arithmetic and returns zero flags. That reference behavior is not an IEEE-754 or target-hardware conformance claim.
+Design point: a NaN input produces a NaN result, never an infinity and never a finite number, so a NaN detected here stays visible at the destination instead of being absorbed silently.
 
 <!-- PTO-READER-BLOCK: scalar-fadd-inputs role=inputs-outputs -->
-## Inputs and destination
+## Inputs and output
 
-- `SrcL` and `SrcR` accept every Reg5 source selector, including non-consuming T/U sources.
-- `RegDst` values `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only the result.
+- `SrcL` supplies the left Reg5 source.
+- `SrcR` supplies the right Reg5 source.
+- `SrcType` selects the source carrier for both sides; one width applies to the whole operation.
+- `RegDst` selects the destination: codes `1..23` write the named absolute GPR, code `30` pushes the `U` queue, code `31` pushes the `T` queue, and code `0` plus codes `24..29` discard the result.
 
-All displayed operand fields are encoded. Encoded zero is a value: source selector `0` reads the zero GPR, destination `0` discards, and `SrcType=00` selects FP64.
+Reg5 source codes read absolute GPRs, `T#1..T#4`, or `U#1..U#4` without consuming a queue entry. Encoded zero in a source reads the architectural zero GPR, and encoded zero in `RegDst` discards.
 
 <!-- PTO-READER-BLOCK: scalar-fadd-effects role=effects -->
 ## Effects and ordering
 
-Type legality is checked before the first source read or profile call. Both sources are then snapshotted before flag accumulation or destination publication.
+The result is normalised to the selected carrier width and written once, the produced flags are ORed into the sticky numeric status, and `TPC` then advances by `4` bytes. There is no memory, reservation, or descriptor effect.
 
-Produced flags are ORed into sticky numeric status, the result is published or discarded, and `TPC` advances by `4` bytes. Numeric flags do not themselves raise a synchronous PTO trap.
-
-`FADD` has no memory or reservation effect.
+The profile returns an exact `NV`, `DZ`, `OF`, `UF`, `NX` vector. The model ORs that vector into the existing sticky status, so a flag set by an earlier instruction survives an `FADD` that reports no flag of its own.
 
 <!-- PTO-READER-BLOCK: scalar-fadd-constraints role=constraints -->
-## Type and profile boundaries
+## Carrier legality and sticky-flag behavior
 
-`SrcType=10` and `SrcType=11` are reserved and raise `Fault_IllegalInstruction` before source, profile, destination, flag, queue, or `TPC` effects. An unavailable selected T/U source has the same pre-effect fault boundary.
+`SrcType` codes `0` and `1` are assigned and codes `2` and `3` are reserved. The carrier check runs before the first architectural source read, so a reserved `SrcType`, a fixed-bit mismatch, or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before any source, profile, destination, flag, queue, or `TPC` effect.
 
-The portable contract owns carrier selection, snapshotting, flag accumulation, destination publication, and rejection ordering. The active named numeric profile owns the arithmetic result and produced status vector.
+Every Reg5 destination code is assigned, so no destination encoding is illegal. Numeric status flags update sticky status and never raise a synchronous PTO trap.
 
 <!-- PTO-READER-BLOCK: scalar-fadd-example role=example -->
-## Non-normative usage example
+## Non-normative example
 
-This example illustrates selection and publication; it does not define floating-point arithmetic independently of the active profile.
+This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
 
-`fadd.fd a0, a1, ->a2` selects the FP64 carrier path, snapshots both sources, invokes profile addition with active rounding, accumulates returned flags, writes the returned carrier to `a2`, and then advances `TPC` by `4` bytes.
+The canonical FP64 example is `fadd.fd a0, a1, ->a2` with GPR `a0` holding `0x3ff0000000000000`, standing for `1.0`, and GPR `a1` holding `0x3ff0000000000000`: GPR `a2` receives `0x4000000000000000`, standing for `2.0`.
+
+Because both operands select one carrier width, an `FADD` on two FP32 values in `T` and `U` queues uses the same instruction with the FP32 encoding of `SrcType`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

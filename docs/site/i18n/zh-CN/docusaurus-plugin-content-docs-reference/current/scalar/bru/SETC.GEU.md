@@ -19,44 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-geu-purpose role=purpose -->
 ## SETC.GEU 的作用
 
-`SETC.GEU` 判断无符号大于等于，并把结果发布为当前条件指令束的提交判定。
+`SETC.GEU` 把两个标量寄存器当作无符号整数比较，并把结果发布为所在 Conditional 指令束的提交判定。
+
+发布的值不是通用结果：它写入提交参数（commit argument），该指令束在决定是否执行条件转移时读取它，同时它也驱动 `BARG.TAKEN`。
 
 <!-- PTO-READER-BLOCK: scalar-setc-geu-mechanism role=mechanism -->
-## 执行机制
+## GEU 条件如何判定
 
-在检查源就绪状态或读取源之前，先检查放置和单次设置规则。
+该指令没有目的寄存器。它对 `SrcL` 和准备好的右侧操作数做快照，测试 `ConditionHolds(ScalarCondition_GEU, left, right)`，关系成立时存入恰好 `1`，不成立时存入恰好 `0`。
 
-指令对源取快照，判断无符号大于等于，再规范化为 XLEN 一或零。
+`ConditionHolds` 比较 `UInt(left) >= UInt(right)`。两个操作数都是完整 `64` 位字，因此最高位为一的模式表示一个非常大的数，而不是负数。
+
+设计要点：提交值被规范化为 `1` 或 `0`，而不是任意非零值，因此指令束判定不必再检查原始比较残值——只需测试一次提交参数即可。
 
 <!-- PTO-READER-BLOCK: scalar-setc-geu-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `SrcL` 提供左侧标量源。
+- `SrcL` 提供左侧绝对 GPR 源。
+- `SrcR` 提供右侧绝对 GPR 源。
+- `SrcRType` 选择在测试关系之前施加于 `SrcR` 快照的变换：值 `1` 代入低 `32` 位的符号扩展结果，值 `2` 代入低 `32` 位的零扩展结果，值 `0` 和 `3` 都保持完整值不变。
 
-- `SrcR` 提供右侧标量源。
-
-- `SrcRType` 选择右源变换。
+`SrcL` 或 `SrcR` 中的编码零指向架构零 GPR。两个源都不会被消费，该指令也不写任何 `GPR`、`T` 或 `U` 目的。
 
 <!-- PTO-READER-BLOCK: scalar-setc-geu-effects role=effects -->
 ## 效果与顺序
 
-规范化条件会原子写入 `_CommitArgument` 和 `BARG.TAKEN`，同时置位条件已设置标记。
+成功时该指令把规范化条件写入提交参数，在指令束处于活动状态时把 `BARG.TAKEN` 置为同一真值，标记指令束条件已设置，然后才把 `TPC` 前进 `4` 字节，即 `32` 位形式的编码长度。
 
-成功时，`SETC.GEU` 让 `TPC` 前进 `4` 字节；它没有标量目的位置，也不产生内存或保留状态效果。
+它没有内存效果、没有保留状态效果，也没有数值状态标志。`BARG.BPC`、`BARG.BPCN`、`BARG.BlockType` 和 `BARG.TYPE` 保持原值。
+
+设计要点：处理程序先写入提交参数，再从同一个字推导 `BARG.TAKEN`，且处理程序内部不会在这两次写入之间产生故障，因此不存在两者不一致的可观察指令束状态。
 
 <!-- PTO-READER-BLOCK: scalar-setc-geu-constraints role=constraints -->
-## 合法性与故障顺序
+## 指令束放置、顺序与故障
 
-该指令只在适用的条件指令束上下文中合法，并且只能有一个条件设置操作成功。
+该操作只适用于活动指令束的束体，且其转移类型为 Conditional；在同一指令束中，`SETC` 条件设置家族只能有一个成员成功完成。
 
-放置错误或重复设置会在读取源之前引发非法指令束异常；编码或源不可用会在提交状态或 `TPC` 效果前引发 `Fault_IllegalInstruction`。
+错误的放置位置或第二个成功的设置者会在任何源就绪检查或源读取之前引发 `Fault_BundleControl`（陷阱编号 `5`，`BUNDLE_TRAP`）。固定位不匹配或所选的 `T`、`U` 源不可用会在提交状态、`BARG`、队列或 `TPC` 效果之前引发 `Fault_IllegalInstruction`。被拒绝的一次出现不会消耗共享的“仅一次设置”标记，因此之后一个形式正确的设置者仍可成功。
 
 <!-- PTO-READER-BLOCK: scalar-setc-geu-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不构成第二份语义定义。
+This example illustrates the current owner and does not create a second semantic definition.
 
-`setc.geu SrcL, SrcR<{.sw, .uw}>` 按上述规则计算条件，把规范化判定写入提交状态，并且只在更新完成后推进 `TPC`。
+把 `5` 放入 GPR1、`5` 放入 GPR2，然后执行 `setc.geu R1, R2`。无符号关系 `5 >= 5` 成立，因此提交参数和 `BARG.TAKEN` 变为 `1`。把 GPR2 设为 `6`，同一形式则提交 `0`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,49 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-orw-purpose role=purpose -->
 ## What ORW does
 
-`ORW` is a 32-bit scalar ALU instruction. It performs bitwise inclusive OR under the low 32-bit word, followed by sign-extension to XLEN result rules; its current instruction contract defines the result publication path and any additional state effect.
+`ORW` prepares `SrcR` exactly as `OR` does, ORs it with the low `32` bits of `SrcL` at `32`-bit width, and publishes the word sign-extended to `PTO_XLEN`. It carries `RegDst`, `SrcL`, `SrcR`, `SrcRType` and `shamt`.
+
+The carrier matches `0x00003025` under mask `0x0000707f` and dispatches `ScalarBinaryW` with the logical-family flag set, so `SrcRType=10` complements the complete right operand.
+
+Only the low word of each side reaches the disjunction, but the modifier and the shift act on the whole `PTO_XLEN` right operand first.
 
 <!-- PTO-READER-BLOCK: scalar-orw-mechanism role=mechanism -->
-## How the result is formed
+## How the word result is formed
 
-Execution snapshots the encoded inputs, then performs bitwise inclusive OR under the low 32-bit word, followed by sign-extension to XLEN result rules, and only afterward performs the destination effects.
+`ExecuteDecodedBinary` reads `SrcL`, the unmodified `SrcR`, `SrcRType` and `shamt`, then forms the right operand with `PrepareScalarRight(right, modifier, shift_amount, TRUE)`. With `word_operation` true it calls `ScalarBinaryW(ScalarBinary_OR, left, right)`, whose `left32`/`right32` bindings keep `[31:0]` and whose return is `SignExtend{PTO_XLEN}` of the `32`-bit OR (`asl/scalar/model/dispatch/alu.asl:82-83`, `asl/scalar/model/alu/semantics.asl:470-487`).
 
-- `SrcRType` first transforms the right source; `shamt` then logically shifts that transformed value left before the arithmetic or logical operation.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+orw SrcL, SrcR<{.sw,.uw,.not}><<<shamt>, ->{t, u, Rd}
+```
+
+Design point: The shift happens before the narrowing, so `shamt` can carry bits of `SrcR` into the low word from below bit `32` but never from above it. Shifting a `.sw` or `.uw` right operand by `31` places its former bit `0` into word bit `31`, which then becomes a sign bit of the published word.
+
+Design point: Because the narrowing happens last, the upper word of `SrcL` cannot set any result bit. `orw` with `SrcL` holding an all-ones upper half still publishes only what the low words produce.
 
 <!-- PTO-READER-BLOCK: scalar-orw-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the left operand through Reg5.
-- The 5-bit `SrcR` field selects the right operand through Reg5.
-- The 2-bit `SrcRType` field selects the transformation applied to the right source.
-- The 5-bit `shamt` field encodes the logical-left shift applied after right-source transformation.
+Both sources use the Reg5 source map, the suffix fields are decoded from the carrier, and the result leaves through the Reg5 destination map.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+- `SrcL` at `[15 +: 5]` and `SrcR` at `[20 +: 5]`: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, `28..31` read `U#1..U#4`, non-consuming.
+- `SrcRType` at `[25 +: 2]`: `00` `.sw`, `01` `.uw`, `10` `.not`, `11` no modifier; an omitted suffix encodes `11`.
+- `shamt` at `[27 +: 5]`: the logical left shift applied after the modifier, `0` through `31`.
+- `RegDst` at `[7 +: 5]`: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+
+Design point: `.not` complements `PTO_XLEN` bits of `SrcR`, so `orw a0, a1<.not>, ->a2` publishes the OR of the low word of `a0` with the complement of the low word of `a1`. The modifier and the narrowing are independent: the complement is never restricted to `32` bits.
 
 <!-- PTO-READER-BLOCK: scalar-orw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are snapshotted before the write, so destination aliases observe pre-instruction values. The word is published and `TPC` advances by `4` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+`ORW` touches no memory and changes no reservation, descriptor, numeric-flag, trap, bundle, privilege, predicate or control-flow state. A `30` or `31` destination is the only case in which it moves a temporary queue.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: The published word always has a defined upper half: bits `63..32` repeat bit `31` of the OR. A consumer that needs a zero-extended word has to clear those bits itself, because `ORW` offers no zero-extending variant.
 
 <!-- PTO-READER-BLOCK: scalar-orw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+All four `SrcRType` codes and all `32` `shamt` values are assigned, as are every source and destination code of the Reg5 maps. The form carries no constraint beyond its fixed bits.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unmatched carrier raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`, reachable for `ORW` only while a system-block terminal request is pending. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`. Each check precedes the destination effect and the `TPC` advance.
+
+Design point: No operand value selects a trap: the transformation, the shift, the word OR and the sign extension are all total. The fault boundary of `ORW` is encoding validity plus source availability.
 
 <!-- PTO-READER-BLOCK: scalar-orw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `ORW` example, `SrcL=0xc`, `SrcR=0xa`, `SrcRType=11`, and `shamt=0` produce `0xe`.
+With `a0` whose low `32` bits are `0x00F0` and `a1` holding `0x000000000000000F`, `orw a0, a1, ->a2` publishes `0x00FF`.
+
+With `a0` holding `1` and `a1` holding `1`, `orw a0, a1<.sw><<<31>, ->a2` shifts the transformed `1` left by `31`, so the shifted right operand is `0x80000000`; the word OR also keeps bit `0` of `a0`, so the published word is `0xFFFFFFFF80000001`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

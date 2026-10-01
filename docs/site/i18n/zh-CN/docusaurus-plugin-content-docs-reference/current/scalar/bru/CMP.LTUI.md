@@ -19,44 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-cmp-ltui-purpose role=purpose -->
 ## CMP.LTUI 的作用
 
-`CMP.LTUI` 对解码后的标量操作数判断无符号小于，并发布规范化的 XLEN 一或零。
+`CMP.LTUI` 求值无符号的小于关系，并把规范 XLEN 布尔值写入目的：条件成立时为 `1`，不成立时为 `0`。
+
+结果是普通数据。`CMP.LTUI` 不设置所在块的提交条件，也不触碰任何谓词寄存器。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ltui-mechanism role=mechanism -->
-## 执行机制
+## 机制
 
-指令先对操作数取快照，准备解码立即数，再判断无符号小于。
+契约返回 `ScalarHandler_ExecuteCompare`。模型读取左源、准备右操作数、测试条件 `ScalarCondition_LTU`，并通过目的选择子写入 `Zeros{PTO_XLEN} + 1` 或 `Zeros{PTO_XLEN}`。
 
-`uimm12` 会在任何移位或比较前零扩展到 XLEN。
+右操作数是 `uimm12`，一个 `12` 位无符号立即数，解码器把它零扩展到 XLEN。该关系是无符号的，因此模型把左源的无符号读数与该立即数相比较。
 
-关系成立时结果为 XLEN 一，否则为 XLEN 零。
+设计要点：零扩展的立即数永远不会看起来像负值，因此该形式不需要单独的负边界，且用一条指令就能覆盖全部的 `4096` 个模式空间。
+
+设计要点：规范化为恰好 `1` 或 `0`（而不是任意非零值），使两次比较可以做算术组合，并且对目的做一次测试就足以恢复该关系。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ltui-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `RegDst` 选择编码指定的目的位置或丢弃行为。
+- `SrcL` 提供左侧绝对 GPR 源。
+- `uimm12` 提供 `12` 位无符号立即数。
 
-- `SrcL` 提供左侧标量源。
+`RegDst` 命名目的：编码 `1..23` 写入所指的绝对 GPR，编码 `0` 与编码 `24..29` 丢弃结果，编码 `30` 把它压入 `U` 队列，编码 `31` 把它压入 `T` 队列。
 
-- `uimm12` 提供无符号编码立即数。
+`SrcL` 编码为零时指向架构零 GPR。源按值读取，不会被消耗。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ltui-effects role=effects -->
-## 效果与顺序
+## 效果与排序
 
-规范化布尔值先通过编码目的位置发布，随后 `TPC` 前进 `4` 字节。
+成功时该指令恰好写入一个目的值，并让 `TPC` 前进 `4` 字节，即 `32` 位形式的编码长度。
 
-该指令不修改提交状态，也不访问内存或保留状态。
+它没有内存效果、没有保留效果、没有描述符效果，也没有数值状态标志。它保持提交参数、块参数和块条件标记不变，因为它不是条件设置指令。
+
+设计要点：由于该比较既不能观察提交条件，也不能安装控制流目标，编译器可以在其目的被读取之前，把它与其他纯标量操作自由重排。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ltui-constraints role=constraints -->
 ## 合法性与故障顺序
 
-编码、保留字段值和源可用性都会在目的、控制或 `TPC` 效果前检查。
+先执行解码，固定位不匹配会在指令地址处抛出 `Fault_IllegalInstruction`，且在任何效果之前。
+
+`uimm12` 的全部 `4096` 个模式都已分配；没有保留立即数。
+
+被选中但不可用的 `T` 或 `U` 源会在操作数合法性阶段被拒绝，且早于目的写入。被拒绝的指令既不改变目的也不改变 `TPC`，陷入入口保存原始 `TPC`，因此它可以重新执行。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ltui-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不构成第二份语义定义。
+把 GPR1 设为 `5`。
 
-`cmp.ltui SrcL, uimm, ->{t, u, Rd}` 在条件为真时发布 XLEN 一，否则发布 XLEN 零。
+`cmp.ltui 1, 6, ->0` 把 `1` 写入目的。若把 `uimm12` 设为 `5`，同一形式写入 `0`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

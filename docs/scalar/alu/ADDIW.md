@@ -19,47 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-addiw-purpose role=purpose -->
 ## What ADDIW does
 
-`ADDIW` is a 32-bit scalar ALU instruction. It performs addition under the low 32-bit word, followed by sign-extension to XLEN result rules; its current instruction contract defines the result publication path and any additional state effect.
+`ADDIW` adds a zero-extended unsigned 12-bit immediate to the low word of a Reg5 source and publishes the 32-bit sum sign-extended to `PTO_XLEN`.
+
+Design point: `ADDIW` reuses both fields and the unsigned immediate rule of `ADDI`, and changes only the width of the addition and of the publication. That is why the two mnemonics have separate opcodes rather than a width field: the width is a property of the mnemonic, so no bit of the encoding is spent on it.
 
 <!-- PTO-READER-BLOCK: scalar-addiw-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then performs addition under the low 32-bit word, followed by sign-extension to XLEN result rules, and only afterward performs the destination effects.
+The immediate is zero-extended to `PTO_XLEN` and added to `SrcL[31:0]` modulo `2^32`. The 32-bit result is then sign-extended: result bit `31` is copied into bits `63..32`.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: source bits `63..32` never participate. `ADDIW` is therefore the normalization step for a value that must be a well-formed 32-bit number in a 64-bit register, because every published result has bits `63..32` equal to bit `31`.
+
+Word addition is fixed width and total: it wraps at `2^32` and raises no arithmetic exception.
 
 <!-- PTO-READER-BLOCK: scalar-addiw-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 scalar result target or discards the result.
-- The 5-bit `SrcL` field selects a Reg5 scalar value whose low 32 bits participate.
-- The unsigned 12-bit `uimm12` field carries the unsigned 12-bit immediate.
+- `SrcL` is a Reg5 source: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`, without consuming a queue entry. Only `SrcL[31:0]` participates.
+- `uimm12` carries the unsigned addend, from `0` through `4095`.
+- `RegDst` publishes the sign-extended result: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero of `SrcL` reads the architectural zero GPR, and encoded zero of `RegDst` discards. Neither is an omission, and no field of `ADDIW` can be omitted.
 
 <!-- PTO-READER-BLOCK: scalar-addiw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is read before the destination is written, so an alias between the two selectors observes the pre-instruction value.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The word sum is published or discarded, and then `TPC` advances by `4` bytes. `ADDIW` accesses no memory and changes no reservation, descriptor, numeric-status, trap, bundle, privilege, predicate or control-flow state beyond that advance.
 
 <!-- PTO-READER-BLOCK: scalar-addiw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every encoded value is assigned: all `32` `SrcL` codes, all `32` `RegDst` codes, and all `4096` immediate values from `0` through `4095`.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An undecodable form raises `Fault_IllegalInstruction` at `PC`; an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`; a fixed-bit mismatch or an unavailable selected T/U source raises `Fault_IllegalInstruction`. Each precedes the destination effect and the `TPC` advance, and none of them depends on the operand values.
+
+Design point: the truncation to `32` bits is not a fault condition. A sum that does not fit in a word silently keeps its low `32` bits and then sign-extends them, so `ADDIW` can never raise an overflow trap.
 
 <!-- PTO-READER-BLOCK: scalar-addiw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `ADDIW` example, `SrcL=7` and `uimm12=3` produce `10`.
+With `SrcL=4294967295`, `uimm12=1` and `SrcL[31:0]` all ones, the 32-bit sum wraps to `0` and `ADDIW` publishes `0`; the same operands under `ADDI` would publish `4294967296`. With `SrcL=2147483648` and `uimm12=0`, the published value keeps `2147483648`, because sign-extension reproduces the source word.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

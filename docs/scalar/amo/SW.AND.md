@@ -18,43 +18,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-sw-and-purpose role=purpose -->
 ## What SW.AND does
-
-`SW.AND` atomically applies bitwise AND to one word and stores the result without publishing the old value.
+`SW.AND` atomically updates one aligned 4-byte memory value and stores the result. It publishes no old value and writes no register or temporary queue.
+Its recorded summary is: SW.AND atomically replaces the aligned 32-bit memory value with its bitwise AND with SrcR; it does not publish the old value. The `SW` prefix marks the width, 4 bytes of memory per operation, and the store needs the value it replaces, read inside the same atomic access.
 
 <!-- PTO-READER-BLOCK: scalar-sw-and-mechanism role=mechanism -->
 ## Atomic mechanism
-
-The ASL DOC contract selects `ScalarHandler_AtomicReadModifyWrite` with an access width of `4` bytes.
-
-Read and write access are preflighted before the same-location atomic read-modify-write is allowed to commit.
+The instruction contract selects `ScalarHandler_AtomicReadModifyWrite` at width `4` and maps this operation to `Atomic_AND`. Scalar dispatch calls `AtomicReadModifyWrite`, which preflights the same address twice, reads, combines, and writes back; its return value is discarded.
+`Atomic_AND` returns `old_value AND operand`.
+The helper returns the old memory value, but the dispatch passes `write_result` as `FALSE` and the form has no destination field, so nothing is published.
+Design point: an `SW` operation is defined at 32 bits, so exactly the low 32 bits of the operand register are used. Bits `32` and above never reach memory, and the stored 4-byte value is the low 32 bits of the result.
 
 <!-- PTO-READER-BLOCK: scalar-sw-and-inputs-outputs role=inputs-outputs -->
 ## Inputs and result
-
-`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 atomic operand source; `far` carries the flat-address routing hint; `rl` carries the release ordering bit.
-
-`rl` selects relaxed or release ordering; this form has no acquire bit; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+`SrcL` supplies the atomic address. `SrcR` supplies the atomic operand, and the stored value comes from the value already at the address, under bitwise AND.
+`rl` is the release bit: `rl=0` records the atomic event as relaxed and `rl=1` as release. This form has no acquire bit, so it cannot record acquire or acquire-release ordering. `far` is a route hint only: `AtomicAddress` returns its `address` argument unchanged, so it changes neither the address nor the ordering nor the result.
+All 32 Reg5 source codes are assigned: `0`..`23` name a GPR, `24`..`27` name `T#1`..`T#4`, and `28`..`31` name `U#1`..`U#4`. There is no destination field, so the old value reaches no GPR and no queue.
 
 <!-- PTO-READER-BLOCK: scalar-sw-and-effects role=effects -->
 ## Effects and ordering
-
-This store-only form has no destination field; successful commit updates memory and emits one atomic event.
-
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+A successful operation reads the old value, computes the bitwise AND, stores that result back to the same translated address, and records one atomic memory event with the selected ordering. `SW` records no numeric status.
+The completed write invalidates a local reservation that overlaps the written range, and leaves a nonoverlapping one untouched; the check happens inside `StoreTranslated` against the 64-byte reservation granule. Success then advances `TPC` by `4` bytes.
+Design point: with the width fixed at 32 bits, only the low 32 bits of the addressed location take part, so a caller keeping a wider value there must treat this operation as updating only its low half.
 
 <!-- PTO-READER-BLOCK: scalar-sw-and-constraints role=constraints -->
 ## Legality and precise faults
-
-The effective address must be aligned to `4` bytes. Alignment, translation, and permission checks precede architectural effects.
-
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+The effective address must be aligned to `4` bytes. `ProbeDataAccess` compares the address against the access width before it consults translation, so misalignment is reported ahead of a translation or permission fault, and a failing probe reports the original architectural address.
+If either probe fails, nothing happens at all: no load, no store, no memory event, no reservation update, no publication, no `TPC` advance. One further outcome exists when both probes pass but resolve to different translated addresses: the helper sets `Fault_DataPage` on the original address and changes no memory.
+`Fault_IllegalInstruction` is raised before any effect when no form decodes the 32-bit pattern (this one matches `0x1000300b` under mask `0xf4007fff`), and also when a named source selects a temporary queue entry that is not currently valid. Encoded zero in `SrcL` reads the architectural zero register as the address, and encoded zero in `SrcR` supplies numeric zero as the operand.
+Design point: an unaligned address and an untranslatable one are different traps, and alignment is tested first, so a debugger can separate them without reconstructing the access size.
+Design point: both sources are read before the result is stored, and `SrcL` and `SrcR` may name the same register; the operand is then still the pre-instruction value.
 
 <!-- PTO-READER-BLOCK: scalar-sw-and-example role=example -->
 ## Non-normative example
-
-This example only shows one accepted spelling; the generated contract below remains authoritative.
-
-For a first reading, use `sw.and [SrcL], SrcR` and then vary only the ordering or route modifiers described above.
+This example illustrates the current ASL owner and does not replace the normative operation.
+The four accepted spellings of this operation are the ones below; `.rl`, `.f`, and `.rlf` only select ordering or routing.
+```text
+sw.and [SrcL], SrcR
+sw.and.rl [SrcL], SrcR
+sw.and.f [SrcL], SrcR
+sw.and.rlf [SrcL], SrcR
+```
+The 4-byte value at the aligned address is `0xff00ff00` and the register named by `SrcR` holds `0x0f0f0f0f`.
+The bitwise AND is `0x0f000f00`, and that is the value stored back.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

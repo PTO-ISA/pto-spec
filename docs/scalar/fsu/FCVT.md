@@ -19,56 +19,53 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fcvt-purpose role=purpose -->
 ## What FCVT does
 
-`FCVT` converts FP64, FP32, FP16, or E4M3 input to the FP64, FP32, FP16, or E4M3 destination selected by raw `DstType=0..3` using active rounding through the active numeric profile.
+`FCVT` converts one selected floating-point carrier into another floating-point carrier and writes the result to a Reg5 destination. Both sides stay in the floating-point domain, so no integer rounding rule applies.
+
+The pair of types is chosen by two encoded fields, which makes one mnemonic cover the whole cross product of the four supported floating formats.
 
 <!-- PTO-READER-BLOCK: scalar-fcvt-mechanism role=mechanism -->
-## Numeric mechanism
+## How the conversion is computed
 
-`SrcType=00`, `01`, `10`, and `11` select FP64, FP32, FP16, and E4M3 carriers respectively.
+`SrcType` selects the source carrier and `DstType` the destination carrier. Codes `0`, `1`, `2`, and `3` mean FP64, FP32, FP16, and E4M3 on both sides, so every source code is assigned and destination codes `4` through `31` are reserved.
 
-The active profile receives snapshotted operands and the mnemonic-selected operation, then returns a result and exact `NV`, `DZ`, `OF`, `UF`, `NX` vector.
+The source value is normalised to the full word before the profile runs, and the result is normalised again to the destination width. Widening a narrow source therefore zero-extends it rather than reinterpreting neighbouring bits.
 
-In the `pto-v0` reference profile, finite and special FP64, FP32, FP16, and E4M3 sources convert under the active rounding mode through the common scalar/TCVT profile.
+The conversion runs with the active rounding mode, which the model reads from `core_state[39:37]`, and returns an exact `NV`, `DZ`, `OF`, `UF`, `NX` vector that is ORed into the sticky numeric status.
+
+Design point: rounding is read from the register field rather than fixed by the mnemonic, so a program that needs a particular tie-break rule writes that rule once and every `FCVT` in the region obeys it.
 
 <!-- PTO-READER-BLOCK: scalar-fcvt-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `DstType` selects the destination-carrier code.
+- `SrcL` supplies the sole Reg5 source.
+- `SrcType` selects the source carrier; every code `0..3` is assigned.
+- `DstType` selects the destination carrier; codes `0..3` are assigned and codes `4..31` are reserved.
+- `RegDst` selects the destination: codes `1..23` write the named absolute GPR, code `30` pushes the `U` queue, code `31` pushes the `T` queue, and code `0` plus codes `24..29` discard the result.
 
-- `RegDst` selects the encoded destination or discard behavior.
-
-- `SrcL` supplies the left scalar source.
-
-- `SrcType` selects the source-carrier width.
-
-- Reg5 source selectors may read GPR, T, or U state without consuming temporary entries.
-
-- The destination selector writes a GPR, pushes T/U, or discards only the result.
+Reg5 source codes read absolute GPRs, `T#1..T#4`, or `U#1..U#4` without consuming a queue entry. Encoded zero in `SrcL` reads the architectural zero GPR.
 
 <!-- PTO-READER-BLOCK: scalar-fcvt-effects role=effects -->
 ## Effects and ordering
 
-All explicit sources are snapshotted before numeric-status or destination effects.
+The converted carrier is written once, normalised to the destination width, and `TPC` then advances by `4` bytes. No memory, reservation, or descriptor state changes.
 
-All five profile-returned flags are ORed into sticky numeric state; the operation cannot clear an existing flag.
-
-The result is published or discarded, then `TPC` advances by `4` bytes. The instruction has no memory or reservation effect.
+A NaN source publishes the canonical NaN of the destination format. An infinity source publishes an infinity when the destination format has one; when it does not, as with an E4M3 destination, the result is the canonical NaN of that format with `OF` and `NX` recorded. The instruction writes no predicate or bundle state, and it is the destination write, not the profile call, that publishes the result.
 
 <!-- PTO-READER-BLOCK: scalar-fcvt-constraints role=constraints -->
-## Type and profile boundaries
+## Assigned source codes and reserved destination codes
 
-All four `SrcType` values are assigned. Unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+Type legality is resolved before the first architectural source read: every `SrcType` is legal here, while a `DstType` above `3` is reserved. A reserved destination type, a fixed-bit mismatch, or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before any source, profile, destination, flag, queue, or `TPC` effect.
 
-Raw `DstType=0..3` select FP64, FP32, FP16, and E4M3; `4..31` are reserved and reject before effects.
-
-The portable instruction contract owns carrier selection, snapshots, flag accumulation, publication, and fault order; the active named profile owns the numeric result and produced flags.
+Every Reg5 destination code is assigned, so no destination encoding is illegal. Numeric status flags update sticky status and never raise a synchronous PTO trap.
 
 <!-- PTO-READER-BLOCK: scalar-fcvt-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
 
-`fcvt.fd2fs a0, ->a1` selects its carriers, snapshots its sources, invokes the active profile, accumulates returned flags, publishes the result, and then advances `TPC`.
+The canonical widening example is `fcvt.fd2fs a0, ->a1`: GPR `a0` holds `0x3ff0000000000000`, standing for FP64 `1.0`, and GPR `a1` receives `0x3f800000`, the FP32 encoding of `1.0` in the low word, zero-extended.
+
+The companion example `fcvt.fs2fd t#1, ->u` widens the FP32 carrier in the low word of the `T#1` entry to FP64 and pushes the result to the `U` queue.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

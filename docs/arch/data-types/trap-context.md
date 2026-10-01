@@ -15,45 +15,56 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-trap-context-type-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit defines the complete typed `TrapContext` snapshot used to preserve recoverable execution state across trap handling.
+`TrapContext` is a single record with 41 fields that names every value a trap capture writes and a trap restore reads.
 
-The record shape is centralized so capture and restore owners operate on the same state bundle.
+This page owns the record shape only. The unit declares no function, so it neither captures nor restores a context.
+
+Design point: the record is declared once, and the capture side and the restore side both use its field names. Adding a field therefore changes the shape seen by both sides at the same moment, and neither side can keep a private copy of state that the other side does not save.
 
 <!-- PTO-READER-BLOCK: arch-trap-context-type-concepts-state role=concepts-state -->
 ## Concepts and visible state
 
-- The snapshot begins with validity, source `AccessControlRing`, `tpc`, `bpc`, core state, bundle and commit arguments, and bundle-active flags.
-- It carries bundle descriptors, dimensions, scalar/tile/shared bindings, range-group state, control/data/fixed-point/hint attributes, and local/shared generation snapshots.
-- It also preserves memory-copy and frame templates, temporary `T`/`U` queues with validity snapshots, predicate state, return targets, and the bundle execution-domain token.
+- The leading fields are `valid`, `source_acr`, `tpc`, `bpc`, `core_state`, `bundle_argument` and `commit_argument`, followed by the bundle flags `bundle_active`, `bundle_body_active`, `bundle_commit_target_set`, `bundle_condition_set` and `system_block_terminal_pending`.
+- The middle fields carry `barg`, the bundle sequencing values and the typed bundle snapshot records, among them `bundle_dimensions`, `bundle_scalar_bindings`, `bundle_data_attributes` and `bundle_data_attributes_present`.
+- The trailing fields carry `local_generations`, `shared_generations`, `bundle_execution_domain_token`, `memory_copy_template`, `frame_template`, `memory_replay_state`, `t_queue`, `t_queue_valid`, `u_queue`, `u_queue_valid`, and `predicates`.
+
+Design point: `t_queue` and `t_queue_valid`, and `u_queue` and `u_queue_valid`, are four separate fields rather than one array with an embedded validity bit. Because the captured words and the captured readiness are stored apart, a restore can put the queue words back and still mark a slot as not ready; readiness is saved state and is never derived from the stored word.
 
 <!-- PTO-READER-BLOCK: arch-trap-context-type-rules-interactions role=rules-interactions -->
 ## Rules and interactions
 
-`valid` states whether the record contains a restorable context; the record type itself does not perform capture or restore.
+`valid` is a field of the record and the only flag that says whether the record holds a restorable context. A capture sets it, and a successful portable restore clears it again.
 
-Presence flags remain explicit for condition, commit target, data attributes, and bundle dimensions rather than being inferred from payload contents.
+The presence questions are answered by booleans saved beside the values they qualify, not by the payload contents: `bundle_commit_target_set`, `bundle_condition_set`, `bundle_dimension_present`, and `bundle_data_attributes_present` each have their own field.
 
-Queue values and queue-validity arrays are separate fields, preserving readiness independently from stored words.
+The address-valued fields, among them `tpc`, `bpc`, `core_state`, `bundle_argument` and `return_address`, are all declared `Word`, so a saved address keeps the full architectural width.
+
+Design point: because the capture copies the typed `bundle_data_attributes` record and the separate `bundle_data_attributes_present` flag side by side, a saved context can hold `bundle_data_attributes_present = FALSE` while the payload record still carries its captured field values. A restore that reads the payload without testing the flag can apply attributes that were never in effect.
 
 <!-- PTO-READER-BLOCK: arch-trap-context-type-boundaries role=boundaries -->
 ## Architectural boundaries
 
-This type declaration does not define trap routing, cause values, capture timing, or restore legality. Those behaviors remain in trap-state and recovery owners.
+This declaration defines no trap routing, no cause value, no capture timing, and no restore legality. Those belong to the trap-state owner and to the memory-model owners that call the capture path.
 
-The record must not be read as permission for nested bundle execution; it snapshots the existing one-level architecture state.
+The record describes one level of architectural state. It is not permission to start a nested bundle, because the values it saves are the state objects that already exist in the one-level architecture.
+
+Design point: `PortableTrapContextRecoverable` requires more than `valid`; it also requires `bpc[0]` and `tpc[0]` to be zero, so a record can be marked valid and still be refused by the portable recovery path. `valid` therefore means that a context was written, not that the context can be used.
+
+The field types themselves are owned outside this unit. The bundle snapshots and templates come from the block state types, `MemoryReplayState` comes from the memory-model data types, and `Word` comes from the integer data types. Line 1 lists one dependency, so the remaining owners appear only in the field declarations.
 
 <!-- PTO-READER-BLOCK: arch-trap-context-type-example-usage role=example-usage -->
 ## Non-normative reading example
 
-A saved context can retain `bundle_data_attributes_present = FALSE` while still carrying the typed data-attribute field; restore logic uses the explicit presence bit.
+A saved context can hold `bundle_data_attributes_present = FALSE` while the typed `bundle_data_attributes` record is still present with its captured field values, because the capture copies `_BundleDataAttributes` and `_BundleDataAttributesPresent` next to each other. Restore logic must read the boolean.
 
-To understand what is captured on a fault, combine this record layout with the current trap capture/restore ASL; the record alone does not specify the transition.
+`RecoverPortableTrapContext` clears `valid` after it has written the saved fields back. To see the whole transition, read this record together with the trap-state ASL that performs the capture and the restore; the record alone does not specify either.
 
 <!-- PTO-READER-BLOCK: arch-trap-context-type-related-owners role=related-owners-navigation -->
 ## Related owners
 
 - [Trap-context state](../state/trap-context.md)
-- [Trap recovery profile](../state/trap-context.md)
+- [Execution context](../programming-model/execution-context.md)
+- [Memory-model data types](memory-model.md)
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

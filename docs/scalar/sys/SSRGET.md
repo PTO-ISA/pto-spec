@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ssrget-purpose role=purpose -->
 ## What SSRGET does
 
-`SSRGET` reads an assigned system-register address and publishes the complete XLEN value.
+`SSRGET` reads one system register. It takes a 12-bit register address in `SSR_ID` and a 5-bit destination selector in `RegDst`, reads the addressed register, and publishes the complete value to that destination. The address space is canonical, so base registers and context registers are reached by the same instruction.
 
 <!-- PTO-READER-BLOCK: scalar-ssrget-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteSystemRegisterGet`. Placement and encoded legality are checked before sources or system state can change.
+`InstructionContractHandler_SSRGET` selects `ScalarHandler_ExecuteSystemRegisterGet` (`asl/scalar/sys/SSRGET.asl:18`), and `InstructionContractSystemAddressWidth_SSRGET` fixes the address width at 12 (`asl/scalar/sys/SSRGET.asl:36`). The dispatcher decodes `RegDst` as a Reg5 selector and `SSR_ID` as a system-register address, then calls the get helper in that order (`asl/scalar/model/dispatch/sys.asl:106`).
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+The helper reads first and writes second: `ExecuteSystemRegisterGet` reads the addressed register, then writes the destination only if no fault was raised (`asl/scalar/model/sys/registers.asl:144`).
 
 <!-- PTO-READER-BLOCK: scalar-ssrget-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`RegDst` carries the Reg5 destination: discard, R1..R23, push U, or push T; `SSR_ID` carries the system-register identifier.
+`SSR_ID` is the 12-bit system-register identifier and `RegDst` is the destination selector `discard, R1..R23, push U, or push T` (`asl/scalar/sys/SSRGET.asl:1`). The ReadSystemRegisterAddress path classifies the address as base, extended, or unassigned, and checks its access class before the read (`asl/scalar/model/sys/registers.asl:60`).
 
-Encoded zero is an assigned field value, never an omitted operand.
+The L32 form is 32 bits long, so `SSR_ID` addresses 4096 register positions. Encoded zero in `SSR_ID` is the base register at address 0, and encoded zero in `RegDst` names the architectural zero GPR, which discards the value.
 
 <!-- PTO-READER-BLOCK: scalar-ssrget-effects role=effects -->
 ## Architectural effects
 
-After address and access preflight, the complete XLEN system-register value is published through the common Reg5 destination mapping.
+A successful read publishes the complete register value through the Reg5 destination mapping, which writes a GPR or pushes onto the U queue or the T queue (`asl/scalar/model/types/operands.asl:65`). `TPC` then advances by 4 bytes.
 
-A rejected read does not modify the selected destination or temporary-queue order beyond ordinary trap entry.
+Design point: the destination write is conditional on the read having succeeded. A rejected read therefore leaves the destination register, the temporary queues, and the system register unchanged, so a failed `SSRGET` cannot clobber a value that later code depends on.
+
+`SSRGET` does not modify the system-register file, and it performs no ordinary scalar memory access.
 
 <!-- PTO-READER-BLOCK: scalar-ssrget-constraints role=constraints -->
 ## Placement and rejection
 
-The complete address is checked for assigned access class and current-ACR permission before destination or queue effects.
+The first gate is placement in an active SYS block body; outside one the attempt raises `Fault_BundleControl` before the address is examined. The second gate is the address check: a read is rejected with `Fault_IllegalInstruction` when the ring lacks permission, or when the address class is `SystemRegisterAccess_Unknown` or `SystemRegisterAccess_WriteOnly` (`asl/scalar/model/sys/registers.asl:66`).
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+Design point: access-ring permission is decided by the address, not by the instruction. Addresses below 0x0F00 are reachable from every ring, while the context, translation, and debug families need ACR0, so the same `SSRGET` encoding succeeds or fails depending on the ring that executes it.
 
 <!-- PTO-READER-BLOCK: scalar-ssrget-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `ssrget SSR_ID, ->{t, u, Rd}` and trace its encoded fields through preflight before following the selected system effect.
+`ssrget SSR_ID, ->{t, u, Rd}` with `SSR_ID` 0x0010 and a destination of R1 reads `TIME`, the architectural time register, and publishes that value into R1. Repeating the instruction with `SSR_ID` 0x0F04 is rejected instead, because that address has no assigned access class and the read raises `Fault_IllegalInstruction` before any destination write.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

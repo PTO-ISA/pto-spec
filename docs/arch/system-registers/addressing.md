@@ -15,38 +15,64 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-system-addressing-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit owns the base system-register state record and the profile reset hook used to initialize the profile-owned part of architectural state.
+This unit owns three things: the base system-register record type, the single instance of that record for the current core, and the reset function that installs the reference-profile values.
+
+The record holds the registers that address decoding treats as base registers, so a reader can see every field, its reset value, and whether software may write it in one place. Cross-ACR context registers, the 24-bit address decode, and the side effects of individual control registers are other owners.
 
 <!-- PTO-READER-BLOCK: arch-system-addressing-concepts-state role=concepts-state -->
 ## Base system-register state
 
-`BaseSystemRegisterState` contains `thread_ptr`, `global_ptr`, `core_state`, `core_id`, `thread_id`, `vendor`, `version`, `core_feature`, `core_feature_enable`, `tile_capacity`, `blocknum`, `blockid`, and `cycle`, each represented as a `Word`.
+`BaseSystemRegisterState` is a record of thirteen `Word` fields: `thread_ptr`, `global_ptr`, `core_state`, `core_id`, `thread_id`, `vendor`, `version`, `core_feature`, `core_feature_enable`, `tile_capacity`, `blocknum`, `blockid`, and `cycle`.
 
-The architecture-visible owner is `_SystemRegisters`, identified by `PTO-STATE-ARCH-SYSTEM-REGISTERS`.
+| Field | Reset value | Software writable |
+| --- | --- | --- |
+| `thread_ptr` | zero | yes |
+| `global_ptr` | zero | yes |
+| `core_state` | zero | yes |
+| `core_id` | zero | no |
+| `thread_id` | zero | no |
+| `vendor` | zero | no |
+| `version` | one | no |
+| `core_feature` | zero | no |
+| `core_feature_enable` | zero | yes |
+| `tile_capacity` | `PTO_MODEL_MAX_TILE_CAPACITY_BYTES` | no |
+| `blocknum` | zero | no |
+| `blockid` | zero | no |
+| `cycle` | zero | no |
+
+The architecture-visible owner is the variable `_SystemRegisters`, declared as `PTO-STATE-ARCH-SYSTEM-REGISTERS` with members `_SystemRegisters`.
 
 <!-- PTO-READER-BLOCK: arch-system-addressing-rules-interactions role=rules-interactions -->
-## Profile reset hook
+## What reset installs
 
-`ResetProfileState` is implementation-defined and may be overridden by the active concrete profile. The default body in this owner sets `_CurrentACR` to `0` and clears `_SystemRegisters.cycle` to `Zeros{PTO_XLEN}`.
+`ResetProfileState` writes every field of this record explicitly. It resets every ACR bank rather than only the current one, then sets `_CurrentACR` to ACR0 and calls `ClearFault` for that ring, so a reset execution cannot inherit archived state from a ring that was formerly current.
+
+The function also carries the rest of the reference reset, including general-purpose registers, temporary queues, predicate registers, model memory, tile and shared-tile descriptors, descriptor-valid and definedness fields, reservation state, bundle-control state, memory-execution state, and the trap contexts of every ACR.
+
+Design point: each field is written even when its reset value is zero, so the post-reset value of `version` is one and of `tile_capacity` is `PTO_MODEL_MAX_TILE_CAPACITY_BYTES` instead of depending on an unstated initial state. A reader can compare a running core against this list without asking which fields a particular profile happened to initialize.
 
 <!-- PTO-READER-BLOCK: arch-system-addressing-boundaries role=boundaries -->
 ## Architectural boundaries
 
-The default body does not write the other fields of `BaseSystemRegisterState`. This page therefore does not claim a reset value for fields that the owner leaves untouched.
+`cycle` is the architectural time value. This owner resets it and never increments it; a separate execution path advances the counter once per decoded execution attempt, so the reset baseline is zero and the value grows from there.
 
-Profile-specific reset behavior must remain behind the `ResetProfileState` hook rather than being inferred from a target implementation.
+A write to `core_state` also selects the current ACR, and a read of the interrupt pending bitmap or of the top pending interrupt runs the timer refresh that the timer owner defines.
+
+Design point: the reset body clears the context-register low-index range in all sixteen rings and then stores the interrupt configuration value, so a bank that was active before reset cannot carry pending bits, trap arguments, or enable bits into the next execution.
 
 <!-- PTO-READER-BLOCK: arch-system-addressing-example-usage role=example-usage -->
 ## Non-normative reset reading example
 
-When checking the portable default, expect ACR0 and a zero cycle counter after `ResetProfileState`. Treat the value of `vendor` or `tile_capacity` as unresolved by this helper unless another current owner or active profile defines it.
+After `ResetProfileState`, reading the base registers gives `version` one, `tile_capacity` equal to `PTO_MODEL_MAX_TILE_CAPACITY_BYTES`, `cycle` zero, and the current ACR ACR0. The fields `core_id`, `vendor`, `thread_id`, `blocknum`, and `blockid` read zero because reset writes zero and software cannot write them.
+
+Reading low index `0x0f07` of ACR1 gives 3, and reading `0x0f08` and `0x0f09` of ACR1 gives zero.
 
 <!-- PTO-READER-BLOCK: arch-system-addressing-related-owners role=related-owners-navigation -->
 ## Related owners
 
-- [Trap-context data type](../data-types/trap-context.md) is the declared dependency.
-- [Context registers](context.md) maps ring-relative context registers into extended-system-register storage.
-- [Numeric status](../state/numeric-status.md) uses the `core_state` field owned here.
+- [Trap-context record](../data-types/trap-context.md) is the declared dependency; the reset body initializes one context per ACR.
+- [Context registers](context.md) maps a ring number and a low index into the extended register file.
+- [Numeric status](../state/numeric-status.md) reads the `core_state` field owned here.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

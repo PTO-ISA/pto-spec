@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-purpose role=purpose -->
 ## What SETC.TGT does
 
-`SETC.TGT` captures a scalar source into the active block's `BARG.BPCN` commit target.
+`SETC.TGT` sets the candidate next PC of the active block. It snapshots the Reg5 source `SrcL` into `BARG.BPCN`, the field that a block boundary later selects as the next PC when the block's continuation rule calls for the candidate.
 
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-mechanism role=mechanism -->
-## Block-state mechanism
+## System mechanism
 
-The ASL DOC region selects `ScalarHandler_SetCommitTarget`. Placement and encoded legality are checked before sources or system state can change.
+`InstructionContractHandler_SETC_TGT` selects `ScalarHandler_SetCommitTarget` (`asl/scalar/sys/SETC.TGT.asl:18`), and `InstructionContractRequiresCommitTargetBlock_SETC_TGT` returns `TRUE` (`asl/scalar/sys/SETC.TGT.asl:30`). The applicability rule for the operation is `BundleCommitTargetWritable`, which requires an active bundle whose block type is Standard or Floating (`asl/scalar/model/sys/semantics.asl:316`).
 
-The instruction occupies one scalar operation position in an active Standard or Floating block and is not legal in a SYS block.
+`InstructionContractRequiresSystemBlock_SETC_TGT` returns `FALSE` (`asl/scalar/sys/SETC.TGT.asl:24`), so this instruction is not a SYS-block operation: it runs in the very block whose target it changes.
 
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+`SrcL` is the single operand, a Reg5 source from R0..R23, T#1..T#4, or U#1..U#4 (`asl/scalar/sys/SETC.TGT.asl:1`). It supplies the complete XLEN value that becomes the new candidate PC.
 
-Encoded zero is an assigned field value, never an omitted operand.
+There is no destination operand. The output is the block state field `BARG.BPCN` itself. Encoded zero in `SrcL` names the architectural zero GPR, so zero is written as a real value rather than as an omission.
 
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-effects role=effects -->
 ## Architectural effects
 
-The snapshotted source replaces only `BARG.BPCN`; every other BARG and block-control field is preserved.
+On success the instruction replaces `BARG.BPCN` with the snapshotted source value and advances `TPC` by 4 bytes (`asl/scalar/model/sys/semantics.asl:336`, `asl/scalar/model/dispatch/top-level.asl:56`). Everything else in `BARG` is preserved: `BPC`, the block type, the transfer type, and `TAKEN` are untouched.
 
-Block applicability is checked before reading `SrcL`, and `TPC` advances only after the new target is stored.
+Design point: `BARG.BPCN` is only a candidate. A block boundary selects it through the continuation rule, which picks the candidate for direct, call, indirect, indirect-call, and return transfers, and for a conditional transfer only when `TAKEN` is set (`asl/block/model/state/barg.asl:14`). Writing the candidate therefore does not by itself change where the block continues.
+
+The instruction performs no ordinary scalar memory access, writes no register, and does not consume the source; the source keeps its value.
 
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-constraints role=constraints -->
 ## Placement and rejection
 
-The operation is assigned only in an active Standard or Floating block.
+Placement is the only gate, and it is unusually strict in kind rather than in position: the attempt needs an active Standard or Floating block, and any other block kind raises `Fault_BundleControl` at the active block's `TPC` value. The source is read only after that verdict, and a rejected attempt leaves `BARG.BPCN` and the pending continuation state unchanged, as the owner NDF clause requires.
 
-An inactive body or any block kind other than Standard or Floating raises Illegal Block Exception before reading `SrcL` or changing BARG or `TPC`.
+There is no reserved source encoding to reject, because every Reg5 source selector is assigned, and no access-ring restriction applies.
 
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `setc.tgt SrcL` in an active Standard or Floating block and trace the source snapshot before the BARG update.
+Inside an active Standard block body with a GPR holding 0x1000, `setc.tgt SrcL` snapshots 0x1000 into `BARG.BPCN`. If the block leaves through a direct transfer, the boundary selects `BARG.BPCN`, so execution continues at 0x1000; if it leaves through a conditional transfer whose `TAKEN` is clear, the sequential continuation wins and the new `BARG.BPCN` is not used. Running the same instruction in a SYS block body raises `Fault_BundleControl` instead.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

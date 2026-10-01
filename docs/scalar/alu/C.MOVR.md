@@ -19,46 +19,49 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-movr-purpose role=purpose -->
 ## What C.MOVR does
 
-`C.MOVR` is a 16-bit scalar ALU instruction. It forwards the snapshotted scalar source without changing its bit pattern; its current instruction contract defines the result publication path and any additional state effect.
+`C.MOVR` reads one Reg5 source and publishes the complete XLEN value unchanged through the Reg5 destination.
+
+Design point: the source field accepts `T#1..T#4`, so `c.movr t#1, ->a0` is the compressed way to move a pushed temporary result into a GPR. The compressed arithmetic forms all push to `T` and cannot write a register themselves, so this instruction is what closes that gap.
 
 <!-- PTO-READER-BLOCK: scalar-c-movr-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then forwards the snapshotted scalar source without changing its bit pattern, and only afterward performs the destination effects.
+The source code is resolved and its value is published with no transformation: no extension, no truncation and no arithmetic. Bits `63..0` of the destination, when there is one, become exactly the bits that were read.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: the move is a pure copy rather than a conversion. A program that wants a 32-bit normalization must ask for it, for example with `c.sext.w` or `addiw`.
 
 <!-- PTO-READER-BLOCK: scalar-c-movr-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar input through Reg5.
+- `SrcL` is a Reg5 source: codes `0..23` select absolute GPRs, `24..27` select `T#1..T#4`, and `28..31` select `U#1..U#4`, without consuming a queue entry.
+- `RegDst` publishes the value: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero of `SrcL` reads the architectural zero GPR, so `c.movr zero, ->a0` is a compressed constant-zero materialization. Encoded zero of `RegDst` discards the value rather than writing the zero GPR, even though the source is still read and checked.
+
+Design point: `c.movr t#1, ->t` is legal. It reads the old `T#1`, pushes a copy as the new `T#1`, and shifts the original to `T#2`, which is a way to duplicate a temporary value.
 
 <!-- PTO-READER-BLOCK: scalar-c-movr-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+The source is read before the destination is written, so a destination that aliases the source still publishes the pre-instruction value. Nothing else changes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 2 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+After publication or discard, `TPC` advances by `2` bytes. No memory, reservation, descriptor, numeric-status, bundle, privilege, predicate or control-flow state changes, and no queue moves except the single `T` or `U` push selected by `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-c-movr-constraints role=constraints -->
 ## Legality and fault boundary
 
-Materialization, movement, and extension are total at their fixed widths and do not raise arithmetic exceptions. A fixed-bit mismatch or unavailable selected T/U source faults before state effects.
+Every `SrcL` code and every `RegDst` code is assigned, so `C.MOVR` has no reserved operand value.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before the destination effect and before `TPC` advances. An undecodable 16-bit form raises `Fault_IllegalInstruction` at `PC`, and an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`.
+
+Design point: a copy has no arithmetic to fault on, so the whole value-dependent boundary of `C.MOVR` is source availability. Reading an uninitialized temporary is therefore a defined trap rather than a silent copy of stale data.
 
 <!-- PTO-READER-BLOCK: scalar-c-movr-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `C.MOVR` example, source bit pattern `0x1234` is published unchanged.
+With `T#1` holding `5`, `c.movr t#1, ->a0` writes `5` into `a0` and leaves `T#1` equal to `5`. `c.movr zero, ->a1` writes `0` into `a1` without reading any GPR value that could change the result.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

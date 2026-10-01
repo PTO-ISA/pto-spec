@@ -19,48 +19,57 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-remuw-purpose role=purpose -->
 ## HL.REMUW 的作用
 
-`HL.REMUW` 是一条 48 位标量 ALU 指令。它根据源快照同时计算无符号余数和商；当前指令契约定义结果发布路径以及任何额外状态效果。
+`HL.REMUW` 是一条 48 位标量 ALU 指令，它把两个源的无符号低字相除，并通过 `RegDst0` 发布余数、通过 `RegDst1` 发布商，两者都被重新扩展到 XLEN。
+
+操作数做的是零扩展的字，但每个 `32` 位结果在发布之前做符号扩展，因此第 `31` 位被置位的结果字会以高位全为 1 的 XLEN 值到达目标。
 
 <!-- PTO-READER-BLOCK: scalar-hl-remuw-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后根据源快照同时计算无符号余数和商，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractQuotient_HL_REMUW` 与 `InstructionContractRemainder_HL_REMUW`，它们分别调用 `ScalarDivideUnsignedW` 与 `ScalarRemainderUnsignedW`。两者都对两个低字做零扩展、执行除法，并返回 `32` 位结果的 `SignExtend{PTO_XLEN}`。分派路径以 `signed_operation` 为假调用 `ExecuteScalarRemainderPairW`，先写余数再写商。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+hl.remuw SrcL, SrcR, ->Dst0, Dst1
+```
+
+设计要点：除法两侧的扩展方式不同。输入按无符号加宽，结果按有符号加宽，因此被除数字为 `0xFFFFFFFF`、除数字为 `1` 时，`hl.remuw` 发布的商是 `0xFFFFFFFFFFFFFFFF`，读作 `-1`，尽管除法本身是无符号的。
 
 <!-- PTO-READER-BLOCK: scalar-hl-remuw-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst0` 是 5 位字段，选择余数的 Reg5 目标，或丢弃余数。
-- `RegDst1` 是 5 位字段，选择商的 Reg5 目标，或丢弃商。
-- `SrcL` 是 5 位字段，通过 Reg5 选择被除数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择除数。
+- `RegDst0`，指令切片 `[23 +: 5]`，接收符号扩展后的余数，或丢弃它。
+- `RegDst1`，指令切片 `[11 +: 5]`，接收符号扩展后的商，或丢弃它。
+- `SrcL`，指令切片 `[31 +: 5]`，提供被除数；只有 `31:0` 位参与。
+- `SrcR`，指令切片 `[36 +: 5]`，提供除数；只有 `31:0` 位参与。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+两个源都使用通用 Reg5 映射：`0..23` 为绝对 GPR，`24..27` 为 `T#1..T#4`，`28..31` 为 `U#1..U#4`，每个表项保持原位。编码零读取体系结构零 GPR。
+
+设计要点：商与余数的目标是两个独立编码字段，因此可以丢弃其中一个而发布另一个。丢弃一个结果不会改变通过另一个发布的值。
 
 <!-- PTO-READER-BLOCK: scalar-hl-remuw-effects role=effects -->
 ## 效果与顺序
 
-所有结果都在发布前计算完成。随后按编码顺序（`RegDst0`, `RegDst1`）更新目标；目标重复指向同一寄存器或队列时也采用这一顺序。
+两个低字都在任一写入之前读取，两个结果都在第一次写入之前完整，因此源与目标同名不会破坏任何一个值。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 6 字节。
+余数先发布到 `RegDst0`，商随后发布到 `RegDst1`；重复的 GPR 最终保存商，重复的队列推送把商放在最新位置、把余数放在次新位置。
 
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+写入完成后 `TPC` 前进 `6` 字节。内存与其他任何体系结构状态都不改变。
 
 <!-- PTO-READER-BLOCK: scalar-hl-remuw-constraints role=constraints -->
 ## 合法性与故障边界
 
-除数为零时使用已定义的商和余数；两个结果都在任何目标写入前计算完成。
+每个 `32` 编码的源编码与每个 `32` 编码的目标编码都有定义，重复目标也合法，因此只有临时源不可用会使操作数检查失败。固定编码位必须与规范的 48 位形式匹配。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+适用性只在系统块终止请求挂起时失败，并在 `TPC` 触发 `Fault_BundleControl`。否则，不匹配的编码在进入指令束主体之前于 `PC` 触发 `Fault_IllegalInstruction`，所选 `T` 或 `U` 源不可用时则在任一目标写入之前于 `PC` 触发 `Fault_IllegalInstruction`。
+
+设计要点：无符号字除法完全没有算术故障情形。除数字为零时发布商 `0`、余数为 `SignExtend(dividend[31:0])`，它的高位跟随被除数字的第 `31` 位，而不是除法的符号。
 
 <!-- PTO-READER-BLOCK: scalar-hl-remuw-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `HL.REMUW` 示例说明：被除数 `13` 与除数 `5` 产生余数 `3`，随后产生商 `2`。
+取 `SrcL = 13`、`SrcR = 5` 时商字为 `2`、余数字为 `3`，因此 `RegDst0` 收到 `3`，`RegDst1` 收到 `2`。取 `SrcL = 0xFFFFFFFF`、`SrcR = 1` 时商字为 `0xFFFFFFFF`，因此 `RegDst1` 收到 `0xFFFFFFFFFFFFFFFF`，`RegDst0` 收到 `0`。`SrcR` 取体系结构零 GPR、`SrcL = 0xFFFFFFFF` 时余数为 `SignExtend(0xFFFFFFFF)` = `0xFFFFFFFFFFFFFFFF`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

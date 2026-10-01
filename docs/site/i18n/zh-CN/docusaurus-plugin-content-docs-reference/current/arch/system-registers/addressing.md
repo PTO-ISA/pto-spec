@@ -15,38 +15,64 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-system-addressing-purpose-scope role=purpose-scope -->
 ## 用途与范围
 
-本单元拥有基础系统寄存器状态记录，以及用于初始化架构状态中由配置档拥有的部分的配置档复位钩子。
+本单元拥有三样东西：基础系统寄存器记录类型、当前核心上该记录的唯一实例，以及安装参考配置档取值的复位函数。
+
+该记录保存地址解码视为基础寄存器的那些寄存器，因此读者可以在一处看到每个字段、它的复位取值，以及软件是否可以写入它。跨 ACR 的上下文寄存器、24 位地址解码以及各个控制寄存器的副作用属于其他所有者。
 
 <!-- PTO-READER-BLOCK: arch-system-addressing-concepts-state role=concepts-state -->
 ## 基础系统寄存器状态
 
-`BaseSystemRegisterState` 包含 `thread_ptr`、`global_ptr`、`core_state`、`core_id`、`thread_id`、`vendor`、`version`、`core_feature`、`core_feature_enable`、`tile_capacity`、`blocknum`、`blockid` 和 `cycle`，每个字段都表示为 `Word`。
+`BaseSystemRegisterState` 是包含 13 个 `Word` 字段的记录：`thread_ptr`、`global_ptr`、`core_state`、`core_id`、`thread_id`、`vendor`、`version`、`core_feature`、`core_feature_enable`、`tile_capacity`、`blocknum`、`blockid` 和 `cycle`。
 
-架构可见的所有者是 `_SystemRegisters`，其标识为 `PTO-STATE-ARCH-SYSTEM-REGISTERS`。
+| 字段 | 复位取值 | 软件可写 |
+| --- | --- | --- |
+| `thread_ptr` | 零 | 是 |
+| `global_ptr` | 零 | 是 |
+| `core_state` | 零 | 是 |
+| `core_id` | 零 | 否 |
+| `thread_id` | 零 | 否 |
+| `vendor` | 零 | 否 |
+| `version` | 一 | 否 |
+| `core_feature` | 零 | 否 |
+| `core_feature_enable` | 零 | 是 |
+| `tile_capacity` | `PTO_MODEL_MAX_TILE_CAPACITY_BYTES` | 否 |
+| `blocknum` | 零 | 否 |
+| `blockid` | 零 | 否 |
+| `cycle` | 零 | 否 |
+
+架构可见的所有者是变量 `_SystemRegisters`，其标识为 `PTO-STATE-ARCH-SYSTEM-REGISTERS`，成员为 `_SystemRegisters`。
 
 <!-- PTO-READER-BLOCK: arch-system-addressing-rules-interactions role=rules-interactions -->
-## 配置档复位钩子
+## 复位安装了哪些状态
 
-`ResetProfileState` 由实现定义，可以由当前活动的具体配置档覆写。本所有者中的默认函数体把 `_CurrentACR` 设为 `0`，并把 `_SystemRegisters.cycle` 清为 `Zeros{PTO_XLEN}`。
+`ResetProfileState` 显式写入本记录的每个字段。它复位每一个 ACR 存储体，而不只是当前存储体，然后把 `_CurrentACR` 设为 ACR0 并为该环调用 `ClearFault`，因此一次复位执行不会从先前的当前环继承归档状态。
+
+该函数还承担参考复位的其余部分，包括通用寄存器、临时队列、谓词寄存器、模型内存、瓦片与共享瓦片描述符、描述符有效位与已定义性字段、预留状态、指令束控制状态、内存执行状态，以及每个 ACR 的陷阱上下文。
+
+设计要点：即使复位取值为零，每个字段也会被写入，因此复位后 `version` 的取值是一、`tile_capacity` 的取值是 `PTO_MODEL_MAX_TILE_CAPACITY_BYTES`，而不依赖某个未被说明的初始状态。读者可以把一个正在运行的核心与这份清单对照，而无需追问某个配置档恰好初始化了哪些字段。
 
 <!-- PTO-READER-BLOCK: arch-system-addressing-boundaries role=boundaries -->
 ## 架构边界
 
-默认函数体不会写入 `BaseSystemRegisterState` 的其他字段。因此，本页不会为所有者未触及的字段指定复位值。
+`cycle` 是架构时间取值。本所有者复位它，也从不递增它；另一条执行路径在每次已解码执行尝试时把计数器加一，因此复位基线是零，取值从那里开始增长。
 
-配置档专用的复位行为必须保留在 `ResetProfileState` 钩子后面，不能从某个目标实现推断。
+对 `core_state` 的写入还会选择当前 ACR，而读取待处理位图或最高优先待处理中断会运行定时器所有者定义的定时器刷新。
+
+设计要点：复位函数体清除全部 16 个环中上下文寄存器的低位索引范围，然后存入中断配置取值，因此复位前处于活动状态的存储体无法把待处理位、陷阱参数或使能位带入下一次执行。
 
 <!-- PTO-READER-BLOCK: arch-system-addressing-example-usage role=example-usage -->
 ## 非规范复位阅读示例
 
-检查可移植默认行为时，调用 `ResetProfileState` 后应看到 ACR0 和清零的周期计数器。除非另一个当前所有者或活动配置档给出定义，否则应把 `vendor` 或 `tile_capacity` 的值视为本辅助函数未解决的问题。
+执行 `ResetProfileState` 之后，读取基础寄存器得到：`version` 为一、`tile_capacity` 等于 `PTO_MODEL_MAX_TILE_CAPACITY_BYTES`、`cycle` 为零，并且当前 ACR 为 ACR0。字段 `core_id`、`vendor`、`thread_id`、`blocknum` 和 `blockid` 读为零，因为复位写入零且软件无法写入它们。
+
+读取 ACR1 的低位索引 `0x0f07` 得到 3，而读取 ACR1 的 `0x0f08` 和 `0x0f09` 得到零。
 
 <!-- PTO-READER-BLOCK: arch-system-addressing-related-owners role=related-owners-navigation -->
 ## 相关所有者
 
-- [陷阱上下文数据类型](../data-types/trap-context.md)是声明的依赖项。
-- [上下文寄存器](context.md)把相对环的上下文寄存器映射到扩展系统寄存器存储。
-- [数值状态](../state/numeric-status.md)使用本页拥有的 `core_state` 字段。
+- [陷阱上下文记录](../data-types/trap-context.md)是声明的依赖项；复位函数体为每个 ACR 初始化一个上下文。
+- [上下文寄存器](context.md)把环号与低位索引映射到扩展寄存器文件。
+- [数值状态](../state/numeric-status.md)读取本页拥有的 `core_state` 字段。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -19,42 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-ssrget-purpose role=purpose -->
 ## What C.SSRGET does
 
-`C.SSRGET` reads one assigned short system-register ID and pushes the complete XLEN value to T.
+`C.SSRGET` reads one system register and pushes the value it read onto the `T` queue. It is the compressed system-register read form: the destination is implicit and the register is named by a short identifier.
+
+Only three identifiers are assigned, so the instruction reaches exactly three registers: `THREAD_PTR`, `GLOBAL_PTR` and `TIME`.
 
 <!-- PTO-READER-BLOCK: scalar-c-ssrget-mechanism role=mechanism -->
-## System mechanism
+## How the instruction is placed and executed
 
-The ASL DOC region selects `ScalarHandler_ExecuteCompressedSystemRegisterGet`. Placement and encoded legality are checked before sources or system state can change.
+This instruction is one scalar operation of an active SYS block. The scalar dispatcher first checks that a bundle is active and that its body is active with block kind System; a SYS form outside such a block is rejected with `Fault_BundleControl`, before any encoded-field check and before any architectural effect.
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+Encoded legality and source availability are then checked, and only then does the handler run.
+
+The 5-bit identifier is treated as the low bits of a system-register address, so identifiers `0`, `1` and `16` name addresses `0x0000`, `0x0001` and `0x0010`. Those are the addresses of `THREAD_PTR`, `GLOBAL_PTR` and `TIME`. Every other five-bit identifier is reserved.
+
+The read then goes through the common system-register read rule, which applies two checks in order. The first is the ring check: an address whose low twelve bits are below `0x0f00` is readable from every ring, and any other address requires the root ring. All three assigned addresses are in the below-`0x0f00` group, so none of them needs the root ring. The second check rejects an address whose access class is unknown or write-only; all three assigned addresses are readable, so none of them is rejected here either.
+
+If both checks pass, the read value is pushed onto the `T` queue as a complete XLEN word. If either check fails, the handler raises `Fault_IllegalInstruction` and does not push, so the `T` queue keeps its order and contents.
+
+Design point: the destination is the `T` queue and not a GPR selector. That is what lets the compressed form drop its destination field, and it also means a rejected read can be made side-effect-free on the queue simply by testing before the push instead of after it.
 
 <!-- PTO-READER-BLOCK: scalar-c-ssrget-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SSRID` carries the short system-register identifier.
-
-Encoded zero is an assigned field value, never an omitted operand.
+- `SSRID` is the only encoded operand: a 5-bit short system-register identifier. Assigned values are `0`, `1` and `16`; every other value is reserved. Encoded zero is an assigned value and names `THREAD_PTR`, not an omitted operand.
+- The destination is implicit: the complete XLEN value is pushed onto the `T` queue, becoming the newest entry and discarding the oldest entry when the queue is full.
+- No GPR and no `U` queue entry is written, and no scalar register is read.
 
 <!-- PTO-READER-BLOCK: scalar-c-ssrget-effects role=effects -->
 ## Architectural effects
 
-Direct IDs `0`, `1`, and `16` read `THREAD_PTR`, `GLOBAL_PTR`, or `TIME` and push the complete XLEN value to T.
+On success one `T` push happens and `TPC` advances by `2` bytes. The queue push shifts the existing entries by one position, so a program that keeps earlier results in `T#1`..`T#4` must account for the shift.
 
-A rejected read does not modify the selected destination or temporary-queue order beyond ordinary trap entry.
+The read itself has no memory effect and takes no reservation. `TIME` returns the architectural time value, which the model advances once per decoded execution attempt, so a `TIME` read observes the attempt count at the point the source was read.
 
 <!-- PTO-READER-BLOCK: scalar-c-ssrget-constraints role=constraints -->
 ## Placement and rejection
 
-Every other five-bit ID is reserved; access and queue state are preserved on rejection except for ordinary trap entry.
+Invalid block placement is rejected first, with `Fault_BundleControl`, before the encoded field is even considered.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+A reserved identifier raises `Fault_IllegalInstruction` before the implicit `T` destination effect, so a rejected `C.SSRGET` leaves the `T` queue order and contents untouched apart from ordinary trap entry. The same rejection covers a read that the access rules refuse.
+
+The complete encoded address is what the access rules see, not just the five-bit identifier, so the ring check and the access-class check both apply to the address the identifier names.
 
 <!-- PTO-READER-BLOCK: scalar-c-ssrget-example role=example -->
 ## Non-normative example
 
-This spelling example is illustrative; exact legality and effects remain in the generated contract below.
-
-Start with `c.ssrget SSR-ID, ->t` and trace its encoded fields through preflight before following the selected system effect.
+`c.ssrget SSR-ID, ->t` with `SSRID=16` reads `TIME` and pushes the complete XLEN time value onto the `T` queue. With `SSRID=2` the identifier is reserved: the instruction raises `Fault_IllegalInstruction`, no value is pushed, and the existing `T` entries keep their positions.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

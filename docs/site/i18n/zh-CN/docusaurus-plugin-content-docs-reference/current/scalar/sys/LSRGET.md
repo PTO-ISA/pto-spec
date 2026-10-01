@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-lsrget-purpose role=purpose -->
 ## LSRGET 的作用
 
-`LSRGET` 从活动 BARG 视图读取一个已分配字，并通过 Reg5 目的地映射发布。
+`LSRGET` 读取活动块参数（BARG）视图中的一个字。12 位 `LSR_ID` 选择是哪个字，Reg5 目的地接收它。共有三个标识符已分配：`BARG.BPC`、候选下一 PC `BARG.BPCN`，以及一个打包控制字，它报告块的种类、传送与控制属性。
 
 <!-- PTO-READER-BLOCK: scalar-lsrget-mechanism role=mechanism -->
-## 块状态机制
+## 系统机制
 
-ASL DOC 区域选择 `ScalarHandler_ExecuteLocalStateRegisterGet`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+`InstructionContractHandler_LSRGET` 选择 `ScalarHandler_ExecuteLocalStateRegisterGet`（`asl/scalar/sys/LSRGET.asl:17`），而 `InstructionContractRequiresSystemBlock_LSRGET` 返回 `FALSE`（`asl/scalar/sys/LSRGET.asl:23`），因此它不是 SYS 块指令：它需要任意活动的块体。派发器解码 `RegDst`，并把标识符的低 12 位传给辅助函数（`asl/scalar/model/dispatch/sys.asl:101`）。
 
-只要所选 BARG 字适用于当前活动块，该指令就可以占用其中一个标量操作位置。
+该辅助函数先询问 `CurrentBARGWordApplicable`，当答案为否时引发 `Fault_BundleControl`（`asl/scalar/model/sys/semantics.asl:172`）。
 
 <!-- PTO-READER-BLOCK: scalar-lsrget-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`LSR_ID` 承载活动 BARG 字标识符；`RegDst` 承载 Reg5 目的地：丢弃、R1..R23、压入 U 或压入 T。
+`LSR_ID` 是 12 位 BARG 字标识符，`RegDst` 是 Reg5 目的地（`asl/scalar/sys/LSRGET.asl:1`）。标识符 0 选择 `BARG.BPC`，标识符 1 选择 `BARG.BPCN`，标识符 2 选择打包控制字；标识符 3 到 4095 为保留。`InstructionContractLocalRegisterIDLegal_LSRGET` 把该限制写成 `UInt(identifier) <= 2`（`asl/scalar/sys/LSRGET.asl:29`）。
 
-编码零是已分配的字段值，从不表示省略操作数。
+设计要点：标识符 1 只对 Standard 与 Floating 块适用，因为 `BARGHasCandidateWord` 仅对这两个块种类为真（`asl/block/model/state/barg.asl:31`）。`InstructionContractBPCNApplicable_LSRGET` 规定了同样这两个种类（`asl/scalar/sys/LSRGET.asl:35`），因此没有 `BARG.BPCN` 的块种类无法被索取该字。
 
 <!-- PTO-READER-BLOCK: scalar-lsrget-effects role=effects -->
 ## 架构效果
 
-已分配的 ID 选择 `BARG.BPC`、`BARG.BPCN` 或规范打包的 BARG 控制字，并通过 `RegDst` 发布。
+成功的读取把所选字发布到目的地，并把 `TPC` 推进 4 字节。打包字是按需组装的：第 3:0 位用于块种类，第 8 到 12 位用于 atomic、acquire、release、far 和维度归约属性；第 6:4 位用于传送种类、第 7 位用于 `TAKEN`，但这两项只在 Standard 或 Floating 块中填充，其余所有位为零（`asl/block/model/state/barg.asl:37`）。
 
-读取不会改变 BARG 或系统寄存器状态；只有适用性检查通过后才会发布。
+设计要点：打包字是活动块状态的投影而不是存储状态。读取 `BARG.BPC`、`BARG.BPCN` 或打包字从不修改 `BARG`，因此观察与延续不会互相干扰。
+
+`LSRGET` 不写系统寄存器，也不执行普通标量内存访问。
 
 <!-- PTO-READER-BLOCK: scalar-lsrget-constraints role=constraints -->
 ## 位置与拒绝边界
 
-ID `0`、`1`、`2` 已分配；`1` 只适用于 Standard 与 Floating 块，更高 ID 都是保留值。
+`LSRGET` 要求活动 bundle 且块体活动。在其他情况下 `CurrentBARGWordApplicable` 返回 `FALSE`，该次尝试在任何目的地效果之前引发 `Fault_BundleControl`。保留标识符，或在没有候选字的块种类中使用标识符 1，都以同样方式被拒绝（`asl/block/model/state/barg.asl:54`）。
 
-块体未激活、ID 未分配或所选 BARG 字不适用于当前活动块时，会在产生目的地、队列、系统状态或 `TPC` 效果之前触发 Illegal Block Exception。
+设计要点：适用性测试同时覆盖 bundle 与块体状态以及标识符，因此同一条 `LSRGET` 编码在一种块种类中合法而在另一种中被拒绝。读取 `BARG.BPCN` 的代码因此只在具有候选字的块中合法。
 
 <!-- PTO-READER-BLOCK: scalar-lsrget-example role=example -->
 ## 非规范示例
 
 该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
 
-可从 `lsrget LSR_ID, ->{t, u, Rd}` 开始，沿所选 BARG 字完成适用性检查，再查看发布行为。
+在活动的 Standard 块体内，`lsrget LSR_ID, ->{t, u, Rd}` 在 `LSR_ID` 为 1 且目的地为 R3 时把 `BARG.BPCN` 读入 R3。同一指令在 `LSR_ID` 为 3 时引发 `Fault_BundleControl`，因为大于 2 的标识符为保留，且不写 `RegDst`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

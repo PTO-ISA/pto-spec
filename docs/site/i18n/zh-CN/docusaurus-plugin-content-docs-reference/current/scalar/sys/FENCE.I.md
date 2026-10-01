@@ -19,40 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fence-i-purpose role=purpose -->
 ## FENCE.I 的作用
 
-`FENCE.I` 建立指令可见性，同时使本地保留失效。
+`FENCE.I` 是指令可见性屏障。它没有操作数、没有掩码、也没有目的地：整个 32 位形式都是固定的，该指令的全部职责就是让指令缓存纪元前进并清除本地保留。
 
 <!-- PTO-READER-BLOCK: scalar-fence-i-mechanism role=mechanism -->
 ## 系统机制
 
-ASL DOC 区域选择 `ScalarHandler_FenceInstruction`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+`InstructionContractHandler_FENCE_I` 选择 `ScalarHandler_FenceInstruction`（`asl/scalar/sys/FENCE.I.asl:18`），且 `InstructionContractFenceInvalidatesReservation_FENCE_I` 与 `InstructionContractAdvancesInstructionEpoch_FENCE_I` 都返回 `TRUE`（`asl/scalar/sys/FENCE.I.asl:30`）。`FenceInstruction` 恰好实现这两步，其 ASL 注释指出可执行字节数组模型本就具有一致的指令与数据存储，因此是指令缓存纪元把架构可见性点显式化（`asl/scalar/model/sys/semantics.asl:83`）。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+与其他 SYS 块指令一样，该指令要求活动 SYS 块的块体。
 
 <!-- PTO-READER-BLOCK: scalar-fence-i-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-该编码没有显式操作数字段；操作完全由固定指令位选择。
+完全没有编码操作数。该形式的每一位都是固定的，因此无法改变任何选择器、掩码或立即数，该指令也无法用来指名比整个指令流更窄的作用域。
+
+`FENCE.I` 不写目的地寄存器、临时队列项或系统寄存器。它唯一的输出是保留状态与指令缓存纪元。
 
 <!-- PTO-READER-BLOCK: scalar-fence-i-effects role=effects -->
 ## 架构效果
 
-完成时，本地保留失效，指令缓存纪元恰好递增一次，随后 `TPC` 前进。
+该指令清除本地保留，即后续 `StoreConditional` 成功所需的 `_ReservationValid` 状态（`asl/scalar/model/amo/semantics.asl:93`），并恰好把指令缓存纪元递增一。随后它为该 32 位形式把 `TPC` 推进 4 字节。
 
-`FENCE.I` 不发出数据内存事件；其效果是建立指令可见性并使保留失效。
+设计要点：`FENCE.I` 不带掩码，因此它的效果是无条件的，而 `fence.d` 的效果是有条件的。不存在让指令缓存纪元保持不变的 `fence.i` 编码，也不存在总是推进它的 `fence.d` 编码。
+
+该指令不发出数据内存事件，也不执行普通标量内存访问，因此不改变任何内存位置。针对数据访问的排序由 `FENCE.D` 负责。
 
 <!-- PTO-READER-BLOCK: scalar-fence-i-constraints role=constraints -->
 ## 位置与拒绝边界
 
-该指令没有操作数字段；位置与固定指令位合法性检查先于所有效果。
+唯一可用的拒绝是位置。在活动 SYS 块体之外的尝试会引发 `Fault_BundleControl` 并在处理程序之前返回，因此保留仍然有效、纪元保持原值。没有保留编码可拒绝，因为所有位都是固定的，也没有操作数需要校验。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+不需要任何访问环。维护路径中的环限制属于四个 TLB 操作，而 `FENCE.I` 根本不使用那条路径。
 
 <!-- PTO-READER-BLOCK: scalar-fence-i-example role=example -->
 ## 非规范示例
 
 该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
 
-可从 `fence.i` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+在 SYS 块体内执行 `fence.i`。保留被清除，指令缓存纪元递增一，`TPC` 继续前进 4 字节。在 Standard 块体中的尝试则会引发 `Fault_BundleControl`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,54 +19,49 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fmul-purpose role=purpose -->
 ## What FMUL does
 
-`FMUL` multiplies two carriers through the active numeric profile.
+`FMUL` multiplies two floating-point scalars and publishes the product. The result is a floating-point carrier in a Reg5 destination, so it can feed another scalar floating-point operation or be pushed onto the `T` or `U` queue for a later consumer.
 
 <!-- PTO-READER-BLOCK: scalar-fmul-mechanism role=mechanism -->
-## Numeric mechanism
+## How the arithmetic is performed
 
-`SrcType=00` selects a complete FP64 carrier; `SrcType=01` selects the zero-extended low 32-bit FP32 carrier.
+`SrcType=00` selects a complete 64-bit FP64 carrier. `SrcType=01` selects FP32: only the low 32 bits of each source word are used and zero-extended to XLEN.
 
-The active profile receives snapshotted operands and the mnemonic-selected operation, then returns a result and exact `NV`, `DZ`, `OF`, `UF`, `NX` vector.
+The contract names `FloatingBinary_MUL`, so `left * right` is the declared arithmetic operation.
 
-In the `pto-v0` reference profile, carrier multiplication is evaluated modulo the selected width. This deterministic reference rule is not an IEEE-754 or target-hardware claim.
+The selected numeric profile returns both the result and an exact `NV`, `DZ`, `OF`, `UF`, `NX` vector. For the `pto-v0` reference profile, finite FP32 and FP64 carriers are converted to real values, multiplied with real arithmetic, and encoded once with the requested rounding mode. Rounding happens at the end, so the single published carrier is the only rounding step of the operation.
+
+Design point: the profile returns flags instead of trapping, and the instruction ORs them into sticky state. That is why an overflowed result is still published normally as an infinity while `OF` becomes visible afterwards in `CORE_STATE[34]`.
 
 <!-- PTO-READER-BLOCK: scalar-fmul-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `RegDst` selects the encoded destination or discard behavior.
-
-- `SrcL` supplies the left scalar source.
-
-- `SrcR` supplies the right scalar source.
-
-- `SrcType` selects the source-carrier width.
-
-- Reg5 source selectors may read GPR, T, or U state without consuming temporary entries.
-
-- The destination selector writes a GPR, pushes T/U, or discards only the result.
+- `RegDst` selects the destination selector: codes `1`..`23` write a GPR, `30` pushes `U`, `31` pushes `T`, and `0` plus `24`..`29` discard the result.
+- `SrcL` is the left source selector.
+- `SrcR` is the right source selector.
+- `SrcType` selects the carrier that both sources are read with.
+- Source selectors `0`..`23` read GPRs, `24`..`27` read `T#1`..`T#4`, and `28`..`31` read `U#1`..`U#4`. Reading a temporary never consumes or reorders it.
+- Source selector `0` always reads XLEN zero, and destination selector `0` writes nothing.
 
 <!-- PTO-READER-BLOCK: scalar-fmul-effects role=effects -->
 ## Effects and ordering
 
-All explicit sources are snapshotted before numeric-status or destination effects.
+Both sources are read before any write, so `SrcL`, `SrcR` and `RegDst` may name the same register or queue slot and the operation still uses the pre-instruction values. A push into `T` or `U` happens only after both reads, so a read-then-push of the same queue observes the entry that was already present.
 
-All five profile-returned flags are ORed into sticky numeric state; the operation cannot clear an existing flag.
-
-The result is published or discarded, then `TPC` advances by `4` bytes. The instruction has no memory or reservation effect.
+All five returned flag bits are ORed into `CORE_STATE[36:32]`, so the operation can set a sticky flag but never clear one. The destination is written or discarded, and only then does `TPC` advance by `4` bytes. No memory access and no reservation is involved.
 
 <!-- PTO-READER-BLOCK: scalar-fmul-constraints role=constraints -->
-## Type and profile boundaries
+## Reserved types and rejection
 
-`SrcType=10` and `SrcType=11` are reserved. Reserved types and unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+`SrcType=10` and `SrcType=11` are reserved. The handler checks the carrier type before the first read of either source register, so a reserved type raises `Fault_IllegalInstruction` with no source read, no profile call, no flag, no queue change, no destination write, and no `TPC` advance.
 
-The portable instruction contract owns carrier selection, snapshots, flag accumulation, publication, and fault order; the active named profile owns the numeric result and produced flags.
+A source selector that names an unavailable `T` or `U` slot is rejected the same way, at the same point.
+
+The active rounding mode is taken from `CORE_STATE[39:37]`; the instruction has no per-instruction rounding field. Reserved numeric flags never raise a synchronous PTO trap by themselves.
 
 <!-- PTO-READER-BLOCK: scalar-fmul-example role=example -->
 ## Non-normative example
 
-This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
-
-`fmul.fd a0, a1, ->a2` selects its carriers, snapshots its sources, invokes the active profile, accumulates returned flags, publishes the result, and then advances `TPC`.
+`fmul.fd a0, a1, ->a2` reads `a0` and `a1` as complete FP64 carriers, multiplies them, records the flags the profile returns, and writes the product to `a2`. No memory traffic is generated and `TPC` advances by `4` bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

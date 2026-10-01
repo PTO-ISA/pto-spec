@@ -19,44 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-cmp-ne-purpose role=purpose -->
 ## CMP.NE 的作用
 
-`CMP.NE` 对解码后的标量操作数判断不相等，并发布规范化的 XLEN 一或零。
+`CMP.NE` 求值不等，并把规范 XLEN 布尔值写入目的：条件成立时为 `1`，不成立时为 `0`。
+
+结果是普通数据。`CMP.NE` 不设置所在块的提交条件，也不触碰任何谓词寄存器。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ne-mechanism role=mechanism -->
-## 执行机制
+## 机制
 
-指令先对操作数取快照，准备解码右源，再判断不相等。
+契约返回 `ScalarHandler_ExecuteCompare`。模型读取左源、准备右操作数、测试条件 `ScalarCondition_NE`，并通过目的选择子写入 `Zeros{PTO_XLEN} + 1` 或 `Zeros{PTO_XLEN}`。
 
-关系成立时结果为 XLEN 一，否则为 XLEN 零。
+`SrcRType` 选择在测试关系之前对 `SrcR` 快照施加的一种变换。取值 `1` 换为符号扩展的低 `32` 位，取值 `2` 换为零扩展的低 `32` 位。取值 `0` 与 `3` 都已定义，且都保持完整值不变：模型对 `11` 修饰符原样透传，因此没有任何 `SrcRType` 编码被保留，只有 `1` 与 `2` 会改变参与比较的值。
+
+设计要点：`CMP.AND` 与 `CMP.OR` 才是通过另一套修饰符解码器施加 `.not` 修饰符的寄存器形式比较。对于这些关系形式，即 `cmp.eq` 及其同族，关系所测试的就是程序放入 `SrcR` 的那个值。
+
+设计要点：规范化为恰好 `1` 或 `0`（而不是任意非零值），使两次比较可以做算术组合，并且对目的做一次测试就足以恢复该关系。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ne-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `RegDst` 选择编码指定的目的位置或丢弃行为。
+- `SrcL` 提供左侧绝对 GPR 源，`SrcR` 提供右侧绝对 GPR 源。
+- `SrcRType` 选择对 `SrcR` 的变换：`1` 换为符号扩展的低 `32` 位，`2` 换为零扩展的低 `32` 位，`0` 与 `3` 都保持完整值不变。
 
-- `SrcL` 提供左侧标量源。
+`RegDst` 命名目的：编码 `1..23` 写入所指的绝对 GPR，编码 `0` 与编码 `24..29` 丢弃结果，编码 `30` 把它压入 `U` 队列，编码 `31` 把它压入 `T` 队列。
 
-- `SrcR` 提供右侧标量源。
-
-- `SrcRType` 选择右源变换。
+`SrcL` 编码为零时指向架构零 GPR。源按值读取，不会被消耗。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ne-effects role=effects -->
-## 效果与顺序
+## 效果与排序
 
-规范化布尔值先通过编码目的位置发布，随后 `TPC` 前进 `4` 字节。
+成功时该指令恰好写入一个目的值，并让 `TPC` 前进 `4` 字节，即 `32` 位形式的编码长度。
 
-该指令不修改提交状态，也不访问内存或保留状态。
+它没有内存效果、没有保留效果、没有描述符效果，也没有数值状态标志。它保持提交参数、块参数和块条件标记不变，因为它不是条件设置指令。
+
+设计要点：由于该比较既不能观察提交条件，也不能安装控制流目标，编译器可以在其目的被读取之前，把它与其他纯标量操作自由重排。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ne-constraints role=constraints -->
 ## 合法性与故障顺序
 
-编码、保留字段值和源可用性都会在目的、控制或 `TPC` 效果前检查。
+先执行解码，固定位不匹配会在指令地址处抛出 `Fault_IllegalInstruction`，且在任何效果之前。
+
+`SrcL`、`SrcR` 和 `RegDst` 的全部 `32` 个编码都已分配，且 `SrcRType` 的四个取值都已定义，因此没有保留的寄存器或修饰位编码。
+
+被选中但不可用的 `T` 或 `U` 源会在操作数合法性阶段被拒绝，且早于目的写入。被拒绝的指令既不改变目的也不改变 `TPC`，陷入入口保存原始 `TPC`，因此它可以重新执行。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ne-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不构成第二份语义定义。
+把 GPR1 设为 `5`，把 GPR2 设为 `6`。
 
-`cmp.ne SrcL, SrcR<{.sw, .uw}>, ->{t, u, Rd}` 在条件为真时发布 XLEN 一，否则发布 XLEN 零。
+`cmp.ne 1, 2, ->0` 把 `1` 写入目的，因为两个源不同。若把 GPR2 设为 `5`，同一形式写入 `0`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

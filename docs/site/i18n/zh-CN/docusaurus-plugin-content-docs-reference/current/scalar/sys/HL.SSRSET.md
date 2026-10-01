@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-purpose role=purpose -->
 ## HL.SSRSET 的作用
 
-`HL.SSRSET` 把完整 XLEN 值写入已分配的可写系统寄存器。
+`HL.SSRSET` 是系统寄存器写入的宽地址形式。它把 Reg5 源的完整 XLEN 值存入由 24 位地址指名的系统寄存器。
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-mechanism role=mechanism -->
 ## 系统机制
 
-ASL DOC 区域选择 `ScalarHandler_ExecuteSystemRegisterSet`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+`InstructionContractHandler_HL_SSRSET` 选择 `ScalarHandler_ExecuteSystemRegisterSet`（`asl/scalar/sys/HL.SSRSET.asl:18`），`InstructionContractSystemAddressWidth_HL_SSRSET` 把地址宽度固定为 24（`asl/scalar/sys/HL.SSRSET.asl:36`）。48 位汇编形式把地址携带为两个 12 位片段，派发器在调用之前把它们重新组合（`asl/scalar/model/dispatch/sys.asl:96`）。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+该辅助函数先预检写权限，然后才读取源，因此无法存储的尝试不会消耗源（`asl/scalar/model/sys/registers.asl:160`）。
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`SSR_ID` 承载系统寄存器标识符；`SrcL` 承载 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。
+`SrcL` 是来自 R0..R23、T#1..T#4 或 U#1..U#4 的 Reg5 源，`SSR_ID` 是 24 位寄存器地址（`asl/scalar/sys/HL.SSRSET.asl:1`）。没有目的地操作数。
 
-编码零是已分配的字段值，从不表示省略操作数。
+`InstructionContractPushesTemporaryT_HL_SSRSET` 返回 `FALSE`（`asl/scalar/sys/HL.SSRSET.asl:42`），且该指令没有目的地操作数，因此不写任何临时队列。`SrcL` 中的编码零命名架构零 GPR，它是已分配的值，也是写零的合法方式。
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-effects role=effects -->
 ## 架构效果
 
-可写访问预检完成后，完整 XLEN 源值替换所选系统寄存器，随后 `TPC` 前进。
+成功的尝试把源值存入被寻址寄存器，并按 48 位形式的长度推进 `TPC`。当地址是 0x0000 这样的基指针寄存器时，存储落入该寄存器；当它是 `CORE_STATE` 时，存储还会用第 3:0 位更新当前访问环（`asl/scalar/model/sys/semantics.asl:63`）。
 
-写入被拒绝时，除普通陷阱进入外，源值与目标寄存器都保持不变。
+设计要点：对只读或未知地址的存储会在读取源之前出错，因此被拒绝的宽写入让源寄存器与目标寄存器都保持原样。更宽的地址字段完全不改变这一顺序。
+
+该指令不执行普通标量内存访问。
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-constraints role=constraints -->
 ## 位置与拒绝边界
 
-读取 `SrcL` 之前，必须先检查地址、当前 ACR 权限和可写访问类别。
+该次尝试必须位于活动 SYS 块体内，否则会在任何地址处理之前引发 `Fault_BundleControl`。随后写入路径在当前环对该地址缺少权限，或访问类别为未知或只读时以 `Fault_IllegalInstruction` 拒绝（`asl/scalar/model/sys/registers.asl:105`）。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+设计要点：权限规则以地址的低 12 位为依据，因此低位索引低于 0x0F00 的 24 位地址仍然对每个环开放，而上下文与调试系列仍仅限 ACR0。多出的地址位并不会产生第二条特权规则。
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-example role=example -->
 ## 非规范示例
 
 该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
 
-可从 `hl.ssrset SrcL, SSR_ID` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+`hl.ssrset SrcL, SSR_ID` 在 `SSR_ID` 为 0x0001 时把源值存入全局指针寄存器。改用 `SSR_ID` 0x0C00 会被 `Fault_IllegalInstruction` 拒绝，因为 `CYCLE` 只读，源读取从不发生。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

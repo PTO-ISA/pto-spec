@@ -19,48 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-miadd-purpose role=purpose -->
 ## What HL.MIADD does
 
-`HL.MIADD` is a 48-bit scalar ALU instruction. It multiplies the right source by the unsigned immediate and adds the product relative to the left source modulo 2^PTO_XLEN; its current instruction contract defines the result publication path and any additional state effect.
+`HL.MIADD` is a 48-bit scalar ALU instruction that publishes `SrcL + SrcR * uimm19` modulo `2^PTO_XLEN` through one Reg5 destination.
+
+The 19-bit field is the multiplier. It is zero-extended to XLEN and multiplied by `SrcR`; the product is then added to `SrcL` in full XLEN width.
 
 <!-- PTO-READER-BLOCK: scalar-hl-miadd-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then multiplies the right source by the unsigned immediate and adds the product relative to the left source modulo 2^PTO_XLEN, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractResult_HL_MIADD`, which returns `ScalarMultiplyImmediateAdd(left, right, immediate, FALSE)`. That helper computes `MultiplyWord(right, ZeroExtend{PTO_XLEN}(immediate))` and adds `left` to the product. Dispatch reaches it from the `ScalarOperation_HL_MIADD, ScalarOperation_HL_MISUB` alternative with `ScalarDecodedBits19(instruction, form, ScalarField_uimm19)`.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+hl.miadd SrcL, SrcR, uimm, ->{t, u, Rd}
+```
+
+Design point: the immediate scales `SrcR`; it is not an operand of its own. Setting `uimm19 = 0` therefore makes the product zero and the instruction publishes `SrcL` unchanged, which is the only immediate value that does not depend on `SrcR`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-miadd-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the left multiplicand or additive operand through Reg5.
-- The 5-bit `SrcR` field selects the right multiplicand through Reg5.
-- The unsigned 19-bit `uimm19` field carries the unsigned 19-bit multiplier.
+- `RegDst`, instruction slice `[23 +: 5]`, receives the XLEN result or discards it.
+- `SrcL`, instruction slice `[31 +: 5]`, supplies the additive operand.
+- `SrcR`, instruction slice `[36 +: 5]`, supplies the multiplicand.
+- `uimm19`, instruction slices `[41 +: 7]` and `[4 +: 12]`, supplies value bits `6:0` and `18:7`.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+All three Reg5 codes use the common map: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4` without consuming an entry. An encoded zero in `SrcL` or `SrcR` reads the architectural zero GPR.
+
+Design point: the two immediate pieces are not adjacent. Value bits `6:0` sit at the top of the 48-bit word and value bits `18:7` sit below the destination field, so a decoder has to place both pieces before it can multiply.
 
 <!-- PTO-READER-BLOCK: scalar-hl-miadd-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` and `SrcR` are snapshotted before the destination effect, so `hl.miadd a0, a1, 3, ->a0` still uses the pre-instruction `a0` as the additive operand.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The single result is published through `RegDst`, and `TPC` then advances by `6` bytes. `HL.MIADD` has no memory effect and no numeric-status effect; apart from `RegDst` and `TPC`, only the `T` or `U` push selected by the destination code can change state.
 
 <!-- PTO-READER-BLOCK: scalar-hl-miadd-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every `32`-code source encoding and every `32`-code destination encoding is assigned, and every `uimm19` value from `0` through `524287` is legal, so the operand pass can fail only on an unavailable temporary source. The fixed encoding bits must match the canonical 48-bit form.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise a mismatching encoding raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before the destination write. Multiplication and addition raise no arithmetic exception at any value.
+
+Design point: the multiplier is unsigned and capped at `524287`, so the multiply can never be asked for a negative scale. A negative contribution comes from `SrcR` itself: `MultiplyWord` works on the XLEN bit pattern, so a two's-complement negative multiplicand produces the wrapped product.
 
 <!-- PTO-READER-BLOCK: scalar-hl-miadd-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.MIADD` example, left source `20`, right source `3`, and `uimm19=4` produce `32`.
+With `SrcL = 20`, `SrcR = 3` and `uimm19 = 4`, the product is `12` and `RegDst` receives `32`. With `SrcR = 3` and `uimm19 = 0` the product is `0`, so `RegDst` receives `SrcL` whatever `SrcR` holds. With `SrcL = 0`, `SrcR = 0xFFFFFFFFFFFFFFFF` and `uimm19 = 2`, the product is `0xFFFFFFFFFFFFFFFE`, which is the published value.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

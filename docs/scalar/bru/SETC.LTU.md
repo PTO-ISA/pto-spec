@@ -19,44 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-ltu-purpose role=purpose -->
 ## What SETC.LTU does
 
-`SETC.LTU` evaluates unsigned less-than and publishes the result as the current Conditional bundle commit decision.
+`SETC.LTU` compares two scalar registers as unsigned integers and publishes the answer as the commit decision of the Conditional bundle it sits in.
+
+The unsigned reading is what makes the instruction useful for address-like and length-like values, where the top bit is a magnitude bit rather than a sign.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ltu-mechanism role=mechanism -->
-## Mechanism
+## Unsigned less-than under the same setter path
 
-Placement and the single-setter rule are checked before source readiness or reads.
+The instruction holds no destination register. It snapshots `SrcL` and the prepared right operand, tests `ConditionHolds(ScalarCondition_LTU, left, right)`, and stores exactly `1` when the relation holds and exactly `0` when it does not.
 
-The snapshotted operands are evaluated for unsigned less-than and canonicalized to XLEN one or zero.
+`ConditionHolds` compares `UInt(left) < UInt(right)`, so no word is ever negative and the all-ones pattern is the largest value rather than `-1`.
+
+Design point: `SrcRType` values `0` and `3` both leave the complete `64`-bit word untouched, while the `.sw` and `.uw` encodings replace the right operand with an extension of its low `32` bits. The modifier changes the operand, not the relation: `SETC.LTU` stays unsigned under every encoding.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ltu-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `SrcL` supplies the left scalar source.
+- `SrcL` supplies the left absolute GPR source.
+- `SrcR` supplies the right absolute GPR source.
+- `SrcRType` transforms the `SrcR` snapshot before the relation is tested: value `1` substitutes the sign-extended low `32` bits, value `2` the zero-extended low `32` bits, and values `0` and `3` leave the complete word unchanged.
 
-- `SrcR` supplies the right scalar source.
-
-- `SrcRType` selects the right-source transformation.
+Encoded zero in `SrcL` or `SrcR` names the architectural zero GPR. Neither source is consumed and no `GPR`, `T`, or `U` destination is written.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ltu-effects role=effects -->
 ## Effects and ordering
 
-The canonical condition is written atomically to `_CommitArgument` and `BARG.TAKEN`, and the condition-set marker becomes true.
+On success the canonical condition is written to the commit argument, `BARG.TAKEN` follows the same truth value while a bundle is active, the block condition marker becomes set, and `TPC` advances by `4` bytes.
 
-On success, `SETC.LTU` advances `TPC` by `4` bytes. It has no scalar destination and no memory or reservation effect.
+There is no memory, reservation, descriptor, or numeric-status effect, and `BARG.BPC`, `BARG.BPCN`, `BARG.BlockType`, and `BARG.TYPE` are preserved.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ltu-constraints role=constraints -->
-## Legality and fault order
+## What the setter marker and placement check reject
 
-The instruction is valid only in the applicable Conditional bundle context, and only one successful condition setter may occur.
+Applicability is confined to the body of an active Conditional block, where at most one successful `SETC` condition setter may complete.
 
-Wrong placement or a repeated setter raises an Illegal Block Exception before source reads; encoding or unavailable-source failures raise `Fault_IllegalInstruction` before commit or `TPC` effects.
+Wrong placement or a second successful setter raises `Fault_BundleControl` (trap number `5`, `BUNDLE_TRAP`) before operand legality and before any source read. A fixed-bit mismatch or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before commit state, `BARG`, queue, or `TPC` effects. A rejected occurrence does not consume the shared marker.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ltu-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not create a second semantic definition.
 
-`setc.ltu SrcL, SrcR<{.sw, .uw}>` evaluates the described condition, writes the canonical decision to commit state, and advances `TPC` only after that update.
+Place `0` in GPR1 and `0` in GPR2, then execute `setc.ltu R1, R2`. The unsigned relation `0 < 0` is false, so the form commits `0`. Set GPR2 to `1` and the same form commits `1`, because unsigned `0 < 1` holds.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

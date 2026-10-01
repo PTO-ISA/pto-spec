@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-div-purpose role=purpose -->
 ## What DIV does
 
-`DIV` is a 32-bit scalar ALU instruction. It computes the signed quotient over the complete XLEN value; its current instruction contract defines the result publication path and any additional state effect.
+`DIV` is a 32-bit L32 scalar ALU form. It reads one Reg5 dividend and one Reg5 divisor, interprets both complete `PTO_XLEN` words as signed two's-complement integers, and publishes the quotient truncated toward zero through a third Reg5 field. `DIV` produces no remainder.
+
+Design point: `DIV` and `DIVU` share one field layout and differ only in the mnemonic and in the fixed match bits of the 32-bit encoding. Signedness is not a mode field, so no operand value can turn an unsigned divide into a signed one; the executed instruction word alone selects the interpretation.
 
 <!-- PTO-READER-BLOCK: scalar-div-mechanism role=mechanism -->
-## How the result is formed
+## How the quotient is formed
 
-Execution snapshots the encoded inputs, then computes the signed quotient over the complete XLEN value, and only afterward performs the destination effects.
+Execution resolves the three selectors, reads `SrcL` and `SrcR`, and computes one value.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+- `ScalarDivideSigned` returns `0` when the divisor is zero.
+- Otherwise it forms the magnitude of each operand, divides the magnitudes with restoring division, and subtracts the magnitude from `0` when exactly one operand is negative.
+
+The computed word reaches `RegDst` only after both source reads have happened.
+
+Design point: the sign is applied after the magnitude division, so the quotient of the signed minimum (the word whose only set bit is the top bit) and `-1` is that same word. Computing `0 - minimum` in `PTO_XLEN` two's-complement returns `minimum`, and the model keeps no wider intermediate that could hold the mathematically positive result.
 
 <!-- PTO-READER-BLOCK: scalar-div-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the dividend through Reg5.
-- The 5-bit `SrcR` field selects the divisor through Reg5.
+- `SrcL` is the dividend and `SrcR` is the divisor. Both use the Reg5 source map: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`.
+- `RegDst` publishes the single result: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard the result.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: a source read never removes a queue entry, so a divisor held in `T#1` survives the instruction. Only a `30` or `31` destination shifts a queue, and that shift is what makes the pushed word the newest entry of that queue.
 
 <!-- PTO-READER-BLOCK: scalar-div-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are read before `RegDst` is written, so `div a0, a0, ->a0` divides the pre-instruction `a0` by itself, and a destination that aliases a source still uses the snapshotted value.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+After the result is published or discarded, `TPC` advances by `4` bytes, the length of the 32-bit form. No memory, reservation, descriptor, numeric-status, bundle, privilege, predicate or control-flow state changes.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: the divisor word selects the whole result, and a `T` or `U` divisor is read without being consumed. A divide whose `SrcR` names `T#1` therefore reads the same `T#1` word on every execution until something else changes that slot.
 
 <!-- PTO-READER-BLOCK: scalar-div-constraints role=constraints -->
 ## Legality and fault boundary
 
-A zero divisor returns quotient zero; signed-minimum divided by negative one retains signed minimum. Neither case raises an arithmetic exception.
+Every code of `SrcL`, `SrcR` and `RegDst` is assigned, and the form adds no fixed-bit constraint beyond the match and mask of its 32-bit encoding, so `DIV` reserves no selector value.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before the destination effect and before `TPC` advances. An undecodable form raises `Fault_IllegalInstruction` at `PC`, and an instruction that is not applicable to the active bundle raises `Fault_BundleControl` at `TPC`.
+
+Design point: no divisor value can fault. `ScalarDivideSigned` tests for a zero divisor before calling the restoring-division helper, whose assertion requires a nonzero divisor, so no `SrcR` encoding can reach that assertion.
 
 <!-- PTO-READER-BLOCK: scalar-div-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `DIV` example, dividend `13` and divisor `5` produce quotient `2`.
+With `a0=-13` and `a1=5`, `div a0, a1, ->a2` writes `-2` to `a2`: the magnitudes divide as `13 / 5 = 2`, and exactly one operand is negative. With `SrcR` encoded as zero the divisor is the architectural zero GPR, so, while `T#1` is available, `div t#1, zero, ->u` pushes `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

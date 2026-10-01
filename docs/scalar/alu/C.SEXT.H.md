@@ -19,45 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-sext-h-purpose role=purpose -->
 ## What C.SEXT.H does
 
-`C.SEXT.H` is a 16-bit scalar ALU instruction. It sign-extends the low 16 source bits to XLEN; its current instruction contract defines the result publication path and any additional state effect.
+`C.SEXT.H` takes the low halfword of one Reg5 source, sign-extends it to `PTO_XLEN`, and pushes the result to `T` as the newest temporary value.
+
+Design point: `C.SEXT.H` is the halfword member of the compressed extension family. The field layout, the fixed `T` destination and the push behaviour are identical to `C.SEXT.B`; only the sign bit moves from position `7` to position `15`.
 
 <!-- PTO-READER-BLOCK: scalar-c-sext-h-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then sign-extends the low 16 source bits to XLEN, and only afterward performs the destination effects.
+Source bits `15..0` become result bits `15..0`, and source bit `15` is copied into every bit from `16` upward.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: the extension reads the source once and produces one value. The bits above the halfword are not tested or reported, so a value that overflowed a 16-bit computation is simply re-extended from bit `15` with no flag and no trap.
+
+Design point: the push shifts the queue, so the new value becomes `T#1`, the previous `T#1` becomes `T#2`, and the previous `T#4` is discarded.
 
 <!-- PTO-READER-BLOCK: scalar-c-sext-h-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `SrcL` field selects a scalar input through Reg5.
+- `SrcL` is a Reg5 source: codes `0..23` select absolute GPRs, `24..27` select `T#1..T#4`, and `28..31` select `U#1..U#4`, without consuming a queue entry.
+- The destination is fixed to `T`: exactly one XLEN result is pushed per successful execution.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: `c.sext.h t#1, ->t` reads the old `T#1`, pushes the halfword-extended value as the new `T#1`, and moves the original to `T#2`. A temporary source is read, not consumed.
+
+Design point: encoded zero of `SrcL` reads the architectural zero GPR, whose low halfword is `0`, so `c.sext.h zero, ->t` pushes `0`.
 
 <!-- PTO-READER-BLOCK: scalar-c-sext-h-effects role=effects -->
 ## Effects and ordering
 
-Any scalar source is snapshotted before publication, and the completed instruction pushes exactly one result to T.
+The source is read before the push, so the pushed value is computed from the pre-instruction source.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 2 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+After the push, `TPC` advances by `2` bytes. No GPR, `U` entry, memory, reservation, descriptor, numeric-status, bundle, privilege, predicate or control-flow state changes.
 
 <!-- PTO-READER-BLOCK: scalar-c-sext-h-constraints role=constraints -->
 ## Legality and fault boundary
 
-Materialization, movement, and extension are total at their fixed widths and do not raise arithmetic exceptions. A fixed-bit mismatch or unavailable selected T/U source faults before state effects.
+Every `SrcL` code is assigned and fixed encoding bits must match the canonical form, so `C.SEXT.H` has no reserved operand value.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before the push, before `TPC` advances, and before any other effect. An undecodable 16-bit form raises `Fault_IllegalInstruction` at `PC`, and an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`.
+
+Design point: halfword extension is total, so `C.SEXT.H` has no value-dependent fault. All `65536` possible low halfwords produce a defined result, and the upper `48` source bits are ignored rather than checked.
 
 <!-- PTO-READER-BLOCK: scalar-c-sext-h-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `C.SEXT.H` example, source low 16 bits `0x8000` become XLEN value `-32768` after sign extension.
+With `a0=65535`, the low halfword is all ones, so `c.sext.h a0, ->t` pushes `18446744073709551615`. With `a0=32767` the sign bit `15` is clear and the pushed value is `32767`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

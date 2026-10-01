@@ -19,42 +19,50 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ld-umin-purpose role=purpose -->
 ## What LD.UMIN does
 
-`LD.UMIN` atomically applies unsigned minimum to one doubleword, stores the result, and publishes the prior memory value.
+`LD.UMIN` stores the smaller of two 64-bit patterns at a memory address, ordering them as unsigned integers. The operand comes from `SrcR`, the address from `SrcL`, and the doubleword that was replaced is published through `RegDst`.
+
+The whole 8-byte access participates in the comparison, so no part of either value is truncated or reinterpreted.
 
 <!-- PTO-READER-BLOCK: scalar-ld-umin-mechanism role=mechanism -->
-## Atomic mechanism
+## Keeping the smaller unsigned value
 
-The ASL DOC contract selects `ScalarHandler_AtomicReadModifyWrite` with an access width of `8` bytes.
+The form binds `ScalarHandler_AtomicReadModifyWrite` with access size `8` and atomic operation `Atomic_UMIN`. Both access probes run first; then the old doubleword is loaded, compared with `SrcR` as unsigned values, the smaller one is stored back, and one atomic event with `write_performed` set to true is recorded.
 
-Read and write access are preflighted before the same-location atomic read-modify-write is allowed to commit.
+Under unsigned order a set top bit makes a pattern numerically large. Storage holding `0x8000000000000000` compared with `SrcR = 0x0000000000000005` keeps `5`, because `0x8000000000000000` is the larger unsigned number; the same two patterns under `LD.SMIN` would keep the pattern with bit 63 set, which reads as a negative value.
+
+Design point: equality stores the operand. When the two unsigned values are equal, the operand's pattern is already the old doubleword's pattern, so the addressed bytes do not change, yet the execution still counts as a performed atomic write.
+
+Design point: the operand is not converted. Access size `8` maps to the identity normalization, so a `SrcR` with its upper bits set is compared as that full 64-bit value, not as a low word.
 
 <!-- PTO-READER-BLOCK: scalar-ld-umin-inputs-outputs role=inputs-outputs -->
-## Inputs and result
+## Fields and operand roles
 
-`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 atomic operand source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+`RegDst` is a `5`-bit field at instruction bits `7..11`, `SrcL` at bits `15..19`, `SrcR` at bits `20..24`, `rl` at bit `25`, `aq` at bit `26`, and `far` at bit `27`.
 
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+- `SrcL` reads the atomic address; selector `0` reads the architectural zero register.
+- `SrcR` reads the compared value; a T or U selector must name a valid entry and does not consume it.
+- `RegDst` receives the published value; destination code `0` and codes `24` to `29` discard it, code `30` pushes U, and code `31` pushes T.
+
+Design point: `aq` and `rl` choose relaxed, acquire, release, or acquire-release ordering for the atomic event, while `far` is decoded and passed to `AtomicAddress`, which returns its argument unchanged, so the hint bit leaves the address, the comparison, and the published value untouched in the reference model.
 
 <!-- PTO-READER-BLOCK: scalar-ld-umin-effects role=effects -->
-## Effects and ordering
+## Effects
 
-The old memory value is published only after the read-modify-write commits; source aliases are captured before any destination effect.
-
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+A completed execution writes 8 bytes, records one atomic event with `write_performed` set to true, publishes the pre-instruction doubleword, and advances `TPC` by 4 bytes. If the written range overlaps the reserved 64-byte granule, the local reservation is cleared.
 
 <!-- PTO-READER-BLOCK: scalar-ld-umin-constraints role=constraints -->
-## Legality and precise faults
+## Legality and faults
 
-The effective address must be aligned to `8` bytes. Alignment, translation, and permission checks precede architectural effects.
+The address must be a multiple of 8. The read probe raises `Fault_DataAlignment` for a misaligned address and `Fault_DataPage` for an address outside the permitted region, both before the load and both reported at the original address; the write probe repeats the checks, and the two translated addresses must be equal. `Fault_IllegalInstruction` precedes all of this for an undecodable form or an unavailable selected T or U source. A faulting execution has no partial effect and does not advance `TPC`.
 
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+Design point: nothing is published on a fault, so the destination register keeps its previous contents and a later read of it returns those contents rather than a comparison result.
 
 <!-- PTO-READER-BLOCK: scalar-ld-umin-example role=example -->
 ## Non-normative example
 
 This example only shows one accepted spelling; the generated contract below remains authoritative.
 
-For a first reading, use `ld.umin [SrcL], SrcR, ->Rd` and then vary only the ordering or route modifiers described above.
+`ld.umin [a0], a1, ->a2` with an 8-byte aligned address in `a0` compares the stored doubleword with `a1`. When `[a0]` holds `0x8000000000000000` and `a1` holds `0x0000000000000005`, the location receives `0x0000000000000005` and `a2` receives `0x8000000000000000`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

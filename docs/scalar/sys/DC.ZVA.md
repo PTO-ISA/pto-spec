@@ -19,42 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-zva-purpose role=purpose -->
 ## What DC.ZVA does
 
-`DC.ZVA` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+`DC.ZVA` is the data-cache zero-by-address operation. It takes the target address from `SrcL` and completes synchronously, recording the operation token `Maintenance_DC_ZVA` and the exact operand (`asl/scalar/sys/DC.ZVA.asl:23`).
 
 <!-- PTO-READER-BLOCK: scalar-dc-zva-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+`InstructionContractHandler_DC_ZVA` selects the shared maintenance handler (`asl/scalar/sys/DC.ZVA.asl:11`), and `InstructionContractMaintenanceUsesOperand_DC_ZVA` returning `TRUE` makes the dispatcher read the source register before the call (`asl/scalar/model/dispatch/sys.asl:30`).
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+The executor's data-cache group contains all eight `DC.*` operations, so `Maintenance_DC_ZVA` advances `_DataCacheEpoch` rather than installing a modelled zero block (`asl/scalar/model/sys/semantics.asl:134`).
+
+The instruction is applicable only in an active SYS block body (`asl/scalar/model/sys/semantics.asl:322`).
 
 <!-- PTO-READER-BLOCK: scalar-dc-zva-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+`SrcL` is a Reg5 source: R0..R23, T#1..T#4, or U#1..U#4. Its value is the address whose block the request names.
 
-Encoded zero is an assigned field value, never an omitted operand.
+There is no destination. The captured address is published only as the operand field of the maintenance record, and encoded zero means the architectural zero GPR, not an omitted operand.
 
 <!-- PTO-READER-BLOCK: scalar-dc-zva-effects role=effects -->
 ## Architectural effects
 
-On success, the maintenance record receives `Maintenance_DC_ZVA` and the exact captured operand token.
+A successful attempt increases the data-cache epoch by one and replaces the maintenance record with `Maintenance_DC_ZVA` and the operand (`asl/scalar/model/sys/semantics.asl:137`). The record update is skipped when a fault was raised, so the record is never half-written.
 
-Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+Design point: modelling zeroing as an epoch step keeps the instruction from acquiring a memory result. A subsequent ordinary load from the same address is a normal memory access with no defined relationship to this instruction's epoch, so software cannot observe a zero-filled location through `DC.ZVA` alone.
+
+The attempt performs no ordinary scalar memory access and writes no register or queue. `TPC` advances by the instruction length after success.
 
 <!-- PTO-READER-BLOCK: scalar-dc-zva-constraints role=constraints -->
 ## Placement and rejection
 
-Cache maintenance is a synchronous local hint at every ACR and does not define additional implementation cache contents.
+The first gate is placement inside an active SYS block body; failure raises `Fault_BundleControl` and leaves the executor untouched. The second is the fixed-bit and Reg5 encoding check, which runs before the handler.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+No access-ring restriction applies to any `DC.*` operation (`asl/scalar/model/sys/semantics.asl:123`), and the address operand is not required to be canonical, because only `TLB.IV` and `TLB.IAV` test canonical form.
 
 <!-- PTO-READER-BLOCK: scalar-dc-zva-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `dc.zva SrcL` and trace its encoded fields through preflight before following the selected system effect.
+Run `dc.zva SrcL` with the source register holding 0x2000. The attempt checks placement and encoding, snapshots 0x2000, advances the data-cache epoch by one, and records `Maintenance_DC_ZVA` with operand 0x2000. No memory location changes, so a load from 0x2000 afterwards is served by the ordinary memory path.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

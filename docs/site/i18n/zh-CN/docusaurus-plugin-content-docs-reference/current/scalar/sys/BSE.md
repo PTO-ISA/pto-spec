@@ -19,42 +19,49 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-bse-purpose role=purpose -->
 ## BSE 的作用
 
-`BSE` 使用快照得到的标量操作数发布所分配的非阻塞执行控制请求。
+`BSE` 向架构发布一次执行控制请求，并把它的源值作为请求操作数一并携带。该请求是 `ExecutionControl_SendEvent`。
+
+它是非阻塞请求：指令发布请求后就退休。它不挂起线程，也不在下一个指令之前等待唤醒。
 
 <!-- PTO-READER-BLOCK: scalar-bse-mechanism role=mechanism -->
-## 系统机制
+## 指令如何放置与执行
 
-ASL DOC 区域选择 `ScalarHandler_ExecuteControlRequest`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+本指令是活动 SYS 块体中的一个标量操作。标量分派器先检查是否存在活动指令束，以及其块体是否活动且块类型为 System；处于这种块之外的 SYS 形式会以 `Fault_BundleControl` 被拒绝，这发生在任何编码字段检查之前，也发生在任何架构效果之前。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+随后检查编码合法性与源可用性，之后处理程序才运行。
+
+处理程序读取 `SrcL`，然后通过共享的执行控制规则发布该请求。该规则保存请求类型、保存精确的 XLEN 操作数，并把架构请求纪元推进一。它不查询任何权限表，因此在放置检查与操作数检查通过之后，请求会被无条件发布。
+
+设计要点：只记录请求类型及其操作数，模型不为该请求定义任何睡眠、邮箱、超时计数器或待唤醒状态。这正是该请求在可测试意义下非阻塞的原因：不存在后续指令可以观察到的额外架构状态，因此立即退休就是完整的行为。
 
 <!-- PTO-READER-BLOCK: scalar-bse-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`SrcL` 承载 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。
-
-编码零是已分配的字段值，从不表示省略操作数。
+- `SrcL` 是源选择器，提供完整的 XLEN 请求操作数。
+- 源选择器 `0`..`23` 读取 GPR，`24`..`27` 读取 `T#1`..`T#4`，`28`..`31` 读取 `U#1`..`U#4`。读取临时队列不会消费或重排它。
+- 源选择器 `0` 始终读到 XLEN 零，而零是合法的操作数值：它被记录为操作数，而不是被当作省略。
+- 没有目的字段，因此该指令绝不写 GPR，也绝不压入 `T` 或 `U`。
 
 <!-- PTO-READER-BLOCK: scalar-bse-effects role=effects -->
 ## 架构效果
 
-快照得到的 `SrcL` 值与 `ExecutionControl_SendEvent` 一同发布；架构请求纪元递增后，`TPC` 才前进。
+发布的效果是记录下来的请求类型、记录下来的操作数，以及架构请求纪元加一。源寄存器以及它指名的队列表项（如果有）保持不变，因为该指令只读取它们。
 
-该请求在可移植模型中是非阻塞的，不会创建独立的休眠、邮箱、超时计数器或待唤醒状态。
+`TPC` 前进 `4` 字节。该指令不进行内存访问，也不留下保留状态，因此它本身不可能是后续原子操作或链接加载操作失败的原因。
 
 <!-- PTO-READER-BLOCK: scalar-bse-constraints role=constraints -->
-## 位置与拒绝边界
+## 放置与拒绝
 
-每个已分配的 Reg5 选择器都遵循通用标量源规则。
+无效的块放置首先被拒绝，以 `Fault_BundleControl` 报出，此时连编码字段都还没有被考虑。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+每个已分配的 Reg5 源选择器都遵循通用标量源可用性规则：`0`..`23` 始终可用，而 `T` 或 `U` 选择器只有在对应队列槽保存了值时才可用。不可用的选择器会在请求发布之前引发 `Fault_IllegalInstruction`，因此被拒绝的 `BSE` 不记录任何内容，也不推进请求纪元。
+
+处理程序中没有逐请求的权限测试，因此操作数取值本身绝不会导致拒绝。
 
 <!-- PTO-READER-BLOCK: scalar-bse-example role=example -->
 ## 非规范示例
 
-该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
-
-可从 `bse SrcL` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+`bse a0` 从 `a0` 读取操作数，把 `ExecutionControl_SendEvent` 与该操作数一起发布，把架构请求纪元推进一，并让 `TPC` 前进 `4` 字节。执行不等待，直接继续下一条指令。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

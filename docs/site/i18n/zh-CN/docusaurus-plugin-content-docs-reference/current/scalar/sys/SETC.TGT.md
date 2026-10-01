@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-purpose role=purpose -->
 ## SETC.TGT 的作用
 
-`SETC.TGT` 把标量源捕获到活动块的 `BARG.BPCN` 提交目标。
+`SETC.TGT` 设置活动块的候选下一 PC。它把 Reg5 源 `SrcL` 快照进 `BARG.BPCN`，也就是块边界在延续规则要求候选时稍后选作下一 PC 的字段。
 
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-mechanism role=mechanism -->
-## 块状态机制
+## 系统机制
 
-ASL DOC 区域选择 `ScalarHandler_SetCommitTarget`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+`InstructionContractHandler_SETC_TGT` 选择 `ScalarHandler_SetCommitTarget`（`asl/scalar/sys/SETC.TGT.asl:18`），且 `InstructionContractRequiresCommitTargetBlock_SETC_TGT` 返回 `TRUE`（`asl/scalar/sys/SETC.TGT.asl:30`）。该操作的适用性规则是 `BundleCommitTargetWritable`，它要求活动 bundle 且块种类为 Standard 或 Floating（`asl/scalar/model/sys/semantics.asl:316`）。
 
-该指令占用活动 Standard 或 Floating 块中的一个标量操作位置，在 SYS 块中不合法。
+`InstructionContractRequiresSystemBlock_SETC_TGT` 返回 `FALSE`（`asl/scalar/sys/SETC.TGT.asl:24`），因此该指令不是 SYS 块操作：它就在自己所修改目标的那个块中运行。
 
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`SrcL` 承载 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。
+`SrcL` 是唯一操作数，即来自 R0..R23、T#1..T#4 或 U#1..U#4 的 Reg5 源（`asl/scalar/sys/SETC.TGT.asl:1`）。它提供成为新候选 PC 的完整 XLEN 值。
 
-编码零是已分配的字段值，从不表示省略操作数。
+没有目的地操作数。输出是块状态字段 `BARG.BPCN` 本身。`SrcL` 中的编码零命名架构零 GPR，因此零是作为真实值写入的，而不是省略。
 
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-effects role=effects -->
 ## 架构效果
 
-快照得到的源值只替换 `BARG.BPCN`；其他 BARG 与块控制字段全部保持不变。
+成功时该指令用已快照的源值替换 `BARG.BPCN`，并把 `TPC` 推进 4 字节（`asl/scalar/model/sys/semantics.asl:336`、`asl/scalar/model/dispatch/top-level.asl:56`）。`BARG` 中的其他部分都保留：`BPC`、块种类、传送种类与 `TAKEN` 都不被触碰。
 
-读取 `SrcL` 之前先检查块适用性，只有新目标写入后 `TPC` 才前进。
+设计要点：`BARG.BPCN` 只是候选。块边界通过延续规则选择它，该规则对直接、调用、间接、间接调用和返回传送取候选，而对条件传送只在 `TAKEN` 被置位时取候选（`asl/block/model/state/barg.asl:14`）。因此写入候选本身并不改变块继续的位置。
+
+该指令不执行普通标量内存访问，不写寄存器，也不消耗源；源保持其值。
 
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-constraints role=constraints -->
 ## 位置与拒绝边界
 
-该操作只在活动 Standard 或 Floating 块中分配。
+位置是唯一的门，而且它限制的是种类而不是位置：该次尝试需要活动的 Standard 或 Floating 块，任何其他块种类都会在活动块的 `TPC` 值处引发 `Fault_BundleControl`。源只在该判定之后被读取，被拒绝的尝试让 `BARG.BPCN` 与待决延续状态保持不变，这正是归属方 NDF 条款的要求。
 
-块体未激活或块类型不是 Standard 或 Floating 时，会在读取 `SrcL` 或改变 BARG、`TPC` 之前触发 Illegal Block Exception。
+没有保留的源编码需要拒绝，因为每个 Reg5 源选择器都已分配；也不受访问环限制。
 
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-example role=example -->
 ## 非规范示例
 
 该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
 
-可在活动 Standard 或 Floating 块中从 `setc.tgt SrcL` 开始，先跟踪源快照，再查看 BARG 更新。
+在活动的 Standard 块体内，GPR 持有 0x1000 时 `setc.tgt SrcL` 把 0x1000 快照进 `BARG.BPCN`。如果该块以直接传送离开，边界会选择 `BARG.BPCN`，因此执行在 0x1000 继续；如果它以 `TAKEN` 为清除的条件传送离开，则顺序延续胜出，新的 `BARG.BPCN` 不被使用。在 SYS 块体内运行同一指令则会引发 `Fault_BundleControl`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

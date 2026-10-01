@@ -19,42 +19,53 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-cmp-ori-purpose role=purpose -->
 ## CMP.ORI 的作用
 
-`CMP.ORI` 对两个解码标量值执行按位或，并发布组合值是否非零。
+`CMP.ORI` 用按位或组合两个操作数的值，并在组合结果非零时写入规范 XLEN 布尔值 `1`，为零时写入 `0`。
+
+它只在结果形状上算比较。写入的值并不报告两个操作数之间的关系；它报告的是二者的或是否全为零。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ori-mechanism role=mechanism -->
-## 执行机制
+## 机制
 
-两个源会在按位或之前完成快照。
+契约返回 `ScalarHandler_ExecuteCompareLogical`，其操作为 OR。模型把 `12` 位 `simm12` 字段符号扩展到 XLEN，并把它用作右值。
 
-组合 word 为零时结果是 XLEN 零，非零时规范化为 XLEN 一。
+随后处理程序取左源和准备好的右值，计算 `left OR right`，并在逻辑结果非零时写入 `Zeros{PTO_XLEN} + 1`、为零时写入 `Zeros{PTO_XLEN}`。不读取也不写入任何其他状态。
+
+设计要点：先组合两个操作数，再测试组合结果，因此该指令无法单独泄露任何一个操作数的信息。这正是"这个值是否含有这些位中的任意一位"这类掩码测试只需一条指令，而不必用一次比较加一次分支处理两个结果的原因。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ori-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `RegDst` 选择编码指定的目的位置或丢弃行为。
+- `SrcL` 提供左侧绝对 GPR 源。
+- `simm12` 提供 `12` 位有符号立即数。
 
-- `SrcL` 提供左侧标量源。
+`RegDst` 命名目的：编码 `1..23` 写入所指的绝对 GPR，编码 `0` 与编码 `24..29` 丢弃结果，编码 `30` 把它压入 `U` 队列，编码 `31` 把它压入 `T` 队列。
 
-- `simm12` 提供有符号编码立即数。
+`SrcL` 编码为零时指向架构零 GPR。源按值读取，不会被消耗。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ori-effects role=effects -->
-## 效果与顺序
+## 效果与排序
 
-规范化布尔值先通过编码目的位置发布，随后 `TPC` 前进 `4` 字节。
+成功时该指令恰好写入一个目的值，并让 `TPC` 前进 `4` 字节，即 `32` 位形式的编码长度。
 
-该指令不修改提交状态，也不访问内存或保留状态。
+它没有内存效果、没有保留效果、没有描述符效果，也没有数值状态标志。它保持提交参数、块参数和块条件标记不变，因为它不是条件设置指令。
+
+设计要点：`CMP.ORI` 不是 `ORI` 的别名。`ORI` 写入组合后的 XLEN 值，而 `CMP.ORI` 写入的是报告该值是否非零的规范布尔值，因此当之后需要组合后的位本身时，这两种形式不可互换。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ori-constraints role=constraints -->
 ## 合法性与故障顺序
 
-编码、保留字段值和源可用性都会在目的、控制或 `TPC` 效果前检查。
+先执行解码，固定位不匹配会在指令地址处抛出 `Fault_IllegalInstruction`，且在任何效果之前。
+
+`SrcL` 与 `RegDst` 的全部 `32` 个编码都已分配，`simm12` 的全部 `4096` 个模式也都已分配，因此没有保留的操作数编码。
+
+被选中但不可用的 `T` 或 `U` 源会在操作数合法性阶段被拒绝，且早于目的写入。被拒绝的指令既不改变目的也不改变 `TPC`，陷入入口保存原始 `TPC`，因此它可以重新执行。
 
 <!-- PTO-READER-BLOCK: scalar-cmp-ori-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不构成第二份语义定义。
+把 GPR1 设为 `5`。
 
-`cmp.ori SrcL, simm, ->{t, u, Rd}` 在条件为真时发布 XLEN 一，否则发布 XLEN 零。
+`cmp.ori 1, 9, ->0` 计算 `5 OR 9`，结果为 `13`，因此把 `1` 写入目的。若把 GPR1 设为 `0` 且把 `simm12` 设为 `0`，同一形式写入 `0`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

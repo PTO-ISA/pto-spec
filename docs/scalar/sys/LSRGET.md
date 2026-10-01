@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-lsrget-purpose role=purpose -->
 ## What LSRGET does
 
-`LSRGET` reads an assigned word from the active BARG view and publishes it through Reg5 destination mapping.
+`LSRGET` reads one word of the active block argument (BARG) view. The 12-bit `LSR_ID` selects which word, and the Reg5 destination receives it. Three identifiers are assigned: `BARG.BPC`, the candidate next PC `BARG.BPCN`, and a packed control word that reports the block's kind, transfer, and control attributes.
 
 <!-- PTO-READER-BLOCK: scalar-lsrget-mechanism role=mechanism -->
-## Block-state mechanism
+## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteLocalStateRegisterGet`. Placement and encoded legality are checked before sources or system state can change.
+`InstructionContractHandler_LSRGET` selects `ScalarHandler_ExecuteLocalStateRegisterGet` (`asl/scalar/sys/LSRGET.asl:17`), and `InstructionContractRequiresSystemBlock_LSRGET` returns `FALSE` (`asl/scalar/sys/LSRGET.asl:23`), so this is not a SYS-block instruction: it needs any active block body. The dispatcher decodes `RegDst` and passes the low 12 bits of the identifier to the helper (`asl/scalar/model/dispatch/sys.asl:101`).
 
-The instruction occupies one scalar operation position in any active block for which the selected BARG word is applicable.
+The helper asks `CurrentBARGWordApplicable` first and raises `Fault_BundleControl` when the answer is no (`asl/scalar/model/sys/semantics.asl:172`).
 
 <!-- PTO-READER-BLOCK: scalar-lsrget-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`LSR_ID` carries the active BARG word identifier; `RegDst` carries the Reg5 destination: discard, R1..R23, push U, or push T.
+`LSR_ID` is the 12-bit BARG word identifier and `RegDst` is the Reg5 destination (`asl/scalar/sys/LSRGET.asl:1`). Identifier 0 selects `BARG.BPC`, identifier 1 selects `BARG.BPCN`, and identifier 2 selects the packed control word; identifiers 3 through 4095 are reserved. `InstructionContractLocalRegisterIDLegal_LSRGET` encodes that limit as `UInt(identifier) <= 2` (`asl/scalar/sys/LSRGET.asl:29`).
 
-Encoded zero is an assigned field value, never an omitted operand.
+Design point: identifier 1 is applicable only to Standard and Floating blocks, because `BARGHasCandidateWord` is true for those kinds only (`asl/block/model/state/barg.asl:31`). `InstructionContractBPCNApplicable_LSRGET` states the same two kinds (`asl/scalar/sys/LSRGET.asl:35`), so a block type without a `BARG.BPCN` cannot be asked for one.
 
 <!-- PTO-READER-BLOCK: scalar-lsrget-effects role=effects -->
 ## Architectural effects
 
-Assigned IDs select `BARG.BPC`, `BARG.BPCN`, or the canonical packed BARG control word and publish it through `RegDst`.
+A successful read publishes the selected word to the destination and advances `TPC` by 4 bytes. The packed word is assembled on demand and uses bits 3:0 for the block type and bits 8 through 12 for the atomic, acquire, release, far, and dimension-reduction attributes; bits 6:4 for the transfer type and bit 7 for `TAKEN` are filled only for a Standard or Floating block, and every other bit is zero (`asl/block/model/state/barg.asl:37`).
 
-The read leaves BARG and system-register state unchanged; publication occurs only after applicability checks.
+Design point: the packed word is a projection of live block state rather than stored state. Reading `BARG.BPC`, `BARG.BPCN`, or the packed word never modifies `BARG`, so observation and continuation cannot interfere.
+
+`LSRGET` writes no system register and performs no ordinary scalar memory access.
 
 <!-- PTO-READER-BLOCK: scalar-lsrget-constraints role=constraints -->
 ## Placement and rejection
 
-IDs `0`, `1`, and `2` are assigned; `1` applies only to Standard and Floating blocks, and higher IDs are reserved.
+`LSRGET` requires an active bundle with an active body. Outside one, `CurrentBARGWordApplicable` returns `FALSE` and the attempt raises `Fault_BundleControl` before any destination effect. A reserved identifier, or identifier 1 in a block kind without a candidate word, is rejected the same way (`asl/block/model/state/barg.asl:54`).
 
-An inactive body, an unassigned ID, or a selected BARG word that does not apply to the active block raises Illegal Block Exception before destination, queue, system-state, or `TPC` effects.
+Design point: the applicability test covers the bundle and body state as well as the identifier, so the same `LSRGET` encoding can be legal in one block kind and rejected in another. Code that reads `BARG.BPCN` is therefore legal only in blocks that have a candidate word.
 
 <!-- PTO-READER-BLOCK: scalar-lsrget-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `lsrget LSR_ID, ->{t, u, Rd}` and trace the selected BARG word through applicability checks before publication.
+Inside an active Standard block body, `lsrget LSR_ID, ->{t, u, Rd}` with `LSR_ID` 1 and a destination of R3 reads `BARG.BPCN` into R3. The same instruction with `LSR_ID` 3 raises `Fault_BundleControl`, because identifiers above 2 are reserved, and `RegDst` is not written.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

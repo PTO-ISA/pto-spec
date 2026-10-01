@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-isw-purpose role=purpose -->
 ## What DC.ISW does
 
-`DC.ISW` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+`DC.ISW` performs the data-cache set/way scope-token maintenance operation and completes it synchronously. The token comes from the single source operand `SrcL` (`asl/scalar/sys/DC.ISW.asl:29`), which the instruction snapshots and records.
 
 <!-- PTO-READER-BLOCK: scalar-dc-isw-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+The instruction is bound to the maintenance handler (`asl/scalar/sys/DC.ISW.asl:11`) and to `Maintenance_DC_ISW` (`asl/scalar/sys/DC.ISW.asl:23`). The executor's privilege table treats that token as a cache operation, and its operation table places it in the data-cache group that advances `_DataCacheEpoch` (`asl/scalar/model/sys/semantics.asl:134`).
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+`DC.ISW` is one scalar operation in an active SYS block body. The applicability rule that enforces this reads the active bundle and its block kind, not the decoded operand (`asl/scalar/model/sys/semantics.asl:321`).
 
 <!-- PTO-READER-BLOCK: scalar-dc-isw-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+`SrcL` is a Reg5 source: R0..R23, T#1..T#4, or U#1..U#4. The decoded value is captured before the effect and passed to the executor as the operand (`asl/scalar/model/dispatch/sys.asl:27`).
 
-Encoded zero is an assigned field value, never an omitted operand.
+There is no destination operand, so the operand value is published only into the maintenance record. Encoded zero selects the architectural zero GPR and is a usable token value rather than an omission.
 
 <!-- PTO-READER-BLOCK: scalar-dc-isw-effects role=effects -->
 ## Architectural effects
 
-On success, the maintenance record receives `Maintenance_DC_ISW` and the exact captured operand token.
+On success, `_DataCacheEpoch` increases by one and the maintenance record is set to `Maintenance_DC_ISW` plus the captured operand (`asl/scalar/model/sys/semantics.asl:137`). `TPC` advances by the instruction length afterwards, from the dispatcher's success tail (`asl/scalar/model/dispatch/top-level.asl:56`).
 
-Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+Design point: the epoch and the record are separate observables. The epoch says a data-cache maintenance step completed; the record says which operation and which token caused it. Reading only the epoch cannot distinguish `DC.ISW` from `DC.CVA`.
+
+No scalar memory access, register write, or queue push accompanies the operation.
 
 <!-- PTO-READER-BLOCK: scalar-dc-isw-constraints role=constraints -->
 ## Placement and rejection
 
-Cache maintenance is a synchronous local hint at every ACR and does not define additional implementation cache contents.
+Placement and encoding are checked before the executor is entered. An attempt outside an active SYS block body raises `Fault_BundleControl` at the active block's `TPC` value (`asl/scalar/model/dispatch/top-level.asl:28`), and the record and epoch are left untouched.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+Ring permission does not constrain `DC.ISW`, because only the TLB maintenance operations reject a non-root ring (`asl/scalar/model/sys/semantics.asl:121`). The recorded token is never bounds-checked against a modelled set or way count.
 
 <!-- PTO-READER-BLOCK: scalar-dc-isw-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `dc.isw SrcL` and trace its encoded fields through preflight before following the selected system effect.
+Run `dc.isw SrcL` in a SYS block body with the source holding 0x21. The attempt passes placement and encoding, snapshots 0x21, advances the data-cache epoch by one, and leaves the record holding `Maintenance_DC_ISW` with operand 0x21. Running the same sequence at any access ring gives the same result, since the operation is not ring-restricted.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

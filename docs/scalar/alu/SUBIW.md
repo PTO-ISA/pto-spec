@@ -19,47 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-subiw-purpose role=purpose -->
 ## What SUBIW does
 
-`SUBIW` is a 32-bit scalar ALU instruction. It performs subtraction under the low 32-bit word, followed by sign-extension to XLEN result rules; its current instruction contract defines the result publication path and any additional state effect.
+`SUBIW` subtracts a zero-extended `12`-bit immediate from the low `32` bits of `SrcL` modulo `2^32` and publishes the `32`-bit result sign-extended to `PTO_XLEN`. It has three fields: `RegDst` at `[7 +: 5]`, `SrcL` at `[15 +: 5]` and `uimm12` at `[20 +: 12]`.
+
+The carrier matches `0x00001035` under mask `0x0000707f` and dispatches `ScalarBinaryW`.
+
+Two independent width decisions are visible here: the subtraction happens at `32` bits, while the published value is a `PTO_XLEN` word whose upper half repeats word bit `31`.
 
 <!-- PTO-READER-BLOCK: scalar-subiw-mechanism role=mechanism -->
-## How the result is formed
+## How the word result is formed
 
-Execution snapshots the encoded inputs, then performs subtraction under the low 32-bit word, followed by sign-extension to XLEN result rules, and only afterward performs the destination effects.
+Dispatch calls `ExecuteDecodedImmediateBinary` with `word_operation` true at `asl/scalar/model/dispatch/alu.asl:114-116`. `ScalarBinaryW` binds `left32` to `left[31:0]`, computes `left32 - right32` modulo `2^32`, and returns `SignExtend{PTO_XLEN}(result32)` (`asl/scalar/model/alu/semantics.asl:477`).
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+subiw SrcL, uimm, ->{t, u, Rd}
+```
+
+Design point: The immediate is zero-extended to `PTO_XLEN` first, but only its low word reaches the subtraction, and the immediate is at most `4095`, so it never sets a bit above bit `11`.
+
+Design point: A word subtraction that goes below zero produces a word with bit `31` set, and the final extension turns that into a negative published value. `subiw` with a source word of `0` and `uimm12 = 1` publishes `0xFFFFFFFFFFFFFFFF`, which is `-1`.
 
 <!-- PTO-READER-BLOCK: scalar-subiw-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 scalar result target or discards the result.
-- The 5-bit `SrcL` field selects a Reg5 scalar value whose low 32 bits participate.
-- The unsigned 12-bit `uimm12` field carries the unsigned 12-bit immediate.
+`SrcL` supplies the word, `uimm12` is decoded from the carrier, and `RegDst` receives the sign-extended word.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+- `SrcL`, instruction slice `[15 +: 5]`: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, `28..31` read `U#1..U#4`, non-consuming. Only `SrcL[31:0]` participates.
+- `uimm12`, instruction slice `[20 +: 12]`: unsigned, `0` through `4095`; encoded zero supplies subtrahend `0`.
+- `RegDst`, instruction slice `[7 +: 5]`: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+- Encoded zero of `SrcL` reads the architectural zero GPR, whose low word is `0`.
+
+Design point: The upper half of `SrcL` is discarded before the subtraction, so `subiw` with `a0 = 0x0000000100000000` and `uimm12 = 1` publishes `0xFFFFFFFFFFFFFFFF`, not `0x00000000FFFFFFFF`. The word of the source is zero and the word result is `-1`.
 
 <!-- PTO-READER-BLOCK: scalar-subiw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is read before the write, so an aliasing destination computes from the pre-instruction value. The sign-extended word is published and `TPC` advances by `4` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+`SUBIW` reads no memory and changes no reservation, descriptor, numeric-flag, trap, bundle, privilege, predicate or control-flow state; the only queue movement is the push selected by a `30` or `31` destination.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: The wrap at `32` bits and the sign extension are both silent. A caller that wants the unsigned word difference reads the low `32` bits of the destination and ignores the upper half.
 
 <!-- PTO-READER-BLOCK: scalar-subiw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+All `32` `SrcL` codes, all `32` `RegDst` codes and all `4096` immediate values are assigned, and the form has no constraint entry. The only fixed requirement is that the carrier bits selected by mask `0x0000707f` match `0x00001035`, because `uimm12` occupies all twelve instruction bits `31:20`.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unmatched carrier raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`, reachable for `SUBIW` only while a system-block terminal request is pending. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`, before the destination effect and before `TPC` advances.
+
+Design point: The word subtraction and the final sign extension are total, so `SUBIW` has no operand-selected trap. Its fault boundary is encoding validity plus source availability.
 
 <!-- PTO-READER-BLOCK: scalar-subiw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `SUBIW` example, `SrcL=7` and `uimm12=3` produce `4`.
+With `a0` holding `10`, `subiw a0, 3, ->a2` publishes `7`.
+
+With `a0` whose low word is `3` and an immediate of `7`, the word difference is `0xFFFFFFFC`, so `a2` receives `0xFFFFFFFFFFFFFFFC`, which is `-4`. With the same source, an immediate of `3` publishes `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

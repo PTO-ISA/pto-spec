@@ -19,42 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-ebreak-purpose role=purpose -->
 ## What C.EBREAK does
 
-`C.EBREAK` raises the architectural software-breakpoint trap with its encoded immediate cause.
+`C.EBREAK` raises the software-breakpoint trap. The trap number is `50`, and the encoded immediate becomes the trap cause.
+
+It is the compressed software-breakpoint form: the cause travels inside the instruction itself rather than in a register.
 
 <!-- PTO-READER-BLOCK: scalar-c-ebreak-mechanism role=mechanism -->
-## System mechanism
+## How the instruction is placed and executed
 
-The ASL DOC region selects `ScalarHandler_SoftwareBreakpoint`. Placement and encoded legality are checked before sources or system state can change.
+This instruction is one scalar operation of an active SYS block. The scalar dispatcher first checks that a bundle is active and that its body is active with block kind System; a SYS form outside such a block is rejected with `Fault_BundleControl`, before any encoded-field check and before any architectural effect.
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+Encoded legality and source availability are then checked, and only then does the handler run.
+
+The handler takes the 5-bit immediate field, zero-extends it into the 24-bit trap-cause field, and raises `Fault_SoftwareBreakpoint` at the request site. The trap context is saved before the vector transfer, so the pre-instruction state, the trap number, the zero-extended cause and the faulting-address argument are all recorded together.
+
+Design point: the cause is zero-extended rather than sign-extended, and no breakpoint-tag register is written. That keeps the immediate a plain unsigned cause value that a trap handler can compare without knowing the encoding width, and it keeps the breakpoint identity entirely inside the trap record.
 
 <!-- PTO-READER-BLOCK: scalar-c-ebreak-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`imm5` carries the 5-bit immediate value.
-
-Encoded zero is an assigned field value, never an omitted operand.
+- `imm5` is the only encoded operand: a 5-bit immediate value.
+- Every 5-bit value is an assigned encoding, so encoded zero is a real zero cause, not an omitted operand.
+- There is no destination field, so the instruction never writes a GPR and never pushes `T` or `U`, and there is no source field, so no register or queue entry is read.
 
 <!-- PTO-READER-BLOCK: scalar-c-ebreak-effects role=effects -->
 ## Architectural effects
 
-The operation raises `Fault_SoftwareBreakpoint`, publishes trap number `50`, and zero-extends the 5-bit immediate into the 24-bit cause field.
+The instruction raises `Fault_SoftwareBreakpoint` and publishes trap number `50`. The trap-cause field receives the zero-extended immediate, so `imm5=0` produces cause `0` and `imm5=31` produces cause `31`.
 
-Trap entry atomically saves the pre-instruction context and faulting-PC argument before vector transfer.
+`TPC` does not advance by the ordinary `2`-byte step of this compressed form: the trap records the request site as the fault address and control transfers through the trap vector. No scalar register, queue entry, or memory location is changed by the instruction itself.
 
 <!-- PTO-READER-BLOCK: scalar-c-ebreak-constraints role=constraints -->
 ## Placement and rejection
 
-All `32` immediate encodings are assigned, including zero as a real cause value.
+Invalid block placement is rejected first, with `Fault_BundleControl`, before the encoded field is even considered.
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+No `imm5` value is reserved, so the cause field can never be the reason for a rejection. There is no source selector to validate and no destination to validate.
+
+Because the immediate is zero-extended into a `5`-bit breakpoint tag, the largest cause a software breakpoint can produce is `31`.
 
 <!-- PTO-READER-BLOCK: scalar-c-ebreak-example role=example -->
 ## Non-normative example
 
-This spelling example is illustrative; exact legality and effects remain in the generated contract below.
-
-Start with `c.break imm` and trace its encoded fields through preflight before following the selected system effect.
+`c.break imm` with `imm5=7` raises the software-breakpoint trap with number `50` and cause `7`. With `imm5=0` the same trap is raised with cause `0`; the zero cause is a real encoded request and is never treated as a missing operand.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,49 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-ccatw-purpose role=purpose -->
 ## What HL.CCATW does
 
-`HL.CCATW` is a 48-bit scalar ALU instruction. It concatenates the two source portions, applies the encoded logical right shift, and separates the result into low and high word destinations; its current instruction contract defines the result publication path and any additional state effect.
+`HL.CCATW` is a 48-bit scalar ALU instruction. It packs the low word of `SrcL` above the low word of `SrcR`, shifts that 64-bit value logically right by `shamt`, sign-extends each 32-bit half to XLEN, and publishes the low half to `Dst0` and the high half to `Dst1`.
+
+Design point: the word form reads bits `31:0` of each source but writes a full XLEN value to each destination. Sign extension fills the upper bits from bit `31` of the shifted half, so each destination receives a defined XLEN value.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ccatw-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then concatenates the two source portions, applies the encoded logical right shift, and separates the result into low and high word destinations, and only afterward performs the destination effects.
+Both helpers build the same packed value: bits `31:0` hold `SrcR[31:0]` and bits `63:32` hold `SrcL[31:0]` (`asl/scalar/alu/HL.CCATW.asl:26-58`).
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+- For `shamt` in `0..63` the low result is the sign-extended `LSR(packed, shamt)[31:0]`.
+- For `shamt` in `0..63` the high result is the sign-extended `LSR(packed, shamt)[63:32]`.
+- For `shamt` in `64..127` both results are zero.
+
+Design point: this helper has no special case at `shamt=0`, so `Dst0` receives the sign-extended `SrcR[31:0]` and `Dst1` the sign-extended `SrcL[31:0]`; each half takes its sign from bit `31` of the shifted result, so the sign follows the data arriving in that half.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ccatw-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst0` field selects the first, low-result Reg5 target or discards that result.
-- The 5-bit `RegDst1` field selects the second, high-result Reg5 target or discards that result.
-- The 5-bit `SrcL` field selects the upper concatenation source low word through Reg5.
-- The 5-bit `SrcR` field selects the lower concatenation source low word through Reg5.
-- The 7-bit `shamt` field encodes the unsigned seven-bit logical-right shift amount.
+- `RegDst0` receives the low word result or discards it.
+- `RegDst1` receives the high word result or discards it.
+- `SrcL` is the source whose low word becomes bits `63:32` of the packed value.
+- `SrcR` is the source whose low word becomes bits `31:0` of the packed value.
+- `shamt` is the 7-bit unsigned logical-right shift amount.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Both sources use the full source map: codes `0..23` select absolute GPRs, `24..27` select `T#1..T#4`, `28..31` select `U#1..U#4`, without consuming a queue entry. Both destinations use the common destination map: codes `1..23` write a GPR, codes `0` and `24..29` discard, code `30` pushes `U`, and code `31` pushes `T`.
+
+Design point: only bits `31:0` of each source reach the result, so `hl.ccatw a0, a1, 0, ->a2, a3` ignores bits `63:32` of both `a0` and `a1`; those upper words never enter the published halves.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ccatw-effects role=effects -->
 ## Effects and ordering
 
-All results are computed before publication. The destinations are then updated in encoded order (`RegDst0`, `RegDst1`), which also defines the order of duplicate-register writes or queue pushes.
+Both results are computed before either write, and the writes follow a fixed order: `Dst0` first with the low word result, then `Dst1` with the high word result.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
+Design point: the order is observable when both destinations name one place. For one GPR the `Dst1` write is final. For one queue `Dst0` is enqueued first, so the high result becomes the newest entry.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+`HL.CCATW` has no memory effect, records no numeric-status flag, and changes no other architectural state; `TPC` advances by `6` bytes after both destination effects.
+
+Design point: for `shamt` in `64..127` both results are zero, yet both destination effects happen: a GPR destination is written with `0`, and a `T` or `U` destination still receives a zero push.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ccatw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Every encoded concatenation shift is defined and zero-filling. A fixed-bit mismatch or unavailable selected T/U source faults before either destination effect.
+All `128` values of `shamt` are assigned: `0..63` produce two sign-extended word results and `64..127` produce two zeros; every source and destination code is assigned as well.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An encoding whose fixed bits do not match the `HL48` form does not decode, and an encoding that matches no accepted form raises `Fault_IllegalInstruction` at `PC` before any source read. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before either destination effect and before `TPC` advances. An instruction not applicable to the active bundle faults with `Fault_BundleControl` at `TPC` (`asl/scalar/model/dispatch/top-level.asl:17-37`, `asl/scalar/model/types/operands.asl:6-19`).
+
+Design point: the helpers assert on no operand value, so every `shamt` and source pair yields a defined XLEN result, and the instruction has no arithmetic fault path.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ccatw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.CCATW` example, with shift `0`, upper source `1`, and lower source `2`, the ordered low and high results are `2` then `1`.
+With `shamt=0`, `SrcL[31:0]` equal to `0x80000000`, and `SrcR[31:0]` equal to `0x1`, there is no shift: `Dst0` receives the sign-extended `SrcR[31:0]`, which is `1`, and `Dst1` receives the sign-extended `SrcL[31:0]`, which is `0xffffffff80000000`.
+
+With `shamt=64` both published results are zero, so `hl.ccatw a0, a1, 64, ->a2, a3` writes `0` to `a2` and `0` to `a3`. With `shamt=32` the low result is the sign-extended `SrcL[31:0]`, which is again `0xffffffff80000000`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

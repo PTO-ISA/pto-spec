@@ -15,42 +15,54 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-access-control-purpose-scope role=purpose-scope -->
 ## Purpose and scope
 
-This unit defines current Access Control Ring state, its four-bit representation, portable trap targets, permitted service requests, and trap-vector lookup.
+`asl/arch/system-registers/access-control.asl` owns the current Access Control Ring and the ring arithmetic around it: `CurrentACR`, `AccessControlRingBits`, `SetCurrentACR`, `TrapTargetForFault`, `TrapTargetForInterrupt`, `ServiceRequestPermitted`, `ServiceRequestTarget` and `TrapVectorEntry`. `AccessControlRing` is `integer {0..15}` and `PTO_ACR_COUNT` in `asl/arch/programming-model/core-pe-topology.asl` is `16`.
+
+The file declares no `NDF-BEGIN` clause; its normative content is the eight function bodies plus the state they read, `_CurrentACR` and `_ExtendedSystemRegisters`, declared in `asl/arch/programming-model/execution-context.asl`.
 
 <!-- PTO-READER-BLOCK: arch-access-control-concepts-state role=concepts-state -->
-## ACR state and encoding
+## Ring state and its encoding
 
-`CurrentACR` returns `_CurrentACR`. `AccessControlRingBits` maps ring values `0` through `15` to the corresponding four-bit binary value.
+`CurrentACR()` returns `_CurrentACR`. `SetCurrentACR(ring)` writes `_CurrentACR` and also writes `AccessControlRingBits(ring)` into `_SystemRegisters.core_state[3:0]`, so the ring appears in its own variable and in the low nibble of the `CORE_STATE` word. `AccessControlRingBits` maps `0` to `0000` through `15` to `1111`, making the nibble the ring number itself.
 
-`SetCurrentACR` updates both `_CurrentACR` and `core_state[3:0]`, keeping the stored ring and its system-register representation synchronized.
+The reverse direction lives in the system-register write path: `WriteSystemRegister` in `asl/scalar/model/sys/semantics.asl` stores a software `CORE_STATE` write and then sets `_CurrentACR` from `value[3:0]`, and `ResetProfileState` in `asl/arch/system-registers/addressing.asl` ends with `_CurrentACR = 0`.
+
+Design point: the ring needs no encoding table lookup and no separate valid flag, because `AccessControlRing` is already constrained to `0..15` and `AccessControlRingBits` is total over that range. A value read from `_CurrentACR` can always be written into the nibble, and a saved nibble can always be converted back with `UInt(ecstate[3:0]) as AccessControlRing`.
 
 <!-- PTO-READER-BLOCK: arch-access-control-rules-interactions role=rules-interactions -->
 ## Trap and service routing
 
-`TrapTargetForFault` maps source ACR0 to target ACR0 and every nonzero source to target ACR1. `TrapTargetForInterrupt` uses the same rule.
+`TrapTargetForFault(source)` returns `0` for source `0` and `1` for any other source, and `TrapTargetForInterrupt(source)` returns exactly `TrapTargetForFault(source)`: a trap taken while ring `0` is current stays in ring `0`, and a trap taken in rings `1` to `15` is delivered to ring `1`.
 
-From ACR1, service request types `0000` and `0010` are permitted. From ACR2 through ACR15, request types whose unsigned value is at most `2` are permitted; ACR0 permits none.
+`ServiceRequestPermitted(source, request_type)` accepts, from source `1`, only `0000` and `0010`; from source `2` and above it accepts any `request_type` whose unsigned value is at most `2`; from source `0` it returns `FALSE`. `ServiceRequestTarget(source, request_type)` asserts that permission and returns `1` for `0001` and `0` otherwise.
 
-For a permitted request, type `0001` targets ACR1 and every other permitted type targets ACR0.
+Design point: two-level routing means one slot serves many rings. `SetFaultWithCause` calls `SaveTrapContext(ring, source_ring)` with the routed target ring, and `_TrapContexts` holds one slot per ring, so faults in rings `7` and `2` both save into slot `1` and the later save replaces the earlier; the saved `source_acr` field keeps each origin recoverable.
 
 <!-- PTO-READER-BLOCK: arch-access-control-boundaries role=boundaries -->
 ## Trap-vector lookup boundary
 
-`TrapVectorEntry` reads extended-system-register index `target * 4096 + 0x0f01`. A nonzero entry is the vector base; a zero entry falls back to the supplied fault address.
+`TrapVectorEntry(target, fault_address)` computes the index `(target * 4096) + 0x0f01` as a `SystemRegisterFileIndex` and returns the word stored there unless it is `Zeros{PTO_XLEN}`, in which case it returns `fault_address`. The highest ring's index, `15 * 4096 + 0x0f01` = `65281`, is inside the declared range `0` to `65535`.
 
-`ServiceRequestTarget` asserts that the request is permitted. Callers must establish permission before asking for a target.
+`ResetProfileState` clears low indices `0x0f00` through `0x0fb7` for all `16` rings, so the vector base at `0x0f01` is zero for every ring in the reset state. The one exception is low index `0x0f07`, preset to `3` so external and timer interrupt collection starts enabled.
+
+Design point: a zero vector base means "use the fault address" instead of "invalid entry", so the reset state is a working identity vector: a fault re-enters the model at the address it was reported for until software stores a nonzero base in the target ring's `0x0f01` register, and a stored zero cannot vector a ring to address `0`.
 
 <!-- PTO-READER-BLOCK: arch-access-control-example-usage role=example-usage -->
 ## Non-normative routing example
 
-A type-`0001` request from ACR2 is permitted and targets ACR1. The same request from ACR1 is not permitted, so it must not be passed to `ServiceRequestTarget`.
+`TrapTargetForFault(0)` is `0` and `TrapTargetForFault(3)` is `1`, so a fault taken while ring `3` is current goes to ring `1`. `ServiceRequestPermitted(2, '0001')` is `TRUE` because the unsigned value of `0001` is at most `2`, and `ServiceRequestTarget(2, '0001')` returns `1`; from ring `1` the same type is not permitted, since the set there is `0000` and `0010` only, so `ServiceRequestTarget(1, '0001')` would fail its assertion.
+
+`RaiseServiceRequest` in `asl/arch/memory-model/fault-precision.asl` runs the whole sequence: it computes a resume address, saves context into the ring chosen by `ServiceRequestTarget`, rewrites the saved TPC and context register `0x0f43`, records trap number `6`, selects the target with `SetCurrentACR` and installs `TrapVectorEntry(target_ring, source_tpc)`.
+
+Within `asl/arch/memory-model/fault-precision.asl` alone, `CurrentACR` appears `4` times, `SetCurrentACR` and `TrapVectorEntry` `3` times each, and `TrapTargetForFault`, `TrapTargetForInterrupt`, `ServiceRequestPermitted` and `ServiceRequestTarget` once each.
 
 <!-- PTO-READER-BLOCK: arch-access-control-related-owners role=related-owners-navigation -->
 ## Related owners
 
-- [Execution context](../programming-model/execution-context.md) is the declared dependency.
-- [Context registers](context.md) defines the ring-plus-low-index addressing rule.
-- [Trap context](../state/trap-context.md) saves the source ACR and restores it after portable recovery.
+- [Execution context](../programming-model/execution-context.md) is the line-1 dependency and declares `_CurrentACR` and `_ExtendedSystemRegisters`.
+- [Context registers](context.md) owns `ContextRegisterIndex` and the ring-plus-low-index addressing rule.
+- [Trap context](../state/trap-context.md) saves `source_acr`, writes the saved ring nibble and restores `_CurrentACR`.
+- [Fault precision](../memory-model/fault-precision.md) calls the trap-target and service-request helpers.
+- [System-register addressing](addressing.md) owns `core_state`, which carries the ring nibble.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

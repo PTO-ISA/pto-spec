@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-xori-purpose role=purpose -->
 ## What HL.XORI does
 
-`HL.XORI` is a 48-bit scalar ALU instruction. It performs bitwise exclusive OR under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+`HL.XORI` is a 48-bit scalar ALU instruction that computes the bitwise exclusive-or of `SrcL` and a sign-extended 24-bit immediate and publishes the XLEN result through one Reg5 destination.
+
+Because the operand is built by `SignExtend{PTO_XLEN}`, a negative immediate inverts the whole upper half as well as the bits it encodes directly.
 
 <!-- PTO-READER-BLOCK: scalar-hl-xori-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then performs bitwise exclusive OR under the complete XLEN value result rules, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractResult_HL_XORI`, which builds `right = SignExtend{PTO_XLEN}(immediate)` and returns `ScalarBinary(ScalarBinary_XOR, left, right)`. Dispatch selects the same path with `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_XOR, ScalarField_simm24, FALSE)`.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+hl.xori SrcL, simm, ->{t, u, Rd}
+```
+
+Design point: exclusive-or with a sign-extended field is a patterned complement, not just a local edit. `simm24 = -1` extends to `0xFFFFFFFFFFFFFFFF`, so `hl.xori a0, -1, ->a0` publishes the bitwise complement of the complete XLEN register.
 
 <!-- PTO-READER-BLOCK: scalar-hl-xori-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 scalar result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar value through Reg5.
-- The signed 24-bit `simm24` field carries the signed split 24-bit immediate.
+- `RegDst`, instruction slice `[23 +: 5]`, receives the XLEN result or discards it.
+- `SrcL`, instruction slice `[31 +: 5]`, supplies the value to be combined.
+- `simm24`, instruction slices `[36 +: 12]` and `[4 +: 12]`, supplies value bits `11:0` and `23:12`.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+`SrcL` uses the common Reg5 map: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4` without consuming the entry. Encoded zero reads the architectural zero GPR.
+
+Design point: the immediate is signed, so the field spans `-8388608` through `8388607` and each value inverts a different set of high bits. There is no unsigned reading of `simm24` and therefore no encoding that masks only the low bits without also touching the upper half when bit `23` is set.
 
 <!-- PTO-READER-BLOCK: scalar-hl-xori-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is snapshotted before the destination effect, so an alias between `SrcL` and `RegDst` cannot feed the newly published value back into the same instruction.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The result is published through `RegDst`, and `TPC` then advances by `6` bytes. `HL.XORI` reads and writes no memory and leaves numeric-status, reservation, descriptor, Tile, bundle, privilege and control-flow state unchanged; the only possible queue change is the destination-selected `T` or `U` push.
 
 <!-- PTO-READER-BLOCK: scalar-hl-xori-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+All `32` `SrcL` codes and all `32` `RegDst` codes are assigned, and every signed 24-bit immediate is legal, so the operand pass can fail only on an unavailable temporary source. The fixed encoding bits must match the canonical 48-bit form; the two immediate pieces reconstruct one exact value and no encoding is reserved.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise a mismatching encoding raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before the destination write. The exclusive-or itself raises no exception.
+
+Design point: a logical operation has no overflow corner, so the whole fault surface is the encoding match plus temporary source availability. Nothing about the operand values can move a fault from one of those two checks to the arithmetic.
 
 <!-- PTO-READER-BLOCK: scalar-hl-xori-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.XORI` example, `SrcL=0xc` and `simm24=0xa` produce `0x6`.
+With `SrcL = 0x0F` and `simm24 = -1`, the extended operand is `0xFFFFFFFFFFFFFFFF`, so `RegDst` receives `0xFFFFFFFFFFFFFFF0`. With `SrcL = 0` and `simm24 = 8388607`, the extended operand is `0x00000000007FFFFF` and `RegDst` receives `0x00000000007FFFFF`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

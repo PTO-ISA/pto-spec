@@ -19,40 +19,58 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-addtpc-purpose role=purpose -->
 ## ADDTPC 的作用
 
-`ADDTPC` 根据当前 `TPC` 形成页相对地址，但不执行控制转移。
+`ADDTPC` 给当前指令 `TPC` 加上一个有符号的 `4` KiB 页位移，并把得到的地址写入目的寄存器。
+
+它是物化指令而非分支：算出的地址成为数据，执行继续到下一条指令。
 
 <!-- PTO-READER-BLOCK: scalar-addtpc-mechanism role=mechanism -->
-## 执行机制
+## 机制
 
-有符号 `20` 位立即数先扩展并左移 `12` 位，再与快照的当前 `TPC` 按 `2^PTO_XLEN` 取模相加。
+契约返回 `ScalarHandler_AddToPC`，其中 `InstructionContractUsesTPC_ADDTPC` 为真、`InstructionContractImmediateIsSigned_ADDTPC` 为真、`InstructionContractImmediateWidth_ADDTPC` 为 `20`、`InstructionContractPageShift_ADDTPC` 为 `12`。
 
-计算出的地址通过编码目的位置发布，不会被安装为下一条 `TPC`。
+模型把左移 `12` 位后的 `SignExtend(imm20)` 加到 `TPC` 上，并把该和通过目的选择子写出。加法在 XLEN 处回绕。`TPC` 在加法之前只读取一次，因此该和相对于 `ADDTPC` 自身的地址，而绝不相对于下一条指令。
+
+设计要点：编码立即数为零时贡献零位移，因此该指令无需其他准备就能把当前 `TPC` 复制进寄存器。这为软件提供了获取自相对基地址的途径，而不必额外载入一个常量。
 
 <!-- PTO-READER-BLOCK: scalar-addtpc-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `RegDst` 选择编码指定的目的位置或丢弃行为。
+`imm20` 提供有符号的 `20` 位页位移：编码值先做符号扩展，再按 `4096` 字节缩放。它的 `20` 位覆盖正负两千兆字节的页范围。
 
-- `imm20` 提供编码立即数或位移。
+`RegDst` 命名目的。编码 `1..23` 写入所指的绝对 GPR，编码 `0` 与编码 `24..29` 丢弃结果，编码 `30` 把它压入 `U` 队列，编码 `31` 把它压入 `T` 队列。
+
+`RegDst` 编码为零时指向架构零 GPR，因此写入该处没有架构效果。
+
+设计要点：`RegDst` 排除编码 `10`，因为这个五位值是 `SETRET` 隐式返回地址目的的编码，而更窄的 `SETRET` 形式恰好占据 `ADDTPC` 操作码中的那个空洞。因此 `RegDst` 为 `10` 会被拒绝，而不是被重新解释。
 
 <!-- PTO-READER-BLOCK: scalar-addtpc-effects role=effects -->
-## 效果与顺序
+## 效果与排序
 
-结果先通过编码目的位置发布，成功分派随后让 `TPC` 前进 `4` 字节。
+`ADDTPC` 只写一个目的值，别的什么都不做。`InstructionContractWritesTPC_ADDTPC` 返回假，状态契约也声明该指令既不安装控制流目标，也不直接修改 `TPC`。
 
-该指令不分支，也不访问内存或保留状态。
+在目的效果之后，标量派发让 `TPC` 前进 `4` 字节，即该形式的编码长度，因为 `ScalarHandlerWritesTPC` 对 `AddToPC` 为假。
+
+没有内存效果，没有保留效果，也没有数值状态标志。
+
+设计要点：地址运算与程序计数器前进是两个分离的步骤。因此后续的分支或间接转移可以从寄存器中取用算出的地址，而在此之前只读的 `TPC` 寄存器一直保持它通常的顺序含义。
 
 <!-- PTO-READER-BLOCK: scalar-addtpc-constraints role=constraints -->
 ## 合法性与故障顺序
 
-编码、保留字段值和源可用性都会在目的、控制或 `TPC` 效果前检查。
+先执行解码。固定位不匹配会在指令地址处抛出 `Fault_IllegalInstruction`，且在任何效果之前。
+
+唯一受约束的字段是 `RegDst`，其取值 `10` 是保留的，也会在任何效果之前抛出 `Fault_IllegalInstruction`。`imm20` 没有保留取值：包括符号位在内，全部 `20` 位模式都已分配。
+
+被选中但不可用的 `T` 或 `U` 源会在操作数合法性步骤被拒绝，且早于目的写入。失败时目的寄存器、队列和 `TPC` 都保持不变。
 
 <!-- PTO-READER-BLOCK: scalar-addtpc-example role=example -->
 ## 非规范示例
 
-下面的示例只帮助理解当前所有者，不构成第二份语义定义。
+设 `a0 = 8192`，并设 `ADDTPC` 指令本身位于 `TPC = 53248`。
 
-`addtpc simm, ->{t, u, Rd}` 把页相对地址作为数据发布，随后继续顺序执行。
+当 `imm20 = 1` 时位移为 `1 << 12 = 4096`，因此 `addtpc simm, ->{t, u, Rd}` 把 `53248 + 4096 = 57344` 写入 `a0`。
+
+下一条指令取自 `53248 + 4 = 53252`，而不是 `57344`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

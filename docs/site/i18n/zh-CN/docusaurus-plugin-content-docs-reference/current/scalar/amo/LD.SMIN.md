@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ld-smin-purpose role=purpose -->
 ## LD.SMIN 的作用
 
-`LD.SMIN` 对一个双字原子执行有符号最小值、存储结果，并发布先前的内存值。
+`LD.SMIN` 把两个值中较小的那个存储到某个内存地址。已存的双字与 64 位操作数都按二进制补码有符号整数解读，指令执行前内存中的双字通过 `RegDst` 发布。
 
 <!-- PTO-READER-BLOCK: scalar-ld-smin-mechanism role=mechanism -->
-## 原子机制
+## 如何保留较小的有符号值
 
-ASL DOC 契约选择 `ScalarHandler_AtomicReadModifyWrite`，访问宽度为 `8` 字节。
+处理器是 `ScalarHandler_AtomicReadModifyWrite`，访问宽度 `8`，原子操作 `Atomic_SMIN`。读取预检与写入预检通过后，旧双字被加载、与 `SrcR` 比较，较小的有符号值被写回；同时记录一个 `write_performed` 为 true 的原子事件。
 
-只有读取与写入访问都完成预检后，同一位置的原子读改写才能提交。
+设计要点：比较把第 63 位读作符号位。存放 `0x0000000000000005` 的位置与 `SrcR = 0xfffffffffffffffd`（即 `-3`）比较后存放 `0xfffffffffffffffd`，因为 `-3` 小于 `5`。存储的字节是两个输入模式之一，未被改动。
+
+设计要点：两个有符号值相等时，该形式保留操作数。此时它的位模式与旧双字完全相同，因此该位置被写入它本来就持有的字节，而这次执行仍然算作一次已执行的原子写入。
+
+设计要点：只有在没有引发故障时才写目的地，因此被拒绝的 `LD.SMIN` 会让该寄存器保持原有内容，而不会发布一个并非来自内存的值。
 
 <!-- PTO-READER-BLOCK: scalar-ld-smin-inputs-outputs role=inputs-outputs -->
-## 输入与结果
+## 字段与操作数角色
 
-`SrcL` 承载 Reg5 原子地址源；`SrcR` 承载 Reg5 原子操作数源；`RegDst` 承载 Reg5 旧值目的地；`aq` 承载获取排序位；`rl` 承载释放排序位；`far` 承载平坦地址路由提示。
+`RegDst` 是位于指令位 `7..11` 的 `5` 位字段，`SrcL` 位于位 `15..19`，`SrcR` 位于位 `20..24`，`rl` 位于位 `25`，`aq` 位于位 `26`，`far` 位于位 `27`。`SrcL` 提供原子地址，`SrcR` 提供操作数；全部 Reg5 源选择子都合法，被选中的 T 或 U 项在读取时不会被弹出。
 
-`aq` 与 `rl` 选择宽松、获取、释放或获取-释放排序；`far` 是配置档路由提示，在参考配置档中不改变架构结果。
+`RegDst` 接收发布值：编码 `0` 与 `24` 到 `29` 丢弃它，编码 `30` 压入 U，编码 `31` 压入 T，编码 `1` 到 `23` 写入所指的 GPR。`aq` 与 `rl` 为所记录的事件编码宽松、获取、释放与获取-释放排序。
+
+设计要点：`far` 被译码并传给 `AtomicAddress`，后者原样返回地址。在参考模型中，带提示的写法与普通写法选中的是同一个双字，因此比较结果完全相同。
 
 <!-- PTO-READER-BLOCK: scalar-ld-smin-effects role=effects -->
-## 效果与排序
+## 效果
 
-只有读改写提交后才会发布旧内存值；任何目的地效果之前都会先捕获源别名。
-
-完成的写入会使重叠的本地 64 字节缓存行保留失效，保留不重叠的保留，并让 `TPC` 前进 `4` 字节。
+一次完成的执行存储 8 字节、记录一个 `write_performed` 为 true 的原子事件、发布执行前的双字，并让 `TPC` 前进 4 字节。当写入范围与保留的 64 字节粒度重叠时，该存储会清除本地保留。
 
 <!-- PTO-READER-BLOCK: scalar-ld-smin-constraints role=constraints -->
-## 合法性与精确故障
+## 合法性与故障
 
-有效地址必须按 `8` 字节对齐。对齐、地址翻译和权限检查都先于架构效果。
-
-预检失败时不会发布目的值、内存事件、保留更新或退役效果；保存的原始 `TPC` 支持完整重新执行。
+地址必须是 8 的倍数；未对齐会引发 `Fault_DataAlignment`，超出允许区域的地址会引发 `Fault_DataPage`，两者都以原始地址报告，并且都在加载之前检查。译码失败或所选 T 或 U 源不可用会在任何效果之前引发 `Fault_IllegalInstruction`。发生故障的执行不发布任何值、不写入任何内容、不记录事件，也不推进 `TPC`。
 
 <!-- PTO-READER-BLOCK: scalar-ld-smin-example role=example -->
 ## 非规范示例
 
 本示例只展示一种已接受写法；下方生成的契约仍是权威来源。
 
-初次阅读可从 `ld.smin [SrcL], SrcR, ->Rd` 开始，再只改变上文说明的排序或路由修饰位。
+`ld.smin [a0], a1, ->a2` 在 `a0` 存放 8 字节对齐地址时就地比较。当 `[a0]` 存放 `0x0000000000000005`、`a1` 存放 `0xfffffffffffffffd` 时，较小的有符号值 `-3` 以 `0xfffffffffffffffd` 存储，`a2` 得到 `0x0000000000000005`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

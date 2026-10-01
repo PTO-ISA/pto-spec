@@ -19,36 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-add-purpose role=purpose -->
 ## What C.ADD does
 
-`C.ADD` is a compact 16-bit scalar instruction that adds two complete XLEN Reg5 sources modulo `2^PTO_XLEN` and always pushes one result to the T queue.
+`C.ADD` reads two Reg5 sources, adds them modulo `2^PTO_XLEN`, and pushes the XLEN result to `T` as the newest temporary value. It is the 16-bit form of the same addition that `ADD` performs with an encoded destination.
+
+Design point: the destination is not encoded at all. The 16-bit form spends its payload on two 5-bit source selectors, so every successful `C.ADD` pushes exactly one `T` value. A result reaches a GPR only through a later instruction that reads a temporary source, for example `c.movr t#1, ->a0`.
 
 <!-- PTO-READER-BLOCK: scalar-c-add-mechanism role=mechanism -->
 ## Mechanism
 
-The instruction snapshots `SrcL` and `SrcR`, performs fixed-width addition on the two saved values, and publishes the wrapping result as the newest T entry.
+Both source codes are resolved, the two complete XLEN values are added modulo `2^PTO_XLEN`, and the wrapping sum is pushed as the newest `T` entry.
 
-The destination is implicit rather than encoded: every successful `C.ADD` pushes exactly one value to T.
+Design point: the push shifts the queue rather than overwriting a slot. The new value becomes `T#1`, the previous `T#1` becomes `T#2`, and the previous `T#4` is discarded, so a temporary value survives exactly four pushes.
+
+Design point: both sources are read before the push, so the result of `c.add t#1, t#1, ->t` is twice the old `T#1`. The instruction can never read the value it is about to create.
+
+Fixed-width addition is total: it wraps and raises no arithmetic exception.
 
 <!-- PTO-READER-BLOCK: scalar-c-add-inputs role=inputs-outputs -->
 ## Inputs and output
 
-- Each source uses the full Reg5 domain: `0..23` select GPRs, `24..27` select `T#1..T#4`, and `28..31` select `U#1..U#4`.
-- Both encoded source fields are required. Encoded source `0` reads the architectural zero GPR.
+- `SrcL` and `SrcR` are Reg5 sources: codes `0..23` select absolute GPRs, `24..27` select `T#1..T#4`, and `28..31` select `U#1..U#4`, without consuming a queue entry.
+- The destination is fixed to `T`: exactly one XLEN result is pushed per successful execution.
 
-Duplicate sources and every absolute-relative or relative-relative pairing are legal; reading a temporary source does not consume it.
+Design point: every source code is assigned, and duplicate, absolute-relative and relative-relative source pairs are all legal. `c.add t#1, u#1, ->t` and `c.add t#1, t#1, ->t` therefore encode cleanly; only an unavailable selected temporary faults.
+
+Design point: encoded zero of `SrcL` or `SrcR` reads the architectural zero GPR, so `c.add zero, zero, ->t` pushes `0` and is the compressed way to push an explicit zero.
 
 <!-- PTO-READER-BLOCK: scalar-c-add-effects role=effects -->
 ## Effects and ordering
 
-Source snapshotting precedes the implicit T push, so reading T and then pushing T uses the pre-instruction queue contents.
+The two sources are snapshotted before the `T` push, so aliases between the sources and the queue observe the pre-instruction queue state. The push itself is the only state change: the former `T#4` is dropped and all other entries move one index toward older values.
 
-The new result becomes `T#1`, older T entries shift toward `T#4`, and the former `T#4` is discarded. The U queue remains unchanged, and reading a source does not consume an entry.
-
-Successful execution advances `TPC` by `2` bytes and does not change GPR, memory, reservation, descriptor, numeric-status, block, privilege, predicate, or other control state.
+After the push, `TPC` advances by `2` bytes. No GPR, `U` entry, memory, reservation, descriptor, numeric-status, bundle, privilege, predicate or control-flow state changes.
 
 <!-- PTO-READER-BLOCK: scalar-c-add-constraints role=constraints -->
 ## Fault boundary
 
-Addition itself is total and non-trapping. An unavailable selected T/U source raises `Fault_IllegalInstruction` before the T push, before `TPC` advances, and before any unrelated state changes.
+Every encoded source value is assigned, so `C.ADD` has no reserved source code. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before the push, before `TPC` advances, and before any other effect.
+
+An undecodable 16-bit form raises `Fault_IllegalInstruction` at `PC`, and an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`. Both precede the push as well.
+
+Design point: addition itself never faults, so every value-dependent trap of `C.ADD` comes from source availability, not from the operands. Values that wrap or that look negative to a programmer are ordinary results.
 
 <!-- PTO-READER-BLOCK: scalar-c-add-example role=example -->
 ## Non-normative walkthrough

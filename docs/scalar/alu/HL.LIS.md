@@ -19,46 +19,49 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-lis-purpose role=purpose -->
 ## What HL.LIS does
 
-`HL.LIS` is a 48-bit scalar ALU instruction. It assembles the split 32-bit immediate and sign-extends it to XLEN; its current instruction contract defines the result publication path and any additional state effect.
+`HL.LIS` materializes a signed constant. It encodes no source register: its only operands are the immediate `simm32` and the destination `RegDst`. Decode reassembles the immediate from two pieces, sign-extends bit `31` through bit `63`, and publishes the value through `RegDst`. Successful execution advances `TPC` by `6` bytes.
+
+Design point: the signedness comes from the mnemonic and not from the encoding. `HL.LIS` and `HL.LIU` carry the same `32` encoded bits and differ only in the extension: `HL.LIS` sign-extends, so its results lie in `-2147483648` through `2147483647`, while `HL.LIU` zero-fills and reaches `4294967295`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lis-mechanism role=mechanism -->
-## How the result is formed
+## How the constant is formed
 
-Execution snapshots the encoded inputs, then assembles the split 32-bit immediate and sign-extends it to XLEN, and only afterward performs the destination effects.
+One immediate piece carries value bits `19:0` and the other carries bits `31:20`, so the reassembled `32`-bit pattern is exact and every pattern is an assigned value. The published word is that pattern with bit `31` copied through bit `63`.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: because bit `63` of the result is a copy of bit `31` of the immediate, `HL.LIS` can materialize a value with the highest `PTO_XLEN` bit set, and it can do so from a constant that fits in the `32` encoded bits. Nothing is read before publication, so the published value is a function of the encoding alone.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lis-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The signed 32-bit `simm32` field carries the signed split 32-bit immediate.
+- `simm32` carries the signed `32`-bit value.
+- `RegDst` publishes it: codes `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: there is no `SrcL` field, so no register and no queue entry is read, and the destination cannot alias a source. A discard destination such as `RegDst=0` therefore performs the materialization and the `TPC` advance while leaving all register and queue state as it was.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lis-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+There is no source read to order against the publication: the value is assembled from the instruction bits, then written to the selected destination. A `T` or `U` destination push makes the new value index `1` of that queue and discards the entry that was at index `4`; a GPR destination writes that one register.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Publication is followed by the `TPC` advance of `6` bytes. `HL.LIS` performs no memory access and changes no reservation, descriptor, numeric-status, `Tile`, bundle, privilege or branch-target state.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lis-constraints role=constraints -->
 ## Legality and fault boundary
 
-Materialization, movement, and extension are total at their fixed widths and do not raise arithmetic exceptions. A fixed-bit mismatch or unavailable selected T/U source faults before state effects.
+Every encoded value is assigned: all `32` `RegDst` codes and all `4294967296` immediate patterns of the `32`-bit field.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Two rejections are reachable, in model order. A `48`-bit word whose fixed bits match no form raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active bundle raises `Fault_BundleControl` at `TPC`. Both precede the destination effect and the `TPC` advance.
+
+Design point: the third rejection that the register forms can raise, an unavailable selected `T` or `U` source, is not reachable here. This form encodes no source selector, so there is no source selector for the model to test, and the destination codes are all accepted by the destination map.
+
+`HL.LIS` adds no arithmetic exception: sign extension of a `32`-bit value cannot overflow.
 
 <!-- PTO-READER-BLOCK: scalar-hl-lis-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.LIS` example, split immediate value `1` materializes XLEN value `1`.
+With the immediate bits `0xFFFFFFFF`, `hl.lis -1, ->a0` writes `18446744073709551615`. With the immediate bits `0x7FFFFFFF`, `hl.lis 2147483647, ->a0` writes `2147483647`, and `hl.lis 0, ->t` pushes `0` as the newest `T` entry.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

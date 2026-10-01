@@ -19,46 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-addi-purpose role=purpose -->
 ## What C.ADDI does
 
-`C.ADDI` is a 16-bit scalar ALU instruction. It performs addition under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+`C.ADDI` adds a sign-extended 5-bit immediate to one Reg5 source and pushes the XLEN sum to `T`.
+
+Design point: the immediate is signed and narrow, while the 32-bit `ADDI` spends twelve bits on an unsigned value. The compressed form has room for five immediate bits, and sign extension lets those five bits express both small positive and small negative increments.
 
 <!-- PTO-READER-BLOCK: scalar-c-addi-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then performs addition under the complete XLEN value result rules, and only afterward performs the destination effects.
+`simm5` is sign-extended to `PTO_XLEN`, giving an addend from `-16` through `15`, and that value is added to the snapshotted source modulo `2^PTO_XLEN`. The sum is pushed as the newest `T` entry.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: sign extension happens before the addition, so `c.addi a0, -1, ->t` subtracts one. There is no subtract mnemonic in this compressed family; a negative immediate is how the encoding expresses it.
+
+Design point: encoded zero is numeric zero, not omission, so `c.addi a0, 0, ->t` republishes the unchanged source as a new `T` entry rather than performing nothing.
+
+Fixed-width addition is total: it wraps and raises no arithmetic exception.
 
 <!-- PTO-READER-BLOCK: scalar-c-addi-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `SrcL` field selects an addend through Reg5.
-- The signed 5-bit `simm5` field carries the signed five-bit addend.
+- `SrcL` is a Reg5 source: codes `0..23` select absolute GPRs, `24..27` select `T#1..T#4`, and `28..31` select `U#1..U#4`, without consuming a queue entry.
+- `simm5` is the signed 5-bit addend.
+- The destination is fixed to `T`: exactly one XLEN result is pushed per successful execution.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero of `SrcL` reads the architectural zero GPR, so `c.addi zero, 5, ->t` is a pure constant push with no register dependency.
 
 <!-- PTO-READER-BLOCK: scalar-c-addi-effects role=effects -->
 ## Effects and ordering
 
-Any scalar source is snapshotted before publication, and the completed instruction pushes exactly one result to T.
+`SrcL` and the immediate are resolved before the `T` push, so the source cannot observe the value the instruction is about to push. The push shifts the queue: the new value becomes `T#1`, and the previous `T#4` is discarded.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 2 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+After the push, `TPC` advances by `2` bytes. No GPR, `U` entry, memory, reservation, descriptor, numeric-status, bundle, privilege, predicate or control-flow state changes.
 
 <!-- PTO-READER-BLOCK: scalar-c-addi-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every encoded value is assigned: all `32` `SrcL` codes and every `simm5` value from `-16` through `15`. No immediate is illegal.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before the push, before `TPC` advances, and before any other effect. An undecodable 16-bit form raises `Fault_IllegalInstruction` at `PC`, and an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`.
+
+Design point: because the immediate is signed and fully assigned, a caller never needs a second mnemonic to subtract a small constant, and no encoding of `C.ADDI` is reserved for a future subtract form.
 
 <!-- PTO-READER-BLOCK: scalar-c-addi-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `C.ADDI` example, `SrcL=7` and `simm5=3` produce `10`.
+With `T#1` holding `5` and `simm5=-2`, `c.addi t#1, -2, ->t` pushes `3` to `T#1` and moves the old value `5` to `T#2`. With `SrcL` naming the architectural zero GPR and `simm5=15`, the pushed value is `15`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

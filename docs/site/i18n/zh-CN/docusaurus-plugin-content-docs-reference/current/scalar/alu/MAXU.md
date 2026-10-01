@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-maxu-purpose role=purpose -->
 ## MAXU 的作用
 
-`MAXU` 是一条 32 位标量 ALU 指令。它把完整操作数按无符号值比较，并选择最大值的位模式；当前指令契约定义结果发布路径以及任何额外状态效果。
+`MAXU` 是一条 32 位编码的标量 ALU 指令，它把两个 XLEN 值按无符号整数比较，并通过一个 Reg5 目标原样发布其中较大的那个。
+
+比较覆盖全部 `64` 位，因此第 `63` 位被置位的源是可能的最大操作数，而不是负值。
 
 <!-- PTO-READER-BLOCK: scalar-maxu-mechanism role=mechanism -->
 ## 结果形成方式
 
-执行时先对编码输入做快照，然后把完整操作数按无符号值比较，并选择最大值的位模式，最后才产生目标效果。
+所属 ASL 提供 `InstructionContractResult_MAXU`：当 `UInt(left) > UInt(right)` 时返回 `left`，否则返回 `right`；并提供返回假的 `InstructionContractUsesSignedComparison_MAXU`。分派路径通过 `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MAXU, FALSE)` 到达同一个辅助函数。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+maxu SrcL, SrcR, ->{t, u, Rd}
+```
+
+设计要点：`MAX` 与 `MAXU` 共用一个带比较模式标志的辅助函数，而不是两段独立实现；只要恰好一个操作数的第 `63` 位被置位，这个选择就会改变答案。取 `SrcL = 0xFFFFFFFFFFFFFFFF`、`SrcR = 0` 时，`MAX` 发布 `0`，而 `MAXU` 发布 `SrcL`。
 
 <!-- PTO-READER-BLOCK: scalar-maxu-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择左操作数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择右操作数。
+- `RegDst`，指令切片 `[7 +: 5]`，接收被选中的操作数，或丢弃它。
+- `SrcL`，指令切片 `[15 +: 5]`，提供左操作数。
+- `SrcR`，指令切片 `[20 +: 5]`，提供右操作数。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+源使用通用 Reg5 映射：`0..23` 为绝对 GPR，`24..27` 为 `T#1..T#4`，`28..31` 为 `U#1..U#4`，全部非消耗读取。编码零读取体系结构零 GPR。
+
+设计要点：目标编码就是常用的那一组：`1..23` 写 GPR，`30` 推入 `U`，`31` 推入 `T`，`0` 与 `24..29` 丢弃。由于两个操作数都只被读取，被丢弃的 `MAXU` 会让每个寄存器与队列保持原样。
 
 <!-- PTO-READER-BLOCK: scalar-maxu-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+两个源都在目标写入之前读取，因此与某个源同名的目标无法改变被选中的是哪个操作数。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
-
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+被选中的操作数通过 `RegDst` 发布，随后 `TPC` 前进 `4` 字节。该指令没有内存效果，也不设置数值标志；除 `RegDst` 与 `TPC` 之外，只有目标选择的 `T` 或 `U` 推送能改变状态。
 
 <!-- PTO-READER-BLOCK: scalar-maxu-constraints role=constraints -->
 ## 合法性与故障边界
 
-固定宽度算术按当前操作规则回绕，不产生算术异常；固定编码位不匹配或所选 T/U 源不可用时，会在结果发布和 `TPC` 前进之前触发 `Fault_IllegalInstruction`。
+每个 `32` 编码的源编码与每个 `32` 编码的目标编码都有定义，每个 XLEN 位模式都是合法操作数，因此只有临时源不可用会使操作数检查失败。指令第 `31:25` 位与 `14:12` 位由所接受的形式固定，因此这些位属于译码匹配而不是操作数。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+适用性只在系统块终止请求挂起时失败，并在 `TPC` 触发 `Fault_BundleControl`。否则，不匹配的编码在进入指令束主体之前于 `PC` 触发 `Fault_IllegalInstruction`，所选 `T` 或 `U` 源不可用时则在目标写入之前于 `PC` 触发 `Fault_IllegalInstruction`。
+
+设计要点：无符号比较没有符号拐角，也没有算术步骤，因此没有任何操作数值会产生故障行为。完整的故障面就是译码匹配加上临时源可用性。
 
 <!-- PTO-READER-BLOCK: scalar-maxu-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `MAXU` 示例说明：操作数 `7` 与 `3` 选择结果 `7`。
+取 `SrcL = 0xFFFFFFFFFFFFFFFF`、`SrcR = 0` 时无符号比较为真，因此 `RegDst` 收到 `0xFFFFFFFFFFFFFFFF`。取 `SrcL = 4`、`SrcR = 7` 时 `RegDst` 收到 `7`。取 `SrcL = SrcR = 0x8000000000000000` 时比较为假，`RegDst` 收到右操作数，它的位模式与之相同。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

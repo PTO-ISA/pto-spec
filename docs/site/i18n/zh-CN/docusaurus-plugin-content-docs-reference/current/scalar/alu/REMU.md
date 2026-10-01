@@ -19,47 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-remu-purpose role=purpose -->
 ## REMU 的作用
 
-`REMU` 是一条 32 位标量 ALU 指令。它对完整 XLEN 值计算无符号余数；当前指令契约定义结果发布路径以及任何额外状态效果。
+`REMU` 把两个完整的 `PTO_XLEN` 源当作无符号整数，并发布无符号余数。它有三个五位字段：`RegDst` 位于 `[7 +: 5]`、`SrcL` 位于 `[15 +: 5]`、`SrcR` 位于 `[20 +: 5]`。
+
+该载体在掩码 `0xfe00707f` 下匹配 `0x00005057`。该助记符不携带编码模式，因此操作数解释就是无符号解释。
+
+由于取值是无符号的，源的纯位模式比较就能决定它是否大于除数；没有哪个符号位是特殊的。
 
 <!-- PTO-READER-BLOCK: scalar-remu-mechanism role=mechanism -->
-## 结果形成方式
+## 余数形成方式
 
-执行时先对编码输入做快照，然后对完整 XLEN 值计算无符号余数，最后才产生目标效果。
+分派路径调用 `ScalarRemainderUnsigned(left, right)`，两个源都通过 Reg5 映射读取（`asl/scalar/model/dispatch/alu.asl:240-245`）。零除数返回未改变的被除数；否则 `DivideWordUnsigned` 执行 `PTO_XLEN` 步恢复除法，辅助函数返回 `dividend - quotient * divisor`。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+remu SrcL, SrcR, ->{t, u, Rd}
+```
+
+设计要点：恢复除法的比较基于 `UInt` 取值，因此第 `63` 位为 `1` 的被除数被视为大于 `2^63` 的值，而不是负数。被除数为 `0xFFFFFFFFFFFFFFFF`、除数为 `2` 时，`remu` 发布 `1`，而对相同位模式 `rem` 发布 `-1`。
+
+设计要点：`DivideWordUnsigned` 只要运行余数达到除数就做一次减法，因此非零除数总是留下小于除数的余数，且永不为负。循环之后没有符号修正步骤，发布的字就是 `dividend - quotient * divisor` 的原始位模式。
 
 <!-- PTO-READER-BLOCK: scalar-remu-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择被除数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择除数。
+`SrcL` 是被除数，`SrcR` 是除数，`RegDst` 是余数的目标。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+- `SrcL`，指令切片 `[15 +: 5]`：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`，任何读取都不消耗条目。
+- `SrcR`，指令切片 `[20 +: 5]`：同样的五位映射；除数只用于比较与相减。
+- `RegDst`，指令切片 `[7 +: 5]`：`1..23` 写入对应 GPR，`30` 压入 `U`，`31` 压入 `T`，`0` 与 `24..29` 丢弃。
+- `SrcR` 的编码零读取体系结构零 GPR，并选择已定义的零除数答案，即未改变的被除数。
+
+设计要点：零除数的答案是完整的被除数本身，它可以大到整个 `PTO_XLEN` 位模式。因此依赖“余数小于除数”的程序必须先排除零除数。
 
 <!-- PTO-READER-BLOCK: scalar-remu-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+两个源都在写目标之前取快照，因此与 `SrcL` 或 `SrcR` 同名的目标对执行前的值做除法。余数发布后 `TPC` 推进 `4` 字节。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
+不访问内存，保留、描述符、数值标志、陷阱、指令束、特权、分支目标与控制流状态都保持不变。仅当目标是 `30` 或 `31` 时临时队列才会移动。
 
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+设计要点：该指令只写入一个体系结构取值。恢复除法循环算出的商只是辅助函数的局部绑定，因此没有调用者能在不执行 `DIVU` 的情况下读到它。
 
 <!-- PTO-READER-BLOCK: scalar-remu-constraints role=constraints -->
 ## 合法性与故障边界
 
-除数为零时余数保留有效被除数；有符号溢出组合的余数为零。这些情况不会引发算术异常。
+Reg5 域中全部 `32` 个源编码与全部 `32` 个目标编码都有定义，该形式除固定载体位外没有约束条目。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+不匹配的载体在 `PC` 触发 `Fault_IllegalInstruction`。对活动块不适用的指令在 `TPC` 触发 `Fault_BundleControl`，对 `REMU` 而言仅在系统块终止请求挂起期间可达。所选 `T` 或 `U` 源不可用时在 `PC` 触发 `Fault_IllegalInstruction`。所有检查都先于目标效果与 `TPC` 推进。
+
+设计要点：无符号除法在整个操作数域上都是全定义的，零除数也不例外，因此 `REMU` 没有由操作数选择的陷阱。它的故障边界是编码有效性与源可用性。
 
 <!-- PTO-READER-BLOCK: scalar-remu-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `REMU` 示例说明：被除数 `13` 与除数 `5` 产生余数 `3`。
+当 `a0` 为 `10`、`a1` 为 `4` 时，`remu a0, a1, ->a2` 发布 `2`。
+
+当 `a0` 为 `0xFFFFFFFFFFFFFFFF`、`a1` 为 `2` 时，无符号余数是 `1`，因此 `a2` 收到 `1`。把 `a1` 设为 `0` 则发布完整的被除数 `0xFFFFFFFFFFFFFFFF`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

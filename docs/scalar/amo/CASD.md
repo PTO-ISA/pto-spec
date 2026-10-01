@@ -19,42 +19,66 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-casd-purpose role=purpose -->
 ## What CASD does
 
-`CASD` atomically compares the doubleword at `SrcL` with `SrcR`; equality stores `SrcD`, while both paths publish the prior 64-bit value.
+`CASD` is the 8-byte compare-and-swap: it reads the doubleword at the address named by `SrcL`, compares all `64` bits with `SrcR`, and stores `SrcD` at that address only when the two doublewords are identical.
+
+The prior doubleword reaches `RegDst` on a match and on a mismatch. `CASD` is a 32-bit encoded form, and a successful execution advances `TPC` by `4` bytes.
 
 <!-- PTO-READER-BLOCK: scalar-casd-mechanism role=mechanism -->
-## Atomic mechanism
+## Comparing a whole doubleword
 
-The ASL DOC contract selects `ScalarHandler_CompareAndSwap` with an access width of `8` bytes.
+The dispatch calls `CompareAndSwap` with `size_bytes = 8`, so the read probe and the write probe each cover `8` bytes, and both fail the alignment test unless the address is a multiple of `8`.
 
-Match and mismatch both emit one ordered atomic event; only the matching path marks a write as performed.
+`LoadTranslatedUnsigned` fills `64` bits from memory, and `NormalizeAtomicUnsigned` and `NormalizeAtomicReturn` both return an `8`-byte value unchanged, so no extension or truncation step stands between the loaded doubleword and the published one.
+
+Design point: size `8` is the identity case in both normalizers, so every bit of `SrcR` takes part in the comparison and every bit of `SrcD` is available to the store. An expected value whose upper half is wrong fails to match, unlike the narrower forms, which discard those bits before comparing.
+
+Design point: `StoreTranslated` writes the low `8` bytes of `SrcD` one byte at a time, and the atomic event carries `NormalizeAtomicUnsigned(desired, 8)`, which is `SrcD` unchanged. The new value in the event and the bytes the store writes are therefore the same value.
 
 <!-- PTO-READER-BLOCK: scalar-casd-inputs-outputs role=inputs-outputs -->
-## Inputs and result
+## Fields, ordering, and selectors
 
-`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 expected doubleword source; `SrcD` carries the Reg5 desired doubleword source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit.
+The form encodes `SrcL` at instruction bit `15`, `SrcR` at bit `20`, `SrcD` at bit `27`, and `RegDst` at bit `7`, each `5` bits wide, plus `rl` at bit `25` and `aq` at bit `26`.
 
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering.
+The four settings are relaxed (`aq=0,rl=0`), acquire (`aq=1,rl=0`), release (`aq=0,rl=1`), and acquire-release (`aq=1,rl=1`), and the recorded atomic event carries the same setting for a match and for a mismatch.
+
+`SrcL`, `SrcR`, and `SrcD` accept every Reg5 source selector, including the T and U selectors, which are read without consuming a queue entry. `RegDst` accepts every Reg5 destination selector.
+
+Design point: an encoded zero source reads the architectural zero register, so `casd` with `SrcR` and `SrcD` both encoded as zero matches only an all-zero doubleword, and stores zero when it matches.
 
 <!-- PTO-READER-BLOCK: scalar-casd-effects role=effects -->
-## Effects and ordering
+## Architectural effects
 
-After successful preflight, the old value is published even on comparison mismatch; memory changes only on equality.
+A match stores `SrcD` at the address and records one atomic event with `write_performed=true`; a mismatch stores nothing and records one atomic event with `write_performed=false`.
 
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+Design point: this is the only width in the group whose published value is neither zero-extended nor sign-extended. `RegDst` receives the `64` bits that memory held, so software can compare the destination directly against a full-width expected value.
+
+Design point: the event is recorded on both paths, and its new value is the desired doubleword even when `write_performed=false`, so a reader of the event can see what was proposed as well as what memory held.
+
+Both nonfaulting outcomes advance `TPC` by `4` bytes, and a match also clears the reservation when the addressed `8` bytes overlap the reserved 64-byte granule.
 
 <!-- PTO-READER-BLOCK: scalar-casd-constraints role=constraints -->
-## Legality and precise faults
+## Alignment, access, and fault order
 
-The effective address must be aligned to `8` bytes. Alignment, translation, and permission checks precede architectural effects.
+The address must be a multiple of `8`. `ProbeDataAccess` performs that test before translation and before the permission check that reports `Fault_DataPage`.
 
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+The read probe is evaluated before the write probe, and the two translated addresses must agree before any byte is loaded.
+
+On a fault the helper returns immediately: no load, no store, no atomic event, no reservation change, no destination write, and no `TPC` advance, so the compare-and-swap can be reissued whole.
+
+A reported fault carries the original `SrcL` address. A decode failure, or an unavailable selected `T#1` to `T#4` or `U#1` to `U#4` source, raises `Fault_IllegalInstruction` before the handler runs.
 
 <!-- PTO-READER-BLOCK: scalar-casd-example role=example -->
-## Non-normative example
+## A doubleword that matches
 
 This example only shows one accepted spelling; the generated contract below remains authoritative.
 
-For a first reading, use `casd [SrcL], SrcR, SrcD, ->Rd` and then vary only the ordering or route modifiers described above.
+```asm
+casd [a0], a1, a2, ->a3
+```
+
+Suppose the addressed doubleword holds `0x0123456789abcdef`, `SrcR` holds `0x0123456789abcdef`, and `SrcD` holds `0xffffffffffffffff`. All `64` bits compare equal, so `CASD` stores `0xffffffffffffffff`, publishes `0x0123456789abcdef` in `RegDst`, and records one atomic event with `write_performed=true`.
+
+With `0x0123456789abcdee` in `SrcR` instead, the comparison fails on the last bit: memory keeps `0x0123456789abcdef`, the recorded event has `write_performed=false`, and `RegDst` still receives `0x0123456789abcdef`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

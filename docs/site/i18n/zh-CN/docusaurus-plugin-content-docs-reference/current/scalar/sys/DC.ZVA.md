@@ -19,42 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-zva-purpose role=purpose -->
 ## DC.ZVA 的作用
 
-`DC.ZVA` 同步完成所分配的缓存或地址翻译维护请求，并记录精确操作令牌。
+`DC.ZVA` 是按地址将数据缓存清零的操作。它从 `SrcL` 取得目标地址并同步完成，同时记录操作令牌 `Maintenance_DC_ZVA` 与确切的操作数（`asl/scalar/sys/DC.ZVA.asl:23`）。
 
 <!-- PTO-READER-BLOCK: scalar-dc-zva-mechanism role=mechanism -->
 ## 系统机制
 
-ASL DOC 区域选择 `ScalarHandler_ExecuteMaintenance`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+`InstructionContractHandler_DC_ZVA` 选择共用的维护处理程序（`asl/scalar/sys/DC.ZVA.asl:11`），而 `InstructionContractMaintenanceUsesOperand_DC_ZVA` 返回 `TRUE`，使派发器在调用之前读取源寄存器（`asl/scalar/model/dispatch/sys.asl:30`）。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+执行器的数据缓存组包含全部八个 `DC.*` 操作，因此 `Maintenance_DC_ZVA` 推进的是 `_DataCacheEpoch`，而不是装入一个建模的零块（`asl/scalar/model/sys/semantics.asl:134`）。
+
+该指令只在活动 SYS 块体中适用（`asl/scalar/model/sys/semantics.asl:322`）。
 
 <!-- PTO-READER-BLOCK: scalar-dc-zva-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`SrcL` 承载 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。
+`SrcL` 是 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。它的值就是请求所指名数据块的地址。
 
-编码零是已分配的字段值，从不表示省略操作数。
+没有目的地。被捕获的地址只作为维护记录的操作数字段发布，编码零表示架构零 GPR，而不是省略的操作数。
 
 <!-- PTO-READER-BLOCK: scalar-dc-zva-effects role=effects -->
 ## 架构效果
 
-成功时，维护记录接收 `Maintenance_DC_ZVA` 和精确捕获的操作数令牌。
+成功的尝试把数据缓存纪元递增一，并用 `Maintenance_DC_ZVA` 与该操作数替换维护记录（`asl/scalar/model/sys/semantics.asl:137`）。引发故障时会跳过记录更新，因此记录不会被写一半。
 
-选中的缓存或 TLB 纪元恰好递增一次，然后 `TPC` 前进；该操作是同步完成的本地提示。
+设计要点：把清零建模为一次纪元推进，使该指令不会获得内存结果。随后从同一地址执行的普通加载是一次普通内存访问，与这条指令的纪元没有已定义的关系，因此软件无法仅通过 `DC.ZVA` 观察到某个位置已被填零。
+
+该次尝试不执行普通标量内存访问，也不写任何寄存器或队列。成功之后 `TPC` 按指令长度前进。
 
 <!-- PTO-READER-BLOCK: scalar-dc-zva-constraints role=constraints -->
 ## 位置与拒绝边界
 
-缓存维护在每个 ACR 都是同步本地提示，并不定义额外的实现缓存内容。
+第一道门是位置必须在活动 SYS 块体内；失败会引发 `Fault_BundleControl` 并不触碰执行器。第二道是固定位与 Reg5 编码检查，它在处理程序之前运行。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+任何 `DC.*` 操作都不受访问环限制（`asl/scalar/model/sys/semantics.asl:123`），地址操作数也不要求是规范地址，因为只有 `TLB.IV` 与 `TLB.IAV` 会测试规范形式。
 
 <!-- PTO-READER-BLOCK: scalar-dc-zva-example role=example -->
 ## 非规范示例
 
 该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
 
-可从 `dc.zva SrcL` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+在源寄存器持有 0x2000 时运行 `dc.zva SrcL`。该次尝试检查位置与编码，快照 0x2000，把数据缓存纪元递增一，并以操作数 0x2000 记录 `Maintenance_DC_ZVA`。没有任何内存位置改变，因此随后从 0x2000 加载由普通内存路径服务。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

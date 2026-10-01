@@ -19,44 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-or-purpose role=purpose -->
 ## What SETC.OR does
 
-`SETC.OR` derives a bitwise-OR condition and publishes it as the current Conditional bundle commit decision.
+`SETC.OR` combines two scalar registers with a bitwise OR and publishes whether the combination is nonzero as the commit decision of the Conditional bundle it sits in.
+
+This makes the mnemonic a disjunction over two words: the block commits when either operand contributes at least one set bit.
 
 <!-- PTO-READER-BLOCK: scalar-setc-or-mechanism role=mechanism -->
-## Mechanism
+## Combining the two words with a bitwise OR
 
-After placement and single-setter checks, the instruction snapshots its operands and applies bitwise OR.
+The instruction snapshots `SrcL` and the prepared right operand, computes the bitwise OR of the two complete words, and stores exactly `0` when the combination is zero and exactly `1` otherwise.
 
-Zero selects a false commit condition; any nonzero combined value selects true.
+Unlike the relation members of the family, no numeric condition is involved: the tested property is whether the OR produced any set bit at all.
+
+Design point: the committed value is the reduced truth value, not the OR result. The word produced by the combination is not written anywhere, so a program that needs the combined bits must compute them separately.
 
 <!-- PTO-READER-BLOCK: scalar-setc-or-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `SrcL` supplies the left scalar source.
+- `SrcL` supplies the left absolute GPR source.
+- `SrcR` supplies the right absolute GPR source.
+- `SrcRType` transforms the `SrcR` snapshot before the combination: value `0` leaves the complete word unchanged, value `1` substitutes the sign-extended low `32` bits, value `2` the zero-extended low `32` bits, and value `3` substitutes the one's complement of the full word, which is the `.not` annotation on the canonical assembly.
 
-- `SrcR` supplies the right scalar source.
-
-- `SrcRType` selects the right-source transformation.
+Encoded zero in `SrcL` or `SrcR` names the architectural zero GPR. Sources are not consumed, and no `GPR`, `T`, or `U` destination is written.
 
 <!-- PTO-READER-BLOCK: scalar-setc-or-effects role=effects -->
 ## Effects and ordering
 
-The canonical condition is written atomically to `_CommitArgument` and `BARG.TAKEN`, and the condition-set marker becomes true.
+On success the commit argument receives exactly `1` or `0`, `BARG.TAKEN` takes the same truth value while a bundle is active, the block condition marker becomes set, and `TPC` advances by `4` bytes.
 
-On success, `SETC.OR` advances `TPC` by `4` bytes. It has no scalar destination and no memory or reservation effect.
+No memory, reservation, descriptor, or numeric-status effect occurs, and `BARG.BPC`, `BARG.BPCN`, `BARG.BlockType`, and `BARG.TYPE` are preserved.
 
 <!-- PTO-READER-BLOCK: scalar-setc-or-constraints role=constraints -->
-## Legality and fault order
+## What the setter marker and placement check reject
 
-The instruction is valid only in the applicable Conditional bundle context, and only one successful condition setter may occur.
+Applicability is confined to the body of an active Conditional block, and the shared marker allows at most one successful `SETC` condition setter in that block.
 
-Wrong placement or a repeated setter raises an Illegal Block Exception before source reads; encoding or unavailable-source failures raise `Fault_IllegalInstruction` before commit or `TPC` effects.
+Wrong placement or a second successful setter raises `Fault_BundleControl` (trap number `5`, `BUNDLE_TRAP`) before operand legality and before any source read. A fixed-bit mismatch or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before commit state, `BARG`, queue, or `TPC` effects. A rejected occurrence does not consume the shared marker.
 
 <!-- PTO-READER-BLOCK: scalar-setc-or-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not create a second semantic definition.
 
-`setc.or SrcL, SrcR<.sw, .uw, .not>` evaluates the described condition, writes the canonical decision to commit state, and advances `TPC` only after that update.
+Place `0` in GPR1 and `0` in GPR2, then execute `setc.or R1, R2`. The OR of two zero words is zero, so the form commits `0`. Set GPR1 to `4` and the same form commits `1`, even though only one bit is set.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

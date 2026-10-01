@@ -19,49 +19,62 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-ccat-purpose role=purpose -->
 ## What HL.CCAT does
 
-`HL.CCAT` is a 48-bit scalar ALU instruction. It concatenates the two source portions, applies the encoded logical right shift, and separates the result into low and high XLEN destinations; its current instruction contract defines the result publication path and any additional state effect.
+`HL.CCAT` is a 48-bit scalar ALU instruction. It forms one 128-bit value with `SrcL` as the upper half and `SrcR` as the lower half, shifts that value logically right by the 7-bit `shamt`, and publishes bits `63:0` to `Dst0` and bits `127:64` to `Dst1`.
+
+Design point: the concatenation never exists as a register value. The halves are computed separately, so a shift below `64` carries the low bits of the upper half down into the top of the low result: with `SrcL` equal to `1`, `SrcR` equal to `2`, and `shamt=8`, the low result is `0x0100000000000000`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ccat-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then concatenates the two source portions, applies the encoded logical right shift, and separates the result into low and high XLEN destinations, and only afterward performs the destination effects.
+`InstructionContractLowResult_HL_CCAT` returns bits `63:0` and `InstructionContractHighResult_HL_CCAT` returns bits `127:64` (`asl/scalar/alu/HL.CCAT.asl:26-55`).
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+- For `shamt=0` the low result is `SrcR` and the high result is `SrcL`.
+- For `shamt` in `1..63` the low result is `LSR(SrcR, shamt) OR LSL(SrcL, 64 - shamt)`, and the high result is `LSR(SrcL, shamt)`.
+- For `shamt` in `64..127` the low result is `LSR(SrcL, shamt - 64)` and the high result is zero.
+
+Design point: the zero shift returns the sources directly, so `hl.ccat a0, a1, 0, ->a2, a3` publishes `a1` to `a2` and `a0` to `a3`.
+
+Design point: `shamt=127` keeps only bit 127, which is bit 63 of `SrcL`, and moves it to bit 0 of the low result. For `shamt` of `64` or more the high result is zero, so nothing reaches the high destination.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ccat-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst0` field selects the first, low-result Reg5 target or discards that result.
-- The 5-bit `RegDst1` field selects the second, high-result Reg5 target or discards that result.
-- The 5-bit `SrcL` field selects the upper concatenation source through Reg5.
-- The 5-bit `SrcR` field selects the lower concatenation source through Reg5.
-- The 7-bit `shamt` field encodes the unsigned seven-bit logical-right shift amount.
+- `RegDst0` receives the low result or discards it.
+- `RegDst1` receives the high result or discards it.
+- `SrcL` is the upper source and supplies bits `127:64`.
+- `SrcR` is the lower source and supplies bits `63:0`.
+- `shamt` is the 7-bit unsigned logical-right shift amount.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Both sources use the full source map: codes `0..23` select absolute GPRs, `24..27` select `T#1..T#4`, `28..31` select `U#1..U#4`, without consuming a queue entry. Both destinations use the common destination map: codes `1..23` write a GPR, codes `0` and `24..29` discard, code `30` pushes `U`, and code `31` pushes `T`.
+
+Design point: in a destination position the spelling `zero` is the discard code `0`. The metadata example `hl.ccat t#1, u#1, 64, ->zero, a0` discards the low result `T#1` and writes the high result `0` to `a0`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ccat-effects role=effects -->
 ## Effects and ordering
 
-All results are computed before publication. The destinations are then updated in encoded order (`RegDst0`, `RegDst1`), which also defines the order of duplicate-register writes or queue pushes.
+Both results are computed before either write, and the writes follow a fixed order: `Dst0` first with bits `63:0`, then `Dst1` with bits `127:64`.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
+Design point: the order is observable when both destinations name one place. For one GPR the `Dst1` write is final, so the register holds the high result. For one queue `Dst0` is enqueued first, so the high result becomes the newest entry.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+`HL.CCAT` has no memory effect and changes no other architectural state; a discard destination has no effect. `TPC` advances by `6` bytes after both destination effects.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ccat-constraints role=constraints -->
 ## Legality and fault boundary
 
-Every encoded concatenation shift is defined and zero-filling. A fixed-bit mismatch or unavailable selected T/U source faults before either destination effect.
+All `128` values of `shamt` are assigned and the shift fills with zeros, so no `shamt` value is reserved; every source code and destination code is assigned as well.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An encoding whose fixed bits do not match the `HL48` form does not decode, and an encoding that matches no accepted form raises `Fault_IllegalInstruction` at `PC` before any source read. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before either destination effect and before `TPC` advances. An instruction not applicable to the active bundle faults with `Fault_BundleControl` at `TPC` (`asl/scalar/model/dispatch/top-level.asl:17-37`, `asl/scalar/model/types/operands.asl:6-19`).
+
+Design point: the shift is total, so every `shamt` and source pair produces a defined pair of XLEN results, and the instruction has no arithmetic fault path.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ccat-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.CCAT` example, with shift `0`, upper source `1`, and lower source `2`, the ordered low and high results are `2` then `1`.
+With `shamt=0` there is no shift: `hl.ccat a0, a1, 0, ->a2, a3` publishes `a1` to `a2` and `a0` to `a3`.
+
+With `a0` equal to `1`, `a1` equal to `2`, and `shamt=8`, the low result is `LSR(2, 8) OR LSL(1, 56)`, which is `0x0100000000000000`, and the high result is `LSR(1, 8)`, which is `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

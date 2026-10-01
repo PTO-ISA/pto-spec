@@ -19,42 +19,49 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ld-xor-purpose role=purpose -->
 ## LD.XOR 的作用
 
-`LD.XOR` 对一个双字原子执行按位异或、存储结果，并发布先前的内存值。
+`LD.XOR` 翻转一个 8 字节内存双字中被选中的位。64 位操作数中为 `1` 的每一位在存储值中被取反，为 `0` 的位则保持已存储的位不变，而指令执行前的双字通过 `RegDst` 发布。
 
 <!-- PTO-READER-BLOCK: scalar-ld-xor-mechanism role=mechanism -->
-## 原子机制
+## 如何翻转目标双字
 
-ASL DOC 契约选择 `ScalarHandler_AtomicReadModifyWrite`，访问宽度为 `8` 字节。
+该形式选择 `ScalarHandler_AtomicReadModifyWrite`、访问宽度 `8` 和原子操作 `Atomic_XOR`。读取预检与写入预检都在加载之前完成；随后旧双字与 `SrcR` 做异或，64 位结果存储到同一地址，记录一个 `write_performed` 为 true 的原子事件，并返回旧双字以便发布。
 
-只有读取与写入访问都完成预检后，同一位置的原子读改写才能提交。
+异或覆盖全部 64 位且没有截断：存放 `0x000000000000ff00` 的位置与 `SrcR = 0x0000000000000f0f` 异或后存放 `0x000000000000f00f`。
+
+设计要点：异或是自身的逆运算。对同一位置用同一个操作数执行两次，存储的位会与第一次执行前一模一样，但第二次执行仍然会存储，并仍然通过 `RegDst` 发布翻转后的中间值。
+
+设计要点：操作数与地址在任何内存或目的地效果之前就被快照，因此 `RegDst` 可以与 `SrcR` 是同一个寄存器；异或所用的掩码是执行前的寄存器内容。
 
 <!-- PTO-READER-BLOCK: scalar-ld-xor-inputs-outputs role=inputs-outputs -->
-## 输入与结果
+## 字段与操作数角色
 
-`SrcL` 承载 Reg5 原子地址源；`SrcR` 承载 Reg5 原子操作数源；`RegDst` 承载 Reg5 旧值目的地；`aq` 承载获取排序位；`rl` 承载释放排序位；`far` 承载平坦地址路由提示。
+`RegDst` 是位于指令位 `7..11` 的 `5` 位字段，`SrcL` 位于位 `15..19`，`SrcR` 位于位 `20..24`，`rl` 位于位 `25`，`aq` 位于位 `26`，`far` 位于位 `27`。
 
-`aq` 与 `rl` 选择宽松、获取、释放或获取-释放排序；`far` 是配置档路由提示，在参考配置档中不改变架构结果。
+- `SrcL` 读取原子地址；编码为零时读取架构零寄存器。
+- `SrcR` 读取翻转掩码；编码为零时提供数值零，从而保持每一个已存储的位不变。
+
+设计要点：`aq` 与 `rl` 为事件选择宽松、获取、释放或获取-释放排序，而 `far` 被交给 `AtomicAddress`，后者原样返回其参数。因此在参考模型中，`ld.xor [a0], a1, ->a2` 与 `ld.xor.f [a0], a1, ->a2` 得到相同地址和相同的存储位。
 
 <!-- PTO-READER-BLOCK: scalar-ld-xor-effects role=effects -->
-## 效果与排序
+## 效果
 
-只有读改写提交后才会发布旧内存值；任何目的地效果之前都会先捕获源别名。
+一次完成的 `LD.XOR` 写入 8 字节、记录一个 `write_performed` 为 true 的原子事件、把执行前的双字送到 `RegDst`，并让 `TPC` 前进 4 字节。若写入范围与保留的 64 字节粒度重叠，本地保留会被清除。
 
-完成的写入会使重叠的本地 64 字节缓存行保留失效，保留不重叠的保留，并让 `TPC` 前进 `4` 字节。
+设计要点：掩码为零时仍然会把旧的位写回，并仍然记录一次已执行的写入，因此内存内容不变，而保留与事件效果并非不变。
 
 <!-- PTO-READER-BLOCK: scalar-ld-xor-constraints role=constraints -->
-## 合法性与精确故障
+## 合法性与故障
 
-有效地址必须按 `8` 字节对齐。对齐、地址翻译和权限检查都先于架构效果。
+地址必须是 8 的倍数。对齐检查在读取预检内部、翻译之前、加载之前运行，写入预检会为写访问重复同样的检查。`Fault_DataAlignment` 与 `Fault_DataPage` 都在原始（翻译前）地址上报告。
 
-预检失败时不会发布目的值、内存事件、保留更新或退役效果；保存的原始 `TPC` 支持完整重新执行。
+故障不会碰该双字：不写目的地、不记录原子事件、不改变保留，也不推进 `TPC`，因此该指令可以重新执行。译码失败或所选 T 或 U 源不可用会更早引发 `Fault_IllegalInstruction`。
 
 <!-- PTO-READER-BLOCK: scalar-ld-xor-example role=example -->
 ## 非规范示例
 
 本示例只展示一种已接受写法；下方生成的契约仍是权威来源。
 
-初次阅读可从 `ld.xor [SrcL], SrcR, ->Rd` 开始，再只改变上文说明的排序或路由修饰位。
+当 `a0` 存放 8 字节对齐的地址时，`ld.xor [a0], a1, ->a2` 翻转由 `a1` 选中的位。若 `[a0]` 存放 `0x000000000000ff00` 且 `a1` 存放 `0x0000000000000f0f`，该位置得到 `0x000000000000f00f`，`a2` 得到 `0x000000000000ff00`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

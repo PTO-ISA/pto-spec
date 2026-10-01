@@ -19,47 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-subi-purpose role=purpose -->
 ## What SUBI does
 
-`SUBI` is a 32-bit scalar ALU instruction. It performs subtraction under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+`SUBI` subtracts a zero-extended `12`-bit immediate from `SrcL` modulo `2^PTO_XLEN` and publishes the full `PTO_XLEN` result. It has three fields: `RegDst` at `[7 +: 5]`, `SrcL` at `[15 +: 5]` and `uimm12` at `[20 +: 12]`.
+
+The carrier matches `0x00001015` under mask `0x0000707f`.
+
+The immediate is unsigned, so the subtrahend ranges over `0` through `4095` and never becomes a negative value. This is the opposite of the `simm12` immediate used by `ORI`.
 
 <!-- PTO-READER-BLOCK: scalar-subi-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then performs subtraction under the complete XLEN value result rules, and only afterward performs the destination effects.
+The immediate decoder sees an unsigned `12`-bit field and returns `ZeroExtend{PTO_XLEN}(raw)`. Dispatch then calls `ScalarBinary(ScalarBinary_SUB, left, right)` at `asl/scalar/model/dispatch/alu.asl:111-113` and writes `left - right` through `RegDst`.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+subi SrcL, uimm, ->{t, u, Rd}
+```
+
+Design point: An unsigned immediate means the smallest subtrahend is `0` and the largest is `4095`, with no sign extension at all. `subi a0, 4095, ->a2` subtracts exactly `4095`, while the same raw bits in `ori` would supply a negative constant.
+
+Design point: Because the subtraction wraps, subtracting a value larger than `SrcL` produces a borrow that shows up as a large result rather than as a fault or a saturation. `subi` with `SrcL = 0` and `uimm12 = 1` publishes the all-ones word.
 
 <!-- PTO-READER-BLOCK: scalar-subi-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 scalar result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar value through Reg5.
-- The unsigned 12-bit `uimm12` field carries the unsigned 12-bit immediate.
+`SrcL` is the minuend, `uimm12` is decoded from the carrier, and `RegDst` receives the difference.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+- `SrcL`, instruction slice `[15 +: 5]`: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, `28..31` read `U#1..U#4`, and the read does not consume a queue entry.
+- `uimm12`, instruction slice `[20 +: 12]`: unsigned, so every value from `0` through `4095` is assigned and none of them is sign-extended.
+- `RegDst`, instruction slice `[7 +: 5]`: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+- Encoded zero of `SrcL` reads the architectural zero GPR, and encoded zero of `uimm12` supplies subtrahend `0`, which makes the instruction an identity copy of the source.
+
+Design point: The `0..4095` range means `SUBI` can step down by at most `4095` per instruction; a larger decrement needs a register constant.
 
 <!-- PTO-READER-BLOCK: scalar-subi-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is snapshotted before the destination effect, so a destination that aliases the source uses the pre-instruction value. The wrapped difference is published and `TPC` advances by `4` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+`SUBI` accesses no memory and leaves reservation, descriptor, numeric-flag, trap, bundle, privilege, predicate and control-flow state unchanged; a `30` or `31` destination is the only case in which a temporary queue moves.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: No borrow or carry flag is recorded, so the instruction cannot report that the immediate exceeded the source. The published word is the only architectural trace of the wrap.
 
 <!-- PTO-READER-BLOCK: scalar-subi-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+All `32` `SrcL` codes, all `32` `RegDst` codes and all `4096` immediate values are assigned, and the form has no constraint entry. The only fixed requirement is that the carrier bits selected by mask `0x0000707f` match `0x00001015`, because `uimm12` occupies all twelve instruction bits `31:20`.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unmatched carrier raises `Fault_IllegalInstruction` at `PC`. An instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`, reachable for `SUBI` only while a system-block terminal request is pending. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`, before the destination effect and before `TPC` advances.
+
+Design point: Every immediate pattern is assigned and the subtraction is total, so `SUBI` has no operand-selected trap path. Its fault boundary is encoding validity plus source availability.
 
 <!-- PTO-READER-BLOCK: scalar-subi-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `SUBI` example, `SrcL=7` and `uimm12=3` produce `4`.
+With `a0` holding `10`, `subi a0, 3, ->a2` publishes `7`, and `subi a0, 10, ->a2` publishes `0`.
+
+With `a0` holding `0`, `subi a0, 4095, ->a2` publishes `0xFFFFFFFFFFFFF001`, the wrapped difference. With `uimm12` equal to `0`, `a2` receives the source unchanged.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

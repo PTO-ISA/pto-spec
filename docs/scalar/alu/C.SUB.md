@@ -19,46 +19,49 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-sub-purpose role=purpose -->
 ## What C.SUB does
 
-`C.SUB` is a 16-bit scalar ALU instruction. It performs subtraction under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+`C.SUB` reads two Reg5 sources, computes `SrcL` minus `SrcR` modulo `2^PTO_XLEN`, and pushes the XLEN difference to `T`.
+
+Design point: ten of the sixteen encoded bits are the two 5-bit source selectors, and none are a destination selector, so both operands can vary while the result always lands in the newest `T` entry. A compressed subtraction cannot write a GPR directly.
 
 <!-- PTO-READER-BLOCK: scalar-c-sub-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then performs subtraction under the complete XLEN value result rules, and only afterward performs the destination effects.
+Both sources are snapshotted first, then subtracted with fixed-width arithmetic that wraps modulo `2^PTO_XLEN`. A negative difference is published as its two's-complement bit pattern.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: because the published value is a complete XLEN two's-complement number, `c.sub zero, a0, ->t` publishes `0 - a0`. The mnemonic needs no second operand form to express a negation.
+
+Design point: subtraction is ordered, so the two selector fields are not interchangeable: `c.sub a0, a1, ->t` and `c.sub a1, a0, ->t` push different values. Both encodings are legal and both sources are read before the push.
 
 <!-- PTO-READER-BLOCK: scalar-c-sub-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `SrcL` field selects the left operand through Reg5.
-- The 5-bit `SrcR` field selects the right operand through Reg5.
+- `SrcL` is the left Reg5 source and `SrcR` the right one: codes `0..23` select absolute GPRs, `24..27` select `T#1..T#4`, and `28..31` select `U#1..U#4`, without consuming a queue entry.
+- The destination is fixed to `T`: exactly one XLEN result per successful execution.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: the zero code of either source reads the architectural zero GPR, so `c.sub a0, zero, ->t` republishes `a0` and `c.sub zero, zero, ->t` pushes `0` without depending on real register contents. Duplicate and mixed selectors are legal, so `c.sub t#1, u#1, ->t` is a valid encoding.
 
 <!-- PTO-READER-BLOCK: scalar-c-sub-effects role=effects -->
 ## Effects and ordering
 
-Any scalar source is snapshotted before publication, and the completed instruction pushes exactly one result to T.
+`SrcL` and `SrcR` are snapshotted before the destination push, so the instruction cannot subtract its own result and a destination alias cannot disturb an operand. The push moves the queue toward older indices, and the new value becomes `T#1`.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 2 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+After the push, `TPC` advances by `2` bytes. No GPR is written, and no `U` entry, memory, reservation, descriptor, numeric-status, bundle, privilege, predicate or other control state changes.
 
 <!-- PTO-READER-BLOCK: scalar-c-sub-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every `SrcL` and `SrcR` code from `0` through `31` is assigned, so no source selector is reserved, and the six fixed encoding bits must match the canonical form. Fixed-width subtraction is total and raises no arithmetic exception, including on underflow.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before the `T` push, before `TPC` advances and before any other effect. An undecodable 16-bit form raises `Fault_IllegalInstruction` at `PC`, and an instruction that is not applicable to the active bundle raises `Fault_BundleControl` at `TPC`.
+
+Design point: source availability is decided by the two encoded selectors, before any subtraction happens. A `c.sub` that names an empty queue slot therefore faults instead of publishing a difference computed from a value the queue does not hold.
 
 <!-- PTO-READER-BLOCK: scalar-c-sub-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `C.SUB` example, left `7` and right `3` produce `4`.
+With `a0` holding `10` and `T#1` holding `7`, `c.sub a0, t#1, ->t` pushes `3` and moves the old `7` to `T#2`; the source queues are unchanged. With `a0` holding `0` and `a1` holding `1`, `c.sub a0, a1, ->t` pushes `2^PTO_XLEN - 1`, which reads as `-1` in two's complement.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

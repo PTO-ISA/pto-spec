@@ -19,42 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-assert-purpose role=purpose -->
 ## ASSERT 的作用
 
-`ASSERT` 检查快照得到的标量条件，并在条件为零时触发架构断言陷阱。
+`ASSERT` 是一次架构断言检查。它读取一个标量值，并在该值恰好为零时引发断言陷阱。非零值被静默接受。
+
+它没有目的位置：只可能有两种结果，即正常退休和断言陷阱。
 
 <!-- PTO-READER-BLOCK: scalar-assert-mechanism role=mechanism -->
-## 系统机制
+## 指令如何放置与执行
 
-ASL DOC 区域选择 `ScalarHandler_ArchitectureAssert`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+本指令是活动 SYS 块体中的一个标量操作。标量分派器先检查是否存在活动指令束，以及其块体是否活动且块类型为 System；处于这种块之外的 SYS 形式会以 `Fault_BundleControl` 被拒绝，这发生在任何编码字段检查之前，也发生在任何架构效果之前。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+随后检查编码合法性与源可用性，之后处理程序才运行。
+
+处理程序读取一次 `SrcL` 并测试它是否为零。零会引发 `Fault_Assert`，并以请求发生处作为故障地址。任何非零值都通过测试，包括低位为零但高位被置位的值。
+
+设计要点：检查施加在源的快照上，而不是施加在标志或条件寄存器上。这使断言自成一体：决定结果的值正是程序算入该寄存器的值，计算与检查之间没有隐藏状态。
 
 <!-- PTO-READER-BLOCK: scalar-assert-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`SrcL` 承载 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。
-
-编码零是已分配的字段值，从不表示省略操作数。
+- `SrcL` 是源选择器。编码零指名架构零 GPR，其读取值始终是 XLEN 零，因此零选择器总是引发断言陷阱。
+- 源选择器 `0`..`23` 读取 GPR，`24`..`27` 读取 `T#1`..`T#4`，`28`..`31` 读取 `U#1`..`U#4`。读取临时队列不会消费或重排它。
+- 没有目的字段，因此该指令绝不写 GPR，也绝不压入 `T` 或 `U`。
 
 <!-- PTO-READER-BLOCK: scalar-assert-effects role=effects -->
 ## 架构效果
 
-先对标量条件取快照；零会在故障 PC 触发 `Fault_Assert`，非零则退役且不产生其他架构效果。
+源为零时，该指令引发 `Fault_Assert`，不推进 `TPC`，也不退休任何东西；陷阱入口把故障地址记录为请求发生处。源非零时，唯一的效果是成功退休，`TPC` 前进 `4` 字节。
 
-只有位置与解码检查完成后才读取条件，并且只有无故障路径会让 `TPC` 前进。
+在两种结果下，源寄存器以及它指名的任何队列表项都不变：该指令只读取，从不写入。
+
+该指令没有内存效果，也不留下保留状态，因此它不可能是后续原子操作或链接加载操作失败的原因。
 
 <!-- PTO-READER-BLOCK: scalar-assert-constraints role=constraints -->
-## 位置与拒绝边界
+## 放置与拒绝
 
-每个可用的 Reg5 源选择器都已分配。
+无效的块放置首先被拒绝，以 `Fault_BundleControl` 报出，此时连编码字段都还没有被考虑。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+每个可用的 Reg5 源选择器都是已分配编码，因此没有保留的源选择器。指名不可用 `T` 或 `U` 槽的选择器会在零值测试运行之前以 `Fault_IllegalInstruction` 被拒绝，这使故障顺序保持稳定：不可用的源绝不会被报告为断言失败。
 
 <!-- PTO-READER-BLOCK: scalar-assert-example role=example -->
 ## 非规范示例
 
-该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
-
-可从 `assert SrcL` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+当 `a0` 保存任何非零值时，`assert a0` 正常退休。当 `a0` 保存 XLEN 零时，该指令在自身所在位置引发 `Fault_Assert`，`TPC` 保持在原处。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

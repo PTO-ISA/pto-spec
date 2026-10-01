@@ -19,40 +19,58 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-addtpc-purpose role=purpose -->
 ## What ADDTPC does
 
-`ADDTPC` materializes a page-relative address from the current `TPC` without performing a control transfer.
+`ADDTPC` adds a signed `4` KiB page displacement to the current instruction `TPC` and writes the resulting address to a destination register.
+
+It is a materializing instruction, not a branch: the computed address becomes data, and execution continues with the instruction that follows.
 
 <!-- PTO-READER-BLOCK: scalar-addtpc-mechanism role=mechanism -->
 ## Mechanism
 
-The signed `20`-bit immediate is extended, shifted left by `12`, and added to the snapshotted current `TPC` modulo `2^PTO_XLEN`.
+The contract returns `ScalarHandler_AddToPC` with `InstructionContractUsesTPC_ADDTPC` true, `InstructionContractImmediateIsSigned_ADDTPC` true, `InstructionContractImmediateWidth_ADDTPC` `20`, and `InstructionContractPageShift_ADDTPC` `12`.
 
-The computed address is published through the encoded destination; it is not installed as the next `TPC`.
+The model adds `SignExtend(imm20)` shifted left by `12` to `TPC` and writes that sum through the destination selector. The addition wraps at XLEN. `TPC` is read once, before the addition, so the sum is relative to the address of `ADDTPC` itself and never to the next instruction.
+
+Design point: encoded immediate zero contributes a zero displacement, so the instruction can copy the current `TPC` into a register without any other setup. That gives software a way to obtain a self-relative base address without a separate constant load.
 
 <!-- PTO-READER-BLOCK: scalar-addtpc-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `RegDst` selects the encoded destination or discard behavior.
+`imm20` supplies the signed `20`-bit page displacement: the encoded value is sign-extended, then scaled by `4096` bytes. Its `20` bits cover a range of plus or minus two gigabytes of pages.
 
-- `imm20` supplies the encoded immediate or displacement.
+`RegDst` names the destination. Codes `1..23` write the named absolute GPR, code `0` and codes `24..29` discard the result, code `30` pushes it to the `U` queue, and code `31` pushes it to the `T` queue.
+
+Encoded zero in `RegDst` names the architectural zero GPR, so writing there has no architectural effect.
+
+Design point: `RegDst` excludes code `10` because that five-bit value is the encoding of `SETRET`'s implicit return-address destination, and the narrower `SETRET` form occupies exactly that hole in the `ADDTPC` opcode. A `RegDst` of `10` is therefore rejected rather than reinterpreted.
 
 <!-- PTO-READER-BLOCK: scalar-addtpc-effects role=effects -->
 ## Effects and ordering
 
-The result is published through the encoded destination, then successful dispatch advances `TPC` by `4` bytes.
+`ADDTPC` writes one destination value and nothing else. `InstructionContractWritesTPC_ADDTPC` returns false, and the state contract states that the instruction neither installs a control-flow target nor modifies `TPC` directly.
 
-The instruction does not branch and does not access memory or reservation state.
+After the destination effect, scalar dispatch advances `TPC` by `4` bytes, the encoded length of the form, because `ScalarHandlerWritesTPC` is false for `AddToPC`.
+
+There is no memory effect, no reservation effect, and no numeric status flag.
+
+Design point: the address arithmetic and the program counter advance are separate steps. A later branch or indirect transfer can therefore consume the computed address from a register, while the read-only `TPC` register keeps its ordinary sequential meaning until then.
 
 <!-- PTO-READER-BLOCK: scalar-addtpc-constraints role=constraints -->
 ## Legality and fault order
 
-Encoding, reserved field values, and source availability are checked before destination, control, or `TPC` effects.
+Decode runs first. A fixed-bit mismatch raises `Fault_IllegalInstruction` at the instruction address before any effect.
+
+The only constrained field is `RegDst`, whose value `10` is reserved and also raises `Fault_IllegalInstruction` before any effect. `imm20` has no reserved values: all `20`-bit patterns are assigned, including the sign bit.
+
+An unavailable selected `T` or `U` source is rejected during the operand-legality step, before the destination is written. A failure leaves the destination register, the queues, and `TPC` unchanged.
 
 <!-- PTO-READER-BLOCK: scalar-addtpc-example role=example -->
 ## Non-normative example
 
-This example illustrates the current owner and does not create a second semantic definition.
+Let `a0 = 8192` and let the `ADDTPC` instruction itself sit at `TPC = 53248`.
 
-`addtpc simm, ->{t, u, Rd}` publishes the page-relative address as data and then continues sequentially.
+With `imm20 = 1`, the displacement is `1 << 12 = 4096`, so `addtpc simm, ->{t, u, Rd}` writes `53248 + 4096 = 57344` into `a0`.
+
+The next instruction is fetched from `53248 + 4 = 53252`, not from `57344`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

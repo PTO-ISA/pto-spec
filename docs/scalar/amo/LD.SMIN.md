@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ld-smin-purpose role=purpose -->
 ## What LD.SMIN does
 
-`LD.SMIN` atomically applies signed minimum to one doubleword, stores the result, and publishes the prior memory value.
+`LD.SMIN` stores the smaller of two values at a memory address. The stored doubleword and the 64-bit operand are both read as two's-complement signed integers, and the doubleword that was in memory before the instruction is published through `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-ld-smin-mechanism role=mechanism -->
-## Atomic mechanism
+## Keeping the smaller signed value
 
-The ASL DOC contract selects `ScalarHandler_AtomicReadModifyWrite` with an access width of `8` bytes.
+The handler is `ScalarHandler_AtomicReadModifyWrite` with access size `8` and atomic operation `Atomic_SMIN`. After the read and write probes pass, the old doubleword is loaded, compared with `SrcR`, and the smaller signed value is written back; one atomic event with `write_performed` set to true is recorded.
 
-Read and write access are preflighted before the same-location atomic read-modify-write is allowed to commit.
+Design point: the comparison reads bit 63 as a sign. Storage holding `0x0000000000000005` compared with `SrcR = 0xfffffffffffffffd`, which is `-3`, ends up holding `0xfffffffffffffffd`, because `-3` is smaller than `5`. The stored bytes are one of the two input patterns, unchanged.
+
+Design point: when the two signed values are equal, the form keeps the operand. Its bit pattern is then identical to the old doubleword, so the location is written with the bytes it already held, and the execution still counts as a performed atomic write.
+
+Design point: the destination is written only when no fault was raised, so a rejected `LD.SMIN` leaves the previous contents of that register in place instead of publishing a value that never came from memory.
 
 <!-- PTO-READER-BLOCK: scalar-ld-smin-inputs-outputs role=inputs-outputs -->
-## Inputs and result
+## Fields and operand roles
 
-`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 atomic operand source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+`RegDst` is a `5`-bit field at instruction bits `7..11`, `SrcL` at bits `15..19`, `SrcR` at bits `20..24`, `rl` at bit `25`, `aq` at bit `26`, and `far` at bit `27`. `SrcL` supplies the atomic address and `SrcR` the operand; every Reg5 source selector is legal, and a selected T or U entry is read without being popped.
 
-`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+`RegDst` takes the published value: codes `0` and `24` to `29` discard it, code `30` pushes U, code `31` pushes T, and codes `1` to `23` write the named GPR. `aq` and `rl` encode relaxed, acquire, release, and acquire-release ordering for the recorded event.
+
+Design point: `far` is decoded and passed to `AtomicAddress`, which returns the address unchanged. In the reference model the hinted spelling selects the same doubleword as the plain spelling, so the comparison result is identical.
 
 <!-- PTO-READER-BLOCK: scalar-ld-smin-effects role=effects -->
-## Effects and ordering
+## Effects
 
-The old memory value is published only after the read-modify-write commits; source aliases are captured before any destination effect.
-
-A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+A completed execution stores 8 bytes, records one atomic event with `write_performed` set to true, publishes the pre-instruction doubleword, and advances `TPC` by 4 bytes. The store clears the local reservation when the written range overlaps the reserved 64-byte granule.
 
 <!-- PTO-READER-BLOCK: scalar-ld-smin-constraints role=constraints -->
-## Legality and precise faults
+## Legality and faults
 
-The effective address must be aligned to `8` bytes. Alignment, translation, and permission checks precede architectural effects.
-
-A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+The address must be a multiple of 8; misalignment raises `Fault_DataAlignment`, and an address outside the permitted region raises `Fault_DataPage`, each reported at the original address and each checked before the load. An undecodable form or an unavailable selected T or U source raises `Fault_IllegalInstruction` before any effect. A faulting execution publishes nothing, writes nothing, records no event, and does not advance `TPC`.
 
 <!-- PTO-READER-BLOCK: scalar-ld-smin-example role=example -->
 ## Non-normative example
 
 This example only shows one accepted spelling; the generated contract below remains authoritative.
 
-For a first reading, use `ld.smin [SrcL], SrcR, ->Rd` and then vary only the ordering or route modifiers described above.
+`ld.smin [a0], a1, ->a2` with `a0` holding an 8-byte aligned address compares in place. With `[a0]` holding `0x0000000000000005` and `a1` holding `0xfffffffffffffffd`, the smaller signed value `-3` is stored as `0xfffffffffffffffd`, and `a2` receives `0x0000000000000005`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

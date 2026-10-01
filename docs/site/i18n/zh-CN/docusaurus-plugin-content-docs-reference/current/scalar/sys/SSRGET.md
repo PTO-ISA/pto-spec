@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ssrget-purpose role=purpose -->
 ## SSRGET 的作用
 
-`SSRGET` 读取已分配的系统寄存器地址并发布完整 XLEN 值。
+`SSRGET` 读取一个系统寄存器。它从 `SSR_ID` 取得 12 位寄存器地址、从 `RegDst` 取得 5 位目的地选择器，读取被寻址的寄存器，并把完整值发布到该目的地。该地址空间是规范的，因此基寄存器与上下文寄存器由同一条指令到达。
 
 <!-- PTO-READER-BLOCK: scalar-ssrget-mechanism role=mechanism -->
 ## 系统机制
 
-ASL DOC 区域选择 `ScalarHandler_ExecuteSystemRegisterGet`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+`InstructionContractHandler_SSRGET` 选择 `ScalarHandler_ExecuteSystemRegisterGet`（`asl/scalar/sys/SSRGET.asl:18`），`InstructionContractSystemAddressWidth_SSRGET` 把地址宽度固定为 12（`asl/scalar/sys/SSRGET.asl:36`）。派发器把 `RegDst` 解码为 Reg5 选择器、把 `SSR_ID` 解码为系统寄存器地址，然后按该顺序调用读取辅助函数（`asl/scalar/model/dispatch/sys.asl:106`）。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+该辅助函数先读后写：`ExecuteSystemRegisterGet` 先读取被寻址的寄存器，只有在未引发故障时才写目的地（`asl/scalar/model/sys/registers.asl:144`）。
 
 <!-- PTO-READER-BLOCK: scalar-ssrget-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`RegDst` 承载 Reg5 目的地：丢弃、R1..R23、压入 U 或压入 T；`SSR_ID` 承载系统寄存器标识符。
+`SSR_ID` 是 12 位系统寄存器标识符，`RegDst` 是目的地选择器 `discard, R1..R23, push U, or push T`（`asl/scalar/sys/SSRGET.asl:1`）。`ReadSystemRegisterAddress` 路径把地址分类为基寄存器、扩展寄存器或未分配，并在读取之前检查其访问类别（`asl/scalar/model/sys/registers.asl:60`）。
 
-编码零是已分配的字段值，从不表示省略操作数。
+L32 形式长 32 位，因此 `SSR_ID` 可寻址 4096 个寄存器位置。`SSR_ID` 中的编码零是地址 0 处的基寄存器，`RegDst` 中的编码零命名架构零 GPR，即丢弃该值。
 
 <!-- PTO-READER-BLOCK: scalar-ssrget-effects role=effects -->
 ## 架构效果
 
-地址与访问预检完成后，完整 XLEN 系统寄存器值通过通用 Reg5 目的地映射发布。
+成功的读取通过 Reg5 目的地映射发布完整的寄存器值，该映射会写 GPR 或压入 U 队列或 T 队列（`asl/scalar/model/types/operands.asl:65`）。随后 `TPC` 前进 4 字节。
 
-读取被拒绝时，除普通陷阱进入外，不会改变所选目的地或临时队列顺序。
+设计要点：目的地写入以读取成功为前提。因此被拒绝的读取会让目的地寄存器、临时队列和系统寄存器都保持不变，失败的 `SSRGET` 无法破坏后续代码所依赖的值。
+
+`SSRGET` 不修改系统寄存器堆，也不执行普通标量内存访问。
 
 <!-- PTO-READER-BLOCK: scalar-ssrget-constraints role=constraints -->
 ## 位置与拒绝边界
 
-完整地址必须先通过已分配访问类别和当前 ACR 权限检查，之后才能产生目的地或队列效果。
+第一道门是位置必须在活动 SYS 块体内；在其他位置，该次尝试在地址被检查之前引发 `Fault_BundleControl`。第二道门是地址检查：当环缺少权限，或地址类别为 `SystemRegisterAccess_Unknown` 或 `SystemRegisterAccess_WriteOnly` 时，读取以 `Fault_IllegalInstruction` 被拒绝（`asl/scalar/model/sys/registers.asl:66`）。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+设计要点：访问环权限由地址而不是由指令决定。低于 0x0F00 的地址在每个环都可到达，而上下文、地址转换和调试系列需要 ACR0，因此同一条 `SSRGET` 编码会因执行它的环而成功或失败。
 
 <!-- PTO-READER-BLOCK: scalar-ssrget-example role=example -->
 ## 非规范示例
 
 该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
 
-可从 `ssrget SSR_ID, ->{t, u, Rd}` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+`ssrget SSR_ID, ->{t, u, Rd}` 在 `SSR_ID` 为 0x0010 且目的地为 R1 时读取 `TIME`，即架构时间寄存器，并把该值发布到 R1。把同一指令的 `SSR_ID` 改为 0x0F04 则被拒绝，因为该地址没有已分配的访问类别，读取在任何目的地写入之前引发 `Fault_IllegalInstruction`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,49 +19,61 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-casw-purpose role=purpose -->
 ## What CASW does
 
-`CASW` atomically reads one aligned 4-byte word, compares it with an expected word, conditionally stores a desired word, and publishes the prior memory value after either a nonfaulting match or mismatch.
+`CASW` atomically reads the 4-byte word at the address named by `SrcL`, compares it with the low `4` bytes of `SrcR`, and stores the low `4` bytes of `SrcD` there when the comparison succeeds.
+
+A nonfaulting match and a nonfaulting mismatch both publish the prior word through `RegDst`. `CASW` is a 32-bit form whose successful execution advances `TPC` by `4` bytes.
 
 <!-- PTO-READER-BLOCK: scalar-casw-mechanism role=mechanism -->
-## Compare-and-swap mechanism
+## The compare-and-swap sequence
 
-Before any effect, `CASW` snapshots the address source `SrcL`, expected source `SrcR`, and desired source `SrcD`, then completes alignment plus read/write translation and permission preflight for one translated location.
+`ExecuteDecodedCompareAndSwap` reads `SrcL`, `SrcR`, and `SrcD` before calling `CompareAndSwap` with the access size `4`, so the operands are snapshotted before the first probe. The helper probes the address for read access, probes it again for write access, and requires one translated address from both probes.
 
-The comparison uses the low 4 bytes of `SrcR`. On equality, the instruction stores the low 4 bytes of `SrcD`; on mismatch, it preserves memory.
+The helper loads the word at that translated address and compares it with the normalized expected value. Equality calls the store, inequality skips it, and either way one atomic event is recorded with the loaded word, the normalized desired value, and `write_performed` set to the comparison result.
 
-Both outcomes emit one ordered atomic event. A matching event records `write_performed=true`; a mismatching event records `write_performed=false` and acts as an ordered atomic read without a coherence write.
+Design point: `NormalizeAtomicReturn` applies `SignExtend{PTO_XLEN}(value[31:0])` at this width, so a memory word of `0x80000001` reaches `RegDst` as `0xffffffff80000001`. `CASW` can publish a negative XLEN value; `CASB` and `CASH` cannot.
 
-The prior 32-bit word is sign-extended to XLEN before destination publication.
+Design point: the comparison uses `NormalizeAtomicUnsigned(SrcR, 4)`, which zero-extends from `32` bits, so the upper `32` bits of `SrcR` are ignored. A memory word of `0x00000001` matches `SrcR = 0xdeadbeef00000001`.
 
 <!-- PTO-READER-BLOCK: scalar-casw-inputs role=inputs-outputs -->
-## Inputs, ordering, and output
+## Operands, ordering, and the destination
 
-- `SrcL`, `SrcR`, and `SrcD` accept every Reg5 source selector, including non-consuming T/U sources; `RegDst` accepts every Reg5 destination or discard selector.
-- `aq=0,rl=0` selects relaxed ordering; `aq=1,rl=0` acquire; `aq=0,rl=1` release; and `aq=1,rl=1` acquire-release.
+- `SrcL` supplies the atomic address, `SrcR` the expected word, and `SrcD` the desired word; all three accept the absolute GPR, T, and U selectors, and reading a queue entry does not consume it.
+- `RegDst` selects where the prior word goes: codes `1` to `23` write that GPR, code `0` and codes `24` to `29` discard it, and codes `30` and `31` push it onto the U queue or the T queue.
 
-The short form has no far-address field and always uses the default flat-address route.
+`aq=0,rl=0` records relaxed ordering, `aq=1,rl=0` acquire, `aq=0,rl=1` release, and `aq=1,rl=1` acquire-release, for match and mismatch alike.
+
+Design point: the 32-bit form has no `far` bit, so the encoding offers only the default flat-address route. An absent field decodes as zero and `AtomicAddress` returns its argument unchanged, so no route choice here can move the access.
 
 <!-- PTO-READER-BLOCK: scalar-casw-effects role=effects -->
 ## Architectural effects
 
-On a match, `CASW` writes the desired low word, emits one read/write atomic event, and invalidates an overlapping local 64-byte-line reservation.
+A match writes the desired low word to memory and records one atomic event with `write_performed=true`; a mismatch records one atomic event with `write_performed=false` and leaves memory unchanged.
 
-On a mismatch, it leaves memory and the reservation unchanged while still emitting the ordered atomic read event.
+Design point: the destination write is driven by the loaded word and is skipped only while a fault is set, so an instruction that fails to replace the word still reports what memory held, and a retry can take that value from `RegDst` without a second load.
 
-Every nonfaulting outcome publishes the sign-extended prior word and advances `TPC` by `4` bytes; a fault publishes no destination.
+Design point: the recorded event carries `NormalizeAtomicUnsigned(desired, 4)` rather than the XLEN register value, so its new value is the low `32` bits that the store actually writes.
+
+Both nonfaulting outcomes advance `TPC` by `4` bytes; a match also clears the reservation when the stored word overlaps the reserved 64-byte granule.
 
 <!-- PTO-READER-BLOCK: scalar-casw-constraints role=constraints -->
-## Alignment and precise faults
+## Alignment, access checks, and fault order
 
-The effective address must be aligned to `4` bytes. Alignment, read access, write access, and translated-address equality are checked before memory, destination, event, reservation, or `TPC` effects.
+The address must be a multiple of `4`. `ProbeDataAccess` tests `UInt(address) MOD 4` before translation and before the permission check, and reports `Fault_DataAlignment` when the remainder is nonzero.
 
-On fault, trap entry preserves the original `TPC`; recovery restores it so the complete instruction can be reissued without retained progress.
+The read probe runs first, so its alignment or `Fault_DataPage` result is reported first. The write probe follows with the same size and alignment, and only then must the two translated addresses agree, or `Fault_DataPage` is raised.
+
+Design point: these checks finish before the load, so a faulting `CASW` stores nothing, records no atomic event, clears no reservation, writes no destination, and leaves `TPC` on the same instruction. The reference model translates an address to itself, so that comparison cannot fail there, while the bounds check can.
+
+A reported fault carries the original `SrcL` address. A decode failure, or an unavailable selected `T#1` to `T#4` or `U#1` to `U#4` source, raises `Fault_IllegalInstruction` before the handler runs.
 
 <!-- PTO-READER-BLOCK: scalar-casw-example role=example -->
-## Non-normative walkthrough
+## A word that matches, and one that does not
 
 This walkthrough illustrates the current contract; it does not replace the atomic operation.
 
-Suppose memory holds the word `0x80000001`, the expected word matches, and the desired XLEN value is `0x1122334455667788`. `CASW.aqrl` stores `0x55667788`, publishes the prior word sign-extended to XLEN, emits one acquire-release atomic event with `write_performed=true`, and invalidates an overlapping reservation.
+Suppose the addressed word holds `0x80000001`, `SrcR` holds `0x80000001` in its low `4` bytes, and `SrcD` holds `0x55667788`. The comparison succeeds, so `CASW` stores `0x55667788`, publishes `0xffffffff80000001` in `RegDst`, and records one atomic event with `write_performed=true`.
+
+Suppose the same word `0x80000001` is in memory but `SrcR` holds `0x00000002` in its low `4` bytes. The comparison fails, memory keeps `0x80000001`, the recorded event has `write_performed=false`, and `RegDst` still receives `0xffffffff80000001`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

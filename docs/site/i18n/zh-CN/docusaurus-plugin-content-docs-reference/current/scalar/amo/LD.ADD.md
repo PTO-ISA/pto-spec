@@ -19,42 +19,49 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ld-add-purpose role=purpose -->
 ## LD.ADD 的作用
 
-`LD.ADD` 对一个双字原子执行模加、存储结果，并发布先前的内存值。
+`LD.ADD` 把一个 64 位操作数加到某个内存地址上的双字，把和写回该地址，并发布被替换的双字。地址来自 `SrcL`，操作数来自 `SrcR`，被替换的值通过 `RegDst` 发布。它是独立的 32 位编码形式且有内存效果，因此成功执行会让 `TPC` 前进 4 字节。
 
 <!-- PTO-READER-BLOCK: scalar-ld-add-mechanism role=mechanism -->
-## 原子机制
+## 和如何到达内存
 
-ASL DOC 契约选择 `ScalarHandler_AtomicReadModifyWrite`，访问宽度为 `8` 字节。
+该形式绑定语义处理器 `ScalarHandler_AtomicReadModifyWrite`、访问宽度 `8` 和原子操作 `Atomic_ADD`。分派先对同一地址执行读取预检与写入预检，然后加载旧双字、计算 64 位和、存储该和、记录一个 `write_performed` 为 true 的原子事件，并返回旧值。
 
-只有读取与写入访问都完成预检后，同一位置的原子读改写才能提交。
+设计要点：加法是 `old + operand`，宽度为 `XLEN`，因此会回绕。存放 `0xffffffffffffffff` 的位置与 `SrcR = 0x0000000000000001` 相加后存放 `0x0`；第 63 位的进位被丢弃，且没有任何标量状态标志记录该进位。
+
+设计要点：发布到 `RegDst` 的值是执行前的双字，而不是刚写入的和。因此一次执行既替换了内存内容又报告了原内容，新和只能通过再次读取该位置才能看到。
 
 <!-- PTO-READER-BLOCK: scalar-ld-add-inputs-outputs role=inputs-outputs -->
-## 输入与结果
+## 字段与操作数角色
 
-`SrcL` 承载 Reg5 原子地址源；`SrcR` 承载 Reg5 原子操作数源；`RegDst` 承载 Reg5 旧值目的地；`aq` 承载获取排序位；`rl` 承载释放排序位；`far` 承载平坦地址路由提示。
+`RegDst` 是位于指令位 `7..11` 的 `5` 位字段，`SrcL` 位于位 `15..19`，`SrcR` 位于位 `20..24`，`rl` 位于位 `25`，`aq` 位于位 `26`，`far` 位于位 `27`。
 
-`aq` 与 `rl` 选择宽松、获取、释放或获取-释放排序；`far` 是配置档路由提示，在参考配置档中不改变架构结果。
+- `SrcL` 读取地址；编码为零时选择架构零寄存器，因此访问以地址零为目标。
+- `SrcR` 读取操作数；选择 T 或 U 选择子时读取队列项而不消耗它。
+- `RegDst` 接收旧值；目的地编码 0 丢弃它，编码 30 压入 U，编码 31 压入 T。
+- `aq` 与 `rl` 为所记录的事件选择宽松、获取、释放或获取-释放排序。
+
+设计要点：`far` 被译码后交给 `AtomicAddress`，后者原样返回其参数，因此在参考模型中 `ld.add [a0], a1, ->a2` 与 `ld.add.f [a0], a1, ->a2` 到达同一地址并产生相同结果；该位只选择路由提示。
 
 <!-- PTO-READER-BLOCK: scalar-ld-add-effects role=effects -->
-## 效果与排序
+## 效果
 
-只有读改写提交后才会发布旧内存值；任何目的地效果之前都会先捕获源别名。
+成功执行会向目标地址写入 8 字节，记录一个 `write_performed` 为 true 的原子事件，并在 `RegDst` 不是丢弃型目的地时发布旧双字。当写入的 8 字节范围与保留的 64 字节粒度重叠时，该存储还会使本地保留失效；其他位置的保留不受影响。`TPC` 前进 4 字节。
 
-完成的写入会使重叠的本地 64 字节缓存行保留失效，保留不重叠的保留，并让 `TPC` 前进 `4` 字节。
+设计要点：该存储是无条件的，即使和与旧双字相等也一样，例如 `SrcR` 读取架构零寄存器时。该存储仍会清除重叠的保留，因此即使字节没有变化，之后对同一粒度的条件存储也会失败。
 
 <!-- PTO-READER-BLOCK: scalar-ld-add-constraints role=constraints -->
-## 合法性与精确故障
+## 合法性与故障
 
-有效地址必须按 `8` 字节对齐。对齐、地址翻译和权限检查都先于架构效果。
+地址必须是 8 的倍数。译码失败或所选 T 或 U 源不可用会在任何效果之前引发 `Fault_IllegalInstruction`。地址未对齐随后报告 `Fault_DataAlignment`；地址超出允许区域报告 `Fault_DataPage`。两者都在原始（翻译前）地址上报告，且故障不会发布目的地、不会加载或存储、不记录事件，也不推进 `TPC`。
 
-预检失败时不会发布目的值、内存事件、保留更新或退役效果；保存的原始 `TPC` 支持完整重新执行。
+设计要点：由于对齐检查发生在读取预检内部，而且两次预检都在加载之前完成，未对齐的地址不会读写任何字节；保存的 `TPC` 让软件可以修正地址并重新执行同一条指令。
 
 <!-- PTO-READER-BLOCK: scalar-ld-add-example role=example -->
 ## 非规范示例
 
 本示例只展示一种已接受写法；下方生成的契约仍是权威来源。
 
-初次阅读可从 `ld.add [SrcL], SrcR, ->Rd` 开始，再只改变上文说明的排序或路由修饰位。
+当 `a0` 存放 8 字节对齐的地址时，`ld.add [a0], a1, ->a2` 把 `a1` 加到 `[a0]` 处的双字上。若该双字存放 `0xffffffffffffffff` 且 `a1` 存放 `0x0000000000000001`，内存得到 `0x0`，`a2` 得到 `0xffffffffffffffff`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

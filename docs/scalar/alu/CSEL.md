@@ -19,49 +19,53 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-csel-purpose role=purpose -->
 ## What CSEL does
 
-`CSEL` is a 32-bit scalar ALU instruction. It selects the left value for a nonzero predicate, otherwise selecting the optionally negated right value; its current instruction contract defines the result publication path and any additional state effect.
+`CSEL` reads three Reg5 sources and publishes one of two candidate values: the true-value source when the predicate source is not all zero, otherwise the false-value source after an optional negation chosen by the encoding.
+
+Design point: the predicate test is "not all zero", so any nonzero bit pattern is true, including a value whose only set bit is far from bit zero. A caller can pass a mask or a comparison result straight in as the condition instead of normalizing it to `0` or `1`.
 
 <!-- PTO-READER-BLOCK: scalar-csel-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then selects the left value for a nonzero predicate, otherwise selecting the optionally negated right value, and only afterward performs the destination effects.
+All three sources are snapshotted. The false candidate is prepared first: raw `SrcRType` codes `00`, `01` and `10` leave `SrcR` unchanged, and raw `11` replaces it with `0 - SrcR` computed modulo `2^PTO_XLEN`. The selection then publishes the true candidate if the predicate snapshot is nonzero, and the prepared false candidate if it is zero.
 
-- `SrcRType` chooses the right-source transformation before the operation-specific arithmetic or logical step.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: the modifier is applied to the false candidate before the selection, so a negation can never reach the true value. In `csel a0, a1, a2.neg, ->a3` the two possible results are `a1` and `-a2`, and there is no way to negate `a1` in this form.
+
+Design point: three of the four `SrcRType` codes mean "unchanged", so an assembler that omits `.neg` must choose one of them, and the remaining two stay legal encodings of the same operation. Two instruction streams can differ in those bits and still produce identical results.
+
+Design point: negation wraps modulo `2^PTO_XLEN` and does not fault, so negating the most negative value republishes that same value rather than overflowing.
 
 <!-- PTO-READER-BLOCK: scalar-csel-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `SrcP` field selects the predicate value through Reg5.
-- The 5-bit `SrcL` field selects the value used for a true predicate.
-- The 5-bit `SrcR` field selects the value used for a false predicate.
-- The 2-bit `SrcRType` field selects the CSEL transformation applied to the false-side source.
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
+- `SrcP` is the predicate: an all-zero value selects the false candidate and every nonzero value selects the true candidate.
+- `SrcL` is the true-value source and `SrcR` the false-value source; both use the Reg5 map, where codes `0..23` are absolute GPRs, `24..27` are `T#1..T#4` and `28..31` are `U#1..U#4`, read without consuming a queue entry.
+- `SrcRType` is the two-bit false-source modifier selector: `00`, `01` and `10` are unmodified aliases, and `11` is `.neg`.
+- `RegDst` publishes the selected value through the common destination map: codes `0` and `24..29` discard, `1..23` write a GPR, `30` pushes `U`, and `31` pushes `T`.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero of `SrcP` reads the architectural zero GPR, so `csel zero, a0, a1, ->a2` always publishes `a1`. The predicate is a real operand in every encoding, never an omitted field.
 
 <!-- PTO-READER-BLOCK: scalar-csel-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+All three sources are read eagerly and non-consumingly before the destination write, even when the predicate outcome does not select one of them. A destination that aliases a source therefore sees the pre-instruction value: `csel a0, a1, a2, ->a0` tests the old `a0`. The selected value is then published once.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+`TPC` advances by `4` bytes. Only a `T` or `U` destination push changes a temporary queue; no memory, reservation, descriptor, numeric-status, block, privilege, branch-target or other control state changes.
 
 <!-- PTO-READER-BLOCK: scalar-csel-constraints role=constraints -->
 ## Legality and fault boundary
 
-All three sources are read before selection; an unavailable T/U source faults with `Fault_IllegalInstruction` before publication even when the predicate would choose the other side.
+All four `SrcRType` values are assigned, every value of each Reg5 selector is assigned, and the fixed encoding bits must match the canonical form. No operand of `CSEL` is reserved.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unavailable selected `T` or `U` queue source raises `Fault_IllegalInstruction` before the destination effect and before `TPC` advances, including a source that the predicate outcome does not select. `CSEL` raises no arithmetic, memory, alignment, permission or control-flow exception.
+
+Design point: the preflight covers the encoded selectors rather than the value that wins, so `csel t#1, a0, u#1, ->a2` faults when `U#1` is unavailable even if a nonzero `T#1` would publish `a0`. The fault decision is fixed by the encoding before the predicate is consulted.
 
 <!-- PTO-READER-BLOCK: scalar-csel-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `CSEL` example, predicate `0`, false-side value `3`, and the negating selector publish `-3` modulo `2^PTO_XLEN`.
+With `a0` holding `5`, `a1` holding `7` and `a2` holding `9`, `csel a0, a1, a2, ->a3` publishes `7`, because a nonzero predicate selects the true candidate. With `a0` holding `0` the same instruction publishes `9`, and `csel a0, a1, a2.neg, ->a3` publishes `-9`. The canonical form `csel t#1, u#1, a0.neg, ->u` reads the predicate from `T#1` and the true candidate from `U#1`, neither of which is consumed.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

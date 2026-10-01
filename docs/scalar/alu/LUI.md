@@ -19,46 +19,53 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-lui-purpose role=purpose -->
 ## What LUI does
 
-`LUI` is a 32-bit scalar ALU instruction. It sign-extends the encoded 20-bit immediate, then shifts it left by 12 bits; its current instruction contract defines the result publication path and any additional state effect.
+`LUI` is a 32-bit encoded scalar ALU instruction that materializes `SignExtend(imm20) << 12` and publishes the XLEN value through one Reg5 destination. It reads no scalar register.
+
+The published value is always a multiple of `4096` whose magnitude is at most `2^31`, so the instruction materializes a signed immediate in the upper `20` bits of a word.
 
 <!-- PTO-READER-BLOCK: scalar-lui-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then sign-extends the encoded 20-bit immediate, then shifts it left by 12 bits, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractResult_LUI`, which returns `MaterializeLUI(encoded_immediate)`. That helper is `LSL(SignExtend{PTO_XLEN}(immediate), 12)`: the `20`-bit field is sign-extended first and shifted left afterwards. Dispatch calls it from `ScalarOperation_LUI` with `ScalarDecodedBits20(instruction, form, ScalarField_imm20)`.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+lui simm, ->{t, u, Rd}
+```
+
+Design point: the shift follows the sign extension, so a negative field fills the top of the word instead of leaving zeros. `imm20 = 0x80000` materializes `0xFFFFFFFF80000000`, not `0x0000000080000000`.
 
 <!-- PTO-READER-BLOCK: scalar-lui-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 20-bit `imm20` field carries the signed upper 20-bit immediate.
+- `RegDst`, instruction slice `[7 +: 5]`, receives the XLEN result or discards it.
+- `imm20`, instruction slice `[12 +: 20]`, supplies the signed upper immediate.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+There is no `SrcL` or `SrcR` field. The destination uses the common map: codes `1..23` write absolute GPRs, code `30` pushes `U`, code `31` pushes `T`, and code `0` with codes `24..29` discard.
+
+Design point: with no source field, `LUI` has no read to snapshot and no temporary source availability to test. The only operand that can affect the result is the immediate, and the only state it writes is the destination.
 
 <!-- PTO-READER-BLOCK: scalar-lui-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+The result is computed from the encoded immediate alone and then published through `RegDst`. There is no earlier architectural state for it to observe, so the ordering question reduces to the single destination write.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+`TPC` advances by `4` bytes after the destination effect. `LUI` accesses no memory and changes no numeric-status, reservation, descriptor, Tile, bundle, privilege or control-flow state; the only possible queue change is the one `T` or `U` push selected by `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-lui-constraints role=constraints -->
 ## Legality and fault boundary
 
-Materialization, movement, and extension are total at their fixed widths and do not raise arithmetic exceptions. A fixed-bit mismatch or unavailable selected T/U source faults before state effects.
+Both encoded fields are fully assigned: all `32` `RegDst` codes are accepted and all `2^20` values of `imm20` are legal. Only the low opcode field is fixed, so once the form decodes the operand-legality pass has nothing left to reject.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise the only reachable fault is `Fault_IllegalInstruction` at `PC` for an encoding that does not match the form, and it is raised before the bundle body is entered. No unavailable-temporary fault exists, because there is no Reg5 source.
+
+Design point: the immediate is `20` bits, so `SignExtend(imm20)` has magnitude at most `2^19` and the left shift by `12` produces at most `2^31`. The shift therefore stays inside XLEN for every `imm20` value, and the bits it drops out of the top of the register are redundant sign bits, so each `imm20` value materializes one distinct multiple of `4096` in the range `-2147483648` through `2147479552`.
 
 <!-- PTO-READER-BLOCK: scalar-lui-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `LUI` example, immediate `1` produces XLEN value `0x1000` after the 12-bit shift.
+With `imm20 = 1`, `SignExtend(1)` is `1` and the shift produces `4096`, so `RegDst` receives `4096`. With `imm20 = 0x80000`, the field is negative, `SignExtend` produces `0xFFFFFFFFFFF80000`, and the published value is `0xFFFFFFFF80000000`. The largest positive field, `imm20 = 0x7FFFF`, publishes `0x7FFFF000`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

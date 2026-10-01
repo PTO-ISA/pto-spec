@@ -19,47 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fadd-purpose role=purpose -->
 ## FADD 的作用
 
-`FADD` 通过当前数值配置档对两个选定的 FP64 或 FP32 载体求和，发布配置档返回的结果，并把返回的 5 位状态向量累积到粘滞数值状态。
+`FADD` 把两个选定的浮点载体相加，并把舍入后的和发布到 Reg5 目的。
+
+加法由当前数值配置档执行，因此和是配置档的舍入结果，而不是无界的实数值。
 
 <!-- PTO-READER-BLOCK: scalar-fadd-mechanism role=mechanism -->
-## 配置档介导的机制
+## 和如何产生
 
-`SrcType=00` 选择完整 FP64 载体，`SrcType=01` 从零扩展后的低 32 位选择 FP32 载体。指令使用当前舍入模式调用配置档的二元加法操作。
+`SrcType` 选择载体：编码 `00` 选择 FP64，编码 `01` 选择每个源低字中的 FP32 载体。两个源都先规范化到该载体，然后模型用当前舍入模式（读取自 `core_state[39:37]`）计算二元加法。
 
-选定的配置档返回结果以及 `NV`、`DZ`、`OF`、`UF`、`NX`；`FADD` 把这些位按位或到已有的粘滞 `CORE_STATE[36:32]` 字段中。
+特殊值规则在任何有限算术之前就决定结果。任一侧为 NaN 时结果为静默 NaN；两侧为异号无穷时结果为静默 NaN；恰好一侧为无穷时结果为带该符号的无穷。两个有限输入若其精确和超出目的格式范围，也会产生无穷，该溢出会记录 `OF` 与 `NX`。
 
-在 `pto-v0` 参考配置档中，加法是确定性的原始载体模运算，并返回全零标志。该参考行为并不是 IEEE-754 或目标硬件一致性声明。
+设计要点：NaN 输入产生 NaN 结果，绝不会产生无穷，也不会产生有限数，因此这里检测到的 NaN 会在目的处保持可见，而不会被静默吸收。
 
 <!-- PTO-READER-BLOCK: scalar-fadd-inputs role=inputs-outputs -->
-## 输入与目的位置
+## 输入与输出
 
-- `SrcL` 和 `SrcR` 接受全部 Reg5 源选择器，包括不消费的 T/U 源。
-- `RegDst` 的 `1..23` 写入 GPR，`30` 压入 U，`31` 压入 T，`0` 和 `24..29` 只丢弃结果。
+- `SrcL` 提供左侧 Reg5 源。
+- `SrcR` 提供右侧 Reg5 源。
+- `SrcType` 为两侧选择源载体；整个操作只使用一个宽度。
+- `RegDst` 选择目的：编码 `1..23` 写所指的绝对 GPR，编码 `30` 压入 `U` 队列，编码 `31` 压入 `T` 队列，编码 `0` 以及编码 `24..29` 丢弃结果。
 
-页面显示的所有操作数字段都有编码。编码零是一个值：源选择器 `0` 读取零 GPR，目的 `0` 丢弃结果，`SrcType=00` 选择 FP64。
+Reg5 源码读取绝对 GPR、`T#1..T#4` 或 `U#1..U#4`，且不消费队列项。源中的编码零读取架构零 GPR，`RegDst` 中的编码零表示丢弃。
 
 <!-- PTO-READER-BLOCK: scalar-fadd-effects role=effects -->
 ## 效果与顺序
 
-第一次读取源或调用配置档之前，会先检查类型合法性。随后两个源都在标志累积或目的发布前完成快照。
+结果被规范化到选定的载体宽度并写入一次，产生的标志按位或进粘性数值状态，随后 `TPC` 前进 `4` 字节。没有内存、保留状态或描述符效果。
 
-产生的标志会按位或到粘滞数值状态，结果随后被发布或丢弃，`TPC` 再前进 `4` 字节。数值标志本身不会引发同步 PTO 陷阱。
-
-`FADD` 不产生内存或保留状态效果。
+配置档返回精确的 `NV`、`DZ`、`OF`、`UF`、`NX` 向量。模型把该向量按位或进已有粘性状态，因此先前指令置位的标志在本次未报告任何标志的 `FADD` 之后仍然保留。
 
 <!-- PTO-READER-BLOCK: scalar-fadd-constraints role=constraints -->
-## 类型与配置档边界
+## 载体合法性与粘性标志行为
 
-`SrcType=10` 和 `SrcType=11` 为保留值，会在读取源、调用配置档、写入目的、更新标志、压入队列或改变 `TPC` 之前引发 `Fault_IllegalInstruction`。选中的 T/U 源尚不可用时，适用相同的效果前故障边界。
+`SrcType` 编码 `0` 和 `1` 已分配，编码 `2` 和 `3` 为保留值。载体检查在第一次架构源读取之前运行，因此保留的 `SrcType`、固定位不匹配或所选的 `T`、`U` 源不可用，都会在任何源、配置档、目的、标志、队列或 `TPC` 效果之前引发 `Fault_IllegalInstruction`。
 
-可移植契约拥有载体选择、源快照、标志累积、目的发布和拒绝顺序。当前具名数值配置档拥有算术结果和产生的状态向量。
+每个 Reg5 目的编码都已分配，因此没有非法的目的编码。数值状态标志只更新粘性状态，永远不会引发同步 PTO 陷阱。
 
 <!-- PTO-READER-BLOCK: scalar-fadd-example role=example -->
-## 非规范使用示例
+## 非规范示例
 
-下面的示例只说明选择和发布，并不脱离当前配置档另行定义浮点算术。
+This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
 
-`fadd.fd a0, a1, ->a2` 选择 FP64 载体路径，对两个源取快照，使用当前舍入模式调用配置档加法，累积返回的标志，把返回载体写入 `a2`，最后让 `TPC` 前进 `4` 字节。
+规范 FP64 示例是 `fadd.fd a0, a1, ->a2`，其中 GPR `a0` 保存 `0x3ff0000000000000`，表示 `1.0`，GPR `a1` 保存 `0x3ff0000000000000`：GPR `a2` 收到 `0x4000000000000000`，表示 `2.0`。
+
+由于两个操作数共用一个载体宽度，对 `T` 和 `U` 队列中的两个 FP32 值做 `FADD` 使用同一条指令，只是 `SrcType` 取 FP32 编码。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,49 +19,58 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-madd-purpose role=purpose -->
 ## What HL.MADD does
 
-`HL.MADD` is a 48-bit scalar ALU instruction. It adds the selected addend to the signed product and separates the wide result into low and high XLEN halves; its current instruction contract defines the result publication path and any additional state effect.
+`HL.MADD` is a 48-bit scalar ALU instruction that computes `SrcL * SrcR + SrcD` at 128-bit width. Both multiplicands are read as signed XLEN values, the addend is sign-extended to 128 bits, and the sum is published as two XLEN halves.
+
+There is no rounding, saturation, or flag output. The low half goes to `RegDst0` and the high half to `RegDst1`. That pair result shape is what separates this mnemonic from `MADD`, which adds the same addend to the product modulo `2^PTO_XLEN` and publishes one destination.
 
 <!-- PTO-READER-BLOCK: scalar-hl-madd-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then adds the selected addend to the signed product and separates the wide result into low and high XLEN halves, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractAccumulator_HL_MADD`: `MultiplyWideSigned(left, right)` produces the 128-bit product, `SignExtend{PTO_XLEN * 2}(addend)` widens `SrcD` to the same width, and one 128-bit addition combines them. Dispatch reaches the same accumulator through `ExecuteScalarMultiplyAddPair` with `word_operation` false.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+hl.madd SrcL, SrcR, SrcD, ->Dst0, Dst1
+```
+
+Design point: the addend is sign-extended to `128` bits, not zero-extended and not truncated to `64`. Adding `SrcD = -1` therefore subtracts one from the complete 128-bit product, and the borrow can reach the high half that `RegDst1` receives.
 
 <!-- PTO-READER-BLOCK: scalar-hl-madd-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst0` field selects the Reg5 target for the low product or accumulator half.
-- The 5-bit `RegDst1` field selects the Reg5 target for the high product or accumulator half.
-- The 5-bit `SrcD` field selects the addend through Reg5.
-- The 5-bit `SrcL` field selects the left multiplicand or additive operand through Reg5.
-- The 5-bit `SrcR` field selects the right multiplicand through Reg5.
+- `RegDst0`, instruction slice `[23 +: 5]`, receives `accumulator[63:0]`.
+- `RegDst1`, instruction slice `[11 +: 5]`, receives `accumulator[127:64]`.
+- `SrcD`, instruction slice `[43 +: 5]`, supplies the addend.
+- `SrcL`, instruction slice `[31 +: 5]`, supplies the left multiplicand.
+- `SrcR`, instruction slice `[36 +: 5]`, supplies the right multiplicand.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Each source is a Reg5 code: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`. Reading a temporary does not remove it from its queue, and all three sources are read before either destination is written.
+
+Design point: both destination fields are written independently, so `->Dst0, Dst1` holding codes `30` and `31` pushes the low half to `U` and then the high half to `T`. Duplicate destinations are legal because the two writes simply happen in `RegDst0` then `RegDst1` order.
 
 <!-- PTO-READER-BLOCK: scalar-hl-madd-effects role=effects -->
 ## Effects and ordering
 
-All results are computed before publication. The destinations are then updated in encoded order (`RegDst0`, `RegDst1`), which also defines the order of duplicate-register writes or queue pushes.
+All three sources are read before any write, so a source that also names a destination still contributes its pre-instruction value. The 128-bit accumulator is complete before the first write.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
+The writes then run in encoded order: `RegDst0` first with `accumulator[63:0]`, `RegDst1` second with `accumulator[127:64]`. When both names resolve to one GPR the high half is the final value; when both are queue pushes the high half is the newest entry.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+After the destination effects, `TPC` advances by `6` bytes. `HL.MADD` reads and writes no memory and changes no other architectural state; the only queue change it can make is the one or two pushes selected by `RegDst0` and `RegDst1`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-madd-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+All `32` source codes are assigned: `0..23` select GPRs and `24..31` select temporary queue entries that must be valid. All `32` destination codes are accepted, so `ScalarDestinationSelectorLegal` cannot fail. The fixed bits of the form are a match-and-mask test over the whole 48-bit encoding, and no operand value is reserved.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+The checks run in a fixed order. Applicability fails only while a system-block terminal request is pending, which raises `Fault_BundleControl` at `TPC`. Otherwise an encoding that does not match the form raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before any destination write. The arithmetic itself raises nothing: the 128-bit sum wraps modulo `2^128`.
+
+Design point: an unavailable temporary is rejected by the legality pass instead of being read, so the accumulator is never built from an undefined queue entry. That is why `hl.madd t#1, t#1, zero, ->a0, a1` faults on an empty `T` queue rather than publishing a value.
 
 <!-- PTO-READER-BLOCK: scalar-hl-madd-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.MADD` example, multiplicands `6` and `7` with addend `1` produce accumulated value `43`; wide pair forms place `43` in the low result and `0` in the high result.
+With `SrcL = 6`, `SrcR = 7`, and `SrcD = 1`, `MultiplyWideSigned` produces `42`, the sign-extended addend is `1`, and the accumulator is `43`, so `RegDst0` receives `43` and `RegDst1` receives `0`. With negative inputs `SrcL = -3`, `SrcR = 5`, and `SrcD = 1`, the accumulator is `-14`: the low half is `0xFFFFFFFFFFFFFFF2` and the high half is `0xFFFFFFFFFFFFFFFF`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

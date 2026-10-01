@@ -19,45 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-setc-tgt-purpose role=purpose -->
 ## What C.SETC.TGT does
 
-`C.SETC.TGT` is a 16-bit scalar ALU instruction. It captures the selected scalar value as the active block commit target; its current instruction contract defines the result publication path and any additional state effect.
+`C.SETC.TGT` snapshots one Reg5 source value into `BARG.BPCN`, the pending target address of the active block that a later indirect transfer reads before the block retires.
+
+Design point: the target travels through a block-private state slot rather than a register. That lets a condition-setting instruction decide whether the branch is taken and this instruction decide where it goes, without either one having to encode the other's operand.
 
 <!-- PTO-READER-BLOCK: scalar-c-setc-tgt-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then captures the selected scalar value as the active block commit target, and only afterward performs the destination effects.
+The instruction first checks that a target can be written at all, then reads the source, then stores it.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+- The bundle must be active and its type must be `Standard` or `Floating`, and no earlier `C.SETC.TGT` may already have succeeded in this block.
+- The complete selected `64`-bit source value is read and written unchanged into `BARG.BPCN`; the selector itself is not retained.
+- Only after that store succeeds is the block-private marker that blocks a second occurrence set.
+
+Design point: the target is snapshotted, not referenced. A later write to the source register or a later push onto its queue cannot change the pending target.
+
+Design point: the value is stored exactly as read, with no alignment check and no shift. An odd value is accepted here; it raises `Fault_InstructionPC` only if the block later selects it as an instruction address, where an odd address is rejected.
+
+Design point: this instruction does not touch the generic commit-condition argument that `SETC.*` produces. The taken/not-taken decision and the destination address are separate pieces of block state.
 
 <!-- PTO-READER-BLOCK: scalar-c-setc-tgt-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `SrcL` field selects an absolute GPR, T#1..T#4, or U#1..U#4 scalar value.
+- `SrcL` is the only encoded operand: codes `0..23` select absolute GPRs, `24..27` select `T#1..T#4`, and `28..31` select `U#1..U#4`, without consuming a queue entry.
+- The destination is implicit: the active block's `BARG.BPCN`. No register is written.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero reads the architectural zero GPR, so `c.setc.tgt zero` installs the target `0`. There is no omitted operand and no discard form; whether the instruction is allowed at all is decided by the block, not by a field.
 
 <!-- PTO-READER-BLOCK: scalar-c-setc-tgt-effects role=effects -->
 ## Effects and ordering
 
-The selected source is captured before `BARG.BPCN` changes, so source aliasing cannot observe the new commit target.
+Applicability and the duplicate check run before the source is read, and the source read runs before the target update. A fault at any of those points leaves `BARG.BPCN` and the uniqueness marker unchanged.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 2 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+On success, `BARG.BPCN` and the uniqueness marker change, and then `TPC` advances by `2` bytes. No GPR, queue entry, memory, reservation, descriptor, numeric-status, privilege, predicate or control-flow state changes.
 
 <!-- PTO-READER-BLOCK: scalar-c-setc-tgt-constraints role=constraints -->
 ## Legality and fault boundary
 
-The instruction is legal only in an active Standard or Floating block and may complete successfully at most once in that block. Target alignment is deferred to the block-commit boundary.
+Applicability is tested first. `Fault_BundleControl` is raised at `TPC`, before the source is read and before any state is written, when no `Standard` or `Floating` block is active, when one `C.SETC.TGT` has already succeeded in this block, or while a system-block close request is pending.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before `BARG.BPCN`, the uniqueness marker, `TPC` or queue state change. If nothing faults, `TPC` advances by `2` bytes.
+
+Design point: the same two applicability conditions are tested twice, once before the source is read and once inside the target update. The outer test is what makes a duplicate occurrence fault without reading a source; the inner test keeps the update itself conditional on the same rule.
 
 <!-- PTO-READER-BLOCK: scalar-c-setc-tgt-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `C.SETC.TGT` example, a snapshotted source value `0x100` becomes the active `BARG.BPCN`; target alignment is still checked later at block commit.
+Inside an active `Standard` block, `c.setc.tgt a0` with `a0=4096` installs the pending target `4096` and advances `TPC` by `2` bytes. A second `c.setc.tgt` in the same block raises `Fault_BundleControl` even if its source is readable. With `a0=4097` the instruction succeeds and stores the odd value; the fault, if any, comes later, when that value is selected as an instruction address.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

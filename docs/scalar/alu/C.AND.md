@@ -19,46 +19,51 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-c-and-purpose role=purpose -->
 ## What C.AND does
 
-`C.AND` is a 16-bit scalar ALU instruction. It performs bitwise conjunction under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+`C.AND` reads two Reg5 sources, computes their bit-by-bit conjunction over all `PTO_XLEN` bits, and pushes the result to `T` as the newest temporary value.
+
+Design point: the compressed logical forms take their operation from the opcode and their two operands from the only two fields the 16-bit encoding has. There is no modifier field, so `C.AND` always uses the complete source values; the transforming forms are the 32-bit `AND` family.
 
 <!-- PTO-READER-BLOCK: scalar-c-and-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then performs bitwise conjunction under the complete XLEN value result rules, and only afterward performs the destination effects.
+Both source codes are resolved and the conjunction is computed independently for each of the `64` bit positions. The result is pushed as the newest `T` entry.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+Design point: the push shifts the queue instead of overwriting a slot, so the new value becomes `T#1`, the previous `T#1` becomes `T#2`, and the previous `T#4` is discarded. A temporary survives four pushes.
+
+Design point: a conjunction can only clear bits relative to its sources, so any bit set in the result is set in both sources. A mask built this way cannot acquire a bit that neither input had.
 
 <!-- PTO-READER-BLOCK: scalar-c-and-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `SrcL` field selects the left operand through Reg5.
-- The 5-bit `SrcR` field selects the right operand through Reg5.
+- `SrcL` and `SrcR` are Reg5 sources: codes `0..23` select absolute GPRs, `24..27` select `T#1..T#4`, and `28..31` select `U#1..U#4`, without consuming a queue entry.
+- The destination is fixed to `T`: exactly one XLEN result is pushed per successful execution.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: duplicate and mixed source pairs are legal, so `c.and t#1, u#1, ->t` and `c.and t#1, t#1, ->t` both encode. Since both sources are read before the push, the second form pushes the old `T#1` value paired with itself.
+
+Design point: encoded zero of either source reads the architectural zero GPR, so `c.and a0, zero, ->t` pushes `0` and `c.and zero, zero, ->t` is a constant-zero push.
 
 <!-- PTO-READER-BLOCK: scalar-c-and-effects role=effects -->
 ## Effects and ordering
 
-Any scalar source is snapshotted before publication, and the completed instruction pushes exactly one result to T.
+Both sources are snapshotted before the `T` push, so an alias between a source and the queue observes the pre-instruction state.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 2 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+After the push, `TPC` advances by `2` bytes. No GPR, `U` entry, memory, reservation, descriptor, numeric-status, bundle, privilege, predicate or control-flow state changes, and no source queue entry is consumed.
 
 <!-- PTO-READER-BLOCK: scalar-c-and-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every encoded source value is assigned, so `C.AND` has no reserved source code and no illegal operand combination.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before the push, before `TPC` advances, and before any other effect. An undecodable 16-bit form raises `Fault_IllegalInstruction` at `PC`, and an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`.
+
+Design point: a bitwise conjunction signals nothing and cannot overflow, so `C.AND` has no value-dependent fault and no status flag. Bits that the mask removes are simply absent from the pushed value.
 
 <!-- PTO-READER-BLOCK: scalar-c-and-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `C.AND` example, inputs `0xc` and `0xa` produce `0x8`.
+With `T#1` holding `12` and `U#1` holding `10`, `c.and t#1, u#1, ->t` pushes `12 AND 10 = 8` to `T#1`, moves the old value `12` to `T#2`, and leaves `U#1` at `10`. With `SrcR` naming the architectural zero GPR, the pushed value is `0` for every `SrcL`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

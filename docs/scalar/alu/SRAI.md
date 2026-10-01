@@ -19,47 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-srai-purpose role=purpose -->
 ## What SRAI does
 
-`SRAI` is a 32-bit scalar ALU instruction. It arithmetically shifts the source right under the complete XLEN value shift rules; its current instruction contract defines the result publication path and any additional state effect.
+`SRAI` shifts `SrcL` arithmetically right by a constant `shamt` of `0` through `63`, copying the sign bit into the vacated positions. It has three fields: `RegDst` at `[7 +: 5]`, `SrcL` at `[15 +: 5]` and the six-bit `shamt` at `[20 +: 6]`.
+
+The carrier matches `0x00006015` under mask `0xfc00707f`.
+
+The mnemonic keeps the full `PTO_XLEN` width: the sign bit that is copied is always bit `63`, and no field selects a narrower width.
 
 <!-- PTO-READER-BLOCK: scalar-srai-mechanism role=mechanism -->
-## How the result is formed
+## How the shift is formed
 
-Execution snapshots the encoded inputs, then arithmetically shifts the source right under the complete XLEN value shift rules, and only afterward performs the destination effects.
+Dispatch calls `ExecuteDecodedShiftImmediate` with `ScalarBinary_SRA` at `asl/scalar/model/dispatch/alu.asl:196-197`. The decoded `shamt` becomes the right operand and `ScalarBinary` returns `ASR(left, UInt(right[5:0]))` (`asl/scalar/model/alu/semantics.asl:458`).
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+srai SrcL, shamt, ->{t, u, Rd}
+```
+
+Design point: Because the shift is arithmetic at `64` bits, the result is the floor of the signed value divided by two to the power of `shamt`, not the truncated quotient toward zero. `SRAI` with `-1` and any amount from `1` through `63` publishes `-1`.
+
+Design point: The amount is a constant in the encoding, so the shift is a fixed field extraction: with `shamt = 8` the published value is `SrcL[63:8]` read as a signed `56`-bit field, whose upper `8` bits are copies of `SrcL[63]`.
 
 <!-- PTO-READER-BLOCK: scalar-srai-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar input through Reg5.
-- The 6-bit `shamt` field encodes the six-bit shift amount.
+`SrcL` is the value shifted, `shamt` is decoded from the carrier, and `RegDst` receives the result.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+- `SrcL`, instruction slice `[15 +: 5]`: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, `28..31` read `U#1..U#4`, and the read never consumes an entry.
+- `shamt`, instruction slice `[20 +: 6]`: `0` through `63`; encoded zero performs an identity shift.
+- `RegDst`, instruction slice `[7 +: 5]`: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+- Encoded zero of `SrcL` reads the architectural zero GPR, which has a clear sign bit, so every amount publishes `0`.
+
+Design point: The sign source is fixed by the form, not selectable. A program that needs the sign of a narrower field must first place that field's top bit at bit `63`, for example with a shift pair, because `SRAI` has no width selector.
 
 <!-- PTO-READER-BLOCK: scalar-srai-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is snapshotted before the destination effect, so a destination that aliases the source shifts the pre-instruction value. The result is published and `TPC` advances by `4` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+`SRAI` accesses no memory and leaves reservation, descriptor, numeric-flag, trap, bundle, privilege, predicate and control-flow state unchanged; the only queue movement possible is the push selected by a `30` or `31` destination.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: The instruction neither reports nor records whether bits were shifted out. Its whole architectural effect is the one published word.
 
 <!-- PTO-READER-BLOCK: scalar-srai-constraints role=constraints -->
 ## Legality and fault boundary
 
-All 6 encoded shift bits are assigned, giving amounts `0..63`; fixed-width shifting is total and raises no arithmetic exception.
+All `32` `SrcL` codes, all `32` `RegDst` codes and all `64` shift amounts are assigned, and the form has no constraint entry beyond the fixed bits `31:26` and `14:12`.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unmatched carrier raises `Fault_IllegalInstruction` at `PC`, which also rejects a nonzero bit of the reserved `31:26` field. An instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`, reachable for `SRAI` only while a system-block terminal request is pending. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`. All checks precede the destination effect and the `TPC` advance.
+
+Design point: Since every encodable shift amount has a defined result, `SRAI` has no operand-selected trap. Apart from the block-applicability check above, its fault boundary is encoding validity plus source availability.
 
 <!-- PTO-READER-BLOCK: scalar-srai-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `SRAI` example, source `-8` shifted arithmetically right by `2` produces `-2`.
+With `a0` holding `-16`, `srai a0, 2, ->a2` publishes `-4`.
+
+With `a0` holding `0x00000000000000FF` and an amount of `4`, the result is `15`. With `a0` holding `-1`, every amount from `1` through `63` publishes `-1`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

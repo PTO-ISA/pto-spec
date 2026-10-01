@@ -13,41 +13,62 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: arch-fault-precision-purpose role=purpose-scope -->
-## 用途与范围
+## 目的与范围
 
-本单元集中处理故障、服务请求、中断入口以及陷阱状态打包。对于同步 `SetFaultWithCause`，只有故障代码不是 `Fault_None` 时才会保存上下文并重定向到目标 `AccessControlRing`。
+本单元拥有让重试重新执行整个 Tile 内存请求的重放检查点，以及让内存故障成为架构陷阱状态的漏斗。它带有 `PTO-ARCH-MEMORY-MODEL-REPLAY-001` 与 `PTO-ARCH-MEMORY-MODEL-FLUSH-001`，并依赖 `PTO-ARCH-STATE-TRAP-CONTEXT`。
+
+主体写入 `_MemoryReplayState`、陷阱库数组、`_LastFault`、`_FaultAddress`、`TPC` 以及一个 `_ExtendedSystemRegisters` 条目。
 
 <!-- PTO-READER-BLOCK: arch-fault-precision-concepts role=concepts-state -->
-## 陷阱入口状态
+## 重放检查点与陷阱库
 
-- `SetFaultWithCause` 对每个输入故障代码记录故障代码、地址、原因和陷阱状态。
-- 当故障代码不是 `Fault_None` 时，它保存上下文、把目标 `AccessControlRing` 设为当前层级并重定向 `TPC`。对于 `Fault_None`，它保留源 ACR 层级，既不保存上下文也不重定向。
-- `RaiseServiceRequest` 检查权限，保存位于源 `TPC` 之后四字节的恢复 `TPC`，再进入服务目标。
-- `RaiseInterrupt` 先标记中断待处理状态，并且只在该中断已启用时进入。
+- `_MemoryReplayState` 是定义在 `asl/arch/data-types/memory-model.asl` 中的四字段记录：`active`、`request`、`committed_event_count` 与 `epoch`。
+- `BeginMemoryReplay(request)` 把 `active` 置真、存入 `request`、把 `_MemoryEventCount` 拷入 `committed_event_count` 并递增 `epoch`。
+- `CommitMemoryReplayEffect` 把 `committed_event_count` 提升到 `_MemoryEventCount`，但仅在 `active` 为真时。
+- `FlushMemoryReplay` 把 `_MemoryEventCount` 回退到 `committed_event_count` 并清除 `active`；`CompleteMemoryReplay` 提升它并清除 `active`。
+- 陷阱库是五个按 ring 索引的数组：`_ACRTrapAsynchronous`、`_ACRTrapArgumentValid`、类型为 `bits(24)` 的 `_ACRTrapCause`、类型为 `TrapNumber` 的 `_ACRTrapNumber`，以及类型为 `Word` 的 `_ACRTrapArgument0`。
 
 <!-- PTO-READER-BLOCK: arch-fault-precision-rules role=rules-interactions -->
-## 状态转换规则
+## 每个入口写入什么
 
-- 同步故障入口把异步位设为假，并为非零故障设置陷阱参数有效位。
-- 中断入口把异步位设为真，记录陷阱编号 `44`，并把 `InterruptID` 放入参数 `0`。
-- `ClearFault` 清除当前 ACR 层级的故障报告，但不会重建较早上下文。
-- `PackTrapStatus` 与 `UnpackTrapStatus` 映射异步位、参数有效位、24 位原因字段和 6 位编号字段。
+- `SetFaultWithCause(code, address, cause)` 只对非零 `code` 调用 `SaveTrapContext(ring, source_ring)` 并写入 `TPC`；此时 `ring = TrapTargetForFault(CurrentACR())`，否则为源 ring。
+- 它把 `code` 记入 `_LastFault`、把 `address` 记入 `_FaultAddress`、把 `cause` 记入 `_ACRTrapCause`，并按 `code != Fault_None` 设置 `_ACRTrapArgumentValid[[ring]]`。
+- `case code of` 语句给 `Fault_None` 与 `Fault_ExecutionStateCheck` 陷阱号 `0`，给 `Fault_IllegalInstruction` `4`，给四个 tile 与 bundle 编号共享的 `5`，给 `Fault_ServiceRequest` `6`，其余指令、数据与调试故障得到 `32` 到 `52` 之间各自不同的编号。
+- 对非零 `code`，它调用 `SetCurrentACR(ring)` 与 `WriteTPC(TrapVectorEntry(ring, address))`；非零时 `TrapVectorEntry` 返回 `EVBASE`，否则返回 `address`。
+- `ClearFault` 把当前 ring 的陷阱库重置为 `Fault_None`、零 cause、零陷阱号与零实参、假标志，并且也会清除 `_FaultAddress`。
+- `RaiseServiceRequest(request_type)` 检查 `ServiceRequestPermitted(source_ring, request_type)`：被拒绝时在 `ReadTPC()` 处引发 `Fault_IllegalInstruction` 并返回假；成功时为 `ServiceRequestTarget` 保存上下文、从源 TPC 之后 `4` 字节处恢复，并经 `TrapVectorEntry` 以陷阱号 `6` 与实参 `source_tpc` 进入。
+- `RaiseInterrupt(interrupt_id, cause)` 标记该中断为 pending，并在 `InterruptEnabled` 为真时保存上下文、以陷阱号 `44` 异步进入目标 ring。
+- `PackTrapStatus(ring)` 组装一个 `Word`：位 `63` 为异步、位 `62` 为实参有效、`value[24 +: 24]` 为 cause、`value[0 +: 6]` 为陷阱号；`UnpackTrapStatus` 恢复这四个字段。
+
+设计要点：`FlushMemoryReplay` 只重写 `_MemoryEventCount`，别的什么都不动，所以它无法撤销一次 GM 写入或一个 tile 载荷元素：那些是调用者在记录事件之前写下的。检查点之上的记录仍留在 `_MemoryEvents` 中但不可达：读取者都以 `_MemoryEventCount` 为界，而 `AddMemoryEvent` 下一次就会覆写该槽。
+
+设计要点：`MemoryReplayCanRetryWholeRequest` 要求 `!_MemoryReplayState.active`，并且 `request` 等于已保存的值或是 `Zeros{PTO_XLEN}`。由于 `FlushMemoryReplay` 会清除 `active`，一个请求只有在一次冲刷或一次完成之后才可重试，且调用者必须传入与传给 `BeginMemoryReplay` 相同的 `Word`。
+
+设计要点：`SetFaultWithCause` 在 `case` 之前就写入编号，因此 `Fault_None` 留下 cause 为零、实参有效为假、陷阱号为 `0` 的陷阱库，而 `_FaultAddress` 保留其先前值。因此清除故障指示并不清除故障地址；同时把两者归零的是 `ClearFault`。
 
 <!-- PTO-READER-BLOCK: arch-fault-precision-boundaries role=boundaries -->
-## 提交边界
+## 边界
 
-`Fault_BundlePostCommit` 被表示为成功提交边界陷阱：保存上下文时后继位置已经选定。被拒绝的服务请求则会引发 `Fault_IllegalInstruction` 并返回假。
+`Fault_BundlePostCommit` 是成功边界而不是失败的指令：它与 tile 与 bundle 故障共享陷阱号 `5`，而它在 ASL 中唯一的产生者是 `asl/block/model/lifecycle/enter-stop.asl` 中的 `SetFault(Fault_BundlePostCommit, next_pc)`。
+
+`RaiseInterrupt` 不被任何 ASL 单元调用，只有测试调用；`RaiseServiceRequest` 例如被 `asl/scalar/model/sys/semantics.asl` 中的 `ArchitectureCloseRequest` 调用。`PTO-ARCH-MEMORY-MODEL-REPLAY-001` 条款把出错指令称为重启点，但本单元写入的是陷阱向量入口，对服务请求则是该指令之后 `4` 字节的地址。
+
+冲刷不写任何故障状态，故障入口除上下文副本之外也不写任何重放状态，因此不调用 `FlushMemoryReplay` 的故障会让 `active` 保持为真。
 
 <!-- PTO-READER-BLOCK: arch-fault-precision-example role=example-usage -->
-## 非规范阅读示例
+## 非规范性重放示例
 
-本示例块只用于帮助阅读：先应用上文规则，再到规范 ASL 所有者中确认结果。它不会增加任何架构契约。
+一次 Tile 加载在 `_MemoryEventCount` 为 `4` 时用 `BeginMemoryReplay(ReadBPC())` 打开记录，提交两个事件并到达检查点 `6`。当后续某个元素探测失败时，`FlushMemoryReplay` 把 `_MemoryEventCount` 退回 `6`，而已提交事件与 GM 写入都留在原处。
+
+本示例仅作为阅读辅助：先应用上面的规则，再到规范性 ASL 拥有者中确认结果。它不增加任何架构契约。
 
 <!-- PTO-READER-BLOCK: arch-fault-precision-related role=related-owners-navigation -->
-## 相关所有者
+## 相关拥有者
 
-- `PTO-ARCH-STATE-TRAP-CONTEXT` 拥有保存上下文的表示。
-- 陷阱上下文恢复单元定义可恢复保存上下文对应的恢复路径。
+- `PTO-ARCH-STATE-TRAP-CONTEXT` 拥有 `_TrapContexts` 与 `SaveTrapContext`。
+- `PTO-ARCH-SYSTEM-REGISTERS-ACCESS-CONTROL` 拥有 `CurrentACR`、`TrapTargetForFault`、`ServiceRequestPermitted`、`ServiceRequestTarget` 与 `TrapVectorEntry`。
+- [内存事件](memory-events.md) 拥有 `_MemoryEventCount` 与事件数组。
+- `PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT` 声明 `_MemoryReplayState` 与陷阱库数组。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

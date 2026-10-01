@@ -15,43 +15,48 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-system-register-types-purpose-scope role=purpose-scope -->
 ## 目的与范围
 
-本单元定义基础系统寄存器、访问类别以及缓存/TLB 维护操作的共享符号命名空间。
+本单元定义三个符号命名空间：用于基础系统寄存器的 `SystemRegister`、用于访问类别的 `SystemRegisterAccess`，以及用于缓存与 TLB 维护操作的 `MaintenanceOperation`。它不声明寄存器存储，也不声明读或写函数。
 
-它只提供类型化身份；地址映射、访问控制、寄存器状态和维护效果由其他归属单元定义。
+第 1 行记录还带有 `system-registers` 目录投影，它为每个基础寄存器分配地址、声明寄存器文件宽度，并把寄存器分组为行为类别。
+
+设计要点：枚举成员与地址是分开存放的，成员在 ASL 类型中，地址在投影中，因此成员在类型声明中的位置不携带地址信息，读者必须从投影取得地址。
 
 <!-- PTO-READER-BLOCK: arch-system-register-types-concepts-state role=concepts-state -->
 ## 概念与可见状态
 
-- `SystemRegister` 命名线程/全局指针、时间/周期、核/线程身份、厂商/版本/特性、Tile 容量以及块身份寄存器。
-- `SystemRegisterAccess` 区分未知、只读、只写和可读写四种访问类别。
-- `MaintenanceOperation` 命名数据缓存、指令缓存、束缓存和 TLB 的失效或清理变体。
+- `SystemRegister` 有 14 个成员：`SystemRegister_THREAD_PTR`、`SystemRegister_GLOBAL_PTR`、`SystemRegister_TIME`、`SystemRegister_CORE_STATE`、`SystemRegister_CORE_ID`、`SystemRegister_THREAD_ID`、`SystemRegister_VENDOR`、`SystemRegister_VERSION`、`SystemRegister_CORE_FEATURE`、`SystemRegister_CORE_FEATURE_ENABLE`、`SystemRegister_TILE_CAPACITY`、`SystemRegister_BLOCKNUM`、`SystemRegister_BLOCKID` 和 `SystemRegister_CYCLE`。
+- `SystemRegisterAccess` 有 4 个成员：`SystemRegisterAccess_Unknown`、`SystemRegisterAccess_ReadOnly`、`SystemRegisterAccess_WriteOnly` 和 `SystemRegisterAccess_ReadWrite`。
+- `MaintenanceOperation` 有 16 个成员：数据缓存、指令缓存、指令束缓存与 TLB 形式，其中包括 `Maintenance_DC_IALL`、`Maintenance_DC_ZVA`、`Maintenance_IC_IALL`、`Maintenance_IC_IVA`、`Maintenance_BC_IALL`、`Maintenance_BC_IVA` 和 `Maintenance_TLB_IALL`。
+- 投影声明 `system_register_address_bits` 为 `24`、`system_register_file_index_bits` 为 `16`，并分配的地址从 `THREAD_PTR` 的 `0x0000` 到 `CYCLE` 的 `0x0C00`。
+
+设计要点：`SystemRegisterAccess` 在三个真实类别之外还包含 `SystemRegisterAccess_Unknown`。因此解析器对“该地址不是寄存器”有一个独立答案，而 `asl/scalar/model/sys/registers.asl` 中的读路径在产生任何寄存器值之前，对 `SystemRegisterAccess_Unknown` 和 `SystemRegisterAccess_WriteOnly` 报告 `Fault_IllegalInstruction`。
 
 <!-- PTO-READER-BLOCK: arch-system-register-types-rules-interactions role=rules-interactions -->
 ## 规则与交互
 
-枚举成员只标识寄存器或操作，并不分配编码地址。
+每个基础成员都在投影中出现，带有一个地址、一个访问类别和一个行为类别，而行为类别说明读返回什么、写做什么。
 
-访问类别与当前访问控制环以及具体读写行为彼此独立。
+投影把存储值的寄存器与报告值的寄存器区分开：`THREAD_PTR`、`GLOBAL_PTR`、`CORE_STATE` 和 `CORE_FEATURE_ENABLE` 读取已存值并接受写入；而 `CORE_ID`、`VENDOR`、`VERSION`、`CORE_FEATURE`、`THREAD_ID`、`BLOCKNUM`、`BLOCKID` 和 `TILE_CAPACITY` 以 `fixed-value` 方式读取并拒绝写入。
 
-维护变体保持相互独立，包括已声明的全缓存、虚拟地址和组/路形式。
+`SystemRegister_TIME` 与 `SystemRegister_CYCLE` 两者的读行为都是 `architectural-time`，记录在案的副作用是 `advances-on-every-execution-attempt`，写行为是 `reject-read-only`。`CORE_STATE` 的写是唯一带记录副作用 `write-selects-current-acr` 的基础写。
+
+设计要点：`SystemRegister_TIME` 是枚举的成员，但在基础寄存器状态记录 `BaseSystemRegisterState` 中没有对应域，该记录为其余 13 个成员各带一个域。因此把每个成员都当作已加载字的使用方，恰好会在一个成员上出错，而该成员的值来自定时器归属单元。
 
 <!-- PTO-READER-BLOCK: arch-system-register-types-boundaries role=boundaries -->
 ## 架构边界
 
-本单元不创建系统寄存器文件，也不规定复位值；这些契约应查阅状态和寻址归属单元。
+本单元不创建系统寄存器文件，也不定义地址解码。`zero`、`one` 之类的复位意图作为目录数据记录在投影中，而不是作为 ASL 状态转移。
 
-声明某个维护操作身份并不自动保证相应指令可用，也不定义纪元变化；这些效果由执行归属单元提供。
+声明了某个维护身份，本身并不保证指令可以调用它，也不定义纪元变化。执行该操作的指令拥有自己的合法性，维护归属单元拥有其效果。
+
+设计要点：枚举与投影覆盖的集合并不相同，读者不得把 `SystemRegister` 当作系统寄存器的完整清单。投影还列出 `context-family` 寄存器，例如低索引 `0xF00` 的 `ECSTATE_ACRn` 和低索引 `0xF10` 的 `TTBR0_ACR1`，这些名字都不是 `SystemRegister` 成员，而全部 14 个成员都出现在投影中。
 
 <!-- PTO-READER-BLOCK: arch-system-register-types-example-usage role=example-usage -->
 ## 非规范阅读示例
 
-`SystemRegister_TIME` 命名一个系统寄存器。
+`SystemRegister_TIME` 命名一个系统寄存器。投影为它分配地址 `0x0010` 和访问类别 `RO`，因此寻找它取值的读者必须跟随定时器归属单元，而不是某个已存域。
 
-其架构地址和数值行为分别由寻址归属单元及计时器/状态归属单元定义。
-
-`Maintenance_TLB_IALL` 标识全部表项 TLB 操作。
-
-调用该操作的指令仍负责定义合法性、操作数和可见的维护状态变化。
+`Maintenance_TLB_IALL` 标识全条目 TLB 操作，仅此而已。它的操作数、合法性和它推进的纪元由执行它的指令拥有；例如 `asl/scalar/model/sys/semantics.asl` 就是该身份获得环限制和纪元递增的地方。
 
 <!-- PTO-READER-BLOCK: arch-system-register-types-related-owners role=related-owners-navigation -->
 ## 相关归属单元

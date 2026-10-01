@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-divw-purpose role=purpose -->
 ## What DIVW does
 
-`DIVW` is a 32-bit scalar ALU instruction. It computes the signed quotient over the low 32-bit word, followed by sign-extension to XLEN; its current instruction contract defines the result publication path and any additional state effect.
+`DIVW` is a 32-bit L32 form that divides the low word of two Reg5 sources as signed integers and publishes one sign-extended `PTO_XLEN` result. Bits `63` through `32` of both sources are ignored.
+
+Design point: the mnemonic fixes the operand width as well as the signedness. Two registers that agree in their low words produce the same quotient even when their upper words differ, so a `DIVW` result is a function of `32` bits of each source rather than of `64`.
 
 <!-- PTO-READER-BLOCK: scalar-divw-mechanism role=mechanism -->
-## How the result is formed
+## How the quotient is formed
 
-Execution snapshots the encoded inputs, then computes the signed quotient over the low 32-bit word, followed by sign-extension to XLEN, and only afterward performs the destination effects.
+Execution sign-extends `SrcL[31:0]` and `SrcR[31:0]` to `PTO_XLEN` and divides those two words with the same total rules `DIV` uses.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+- The extension is what makes the low word signed: a low word whose bit `31` is set becomes a negative `PTO_XLEN` value before the division starts.
+- A low-word divisor of zero returns `0`, and the signed minimum low word divided by `-1` returns that same low word.
+
+The quotient is then reduced to its low `32` bits and sign-extended again, so bit `31` of the quotient is copied into every higher bit of the published word.
+
+Design point: the second extension is why the published word stays between `-2147483648` and `2147483647`. The one case that would leave the signed 32-bit range in exact arithmetic, the signed minimum low word divided by `-1`, is folded back onto `-2147483648` by that extension instead of becoming a positive value.
 
 <!-- PTO-READER-BLOCK: scalar-divw-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the dividend through Reg5.
-- The 5-bit `SrcR` field selects the divisor through Reg5.
+- `SrcL` is the dividend and `SrcR` is the divisor. Only bits `31` through `0` of each source are used, and both are read through the Reg5 source map: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`.
+- `RegDst` publishes the sign-extended quotient: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: the destination is always a complete `PTO_XLEN` word. `DIVW` never writes only `32` bits, so a GPR that held a wider value is replaced completely rather than partly updated.
 
 <!-- PTO-READER-BLOCK: scalar-divw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are read before `RegDst` is written, so a destination that aliases a source still divides the pre-instruction values.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+After the result is published or discarded, `TPC` advances by `4` bytes. No memory, reservation, descriptor, numeric-status, bundle, privilege, predicate or control-flow state changes, and no queue entry moves unless `RegDst` is `30` or `31`.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: the same five-bit `SrcL` and `SrcR` fields that `DIV` uses select the operands here. There is no separate word-source map, so the upper halves are read and then dropped rather than never addressed.
 
 <!-- PTO-READER-BLOCK: scalar-divw-constraints role=constraints -->
 ## Legality and fault boundary
 
-A zero divisor returns quotient zero; signed-minimum divided by negative one retains signed minimum. Neither case raises an arithmetic exception.
+The three selectors assign all `32` codes each, and the form carries no fixed bits beyond its 32-bit match and mask, so `DIVW` reserves no operand value.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An undecodable form raises `Fault_IllegalInstruction` at `PC`; an instruction that is not applicable to the active bundle raises `Fault_BundleControl` at `TPC`; an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before the destination effect and before `TPC` advances.
+
+Design point: the word form does not move the fault boundary. The source availability check runs before the handler reads either operand, so a `DIVW` that faults has not yet examined a single bit of its sources.
 
 <!-- PTO-READER-BLOCK: scalar-divw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `DIVW` example, dividend `13` and divisor `5` produce quotient `2`.
+With `a0` whose low `32` bits are `-7` and `a1` whose low `32` bits are `2`, `divw a0, a1, ->a2` writes `-3` to `a2`: the magnitudes divide as `7 / 2 = 3`, the operands have different signs, and the magnitude is subtracted from `0`. Changing the upper `32` bits of `a0` changes nothing. With `a1` holding `0` in its low word the quotient is `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

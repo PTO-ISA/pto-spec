@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fence-d-purpose role=purpose -->
 ## What FENCE.D does
 
-`FENCE.D` records predecessor and successor access-class masks as one data-fence event, invalidates the local reservation, and retires as a scalar operation inside an active SYS block.
+`FENCE.D` is the data-ordering fence with explicit predecessor and successor access-class masks. Both masks are 4-bit immediates in the encoding, not registers, so the fence describes which kinds of access must be ordered without reading any operand from the scalar register file.
 
 <!-- PTO-READER-BLOCK: scalar-fence-d-mechanism role=mechanism -->
-## Fence mechanism
+## System mechanism
 
-`PRED_IMM` and `SUCC_IMM` are independent 4-bit masks. The instruction records both exact values in architectural fence state and in the emitted fence event.
+`InstructionContractHandler_FENCE_D` selects `ScalarHandler_FenceData` (`asl/scalar/sys/FENCE.D.asl:18`), and `InstructionContractFenceInvalidatesReservation_FENCE_D` returns `TRUE` (`asl/scalar/sys/FENCE.D.asl:36`). The dispatcher decodes `PRED_IMM` and `SUCC_IMM` as two 4-bit fields and passes them to `FenceData` in that order (`asl/scalar/model/dispatch/sys.asl:81`).
 
-If either mask contains the instruction-visibility bit, `FENCE.D` also advances the instruction-cache epoch.
+`FenceData` performs four steps in sequence: clear the local reservation, store the predecessor mask, store the successor mask, then test bit 3 of both masks (`asl/scalar/model/sys/semantics.asl:72`).
 
 <!-- PTO-READER-BLOCK: scalar-fence-d-inputs role=inputs-outputs -->
-## Inputs and result shape
+## Inputs and outputs
 
-Both masks accept all `16` encoded values from `0` through `15`. Encoded zero is an assigned all-zero mask, not an omitted operand.
+`PRED_IMM` is the 4-bit predecessor access-class mask and `SUCC_IMM` is the 4-bit successor mask (`asl/scalar/sys/FENCE.D.asl:1`). All sixteen values of each field are assigned, so no mask value is reserved and no field is optional.
 
-`FENCE.D` has no Reg5 source and no scalar destination; its visible result is the ordering event and system-state updates.
+`FENCE.D` has no destination operand. It reads no register, so nothing is snapshotted from the register file, and encoded zero is an assigned mask value rather than an omitted operand.
 
 <!-- PTO-READER-BLOCK: scalar-fence-d-effects role=effects -->
-## Effects and ordering
+## Architectural effects
 
-A successful execution invalidates the local reservation, records both masks, emits one acquire-release fence event for the current memory agent, and advances `TPC`.
+The fence clears the local reservation and records both masks as one data-fence event. If bit 3 of either mask is set, the instruction-cache epoch also advances by one (`asl/scalar/model/sys/semantics.asl:77`). `TPC` then advances by the instruction length, since the handler writes no `TPC` of its own.
 
-The instruction does not itself load or store data memory; its ordering effect is represented by the exact masks in the emitted fence event.
+Design point: the epoch step is conditional on a bit that is visible in the encoding. A fence with mask 8 in either position therefore has an instruction-visibility side effect, while a fence with masks 1 and 1 does not, and the same encoded instruction always behaves the same way.
+
+The instruction has no memory effect: `memory_effects` is `none`, and `FenceData` touches no memory. It also writes no register or temporary queue.
 
 <!-- PTO-READER-BLOCK: scalar-fence-d-constraints role=constraints -->
-## Placement and fault boundary
+## Placement and rejection
 
-`FENCE.D` is legal only in the body of an active SYS block. Invalid placement raises an Illegal Block Exception before encoded-field checks or effects.
+`FENCE.D` executes in the body of an active SYS block. An attempt outside one raises `Fault_BundleControl` before the masks are read, so the reservation, the recorded masks, and the instruction-cache epoch all keep their previous values.
 
-A fixed-bit mismatch raises `Fault_IllegalInstruction` before reservation, fence-state, event, cache-epoch, or `TPC` effects.
+Because every 4-bit mask value is assigned, there is no reserved-encoding rejection for these fields. The fixed bits of the 32-bit form are still checked before the handler runs, and no access-ring restriction applies to the operation.
 
 <!-- PTO-READER-BLOCK: scalar-fence-d-example role=example -->
-## Non-normative mask examples
+## Non-normative example
 
-These examples illustrate assigned mask values; they do not replace the normative fence relation.
+This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-With both masks equal to `0`, `FENCE.D` still invalidates the reservation and emits one fence event, but it does not advance the instruction-cache epoch. With both masks equal to `15`, it records all-one masks and advances that epoch because the instruction-visibility bit is present.
+Run `fence.d 8, 1` in a SYS block body. The reservation is cleared, the predecessor mask 8 and successor mask 1 are recorded as one fence event, and because bit 3 of the predecessor mask is set the instruction-cache epoch advances by one. Running `fence.d 1, 1` clears the reservation and records the masks with no epoch change.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

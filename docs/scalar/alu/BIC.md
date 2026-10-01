@@ -19,48 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-bic-purpose role=purpose -->
 ## What BIC does
 
-`BIC` is a 32-bit scalar ALU instruction. It clears every bit in the independently selected wrapping destination field; its current instruction contract defines the result publication path and any additional state effect.
+`BIC` clears every bit of a selected bit field inside one Reg5 source and publishes the modified XLEN value through a Reg5 destination.
+
+Design point: the field is described by two immediate values rather than by a mask, so the instruction performs a field-scoped clear in one step. A caller does not need a mask register, and the bits outside the field cannot be disturbed by the operation.
 
 <!-- PTO-READER-BLOCK: scalar-bic-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then clears every bit in the independently selected wrapping destination field, and only afterward performs the destination effects.
+- `imms` is the field start bit `M`, from `0` through `63`.
+- `imml` encodes the field width `N` minus one, so raw values `0` through `63` select widths `1` through `64`.
 
-- `imml` and `imms` independently select field width and starting bit; wrapping is part of the selected-field mechanism.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+The `N` bits beginning at bit `M` are written as `0`. Every bit outside the selected field keeps the value it had in the source.
+
+Design point: `imml` stores `N - 1` so that the complete register width `64` is representable in six bits; encoded zero is a `1`-bit field, not an omitted field.
+
+Design point: the field wraps. When `M + N` exceeds `64`, the field continues from bit `0`. The mechanism is a rotate of the source, a clear of the low `N` bits, and a rotate back, which is why `N=64` clears every bit regardless of `M`.
+
+Design point: bits outside the field are preserved rather than re-derived. A field clear therefore never needs a second instruction to restore the untouched bits.
 
 <!-- PTO-READER-BLOCK: scalar-bic-inputs role=inputs-outputs -->
 ## Inputs and destinations
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar input through Reg5.
-- The 6-bit `imml` field encodes the selected field width as `N-1`.
-- The 6-bit `imms` field encodes selected-field starting bit `M`.
+- `SrcL` is a Reg5 source: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, and `28..31` read `U#1..U#4`. Reading a temporary source does not consume it.
+- `imml` and `imms` are immediate fields that describe the field; they read no storage.
+- `RegDst` publishes the modified value: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` together with `24..29` discard it.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Design point: encoded zero of `SrcL` reads the architectural zero GPR, so any clear of it publishes `0`. Encoded zero of `RegDst` discards the result rather than writing the zero GPR, so `bic a0, 0, 8, ->zero` is a legal encoding that changes no register.
 
 <!-- PTO-READER-BLOCK: scalar-bic-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is read before the destination is written, so a destination that aliases the source still produces the cleared field computed from the pre-instruction value.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The result is published or discarded, and then `TPC` advances by `4` bytes. `BIC` accesses no memory and leaves reservation, descriptor, numeric-status, trap, bundle, privilege, predicate and control-flow state unchanged apart from the one `T` or `U` push selected by `RegDst`.
 
 <!-- PTO-READER-BLOCK: scalar-bic-constraints role=constraints -->
 ## Legality and fault boundary
 
-Field selection may wrap from bit 63 to bit 0; the generated defaults and legality tables below give the exact width and starting-position encodings.
+Every encoded value is assigned: all `32` `SrcL` codes, all `32` `RegDst` codes, and every `imml` and `imms` value.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An undecodable form raises `Fault_IllegalInstruction` at `PC`; an instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`; a fixed-bit mismatch or an unavailable selected T/U source raises `Fault_IllegalInstruction`. Each precedes the destination effect and the `TPC` advance.
+
+Design point: clearing bits has no exceptional outcome, so `BIC` raises no arithmetic, memory, alignment or permission fault. A clear that removes bits the program still needs is a programming error, not a trap.
 
 <!-- PTO-READER-BLOCK: scalar-bic-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `BIC` example, clearing selected bits `1..2` of base `0xf` produces `0x9`.
+With `SrcL=4294967295`, `M=4` and `N=4`, the selected field is bits `4..7`, whose value is `240`; `bic a0, 4, 4, ->a1` publishes `4294967295 - 240 = 4294967055`. With `M=60` and `N=8` on the same source, the field wraps through bit `63` to bit `0` and both ends are cleared.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,47 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-remw-purpose role=purpose -->
 ## REMW 的作用
 
-`REMW` 是一条 32 位标量 ALU 指令。它对低 32 位字，再符号扩展到 XLEN计算有符号余数；当前指令契约定义结果发布路径以及任何额外状态效果。
+`REMW` 对两个源的有符号低字做除法，并发布符号扩展到 `PTO_XLEN` 的有符号余数。它有三个字段：`RegDst` 位于 `[7 +: 5]`、`SrcL` 位于 `[15 +: 5]`、`SrcR` 位于 `[20 +: 5]`。
+
+该载体在掩码 `0xfe00707f` 下匹配 `0x00006057`，并分派到 `ScalarRemainderSignedW`。
+
+字形式先收窄操作数、随后加宽结果，因此能放进 `32` 位的余数会以该字的符号扩展 `64` 位值发布。
 
 <!-- PTO-READER-BLOCK: scalar-remw-mechanism role=mechanism -->
-## 结果形成方式
+## 字余数形成方式
 
-执行时先对编码输入做快照，然后对低 32 位字，再符号扩展到 XLEN计算有符号余数，最后才产生目标效果。
+`ScalarRemainderSignedW` 把 `dividend32` 绑定为 `SignExtend{PTO_XLEN}(dividend[31:0])`、把 `divisor32` 绑定为 `SignExtend{PTO_XLEN}(divisor[31:0])`，调用 `ScalarRemainderSigned(dividend32, divisor32)`，并返回 `SignExtend{PTO_XLEN}(remainder[31:0])`（`asl/scalar/model/alu/semantics.asl:90-96`）。分派路径在 `asl/scalar/model/dispatch/alu.asl:246-251` 处为 `ScalarOperation_REMW` 选择它。
 
-- 操作专属的宽度、有符号性和立即数规则由助记符以及下方编码字段共同确定。
-- 结果发布使用当前指令契约为该助记符确定的位宽与扩展规则。
+```asm
+remw SrcL, SrcR, ->{t, u, Rd}
+```
+
+设计要点：操作数的符号扩展使 `0xFFFFFFFF` 这样的字成为被除数 `-1`。最终的符号扩展作用于已经跟随被除数符号的 `32` 位余数，因此发布的字是 `32` 位截断除法所能产生的取值的 `64` 位扩展。
+
+设计要点：在这个辅助函数中，有符号 `32` 位最小值除以负一返回 `0`，与全宽度 `REM` 完全一致。该情形有定义答案，不会触发故障。
 
 <!-- PTO-READER-BLOCK: scalar-remw-inputs role=inputs-outputs -->
 ## 输入与目标
 
-- `RegDst` 是 5 位字段，选择 Reg5 结果目标，或丢弃结果。
-- `SrcL` 是 5 位字段，通过 Reg5 选择被除数。
-- `SrcR` 是 5 位字段，通过 Reg5 选择除数。
+`SrcL` 提供被除数字，`SrcR` 提供除数字，`RegDst` 接收符号扩展后的余数。
 
-这些角色来自当前指令契约；T/U 源只被读取和快照，不会因源选择而出队。编码零的精确含义列在下方生成的默认值章节中。
+- `SrcL`，指令切片 `[15 +: 5]`：`0..23` 读取绝对 GPR，`24..27` 读取 `T#1..T#4`，`28..31` 读取 `U#1..U#4`，非消耗。只有 `SrcL[31:0]` 参与运算。
+- `SrcR`，指令切片 `[20 +: 5]`：同样的五位映射；只有 `SrcR[31:0]` 参与运算。
+- `RegDst`，指令切片 `[7 +: 5]`：`1..23` 写入对应 GPR，`30` 压入 `U`，`31` 压入 `T`，`0` 与 `24..29` 丢弃。
+- `SrcR` 的编码零读取体系结构零 GPR，其低字就是零除数；答案是符号扩展后的被除数低字。
+
+设计要点：低字为负的被除数在除法之前被扩展，因此低字为 `0xFFFFFFFF`、除数为 `2` 时，`remw` 发布 `-1`，而相同位模式下的无符号助记符发布 `1`。`remw`/`remuw` 这一对仅在这项解释上不同。
 
 <!-- PTO-READER-BLOCK: scalar-remw-effects role=effects -->
 ## 效果与顺序
 
-所有标量源都在目标效果前完成快照。完成后的值随后通过 `RegDst` 按当前标量目标映射发布。
+两个低字都在写入 `RegDst` 之前读取，因此与源同名的目标对执行前的值做除法。符号扩展后的余数发布后 `TPC` 推进 `4` 字节。
 
-该 ALU 操作不产生内存效果。成功完成架构效果后，`TPC` 前进 4 字节。
+`REMW` 不访问内存，也不改变保留、描述符、数值标志、陷阱、指令束、特权、分支目标或控制流状态；唯一的队列移动是 `30` 或 `31` 目标所选的一次压入。
 
-该操作不会产生隐藏的标量发布目标或隐式内存访问。架构变化仅限于当前契约列出的状态效果。
+设计要点：商被算出后即被丢弃。由于 `REMW` 没有商目标，需要同时得到两个结果的有符号字除法必须再使用一条指令。
 
 <!-- PTO-READER-BLOCK: scalar-remw-constraints role=constraints -->
 ## 合法性与故障边界
 
-除数为零时余数保留有效被除数；有符号溢出组合的余数为零。这些情况不会引发算术异常。
+全部 `32` 个源编码与全部 `32` 个目标编码都有定义，该形式除固定载体位外没有约束条目。
 
-下方生成的合法性表是已分配字段值、保留编码和目标丢弃编码的权威说明。解码与源可用性检查先于架构效果完成。
+不匹配的载体在 `PC` 触发 `Fault_IllegalInstruction`。对活动块不适用的指令在 `TPC` 触发 `Fault_BundleControl`，对 `REMW` 而言仅在系统块终止请求挂起期间可达。所选 `T` 或 `U` 源不可用时在 `PC` 触发 `Fault_IllegalInstruction`。每项检查都先于目标效果与 `TPC` 推进。
+
+设计要点：没有任何操作数组合会选择陷阱：零除数返回扩展后的被除数，有符号最小值除以负一返回 `0`。因此 `REMW` 没有依赖取值的故障路径。
 
 <!-- PTO-READER-BLOCK: scalar-remw-example role=example -->
 ## 非规范演算示例
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-以一个小型 `REMW` 示例说明：被除数 `13` 与除数 `5` 产生余数 `3`。
+当 `a0 = -7`、`a1 = 3` 时，`remw a0, a1, ->a2` 发布 `-1`，因为扩展后的被除数是 `-7`，字级商截断为 `-2`。
+
+当 `a0 = 0x100000007`、`a1 = 2` 时只有低字参与：被除数字是 `7`，`a2` 收到 `1`。当 `a1` 的低字为 `0` 时，`a2` 收到符号扩展后的被除数字 `7`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

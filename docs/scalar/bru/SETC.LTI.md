@@ -19,46 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-lti-purpose role=purpose -->
 ## What SETC.LTI does
 
-`SETC.LTI` evaluates signed less-than and publishes the result as the current Conditional bundle commit decision.
+`SETC.LTI` compares one scalar register against an encoded immediate as signed integers and publishes the answer as the commit decision of the Conditional bundle it sits in.
+
+The bound lives in the instruction word, so no register is spent holding it.
 
 <!-- PTO-READER-BLOCK: scalar-setc-lti-mechanism role=mechanism -->
-## Mechanism
+## Sign extension before the immediate shift
 
-Placement and the single-setter rule are checked before source readiness or reads.
+Because the field is signed, the model sign-extends `simm12` to the full word width before the shift. The sign-extended word is then logically shifted left by `shamt`, read as the low `6` bits of that encoded field, and the relation `SInt(left) < SInt(right)` is tested against the shifted value.
 
-The decoded immediate is logically shifted left by `shamt` before the condition is evaluated.
+`SrcL` is read as a complete word and is never shifted, so the left side of the relation is always the complete register value even when the immediate side is scaled. Encoded zero in `SrcL` names the architectural zero GPR, which cannot be written away by this instruction.
 
-The snapshotted operands are evaluated for signed less-than and canonicalized to XLEN one or zero.
+Design point: sign extension happens before the shift, so a negative immediate stays negative after scaling instead of turning into a large positive value.
 
 <!-- PTO-READER-BLOCK: scalar-setc-lti-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `SrcL` supplies the left scalar source.
+- `SrcL` supplies the left absolute GPR source, read as a complete word.
+- `shamt` supplies the shift amount applied to the immediate; encoded zero performs no shift.
+- `simm12` supplies the signed encoded immediate; encoded zero supplies numeric zero.
 
-- `shamt` supplies the encoded shift amount.
-
-- `simm12` supplies a signed encoded immediate.
+`SrcL` is not consumed and no `GPR`, `T`, or `U` destination is written.
 
 <!-- PTO-READER-BLOCK: scalar-setc-lti-effects role=effects -->
 ## Effects and ordering
 
-The canonical condition is written atomically to `_CommitArgument` and `BARG.TAKEN`, and the condition-set marker becomes true.
+On success the commit argument holds exactly `1` or `0`, `BARG.TAKEN` mirrors that truth value while a bundle is active, the block condition marker becomes set, and `TPC` advances by `4` bytes.
 
-On success, `SETC.LTI` advances `TPC` by `4` bytes. It has no scalar destination and no memory or reservation effect.
+No memory, reservation, descriptor, or numeric-status state changes, and `BARG.BPC`, `BARG.BPCN`, `BARG.BlockType`, and `BARG.TYPE` are preserved.
 
 <!-- PTO-READER-BLOCK: scalar-setc-lti-constraints role=constraints -->
-## Legality and fault order
+## Legality, placement, and fault order
 
-The instruction is valid only in the applicable Conditional bundle context, and only one successful condition setter may occur.
+The operation is applicable only in the body of an active Conditional block, and at most one successful `SETC` condition setter may complete there.
 
-Wrong placement or a repeated setter raises an Illegal Block Exception before source reads; encoding or unavailable-source failures raise `Fault_IllegalInstruction` before commit or `TPC` effects.
+Wrong placement or a repeated successful setter raises `Fault_BundleControl` (trap number `5`, `BUNDLE_TRAP`) before operand legality and before any read of `SrcL`. A fixed-bit mismatch or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before commit state, `BARG`, queue, or `TPC` effects. A rejected occurrence leaves the shared marker unconsumed.
 
 <!-- PTO-READER-BLOCK: scalar-setc-lti-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not create a second semantic definition.
 
-`setc.lti SrcL, simm` evaluates the described condition, writes the canonical decision to commit state, and advances `TPC` only after that update.
+Place `-16` in GPR1 and execute the form whose encoded fields are `SrcL=1`, `shamt=2`, and `simm12=-4`. The sign-extended immediate `-4` scaled by `4` is `-16`, and the signed relation `-16 < -16` is false, so the form commits `0`. With GPR1 set to `-17` the same form commits `1`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

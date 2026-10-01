@@ -19,42 +19,46 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-tlb-iv-purpose role=purpose -->
 ## TLB.IV 的作用
 
-`TLB.IV` 同步完成所分配的缓存或地址翻译维护请求，并记录精确操作令牌。
+`TLB.IV` 同步完成规范 48 位虚拟地址的地址转换维护操作。它是纯地址形式：要失效的地址来自 `SrcL`，只有当该值是规范 48 位虚拟地址且当前环为 ACR0 时该次尝试才被接受。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iv-mechanism role=mechanism -->
 ## 系统机制
 
-ASL DOC 区域选择 `ScalarHandler_ExecuteMaintenance`。读取源或改变系统状态之前，必须先检查位置和编码合法性。
+`InstructionContractHandler_TLB_IV` 选择共用的维护处理程序（`asl/scalar/sys/TLB.IV.asl:18`），而 `InstructionContractMaintenanceRequiresRootRing_TLB_IV` 返回 `TRUE`（`asl/scalar/sys/TLB.IV.asl:42`），正是这一点把该操作放进执行器的环受限组（`asl/scalar/model/sys/semantics.asl:121`）。派发器为该形式读取 `SrcL`，因为 `InstructionContractMaintenanceUsesOperand_TLB_IV` 为 `TRUE`（`asl/scalar/model/dispatch/sys.asl:50`）。
 
-该指令占用活动 SYS 块体中的一个标量操作位置。
+执行器内部的顺序是先特权、后操作数：环检查在规范地址测试之前运行，两种失败各有自己的故障类别（`asl/scalar/model/sys/semantics.asl:129`）。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iv-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`SrcL` 承载 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。
+`SrcL` 是 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。它的值是虚拟地址操作数，由 `IsCanonicalAddress48` 测试，该函数要求当第 47 位为 0 时第 63:48 位全为 0，当第 47 位为 1 时全为 1（`asl/scalar/model/sys/semantics.asl:108`）。
 
-编码零是已分配的字段值，从不表示省略操作数。
+没有目的地操作数。成功时该操作数只发布到维护记录中，编码零命名架构零 GPR。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iv-effects role=effects -->
 ## 架构效果
 
-成功时，维护记录接收 `Maintenance_TLB_IV` 和精确捕获的操作数令牌。
+成功的尝试恰好把 TLB 纪元递增一，并以该地址操作数记录 `Maintenance_TLB_IV`（`asl/scalar/model/sys/semantics.asl:146`）。随后 `TPC` 按指令长度前进，因为无故障的尝试会向派发器报告成功。
 
-选中的缓存或 TLB 纪元恰好递增一次，然后 `TPC` 前进；该操作是同步完成的本地提示。
+设计要点：被拒绝的操作数不会改变 TLB 纪元，而且只有在该次尝试无故障时才写入记录（`asl/scalar/model/sys/semantics.asl:156`）。因此对纪元或记录的读者来说，非规范请求不可能看起来像一次已完成的失效。
+
+该指令不执行普通标量内存访问，因此不触碰页表或数据内存。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iv-constraints role=constraints -->
 ## 位置与拒绝边界
 
-TLB 维护只在 `ACR0` 接受；环权限先于操作数验证进行检查。操作数必须是规范 48 位虚拟地址。
+位置先由派发器检查：在活动 SYS 块体之外，该次尝试引发 `Fault_BundleControl`，执行器从不运行。在块体内部，固定位与 `SrcL` 选择器在调用之前完成校验。
 
-无效的 SYS 块位置会在字段检查之前被拒绝。保留编码或访问拒绝除普通陷阱包络外，不产生目的地、队列、系统状态或 `TPC` 效果。
+随后执行器施加自己的两种拒绝。当前环不是 ACR0 会引发 `Fault_IllegalInstruction`。ring 0 下操作数不是规范地址会引发 `Fault_DataPage`，并以该操作数作为陷阱参数，同时纪要不改变（`asl/scalar/model/sys/semantics.asl:143`）。
+
+设计要点：地址转换维护属于管理者状态，因此被限制在根环；而地址形状的操作数保留自己的页故障类别。区分这两种拒绝，使处理程序能分辨特权失败与地址格式错误。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iv-example role=example -->
 ## 非规范示例
 
 该写法示例只用于说明；确切合法性与效果仍由下方生成契约定义。
 
-可从 `tlb.iv SrcL` 开始，先沿编码字段完成预检，再继续查看所选系统效果。
+在 ACR0，GPR 持有 0x1234 时，`tlb.iv SrcL` 快照 0x1234，因第 63:48 位为零而通过规范测试，把 TLB 纪元递增一，并以操作数 0x1234 记录 `Maintenance_TLB_IV`。同一条指令在 ACR1 环上引发 `Fault_IllegalInstruction`，且不读取操作数的规范形式。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

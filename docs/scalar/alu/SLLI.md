@@ -19,47 +19,63 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-slli-purpose role=purpose -->
 ## What SLLI does
 
-`SLLI` is a 32-bit scalar ALU instruction. It logically shifts the source left under the complete XLEN value shift rules; its current instruction contract defines the result publication path and any additional state effect.
+`SLLI` shifts `SrcL` logically left by a constant `shamt` of `0` through `63` and publishes the full `PTO_XLEN` result. It has three fields: `RegDst` at `[7 +: 5]`, `SrcL` at `[15 +: 5]` and the six-bit `shamt` at `[20 +: 6]`.
+
+The carrier matches `0x00007015` under mask `0xfc00707f`. The mask fixes bits `31:26`, the six bits directly above the shift amount, so no bit of `shamt` is reserved.
+
+`SLLI` and `SLL` compute the same function; the difference is that the amount is part of the instruction rather than a second register.
 
 <!-- PTO-READER-BLOCK: scalar-slli-mechanism role=mechanism -->
-## How the result is formed
+## How the shift is formed
 
-Execution snapshots the encoded inputs, then logically shifts the source left under the complete XLEN value shift rules, and only afterward performs the destination effects.
+Dispatch calls `ExecuteDecodedShiftImmediate` with `ScalarBinary_SLL` at `asl/scalar/model/dispatch/alu.asl:188-189`. That path reads `SrcL`, decodes the six-bit field into a word with `ScalarDecodedWord`, and calls `ScalarBinary(ScalarBinary_SLL, left, amount)`, which is `LSL(left, UInt(right[5:0]))` (`asl/scalar/model/alu/semantics.asl:456`).
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+slli SrcL, shamt, ->{t, u, Rd}
+```
+
+Design point: The immediate path passes the decoded `shamt` through the same six-bit mask as the register form, so a `shamt` of `64` cannot be encoded and a `shamt` of `63` is the largest shift. Every encodable amount is legal.
+
+Design point: Bits shifted out of bit `63` are discarded and zeros enter from the right, so `SLLI` cannot preserve information that leaves the word. The published result is always a function of `SrcL` and the encoded amount alone.
 
 <!-- PTO-READER-BLOCK: scalar-slli-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects a scalar input through Reg5.
-- The 6-bit `shamt` field encodes the six-bit shift amount.
+`SrcL` is the shifted value, `shamt` is decoded from the carrier, and `RegDst` receives the result.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+- `SrcL`, instruction slice `[15 +: 5]`: `0..23` read absolute GPRs, `24..27` read `T#1..T#4`, `28..31` read `U#1..U#4`, and the read does not consume a queue entry.
+- `shamt`, instruction slice `[20 +: 6]`: every value from `0` through `63` is legal, and encoded zero performs an identity shift.
+- `RegDst`, instruction slice `[7 +: 5]`: `1..23` write that GPR, `30` pushes `U`, `31` pushes `T`, and `0` with `24..29` discard.
+- Encoded zero of `SrcL` reads the architectural zero GPR, so a zero source publishes `0` for every amount.
+
+Design point: Because the amount is encoded, it cannot be renamed or pushed onto a queue. A program that wants to vary the amount at run time needs `SLL` and a register, while `SLLI` fixes one amount in the instruction stream.
 
 <!-- PTO-READER-BLOCK: scalar-slli-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+`SrcL` is snapshotted before the destination is written, so an aliasing destination shifts the pre-instruction value. The result is published and `TPC` advances by `4` bytes.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+`SLLI` accesses no memory and leaves reservation, descriptor, numeric-flag, trap, bundle, privilege, predicate and control-flow state unchanged; the only queue movement possible is the push selected by a `30` or `31` destination.
 
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+Design point: The instruction is a pure function of one register and its own encoding, which makes it usable to build a mask of the form `1 << k` without occupying a second register for the count.
 
 <!-- PTO-READER-BLOCK: scalar-slli-constraints role=constraints -->
 ## Legality and fault boundary
 
-All 6 encoded shift bits are assigned, giving amounts `0..63`; fixed-width shifting is total and raises no arithmetic exception.
+All `32` `SrcL` codes, all `32` `RegDst` codes and all `64` shift amounts are assigned. Beyond the fixed bits `31:26` and `14:12` the form carries no constraint.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+An unmatched carrier raises `Fault_IllegalInstruction` at `PC`, which is how the reserved high bits are rejected. An instruction that is not applicable to the active block raises `Fault_BundleControl` at `TPC`, reachable for `SLLI` only while a system-block terminal request is pending. An unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC`. Each check precedes the destination effect and the `TPC` advance.
+
+Design point: An out-of-range shift amount is not an illegal instruction; it is not encodable in the first place. Fixed bits `31:26` must be zero, so the only way to express a shift by more than `63` is not available at all.
 
 <!-- PTO-READER-BLOCK: scalar-slli-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `SLLI` example, source `1` shifted left by `3` produces `8`.
+With `a0` holding `1`, `slli a0, 4, ->a2` publishes `16` and `slli a0, 0, ->a2` publishes `1`.
+
+With `a0` holding `1`, `slli a0, 63, ->a2` publishes `0x8000000000000000`. With `a0` holding `0xFFFFFFFFFFFFFFFF`, `slli a0, 4, ->a2` publishes `0xFFFFFFFFFFFFFFF0`, because four one-bits leave the word at the top.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,48 +19,55 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-misub-purpose role=purpose -->
 ## What HL.MISUB does
 
-`HL.MISUB` is a 48-bit scalar ALU instruction. It multiplies the right source by the unsigned immediate and subtracts the product relative to the left source modulo 2^PTO_XLEN; its current instruction contract defines the result publication path and any additional state effect.
+`HL.MISUB` is a 48-bit scalar ALU instruction that publishes `SrcL - SrcR * uimm19` modulo `2^PTO_XLEN` through one Reg5 destination.
+
+`SrcL` is the minuend and the scaled product is the subtrahend, so the immediate selects how many copies of `SrcR` are removed from `SrcL`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-misub-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then multiplies the right source by the unsigned immediate and subtracts the product relative to the left source modulo 2^PTO_XLEN, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractResult_HL_MISUB`, which returns `ScalarMultiplyImmediateAdd(left, right, immediate, TRUE)`. With the subtract flag set, the helper computes `MultiplyWord(right, ZeroExtend{PTO_XLEN}(immediate))` first and then returns `left - product`. Dispatch shares the `ScalarOperation_HL_MIADD, ScalarOperation_HL_MISUB` alternative and passes `operation == ScalarOperation_HL_MISUB` as that flag.
 
-- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+hl.misub SrcL, SrcR, uimm, ->{t, u, Rd}
+```
+
+Design point: the subtraction is a full-width step, so a product larger than `SrcL` borrows across the whole word. `SrcL = 0`, `SrcR = 1` and `uimm19 = 1` publish `0xFFFFFFFFFFFFFFFF` rather than a clamped zero.
 
 <!-- PTO-READER-BLOCK: scalar-hl-misub-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the left multiplicand or additive operand through Reg5.
-- The 5-bit `SrcR` field selects the right multiplicand through Reg5.
-- The unsigned 19-bit `uimm19` field carries the unsigned 19-bit multiplier.
+- `RegDst`, instruction slice `[23 +: 5]`, receives the XLEN result or discards it.
+- `SrcL`, instruction slice `[31 +: 5]`, supplies the minuend.
+- `SrcR`, instruction slice `[36 +: 5]`, supplies the multiplicand.
+- `uimm19`, instruction slices `[41 +: 7]` and `[4 +: 12]`, supplies value bits `6:0` and `18:7`.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Each Reg5 code is a source code or a destination code from the common map: `0..23` name absolute GPRs, `24..27` name `T#1..T#4`, and `28..31` name `U#1..U#4` as sources. Reading a temporary leaves it in place, and the two reads both precede the destination write.
+
+Design point: the destination shares the five-bit field with the sources, but the two roles are not symmetric: source codes `24..29` are readable temporary entries, while the same codes as a destination discard the result. `->u` and `->t` are the codes `30` and `31`.
 
 <!-- PTO-READER-BLOCK: scalar-hl-misub-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both sources are snapshotted before the destination effect, so a destination that also names `SrcL` or `SrcR` receives a value computed from the pre-instruction registers.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The result is published through `RegDst`, and `TPC` then advances by `6` bytes. No memory is read or written, and no numeric-status, reservation, descriptor, bundle, privilege or control-flow state changes; only the destination-selected queue push can alter a temporary queue.
 
 <!-- PTO-READER-BLOCK: scalar-hl-misub-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every `32`-code source encoding, every `32`-code destination encoding and every `uimm19` value from `0` through `524287` is assigned, so only an unavailable temporary source can fail the operand checks. The fixed encoding bits must match the canonical 48-bit form.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise a mismatching encoding raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before the destination write.
+
+Design point: a subtract that underflows is not an exception, so the instruction cannot report a negative intermediate result. `HL.MISUB` publishes the wrapped word, and the sign of the difference is readable only from its top bit.
 
 <!-- PTO-READER-BLOCK: scalar-hl-misub-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `HL.MISUB` example, left source `20`, right source `3`, and `uimm19=4` produce `8`.
+With `SrcL = 20`, `SrcR = 3` and `uimm19 = 4`, the product is `12` and `RegDst` receives `8`. With `SrcL = 0`, `SrcR = 1` and `uimm19 = 1` the subtraction wraps and `RegDst` receives `0xFFFFFFFFFFFFFFFF`. With `uimm19 = 0` the product is `0` and `RegDst` receives `SrcL`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

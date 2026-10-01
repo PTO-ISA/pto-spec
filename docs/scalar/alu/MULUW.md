@@ -19,47 +19,54 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-muluw-purpose role=purpose -->
 ## What MULUW does
 
-`MULUW` is a 32-bit scalar ALU instruction. It computes the low part of the unsigned product under the low 32-bit word, followed by sign-extension to XLEN result rules; its current instruction contract defines the result publication path and any additional state effect.
+`MULUW` is a 32-bit encoded scalar ALU instruction that multiplies the low words of its two sources, keeps the low `32` bits of that product, and sign-extends bit `31` to XLEN before publishing through one Reg5 destination.
+
+Bits `63:32` of either source are outside the operation, so a source that differs only above bit `31` produces the same published word.
 
 <!-- PTO-READER-BLOCK: scalar-muluw-mechanism role=mechanism -->
 ## How the result is formed
 
-Execution snapshots the encoded inputs, then computes the low part of the unsigned product under the low 32-bit word, followed by sign-extension to XLEN result rules, and only afterward performs the destination effects.
+The owning ASL exposes `InstructionContractResult_MULUW`, which returns `ScalarMultiplyW(left, right)`. That helper zero-extends `left[31:0]` and `right[31:0]`, multiplies them with `MultiplyWord`, and applies `SignExtend{PTO_XLEN}` to `product[31:0]`.
 
-- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
-- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+```asm
+muluw SrcL, SrcR, ->{t, u, Rd}
+```
+
+Design point: the sources are zero-extended but the result is sign-extended, and the two extensions are not symmetric. A product whose bit `31` is set is published as a negative XLEN word: `SrcL = SrcR = 0xFFFFFFFF` gives the 32-bit product `1`, so the destination receives `1`, while the same source values under `MULU` produce `0xFFFFFFFE00000001`.
 
 <!-- PTO-READER-BLOCK: scalar-muluw-inputs role=inputs-outputs -->
-## Inputs and destinations
+## Inputs and destination
 
-- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
-- The 5-bit `SrcL` field selects the left multiplicand or additive operand through Reg5.
-- The 5-bit `SrcR` field selects the right multiplicand through Reg5.
+- `RegDst`, instruction slice `[7 +: 5]`, receives `SignExtend(product[31:0])`.
+- `SrcL`, instruction slice `[15 +: 5]`, supplies the left multiplicand word.
+- `SrcR`, instruction slice `[20 +: 5]`, supplies the right multiplicand word.
 
-These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+Sources use the common Reg5 map, `0..23` for absolute GPRs, `24..27` for `T#1..T#4` and `28..31` for `U#1..U#4`, read without consuming an entry. An encoded zero reads the architectural zero GPR, so an encoded-zero multiplicand makes the whole product zero.
+
+Design point: the destination map is the usual one, so codes `1..23` write GPRs, `30` and `31` push `U` and `T`, and `0` with `24..29` discard. The source reads still happen before the discard, so the queue state after a discarded `muluw` is unchanged.
 
 <!-- PTO-READER-BLOCK: scalar-muluw-effects role=effects -->
 ## Effects and ordering
 
-Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+Both source snapshots are taken before the destination effect, so source-destination aliasing cannot change which values enter the multiply.
 
-This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
-
-The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+The destination receives the sign-extended low word and `TPC` then advances by `4` bytes. The instruction has no memory effect and no numeric-status effect; apart from `RegDst` and `TPC`, only the `T` or `U` push selected by the destination code can change state.
 
 <!-- PTO-READER-BLOCK: scalar-muluw-constraints role=constraints -->
 ## Legality and fault boundary
 
-Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+Every source code and every destination code is assigned, and the destination selector check accepts all `32` codes, so an unavailable temporary source is the only operand condition that can fail. Fixed encoding bits must match the canonical 32-bit form.
 
-The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+Applicability fails only while a system-block terminal request is pending, raising `Fault_BundleControl` at `TPC`. Otherwise an encoding that does not match the form raises `Fault_IllegalInstruction` at `PC` before the bundle body is entered, and an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` at `PC` before the destination write. The multiply itself is total and raises nothing.
+
+Design point: the zero-extension of the sources and the sign-extension of the result are separate steps, so no operand value can produce an exception and no operand value is reserved. The only surprising case is a high result bit `31`, which turns an apparently small 32-bit product into a negative XLEN word.
 
 <!-- PTO-READER-BLOCK: scalar-muluw-example role=example -->
 ## Non-normative worked example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-For a small `MULUW` example, unsigned low-word sources `6` and `7` produce the single sign-extended result `42`.
+With `SrcL = 0xFFFFFFFF` and `SrcR = 0xFFFFFFFF`, the low words multiply to `0xFFFFFFFE00000001`, whose low `32` bits are `1`, so `RegDst` receives `1`. With `SrcL = 0x0000000180000000` and `SrcR = 2`, only the low words are used: the product `0x80000000 * 2` is `0x100000000`, whose low `32` bits are `0x00000000`, so the destination receives `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

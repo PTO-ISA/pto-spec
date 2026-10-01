@@ -19,42 +19,44 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-tlb-ia-purpose role=purpose -->
 ## What TLB.IA does
 
-`TLB.IA` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+`TLB.IA` completes the 16-bit ASID translation-maintenance operation synchronously. Its operand is not an address but an address-space identifier: bits 15:0 of `SrcL` carry the token, and bits 63:16 must be zero for the attempt to be accepted.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-ia-mechanism role=mechanism -->
 ## System mechanism
 
-The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+The instruction selects the shared maintenance handler (`asl/scalar/sys/TLB.IA.asl:18`) and the token `Maintenance_TLB_IA` (`asl/scalar/sys/TLB.IA.asl:30`). That token has its own case in the executor, separate from the two address cases, because its operand test is a bit-range test rather than a canonicality test (`asl/scalar/model/sys/semantics.asl:148`).
 
-The instruction occupies one scalar operation position in the body of an active SYS block.
+`InstructionContractMaintenanceRequiresRootRing_TLB_IA` returns `TRUE` (`asl/scalar/sys/TLB.IA.asl:42`), which places the operation in the ACR0-only group of `MaintenanceAccessPermitted`.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-ia-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+`SrcL` is a Reg5 source: R0..R23, T#1..T#4, or U#1..U#4. The instruction interprets it as a packed token, so a value with any nonzero bit above bit 15 is not a valid operand of this form.
 
-Encoded zero is an assigned field value, never an omitted operand.
+There is no destination operand and no second field. On success the token is recorded in the maintenance record; on any rejection nothing is published.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-ia-effects role=effects -->
 ## Architectural effects
 
-On success, the maintenance record receives `Maintenance_TLB_IA` and the exact captured operand token.
+A successful attempt advances the TLB epoch by one and stores `Maintenance_TLB_IA` with the operand in the maintenance record (`asl/scalar/model/sys/semantics.asl:148`). `TPC` advances by the instruction length once the attempt reports success.
 
-Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+Design point: the operand check is a range test rather than a mask, so an operand with stray high bits is rejected instead of being silently truncated to its low 16 bits. Software that packs an identifier into the register must therefore zero the upper bits.
+
+The instruction performs no ordinary scalar memory access and writes no register, queue, or system register.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-ia-constraints role=constraints -->
 ## Placement and rejection
 
-TLB maintenance is accepted only at `ACR0`; ring permission is checked before operand validation. Operand bits `63:16` must be zero, and bits `15:0` carry the ASID token.
+Three rejections belong to the maintenance path, and they come in this order. Outside an active SYS block body the dispatcher raises `Fault_BundleControl` before the executor. A ring other than ACR0 raises `Fault_IllegalInstruction`. At ACR0, an operand whose bits 63:16 are not all zero raises `Fault_IllegalInstruction`, and the TLB epoch is left unchanged (`asl/scalar/model/sys/semantics.asl:149`). One rejection happens between placement and the executor: the shared operand-legality pass rejects a `SrcL` selector that names an unavailable temporary-queue entry (`asl/scalar/model/types/operands.asl:6`).
 
-Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+Design point: the privilege test runs before the operand test. A non-root attempt therefore takes the privilege rejection even when its operand is also malformed, and it never reaches the epoch step.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-ia-example role=example -->
 ## Non-normative example
 
 This spelling example is illustrative; exact legality and effects remain in the generated contract below.
 
-Start with `tlb.ia SrcL` and trace its encoded fields through preflight before following the selected system effect.
+At ACR0 with the source register holding 3, `tlb.ia SrcL` passes the ASID bit test, advances the TLB epoch by one, and records `Maintenance_TLB_IA` with operand 3. If an upper bit is set, for example 0x10000, the same instruction raises `Fault_IllegalInstruction` at ACR0 and the TLB epoch does not move.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -19,46 +19,48 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-ori-purpose role=purpose -->
 ## What SETC.ORI does
 
-`SETC.ORI` derives a bitwise-OR condition and publishes it as the current Conditional bundle commit decision.
+`SETC.ORI` combines one scalar register with an encoded immediate using a bitwise OR and publishes whether the combination is nonzero as the commit decision of the Conditional bundle it sits in.
+
+The immediate is a constant mask carried by the instruction, so a test that is always satisfied by any nonzero register can be written without a second register.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ori-mechanism role=mechanism -->
-## Mechanism
+## The sign-extended constant mask
 
-After placement and single-setter checks, the instruction snapshots its operands and applies bitwise OR.
+The signed `simm12` field is sign-extended to the full word width, then logically shifted left by `shamt`, read as the low `6` bits of that encoded field. The instruction ORs the complete left word with that shifted value and stores exactly `0` when the combination is zero and exactly `1` otherwise.
 
-The decoded immediate is logically shifted left by `shamt` before the condition is evaluated.
+The left operand is read as a complete word and is never shifted.
 
-Zero selects a false commit condition; any nonzero combined value selects true.
+Design point: because the immediate is sign-extended before the shift, an all-ones immediate survives scaling and makes the OR nonzero for every value of the left operand, which is a way to commit a condition unconditionally from an immediate form.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ori-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
 
-- `SrcL` supplies the left scalar source.
+- `SrcL` supplies the left absolute GPR source, read as a complete word.
+- `shamt` supplies the shift amount applied to the immediate; encoded zero performs no shift.
+- `simm12` supplies the signed encoded immediate; encoded zero supplies numeric zero.
 
-- `shamt` supplies the encoded shift amount.
-
-- `simm12` supplies a signed encoded immediate.
+`SrcL` is not consumed and no `GPR`, `T`, or `U` destination is written.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ori-effects role=effects -->
 ## Effects and ordering
 
-The canonical condition is written atomically to `_CommitArgument` and `BARG.TAKEN`, and the condition-set marker becomes true.
+On success the commit argument holds exactly `1` or `0`, `BARG.TAKEN` mirrors that truth value while a bundle is active, the block condition marker becomes set, and `TPC` advances by `4` bytes.
 
-On success, `SETC.ORI` advances `TPC` by `4` bytes. It has no scalar destination and no memory or reservation effect.
+There is no memory, reservation, descriptor, or numeric-status effect, and `BARG.BPC`, `BARG.BPCN`, `BARG.BlockType`, and `BARG.TYPE` are preserved.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ori-constraints role=constraints -->
-## Legality and fault order
+## What the setter marker and placement check reject
 
-The instruction is valid only in the applicable Conditional bundle context, and only one successful condition setter may occur.
+The operation is applicable only in the body of an active Conditional block, where at most one successful `SETC` condition setter may complete.
 
-Wrong placement or a repeated setter raises an Illegal Block Exception before source reads; encoding or unavailable-source failures raise `Fault_IllegalInstruction` before commit or `TPC` effects.
+Wrong placement or a repeated successful setter raises `Fault_BundleControl` (trap number `5`, `BUNDLE_TRAP`) before operand legality and before any source read. A fixed-bit mismatch or an unavailable selected `T` or `U` source raises `Fault_IllegalInstruction` before commit state, `BARG`, queue, or `TPC` effects. A rejected occurrence leaves the shared marker unconsumed.
 
 <!-- PTO-READER-BLOCK: scalar-setc-ori-example role=example -->
 ## Non-normative example
 
 This example illustrates the current owner and does not create a second semantic definition.
 
-`setc.ori SrcL, simm` evaluates the described condition, writes the canonical decision to commit state, and advances `TPC` only after that update.
+Place `0` in GPR1 and execute the form whose encoded fields are `SrcL=1`, `shamt=0`, and `simm12=-1`. The immediate sign-extends to an all-ones word, the OR is nonzero for any left operand, so the form commits `1`. With `simm12=0` and GPR1 still `0` the same form commits `0`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

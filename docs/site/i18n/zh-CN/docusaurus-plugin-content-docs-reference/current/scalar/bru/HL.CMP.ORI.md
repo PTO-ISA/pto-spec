@@ -19,42 +19,52 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-ori-purpose role=purpose -->
 ## HL.CMP.ORI 的作用
 
-`HL.CMP.ORI` 对两个解码标量值执行按位或，并发布组合值是否非零。
+`HL.CMP.ORI` 判断一个标量寄存器与 `24` 位立即数的按位或是否非零，并把结果写为 `1` 或 `0`。它是宽立即数比较族中的 OR 成员，使用 `24` 位立即数，而 `32` 位的 `CMP.ORI` 使用 `12` 位。
+
+设计要点：或运算的结果本身不会发布。立即数为零时，该指令就是对 `SrcL` 的普通非零判定；立即数非零时，任一操作数中有置位就使答案为 `1`。
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-ori-mechanism role=mechanism -->
-## 执行机制
+## 按位或判定的执行方式
 
-两个源会在按位或之前完成快照。
+读取 `SrcL`，并把 `simm24` 符号扩展到 `PTO_XLEN`。二者按位或组合，组合结果非零时处理程序写入 `1`，为零时写入 `0`。
 
-组合 word 为零时结果是 XLEN 零，非零时规范化为 XLEN 一。
+设计要点：由于立即数采用符号扩展，负立即数会把右操作数的所有高位都置 `1`，因此 `hl.cmp.ori a0, -1` 对 `a0` 的任何取值都写入 `1`。
+
+设计要点：写入的字始终是 `1` 或 `0`，绝不是全 `1` 掩码，因此使用者可以直接把它加到计数器上、移位或判断，无需再做掩码。
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-ori-inputs-outputs role=inputs-outputs -->
-## 输入与输出
+## 操作数与目的编码
 
-- `RegDst` 选择编码指定的目的位置或丢弃行为。
+- `SrcL` 按 `Reg5` 源规则提供左操作数：编码 `0` 到 `23` 读取绝对 GPR，编码 `24` 到 `27` 读取 T 队列，编码 `28` 到 `31` 读取 U 队列。若队列编码对应的项无效，指令会在任何读取之前被拒绝。
 
-- `SrcL` 提供左侧标量源。
+- `simm24` 提供 `24` 位有符号常量，编码在两个 `12` 位片段中。
 
-- `simm24` 提供有符号编码立即数。
+- `RegDst` 按普通 `Reg5` 规则选择目的：编码 `0` 到 `23` 指定绝对 GPR，编码 `24` 到 `29` 不写入任何位置，编码 `30` 压入 U 队列，编码 `31` 压入 T 队列。
+
+设计要点：本形式没有右源修饰字段，因此没有 `.sw`、`.uw` 或 `.not` 写法。左操作数按读取值原样使用，唯一的变换是立即数的扩展。
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-ori-effects role=effects -->
 ## 效果与顺序
 
-规范化布尔值先通过编码目的位置发布，随后 `TPC` 前进 `6` 字节。
+规范化的 `1` 或 `0` 通过所选目的写入，除此之外不写任何位置。由于处理程序不写 `TPC`，随后由分派边界让 `TPC` 前进 `6` 字节，即该 `48` 位形式的编码长度。
 
-该指令不修改提交状态，也不访问内存或保留状态。
+`HL.CMP.ORI` 不是条件设置操作，因此不接触 `_CommitArgument`、`BARG.TAKEN` 或指令束条件标记，对它也没有条件指令束的放置要求。具有同一条件的关系型提交姊妹形式是 `HL.SETC.ORI`。
+
+处理程序不访问内存、不获取保留状态、不记录数值状态，因此一次被接受的执行所造成的架构差异只有目的字与前进后的 `TPC`。
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-ori-constraints role=constraints -->
 ## 合法性与故障顺序
 
-编码、保留字段值和源可用性都会在目的、控制或 `TPC` 效果前检查。
+该形式的固定位必须匹配，否则该编码不会译码为本指令，并引发 `Fault_IllegalInstruction`。没有保留字段值：全部 `32` 个 `RegDst` 编码以及 `24` 位立即数字段的所有取值都已分配。所选的 `SrcL` 编码也必须可用，因此指向无效项的 T 或 U 队列编码会引发同一故障。
+
+设计要点：译码、源与目的检查都在读取操作数之前、写入目的之前完成，因此被拒绝的编码既不改变目的，也不改变 `TPC`。
 
 <!-- PTO-READER-BLOCK: scalar-hl-cmp-ori-example role=example -->
 ## 非规范示例
 
 下面的示例只帮助理解当前所有者，不构成第二份语义定义。
 
-`hl.cmp.ori SrcL, simm, ->{t, u, Rd}` 在条件为真时发布 XLEN 一，否则发布 XLEN 零。
+当 `a0` 持有 `0x0000000000000005` 时，`hl.cmp.ori a0, 0, ->a1` 写入 `1`。当 `a0` 为 `0` 时，同一编码写入 `0`；而 `hl.cmp.ori a0, 1, ->a1` 又写入 `1`，因为仅立即数就使或结果非零。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
