@@ -17,48 +17,62 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-sdi-po-purpose role=purpose -->
-## What HL.SDI.PO does
+## What `HL.SDI.PO` does
 
-`HL.SDI.PO` is a standalone `48`-bit AGU instruction that forms a signed-immediate address and stores one aligned little-endian `8`-byte value.
+`HL.SDI.PO` is a standalone `48`-bit scalar AGU instruction that stores one `8`-byte little-endian unit from `SrcD` at a signed `simm17` displacement from the `SrcR` base.
+
+The canonical assembly is `hl.sdi.po SrcD, [SrcR, simm], ->{t, u, Rd}`.
+
+Design point: this is the post-index form: the access uses the original base, and the updated base is published only after the store succeeds. The displacement is scaled by `8`, so the encoded field counts `8`-byte units.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sdi-po-mechanism role=mechanism -->
-## Address and memory mechanism
+## How the address and the transfer are formed
 
-`HL.SDI.PO` sign-extends `simm17` from its complete `-65536..65535` domain, multiplies it by `8`, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcR` base.
+The displacement is the sign-extended `simm17` value left-shifted by `3` and is added to the `SrcR` snapshot modulo `2^PTO_XLEN`. The base is read before any memory effect, so a later write-back of the same register cannot change the address this store uses.
 
-After complete preflight, the instruction performs one little-endian `8`-byte store from its snapshotted store-data source.
+The address is preflighted before the store. On success one `8`-byte little-endian store is performed and one relaxed store event is recorded.
 
-Post-index mode accesses the original base and publishes base plus offset only after successful memory completion.
+The post-index address is the base itself, so the displacement does not move this access; it is added to the base for the write-back only, and it advances the published pointer by whole `8`-byte units.
+
+Design point: the write-back is gated on the store completing without fault, so a retry of a faulted `HL.SDI.PO` sees the same base and computes the same address.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sdi-po-inputs role=inputs-outputs -->
-## Inputs and outputs
+## Encoded fields and the effect
 
-- `SrcR` supplies the base; `simm17` supplies the signed displacement. Every encoded Reg5 source among `SrcD`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
-- `SrcD` supplies store data; `RegDst` receives the updated base; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
-- `simm17` assigns every signed value from `-65536` through `65535`; encoded zero is a zero displacement, not omission.
+- `SrcD` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `SrcR` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `simm17` is a signed `17`-bit displacement in `8`-byte units, carried in the encoding as three pieces at bits `41`..`47`, bits `23`..`27`, and bits `6`..`10`, covering `-65536`..`65535` units.
+- `RegDst` is a `5`-bit selector. Codes `1`..`23` write absolute GPRs, code `30` pushes `U`, code `31` pushes `T`, and codes `0` and `24`..`29` discard that one result without suppressing the other effects.
+- Design point: a scaled immediate index keeps the encoded field narrow while the reach stays large, because the scale multiplies the count rather than widening the field. The `17`-bit field covers `-65536`..`65535` units, that is `-524288`..`524280` bytes.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sdi-po-effects role=effects -->
-## Effects and ordering
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+Every scalar source is snapshotted before any memory or destination effect, so a source that a destination also names still contributes the pre-instruction value.
 
-A successful attempt records one relaxed store event, invalidates an overlapping reservation but preserves a nonoverlapping one, and advances `TPC` by `6` bytes.
+In memory, a successful execution changes only the bytes inside the stored range. The updated base is published to `RegDst` when the store completes without fault. A valid reservation is invalidated when the stored range overlaps the reservation's `64`-byte granule; a reservation whose granule the store leaves untouched stays valid.
+
+`TPC` advances by `6` bytes after the memory operation completes. A rejected or faulting attempt does not retire.
+
+Design point: all `8` bytes of `SrcD` are the transfer, so the low byte lands at the lowest address of the unit. There is no truncation.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sdi-po-constraints role=constraints -->
-## Alignment, faults, and restart
+## Legality, faults, and restart
 
-Each effective address must satisfy `8`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
-
-A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
-
-A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+- A fixed-bit mismatch, or a source code selecting an unavailable `T` or `U` slot, raises `Fault_IllegalInstruction` before any instruction effect.
+- A misaligned `8`-byte address raises `Fault_DataAlignment` before translation or permission. A later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+- A fault records no store event, leaves memory and destination registers unchanged, and keeps `TPC` on the faulting instruction. Recovery recomputes the snapshot, the address, the probe, and the store from the beginning.
+- Design point: the published base is aligned exactly when the original base was, whatever the index, because the scaled displacement is always a multiple of `8`. An unaligned base stays unaligned for every step of the walk.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sdi-po-example role=example -->
-## Non-normative address example
+## Reading one encoding end to end
 
-This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
+This walkthrough explains how to use the page and does not add instruction behavior.
 
-With the base set to `0x100` and the signed immediate set to `2`, the displacement is `16` and base plus displacement is `0x110`. The memory access uses `0x100`, and the computed sum is published only after success. If aligned and permitted, the instruction stores `8` bytes at that address.
+- Suppose `hl.sdi.po 5, [6, 2], ->8` runs with GPR6 = `0x2000` and GPR5 = `0x0807060504030201`.
+- The post-index address is `0x2000`, so the `8` bytes are stored there.
+- The displacement is `2` units, that is `0x10`, so GPR8 receives `0x2010` after the store succeeds.
+- No other memory byte and no other register changes, and `TPC` becomes the instruction address plus `6`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

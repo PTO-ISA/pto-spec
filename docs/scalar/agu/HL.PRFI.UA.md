@@ -17,50 +17,65 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-prfi-ua-purpose role=purpose -->
-## What HL.PRFI.UA does
+## What `HL.PRFI.UA` does
 
-`HL.PRFI.UA` is a standalone `48`-bit scalar AGU instruction that forms a non-binding prefetch hint without performing an architectural memory access using `Immediate` addressing.
+`HL.PRFI.UA` is a standalone `48`-bit scalar AGU instruction that issues a non-binding 1-byte-granularity prefetch hint with an immediate displacement and publishes the effective address it formed.
+
+The canonical assembly is `hl.prfi.ua{.l1,.l2,.l3} [SrcL, simm], ->{t, u, Rd}`. The `.l1`, `.l2`, and `.l3` suffixes select the level named by the `model` field.
+
+Design point: this form is the immediate hint that also returns its own sum. Keeping the address lets one instruction point at a line and hand the traversal its next pointer, without recomputing the same add. The suffix `.ua` marks the published address on an unscaled immediate.
 
 <!-- PTO-READER-BLOCK: scalar-hl-prfi-ua-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How the address and the transfer are formed
 
-The address path sign-extends `simm17`, scales it by `1`, and adds the displacement to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+The sign-extended `simm17` value is added to the `SrcL` snapshot modulo `2^PTO_XLEN`. The scale is `1`: the encoded value is the byte distance, not a count of units. The sum is both the hinted address and the published result.
 
-A legal `model` selects the hint level. The hint performs no translation, permission check, alignment check, memory access, memory event, reservation update, ordering edge, or cache-placement guarantee.
+The model then does the address formation and nothing else: no translation, no alignment or permission check, no memory access, no memory event, and no reservation or ordering effect.
 
-The effective address is published through `RegDst` after source snapshot.
+Design point: because the prefetch path never probes the address, a hint naming an address outside the permitted region is not a fault. The published value is a computation, not evidence that anything was fetched.
 
 <!-- PTO-READER-BLOCK: scalar-hl-prfi-ua-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and results
 
-- `RegDst` is a `5`-bit field selecting the effective-address result.
-- `SrcL` is a `5`-bit field selecting the address base.
-- `model` is a `5`-bit field selecting the prefetch hint level.
-- `simm17` is a `17`-bit field selecting the signed displacement before the `1` scale factor.
+- `SrcL` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `simm17` is a signed `17`-bit displacement carried in the encoding as two pieces at bits `36`..`47` and bits `6`..`10`, covering `-65536`..`65535` bytes.
+- `model` is a `5`-bit selector. Value `0` names `L1`, `1` names `L2`, and `2` names `L3`; values `3`..`31` are reserved.
+- `RegDst` is a `5`-bit selector that receives the formed address. Codes `1`..`23` write absolute GPRs, code `30` pushes `U`, code `31` pushes `T`, and codes `0` and `24`..`29` discard it.
+
+Design point: a reserved `model` value rejects before the source is read and before `RegDst` is written, so a rejected hint leaves the destination exactly as it was.
 
 <!-- PTO-READER-BLOCK: scalar-hl-prfi-ua-effects role=effects -->
-## Effects and completion order
+## Effects, ordering, and completion
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+Every scalar source is snapshotted before the destination is written, so a destination that names `SrcL` still contributes the pre-instruction base to the hinted address.
 
-A legal hint records no architectural memory event and does not change reservation state.
+The hint records no memory event, changes no memory byte, and leaves reservation state and ordering untouched.
 
-After all result or writeback publication, `HL.PRFI.UA` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+`TPC` advances by `6` bytes after the address result is published. A rejected or faulting attempt does not retire.
+
+Design point: the destination is written once, in the publication step, so the value cannot be a mixture of a pre-instruction base and a post-instruction one. A retry after a rejection starts from the same register state.
 
 <!-- PTO-READER-BLOCK: scalar-hl-prfi-ua-constraints role=constraints -->
 ## Legality, faults, and restart
 
-`model` values `0`, `1`, and `2` are assigned; values `3..31` are reserved and cause `Fault_IllegalInstruction` before source reads or address publication.
+A fixed-bit mismatch, or a source code selecting an unavailable `T` or `U` slot, raises `Fault_IllegalInstruction` before any instruction effect.
 
-A legal prefetch hint cannot raise a data-access fault because it performs no architectural access. Fixed-bit mismatches or unavailable selected T/U sources are rejected before effects.
+A reserved `model` value raises `Fault_IllegalInstruction` before the source is read and before any address is published.
+
+A legal hint raises no data-access fault. Recovery performs a full reissue: the snapshot, the address formation, and the publication are recomputed with no retained progress.
+
+Design point: the immediate is compared against nothing, because every signed `17`-bit value is assigned, so no immediate value can be the reason a hint rejects. Only the fixed bits, the `model` field, and the source codes can reject.
 
 <!-- PTO-READER-BLOCK: scalar-hl-prfi-ua-example role=example -->
-## Non-normative reading walkthrough
+## Reading one encoding end to end
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `hl.prfi.ua{.l1,.l2,.l3} [SrcL, simm], ->{t, u, Rd}` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Take `hl.prfi.ua.l3 [6, -64], ->20` with GPR6 = `0x1000`.
+- The scale is `1`, so the byte displacement is `-64` and the hinted address is `0x0FC0`.
+- `model` is `2`, so the `.l3` suffix and the encoded field agree on the `L3` level.
+- GPR20 receives `0x0FC0`, and `TPC` becomes the instruction address plus `6`.
+- A later load through GPR20 still performs its own probe and can still fault.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

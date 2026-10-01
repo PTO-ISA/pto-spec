@@ -17,53 +17,68 @@ The current instruction contract is owned by the ASL source linked above.
 
 <!-- SUPPLEMENTARY-BEGIN -->
 <!-- PTO-READER-BLOCK: scalar-hl-sbp-purpose role=purpose -->
-## What HL.SBP does
+## What `HL.SBP` does
 
-`HL.SBP` is a standalone `48`-bit scalar AGU instruction that stores two adjacent 1-byte little-endian values using `Register` addressing.
+`HL.SBP` is a standalone `48`-bit scalar AGU instruction that stores two adjacent `1`-byte little-endian units from `SrcD` and `SrcD1`.
+
+The canonical assembly is `hl.sbp SrcD, SrcD1, [SrcL, SrcR<{.sw,.uw}>]`.
+
+Design point: both stored values come from registers, and the pair covers two adjacent bytes. A one-byte write of each of two sources is therefore a single instruction, and neither source is modified.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sbp-mechanism role=mechanism -->
-## Address and transfer mechanism
+## How the address and the transfer are formed
 
-The register-offset path applies the encoded `SrcRType` transformation to `SrcR` and adds the transformed offset to the snapshotted `SrcL` value modulo `2^PTO_XLEN`. The scale factor is fixed at `1`; no `shamt` field is encoded.
+The offset is the `SrcR` snapshot transformed by `SrcRType` and left-shifted by the fixed amount of `0`, then added to the `SrcL` snapshot modulo `2^PTO_XLEN`.
 
-Both adjacent addresses are preflighted before either aligned little-endian `1`-byte store occurs. The two stores commit in increasing-address order.
+That sum is the first address, and the second address is that sum plus `1`. The update mode is none, so no base write-back is published.
 
-This form does not publish an address-base writeback.
+Both addresses are probed and both store-data sources are read before the first store. On a fault, neither unit is written.
+
+Design point: both units are probed before either byte is written, so a fault on the second unit cannot leave the first byte of the pair already stored.
+
+Design point: the register offset is scaled by `0`, so `SrcR` counts bytes and the second byte of the pair is exactly one byte above the first. The same offset register can be reused as a byte cursor.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sbp-inputs role=inputs-outputs -->
-## Encoded inputs and outputs
+## Encoded fields and what they select
 
-- `SrcD` is a `5`-bit field selecting the first store-data value.
-- `SrcD1` is a `5`-bit field selecting the second store-data value.
-- `SrcL` is a `5`-bit field selecting the address base.
-- `SrcR` is a `5`-bit field selecting the register offset.
-- `SrcRType` is a `2`-bit field selecting the register-offset transformation.
+- `SrcD` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `SrcD1` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `SrcL` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `SrcR` is a `5`-bit Reg5 selector. Codes `0`..`23` select absolute GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`; a queue entry is read without being consumed.
+- `SrcRType` is `2` bits: `00` leaves the whole `SrcR` value unchanged, `01` and `10` replace it with the signed and unsigned readings of its low `32` bits, and `11` is reserved.
+- This form has no `RegDst` field, so no register receives a result and no updated base is published.
+
+Design point: `SrcD` and `SrcD1` may name the same register, in which case both bytes receive the same value from one pre-instruction read. The second read does not observe the first store, because both sources are read before the first store.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sbp-effects role=effects -->
-## Effects and completion order
+## Effects, snapshots, and completion
 
-All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+Every scalar source is snapshotted before any memory or destination effect, so a source that a destination also names still contributes the pre-instruction value.
 
-Successful execution records two relaxed store events in address order; an overlapping reservation is invalidated only after complete preflight.
+A successful execution records two relaxed store events in increasing address order.
 
-After all result or writeback publication, `HL.SBP` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+In memory, a successful execution changes only the bytes inside the stored range. A valid reservation is invalidated when the stored range overlaps the reservation's `64`-byte granule; a reservation whose granule the store leaves untouched stays valid.
+
+Design point: only the low `8` bits of each source are written, so wider sources are truncated silently. The rest of each register is untouched.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sbp-constraints role=constraints -->
 ## Legality, faults, and restart
 
-Each accessed address is aligned to the `1`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+- A fixed-bit mismatch, or a source code selecting an unavailable `T` or `U` slot, raises `Fault_IllegalInstruction` before any instruction effect.
+- Every address is a whole number of `1`-byte units, so preflight cannot raise `Fault_DataAlignment` for this form. A permission or bounded-memory failure raises `Fault_DataPage` at the failing unit's own address: when only the second unit fails the bound or permission check, that second address is reported.
+- A fault records no store event, leaves memory and destination registers unchanged, and keeps `TPC` on the faulting instruction. Recovery recomputes the snapshot, the address, the probe, and the store from the beginning.
 
-A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
-
-A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+Design point: `SrcRType` raw `11` is reserved and rejects before the sources are read, so a reserved selector cannot expose a half-formed offset.
 
 <!-- PTO-READER-BLOCK: scalar-hl-sbp-example role=example -->
-## Non-normative reading walkthrough
+## Reading one encoding end to end
 
 This walkthrough explains how to use the page and does not add instruction behavior.
 
-- Start with the canonical assembly `hl.sbp SrcD, SrcD1, [SrcL, SrcR<{.sw,.uw,.neg}>]` and identify the encoded address fields.
-- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+- Take `hl.sbp 20, 21, [2, 7]` with GPR2 = `0x8000`, GPR7 = `0x10`, GPR20 = `0xAA`, and GPR21 = `0xBB`.
+- The offset is `0x10`, so the two addresses are `0x8010` and `0x8011`.
+- Byte `0xAA` is stored at `0x8010` and byte `0xBB` at `0x8011`.
+- No register changes, and `TPC` becomes the instruction address plus `6`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
