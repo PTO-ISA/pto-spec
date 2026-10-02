@@ -2011,7 +2011,7 @@
       "defaults": [
         "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
+        "IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed."
       ],
       "destinations": [
         {
@@ -2197,7 +2197,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "e0f3bf4945ae63e0605cfdf8680e0deeba49c30dbd9e1c69d330daae15413fed",
+                "fold_signature_sha256": "3794d51a499cbd4c8f95855efda2ba591d7f8c137154d03b788958b1e5905380",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -2267,7 +2267,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "byte-displacement indices",
+                    "role": "logical element indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -2302,7 +2302,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "byte-displacement indices",
+                  "role": "logical element indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -2470,7 +2470,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "8ae7e7c0200e12ca6609aafe029eee4d6043fa1b3b998175620c680b3540cec5",
+                "fold_signature_sha256": "ab5b8348d310d913d4fe9c4f7ae7c676e15208a090eba97f26e365884f0bcb39",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -2540,7 +2540,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "byte-displacement indices",
+                    "role": "logical element indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -2575,7 +2575,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "byte-displacement indices",
+                  "role": "logical element indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -2791,7 +2791,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "de8155eaf7a69a8b38e5dfab0b0e07f4cb470d107f0e918042cf5a02ea56a967",
+                "fold_signature_sha256": "e44857fc8edc367ca2799606dcde1932d3bee604385319c9da736ea47c1f4821",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -2861,7 +2861,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "byte-displacement indices",
+                    "role": "logical element indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -2896,7 +2896,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "byte-displacement indices",
+                  "role": "logical element indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -3112,7 +3112,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "4a5dd5ddff60ba3b68b5bc0bdc3101c21803b9c4809efbcc1b86cc7550fd6f26",
+                "fold_signature_sha256": "bce64504a3215e11e4925abe09b26f801d95a47593c32f210e614e2355f25c36",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -3182,7 +3182,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "byte-displacement indices",
+                    "role": "logical element indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -3217,7 +3217,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "byte-displacement indices",
+                  "role": "logical element indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -3657,7 +3657,7 @@
               "field": "SrcTile0",
               "optional": false,
               "ordinal": 1,
-              "role": "byte-displacement indices",
+              "role": "logical element indices",
               "size": null,
               "syntax": "SrcTile0",
               "value_style": null
@@ -3739,7 +3739,7 @@
         },
         {
           "field": "source0",
-          "role": "byte-displacement indices"
+          "role": "logical element indices"
         }
       ],
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER.asl",
@@ -3767,7 +3767,7 @@
           "field": "SrcTile0",
           "optional": false,
           "ordinal": 1,
-          "role": "byte-displacement indices",
+          "role": "logical element indices",
           "size": null,
           "syntax": "SrcTile0",
           "value_style": null
@@ -3873,7 +3873,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [
         {
@@ -5995,7 +5995,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [
         {
@@ -8118,7 +8118,7 @@
       "defaults": [
         "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
+        "IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed."
       ],
       "destinations": [
         {
@@ -8304,7 +8304,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "c95de4f26bc6143f1844ce90dae630f55bdc9f2c11925eaca4e37c86fdd7f6c8",
+                "fold_signature_sha256": "69fb94bd4bf55237f5c01dc1d78af0e7a5282eb37cd45aec54eb46a96bb12ad6",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -8402,7 +8402,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "byte-displacement indices",
+                    "role": "logical element indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -8465,7 +8465,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "byte-displacement indices",
+                  "role": "logical element indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -8661,7 +8661,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "e34ad0a62dd4ff13c212b55f0fc8db634b434332e93828e3edf5748c459f063a",
+                "fold_signature_sha256": "bb7c0b0752dbffa29812901827762e29b838449c3d5ab17290dcc2ef8d4424db",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -8759,7 +8759,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "byte-displacement indices",
+                    "role": "logical element indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -8822,7 +8822,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "byte-displacement indices",
+                  "role": "logical element indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -9066,7 +9066,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "291695d5d54ed6099f08381c3d28c5c8c1c49a4b5a0c57ae945e6da320d45272",
+                "fold_signature_sha256": "f2aee2013dc981214f64cf5629d11c6492d8f45efc6ad82824cccd0c4e863a5f",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -9164,7 +9164,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "byte-displacement indices",
+                    "role": "logical element indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -9227,7 +9227,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "byte-displacement indices",
+                  "role": "logical element indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -9471,7 +9471,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "22502cdf5f4cc0dc40746aae6cbc3cdec8b2e4282f1e725c48b82bc818948311",
+                "fold_signature_sha256": "e6adc1106409964d2f265fb983a6c77a7d1d2c38800ba86fd41d6af5cc72afd5",
                 "handler_source_arguments": [
                   {
                     "kind": "constant",
@@ -9569,7 +9569,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "byte-displacement indices",
+                    "role": "logical element indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -9632,7 +9632,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "byte-displacement indices",
+                  "role": "logical element indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -10205,7 +10205,7 @@
               "field": "SrcTile0",
               "optional": false,
               "ordinal": 1,
-              "role": "byte-displacement indices",
+              "role": "logical element indices",
               "size": null,
               "syntax": "SrcTile0",
               "value_style": null
@@ -10334,7 +10334,7 @@
         },
         {
           "field": "source0",
-          "role": "byte-displacement indices"
+          "role": "logical element indices"
         },
         {
           "field": "source1",
@@ -10370,7 +10370,7 @@
           "field": "SrcTile0",
           "optional": false,
           "ordinal": 1,
-          "role": "byte-displacement indices",
+          "role": "logical element indices",
           "size": null,
           "syntax": "SrcTile0",
           "value_style": null
@@ -10504,7 +10504,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [
         {
@@ -12626,7 +12626,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [
         {
@@ -14748,7 +14748,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [
         {
@@ -16885,7 +16885,7 @@
       "defaults": [
         "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
+        "IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed."
       ],
       "destinations": [
         {
@@ -17071,7 +17071,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "5fea0345961089929c32fa997bf122db13256f42bc864ead37755de64a4c9919",
+                "fold_signature_sha256": "2eec47aeeeb23fd524ca660526628a2df7736f6938f820325b3b3dfccf9f0446",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -17153,7 +17153,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "byte-displacement indices",
+                    "role": "logical element indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -17202,7 +17202,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "byte-displacement indices",
+                  "role": "logical element indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -17384,7 +17384,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "e2b176afcebc48789d10d2548f2117d36ee9b53871b56ae2d557ddaef6897e29",
+                "fold_signature_sha256": "045b8d346fd613477304e56bc79b105dd450e23e6c8f1f34906d8f80f428a8d8",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -17466,7 +17466,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "byte-displacement indices",
+                    "role": "logical element indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -17515,7 +17515,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "byte-displacement indices",
+                  "role": "logical element indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -17745,7 +17745,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "8bcfa88b26662d574e1c6074d65c5749a2b18dfea71def938d57d3a35ff513d6",
+                "fold_signature_sha256": "86a63a7e37d46026e96babf6681e1250a4af73d0c1e8f54a1f0aed2192e7f91c",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -17827,7 +17827,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "byte-displacement indices",
+                    "role": "logical element indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -17876,7 +17876,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "byte-displacement indices",
+                  "role": "logical element indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -18106,7 +18106,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "6d3be5938d9e5c886e854d993c1b860d8b4b92940db97dbc33f27f583e616abb",
+                "fold_signature_sha256": "ed1e2556230c2d51330e30c84e1e7991d73489f0107aead6ccfe03bb21c47636",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -18188,7 +18188,7 @@
                     "field": "SrcTile0",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "byte-displacement indices",
+                    "role": "logical element indices",
                     "size": null,
                     "syntax": "SrcTile0",
                     "value_style": null
@@ -18237,7 +18237,7 @@
                   "field": "SrcTile0",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "byte-displacement indices",
+                  "role": "logical element indices",
                   "size": null,
                   "syntax": "SrcTile0",
                   "value_style": null
@@ -18754,7 +18754,7 @@
               "field": "SrcTile0",
               "optional": false,
               "ordinal": 1,
-              "role": "byte-displacement indices",
+              "role": "logical element indices",
               "size": null,
               "syntax": "SrcTile0",
               "value_style": null
@@ -18858,7 +18858,7 @@
         },
         {
           "field": "source0",
-          "role": "byte-displacement indices"
+          "role": "logical element indices"
         },
         {
           "field": "source1",
@@ -18890,7 +18890,7 @@
           "field": "SrcTile0",
           "optional": false,
           "ordinal": 1,
-          "role": "byte-displacement indices",
+          "role": "logical element indices",
           "size": null,
           "syntax": "SrcTile0",
           "value_style": null
@@ -19010,7 +19010,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [
         {
@@ -21132,7 +21132,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [
         {
@@ -23254,7 +23254,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [
         {
@@ -25376,7 +25376,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [
         {
@@ -27499,7 +27499,7 @@
       "defaults": [
         "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
+        "IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -27911,7 +27911,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 2,
-              "role": "byte-displacement indices",
+              "role": "logical element indices",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -27971,7 +27971,7 @@
           },
           {
             "field": "source1",
-            "role": "byte-displacement-indices"
+            "role": "logical-element-index-indices"
           }
         ],
         "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -27989,7 +27989,7 @@
         },
         {
           "field": "source1",
-          "role": "byte-displacement indices"
+          "role": "logical element indices"
         }
       ],
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER.asl",
@@ -28031,7 +28031,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 2,
-          "role": "byte-displacement indices",
+          "role": "logical element indices",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -28137,7 +28137,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -28789,7 +28789,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -29441,7 +29441,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -30093,7 +30093,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -30746,7 +30746,7 @@
       "defaults": [
         "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
+        "IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -31221,7 +31221,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 2,
-              "role": "byte-displacement indices",
+              "role": "logical element indices",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -31300,7 +31300,7 @@
           },
           {
             "field": "source1",
-            "role": "byte-displacement-indices"
+            "role": "logical-element-index-indices"
           },
           {
             "field": "source2",
@@ -31322,7 +31322,7 @@
         },
         {
           "field": "source1",
-          "role": "byte-displacement indices"
+          "role": "logical element indices"
         },
         {
           "field": "source2",
@@ -31368,7 +31368,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 2,
-          "role": "byte-displacement indices",
+          "role": "logical element indices",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -31488,7 +31488,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -32140,7 +32140,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -32792,7 +32792,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -33444,7 +33444,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -33986,7 +33986,7 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses logical-element-index addresses and complete preflight."
       ],
       "destinations": [],
       "engine": "TLSU",

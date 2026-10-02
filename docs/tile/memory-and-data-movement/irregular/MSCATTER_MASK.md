@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl`
 
-Masked scatter using explicit byte displacements.
+Masked scatter using explicit logical element indices.
 
 ## Normative identity {#PTO-INST-TILE-MSCATTER-MASK}
 
@@ -19,7 +19,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-mscatter-mask-purpose role=purpose -->
 ## What MSCATTER_MASK does
 
-`MSCATTER_MASK` is TLSU Function 7, written `BSTART.MSCATTER.MASK DataType`. Its addressing is the byte-displacement rule of `MSCATTER`: the per-PE base address named by `B.IOR.RegSrc0` plus the index value, and the stored value is the raw source element. The difference is a Local `U8` predicate Tile that decides which indexed transactions store. NDF `PTO-MSCATTER-MASK-PREDICATE-001` allows only `0x00` and `0x01` per transaction and states that a zero suppresses address generation, translation, permission checks, stores, and events.
+`MSCATTER_MASK` is TLSU Function 7, written `BSTART.MSCATTER.MASK DataType`. Its addressing is the logical-element-index rule of `MSCATTER`: the per-PE base address named by `B.IOR.RegSrc0` plus the index value, and the stored value is the raw source element. The difference is a Local `U8` predicate Tile that decides which indexed transactions store. NDF `PTO-MSCATTER-MASK-PREDICATE-001` allows only `0x00` and `0x01` per transaction and states that a zero suppresses address generation, translation, permission checks, stores, and events.
 
 The owner declares `InstructionContractUsesMaskTile_MSCATTER_MASK` TRUE and `InstructionContractWritesMemory_MSCATTER_MASK` TRUE. The dispatcher `ExecuteBundleMSCATTERMASKOperation` decodes Function 7, checks two `B.IOT` bindings and the descriptors, then calls `TileOperandsLegal_MSCATTER_MASK` and the body `MSCATTER_MASK`.
 
@@ -157,7 +157,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 | --- | --- |
 | address | base-address |
 | source0 | source data |
-| source1 | byte-displacement indices |
+| source1 | logical element indices |
 | source2 | U8 PredicateTile |
 
 ## Decode
@@ -194,7 +194,7 @@ begin
     return TileHandler_MSCATTER_MASK;
 end;
 
-pure func InstructionContractUsesByteDisplacements_MSCATTER_MASK()
+pure func InstructionContractUsesLogicalElementIndices_MSCATTER_MASK()
     => boolean
 begin
     return TRUE;
@@ -224,7 +224,7 @@ end;
 
 - B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.
-- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
+- IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed.
 
 ## Legality
 
@@ -244,7 +244,7 @@ end;
 
 ### Memory effects
 
-- Each enabled indexed transaction stores one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.
+- Each enabled indexed transaction stores one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the logical element index scaled by the transfer element width.
 - A false predicate performs no address generation, translation, permission check, memory probe, event, access, or data-access fault.
 
 ### Ordering

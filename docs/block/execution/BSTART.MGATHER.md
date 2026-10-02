@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/execution/BSTART.MGATHER.asl`
 
-gather using explicit byte displacements.
+gather using explicit logical element indices.
 
 ## Normative identity {#PTO-INST-BLOCK-BSTART-MGATHER}
 
@@ -19,11 +19,11 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mgather-purpose role=purpose -->
 ## What BSTART.MGATHER contributes
 
-`BSTART.MGATHER` opens a Tile memory block whose operation is `MGATHER`: an indexed load. Each active lane reads one transfer element from global memory (GM) at a base address plus that lane's byte displacement and writes it into a new Local destination Tile. The block returns the destination and writes no memory.
+`BSTART.MGATHER` opens a Tile memory block whose operation is `MGATHER`: an indexed load. Each active lane reads one transfer element from global memory (GM) at a base address plus that lane's logical element index and writes it into a new Local destination Tile. The block returns the destination and writes no memory.
 
 The command is one 32-bit word with match `0x00411181` under mask `0x07ffffff`, so `DataType` occupies bits 31 to 27 and the fixed low bits carry TLSU selector 4. `BundleMGATHERSelected` matches that selector and `ExecuteBundleMGATHEROperation` runs the operation, whose decoded identity is `TileOperation_MGATHER`.
 
-Design point: an index is a byte displacement and is never scaled by the element size. A program that wants element-strided addresses multiplies its own indices, so the same index Tile can serve several transfer types without changing.
+Design point: an index is a logical element index and is never scaled by the element size. A program that wants element-strided addresses multiplies its own indices, so the same index Tile can serve several transfer types without changing.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-mechanism role=mechanism -->
 ## Placement and mechanism
@@ -40,7 +40,7 @@ Design point: all probes run before the first load and before the destination is
 - `DataType` is the transfer element type; it also fixes the width of each load.
 - `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col (default `LB0`). The valid rows and valid columns must equal the index Tile's own valid shape.
 - One terminating `B.IOT` carries the index Tile in `source0`, the `PE_MASK`, `last`, and a destination with a size code. A predicate-Tile ExecutionMask instead moves the destination into a second `B.IOT`, and the first record then carries the index Tile without a destination and without `last`.
-- The index Tile is `S32`, `U32`, `S64`, or `U64`, uses the bundle layout, and holds byte displacements.
+- The index Tile is `S32`, `U32`, `S64`, or `U64`, uses the bundle layout, and holds logical element indices.
 - `B.IOR BaseGPR, zero, zero, ->zero` is required: `RegSrc0` selects the per-PE base address GPR, `RegSrc1`, `RegSrc2`, and `RegDst` must encode zero, and a `RegSrc0` of `zero` supplies base address zero.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-effects role=effects -->
@@ -76,7 +76,7 @@ B.IOR a0, zero, zero, ->zero
 BSTOP
 ```
 
-`T#1` is a 1 by 4 `S32` index Tile holding the byte displacements `0`, `4`, `8`, and `12`, and `a0` holds `0x1000`. The four active lanes load from `0x1000`, `0x1004`, `0x1008`, and `0x100C`. The destination is a 1 by 4 `U32` Tile of 16 bytes, so all four elements receive a loaded value and the padding rule has no visible effect.
+`T#1` is a 1 by 4 `S32` index Tile holding the logical element indices `0`, `4`, `8`, and `12`, and `a0` holds `0x1000`. The four active lanes load from `0x1000`, `0x1004`, `0x1008`, and `0x100C`. The destination is a 1 by 4 `U32` Tile of 16 bytes, so all four elements receive a loaded value and the padding rule has no visible effect.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
@@ -216,7 +216,7 @@ end;
 
 - B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.
-- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
+- IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed.
 
 ## Legality
 
@@ -234,7 +234,7 @@ end;
 
 ### Memory effects
 
-- Each indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.
+- Each indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the logical element index scaled by the transfer element width.
 - All valid addresses are preflighted before the first architectural effect.
 
 ### Ordering

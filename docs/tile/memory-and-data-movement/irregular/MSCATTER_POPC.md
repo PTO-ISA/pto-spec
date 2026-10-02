@@ -19,7 +19,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-mscatter-popc-purpose role=purpose -->
 ## What MSCATTER_POPC does
 
-`MSCATTER_POPC` is TLSU Function 27, written `BSTART.MSCATTER.POPC DataType`. It is an indexed GM reduction: each active valid index contributes one `U32` increment at the address formed by the per-PE base address from `B.IOR.RegSrc0` plus that index's byte displacement. It reads no value Tile and publishes no destination.
+`MSCATTER_POPC` is TLSU Function 27, written `BSTART.MSCATTER.POPC DataType`. It is an indexed GM reduction: each active valid index contributes one `U32` increment at the address formed by the per-PE base address from `B.IOR.RegSrc0` plus that index's logical element index. It reads no value Tile and publishes no destination.
 
 The body `GM_RED_POPC` fixes the transfer type to `TileDataType_U32`, and `ExecuteBundleGMAtomRedOperation` reaches it through the `popc` branch with `TileOperandsLegal_GM_RED_POPC`. NDF `PTO-ATOM-RED-POPC-SEMANTICS-001` states the same contract: one `U32` increment per valid effective GM address, with no ValueTile and no destination, and NDF `PTO-ATOM-RED-BODY-SCHEMA-001` adds that `mscatter.popc` has indices only.
 
@@ -154,7 +154,7 @@ end;
 ## Defaults and encoded zero
 
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.
-- GM indexed operation uses byte-displacement addresses and complete preflight.
+- GM indexed operation uses logical-element-index addresses and complete preflight.
 
 ## Legality
 

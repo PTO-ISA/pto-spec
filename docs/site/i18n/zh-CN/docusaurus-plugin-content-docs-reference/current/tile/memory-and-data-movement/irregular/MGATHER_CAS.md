@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/irregular/MGATHER_CAS.asl`
 
-atomic compare-and-swap gather using explicit byte displacements.
+atomic compare-and-swap gather using explicit logical element indices.
 
 ## Normative identity {#PTO-INST-TILE-MGATHER-CAS}
 
@@ -158,7 +158,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 | --- | --- |
 | destination0 | destination |
 | address | base-address |
-| source0 | byte-displacement indices |
+| source0 | logical element indices |
 | source1 | expected |
 | source2 | replacement |
 
@@ -205,7 +205,7 @@ end;
 
 - B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.
-- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
+- IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed.
 
 ## Legality
 
@@ -224,7 +224,7 @@ end;
 
 ### Memory effects
 
-- Each valid coordinate performs one atomic compare-and-swap at BaseGPR plus the sign- or zero-extended byte displacement.
+- Each valid coordinate performs one atomic compare-and-swap at BaseGPR plus the sign- or zero-extended logical element index scaled by the transfer element width.
 - All read/write probes complete before the first atomic effect; observed old values publish in the destination and non-valid physical elements contain PadValue.
 
 ### Ordering

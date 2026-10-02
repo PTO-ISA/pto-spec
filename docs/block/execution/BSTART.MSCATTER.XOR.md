@@ -19,7 +19,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-xor-purpose role=purpose -->
 ## Purpose and scope
 
-`BSTART.MSCATTER.XOR` opens a Tile memory bundle whose operation is `MSCATTER_XOR`: an indexed reduction. For each lane it reads the GM element at a base address plus a byte displacement, XORs it with a value from a Local value Tile, and writes the result back. It returns no Tile.
+`BSTART.MSCATTER.XOR` opens a Tile memory bundle whose operation is `MSCATTER_XOR`: an indexed reduction. For each lane it reads the GM element at a base address plus a logical element index, XORs it with a value from a Local value Tile, and writes the result back. It returns no Tile.
 
 The command is one 32-bit word (match `0x01a11181`, mask `0x07ffffff`) with `DataType` in bits 31 to 27. It carries the fixed TLSU selector 26, which the reduction table maps to `GMReduction_XOR`. A reserved `DataType` code raises `Fault_IllegalInstruction` at the `BSTART`, before [bundle start dispatch](../model/dispatch/start.md) commits any predecessor.
 

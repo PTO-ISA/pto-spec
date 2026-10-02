@@ -31,7 +31,8 @@ begin
             let index_element = TileStorageIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let address = TileMemoryByteDisplacementAddress(base_address,
-                index_tile.payload[[index_element]], index_tile.data_type);
+                index_tile.payload[[index_element]], index_tile.data_type,
+                data_type);
             let read_probe = ProbeTileMemoryAccess(address, data_type, FALSE);
             if RaiseDataAccessFault(read_probe, address) then return; end;
             let write_probe = ProbeTileMemoryAccess(address, data_type, TRUE);
@@ -179,7 +180,8 @@ begin
             let element = TileStorageIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let address = TileMemoryByteDisplacementAddress(base_address,
-                index_tile.payload[[element]], index_tile.data_type);
+                index_tile.payload[[element]], index_tile.data_type,
+                data_type);
             let read_probe = ProbeTileMemoryAccess(address, data_type, FALSE);
             if RaiseDataAccessFault(read_probe, address) then return; end;
             let write_probe = ProbeTileMemoryAccess(address, data_type, TRUE);
@@ -247,7 +249,8 @@ begin
             let element = TileStorageIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let address = TileMemoryByteDisplacementAddress(base_address,
-                index_tile.payload[[element]], index_tile.data_type);
+                index_tile.payload[[element]], index_tile.data_type,
+                data_type);
             let read_probe = ProbeTileMemoryAccess(address, data_type, FALSE);
             if RaiseDataAccessFault(read_probe, address) then return; end;
             let write_probe = ProbeTileMemoryAccess(address, data_type, TRUE);

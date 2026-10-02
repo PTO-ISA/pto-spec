@@ -1780,7 +1780,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "gather using explicit byte displacements.",
+      "semantic_summary": "gather using explicit logical element indices.",
       "status": "accepted"
     },
     {
@@ -1847,7 +1847,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "atomic compare-and-swap gather using explicit byte displacements.",
+      "semantic_summary": "atomic compare-and-swap gather using explicit logical element indices.",
       "status": "accepted"
     },
     {
@@ -1914,7 +1914,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "Masked gather using explicit byte displacements.",
+      "semantic_summary": "Masked gather using explicit logical element indices.",
       "status": "accepted"
     },
     {
@@ -1981,7 +1981,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "Masked scatter using explicit byte displacements.",
+      "semantic_summary": "Masked scatter using explicit logical element indices.",
       "status": "accepted"
     },
     {
@@ -2048,7 +2048,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "scatter using explicit byte displacements.",
+      "semantic_summary": "scatter using explicit logical element indices.",
       "status": "accepted"
     },
     {

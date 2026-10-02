@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/execution/BSTART.MGATHER.CAS.asl`
 
-atomic compare-and-swap gather using explicit byte displacements.
+atomic compare-and-swap gather using explicit logical element indices.
 
 ## Normative identity {#PTO-INST-BLOCK-BSTART-MGATHER-CAS}
 
@@ -218,7 +218,7 @@ end;
 
 - B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.
-- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
+- IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed.
 
 ## Legality
 
@@ -237,7 +237,7 @@ end;
 
 ### Memory effects
 
-- Each valid coordinate performs one atomic compare-and-swap at BaseGPR plus the sign- or zero-extended byte displacement.
+- Each valid coordinate performs one atomic compare-and-swap at BaseGPR plus the sign- or zero-extended logical element index scaled by the transfer element width.
 - All read/write probes complete before the first atomic effect; observed old values publish in the destination and non-valid physical elements contain PadValue.
 
 ### Ordering

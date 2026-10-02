@@ -83,9 +83,10 @@ This page is a generated reference view of the normative ASL unit.
 // NDF-BEGIN: PTO-INDEXED-TLSU-STRIDE-001
 // ndf: kind=executable level=L3 layer=tile status=accepted
 // Indexed TLSU MUST interpret S32, U32, S64, and U64 IndexTile elements as
-// byte displacements. Signed values MUST sign-extend and unsigned values MUST
-// zero-extend before addition to BaseGPR. Indexed TLSU MUST NOT scale the
-// displacement, decompose it by ValidCol, or consume an implicit row stride.
+// logical element indices. Signed values MUST sign-extend and unsigned values
+// MUST zero-extend before scaling by the accessed transfer element width and
+// adding to BaseGPR. Indexed TLSU MUST NOT decompose the index by ValidCol or
+// consume an implicit row stride.
 // NDF-END: PTO-INDEXED-TLSU-STRIDE-001
 pure func TileMemoryElementBytes(data_type: TileDataType) => integer {1,2,4,8}
 begin
@@ -164,10 +165,18 @@ end;
 
 pure func TileMemoryByteDisplacementAddress(
     base_address: Word, index_value: Word,
-    index_data_type: TileDataType) => Word
+    index_data_type: TileDataType, data_type: TileDataType) => Word
 begin
-    return base_address +
-        TileIndexByteDisplacement(index_value, index_data_type);
+    let logical_index = TileIndexByteDisplacement(index_value, index_data_type);
+    if TileDataTypeIsFourBit(data_type) then
+        let byte_index = if TileDataTypeIsSigned(index_data_type) then
+            SignExtend{PTO_XLEN}(logical_index[63:1])
+        else ZeroExtend{PTO_XLEN}(logical_index[63:1]);
+        return base_address + byte_index;
+    end;
+    let element_bytes = NaturalToWord(
+        TileMemoryElementBytes(data_type) as integer {0..262144});
+    return base_address + MultiplyWord(logical_index, element_bytes);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

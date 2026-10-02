@@ -28,7 +28,7 @@ Design point: the limit is the value Tile element of that lane, so one block can
 <!-- PTO-READER-BLOCK: block-bstart-mgather-dec-mechanism role=mechanism -->
 ## How to read the operation
 
-At commit the block runs the Tile-level body through `GM_ATOM_VALUE`, which calls the shared atom body `GMRunAtomic`. That body visits every active lane, computes the address as `BaseGPR` plus the lane's byte displacement, and probes it for read and then for write; two probes whose translations differ raise `Fault_DataPage`. Only after all lanes pass does it update them one at a time in an `ARBITRARY` order: load the old element, compute the new element, store it, publish the old value into the destination, and record one atomic event.
+At commit the block runs the Tile-level body through `GM_ATOM_VALUE`, which calls the shared atom body `GMRunAtomic`. That body visits every active lane, computes the address as `BaseGPR` plus the lane's logical element index, and probes it for read and then for write; two probes whose translations differ raise `Fault_DataPage`. Only after all lanes pass does it update them one at a time in an `ARBITRARY` order: load the old element, compute the new element, store it, publish the old value into the destination, and record one atomic event.
 
 `GMAtomicResult` computes the new element with `GMDecValue(old, value)`: a zero old element and an old element above the limit both return the limit, and any other old element returns `old - 1`.
 

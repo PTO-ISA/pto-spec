@@ -41,7 +41,7 @@ Design point: all probes run before the first increment, so a faulting address l
 - `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col. The values must equal the index Tile's valid columns and valid rows, and `LB2` is the physical column count the layout rule uses.
 - One terminating `B.IOT` carries the index Tile in `source0`, the `PE_MASK`, and `last`. It carries no destination and no second source, and no value Tile exists for this operation.
 - `B.IOR BaseGPR, zero, zero, ->zero` is required: `RegSrc0` selects the per-PE base GPR, the other three selectors encode zero, and a `RegSrc0` of `zero` supplies base address zero.
-- The index Tile is `S32`, `U32`, `S64`, or `U64` with byte displacements and the bundle layout.
+- The index Tile is `S32`, `U32`, `S64`, or `U64` with logical element indices and the bundle layout.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-popc-effects role=effects -->
 ## Effects and state

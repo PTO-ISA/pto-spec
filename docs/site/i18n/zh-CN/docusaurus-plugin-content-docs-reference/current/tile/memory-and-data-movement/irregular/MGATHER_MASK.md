@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/irregular/MGATHER_MASK.asl`
 
-Masked gather using explicit byte displacements.
+Masked gather using explicit logical element indices.
 
 ## Normative identity {#PTO-INST-TILE-MGATHER-MASK}
 
@@ -154,7 +154,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 | --- | --- |
 | destination0 | destination |
 | address | base-address |
-| source0 | byte-displacement indices |
+| source0 | logical element indices |
 | source1 | U8 PredicateTile |
 
 ## Decode
@@ -190,7 +190,7 @@ begin
     return TileHandler_MGATHER_MASK;
 end;
 
-pure func InstructionContractUsesByteDisplacements_MGATHER_MASK()
+pure func InstructionContractUsesLogicalElementIndices_MGATHER_MASK()
     => boolean
 begin
     return TRUE;
@@ -220,7 +220,7 @@ end;
 
 - B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.
-- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
+- IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed.
 
 ## Legality
 
@@ -240,7 +240,7 @@ end;
 
 ### Memory effects
 
-- Each enabled indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.
+- Each enabled indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the logical element index scaled by the transfer element width.
 - A false predicate performs no address generation, translation, permission check, memory probe, event, access, or data-access fault and leaves the corresponding destination value(s) at PadValue.
 
 ### Ordering

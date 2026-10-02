@@ -28,7 +28,7 @@ Design point: the sibling `BSTART.MSCATTER.MIN` computes the same minimum but pu
 <!-- PTO-READER-BLOCK: block-bstart-mgather-min-mechanism role=mechanism -->
 ## How to read the operation
 
-At commit the block runs the Tile-level body through `GM_ATOM_VALUE`, which calls the shared atom body `GMRunAtomic`. That body visits every active lane, computes the address as `BaseGPR` plus the lane's byte displacement, and probes it for read and then for write; two probes whose translations differ raise `Fault_DataPage`. Only after all lanes pass does it update them one at a time in an `ARBITRARY` order: load the old element, compute the new element, store it, publish the old value into the destination, and record one atomic event.
+At commit the block runs the Tile-level body through `GM_ATOM_VALUE`, which calls the shared atom body `GMRunAtomic`. That body visits every active lane, computes the address as `BaseGPR` plus the lane's logical element index, and probes it for read and then for write; two probes whose translations differ raise `Fault_DataPage`. Only after all lanes pass does it update them one at a time in an `ARBITRARY` order: load the old element, compute the new element, store it, publish the old value into the destination, and record one atomic event.
 
 `GMAtomicResult` selects the comparison from the element type: when `TileDataTypeIsSigned` holds, it compares `SInt` values, and otherwise it compares `UInt` values. It returns the old element when that one is smaller and the value Tile element otherwise.
 
@@ -43,7 +43,7 @@ Design point: all probes run before the first update, so a fault on any lane lea
 - `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col. All three must equal the index Tile's and the value Tile's valid columns, valid rows, and the destination's physical columns.
 - `B.IOR BaseGPR, zero, zero, ->zero` is required: `RegSrc0` selects the per-PE base GPR, the other three selectors encode zero, and a `RegSrc0` of `zero` supplies base address zero.
 - Without a predicate-Tile ExecutionMask, one terminating `B.IOT` carries the index Tile, the value Tile, and the destination. With one, the first `B.IOT` carries the two sources with no destination and no `last`, and a second `B.IOT` carries the mask Tile, the destination, and `last`.
-- The index Tile is `S32`, `U32`, `S64`, or `U64` with byte displacements. The value Tile uses the operation `DataType` and the same valid shape as the index Tile.
+- The index Tile is `S32`, `U32`, `S64`, or `U64` with logical element indices. The value Tile uses the operation `DataType` and the same valid shape as the index Tile.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-min-effects role=effects -->
 ## Effects and state

@@ -622,7 +622,7 @@
       "mnemonic": "MSCATTER",
       "owner": "asl/block/execution/BSTART.MSCATTER.asl",
       "role": "source1",
-      "role_description": "byte-displacement-indices"
+      "role_description": "logical-element-index-indices"
     },
     {
       "form": "direct",
@@ -638,7 +638,7 @@
       "mnemonic": "MSCATTER",
       "owner": "asl/tile/memory-and-data-movement/irregular/MSCATTER.asl",
       "role": "source1",
-      "role_description": "byte-displacement-indices"
+      "role_description": "logical-element-index-indices"
     },
     {
       "form": "bundle",
@@ -782,7 +782,7 @@
       "mnemonic": "MSCATTER_MASK",
       "owner": "asl/block/execution/BSTART.MSCATTER.MASK.asl",
       "role": "source1",
-      "role_description": "byte-displacement-indices"
+      "role_description": "logical-element-index-indices"
     },
     {
       "form": "bundle",
@@ -806,7 +806,7 @@
       "mnemonic": "MSCATTER_MASK",
       "owner": "asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl",
       "role": "source1",
-      "role_description": "byte-displacement-indices"
+      "role_description": "logical-element-index-indices"
     },
     {
       "form": "direct",
@@ -5065,7 +5065,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "d103b24c6eab28ed5e7b6f8e5699c570ee92931f",
+  "candidate_head": "abc97284b4503f2f93dccd1b14272b213cad623a",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -19328,6 +19328,15 @@
       "before": [],
       "classification": "Local Matrix CellReg auxiliary and narrow CUBE_N8/U64 closure (Issue #339 / ADR-CUBE-0002..0006)",
       "name": "TileMatrixLocalVectorParameterSchemaLegal"
+    },
+    {
+      "after_layouts": [],
+      "after_sha256": "572882622fcf3b0612f7ec740e7708c7793a9633767b5e815e4645fadaf06902",
+      "before_layouts": [],
+      "before_sha256": "272f527c4394a03f6fe3686e0940d89e8b0e68ba78f0c1ab64a1b3db0815183a",
+      "classification": "operation-scoped accepted layout/relation owner",
+      "name": "TileMemoryByteDisplacementAddress",
+      "path": "asl/tile/model/memory/addressing.asl"
     },
     {
       "after": [],
@@ -53551,11 +53560,16 @@
         "TileMemoryByteDisplacementAddress": [
           {
             "calls": [
-              "TileIndexByteDisplacement"
+              "MultiplyWord",
+              "NaturalToWord",
+              "TileDataTypeIsFourBit",
+              "TileDataTypeIsSigned",
+              "TileIndexByteDisplacement",
+              "TileMemoryElementBytes"
             ],
             "layouts": [],
             "path": "asl/tile/model/memory/addressing.asl",
-            "sha256": "272f527c4394a03f6fe3686e0940d89e8b0e68ba78f0c1ab64a1b3db0815183a"
+            "sha256": "572882622fcf3b0612f7ec740e7708c7793a9633767b5e815e4645fadaf06902"
           }
         ],
         "TileMemoryElementBytes": [
@@ -64679,7 +64693,7 @@
             },
             {
               "field": "source1",
-              "role": "byte-displacement-indices"
+              "role": "logical-element-index-indices"
             }
           ],
           "roots": [
@@ -64747,6 +64761,7 @@
             "TileDescriptorConfigured",
             "TileDescriptorLegal",
             "TileElementBits",
+            "TileElementBytes",
             "TileFractalInnerElements",
             "TileGenericIndexingPermitted",
             "TileIndexByteDisplacement",
@@ -64757,6 +64772,7 @@
             "TileLogicalElementDefined",
             "TileLogicalLinearIndex",
             "TileMemoryByteDisplacementAddress",
+            "TileMemoryElementBytes",
             "TileOperandsLegal_MSCATTER",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
@@ -64784,7 +64800,7 @@
             },
             {
               "field": "source1",
-              "role": "byte-displacement-indices"
+              "role": "logical-element-index-indices"
             }
           ],
           "roots": [
@@ -67837,7 +67853,7 @@
             },
             {
               "field": "source1",
-              "role": "byte-displacement-indices"
+              "role": "logical-element-index-indices"
             },
             {
               "field": "source2",
@@ -67912,6 +67928,7 @@
             "TileDescriptorConfigured",
             "TileDescriptorLegal",
             "TileElementBits",
+            "TileElementBytes",
             "TileElementDefined",
             "TileFractalInnerElements",
             "TileGenericIndexingPermitted",
@@ -67923,6 +67940,7 @@
             "TileLogicalElementDefined",
             "TileLogicalLinearIndex",
             "TileMemoryByteDisplacementAddress",
+            "TileMemoryElementBytes",
             "TileOperandsLegal_MSCATTER_MASK",
             "TilePackedCarrierIndex",
             "TilePackedLaneIndex",
@@ -67953,7 +67971,7 @@
             },
             {
               "field": "source1",
-              "role": "byte-displacement-indices"
+              "role": "logical-element-index-indices"
             },
             {
               "field": "source2",

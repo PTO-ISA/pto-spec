@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/execution/BSTART.MGATHER.CAS.asl`
 
-atomic compare-and-swap gather using explicit byte displacements.
+atomic compare-and-swap gather using explicit logical element indices.
 
 ## Normative identity {#PTO-INST-BLOCK-BSTART-MGATHER-CAS}
 
@@ -19,7 +19,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mgather-cas-purpose role=purpose -->
 ## What BSTART.MGATHER.CAS contributes
 
-`BSTART.MGATHER.CAS` opens a Tile memory block whose operation is `MGATHER_CAS`: an atomic compare-and-swap per lane. For each active lane it reads the global memory (GM) element at the base address plus that lane's byte displacement, compares it with the lane's expected value, and stores that lane's replacement value only when the two match. The observed old value is written into the destination Tile either way.
+`BSTART.MGATHER.CAS` opens a Tile memory block whose operation is `MGATHER_CAS`: an atomic compare-and-swap per lane. For each active lane it reads the global memory (GM) element at the base address plus that lane's logical element index, compares it with the lane's expected value, and stores that lane's replacement value only when the two match. The observed old value is written into the destination Tile either way.
 
 The command is one 32-bit word with match `0x00811181` under mask `0x07ffffff`, so `DataType` occupies bits 31 to 27 and the fixed low bits carry TLSU selector 8. `BundleMGATHERCASSelected` matches that selector before the atom and reduction selectors, and `ExecuteBundleMGATHERCASOperation` runs the operation `TileOperation_MGATHER_CAS`.
 
@@ -41,7 +41,7 @@ Design point: the comparison uses the element-width raw old value, so for `U16`,
 - `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col. The index, expected, and replacement Tiles and the destination must all have that valid shape and the bundle layout.
 - The first `B.IOT` carries the index Tile in `source0` and the expected Tile in `source1`, with no destination, no size code, and no `last`.
 - The second `B.IOT` carries the replacement Tile in `source0`, the destination with a size code, and `last`. With a predicate-Tile ExecutionMask the destination record also carries that mask as `source1`.
-- The index Tile is `S32`, `U32`, `S64`, or `U64` with byte displacements, and `B.IOR BaseGPR, zero, zero, ->zero` is required with the same rules as a plain gather.
+- The index Tile is `S32`, `U32`, `S64`, or `U64` with logical element indices, and `B.IOR BaseGPR, zero, zero, ->zero` is required with the same rules as a plain gather.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-cas-effects role=effects -->
 ## Pending state and completion
@@ -77,7 +77,7 @@ B.IOR a0, zero, zero, ->zero
 BSTOP
 ```
 
-`T#1` holds the byte displacements `0` and `4`, `T#2` holds the expected values `10` and `99`, `T#3` holds the replacements `20` and `0`, and `a0` holds `0x1000`. Suppose GM holds `10` at `0x1000` and `5` at `0x1004`. Lane 0 matches, so it stores `20`; lane 1 does not match `99`, so `0x1004` keeps `5`. The destination receives the observed values `10` and `5`, both elements defined, in 8 bytes.
+`T#1` holds the logical element indices `0` and `4`, `T#2` holds the expected values `10` and `99`, `T#3` holds the replacements `20` and `0`, and `a0` holds `0x1000`. Suppose GM holds `10` at `0x1000` and `5` at `0x1004`. Lane 0 matches, so it stores `20`; lane 1 does not match `99`, so `0x1004` keeps `5`. The destination receives the observed values `10` and `5`, both elements defined, in 8 bytes.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
@@ -218,7 +218,7 @@ end;
 
 - B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.
-- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
+- IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed.
 
 ## Legality
 
@@ -237,7 +237,7 @@ end;
 
 ### Memory effects
 
-- Each valid coordinate performs one atomic compare-and-swap at BaseGPR plus the sign- or zero-extended byte displacement.
+- Each valid coordinate performs one atomic compare-and-swap at BaseGPR plus the sign- or zero-extended logical element index scaled by the transfer element width.
 - All read/write probes complete before the first atomic effect; observed old values publish in the destination and non-valid physical elements contain PadValue.
 
 ### Ordering

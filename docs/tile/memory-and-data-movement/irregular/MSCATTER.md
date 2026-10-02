@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/irregular/MSCATTER.asl`
 
-scatter using explicit byte displacements.
+scatter using explicit logical element indices.
 
 ## Normative identity {#PTO-INST-TILE-MSCATTER}
 
@@ -19,7 +19,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-mscatter-purpose role=purpose -->
 ## What MSCATTER does
 
-`MSCATTER` is TLSU Function 5, written `BSTART.MSCATTER DataType`. It reads one Local data Tile and one Local index Tile and stores one transfer element, or one packed byte, per active valid coordinate of the index Tile, at the per-PE base address named by `B.IOR.RegSrc0` plus that coordinate's index value read as a byte displacement. A coordinate is active when no ExecutionMask is in force or when `BundleExecutionMaskActiveAt` selects it.
+`MSCATTER` is TLSU Function 5, written `BSTART.MSCATTER DataType`. It reads one Local data Tile and one Local index Tile and stores one transfer element, or one packed byte, per active valid coordinate of the index Tile, at the per-PE base address named by `B.IOR.RegSrc0` plus that coordinate's index value read as a logical element index. A coordinate is active when no ExecutionMask is in force or when `BundleExecutionMaskActiveAt` selects it.
 
 The owner declares `InstructionContractUsesByteDisplacements_MSCATTER` TRUE, `InstructionContractUsesMaskTile_MSCATTER` FALSE, `InstructionContractWritesMemory_MSCATTER` TRUE, and `InstructionContractIsAtomicMemoryOperation_MSCATTER` FALSE. The dispatcher `ExecuteBundleMSCATTEROperation` decodes Function 5, checks the binding shape, the dimensions, and the descriptors, then calls `TileOperandsLegal_MSCATTER` and the body `MSCATTER`.
 
@@ -155,7 +155,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 | --- | --- |
 | address | base-address |
 | source0 | source data |
-| source1 | byte-displacement indices |
+| source1 | logical element indices |
 
 ## Decode
 
@@ -190,7 +190,7 @@ begin
     return TileHandler_MSCATTER;
 end;
 
-pure func InstructionContractUsesByteDisplacements_MSCATTER()
+pure func InstructionContractUsesLogicalElementIndices_MSCATTER()
     => boolean
 begin
     return TRUE;
@@ -220,7 +220,7 @@ end;
 
 - B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.
-- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
+- IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed.
 
 ## Legality
 
@@ -238,7 +238,7 @@ end;
 
 ### Memory effects
 
-- Each indexed transaction stores one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.
+- Each indexed transaction stores one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the logical element index scaled by the transfer element width.
 - All valid addresses are preflighted before the first architectural effect.
 
 ### Ordering

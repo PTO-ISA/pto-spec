@@ -39,7 +39,8 @@ begin
             let replacement_element = TileStorageIndex(_Tiles[[replacement]],
                 row as integer {0..65535}, column as integer {0..65535});
             let address = TileMemoryByteDisplacementAddress(base_address,
-                index_payload[[index_element]], index_tile.data_type);
+                index_payload[[index_element]], index_tile.data_type,
+                destination_tile.data_type);
             let read_probe = ProbeTileMemoryAccess(address,
                 destination_tile.data_type, FALSE);
             if RaiseDataAccessFault(read_probe, address) then return; end;
