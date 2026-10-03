@@ -2,7 +2,7 @@
 {
   "id": "ADR-CUBE-0004",
   "title": "Local CUBE CELL State and Geometry",
-  "title_zh": "Local CUBE CELL 状态与几何结构",
+  "title_zh": "Local CUBE CELL \u72b6\u6001\u4e0e\u51e0\u4f55\u7ed3\u6784",
   "status": "accepted",
   "authors": [
     "Kevin Zhou <zhoubot@gmail.com>"
@@ -16,18 +16,21 @@
   "superseded": null,
   "baseline": "0b8ce516ffe998b24c4bae4c1a9dbca2e0d76510",
   "target_releases": [
-    "0.58.3"
+    "0.58.3",
+    "0.59.0"
   ],
   "affected_ndf": [
+    "PTO-CUBE-AUX-CELLREG-001",
     "PTO-CUBE-CELL-STATE-001",
-    "PTO-CUBE-AUX-CELLREG-001"
+    "PTO-CUBE-M32-B64-DOUBLE-CELL-001"
   ],
   "affected_units": [
-    "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
-    "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
-    "PTO-TILE-MODEL-STATE-ALLOCATION",
     "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS",
-    "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
+    "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
+    "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
+    "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+    "PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL",
+    "PTO-TILE-MODEL-STATE-ALLOCATION"
   ],
   "resolves": [],
   "supersedes": [],
@@ -87,6 +90,22 @@
         "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
         "PTO-TILE-MODEL-STATE-ALLOCATION",
         "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
+      ]
+    },
+    {
+      "date": "2026-10-03",
+      "baseline": "e182c9b70d54a3a264bac54af9b915a0e43bb519",
+      "approvers": [
+        "Kevin Zhou <zhoubot@gmail.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/371",
+      "affected_ndf": [
+        "PTO-CUBE-CELL-STATE-001",
+        "PTO-CUBE-M32-B64-DOUBLE-CELL-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+        "PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL"
       ]
     }
   ],
@@ -285,3 +304,12 @@ exactly `K2 x N8` (128 bytes). A logical `[1,N]` descriptor has physical rows
 repeat. `CUBE_M16/M32` remain illegal for every b64 dtype, while FP64 and S64
 remain illegal in CUBE_N8. Descriptor geometry does not by itself authorize an
 operation; only the frozen vector-parameter and ND2N8-TLOAD fences may use U64.
+
+
+## Accepted amendment: issue #371 M32 double-CELL b64 storage
+
+The maintainer selected explicit CUBE_M32 double-CELL storage for 64-bit Local elements under [issue #371](https://github.com/PTO-ISA/pto-spec/issues/371). The current geometry, low/high-word mapping, capacity, complete-pair views and publication are owned by `PTO-CUBE-M32-B64-DOUBLE-CELL-001` in the CUBE shape ASL. This amendment records the interface change and does not duplicate the executable contract.
+
+It preserves the 128-byte physical CELL and 32-row M axis while making element width independent of logical lane identity. Existing M16/N8 and primary Matrix arithmetic contracts keep their own owners. Applicable Local instruction families must close their datatype, transport, predicate and effect behavior against this storage contract. Compatibility impact is newly accepted M32 b64 tuples; release impact is required, with commit-scoped AVS and downstream adoption obligations.
+
+#371 在既有 M32 行域和 128 字节 CELL 上引入 64 位 Local 元素的双 CELL 存储。低／高字、容量、完整配对视图和发布由 owning ASL/NDF 唯一规定；各 Local 指令族须闭合对应类型与效果。该变更不定义新的 M64 布局，也不替代既有 Matrix 运算合同。

@@ -2,7 +2,7 @@
 {
   "id": "ADR-CUBE-0005",
   "title": "GM/Local CUBE Layout Transport",
-  "title_zh": "GM/Local CUBE 布局传输",
+  "title_zh": "GM/Local CUBE \u5e03\u5c40\u4f20\u8f93",
   "status": "accepted",
   "authors": [
     "Kevin Zhou <zhoubot@gmail.com>"
@@ -16,7 +16,8 @@
   "superseded": null,
   "baseline": "e9e9934f3cd4e857f44482f5e86779fd726d1733",
   "target_releases": [
-    "0.58.3"
+    "0.58.3",
+    "0.59.0"
   ],
   "affected_ndf": [
     "PTO-B-DATR-FIELDS-001",
@@ -24,23 +25,25 @@
     "PTO-BSTART-TLOAD-MEMORY-001",
     "PTO-BSTART-TSTORE-CUBE-001",
     "PTO-BSTART-TSTORE-MEMORY-001",
+    "PTO-CUBE-AUX-CELLREG-001",
     "PTO-CUBE-CELL-STATE-001",
     "PTO-CUBE-CELL-TRANSPORT-001",
+    "PTO-CUBE-M32-B64-DOUBLE-CELL-001",
     "PTO-TLOAD-CUBE-001",
     "PTO-TLOAD-MEMORY-001",
     "PTO-TSTORE-CUBE-001",
-    "PTO-TSTORE-MEMORY-001",
-    "PTO-CUBE-AUX-CELLREG-001"
+    "PTO-TSTORE-MEMORY-001"
   ],
   "affected_units": [
     "PTO-BLOCK-B-DATR",
     "PTO-BLOCK-BSTART-TLOAD",
     "PTO-BLOCK-BSTART-TSTORE",
-    "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
-    "PTO-TILE-TLOAD",
-    "PTO-TILE-TSTORE",
     "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
-    "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
+    "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
+    "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+    "PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL",
+    "PTO-TILE-TLOAD",
+    "PTO-TILE-TSTORE"
   ],
   "resolves": [],
   "supersedes": [],
@@ -67,8 +70,24 @@
         "PTO-BLOCK-B-DATR",
         "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
       ]
+    },
+    {
+      "date": "2026-10-03",
+      "baseline": "e182c9b70d54a3a264bac54af9b915a0e43bb519",
+      "approvers": [
+        "Kevin Zhou <zhoubot@gmail.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/371",
+      "affected_ndf": [
+        "PTO-CUBE-M32-B64-DOUBLE-CELL-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+        "PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL"
+      ]
     }
-  ]
+  ],
+  "interface_change": true
 }
 ---
 # ADR-CUBE-0005: GM/Local CUBE Layout Transport
@@ -233,3 +252,12 @@ The existing `ND2N8` TLOAD path accepts U64 and constructs a raw
 representation-preserving Local `CUBE_N8/U64` parameter Tile. `ND2M16`,
 `ND2M32`, `N82ND`, `M162ND`, and `M322ND` remain illegal for U64. No encoding
 or other transport capability changes.
+
+
+## Accepted amendment: issue #371 M32 double-CELL b64 storage
+
+The maintainer selected explicit CUBE_M32 double-CELL storage for 64-bit Local elements under [issue #371](https://github.com/PTO-ISA/pto-spec/issues/371). The current geometry, low/high-word mapping, capacity, complete-pair views and publication are owned by `PTO-CUBE-M32-B64-DOUBLE-CELL-001` in the CUBE shape ASL. This amendment records the interface change and does not duplicate the executable contract.
+
+It preserves the 128-byte physical CELL and 32-row M axis while making element width independent of logical lane identity. Existing M16/N8 and primary Matrix arithmetic contracts keep their own owners. Applicable Local instruction families must close their datatype, transport, predicate and effect behavior against this storage contract. Compatibility impact is newly accepted M32 b64 tuples; release impact is required, with commit-scoped AVS and downstream adoption obligations.
+
+#371 在既有 M32 行域和 128 字节 CELL 上引入 64 位 Local 元素的双 CELL 存储。低／高字、容量、完整配对视图和发布由 owning ASL/NDF 唯一规定；各 Local 指令族须闭合对应类型与效果。该变更不定义新的 M64 布局，也不替代既有 Matrix 运算合同。
