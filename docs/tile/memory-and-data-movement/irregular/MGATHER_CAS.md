@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/irregular/MGATHER_CAS.asl`
 
-atomic compare-and-swap gather using explicit logical element indices.
+atomic compare-and-swap gather using explicit byte displacements.
 
 ## Normative identity {#PTO-INST-TILE-MGATHER-CAS}
 
@@ -21,7 +21,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `MGATHER_CAS` performs one atomic compare-and-swap in global memory (GM) per lane and returns the value each lane observed in a new Local destination Tile. It is a selector-encoded Tile operation of engine `TLSU`, selected by TLSU Function 8 and spelled `BSTART.MGATHER.CAS DataType`. The block dispatcher `ExecuteBundleMGATHERCASOperation` resolves the bundle and then calls the body `MGATHER_CAS`.
 
-A lane is one coordinate of the index Tile's valid region. The compared address is `BaseGPR` plus that lane's index value used as a logical element index. `MGATHER_CAS` has no standalone opcode.
+A lane is one coordinate of the index Tile's valid region. The compared address is `BaseGPR` plus that lane's index value used as a byte displacement. `MGATHER_CAS` has no standalone opcode.
 
 Design point: the destination carries the observed old value, not the value written. A lane whose compare fails still reports what GM then held, so software can tell a successful swap from a failed one without a second read.
 
@@ -41,7 +41,7 @@ Design point: the two probes must agree on the translated address. If they do no
 
 - `destination0` is a new Local Tile with the bundle `DataType`. It receives the observed old values.
 - `address` is the base address, read from the GPR named by `B.IOR.RegSrc0` in the current memory agent's register file.
-- `source0` is the index Tile: `S32`, `U32`, `S64`, or `U64` logical element indices.
+- `source0` is the index Tile: `S32`, `U32`, `S64`, or `U64` byte displacements.
 - `source1` is the expected Tile, compared against the old value of the addressed element.
 - `source2` is the replacement Tile, stored when the comparison matches.
 
@@ -158,7 +158,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 | --- | --- |
 | destination0 | destination |
 | address | base-address |
-| source0 | logical element indices |
+| source0 | byte-displacement indices |
 | source1 | expected |
 | source2 | replacement |
 
@@ -205,7 +205,7 @@ end;
 
 - B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.
-- IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed.
+- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
 
 ## Legality
 
@@ -224,7 +224,7 @@ end;
 
 ### Memory effects
 
-- Each valid coordinate performs one atomic compare-and-swap at BaseGPR plus the sign- or zero-extended logical element index scaled by the transfer element width.
+- Each valid coordinate performs one atomic compare-and-swap at BaseGPR plus the sign- or zero-extended byte displacement.
 - All read/write probes complete before the first atomic effect; observed old values publish in the destination and non-valid physical elements contain PadValue.
 
 ### Ordering

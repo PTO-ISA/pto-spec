@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/irregular/MGATHER_MASK.asl`
 
-Masked gather using explicit logical element indices.
+Masked gather using explicit byte displacements.
 
 ## Normative identity {#PTO-INST-TILE-MGATHER-MASK}
 
@@ -41,7 +41,7 @@ Design point: every enabled address is translated and checked before the first l
 
 - `destination0` is a new Local Tile with the bundle `DataType` and the `B.DIM` shape. It receives the enabled loaded elements.
 - `address` is the base address, read from the GPR named by `B.IOR.RegSrc0` in the current memory agent's register file.
-- `source0` is the index Tile: `S32`, `U32`, `S64`, or `U64` logical element indices.
+- `source0` is the index Tile: `S32`, `U32`, `S64`, or `U64` byte displacements.
 - `source1` is the predicate Tile: an ordinary Local `U8` carrier with one element per indexed transaction.
 
 `B.IOR` is required, and `RegSrc1`, `RegSrc2`, and `RegDst` must encode zero. `ExecuteBundleMGATHERMASKOperation` requires exactly one tile binding when no ExecutionMask is in force, so the form then terminates in one `B.IOT` that carries the index Tile, the predicate Tile, and the destination. A predicate-Tile ExecutionMask instead forces two bindings, where the first carries the two sources with no destination and no `last` and the second carries the predicate Tile as its only source together with the destination and `last`; unlike the `TGATHER` and `MSCATTER` families, whose mask domain comes from source ordinal `1`, `BundleExecutionMaskCoordinateSourceOrdinal` names ordinal `0` for `MGATHER_MASK`, so the index Tile supplies the coordinate domain of the mask.
@@ -154,7 +154,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 | --- | --- |
 | destination0 | destination |
 | address | base-address |
-| source0 | logical element indices |
+| source0 | byte-displacement indices |
 | source1 | U8 PredicateTile |
 
 ## Decode
@@ -190,7 +190,7 @@ begin
     return TileHandler_MGATHER_MASK;
 end;
 
-pure func InstructionContractUsesLogicalElementIndices_MGATHER_MASK()
+pure func InstructionContractUsesByteDisplacements_MGATHER_MASK()
     => boolean
 begin
     return TRUE;
@@ -220,7 +220,7 @@ end;
 
 - B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.
-- IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed.
+- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
 
 ## Legality
 
@@ -240,7 +240,7 @@ end;
 
 ### Memory effects
 
-- Each enabled indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the logical element index scaled by the transfer element width.
+- Each enabled indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.
 - A false predicate performs no address generation, translation, permission check, memory probe, event, access, or data-access fault and leaves the corresponding destination value(s) at PadValue.
 
 ### Ordering

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/irregular/MGATHER.asl`
 
-gather using explicit logical element indices.
+gather using explicit byte displacements.
 
 ## Normative identity {#PTO-INST-TILE-MGATHER}
 
@@ -21,7 +21,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `MGATHER` reads global memory (GM) at one address per lane and writes the loaded elements into a new Local destination Tile. It is a selector-encoded Tile operation of engine `TLSU`, selected by TLSU Function 4 and spelled `BSTART.MGATHER DataType`. The block dispatcher `ExecuteBundleMGATHEROperation` checks the bundle and then calls the shared tile model `MGATHER`.
 
-A lane is one coordinate of the index Tile's valid region. Its address is `BaseGPR` plus that lane's index value used as a logical element index. `MGATHER` has no standalone opcode.
+A lane is one coordinate of the index Tile's valid region. Its address is `BaseGPR` plus that lane's index value used as a byte displacement. `MGATHER` has no standalone opcode.
 
 Design point: the number of lanes follows the index Tile's valid rectangle and not a memory layout, so the shape of the result is statically known even though the addresses are not. Four indices always produce a four-element valid region, however scattered those four addresses are.
 
@@ -66,7 +66,7 @@ A selector code that decodes to nothing raises `Fault_IllegalInstruction`. A wro
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-Take a 1 by 4 `U32` index Tile holding `8, 0, 8, 4`, a base address `0x1000` in `a0`, and GM holding the `U32` values `1, 2, 3, 4` at `0x1000`, `0x1004`, `0x1008`, and `0x100c`. Each index is a logical element index, so lanes `0` and `2` both load from `0x1008`, lane `1` loads from `0x1000`, and lane `3` loads from `0x1004`. The valid region of the destination holds `3, 1, 3, 2`.
+Take a 1 by 4 `U32` index Tile holding `8, 0, 8, 4`, a base address `0x1000` in `a0`, and GM holding the `U32` values `1, 2, 3, 4` at `0x1000`, `0x1004`, `0x1008`, and `0x100c`. Each index is a byte displacement, so lanes `0` and `2` both load from `0x1008`, lane `1` loads from `0x1000`, and lane `3` loads from `0x1004`. The valid region of the destination holds `3, 1, 3, 2`.
 
 In macro form this is `MGATHER <Col=4, U32>, [base=a0], T#1, ->T<128B>`, with `T#1` as the index Tile. The 128-byte destination holds 32 `U32` physical elements: the 4 valid ones receive the loaded values and the other 28 receive zero bits from the default pad value.
 <!-- SUPPLEMENTARY-END -->
@@ -146,7 +146,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 | --- | --- |
 | destination0 | destination |
 | address | base-address |
-| source0 | logical element indices |
+| source0 | byte-displacement indices |
 
 ## Decode
 
@@ -181,7 +181,7 @@ begin
     return TileHandler_MGATHER;
 end;
 
-pure func InstructionContractUsesLogicalElementIndices_MGATHER()
+pure func InstructionContractUsesByteDisplacements_MGATHER()
     => boolean
 begin
     return TRUE;
@@ -211,7 +211,7 @@ end;
 
 - B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.
-- IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed.
+- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
 
 ## Legality
 
@@ -229,7 +229,7 @@ end;
 
 ### Memory effects
 
-- Each indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the logical element index scaled by the transfer element width.
+- Each indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.
 - All valid addresses are preflighted before the first architectural effect.
 
 ### Ordering

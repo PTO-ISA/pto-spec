@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/execution/BSTART.MSCATTER.MASK.asl`
 
-Masked scatter using explicit logical element indices.
+Masked scatter using explicit byte displacements.
 
 ## Normative identity {#PTO-INST-BLOCK-BSTART-MSCATTER-MASK}
 
@@ -19,7 +19,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-mask-purpose role=purpose -->
 ## What BSTART.MSCATTER.MASK contributes
 
-`BSTART.MSCATTER.MASK` opens a Tile memory block whose operation is `MSCATTER_MASK`: an indexed store in which a Local predicate Tile decides, lane by lane, whether that lane stores. For each active lane whose predicate element is `0x01`, one transfer element of the data Tile is written to global memory (GM) at the base address plus that lane's logical element index. A lane whose predicate element is `0x00` is skipped.
+`BSTART.MSCATTER.MASK` opens a Tile memory block whose operation is `MSCATTER_MASK`: an indexed store in which a Local predicate Tile decides, lane by lane, whether that lane stores. For each active lane whose predicate element is `0x01`, one transfer element of the data Tile is written to global memory (GM) at the base address plus that lane's byte displacement. A lane whose predicate element is `0x00` is skipped.
 
 The command is one 32-bit word with match `0x00711181` under mask `0x07ffffff`, so `DataType` occupies bits 31 to 27 and the fixed low bits carry TLSU selector 7. `BundleMSCATTERMASKSelected` matches that selector and `ExecuteBundleMSCATTERMASKOperation` runs the operation `TileOperation_MSCATTER_MASK`. No Tile is allocated by this block and no source Tile is consumed or modified.
 
@@ -41,7 +41,7 @@ Design point: a false predicate performs no address generation and no probe, so 
 - `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col. The values must describe the data Tile exactly: its valid columns, its valid rows, and its physical columns.
 - The first `B.IOT` carries the data Tile in `source0` and the index Tile in `source1`, with no destination, no size code, and no `last`.
 - The second `B.IOT` carries the predicate Tile in `source0` and `last`, and a predicate-Tile ExecutionMask, when present, in `source1`. There is no destination record.
-- The index Tile is `S32`, `U32`, `S64`, or `U64` with logical element indices and the bundle layout. The predicate Tile is an ordinary Local `U8` carrier with the index Tile's valid shape and the bundle layout.
+- The index Tile is `S32`, `U32`, `S64`, or `U64` with byte displacements and the bundle layout. The predicate Tile is an ordinary Local `U8` carrier with the index Tile's valid shape and the bundle layout.
 - `B.IOR BaseGPR, zero, zero, ->zero` is required: `RegSrc0` selects the per-PE base GPR, and the other three selectors must encode zero.
 
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-mask-effects role=effects -->
@@ -219,7 +219,7 @@ end;
 
 - B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.
-- IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed.
+- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
 
 ## Legality
 
@@ -239,7 +239,7 @@ end;
 
 ### Memory effects
 
-- Each enabled indexed transaction stores one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the logical element index scaled by the transfer element width.
+- Each enabled indexed transaction stores one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.
 - A false predicate performs no address generation, translation, permission check, memory probe, event, access, or data-access fault.
 
 ### Ordering

@@ -4456,10 +4456,10 @@
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
-        "operand:source0:logical-element-index-indices",
+        "operand:source0:byte-displacement-indices",
         "runtime:CurrentBundlePadValue:physical-padding"
       ],
-      "semantic_summary": "gather using explicit logical element indices.",
+      "semantic_summary": "gather using explicit byte displacements.",
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -4501,7 +4501,7 @@
         },
         {
           "field": "source1",
-          "role": "logical-element-index-indices"
+          "role": "byte-displacement-indices"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -4509,9 +4509,9 @@
       "state_effects": [
         "operand:address:base-address",
         "operand:source0:source",
-        "operand:source1:logical-element-index-indices"
+        "operand:source1:byte-displacement-indices"
       ],
-      "semantic_summary": "scatter using explicit logical element indices.",
+      "semantic_summary": "scatter using explicit byte displacements.",
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -4572,11 +4572,11 @@
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
-        "operand:source0:logical-element-index-indices",
+        "operand:source0:byte-displacement-indices",
         "operand:source1:exact-predicate-mask",
         "runtime:CurrentBundlePadValue:inactive-and-physical-padding"
       ],
-      "semantic_summary": "Masked gather using explicit logical element indices.",
+      "semantic_summary": "Masked gather using explicit byte displacements.",
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -4621,7 +4621,7 @@
         },
         {
           "field": "source1",
-          "role": "logical-element-index-indices"
+          "role": "byte-displacement-indices"
         },
         {
           "field": "source2",
@@ -4633,10 +4633,10 @@
       "state_effects": [
         "operand:address:base-address",
         "operand:source0:source",
-        "operand:source1:logical-element-index-indices",
+        "operand:source1:byte-displacement-indices",
         "operand:source2:exact-predicate-mask"
       ],
-      "semantic_summary": "Masked scatter using explicit logical element indices.",
+      "semantic_summary": "Masked scatter using explicit byte displacements.",
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -4714,7 +4714,7 @@
       "catalog_indices": [
         81
       ],
-      "semantic_summary": "atomic compare-and-swap gather using explicit logical element indices.",
+      "semantic_summary": "atomic compare-and-swap gather using explicit byte displacements.",
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/execution/BSTART.MSCATTER.asl`
 
-scatter using explicit logical element indices.
+scatter using explicit byte displacements.
 
 ## Normative identity {#PTO-INST-BLOCK-BSTART-MSCATTER}
 
@@ -19,7 +19,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mscatter-purpose role=purpose -->
 ## What BSTART.MSCATTER contributes
 
-`BSTART.MSCATTER` opens a Tile memory bundle whose operation is `MSCATTER`: an indexed store. Each element of a Local data Tile is written to global memory (GM) at a base address plus a logical element index taken from a Local index Tile. The command is one 32-bit word (match `0x00511181`, mask `0x07ffffff`) with `DataType` in bits 31 to 27. It carries the fixed TLSU selector 5.
+`BSTART.MSCATTER` opens a Tile memory bundle whose operation is `MSCATTER`: an indexed store. Each element of a Local data Tile is written to global memory (GM) at a base address plus a byte displacement taken from a Local index Tile. The command is one 32-bit word (match `0x00511181`, mask `0x07ffffff`) with `DataType` in bits 31 to 27. It carries the fixed TLSU selector 5.
 
 A scatter produces no Tile. Neither source is consumed or modified.
 
@@ -30,7 +30,7 @@ Design point: the start command writes no memory. [Bundle start dispatch](../mod
 
 At commit, [Tile execution](../model/dispatch/tile-execution.md) reaches the [MSCATTER handler](../model/dispatch/tlsu-mscatter.md) after the earlier specialized selectors, including plain `MGATHER`, decline. The handler validates the complete bundle and calls the Tile-level [MSCATTER](../../tile/memory-and-data-movement/irregular/MSCATTER.md).
 
-For each active lane, the address is `BaseGPR` plus the index value. The index is a logical element index: an S32, U32, S64, or U64 value that is scaled by the transfer element size or decomposed.
+For each active lane, the address is `BaseGPR` plus the index value. The index is a byte displacement: an S32, U32, S64, or U64 value that is not scaled by the element size or decomposed.
 
 Design point: the Tile-level `MSCATTER` probes every active lane for write permission before it commits any store. A translation or permission fault found while probing therefore leaves no store of this scatter in GM. Only after every probe succeeds are the stores committed and their store events recorded.
 
@@ -218,7 +218,7 @@ end;
 
 - B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.
-- IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed.
+- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
 
 ## Legality
 
@@ -236,7 +236,7 @@ end;
 
 ### Memory effects
 
-- Each indexed transaction stores one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the logical element index scaled by the transfer element width.
+- Each indexed transaction stores one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.
 - All valid addresses are preflighted before the first architectural effect.
 
 ### Ordering

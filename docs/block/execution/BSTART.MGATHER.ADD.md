@@ -28,7 +28,7 @@ Design point: the sibling `BSTART.MSCATTER.ADD` performs the same addition but p
 <!-- PTO-READER-BLOCK: block-bstart-mgather-add-mechanism role=mechanism -->
 ## How to read the operation
 
-At commit the block runs the Tile-level body through `GM_ATOM_VALUE`, which calls the shared atom body `GMRunAtomic`. That body first visits every active lane, computes the address as `BaseGPR` plus the lane's logical element index, and probes it for read and then for write. Two probes whose translations differ raise `Fault_DataPage`. Only after all lanes pass does it apply the updates one lane at a time in an `ARBITRARY` order: load the old element, compute the new element, store it, write the old value into the destination, and record one atomic event.
+At commit the block runs the Tile-level body through `GM_ATOM_VALUE`, which calls the shared atom body `GMRunAtomic`. That body first visits every active lane, computes the address as `BaseGPR` plus the lane's byte displacement, and probes it for read and then for write. Two probes whose translations differ raise `Fault_DataPage`. Only after all lanes pass does it apply the updates one lane at a time in an `ARBITRARY` order: load the old element, compute the new element, store it, write the old value into the destination, and record one atomic event.
 
 For an integer `DataType`, `GMAtomicResult` adds the element-width raw values and the element-width store truncates the sum, so the result wraps. For `FP16`, `BF16`, `FP32`, and `FP64`, the sum comes from `GMFloatingAddPTX`, an implementation-defined hook whose comment names a PTX-derived profile with round-to-nearest-even and a flush-to-zero policy that depends on the type; its model body only adds the raw words.
 
@@ -43,7 +43,7 @@ Design point: each lane reloads the current element instead of reusing a value r
 - `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col. All three must equal the index Tile's and the value Tile's valid columns, valid rows, and the destination's physical columns.
 - `B.IOR BaseGPR, zero, zero, ->zero` is required: `RegSrc0` selects the per-PE base GPR, the other three selectors encode zero, and a `RegSrc0` of `zero` supplies base address zero.
 - Without a predicate-Tile ExecutionMask, one terminating `B.IOT` carries the index Tile, the value Tile, and the destination. With one, the first `B.IOT` carries the two sources with no destination and no `last`, and a second `B.IOT` carries the mask Tile, the destination, and `last`.
-- The index Tile is `S32`, `U32`, `S64`, or `U64` with logical element indices. The value Tile uses the operation `DataType` and the same valid shape as the index Tile.
+- The index Tile is `S32`, `U32`, `S64`, or `U64` with byte displacements. The value Tile uses the operation `DataType` and the same valid shape as the index Tile.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-add-effects role=effects -->
 ## Effects and state

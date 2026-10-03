@@ -118,8 +118,7 @@ begin
                     row as integer {0..65535},
                     column as integer {0..65535});
                 let address = TileMemoryByteDisplacementAddress(base_address,
-                    index_tile.payload[[index_element]], index_tile.data_type,
-                    destination_tile.data_type);
+                    index_tile.payload[[index_element]], index_tile.data_type);
                 let probe = ProbeTileMemoryAccess(address,
                     destination_tile.data_type, FALSE);
                 if RaiseDataAccessFault(probe, address) then return; end;
@@ -269,8 +268,7 @@ begin
             let index_element = TileStorageIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let address = TileMemoryByteDisplacementAddress(base_address,
-                index_tile.payload[[index_element]], index_tile.data_type,
-                source_tile.data_type);
+                index_tile.payload[[index_element]], index_tile.data_type);
             let probe = ProbeTileMemoryAccess(address,
                 source_tile.data_type, TRUE);
             if RaiseDataAccessFault(probe, address) then return; end;
@@ -419,8 +417,7 @@ begin
                 row as integer {0..65535},
                 column as integer {0..65535}) then
                 let address = TileMemoryByteDisplacementAddress(base_address,
-                    index_tile.payload[[index_element]], index_tile.data_type,
-                    destination_tile.data_type);
+                    index_tile.payload[[index_element]], index_tile.data_type);
                 let probe = ProbeTileMemoryAccess(address,
                     destination_tile.data_type, FALSE);
                 if RaiseDataAccessFault(probe, address) then return; end;
@@ -522,9 +519,8 @@ begin
                ReadIndexedTLSUPredicate(mask,
                 row as integer {0..65535},
                 column as integer {0..65535}) then
-            let address = TileMemoryByteDisplacementAddress(base_address,
-                index_tile.payload[[index_element]], index_tile.data_type,
-                source_tile.data_type);
+                let address = TileMemoryByteDisplacementAddress(base_address,
+                    index_tile.payload[[index_element]], index_tile.data_type);
                 let probe = ProbeTileMemoryAccess(address,
                     source_tile.data_type, TRUE);
                 if RaiseDataAccessFault(probe, address) then return; end;

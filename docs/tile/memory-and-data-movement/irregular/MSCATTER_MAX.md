@@ -19,7 +19,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-mscatter-max-purpose role=purpose -->
 ## What `MSCATTER_MAX` does
 
-`MSCATTER_MAX` is one atomic read-modify-write per lane on global memory (GM) and returns nothing. A lane is one active valid coordinate of the index Tile. Its address is the base address plus that lane's index value used as a logical element index.
+`MSCATTER_MAX` is one atomic read-modify-write per lane on global memory (GM) and returns nothing. A lane is one active valid coordinate of the index Tile. Its address is the base address plus that lane's index value used as a byte displacement.
 
 It is TLSU Function 19, written `BSTART.MSCATTER.MAX DataType`. The block dispatcher `ExecuteBundleGMAtomRedOperation` maps Function 19 to the reduction operation MAX and calls `GM_RED_VALUE`. The page has no standalone opcode.
 
@@ -162,7 +162,7 @@ end;
 ## Defaults and encoded zero
 
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.
-- GM indexed operation uses logical-element-index addresses and complete preflight.
+- GM indexed operation uses byte-displacement addresses and complete preflight.
 
 ## Legality
 

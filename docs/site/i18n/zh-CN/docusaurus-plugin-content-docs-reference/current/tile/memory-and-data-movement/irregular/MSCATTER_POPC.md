@@ -154,7 +154,7 @@ end;
 ## Defaults and encoded zero
 
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.
-- GM indexed operation uses logical-element-index addresses and complete preflight.
+- GM indexed operation uses byte-displacement addresses and complete preflight.
 
 ## Legality
 

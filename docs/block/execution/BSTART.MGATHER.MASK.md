@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/execution/BSTART.MGATHER.MASK.asl`
 
-Masked gather using explicit logical element indices.
+Masked gather using explicit byte displacements.
 
 ## Normative identity {#PTO-INST-BLOCK-BSTART-MGATHER-MASK}
 
@@ -19,7 +19,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-mgather-mask-purpose role=purpose -->
 ## What BSTART.MGATHER.MASK contributes
 
-`BSTART.MGATHER.MASK` opens a Tile memory block whose operation is `MGATHER_MASK`: an indexed load in which a Local predicate Tile decides, lane by lane, whether that lane is loaded. For each active lane whose predicate element is `0x01`, one transfer element is read from global memory (GM) at the base address plus that lane's logical element index and written into the destination Tile. A lane whose predicate element is `0x00` is skipped.
+`BSTART.MGATHER.MASK` opens a Tile memory block whose operation is `MGATHER_MASK`: an indexed load in which a Local predicate Tile decides, lane by lane, whether that lane is loaded. For each active lane whose predicate element is `0x01`, one transfer element is read from global memory (GM) at the base address plus that lane's byte displacement and written into the destination Tile. A lane whose predicate element is `0x00` is skipped.
 
 The command is one 32-bit word with match `0x00611181` under mask `0x07ffffff`, so `DataType` occupies bits 31 to 27 and the fixed low bits carry TLSU selector 6. `BundleMGATHERMASKSelected` matches that selector and `ExecuteBundleMGATHERMASKOperation` runs the operation `TileOperation_MGATHER_MASK`.
 
@@ -40,7 +40,7 @@ Design point: a false predicate performs no address generation at all, so no tra
 - `DataType` is the transfer element type, and it need not match the predicate Tile's element type.
 - `B.DIM` `LB0` is ValidCol, `LB1` is ValidRow (default 1), and `LB2` is the physical Col (default `LB0`). The valid rows and valid columns must equal the index Tile's valid shape, and the predicate Tile must have the same valid rows and valid columns as the index Tile.
 - One terminating `B.IOT` carries the index Tile in `source0`, the predicate Tile in `source1`, the `PE_MASK`, `last`, and a destination with a size code. With a predicate-Tile ExecutionMask the destination moves to a second `B.IOT`.
-- The index Tile is `S32`, `U32`, `S64`, or `U64` with the bundle layout and logical element indices. The predicate Tile uses the bundle layout.
+- The index Tile is `S32`, `U32`, `S64`, or `U64` with the bundle layout and byte displacements. The predicate Tile uses the bundle layout.
 - `B.IOR BaseGPR, zero, zero, ->zero` is required, with `RegSrc0` as the per-PE base GPR and the other three selectors encoding zero.
 
 <!-- PTO-READER-BLOCK: block-bstart-mgather-mask-effects role=effects -->
@@ -216,7 +216,7 @@ end;
 
 - B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.
-- IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed.
+- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
 
 ## Legality
 
@@ -236,7 +236,7 @@ end;
 
 ### Memory effects
 
-- Each enabled indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the logical element index scaled by the transfer element width.
+- Each enabled indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.
 - A false predicate performs no address generation, translation, permission check, memory probe, event, access, or data-access fault and leaves the corresponding destination value(s) at PadValue.
 
 ### Ordering

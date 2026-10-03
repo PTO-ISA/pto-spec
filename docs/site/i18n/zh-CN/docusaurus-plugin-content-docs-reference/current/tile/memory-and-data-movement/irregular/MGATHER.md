@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/irregular/MGATHER.asl`
 
-gather using explicit logical element indices.
+gather using explicit byte displacements.
 
 ## Normative identity {#PTO-INST-TILE-MGATHER}
 
@@ -146,7 +146,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 | --- | --- |
 | destination0 | destination |
 | address | base-address |
-| source0 | logical element indices |
+| source0 | byte-displacement indices |
 
 ## Decode
 
@@ -181,7 +181,7 @@ begin
     return TileHandler_MGATHER;
 end;
 
-pure func InstructionContractUsesLogicalElementIndices_MGATHER()
+pure func InstructionContractUsesByteDisplacements_MGATHER()
     => boolean
 begin
     return TRUE;
@@ -211,7 +211,7 @@ end;
 
 - B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.
-- IndexTile entries are S32, U32, S64, or U64 logical element indices; each index is scaled by the transfer element width and is not decomposed.
+- IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
 
 ## Legality
 
@@ -229,7 +229,7 @@ end;
 
 ### Memory effects
 
-- Each indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the logical element index scaled by the transfer element width.
+- Each indexed transaction loads one transfer element, or one packed byte containing the low then high logical nibble, at BaseGPR plus the byte displacement.
 - All valid addresses are preflighted before the first architectural effect.
 
 ### Ordering

@@ -100,7 +100,7 @@ S32 MAX with old `0xFFFFFFFF` (-1) and value 1 keeps 1, because the comparison i
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // The legacy MGATHER_CAS spelling aliases mgather.cas and MUST accept only
 // U16, U32, and U64 transfer DataTypes. Each valid request MUST perform one
-// atomic compare-and-swap at its signed or unsigned logical element index and
+// atomic compare-and-swap at its signed or unsigned byte displacement and
 // place the value observed by that request in the corresponding destination
 // element. Duplicate-address requests MUST serialize in an implementation-
 // defined order and MUST NOT expose a fixed row-major ordering requirement.
