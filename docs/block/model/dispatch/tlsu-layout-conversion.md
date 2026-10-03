@@ -44,7 +44,7 @@ An unknown TLSU operation code raises `Fault_IllegalInstruction`. The following 
 
 For a load, the single `B.IOT` carries a destination and `last`, and a source only as a predicate-Tile execution mask. For a store, it carries the CUBE source Tile and `last`, with no destination.
 
-The effective data type must pass `TileCubeDataTypeSupported` and must not be HiF4X2. U64 is accepted only for a load into `CUBE_N8`, as the ASL comment states.
+The effective type and selected layout must pass `TileCubeLayoutDataTypeSupported` and must not be HiF4X2. `FP64`, `S64`, and `U64` are accepted for `ND2M32` and `M322ND` using complete double-CELL pairs. `CUBE_M16` 64-bit transport remains illegal, and the separate `CUBE_N8/U64` transport exception is unchanged.
 
 A load resolves its destination through `ResolveBundleCubeTransportDestination`. A reused generation destination with a mismatched descriptor raises `Fault_TileLegality`. An illegal CUBE shape, a capacity overflow on a selected PE, or no free Tile slot in the destination hand raises `Fault_TileAllocation`. The handler then validates Local generation writers and calls `TLOAD`. A store checks that the source is a legal defined CUBE Tile with the selected type, layout, and valid shape, allocated on every selected PE, and calls `TSTORE`.
 
@@ -99,10 +99,14 @@ begin
     // HiF4X2 is accepted only by the Matrix-MX input-role contract.  U64 is
     // the single descriptor-level exception, and only ND2N8 TLOAD may create
     // that Local CUBE_N8 representation.
+    if layout == TileLayout_CUBE_M32 &&
+       TileCubeM32B64DataType(data_type) then
+        return function == 0 || function == 1;
+    end;
     if data_type == TileDataType_U64 then
         return function == 0 && layout == TileLayout_CUBE_N8;
     end;
-    return TileCubeDataTypeSupported(data_type) &&
+    return TileCubeLayoutDataTypeSupported(layout, data_type) &&
            data_type != TileDataType_HiF4X2;
 end;
 

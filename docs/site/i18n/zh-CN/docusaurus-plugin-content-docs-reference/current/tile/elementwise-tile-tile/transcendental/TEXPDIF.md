@@ -45,7 +45,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 一条终止 `B.IOT` 绑定全部三个 Tile，它们共享一个 `PE_MASK`。`PE_MASK=0000` 是严格无操作，发生在源描述符读取、目标分配、数值状态或载荷效果之前。
 
-`DstDataType` 由 `B.DATR` 解析。省略 `B.DATR`，或把 `DataType` 字段编码为 `DTYPE_NONE`（代码 31），会使目标继承 `SrcOperationType`。编码为零的 `DataType` 选择 `FP64`，它不是合法的目标，因此会被拒绝。
+`DstDataType` 由 `B.DATR` 解析。省略 `B.DATR`，或把 `DataType` 字段编码为 `DTYPE_NONE`（代码 31），会使目标继承 `SrcOperationType`。编码为零的 `DataType` 显式选择 `FP64`；它不表示缺省。
 
 设计要点：代码 0 已经表示 `FP64`，因此继承需要一个单独的哨兵值。使用 `DTYPE_NONE` 使“未请求目标类型”与真实的类型请求保持区分。
 
@@ -63,7 +63,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-texpdif-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-合法的 `(SrcOperationType,DstDataType)` 对只有 `(FP16,FP16)`、`(BF16,BF16)`、`(FP32,FP32)`、`(FP16,FP32)` 与 `(BF16,FP32)`。其他任何类型对，包括变窄的类型对或整数类型，都会被拒绝。
+合法的 `(SrcOperationType,DstDataType)` 对为 `(FP64,FP64)`、`(FP32,FP32)`、`(FP16,FP16)`、`(BF16,BF16)`、`(FP16,FP32)` 与 `(BF16,FP32)`。其他任何类型对，包括变窄类型对或整数类型，都会被拒绝。CUBE FP64 形式要求 `CUBE_M32`。
 
 布局为 `RowMajor`、`CUBE_M16` 或 `CUBE_M32`，三个操作数必须使用所选布局。`CUBE_N8`、Shared Tile 以及混合布局均非法。各操作数共享 `ValidRow` 与 `ValidCol`，但每个描述符的物理几何按其自身类型检查，因此 `FP32` 目标的物理大小可以不同于其 `FP16` 源。`B.DATR` 只接受 `Layout`、`DataType` 与 `PadValue`；非默认的 `CMode`、`RMode`、`Sat` 或 `Canonicalize` 均非法。
 
@@ -238,13 +238,15 @@ end;
 
 - TEXPDIF is TEPL Mode 0 Function 29 (selector 0x01D) on SFU; 0x01C remains TFMA and 0x01E..0x01F remain reserved.
 - Exactly one terminating Local B.IOT supplies two ordered persistent Local numeric sources and one newly allocated Local numeric destination. B.IOR, B.IOS, additional bindings, and shared operands are illegal.
-- The exact legal (SrcOperationType,DstDataType) pairs are (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32). All other pairs reject.
+- The exact legal (SrcOperationType,DstDataType) pairs are (FP64,FP64), (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32). All other pairs reject.
 - Each source backing type may differ independently from SrcOperationType only when both types are non-packed, have equal element width, and TileCarrierWidthCompatible is true. Source payloads are validated and interpreted as SrcOperationType without retagging the source descriptors.
 - The result for every valid coordinate is natural exp(src0-src1), with source0 as minuend and source1 as subtrahend. TEXPDIF does not broadcast.
 - Same-type pairs perform typed SUB followed by typed natural EXP. Mixed FP16/BF16-to-FP32 pairs exactly widen both inputs to FP32 before FP32 SUB and FP32 natural EXP; widening is not TCVT and adds no conversion-inexact status.
 - Only RowMajor, CUBE_M16, and CUBE_M32 are legal. CUBE_N8, Shared, unsupported layouts, and mixed operand layouts reject. Sources and destination share the selected layout and logical ValidRow x ValidCol; each descriptor's physical geometry is checked using its own backing/destination type.
 - B.DATR Layout, DataType, and PadValueOrByteId are the only applicable nonzero fields. CMode, RMode, Sat, Canonicalize, and unrelated fields are illegal.
 - PE_MASK=0000 is a strict no-op before source descriptor reads, destination allocation, numeric status, or payload effects.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
+- FP64 source and FP64 destination form an accepted same-type pair; mixed FP64 type pairs are not added.
 
 ## State effects
 

@@ -48,7 +48,7 @@ Tile 元素始终是左操作数，因此当 `source < scalar` 时 LT 为真。�
 
 - RowMajor 源：新的传统打包谓词 Tile。逻辑元素 `i = row x Col + column` 位于第 `floor(i / 8)` 字节的第 `i mod 8` 位，因此该 Tile 至少需要 `ceil(Row x Col / 8)` 字节。
 - 带 `B.IOT` 目标的 `CUBE_M16` 或 `CUBE_M32` 源：新的 `U8` PredicateCell Tile，每个元素一个字节，其基准类型为操作 `DataType`。
-- 不带 `B.IOT` 目标的 `CUBE_M16` 或 `CUBE_M32` 源：由 `B.IOR.RegDst` 指定的一个 GPR。对 8 位类型，`Sat` 选择低半或高半列。
+- 不带 `B.IOT` 目标的 `CUBE_M16` 或 `CUBE_M32` 源：由 `B.IOR.RegDst` 指定的一个 GPR。对 8 位类型，`Sat` 选择低半或高半列。 64 位 CUBE 操作数要求 `CUBE_M32` double-CELL 映射；`CUBE_M16` 会拒绝。
 
 设计要点：`PE_MASK=0000` 是严格无操作。它在任何 GPR 读取、描述符读取、分配、故障或状态效果之前退出，因此没有 PE 参与的指令束永远不会读取标量寄存器。
 
@@ -66,7 +66,7 @@ Tile 元素始终是左操作数，因此当 `source < scalar` 时 LT 为真。�
 <!-- PTO-READER-BLOCK: tile-tcmps-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-操作 `DataType` 集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。PredicateCell 形式不包括 `FP64`、`S64` 与 `U64`，GPR 形式还受 GPR 谓词几何的进一步限制。
+操作 `DataType` 集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。PredicateCell 与 GPR CUBE 形式接受 `FP64`、`S64` 与 `U64`，但数值源必须使用 `CUBE_M32` double-CELL；`CUBE_M16` 拒绝这些 64 位 basis 类型。GPR 形式仍受类型推导的谓词几何限制。
 
 `B.DATR` 接受 `CMode`、`PadValueOrByteId` 与 `Sat`；`Sat` 只在 8 位 GPR 形式中合法，`Canonicalize` 必须保持为零。没有 `Layout` 字段：布局来自源描述符。
 
@@ -282,9 +282,10 @@ end;
 
 - TCMPS selects TEPL Mode 1 Function 13 and executes on VEC. PE_MASK=0000 is a strict no-op before GPR, source, allocation, status, or payload checks.
 - Legacy RowMajor form uses one terminating B.IOT with source and new packed Predicate destination; one optional B.IOR supplies the compare scalar, and the source backing DataType is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.
-- CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with source and new U8 PredicateCell destination whose basis is the operation DataType plus an optional scalar-source B.IOR; omission selects the operation-type zero. The source backing DataType is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier, and the operation type is exactly one of FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S32, S16, S8, U32, U16, or U8.
-- CUBE_M16/M32 GPR form uses one source-only B.IOT and one B.IOR carrying the scalar source plus one destination GPR. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8; the source backing DataType is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier and U8 Sat selects Low or High columns derived from the operation type.
+- CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with source and new U8 PredicateCell destination whose basis is the operation DataType plus an optional scalar-source B.IOR; omission selects the operation-type zero. The source backing DataType is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier, and the operation type is exactly one of FP64, S64, U64 (these three only for CUBE_M32), FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S32, S16, S8, U32, U16, or U8.
+- CUBE_M16/M32 GPR form uses one source-only B.IOT and one B.IOR carrying the scalar source plus one destination GPR. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8, or FP64/S64/U64 for CUBE_M32; the source backing DataType is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier and U8 Sat selects Low or High columns derived from the operation type.
 - Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. CMode and PadValue apply to all; Sat is nonzero only for U8 GPR selection; Canonicalize remains zero.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

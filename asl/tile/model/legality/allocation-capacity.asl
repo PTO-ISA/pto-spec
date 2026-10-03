@@ -1,9 +1,9 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-ALLOCATION-CAPACITY","surface":"tile","classification":["model","legality","allocation-capacity"],"depends_on":["PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-ALLOCATION-CAPACITY","surface":"tile","classification":["model","legality","allocation-capacity"],"depends_on":["PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA"]}
 readonly func TilePayloadNonzero(index: TileIndex) => boolean
 begin
     let tile = _Tiles[[index]];
     if !_BundleExecutionMask.valid then
-        if !TileSourceContentsDefined(index) then return FALSE; end;
+        if !TileElementwiseSourceContentsDefined(index) then return FALSE; end;
     elsif !TileCubeDescriptorLegal(tile) ||
           tile.layout != _BundleExecutionMask.layout ||
           tile.valid_rows != _BundleExecutionMask.valid_rows ||

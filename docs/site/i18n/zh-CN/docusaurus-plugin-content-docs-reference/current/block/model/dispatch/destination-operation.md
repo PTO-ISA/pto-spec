@@ -91,6 +91,19 @@ begin
         return TRUE;
     end;
     let decoded_operation = TileOperationOfIndex(operation);
+    if decoded_operation == TileOperation_TLEA then
+        let (type_valid, destination_type) = ResolveBundleEffectiveDataType();
+        if !type_valid then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
+        let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
+        let columns = BundleDestinationPhysicalColumns(FALSE, 0)
+            as integer {1..65535};
+        return ResolveBundleTileDestinationsWithShapeAndType(
+            TRUE, valid_rows, valid_columns, columns, TRUE, destination_type);
+    end;
     if decoded_operation == TileOperation_TPERMUTE ||
        decoded_operation == TileOperation_TSHUF ||
        decoded_operation == TileOperation_TPACK ||

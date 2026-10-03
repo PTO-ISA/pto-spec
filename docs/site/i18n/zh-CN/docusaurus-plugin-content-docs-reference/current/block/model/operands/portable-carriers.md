@@ -57,6 +57,8 @@ This page is a generated reference view of the normative ASL unit.
 
 一个代次有 32 个 CELL，覆盖 CELL 0..15 和 16..31 的写者已登记，并由 LAST 关闭。一个使用者用 `B.SUBVIEW` 选择 CELL 0..3。在任何完成事件之前，它处于等待状态且不产生效果。第一个写者完成后，CELL 0..15 已就绪，因此该使用者变为满足条件并可以运行。另一个不带 subview 的使用者需要整个父 Tile。它保持等待，直到第二个写者完成且该代次被发布。
 
+`TLEA` 是 rollback-safe Local producer：其源在预检和执行期间保持不变，原子目标发布既不消耗也不重标记该源。
+
 <!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-related role=related-owners-navigation -->
 ## 相关所有者
 
@@ -521,7 +523,7 @@ begin
              TileHandler_GMOV,
              TileHandler_MGATHER,
              TileHandler_MGATHER_MASK,
-             TileHandler_TCI,
+             TileHandler_TCI, TileHandler_TLEA,
              TileHandler_TCVT,
              TileHandler_TFMA,
              TileHandler_TGATHER,

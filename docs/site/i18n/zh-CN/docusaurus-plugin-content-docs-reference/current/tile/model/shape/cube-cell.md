@@ -27,7 +27,7 @@ CELL 形状取决于布局和元素宽度：
 | 布局 | 32 位 | 16 位 | 8 位 | 4 位 | 64 位 |
 | --- | --- | --- | --- | --- | --- |
 | `CUBE_M16` | 16 x 2 | 16 x 4 | 16 x 8 | 16 x 16 | 非法 |
-| `CUBE_M32` | 32 x 1 | 32 x 2 | 32 x 4 | 32 x 8 | 非法 |
+| `CUBE_M32` | 32 x 1 | 32 x 2 | 32 x 4 | 32 x 8 | 逻辑 32 x 1，每列两个 CELL |
 | `CUBE_N8` | 4 x 8 | 8 x 8 | 16 x 8 | 32 x 8 | 2 x 8，仅限 U64 |
 
 每一项为 CELL 行数乘 CELL 列数。每一项都容纳 128 字节。
@@ -43,7 +43,7 @@ CUBE `TileInfo` 记录四个派生值：`cube_k_repeat`、`cube_n_repeat`、`cub
 - `CUBE_N8` 把有效行数向上取整到 CELL 行数的倍数。
 - 所有布局都把有效列数向上取整到 CELL 列数的倍数。
 
-重复次数由物理形状得出。对 M16 和 M32，K 重复次数为列数除以 CELL 列数，N 重复次数为 1。对 N8，K 重复次数为行数除以 CELL 行数，N 重复次数为列数除以 8。CELL 个数为 K 重复次数乘 N 重复次数，存储为每个 CELL 128 字节。
+重复次数由物理形状得出。对 M16 和 M32，K 重复次数为列数除以 CELL 列数，N 重复次数为 1。对 N8，K 重复次数为行数除以 CELL 行数，N 重复次数为列数除以 8。物理 CELL 数为 K 重复乘 N 重复；M32 `FP64`、`S64`、`U64` 再乘二。每个 CELL 仍为 128 字节。
 
 `TileCubeDescriptorShapeAndPhysicalLegal` 还要求容量合法、有效区域为正且位于物理形状之内，并且存储不大于容量。
 
@@ -51,7 +51,7 @@ CUBE `TileInfo` 记录四个派生值：`cube_k_repeat`、`cube_n_repeat`、`cub
 
 设计要点：M16 和 M32 容纳一个物理 M 块。如源注释所述，它们的描述符可以携带比有效区域更宽的物理列包络，但 N8 保持由有效区域派生的几何。
 
-设计要点：64 位类型被排除，只有使用 U64 的 `CUBE_N8` 例外，它使用 K2 x N8 CELL。`PTO-CUBE-CELL-STATE-001` 将此列为唯一的 b64 例外。
+设计要点：`CUBE_M32` 通过 double-CELL owner 接受 `FP64`、`S64` 与 `U64`：每个逻辑列使用完整低/高 CELL pair，占 256 字节。`CUBE_M16` 的 64 位元素仍非法。既有 `CUBE_N8/U64` K2 x N8 例外保持不变。
 
 <!-- PTO-READER-BLOCK: tile-model-shape-cube-cell-boundaries role=boundaries -->
 ## 架构边界
@@ -81,6 +81,7 @@ CUBE `TileInfo` 记录四个派生值：`cube_k_repeat`、`cube_n_repeat`、`cub
 - [有效区域](valid-region.md)拥有非 CUBE 形状检查。
 - [描述符形状合法性](../legality/descriptor-shape.md)重新检查已存储的 CUBE 几何。
 - [元素已定义性](../definedness/elements.md)通过 `TileCubePayloadIndex` 路由 CUBE 索引。
+- [Double-CELL 几何](cube-double-cell.md)负责 M32 64 位 pairing 与 raw plane 辅助函数。
 - [CUBE 目标](../../../block/model/dispatch/cube-destination.md)为矩阵操作分配 CUBE 目标。
 <!-- SUPPLEMENTARY-END -->
 
@@ -88,13 +89,14 @@ CUBE `TileInfo` 记录四个派生值：`cube_k_repeat`、`cube_n_repeat`、`cub
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/shape/cube-cell.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-SHAPE-CUBE-CELL","surface":"tile","classification":["model","shape","cube-cell"],"depends_on":["PTO-TILE-MODEL-SHAPE-VALID-REGION"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-SHAPE-CUBE-CELL","surface":"tile","classification":["model","shape","cube-cell"],"depends_on":["PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL","PTO-TILE-MODEL-SHAPE-VALID-REGION"]}
 // NDF-BEGIN: PTO-CUBE-CELL-STATE-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // Local CUBE layouts MUST use assigned 128-byte width-parametric CELL mappings,
 // derive storage independently of valid M/N/K, and reject unsupported types or
 // insufficient capacity before effects; M16/M32 contain one physical M block.
-// CUBE_N8/U64 is the sole b64 exception and uses K2 x N8 CELL geometry.
+// CUBE_N8/U64 retains its K2 x N8 exception; M32 b64 delegates physical
+// pairing to PTO-CUBE-M32-B64-DOUBLE-CELL-001.
 // NDF-END: PTO-CUBE-CELL-STATE-001
 
 // NDF-BEGIN: PTO-CUBE-MATRIX-SCALE-CELL-001
@@ -102,23 +104,6 @@ CUBE `TileInfo` 记录四个派生值：`cube_k_repeat`、`cube_n_repeat`、`cub
 // column/K repeat fast and one 32-row physical block; partial groups are tail.
 // This generic grid MUST NOT expand primary A/C/D legality beyond M16/M32.
 // NDF-END: PTO-CUBE-MATRIX-SCALE-CELL-001
-pure func TileLayoutIsCube(layout: TileLayout) => boolean
-begin
-    return layout == TileLayout_CUBE_M16 ||
-           layout == TileLayout_CUBE_M32 ||
-           layout == TileLayout_CUBE_N8;
-end;
-
-pure func TileCubeDataTypeSupported(data_type: TileDataType) => boolean
-begin
-    let element_bits = TileElementBits(data_type);
-    return element_bits != 64;
-end;
-
-pure func TileCubeLayoutDataTypeSupported(layout: TileLayout, data_type: TileDataType) => boolean
-begin
-    return TileCubeDataTypeSupported(data_type) || (layout == TileLayout_CUBE_N8 && data_type == TileDataType_U64);
-end;
 
 pure func TileCubeCellRows(layout: TileLayout,
                            data_type: TileDataType)
@@ -151,6 +136,7 @@ begin
     end;
     if layout == TileLayout_CUBE_N8 then return 8; end;
     case TileElementBits(data_type) of
+        when 64 => return 1;
         when 32 =>
             return if layout == TileLayout_CUBE_M16 then 2 else 1;
         when 16 =>
@@ -283,7 +269,8 @@ begin
     let n_repeat = TileCubeNRepeatForColumns(
         layout, valid_rows, columns, data_type);
     if k_repeat == 0 || n_repeat == 0 then return 0; end;
-    let cells: integer = k_repeat * n_repeat;
+    let cells: integer = k_repeat * n_repeat *
+        TileCubePhysicalCellsPerLogicalGroup(layout, data_type);
     if cells > 16384 then return 0; end;
     return cells as integer {1..16384};
 end;
@@ -299,7 +286,9 @@ begin
     let cell_rows = TileCubeCellRows(layout, data_type);
     let cell_columns = TileCubeCellColumns(layout, data_type);
     if cells == 0 || cell_rows == 0 || cell_columns == 0 then return 0; end;
-    let elements: integer = cells * cell_rows * cell_columns;
+    let groups = TileCubeLogicalGroupsForPhysicalCells(
+        layout, data_type, cells);
+    let elements: integer = groups * cell_rows * cell_columns;
     if elements > PTO_MODEL_TILE_ELEMENTS then return 0; end;
     return elements as integer {1..32768};
 end;
@@ -380,7 +369,8 @@ begin
     let n_repeat = TileCubePhysicalNRepeat(
         layout, physical_rows, physical_columns, data_type);
     if k_repeat == 0 || n_repeat == 0 then return 0; end;
-    let cells: integer = k_repeat * n_repeat;
+    let cells: integer = k_repeat * n_repeat *
+        TileCubePhysicalCellsPerLogicalGroup(layout, data_type);
     if cells > 16384 then return 0; end;
     return cells as integer {1..16384};
 end;
@@ -410,7 +400,9 @@ begin
     let cell_rows = TileCubeCellRows(layout, data_type);
     let cell_columns = TileCubeCellColumns(layout, data_type);
     if cells == 0 || cell_rows == 0 || cell_columns == 0 then return 0; end;
-    let elements: integer = cells * cell_rows * cell_columns;
+    let groups = TileCubeLogicalGroupsForPhysicalCells(
+        layout, data_type, cells);
+    let elements: integer = groups * cell_rows * cell_columns;
     if elements > PTO_MODEL_TILE_ELEMENTS then return 0; end;
     return elements as integer {1..32768};
 end;
@@ -554,6 +546,13 @@ readonly func TileCubePayloadIndex(
 begin
     assert TileLayoutIsCube(tile.layout);
     assert row < tile.rows && column < tile.columns;
+    if tile.layout == TileLayout_CUBE_M32 &&
+       TileCubeM32B64DataType(tile.data_type) then
+        assert row < 32 && column < 1024;
+        return TileCubeM32B64PayloadIndex(
+            row as integer {0..31}, column as integer {0..1023})
+            as ModelTileElementIndex;
+    end;
     let cell_rows = TileCubeCellRows(tile.layout, tile.data_type);
     let cell_columns = TileCubeCellColumns(tile.layout, tile.data_type);
     let k_repeat = TileCubePhysicalKRepeat(tile.layout, tile.rows,

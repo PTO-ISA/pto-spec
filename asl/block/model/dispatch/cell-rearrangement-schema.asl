@@ -76,15 +76,22 @@ begin
         if selected_type == TileDataType_U8 then 4
         else if selected_type == TileDataType_U16 then 2
         else if selected_type == TileDataType_U32 then 1
+        else if selected_type == TileDataType_U64 then 0
         else 0;
     if !selected_type_valid ||
-       (pack_unpack && destination_elements_per_word == 0) then
+       (pack_unpack && destination_elements_per_word == 0 &&
+        selected_type != TileDataType_U64) ||
+       (pack_unpack && selected_type == TileDataType_U64 &&
+        (source_tile.layout != TileLayout_CUBE_M32 ||
+         TileCellRearrangementWordsPerRow(source_tile) MOD 2 != 0)) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
     let destination_columns_unbounded = if pack_unpack then
-        (TileCellRearrangementWordsPerRow(source_tile) *
-            destination_elements_per_word) as integer {0..262144}
+        (if selected_type == TileDataType_U64 then
+             TileCellRearrangementWordsPerRow(source_tile) DIVRM 2
+         else TileCellRearrangementWordsPerRow(source_tile) *
+             destination_elements_per_word) as integer {0..262144}
     else source_tile.valid_columns as integer {0..262144};
     let destination_type = if pack_unpack then selected_type
                            else source_tile.data_type;

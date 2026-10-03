@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TCI-CUBE-001","source":"asl/tile/irregular-and-complex/initialization/TCI.asl","requirements":["PTO-TCI-CONTRACT-001"],"kind":"execution","summary":"TCI CUBE M16 and M32 materialize the typed two-dimensional sequence with exact physical columns","pass_condition":"all four integer carriers execute in both CUBE M formats, every unit row/column step tuple produces the specified logical values, and physical columns, CELL counts, bytes, and Null tails are observable","related_sources":["asl/block/model/dispatch/generation-schema.asl","asl/block/model/dispatch/scalar-schema.asl","asl/block/model/dispatch/destination-shape.asl","asl/tile/model/execution/generation.asl","asl/tile/model/shape/cube-cell.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TCI-CUBE-001","source":"asl/tile/irregular-and-complex/initialization/TCI.asl","requirements":["PTO-TCI-CONTRACT-001"],"kind":"execution","summary":"TCI CUBE M16 and M32 materialize the typed two-dimensional sequence with exact physical columns","pass_condition":"all six integer carriers execute in both CUBE M formats, every unit row/column step tuple produces the specified logical values, and physical columns, CELL counts, bytes, and Null tails are observable","related_sources":["asl/block/model/dispatch/generation-schema.asl","asl/block/model/dispatch/scalar-schema.asl","asl/block/model/dispatch/destination-shape.asl","asl/tile/model/execution/generation.asl","asl/tile/model/shape/cube-cell.asl"]}
 pure func TCICubeStart(data_type: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00019181;
@@ -126,7 +126,7 @@ end;
 
 func main() => integer
 begin
-    // M16 and M32 cover all four TCI integer carriers with column/K CELL
+    // M16 and M32 cover all six TCI integer carriers with column/K CELL
     // repetition and one fixed physical M block.
     RunTCICube(Zeros{5} + 17, Zeros{5} + 31, TileDataType_S32,
         TileLayout_CUBE_M16, 16, 3, 4, TRUE, 2, 256, 2, 15, 2,
@@ -151,6 +151,12 @@ begin
         Zeros{PTO_XLEN} + 0x1000);
     RunTCICube(Zeros{5} + 18, Zeros{5} + 29, TileDataType_S16,
         TileLayout_CUBE_M32, 32, 1, 2, TRUE, 1, 128, 2, 31, 0,
+        Zeros{PTO_XLEN} + 0x1000);
+    RunTCICube(Zeros{5} + 16, Zeros{5} + 29, TileDataType_S64,
+        TileLayout_CUBE_M32, 32, 1, 1, TRUE, 2, 256, 2, 31, 0,
+        Zeros{PTO_XLEN} + 0x1000);
+    RunTCICube(Zeros{5} + 24, Zeros{5} + 29, TileDataType_U64,
+        TileLayout_CUBE_M32, 32, 1, 1, TRUE, 2, 256, 2, 31, 0,
         Zeros{PTO_XLEN} + 0x1000);
     RunTCICube(Zeros{5} + 26, Zeros{5} + 31, TileDataType_U16,
         TileLayout_CUBE_M16, 1, 1, 4, FALSE, 1, 128, 1, 0, 0,
@@ -182,5 +188,12 @@ begin
     RunTCICubeWrap(Zeros{5} + 25, Zeros{5} + 29, TileLayout_CUBE_M32,
         2, 2, Zeros{PTO_XLEN} + 0xffffffff, Zeros{PTO_XLEN},
         Zeros{64} + 0x0000000100000000, 1, 0);
+    RunTCICubeWrap(Zeros{5} + 24, Zeros{5} + 29, TileLayout_CUBE_M32,
+        2, 4, Ones{PTO_XLEN}, Zeros{PTO_XLEN},
+        Zeros{64} + 1, 0, 1);
+    RunTCICubeWrap(Zeros{5} + 16, Zeros{5} + 29, TileLayout_CUBE_M32,
+        2, 4, Zeros{PTO_XLEN} + 0x7fffffffffffffff,
+        Zeros{PTO_XLEN} + 0x8000000000000000,
+        Zeros{64} + 1, 0, 1);
     return 0;
 end;

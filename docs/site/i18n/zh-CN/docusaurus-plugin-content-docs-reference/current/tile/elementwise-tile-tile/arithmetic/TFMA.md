@@ -60,9 +60,9 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tfma-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-ASL 合法性谓词 `TileFusedMultiplyAddDataTypeSupported` 接受 16 种类型：`FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16` 与 `U8`。下方生成的合法性列表更窄，只列出 `FP16`、`FP32` 与 `BF16`。`TFMA` 所调用的浮点元素运算 `ScalarFPFusedProfile` 只为 `FP64`、`FP32` 与 `FP16` 定义，因此 ASL 对 `TF32`、`HF32`、`BF16`、`E4M3` 或 `E5M2` 不给出元素结果。需要同时满足两者的代码应使用 `FP16` 或 `FP32`。
+`TFMA` 恰好接受 `FP64`、`S64`、`U64`、`FP16`、`FP32` 与 `BF16`。融合浮点辅助函数为 `FP64`、`FP32` 与 `FP16` 提供有限执行；既有已接受 `BF16` 有限结果缺口保持不变。整数形式使用定宽融合规则。
 
-默认布局为 `RowMajor`。显式 `Layout` 可以选择 `CUBE_M16` 或 `CUBE_M32`，所有操作数必须使用同一布局。`CUBE_N8`、Shared Tile 以及混合布局均非法。`TFMA` 拒绝非默认的 `RMode`、`Sat`、`CMode` 与 `Canonicalize`。
+默认布局为 `RowMajor`。显式 `Layout` 可以选择 `CUBE_M16` 或 `CUBE_M32`，所有操作数必须使用同一布局。`CUBE_N8`、Shared Tile 以及混合布局均非法。`TFMA` 拒绝非默认的 `RMode`、`Sat`、`CMode` 与 `Canonicalize`。 在 CUBE 布局中，64 位操作类型只在 `CUBE_M32` 中合法；`CUBE_M16` 会拒绝。
 
 绑定格式错误或多余、出现 `B.IOR` 或 `B.IOS`、掩码不相等、维度错误、`DataType` 不受支持、布局不匹配、源未定义或浮点编码无效时，会引发 `Fault_TileLegality`。目标形状无法表示或容量不足时，会引发 `Fault_TileAllocation`。两种故障都发生在任何目标效果之前。
 
@@ -199,10 +199,11 @@ end;
 
 - TFMA is selected by the TEPL encoding carrier Mode 0 Function 28, canonically assembled with BSTART.VEC, and has no standalone opcode.
 - Exactly two ordered Local B.IOT bindings are required: the first supplies two multiplicands without a destination or last marker; the second supplies the addend and one new destination and terminates the sequence.
-- DataType is exactly one of FP16, FP32, or BF16.
+- DataType is exactly one of FP64, S64, U64, FP16, FP32, or BF16.
 - All three sources and the destination match physical shape, valid shape, selected layout, DataType, and PE_MASK; every valid source element is defined.
 - Only B.DATR PadValueOrByteId is applicable. Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.
 - B.IOR and B.IOS are illegal. All participating B.IOT masks are equal; PE_MASK zero is a strict no-op before source reads, allocation, arithmetic, flags, padding, or descriptor effects.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

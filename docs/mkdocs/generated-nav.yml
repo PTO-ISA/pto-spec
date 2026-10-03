@@ -187,6 +187,7 @@ nav:
               - Expansion Schema: block/model/dispatch/expansion-schema.md
               - Expdif Schema: block/model/dispatch/expdif-schema.md
               - Generation Schema: block/model/dispatch/generation-schema.md
+              - Lea Schema: block/model/dispatch/lea-schema.md
               - Matrix Scale: block/model/dispatch/matrix-scale.md
               - Numeric Control: block/model/dispatch/numeric-control.md
               - Predicate Destination: block/model/dispatch/predicate-destination.md
@@ -881,6 +882,7 @@ nav:
               - Generation: tile/model/execution/generation.md
               - Indexed Rearrangement: tile/model/execution/indexed-rearrangement.md
               - Internal Accumulator: tile/model/execution/internal-accumulator.md
+              - Lea: tile/model/execution/lea.md
               - Matrix Postprocess: tile/model/execution/matrix-postprocess.md
               - Matrix Quantization: tile/model/execution/matrix-quantization.md
               - Matrix Scale: tile/model/execution/matrix-scale.md
@@ -899,6 +901,7 @@ nav:
               - Indexed Layout: tile/model/legality/indexed-layout.md
               - Indexed Rearrangement: tile/model/legality/indexed-rearrangement.md
               - Layout Rearrangement: tile/model/legality/layout-rearrangement.md
+              - Lea Operands: tile/model/legality/lea-operands.md
               - Matrix CUBE Primary: tile/model/legality/matrix-cube-primary.md
               - Matrix Functions: tile/model/legality/matrix-functions.md
               - Matrix Info Descriptor: tile/model/legality/matrix-info-descriptor.md
@@ -926,12 +929,14 @@ nav:
               - Formats: tile/model/numeric/formats.md
               - Packed Conversion: tile/model/numeric/packed-conversion.md
               - Reference Conversion: tile/model/numeric/reference-conversion.md
+              - Reference Fixed Binary: tile/model/numeric/reference-fixed-binary.md
               - Rounding: tile/model/numeric/rounding.md
               - Tcvt Conversion: tile/model/numeric/tcvt-conversion.md
           - Ordering:
               - Sorting: tile/model/ordering/sorting.md
           - Shape:
               - CUBE Cell: tile/model/shape/cube-cell.md
+              - CUBE Double Cell: tile/model/shape/cube-double-cell.md
               - Rows Columns: tile/model/shape/rows-columns.md
               - Valid Region: tile/model/shape/valid-region.md
           - State:
@@ -978,6 +983,7 @@ nav:
           - Arithmetic:
               - TADDS: tile/tile-scalar-and-immediate/arithmetic/TADDS.md
               - TDIVS: tile/tile-scalar-and-immediate/arithmetic/TDIVS.md
+              - TLEA: tile/tile-scalar-and-immediate/arithmetic/TLEA.md
               - TMAXS: tile/tile-scalar-and-immediate/arithmetic/TMAXS.md
               - TMINS: tile/tile-scalar-and-immediate/arithmetic/TMINS.md
               - TMULS: tile/tile-scalar-and-immediate/arithmetic/TMULS.md

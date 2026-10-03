@@ -61,9 +61,9 @@ Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`.
 <!-- PTO-READER-BLOCK: tile-texp-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The ASL legality predicate `TileFloatingElementwiseDataTypeSupported` accepts `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, and `E5M2`. The NDF clause for `TEXP` names only `FP16`, `FP32`, and `BF16`, and the finite-value reference approximation is defined only for those three types, so code should use one of them. Integer and packed types are rejected.
+`TEXP` legality accepts `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, and `E5M2`. The validated finite reference paths cover `FP64`, `FP32`, `FP16`, and `BF16`; the pre-existing finite, non-special result gap remains for `TF32`, `HF32`, `E4M3`, and `E5M2`. Integer and packed operation types reject before effects.
 
-The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`, and both operands must use that same layout. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal. `TEXP` rejects nondefault `RMode`, `Sat`, and `CMode`.
+The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`, and both operands must use that same layout; among CUBE layouts, a 64-bit operation type is legal only in `CUBE_M32`; `CUBE_M16` rejects it. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal. `TEXP` rejects nondefault `RMode`, `Sat`, and `CMode`.
 
 Malformed bindings, `B.IOR` or `B.IOS`, missing or zero dimensions, an unsupported `DataType`, an undefined source or invalid source encoding, a descriptor mismatch, or an invalid capacity raise the applicable Tile fault before any destination effect. Special floating inputs never fault; they produce the table results above.
 
@@ -204,6 +204,7 @@ end;
 - B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.
 - Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects.
 - The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

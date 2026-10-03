@@ -90,6 +90,7 @@ TILE_DATR_PAD_UNION_ENUM = {
     "matrix-cctrl": "TileDATRPadUnion_MatrixCCTRL",
 }
 TILE_LEGALITY_OWNS_SOURCE_DEFINEDNESS = {
+    "TLEA",
     "ExecuteTileBinary",
     "ExecuteTileCompare",
     "ExecuteTileCompareScalar",

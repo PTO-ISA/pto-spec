@@ -41,7 +41,7 @@ The CUBE form consults the ExecutionMask: an active coordinate receives the gene
 <!-- PTO-READER-BLOCK: tile-tci-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
 
-- `destination0` is a newly allocated Local `S32`, `S16`, `U32`, or `U16` Tile.
+- `destination0` is a newly allocated Local `S64`, `S32`, `S16`, `U64`, `U32`, or `U16` Tile.
 - `scalar0` is the start value, read from the GPR named by RegSrc0.
 - `flag0` is the RowMajor direction or the CUBE Step2D word, read from the GPR named by RegSrc1.
 
@@ -63,7 +63,7 @@ Physical elements outside the valid region receive `Null` padding: they hold a z
 <!-- PTO-READER-BLOCK: tile-tci-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The accepted data types are `S32`, `S16`, `U32`, and `U16`.
+The accepted data types are `S64`, `S32`, `S16`, `U64`, `U32`, and `U16`. The 64-bit CUBE form requires `CUBE_M32`; `CUBE_M16` remains illegal for those types.
 
 - RowMajor form: a malformed binding, `B.IOS`, an unsupported type, a missing or invalid dimension, a direction other than 0 or 1, or a nonzero inapplicable `B.DATR` field raises `Fault_TileLegality`.
 - CUBE form: a malformed command or `B.IOR` structure raises `Fault_BundleControl`; an invalid selector, tuple, dimension, step, or alignment raises `Fault_TileLegality`; a legal geometry with too small a TSize or exhausted Tile capacity raises `Fault_TileAllocation`.
@@ -115,7 +115,7 @@ This operation has no standalone opcode.
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | new Local S32, S16, U32, or U16 destination |
+| destination0 | new Local S64, S32, S16, U64, U32, or U16 destination |
 | scalar0 | typed sequence start from RowMajor/CUBE RegSrc0 |
 | flag0 | RowMajor direction or CUBE packed Step2D from RegSrc1 |
 
@@ -133,7 +133,7 @@ end;
 ## Block composition
 
 ```asm
-BSTART.SFU TCI, S32|S16|U32|U16
+BSTART.SFU TCI, S64|S32|S16|U64|U32|U16
 B.DATR RowMajor all-zero (optional), or explicit CUBE_M32/CUBE_M16 tuple
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (RowMajor optional, default 1; when present must equal 1; CUBE required positive)
@@ -208,8 +208,8 @@ end;
 
 - TCI is selected by the TEPL encoding carrier Mode 3 Function 6, canonically assembled with BSTART.SFU, and has no standalone opcode.
 - Exactly one terminating destination-only Local B.IOT supplies one newly allocated destination. Every source binding, a second B.IOT, B.IOS, or an unterminated binding stream is illegal.
-- The selected DataType is exactly S32, S16, U32, or U16. The existing RowMajor form remains one-row with ValidRow one, ValidCol nonzero, and Col at least ValidCol.
-- The CUBE form is selected only by explicit Layout CUBE_M32 (29) or CUBE_M16 (31), uses a Matrix-location Local numeric destination, and retains one exact TileInfo.columns physical Col independently of ValidCol.
+- The selected DataType is exactly S64, S32, S16, U64, U32, or U16. The existing RowMajor form remains one-row with ValidRow one, ValidCol nonzero, and Col at least ValidCol.
+- The CUBE form is selected only by explicit Layout CUBE_M32 (29) or CUBE_M16 (31), uses a Matrix-location Local numeric destination, and retains one exact TileInfo.columns physical Col independently of ValidCol. S64 and U64 CUBE destinations use only CUBE_M32 double-CELL storage; CUBE_M16 remains illegal for b64.
 - CUBE M16 requires ValidRow>0 and ValidRow<=16; CUBE M32 accepts every positive ValidRow. Both forms require ValidCol<=Col and a cell-column-aligned explicit Col.
 - CUBE B.DATR is exactly {Layout=CUBE_M32/CUBE_M16, DataType=DTYPE_NONE, Pad=0, CMode=0, RMode=0, Sat=0, Canonicalize=0}.
 - CUBE B.IOR is exactly StartGPR, packed Step2DGPR with signed s32 RowStep in bits [63:32] and signed s32 ColStep in bits [31:0], then zero and ->zero. Each step is exactly -1, 0, or +1.

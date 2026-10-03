@@ -36,13 +36,13 @@ CUBE 布局以单元（cell）存储 Tile。这些指令只接受 `CUBE_M16` 与
 <!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-rules role=rules-interactions -->
 ## 规则与交互
 
-`TPERMUTE` 检查四个 Tile：目标、`source0`、`source1` 以及一个 U8 索引 Tile。它们使用同一布局。数据 Tile 共享同一类型与同一有效形状，且该类型不是 64 位。索引 Tile 的有效行数相同，每个有效目标字节对应一列，单元数也相同。对每个活动目标字节，索引字节必须已定义且小于单元行字节数的两倍。小于单元行字节数的索引选择 `source0`，否则选择 `source1`，被选中的源字节必须已定义。
+`TPERMUTE` 检查四个 Tile：目标、`source0`、`source1` 以及一个 U8 索引 Tile。它们使用同一布局。数据 Tile 共享同一类型与有效形状；64 位类型要求 `CUBE_M32` double-CELL 描述符。索引 Tile 具有相同有效行数、每个有效目标字节一列，以及对应的物理 CELL 数。每个活动目标字节的索引必须已定义且小于 CELL 行字节数的两倍。
 
 设计要点：索引在同一行、同一单元行段内选择字节，因为源字节等于段基址加所选偏移。因此字节不能移动到另一行或另一段，且在 `CUBE_M16` 下 16 或更大的索引是非法的，而不是回绕。
 
 `TSHUF` 检查一个数据源、一个 U32 控制 Tile 与控制字。位 `[7:0]` 是模式（0 到 3），位 `[15:8]` 是段编码（0 到 4，对应宽度 2、4、8、16、32），位 `[23:16]` 是边界标志（0 或 1）。段编码 4 仅对 `CUBE_M32` 合法。对每个活动元素，起控制作用的 U32 字必须已定义，实际将被读取的源元素也必须已定义。
 
-`TPACK` 与 `TUNPACK` 需要位宽为 8、16 或 32 位的数值源，以及类型为 U8、U16 或 U32 的目标。目标有效列数必须等于原始字数乘以每字目标元素数。`TPACK` 从每个源的每个字中取 1 到 3 个低字节，总数最多 4。`TUNPACK` 取字节偏移 0 到 3、长度 1 到 4 且在第 4 字节前结束的字段。
+`TPACK` 与 `TUNPACK` 接受最高 64 位的数值源。目标为 U8、U16、U32 或 U64。U64 形式要求 `CUBE_M32`、偶数 raw-word 数，并让每个低/高 word pair 对应一个逻辑目标列；更窄形式保持既有每 word 元素数规则。
 
 设计要点：已定义性只对操作将读取的字节检查。没有被任何索引或控制选中的未定义字节不会使操作非法。
 
@@ -227,6 +227,46 @@ begin
         as integer {0..65535};
 end;
 
+pure func TileShuffleSelectedRow(
+    control_word: Word, row: integer {0..65535},
+    valid_rows: integer {1..65535}, layout: TileLayout,
+    segment_width: integer {2,4,8,16,32}, mode: integer {0..3},
+    boundary: integer {0..1})
+    => (boolean, integer {0..65535})
+begin
+    let cell_rows = if layout == TileLayout_CUBE_M32 then 32 else 16;
+    let lane = (row MOD cell_rows) as integer {0..31};
+    let segment_base = ((lane DIVRM segment_width) * segment_width)
+        as integer {0..31};
+    let local_lane = (lane - segment_base) as integer {0..31};
+    let b = UInt(control_word[4:0]);
+    var candidate_valid = TRUE;
+    var candidate_lane: integer {0..31} = lane;
+    if mode == 0 then
+        if b > lane - segment_base then candidate_valid = FALSE;
+        else candidate_lane = (lane - b) as integer {0..31}; end;
+    elsif mode == 1 then
+        if (lane - segment_base) + b >= segment_width then
+            candidate_valid = FALSE;
+        else candidate_lane = (lane + b) as integer {0..31}; end;
+    elsif mode == 2 then
+        candidate_lane = (segment_base +
+            UInt(((Zeros{5} + local_lane) as bits(5)) XOR
+                 ((Zeros{5} + b) as bits(5)))) as integer {0..31};
+        if candidate_lane >= segment_base + segment_width then
+            candidate_valid = FALSE;
+        end;
+    else
+        candidate_lane = (segment_base + (b MOD segment_width))
+            as integer {0..31};
+    end;
+    let candidate_row = (row - lane) + candidate_lane;
+    if candidate_valid && candidate_row < valid_rows then
+        return (TRUE, candidate_row as integer {0..65535});
+    end;
+    return (boundary == 0, row);
+end;
+
 readonly func TileOperandsLegal_TPERMUTE(
     destination: TileIndex, source0: TileIndex,
     source1: TileIndex, indices: TileIndex) => boolean
@@ -251,8 +291,8 @@ begin
        destination_tile.layout != right.layout ||
        destination_tile.data_type != left.data_type ||
        destination_tile.data_type != right.data_type ||
-       !TileCubeDataTypeSupported(destination_tile.data_type) ||
-       TileElementBits(destination_tile.data_type) == 64 ||
+       !TileCubeLayoutDataTypeSupported(
+           destination_tile.layout, destination_tile.data_type) ||
        index_tile.data_type != TileDataType_U8 ||
        index_tile.layout != destination_tile.layout ||
        destination_tile.valid_rows != left.valid_rows ||
@@ -334,8 +374,8 @@ begin
         destination_tile.layout != TileLayout_CUBE_M32) ||
        (destination_tile.layout == TileLayout_CUBE_M16 &&
         segment_code == 4) || !TileRearrangementControlWordLegal(control) ||
-       !TileCubeDataTypeSupported(destination_tile.data_type) ||
-       TileElementBits(destination_tile.data_type) == 64 then
+       !TileCubeLayoutDataTypeSupported(
+           destination_tile.layout, destination_tile.data_type) then
         return FALSE;
     end;
     let segment_width = if segment_code == 0 then 2
@@ -343,63 +383,38 @@ begin
         else if segment_code == 2 then 8
         else if segment_code == 3 then 16
         else 32;
-    let cell_rows = if destination_tile.layout == TileLayout_CUBE_M32 then 32
-        else 16;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
-        let lane = (row MOD cell_rows) as integer {0..31};
-        let segment_base = ((lane DIVRM segment_width) * segment_width)
-            as integer {0..31};
-        let local_lane = (lane - segment_base) as integer {0..31};
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
             if BundleExecutionMaskActiveAt(
                    source_tile.layout, row as integer {0..65535},
                    column as integer {0..65535}) then
-                let word_index = TileCellRearrangementElementWordIndex(
+                let first_word = TileCellRearrangementElementWordIndex(
                     source_tile.data_type,
                     column as integer {0..65535});
-                let control_element = TileLogicalLinearIndex(
-                    control_tile, row as integer {0..65535}, word_index);
-                if !TileLogicalElementDefined(
-                       control_tile, control_element) then return FALSE; end;
-                let control_word = TileReadLogicalElement(
-                    control_tile, control_element);
-                let b = UInt(control_word[4:0]);
-                var candidate_valid = TRUE;
-                var candidate_lane: integer {0..31} = lane;
-                if mode == 0 then
-                    if b > lane - segment_base then candidate_valid = FALSE;
-                    else candidate_lane = (lane - b) as integer {0..31}; end;
-                elsif mode == 1 then
-                    if (lane - segment_base) + b >= segment_width then
-                        candidate_valid = FALSE;
-                    else candidate_lane = (lane + b) as integer {0..31}; end;
-                elsif mode == 2 then
-                    candidate_lane = (segment_base +
-                        UInt(((Zeros{5} + local_lane) as bits(5)) XOR
-                             ((Zeros{5} + b) as bits(5))))
-                        as integer {0..31};
-                    if candidate_lane >= segment_base + segment_width then
-                        candidate_valid = FALSE;
-                    end;
-                else
-                    candidate_lane = (segment_base +
-                        (b MOD segment_width)) as integer {0..31};
-                end;
-                let candidate_row = (row - lane) + candidate_lane;
-                var source_row: integer {0..65535} =
-                    row as integer {0..65535};
-                var source_required = boundary == 0;
-                if candidate_valid &&
-                   candidate_row < source_tile.valid_rows then
-                    source_row = candidate_row as integer {0..65535};
-                    source_required = TRUE;
-                end;
-                if source_required then
-                    let source_element = TileLogicalLinearIndex(
-                        source_tile, source_row,
-                        column as integer {0..65535});
+                let raw_words = if TileElementBits(source_tile.data_type) == 64
+                    then 2 else 1;
+                for raw_word = 0 to raw_words - 1 looplimit 2 do
+                    let word_index = (first_word + raw_word)
+                        as integer {0..65535};
+                    let control_element = TileLogicalLinearIndex(
+                        control_tile, row as integer {0..65535}, word_index);
                     if !TileLogicalElementDefined(
-                           source_tile, source_element) then return FALSE; end;
+                           control_tile, control_element) then return FALSE; end;
+                    let control_word = TileReadLogicalElement(
+                        control_tile, control_element);
+                    let (source_required, source_row) = TileShuffleSelectedRow(
+                        control_word, row as integer {0..65535},
+                        source_tile.valid_rows as integer {1..65535},
+                        source_tile.layout,
+                        segment_width, mode as integer {0..3},
+                        boundary as integer {0..1});
+                    if source_required then
+                        let source_element = TileLogicalLinearIndex(
+                            source_tile, source_row,
+                            column as integer {0..65535});
+                        if !TileLogicalElementDefined(
+                               source_tile, source_element) then return FALSE; end;
+                    end;
                 end;
             end;
         end;
@@ -413,7 +428,8 @@ begin
     return TileCubeDataTypeSupported(data_type) &&
            (TileElementBits(data_type) == 8 ||
             TileElementBits(data_type) == 16 ||
-            TileElementBits(data_type) == 32);
+            TileElementBits(data_type) == 32 ||
+            TileElementBits(data_type) == 64);
 end;
 
 readonly func TileCellRearrangementSelectedBytesDefined(
@@ -454,20 +470,26 @@ begin
         if destination_tile.data_type == TileDataType_U8 then 4
         else if destination_tile.data_type == TileDataType_U16 then 2
         else if destination_tile.data_type == TileDataType_U32 then 1
+        else if destination_tile.data_type == TileDataType_U64 then 0
         else 0;
+    let destination_columns: integer = if destination_tile.data_type == TileDataType_U64
+        then words DIVRM 2 else words * destination_elements_per_word;
     if destination_tile.storage_kind != TileStorage_Numeric ||
        left.storage_kind != TileStorage_Numeric ||
        right.storage_kind != TileStorage_Numeric ||
        !TileCellRearrangementDataTypeLegal(left.data_type) ||
        !TileCellRearrangementDataTypeLegal(right.data_type) ||
-       destination_elements_per_word == 0 ||
+       (destination_elements_per_word == 0 &&
+        destination_tile.data_type != TileDataType_U64) ||
+       (destination_tile.data_type == TileDataType_U64 &&
+        (destination_tile.layout != TileLayout_CUBE_M32 ||
+         words MOD 2 != 0)) ||
        destination_tile.layout != left.layout ||
        destination_tile.layout != right.layout ||
        destination_tile.valid_rows != left.valid_rows ||
        destination_tile.valid_rows != right.valid_rows ||
        TileCellRearrangementWordsPerRow(right) != words ||
-       destination_tile.valid_columns !=
-           words * destination_elements_per_word ||
+       destination_tile.valid_columns != destination_columns ||
        left_bytes < 1 || left_bytes > 3 ||
        right_bytes < 1 || right_bytes > 3 ||
        left_bytes + right_bytes > 4 ||
@@ -515,15 +537,21 @@ begin
         if destination_tile.data_type == TileDataType_U8 then 4
         else if destination_tile.data_type == TileDataType_U16 then 2
         else if destination_tile.data_type == TileDataType_U32 then 1
+        else if destination_tile.data_type == TileDataType_U64 then 0
         else 0;
+    let destination_columns: integer = if destination_tile.data_type == TileDataType_U64
+        then words DIVRM 2 else words * destination_elements_per_word;
     if destination_tile.storage_kind != TileStorage_Numeric ||
        source_tile.storage_kind != TileStorage_Numeric ||
        !TileCellRearrangementDataTypeLegal(source_tile.data_type) ||
-       destination_elements_per_word == 0 ||
+       (destination_elements_per_word == 0 &&
+        destination_tile.data_type != TileDataType_U64) ||
+       (destination_tile.data_type == TileDataType_U64 &&
+        (destination_tile.layout != TileLayout_CUBE_M32 ||
+         words MOD 2 != 0)) ||
        destination_tile.layout != source_tile.layout ||
        destination_tile.valid_rows != source_tile.valid_rows ||
-       destination_tile.valid_columns !=
-           words * destination_elements_per_word ||
+       destination_tile.valid_columns != destination_columns ||
        offset > 3 || count < 1 || count > 4 || offset + count > 4 ||
        !TileRearrangementControlWordLegal(control) then
         return FALSE;

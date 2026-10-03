@@ -331,14 +331,21 @@ begin
         if result_type == TileDataType_U8 then 4
         else if result_type == TileDataType_U16 then 2
         else if result_type == TileDataType_U32 then 1
+        else if result_type == TileDataType_U64 then 0
         else 0;
     let packed_columns_unbounded = if pack_unpack then
-        (TileCellRearrangementWordsPerRow(source_tile) *
-            result_elements_per_word) as integer {0..262144}
+        (if result_type == TileDataType_U64 then
+             TileCellRearrangementWordsPerRow(source_tile) DIVRM 2
+         else TileCellRearrangementWordsPerRow(source_tile) *
+             result_elements_per_word) as integer {0..262144}
         else 0;
     if !result_type_valid ||
        (pack_unpack &&
-        (result_elements_per_word == 0 ||
+        ((result_elements_per_word == 0 &&
+          result_type != TileDataType_U64) ||
+         (result_type == TileDataType_U64 &&
+          (source_tile.layout != TileLayout_CUBE_M32 ||
+           TileCellRearrangementWordsPerRow(source_tile) MOD 2 != 0)) ||
          packed_columns_unbounded > 65535)) then
         return FALSE;
     end;

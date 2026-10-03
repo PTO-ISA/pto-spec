@@ -28,9 +28,9 @@ Its callers include the TCMP, TCMPS, TSEL, and TSELS predicates in operand-schem
 
 A predicate cell records a `predicate_basis_type`: the operation type of the comparison that produced it. Its own `data_type` is always U8 and its CUBE geometry is computed for U8. `TilePredicateCellDescriptorLegal` requires a basis type in `TileCubePredicateDataTypeSupported` and requires the stored CUBE repeat, cell count, and byte counts to equal the values recomputed from its shape.
 
-`TileCubePredicateDataTypeSupported` accepts FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, and the signed and unsigned 8, 16, and 32-bit integers. Every other type is excluded, including the 64-bit, packed, HiF8, E3M2, E2M3, E8M0, E6M2, and RCPE6M2 types.
+`TileCubePredicateDataTypeSupported` additionally accepts `FP64`, `S64`, and `U64`, alongside the prior floating and 8-, 16-, and 32-bit integer set. A 64-bit numeric basis is legal only with `CUBE_M32`; the predicate carrier itself remains a U8 PredicateCell Tile with the same logical shape and layout.
 
-For a GPR carrier, `TileCubePredicateRowBits` gives 16 rows for CUBE_M16 and 32 for CUBE_M32. `TileCubePredicateFieldCount` gives the number of columns per register: 2 for CUBE_M32, and for CUBE_M16 either 2 for 32-bit types or 4 otherwise. An 8-bit type uses two registers, doubling the column limit.
+For a GPR carrier, `TileCubePredicateRowBits` gives 16 rows for CUBE_M16 and 32 for CUBE_M32. `TileCubePredicateFieldCount` gives the number of logical columns per register; a 64-bit `CUBE_M32` basis uses one predicate bit per complete 64-bit logical element, independent of its two physical CELLs.
 
 <!-- PTO-READER-BLOCK: tile-model-legality-predicate-carriers-rules role=rules-interactions -->
 ## Rules and interactions
@@ -87,16 +87,19 @@ With a U8 source in CUBE_M16, two registers are used, so up to 4 x 2 = 8 columns
 pure func TileCubePredicateDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
-    return data_type == TileDataType_FP32 ||
+    return data_type == TileDataType_FP64 ||
+           data_type == TileDataType_FP32 ||
            data_type == TileDataType_TF32 ||
            data_type == TileDataType_HF32 ||
            data_type == TileDataType_FP16 ||
            data_type == TileDataType_BF16 ||
            data_type == TileDataType_E4M3 ||
            data_type == TileDataType_E5M2 ||
+           data_type == TileDataType_S64 ||
            data_type == TileDataType_S32 ||
            data_type == TileDataType_S16 ||
            data_type == TileDataType_S8 ||
+           data_type == TileDataType_U64 ||
            data_type == TileDataType_U32 ||
            data_type == TileDataType_U16 ||
            data_type == TileDataType_U8;
@@ -105,7 +108,8 @@ end;
 pure func TileCubePredicateGPRDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
-    return TileElementBits(data_type) == 32 ||
+    return TileElementBits(data_type) == 64 ||
+           TileElementBits(data_type) == 32 ||
            TileElementBits(data_type) == 16 ||
            data_type == TileDataType_U8 ||
            data_type == TileDataType_S8 ||
@@ -282,6 +286,8 @@ begin
            tile.storage_kind == TileStorage_PredicateCell &&
            tile.data_type == TileDataType_U8 &&
            TileCubePredicateDataTypeSupported(tile.predicate_basis_type) &&
+           TileCubeLayoutDataTypeSupported(
+               tile.layout, tile.predicate_basis_type) &&
            TileCubeDescriptorShapeAndPhysicalLegal(
                tile.capacity_bytes, tile.rows, tile.columns,
                tile.valid_rows, tile.valid_columns,

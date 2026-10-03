@@ -3,16 +3,19 @@
 pure func TileCubePredicateDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
-    return data_type == TileDataType_FP32 ||
+    return data_type == TileDataType_FP64 ||
+           data_type == TileDataType_FP32 ||
            data_type == TileDataType_TF32 ||
            data_type == TileDataType_HF32 ||
            data_type == TileDataType_FP16 ||
            data_type == TileDataType_BF16 ||
            data_type == TileDataType_E4M3 ||
            data_type == TileDataType_E5M2 ||
+           data_type == TileDataType_S64 ||
            data_type == TileDataType_S32 ||
            data_type == TileDataType_S16 ||
            data_type == TileDataType_S8 ||
+           data_type == TileDataType_U64 ||
            data_type == TileDataType_U32 ||
            data_type == TileDataType_U16 ||
            data_type == TileDataType_U8;
@@ -21,7 +24,8 @@ end;
 pure func TileCubePredicateGPRDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
-    return TileElementBits(data_type) == 32 ||
+    return TileElementBits(data_type) == 64 ||
+           TileElementBits(data_type) == 32 ||
            TileElementBits(data_type) == 16 ||
            data_type == TileDataType_U8 ||
            data_type == TileDataType_S8 ||
@@ -198,6 +202,8 @@ begin
            tile.storage_kind == TileStorage_PredicateCell &&
            tile.data_type == TileDataType_U8 &&
            TileCubePredicateDataTypeSupported(tile.predicate_basis_type) &&
+           TileCubeLayoutDataTypeSupported(
+               tile.layout, tile.predicate_basis_type) &&
            TileCubeDescriptorShapeAndPhysicalLegal(
                tile.capacity_bytes, tile.rows, tile.columns,
                tile.valid_rows, tile.valid_columns,

@@ -38,13 +38,23 @@ begin
         TileLayout_CUBE_N8, TileDataType_HiF4X2) == 32;
     assert TileCubeCellColumns(
         TileLayout_CUBE_M16, TileDataType_HiF4X2) == 16;
-    assert !TileCubeDataTypeSupported(TileDataType_FP64);
-    assert !TileCubeDataTypeSupported(TileDataType_S64);
-    assert !TileCubeDataTypeSupported(TileDataType_U64);
+    assert TileCubeDataTypeSupported(TileDataType_FP64);
+    assert TileCubeDataTypeSupported(TileDataType_S64);
+    assert TileCubeDataTypeSupported(TileDataType_U64);
+    assert TileCubeCellRows(TileLayout_CUBE_M32, TileDataType_FP64) == 32;
+    assert TileCubeCellColumns(TileLayout_CUBE_M32, TileDataType_FP64) == 1;
     assert TileCubeCellRows(TileLayout_CUBE_N8, TileDataType_U64) == 2;
     assert TileCubeCellColumns(TileLayout_CUBE_N8, TileDataType_U64) == 8;
     assert !TileCubeLayoutDataTypeSupported(
         TileLayout_CUBE_M16, TileDataType_U64);
+    assert !TileCubeLayoutDataTypeSupported(
+        TileLayout_CUBE_N8, TileDataType_FP64);
+    assert TileCubeLayoutDataTypeSupported(
+        TileLayout_CUBE_M32, TileDataType_FP64);
+    assert TileCubeLayoutDataTypeSupported(
+        TileLayout_CUBE_M32, TileDataType_S64);
+    assert TileCubeLayoutDataTypeSupported(
+        TileLayout_CUBE_M32, TileDataType_U64);
     assert TileCubeLayoutDataTypeSupported(
         TileLayout_CUBE_N8, TileDataType_U64);
     return 0;

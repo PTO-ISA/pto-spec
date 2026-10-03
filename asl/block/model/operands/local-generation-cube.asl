@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE","surface":"block","classification":["model","operands","local-generation-cube"],"depends_on":["PTO-BLOCK-MODEL-STATE-TYPES","PTO-TILE-MODEL-SHAPE-CUBE-CELL","PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE","surface":"block","classification":["model","operands","local-generation-cube"],"depends_on":["PTO-BLOCK-MODEL-STATE-TYPES","PTO-TILE-MODEL-SHAPE-CUBE-CELL","PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL","PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE"]}
 pure func BundleLocalGenerationCubeLayout(layout: TileLayout) => boolean
 begin
     return layout == TileLayout_CUBE_M16 || layout == TileLayout_CUBE_M32;
@@ -40,9 +40,12 @@ end;
 
 pure func BundleLocalGenerationCubeValidColumnsAt(
     offset_cells: integer {0..2047}, cell_columns: integer {0,1,2,4,8,16},
+    cells_per_group: integer {1..2},
     fragment_valid_columns: integer {0..65535}) => integer {0..65535}
 begin
-    let derived = offset_cells * cell_columns + fragment_valid_columns;
+    if offset_cells MOD cells_per_group != 0 then return 0; end;
+    let derived = (offset_cells DIVRM cells_per_group) * cell_columns +
+        fragment_valid_columns;
     if derived > 65535 then return 0; end;
     return derived as integer {0..65535};
 end;
@@ -80,6 +83,10 @@ begin
         else _LocalGenerations[[slot]].participant_mask;
     if participant_mask == Zeros{4} ||
        (writer_mask AND participant_mask) != writer_mask then return FALSE; end;
+    let cells_per_group = TileCubePhysicalCellsPerLogicalGroup(
+        candidate.layout, candidate.data_type);
+    if !TileCubePhysicalCellRangeComplete(candidate.layout,
+           candidate.data_type, offset_cells, writer_cells) then return FALSE; end;
     if !init && _LocalGenerations[[slot]].writer_count != 0 then
         let first = _LocalGenerations[[slot]].writers[[0]];
         if first.layout != candidate.layout ||
@@ -91,6 +98,9 @@ begin
             looplimit 16 do
             let prior = _LocalGenerations[[slot]].writers[[prior_index]];
             if prior.valid then
+                if !TileCubePhysicalCellRangeComplete(
+                       prior.layout, prior.data_type,
+                       prior.offset_cells, prior.cell_count) then return FALSE; end;
                 let expected_rows = if prior.layout == TileLayout_CUBE_M16 then
                     16 else 32;
                 if prior.physical_rows != expected_rows ||
@@ -151,6 +161,7 @@ begin
                             pe_valid_columns =
                                 BundleLocalGenerationCubeValidColumnsAt(
                                     prior.offset_cells, cell_columns,
+                                    cells_per_group,
                                     prior.valid_columns);
                         elsif prior.valid_columns != prior.physical_columns then
                             return FALSE;
@@ -170,13 +181,17 @@ begin
                     pe_valid_columns =
                         BundleLocalGenerationCubeValidColumnsAt(
                             offset_cells, cell_columns,
+                            cells_per_group,
                             candidate.valid_columns);
                 elsif candidate.valid_columns != candidate.columns then
                     return FALSE;
                 end;
             end;
             if !terminal_found || pe_valid_columns == 0 ||
-               pe_valid_columns > extent * cell_columns then return FALSE; end;
+               pe_valid_columns >
+                   (extent DIVRM cells_per_group) * cell_columns then
+                return FALSE;
+            end;
             if !common_set then
                 common_valid_columns = pe_valid_columns;
                 common_set = TRUE;
@@ -188,7 +203,9 @@ begin
     if !common_set || common_extent == 0 || common_valid_columns == 0 then
         return FALSE;
     end;
-    let final_columns = common_extent * cell_columns;
+    if common_extent MOD cells_per_group != 0 then return FALSE; end;
+    let final_columns =
+        (common_extent DIVRM cells_per_group) * cell_columns;
     return TileCubeDescriptorShapeAndPhysicalLegal(
         candidate.capacity_bytes, candidate.rows, final_columns,
         candidate.valid_rows, common_valid_columns, candidate.data_type,
@@ -214,12 +231,14 @@ begin
     end;
     return if set then common_extent else 0;
 end;
-
 readonly func BundleLocalGenerationCubeFinalValidColumns(
     slot: integer {0..63}, extent: integer {1..2048}) => integer {0..65535}
 begin
     let first = _LocalGenerations[[slot]].writers[[0]];
     let cell_columns = TileCubeCellColumns(first.layout, first.data_type);
+    let cells_per_group = TileCubePhysicalCellsPerLogicalGroup(
+        first.layout, first.data_type);
+    if extent MOD cells_per_group != 0 then return 0; end;
     var selected_pe: integer {0..3} = 0;
     var pe_found = FALSE;
     for pe = 0 to 3 do
@@ -241,13 +260,13 @@ begin
             if found then return 0; end;
             found = TRUE;
             valid_columns = BundleLocalGenerationCubeValidColumnsAt(
-                current.offset_cells, cell_columns, current.valid_columns);
+                current.offset_cells, cell_columns, cells_per_group,
+                current.valid_columns);
             if valid_columns == 0 then return 0; end;
         end;
     end;
     return if found then valid_columns else 0;
 end;
-
 func FinalizeBundleLocalGenerationCube(slot: integer {0..63})
 begin
     let destination = _LocalGenerations[[slot]].working_destination;
@@ -256,7 +275,10 @@ begin
     let valid_columns = BundleLocalGenerationCubeFinalValidColumns(slot,
         extent as integer {1..2048});
     let cell_columns = TileCubeCellColumns(first.layout, first.data_type);
-    let physical_columns = extent * cell_columns;
+    let cells_per_group = TileCubePhysicalCellsPerLogicalGroup(
+        first.layout, first.data_type);
+    let physical_columns =
+        (extent DIVRM cells_per_group) * cell_columns;
     let k_repeat = TileCubePhysicalKRepeat(first.layout, first.physical_rows,
         physical_columns, first.data_type);
     let n_repeat = TileCubePhysicalNRepeat(first.layout, first.physical_rows,
@@ -296,8 +318,6 @@ begin
     _LocalGenerations[[slot]].parent_descriptor.valid = TRUE;
     _LocalGenerations[[slot]].descriptor_finalized = TRUE;
 end;
-
-
 readonly func BundleLocalGenerationCoverageComplete(
     slot: integer {0..63}, offset: Word, writer_size: integer {1..12},
     writer_mask: bits(4), init: boolean,
@@ -378,7 +398,6 @@ begin
            actual.cube_cell_count == expected.cube_cell_count &&
            actual.cube_storage_bytes == expected.cube_storage_bytes;
 end;
-
 pure func BundleLocalGenerationRangeOverlaps(
     left_offset: integer {0..2047}, left_count: integer {1..2048},
     right_offset: integer {0..2047}, right_count: integer {1..2048}) => boolean
@@ -386,8 +405,6 @@ begin
     return left_offset < right_offset + right_count &&
            right_offset < left_offset + left_count;
 end;
-
-
 func SetBundleLocalGenerationInitFault(fault: FaultCode)
 begin
     SetFault(fault, ReadTPC()); let ring = CurrentACR();

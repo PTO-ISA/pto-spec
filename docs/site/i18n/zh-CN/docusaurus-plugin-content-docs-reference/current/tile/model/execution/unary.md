@@ -24,7 +24,7 @@ This page is a generated reference view of the normative ASL unit.
 
 操作类型是目标 Tile 的 `data_type`。源必须已分配、与目标形状匹配，并具有兼容的载体宽度。
 
-各操作的类型集合不同。TNOT 接受八种整数类型。TABS、TNEG 和 TRELU 接受 16 种算术类型。SFU 操作接受八种浮点类型 FP64、FP32、TF32、HF32、FP16、BF16、E4M3 和 E5M2。
+各操作的类型集合不同。TNOT 接受八种有符号与无符号整数类型。TABS 使用 16 类型向量算术集合。TNEG 接受 `FP64`、`S64`、`U64`、`S32`、`S16`、`S8`、`FP32`、`FP16` 与 `BF16`。TRELU 接受 `FP64`、`S64`、`U64`、`FP16`、`BF16`、`FP32` 与 `S32`。SFU 组中，TEXP 保留八种浮点类型 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3` 与 `E5M2`；TLOG、TRECIP、TSQRT 与 TRSQRT 恰好接受 `FP64`、`FP32`、`FP16` 与 `BF16`。
 
 状态标志从 bit 0 到 bit 4 依次为 NV、DZ、OF、UF 和 NX。SFU 元素返回全部五个标志；封闭组元素只返回一个无效位，记录为 NV。处理函数把活动元素的标志按位或起来，并用 `ScalarFPRecordFlags` 记录一次。
 
@@ -55,7 +55,7 @@ E4M3 没有无穷编码，因此无界结果变为其规范 NaN。其他输入�
 
 ExecutionMask 下的非活动坐标取 ZERO 或 MERGE 值，且不贡献标志。发布之后，处理函数把有效区域标记为已定义，并应用指令束填充。
 
-`ReferenceTileUnaryFinite` 只接受 FP32、FP16 和 BF16。合法性允许 SFU 操作使用 FP64、TF32、HF32、E4M3 和 E5M2，但模型没有为它们定义有限的非特殊结果。
+`ReferenceTileUnaryFinite` 接受 `FP64`、`FP32`、`FP16` 与 `BF16`。它们是 TLOG、TRECIP、TSQRT 与 TRSQRT 的完整类型域。TEXP 还接受 `TF32`、`HF32`、`E4M3` 与 `E5M2`，这些类型保留既有有限、非特殊结果缺口；整数与打包 SFU 操作类型在到达该路径前拒绝。
 
 `TileUnaryValue` 在可执行模型中没有调用者。
 
@@ -187,8 +187,11 @@ begin
     if operation == TileUnary_RELU then
         return TileTReluDataTypeSupported(data_type);
     end;
-    if TileUnaryUsesSFUElementwiseContract(operation) then
+    if operation == TileUnary_EXP then
         return TileFloatingElementwiseDataTypeSupported(data_type);
+    end;
+    if TileUnaryUsesSFUElementwiseContract(operation) then
+        return TileF3DataTypeSupported(data_type);
     end;
     return FALSE;
 end;

@@ -36,7 +36,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `Sat` 控制范围溢出。`Sat=0` 时，溢出的浮点结果在目标格式有无穷时变为无穷，溢出的整数结果只保留舍入值的低位。`Sat=1` 时，结果被钳位到目标类型的最大或最小有限值。
 
-完整预检之后，源被快照，每个有效逻辑元素独立转换。源与目标都属于共享集合 `FP64`、`FP32`、`FP16`、`E4M3`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16` 与 `U8` 的转换，使用与标量转换族完全相同的结果与标志规则。`E8M0`、`E6M2`、`RCPE6M2`、`E2M1X2` 与 `E1M2X2` 使用约束块中描述的专用规则。这些规则之外的其他合法类型对，例如涉及 `BF16`、`TF32`、`HF32` 或 `E5M2` 的类型对，会进入 `TileProfileConvert` 中的回退路径：浮点目标直接返回源的原始位，整数目标则截断原始位，因此 ASL 不为它们给出数值转换。
+完整预检之后，源被快照，每个有效逻辑元素独立转换。公共 Tile 规则覆盖 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`，以及有符号或无符号 64、32、16、8 位整数。reduced 浮点目标使用各自精确 fixed encoder。`E8M0`、`E6M2`、`RCPE6M2`、`E2M1X2` 与 `E1M2X2` 保持专用类型对规则。更广的 Tile 集合不会新增标量转换 opcode 或类型对。
 
 <!-- PTO-READER-BLOCK: tile-tcvt-inputs role=inputs-outputs -->
 ## 操作数角色与描述符
@@ -54,6 +54,8 @@ The current instruction contract is owned by the ASL source linked above.
 对 `CUBE_M16` 或 `CUBE_M32` 源，`B.DATR` `Layout` 必须保持 `NORM`，且必须省略 `LB2`。目标保持相同的 CUBE 布局以及相同的 `ValidRow` 与 `ValidCol`，而其物理形状、CELL 数量与最小 `TSize` 由 `DstDataType` 推导。
 
 设计要点：CUBE 物理几何取决于元素位宽。为目标独立推导几何，使得例如 `FP32` 的 CUBE Tile 可以转换为更窄的类型，而无需先做布局转换。
+
+对于 `CUBE_M32`，`FP64`、`S64` 或 `U64` 源或目标使用 double-CELL 映射，同时保持逻辑形状。若源或目标为 64 位，`CUBE_M16` 会拒绝该类型对。
 
 <!-- PTO-READER-BLOCK: tile-tcvt-effects role=effects -->
 ## 发布、已定义性与填充
@@ -304,6 +306,7 @@ end;
 - The source valid region is fully defined and contains valid encodings. PE_MASK=0000 is a strict no-op before schema, descriptor, allocation, or payload checks.
 - Under the named hardware profile, an E8M0 destination accepts exactly FP16, BF16, or FP32 sources. E8M0 as a source accepts exactly FP16, BF16, or FP32 destinations; 0x00..0xFE denote powers of two and 0xFF produces the target canonical quiet NaN without NV. Every other E8M0 pair rejects before destination allocation.
 - The BSTART DataType is the TCVT source operation interpretation, not necessarily the source backing DataType. RowMajor and CUBE_M16/M32 sources may differ only when backing and operation types are non-packed, equal-width, and carrier-compatible; the operation view never mutates the backing descriptor. The destination backing type is the resolved B.DATR destination type.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 
