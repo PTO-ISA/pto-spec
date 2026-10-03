@@ -3682,7 +3682,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "bffb5e764bb02b58ce7e880252827c2db9b2728e0c26e0d4ab6390d9f1109398"
+      "sha256": "9b3a47f572b735e24bf31f589ebb6f9686dc5647fa9c29c6bbd453bcbfed915c"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3748,7 +3748,7 @@
     },
     "tile_operations_total": 119
   },
-  "content_sha256": "d72a19d804eeadc5e1d06d1aaa414e31c166d57cfcc3f9e16b38a4d4231749ce",
+  "content_sha256": "6bc74a792b597ec68feb8c3ce8b7edef7df2ed5344e55f6ef4d9f2e4444cd867",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

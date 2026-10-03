@@ -2089,4 +2089,4 @@ Issue [#371](https://github.com/PTO-ISA/pto-spec/issues/371) closes the Local in
 
 The reference implementation repairs admitted FP64 finite operations and exact conversion paths. This does not accept the still-open elementary-function accuracy proposal, introduce a target latency, or claim a new ULP bound. Compatibility includes newly executable M32 b64 tuples, 64-bit generation counterparts and paired raw-word rearrangement; release impact requires fresh commit-scoped AVS and downstream adoption.
 
-#371 使 Local 指令族与 M32 双 CELL 的 64 位存储合同闭合，按浮点、整数和原始载体分别接入对应类型。每个助记符保留其类型对和效果坐标 owner；参考实现修复已声明的 FP64 路径，不由此接受新的目标精度或时序保证。
+议题 #371 使 Local 指令族与 M32 双 CELL 的 64 位存储合同闭合，按浮点、整数和原始载体分别接入对应类型。每个助记符保留其类型对和效果坐标 owner；参考实现修复已声明的 FP64 路径，不由此接受新的目标精度或时序保证。

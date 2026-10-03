@@ -151,6 +151,12 @@ projection to 466 Scalar forms, 96 active Block forms, 118 direct Tile
 operations, and 46 occupied extension reservations while preserving the
 earlier inventory lines.
 
+The ADR-TILE-0009 decision of 2026-10-03 (issue
+[#371](https://github.com/PTO-ISA/pto-spec/issues/371)) updates the current
+projection to 466 Scalar forms, 96 active Block forms, 119 direct Tile
+operations, and 46 occupied extension reservations while preserving the
+earlier inventory lines.
+
 ## Consequences
 
 - Binary encodings preserve PTO selector facts without prescribing physical
