@@ -91,7 +91,8 @@ begin
                    _Tiles[[source]].valid_rows,
                    _Tiles[[source]].valid_columns,
                    source_operation_type, source_layout) &&
-               TileCubeDataTypeSupported(destination_type);
+               TileCubeLayoutDataTypeSupported(
+                   source_layout, destination_type);
     end;
     if TileLayoutIsCube(source_layout) then
         return FALSE;

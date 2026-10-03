@@ -94,8 +94,11 @@ begin
     if operation == TileUnary_RELU then
         return TileTReluDataTypeSupported(data_type);
     end;
-    if TileUnaryUsesSFUElementwiseContract(operation) then
+    if operation == TileUnary_EXP then
         return TileFloatingElementwiseDataTypeSupported(data_type);
+    end;
+    if TileUnaryUsesSFUElementwiseContract(operation) then
+        return TileF3DataTypeSupported(data_type);
     end;
     return FALSE;
 end;
