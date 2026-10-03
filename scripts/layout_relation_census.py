@@ -266,7 +266,7 @@ TLEA_COMMON_HELPERS = set(TLEA_NEW_HELPER_PATHS) | {
 ISSUE371_B64_CLASSIFICATION = (
     "Local CUBE_M32 FP64/S64/U64 double-CELL and Local 64-bit applicability "
     "closure (Issue #371 / ADR-CUBE-0004/ADR-CUBE-0005/ADR-TILE-0009, "
-    "baseline 7bfc185ce)"
+    "baseline e182c9b70)"
 )
 ISSUE371_HELPER_DEFINITION_DELTAS = {
     "ReferenceCommonFloatingEndpoint": {
