@@ -532,10 +532,22 @@ class LayoutRelationCensusTest(unittest.TestCase):
         expected = set(BIAS) | set(result["exact_34"]) | INDEXED_TLSU | {"GMOV", "TCVT"}
         if texpdif_is_committed:
             expected.add("TEXPDIF")
+        tlea_is_committed = any(
+            row["mnemonic"] == "TLEA" for row in result["operation_signatures"]
+        )
+        if tlea_is_committed:
+            expected.add("TLEA")
         self.assertEqual({row["mnemonic"] for row in changed}, expected)
         self.assertEqual(len([row for row in changed if row["mnemonic"] in result["exact_34"]]), 68)
         self.assertEqual(len(gmov), 2)
         self.assertEqual(len(bias), 8)
+        if tlea_is_committed:
+            tlea = [row for row in changed if row["mnemonic"] == "TLEA"]
+            self.assertEqual({row["form"] for row in tlea}, {"direct", "bundle"})
+            for row in tlea:
+                self.assertEqual(set(row["L1"]), {"destination0", "source0"})
+                for role in ("destination0", "source0"):
+                    self.assertEqual(set(row["L1"][role]), {"RowMajor", "CUBE_M32"})
         if texpdif_is_committed:
             texpdif = [row for row in changed if row["mnemonic"] == "TEXPDIF"]
             self.assertEqual({row["form"] for row in texpdif}, {"direct", "bundle"})
