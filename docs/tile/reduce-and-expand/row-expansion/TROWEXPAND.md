@@ -37,7 +37,7 @@ Design point: the copy is bit-for-bit through the operation view. A broadcast ba
 
 - `destination0` is a newly allocated Local Tile with the operation DataType and the `B.DIM`-derived geometry; `LB0` is required and supplies a nonzero `ValidCol`, omitted `LB1` selects `ValidRow` one, and omitted `LB2` selects `Col` equal to `ValidCol`. Its other physical coordinates are padding coordinates.
 
-- All operands use the same layout, and only `RowMajor`, `CUBE_M16`, and `CUBE_M32` are admitted. The slot is logical column 0 for `RowMajor` and the `B.DATR.RMode`-selected operation-typed slot for `CUBE_M16` and `CUBE_M32`.
+- All operands use the same layout, and only `RowMajor`, `CUBE_M16`, and `CUBE_M32` are admitted. The slot is logical column 0 for `RowMajor` and the `B.DATR.RMode`-selected operation-typed slot for `CUBE_M16` and `CUBE_M32`. A 64-bit CUBE operand requires the `CUBE_M32` double-CELL mapping; `CUBE_M16` rejects it.
 
 - The operands share one `PE_MASK`. `PE_MASK=0000` is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
@@ -215,7 +215,8 @@ end;
 - Without ExecutionMask, the broadcast valid region remains fully defined. With ExecutionMask, only the selected BroadcastTile[r,BroadcastSlot] for each row with an active destination coordinate must be defined; an inactive row does not read or validate its selected element. COPY does not validate arithmetic encodings.
 - Layout, PadValueOrByteId, and operation-specific RMode are applicable as encoded by the selected layout; RMode means BroadcastByteOffset only for CUBE_M16/M32 and must be zero for RowMajor. B.IOR and B.IOS are illegal.
 - All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
-- For CUBE_M32/CUBE_M16, the source-operation-typed BroadcastSlot is BroadcastByteOffset DIV ElementBytes. The offset must be less than the 4-byte M32 or 8-byte M16 per-row CELL slice, aligned to ElementBytes, and select a slot below both TileCubeCellColumns(Layout, SourceOperationDataType) and BroadcastTile.ValidColumns. The selector addresses only the first CELL of the bound broadcast Tile; B.SUBVIEW selects a later CELL/range when needed. RowMajor requires RMode zero.
+- For CUBE_M32/CUBE_M16, the source-operation-typed BroadcastSlot is BroadcastByteOffset DIV ElementBytes. The offset must be less than the 4-byte lower-width M32 or 8-byte M16 per-row CELL slice (a b64 M32 group spans 8 bytes across the pair), aligned to ElementBytes, and select a slot below both TileCubeCellColumns(Layout, SourceOperationDataType) and BroadcastTile.ValidColumns. The selector addresses only the first logical CELL group of the bound broadcast Tile, including both planes for b64 M32; B.SUBVIEW selects a later CELL/range when needed. RowMajor requires RMode zero.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

@@ -59,7 +59,7 @@ Design point: `InstructionContractPublishesTileDestination_TPREFETCH` is `FALSE`
 <!-- PTO-READER-BLOCK: tile-tprefetch-constraints role=constraints -->
 ## Types, shapes, and faults
 
-`InstructionContractDataTypeLegal_TPREFETCH` accepts the types `TileCarrierOrPackedBaselineDataTypeSupported` admits: non-four-bit carriers up to 4 bytes wide, plus the packed four-bit types.
+`InstructionContractDataTypeLegal_TPREFETCH` accepts the types `TileCarrierOrPackedBaselineDataTypeSupported` admits: non-packed carriers through 64 bits, plus the packed four-bit baseline.
 
 `ValidCol` and `ValidRow` are positive, `Col` is a nonzero power of two and at least `ValidCol`, and `ValidRow * ValidCol` may not exceed `PTO_MODEL_TILE_ELEMENTS`. `B.DATR` permits only `Layout` as a nonzero operation attribute and requires the pad union to remain zero.
 
@@ -178,6 +178,7 @@ end;
 - It has implicit participation 1111 and accepts no Local or Shared Tile binding.
 - ValidCol and ValidRow are positive; Col is a nonzero power of two and is at least ValidCol.
 - B.DATR permits only Layout as a nonzero operation attribute and requires the pad union to remain zero.
+- The non-packed raw carrier domain includes B64; prefetch addressing remains the existing explicit element-stride contract.
 
 ## State effects
 

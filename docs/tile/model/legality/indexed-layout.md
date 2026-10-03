@@ -46,9 +46,9 @@ Design point: indexed addresses are byte displacements, and the block schema has
 
 `TileOperandsLegal_TFMA` requires the destination and three sources (left, right, addend) to share shape, layout, storage kind, and data type; the layout must be RowMajor, CUBE_M16, or CUBE_M32; and the sources must be defined and, for floating types, validly encoded at every valid coordinate (every active coordinate when an ExecutionMask is in force).
 
-`TileOperandsLegal_TFMA` accepts any type in `TileVecArithmeticDataTypeSupported`, which includes FP64, TF32, HF32, E4M3, E5M2, and 8 integer types. The `TFMA` contract text limits the DataType to FP16, FP32, and BF16. For floating types the finite path calls `ScalarFPFusedProfile`, which asserts an FP64, FP32, or FP16 type code; BF16, which the contract admits, is not among them. This page does not promise a result for a type that helper asserts against.
+`TileOperandsLegal_TFMA` uses `TileFusedMultiplyAddDataTypeSupported` and accepts exactly `FP64`, `S64`, `U64`, `FP16`, `FP32`, and `BF16`. Fixed-width integer forms and the `FP64`, `FP32`, and `FP16` fused floating paths are executable. `ScalarFPFusedProfile` does not admit BF16, so the pre-existing accepted-BF16 finite-FMA gap remains. Other vector-arithmetic types do not enter TFMA execution.
 
-`TileOperandsLegal_GMOV` requires `peer_tid` below 4, a defined source, matching shape, equal type and layout, a supported elementwise layout, and a data type in `TileCarrierOrPackedBaselineDataTypeSupported` (non-four-bit up to 4 bytes, or four-bit).
+`TileOperandsLegal_GMOV` requires `peer_tid` below 4, a defined source, matching shape, equal type and layout, a supported elementwise layout, and a data type in `TileCarrierOrPackedBaselineDataTypeSupported` (non-packed through 64 bits, or the existing packed baseline).
 
 All of these run in preflight, before any memory request, snapshot, or destination write.
 

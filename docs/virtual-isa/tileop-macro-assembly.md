@@ -1,6 +1,6 @@
 # PTO TileOp macro assembly
 
-This reference defines the canonical PTO 0.58.7 macro-assembly format for all 118 current direct Tile operations.
+This reference defines the canonical PTO 0.58.7 macro-assembly format for all 119 current direct Tile operations.
 It is generated from the `PTO-TILEOP-MACRO` owners in `asl/arch/overview/instruction-classification.asl`; each physical mapping is cross-checked against the operation's owning `PTO-INSTRUCTION` metadata and `spec/catalog/tile-operations.json`.
 
 ## Syntax model
@@ -241,6 +241,7 @@ Destination metavariables likewise become physical binding operands. A Local des
 | --- | --- | --- |
 | `TADDS` | `VEC` | `TADDS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ScalarGPR0?, ->DstTile<Size>` |
 | `TDIVS` | `SFU` | `TDIVS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ScalarGPR0?, ->DstTile<Size>` |
+| `TLEA` | `VEC` | `TLEA <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ScalarGPR0, ->DstTile<Size>` |
 | `TMAXS` | `VEC` | `TMAXS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ScalarGPR0?, ->DstTile<Size>` |
 | `TMINS` | `VEC` | `TMINS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ScalarGPR0?, ->DstTile<Size>` |
 | `TMULS` | `VEC` | `TMULS <Row=Derived, Col, ValidRow=Row, ValidCol=Col, DataType, PadValue?, PEMask=AllPE>, SrcTile0, ScalarGPR0?, ->DstTile<Size>` |

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/layout-and-rearrangement/layout/TUNPACK.asl`
 
-Extract selected byte fields from 8/16/32-bit Local CUBE source carriers into U8/U16/U32 destination words.
+Extract selected byte fields from 8/16/32-bit and M32 64-bit Local CUBE source carriers into U8/U16/U32/U64 destination words.
 
 ## Normative identity {#PTO-INST-TILE-TUNPACK}
 
@@ -21,7 +21,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `TUNPACK` 从 Local CUBE 源的每个参与的 32 位字中提取一个连续的字节字段，并把它放入目标字的低字节。它重排原始字节，不执行任何数值转换。
 
-设计要点：`TUNPACK` 由 `BSTART.SFU` 以 TEPL Mode 3 Function 24（选择器 `0x078`）选中。`BSTART` 类型 `U8`、`U16` 或 `U32` 是目标类型；源后备类型不必与之相同。
+设计要点：`TUNPACK` 由 `BSTART.SFU` 以 TEPL Mode 3 Function 24（选择器 `0x078`）选中。`BSTART` 类型 `U8`、`U16`、`U32` 或 `U64` 是目标类型；源后备类型不必与之相同。
 
 <!-- PTO-READER-BLOCK: tile-tunpack-mechanism role=mechanism -->
 ## 提取规则
@@ -35,9 +35,9 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tunpack-inputs-outputs role=inputs-outputs -->
 ## 输入与结果
 
-- `source0` 是 Local 数值 `CUBE_M16` 或 `CUBE_M32` Tile，元素为非打包的 8、16 或 32 位。
+- `source0` 是 Local 数值 CUBE Tile，元素为非打包 8、16、32 位或 M32 64 位。
 - `scalar0` 是来自一条 `B.IOR` 的解包控制字；RegSrc1、RegSrc2 与 RegDst 为零。
-- `destination0` 是新的，类型为 `BSTART` 类型，布局与有效行与源相同，有效列数为 `words per row x elements per word`：`U8` 为 4，`U16` 为 2，`U32` 为 1。
+- `destination0` 是新的。U8/U16/U32 每个 raw word 分别生成 4/2/1 个元素。U64 要求 `CUBE_M32`、偶数 raw-word 数以及每个完整低/高 pair 一个逻辑列。
 
 与 `TPACK` 相同，目标形状由源描述符推导，而不是来自 `B.DIM`。
 
@@ -111,7 +111,7 @@ end;
 ## Block composition
 
 ```asm
-BSTART.SFU TUNPACK, U8/U16/U32
+BSTART.SFU TUNPACK, U8/U16/U32/U64
 B.DATR Layout (optional)
 B.DIM LB0/LB1/LB2 (optional)
 B.IOT source, ->destination
@@ -133,7 +133,8 @@ pure func InstructionContractDataTypeLegal_TUNPACK(
 begin
     return data_type == TileDataType_U8 ||
            data_type == TileDataType_U16 ||
-           data_type == TileDataType_U32;
+           data_type == TileDataType_U32 ||
+           data_type == TileDataType_U64;
 end;
 
 readonly func InstructionContractOperandsLegal_TUNPACK(
@@ -157,9 +158,9 @@ end;
 
 ## Legality
 
-- TUNPACK accepts Local Numeric CUBE_M16 or CUBE_M32 source backing with non-packed 8/16/32-bit elements.
-- BSTART selects exactly U8, U16, or U32 for the fresh destination. The control selects a contiguous byte field within each independent 32-bit source word.
-- Only selected source bytes are read. Every selected interval is inside its word logical valid-byte span and every selected byte has a defined containing element; each participating word produces one complete zero-filled destination word.
+- TUNPACK accepts Local Numeric CUBE_M16 or CUBE_M32 source backing with non-packed 8/16/32-bit or M32 64-bit elements.
+- BSTART selects U8, U16, U32, or U64 for the fresh destination. The control selects a contiguous byte field within each independent 32-bit source word.
+- Only selected source bytes are read. Every selected interval is inside its word logical valid-byte span and every selected byte has a defined containing element; each participating word produces one zero-filled result word; U64 joins complete low/high pairs and rejects odd tails.
 
 ## State effects
 
@@ -182,4 +183,4 @@ end;
 
 ## Examples
 
-- BSTART.SFU TUNPACK, U8/U16/U32; B.DATR Layout; B.DIM LB0; B.IOT source, ->destination; B.IOR a0; BSTOP
+- BSTART.SFU TUNPACK, U8/U16/U32/U64; B.DATR Layout; B.DIM LB0; B.IOT source, ->destination; B.IOR a0; BSTOP

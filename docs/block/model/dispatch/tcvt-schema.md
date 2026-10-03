@@ -40,7 +40,7 @@ Design point: an encoded rounding field of zero means "use the operation default
 
 The shape rules depend on the source layout.
 
-- For a `CUBE_M16` or `CUBE_M32` source, the requested valid columns and rows must equal the source's, dimension 2 must be 1, canonicalize must be off, the data layout must be `NORM`, and the destination type must be CUBE-capable. The destination keeps the same CUBE layout.
+- For a `CUBE_M16` or `CUBE_M32` source, the requested valid columns and rows must equal the source's, dimension 2 must be 1, canonicalize must be off, the data layout must be `NORM`, and the destination type must be supported by that same CUBE layout. Thus an `FP64`, `S64`, or `U64` destination requires `CUBE_M32`; `CUBE_M16` rejects the 64-bit result.
 - Any other CUBE layout is rejected.
 - For a non-CUBE source, the requested valid columns, valid rows, and physical columns must all equal the source's, canonicalize must be off, and the source layout must equal the bundle's source layout. The destination physical shape must also fit: normally its derived row count equals the source's rows, but when both types allow odd physical columns and the column count is not a power of two, the source rows must fit the destination capacity.
 
@@ -164,7 +164,8 @@ begin
                    _Tiles[[source]].valid_rows,
                    _Tiles[[source]].valid_columns,
                    source_operation_type, source_layout) &&
-               TileCubeDataTypeSupported(destination_type);
+               TileCubeLayoutDataTypeSupported(
+                   source_layout, destination_type);
     end;
     if TileLayoutIsCube(source_layout) then
         return FALSE;

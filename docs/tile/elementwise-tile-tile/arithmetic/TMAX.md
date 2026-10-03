@@ -62,9 +62,9 @@ Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`.
 <!-- PTO-READER-BLOCK: tile-tmax-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The ASL legality predicate `TileVecArithmeticDataTypeSupported` accepts the 16 types `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, and `U8`. The generated legality list below is narrower and names only `S32`, `U32`, `FP32`, `S16`, `U16`, `FP16`, `BF16`, `S8`, and `U8`. Code that must satisfy both should use a type from the narrower list.
+`TMAX` accepts exactly `FP64`, `S64`, `U64`, `S32`, `U32`, `FP32`, `S16`, `U16`, `FP16`, `BF16`, `S8`, and `U8`. Every admitted type has an executable ordered maximum result.
 
-The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`, and all operands must use that same layout. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal.
+The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`, and all operands must use that same layout; among CUBE layouts, a 64-bit operation type is legal only in `CUBE_M32`; `CUBE_M16` rejects it. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal.
 
 Every valid source element must be defined and, for floating types, must be a valid encoding of the selected `DataType`. Malformed bindings, missing or zero dimensions, mismatched sources, an unsupported `DataType`, an invalid encoding, or an invalid destination capacity raise `Fault_TileLegality` before any destination effect.
 
@@ -198,10 +198,11 @@ end;
 
 - TMAX is BSTART.VEC Mode 0 Function 11 and has no standalone opcode.
 - Exactly one terminating Local B.IOT supplies two ordered Local sources and one new Local destination; B.IOR and B.IOS are illegal.
-- DataType is one of S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.
+- DataType is one of FP64, S64, U64, S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.
 - B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.
 - Floating source encodings invalid for the selected operation reject before allocation or destination effects; PE_MASK zero is a strict no-op.
 - The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

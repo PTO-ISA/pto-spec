@@ -27,7 +27,7 @@ A mask has one of two carriers:
 
 The unit writes `_BundleExecutionMask`: `valid`, `carrier`, the coordinate domain (`layout`, `valid_rows`, `valid_columns`), `word_count`, `predicate_tile`, `predicate_source_ordinal`, `invert`, `zero_inactive`, and at merge preparation `merge_base` and `merge_base_valid`. `invert` and `zero_inactive` are copied from the `B.DATR` `PredInv` and `Zero` fields.
 
-The coordinate domain is the grid that the mask covers. For most operations it is the valid shape and layout of the first ordinary source. `TSEL` and `TSELS` use the second source when the first is a predicate cell. `TGATHER`, `TSCATTER`, `MSCATTER`, and `MSCATTER_MASK` use the second source. CUBE transport and closed expansion operations use `LB0` and `LB1`. `TPACK` and `TUNPACK` count columns in 32-bit words per row.
+The coordinate domain is the grid that the mask covers. For most operations it is the valid shape and layout of the first ordinary source. `TSEL` and `TSELS` use the second source when the first is a predicate cell. `TGATHER`, `TSCATTER`, `MSCATTER`, and `MSCATTER_MASK` use the second source. CUBE transport and closed expansion operations use `LB0` and `LB1`. `TPACK` and `TUNPACK` count activity in 32-bit words per row, preserving the raw-carrier exception in which the low and high words of a U64 result may be gated separately.
 
 <!-- PTO-READER-BLOCK: block-model-dispatch-execution-mask-schema-rules role=rules-interactions -->
 ## Rules and interactions
@@ -404,14 +404,21 @@ begin
         if result_type == TileDataType_U8 then 4
         else if result_type == TileDataType_U16 then 2
         else if result_type == TileDataType_U32 then 1
+        else if result_type == TileDataType_U64 then 0
         else 0;
     let packed_columns_unbounded = if pack_unpack then
-        (TileCellRearrangementWordsPerRow(source_tile) *
-            result_elements_per_word) as integer {0..262144}
+        (if result_type == TileDataType_U64 then
+             TileCellRearrangementWordsPerRow(source_tile) DIVRM 2
+         else TileCellRearrangementWordsPerRow(source_tile) *
+             result_elements_per_word) as integer {0..262144}
         else 0;
     if !result_type_valid ||
        (pack_unpack &&
-        (result_elements_per_word == 0 ||
+        ((result_elements_per_word == 0 &&
+          result_type != TileDataType_U64) ||
+         (result_type == TileDataType_U64 &&
+          (source_tile.layout != TileLayout_CUBE_M32 ||
+           TileCellRearrangementWordsPerRow(source_tile) MOD 2 != 0)) ||
          packed_columns_unbounded > 65535)) then
         return FALSE;
     end;

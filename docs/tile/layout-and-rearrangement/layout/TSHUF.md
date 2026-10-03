@@ -37,7 +37,7 @@ Design point: one control word covers each 32-bit word of a row, so every elemen
 <!-- PTO-READER-BLOCK: tile-tshuf-inputs-outputs role=inputs-outputs -->
 ## Operands and descriptors
 
-- `source0` is the data source: a numeric `CUBE_M16` or `CUBE_M32` Tile of any CUBE type except a 64-bit type.
+- `source0` is the data source: a numeric `CUBE_M16` or `CUBE_M32` Tile; a 64-bit carrier requires `CUBE_M32`. A 64-bit CUBE operand requires the `CUBE_M32` double-CELL mapping; `CUBE_M16` rejects it.
 - `source1` is the control Tile: `U32`, the same layout and valid rows, one valid column per 32-bit word of a source row, and the same cell count.
 - `scalar0` is the control word from one `B.IOR`; RegSrc1, RegSrc2, and RegDst are zero.
 - `destination0` is fresh and keeps the source type, valid shape, and layout. It must differ from the source and the control Tile.
@@ -139,8 +139,7 @@ end;
 pure func InstructionContractDataTypeLegal_TSHUF(
     data_type: TileDataType) => boolean
 begin
-    return TileCubeDataTypeSupported(data_type) &&
-           TileElementBits(data_type) != 64;
+    return TileCubeDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TSHUF(
@@ -167,9 +166,9 @@ end;
 
 ## Legality
 
-- TSHUF accepts Local CUBE_M16 or CUBE_M32 data and U32 control Tiles with matching geometry.
+- TSHUF accepts Local CUBE_M16 data and Local CUBE_M32 data, including FP64/S64/U64 and U32 control Tiles with matching geometry.
 - The control word selects UP, DOWN, BFLY, or IDX; segment and boundary fields are checked before execution.
-- Raw 32-bit words are shuffled without byte permutation.
+- Raw 32-bit words are shuffled without byte permutation; M32 64-bit low and high words use independent controls and publish coherently.
 
 ## State effects
 

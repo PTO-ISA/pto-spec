@@ -25,7 +25,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: tile-model-numeric-reference-conversion-concepts role=concepts-state -->
 ## 概念与可见状态
 
-公共集合为 FP64、FP32、FP16、E4M3、S64、S32、S16、S8、U64、U32、U16 与 U8（`ReferenceCommonConversionTypeSupported`）。BF16 不在其中。`ReferenceCommonConvert` 断言两个类型都在该集合中。
+公共 Tile 转换集合为 FP64、FP32、TF32、HF32、FP16、BF16、E4M3、E5M2、S64、S32、S16、S8、U64、U32、U16 与 U8（`ReferenceCommonConversionTypeSupported`）。标量转换继续使用既有子集。`ReferenceCommonConvert` 断言两个所选类型都在适用集合中。
 
 每个辅助函数返回一个结果字和一个五位标志集合：`0x01` NV、`0x02` DZ、`0x04` OF、`0x08` UF、`0x10` NX。
 
@@ -33,9 +33,9 @@ This page is a generated reference view of the normative ASL unit.
 
 | 辅助函数 | 接受的浮点类型 |
 | --- | --- |
-| `ReferenceCommonConvert` | FP64, FP32, FP16, E4M3 |
-| `ReferenceTileFloatingModulo` | FP32, FP16, BF16 |
-| `ReferenceTileUnaryFinite` | FP32, FP16, BF16 |
+| `ReferenceCommonConvert` | FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2 |
+| `ReferenceTileFloatingModulo` | FP64, FP32, FP16, BF16 |
+| `ReferenceTileUnaryFinite` | FP64, FP32, FP16, BF16 |
 | `ReferenceMatrixOrdinaryFloatingAccumulate` 输入 | FP32, TF32, HF32, FP16, BF16 |
 
 <!-- PTO-READER-BLOCK: tile-model-numeric-reference-conversion-rules role=rules-interactions -->
@@ -53,12 +53,12 @@ This page is a generated reference view of the normative ASL unit.
 
 浮点取模把商向零截断，因此结果与被除数同号。被除数为无穷或除数为零时得到规范 NaN 并带 NV。除数为无穷或被除数为零时返回被除数。结果以默认控制编码，即 RNE 且不饱和。
 
-`ReferenceTileUnaryFinite` 计算实数结果（EXP 与 LOG 使用级数近似），并以 RNE 编码。`ReferenceMatrixOrdinaryFloatingAccumulate` 在给定控制下先把乘积舍入到 FP32，再把和舍入到 FP32，并丢弃两组标志。
+`ReferenceTileUnaryFinite` 包含适用的 FP64 SFU 路径。FP64 指数使用更宽的范围约简，对数接受 FP64 指数范围，平方根与倒平方根使用 FP64 有限值辅助函数。浮点取模同样接受 FP64。reduced `TF32`、`HF32` 与 `E5M2` 有限目标编码委托给 fixed-binary owner。
 
 <!-- PTO-READER-BLOCK: tile-model-numeric-reference-conversion-boundaries role=boundaries -->
 ## 架构边界
 
-调用者包括：TCVT 的 `TileProfileConvert` 与 `ReferenceTCVTConvert`、标量 FSU 转换模型、逐元素取模配置档、对 SFU 操作且调用者未发现特殊值时的一元配置档 `TileProfileUnary`，以及当目标为 FP32、两个操作数类型均为受支持的普通浮点类型、且累加器与两个操作数均为有限值时的 matrix-scale 单元。
+调用者包括用于更广 Tile 转换集合的 `TileProfileConvert` 与 `ReferenceTCVTConvert`、使用其既有子集的标量 FSU 转换模型、支持 FP64 的逐元素取模，以及一元 SFU 配置档。新的 Tile 支持不会新增标量 opcode，也不会扩展标量转换类型对。
 
 本单元不记录标志。由每个调用者决定记录还是丢弃；例如，逐元素取模的结果辅助函数会丢弃它们。
 
@@ -92,15 +92,16 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/numeric/reference-conversion.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-NUMERIC-REFERENCE-CONVERSION","surface":"tile","classification":["model","numeric","reference-conversion"],"depends_on":["PTO-ARCH-FEATURES-MX-FORMATS","PTO-TILE-MODEL-EXECUTION-MATRIX-QUANTIZATION","PTO-SCALAR-MODEL-FSU-SCALAR-FP","PTO-TILE-MODEL-NUMERIC-FORMATS"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-NUMERIC-REFERENCE-CONVERSION","surface":"tile","classification":["model","numeric","reference-conversion"],"depends_on":["PTO-ARCH-FEATURES-MX-FORMATS","PTO-TILE-MODEL-NUMERIC-REFERENCE-FIXED-BINARY","PTO-SCALAR-MODEL-FSU-SCALAR-FP","PTO-TILE-MODEL-NUMERIC-FORMATS"]}
 
 // NDF-BEGIN: PTO-COMMON-CONVERSION-001
 // ndf: kind=executable level=L3 layer=architecture status=accepted
-// Scalar conversion and TCVT MUST use this common result rule whenever both
-// types are in the shared FP64/FP32/FP16/E4M3 or signed/unsigned 64/32/16/8
-// set. Scalar conversion MUST supply saturation disabled. Exact, inexact,
-// underflow, overflow, saturation, wrap, signed-zero, NaN, infinity, and flag
-// results MUST be identical for equal source, destination, and control inputs.
+// TCVT MUST use this common result rule for FP64, FP32, TF32, HF32, FP16,
+// BF16, E4M3, E5M2, and signed/unsigned 64/32/16/8 conversions. Scalar
+// conversion MUST use it for its FP64/FP32/FP16/E4M3 and integer subset and
+// MUST supply saturation disabled. Exact, inexact, underflow, overflow,
+// saturation, wrap, signed-zero, NaN, infinity, and flag results MUST be
+// identical for equal source, destination, and control inputs.
 // NDF-END: PTO-COMMON-CONVERSION-001
 
 pure func ReferenceCommonConversionTypeSupported(
@@ -108,8 +109,12 @@ pure func ReferenceCommonConversionTypeSupported(
 begin
     return data_type == TileDataType_FP64 ||
            data_type == TileDataType_FP32 ||
+           data_type == TileDataType_TF32 ||
+           data_type == TileDataType_HF32 ||
            data_type == TileDataType_FP16 ||
+           data_type == TileDataType_BF16 ||
            data_type == TileDataType_E4M3 ||
+           data_type == TileDataType_E5M2 ||
            data_type == TileDataType_S64 ||
            data_type == TileDataType_S32 ||
            data_type == TileDataType_S16 ||
@@ -125,37 +130,22 @@ pure func ReferenceCommonFloatingFiniteValue(
 begin
     case data_type of
         when TileDataType_FP64 => return ReferenceFP64FiniteValue(value);
-        when TileDataType_FP32 =>
+        when TileDataType_FP32, TileDataType_TF32, TileDataType_HF32 =>
             return ReferenceFP32FiniteValue(value[31:0]);
         when TileDataType_FP16, TileDataType_BF16 =>
             return ReferenceBinary16FiniteValue(value, data_type);
         when TileDataType_E4M3 =>
             return ReferenceFP8FiniteValue(data_type, value[7:0]);
+        when TileDataType_E5M2 =>
+            let (available, negative, significand, exponent) =
+                TileNumericFiniteDecomposition(data_type, value);
+            assert available;
+            let magnitude = Real(UInt(significand)) *
+                ReferencePowerOfTwo(exponent);
+            return if negative then -magnitude else magnitude;
         otherwise => unreachable;
     end;
 end;
-
-pure func ReferenceCommonFloatingEndpoint(
-    data_type: TileDataType, negative: boolean) => Word
-begin
-    case data_type of
-        when TileDataType_FP64 =>
-            return Zeros{PTO_XLEN} +
-                (if negative then 0xffefffffffffffff
-                 else 0x7fefffffffffffff);
-        when TileDataType_FP32 =>
-            return Zeros{PTO_XLEN} +
-                (if negative then 0xff7fffff else 0x7f7fffff);
-        when TileDataType_FP16 =>
-            return Zeros{PTO_XLEN} +
-                (if negative then 0xfbff else 0x7bff);
-        when TileDataType_E4M3 =>
-            return Zeros{PTO_XLEN} +
-                (if negative then 0xfe else 0x7e);
-        otherwise => unreachable;
-    end;
-end;
-
 pure func ReferenceCommonFloatingInfinity(
     data_type: TileDataType, negative: boolean) => (boolean, Word)
 begin
@@ -164,17 +154,22 @@ begin
             return (TRUE, Zeros{PTO_XLEN} +
                 (if negative then 0xfff0000000000000
                  else 0x7ff0000000000000));
-        when TileDataType_FP32 =>
+        when TileDataType_FP32, TileDataType_TF32, TileDataType_HF32 =>
             return (TRUE, Zeros{PTO_XLEN} +
                 (if negative then 0xff800000 else 0x7f800000));
         when TileDataType_FP16 =>
             return (TRUE, Zeros{PTO_XLEN} +
                 (if negative then 0xfc00 else 0x7c00));
+        when TileDataType_BF16 =>
+            return (TRUE, Zeros{PTO_XLEN} +
+                (if negative then 0xff80 else 0x7f80));
+        when TileDataType_E5M2 =>
+            return (TRUE, Zeros{PTO_XLEN} +
+                (if negative then 0xfc else 0x7c));
         when TileDataType_E4M3 => return (FALSE, Zeros{PTO_XLEN});
         otherwise => unreachable;
     end;
 end;
-
 func ReferenceCommonConvertSpecial(
     value: Word,
     source_type: TileDataType,
@@ -232,7 +227,6 @@ begin
     end;
     return (FALSE, Zeros{PTO_XLEN}, Zeros{5});
 end;
-
 func ReferenceCommonConvert(
     value: Word,
     source_type: TileDataType,
@@ -251,6 +245,12 @@ begin
         let finite = ReferenceCommonFloatingFiniteValue(
             value, source_type);
         if TileDataTypeIsFloating(destination_type) then
+            if destination_type == TileDataType_TF32 ||
+               destination_type == TileDataType_HF32 ||
+               destination_type == TileDataType_E5M2 then
+                return ReferenceCommonReducedFloatingEncoding(
+                    finite, destination_type, control);
+            end;
             return ReferenceMatrixFloatingEncoding(
                 finite, destination_type, control);
         end;
@@ -259,6 +259,13 @@ begin
     end;
 
     if TileDataTypeIsFloating(destination_type) then
+        if destination_type == TileDataType_TF32 ||
+           destination_type == TileDataType_HF32 ||
+           destination_type == TileDataType_E5M2 then
+            return ReferenceCommonReducedFloatingEncoding(
+                Real(ReferenceIntegerValue(value, source_type)),
+                destination_type, control);
+        end;
         return ReferenceMatrixFloatingEncoding(
             Real(ReferenceIntegerValue(value, source_type)),
             destination_type, control);
@@ -268,7 +275,6 @@ begin
             value, source_type, destination_type, control.saturating),
         Zeros{5});
 end;
-
 pure func ReferenceMatrixOrdinaryFloatingInputSupported(
     data_type: TileDataType) => boolean
 begin
@@ -278,7 +284,6 @@ begin
            data_type == TileDataType_FP16 ||
            data_type == TileDataType_BF16;
 end;
-
 pure func ReferenceMatrixOrdinaryFloatingValue(
     value: Word, data_type: TileDataType) => real
 begin
@@ -324,7 +329,8 @@ end;
 func ReferenceTileFloatingModulo(
     data_type: TileDataType, left: Word, right: Word) => (Word, bits(5))
 begin
-    assert data_type == TileDataType_FP32 ||
+    assert data_type == TileDataType_FP64 ||
+           data_type == TileDataType_FP32 ||
            data_type == TileDataType_FP16 ||
            data_type == TileDataType_BF16;
     let left_class = TileNumericValueClass(data_type, left);
@@ -372,18 +378,29 @@ begin
     return result;
 end;
 
-pure func ReferenceTileLogarithmFinite(value: real) => real
+pure func ReferenceTileLogarithmFinite(
+    value: real, data_type: TileDataType) => real
 begin
     assert value > 0.0;
+    assert data_type == TileDataType_FP64 ||
+           data_type == TileDataType_FP32 ||
+           data_type == TileDataType_FP16 ||
+           data_type == TileDataType_BF16;
     var normalized = value;
-    var exponent: integer {-149..127} = 0;
-    while normalized >= 2.0 && exponent < 127 looplimit 127 do
+    var exponent: integer {-1074..1023} = 0;
+    let maximum_exponent = if data_type == TileDataType_FP64
+        then 1023 else 127;
+    let minimum_exponent = if data_type == TileDataType_FP64
+        then -1074 else -149;
+    while normalized >= 2.0 &&
+          exponent < maximum_exponent looplimit 1023 do
         normalized = normalized / 2.0;
-        exponent = (exponent + 1) as integer {-149..127};
+        exponent = (exponent + 1) as integer {-1074..1023};
     end;
-    while normalized < 1.0 && exponent > -149 looplimit 149 do
+    while normalized < 1.0 &&
+          exponent > minimum_exponent looplimit 1074 do
         normalized = normalized * 2.0;
-        exponent = (exponent - 1) as integer {-149..127};
+        exponent = (exponent - 1) as integer {-1074..1023};
     end;
     let ratio = (normalized - 1.0) / (normalized + 1.0);
     let ratio_squared = ratio * ratio;
@@ -397,22 +414,89 @@ begin
         0.693147180559945309417232121458176568;
 end;
 
+func ReferenceTileFP64ExponentialFinite(value: real) => real
+begin
+    let logarithm_two =
+        0.693147180559945309417232121458176568;
+    let rounded_exponent = FloatingToInteger(
+        value / logarithm_two, NumericRound_RNE);
+    assert rounded_exponent >= -1076 && rounded_exponent <= 1024;
+    let exponent = rounded_exponent as integer {-1076..1024};
+    let reduced = value - Real(exponent) * logarithm_two;
+    var result: real = 1.0;
+    var term: real = 1.0;
+    for index = 1 to 24 do
+        term = (term * reduced) / Real(index);
+        result = result + term;
+    end;
+    if exponent == -1076 then
+        return result * ReferencePowerOfTwo(-1074) * 0.25;
+    elsif exponent == -1075 then
+        return result * ReferencePowerOfTwo(-1074) * 0.5;
+    elsif exponent == 1024 then
+        return result * ReferencePowerOfTwo(1023) * 2.0;
+    end;
+    return result * ReferencePowerOfTwo(
+        exponent as integer {-1074..1023});
+end;
+
+func ReferenceTileFP64SquareRootFinite(value: real) => real
+begin
+    assert value > 0.0;
+    var normalized = value;
+    var scale: integer {-537..512} = 0;
+    while normalized >= 4.0 && scale < 512 looplimit 512 do
+        normalized = normalized / 4.0;
+        scale = (scale + 1) as integer {-537..512};
+    end;
+    while normalized < 1.0 && scale > -537 looplimit 537 do
+        normalized = normalized * 4.0;
+        scale = (scale - 1) as integer {-537..512};
+    end;
+    return SqrtRounded(normalized, 100) *
+        ReferencePowerOfTwo(scale as integer {-1074..1023});
+end;
+
 func ReferenceTileUnaryFinite(
     operation: TileUnaryOperation,
     data_type: TileDataType,
     value: Word) => (Word, bits(5))
 begin
-    assert data_type == TileDataType_FP32 ||
+    assert data_type == TileDataType_FP64 ||
+           data_type == TileDataType_FP32 ||
            data_type == TileDataType_FP16 ||
            data_type == TileDataType_BF16;
     let input = ReferenceCommonFloatingFiniteValue(value, data_type);
     var result: real = input;
     case operation of
-        when TileUnary_EXP => result = ReferenceTileExponentialFinite(input);
-        when TileUnary_LOG => result = ReferenceTileLogarithmFinite(input);
+        when TileUnary_EXP =>
+            if data_type == TileDataType_FP64 then
+                if input > 710.0 then
+                    return (
+                        Zeros{PTO_XLEN} + 0x7ff0000000000000,
+                        Zeros{5} + 0x14);
+                elsif input < -746.0 then
+                    return (Zeros{PTO_XLEN}, Zeros{5} + 0x18);
+                end;
+                result = ReferenceTileFP64ExponentialFinite(input);
+            else
+                result = ReferenceTileExponentialFinite(input);
+            end;
+        when TileUnary_LOG =>
+            result = ReferenceTileLogarithmFinite(input, data_type);
         when TileUnary_RECIP => result = 1.0 / input;
-        when TileUnary_SQRT => result = SqrtRounded(input, 100);
-        when TileUnary_RSQRT => result = 1.0 / SqrtRounded(input, 100);
+        when TileUnary_SQRT =>
+            if data_type == TileDataType_FP64 then
+                result = ReferenceTileFP64SquareRootFinite(input);
+            else
+                result = SqrtRounded(input, 100);
+            end;
+        when TileUnary_RSQRT =>
+            if data_type == TileDataType_FP64 then
+                result = 1.0 / ReferenceTileFP64SquareRootFinite(input);
+            else
+                result = 1.0 / SqrtRounded(input, 100);
+            end;
         otherwise => unreachable;
     end;
     return ReferenceMatrixFloatingEncoding(

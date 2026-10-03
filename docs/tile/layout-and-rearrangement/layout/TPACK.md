@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/layout-and-rearrangement/layout/TPACK.asl`
 
-Pack selected raw byte prefixes from 8/16/32-bit Local CUBE source carriers into U8/U16/U32 destination words.
+Pack selected raw byte prefixes from 8/16/32-bit and M32 64-bit Local CUBE source carriers into U8/U16/U32/U64 destination words.
 
 ## Normative identity {#PTO-INST-TILE-TPACK}
 
@@ -21,7 +21,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `TPACK` joins low-byte fields from corresponding 32-bit words of two Local CUBE sources into one destination word. It rearranges raw bytes and performs no numeric conversion.
 
-Design point: `TPACK` is selected by `BSTART.SFU` with TEPL Mode 3 Function 23 (selector `0x077`). The `BSTART` type, `U8`, `U16`, or `U32`, is the destination type; it need not match the source types.
+Design point: `TPACK` is selected by `BSTART.SFU` with TEPL Mode 3 Function 23 (selector `0x077`). The `BSTART` type, `U8`, `U16`, `U32`, or `U64`, is the destination type; it need not match the source types.
 
 <!-- PTO-READER-BLOCK: tile-tpack-mechanism role=mechanism -->
 ## Packing rule
@@ -35,9 +35,9 @@ Design point: only selected bytes are read. Each selected byte of a participatin
 <!-- PTO-READER-BLOCK: tile-tpack-inputs-outputs role=inputs-outputs -->
 ## Inputs and result
 
-- `source0` and `source1` are Local numeric `CUBE_M16` or `CUBE_M32` Tiles with non-packed 8-, 16-, or 32-bit elements. They share one layout, the same valid rows, and the same number of words per row; their types may differ.
+- `source0` and `source1` are Local numeric CUBE Tiles with non-packed 8-, 16-, 32-, or M32 64-bit elements. They share one layout, the same valid rows, and the same number of raw 32-bit words per row; their types may differ.
 - `scalar0` is the pack control word from one `B.IOR`; RegSrc1, RegSrc2, and RegDst are zero.
-- `destination0` is fresh, with the `BSTART` type, the source layout and valid rows, and `words per row x elements per word` valid columns: 4 for `U8`, 2 for `U16`, and 1 for `U32`.
+- `destination0` is fresh. U8/U16/U32 use 4/2/1 elements per raw word. U64 requires `CUBE_M32`, an even raw-word count, and one logical column per complete low/high pair.
 
 Design point: the destination shape is derived from the source descriptors, not from `B.DIM`. The macro form therefore has no shape fields, and a static disassembler cannot print Row or Col.
 
@@ -46,7 +46,7 @@ Design point: the destination shape is derived from the source descriptors, not 
 
 Control and source validation precede publication. Each paired source word produces one complete destination word, every valid destination element becomes defined, and padding is `Null`.
 
-Under an ExecutionMask, one mask bit at (row, word index) gates the whole destination word group of 4 `U8`, 2 `U16`, or 1 `U32` elements; an inactive group reads no source byte and receives the mask's zero or merge value. The sources persist, and the operation has no memory or numeric-status effect.
+Under an ExecutionMask, raw words are gated independently. For U64, the low and high word bits may differ; each active half is packed independently and the two halves are joined into one coherent 64-bit publication, with an inactive half supplied by ZERO or MERGE.
 
 <!-- PTO-READER-BLOCK: tile-tpack-constraints role=constraints -->
 ## What is rejected
@@ -112,7 +112,7 @@ end;
 ## Block composition
 
 ```asm
-BSTART.SFU TPACK, U8/U16/U32
+BSTART.SFU TPACK, U8/U16/U32/U64
 B.DATR Layout (optional)
 B.DIM LB0/LB1/LB2 (optional)
 B.IOT source0, source1, ->destination
@@ -134,7 +134,8 @@ pure func InstructionContractDataTypeLegal_TPACK(
 begin
     return data_type == TileDataType_U8 ||
            data_type == TileDataType_U16 ||
-           data_type == TileDataType_U32;
+           data_type == TileDataType_U32 ||
+           data_type == TileDataType_U64;
 end;
 
 readonly func InstructionContractOperandsLegal_TPACK(
@@ -161,9 +162,9 @@ end;
 
 ## Legality
 
-- TPACK accepts Local Numeric CUBE_M16 or CUBE_M32 source backing with non-packed 8/16/32-bit elements; source layouts and valid rows match and RawWordSlotsPerRow is equal.
-- BSTART selects exactly U8, U16, or U32 for the fresh destination. The control selects low-byte prefixes of 1..3 bytes per source word with total width at most four.
-- Only selected source bytes are read. Each selected byte is logically valid and its containing element is defined; each paired 32-bit word produces one complete zero-filled destination word.
+- TPACK accepts Local Numeric CUBE_M16 or CUBE_M32 source backing with non-packed 8/16/32-bit or M32 64-bit elements; source layouts and valid rows match and RawWordSlotsPerRow is equal.
+- BSTART selects U8, U16, U32, or U64 for the fresh destination. The control selects low-byte prefixes of 1..3 bytes per source word with total width at most four.
+- Only selected source bytes are read. Each selected byte is logically valid and its containing element is defined; each paired 32-bit word produces one zero-filled result word; U64 joins complete low/high pairs and rejects odd tails.
 
 ## State effects
 
@@ -186,4 +187,4 @@ end;
 
 ## Examples
 
-- BSTART.SFU TPACK, U8/U16/U32; B.DATR Layout; B.IOT source0, source1, ->destination; B.IOR a0; BSTOP
+- BSTART.SFU TPACK, U8/U16/U32/U64; B.DATR Layout; B.IOT source0, source1, ->destination; B.IOR a0; BSTOP

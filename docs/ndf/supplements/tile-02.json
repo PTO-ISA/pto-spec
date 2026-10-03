@@ -29,6 +29,42 @@
       }
     },
     {
+      "id": "PTO-CUBE-M32-B64-DOUBLE-CELL-001",
+      "source_path": "asl/tile/model/shape/cube-double-cell.asl",
+      "title": {
+        "en": "CUBE_M32 64-bit double-CELL storage",
+        "zh-CN": "CUBE_M32 64 位双单元成对存储"
+      },
+      "summary": {
+        "en": "Local CUBE_M32 FP64, S64, and U64 keep 32 logical rows and one 64-bit payload Word per logical element while using two ordered 128-byte CELLs per logical column. The even CELL holds low 32-bit words and the odd CELL holds high words; views, generation ranges, transport, and publication preserve complete pairs.",
+        "zh-CN": "Local CUBE_M32 FP64、S64 与 U64 保持 32 个逻辑行以及每个逻辑元素一个 64 位 payload Word，同时为每个逻辑列使用两个有序的 128 字节 CELL。偶数 CELL 保存低 32 位 word，奇数 CELL 保存高位；view、generation range、transport 与 publication 都保持完整 pair。"
+      }
+    },
+    {
+      "id": "PTO-LOCAL-TILE-B64-APPLICABILITY-001",
+      "source_path": "asl/tile/model/legality/dtype-layout.asl",
+      "title": {
+        "en": "Applicable Local 64-bit Tile operations",
+        "zh-CN": "适用的 Local 64 位 Tile 操作"
+      },
+      "summary": {
+        "en": "Applicable Local operations admit FP64 floating, S64/U64 integer, or raw b64 carriers according to their operation kind. CUBE_M32 uses double-CELL geometry with one mask bit per ordinary logical element; explicitly narrow conversions, Matrix/MX types, fixed-width atomics, TGPR2T, and the raw pack/unpack per-word mask exception retain their own contracts.",
+        "zh-CN": "适用的 Local 操作按其操作种类接受 FP64 浮点、S64/U64 整数或 raw b64 载体。CUBE_M32 使用 double-CELL 几何，普通逻辑元素使用一个掩码位；显式窄转换、Matrix/MX 类型、固定宽度原子操作、TGPR2T 以及 raw pack/unpack 逐 word 掩码例外保持各自契约。"
+      }
+    },
+    {
+      "id": "PTO-TLEA-CONTRACT-001",
+      "source_path": "asl/tile/tile-scalar-and-immediate/arithmetic/TLEA.asl",
+      "title": {
+        "en": "TLEA logical-index to byte-offset conversion",
+        "zh-CN": "TLEA 逻辑索引到字节偏移转换"
+      },
+      "summary": {
+        "en": "TLEA extends each Local S32/U32/S64/U64 logical element index to the corresponding S64/U64 destination type before scaling it by the explicit per-PE element width in bytes. It publishes byte offsets only; base-address addition and memory access remain owned by the consuming indexed-memory instruction. The mnemonic owner defines the exact type, layout, mask, alias, and allocation boundaries.",
+        "zh-CN": "TLEA 先把每个 Local S32/U32/S64/U64 逻辑元素索引扩展为对应的 S64/U64 目标类型，再按显式逐 PE 元素字节宽度进行缩放。它只发布字节偏移；基址相加与内存访问仍由消费该结果的索引内存指令负责。助记符 owner 定义精确的类型、布局、掩码、别名与分配边界。"
+      }
+    },
+    {
       "id": "PTO-TLOAD-CUBE-001",
       "source_path": "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
       "title": {

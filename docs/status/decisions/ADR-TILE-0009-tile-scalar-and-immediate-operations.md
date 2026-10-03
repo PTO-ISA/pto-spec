@@ -17,7 +17,8 @@
   "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
   "target_releases": [
     "0.58.1",
-    "0.58.2"
+    "0.58.2",
+    "0.59.0"
   ],
   "affected_ndf": [
     "PTO-B-DATR-FIELDS-001",
@@ -83,8 +84,8 @@
     "ADR-GOV-0006"
   ],
   "superseded_by": [],
-  "implementation_issue": null,
-  "release_impact": "not-required",
+  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/371",
+  "release_impact": "required",
   "legacy_ids": [
     "PRD-082",
     "PRD-083",

@@ -59,7 +59,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tprefetch-constraints role=constraints -->
 ## 类型、形状与故障
 
-`InstructionContractDataTypeLegal_TPREFETCH` 接受 `TileCarrierOrPackedBaselineDataTypeSupported` 允许的类型：位宽不超过 4 字节的非四位载体，加上打包四位类型。
+`InstructionContractDataTypeLegal_TPREFETCH` 接受 `TileCarrierOrPackedBaselineDataTypeSupported` 允许的类型：最高 64 位的非打包载体，加上打包四位基线。
 
 `ValidCol` 与 `ValidRow` 为正，`Col` 是非零的 2 的幂且至少为 `ValidCol`，并且 `ValidRow * ValidCol` 不得超过 `PTO_MODEL_TILE_ELEMENTS`。`B.DATR` 只允许 `Layout` 作为非零操作属性，并要求填充并集保持为零。
 
@@ -178,6 +178,7 @@ end;
 - It has implicit participation 1111 and accepts no Local or Shared Tile binding.
 - ValidCol and ValidRow are positive; Col is a nonzero power of two and is at least ValidCol.
 - B.DATR permits only Layout as a nonzero operation attribute and requires the pad union to remain zero.
+- The non-packed raw carrier domain includes B64; prefetch addressing remains the existing explicit element-stride contract.
 
 ## State effects
 
