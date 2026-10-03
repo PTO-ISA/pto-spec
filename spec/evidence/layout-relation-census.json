@@ -5096,8 +5096,8 @@
     "TMATMUL_MX_BIAS",
     "TGEMV_MX_BIAS"
   ],
-  "candidate": "working-tree",
-  "candidate_head": "working-tree",
+  "candidate": "HEAD",
+  "candidate_head": "06301550e0fef591dcb8966f076691cfe009b691",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
