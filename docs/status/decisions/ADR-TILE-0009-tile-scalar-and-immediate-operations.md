@@ -2,7 +2,7 @@
 {
   "id": "ADR-TILE-0009",
   "title": "Tile scalar and immediate operations",
-  "title_zh": "Tile 标量与立即数操作",
+  "title_zh": "Tile \u6807\u91cf\u4e0e\u7acb\u5373\u6570\u64cd\u4f5c",
   "status": "accepted",
   "authors": [
     "Kevin Zhou <zhoubot@gmail.com>"
@@ -20,7 +20,6 @@
     "0.58.2"
   ],
   "affected_ndf": [
-    "PTO-TILE-CARRIER-REINTERPRETATION-001",
     "PTO-B-DATR-FIELDS-001",
     "PTO-B-IOR-BINDING-001",
     "PTO-B-IOS-SHARED-STATE-001",
@@ -31,6 +30,8 @@
     "PTO-TCMPS-CONTRACT-001",
     "PTO-TDIVS-CONTRACT-001",
     "PTO-TEXPANDS-CONTRACT-001",
+    "PTO-TILE-CARRIER-REINTERPRETATION-001",
+    "PTO-TLEA-CONTRACT-001",
     "PTO-TMAXS-CONTRACT-001",
     "PTO-TMINS-CONTRACT-001",
     "PTO-TMULS-CONTRACT-001",
@@ -47,21 +48,25 @@
     "PTO-BLOCK-B-IOR",
     "PTO-BLOCK-B-IOS",
     "PTO-BLOCK-B-IOT",
+    "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+    "PTO-BLOCK-MODEL-DISPATCH-LEA-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+    "PTO-TILE-MODEL-EXECUTION-COMPARISON",
+    "PTO-TILE-MODEL-EXECUTION-LEA",
+    "PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS",
     "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+    "PTO-TILE-MODEL-LEGALITY-LEA-OPERANDS",
     "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
     "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
-    "PTO-TILE-MODEL-EXECUTION-COMPARISON",
-    "PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS",
-    "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
-    "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
-    "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
-    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
-    "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
     "PTO-TILE-TADDS",
     "PTO-TILE-TANDS",
     "PTO-TILE-TCMPS",
     "PTO-TILE-TDIVS",
     "PTO-TILE-TEXPANDS",
+    "PTO-TILE-TLEA",
     "PTO-TILE-TMAXS",
     "PTO-TILE-TMINS",
     "PTO-TILE-TMULS",
@@ -124,6 +129,23 @@
         "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
         "PTO-TILE-TCMPS",
         "PTO-TILE-TSELS"
+      ]
+    },
+    {
+      "date": "2026-10-03",
+      "baseline": "e182c9b70d54a3a264bac54af9b915a0e43bb519",
+      "approvers": [
+        "Kevin Zhou <zhoubot@gmail.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/371",
+      "affected_ndf": [
+        "PTO-TLEA-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-TLEA",
+        "PTO-TILE-MODEL-EXECUTION-LEA",
+        "PTO-TILE-MODEL-LEGALITY-LEA-OPERANDS",
+        "PTO-BLOCK-MODEL-DISPATCH-LEA-SCHEMA"
       ]
     }
   ]
@@ -602,3 +624,14 @@ The decisions close arithmetic, division/remainder, bitwise, shifts, min/max, co
 This ADR does not turn scalar forms into extra-operand Tile-Tile forms or add Shared operands. Numerical cases delegated by the existing decisions remain with their numeric owners.
 
 本 ADR 不把标量形式变成额外操作数的 Tile-Tile 形式，也不增加 Shared 操作数。既有决策委托的数值情况仍由相应 numeric owner 管理。
+
+
+## Accepted amendment: issue #371 explicit element-index byte-offset conversion
+
+Issue [#371](https://github.com/PTO-ISA/pto-spec/issues/371) extends this Tile-scalar family with TLEA, a memory-free conversion from logical element indices to 64-bit byte offsets. The instruction's operand roles, legality, scaling, overflow and publication contracts are owned by `PTO-TLEA-CONTRACT-001` in `asl/tile/tile-scalar-and-immediate/arithmetic/TLEA.asl` and its legality/execution/schema units. It does not change indexed TLSU byte-displacement semantics under ADR-MEM-0009 and issue #301.
+
+The selector allocation adds an explicit conversion boundary, allowing compilers to represent logical indices upstream while keeping existing memory instruction contracts stable. Reusing a same-width shift would truncate widened S32/U32 offsets; routing this through floating/numeric conversion would add irrelevant numeric controls. The dedicated operation instead closes the widened address-carrier behavior and preserves existing predication, allocation and publication infrastructure.
+
+Compatibility impact: a formerly reserved TEPL selector becomes accepted; existing indexed-memory encodings and behavior are unchanged. The new instruction requires coordinated compiler/model adoption, independent AVS, generated decoder/catalog/macro/docs closure and commit-scoped release evidence before release. It does not itself publish a release.
+
+Issue #371 按现有 Tile 标量指令族引入 TLEA，在显式转换边界生成 64 位字节偏移；寻址、位宽、溢出和发布的当前合同由 owning ASL/NDF 唯一持有。MGATHER/MSCATTER 及原子索引访存继续使用 #301 的字节偏移语义。新增保留选择码的兼容性和编译器／模型采用义务须随 AVS 与生成投影闭合。
