@@ -11,12 +11,16 @@ from scripts.layout_relation_census import (
     INDEXED_TLSU,
     ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION,
     ROW_EXPANSION_BROADCAST_HELPER_DEFINITION_DELTAS,
+    TLEA_COMMON_HELPERS,
+    TLEA_NEW_HELPER_PATHS,
     _complete_fixture_keys,
     _catalog_operand_rows,
     _census_texts,
     _execution_mask_support_mutation_canaries,
     _fixture,
+    _helper_deltas,
     _inventory,
+    _issue371_b64_mutation_canaries,
     _load_baseline_fixture,
     _metadata_map,
     _narrow_indexed_tlsu_layout_helper,
@@ -28,6 +32,60 @@ from scripts.layout_relation_census import (
 
 
 class LayoutRelationCensusTest(unittest.TestCase):
+    def test_issue371_b64_double_cell_mutations_fail_closed(self) -> None:
+        _issue371_b64_mutation_canaries()
+
+    def test_tlea_helper_allowlist_is_exact_and_path_bound(self) -> None:
+        self.assertEqual(
+            TLEA_NEW_HELPER_PATHS,
+            {
+                "TileLEABundleLogicalShapeMatches": "asl/tile/model/legality/lea-operands.asl",
+                "TileLEAByteOffset": "asl/tile/model/execution/lea.asl",
+                "TileLEAByteScale": "asl/tile/model/execution/lea.asl",
+                "TileLEADestinationDataType": "asl/tile/model/legality/lea-operands.asl",
+                "TileLEAElementBitsLegal": "asl/tile/model/legality/lea-operands.asl",
+                "TileLEAExtendedIndex": "asl/tile/model/execution/lea.asl",
+                "TileLEAIndexDataTypeLegal": "asl/tile/model/legality/lea-operands.asl",
+                "TileLEASourceOperationType": "asl/tile/model/legality/lea-operands.asl",
+            },
+        )
+        self.assertEqual(
+            TLEA_COMMON_HELPERS - set(TLEA_NEW_HELPER_PATHS),
+            {
+                "BundleProducerEffectClassOfHandler",
+                "ResolveBundleEffectiveDataType",
+                "ResolveBundleTileDestinationsForOperation",
+                "SelectedBundleClosedSchemasLegal",
+                "TileOperationExecutionMaskEligible",
+            },
+        )
+        before = {"helpers": {}}
+        after = {
+            "helpers": {
+                "TileLEAIndexDataTypeLegal": [{
+                    "path": "asl/tile/model/legality/wrong-owner.asl",
+                    "layouts": [],
+                }],
+                "TileLEAUnauthorizedHelper": [{
+                    "path": "asl/tile/model/legality/lea-operands.asl",
+                    "layouts": [],
+                }],
+            }
+        }
+        rows, errors = _helper_deltas(
+            before, after, {}, {}, set(), allow_tlea_changes=True
+        )
+        self.assertIn(
+            "unauthorized TLEA common-helper definition change: "
+            "TileLEAIndexDataTypeLegal",
+            errors,
+        )
+        self.assertIn(
+            "common-helper definition set changed: TileLEAUnauthorizedHelper",
+            errors,
+        )
+        self.assertTrue(all(row["classification"] == "UNCLASSIFIED" for row in rows))
+
     def test_execution_mask_helper_allowlist_is_finite_and_fail_closed(self) -> None:
         self.assertEqual(len(EXECUTION_MASK_HELPER_DEFINITION_DELTAS), 40)
         self.assertEqual(len(EXECUTION_MASK_HELPER_BODY_CHANGES), 6)
@@ -85,7 +143,14 @@ class LayoutRelationCensusTest(unittest.TestCase):
                 "TileExpansionBroadcastSelectorLegal": {
                     "before": [], "after": [(path, {"CUBE_M16", "CUBE_M32", "RowMajor"})]},
                 "TileExpansionBroadcastSlot": {
-                    "before": [], "after": [(path, {"RowMajor"})]},
+                    "before": [],
+                    "after": [(path, {"RowMajor"})],
+                    "after_issue371": [(path, {"CUBE_M32", "RowMajor"})],
+                    "classification_issue371": (
+                        "Issue #207 selected-CUBE row-expansion byte-offset "
+                        "selector plus Issue #371 M32-only b64 broadcast slot"
+                    ),
+                },
             },
         )
         self.assertIn("Issue #207", ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION)
@@ -366,6 +431,26 @@ class LayoutRelationCensusTest(unittest.TestCase):
                              if row["mnemonic"] == "TEXPDIF"]
         self.assertEqual(len(texpdif_inventory), 6)
         self.assertTrue(all(row["layout_bearing"] for row in texpdif_inventory))
+        tlea = [row for row in result["operation_signatures"]
+                if row["mnemonic"] == "TLEA"]
+        self.assertEqual({row["form"] for row in tlea}, {"direct", "bundle"})
+        for signature in tlea:
+            self.assertEqual(signature["L0"], {})
+            self.assertEqual(
+                {role: set(layouts) for role, layouts in signature["L1"].items()},
+                {
+                    "destination0": {"RowMajor", "CUBE_M32"},
+                    "source0": {"RowMajor", "CUBE_M32"},
+                },
+            )
+            self.assertEqual(
+                set(signature["R1"]),
+                {"destination0.layout == source0.layout"},
+            )
+        tlea_inventory = [row for row in result["authoritative_inventory"]
+                          if row["mnemonic"] == "TLEA"]
+        self.assertEqual(len(tlea_inventory), 4)
+        self.assertTrue(all(row["layout_bearing"] for row in tlea_inventory))
         rows = result["reachability"]["after"]["operation_reachability"]
         for mnemonic in ("TADD", "GMOV", "TMATMUL_BIAS"):
             direct = next(row for row in rows if row["mnemonic"] == mnemonic and row["form"] == "direct")

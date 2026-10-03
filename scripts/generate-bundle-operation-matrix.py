@@ -127,6 +127,8 @@ def fixture_data_type(row: dict) -> int:
     handler performs the actual legality check.
     """
     name = row.get("name", row.get("operation"))
+    if name == "TLEA":
+        return 25  # U32 element indices widen to U64 byte offsets.
     if name == "TGPR2T":
         return 27  # TGPR2T always publishes a numeric U8 CUBE destination.
     if name in CELL_REARRANGEMENT_OPERATIONS:
@@ -646,6 +648,7 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
         "0x00000101" if operation_name == "TPACK"
         else "0x00000100" if operation_name == "TUNPACK"
         else "0" if operation_name == "TIMG2COL"
+        else "32" if operation_name == "TLEA"
         else "1"
     )
     lines = [

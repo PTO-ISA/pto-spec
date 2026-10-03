@@ -27,6 +27,7 @@ KNOWN_LAYOUTS = {
     "RowMajor", "CUBE_M16", "CUBE_M32", "CUBE_N8", "ColumnMajor", "ZN", "NZ",
 }
 ALLOWED_LAYOUTS = {"RowMajor", "CUBE_M16", "CUBE_M32"}
+TLEA_ALLOWED_LAYOUTS = {"RowMajor", "CUBE_M32"}
 LOCAL_CUBE_LAYOUTS = {"CUBE_M16", "CUBE_M32"}
 BIAS_LOCAL_LAYOUTS = {"CUBE_N8"}
 LAYOUT_RE = re.compile(r"\b(?:TileLayout_)?(RowMajor|CUBE_M16|CUBE_M32|CUBE_N8|ColumnMajor|ZN|NZ)\b")
@@ -210,6 +211,7 @@ OWNER_DECISIONS = {
     "R4_PACK_UNPACK": R4_OWNER_DECISIONS["pack_unpack"],
     "R4_EXPANSION": R4_OWNER_DECISIONS["expansion"],
     "TEXPDIF": "Issue #333 / ADR-TILE-0008 accepted amendment",
+    "TLEA": "Issue #371 / ADR-TILE-0009 accepted amendment",
 }
 TEXPDIF_LAYOUT_CLASSIFICATION = (
     "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract "
@@ -239,6 +241,99 @@ TEXPDIF_COMMON_HELPER_PATHS = {
     "TileExpdifValueWithTypesAndFlags": "asl/tile/model/execution/expdif.asl",
     "TileOperationUsesClosedBinarySchema": "asl/block/model/dispatch/binary-operation-classification.asl",
     "TileExpandValueWithTypesAndFlags": "asl/tile/model/execution/expansion.asl",
+}
+TLEA_LAYOUT_CLASSIFICATION = (
+    "TLEA RowMajor/CUBE_M32 Local same-logical-shape contract "
+    "(Issue #371 / ADR-TILE-0009)"
+)
+TLEA_NEW_HELPER_PATHS = {
+    "TileLEABundleLogicalShapeMatches": "asl/tile/model/legality/lea-operands.asl",
+    "TileLEAByteOffset": "asl/tile/model/execution/lea.asl",
+    "TileLEAByteScale": "asl/tile/model/execution/lea.asl",
+    "TileLEADestinationDataType": "asl/tile/model/legality/lea-operands.asl",
+    "TileLEAElementBitsLegal": "asl/tile/model/legality/lea-operands.asl",
+    "TileLEAExtendedIndex": "asl/tile/model/execution/lea.asl",
+    "TileLEAIndexDataTypeLegal": "asl/tile/model/legality/lea-operands.asl",
+    "TileLEASourceOperationType": "asl/tile/model/legality/lea-operands.asl",
+}
+TLEA_COMMON_HELPERS = set(TLEA_NEW_HELPER_PATHS) | {
+    "BundleProducerEffectClassOfHandler",
+    "ResolveBundleEffectiveDataType",
+    "ResolveBundleTileDestinationsForOperation",
+    "SelectedBundleClosedSchemasLegal",
+    "TileOperationExecutionMaskEligible",
+}
+ISSUE371_B64_CLASSIFICATION = (
+    "Local CUBE_M32 FP64/S64/U64 double-CELL and Local 64-bit applicability "
+    "closure (Issue #371 / ADR-CUBE-0004/ADR-CUBE-0005/ADR-TILE-0009, "
+    "baseline 7bfc185ce)"
+)
+ISSUE371_HELPER_DEFINITION_DELTAS = {
+    "ReferenceCommonFloatingEndpoint": {
+        "before": [("asl/arch/profile/reference-conversion.asl", set())],
+        "after": [("asl/tile/model/numeric/reference-fixed-binary.asl", set())],
+    },
+    "ReferenceCommonReducedFloatingEncoding": {
+        "before": [],
+        "after": [("asl/tile/model/numeric/reference-fixed-binary.asl", set())],
+    },
+    "TileCubeDataTypeSupported": {
+        "before": [("asl/tile/model/shape/cube-cell.asl", set())],
+        "after": [("asl/tile/model/shape/cube-double-cell.asl", set())],
+    },
+    "TileA7DataTypeSupported": {
+        "before": [],
+        "after": [("asl/tile/model/legality/dtype-layout.asl", set())],
+    },
+    "TileF3DataTypeSupported": {
+        "before": [],
+        "after": [("asl/tile/model/legality/dtype-layout.asl", set())],
+    },
+    "TileCubeLayoutDataTypeSupported": {
+        "before": [],
+        "after": [("asl/tile/model/shape/cube-double-cell.asl", {"CUBE_M32", "CUBE_N8"})],
+    },
+    "TileCubeLogicalGroupsForPhysicalCells": {
+        "before": [],
+        "after": [("asl/tile/model/shape/cube-double-cell.asl", set())],
+    },
+    "TileCubeM32B64DataType": {
+        "before": [],
+        "after": [("asl/tile/model/shape/cube-double-cell.asl", set())],
+    },
+    "TileCubeM32B64PayloadIndex": {
+        "before": [],
+        "after": [("asl/tile/model/shape/cube-double-cell.asl", set())],
+    },
+    "TileCubeM32B64RawPlaneWord": {
+        "before": [],
+        "after": [("asl/tile/model/shape/cube-double-cell.asl", set())],
+    },
+    "TileCubeM32B64WithRawPlaneWord": {
+        "before": [],
+        "after": [("asl/tile/model/shape/cube-double-cell.asl", set())],
+    },
+    "TileCubePhysicalCellsPerLogicalGroup": {
+        "before": [],
+        "after": [("asl/tile/model/shape/cube-double-cell.asl", {"CUBE_M32"})],
+    },
+    "TileLayoutIsCube": {
+        "before": [("asl/tile/model/shape/cube-cell.asl", {"CUBE_M16", "CUBE_M32", "CUBE_N8"})],
+        "after": [("asl/tile/model/shape/cube-double-cell.asl", {"CUBE_M16", "CUBE_M32", "CUBE_N8"})],
+    },
+    "TileShuffleSelectedRow": {
+        "before": [],
+        "after": [("asl/tile/model/legality/layout-rearrangement.asl", {"CUBE_M32"})],
+    },
+}
+ISSUE371_NUMERIC_REFERENCE_HELPERS = {
+    "ReferenceCommonFloatingEndpoint",
+    "ReferenceCommonReducedFloatingEncoding",
+}
+ISSUE371_HELPER_BODY_CHANGES = {
+    "TileA9DataTypeSupported": "asl/tile/model/legality/dtype-layout.asl",
+    "TileTTRIDataTypeSupported": "asl/tile/model/execution/generation.asl",
+    "TileTTRIOneEncoding": "asl/tile/model/execution/generation.asl",
 }
 COMMON_PREFIXES = (
     "Tile", "Bundle", "CurrentBundle", "ResolveBundle", "ConfigureBundle",
@@ -581,8 +676,13 @@ ROW_EXPANSION_BROADCAST_HELPER_DEFINITION_DELTAS = {
     },
     "TileExpansionBroadcastSlot": {
         "before": [],
-        "after": [("asl/tile/model/legality/reduction-and-expansion.asl",
-                   {"RowMajor"})],
+        "after": [("asl/tile/model/legality/reduction-and-expansion.asl", {"RowMajor"})],
+        "after_issue371": [("asl/tile/model/legality/reduction-and-expansion.asl",
+                            {"CUBE_M32", "RowMajor"})],
+        "classification_issue371": (
+            "Issue #207 selected-CUBE row-expansion byte-offset selector plus "
+            "Issue #371 M32-only b64 broadcast slot"
+        ),
     },
 }
 ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION = (
@@ -626,6 +726,7 @@ INDEXED_TLSU_CLASSIFICATION = (
 # relations are unchanged, so unrelated common-helper movement still fails
 # closed through the UNCLASSIFIED path.
 PROFILE_FOLD_HELPERS = {
+    "ReferenceCommonFloatingEndpoint",
     "TileExponential",
     "TileLogarithm",
     "TileProfileConvert",
@@ -1145,7 +1246,8 @@ def _call_sites(body: str) -> list[tuple[str, str]]:
 
 
 def _helper(name: str) -> bool:
-    return name.startswith(COMMON_PREFIXES)
+    return (name.startswith(COMMON_PREFIXES) or
+            name in ISSUE371_NUMERIC_REFERENCE_HELPERS)
 
 
 def _requires_definition(name: str) -> bool:
@@ -1277,6 +1379,11 @@ def _operation_reachability(source_map: dict[str, str], metadata: list[tuple[str
                          "mnemonic": mnemonic, "form": form, "roles": op["roles"],
                          "direct_roots": sorted(direct_roots), "bundle_roots": sorted(bundle_roots),
                          "roots": sorted(roots), "common_helpers": sorted(reachable)})
+    # Issue #371 moves one fixed-binary reference helper and adds one more.
+    # They are layout-free and intentionally outside COMMON_PREFIXES, so add
+    # only these exact names as global audit roots without making arbitrary
+    # Reference* functions operation-layout authorities.
+    all_roots.update(ISSUE371_NUMERIC_REFERENCE_HELPERS & set(index))
     reachable_all, reach_errors = _reachable(index, all_roots)
     errors.extend(reach_errors)
     helpers: dict[str, list[dict[str, Any]]] = {}
@@ -1808,6 +1915,24 @@ def _operation_model(meta: dict[str, Any], content: str, reach: dict[str, Any], 
                 field = role["field"]
                 accepted_layouts[field] = set(supported_layouts)
                 contract_layouts[field] = set(supported_layouts)
+    if mnemonic == "TLEA":
+        if not re.search(
+            r"matching\s+logical\s+valid\s+shape\s+and\s+"
+            r"RowMajor\s*/\s*CUBE_M32\s+layout",
+            contract,
+            re.IGNORECASE,
+        ):
+            errors.append("TLEA authoritative contract does not name exactly RowMajor/CUBE_M32")
+        if not {
+            "TileLEABundleLogicalShapeMatches",
+            "TileElementwiseLayoutSupported",
+            "TileCubeLayoutDataTypeSupported",
+        } <= reachable_names:
+            errors.append("TLEA Local M32 b64 layout/type owner is not reachable")
+        for role in roles:
+            field = role["field"]
+            accepted_layouts[field] = set(TLEA_ALLOWED_LAYOUTS)
+            contract_layouts[field] = set(TLEA_ALLOWED_LAYOUTS)
     # Relation graph transitivity is retained for canonical Bias wording and
     # for stable normalized same-layout predicates in every operation.
     graph: dict[str, set[str]] = {}
@@ -1889,6 +2014,10 @@ def _classify_tuple(mnemonic: str, role: str, layout: str, old_model: dict[str, 
     new_values = set(new_model.get("layouts", {}).get(role, []))
     if mnemonic == "TEXPDIF" and layout in ALLOWED_LAYOUTS:
         return TEXPDIF_LAYOUT_CLASSIFICATION
+    if (mnemonic == "TLEA" and role in {"destination0", "source0"} and
+            layout in TLEA_ALLOWED_LAYOUTS and layout in new_values and
+            layout not in old_values):
+        return TLEA_LAYOUT_CLASSIFICATION
     if mnemonic == "TCVT" and layout == "RowMajor":
         return TCVT_PHYSICAL_SHAPE_CLASSIFICATION
     if mnemonic in EXACT_34 and layout in ALLOWED_LAYOUTS:
@@ -1933,6 +2062,8 @@ def _classify_relation(mnemonic: str, relation: str) -> str | None:
         "source0.layout == source1.layout",
     }:
         return TEXPDIF_LAYOUT_CLASSIFICATION
+    if mnemonic == "TLEA" and relation == "destination0.layout == source0.layout":
+        return TLEA_LAYOUT_CLASSIFICATION
     if mnemonic in BIAS and relation in {
         "Bias.layout == ML == D.layout",
         "Local A present => A.layout == ML",
@@ -1968,9 +2099,128 @@ def _helper_expected_callers(spec: dict[str, Any]) -> set[tuple[str, str]]:
     return set(spec.get("callers", set())) | set(spec.get("additional_callers", set()))
 
 
-def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: dict[str, list[dict[str, Any]]], after_defs: dict[str, list[dict[str, Any]]], authorized_helper_names: set[str], allow_texpdif_changes: bool = False) -> tuple[list[dict[str, Any]], list[str]]:
+def _issue371_b64_closure(
+    after_map: dict[str, str], after_defs: dict[str, list[dict[str, Any]]]
+) -> list[str]:
+    """Validate the frozen M32 b64 double-CELL invariants without widening M16."""
+    if "TileCubeM32B64DataType" not in after_defs:
+        return []
+    errors: list[str] = []
+    double_path = "asl/tile/model/shape/cube-double-cell.asl"
+
+    def body(name: str, path: str = double_path) -> str:
+        rows = after_defs.get(name, [])
+        if len(rows) != 1 or rows[0].get("path") != path:
+            errors.append(f"Issue #371 helper owner mismatch: {name}")
+            return ""
+        return rows[0].get("body", "")
+
+    dtype = body("TileCubeM32B64DataType")
+    if set(re.findall(r"TileDataType_([A-Za-z0-9]+)", dtype)) != {
+        "FP64", "S64", "U64"
+    }:
+        errors.append("Issue #371 M32 b64 data-type domain is not exactly FP64/S64/U64")
+
+    a7 = body("TileA7DataTypeSupported", "asl/tile/model/legality/dtype-layout.asl")
+    if set(re.findall(r"TileDataType_([A-Za-z0-9]+)", a7)) != {
+        "FP64", "S64", "U64", "S32", "U32", "FP32", "S16", "U16",
+        "FP16", "BF16",
+    }:
+        errors.append("Issue #371 TileA7 mnemonic owner domain is not exact")
+    f3 = body("TileF3DataTypeSupported", "asl/tile/model/legality/dtype-layout.asl")
+    if set(re.findall(r"TileDataType_([A-Za-z0-9]+)", f3)) != {
+        "FP64", "FP32", "FP16", "BF16",
+    }:
+        errors.append("Issue #371 TileF3 unary SFU mnemonic owner domain is not exact")
+
+    layout_dtype = body("TileCubeLayoutDataTypeSupported")
+    if not (
+        "layout == TileLayout_CUBE_M32" in layout_dtype
+        and "TileCubeM32B64DataType(data_type)" in layout_dtype
+        and "layout == TileLayout_CUBE_M16" not in layout_dtype
+    ):
+        errors.append("Issue #371 M16 b64 rejection or M32 b64 layout/type closure is missing")
+
+    factor = body("TileCubePhysicalCellsPerLogicalGroup")
+    if not (
+        "layout == TileLayout_CUBE_M32" in factor
+        and "TileCubeM32B64DataType(data_type)" in factor
+        and "then return 2" in factor
+        and factor.count("return 1;") == 1
+    ):
+        errors.append("Issue #371 double-CELL factor is not exactly two for M32 b64")
+
+    groups = body("TileCubeLogicalGroupsForPhysicalCells")
+    if not (
+        "cell_count MOD factor == 0" in groups
+        and "return cell_count DIVRM factor;" in groups
+    ):
+        errors.append("Issue #371 physical-to-logical CELL group count is not closed")
+
+    cell_count = body(
+        "TileCubeCellCountForColumns", "asl/tile/model/shape/cube-cell.asl"
+    )
+    storage_elements = body(
+        "TileCubeStorageElementsForColumns", "asl/tile/model/shape/cube-cell.asl"
+    )
+    if "TileCubePhysicalCellsPerLogicalGroup(layout, data_type)" not in cell_count:
+        errors.append("Issue #371 physical CELL count does not apply the double-CELL factor")
+    if not (
+        "TileCubeLogicalGroupsForPhysicalCells(" in storage_elements
+        and "groups * cell_rows * cell_columns" in storage_elements
+    ):
+        errors.append("Issue #371 logical element count incorrectly counts physical CELL planes")
+
+    plane_cell = body("TileCubeM32B64PlaneCellIndex")
+    plane_word = body("TileCubeM32B64PlaneWordIndex")
+    raw_read = body("TileCubeM32B64RawPlaneWord")
+    raw_write = body("TileCubeM32B64WithRawPlaneWord")
+    if "column * 2 + (if high_plane then 1 else 0)" not in plane_cell:
+        errors.append("Issue #371 M32 b64 low/high plane CELL mapping is incomplete")
+    if "return row;" not in plane_word:
+        errors.append("Issue #371 M32 b64 plane word index must equal the logical row")
+    if "value[63:32] else value[31:0]" not in raw_read:
+        errors.append("Issue #371 M32 b64 raw read does not preserve both 32-bit planes")
+    if not ("result[63:32] = raw" in raw_write and "result[31:0] = raw" in raw_write):
+        errors.append("Issue #371 M32 b64 raw write does not preserve both 32-bit planes")
+
+    subview = body(
+        "BundleCubeSubviewDescriptorOf",
+        "asl/block/model/operands/subview-descriptor.asl",
+    )
+    if not (
+        "TileCubePhysicalCellRangeComplete(" in subview
+        and "TileCubeLogicalGroupsForPhysicalCells(" in subview
+    ):
+        errors.append("Issue #371 CUBE subviews do not require complete double-CELL pairs")
+
+    local_generation = after_map.get(
+        "asl/block/model/operands/local-generation-cube.asl", ""
+    )
+    if not (
+        "TileCubePhysicalCellRangeComplete(" in local_generation
+        and "TileCubePhysicalCellsPerLogicalGroup(" in local_generation
+        and "extent MOD cells_per_group != 0" in local_generation
+    ):
+        errors.append("Issue #371 Local generation does not retain whole double-CELL pairs")
+
+    broadcast_slot = body(
+        "TileExpansionBroadcastSlot",
+        "asl/tile/model/legality/reduction-and-expansion.asl",
+    )
+    if not (
+        "layout == TileLayout_CUBE_M32 && element_bytes == 8" in broadcast_slot
+        and "layout == TileLayout_CUBE_M16 && element_bytes == 8" not in broadcast_slot
+        and set(LAYOUT_RE.findall(broadcast_slot)) == {"RowMajor", "CUBE_M32"}
+    ):
+        errors.append("Issue #371 broadcast slot is not restricted to M32 b64")
+    return errors
+
+
+def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: dict[str, list[dict[str, Any]]], after_defs: dict[str, list[dict[str, Any]]], authorized_helper_names: set[str], allow_texpdif_changes: bool = False, allow_tlea_changes: bool = False) -> tuple[list[dict[str, Any]], list[str]]:
     rows: list[dict[str, Any]] = []
     errors: list[str] = []
+    issue371_b64_active = "TileCubeM32B64DataType" in after["helpers"]
     for name in sorted(set(before["helpers"]) | set(after["helpers"])):
         # Operation roots are retained in operation_reachability for
         # operation-specific extraction, but their body changes are accounted
@@ -1981,6 +2231,31 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
             continue
         old_defs, new_defs = before["helpers"].get(name, []), after["helpers"].get(name, [])
         if len(old_defs) != len(new_defs) or [row["path"] for row in old_defs] != [row["path"] for row in new_defs]:
+            if issue371_b64_active and name in ISSUE371_HELPER_DEFINITION_DELTAS:
+                spec = ISSUE371_HELPER_DEFINITION_DELTAS[name]
+                old_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"]))) for row in old_defs
+                )
+                new_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"]))) for row in new_defs
+                )
+                expected_old = sorted(
+                    (path, tuple(sorted(layouts))) for path, layouts in spec["before"]
+                )
+                expected_new = sorted(
+                    (path, tuple(sorted(layouts))) for path, layouts in spec["after"]
+                )
+                valid = old_shape == expected_old and new_shape == expected_new
+                if not valid:
+                    errors.append(f"unauthorized Issue #371 helper definition delta: {name}")
+                rows.append({
+                    "name": name,
+                    "classification": ISSUE371_B64_CLASSIFICATION if valid else "UNCLASSIFIED",
+                    "before": old_defs,
+                    "after": new_defs,
+                    "owner_decision": ISSUE371_B64_CLASSIFICATION,
+                })
+                continue
             if name in R4_NEW_HELPERS:
                 spec = R4_NEW_HELPERS[name]
                 expected_layouts = set(spec["layouts"])
@@ -2080,6 +2355,11 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 continue
             if name in ROW_EXPANSION_BROADCAST_HELPER_DEFINITION_DELTAS:
                 spec = ROW_EXPANSION_BROADCAST_HELPER_DEFINITION_DELTAS[name]
+                classification = (
+                    spec.get("classification_issue371")
+                    if issue371_b64_active and "classification_issue371" in spec
+                    else ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION
+                )
                 old_shape = sorted(
                     (row["path"], tuple(sorted(row["layouts"])))
                     for row in old_defs
@@ -2094,7 +2374,10 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 )
                 expected_new_shape = sorted(
                     (path, tuple(sorted(layouts)))
-                    for path, layouts in spec["after"]
+                    for path, layouts in spec.get(
+                        "after_issue371" if issue371_b64_active else "after",
+                        spec["after"],
+                    )
                 )
                 valid = (old_shape == expected_old_shape and
                          new_shape == expected_new_shape)
@@ -2104,12 +2387,12 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                     )
                     rows.append({"name": name, "classification": "UNCLASSIFIED",
                                  "before": old_defs, "after": new_defs,
-                                 "owner_decision": ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION})
+                                 "owner_decision": classification})
                 else:
                     rows.append({"name": name,
-                                 "classification": ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION,
+                                 "classification": classification,
                                  "before": old_defs, "after": new_defs,
-                                 "owner_decision": ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION})
+                                 "owner_decision": classification})
                 continue
             if allow_texpdif_changes and name in TEXPDIF_COMMON_HELPERS:
                 valid_change = False
@@ -2129,6 +2412,22 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                     rows.append({"name": name,
                                  "classification": TEXPDIF_LAYOUT_CLASSIFICATION,
                                  "before": old_defs, "after": new_defs})
+                continue
+            if allow_tlea_changes and name in TLEA_NEW_HELPER_PATHS:
+                valid_change = (
+                    not old_defs and len(new_defs) == 1 and
+                    new_defs[0]["path"] == TLEA_NEW_HELPER_PATHS[name] and
+                    not new_defs[0]["layouts"]
+                )
+                if not valid_change:
+                    errors.append(f"unauthorized TLEA common-helper definition change: {name}")
+                rows.append({
+                    "name": name,
+                    "classification": TLEA_LAYOUT_CLASSIFICATION if valid_change else "UNCLASSIFIED",
+                    "before": old_defs,
+                    "after": new_defs,
+                    "owner_decision": OWNER_DECISIONS["TLEA"],
+                })
                 continue
             if name in FPATR_EFFECTIVE_TYPE_HELPERS:
                 # This Issue #345 classification authorizes only the two new,
@@ -2219,6 +2518,17 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                     )
                 else:
                     classification = FPATR_EFFECTIVE_TYPE_CLASSIFICATION
+            if issue371_b64_active and name in ISSUE371_HELPER_BODY_CHANGES:
+                expected_path = ISSUE371_HELPER_BODY_CHANGES[name]
+                valid = (
+                    old["path"] == expected_path and new["path"] == expected_path and
+                    not old["layouts"] and not new["layouts"]
+                )
+                if not valid:
+                    errors.append(f"unauthorized Issue #371 helper body delta: {name}")
+                    classification = None
+                else:
+                    classification = ISSUE371_B64_CLASSIFICATION
             if classification is None and name in CUBE_REDUCTION_PHYSICAL_GEOMETRY_HELPERS:
                 classification = CUBE_REDUCTION_PHYSICAL_GEOMETRY_CLASSIFICATION
             if classification is None and name in PACKED_X2_ROW_LOCAL_HELPERS:
@@ -2232,6 +2542,9 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
             if (classification is None and allow_texpdif_changes and
                     name in TEXPDIF_COMMON_HELPERS):
                 classification = TEXPDIF_LAYOUT_CLASSIFICATION
+            if (classification is None and allow_tlea_changes and
+                    name in TLEA_COMMON_HELPERS):
+                classification = TLEA_LAYOUT_CLASSIFICATION
             if classification is None and name in authorized_helper_names:
                 classification = "operation-scoped accepted layout/relation owner"
             if name == R4_EXECUTION_HELPER["name"]:
@@ -2424,6 +2737,8 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
     after_keys = set(after_inventory["keys"])
     before_has_texpdif = any(mnemonic == "TEXPDIF" for mnemonic, _form, _role in before_keys)
     after_has_texpdif = any(mnemonic == "TEXPDIF" for mnemonic, _form, _role in after_keys)
+    before_has_tlea = any(mnemonic == "TLEA" for mnemonic, _form, _role in before_keys)
+    after_has_tlea = any(mnemonic == "TLEA" for mnemonic, _form, _role in after_keys)
     expected_texpdif_addition = (
         {
             ("TEXPDIF", form, role)
@@ -2433,13 +2748,23 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
         if after_has_texpdif and not before_has_texpdif
         else set()
     )
+    expected_tlea_addition = (
+        {
+            ("TLEA", form, role)
+            for form in ("direct", "bundle")
+            for role in ("destination0", "source0")
+        }
+        if after_has_tlea and not before_has_tlea
+        else set()
+    )
     if (before_keys - after_keys or
-            after_keys - before_keys != expected_texpdif_addition):
+            after_keys - before_keys != expected_texpdif_addition | expected_tlea_addition):
         errors.append("authoritative inventory changed: missing/unknown/duplicate mnemonic/form/role ownership")
     before_reach, e, before_defs = _helper_snapshot(before_map, before_meta)
     errors.extend(e)
     after_reach, e, after_defs = _helper_snapshot(after_map, after_meta)
     errors.extend(e)
+    errors.extend(_issue371_b64_closure(after_map, after_defs))
     baseline_fixture, fixture_errors, fixture_payload = _load_baseline_fixture(before_inventory, baseline)
     errors.extend(fixture_errors)
     old_rows, new_rows = _operation_key_rows(before_inventory), _operation_key_rows(after_inventory)
@@ -2493,6 +2818,17 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
                 "source0.layout == source1.layout",
             }:
                 errors.append(f"TEXPDIF Local layout relations are not closed for {form}")
+        if mnemonic == "TLEA":
+            roles = set(model.get("layouts", {}))
+            if roles != {"destination0", "source0"}:
+                errors.append(f"TLEA Local layout-role closure missing for {form}")
+            if any(set(model.get("layouts", {}).get(role, [])) != TLEA_ALLOWED_LAYOUTS
+                   for role in roles):
+                errors.append(f"TLEA Local layout set is not closed for {form}")
+            if set(model.get("relations", [])) != {
+                "destination0.layout == source0.layout",
+            }:
+                errors.append(f"TLEA Local layout relations are not closed for {form}")
         if mnemonic not in INDEXED_TLSU:
             continue
         role_fields = list(model.get("layouts", {}))
@@ -2587,14 +2923,19 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
                         authorized_helpers.update(
                             set(row["common_helpers"]) & TEXPDIF_COMMON_HELPERS
                         )
+                    elif mnemonic == "TLEA":
+                        authorized_helpers.update(
+                            set(row["common_helpers"]) & TLEA_COMMON_HELPERS
+                        )
                     else:
                         authorized_helpers.update(row["common_helpers"])
 
-    # Keep the accepted r4 expansion helper and TEXPDIF helper changes scoped
+    # Keep the accepted r4 expansion, TEXPDIF, and TLEA helper changes scoped
     # to their independently classified operation deltas.
     helper_deltas, helper_errors = _helper_deltas(
         before_reach, after_reach, before_defs, after_defs, authorized_helpers,
         allow_texpdif_changes=after_has_texpdif and not before_has_texpdif,
+        allow_tlea_changes=after_has_tlea and not before_has_tlea,
     )
     errors.extend(helper_errors)
     if enforce_closure:
@@ -2632,7 +2973,7 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
                 # is still inventoried but not assigned a synthetic role.
                 pass
         for key in sorted(set(operation_models_before) & set(operation_models_after)):
-            if key[0] not in set(EXACT_34) | set(BIAS) | INDEXED_TLSU | {"GMOV", "TCVT", "TEXPDIF"} | R4_LAYOUT_OPERATIONS:
+            if key[0] not in set(EXACT_34) | set(BIAS) | INDEXED_TLSU | {"GMOV", "TCVT", "TEXPDIF", "TLEA"} | R4_LAYOUT_OPERATIONS:
                 if (operation_models_before[key].get("layouts") != operation_models_after[key].get("layouts") or
                         operation_models_before[key].get("relations") != operation_models_after[key].get("relations")):
                     # Location retirement is represented only in helper graph;
@@ -2884,9 +3225,9 @@ def _real_relation_mutation_canaries() -> None:
         raise AssertionError("r4 expansion relation removal did not fail closed")
 
     mutated = dict(candidate)
-    helper_layout_line = "            TileElementBits(data_type) == 32);"
+    helper_layout_line = "            TileElementBits(data_type) == 64);"
     helper_layout_mutation = (
-        "            TileElementBits(data_type) == 32) &&\n"
+        "            TileElementBits(data_type) == 64) &&\n"
         "           TileLayout_RowMajor == TileLayout_RowMajor;"
     )
     if helper_layout_line not in candidate.get(rearrangement_path, ""):
@@ -2946,12 +3287,17 @@ def _execution_mask_support_mutation_canaries() -> None:
          set(ISSUE356_REDUCTION_HELPER_DEFINITION_DELTAS))
     )
     row_expansion_classified = {
-        row["name"] for row in result["common_helper_deltas"]
-        if row.get("classification") == ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION
+        row["name"]: row.get("classification")
+        for row in result["common_helper_deltas"]
+        if row["name"] in ROW_EXPANSION_BROADCAST_HELPER_DEFINITION_DELTAS
     }
-    expected_row_expansion_classified = set(
-        ROW_EXPANSION_BROADCAST_HELPER_DEFINITION_DELTAS
-    )
+    expected_row_expansion_classified = {
+        name: spec.get(
+            "classification_issue371", ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION
+        ) if "TileCubeM32B64DataType" in result["reachability"]["after"]["helpers"]
+        else ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION
+        for name, spec in ROW_EXPANSION_BROADCAST_HELPER_DEFINITION_DELTAS.items()
+    }
     if (not result["pass"] or classified != expected_classified or
             row_expansion_classified != expected_row_expansion_classified):
         raise AssertionError(
@@ -3080,6 +3426,149 @@ def _execution_mask_support_mutation_canaries() -> None:
         for error in result["errors"]
     ):
         raise AssertionError("ExecutionMask PredicateCell layout expansion did not fail closed")
+
+
+def _issue371_b64_mutation_canaries() -> None:
+    """Prove the M32-only double-CELL classification fails closed."""
+    paths = source_paths(BASELINE_OBJECT, "working-tree")
+    baseline = _ref_texts(BASELINE_OBJECT, paths)
+    candidate = _ref_texts("working-tree", paths)
+    double_path = "asl/tile/model/shape/cube-double-cell.asl"
+    cube_path = "asl/tile/model/shape/cube-cell.asl"
+
+    m16 = dict(candidate)
+    m16_owner = candidate[double_path]
+    m32_clause = "return (layout == TileLayout_CUBE_M32 &&"
+    if m32_clause not in m16_owner:
+        raise AssertionError("Issue #371 M16 widening canary source is missing")
+    m16[double_path] = m16_owner.replace(
+        m32_clause, "return (layout == TileLayout_CUBE_M16 &&", 1
+    )
+    result = _census_texts(
+        baseline, m16, BASELINE_OBJECT, "real-mutated-issue371-m16-b64",
+        enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "M16 b64 rejection" in error for error in result["errors"]
+    ):
+        raise AssertionError("Issue #371 M16 b64 widening did not fail closed")
+
+    logical_count = dict(candidate)
+    logical_group = (
+        "    let groups = TileCubeLogicalGroupsForPhysicalCells(\n"
+        "        layout, data_type, cells);"
+    )
+    if logical_group not in candidate[cube_path]:
+        raise AssertionError("Issue #371 logical-count canary source is missing")
+    logical_count[cube_path] = candidate[cube_path].replace(
+        logical_group, "    let groups = cells;", 1
+    )
+    result = _census_texts(
+        baseline, logical_count, BASELINE_OBJECT,
+        "real-mutated-issue371-double-logical-count", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "logical element count" in error for error in result["errors"]
+    ):
+        raise AssertionError("Issue #371 physical-plane logical count did not fail closed")
+
+    half_plane = dict(candidate)
+    plane_mapping = "column * 2 + (if high_plane then 1 else 0)"
+    if plane_mapping not in m16_owner:
+        raise AssertionError("Issue #371 half-plane canary source is missing")
+    half_plane[double_path] = m16_owner.replace(
+        plane_mapping, "column + (if high_plane then 1 else 0)", 1
+    )
+    result = _census_texts(
+        baseline, half_plane, BASELINE_OBJECT,
+        "real-mutated-issue371-half-plane", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "low/high plane CELL mapping" in error for error in result["errors"]
+    ):
+        raise AssertionError("Issue #371 half-plane mapping did not fail closed")
+
+    dtype_path = "asl/tile/model/legality/dtype-layout.asl"
+    a7_widened = dict(candidate)
+    a7_domain = "             TileDataType_BF16 => return TRUE;"
+    if a7_domain not in candidate[dtype_path]:
+        raise AssertionError("Issue #371 TileA7 domain canary source is missing")
+    a7_widened[dtype_path] = candidate[dtype_path].replace(
+        a7_domain,
+        "             TileDataType_BF16, TileDataType_S8 => return TRUE;",
+        1,
+    )
+    result = _census_texts(
+        baseline, a7_widened, BASELINE_OBJECT,
+        "real-mutated-issue371-a7-domain", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "TileA7 mnemonic owner domain is not exact" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #371 TileA7 domain widening did not fail closed")
+
+    f3_widened = dict(candidate)
+    f3_domain = "           data_type == TileDataType_BF16;"
+    if f3_domain not in candidate[dtype_path]:
+        raise AssertionError("Issue #371 TileF3 domain canary source is missing")
+    f3_widened[dtype_path] = candidate[dtype_path].replace(
+        f3_domain,
+        "           data_type == TileDataType_BF16 ||\n"
+        "           data_type == TileDataType_S64;",
+        1,
+    )
+    result = _census_texts(
+        baseline, f3_widened, BASELINE_OBJECT,
+        "real-mutated-issue371-f3-domain", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "TileF3 unary SFU mnemonic owner domain is not exact" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #371 TileF3 domain widening did not fail closed")
+
+    broadcast_path = "asl/tile/model/legality/reduction-and-expansion.asl"
+    broadcast_widened = dict(candidate)
+    broadcast_m32 = "           (layout == TileLayout_CUBE_M32 && element_bytes == 8);"
+    if broadcast_m32 not in candidate[broadcast_path]:
+        raise AssertionError("Issue #371 broadcast-slot canary source is missing")
+    broadcast_widened[broadcast_path] = candidate[broadcast_path].replace(
+        broadcast_m32,
+        "           (layout == TileLayout_CUBE_M16 && element_bytes == 8);",
+        1,
+    )
+    result = _census_texts(
+        baseline, broadcast_widened, BASELINE_OBJECT,
+        "real-mutated-issue371-broadcast-slot", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "broadcast slot is not restricted to M32 b64" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #371 M16 b64 broadcast widening did not fail closed")
+
+    unknown = dict(candidate)
+    dtype_return = "    return data_type == TileDataType_FP64 ||"
+    if dtype_return not in m16_owner:
+        raise AssertionError("Issue #371 unknown-helper canary source is missing")
+    unknown[double_path] = m16_owner.replace(
+        dtype_return,
+        "    assert TileIssue371UnauthorizedHelper();\n" + dtype_return,
+        1,
+    ) + (
+        "\npure func TileIssue371UnauthorizedHelper() => boolean\n"
+        "begin\n    return TRUE;\nend;\n"
+    )
+    result = _census_texts(
+        baseline, unknown, BASELINE_OBJECT,
+        "real-mutated-issue371-unknown-helper", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "common-helper definition set changed: TileIssue371UnauthorizedHelper" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #371 unknown helper did not fail closed")
 
 
 def _issue356_reduction_source_mutation_canaries() -> None:
@@ -3219,8 +3708,9 @@ def self_test() -> None:
         raise AssertionError("missing inventory owner canary failed closed")
     _real_relation_mutation_canaries()
     _execution_mask_support_mutation_canaries()
+    _issue371_b64_mutation_canaries()
     _issue356_reduction_source_mutation_canaries()
-    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, and bounded reduction-source mutations rejected")
+    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, Issue #371 M32 b64 double-CELL, and bounded reduction-source mutations rejected")
 
 
 def main() -> int:
