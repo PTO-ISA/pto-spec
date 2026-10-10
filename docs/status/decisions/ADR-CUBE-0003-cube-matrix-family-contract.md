@@ -135,13 +135,17 @@ The twelve CUBE Matrix block operations form one closed architectural family:
 | `21` | `BSTART.TGEMVMX.BIAS` | `M=1` specialization of function `5` |
 | `22` | `BSTART.TGEMVMX.ACC` | `M=1` specialization of function `6` |
 
-`LB0=M`, `LB1=N`, and `LB2=K`.  Each omitted dimension defaults
-independently to one; a present zero is illegal; every resolved value is a
-power of two.  `TGEMV` fixes `M=1`, permits an explicit `LB0` only when its
-resolved value is one, and is Local-only.  The left operand is `M x K`, the
-right operand is `K x N`, and the result and explicit accumulator are
-`M x N`.  Bias is exactly one Local row-major `1 x N` private-accumulator
-source and is added after the complete K reduction.
+`LB0=M`, `LB1=N`, and `LB2=K`. Each omitted dimension defaults
+independently to one; a present zero is illegal. Local-only TMATMUL dimensions
+remain positive and are subject to the existing Local CUBE descriptor and
+capacity rules. Cooperative Shared forms use Core-total `group_M` in 1..128
+and `N/K` in 1..65535 without a power-of-two restriction; their real source,
+destination, and physical descriptor rules remain independent. `TGEMV` fixes
+`M=1`, permits an explicit `LB0` only when its resolved value is one, and
+remains Local-only. The left operand is `M x K`, the right operand is `K x N`,
+and the result and explicit accumulator are `M x N`. Bias is exactly one
+Local row-major `1 x N` private-accumulator source and is added after the
+complete K reduction.
 
 Ordinary operations accept the exact floating, signed, and unsigned input
 sets defined by the Matrix legality owner.  The two input types may differ
@@ -266,3 +270,21 @@ its payload is broadcast by logical output column. Vector quant and
 vector ReLU/PReLU parameters use `CUBE_N8/U64` with logical `[1,N]`; their
 carrier bits and numeric legality are unchanged. This amendment has required
 release impact and is owned by the ASL/NDF clauses named in the front matter.
+
+
+## Amendment — 2026-10-10 (Issue #374)
+
+Cooperative Shared TMATMUL-family forms no longer have a uniform power-of-two
+requirement for `N` and `K`; `group_M` is 1..128 and `N/K` are positive values
+through 65535, subject to each original Shared descriptor, Local CUBE operand,
+capacity, and destination rule. Local-only TMATMUL and Local-only TGEMV keep
+their existing positive-dimension and physical descriptor domains. Issue #374
+also assigns the packed Shared-primary parity restriction to ADR-CUBE-0007;
+this family inventory does not widen generic Shared, TGEMV, or arithmetic
+semantics.
+
+中文：协作式 Shared TMATMUL 不再对 `N/K` 施加统一幂二限制；`group_M` 为 1..128，
+`N/K` 为 1..65535 内正值，并继续分别受原始 Shared 描述符、Local CUBE 操作数、
+容量和目的布局约束。Local-only TMATMUL 与 TGEMV 保留原有正维度及物理描述符范围。
+Issue #374 的 Shared packed 主操作数奇偶约束归 ADR-CUBE-0007，本家族记录不扩展通用
+Shared、TGEMV 或算术语义。

@@ -421,34 +421,37 @@ begin
             shared_ordinal = (shared_ordinal + 1) as integer {0..4};
         end;
     end;
-
     if TileMatrixFunctionUsesBias(function) then
         bias = BundleMatrixSourceAt(
             local_ordinal as integer {0..8});
         local_ordinal = (local_ordinal + 1) as integer {0..6};
     end;
-
     if _BundleFixedPointAttributes.c_scale_en then
         c_scale = BundleMatrixSourceAt(
             local_ordinal as integer {0..8});
     end;
-
     let right_group = TileMatrixRightGroupSourceCount(
         function, right_type);
+    let left_shared = shared_count != 0 && shared_count != right_group;
     let shape_legal = if shared_count == 0 then
         TileMatrixCubeInfosMatchDimensions(left, right, pe_m, n, k)
-    else if shared_count == right_group then
-        TileMatrixMixedInfosMatchDimensions(left, right, pe_m, n, k)
     else
-        TileMatrixInfosMatchDimensions(left, right, pe_m, n, k);
+        BundleMatrixCooperativeInfosMatchDimensions(
+            left, right, pe_m, n, k, left_shared,
+            left_type, right_type);
     let operand_types_legal = left.data_type == left_type &&
         right.data_type == right_type;
     let scales_legal = !TileMatrixFunctionUsesMX(function) ||
-        TileMatrixInfoOptionalScalesLegal(
-            left, left_scale, left_scale_present,
-            right, right_scale, right_scale_present);
+        if shared_count == 0 then
+            TileMatrixInfoOptionalScalesLegal(
+                left, left_scale, left_scale_present,
+                right, right_scale, right_scale_present)
+        else
+            BundleMatrixCooperativeScalesLegal(
+                left, left_scale, left_scale_present, left_shared,
+                right, right_scale, right_scale_present,
+                left_type, right_type);
     assert shape_legal && operand_types_legal && scales_legal;
-
     let accumulator_legal = !TileMatrixFunctionUsesAccumulator(function) ||
         TileMatrixLocalCubeAccumulatorSchemaLegal(
             accumulator, pe_m, n, result_type, primary_layout,

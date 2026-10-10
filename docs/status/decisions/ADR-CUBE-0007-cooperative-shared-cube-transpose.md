@@ -325,3 +325,58 @@ descriptor/state/payload/lifetime、Local-A 转置拒绝及后处理、数值、
 语义保持不变；不引入 legacy selector、任意非零 mask、Shared TGEMV 或新 descriptor。
 方阵在任一控制下都可能满足 shape 合法性，因此旧布局可能无 fault 而发生数值重解释；
 迁移时必须明确安排 physical payload 或选择匹配控制，本修订不承诺检测此情形。
+
+
+## 2026-10-10 accepted amendment: cooperative logical shapes and packed Shared operands (Issue #374)
+
+This amendment is evaluated from the frozen Issue #374 contract at baseline
+`e145c45c674fdc41b0b71564abf0e0433a6be29b`. It supersedes the cooperative
+Shared `N/K` power-of-two restriction and any transient Local shape/capacity
+restriction for the six TMATMUL-family Shared forms. Cooperative `group_M` is
+1..128 and `N/K` are 1..65535; all descriptor, physical pitch, Local CUBE,
+capacity, and destination rules remain independent checks. Shared data is read
+from its original published physical descriptor with its original pitch and
+typed logical element/carrier/lane semantics. Internal logical views are
+private reference-model read mechanisms and carry no separate Local descriptor
+or 64 KiB capacity requirement. Valid-region tails and padded physical columns
+are not mathematical operands.
+
+If any actual Shared primary uses a supported packed-four-bit Matrix type
+(`E2M1X2`, `E1M2X2`, `HiF4X2` for Matrix-MX only, `S4X2`, or `U4X2`), `K`
+and each such original source parent's physical `columns` pitch MUST be even
+under every legal transpose combination. `valid_columns` MAY be smaller than
+that even pitch. `M/group_M` and `N` have no new parity rule. This applies at
+the Matrix-use boundary, including selected `B.SUBVIEW` views, while generic
+Shared descriptor legality, Local-only TMATMUL, TGEMV, and Local packed A with
+non-packed Shared B remain unchanged. The new restriction is breaking for
+Matrix uses of active odd `K` or odd-pitch packed Shared parents; no odd-pitch
+positive Matrix witness or generic Shared restriction is introduced.
+
+For Shared Matrix-MX, ScaleA remains fixed at stored-valid `[group_M,G_A]`
+and ScaleB at `[N,G_B]`, where each side computes
+`G=ceil(K/group_size)` independently (group-32 E8M0 or group-64 U32). The
+transpose controls do not affect scale shape or indexing; valid `k` selects
+`floor(k/group_size)`. Scale values, numerical interpretation, encodings,
+C/D distinction, readiness, group_M distribution, atomic publication, and
+zero-mask behavior remain unchanged. The amendment adds no arithmetic oracle.
+
+中文：本修订基于 Issue #374 冻结合同与 baseline
+`e145c45c674fdc41b0b71564abf0e0433a6be29b`。六种 cooperative Shared TMATMUL 不再受
+`N/K` 幂二限制，也不再受临时 Local 形状/容量约束；`group_M` 为 1..128，`N/K` 为
+1..65535，描述符、物理 pitch、Local CUBE、容量与目的布局仍分别校验。Shared 数据按原始
+published 物理描述符、原始 pitch 及类型化逻辑 element/carrier/lane 读取。内部逻辑视图
+仅是模型私有读取机制，不引入额外 Local 描述符或 64 KiB 容量要求；valid-region 尾部及
+物理 padding 不参与计算。
+
+若实际 Shared primary 使用已支持的 packed 四位类型（`E2M1X2`、`E1M2X2`、仅 Matrix-MX
+支持的 `HiF4X2`、`S4X2` 或 `U4X2`），则所有转置组合下 `K` 与每个此类原始源 parent 的
+物理 `columns` pitch 均须为偶数；`valid_columns` 可小于偶数 pitch。`M/group_M` 与 `N`
+不增加奇偶约束。该规则在 Matrix 使用边界生效，包括选择 `B.SUBVIEW` 时；通用 Shared
+描述符、Local-only TMATMUL、TGEMV 及 Local packed A 搭配非 packed Shared B 均保持不变。
+使用 active 奇数 K 或奇数 pitch packed Shared parent 的 Matrix 程序存在 breaking 变化；
+不新增 odd-pitch 正例或通用 Shared 限制。
+
+Shared Matrix-MX ScaleA 固定 stored-valid `[group_M,G_A]`，ScaleB 固定 `[N,G_B]`，每侧按
+自身 group-size 独立计算 `G=ceil(K/group_size)`（group-32 E8M0 或 group-64 U32）。转置不
+改变 scale 形状或索引；有效 `k` 选取 `floor(k/group_size)`。scale 数值解释、编码、C/D
+区分、就绪、group_M 分布、原子发布和零 mask 行为不变，本修订不添加算术 oracle。

@@ -25,15 +25,26 @@
 // NDF-BEGIN: PTO-CUBE-SHARED-TRANSPOSE-001
 // ndf: kind=contract level=L1 layer=block status=accepted
 // B.FPATR bits 7 and 8 MUST independently select logical transpose for the
-// corresponding Shared A or B primary data operand only. Shared ScaleA is
-// always physically [M,G_A] and Shared ScaleB is always physically [N,G_B],
-// both K-group-major, regardless of the transpose controls. Local-side
-// transpose MUST remain illegal and neither source is mutated. Shared A [M,K]
-// is physically [M,K] at TransA=0 and [K,M] at TransA=1; Shared B [K,N] is
-// physically [N,K] at TransB=0 and [K,N] at TransB=1. Each Shared source MUST
-// expose the exact physical valid shape with a legal padded major pitch, and
-// every participating PE MUST pass metadata preflight before any payload
-// snapshot, destination allocation, or output effect.
+// corresponding Shared A or B primary data operand only. Shared ScaleA MUST
+// have stored-valid shape [group_M,G_A] and ScaleB [N,G_B], with each G equal
+// to ceil(K/group_size) for its own primary type (group-32 E8M0 or group-64
+// U32), independent of transpose. Local-side transpose MUST remain illegal.
+// Shared A [group_M,K] is physically [group_M,K] at TransA=0 and [K,group_M]
+// at TransA=1; Shared B [K,N] is physically [N,K] at TransB=0 and [K,N] at
+// TransB=1. Cooperative Shared forms MUST use group_M in 1..128 and N/K in
+// 1..65535 without power-of-two restrictions. If a supported packed-four-bit
+// Shared primary is present (E2M1X2, E1M2X2, HiF4X2 for Matrix-MX only, S4X2,
+// or U4X2), K and every such original parent's physical `columns` pitch MUST
+// be even under every transpose combination; valid M/group_M and N gain no
+// parity rule. This MUST not affect Local-only TMATMUL, TGEMV, generic Shared
+// allocation, or Local packed A when Shared B is not packed. Each Shared
+// source MUST expose its exact physical valid shape with a legal padded pitch;
+// Local CUBE roles retain existing descriptor/capacity rules, while Shared
+// roles are checked against original legal descriptors. Internal read views
+// MUST preserve original pitch and typed logical element/carrier/lane mapping
+// without a transient Local descriptor or 64 KiB capacity limit. Every
+// participating PE MUST pass metadata preflight before payload snapshots,
+// destination allocation, or output effects.
 // NDF-END: PTO-CUBE-SHARED-TRANSPOSE-001
 
 // NDF-BEGIN: PTO-CUBE-CSCALE-001

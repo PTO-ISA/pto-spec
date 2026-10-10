@@ -38,29 +38,38 @@ begin
         value, _Tiles[[c_scale]].payload[[scale_element]][7:0]);
 end;
 
+readonly func MatrixReadLogicalElement(
+    tile: TileInfo,
+    row: integer {0..65535},
+    column: integer {0..65535}) => Word
+begin
+    let element = TileLogicalLinearIndex(tile, row, column);
+    return TileReadLogicalElement(tile, element);
+end;
+
 readonly func MatrixLeftScaleElement(
     scale: TileInfo,
     primary_type: TileDataType,
     row: integer {0..65535},
-    inner: integer {0..65535}) => ModelTileElementIndex
+    inner: integer {0..65535}) => PackedTileElementIndex
 begin
     let group = (inner DIVRM TileMXScaleGroupSize(primary_type))
         as integer {0..65535};
-    return TileStorageIndex(scale, row, group);
+    return TileLogicalLinearIndex(scale, row, group);
 end;
 
 readonly func MatrixRightScaleElement(
     scale: TileInfo,
     primary_type: TileDataType,
     column: integer {0..65535},
-    inner: integer {0..65535}) => ModelTileElementIndex
+    inner: integer {0..65535}) => PackedTileElementIndex
 begin
     let group = (inner DIVRM TileMXScaleGroupSize(primary_type))
         as integer {0..65535};
     if scale.layout == TileLayout_CUBE_M32 then
-        return TileStorageIndex(scale, column, group);
+        return TileLogicalLinearIndex(scale, column, group);
     end;
-    return TileStorageIndex(scale, group, column);
+    return TileLogicalLinearIndex(scale, group, column);
 end;
 
 func TileProfileMatrixAccumulate(

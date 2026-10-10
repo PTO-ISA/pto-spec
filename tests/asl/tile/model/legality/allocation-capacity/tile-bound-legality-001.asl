@@ -38,6 +38,12 @@ begin
         (odd_fp16_rows + 1) as integer {0..65535}, 17,
         TileDataType_FP16, 2048);
     assert DerivedTileRows(2048, 17, TileDataType_E2M1X2) == 227;
+    // Generic Shared-capable RowMajor four-bit storage keeps its historical
+    // odd-pitch descriptor domain. Matrix consumption applies the narrower
+    // original-source even-pitch rule at its own boundary.
+    assert DerivedTileRows(1024, 255, TileDataType_E2M1X2) == 8;
+    assert TileShapeMatchesCapacity(
+        1024, 8, 255, TileDataType_E2M1X2);
     assert DerivedTileRows(2048, 17, TileDataType_U8) == 0;
     assert TileShapeMatchesCapacity(128, 16, 1, TileDataType_U64);
     assert TileShapeMatchesCapacity(8192, 16384, 1,

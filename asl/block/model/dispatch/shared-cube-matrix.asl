@@ -1,5 +1,4 @@
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX","surface":"block","classification":["model","dispatch","shared-cube-matrix"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-TILE-MODEL-LEGALITY-MATRIX-FUNCTIONS","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
-
 readonly func BundleMatrixSharedSourceSchemaLegal(
     ordinal: integer {0..3},
     valid_rows: integer {1..65535},
@@ -30,10 +29,11 @@ begin
            shared.tile.valid_rows == valid_rows &&
            shared.tile.valid_columns == valid_columns &&
            shared.tile.columns >= columns &&
+           (!TileDataTypeIsFourBit(data_type) ||
+            shared.tile.columns MOD 2 == 0) &&
            shared.tile.data_type == data_type &&
            shared.tile.layout == TileLayout_RowMajor;
 end;
-
 // Matrix schema preflight derives Shared CELL views without reading payload.
 readonly func BundleSharedSubviewMatrixMetadataLegalForPE(
     binding: BundleSharedBindingIndex, pe_identity: MemoryAgentId,
@@ -55,6 +55,9 @@ begin
         modifier.size_code as integer {1..12});
     let element_bits = TileElementBits(parent.data_type);
     let bounded_columns = parent.columns as integer {1..65535};
+    if TileDataTypeIsFourBit(data_type) && bounded_columns MOD 2 != 0 then
+        return FALSE;
+    end;
     let raw_offset = UInt(BundleSharedSubviewOffsetRawForPE(
         binding, pe_identity));
     if raw_offset > 2047 then return FALSE; end;
@@ -95,7 +98,6 @@ begin
     return clipped_rows == valid_rows && clipped_columns == valid_columns &&
            selected_columns >= minimum_columns;
 end;
-
 readonly func BundleMatrixSharedSourcesReady(
     shared_count: integer {0..4}) => boolean
 begin
@@ -110,7 +112,6 @@ begin
     end;
     return TRUE;
 end;
-
 readonly func BundleMatrixSharedPrimarySchemaLegal(
     ordinal: integer {0..3},
     logical_rows: integer {1..65535},
@@ -124,7 +125,6 @@ begin
         ordinal, stored_rows, stored_columns,
         stored_columns, data_type);
 end;
-
 readonly func BundleMatrixSharedBPrimarySchemaLegal(
     ordinal: integer {0..3},
     logical_rows: integer {1..65535},
@@ -148,7 +148,6 @@ begin
     else return 0;
     end;
 end;
-
 pure func BundleMatrixCooperativeValidM(
     group_m: integer {1..65535},
     pe_identity: MemoryAgentId) => integer {0..32}
@@ -161,7 +160,6 @@ begin
     if remaining < m_per_pe then return remaining as integer {1..31}; end;
     return m_per_pe as integer {16,32};
 end;
-
 pure func BundleMatrixCooperativeCurrentPEMask(
     group_m: integer {1..65535},
     pe_identity: MemoryAgentId) => bits(4)
@@ -172,7 +170,6 @@ begin
     end;
     return mask;
 end;
-
 readonly func BundleMatrixSharedLeftPrimarySchemaLegal(
     ordinal: integer {0..3},
     group_m: integer {1..65535},
@@ -184,7 +181,6 @@ begin
     return BundleMatrixSharedPrimarySchemaLegal(
         ordinal, group_m, k, data_type, transpose);
 end;
-
 readonly func BundleMatrixSharedSchemasLegal(
     function: integer {0..31},
     left_type: TileDataType,
@@ -209,11 +205,15 @@ begin
     let right_group = TileMatrixRightGroupSourceCount(
         function, right_type);
     let left_shared = shared_count != right_group;
+    if !TileMatrixFunctionIsGEMV(function) &&
+       ((left_shared && TileDataTypeIsFourBit(left_type)) ||
+        TileDataTypeIsFourBit(right_type)) && k MOD 2 != 0 then
+        return FALSE;
+    end;
     if _BundleFixedPointAttributes.trans_a && !left_shared then
         return FALSE;
     end;
     var ordinal: integer {0..4} = 0;
-
     if left_shared then
         if !BundleMatrixSharedLeftPrimarySchemaLegal(
                ordinal as integer {0..3},
@@ -232,7 +232,6 @@ begin
             ordinal = (ordinal + 1) as integer {0..4};
         end;
     end;
-
     if !BundleMatrixSharedBPrimarySchemaLegal(
            ordinal as integer {0..3},
            k, n, right_type,
@@ -250,6 +249,25 @@ begin
         ordinal = (ordinal + 1) as integer {0..4};
     end;
     return ordinal == shared_count;
+end;
+readonly func BundleMatrixPrivateSharedViewLegal(
+    tile: TileInfo,
+    rows: integer {1..65535},
+    columns: integer {1..65535},
+    data_type: TileDataType,
+    allow_column_major_packed: boolean) => boolean
+begin
+    return tile.allocated && tile.contents_defined &&
+        SharedTileCapacityIsLegal(tile.capacity_bytes) &&
+        (tile.layout == TileLayout_RowMajor ||
+         (allow_column_major_packed &&
+          tile.layout == TileLayout_ColumnMajor &&
+          TileDataTypeIsFourBit(data_type))) &&
+        tile.rows == rows && tile.columns == columns &&
+        tile.valid_rows == rows && tile.valid_columns == columns &&
+        tile.data_type == data_type &&
+        rows * columns <= TileLogicalElementCapacity(
+            tile.capacity_bytes, data_type);
 end;
 
 readonly func MaterializeBundleSharedMatrixLeftPrimary(
@@ -270,14 +288,14 @@ begin
     let shared_tile_id = BundleSharedBindingId(ordinal);
     let source = if
         _BundleSharedBindings[[ordinal]].source0_subview.valid then
-        MaterializeBundleSharedSubview(ordinal)
+        MaterializeBundleSharedSubviewForPE(ordinal, pe_identity)
     else SharedTileRecord(shared_tile_id).tile;
     var tile = source;
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     tile.packed_defined_elements = zero_packed_tile_elements;
     tile.defined_valid_elements = 0;
-    tile.rows = DerivedTileRows(tile.capacity_bytes, k, data_type);
+    tile.rows = pe_m;
     tile.columns = k;
     tile.valid_rows = pe_m;
     tile.valid_columns = k;
@@ -310,7 +328,6 @@ begin
     tile.defined_valid_elements = (pe_m * k) as integer {0..524288};
     return tile;
 end;
-
 readonly func MaterializeBundleSharedMatrixLeftScale(
     ordinal: integer {0..3},
     group_m: integer {1..65535},
@@ -328,7 +345,7 @@ begin
     let shared_tile_id = BundleSharedBindingId(ordinal);
     let source = if
         _BundleSharedBindings[[ordinal]].source0_subview.valid then
-        MaterializeBundleSharedSubview(ordinal)
+        MaterializeBundleSharedSubviewForPE(ordinal, pe_identity)
     else SharedTileRecord(shared_tile_id).tile;
     assert BundleMatrixSharedPrimarySchemaLegal(
         ordinal, group_m, scale_groups, scale_type, FALSE);
@@ -337,8 +354,7 @@ begin
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     tile.packed_defined_elements = zero_packed_tile_elements;
     tile.defined_valid_elements = 0;
-    tile.rows = DerivedTileRows(
-        tile.capacity_bytes, scale_groups, scale_type);
+    tile.rows = pe_m;
     tile.columns = scale_groups;
     tile.valid_rows = pe_m;
     tile.valid_columns = scale_groups;
@@ -371,7 +387,6 @@ begin
         (pe_m * scale_groups) as integer {0..524288};
     return tile;
 end;
-
 readonly func MaterializeBundleSharedMatrixSource(
     ordinal: integer {0..3},
     valid_rows: integer {1..65535},
@@ -397,7 +412,6 @@ begin
         (valid_rows * valid_columns) as integer {0..524288};
     return tile;
 end;
-
 readonly func MaterializeBundleSharedMatrixPrimary(
     ordinal: integer {0..3},
     logical_rows: integer {1..65535},
@@ -419,14 +433,15 @@ begin
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     tile.packed_defined_elements = zero_packed_tile_elements;
     tile.defined_valid_elements = 0;
-    tile.rows = DerivedTileRows(
-        tile.capacity_bytes, logical_columns, data_type);
+    tile.rows = logical_rows;
     tile.columns = logical_columns;
     tile.valid_rows = logical_rows;
     tile.valid_columns = logical_columns;
     tile.data_type = data_type;
     tile.predicate_basis_type = data_type;
-    tile.layout = TileLayout_RowMajor;
+    // Four-bit right primaries use dense ColumnMajor private views; source pitches stay architectural.
+    tile.layout = if TileDataTypeIsFourBit(data_type) then
+        TileLayout_ColumnMajor else TileLayout_RowMajor;
     tile.cube_k_repeat = 0;
     tile.cube_n_repeat = 0;
     tile.cube_cell_count = 0;
@@ -452,7 +467,6 @@ begin
         (logical_rows * logical_columns) as integer {0..524288};
     return tile;
 end;
-
 readonly func BundleMatrixCooperativeMLayout(
     function: integer {0..31},
     right_type: TileDataType,

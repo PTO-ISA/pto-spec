@@ -73,8 +73,7 @@ begin
     if shared_count == 0 then
         return m != 0 && n != 0 && k != 0;
     end;
-    return m >= 1 && m <= 128 && IsNonzeroPowerOfTwo(n) &&
-           IsNonzeroPowerOfTwo(k);
+    return m >= 1 && m <= 128 && n != 0 && k != 0;
 end;
 
 readonly func TileMatrixInfosMatchDimensions(
