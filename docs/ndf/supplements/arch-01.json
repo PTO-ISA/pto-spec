@@ -5,6 +5,30 @@
   "chunk": 1,
   "entries": [
     {
+      "id": "PTO-ARCH-LOCAL-VTAG-LIFETIME-001",
+      "source_path": "asl/arch/features/tile-allocation.asl",
+      "title": {
+        "en": "Local virtual generation payload lifetime",
+        "zh-CN": "Local 虚拟代次的载荷生命周期"
+      },
+      "summary": {
+        "en": "Last-use may make selected-PE physical CELL backing reclaimable only after readers, aliases, and replay pins complete. The virtual generation identity and relative position remain, and a later payload use faults instead of skipping or rehydrating.",
+        "zh-CN": "仅当读取者、别名所有者及重放固定点均已完成后，last-use 才可使所选 PE 的物理 CELL backing 可回收。虚拟代次身份及相对位置继续保留，后续载荷使用会报错，而不会跳过该代次或重新装载。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-SHARED-VTAG-LIFETIME-001",
+      "source_path": "asl/arch/features/tile-allocation.asl",
+      "title": {
+        "en": "Core-wide Shared payload lifetime with retained Sx identity",
+        "zh-CN": "保留 Sx 身份的 Core-wide Shared 载荷生命周期"
+      },
+      "summary": {
+        "en": "A successful B.IOS last-use returns complete Shared payload capacity while retaining the Sx identity and descriptor. Later use of that consumed generation faults; physical reclamation waits for readers and replay pins and may be delayed.",
+        "zh-CN": "B.IOS last-use 成功后返还完整 Shared 载荷容量，同时保留 Sx 身份与描述符。再次使用已消费代会报错；物理回收须等待读取者及重放固定点排空，且可以延后。"
+      }
+    },
+    {
       "id": "PTO-ARCH-MEMORY-MODEL-SCOPE-001",
       "source_path": "asl/arch/memory-model/ordering.asl",
       "title": {

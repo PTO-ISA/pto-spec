@@ -36,7 +36,7 @@ The handler runs these stages in order.
 2. It requires `B.FPATR`, else `Fault_BundleControl`, and a decodable CUBE operation, else `Fault_IllegalInstruction`.
 3. It checks the bundle structure. The type pair, source and destination counts, `B.DATR` fields, `CCTRL` use, dimensions, and PE masks must be legal. All masks must agree, and a cooperative bundle needs mask `1111`. A GEMV function needs M equal to 1. Failures raise `Fault_TileLegality`.
 4. It waits, without a fault, until every Shared source is published, and then checks the Shared schemas.
-5. A cooperative PE with zero rows consumes its Shared bindings and returns success.
+5. A cooperative PE with zero rows consumes its Shared bindings, reports successful Shared source-lifetime completion, and returns success without Local compute effects.
 6. Otherwise it resolves relative sources and subviews and checks Local sources, CScale, accumulator and CScale aliasing, the result layout, and post-processing sources. Dispatch clause `PTO-CUBE-ACCUMULATOR-OUTPUT-001` requires the encoded C selector to differ from the zero-extended destination hand before rename. The current executable instead performs the accumulator check after resolution and compares the physical C `TileIndex` with D's destination hand (`DstTile MOD 4`); issue #367 tracks this conflict.
 7. It allocates the destination group, snapshots operands, and runs the operation. A fault then rolls the destinations back.
 
@@ -354,7 +354,7 @@ begin
     else m;
     if cooperative && valid_m == 0 then
         ConsumeBundleSharedBindings(shared_count as integer {1..4});
-        FinalizeBundleTileAttempt(TileExecution_Executed);
+        FinalizeBundleSharedLastUseSources();
         return TRUE;
     end;
     let pe_m = valid_m as integer {1..65535};

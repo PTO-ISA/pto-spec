@@ -119,12 +119,30 @@ class ExecutableModelComparisonTest(unittest.TestCase):
                 "docs/status/decisions/ADR-SCALAR-0005-addtpc-page-scaled-immediate.md",
                 row["evidence"],
             )
-        # Mirrors the fail-closed baseline enforced by
-        # scripts/generate-executable-model-comparison.
+        # Frozen comparison classes plus nine last-use command forms absent
+        # from that snapshot. New forms are divergences, never invented passes.
         self.assertEqual(
             evidence["summary"]["classification_counts"],
-            {"comparable-match": 518, "divergence": 123, "non-comparable": 38},
+            {"comparable-match": 518, "divergence": 132, "non-comparable": 38},
         )
+
+    def test_last_use_commands_do_not_invent_independent_execution(self) -> None:
+        evidence = json.loads(
+            (ROOT / "spec/evidence/executable-model-comparison.json").read_text()
+        )
+        expected = {
+            "b_iot_32_ll_src", "b_iot_32_rl_src", "b_iot_32_lr_src",
+            "b_iot_32_ll_dst", "b_iot_32_rl_dst", "b_iot_32_lr_dst",
+            "b_iot_32_last_src", "b_iot_32_last_dst", "b_ios_32_last_src",
+        }
+        rows = {row["stable_id"]: row for row in evidence["rows"]
+                if row["surface"] == "command" and row["stable_id"] in expected}
+        self.assertEqual(set(rows), expected)
+        for row in rows.values():
+            self.assertEqual(row["independent_status"], "missing")
+            self.assertEqual(row["classification"], "divergence")
+            self.assertFalse(row["encoding_match"])
+            self.assertIsNone(row["abi_change_acceptance"])
 
     def test_published_missing_b_fpatr_is_an_explicit_divergence(self) -> None:
         evidence = json.loads(

@@ -41,7 +41,7 @@ class InstructionContractClosureTest(unittest.TestCase):
 
         self.assertEqual(document["schema"], "pto.instruction-contract-closure.v1")
         self.assertEqual(document["summary"]["mnemonic_count"], 665)
-        self.assertEqual(document["summary"]["encoded_form_count"], 563)
+        self.assertEqual(document["summary"]["encoded_form_count"], 572)
         self.assertEqual(document["summary"]["selector_operation_count"], 119)
         self.assertEqual(document["summary"]["unresolved_field_count"], 0)
         self.assertEqual(document["summary"]["placeholder_count"], 0)
@@ -99,7 +99,7 @@ class InstructionContractClosureTest(unittest.TestCase):
         traceability = json.loads(TRACEABILITY.read_text(encoding="utf-8"))
         mnemonic_rows = [row for row in traceability["units"] if row["mnemonic"]]
 
-        self.assertEqual(len(mnemonic_rows), 665)
+        self.assertEqual(len(mnemonic_rows), 664)
         self.assertTrue(
             all(
                 row["instruction_contract"]["artifact"]

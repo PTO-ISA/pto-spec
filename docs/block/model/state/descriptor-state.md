@@ -110,6 +110,12 @@ begin
         _BundleTileBindings[[index]].destination_reused_by_generation = FALSE;
         _BundleTileBindings[[index]].source0_valid = FALSE;
         _BundleTileBindings[[index]].source1_valid = FALSE;
+        _BundleTileBindings[[index]].source0_reuse = TRUE;
+        _BundleTileBindings[[index]].source1_reuse = TRUE;
+        _BundleTileBindings[[index]].source0_lifetime_captured = FALSE;
+        _BundleTileBindings[[index]].source0_lifetime_ordinal = 0;
+        _BundleTileBindings[[index]].gmov_selection_captured = FALSE;
+        _BundleTileBindings[[index]].gmov_selection_ordinal = 0;
         _BundleTileBindings[[index]].source0_relative = FALSE;
         _BundleTileBindings[[index]].source1_relative = FALSE;
         _BundleTileBindings[[index]].parent_ref_valid = FALSE;
@@ -140,6 +146,9 @@ begin
             Zeros{6} as SharedTileID;
         _BundleSharedBindings[[index]].size_code = 0;
         _BundleSharedBindings[[index]].pe_mask = Zeros{4};
+        _BundleSharedBindings[[index]].source_reuse = TRUE;
+        _BundleSharedBindings[[index]].source_lifetime_captured = FALSE;
+        _BundleSharedBindings[[index]].source_lifetime_ordinal = 0;
         _BundleSharedBindings[[index]].consumed = FALSE;
         _BundleSharedBindings[[index]].source0_subview.valid = FALSE;
         _BundleSharedBindings[[index]].source0_subview.derived.valid = FALSE;

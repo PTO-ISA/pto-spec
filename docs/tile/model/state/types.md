@@ -35,7 +35,7 @@ It covers three groups:
 
 The `payload` is an array of `PTO_MODEL_TILE_ELEMENTS` 64-bit Words.
 
-`SharedTileInfo` wraps one `TileInfo` with Shared-only metadata: `descriptor_valid`, `allocation_mask`, `initialized_mask`, `whole_parent_ready`, and `published`.
+`SharedTileInfo` wraps one `TileInfo` with Shared descriptor, coverage, readiness and publication metadata. `payload_live` separates readable backing from retained identity; `payload_generation` distinguishes publication into the same Sx; `reserved_capacity_bytes` records the independent charge for an open assembly parent.
 
 <!-- PTO-READER-BLOCK: tile-model-state-types-rules role=rules-interactions -->
 ## Rules and interactions
@@ -279,6 +279,11 @@ type TileInfo of record {
 // PEs in one core address the same 64 records.
 type SharedTileInfo of record {
     descriptor_valid: boolean,
+    payload_live: boolean,
+    // Monotonic model identity for the currently published payload.
+    payload_generation: integer,
+    // Pending B.ASSEMBLE capacity is a model reservation, not a second payload.
+    reserved_capacity_bytes: integer {0..262144},
     allocation_mask: bits(4),
     initialized_mask: bits(4),
     whole_parent_ready: boolean,

@@ -22,7 +22,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: tile-model-state-shared-registers-concepts role=concepts-state -->
 ## 概念与可见状态
 
-每条 `SharedTileInfo` 记录用五个字段包装一个 `TileInfo`：
+每个 `SharedTileInfo` 在 `TileInfo` 外包装描述符、生产者覆盖、就绪及发布字段。载荷生命周期增加 `payload_live`、单调的 `payload_generation`，以及开放组装的 `reserved_capacity_bytes`。描述符仍有效时，其载荷也可能已经失去存活状态。
 
 - `descriptor_valid`：该寄存器保存有描述符。
 - `allocation_mask`：参与该父级的 PE，由首次更新固定。
@@ -39,9 +39,9 @@ This page is a generated reference view of the normative ASL unit.
 
 `AtomicUpdateSharedTileWithPublication` 有三条路径：
 
-1. 空寄存器：安装整条记录，`allocation_mask` 和 `initialized_mask` 设为 PE 掩码。只有在请求发布、掩码指明一个 PE 或全部四个 PE、且 Tile 内容已定义时，它才变为就绪并已发布。
-2. 已有寄存器，且只有一个发布 PE：替换 Tile，并标记为完全已定义、就绪且已发布。
-3. 其他情况：每个生产者只复制落在其自身那四分之一容量内的已定义元素，`initialized_mask` 加入新的位，当每个已分配 PE 都已贡献时内容变为已定义。
+1. 空寄存器接收候选描述符与生产者覆盖；就绪取决于完整已定义数据及所选发布路径。
+2. 已有寄存器可原子接收完整的单 PE 发布。
+3. 内部聚合 helper 还支持已分类的生产者区域复制。该表示不会使 PE 参与掩码在架构上分配载荷四分区：编码的多 PE 写者通过显式 `B.ASSEMBLE` 范围确定放置位置。
 
 在这些路径之前，`SharedTileUpdateCompatible` 会拒绝 CUBE 布局、非法 Shared 容量以及与容量不匹配的形状。对于已有描述符，它要求掩码保持在 `allocation_mask` 之内，且描述符在容量、物理形状、有效区域、数据类型、布局和 CUBE 几何字段上都一致。对于新描述符，它要求 Shared 池中有空间。
 
@@ -56,7 +56,7 @@ This page is a generated reference view of the normative ASL unit.
 
 `MaterializeSharedTile` 为每个消费者提供同一个完整父级快照。PE 掩码选择的是消费者，而不是载荷的四分之一部分，且物化从不改变 Shared 状态。
 
-允许通过 `MaterializeSharedTileForReadSchema` 读取没有描述符的 Shared 寄存器。它构建一个临时只读描述符，在容量未知时使用 `MinimumTileCapacityBytesForShape`。元素来自 `ReadSharedTileWord`，当描述符缺失、父级未就绪或元素未定义时，它返回一个确定的模型字。该字不是可移植的值，且该读取从不分配寄存器，也不引发故障。
+通过 `MaterializeSharedTileForReadSchema` 读取未定义 Shared 寄存器时使用临时只读描述符。描述符不存在、`payload_live` 为假、父对象未就绪或元素未定义时，`ReadSharedTileWord` 提供确定性模型值；该回退不允许普通指令读取已消费载荷。即便描述符及 `published` 身份保留，普通源预检仍在访问载荷前诊断已消费代次。
 
 <!-- PTO-READER-BLOCK: tile-model-state-shared-registers-example role=example-usage -->
 ## 非规范阅读示例
@@ -106,6 +106,40 @@ end;
 readonly func SharedTileRecord(shared_tile_id: SharedTileID) => SharedTileInfo
 begin
     return _SharedTiles[[SharedTileArrayIndex(shared_tile_id)]];
+end;
+
+readonly func SharedTilePayloadIntact(shared_tile_id: SharedTileID) => boolean
+begin
+    let shared = SharedTileRecord(shared_tile_id);
+    return !shared.descriptor_valid || shared.payload_live;
+end;
+
+func ConsumeSharedTilePayload(shared_tile_id: SharedTileID)
+begin
+    let index = SharedTileArrayIndex(shared_tile_id);
+    if _SharedTiles[[index]].descriptor_valid then
+        _SharedTiles[[index]].payload_live = FALSE;
+    end;
+end;
+
+func ReserveSharedTileGenerationCapacity(
+    shared_tile_id: SharedTileID, capacity_bytes: integer {0..262144})
+    => boolean
+begin
+    let old_charge = SharedTileCapacityCharge(shared_tile_id);
+    let proposed_charge = if old_charge > capacity_bytes then
+        old_charge else capacity_bytes;
+    if (SharedTileCapacityInUse() - old_charge) + proposed_charge >
+       SharedTileCapacityLimitBytes() then return FALSE; end;
+    _SharedTiles[[SharedTileArrayIndex(shared_tile_id)]]
+        .reserved_capacity_bytes = capacity_bytes;
+    return TRUE;
+end;
+
+func ReleaseSharedTileGenerationCapacity(shared_tile_id: SharedTileID)
+begin
+    _SharedTiles[[SharedTileArrayIndex(shared_tile_id)]]
+        .reserved_capacity_bytes = 0;
 end;
 
 readonly func SharedTileFullyInitialized(shared_tile_id: SharedTileID) => boolean
@@ -184,10 +218,15 @@ begin
     end;
     let old = SharedTileRecord(shared_tile_id);
     if old.descriptor_valid then
-        return (pe_mask AND NOT old.allocation_mask) == Zeros{4} &&
-               SharedTileDescriptorsCompatible(old.tile, tile);
+        if (pe_mask AND NOT old.allocation_mask) != Zeros{4} ||
+           !SharedTileDescriptorsCompatible(old.tile, tile) then
+            return FALSE;
+        end;
     end;
-    return SharedTileCapacityInUse() + tile.capacity_bytes <=
+    let old_charge = SharedTileCapacityCharge(shared_tile_id);
+    let new_charge = if tile.capacity_bytes > old.reserved_capacity_bytes then
+        tile.capacity_bytes else old.reserved_capacity_bytes;
+    return (SharedTileCapacityInUse() - old_charge) + new_charge <=
         SharedTileCapacityLimitBytes();
 end;
 
@@ -205,7 +244,8 @@ readonly func ReadSharedTileWord(shared_tile_id: SharedTileID,
                                  element: PackedTileElementIndex) => Word
 begin
     let shared = SharedTileRecord(shared_tile_id);
-    if !shared.descriptor_valid || !shared.whole_parent_ready ||
+    if !shared.descriptor_valid || !shared.payload_live ||
+       !shared.whole_parent_ready ||
        !TileLogicalElementDefined(shared.tile, element) then
         return UndefinedSharedTileWord(shared_tile_id, element);
     end;
@@ -382,6 +422,8 @@ begin
         let direct_complete = PEMaskPopulation(pe_mask) == 1 ||
             pe_mask == '1111';
         updated.descriptor_valid = TRUE;
+        updated.payload_live = TRUE;
+        updated.payload_generation = old.payload_generation + 1;
         updated.allocation_mask = pe_mask;
         updated.tile = tile;
         updated.initialized_mask = pe_mask;
@@ -396,6 +438,8 @@ begin
                 as integer {0..524288};
         updated.whole_parent_ready = TRUE;
         updated.published = TRUE;
+        updated.payload_live = TRUE;
+        updated.payload_generation = old.payload_generation + 1;
     else
         for element = 0 to tile.rows * tile.columns - 1
             looplimit 524288 do
@@ -427,6 +471,10 @@ begin
             (publish && direct_complete && updated.tile.contents_defined);
         updated.published = old.published ||
             (publish && direct_complete && updated.tile.contents_defined);
+        if publish && direct_complete && updated.tile.contents_defined then
+            updated.payload_live = TRUE;
+            updated.payload_generation = old.payload_generation + 1;
+        end;
     end;
     _SharedTiles[[index]] = updated;
     return TRUE;

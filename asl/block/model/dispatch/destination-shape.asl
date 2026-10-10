@@ -108,14 +108,8 @@ begin
             end;
         end;
     end;
-    return TileCapacityInUseForPE(0) + additional0 <=
-               TileCapacityLimitBytes() &&
-           TileCapacityInUseForPE(1) + additional1 <=
-               TileCapacityLimitBytes() &&
-           TileCapacityInUseForPE(2) + additional2 <=
-               TileCapacityLimitBytes() &&
-           TileCapacityInUseForPE(3) + additional3 <=
-               TileCapacityLimitBytes();
+    return LocalTileAllocationGroupFits(
+        additional0, additional1, additional2, additional3);
 end;
 func ResolveBundleTileDestinationsWithShapeAndType(
     explicit_shape: boolean,

@@ -23,8 +23,9 @@ begin
         Zeros{6}, Zeros{3}, Zeros{4}, FALSE, FALSE, FALSE, FALSE);
     SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
     BindBundleSharedIO((Zeros{6} + 51) as SharedTileID, 0, '1111');
-    AddBundleTileBinding(
-        TRUE, 0, 1, '1111', TRUE, FALSE, 62, 0, TRUE);
+    AddBundleTileBindingWithReuse(
+        TRUE, 0, 1, '1111', TRUE, FALSE, 62, 0,
+        FALSE, TRUE, TRUE);
     _BundleTileBindings[[0]].source0_subview.valid = TRUE;
     _BundleTileBindings[[0]].source0_subview.size_code = 1;
     _BundleTileBindings[[0]].source0_subview.offset = Zeros{PTO_XLEN};
@@ -39,6 +40,7 @@ begin
     assert !_BundleTileBindings[[0]].source0_subview.materialized;
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
     assert !_LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open;
+    assert !_Tiles[[62]].allocated;
     assert CoreTileCapacityInUse() == shared_capacity;
     return 0;
 end;

@@ -24,22 +24,22 @@ This page is a generated reference view of the normative ASL unit.
 
 上限是只读系统寄存器 `TILE_CAPACITY` 的值。`TileCapacityLimitBytes` 断言它不超过 `PTO_MODEL_MAX_TILE_CAPACITY_BYTES`，即 262144 字节（256 KiB），复位时把该寄存器设为这个值。
 
-每个 PE 都有自己的同样大小的 Local 池。一个 Local 对象向其分配掩码中置位的每个 PE 计入完整的 `capacity_bytes`。
+每个 PE 拥有自己的 Local 池。容量随存活载荷 backing 计费，与最后使用后仍可保留的描述符和相对名称分离。
 
-这些辅助函数读取两部分状态：`_Tiles` 中的 `allocated` 标志和 `capacity_bytes`，以及 `_TileAllocationMasks` 中的掩码。掩码位通过 `PTOPEMaskBitOfPEIdentity` 映射到 PE，它把 PE0 放在最高位。
+这些 helper 读取 `_Tiles` 中的描述符和独立的 `_TilePayloadLiveMasks`。载荷计费消失后，已分配描述符仍可保留。`PTOPEMaskBitOfPEIdentity` 将 PE0 映射到掩码最高位；独立执行读取每个 PE 的真实 bank，而非把当前 bank 的其他掩码位当作其他 PE 的存储。
 
 <!-- PTO-READER-BLOCK: tile-model-capacity-local-rules role=rules-interactions -->
 ## 规则与交互
 
-`TileCapacityInUseForPE` 对掩码包含该 PE 的已分配寄存器的 `capacity_bytes` 求和。`Except` 变体跳过一个寄存器。
+`TileCapacityInUseForPE` 衡量指定 PE bank 中的存活载荷；`Except` 变体在替换检查时排除一个物理槽。没有活动 PE 上下文的聚合验证保留按掩码表示的方式。
 
-如果 `pe_mask` 中的任何 PE 在加上 `per_pe_bytes` 后会超过上限（忽略被排除寄存器的当前用量），`LocalTileAllocationFitsExcept(excluded, pe_mask, per_pe_bytes)` 返回 FALSE。`LocalTileAllocationFits` 执行同样的检查，但不排除任何寄存器。
+独立执行时，分配检查针对当前执行且被选中 PE 的池。`LocalTileAllocationFitsExcept` 先从该池排除被替换槽，再加入请求字节数。尚未推进的另一个 PE 即使池已满，也不能据此拒绝当前 PE 独立 bank 的分配。
 
 设计要点：检查按 PE 进行，而不是按 Core 进行。一个 PE 的 Local 分配永远不会消耗另一个 PE 的池，因此程序可以填满 PE0 的 256 KiB 而不影响 PE3。
 
 设计要点：分配转换使用 `Except` 形式，并以正在配置的寄存器作为排除项。因此重新配置一个寄存器会替换其旧的计入量，而不是把它计算两次。
 
-`TileCapacityInUse` 用 `TileCoreAllocationBytes` 对整个 Core 求和，后者把每 PE 字节数乘以掩码中的 PE 数量。
+上下文活动时，`TileCapacityInUse` 报告真实 PE bank 的用量之和；聚合验证路径保留 `TileCoreAllocationBytes` 及已有的掩码参与数量记账。
 
 <!-- PTO-READER-BLOCK: tile-model-capacity-local-boundaries role=boundaries -->
 ## 架构边界
@@ -75,7 +75,7 @@ Local 池和 Shared 池相互独立。Shared 池由另一个所有者度量。
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/capacity/local.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-CAPACITY-LOCAL","surface":"tile","classification":["model","capacity","local"],"depends_on":["PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-CAPACITY-LOCAL","surface":"tile","classification":["model","capacity","local"],"depends_on":["PTO-ARCH-STATE-PE-EXECUTION-CONTEXT","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
 readonly func TileCapacityLimitBytes() => integer {0..262144}
 begin
     assert UInt(_SystemRegisters.tile_capacity) <=
@@ -85,11 +85,19 @@ end;
 
 readonly func TileCapacityInUseExcept(excluded: TileIndex) => integer
 begin
+    if _CurrentPEContextValid then
+        var bank_total: integer = 0;
+        for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+            bank_total = bank_total +
+                TileCapacityInUseExceptForPE(excluded, pe);
+        end;
+        return bank_total;
+    end;
     var total: integer = 0;
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
         if index != excluded && _Tiles[[index]].allocated then
             total = total + TileCoreAllocationBytes(
-                _TileAllocationMasks[[index]],
+                _TilePayloadLiveMasks[[index]],
                 _Tiles[[index]].capacity_bytes);
         end;
     end;
@@ -101,10 +109,33 @@ readonly func TileCapacityInUseForPE(
 begin
     var total: integer = 0;
     let mask_bit = PTOPEMaskBitOfPEIdentity(pe_identity);
-    for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
-        if _Tiles[[index]].allocated &&
-           _TileAllocationMasks[[index]][mask_bit] == '1' then
-            total = total + _Tiles[[index]].capacity_bytes;
+    if !_CurrentPEContextValid || pe_identity == _CurrentMemoryAgent then
+        for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
+            if _Tiles[[index]].allocated &&
+               _TilePayloadLiveMasks[[index]][mask_bit] == '1' then
+                total = total + _Tiles[[index]].capacity_bytes;
+            end;
+        end;
+        return total;
+    end;
+    let core = _CurrentModelCore;
+    if _PEContextBankValid[[core]][pe_identity] == '1' then
+        for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
+            if _PEExecutionContexts[[core]][[pe_identity]].tiles[[index]].allocated &&
+               _PEExecutionContexts[[core]][[pe_identity]]
+                   .tile_payload_live_masks[[index]][mask_bit] == '1' then
+                total = total + _PEExecutionContexts[[core]][[pe_identity]]
+                    .tiles[[index]].capacity_bytes;
+            end;
+        end;
+    else
+        for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
+            if _DefaultPEExecutionContext.tiles[[index]].allocated &&
+               _DefaultPEExecutionContext.tile_payload_live_masks[[index]]
+                   [mask_bit] == '1' then
+                total = total + _DefaultPEExecutionContext.tiles[[index]]
+                    .capacity_bytes;
+            end;
         end;
     end;
     return total;
@@ -115,10 +146,35 @@ readonly func TileCapacityInUseExceptForPE(
 begin
     var total: integer = 0;
     let mask_bit = PTOPEMaskBitOfPEIdentity(pe_identity);
-    for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
-        if index != excluded && _Tiles[[index]].allocated &&
-           _TileAllocationMasks[[index]][mask_bit] == '1' then
-            total = total + _Tiles[[index]].capacity_bytes;
+    if !_CurrentPEContextValid || pe_identity == _CurrentMemoryAgent then
+        for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
+            if index != excluded && _Tiles[[index]].allocated &&
+               _TilePayloadLiveMasks[[index]][mask_bit] == '1' then
+                total = total + _Tiles[[index]].capacity_bytes;
+            end;
+        end;
+        return total;
+    end;
+    let core = _CurrentModelCore;
+    if _PEContextBankValid[[core]][pe_identity] == '1' then
+        for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
+            if index != excluded &&
+               _PEExecutionContexts[[core]][[pe_identity]].tiles[[index]].allocated &&
+               _PEExecutionContexts[[core]][[pe_identity]]
+                   .tile_payload_live_masks[[index]][mask_bit] == '1' then
+                total = total + _PEExecutionContexts[[core]][[pe_identity]]
+                    .tiles[[index]].capacity_bytes;
+            end;
+        end;
+    else
+        for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
+            if index != excluded &&
+               _DefaultPEExecutionContext.tiles[[index]].allocated &&
+               _DefaultPEExecutionContext.tile_payload_live_masks[[index]]
+                   [mask_bit] == '1' then
+                total = total + _DefaultPEExecutionContext.tiles[[index]]
+                    .capacity_bytes;
+            end;
         end;
     end;
     return total;
@@ -127,6 +183,13 @@ end;
 readonly func LocalTileAllocationFitsExcept(
     excluded: TileIndex, pe_mask: bits(4), per_pe_bytes: integer) => boolean
 begin
+    if _CurrentPEContextValid then
+        let pe = _CurrentMemoryAgent;
+        let mask_bit = PTOPEMaskBitOfPEIdentity(pe);
+        return pe_mask[mask_bit] == '0' ||
+            TileCapacityInUseExceptForPE(excluded, pe) + per_pe_bytes <=
+                TileCapacityLimitBytes();
+    end;
     for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
         let mask_bit = PTOPEMaskBitOfPEIdentity(pe);
         if pe_mask[mask_bit] == '1' &&
@@ -141,6 +204,13 @@ end;
 readonly func LocalTileAllocationFits(
     pe_mask: bits(4), per_pe_bytes: integer) => boolean
 begin
+    if _CurrentPEContextValid then
+        let pe = _CurrentMemoryAgent;
+        let mask_bit = PTOPEMaskBitOfPEIdentity(pe);
+        return pe_mask[mask_bit] == '0' ||
+            TileCapacityInUseForPE(pe) + per_pe_bytes <=
+                TileCapacityLimitBytes();
+    end;
     for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
         let mask_bit = PTOPEMaskBitOfPEIdentity(pe);
         if pe_mask[mask_bit] == '1' &&
@@ -152,13 +222,46 @@ begin
     return TRUE;
 end;
 
+readonly func LocalTileAllocationGroupFits(
+    additional0: integer, additional1: integer,
+    additional2: integer, additional3: integer) => boolean
+begin
+    if _CurrentPEContextValid then
+        case _CurrentMemoryAgent of
+            when 0 => return TileCapacityInUseForPE(0) + additional0 <=
+                TileCapacityLimitBytes();
+            when 1 => return TileCapacityInUseForPE(1) + additional1 <=
+                TileCapacityLimitBytes();
+            when 2 => return TileCapacityInUseForPE(2) + additional2 <=
+                TileCapacityLimitBytes();
+            when 3 => return TileCapacityInUseForPE(3) + additional3 <=
+                TileCapacityLimitBytes();
+        end;
+    end;
+    return TileCapacityInUseForPE(0) + additional0 <=
+               TileCapacityLimitBytes() &&
+           TileCapacityInUseForPE(1) + additional1 <=
+               TileCapacityLimitBytes() &&
+           TileCapacityInUseForPE(2) + additional2 <=
+               TileCapacityLimitBytes() &&
+           TileCapacityInUseForPE(3) + additional3 <=
+               TileCapacityLimitBytes();
+end;
+
 readonly func TileCapacityInUse() => integer
 begin
+    if _CurrentPEContextValid then
+        var bank_total: integer = 0;
+        for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+            bank_total = bank_total + TileCapacityInUseForPE(pe);
+        end;
+        return bank_total;
+    end;
     var total: integer = 0;
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
         if _Tiles[[index]].allocated then
             total = total + TileCoreAllocationBytes(
-                _TileAllocationMasks[[index]],
+                _TilePayloadLiveMasks[[index]],
                 _Tiles[[index]].capacity_bytes);
         end;
     end;

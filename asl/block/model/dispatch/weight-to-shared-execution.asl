@@ -282,6 +282,9 @@ begin
     if !CommitBundleSharedGenerationCandidateRangeWithPayloadElements(0,
            SharedTileInfo {
                descriptor_valid = TRUE,
+               payload_live = FALSE,
+               payload_generation = 0,
+               reserved_capacity_bytes = 0,
                allocation_mask = mask,
                initialized_mask = BundleWeightTLOADPEBit(),
                whole_parent_ready = FALSE,
