@@ -95,7 +95,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/sys/semantics.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-SEMANTICS","surface":"scalar","classification":["model","sys","semantics"],"depends_on":["PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-BLOCK-MODEL-STATE-BARG","PTO-SCALAR-MODEL-AMO-SEMANTICS"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-SEMANTICS","surface":"scalar","classification":["model","sys","semantics"],"depends_on":["PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-BLOCK-MODEL-STATE-BARG","PTO-SCALAR-MODEL-AMO-SEMANTICS"]}
 // PTO-REQ-SCALAR-SYS-001, PTO-REQ-MEMORY-RC-001: PTO base SSR access,
 // architectural time, and data/instruction fences.
 
@@ -123,6 +123,21 @@ begin
     AdvanceArchitecturalTime();
 end;
 
+// NDF-BEGIN: PTO-THREAD-ID-PE-IDENTITY-001
+// ndf: kind=contract level=L1 layer=state status=accepted
+// THREAD_ID at canonical address 0x0026 MUST return the executing PE index
+// 0..3 within its Core, zero-extended to XLEN. It is not a process, OS-thread,
+// or Core identifier. The value MUST remain the same for that PE across
+// Blocks, kernel launches, retries, faults, interrupts and trap return.
+// Reset selects PE0; selecting another PE MUST expose that PE's identity.
+// Every ACR may read it through an otherwise legal SYS-block SSRGET or
+// HL.SSRGET. Writes and swaps MUST reject under the existing read-only rules
+// before register, destination or queue effects, except ordinary trap entry.
+// This contract MUST NOT assign 0x0802 or permit a system-register read in
+// a Standard Block. Common kernel entry is owned by
+// [[PTO-ARCH-KERNEL-LIFECYCLE-001]]; PE0 is the software leader convention.
+// NDF-END: PTO-THREAD-ID-PE-IDENTITY-001
+
 func ReadSystemRegister(reg: SystemRegister) => Word
 begin
     case reg of
@@ -131,7 +146,8 @@ begin
         when SystemRegister_TIME     => return ReadMonotonicTime();
         when SystemRegister_CORE_STATE => return _SystemRegisters.core_state;
         when SystemRegister_CORE_ID  => return _SystemRegisters.core_id;
-        when SystemRegister_THREAD_ID => return _SystemRegisters.thread_id;
+        when SystemRegister_THREAD_ID =>
+            return Zeros{PTO_XLEN} + _CurrentMemoryAgent;
         when SystemRegister_VENDOR   => return _SystemRegisters.vendor;
         when SystemRegister_VERSION  => return _SystemRegisters.version;
         when SystemRegister_CORE_FEATURE => return _SystemRegisters.core_feature;

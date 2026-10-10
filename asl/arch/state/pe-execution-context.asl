@@ -28,7 +28,6 @@ type PEExecutionContext of record {
     thread_ptr: Word,
     global_ptr: Word,
     core_state: Word,
-    thread_id: Word,
     t_queue: TemporaryQueueSnapshot,
     t_queue_valid: TemporaryQueueValiditySnapshot,
     u_queue: TemporaryQueueSnapshot,
@@ -147,7 +146,6 @@ begin
         thread_ptr = _SystemRegisters.thread_ptr,
         global_ptr = _SystemRegisters.global_ptr,
         core_state = _SystemRegisters.core_state,
-        thread_id = _SystemRegisters.thread_id,
         t_queue = _TQueue,
         t_queue_valid = _TQueueValid,
         u_queue = _UQueue,
@@ -233,7 +231,6 @@ begin
     _SystemRegisters.thread_ptr = context.thread_ptr;
     _SystemRegisters.global_ptr = context.global_ptr;
     _SystemRegisters.core_state = context.core_state;
-    _SystemRegisters.thread_id = context.thread_id;
     _TQueue = context.t_queue;
     _TQueueValid = context.t_queue_valid;
     _UQueue = context.u_queue;
@@ -291,7 +288,6 @@ begin
     _SystemRegisters.thread_ptr = context.thread_ptr;
     _SystemRegisters.global_ptr = context.global_ptr;
     _SystemRegisters.core_state = context.core_state;
-    _SystemRegisters.thread_id = context.thread_id;
     _ExtendedSystemRegisters = context.extended_system_registers;
     _ACRTrapAsynchronous = context.acr_trap_asynchronous;
     _ACRTrapArgumentValid = context.acr_trap_argument_valid;
@@ -384,7 +380,6 @@ begin
             thread_ptr = _SystemRegisters.thread_ptr,
             global_ptr = _SystemRegisters.global_ptr,
             core_state = _SystemRegisters.core_state,
-            thread_id = _SystemRegisters.thread_id,
             t_queue = _TQueue, t_queue_valid = _TQueueValid,
             u_queue = _UQueue, u_queue_valid = _UQueueValid,
             bundle_active = _BundleActive,

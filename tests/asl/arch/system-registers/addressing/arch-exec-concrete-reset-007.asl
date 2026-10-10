@@ -62,7 +62,8 @@ begin
     assert _SystemRegisters.version == Zeros{PTO_XLEN} + 1;
     assert _SystemRegisters.tile_capacity ==
         Zeros{PTO_XLEN} + PTO_MODEL_MAX_TILE_CAPACITY_BYTES;
-    assert _SystemRegisters.thread_id == Zeros{PTO_XLEN};
+    let reset_pe = ReadSystemRegister(SystemRegister_THREAD_ID);
+    assert reset_pe == Zeros{PTO_XLEN};
     assert _SystemRegisters.thread_ptr == Zeros{PTO_XLEN};
     assert _SystemRegisters.global_ptr == Zeros{PTO_XLEN};
     assert _SystemRegisters.core_feature_enable == Zeros{PTO_XLEN};
