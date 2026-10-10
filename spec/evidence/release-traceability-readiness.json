@@ -18764,6 +18764,7 @@
         "ADR-STATE-0008"
       ],
       "tests": [
+        "PTO-AVS-SCALAR-MODEL-SYS-SEMANTICS-STATIC-001",
         "PTO-AVS-THREAD-ID-FOUR-PE-001",
         "PTO-AVS-THREAD-ID-LIFECYCLE-001",
         "PTO-AVS-THREAD-ID-PLACEMENT-001",
@@ -22854,7 +22855,7 @@
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-mx-shared-right-001.asl": "90c39ab811f1919c39d1715d42a6424c3a903634f09591f47c05cc163016da3b",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-bstart-family-036.asl": "81afbac581af20270aa2a6f0a254745822aa0ca940093b1f851357b1fdd5c887",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-bstart-nonpower-038.asl": "2dad64b7e7ed7429e138d6d3d55419f1079aa7667bf0e006f2ebe00531f92e58",
-    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-large-source-044.asl": "503b3d7e47783c642651530ccb3a49854bee9f87bd251239f33f42b92b74ff4a",
+    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-large-source-044.asl": "8323890f34dce1d18090435818d62ce6a1a32d3a8ddc5e91f1ea31782f2d92d7",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-local-packed-a-042.asl": "077dadad9117d7831a41f16009aa638eee48b7b9176231023f1474c3dda40e60",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-local-private-fourstream-038.asl": "d70d7d42457cf790d05ef9bf2b2e4305879ae8e202d26ae32607a23e067e69fc",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-mask-015.asl": "3ae4a822e93a1345d160cf1c86d7aae1847b1cbdd9fd273b7fe9797401bc0838",
@@ -22863,7 +22864,7 @@
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-packed-even-n-transpose-048.asl": "18aaf573b00e1ab5d2457551a53577ac860b48a68e475b63f8884b14e9e39503",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-packed-subview-046.asl": "1170642ef9d20f1aa68f21328b67ed805bc6face90fb6ff85c84b4c6703e136e",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-packed-tight-odd-n-047.asl": "1482908738c33ec6e9619a6469fe7cf93e5a6c894fe9690e339ccdad542d5c2e",
-    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-packed-transpose-040.asl": "7efdf4bdb8a30f8d3270b60b132cc2338661a5b0b5bf3b7fa921b79a34a52ab0",
+    "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-packed-transpose-040.asl": "bf05ec437f961953470fa6e70fd64a59fe0b740e757c6ed57e8f9959af1e6a6a",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-packed-types-049.asl": "14bc6bed3e251b220330ecdcf0089c5e9ec9a5cbf11cd9432fa4418d8aa5e3e9",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-packed-upper-even-054.asl": "3091e99fe212c1a6d4538049b7a359ddd804f0b349668b9f588bd6ed4cf8d314",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-shared-pair-001.asl": "baa399daae840ce6be83a58117b51f09128ed793a4891730356fa8aed0334316",
@@ -22957,7 +22958,7 @@
     "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-control-zero-004.asl": "065085f52d029cbbee1bcf94269fcca86612f04bd1e4e486c9d5857862e89b1f",
     "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-heterogeneous-003.asl": "30bde5c53df6b9bc87c60c9ac6e5f878dd72390bbb90e3a99d82c0a40b552e48",
     "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-hif4-transpose-006.asl": "433e69a1bfae3cd99d2e9d2872a2ebbbe78fd41b47f63e3292b678d2091d3326",
-    "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-nonpower-045.asl": "993cd2bd2e76e7336d5e2ac098e88f7907dd86b417e0d4691c184a16f38305ad",
+    "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-nonpower-045.asl": "b8a99695d2ea7deac688f7f017f3f5b1ef159d01ea39db8ecd885f5c967ddeae",
     "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-transpose-002.asl": "1a934951a810b5a2c62cea00ad83b7af9c00e531d9353ac83ef6d0432b710544",
     "tests/asl/block/model/dispatch/shared-cube-matrix/block-fault-shared-cube-scale-transpose-005.asl": "f15100800791dd57c18450e3f25df01b1118df15d11e272a0e1dc8b4221b2fed",
     "tests/asl/block/model/dispatch/shared-cube-matrix/block-static-shared-cube-matrix-contract-001.asl": "9a87138fcf0fe7bba46f6d3447358753f3997f7110d0b9785d0858890355faf7",
@@ -25504,7 +25505,7 @@
     "tests/asl/scalar/model/sys/semantics/scalar-state-thread-id-placement-001.asl": "770b32ce42ac647c41b77e33604120fd6c2b2fe9f732e28842a3f7e85f75d1e3",
     "tests/asl/scalar/model/sys/semantics/scalar-state-thread-id-rejections-001.asl": "9289da1b6bf34293325338ca1e1dc31ce389cd022a24d576f83fd40cbfd0eb35",
     "tests/asl/scalar/model/sys/semantics/scalar-state-thread-id-rings-001.asl": "3d9040292ad4488ac423e3b4c6b0ddb97a734712245d5ddba88ccb8d40ccd9d6",
-    "tests/asl/scalar/model/sys/semantics/scalar-static-semantics-contract-001.asl": "94f20788eda611573f17427fa6cbc9896bfa40eaa8c86843570b723bf9015b61",
+    "tests/asl/scalar/model/sys/semantics/scalar-static-semantics-contract-001.asl": "3e27c26edc525d9485c4bcf4f3a10c6459c784ce5a01b475bc471bdd69762f48",
     "tests/asl/scalar/model/types/operands/scalar-static-operands-contract-001.asl": "50309ed5f605efa5bf4f2ae949c3378d493d5591a2e7867cf3b3f7c13c1bde6a",
     "tests/asl/scalar/model/types/operations/scalar-static-operations-contract-001.asl": "d5cde4ceb9b26687390ccb6f6cd8366246f67b9afde9e8802b99b64d837399b9",
     "tests/asl/scalar/sys/ACRC/scalar-decode-acrc-canonical-001.asl": "85b793059aa3ad80115667a74d5bd44077ad15d9156592ef905c7412c9920bea",
@@ -44297,7 +44298,7 @@
         "PTO-CUBE-MATRIX-SCALE-001",
         "PTO-CUBE-SHARED-TRANSPOSE-001"
       ],
-      "sha256": "993cd2bd2e76e7336d5e2ac098e88f7907dd86b417e0d4691c184a16f38305ad",
+      "sha256": "b8a99695d2ea7deac688f7f017f3f5b1ef159d01ea39db8ecd885f5c967ddeae",
       "source": "asl/block/model/dispatch/shared-cube-matrix.asl"
     },
     {
@@ -46054,7 +46055,7 @@
         "PTO-CUBE-SHARED-TRANSPOSE-001",
         "PTO-CUBE-GROUP-M-DISTRIBUTION-001"
       ],
-      "sha256": "503b3d7e47783c642651530ccb3a49854bee9f87bd251239f33f42b92b74ff4a",
+      "sha256": "8323890f34dce1d18090435818d62ce6a1a32d3a8ddc5e91f1ea31782f2d92d7",
       "source": "asl/block/model/dispatch/cube-tmatmul.asl"
     },
     {
@@ -46200,7 +46201,7 @@
         "PTO-CUBE-SHARED-TRANSPOSE-001",
         "PTO-CUBE-GROUP-M-DISTRIBUTION-001"
       ],
-      "sha256": "7efdf4bdb8a30f8d3270b60b132cc2338661a5b0b5bf3b7fa921b79a34a52ab0",
+      "sha256": "bf05ec437f961953470fa6e70fd64a59fe0b740e757c6ed57e8f9959af1e6a6a",
       "source": "asl/block/model/dispatch/cube-tmatmul.asl"
     },
     {
@@ -57159,8 +57160,10 @@
       "id": "PTO-AVS-SCALAR-MODEL-SYS-SEMANTICS-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/scalar/model/sys/semantics/scalar-static-semantics-contract-001.asl",
-      "requirements": [],
-      "sha256": "94f20788eda611573f17427fa6cbc9896bfa40eaa8c86843570b723bf9015b61",
+      "requirements": [
+        "PTO-THREAD-ID-PE-IDENTITY-001"
+      ],
+      "sha256": "3e27c26edc525d9485c4bcf4f3a10c6459c784ce5a01b475bc471bdd69762f48",
       "source": "asl/scalar/model/sys/semantics.asl"
     },
     {
