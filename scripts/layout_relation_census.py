@@ -468,6 +468,198 @@ FPATR_EFFECTIVE_TYPE_HELPERS = {
 FPATR_EFFECTIVE_TYPE_CLASSIFICATION = (
     "B.FPATR final-D effective data-type resolution (Issue #345 / ADR-NUM-0012)"
 )
+# Issue #360 adds Core-scoped GM obligation capture/TSTORE progress and
+# actual-PE Shared request completion/eligibility helpers. These helpers are
+# visible to this census because their names/call graph overlap the bundle and
+# Tile execution roots, but they carry no portable-layout relation. Keep the
+# exact owner paths, empty layout sets, and direct caller closure here so the
+# accepted request bookkeeping cannot authorize unrelated layout edits.
+ISSUE360_GM_OBLIGATION_HELPERS = {
+    "BundleFirstGMSourceTile": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/gm-obligation-dispatch.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/gm-obligation-dispatch.asl"),
+        },
+    },
+    "BundleGMOVPESourceTile": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/tlsu-gmov.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleGMOVCore4SourceReady", "asl/block/model/dispatch/tlsu-gmov.asl"),
+            ("ExecuteBundleGMOVOperation", "asl/block/model/dispatch/tlsu-gmov.asl"),
+        },
+    },
+    "BundleGMOVPESourceTileReady": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/tlsu-gmov.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleGMOVCore4SourceReady", "asl/block/model/dispatch/tlsu-gmov.asl"),
+            ("ExecuteBundleGMOVOperation", "asl/block/model/dispatch/tlsu-gmov.asl"),
+        },
+    },
+    "BundleGMOVSourceDescriptorsMatch": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/tlsu-gmov.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleGMOVCore4SourceReady", "asl/block/model/dispatch/tlsu-gmov.asl"),
+        },
+    },
+    "BundleLocalGenerationSlotForDestination": {
+        "before": [],
+        "after": [("asl/block/model/operands/local-generation.asl", set())],
+        "before_callers": {
+            ("AbortBundleLocalGenerationsForBundle", "asl/block/model/operands/local-generation.asl"),
+            ("BundleLocalGenerationQueueInsertionLegal", "asl/block/model/operands/local-generation.asl"),
+            ("BundleLocalGenerationSlotForSource", "asl/block/model/operands/portable-carriers.asl"),
+            ("CommitBundleLocalGeneration", "asl/block/model/operands/local-generation.asl"),
+            ("ReuseBundleLocalGenerationDestination", "asl/block/model/operands/local-generation.asl"),
+            ("ValidateBundleLocalGeneration", "asl/block/model/operands/local-generation.asl"),
+        },
+        "after_callers": {
+            ("AbortBundleLocalGenerationsForBundle", "asl/block/model/operands/local-generation.asl"),
+            ("BundleLocalGenerationQueueInsertionLegal", "asl/block/model/operands/local-generation.asl"),
+            ("BundleLocalGenerationSlotForSource", "asl/block/model/operands/portable-carriers.asl"),
+            ("CommitBundleLocalGeneration", "asl/block/model/operands/local-generation.asl"),
+            ("ReuseBundleLocalGenerationDestination", "asl/block/model/operands/local-generation.asl"),
+            ("ValidateBundleLocalGenerationStructure", "asl/block/model/operands/local-generation.asl"),
+            ("ValidateBundleLocalGenerationWriters", "asl/block/model/operands/local-generation-cube.asl"),
+        },
+    },
+    "BundleLocalGenerationSlotForSource": {
+        "before": [],
+        "after": [("asl/block/model/operands/portable-carriers.asl", set())],
+        "before_callers": {
+            ("BundlePrepareConsumerSource", "asl/block/model/operands/portable-carriers.asl"),
+        },
+        "after_callers": {
+            ("BundlePrepareConsumerSource", "asl/block/model/operands/portable-carriers.asl"),
+            ("ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/gm-obligation-dispatch.asl"),
+            ("TileStoreSourceGeneration", "asl/tile/model/memory/load-store.asl"),
+        },
+    },
+    "BundleTileGMRequestClass": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/gm-obligation-dispatch.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/gm-obligation-dispatch.asl"),
+        },
+    },
+    "BundleTileOperationHasGMEffect": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/gm-obligation-dispatch.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/gm-obligation-dispatch.asl"),
+        },
+    },
+    "BundleSharedGenerationRequestWaiting": {
+        "before": [],
+        "after": [("asl/block/model/operands/shared-generation-pe-requests.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+            ("ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/gm-obligation-dispatch.asl"),
+            ("RetireFailedEarlySharedGenerationRequest",
+             "asl/block/model/dispatch/gm-obligation-dispatch.asl"),
+        },
+    },
+    "BundleCurrentPEIsNonparticipantSharedAssembly": {
+        "before": [],
+        "after": [("asl/block/model/operands/shared-generation-pe-requests.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/gm-obligation-dispatch.asl"),
+            ("PrepareSelectedBundleStage2",
+             "asl/block/model/operands/subview-descriptor.asl"),
+            ("ValidateSharedGenerationEarlyRetirementStructure",
+             "asl/block/model/dispatch/gm-obligation-dispatch.asl"),
+        },
+    },
+    "BundleSharedGenerationCompletionAvailableForCurrentPE": {
+        "before": [],
+        "after": [("asl/block/model/operands/shared-generation-pe-requests.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("ConsumeBundleSharedGenerationCompletionForCurrentPE",
+             "asl/block/model/operands/shared-generation-pe-requests.asl"),
+            ("ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/gm-obligation-dispatch.asl"),
+            ("PrepareSelectedBundleStage2",
+             "asl/block/model/operands/subview-descriptor.asl"),
+            ("ValidateSharedGenerationEarlyRetirementStructure",
+             "asl/block/model/dispatch/gm-obligation-dispatch.asl"),
+        },
+    },
+    "ExecuteBundleTileOperationWithAcceptedApplicabilityRules": {
+        "before": [("asl/block/model/dispatch/tile-execution.asl", set())],
+        "after": [("asl/block/model/dispatch/gm-obligation-dispatch.asl", set())],
+        "before_callers": {
+            ("CompleteBundleAtWithAcceptedApplicabilityRules", "asl/block/model/commit/validation.asl"),
+            ("ExecuteBundleTileOperation", "asl/block/model/dispatch/tile-execution.asl"),
+        },
+        "after_callers": {
+            ("CompleteBundleAtWithAcceptedApplicabilityRules", "asl/block/model/commit/validation.asl"),
+            ("ExecuteBundleTileOperation", "asl/block/model/dispatch/gm-obligation-dispatch.asl"),
+        },
+    },
+    "ExecuteTileStoreSnapshot": {
+        "before": [],
+        "after": [("asl/tile/model/memory/load-store.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("TSTORE", "asl/tile/model/memory/load-store.asl"),
+        },
+    },
+    "ExecuteTileStoreSnapshotProgress": {
+        "before": [],
+        "after": [("asl/tile/model/memory/load-store.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteTileStoreSnapshot", "asl/tile/model/memory/load-store.asl"),
+            ("ProgressKernelGMObligationsForCore", "asl/tile/model/memory/load-store.asl"),
+        },
+    },
+    "TileStoreFootprintIsValidated": {
+        "before": [],
+        "after": [("asl/tile/model/memory/load-store.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("TSTORE", "asl/tile/model/memory/load-store.asl"),
+        },
+    },
+    "TileStoreHasActiveElements": {
+        "before": [],
+        "after": [("asl/tile/model/memory/load-store.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("TSTORE", "asl/tile/model/memory/load-store.asl"),
+        },
+    },
+    "TileStoreSourceGeneration": {
+        "before": [],
+        "after": [("asl/tile/model/memory/load-store.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("TSTORE", "asl/tile/model/memory/load-store.asl"),
+        },
+    },
+}
+ISSUE360_GM_OBLIGATION_HELPER_CLASSIFICATION = (
+    "Issue #360 Core-scoped GM and Shared request plumbing "
+    "(layout-neutral)"
+)
 # Issue #277/#349 adds a carrier-independent ExecutionMask to existing Local
 # CUBE operations. These definitions enter or leave the shared-helper closure
 # without changing any operation's accepted layout tuple or same-layout
@@ -2320,6 +2512,47 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                     "owner_decision": ISSUE356_REDUCTION_CLASSIFICATION,
                 })
                 continue
+            if name in ISSUE360_GM_OBLIGATION_HELPERS:
+                spec = ISSUE360_GM_OBLIGATION_HELPERS[name]
+                old_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"])))
+                    for row in old_defs
+                )
+                new_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"])))
+                    for row in new_defs
+                )
+                expected_old_shape = sorted(
+                    (path, tuple(sorted(layouts)))
+                    for path, layouts in spec["before"]
+                )
+                expected_new_shape = sorted(
+                    (path, tuple(sorted(layouts)))
+                    for path, layouts in spec["after"]
+                )
+                before_callers = _direct_callers(before_defs, name)
+                after_callers = _direct_callers(after_defs, name)
+                valid = (
+                    old_shape == expected_old_shape and
+                    new_shape == expected_new_shape and
+                    before_callers == spec["before_callers"] and
+                    after_callers == spec["after_callers"]
+                )
+                if not valid:
+                    errors.append(
+                        f"Issue #360 GM-obligation helper owner/layout/caller closure mismatch: {name}"
+                    )
+                rows.append({
+                    "name": name,
+                    "classification": ISSUE360_GM_OBLIGATION_HELPER_CLASSIFICATION
+                        if valid else "UNCLASSIFIED",
+                    "before": old_defs,
+                    "after": new_defs,
+                    "before_callers": sorted(before_callers),
+                    "after_callers": sorted(after_callers),
+                    "owner_decision": ISSUE360_GM_OBLIGATION_HELPER_CLASSIFICATION,
+                })
+                continue
             if name in EXECUTION_MASK_HELPER_DEFINITION_DELTAS:
                 spec = EXECUTION_MASK_HELPER_DEFINITION_DELTAS[name]
                 old_shape = sorted(
@@ -3632,6 +3865,62 @@ def _issue356_reduction_source_mutation_canaries() -> None:
         raise AssertionError("unlisted #338 expansion caller did not fail closed")
 
 
+def _issue360_gm_obligation_helper_mutation_canaries() -> None:
+    """Keep the #360 layout-neutral helper owner/caller inventory exact."""
+    paths = source_paths(BASELINE_OBJECT, "working-tree")
+    baseline = _ref_texts(BASELINE_OBJECT, paths)
+    candidate = _ref_texts("working-tree", paths)
+    result = _census_texts(
+        baseline, candidate, BASELINE_OBJECT,
+        "real-issue360-gm-obligation-helper-candidate", enforce_closure=True,
+    )
+    classified = {
+        row["name"] for row in result["common_helper_deltas"]
+        if row.get("classification") == ISSUE360_GM_OBLIGATION_HELPER_CLASSIFICATION
+    }
+    if not result["pass"] or not set(ISSUE360_GM_OBLIGATION_HELPERS).issubset(classified):
+        raise AssertionError(
+            "Issue #360 helper owner/layout/caller inventory is incomplete: "
+            + "; ".join(result["errors"][:12])
+        )
+
+    gmov_path = "asl/block/model/dispatch/tlsu-gmov.asl"
+    mutated = dict(candidate)
+    mutated[gmov_path] += (
+        "\nreadonly func BundleUnlistedGMOVSourceCaller() => boolean\n"
+        "begin\n"
+        "    return BundleGMOVPESourceTileReady(_Tiles[[0]]);\n"
+        "end;\n"
+    )
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-issue360-gmov-source-caller", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #360 GM-obligation helper owner/layout/caller closure mismatch: "
+        "BundleGMOVPESourceTileReady" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("unlisted #360 GMOV source helper caller did not fail closed")
+
+    mutated = dict(candidate)
+    marker = "return TileInfoDescriptorLegal(tile);"
+    replacement = "return TileInfoDescriptorLegal(tile) && tile.layout == TileLayout_RowMajor;"
+    if marker not in mutated[gmov_path]:
+        raise AssertionError("#360 GMOV source helper layout canary source is missing")
+    mutated[gmov_path] = mutated[gmov_path].replace(marker, replacement, 1)
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-issue360-gmov-source-layout", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #360 GM-obligation helper owner/layout/caller closure mismatch: "
+        "BundleGMOVPESourceTileReady" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("layout-bearing #360 GMOV source helper did not fail closed")
+
+
 def self_test() -> None:
     base = _fixture()
     good = _census_texts(base, base, "fixture-baseline", "fixture-candidate", enforce_closure=False)
@@ -3709,8 +3998,9 @@ def self_test() -> None:
     _real_relation_mutation_canaries()
     _execution_mask_support_mutation_canaries()
     _issue371_b64_mutation_canaries()
+    _issue360_gm_obligation_helper_mutation_canaries()
     _issue356_reduction_source_mutation_canaries()
-    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, Issue #371 M32 b64 double-CELL, and bounded reduction-source mutations rejected")
+    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, Issue #371 M32 b64 double-CELL, Issue #360 GM-obligation helper owner/caller/layout, and bounded reduction-source mutations rejected")
 
 
 def main() -> int:

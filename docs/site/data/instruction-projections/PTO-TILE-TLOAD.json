@@ -2,7 +2,7 @@
   "schema": "pto.site-instruction-projection.v1",
   "unitId": "PTO-TILE-TLOAD",
   "ownerSource": "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
-  "ownerSourceSha256": "aeddfe72c054628ff4700f3f3b5f48df41882139d90c84652338a350b7e4b788",
+  "ownerSourceSha256": "d7896d6b0dee6b63de04ef7ce19b2a09d95424746732a211bc33fbe34f9a9cca",
   "composition": {
     "owner": "PTO-TILE-TLOAD",
     "variants": [
@@ -1311,6 +1311,14 @@
               {
                 "en": "Each selected ValidRow × ValidCol GM element is translated, permission-checked, loaded, and recorded before advancing to the next element.",
                 "zh-CN": "每个选中的 ValidRow × ValidCol GM 元素依次完成地址转换、权限检查、载入和记录，然后再处理下一个元素。"
+              },
+              {
+                "en": "One Shared issuer reads the whole valid GM parent, including when B.ASSEMBLE is present.",
+                "zh-CN": "单个 Shared issuer 即使带有 B.ASSEMBLE，也读取整个有效 GM parent。"
+              },
+              {
+                "en": "For multi-PE Shared B.ASSEMBLE, each actual PE reads its existing GM source stripe; encoded offset and writer size select only the destination range.",
+                "zh-CN": "多 PE Shared B.ASSEMBLE 中，每个实际 PE 读取其既有 GM 源 stripe；编码 offset 与 writer size 只选择目标写入范围。"
               }
             ]
           },

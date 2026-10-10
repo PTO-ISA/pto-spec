@@ -210,6 +210,40 @@ begin
         return;
     end;
     let single_issuer = PEMaskPopulation(pe_mask) == 1;
+    let actual_pe_assembly = _CurrentPEContextValid &&
+        _BundleSharedBindings[[0]].valid &&
+        _BundleSharedBindings[[0]].destination_assemble.valid &&
+        _BundleSharedBindings[[0]].destination_assemble.init;
+    var range_payload_elements: integer {0..524288} = 0;
+    var actual_pe_source_offset_elements: integer {0..524287} = 0;
+    if actual_pe_assembly then
+        let assemble = _BundleSharedBindings[[0]].destination_assemble;
+        let writer_size = assemble.size_code as integer {1..12};
+        let writer_cells = ((TileSizeCodeBytes(writer_size) DIVRM
+            PTO_TILE_CELL_BYTES) * 4) as integer {4..8192};
+        let element_bits = TileElementBits(data_type)
+            as integer {1..64};
+        let writer_payload_elements = ((writer_cells * 32 * 8) DIVRM
+            element_bits) as integer {1..524288};
+        range_payload_elements = if single_issuer then
+            TileLogicalElementCapacity(tile.capacity_bytes, tile.data_type)
+            else writer_payload_elements;
+        // The PE's logical source stripe follows the retained PE_MASK shape.
+        // B.ASSEMBLE.offset is a destination range and is applied later by the
+        // Shared candidate owner; it does not change which GM elements this PE
+        // reads or the local index of that source fragment.
+        let elements_per_pe_region = (TileLogicalElementCapacity(
+            tile.capacity_bytes, tile.data_type) DIVRM 4)
+                as integer {0..131072};
+        // A singleton issuer retains PTO-TLOAD-MEMORY-001's whole-parent
+        // source range even when it uses B.ASSEMBLE for the destination.
+        // Only a multi-PE assembly maps each executing PE to its own logical
+        // source stripe; the explicit B.ASSEMBLE offset remains destination
+        // range metadata in either case.
+        actual_pe_source_offset_elements = if single_issuer then 0 else
+            ((_CurrentMemoryAgent as integer {0..3}) *
+             elements_per_pe_region) as integer {0..524287};
+    end;
     var single_agent: MemoryAgentId = 0;
     if single_issuer then
         for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
@@ -223,6 +257,7 @@ begin
     // record. Check every participating issuer through the ordinary
     // translated probe before publishing the complete carrier state.
     var packed_zero_fast = PackedTileDataTypeIsFourBit(tile.data_type) &&
+        !actual_pe_assembly &&
         !_MemoryEventCaptureEnabled &&
         !SharedTileRecord(shared_tile_id).descriptor_valid &&
         tile.valid_rows == tile.rows &&
@@ -272,11 +307,24 @@ begin
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLogicalLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
+            let element_index = element as integer {0..524287};
             let region = SharedTileElementRegion(tile, element);
-            let selected = single_issuer ||
-                pe_mask[PTOPEMaskBitOfPEIdentity(region)] == '1';
+            let actual_pe = _CurrentMemoryAgent as integer {0..3};
+            let in_actual_pe_source_range = !actual_pe_assembly ||
+                (element_index >= actual_pe_source_offset_elements &&
+                 element_index < actual_pe_source_offset_elements +
+                     range_payload_elements);
+            let selected = if _CurrentPEContextValid then
+                (single_issuer ||
+                 (region == actual_pe &&
+                  pe_mask[PTOPEMaskBitOfPEIdentity(actual_pe)] == '1')) &&
+                in_actual_pe_source_range
+                else single_issuer ||
+                    pe_mask[PTOPEMaskBitOfPEIdentity(region)] == '1';
             if selected then
-                let agent = if single_issuer then single_agent
+                let agent = if _CurrentPEContextValid then
+                    _CurrentMemoryAgent
+                    else if single_issuer then single_agent
                     else region as MemoryAgentId;
                 let high_nibble = TileMemoryStridedByteHighNibble(
                     column as integer {0..65535}, tile.data_type);
@@ -298,7 +346,11 @@ begin
                 RecordLoadEventForAgent(agent, translated,
                     TileMemoryElementBytes(tile.data_type), raw,
                     CurrentBundleMemoryOrder());
-                tile = TileInfoWithLogicalElement(tile, element,
+                let destination_element = if actual_pe_assembly then
+                    (element_index - actual_pe_source_offset_elements)
+                        as PackedTileElementIndex
+                    else element;
+                tile = TileInfoWithLogicalElement(tile, destination_element,
                     LoadTileMemoryElement(translated, tile.data_type,
                         high_nibble));
                 tile.defined_valid_elements =
@@ -307,7 +359,7 @@ begin
             end;
         end;
     end;
-    if single_issuer || pe_mask == '1111' then
+    if !actual_pe_assembly && (single_issuer || pe_mask == '1111') then
         tile.defined_valid_elements =
             (tile.valid_rows * tile.valid_columns) as integer {0..524288};
         tile.contents_defined = TRUE;
@@ -326,7 +378,13 @@ begin
     assert tile.allocated;
     // PE_MASK selects consumer PEs. The first fault stops the request and
     // stores completed before it remain visible.
-    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+    var first_pe : integer {0..3} = 0;
+    var last_pe : integer {0..3} = 3;
+    if _CurrentPEContextValid then
+        first_pe = _CurrentMemoryAgent as integer {0..3};
+        last_pe = first_pe;
+    end;
+    for pe = first_pe to last_pe do
         let agent = pe as MemoryAgentId;
         if pe_mask[PTOPEMaskBitOfPEIdentity(agent)] == '1' then
             for row = 0 to tile.valid_rows - 1 looplimit 65536 do
@@ -362,7 +420,16 @@ func TMOVSharedToLocalPerPE(destination: TileIndex,
                            pe_mask: bits(4))
 begin
     if pe_mask == Zeros{4} then return; end;
-    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+    // A real PE request may materialize all peers' eligible descriptors for
+    // preflight, but it writes only its own private Local bank. The contextless
+    // aggregate helper retains its established all-selected batch behavior.
+    var first_pe : integer {0..3} = 0;
+    var last_pe : integer {0..3} = 3;
+    if _CurrentPEContextValid then
+        first_pe = _CurrentMemoryAgent as integer {0..3};
+        last_pe = first_pe;
+    end;
+    for pe = first_pe to last_pe do
         let agent = pe as MemoryAgentId;
         if pe_mask[PTOPEMaskBitOfPEIdentity(agent)] == '1' then
             let source_tile = per_pe_tiles[[agent]];
@@ -395,7 +462,13 @@ func TSTORESharedPerPE(base_addresses: CorePEWords,
                        pe_mask: bits(4))
 begin
     if pe_mask == Zeros{4} then return; end;
-    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+    var first_pe : integer {0..3} = 0;
+    var last_pe : integer {0..3} = 3;
+    if _CurrentPEContextValid then
+        first_pe = _CurrentMemoryAgent as integer {0..3};
+        last_pe = first_pe;
+    end;
+    for pe = first_pe to last_pe do
         let agent = pe as MemoryAgentId;
         if pe_mask[PTOPEMaskBitOfPEIdentity(agent)] == '1' then
             let tile = per_pe_tiles[[agent]];
@@ -470,18 +543,21 @@ end;
 // resolved from the four PE-private peer_tid values.  The bundle dispatcher
 // performs collective readiness and peer-range preflight before this read-old,
 // write-new local copy.  No Shared register or global-memory event is involved.
-func GMOV(destination: TileIndex, source: TileIndex, peer_tid: Word)
+func GMOVFromSourceTile(destination: TileIndex, source_tile: TileInfo)
 begin
-    assert UInt(peer_tid) < 4;
-    let source_tile = _Tiles[[source]];
-    let source_payload = source_tile.payload;
-    _Tiles[[destination]].payload = source_payload;
+    _Tiles[[destination]].payload = source_tile.payload;
     _Tiles[[destination]].defined_elements = source_tile.defined_elements;
     _Tiles[[destination]].packed_defined_elements =
         source_tile.packed_defined_elements;
     _Tiles[[destination]].defined_valid_elements =
         source_tile.defined_valid_elements;
     _Tiles[[destination]].contents_defined = source_tile.contents_defined;
+end;
+
+func GMOV(destination: TileIndex, source: TileIndex, peer_tid: Word)
+begin
+    assert UInt(peer_tid) < 4;
+    GMOVFromSourceTile(destination, _Tiles[[source]]);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

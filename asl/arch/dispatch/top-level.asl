@@ -12,13 +12,15 @@
 
 type PTOInstructionExecutionStatus of enumeration {
     PTOInstruction_Executed,
-    PTOInstruction_Rejected
+    PTOInstruction_Rejected,
+    PTOInstruction_Blocked
 };
 
 func ExecutePTOInstruction(instruction: bits(64),
                            length_bits: integer {16,32,48,64})
                            => PTOInstructionExecutionStatus
 begin
+    _CurrentEncodedInstruction = instruction;
     if DecodeCommandForm(instruction, length_bits) != PTO_COMMAND_FORM_COUNT then
         let command_status = ExecuteCommandInstruction(instruction, length_bits);
         if command_status == CommandExecution_Executed then
@@ -31,6 +33,8 @@ begin
             instruction[47:0], length_bits as integer {16,32,48});
         if scalar_status == ScalarExecution_Executed then
             return PTOInstruction_Executed;
+        elsif scalar_status == ScalarExecution_Blocked then
+            return PTOInstruction_Blocked;
         else
             return PTOInstruction_Rejected;
         end;

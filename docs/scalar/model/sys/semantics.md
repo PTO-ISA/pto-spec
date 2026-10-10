@@ -95,7 +95,7 @@ Each attempt also adds one to the cycle count, including the two that fault.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/sys/semantics.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-SEMANTICS","surface":"scalar","classification":["model","sys","semantics"],"depends_on":["PTO-SCALAR-MODEL-AMO-SEMANTICS","PTO-BLOCK-MODEL-STATE-BARG"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-SEMANTICS","surface":"scalar","classification":["model","sys","semantics"],"depends_on":["PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-BLOCK-MODEL-STATE-BARG","PTO-SCALAR-MODEL-AMO-SEMANTICS"]}
 // PTO-REQ-SCALAR-SYS-001, PTO-REQ-MEMORY-RC-001: PTO base SSR access,
 // architectural time, and data/instruction fences.
 
@@ -116,6 +116,10 @@ func BeginArchitecturalInstructionAttempt()
 begin
     _LastFault = Fault_None;
     _FaultAddress = Zeros{PTO_XLEN};
+    _ScalarExecutionBlocked = FALSE;
+    _CurrentProgramOrder = _CurrentProgramOrder + 1;
+    _PEProgramOrder[[_CurrentModelCore]][[_CurrentMemoryAgent]] =
+        _CurrentProgramOrder;
     AdvanceArchitecturalTime();
 end;
 
@@ -336,6 +340,7 @@ begin
              ScalarOperation_DC_IVA, ScalarOperation_DC_ZVA,
              ScalarOperation_EBREAK,
              ScalarOperation_FENCE_D, ScalarOperation_FENCE_I,
+             ScalarOperation_SYNC_CORE,
              ScalarOperation_HL_SSRGET, ScalarOperation_HL_SSRSET,
              ScalarOperation_IC_IALL, ScalarOperation_IC_IVA,
              ScalarOperation_SSRGET, ScalarOperation_SSRSET,

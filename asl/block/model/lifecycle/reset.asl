@@ -84,6 +84,11 @@ begin
         _BundleTileBindings[[index]].destination_assemble.offset = Zeros{PTO_XLEN};
         _BundleTileBindings[[index]].destination_assemble.init = FALSE;
         _BundleTileBindings[[index]].destination_assemble.last = FALSE;
+        _BundleTileBindings[[index]].destination_assemble.shared_request_identity_valid = FALSE;
+        _BundleTileBindings[[index]].destination_assemble.shared_request_waiting = FALSE;
+        _BundleTileBindings[[index]].destination_assemble.shared_request_squashed = FALSE;
+        _BundleTileBindings[[index]].destination_assemble.shared_request_execution_domain = 0;
+        _BundleTileBindings[[index]].destination_assemble.shared_request_operation_ordinal = 0;
         _BundleTileBindings[[index]].destination_assemble.derived.valid = FALSE;
         _BundleTileBindings[[index]].destination_assemble.materialized = FALSE;
         _BundleTileBindings[[index]].destination_assemble.materialized_index = 0;
@@ -112,6 +117,11 @@ begin
         _BundleSharedBindings[[index]].destination_assemble.offset = Zeros{PTO_XLEN};
         _BundleSharedBindings[[index]].destination_assemble.init = FALSE;
         _BundleSharedBindings[[index]].destination_assemble.last = FALSE;
+        _BundleSharedBindings[[index]].destination_assemble.shared_request_identity_valid = FALSE;
+        _BundleSharedBindings[[index]].destination_assemble.shared_request_waiting = FALSE;
+        _BundleSharedBindings[[index]].destination_assemble.shared_request_squashed = FALSE;
+        _BundleSharedBindings[[index]].destination_assemble.shared_request_execution_domain = 0;
+        _BundleSharedBindings[[index]].destination_assemble.shared_request_operation_ordinal = 0;
         _BundleSharedBindings[[index]].destination_assemble.derived.valid = FALSE;
         _BundleSharedBindings[[index]].destination_assemble.materialized = FALSE;
         _BundleSharedBindings[[index]].destination_assemble.materialized_index = 0;
@@ -244,8 +254,6 @@ begin
         _TrapContexts[[ring]].bundle_hint = _BundleHint;
         _TrapContexts[[ring]].bundle_fixed_point_attributes =
             _BundleFixedPointAttributes;
-        _TrapContexts[[ring]].local_generations = _LocalGenerations;
-        _TrapContexts[[ring]].shared_generations = _SharedGenerations;
         _TrapContexts[[ring]].bundle_execution_domain_token =
             _BundleExecutionDomainToken;
         _TrapContexts[[ring]].memory_copy_template = _MemoryCopyTemplate;

@@ -77,7 +77,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/memory-model/memory-events.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS","surface":"arch","classification":["memory-model","memory-events"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE"]}
+// PTO-UNIT: {"id":"PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS","surface":"arch","classification":["memory-model","memory-events"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE","PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT"]}
 // PTO-REQ-MEMORY-RC-001: bounded executable candidate-execution checker for
 // PTO relaxed consistency with preserved Store->Store order. The event bound
 // is verification infrastructure, not an architectural limit on agents or
@@ -114,19 +114,27 @@ This page is a generated reference view of the normative ASL unit.
 
 pure func MemoryEventIsRead(event: MemoryEvent) => boolean
 begin
-    return event.kind == MemoryEvent_Load || event.kind == MemoryEvent_Atomic;
+    return event.active &&
+           (event.kind == MemoryEvent_Load || event.kind == MemoryEvent_Atomic);
 end;
 
 pure func MemoryEventIsWrite(event: MemoryEvent) => boolean
 begin
-    return event.kind == MemoryEvent_InitialWrite ||
+    return event.active && (event.kind == MemoryEvent_InitialWrite ||
            event.kind == MemoryEvent_Store ||
-           (event.kind == MemoryEvent_Atomic && event.write_performed);
+           (event.kind == MemoryEvent_Atomic && event.write_performed));
 end;
 
 pure func MemoryEventIsAccess(event: MemoryEvent) => boolean
 begin
     return MemoryEventIsRead(event) || MemoryEventIsWrite(event);
+end;
+
+pure func MemoryEventsSameAgent(left: MemoryEvent,
+                                right: MemoryEvent) => boolean
+begin
+    return left.core_identity == right.core_identity &&
+           left.agent == right.agent;
 end;
 
 pure func MemoryEventRangesOverlap(left: MemoryEvent,
@@ -186,7 +194,9 @@ end;
 // Production event extraction is an explicit verification mode because the
 // bounded event array is model-checking infrastructure, not an architectural
 // execution limit. Manual candidate construction remains available while
-// capture is disabled.
+// capture is disabled. Captured events retain the Core's completed collective
+// sequence at request submission; this immutable stamp carries established
+// relation history beyond reusable active generation records.
 func StartMemoryEventCapture(agent: MemoryAgentId)
 begin
     ResetMemoryExecution();
@@ -208,7 +218,32 @@ func AddMemoryEvent(event: MemoryEvent) => MemoryEventIndex
 begin
     assert _MemoryEventCount < PTO_MODEL_MEMORY_EVENTS;
     let index = _MemoryEventCount as MemoryEventIndex;
-    _MemoryEvents[[index]] = event;
+    var captured = event;
+    if event.kind != MemoryEvent_InitialWrite then
+        captured.core_identity = _CurrentModelCore;
+        captured.origin = _CurrentMemoryOrigin;
+        captured.invocation = _CurrentKernelInvocation;
+        captured.program_order = _CurrentProgramOrder;
+        captured.collective_epoch = _CurrentCollectiveEpoch;
+        captured.collective_history_sequence =
+            if _MemoryEventCollectiveHistoryOverrideValid then
+                _MemoryEventCollectiveHistoryOverride
+            else _CoreCollectiveHistorySequence[[captured.core_identity]];
+    end;
+    captured.active = TRUE;
+    captured.committed = TRUE;
+    captured.replay_epoch = 0;
+    if event.kind != MemoryEvent_InitialWrite &&
+       _MemoryReplayState.active &&
+       _MemoryReplayState.owner_core == captured.core_identity &&
+       _MemoryReplayState.owner_agent == captured.agent &&
+       _MemoryReplayState.owner_origin == captured.origin &&
+       _MemoryReplayState.owner_invocation == captured.invocation &&
+       _MemoryReplayState.owner_program_order == captured.program_order then
+        captured.committed = FALSE;
+        captured.replay_epoch = _MemoryReplayState.epoch;
+    end;
+    _MemoryEvents[[index]] = captured;
     _MemoryEventCount = (_MemoryEventCount + 1) as
         integer {0..PTO_MODEL_MEMORY_EVENTS};
     return index;
@@ -218,8 +253,17 @@ func AddInitialWriteEvent(address: Word, size_bytes: integer {1,2,4,8},
                           value: Word) => MemoryEventIndex
 begin
     return AddMemoryEvent(MemoryEvent {
+        active = TRUE,
+        committed = TRUE,
+        replay_epoch = 0,
         kind = MemoryEvent_InitialWrite,
+        core_identity = 0,
         agent = 0,
+        origin = MemoryEventOrigin_NonKernel,
+        invocation = 0,
+        program_order = 0,
+        collective_epoch = 0,
+        collective_history_sequence = 0,
         address = address,
         size_bytes = size_bytes,
         read_value = Zeros{PTO_XLEN},
@@ -238,8 +282,18 @@ func AddLoadEvent(agent: MemoryAgentId, address: Word,
                   order: MemoryOrder) => MemoryEventIndex
 begin
     return AddMemoryEvent(MemoryEvent {
+        active = TRUE,
+        committed = TRUE,
+        replay_epoch = 0,
         kind = MemoryEvent_Load,
+        core_identity = _CurrentModelCore,
         agent = agent,
+        origin = _CurrentMemoryOrigin,
+        invocation = _CurrentKernelInvocation,
+        program_order = _CurrentProgramOrder,
+        collective_epoch = _CurrentCollectiveEpoch,
+        collective_history_sequence =
+            _CoreCollectiveHistorySequence[[_CurrentModelCore]],
         address = address,
         size_bytes = size_bytes,
         read_value = NormalizeMemoryAccessValue(value, size_bytes),
@@ -259,8 +313,18 @@ func AddStoreEvent(agent: MemoryAgentId, address: Word,
                    => MemoryEventIndex
 begin
     return AddMemoryEvent(MemoryEvent {
+        active = TRUE,
+        committed = TRUE,
+        replay_epoch = 0,
         kind = MemoryEvent_Store,
+        core_identity = _CurrentModelCore,
         agent = agent,
+        origin = _CurrentMemoryOrigin,
+        invocation = _CurrentKernelInvocation,
+        program_order = _CurrentProgramOrder,
+        collective_epoch = _CurrentCollectiveEpoch,
+        collective_history_sequence =
+            _CoreCollectiveHistorySequence[[_CurrentModelCore]],
         address = address,
         size_bytes = size_bytes,
         read_value = Zeros{PTO_XLEN},
@@ -290,8 +354,18 @@ func AddAtomicOutcomeEvent(agent: MemoryAgentId, address: Word,
                            write_performed: boolean) => MemoryEventIndex
 begin
     return AddMemoryEvent(MemoryEvent {
+        active = TRUE,
+        committed = TRUE,
+        replay_epoch = 0,
         kind = MemoryEvent_Atomic,
+        core_identity = _CurrentModelCore,
         agent = agent,
+        origin = _CurrentMemoryOrigin,
+        invocation = _CurrentKernelInvocation,
+        program_order = _CurrentProgramOrder,
+        collective_epoch = _CurrentCollectiveEpoch,
+        collective_history_sequence =
+            _CoreCollectiveHistorySequence[[_CurrentModelCore]],
         address = address,
         size_bytes = size_bytes,
         read_value = NormalizeMemoryAccessValue(read_value, size_bytes),
@@ -309,8 +383,18 @@ func AddDataFenceEvent(agent: MemoryAgentId, predecessor: bits(4),
                        successor: bits(4)) => MemoryEventIndex
 begin
     return AddMemoryEvent(MemoryEvent {
+        active = TRUE,
+        committed = TRUE,
+        replay_epoch = 0,
         kind = MemoryEvent_Fence,
+        core_identity = _CurrentModelCore,
         agent = agent,
+        origin = _CurrentMemoryOrigin,
+        invocation = _CurrentKernelInvocation,
+        program_order = _CurrentProgramOrder,
+        collective_epoch = _CurrentCollectiveEpoch,
+        collective_history_sequence =
+            _CoreCollectiveHistorySequence[[_CurrentModelCore]],
         address = Zeros{PTO_XLEN},
         size_bytes = 1,
         read_value = Zeros{PTO_XLEN},

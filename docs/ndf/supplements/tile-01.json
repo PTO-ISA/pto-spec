@@ -96,8 +96,8 @@
         "zh-CN": "Shared 父 Tile 的就绪与可见性"
       },
       "summary": {
-        "en": "Shared producer participation, logical coverage, whole-parent readiness, and published visibility are tracked as distinct conditions. A consumer waits or becomes a no-op before payload access until both readiness and publication are true, independently of the producer and consumer masks.",
-        "zh-CN": "Shared 生产者参与范围、逻辑覆盖范围、完整父 Tile 就绪状态和已发布可见性分别记录。无论生产者与消费者掩码如何，在就绪与发布均成立之前，消费者都会等待或成为空操作，不会访问载荷。"
+        "en": "Shared producer participation, logical coverage, whole-parent readiness, and published visibility are tracked as distinct conditions. A consumer waits or becomes a no-op before payload access until both readiness and publication are true, independently of the producer and consumer masks. Later encoded producers capture their actual PE-owned fragments under a separate operation identity; they do not reuse a prior parent's initialized mask as new contribution state.",
+        "zh-CN": "Shared 生产者参与范围、逻辑覆盖范围、完整父 Tile 就绪状态和已发布可见性分别记录。无论生产者与消费者掩码如何，在就绪与发布均成立之前，消费者都会等待或成为空操作，不会访问载荷。后续编码 producer 会在独立 operation identity 下捕获实际 PE 所有的片段，不会把前一父对象的 initialized mask 当作新贡献状态复用。"
       }
     },
     {

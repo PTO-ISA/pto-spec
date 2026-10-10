@@ -15,6 +15,14 @@
 // elements, or a memory event already admitted before the fault.  Recovery
 // retries from the saved instruction/request template.
 // NDF-END: PTO-ARCH-MEMORY-MODEL-FLUSH-001
+// NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-TRAP-RESTORE-001
+// ndf: kind=contract level=L1 layer=memory status=accepted
+// Trap return restores only the interrupted PE's precise instruction and
+// Block restart carriers. It MUST NOT rewind shared GM/event history, Core
+// synchronization, shared Tile generations, or another PE's cooperative local
+// generation progress. An instruction owner performs any required scoped
+// abort or squash before saving its restart point.
+// NDF-END: PTO-ARCH-MEMORY-MODEL-TRAP-RESTORE-001
 
 func BeginMemoryReplay(request: Word)
 begin
@@ -22,11 +30,34 @@ begin
     _MemoryReplayState.request = request;
     _MemoryReplayState.committed_event_count = _MemoryEventCount;
     _MemoryReplayState.epoch = _MemoryReplayState.epoch + 1;
+    _MemoryReplayState.owner_core = _CurrentModelCore;
+    _MemoryReplayState.owner_agent = _CurrentMemoryAgent;
+    _MemoryReplayState.owner_origin = _CurrentMemoryOrigin;
+    _MemoryReplayState.owner_invocation = _CurrentKernelInvocation;
+    _MemoryReplayState.owner_program_order = _CurrentProgramOrder;
 end;
 
 func CommitMemoryReplayEffect()
 begin
     if _MemoryReplayState.active then
+        for event_number = 0 to _MemoryEventCount - 1 do
+            let event_index = event_number as MemoryEventIndex;
+            if _MemoryEvents[[event_index]].active &&
+               _MemoryEvents[[event_index]].replay_epoch ==
+                   _MemoryReplayState.epoch &&
+               _MemoryEvents[[event_index]].core_identity ==
+                   _MemoryReplayState.owner_core &&
+               _MemoryEvents[[event_index]].agent ==
+                   _MemoryReplayState.owner_agent &&
+               _MemoryEvents[[event_index]].origin ==
+                   _MemoryReplayState.owner_origin &&
+               _MemoryEvents[[event_index]].invocation ==
+                   _MemoryReplayState.owner_invocation &&
+               _MemoryEvents[[event_index]].program_order ==
+                   _MemoryReplayState.owner_program_order then
+                _MemoryEvents[[event_index]].committed = TRUE;
+            end;
+        end;
         _MemoryReplayState.committed_event_count = _MemoryEventCount;
     end;
 end;
@@ -34,9 +65,29 @@ end;
 func FlushMemoryReplay()
 begin
     if _MemoryReplayState.active then
-        // Event records after the last committed effect are speculative and
-        // are removed.  Architectural memory and Tile state are not undone.
-        _MemoryEventCount = _MemoryReplayState.committed_event_count;
+        // Event slots are stable because surviving events and saved contexts
+        // can refer to them through read_from. Deactivate only this owner's
+        // uncommitted records from this replay epoch; never rewind the shared
+        // event log or disturb another PE/Core's event references.
+        for event_number = 0 to _MemoryEventCount - 1 do
+            let event_index = event_number as MemoryEventIndex;
+            if _MemoryEvents[[event_index]].active &&
+               !_MemoryEvents[[event_index]].committed &&
+               _MemoryEvents[[event_index]].replay_epoch ==
+                   _MemoryReplayState.epoch &&
+               _MemoryEvents[[event_index]].core_identity ==
+                   _MemoryReplayState.owner_core &&
+               _MemoryEvents[[event_index]].agent ==
+                   _MemoryReplayState.owner_agent &&
+               _MemoryEvents[[event_index]].origin ==
+                   _MemoryReplayState.owner_origin &&
+               _MemoryEvents[[event_index]].invocation ==
+                   _MemoryReplayState.owner_invocation &&
+               _MemoryEvents[[event_index]].program_order ==
+                   _MemoryReplayState.owner_program_order then
+                _MemoryEvents[[event_index]].active = FALSE;
+            end;
+        end;
         _MemoryReplayState.active = FALSE;
     end;
 end;
@@ -44,6 +95,7 @@ end;
 func CompleteMemoryReplay()
 begin
     if _MemoryReplayState.active then
+        CommitMemoryReplayEffect();
         _MemoryReplayState.committed_event_count = _MemoryEventCount;
         _MemoryReplayState.active = FALSE;
     end;
@@ -62,6 +114,9 @@ begin
         else TrapTargetForFault(source_ring);
     if code != Fault_None then
         SaveTrapContext(ring, source_ring);
+        // Subsequent event capture belongs to the handler until recovery
+        // restores the interrupted PE's saved provenance.
+        _CurrentMemoryOrigin = MemoryEventOrigin_Handler;
     end;
     _LastFault = code;
     _FaultAddress = address;
@@ -125,6 +180,10 @@ begin
     _ACRTrapCause[[target_ring]] = ZeroExtend{24}(request_type);
     _ACRTrapNumber[[target_ring]] = Zeros{6} + 6;
     _ACRTrapArgument0[[target_ring]] = source_tpc;
+    // SaveTrapContext records the origin to restore.  Once entry succeeds,
+    // subsequent memory events are handler work and cannot participate in a
+    // kernel collective.
+    _CurrentMemoryOrigin = MemoryEventOrigin_Handler;
     SetCurrentACR(target_ring);
     WriteTPC(TrapVectorEntry(target_ring, source_tpc));
     return TRUE;
@@ -157,6 +216,9 @@ begin
     _ACRTrapNumber[[ring]] = Zeros{6} + 44;
     _ACRTrapArgument0[[ring]] =
         NaturalToWord(interrupt_id as integer {0..262144});
+    // SaveTrapContext preserves the interrupted origin.  Establish handler
+    // provenance only after the enabled interrupt has actually entered.
+    _CurrentMemoryOrigin = MemoryEventOrigin_Handler;
     SetCurrentACR(ring);
     WriteTPC(TrapVectorEntry(ring, ReadTPC()));
 end;

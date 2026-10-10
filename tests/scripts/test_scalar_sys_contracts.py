@@ -38,7 +38,7 @@ class ScalarSysContractTest(unittest.TestCase):
 
     def test_every_sys_owner_is_formally_complete_and_nontrivial(self) -> None:
         owners = sorted((ROOT / "asl/scalar/sys").glob("*.asl"))
-        self.assertEqual(len(owners), 35)
+        self.assertEqual(len(owners), 36)
 
         for owner in owners:
             text = owner.read_text(encoding="utf-8")

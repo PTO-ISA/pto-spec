@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TSTORE-MASK-001","source":"asl/block/execution/BSTART.TSTORE.asl","requirements":["PTO-B-SHARED-WHOLE-PARENT-READY-001","PTO-INST-BLOCK-BSTART-TSTORE"],"kind":"boundary","summary":"Decoded Function 1 accepts every nonzero Shared consumer mask and zero remains a strict no-op","pass_condition":"full and sparse nonzero masks store one published Shared payload without mask faults while zero completes without source readiness or GM effects","related_sources":["asl/block/model/dispatch/shared-tlsu.asl","asl/tile/model/state/shared-registers.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TSTORE-MASK-001","source":"asl/block/execution/BSTART.TSTORE.asl","requirements":["PTO-B-SHARED-WHOLE-PARENT-READY-001","PTO-INST-BLOCK-BSTART-TSTORE","PTO-ARCH-GM-OBLIGATIONS-001"],"kind":"boundary","summary":"Decoded Function 1 accepts every nonzero Shared consumer mask and zero remains a strict no-op without a phantom kernel GM obligation","pass_condition":"full and sparse nonzero masks store one published Shared payload while zero completes without source readiness, GM effects, memory events, or kernel obligation registration","related_sources":["asl/block/model/dispatch/shared-tlsu.asl","asl/tile/model/state/shared-registers.asl","asl/arch/memory-model/gm-obligations.asl"]}
 pure func TStoreMaskStart(function: bits(5), data_type: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;
@@ -60,6 +60,10 @@ begin
 
     ResetProfileState();
     _Memory[[0]] = Zeros{8} + 0x55;
+    let launch = LaunchKernelInvocation(0, Zeros{PTO_XLEN} + 0x200);
+    assert launch == KernelLifecycle_Started;
+    SelectExecutionContext(0, 0);
+    StartMemoryEventCapture(0);
     let zero_start = ExecuteCommandInstruction(
         TStoreMaskStart('00001', Zeros{5} + 24), 32);
     let zero_source = ExecuteCommandInstruction(
@@ -71,5 +75,15 @@ begin
     assert _LastFault == Fault_None;
     assert _Memory[[0]] == Zeros{8} + 0x55;
     assert !SharedTileRecord((Zeros{6} + 7) as SharedTileID).descriptor_valid;
+    assert _MemoryEventCount == 0;
+    for pe_number = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+        let pe = pe_number as MemoryAgentId;
+        for slot = 0 to PTO_MODEL_GM_OBLIGATIONS - 1 do
+            assert !_GMObligations[[0]][[pe]][[slot]].active;
+        end;
+    end;
+    let ended = EndKernelInvocation(0);
+    assert ended == KernelLifecycle_Started;
+    StopMemoryEventCapture();
     return 0;
 end;

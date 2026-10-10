@@ -72,8 +72,8 @@
     "zh-CN": "Shared 集体组装发布"
    },
    "summary": {
-    "en": "This clause keeps the current Shared object visible until every participating PE reaches a matching, complete, non-overlapping LAST generation with ready data. Successful publication atomically replaces the full descriptor and payload; rejection leaves the previous generation intact.",
-    "zh-CN": "本条款在所有参与 PE 以一致元数据到达完整、无重叠且数据就绪的 LAST 代次之前，持续保留当前 Shared 对象。成功时完整描述符与载荷原子替换；失败时上一代保持不变。"
+    "en": "This clause keeps the current Shared object visible until every participating PE contributes its real source to one matching, complete, non-overlapping LAST generation with ready data. Requests are keyed by Core, invocation, producer and dynamic ordinal; an incomplete squashed candidate is discarded without reviving saved request copies, while a published result and its outstanding releases remain irrevocable. Successful publication atomically replaces the full descriptor and payload.",
+    "zh-CN": "本条款在所有参与 PE 以真实源数据贡献给同一匹配、完整、无重叠且数据就绪的 LAST 代次之前，持续保留当前 Shared 对象。请求按 Core、调用、producer 和动态 ordinal 标识；被撤销的未完成候选会丢弃且不会因恢复已保存请求副本而复活，已发布结果及其未消费 release 则不可撤销。成功发布时完整描述符与载荷原子替换。"
    }
   },
   {
@@ -96,8 +96,8 @@
     "zh-CN": "推测式组装贡献的身份"
    },
    "summary": {
-    "en": "This clause tags dynamic assembly writers with instruction-instance and execution-domain identity. Squashing a domain removes its unretired contributions while preserving the older committed mapping, so speculative work cannot leak into published state.",
-    "zh-CN": "本条款为动态组装写入者标记指令实例与执行域身份。撤销某执行域时，仅移除其未退休贡献并保留较旧的已提交映射，避免推测工作泄漏到已发布状态。"
+    "en": "This clause tags dynamic Local writers and actual-PE Shared requests with instruction-instance and execution-domain identity. Squashing removes only unretired contributions in the matching domain, invalidates retained request copies for an incomplete Shared candidate, and preserves committed Local mappings and any published Shared parent/release state.",
+    "zh-CN": "本条款为动态 Local 写入者及实际 PE Shared 请求标记指令实例与执行域身份。撤销仅移除匹配执行域中的未退休贡献，使未完成 Shared 候选的已保存请求副本失效，并保留已提交 Local 映射及已发布 Shared 父对象/释放状态。"
    }
   },
   {

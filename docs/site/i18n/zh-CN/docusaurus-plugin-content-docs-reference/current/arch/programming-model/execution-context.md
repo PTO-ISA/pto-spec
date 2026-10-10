@@ -72,14 +72,18 @@ T 和 U 是相互独立的队列：向其中一个队列压入数据，不会修
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/programming-model/execution-context.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","surface":"arch","classification":["programming-model","execution-context"],"depends_on":["PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING"]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-KERNEL-LIFECYCLE","classification":["architecture","kernel-lifecycle"],"scope":"core","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_KernelInvocationByCore","_NextKernelInvocationIdByCore","_RetiredKernelInvocationByCore","_KernelInvocationActiveByCore","_CurrentKernelInvocation"],"depends_on":[]}
 // PTO-STATE: {"id":"PTO-STATE-ARCH-GPR","classification":["architecture","scalar","gpr"],"scope":"pe","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_PEGPRs"],"depends_on":[]}
-// PTO-STATE: {"id":"PTO-STATE-ARCH-TEMPORARY-QUEUES","classification":["architecture","temporary-queues"],"scope":"bundle","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_TQueue","_TQueueValid","_UQueue","_UQueueValid"],"depends_on":[]}
-// PTO-STATE: {"id":"PTO-STATE-ARCH-PROGRAM-CONTROL","classification":["architecture","program-control"],"scope":"core","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_PC","_BPC","_BundleActive","_BundleBodyActive","_ReturnAddress","_CommitArgument","_PredicateRegisters"],"depends_on":[]}
-// PTO-STATE: {"id":"PTO-STATE-ARCH-FAULT","classification":["architecture","fault"],"scope":"core","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_LastFault","_FaultAddress"],"depends_on":[]}
-// PTO-STATE: {"id":"PTO-STATE-ARCH-MEMORY","classification":["architecture","memory"],"scope":"system","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_Memory","_ReservationValid","_ReservationAddress","_ReservationSize","_LastFencePredecessor","_LastFenceSuccessor","_MemoryEvents","_MemoryEventCount","_MemoryEventCaptureEnabled","_CurrentMemoryAgent","_MemoryReplayState"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-TEMPORARY-QUEUES","classification":["architecture","temporary-queues"],"scope":"pe","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_TQueue","_TQueueValid","_UQueue","_UQueueValid"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-PROGRAM-CONTROL","classification":["architecture","program-control"],"scope":"pe","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_PC","_BPC","_BundleActive","_BundleBodyActive","_ReturnAddress","_CommitArgument","_PredicateRegisters"],"depends_on":["PTO-STATE-ARCH-PE-EXECUTION-CONTEXT"]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-FAULT","classification":["architecture","fault"],"scope":"pe","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_LastFault","_FaultAddress"],"depends_on":["PTO-STATE-ARCH-PE-EXECUTION-CONTEXT"]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-MEMORY","classification":["architecture","memory"],"scope":"system","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_Memory","_MemoryEvents","_MemoryEventCount","_MemoryEventCaptureEnabled","_CurrentMemoryAgent"],"depends_on":[]}
 // PTO-STATE: {"id":"PTO-STATE-ARCH-MAINTENANCE","classification":["architecture","maintenance"],"scope":"system","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_DataCacheEpoch","_InstructionCacheEpoch","_BundleCacheEpoch","_TLBEpoch","_LastMaintenanceOperation","_LastMaintenanceOperand","_BundleHintEpoch","_ArchitectureRequestEpoch","_LastControlRequest","_ControlRequestOperand"],"depends_on":[]}
-// PTO-STATE: {"id":"PTO-STATE-ARCH-EXTENDED-SYSTEM-REGISTERS","classification":["architecture","extended-system-registers"],"scope":"system","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_ExtendedSystemRegisters","_CurrentACR"],"depends_on":[]}
-// PTO-STATE: {"id":"PTO-STATE-ARCH-TRAP-CONTEXT","classification":["architecture","trap-context"],"scope":"acr","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_ACRTrapAsynchronous","_ACRTrapArgumentValid","_ACRTrapCause","_ACRTrapNumber","_ACRTrapArgument0","_TrapContexts"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-EXTENDED-SYSTEM-REGISTERS","classification":["architecture","extended-system-registers"],"scope":"pe","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_ExtendedSystemRegisters","_CurrentACR"],"depends_on":["PTO-STATE-ARCH-PE-EXECUTION-CONTEXT"]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-TRAP-CONTEXT","classification":["architecture","trap-context"],"scope":"acr","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_ACRTrapAsynchronous","_ACRTrapArgumentValid","_ACRTrapCause","_ACRTrapNumber","_ACRTrapArgument0","_TrapContexts"],"depends_on":["PTO-STATE-ARCH-PE-EXECUTION-CONTEXT"]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-CORE-CONTEXT-SELECTION","classification":["architecture","core-context-selection"],"scope":"system","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_CurrentModelCore"],"depends_on":["PTO-STATE-ARCH-CORE-LOCAL-CONTEXT"]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-PE-EXECUTION-PROGRESS","classification":["architecture","pe-execution-progress"],"scope":"pe","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_CurrentCollectiveEpoch","_CurrentEncodedInstruction","_CurrentMemoryOrigin","_CurrentProgramOrder","_LastFencePredecessor","_LastFenceSuccessor","_MemoryReplayState","_ReservationAddress","_ReservationSize","_ReservationValid","_ScalarExecutionBlocked"],"depends_on":["PTO-STATE-ARCH-PE-EXECUTION-CONTEXT"]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-MEMORY-EVENT-OVERRIDE","classification":["architecture","memory-event-override"],"scope":"system","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_MemoryEventCollectiveHistoryOverrideValid","_MemoryEventCollectiveHistoryOverride"],"depends_on":["PTO-STATE-ARCH-MEMORY"]}
 
 // NDF-BEGIN: PTO-REQ-STATE-001
 // ndf: kind=contract level=L1 layer=state status=accepted
@@ -89,7 +93,8 @@ T 和 U 是相互独立的队列：向其中一个队列压入数据，不会修
 // [[PTO-STATE-ARCH-MEMORY]], [[PTO-STATE-ARCH-MAINTENANCE]],
 // [[PTO-STATE-ARCH-SYSTEM-REGISTERS]],
 // [[PTO-STATE-ARCH-EXTENDED-SYSTEM-REGISTERS]], and
-// [[PTO-STATE-ARCH-TRAP-CONTEXT]].
+// [[PTO-STATE-ARCH-TRAP-CONTEXT]], and
+// [[PTO-STATE-ARCH-PE-EXECUTION-CONTEXT]].
 // NDF-END: PTO-REQ-STATE-001
 
 // Requirement references: PTO-REQ-RESET-001, PTO-REQ-MEMORY-RC-001.
@@ -97,7 +102,8 @@ T 和 U 是相互独立的队列：向其中一个队列压入数据，不会修
 // A core owns four private scalar register files.  An encoded absolute GPR
 // selector is shared by the instruction, but each PE resolves that selector
 // in its own file.
-var _PEGPRs : array [[PTO_MODEL_MEMORY_AGENTS]] of PERegisterFile;
+var _PEGPRs : array [[PTO_MODEL_CORE_INSTANCES]] of
+    array [[PTO_MODEL_MEMORY_AGENTS]] of PERegisterFile;
 var _TQueue : TemporaryQueueSnapshot;
 var _TQueueValid : TemporaryQueueValiditySnapshot;
 var _UQueue : TemporaryQueueSnapshot;
@@ -122,6 +128,21 @@ var _MemoryEventCount : integer {0..PTO_MODEL_MEMORY_EVENTS};
 var _MemoryEventCaptureEnabled : boolean;
 var _CurrentMemoryAgent : MemoryAgentId;
 var _MemoryReplayState : MemoryReplayState;
+var _CurrentModelCore : PTOModelCoreIdentity;
+var _CurrentMemoryOrigin : MemoryEventOrigin;
+var _CurrentKernelInvocation : integer;
+var _CurrentProgramOrder : integer;
+var _CurrentCollectiveEpoch : integer;
+var _MemoryEventCollectiveHistoryOverrideValid : boolean;
+var _MemoryEventCollectiveHistoryOverride : integer;
+var _ScalarExecutionBlocked : boolean;
+var _CurrentEncodedInstruction : bits(64);
+var _KernelInvocationByCore : array [[PTO_MODEL_CORE_INSTANCES]] of integer;
+var _NextKernelInvocationIdByCore : array [[PTO_MODEL_CORE_INSTANCES]] of integer;
+var _RetiredKernelInvocationByCore :
+    array [[PTO_MODEL_CORE_INSTANCES]] of integer;
+var _KernelInvocationActiveByCore :
+    array [[PTO_MODEL_CORE_INSTANCES]] of boolean;
 var _DataCacheEpoch : integer;
 var _InstructionCacheEpoch : integer;
 var _BundleCacheEpoch : integer;

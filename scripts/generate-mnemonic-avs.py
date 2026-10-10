@@ -2068,6 +2068,10 @@ def render_concept_avs(root: Path, unit: AslUnit) -> tuple[Path, str]:
     identity = sanitize(unit.unit_id.removeprefix("PTO-"))
     test_id = f"PTO-AVS-{identity}-STATIC-001"
     if len(test_id) > 64:
+        identity = identity.replace(
+            "BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
+            "BLOCK-SHARED-GENERATION-PE-REQUESTS",
+        )
         identity = identity.replace("CELL-REARRANGEMENT", "CELL-REARR")
         identity = identity.replace("TILE-INSTRUCTION-OPERANDS", "TILE-INST-OPERANDS")
         identity = identity.replace("EXECUTION-MASK-SOURCE-SCHEMA", "EXEC-MASK-SRC-SCHEMA")

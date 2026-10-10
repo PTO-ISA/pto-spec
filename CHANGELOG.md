@@ -186,6 +186,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-NUM-0010](docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md): Hardware numeric subnormal policy
 - [ADR-NUM-0011](docs/status/decisions/ADR-NUM-0011-hardware-special-value-checkpoint.md): Hardware special-value result checkpoint
 - [ADR-SCALAR-0004](docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md): Scalar FSU totality and numeric-profile boundary
+- [ADR-SCALAR-0007](docs/status/decisions/ADR-SCALAR-0007-sync-core-collective-phase-barrier.md): SYNC.CORE collective architectural phase barrier
 - [ADR-STATE-0001](docs/status/decisions/ADR-STATE-0001-pto-owned-system-register-names.md): Use PTO-owned system-register names
 - [ADR-STATE-0002](docs/status/decisions/ADR-STATE-0002-architectural-state-contract.md): Define the PTO architectural state contract
 - [ADR-STATE-0003](docs/status/decisions/ADR-STATE-0003-scalar-tpc-and-execution-status.md): scalar TPC and execution status

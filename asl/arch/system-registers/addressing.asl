@@ -22,10 +22,12 @@ func ResetProfileState()
 begin
     let zero_tile_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
-    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+    for core = 0 to PTO_MODEL_CORE_INSTANCES - 1 do
+      for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
         for index = 0 to PTO_ABSOLUTE_GPR_COUNT - 1 do
-            _PEGPRs[[pe]][[index]] = Zeros{PTO_XLEN};
+            _PEGPRs[[core]][[pe]][[index]] = Zeros{PTO_XLEN};
         end;
+      end;
     end;
     for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
         _TQueue[[index]] = Zeros{PTO_XLEN};
@@ -186,5 +188,28 @@ begin
     _SystemRegisters.blockid = Zeros{PTO_XLEN};
     _SystemRegisters.cycle = Zeros{PTO_XLEN};
     _CurrentACR = 0;
+    _CurrentModelCore = 0;
+    _CurrentMemoryOrigin = MemoryEventOrigin_NonKernel;
+    _CurrentKernelInvocation = 0;
+    _CurrentProgramOrder = 0;
+    _CurrentCollectiveEpoch = 0;
+    _MemoryEventCollectiveHistoryOverrideValid = FALSE;
+    _MemoryEventCollectiveHistoryOverride = 0;
+    _ScalarExecutionBlocked = FALSE;
+    _MemoryReplayState.active = FALSE;
+    _MemoryReplayState.request = Zeros{PTO_XLEN};
+    _MemoryReplayState.committed_event_count = 0;
+    _MemoryReplayState.epoch = 0;
+    _CurrentEncodedInstruction = Zeros{64};
+    for core = 0 to PTO_MODEL_CORE_INSTANCES - 1 do
+        _KernelInvocationByCore[[core]] = 0;
+        _NextKernelInvocationIdByCore[[core]] = 1;
+        _RetiredKernelInvocationByCore[[core]] = 0;
+        _KernelInvocationActiveByCore[[core]] = FALSE;
+    end;
     ClearFault();
+    ResetPEExecutionContextBank();
+    ResetKernelGMObligations();
+    ResetCoreSynchronizationState();
+    ResetKernelLifecycleState();
 end;

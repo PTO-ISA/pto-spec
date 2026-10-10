@@ -218,6 +218,21 @@ class NdfTest(unittest.TestCase):
         self.assertTrue(callable(indexer), "scripts.ndf.state_index is missing")
         states = indexer(REPOSITORY_ROOT)
         expected_members = {
+            "PTO-STATE-ARCH-GM-OBLIGATIONS": (
+                "_GMObligations",
+                "_NextGMObligationIdentity",
+            ),
+            "PTO-STATE-ARCH-GM-PROGRESS-SCHEDULER": (
+                "_VerificationGMProgressDeferred",
+                "_VerificationGMProgressBeatBudget",
+            ),
+            "PTO-STATE-ARCH-KERNEL-LIFECYCLE": (
+                "_KernelInvocationByCore",
+                "_NextKernelInvocationIdByCore",
+                "_RetiredKernelInvocationByCore",
+                "_KernelInvocationActiveByCore",
+                "_CurrentKernelInvocation",
+            ),
             "PTO-STATE-ARCH-GPR": ("_PEGPRs",),
             "PTO-STATE-ARCH-TEMPORARY-QUEUES": (
                 "_TQueue",
@@ -251,16 +266,10 @@ class NdfTest(unittest.TestCase):
             "PTO-STATE-ARCH-FAULT": ("_LastFault", "_FaultAddress"),
             "PTO-STATE-ARCH-MEMORY": (
                 "_Memory",
-                "_ReservationValid",
-                "_ReservationAddress",
-                "_ReservationSize",
-                "_LastFencePredecessor",
-                "_LastFenceSuccessor",
                 "_MemoryEvents",
                 "_MemoryEventCount",
                 "_MemoryEventCaptureEnabled",
                 "_CurrentMemoryAgent",
-                "_MemoryReplayState",
             ),
             "PTO-STATE-ARCH-MAINTENANCE": (
                 "_DataCacheEpoch",
@@ -287,6 +296,47 @@ class NdfTest(unittest.TestCase):
                 "_ACRTrapArgument0",
                 "_TrapContexts",
             ),
+            "PTO-STATE-ARCH-CORE-CONTEXT-SELECTION": ("_CurrentModelCore",),
+            "PTO-STATE-ARCH-PE-EXECUTION-PROGRESS": (
+                "_CurrentCollectiveEpoch",
+                "_CurrentEncodedInstruction",
+                "_CurrentMemoryOrigin",
+                "_CurrentProgramOrder",
+                "_LastFencePredecessor",
+                "_LastFenceSuccessor",
+                "_MemoryReplayState",
+                "_ReservationAddress",
+                "_ReservationSize",
+                "_ReservationValid",
+                "_ScalarExecutionBlocked",
+            ),
+            "PTO-STATE-ARCH-MEMORY-EVENT-OVERRIDE": (
+                "_MemoryEventCollectiveHistoryOverrideValid",
+                "_MemoryEventCollectiveHistoryOverride",
+            ),
+            "PTO-STATE-ARCH-CORE-SYNCHRONIZATION": (
+                "_CoreSyncRecords",
+                "_CoreCollectiveHistorySequence",
+            ),
+            "PTO-STATE-ARCH-CORE-SYNCHRONIZATION-PE": (
+                "_PEBarrierNextGeneration",
+                "_PEReleaseValid",
+                "_PEReleaseGeneration",
+                "_PEProgramOrder",
+                "_PECollectiveEpoch",
+            ),
+            "PTO-STATE-ARCH-PE-EXECUTION-CONTEXT": (
+                "_PEExecutionContexts",
+                "_CurrentPEContextValid",
+                "_PEContextBankValid",
+                "_DefaultPEExecutionContext",
+            ),
+            "PTO-STATE-ARCH-CORE-LOCAL-CONTEXT": (
+                "_CoreExecutionContexts",
+                "_CurrentCoreContextValid",
+                "_CoreContextBankValid",
+                "_DefaultCoreExecutionContext",
+            ),
             "PTO-STATE-TILE-LOCAL": (
                 "_Tiles",
                 "_TileAllocationMasks",
@@ -302,6 +352,7 @@ class NdfTest(unittest.TestCase):
                 "_SystemBlockTerminalPending",
                 "_BundleSequentialPC",
                 "_FrameStackReturnTarget",
+                "_BundleStartEncodedInstruction",
                 "_BundleArgument",
                 "_BundleArgumentKind",
                 "_BundleOperation",
@@ -320,11 +371,7 @@ class NdfTest(unittest.TestCase):
                 "_BundleFixedPointAttributes",
                 "_MemoryCopyTemplate",
                 "_FrameTemplate",
-                "_LocalGenerations",
-                "_SharedGenerations",
                 "_BundleExecutionDomainToken",
-                "_NextBundleExecutionDomainToken",
-                "_TileDataLayoutCapabilities",
                 "_FrameDepth",
                 "_LastFrameBegin",
                 "_LastFrameEnd",
@@ -338,6 +385,14 @@ class NdfTest(unittest.TestCase):
                 "_LastCrossBlockID",
                 "_LastBundleHintPayload",
             ),
+            "PTO-STATE-BLOCK-LOCAL-GENERATIONS": ("_LocalGenerations",),
+            "PTO-STATE-BLOCK-SHARED-GENERATIONS": ("_SharedGenerations",),
+            "PTO-STATE-BLOCK-CORE-TILE-CAPABILITIES": (
+                "_TileDataLayoutCapabilities",
+            ),
+            "PTO-STATE-BLOCK-EXECUTION-DOMAIN-ALLOCATOR": (
+                "_NextBundleExecutionDomainToken",
+            ),
         }
 
         self.assertEqual(set(states), set(expected_members))
@@ -345,7 +400,23 @@ class NdfTest(unittest.TestCase):
             {state_id: state.members for state_id, state in states.items()},
             expected_members,
         )
-        self.assertEqual(states["PTO-STATE-ARCH-TEMPORARY-QUEUES"].scope, "bundle")
+        expected_scopes = {
+            "PTO-STATE-ARCH-KERNEL-LIFECYCLE": "core",
+            "PTO-STATE-ARCH-GPR": "pe",
+            "PTO-STATE-ARCH-TRAP-CONTEXT": "acr",
+            "PTO-STATE-ARCH-CORE-SYNCHRONIZATION": "core",
+            "PTO-STATE-ARCH-CORE-SYNCHRONIZATION-PE": "pe",
+            "PTO-STATE-ARCH-PE-EXECUTION-CONTEXT": "pe",
+            "PTO-STATE-ARCH-CORE-LOCAL-CONTEXT": "core",
+            "PTO-STATE-BLOCK-CONTROL": "pe",
+            "PTO-STATE-TILE-LOCAL": "pe",
+            "PTO-STATE-TILE-FEATURE-MAP": "pe",
+        }
+        self.assertEqual(
+            {state_id: states[state_id].scope for state_id in expected_scopes},
+            expected_scopes,
+        )
+        self.assertEqual(states["PTO-STATE-ARCH-TEMPORARY-QUEUES"].scope, "pe")
         all_members = [member for state in states.values() for member in state.members]
         self.assertEqual(len(all_members), len(set(all_members)))
         declared_members = {

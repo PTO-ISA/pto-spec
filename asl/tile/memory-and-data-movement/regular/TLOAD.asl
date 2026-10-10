@@ -6,9 +6,13 @@
 // byte row stride, MUST distinguish omission from encoded zero, and MUST stop
 // at the first memory fault. Reads completed before that fault MAY remain in a
 // partially defined Local destination or Shared generation; only a successful
-// complete request may publish whole-tile readiness. One Shared issuer loads
-// the whole parent; a multi-PE producer uses B.ASSEMBLE and explicit writer
-// ranges rather than implicit PE_MASK quarters.
+// complete request may publish whole-tile readiness. One Shared issuer reads
+// the whole valid GM parent, including when B.ASSEMBLE is present. In a
+// multi-PE Shared B.ASSEMBLE, each encoded participant reads the per-PE source
+// range assigned by the existing GM mapping, while PE_MASK retains the full
+// collective mask. B.ASSEMBLE offset and size select only the destination
+// writer range; they MUST NOT narrow or remap the TLOAD GM source range.
+// Effects MUST NOT be manufactured for another PE from its private GPR inputs.
 // NDF-END: PTO-TLOAD-MEMORY-001
 // NDF-BEGIN: PTO-TLOAD-CUBE-001
 // ndf: kind=contract level=L1 layer=tile status=accepted

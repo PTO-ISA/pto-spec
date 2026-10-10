@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-ARCH-STATE-TRAP-CONTEXT","surface":"arch","classification":["state","trap-context"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ORDERING"]}
+// PTO-UNIT: {"id":"PTO-ARCH-STATE-TRAP-CONTEXT","surface":"arch","classification":["state","trap-context"],"depends_on":["PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING"]}
 func SavePortableTrapContext(target: AccessControlRing,
                              source: AccessControlRing)
 begin
@@ -6,6 +6,8 @@ begin
     _TrapContexts[[target]].source_acr = source;
     _TrapContexts[[target]].tpc = ReadTPC();
     _TrapContexts[[target]].bpc = ReadBPC();
+    _TrapContexts[[target]].bundle_start_encoded_instruction =
+        _BundleStartEncodedInstruction;
     _TrapContexts[[target]].core_state = _SystemRegisters.core_state;
     _TrapContexts[[target]].bundle_argument = _BundleArgument;
     _TrapContexts[[target]].commit_argument = _CommitArgument;
@@ -41,13 +43,12 @@ begin
     _TrapContexts[[target]].bundle_hint = _BundleHint;
     _TrapContexts[[target]].bundle_fixed_point_attributes =
         _BundleFixedPointAttributes;
-    _TrapContexts[[target]].local_generations = _LocalGenerations;
-    _TrapContexts[[target]].shared_generations = _SharedGenerations;
     _TrapContexts[[target]].bundle_execution_domain_token =
         _BundleExecutionDomainToken;
     _TrapContexts[[target]].memory_copy_template = _MemoryCopyTemplate;
     _TrapContexts[[target]].frame_template = _FrameTemplate;
     _TrapContexts[[target]].memory_replay_state = _MemoryReplayState;
+    _TrapContexts[[target]].memory_origin = _CurrentMemoryOrigin;
     _TrapContexts[[target]].t_queue = _TQueue;
     _TrapContexts[[target]].t_queue_valid = _TQueueValid;
     _TrapContexts[[target]].u_queue = _UQueue;
@@ -62,6 +63,8 @@ begin
     _TrapContexts[[target]].source_acr = source;
     _TrapContexts[[target]].tpc = ReadTPC();
     _TrapContexts[[target]].bpc = ReadBPC();
+    _TrapContexts[[target]].bundle_start_encoded_instruction =
+        _BundleStartEncodedInstruction;
     _TrapContexts[[target]].core_state = _SystemRegisters.core_state;
     _TrapContexts[[target]].bundle_argument = _BundleArgument;
     _TrapContexts[[target]].commit_argument = _CommitArgument;
@@ -95,12 +98,11 @@ begin
     _TrapContexts[[target]].bundle_hint = _BundleHint;
     _TrapContexts[[target]].bundle_fixed_point_attributes =
         _BundleFixedPointAttributes;
-    _TrapContexts[[target]].local_generations = _LocalGenerations;
-    _TrapContexts[[target]].shared_generations = _SharedGenerations;
     _TrapContexts[[target]].bundle_execution_domain_token =
         _BundleExecutionDomainToken;
     _TrapContexts[[target]].memory_copy_template = _MemoryCopyTemplate;
     _TrapContexts[[target]].frame_template = _FrameTemplate;
+    _TrapContexts[[target]].memory_origin = _CurrentMemoryOrigin;
     _TrapContexts[[target]].t_queue = _TQueue;
     _TrapContexts[[target]].t_queue_valid = _TQueueValid;
     _TrapContexts[[target]].u_queue = _UQueue;
@@ -133,6 +135,21 @@ begin
     end;
     WriteContextRegister(target, 0x0f4d, Zeros{PTO_XLEN});
     WriteContextRegister(target, 0x0f4e, Zeros{PTO_XLEN});
+end;
+
+// A fresh kernel launch retires every recovery image owned by the previous
+// contents of this PE. Keep the model validity bit and the architectural
+// EBARG valid bit in step so neither recovery path can restore an old Block
+// into a later invocation.
+func InvalidatePETrapRecoveryFramesForFreshKernelEntry()
+begin
+    for ring_number = 0 to PTO_ACR_COUNT - 1 do
+        let ring = ring_number as AccessControlRing;
+        _TrapContexts[[ring]].valid = FALSE;
+        var control = ReadContextRegister(ring, 0x0f40);
+        control[4] = '0';
+        WriteContextRegister(ring, 0x0f40, control);
+    end;
 end;
 
 readonly func PortableTrapContextRecoverable(target: AccessControlRing)
@@ -169,6 +186,8 @@ begin
     end;
     WriteTPC(_TrapContexts[[target]].tpc);
     WriteBPC(_TrapContexts[[target]].bpc);
+    _BundleStartEncodedInstruction =
+        _TrapContexts[[target]].bundle_start_encoded_instruction;
     _SystemRegisters.core_state = _TrapContexts[[target]].core_state;
     _BundleArgument = _TrapContexts[[target]].bundle_argument;
     _CommitArgument = _TrapContexts[[target]].commit_argument;
@@ -204,8 +223,6 @@ begin
     _BundleHint = _TrapContexts[[target]].bundle_hint;
     _BundleFixedPointAttributes =
         _TrapContexts[[target]].bundle_fixed_point_attributes;
-    _LocalGenerations = _TrapContexts[[target]].local_generations;
-    _SharedGenerations = _TrapContexts[[target]].shared_generations;
     _BundleExecutionDomainToken =
         _TrapContexts[[target]].bundle_execution_domain_token;
     _MemoryCopyTemplate = _TrapContexts[[target]].memory_copy_template;
@@ -216,6 +233,7 @@ begin
     _UQueueValid = _TrapContexts[[target]].u_queue_valid;
     _PredicateRegisters = _TrapContexts[[target]].predicates;
     _CurrentACR = _TrapContexts[[target]].source_acr;
+    _CurrentMemoryOrigin = _TrapContexts[[target]].memory_origin;
     _TrapContexts[[target]].valid = FALSE;
     return TRUE;
 end;
@@ -231,6 +249,8 @@ begin
     let recovered_tpc = ReadContextRegister(target, 0x0f43);
     WriteTPC(recovered_tpc);
     WriteBPC(recovered_bpc);
+    _BundleStartEncodedInstruction =
+        _TrapContexts[[target]].bundle_start_encoded_instruction;
     _SystemRegisters.core_state = ecstate;
     _BundleArgument = _TrapContexts[[target]].bundle_argument;
     _CommitArgument = _TrapContexts[[target]].commit_argument;
@@ -251,6 +271,8 @@ begin
     _ReturnAddress = ReadContextRegister(target, 0x0f44);
     _BundleArgumentKind = _TrapContexts[[target]].bundle_argument_kind;
     _BundleSequentialPC = _TrapContexts[[target]].bundle_sequential_pc;
+    _BundleStartEncodedInstruction =
+        _TrapContexts[[target]].bundle_start_encoded_instruction;
     _BundleOperation = _TrapContexts[[target]].bundle_operation;
     _BundleDimensions = _TrapContexts[[target]].bundle_dimensions;
     _BundleDimensionPresent =
@@ -269,13 +291,12 @@ begin
     _BundleHint = _TrapContexts[[target]].bundle_hint;
     _BundleFixedPointAttributes =
         _TrapContexts[[target]].bundle_fixed_point_attributes;
-    _LocalGenerations = _TrapContexts[[target]].local_generations;
-    _SharedGenerations = _TrapContexts[[target]].shared_generations;
     _BundleExecutionDomainToken =
         _TrapContexts[[target]].bundle_execution_domain_token;
     _MemoryCopyTemplate = _TrapContexts[[target]].memory_copy_template;
     _FrameTemplate = _TrapContexts[[target]].frame_template;
     _MemoryReplayState = _TrapContexts[[target]].memory_replay_state;
+    _CurrentMemoryOrigin = _TrapContexts[[target]].memory_origin;
     for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
         _TQueue[[index]] = ReadContextRegister(target, 0x0f45 + index);
         _UQueue[[index]] = ReadContextRegister(target, 0x0f49 + index);

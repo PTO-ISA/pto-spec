@@ -109,7 +109,8 @@ The instruction adds GPR 3 and T#1 shifted left by 1, and pushes the sum to T. R
 
 type ScalarExecutionStatus of enumeration {
     ScalarExecution_Executed,
-    ScalarExecution_Rejected
+    ScalarExecution_Rejected,
+    ScalarExecution_Blocked
 };
 
 pure func ScalarHandlerWritesTPC(handler: ScalarSemanticHandler) => boolean

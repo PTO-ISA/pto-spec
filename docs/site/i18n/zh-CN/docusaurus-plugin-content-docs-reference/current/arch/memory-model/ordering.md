@@ -72,7 +72,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/memory-model/ordering.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-MEMORY-MODEL-ORDERING","surface":"arch","classification":["memory-model","ordering"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMICITY"]}
+// PTO-UNIT: {"id":"PTO-ARCH-MEMORY-MODEL-ORDERING","surface":"arch","classification":["memory-model","ordering"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMICITY","PTO-ARCH-STATE-CORE-SYNCHRONIZATION"]}
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-SCOPE-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
 // PTO defines one architecture-visible GM domain for scalar, Tile,
@@ -80,6 +80,15 @@ This page is a generated reference view of the normative ASL unit.
 // caches, coalescers, replay buffers, splitting, and merging are not
 // architectural state and MUST preserve the result required by PTO-RC.
 // NDF-END: PTO-ARCH-MEMORY-MODEL-SCOPE-001
+// NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-COLLECTIVE-SYNC-001
+// ndf: kind=contract level=L1 layer=memory status=accepted
+// A completed Core collective orders each participating kernel PE's earlier
+// GM events before participating kernel PE events recorded after that
+// collective in the same invocation. Handler events, events from another Core,
+// and events from another invocation do not acquire this relation. A retained
+// event's established collective relation MUST survive active generation
+// record reuse and later context or invocation selection.
+// NDF-END: PTO-ARCH-MEMORY-MODEL-COLLECTIVE-SYNC-001
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-REQUEST-CLASS-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
 // Every request belongs to Scalar, Tile, IndexedGenerated, or Prefetch.
@@ -152,7 +161,8 @@ readonly func MemoryCoherenceBefore(left_index: MemoryEventIndex,
 begin
     let left = _MemoryEvents[[left_index]];
     let right = _MemoryEvents[[right_index]];
-    return MemoryEventIsWrite(left) && MemoryEventIsWrite(right) &&
+    return left.active && right.active &&
+           MemoryEventIsWrite(left) && MemoryEventIsWrite(right) &&
            MemoryEventsShareLocation(left, right) &&
            left.coherence_rank < right.coherence_rank;
 end;
@@ -162,7 +172,8 @@ readonly func MemoryReadsFromBefore(write_index: MemoryEventIndex,
 begin
     let write = _MemoryEvents[[write_index]];
     let read = _MemoryEvents[[read_index]];
-    return MemoryEventIsWrite(write) && MemoryEventIsRead(read) &&
+    return write.active && read.active &&
+           MemoryEventIsWrite(write) && MemoryEventIsRead(read) &&
            read.read_from == write_index;
 end;
 
@@ -173,7 +184,9 @@ begin
     if !MemoryReadsFromBefore(write_index, read_index) then return FALSE; end;
     let write = _MemoryEvents[[write_index]];
     let read = _MemoryEvents[[read_index]];
-    return write.kind == MemoryEvent_InitialWrite || write.agent != read.agent;
+    return write.active && read.active &&
+           (write.kind == MemoryEvent_InitialWrite ||
+            !MemoryEventsSameAgent(write, read));
 end;
 
 readonly func MemorySynchronizesWith(write_index: MemoryEventIndex,
@@ -182,7 +195,8 @@ begin
     if !MemoryReadsFromBefore(write_index, read_index) then return FALSE; end;
     let write = _MemoryEvents[[write_index]];
     let read = _MemoryEvents[[read_index]];
-    if write.agent == read.agent then return FALSE; end;
+    if !write.active || !read.active ||
+       MemoryEventsSameAgent(write, read) then return FALSE; end;
     let write_release = write.order == MemoryOrder_Release ||
         write.order == MemoryOrder_AcquireRelease;
     let read_acquire = read.order == MemoryOrder_Acquire ||
@@ -196,7 +210,8 @@ begin
     let read = _MemoryEvents[[read_index]];
     // An atomic event contains its read and write sides. Its own write is not a
     // later event in from-read; only a distinct coherence successor is.
-    if read_index == write_index || !MemoryEventIsRead(read) then return FALSE; end;
+    if !read.active || read_index == write_index ||
+       !MemoryEventIsRead(read) then return FALSE; end;
     return MemoryCoherenceBefore(read.read_from, write_index);
 end;
 
@@ -205,7 +220,8 @@ readonly func MemoryProgramOrderLocationBefore(
 begin
     let left = _MemoryEvents[[left_index]];
     let right = _MemoryEvents[[right_index]];
-    return left_index < right_index && left.agent == right.agent &&
+    return left.active && right.active && left_index < right_index &&
+           MemoryEventsSameAgent(left, right) &&
            left.kind != MemoryEvent_InitialWrite &&
            right.kind != MemoryEvent_InitialWrite &&
            MemoryEventIsAccess(left) && MemoryEventIsAccess(right) &&
@@ -218,11 +234,13 @@ begin
     if left_index + 1 >= right_index then return FALSE; end;
     let left = _MemoryEvents[[left_index]];
     let right = _MemoryEvents[[right_index]];
+    if !left.active || !right.active then return FALSE; end;
     for fence_number = left_index + 1 to right_index - 1 do
         let fence_index = fence_number as MemoryEventIndex;
         let fence = _MemoryEvents[[fence_index]];
-        if fence.kind == MemoryEvent_Fence && fence.agent == left.agent &&
-           fence.agent == right.agent &&
+        if fence.active && fence.kind == MemoryEvent_Fence &&
+           MemoryEventsSameAgent(fence, left) &&
+           MemoryEventsSameAgent(fence, right) &&
            (MemoryEventClass(left) AND fence.fence_predecessor) != Zeros{4} &&
            (MemoryEventClass(right) AND fence.fence_successor) != Zeros{4} then
             return TRUE;
@@ -236,7 +254,8 @@ readonly func MemoryPreservedProgramOrderBefore(
 begin
     let left = _MemoryEvents[[left_index]];
     let right = _MemoryEvents[[right_index]];
-    if left_index >= right_index || left.agent != right.agent ||
+    if !left.active || !right.active || left_index >= right_index ||
+       !MemoryEventsSameAgent(left, right) ||
        left.kind == MemoryEvent_InitialWrite ||
        right.kind == MemoryEvent_InitialWrite ||
        !MemoryEventIsAccess(left) || !MemoryEventIsAccess(right) then
@@ -264,17 +283,18 @@ begin
     for event_number = 0 to _MemoryEventCount - 1 do
         let event_index = event_number as MemoryEventIndex;
         let event = _MemoryEvents[[event_index]];
-        if MemoryEventIsAccess(event) then
+        if event.active && MemoryEventIsAccess(event) then
             var initial_count: integer = 0;
             for candidate_number = 0 to _MemoryEventCount - 1 do
                 let candidate_index = candidate_number as MemoryEventIndex;
                 let candidate = _MemoryEvents[[candidate_index]];
-                if candidate.kind == MemoryEvent_InitialWrite &&
+                if candidate.active &&
+                   candidate.kind == MemoryEvent_InitialWrite &&
                    MemoryEventsShareLocation(event, candidate) then
                     initial_count = initial_count + 1;
                 end;
                 if candidate_index != event_index &&
-                   MemoryEventIsAccess(candidate) &&
+                   candidate.active && MemoryEventIsAccess(candidate) &&
                    MemoryEventPartialOverlap(event, candidate) then
                     // Mixed-size or partially overlapping candidates require
                     // a byte-level coherence extension and fail closed here.
@@ -283,10 +303,11 @@ begin
             end;
             if initial_count != 1 then return FALSE; end;
         end;
-        if event.kind == MemoryEvent_InitialWrite && event.coherence_rank != 0 then
+        if event.active && event.kind == MemoryEvent_InitialWrite &&
+           event.coherence_rank != 0 then
             return FALSE;
         end;
-        if MemoryEventIsWrite(event) &&
+        if event.active && MemoryEventIsWrite(event) &&
            event.kind != MemoryEvent_InitialWrite then
             if event.coherence_rank == 0 then return FALSE; end;
             var predecessor_found = FALSE;
@@ -294,7 +315,7 @@ begin
                 let candidate_index = candidate_number as MemoryEventIndex;
                 let candidate = _MemoryEvents[[candidate_index]];
                 if candidate_index != event_index &&
-                   MemoryEventIsWrite(candidate) &&
+                   candidate.active && MemoryEventIsWrite(candidate) &&
                    MemoryEventsShareLocation(event, candidate) then
                     if candidate.coherence_rank == event.coherence_rank then
                         return FALSE;
@@ -306,10 +327,10 @@ begin
             end;
             if !predecessor_found then return FALSE; end;
         end;
-        if MemoryEventIsRead(event) then
+        if event.active && MemoryEventIsRead(event) then
             if event.read_from >= _MemoryEventCount then return FALSE; end;
             let source = _MemoryEvents[[event.read_from]];
-            if !MemoryEventIsWrite(source) ||
+            if !source.active || !MemoryEventIsWrite(source) ||
                !MemoryEventsShareLocation(event, source) ||
                event.read_value != source.write_value then
                 return FALSE;
@@ -337,7 +358,8 @@ begin
             let right = right_number as MemoryEventIndex;
             var edge = MemoryCoherenceBefore(left, right) ||
                 MemoryFromReadBefore(left, right) ||
-                MemorySynchronizesWith(left, right);
+                MemorySynchronizesWith(left, right) ||
+                MemoryCollectiveSyncBefore(left, right);
             if uniproc then
                 edge = edge || MemoryProgramOrderLocationBefore(left, right) ||
                     MemoryReadsFromBefore(left, right);

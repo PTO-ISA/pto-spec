@@ -11,6 +11,12 @@ constant PTO_TILE_REGISTER_COUNT = 64;
 constant PTO_SHARED_TILE_COUNT = 64;
 constant PTO_MODEL_MEMORY_AGENTS = 4;
 constant PTO_MODEL_MEMORY_EVENTS = 16;
+// Finite model inventory for isolation witnesses only. It does not describe
+// implementation capacity and does not change the four PE identities.
+constant PTO_MODEL_CORE_INSTANCES = 2;
+constant PTO_MODEL_SYNC_GENERATIONS = 8;
+constant PTO_MODEL_GM_OBLIGATIONS = 16;
+type PTOModelCoreIdentity of integer {0..PTO_MODEL_CORE_INSTANCES-1};
 
 // Fixed semantic PE identities are numbered PE0..PE3.  The architectural
 // four-bit mask keeps PE0 in its high bit, so consumers that index a mask by

@@ -109,7 +109,8 @@ NDF 条款 PTO-REQ-AGU-SRCRTYPE-001 规定寄存器偏移 AGU 形式的原始 `1
 
 type ScalarExecutionStatus of enumeration {
     ScalarExecution_Executed,
-    ScalarExecution_Rejected
+    ScalarExecution_Rejected,
+    ScalarExecution_Blocked
 };
 
 pure func ScalarHandlerWritesTPC(handler: ScalarSemanticHandler) => boolean

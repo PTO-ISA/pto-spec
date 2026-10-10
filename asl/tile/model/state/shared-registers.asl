@@ -6,7 +6,12 @@
 // published visibility MUST remain distinct. Every Shared source consumer MUST
 // wait/no-op before payload access until whole_parent_ready and published are
 // both true; producer and consumer masks are independent.
+// Independently executed direct producers MUST capture actual PE-owned
+// fragments under an operation identity and MUST publish only through the
+// existing atomic update. A completed Shared initialized_mask MUST NOT be
+// reused as contribution state for a later dynamic operation.
 // NDF-END: PTO-B-SHARED-WHOLE-PARENT-READY-001
+
 pure func SharedTileArrayIndex(shared_tile_id: SharedTileID) => SharedTileIndex
 begin
     return UInt(shared_tile_id) as SharedTileIndex;

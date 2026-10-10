@@ -1296,6 +1296,40 @@ end;
         self.assertIn('"kind":"static-invariant"', document)
         self.assertEqual(document.count("func main() => integer"), 1)
 
+    def test_long_shared_generation_static_id_uses_approved_compact_form(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / (
+                "asl/block/model/operands/shared-generation-pe-requests.asl"
+            )
+            source.parent.mkdir(parents=True)
+            source.write_text("constant TEST_SHARED = 0;\n", encoding="utf-8")
+            unit = AslUnit(
+                unit_id=(
+                    "PTO-BLOCK-MODEL-OPERANDS-"
+                    "SHARED-GENERATION-PE-REQUESTS"
+                ),
+                surface="block",
+                classification=("model", "operands", "shared-generation-pe-requests"),
+                depends_on=(),
+                source_path=Path(
+                    "asl/block/model/operands/shared-generation-pe-requests.asl"
+                ),
+                mnemonic=None,
+                line_count=1,
+            )
+
+            _, document = self.render_concept(root, unit)
+
+        self.assertIn(
+            '"id":"PTO-AVS-BLOCK-SHARED-GENERATION-PE-REQUESTS-STATIC-001"',
+            document,
+        )
+        self.assertLessEqual(
+            len("PTO-AVS-BLOCK-SHARED-GENERATION-PE-REQUESTS-STATIC-001"),
+            64,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

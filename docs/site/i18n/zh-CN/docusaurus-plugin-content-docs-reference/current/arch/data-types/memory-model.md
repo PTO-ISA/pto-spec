@@ -101,6 +101,11 @@ type MemoryFenceStrength of enumeration {
 };
 
 type MemoryAgentId of integer {0..PTO_MODEL_MEMORY_AGENTS-1};
+type MemoryEventOrigin of enumeration {
+    MemoryEventOrigin_NonKernel,
+    MemoryEventOrigin_Kernel,
+    MemoryEventOrigin_Handler
+};
 type MemoryEventIndex of integer {0..PTO_MODEL_MEMORY_EVENTS-1};
 type MemoryCoherenceRank of integer {0..PTO_MODEL_MEMORY_EVENTS-1};
 
@@ -113,8 +118,17 @@ type MemoryEventKind of enumeration {
 };
 
 type MemoryEvent of record {
+    active: boolean,
+    committed: boolean,
+    replay_epoch: integer,
     kind: MemoryEventKind,
+    core_identity: PTOModelCoreIdentity,
     agent: MemoryAgentId,
+    origin: MemoryEventOrigin,
+    invocation: integer,
+    program_order: integer,
+    collective_epoch: integer,
+    collective_history_sequence: integer,
     address: Word,
     size_bytes: integer {1,2,4,8},
     read_value: Word,
@@ -134,7 +148,12 @@ type MemoryReplayState of record {
     active: boolean,
     request: Word,
     committed_event_count: integer {0..PTO_MODEL_MEMORY_EVENTS},
-    epoch: integer
+    epoch: integer,
+    owner_core: PTOModelCoreIdentity,
+    owner_agent: MemoryAgentId,
+    owner_origin: MemoryEventOrigin,
+    owner_invocation: integer,
+    owner_program_order: integer
 };
 ```
 <!-- GENERATED-ASL-END: unit -->
