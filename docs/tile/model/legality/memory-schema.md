@@ -51,7 +51,7 @@ The indexed transfers require:
 
 `TileOperandsLegal_MGATHER_CAS` requires non-packed data and equal data types across destination, expected, and replacement Tiles.
 
-TPREFETCH has no Tile operand. Its predicate requires `ValidCol <= Col`, a power-of-two `Col`, and `ValidRow x ValidCol` no larger than `PTO_MODEL_TILE_ELEMENTS`. The six-argument form also requires `TileCarrierOrPackedBaselineDataTypeSupported`, which excludes 64-bit types.
+TPREFETCH has no Tile operand. Its predicate requires `ValidCol <= Col`, a power-of-two `Col`, and `ValidRow x ValidCol` no larger than `PTO_MODEL_TILE_ELEMENTS`. The six-argument form also requires `TileCarrierOrPackedBaselineDataTypeSupported`, which includes non-packed 64-bit carriers and the existing packed baseline.
 
 Design point: source and index payloads are checked for definedness before any memory request. Under an ExecutionMask only active coordinates must be defined, so inactive lanes can hold undefined values without rejecting the bundle.
 

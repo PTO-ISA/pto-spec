@@ -41,7 +41,7 @@ cell 的行字节数在 `CUBE_M16` 下为 8，在 `CUBE_M32` 下为 4。每行�
 - `source2` 是索引 Tile：`U8`，布局与有效行相同，每个有效目标字节对应一个有效列，cell 数量相同。它必须不同于两个数据源。
 - `destination0` 是新的，保持源类型、有效形状与布局。它必须不同于每个源。
 
-数据类型可以是除 64 位类型之外的任何 CUBE 类型。第一条 `B.IOT` 携带 `source0` 与 `source1`；第二条携带索引 Tile 与目标。只有当 GPR 携带 ExecutionMask 时才出现 `B.IOR`，`B.DATR` 只能携带 `Layout`。
+数据类型可以是任何受支持 CUBE 载体；64 位载体要求 `CUBE_M32` double-CELL 描述符。第一条 `B.IOT` 携带 `source0` 与 `source1`；第二条携带索引 Tile 与目标。
 
 <!-- PTO-READER-BLOCK: tile-tpermute-effects role=effects -->
 ## 效果
@@ -53,7 +53,7 @@ cell 的行字节数在 `CUBE_M16` 下为 8，在 `CUBE_M32` 下为 4。每行�
 <!-- PTO-READER-BLOCK: tile-tpermute-constraints role=constraints -->
 ## 被拒绝的情况
 
-非 CUBE_M16/M32 布局、64 位类型、类型、形状、布局或 cell 数量不匹配、索引 Tile 不是 `U8` 或与数据源别名、目标与源别名、索引越界或未定义，或所选源字节未定义，都会在任何目标效果之前引发 `Fault_TileLegality`。
+非 CUBE_M16/M32 布局、64 位 `CUBE_M16` 载体、类型、形状、布局或 CELL 数不匹配、索引 Tile 非法、目标别名或所选字节未定义，都会在任何目标效果前引发 `Fault_TileLegality`。
 
 绑定结构格式错误会引发 `Fault_BundleControl`；[cell 重排模式](../../../block/model/dispatch/cell-rearrangement-schema.md)拥有该检查。
 
@@ -138,8 +138,7 @@ end;
 pure func InstructionContractDataTypeLegal_TPERMUTE(
     data_type: TileDataType) => boolean
 begin
-    return TileCubeDataTypeSupported(data_type) &&
-           TileElementBits(data_type) != 64;
+    return TileCubeDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TPERMUTE(
@@ -167,10 +166,10 @@ end;
 
 ## Legality
 
-- TPERMUTE accepts only Local CUBE_M16 or CUBE_M32 data Tiles with matching dtype and geometry.
+- TPERMUTE accepts Local CUBE_M16 data Tiles and Local CUBE_M32 data Tiles, including FP64/S64/U64 with matching dtype and geometry.
 - indices is Local U8 with the same CUBE layout and supplies one byte index for every valid destination byte.
 - The destination is fresh; source0 and source1 may alias, while indices is distinct from both sources.
-- Raw bytes are rearranged without numerical conversion.
+- Raw bytes are rearranged without numerical conversion, preserving each M32 64-bit element as two 32-bit CELL groups.
 
 ## State effects
 

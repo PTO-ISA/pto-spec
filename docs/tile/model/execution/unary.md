@@ -24,7 +24,7 @@ It also owns the per-element helpers: `TileFixedUnaryValue` for the closed group
 
 The operation type is the destination Tile's `data_type`. The source must be allocated, match the destination shape, and have a compatible carrier width.
 
-Type sets differ by operation. TNOT accepts the eight integer types. TABS, TNEG, and TRELU accept the 16 arithmetic types. The SFU operations accept the eight floating types FP64, FP32, TF32, HF32, FP16, BF16, E4M3, and E5M2.
+Type sets differ by operation. TNOT accepts the eight signed and unsigned integer types. TABS uses the 16-type vector-arithmetic set. TNEG accepts `FP64`, `S64`, `U64`, `S32`, `S16`, `S8`, `FP32`, `FP16`, and `BF16`. TRELU accepts `FP64`, `S64`, `U64`, `FP16`, `BF16`, `FP32`, and `S32`. In the SFU group, TEXP retains the eight floating types `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, and `E5M2`; TLOG, TRECIP, TSQRT, and TRSQRT accept exactly `FP64`, `FP32`, `FP16`, and `BF16`.
 
 Status flags are NV, DZ, OF, UF, and NX from bit 0 to bit 4. An SFU element returns all five; a closed-group element returns only an invalid bit, recorded as NV. The handler ORs the flags of active elements and records them once with `ScalarFPRecordFlags`.
 
@@ -55,7 +55,7 @@ Design point: special inputs are resolved before the finite profile. Results for
 
 An inactive coordinate under an ExecutionMask takes the ZERO or MERGE value and contributes no flags. After publication, the handler marks the valid region defined and applies the bundle padding.
 
-`ReferenceTileUnaryFinite` accepts only FP32, FP16, and BF16. Legality admits FP64, TF32, HF32, E4M3, and E5M2 for SFU operations, but the model does not define a finite, non-special result for them.
+`ReferenceTileUnaryFinite` accepts `FP64`, `FP32`, `FP16`, and `BF16`. Those are the complete domains of TLOG, TRECIP, TSQRT, and TRSQRT. TEXP additionally admits `TF32`, `HF32`, `E4M3`, and `E5M2`, whose pre-existing finite, non-special result gap remains; integer and packed SFU operation types reject before this path.
 
 `TileUnaryValue` has no caller in the executable model.
 
@@ -187,8 +187,11 @@ begin
     if operation == TileUnary_RELU then
         return TileTReluDataTypeSupported(data_type);
     end;
-    if TileUnaryUsesSFUElementwiseContract(operation) then
+    if operation == TileUnary_EXP then
         return TileFloatingElementwiseDataTypeSupported(data_type);
+    end;
+    if TileUnaryUsesSFUElementwiseContract(operation) then
+        return TileF3DataTypeSupported(data_type);
     end;
     return FALSE;
 end;

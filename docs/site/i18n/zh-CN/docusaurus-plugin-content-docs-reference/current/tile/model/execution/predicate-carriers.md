@@ -30,7 +30,9 @@ This page is a generated reference view of the normative ASL unit.
 
 GPR 谓词在索引 `row + field x rows` 处为每个坐标打包一位。CUBE_M32 的 rows 为 32，CUBE_M16 为 16。一个字段就是一列。CUBE_M32 每字有 2 个字段，CUBE_M16 对 32 位类型有 2 个，其他情况有 4 个。对于 8 位类型，`high` 选择子从第 2 列（M32）或第 4 列（M16）开始。
 
-`TileOperationExecutionMaskEligible` 是指令束分派在接受 ExecutionMask 载体之前查询的列表。它列出 92 个操作名，包括 MGATHER 和 MSCATTER 形式、逐元素和 Tile-标量操作、扩展、TCMP、TSEL、TCVT、TPACK、TSHUF、TLOAD、TSTORE 和 TGPR2T，也包括 TGATHER、TSCATTER 和 TTRI，而 ExecutionMask 源 schema 的 NDF 规定这三者没有适用的 ExecutionMask 形式。它不列出任何归约或矩阵操作。
+`TileOperationExecutionMaskEligible` 是指令束分派在接受 ExecutionMask 载体之前查询的列表。它包含 `TLEA`、既有逐元素与 Tile-标量族、谓词操作、转换、重排以及适用的传输操作。它不列出任何归约或矩阵操作。
+
+对于 M32 64 位数值操作，一个谓词位对应完整逻辑元素，而不是任一物理 CELL 平面。raw pack 与 unpack 保留各自按 32 位 word 的掩码规则。
 
 <!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-rules role=rules-interactions -->
 ## 规则与交互
@@ -554,7 +556,7 @@ begin
            decoded == TileOperation_TPACK || decoded == TileOperation_TPERMUTE || decoded == TileOperation_TRECIP || decoded == TileOperation_TRELU || decoded == TileOperation_TREM ||
            decoded == TileOperation_TREMS || decoded == TileOperation_TROWEXPAND || decoded == TileOperation_TROWEXPANDADD || decoded == TileOperation_TROWEXPANDDIV || decoded == TileOperation_TROWEXPANDEXPDIF ||
            decoded == TileOperation_TROWEXPANDMAX || decoded == TileOperation_TROWEXPANDMIN || decoded == TileOperation_TROWEXPANDMUL || decoded == TileOperation_TROWEXPANDSUB || decoded == TileOperation_TRSQRT ||
-           decoded == TileOperation_TSCATTER || decoded == TileOperation_TSEL || decoded == TileOperation_TSELS || decoded == TileOperation_TSHL || decoded == TileOperation_TSHLS ||
+           decoded == TileOperation_TSCATTER || decoded == TileOperation_TSEL || decoded == TileOperation_TSELS || decoded == TileOperation_TSHL || decoded == TileOperation_TSHLS || decoded == TileOperation_TLEA ||
            decoded == TileOperation_TSHR || decoded == TileOperation_TSHRS || decoded == TileOperation_TSHUF || decoded == TileOperation_TSQRT || decoded == TileOperation_TSTORE ||
            decoded == TileOperation_TSUB || decoded == TileOperation_TSUBS || decoded == TileOperation_TTRI || decoded == TileOperation_TUNPACK || decoded == TileOperation_TXOR ||
            decoded == TileOperation_TXORS;

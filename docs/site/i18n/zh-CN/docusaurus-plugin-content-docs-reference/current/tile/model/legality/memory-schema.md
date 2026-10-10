@@ -51,7 +51,7 @@ TLOAD 与 TSTORE 要求描述符合法，且类型被 `TileRegularTLSUDataTypeSu
 
 `TileOperandsLegal_MGATHER_CAS` 要求数据为非打包类型，且目标、期望值与替换值 Tile 的数据类型相同。
 
-TPREFETCH 没有 Tile 操作数。其谓词要求 `ValidCol <= Col`、`Col` 为 2 的幂，且 `ValidRow x ValidCol` 不超过 `PTO_MODEL_TILE_ELEMENTS`。六参数形式还要求 `TileCarrierOrPackedBaselineDataTypeSupported`，它排除 64 位类型。
+TPREFETCH 没有 Tile 操作数。其谓词要求 `ValidCol <= Col`、`Col` 为 2 的幂，且 `ValidRow x ValidCol` 不超过 `PTO_MODEL_TILE_ELEMENTS`。六参数形式还要求 `TileCarrierOrPackedBaselineDataTypeSupported`，它包含非打包 64 位载体与既有打包基线。
 
 设计要点：源与索引载荷在任何内存请求之前检查已定义性。在 ExecutionMask 下只有活动坐标必须已定义，因此非活动通道可以保存未定义值而不导致指令束被拒绝。
 

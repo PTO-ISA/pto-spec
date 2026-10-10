@@ -59,7 +59,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tcolexpandexpdif-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-`TROWEXPANDEXPDIF` 与 `TCOLEXPANDEXPDIF` 接受的 `(SrcDataType,DstDataType)` 对恰好是 `(FP16,FP16)`、`(BF16,BF16)`、`(FP32,FP32)`、`(FP16,FP32)` 与 `(BF16,FP32)`。`BSTART` 选择 `SrcDataType`；省略 `B.DATR`，或显式 `DataType` 等于 `DTYPE_NONE` 时，`DstDataType` 等于 `SrcDataType`；具体的 `B.DATR` `DataType` 则选择 `DstDataType`。
+`TROWEXPANDEXPDIF` 与 `TCOLEXPANDEXPDIF` 接受的 `(SrcDataType,DstDataType)` 对恰好是 `(FP64,FP64)`、`(FP32,FP32)`、`(FP16,FP16)`、`(BF16,BF16)`、`(FP16,FP32)` 与 `(BF16,FP32)`。`BSTART` 选择 `SrcDataType`；省略 `B.DATR` 或使用 `DTYPE_NONE` 会使 `DstDataType` 继承它。
 
 设计要点：编码为 0 的 `DataType` 表示 `FP64`，永远不表示缺失，因此继承需要单独的 `DTYPE_NONE` 哨兵；想要源类型的程序必须省略 `B.DATR` 或有意编码 `DTYPE_NONE`。
 
@@ -67,7 +67,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 - 绑定流格式错误、维度缺失或为零、DataType 不受支持、布局不受支持或混合、源元素未定义、源几何不匹配，或参与运算的操作视图编码无效，会在效果之前引发 `Fault_TileLegality`。目标形状无法表示、`TSize` 不足、重命名目标不可用或 Tile 容量耗尽，会在发布之前引发 `Fault_TileAllocation`。
 
-设计要点：指数阶段只接受 `FP32`、`FP16` 与 `BF16`，而该操作的每个合法对都映射到这些类型上，因此合法性与可执行定义在可接受对集合上一致。
+设计要点：指数阶段接受 `FP64`、`FP32`、`FP16` 与 `BF16`，每个合法对都映射到这些可执行类型。64 位 CUBE 形式要求 `CUBE_M32`。
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandexpdif-example role=example -->
 ## 非规范演算示例
@@ -203,7 +203,8 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TCOLEXPANDEXPDIF(
     data_type: TileDataType) => boolean
 begin
-    return data_type == TileDataType_FP16 ||
+    return data_type == TileDataType_FP64 ||
+           data_type == TileDataType_FP16 ||
            data_type == TileDataType_BF16 ||
            data_type == TileDataType_FP32;
 end;
@@ -252,7 +253,7 @@ end;
 
 ## Legality
 
-- TROWEXPANDEXPDIF and TCOLEXPANDEXPDIF accept exactly (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32) as (SrcDataType,DstDataType) pairs.
+- TROWEXPANDEXPDIF and TCOLEXPANDEXPDIF accept exactly (FP64,FP64), (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32) as (SrcDataType,DstDataType) pairs.
 - BSTART DataType selects SrcDataType; omitted B.DATR or explicit DataType=DTYPE_NONE selects DstDataType=SrcDataType, while a concrete B.DATR DataType selects DstDataType. Each source backing may differ from SrcDataType only through an equal-width non-packed carrier view; raw bits are interpreted as SrcDataType without retagging or numeric conversion.
 - Mixed FP16/BF16 to FP32 widens the operation-view source bits exactly to FP32 before FP32 subtraction and FP32 exponential. Same-type pairs retain their selected type.
 - The destination is newly allocated with DstDataType; no destination alias or source descriptor retag is introduced.
@@ -261,6 +262,8 @@ end;
 - All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid SrcDataType encodings; ignored extra broadcast elements need definedness but are not encoding-validated.
 - Layout, PadValueOrByteId, and DataType are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.
 - All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
+- FP64 source and FP64 destination form an accepted same-type pair; mixed FP64 type pairs are not added.
 
 ## State effects
 

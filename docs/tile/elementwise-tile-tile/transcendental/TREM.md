@@ -59,9 +59,9 @@ Physical elements outside `ValidRow x ValidCol` receive the selected `PadValue`.
 <!-- PTO-READER-BLOCK: tile-c-trem-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The ASL legality predicate `TileVecArithmeticDataTypeSupported` accepts the 16 types `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, and `U8`. The generated legality list below is narrower and names only `S32`, `U32`, `FP32`, `S16`, `U16`, `FP16`, and `BF16`. The floating modulo reference is defined only for `FP32`, `FP16`, and `BF16`, so code should use a type from the narrower list.
+`TREM` accepts exactly `FP64`, `S64`, `U64`, `S32`, `U32`, `FP32`, `S16`, `U16`, `FP16`, and `BF16`. Floating remainder is executable for all four admitted floating types, including `FP64`; integer forms retain their typed remainder rule.
 
-The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`, and all operands must use that same layout. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal. `TREM` rejects nondefault `RMode`, `Sat`, and `CMode`.
+The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`, and all operands must use that same layout; among CUBE layouts, a 64-bit operation type is legal only in `CUBE_M32`; `CUBE_M16` rejects it. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal. `TREM` rejects nondefault `RMode`, `Sat`, and `CMode`.
 
 An integer zero divisor, malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported `DataType`, or an invalid destination capacity raise `Fault_TileLegality` before any destination effect.
 
@@ -183,9 +183,10 @@ end;
 
 - TREM retains TEPL carrier Mode 0 Function 4 but is canonically classified as SFU.
 - Exactly one terminating Local B.IOT supplies ordered dividend and divisor sources plus one new Local destination; B.IOR and B.IOS are illegal and PE_MASK zero is a strict no-op.
-- DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16.
+- DataType is exactly FP64, S64, U64, S32, U32, FP32, S16, U16, FP16, or BF16.
 - Only B.DATR PadValueOrByteId is applicable.
 - The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

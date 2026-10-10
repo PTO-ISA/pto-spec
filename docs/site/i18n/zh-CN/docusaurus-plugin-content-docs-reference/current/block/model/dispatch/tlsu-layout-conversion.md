@@ -44,7 +44,7 @@ This page is a generated reference view of the normative ASL unit.
 
 对于加载，唯一的 `B.IOT` 携带目标和 `last`，只有作为谓词 Tile 执行掩码时才携带源。对于存储，它携带 CUBE 源 Tile 和 `last`，没有目标。
 
-有效数据类型必须通过 `TileCubeDataTypeSupported`，且不能是 HiF4X2。按 ASL 注释，U64 只在加载到 `CUBE_N8` 时被接受。
+有效类型与所选布局必须通过 `TileCubeLayoutDataTypeSupported`，且不能是 HiF4X2。`FP64`、`S64` 与 `U64` 使用完整 double-CELL pair 适用于 `ND2M32` 与 `M322ND`。`CUBE_M16` 64 位传输仍非法，独立的 `CUBE_N8/U64` 传输例外保持不变。
 
 加载通过 `ResolveBundleCubeTransportDestination` 解析目标。描述符不匹配的复用生成目标引发 `Fault_TileLegality`。非法的 CUBE 形状、某个选中 PE 的容量溢出，或目标 hand 中没有空闲 Tile 槽位，引发 `Fault_TileAllocation`。随后处理程序校验 Local 生成写者并调用 `TLOAD`。存储检查源是具有所选类型、布局和有效形状的合法且已定义的 CUBE Tile，并在每个选中 PE 上已分配，然后调用 `TSTORE`。
 
@@ -99,10 +99,14 @@ begin
     // HiF4X2 is accepted only by the Matrix-MX input-role contract.  U64 is
     // the single descriptor-level exception, and only ND2N8 TLOAD may create
     // that Local CUBE_N8 representation.
+    if layout == TileLayout_CUBE_M32 &&
+       TileCubeM32B64DataType(data_type) then
+        return function == 0 || function == 1;
+    end;
     if data_type == TileDataType_U64 then
         return function == 0 && layout == TileLayout_CUBE_N8;
     end;
-    return TileCubeDataTypeSupported(data_type) &&
+    return TileCubeLayoutDataTypeSupported(layout, data_type) &&
            data_type != TileDataType_HiF4X2;
 end;
 

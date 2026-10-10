@@ -30,7 +30,9 @@ Block dispatch reaches the GPR helpers from `ExecuteBundleComparisonGPRCarrier`:
 
 A GPR predicate packs one bit per coordinate at index `row + field x rows`. Rows is 32 for CUBE_M32 and 16 for CUBE_M16. A field is one column. CUBE_M32 has 2 fields per word, and CUBE_M16 has 2 for 32-bit types and 4 otherwise. For 8-bit types the `high` selector starts at column 2 (M32) or 4 (M16).
 
-`TileOperationExecutionMaskEligible` is the list that bundle dispatch consults before accepting an ExecutionMask carrier. It lists 92 operation names, including MGATHER and MSCATTER forms, elementwise and Tile-scalar operations, expansions, TCMP, TSEL, TCVT, TPACK, TSHUF, TLOAD, TSTORE, and TGPR2T, and also TGATHER, TSCATTER, and TTRI, which the ExecutionMask source schema NDF says have no applicable ExecutionMask form. It lists no reduction and no matrix operation.
+`TileOperationExecutionMaskEligible` is the list that bundle dispatch consults before accepting an ExecutionMask carrier. It includes `TLEA`, the existing elementwise and Tile-scalar families, predicate operations, conversions, rearrangements, and applicable transfers. It lists no reduction and no matrix operation.
+
+For an M32 64-bit numeric operation, one predicate bit addresses the complete logical element rather than either physical CELL plane. Raw pack and unpack keep their separately owned per-32-bit-word mask rule.
 
 <!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-rules role=rules-interactions -->
 ## Rules and interactions
@@ -554,7 +556,7 @@ begin
            decoded == TileOperation_TPACK || decoded == TileOperation_TPERMUTE || decoded == TileOperation_TRECIP || decoded == TileOperation_TRELU || decoded == TileOperation_TREM ||
            decoded == TileOperation_TREMS || decoded == TileOperation_TROWEXPAND || decoded == TileOperation_TROWEXPANDADD || decoded == TileOperation_TROWEXPANDDIV || decoded == TileOperation_TROWEXPANDEXPDIF ||
            decoded == TileOperation_TROWEXPANDMAX || decoded == TileOperation_TROWEXPANDMIN || decoded == TileOperation_TROWEXPANDMUL || decoded == TileOperation_TROWEXPANDSUB || decoded == TileOperation_TRSQRT ||
-           decoded == TileOperation_TSCATTER || decoded == TileOperation_TSEL || decoded == TileOperation_TSELS || decoded == TileOperation_TSHL || decoded == TileOperation_TSHLS ||
+           decoded == TileOperation_TSCATTER || decoded == TileOperation_TSEL || decoded == TileOperation_TSELS || decoded == TileOperation_TSHL || decoded == TileOperation_TSHLS || decoded == TileOperation_TLEA ||
            decoded == TileOperation_TSHR || decoded == TileOperation_TSHRS || decoded == TileOperation_TSHUF || decoded == TileOperation_TSQRT || decoded == TileOperation_TSTORE ||
            decoded == TileOperation_TSUB || decoded == TileOperation_TSUBS || decoded == TileOperation_TTRI || decoded == TileOperation_TUNPACK || decoded == TileOperation_TXOR ||
            decoded == TileOperation_TXORS;

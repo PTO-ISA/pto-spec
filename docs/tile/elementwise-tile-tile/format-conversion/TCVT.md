@@ -36,7 +36,7 @@ Design point: the RTZ default makes a default float-to-integer conversion discar
 
 `Sat` controls range overflow. With `Sat=0`, a floating result that overflows becomes an infinity where the destination format has one, and an overflowing integer result keeps only the low bits of the rounded value. With `Sat=1`, the result is clamped to the largest or smallest finite value of the destination type.
 
-After complete preflight, the source is snapshotted and each valid logical element is converted independently. Conversions whose source and destination are both in the shared set `FP64`, `FP32`, `FP16`, `E4M3`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, and `U8` use exactly the same result and flag rule as the scalar conversion family. `E8M0`, `E6M2`, `RCPE6M2`, `E2M1X2`, and `E1M2X2` use dedicated rules described in the constraints block. Other legal pairs outside these rules, such as those involving `BF16`, `TF32`, `HF32`, or `E5M2`, reach a fallback in `TileProfileConvert` that returns the raw source bits for a floating destination or truncates them for an integer destination, so the ASL gives no numeric conversion for them.
+After complete preflight, the source is snapshotted and each valid logical element is converted independently. The common Tile rule covers `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, and signed or unsigned 64-, 32-, 16-, and 8-bit integers. Reduced floating destinations use their exact fixed encoders. `E8M0`, `E6M2`, `RCPE6M2`, `E2M1X2`, and `E1M2X2` retain dedicated pair rules. The broader Tile set does not add scalar conversion opcodes or pairs.
 
 <!-- PTO-READER-BLOCK: tile-tcvt-inputs role=inputs-outputs -->
 ## Operand roles and descriptors
@@ -54,6 +54,8 @@ For an ordinary source, the destination has the same `Row`, `Col`, `ValidRow`, a
 For a `CUBE_M16` or `CUBE_M32` source, `B.DATR` `Layout` must stay `NORM` and `LB2` must be omitted. The destination keeps the same CUBE layout and the same `ValidRow` and `ValidCol`, while its physical shape, CELL count, and minimum `TSize` are derived from `DstDataType`.
 
 Design point: CUBE physical geometry depends on element width. Deriving it independently for the destination lets, for example, an `FP32` CUBE Tile convert to a narrower type without first converting the layout.
+
+For `CUBE_M32`, an `FP64`, `S64`, or `U64` source or destination uses the double-CELL mapping while preserving the logical shape. `CUBE_M16` rejects any pair whose source or destination is 64-bit.
 
 <!-- PTO-READER-BLOCK: tile-tcvt-effects role=effects -->
 ## Publication, definedness, and padding
@@ -304,6 +306,7 @@ end;
 - The source valid region is fully defined and contains valid encodings. PE_MASK=0000 is a strict no-op before schema, descriptor, allocation, or payload checks.
 - Under the named hardware profile, an E8M0 destination accepts exactly FP16, BF16, or FP32 sources. E8M0 as a source accepts exactly FP16, BF16, or FP32 destinations; 0x00..0xFE denote powers of two and 0xFF produces the target canonical quiet NaN without NV. Every other E8M0 pair rejects before destination allocation.
 - The BSTART DataType is the TCVT source operation interpretation, not necessarily the source backing DataType. RowMajor and CUBE_M16/M32 sources may differ only when backing and operation types are non-packed, equal-width, and carrier-compatible; the operation view never mutates the backing descriptor. The destination backing type is the resolved B.DATR destination type.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

@@ -28,14 +28,14 @@ Design point: `TTRI` is selected by `BSTART.SFU` with TEPL Mode 3 Function 7 (se
 
 For each valid element at row r and column c, the lower orientation writes one when `c <= r + diagonal`, and the upper orientation writes one when `c >= r + diagonal`. Every other valid element receives zero.
 
-One is the exact typed encoding: `0x3f800000` for FP32, `0x3c00` for FP16, and the integer 1 for the integer types. Zero is positive zero.
+One is the exact typed encoding: `0x3ff0000000000000` for FP64, `0x3f800000` for FP32, `0x3c00` for FP16, and the integer 1 for the integer types. Zero is positive zero.
 
 Design point: the boundary comparison uses signed integers and does not wrap. A diagonal of -ValidRow or less therefore makes every lower-orientation element zero, and a large positive diagonal makes every lower-orientation element one.
 
 <!-- PTO-READER-BLOCK: tile-c-ttri-inputs-outputs role=inputs-outputs -->
 ## Operands, shape, and type
 
-- `destination0` is a newly allocated Local RowMajor Tile of type `FP32`, `FP16`, `S32`, `S16`, `U32`, or `U16`.
+- `destination0` is a newly allocated Local RowMajor Tile of type `FP64`, `FP32`, `FP16`, `S64`, `S32`, `S16`, `U64`, `U32`, or `U16`.
 - `diagonal` is the signed displacement read from RegSrc0; it must lie in -65535 to 65535.
 - `flag0` is the orientation read from RegSrc1: 0 selects lower and 1 selects upper. RegSrc2 and RegDst must be zero.
 
@@ -295,7 +295,7 @@ end;
 ## Block composition
 
 ```asm
-BSTART.SFU TTRI, FP32|FP16|S32|S16|U32|U16
+BSTART.SFU TTRI, FP64|FP32|FP16|S64|S32|S16|U64|U32|U16
 B.DATR all-zero (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional, default 1)
@@ -369,7 +369,7 @@ end;
 
 - TTRI is selected by the TEPL encoding carrier Mode 3 Function 7, canonically assembled with BSTART.SFU, and has no standalone opcode.
 - Exactly one terminating destination-only Local B.IOT supplies one newly allocated destination. Every source binding, a second B.IOT, B.IOS, or an unterminated binding stream is illegal.
-- The selected DataType is exactly FP32, FP16, S32, S16, U32, or U16. The destination is row-major with nonzero ValidRow and ValidCol, and Col is at least ValidCol.
+- The selected DataType is exactly FP64, FP32, FP16, S64, S32, S16, U64, U32, or U16. The destination is row-major with nonzero ValidRow and ValidCol, and Col is at least ValidCol.
 - A present B.IOR consumes RegSrc0 as signed diagonal and RegSrc1 as exact zero or one orientation. RegSrc2 and RegDst are zero.
 - Every explicit nonzero B.DATR field is illegal. PE_MASK zero is a strict no-op before GPR reads, descriptor checks, allocation, faults, or payload effects.
 
@@ -377,7 +377,7 @@ end;
 
 - For lower orientation, logical element [r,c] is typed one exactly when c is at most r plus diagonal; otherwise it is typed zero.
 - For upper orientation, logical element [r,c] is typed one exactly when c is at least r plus diagonal; otherwise it is typed zero.
-- Signed boundary comparison does not wrap. FP32 and FP16 use their exact positive-zero and positive-one encodings. Every physical coordinate outside the valid rectangle is undefined Null padding.
+- Signed boundary comparison does not wrap. FP64, FP32, and FP16 use their exact positive-zero and positive-one encodings. Every physical coordinate outside the valid rectangle is undefined Null padding.
 
 ## Memory effects and ordering
 

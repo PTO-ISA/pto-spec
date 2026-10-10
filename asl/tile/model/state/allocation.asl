@@ -259,7 +259,8 @@ func ConfigurePredicateCellForMask(
     allocation_mask: bits(4)) => boolean
 begin
     if (layout != TileLayout_CUBE_M16 && layout != TileLayout_CUBE_M32) ||
-       !TileCubePredicateDataTypeSupported(basis_type) then
+       !TileCubePredicateDataTypeSupported(basis_type) ||
+       !TileCubeLayoutDataTypeSupported(layout, basis_type) then
         return FALSE;
     end;
     if !ConfigureCubeTileForMask(

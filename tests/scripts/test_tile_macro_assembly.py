@@ -92,14 +92,14 @@ class TileMacroAssemblyTest(unittest.TestCase):
             operation["mnemonic"]: operation["engine"]
             for operation in self.operations
         }
-        self.assertEqual(inventory["operation_count"], 118)
+        self.assertEqual(inventory["operation_count"], 119)
         self.assertEqual(actual, expected)
         self.assertEqual(
             Counter(actual.values()),
-            {"VEC": 31, "SFU": 47, "TLSU": 28, "CUBE": 12},
+            {"VEC": 32, "SFU": 47, "TLSU": 28, "CUBE": 12},
         )
         self.assertEqual(
-            self.catalog["summary"], {"operation_count": 118, "form_count": 143}
+            self.catalog["summary"], {"operation_count": 119, "form_count": 144}
         )
 
     def test_every_macro_instruction_is_exactly_one_line(self) -> None:
@@ -230,7 +230,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
         owner = (
             ROOT / "asl/arch/overview/instruction-classification.asl"
         ).read_text(encoding="utf-8")
-        self.assertEqual(owner.count("// PTO-TILEOP-MACRO: "), 118)
+        self.assertEqual(owner.count("// PTO-TILEOP-MACRO: "), 119)
         self.assertEqual(owner.count("// PTO-TILEOP-MACRO-CONTRACT: "), 1)
         self.assertIn("are the sole owners of canonical", owner)
         definitions = self.generator["load_macro_form_definitions"]()
@@ -879,7 +879,12 @@ class TileMacroAssemblyTest(unittest.TestCase):
                         element_type = expression.rsplit("/", 1)[1]
                         self.assertTrue(
                             element_type in configuration
-                            or element_type == "CubeLayoutElementType",
+                            or element_type == "CubeLayoutElementType"
+                            # TLEA's source DataType selects signedness and
+                            # source width, while its destination element type
+                            # is fixed by contract to S64/U64.
+                            or (operation["mnemonic"] == "TLEA"
+                                and element_type == "U64"),
                             form["expansion"]["form_id"],
                         )
                 if resolution["requires_runtime_state"]:
@@ -1332,7 +1337,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
 
     def test_reference_is_0587_and_uses_one_line_examples(self) -> None:
         reference = REFERENCE.read_text(encoding="utf-8")
-        self.assertIn("all 118 current direct Tile operations", reference)
+        self.assertIn("all 119 current direct Tile operations", reference)
         self.assertIn("exactly one source line", reference)
         self.assertIn(
             "predicate and descriptor-preserving forms require source descriptor state",

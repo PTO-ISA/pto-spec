@@ -57,6 +57,8 @@ This example illustrates the current ASL owner and does not replace the normativ
 
 A generation has 32 CELLs, and writers for CELLs 0..15 and 16..31 are registered and closed by LAST. A consumer uses `B.SUBVIEW` for CELLs 0..3. Before any completion event it waits and has no effect. After the first writer completes, CELLs 0..15 are ready, so the consumer becomes eligible and may run. A second consumer without a subview needs the whole parent. It stays waiting until the second writer completes and the generation is published.
 
+`TLEA` is a rollback-safe Local producer: its source persists through preflight and execution, and atomic destination publication neither consumes nor retags that source.
+
 <!-- PTO-READER-BLOCK: block-model-operands-portable-carriers-related role=related-owners-navigation -->
 ## Related owners
 
@@ -521,7 +523,7 @@ begin
              TileHandler_GMOV,
              TileHandler_MGATHER,
              TileHandler_MGATHER_MASK,
-             TileHandler_TCI,
+             TileHandler_TCI, TileHandler_TLEA,
              TileHandler_TCVT,
              TileHandler_TFMA,
              TileHandler_TGATHER,

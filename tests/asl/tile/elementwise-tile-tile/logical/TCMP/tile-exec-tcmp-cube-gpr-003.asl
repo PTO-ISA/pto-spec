@@ -64,8 +64,8 @@ begin
     assert result[32] == '0';
     assert result[1] == '1';
     assert result[33] == '1';
-    assert !TileCubePredicateDataTypeSupported(TileDataType_FP64);
-    assert !TileCubePredicateDataTypeSupported(TileDataType_S64);
-    assert !TileCubePredicateDataTypeSupported(TileDataType_U64);
+    assert TileCubePredicateDataTypeSupported(TileDataType_FP64);
+    assert TileCubePredicateDataTypeSupported(TileDataType_S64);
+    assert TileCubePredicateDataTypeSupported(TileDataType_U64);
     return 0;
 end;

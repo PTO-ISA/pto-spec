@@ -34,7 +34,7 @@ schema 检查读取头部状态，例如 `_BundleTileBindings`（`B.IOT` 记录�
 - 把解析得到的绝对索引写入目标绑定的 `destination` 字段；
 - 把该绑定的 `destination_allocated_by_bundle` 置为真。
 
-对 `TPACK` 和 `TUNPACK`，目标数据类型是指令束选定的操作 `DataType`，且必须是 `U8`、`U16` 或 `U32`。对 `TPERMUTE` 和 `TSHUF`，目标保留源的数据类型和有效列数。四种情况下，目标都保留源的有效行数和布局。
+对 `TPACK` 和 `TUNPACK`，目标数据类型是指令束操作 `DataType` 选定的 `U8`、`U16`、`U32` 或 `U64`。U64 形式要求 `CUBE_M32`，并把每个完整偶数/奇数 raw-word pair 合成一个逻辑目标元素。对 `TPERMUTE` 与 `TSHUF`，目标保留源类型和有效列数。
 
 <!-- PTO-READER-BLOCK: block-model-dispatch-cell-rearrangement-schema-rules role=rules-interactions -->
 ## 规则与交互
@@ -46,7 +46,7 @@ schema 检查读取头部状态，例如 `_BundleTileBindings`（`B.IOT` 记录�
 
 设计要点：Tile 执行所有者在通用封闭 schema 检查之前调用本 schema 检查，并把其失败映射为 `Fault_BundleControl`。ASL 注释说明了原因：缺失或多余的 `B.IOR` 或 `B.IOT` 控制属于指令束结构。因此格式错误的指令束报告为指令束控制故障，而不是 Tile 合法性故障。
 
-对 `TPACK` 和 `TUNPACK`，目标列数等于源每行字数乘以目标每字元素数：`U8` 为 4，`U16` 为 2，`U32` 为 1。每行字数由源有效字节数向上取整到 4 字节字得到。`TPACK` 还要求第二个源与第一个源具有相同的布局、有效行数和每行字数。
+对 `TPACK` 和 `TUNPACK`，较窄目标的列数仍为源每行 word 数乘以 `U8`、`U16`、`U32` 对应的 4、2、1。对 `U64`，raw-word 数必须为偶数，目标逻辑列数为其一半。`TPACK` 还要求第二个源与第一个源具有相同布局、有效行数和每行 word 数。
 
 设计要点：目标形状由源描述符推导，而不是来自 `B.DIM`。宏汇编参考记录了其后果：`TPACK` 和 `TUNPACK` 没有编码的形状，因此其 Row 和 Col 取决于运行时描述符状态。
 
@@ -164,15 +164,22 @@ begin
         if selected_type == TileDataType_U8 then 4
         else if selected_type == TileDataType_U16 then 2
         else if selected_type == TileDataType_U32 then 1
+        else if selected_type == TileDataType_U64 then 0
         else 0;
     if !selected_type_valid ||
-       (pack_unpack && destination_elements_per_word == 0) then
+       (pack_unpack && destination_elements_per_word == 0 &&
+        selected_type != TileDataType_U64) ||
+       (pack_unpack && selected_type == TileDataType_U64 &&
+        (source_tile.layout != TileLayout_CUBE_M32 ||
+         TileCellRearrangementWordsPerRow(source_tile) MOD 2 != 0)) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
     let destination_columns_unbounded = if pack_unpack then
-        (TileCellRearrangementWordsPerRow(source_tile) *
-            destination_elements_per_word) as integer {0..262144}
+        (if selected_type == TileDataType_U64 then
+             TileCellRearrangementWordsPerRow(source_tile) DIVRM 2
+         else TileCellRearrangementWordsPerRow(source_tile) *
+             destination_elements_per_word) as integer {0..262144}
     else source_tile.valid_columns as integer {0..262144};
     let destination_type = if pack_unpack then selected_type
                            else source_tile.data_type;

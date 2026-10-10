@@ -41,7 +41,7 @@ CUBE 形式会参考 ExecutionMask：活动坐标接收生成值，非活动坐�
 <!-- PTO-READER-BLOCK: tile-tci-inputs role=inputs-outputs -->
 ## 操作数角色与描述符
 
-- `destination0` 是新分配的 Local `S32`、`S16`、`U32` 或 `U16` Tile。
+- `destination0` 是新分配的 Local `S64`、`S32`、`S16`、`U64`、`U32` 或 `U16` Tile。
 - `scalar0` 是起始值，从 RegSrc0 指定的 GPR 读取。
 - `flag0` 是 RowMajor 方向或 CUBE Step2D 字，从 RegSrc1 指定的 GPR 读取。
 
@@ -63,7 +63,7 @@ CUBE 形状：LB1 给出正的 ValidRow，`CUBE_M16` 时不超过 16。显式 LB
 <!-- PTO-READER-BLOCK: tile-tci-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-可接受的数据类型为 `S32`、`S16`、`U32` 与 `U16`。
+可接受的数据类型为 `S64`、`S32`、`S16`、`U64`、`U32` 与 `U16`。64 位 CUBE 形式要求 `CUBE_M32`；这些类型在 `CUBE_M16` 中仍非法。
 
 - RowMajor 形式：绑定格式错误、`B.IOS`、不支持的类型、维度缺失或无效、方向不是 0 或 1，或非零的不适用 `B.DATR` 字段，会引发 `Fault_TileLegality`。
 - CUBE 形式：命令或 `B.IOR` 结构格式错误引发 `Fault_BundleControl`；无效的选择器、元组、维度、步长或对齐引发 `Fault_TileLegality`；几何合法但 TSize 过小或 Tile 容量耗尽时引发 `Fault_TileAllocation`。
@@ -115,7 +115,7 @@ This operation has no standalone opcode.
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | new Local S32, S16, U32, or U16 destination |
+| destination0 | new Local S64, S32, S16, U64, U32, or U16 destination |
 | scalar0 | typed sequence start from RowMajor/CUBE RegSrc0 |
 | flag0 | RowMajor direction or CUBE packed Step2D from RegSrc1 |
 
@@ -133,7 +133,7 @@ end;
 ## Block composition
 
 ```asm
-BSTART.SFU TCI, S32|S16|U32|U16
+BSTART.SFU TCI, S64|S32|S16|U64|U32|U16
 B.DATR RowMajor all-zero (optional), or explicit CUBE_M32/CUBE_M16 tuple
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (RowMajor optional, default 1; when present must equal 1; CUBE required positive)
@@ -208,8 +208,8 @@ end;
 
 - TCI is selected by the TEPL encoding carrier Mode 3 Function 6, canonically assembled with BSTART.SFU, and has no standalone opcode.
 - Exactly one terminating destination-only Local B.IOT supplies one newly allocated destination. Every source binding, a second B.IOT, B.IOS, or an unterminated binding stream is illegal.
-- The selected DataType is exactly S32, S16, U32, or U16. The existing RowMajor form remains one-row with ValidRow one, ValidCol nonzero, and Col at least ValidCol.
-- The CUBE form is selected only by explicit Layout CUBE_M32 (29) or CUBE_M16 (31), uses a Matrix-location Local numeric destination, and retains one exact TileInfo.columns physical Col independently of ValidCol.
+- The selected DataType is exactly S64, S32, S16, U64, U32, or U16. The existing RowMajor form remains one-row with ValidRow one, ValidCol nonzero, and Col at least ValidCol.
+- The CUBE form is selected only by explicit Layout CUBE_M32 (29) or CUBE_M16 (31), uses a Matrix-location Local numeric destination, and retains one exact TileInfo.columns physical Col independently of ValidCol. S64 and U64 CUBE destinations use only CUBE_M32 double-CELL storage; CUBE_M16 remains illegal for b64.
 - CUBE M16 requires ValidRow>0 and ValidRow<=16; CUBE M32 accepts every positive ValidRow. Both forms require ValidCol<=Col and a cell-column-aligned explicit Col.
 - CUBE B.DATR is exactly {Layout=CUBE_M32/CUBE_M16, DataType=DTYPE_NONE, Pad=0, CMode=0, RMode=0, Sat=0, Canonicalize=0}.
 - CUBE B.IOR is exactly StartGPR, packed Step2DGPR with signed s32 RowStep in bits [63:32] and signed s32 ColStep in bits [31:0], then zero and ->zero. Each step is exactly -1, 0, or +1.

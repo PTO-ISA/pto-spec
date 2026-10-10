@@ -674,6 +674,9 @@ def row_resolution(
         ),
         "CubeLayoutElementType" if "CubeLayout" in fields else None,
     )
+    if spelling == "TLEA":
+        # TLEA headers describe input indices; all outputs have 64-bit width.
+        element_type = "U64"
     descriptor_source = next(
         (
             str(item["field"])

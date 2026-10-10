@@ -39,7 +39,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 - `destination0` 是新分配的 Local Tile，DataType 为操作 DataType，逻辑形状为 一个有效行乘 60 个有效列，每个有效列一个结果；其余物理坐标是填充坐标，对于 `RowMajor`，物理行数由目标容量推导。
 
-- 目标使用源的布局，只有 `RowMajor`、`CUBE_M16` 与 `CUBE_M32` 是允许的布局。
+- 目标使用源的布局，只有 `RowMajor`、`CUBE_M16` 与 `CUBE_M32` 是允许的布局。 64 位 CUBE 操作数要求 `CUBE_M32` double-CELL 映射；`CUBE_M16` 会拒绝。
 
 - 各操作数共享同一个 `PE_MASK`。`PE_MASK=0000` 是严格无操作，发生在描述符读取、分配、故障、状态或载荷效果之前。
 
@@ -206,6 +206,7 @@ end;
 - The destination has logical ValidRow equal to one and ValidCol equal to source.ValidCol. For RowMajor, Rows equals DerivedTileRows(DstCapacity, source physical Columns, DstDataType) and Columns equals source physical Columns. For CUBE_M16/M32, Rows equals source Rows and Columns equals align_up(Dst.ValidColumns, Dst CellCols), where Dst CellCols is computed from destination DataType.
 - Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 - An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

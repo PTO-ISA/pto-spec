@@ -140,6 +140,24 @@ end;
 
 readonly func ResolveBundleEffectiveDataType() => (boolean, TileDataType)
 begin
+    // TLEA's header names the source index type; its destination is always
+    // the corresponding 64-bit address carrier, independent of transfer width.
+    if _BundleOperation.valid && _BundleOperation.selector_valid &&
+       _BundleOperation.operation_class == BundleOperation_TileElement &&
+       BundleOperationDecodeCode(_BundleOperation) == Zeros{12} + 0x02e then
+        let source_code = UInt(_BundleOperation.data_type);
+        if !_BundleOperation.data_type_valid then
+            return (FALSE, TileDataType_U64);
+        end;
+        if source_code == UInt(TileDataTypeToEncoding(TileDataType_S32)) ||
+           source_code == UInt(TileDataTypeToEncoding(TileDataType_S64)) then
+            return (TRUE, TileDataType_S64);
+        elsif source_code == UInt(TileDataTypeToEncoding(TileDataType_U32)) ||
+              source_code == UInt(TileDataTypeToEncoding(TileDataType_U64)) then
+            return (TRUE, TileDataType_U64);
+        end;
+        return (FALSE, TileDataType_U64);
+    end;
     if _BundleDataAttributes.data_type_present &&
        BundleDataTypeConcrete(_BundleDataAttributes.data_type) then
         return (TRUE, BundleTileDataType(_BundleDataAttributes.data_type));

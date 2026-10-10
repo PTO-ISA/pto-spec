@@ -34,7 +34,7 @@ The destination resolver reads the source descriptors in `_Tiles` and, when it s
 - the resolved absolute index into the destination binding's `destination` field;
 - `destination_allocated_by_bundle` set to true on that binding.
 
-For `TPACK` and `TUNPACK`, the destination data type is the operation `DataType` selected by the bundle, and it must be `U8`, `U16`, or `U32`. For `TPERMUTE` and `TSHUF`, the destination keeps the source data type and valid column count. In all four cases, the destination keeps the source valid row count and layout.
+For `TPACK` and `TUNPACK`, the destination data type is the operation `DataType` selected by the bundle: `U8`, `U16`, `U32`, or `U64`. The U64 form requires `CUBE_M32` and joins each complete even/odd raw-word pair into one logical destination element. For `TPERMUTE` and `TSHUF`, the destination keeps the source data type and valid column count.
 
 <!-- PTO-READER-BLOCK: block-model-dispatch-cell-rearrangement-schema-rules role=rules-interactions -->
 ## Rules and interactions
@@ -46,7 +46,7 @@ The schema check returns true immediately when `SelectedBundleTileMaskIsZero` ho
 
 Design point: the Tile execution owner calls this schema check before the generic closed-schema check and maps its failure to `Fault_BundleControl`. The ASL comment states the reason: a missing or surplus `B.IOR` or `B.IOT` control is bundle structure. A malformed bundle is therefore reported as a bundle-control fault, not as a Tile legality fault.
 
-For `TPACK` and `TUNPACK`, the destination column count is the source words per row times the destination elements per word: 4 for `U8`, 2 for `U16`, and 1 for `U32`. Words per row come from the source valid bytes rounded up to 4-byte words. `TPACK` also requires the second source to have the same layout, valid row count, and words per row as the first.
+For `TPACK` and `TUNPACK`, narrower destination column counts remain source words per row times 4, 2, or 1 for `U8`, `U16`, or `U32`. For `U64`, the raw-word count must be even and the destination has half as many logical columns. `TPACK` also requires the second source to have the same layout, valid row count, and words per row as the first.
 
 Design point: the destination shape is derived from the source descriptor, not from `B.DIM`. The macro assembly reference records the consequence: `TPACK` and `TUNPACK` have no encoded shape, so their Row and Col depend on runtime descriptor state.
 
@@ -164,15 +164,22 @@ begin
         if selected_type == TileDataType_U8 then 4
         else if selected_type == TileDataType_U16 then 2
         else if selected_type == TileDataType_U32 then 1
+        else if selected_type == TileDataType_U64 then 0
         else 0;
     if !selected_type_valid ||
-       (pack_unpack && destination_elements_per_word == 0) then
+       (pack_unpack && destination_elements_per_word == 0 &&
+        selected_type != TileDataType_U64) ||
+       (pack_unpack && selected_type == TileDataType_U64 &&
+        (source_tile.layout != TileLayout_CUBE_M32 ||
+         TileCellRearrangementWordsPerRow(source_tile) MOD 2 != 0)) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
     let destination_columns_unbounded = if pack_unpack then
-        (TileCellRearrangementWordsPerRow(source_tile) *
-            destination_elements_per_word) as integer {0..262144}
+        (if selected_type == TileDataType_U64 then
+             TileCellRearrangementWordsPerRow(source_tile) DIVRM 2
+         else TileCellRearrangementWordsPerRow(source_tile) *
+             destination_elements_per_word) as integer {0..262144}
     else source_tile.valid_columns as integer {0..262144};
     let destination_type = if pack_unpack then selected_type
                            else source_tile.data_type;

@@ -48,6 +48,8 @@ The current instruction contract is owned by the ASL source linked above.
 | PredicateCell | `CUBE_M16` 或 `CUBE_M32` | 相同的两条 `B.IOT` 记录，以 PredicateCell 作为谓词 |
 | GPR | `CUBE_M16` 或 `CUBE_M32` | 一条 `B.IOT` 含 SrcTrue、SrcFalse 与新目标，外加一条携带掩码的仅源 `B.IOR` |
 
+64 位 CUBE 操作数要求 `CUBE_M32` double-CELL 映射；`CUBE_M16` 会拒绝。该布局规则同时适用于 PredicateCell 与 GPR 载体形式。
+
 传统谓词是每个元素一位的打包 Tile，其有效区域内的每个谓词位都必须已定义。PredicateCell 每个元素占一个字节，其基准类型必须等于操作 `DataType`。PredicateCell 字节在每个有效坐标处被检查和读取（存在 ExecutionMask 时仅在活动坐标处），每个这样的字节都必须已定义且为规范值：`0x00` 或 `0x01`。在 GPR 形式中，8 位操作类型使用两个掩码 GPR，16 位与 32 位类型使用一个。
 
 每个数据源都可以使用位宽相同、非打包的其他后备类型。其位按原样拷贝到以操作 `DataType` 标记的目标中。
@@ -66,7 +68,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tsel-constraints role=constraints -->
 ## 合法性、故障与顺序边界
 
-操作 `DataType` 集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。CUBE 形式进一步限制为 CUBE 谓词类型，其中不含 64 位类型。
+操作 `DataType` 集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。CUBE 形式使用 CUBE 谓词类型集；`FP64`、`S64` 与 `U64` 只在 `CUBE_M32` double-CELL 数值操作数下合法。
 
 源数据必须已定义（在 CUBE 形式中为每个活动坐标处），即使其编码不被校验。`PE_MASK=0000` 是严格无操作，发生在 GPR、谓词、源、分配或载荷检查之前。
 
@@ -199,8 +201,9 @@ end;
 - TSEL selects VEC Mode 0 Function 26. PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.
 - Legacy RowMajor form uses two ordered B.IOT records: packed Predicate plus SrcTrue, then SrcFalse plus one new destination; B.IOR is absent, each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers, and selected bits are copied raw.
 - CUBE_M16/M32 PredicateCell form uses the same two-record Tile structure with a descriptor-valid PredicateCell whose basis equals the operation DataType and whose ExecutionMask-active bytes are defined and canonical, while valid shape/layout and physical geometry match the numeric sources. Each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; B.IOR is absent.
-- CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue, SrcFalse, and one new CUBE destination plus one source-only B.IOR carrying the complete mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8; each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; U8 consumes two mask GPRs and other accepted types consume one.
+- CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue, SrcFalse, and one new CUBE destination plus one source-only B.IOR carrying the complete mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8, or FP64/S64/U64 for CUBE_M32; each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; U8 consumes two mask GPRs and other accepted types consume one.
 - Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

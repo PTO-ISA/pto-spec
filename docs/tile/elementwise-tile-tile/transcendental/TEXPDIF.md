@@ -45,7 +45,7 @@ For each element, the status of the subtraction and of the exponential are ORed 
 
 One terminating `B.IOT` binds all three Tiles, and they share one `PE_MASK`. `PE_MASK=0000` is a strict no-op before source descriptor reads, destination allocation, numeric status, or payload effects.
 
-`DstDataType` is resolved from `B.DATR`. Omitting `B.DATR`, or encoding the `DataType` field as `DTYPE_NONE` (code 31), makes the destination inherit `SrcOperationType`. An encoded `DataType` of zero selects `FP64`, which is not a legal destination and therefore rejects.
+`DstDataType` is resolved from `B.DATR`. Omitting `B.DATR`, or encoding the `DataType` field as `DTYPE_NONE` (code 31), makes the destination inherit `SrcOperationType`. An encoded `DataType` of zero explicitly selects `FP64`; it does not mean absence.
 
 Design point: code 0 already names `FP64`, so inheritance needs a separate sentinel. Using `DTYPE_NONE` keeps "no destination type requested" distinct from a real type request.
 
@@ -63,7 +63,7 @@ Because both sources are snapshotted before any result is written, a legal alias
 <!-- PTO-READER-BLOCK: tile-texpdif-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The only legal `(SrcOperationType,DstDataType)` pairs are `(FP16,FP16)`, `(BF16,BF16)`, `(FP32,FP32)`, `(FP16,FP32)`, and `(BF16,FP32)`. Every other pair, including a narrowing pair or an integer type, rejects.
+The legal `(SrcOperationType,DstDataType)` pairs are `(FP64,FP64)`, `(FP32,FP32)`, `(FP16,FP16)`, `(BF16,BF16)`, `(FP16,FP32)`, and `(BF16,FP32)`. Every other pair, including a narrowing pair or an integer type, rejects. A CUBE FP64 form requires `CUBE_M32`.
 
 The layout is `RowMajor`, `CUBE_M16`, or `CUBE_M32`, and all three operands must use the selected layout. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal. The operands share `ValidRow` and `ValidCol`, but each descriptor's physical geometry is checked with its own type, so an `FP32` destination can have a different physical size from its `FP16` sources. `B.DATR` accepts only `Layout`, `DataType`, and `PadValue`; nondefault `CMode`, `RMode`, `Sat`, or `Canonicalize` is illegal.
 
@@ -238,13 +238,15 @@ end;
 
 - TEXPDIF is TEPL Mode 0 Function 29 (selector 0x01D) on SFU; 0x01C remains TFMA and 0x01E..0x01F remain reserved.
 - Exactly one terminating Local B.IOT supplies two ordered persistent Local numeric sources and one newly allocated Local numeric destination. B.IOR, B.IOS, additional bindings, and shared operands are illegal.
-- The exact legal (SrcOperationType,DstDataType) pairs are (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32). All other pairs reject.
+- The exact legal (SrcOperationType,DstDataType) pairs are (FP64,FP64), (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32). All other pairs reject.
 - Each source backing type may differ independently from SrcOperationType only when both types are non-packed, have equal element width, and TileCarrierWidthCompatible is true. Source payloads are validated and interpreted as SrcOperationType without retagging the source descriptors.
 - The result for every valid coordinate is natural exp(src0-src1), with source0 as minuend and source1 as subtrahend. TEXPDIF does not broadcast.
 - Same-type pairs perform typed SUB followed by typed natural EXP. Mixed FP16/BF16-to-FP32 pairs exactly widen both inputs to FP32 before FP32 SUB and FP32 natural EXP; widening is not TCVT and adds no conversion-inexact status.
 - Only RowMajor, CUBE_M16, and CUBE_M32 are legal. CUBE_N8, Shared, unsupported layouts, and mixed operand layouts reject. Sources and destination share the selected layout and logical ValidRow x ValidCol; each descriptor's physical geometry is checked using its own backing/destination type.
 - B.DATR Layout, DataType, and PadValueOrByteId are the only applicable nonzero fields. CMode, RMode, Sat, Canonicalize, and unrelated fields are illegal.
 - PE_MASK=0000 is a strict no-op before source descriptor reads, destination allocation, numeric status, or payload effects.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
+- FP64 source and FP64 destination form an accepted same-type pair; mixed FP64 type pairs are not added.
 
 ## State effects
 

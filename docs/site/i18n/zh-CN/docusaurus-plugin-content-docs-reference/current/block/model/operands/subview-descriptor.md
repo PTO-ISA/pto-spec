@@ -39,7 +39,7 @@ This page is a generated reference view of the normative ASL unit.
 - 偏移大于 65535，或不小于父 Tile 的 CELL 数；
 - 视图原点位于父 Tile 有效区域之外、推导出的形状为空，或推导出的 CUBE 几何不可用（CELL 行数或列数为零、`CUBE_N8` 的 K 重复数为 0 或大于 16384，或推导出的 CELL 数超过视图允许的数量）。
 
-否则视图覆盖 `min(requested, remaining)` 个 CELL。对 `CUBE_N8`，视图在当前 N 列单元的末尾停止。对其他 CUBE 布局，视图原点列为 `offset_cells` 乘以 CELL 宽度。有效区域被裁剪到父 Tile 的有效区域内。
+否则视图覆盖 `min(requested, remaining)` 个 CELL。对 `CUBE_N8`，视图在当前 N 列单元末尾停止。对 M32 64 位父 Tile，偏移与数量都必须覆盖完整低/高 CELL pair，原点列为 `offset_cells / 2`；视图不能暴露半个逻辑列。其他 M 布局每个列组使用一个 CELL 组。有效区域裁剪到父 Tile 内。
 
 空描述符引发 `Fault_TileLegality`。随后 `MaterializeBundleSubview` 在父 Tile 的 hand 中找到一个空闲寄存器，以父 Tile 的布局、数据类型和 PE 掩码分配一个 CUBE Tile，并复制视图内每个已定义的父元素。如果 `TileElementwiseSourceContentsDefined` 对父 Tile 成立，视图的有效区域被标记为已定义。绑定的源被重定向到该副本。
 
@@ -74,7 +74,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/operands/subview-descriptor.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","surface":"block","classification":["model","operands","subview-descriptor"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-TILE-MODEL-SHAPE-CUBE-CELL"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","surface":"block","classification":["model","operands","subview-descriptor"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-TILE-MODEL-SHAPE-CUBE-CELL","PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL"]}
 
 // NDF-BEGIN: PTO-B-SUBVIEW-DESCRIPTOR-001
 // ndf: kind=contract level=L1 layer=block status=accepted
@@ -128,6 +128,9 @@ begin
     let offset_cells = raw_offset as integer {0..65535};
     let requested_cells = (TileSizeCodeBytes(size_code) DIVRM PTO_TILE_CELL_BYTES)
         as integer {1..2048};
+    if !TileCubePhysicalCellRangeComplete(
+           parent.layout, parent.data_type, offset_cells,
+           requested_cells) then return empty; end;
     let remaining = (parent.cube_cell_count - offset_cells)
         as integer {1..16384};
     let cell_count = if requested_cells < remaining then requested_cells
@@ -154,7 +157,9 @@ begin
         origin_row = (cell_k * cell_rows) as integer {0..65535};
         origin_column = (cell_n * cell_columns) as integer {0..65535};
     else
-        origin_column = (offset_cells * cell_columns)
+        let logical_offset = TileCubeLogicalGroupsForPhysicalCells(
+            parent.layout, parent.data_type, offset_cells);
+        origin_column = (logical_offset * cell_columns)
             as integer {0..65535};
     end;
     if origin_row >= parent.valid_rows || origin_column >= parent.valid_columns then
@@ -169,9 +174,11 @@ begin
             as integer {1..65535};
         if valid_rows > requested_rows then valid_rows = requested_rows; end;
     end;
+    let view_groups = TileCubeLogicalGroupsForPhysicalCells(
+        parent.layout, parent.data_type, view_cell_count);
     let requested_columns: integer {1..65535} =
         if parent.layout == TileLayout_CUBE_N8 then cell_columns as integer {1..65535}
-        else (view_cell_count * cell_columns) as integer {1..65535};
+        else (view_groups * cell_columns) as integer {1..65535};
     var valid_columns: integer {0..65535} = requested_columns;
     if origin_column < parent.valid_columns &&
        parent.valid_columns - origin_column < requested_columns then

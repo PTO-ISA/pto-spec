@@ -40,7 +40,7 @@ Tile 执行所有者中的通用 Tile 路径通过 `SelectedBundleClosedSchemasL
 
 形状规则取决于源布局。
 
-- 对于 `CUBE_M16` 或 `CUBE_M32` 源，请求的有效列数与有效行数必须等于源的对应值，维度 2 必须为 1，规范化必须关闭，数据布局必须为 `NORM`，并且目标类型必须支持 CUBE。目标保持相同的 CUBE 布局。
+- 对于 `CUBE_M16` 或 `CUBE_M32` 源，请求的有效列数与有效行数必须等于源的对应值，维度 2 必须为 1，规范化必须关闭，数据布局必须为 `NORM`，并且目标类型必须受同一 CUBE 布局支持。因此 `FP64`、`S64` 或 `U64` 目标要求 `CUBE_M32`；`CUBE_M16` 拒绝 64 位结果。
 - 其他任何 CUBE 布局都被拒绝。
 - 对于非 CUBE 源，请求的有效列数、有效行数和物理列数都必须等于源的对应值，规范化必须关闭，并且源布局必须等于指令束的源布局。目标物理形状也必须合适：通常其推导出的行数等于源的行数；但当两种类型都允许奇数物理列且列数不是 2 的幂时，源行数必须能装入目标容量。
 
@@ -164,7 +164,8 @@ begin
                    _Tiles[[source]].valid_rows,
                    _Tiles[[source]].valid_columns,
                    source_operation_type, source_layout) &&
-               TileCubeDataTypeSupported(destination_type);
+               TileCubeLayoutDataTypeSupported(
+                   source_layout, destination_type);
     end;
     if TileLayoutIsCube(source_layout) then
         return FALSE;

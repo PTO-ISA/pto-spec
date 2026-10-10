@@ -60,9 +60,9 @@ Duplicate sources and a source that aliases the destination observe the complete
 <!-- PTO-READER-BLOCK: tile-tfma-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The ASL legality predicate `TileFusedMultiplyAddDataTypeSupported` accepts the 16 types `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, and `U8`. The generated legality list below is narrower and names only `FP16`, `FP32`, and `BF16`. The floating element arithmetic that `TFMA` reaches, `ScalarFPFusedProfile`, is defined only for `FP64`, `FP32`, and `FP16`, so the ASL gives no element result for `TF32`, `HF32`, `BF16`, `E4M3`, or `E5M2`. Code that must satisfy both should use `FP16` or `FP32`.
+`TFMA` accepts exactly `FP64`, `S64`, `U64`, `FP16`, `FP32`, and `BF16`. The fused floating helper has finite execution for `FP64`, `FP32`, and `FP16`; the pre-existing admitted-`BF16` finite-result gap remains. Integer forms use the fixed-width fused rule.
 
-The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`, and all operands must use that same layout. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal. `TFMA` rejects nondefault `RMode`, `Sat`, `CMode`, and `Canonicalize`.
+The layout is `RowMajor` by default. An explicit `Layout` may select `CUBE_M16` or `CUBE_M32`, and all operands must use that same layout; among CUBE layouts, a 64-bit operation type is legal only in `CUBE_M32`; `CUBE_M16` rejects it. `CUBE_N8`, Shared Tiles, and mixed layouts are illegal. `TFMA` rejects nondefault `RMode`, `Sat`, `CMode`, and `Canonicalize`.
 
 Malformed or surplus bindings, `B.IOR` or `B.IOS`, unequal masks, bad dimensions, an unsupported `DataType`, a layout mismatch, undefined sources, or invalid floating encodings raise `Fault_TileLegality`. An unrepresentable destination shape or insufficient capacity raises `Fault_TileAllocation`. Both faults occur before any destination effect.
 
@@ -199,10 +199,11 @@ end;
 
 - TFMA is selected by the TEPL encoding carrier Mode 0 Function 28, canonically assembled with BSTART.VEC, and has no standalone opcode.
 - Exactly two ordered Local B.IOT bindings are required: the first supplies two multiplicands without a destination or last marker; the second supplies the addend and one new destination and terminates the sequence.
-- DataType is exactly one of FP16, FP32, or BF16.
+- DataType is exactly one of FP64, S64, U64, FP16, FP32, or BF16.
 - All three sources and the destination match physical shape, valid shape, selected layout, DataType, and PE_MASK; every valid source element is defined.
 - Only B.DATR PadValueOrByteId is applicable. Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.
 - B.IOR and B.IOS are illegal. All participating B.IOT masks are equal; PE_MASK zero is a strict no-op before source reads, allocation, arithmetic, flags, padding, or descriptor effects.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

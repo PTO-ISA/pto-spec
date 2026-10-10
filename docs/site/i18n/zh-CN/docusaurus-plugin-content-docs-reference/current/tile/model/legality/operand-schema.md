@@ -55,7 +55,7 @@ This page is a generated reference view of the normative ASL unit.
 
 合法性检查在执行之前运行。生成的分派器调用处理器对应的 `TileOperandsLegal_` 谓词，当其返回 FALSE 时产生 `Fault_TileLegality`，且不调用处理器。执行函数随后断言其中一部分相同条件。
 
-合法性接受某些数值辅助函数会断言失败的类型。二元谓词通过 `TileVecArithmeticDataTypeSupported` 接受 TF32、HF32、E4M3 与 E5M2，但浮点 ADD、SUB、MUL 与 DIV 使用只接受 FP64、FP32、FP16 与 BF16 的 `ScalarFPBinaryProfile`。浮点 TREM 与 SFU 一元操作使用只接受 FP32、FP16 与 BF16 的辅助函数。
+数值合法性按操作区分。TADD 与 TDIV 保留 16 类型宽域，而其已验证浮点有限路径覆盖 `FP64`、`FP32`、`FP16` 与 `BF16`；既有 `TF32`、`HF32`、`E4M3` 与 `E5M2` 有限结果缺口保持不变。TSUB、TMUL、TREM、TMIN 与 TMAX 使用各自较窄的精确 owner 集合，并在 owner 接受时包含 FP64。SFU 组中，TEXP 保留八种浮点合法类型，但同样只有四种已验证有限路径和四种有限结果缺口；TLOG、TRECIP、TSQRT 与 TRSQRT 恰好接受这四种可执行类型。
 
 `TileOperandsLegal_TRESHAPE`、`TileOperandsLegal_TINTERLEAVE` 与 `TileOperandsLegal_TDEINTERLEAVE` 在此定义，但在 `asl/` 中没有调用者。
 

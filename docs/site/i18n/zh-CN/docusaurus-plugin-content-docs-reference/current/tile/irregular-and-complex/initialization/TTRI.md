@@ -28,14 +28,14 @@ The current instruction contract is owned by the ASL source linked above.
 
 对位于第 r 行、第 c 列的每个有效元素，下三角方向在 `c <= r + diagonal` 时写入一，上三角方向在 `c >= r + diagonal` 时写入一。其他所有有效元素接收零。
 
-一是精确的类型化编码：FP32 为 `0x3f800000`，FP16 为 `0x3c00`，整数类型为整数 1。零为正零。
+一是精确的类型化编码：FP64 为 `0x3ff0000000000000`，FP32 为 `0x3f800000`，FP16 为 `0x3c00`，整数类型为整数 1。零为正零。
 
 设计要点：边界比较使用有符号整数，并且不回绕。因此当对角线小于等于 -ValidRow 时，下三角方向的所有元素都为零；而很大的正对角线使下三角方向的所有元素都为一。
 
 <!-- PTO-READER-BLOCK: tile-c-ttri-inputs-outputs role=inputs-outputs -->
 ## 操作数、形状与类型
 
-- `destination0` 是新分配的 Local RowMajor Tile，类型为 `FP32`、`FP16`、`S32`、`S16`、`U32` 或 `U16`。
+- `destination0` 是新分配的 Local RowMajor Tile，类型为 `FP64`、`FP32`、`FP16`、`S64`、`S32`、`S16`、`U64`、`U32` 或 `U16`。
 - `diagonal` 是从 RegSrc0 读取的有符号位移；它必须位于 -65535 到 65535 之间。
 - `flag0` 是从 RegSrc1 读取的方向：0 选择下三角，1 选择上三角。RegSrc2 与 RegDst 必须为零。
 
@@ -295,7 +295,7 @@ end;
 ## Block composition
 
 ```asm
-BSTART.SFU TTRI, FP32|FP16|S32|S16|U32|U16
+BSTART.SFU TTRI, FP64|FP32|FP16|S64|S32|S16|U64|U32|U16
 B.DATR all-zero (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional, default 1)
@@ -369,7 +369,7 @@ end;
 
 - TTRI is selected by the TEPL encoding carrier Mode 3 Function 7, canonically assembled with BSTART.SFU, and has no standalone opcode.
 - Exactly one terminating destination-only Local B.IOT supplies one newly allocated destination. Every source binding, a second B.IOT, B.IOS, or an unterminated binding stream is illegal.
-- The selected DataType is exactly FP32, FP16, S32, S16, U32, or U16. The destination is row-major with nonzero ValidRow and ValidCol, and Col is at least ValidCol.
+- The selected DataType is exactly FP64, FP32, FP16, S64, S32, S16, U64, U32, or U16. The destination is row-major with nonzero ValidRow and ValidCol, and Col is at least ValidCol.
 - A present B.IOR consumes RegSrc0 as signed diagonal and RegSrc1 as exact zero or one orientation. RegSrc2 and RegDst are zero.
 - Every explicit nonzero B.DATR field is illegal. PE_MASK zero is a strict no-op before GPR reads, descriptor checks, allocation, faults, or payload effects.
 
@@ -377,7 +377,7 @@ end;
 
 - For lower orientation, logical element [r,c] is typed one exactly when c is at most r plus diagonal; otherwise it is typed zero.
 - For upper orientation, logical element [r,c] is typed one exactly when c is at least r plus diagonal; otherwise it is typed zero.
-- Signed boundary comparison does not wrap. FP32 and FP16 use their exact positive-zero and positive-one encodings. Every physical coordinate outside the valid rectangle is undefined Null padding.
+- Signed boundary comparison does not wrap. FP64, FP32, and FP16 use their exact positive-zero and positive-one encodings. Every physical coordinate outside the valid rectangle is undefined Null padding.
 
 ## Memory effects and ordering
 

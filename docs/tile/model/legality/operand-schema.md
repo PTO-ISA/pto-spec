@@ -55,7 +55,7 @@ Design point: for the handlers that own source definedness, the generated dispat
 
 Legality runs before execution. The generated dispatcher calls the handler's `TileOperandsLegal_` predicate and raises `Fault_TileLegality` without calling the handler when it returns FALSE. The execute functions then assert a subset of the same conditions.
 
-Legality admits types that some numeric helpers assert against. Binary predicates admit TF32, HF32, E4M3, and E5M2 through `TileVecArithmeticDataTypeSupported`, but floating ADD, SUB, MUL, and DIV use `ScalarFPBinaryProfile`, which accepts only FP64, FP32, FP16, and BF16. Floating TREM and the SFU unary operations use helpers that accept only FP32, FP16, and BF16.
+Numeric legality is operation-specific. TADD and TDIV retain the broad 16-type domain, while their validated floating finite path covers `FP64`, `FP32`, `FP16`, and `BF16`; the pre-existing `TF32`, `HF32`, `E4M3`, and `E5M2` finite-result gap remains. TSUB, TMUL, TREM, TMIN, and TMAX use their narrower exact owner sets, with FP64 included where owned. In the SFU group, TEXP retains eight floating legality types but has the same four validated finite paths and four finite-result gaps; TLOG, TRECIP, TSQRT, and TRSQRT accept exactly those four executable types.
 
 `TileOperandsLegal_TRESHAPE`, `TileOperandsLegal_TINTERLEAVE`, and `TileOperandsLegal_TDEINTERLEAVE` are defined here but have no caller in `asl/`.
 

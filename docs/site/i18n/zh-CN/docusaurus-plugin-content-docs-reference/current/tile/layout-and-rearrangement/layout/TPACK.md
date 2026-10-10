@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/layout-and-rearrangement/layout/TPACK.asl`
 
-Pack selected raw byte prefixes from 8/16/32-bit Local CUBE source carriers into U8/U16/U32 destination words.
+Pack selected raw byte prefixes from 8/16/32-bit and M32 64-bit Local CUBE source carriers into U8/U16/U32/U64 destination words.
 
 ## Normative identity {#PTO-INST-TILE-TPACK}
 
@@ -21,7 +21,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `TPACK` 把两个 Local CUBE 源中对应 32 位字的低字节字段拼接成一个目标字。它重排原始字节，不执行任何数值转换。
 
-设计要点：`TPACK` 由 `BSTART.SFU` 以 TEPL Mode 3 Function 23（选择器 `0x077`）选中。`BSTART` 类型 `U8`、`U16` 或 `U32` 是目标类型；它不必与源类型一致。
+设计要点：`TPACK` 由 `BSTART.SFU` 以 TEPL Mode 3 Function 23（选择器 `0x077`）选中。`BSTART` 类型 `U8`、`U16`、`U32` 或 `U64` 是目标类型；它不必与源类型一致。
 
 <!-- PTO-READER-BLOCK: tile-tpack-mechanism role=mechanism -->
 ## 打包规则
@@ -35,9 +35,9 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tpack-inputs-outputs role=inputs-outputs -->
 ## 输入与结果
 
-- `source0` 与 `source1` 是 Local 数值 `CUBE_M16` 或 `CUBE_M32` Tile，元素为非打包的 8、16 或 32 位。它们共用一个布局、相同的有效行数与每行相同的字数；类型可以不同。
+- `source0` 与 `source1` 是 Local 数值 CUBE Tile，元素为非打包 8、16、32 位或 M32 64 位。它们共用一个布局、相同有效行数与每行相同 raw 32 位 word 数；类型可以不同。
 - `scalar0` 是来自一条 `B.IOR` 的打包控制字；RegSrc1、RegSrc2 与 RegDst 为零。
-- `destination0` 是新的，类型为 `BSTART` 类型，布局与有效行与源相同，有效列数为 `words per row x elements per word`：`U8` 为 4，`U16` 为 2，`U32` 为 1。
+- `destination0` 是新的。U8/U16/U32 每个 raw word 分别生成 4/2/1 个元素。U64 要求 `CUBE_M32`、偶数 raw-word 数以及每个完整低/高 pair 一个逻辑列。
 
 设计要点：目标形状由源描述符推导，而不是来自 `B.DIM`。因此宏形式没有形状字段，静态反汇编器无法打印 Row 或 Col。
 
@@ -46,7 +46,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 控制与源验证都在发布之前完成。每对源字产生一个完整的目标字，每个有效目标元素都变为已定义，填充为 `Null`。
 
-存在 ExecutionMask 时，位于 (row, word index) 的一个掩码位控制整个目标字组，即 4 个 `U8`、2 个 `U16` 或 1 个 `U32` 元素；非活动组不读取任何源字节，并接收该掩码规定的零值或合并值。源保持不变，该操作没有内存或数值状态效果。
+存在 ExecutionMask 时，raw word 分别受控。对 U64，低、高 word 掩码位可以不同；每个活动半部独立打包，两个半部再合成一个一致的 64 位发布，非活动半部由 ZERO 或 MERGE 提供。
 
 <!-- PTO-READER-BLOCK: tile-tpack-constraints role=constraints -->
 ## 被拒绝的情况
@@ -112,7 +112,7 @@ end;
 ## Block composition
 
 ```asm
-BSTART.SFU TPACK, U8/U16/U32
+BSTART.SFU TPACK, U8/U16/U32/U64
 B.DATR Layout (optional)
 B.DIM LB0/LB1/LB2 (optional)
 B.IOT source0, source1, ->destination
@@ -134,7 +134,8 @@ pure func InstructionContractDataTypeLegal_TPACK(
 begin
     return data_type == TileDataType_U8 ||
            data_type == TileDataType_U16 ||
-           data_type == TileDataType_U32;
+           data_type == TileDataType_U32 ||
+           data_type == TileDataType_U64;
 end;
 
 readonly func InstructionContractOperandsLegal_TPACK(
@@ -161,9 +162,9 @@ end;
 
 ## Legality
 
-- TPACK accepts Local Numeric CUBE_M16 or CUBE_M32 source backing with non-packed 8/16/32-bit elements; source layouts and valid rows match and RawWordSlotsPerRow is equal.
-- BSTART selects exactly U8, U16, or U32 for the fresh destination. The control selects low-byte prefixes of 1..3 bytes per source word with total width at most four.
-- Only selected source bytes are read. Each selected byte is logically valid and its containing element is defined; each paired 32-bit word produces one complete zero-filled destination word.
+- TPACK accepts Local Numeric CUBE_M16 or CUBE_M32 source backing with non-packed 8/16/32-bit or M32 64-bit elements; source layouts and valid rows match and RawWordSlotsPerRow is equal.
+- BSTART selects U8, U16, U32, or U64 for the fresh destination. The control selects low-byte prefixes of 1..3 bytes per source word with total width at most four.
+- Only selected source bytes are read. Each selected byte is logically valid and its containing element is defined; each paired 32-bit word produces one zero-filled result word; U64 joins complete low/high pairs and rejects odd tails.
 
 ## State effects
 
@@ -186,4 +187,4 @@ end;
 
 ## Examples
 
-- BSTART.SFU TPACK, U8/U16/U32; B.DATR Layout; B.IOT source0, source1, ->destination; B.IOR a0; BSTOP
+- BSTART.SFU TPACK, U8/U16/U32/U64; B.DATR Layout; B.IOT source0, source1, ->destination; B.IOR a0; BSTOP

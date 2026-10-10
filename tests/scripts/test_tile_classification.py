@@ -10,7 +10,7 @@ from scripts.instruction_docs import ROOT, load_instruction_index
 
 EXPECTED_CLASSES = {
     "elementwise-tile-tile": "TABS TADD TAND TCMP TCVT TDIV TEXP TEXPDIF TFMA TLOG TMAX TMIN TMUL TNEG TNOT TOR TRECIP TRELU TREM TRSQRT TSEL TSHL TSHR TSQRT TSUB TXOR",
-    "tile-scalar-and-immediate": "TADDS TANDS TCMPS TDIVS TEXPANDS TMAXS TMINS TMULS TORS TREMS TSELS TSHLS TSHRS TSUBS TXORS",
+    "tile-scalar-and-immediate": "TADDS TANDS TCMPS TDIVS TEXPANDS TLEA TMAXS TMINS TMULS TORS TREMS TSELS TSHLS TSHRS TSUBS TXORS",
     "reduce-and-expand": "TCOLARGMAX TCOLARGMIN TCOLEXPAND TCOLEXPANDADD TCOLEXPANDDIV TCOLEXPANDEXPDIF TCOLEXPANDMAX TCOLEXPANDMIN TCOLEXPANDMUL TCOLEXPANDSUB TCOLMAX TCOLMIN TCOLPROD TCOLSUM TROWARGMAX TROWARGMIN TROWEXPAND TROWEXPANDADD TROWEXPANDDIV TROWEXPANDEXPDIF TROWEXPANDMAX TROWEXPANDMIN TROWEXPANDMUL TROWEXPANDSUB TROWMAX TROWMIN TROWPROD TROWSUM",
     "memory-and-data-movement": "MGATHER_ADD MGATHER_AND MGATHER_CAS MGATHER_DEC MGATHER_EXCH MGATHER_INC MGATHER_MAX MGATHER_MIN MGATHER_OR MGATHER_XOR GMOV MGATHER MGATHER_MASK MSCATTER MSCATTER_MASK MSCATTER_ADD MSCATTER_AND MSCATTER_DEC MSCATTER_INC MSCATTER_MAX MSCATTER_MIN MSCATTER_OR MSCATTER_POPC MSCATTER_XOR TLOAD TPREFETCH TSTORE",
     "matrix-and-matrix-vector": "TGEMV TGEMV_ACC TGEMV_BIAS TGEMV_MX TGEMV_MX_ACC TGEMV_MX_BIAS TMATMUL TMATMUL_ACC TMATMUL_BIAS TMATMUL_MX TMATMUL_MX_ACC TMATMUL_MX_BIAS",
@@ -29,7 +29,7 @@ SFU_ELEMENTWISE = frozenset(
 
 EXPECTED_VEC = frozenset(
     "TABS TADD TADDS TAND TANDS TCMP TCMPS TCVT TEXPANDS TFMA "
-    "TMAX TMAXS TMIN TMINS TMUL TMULS TNEG TNOT TOR TORS TRELU "
+    "TLEA TMAX TMAXS TMIN TMINS TMUL TMULS TNEG TNOT TOR TORS TRELU "
     "TSEL TSELS TSHL TSHLS TSHR TSHRS TSUB TSUBS TXOR TXORS".split()
 )
 
@@ -53,7 +53,7 @@ class TileClassificationTest(unittest.TestCase):
             Counter(record.classification[0] for record in self.tile),
             {
                 "elementwise-tile-tile": 26,
-                "tile-scalar-and-immediate": 15,
+                "tile-scalar-and-immediate": 16,
                 "reduce-and-expand": 28,
                 "memory-and-data-movement": 27,
                 "matrix-and-matrix-vector": 12,
@@ -76,7 +76,7 @@ class TileClassificationTest(unittest.TestCase):
             if record.mnemonic in SFU_ELEMENTWISE:
                 self.assertEqual(engine, "SFU")
 
-        self.assertEqual(by_engine, {"VEC": 31, "SFU": 47, "TLSU": 28, "CUBE": 12})
+        self.assertEqual(by_engine, {"VEC": 32, "SFU": 47, "TLSU": 28, "CUBE": 12})
 
         actual_vec = {record.mnemonic for record in self.tile if record.engine == "VEC"}
         self.assertEqual(actual_vec, EXPECTED_VEC)

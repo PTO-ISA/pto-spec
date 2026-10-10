@@ -41,7 +41,7 @@ Design point: every active destination byte is checked before any effect: its in
 - `source2` is the index Tile: `U8`, the same layout and valid rows, one valid column per valid destination byte, and the same cell count. It must differ from both data sources.
 - `destination0` is fresh and keeps the source type, valid shape, and layout. It must differ from every source.
 
-The data type may be any CUBE type except a 64-bit type. The first `B.IOT` carries `source0` and `source1`; the second carries the index Tile and the destination. `B.IOR` is present only when a GPR carries the ExecutionMask, and `B.DATR` may carry only a `Layout`.
+The data type may be any supported CUBE carrier; 64-bit carriers require `CUBE_M32` double-CELL descriptors. The first `B.IOT` carries `source0` and `source1`; the second carries the index Tile and the destination.
 
 <!-- PTO-READER-BLOCK: tile-tpermute-effects role=effects -->
 ## Effects
@@ -53,7 +53,7 @@ Under an ExecutionMask, an inactive destination element reads no index or source
 <!-- PTO-READER-BLOCK: tile-tpermute-constraints role=constraints -->
 ## What is rejected
 
-A non-CUBE_M16/M32 layout, a 64-bit type, a mismatched type, shape, layout, or cell count, an index Tile that is not `U8` or aliases a data source, a destination that aliases a source, an out-of-range or undefined index, or an undefined selected source byte raises `Fault_TileLegality` before any destination effect.
+A non-CUBE_M16/M32 layout, a 64-bit `CUBE_M16` carrier, a mismatched type, shape, layout, or cell count, an invalid index Tile, an aliasing destination, or an undefined selected byte raises `Fault_TileLegality` before any destination effect.
 
 A malformed binding structure raises `Fault_BundleControl`; [cell rearrangement schema](../../../block/model/dispatch/cell-rearrangement-schema.md) owns that check.
 
@@ -138,8 +138,7 @@ end;
 pure func InstructionContractDataTypeLegal_TPERMUTE(
     data_type: TileDataType) => boolean
 begin
-    return TileCubeDataTypeSupported(data_type) &&
-           TileElementBits(data_type) != 64;
+    return TileCubeDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TPERMUTE(
@@ -167,10 +166,10 @@ end;
 
 ## Legality
 
-- TPERMUTE accepts only Local CUBE_M16 or CUBE_M32 data Tiles with matching dtype and geometry.
+- TPERMUTE accepts Local CUBE_M16 data Tiles and Local CUBE_M32 data Tiles, including FP64/S64/U64 with matching dtype and geometry.
 - indices is Local U8 with the same CUBE layout and supplies one byte index for every valid destination byte.
 - The destination is fresh; source0 and source1 may alias, while indices is distinct from both sources.
-- Raw bytes are rearranged without numerical conversion.
+- Raw bytes are rearranged without numerical conversion, preserving each M32 64-bit element as two 32-bit CELL groups.
 
 ## State effects
 

@@ -62,9 +62,9 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tmin-constraints role=constraints -->
 ## 类型、布局与故障边界
 
-ASL 合法性谓词 `TileVecArithmeticDataTypeSupported` 接受 16 种类型：`FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16` 与 `U8`。下方生成的合法性列表更窄，只列出 `S32`、`U32`、`FP32`、`S16`、`U16`、`FP16`、`BF16`、`S8` 与 `U8`。需要同时满足两者的代码应使用较窄列表中的类型。
+`TMIN` 恰好接受 `FP64`、`S64`、`U64`、`S32`、`U32`、`FP32`、`S16`、`U16`、`FP16`、`BF16`、`S8` 与 `U8`。每个被接受的类型都有可执行有序最小值结果。
 
-默认布局为 `RowMajor`。显式 `Layout` 可以选择 `CUBE_M16` 或 `CUBE_M32`，所有操作数必须使用同一布局。`CUBE_N8`、Shared Tile 以及混合布局均非法。
+默认布局为 `RowMajor`。显式 `Layout` 可以选择 `CUBE_M16` 或 `CUBE_M32`，所有操作数必须使用同一布局。`CUBE_N8`、Shared Tile 以及混合布局均非法。 在 CUBE 布局中，64 位操作类型只在 `CUBE_M32` 中合法；`CUBE_M16` 会拒绝。
 
 每个有效源元素都必须已定义；对浮点类型，还必须是所选 `DataType` 的有效编码。绑定格式错误、维度缺失或为零、源不匹配、`DataType` 不受支持、编码无效或目标容量无效时，会在任何目标效果之前引发 `Fault_TileLegality`。
 
@@ -198,10 +198,11 @@ end;
 
 - TMIN is BSTART.VEC Mode 0 Function 12 and has no standalone opcode.
 - Exactly one terminating Local B.IOT supplies two ordered Local sources and one new Local destination; B.IOR and B.IOS are illegal.
-- DataType is one of S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.
+- DataType is one of FP64, S64, U64, S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.
 - B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.
 - Floating source encodings invalid for the selected operation reject before allocation or destination effects; PE_MASK zero is a strict no-op.
 - The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

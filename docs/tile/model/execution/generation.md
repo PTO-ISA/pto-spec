@@ -87,18 +87,23 @@ row 2: 1 1 1 0
 
 pure func TileTCIDataTypeSupported(data_type: TileDataType) => boolean
 begin
-    return data_type == TileDataType_S32 ||
+    return data_type == TileDataType_S64 ||
+           data_type == TileDataType_S32 ||
            data_type == TileDataType_S16 ||
+           data_type == TileDataType_U64 ||
            data_type == TileDataType_U32 ||
            data_type == TileDataType_U16;
 end;
 
 pure func TileTTRIDataTypeSupported(data_type: TileDataType) => boolean
 begin
-    return data_type == TileDataType_FP32 ||
+    return data_type == TileDataType_FP64 ||
+           data_type == TileDataType_FP32 ||
            data_type == TileDataType_FP16 ||
+           data_type == TileDataType_S64 ||
            data_type == TileDataType_S32 ||
            data_type == TileDataType_S16 ||
+           data_type == TileDataType_U64 ||
            data_type == TileDataType_U32 ||
            data_type == TileDataType_U16;
 end;
@@ -106,6 +111,8 @@ end;
 pure func TileTTRIOneEncoding(data_type: TileDataType) => Word
 begin
     case data_type of
+        when TileDataType_FP64 =>
+            return Zeros{PTO_XLEN} + 0x3ff0000000000000;
         when TileDataType_FP32 =>
             return Zeros{PTO_XLEN} + 0x3f800000;
         when TileDataType_FP16 =>

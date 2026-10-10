@@ -59,7 +59,7 @@ Design point: omitting `B.DATR` selects `Null`, while an explicit `PadValue` cod
 <!-- PTO-READER-BLOCK: tile-c-trowexpandexpdif-constraints role=constraints -->
 ## Legality, fault, and order boundaries
 
-`TROWEXPANDEXPDIF` and `TCOLEXPANDEXPDIF` accept exactly `(FP16,FP16)`, `(BF16,BF16)`, `(FP32,FP32)`, `(FP16,FP32)`, and `(BF16,FP32)` as `(SrcDataType,DstDataType)` pairs. `BSTART` selects `SrcDataType`; an omitted `B.DATR` or an explicit `DataType` equal to `DTYPE_NONE` selects `DstDataType` equal to `SrcDataType`, while a concrete `B.DATR` `DataType` selects `DstDataType`.
+`TROWEXPANDEXPDIF` and `TCOLEXPANDEXPDIF` accept exactly `(FP64,FP64)`, `(FP32,FP32)`, `(FP16,FP16)`, `(BF16,BF16)`, `(FP16,FP32)`, and `(BF16,FP32)` as `(SrcDataType,DstDataType)` pairs. `BSTART` selects `SrcDataType`; an omitted `B.DATR` or `DTYPE_NONE` makes `DstDataType` inherit it.
 
 Design point: an encoded `DataType` of zero names `FP64` and is never absence, so inheritance needs the separate `DTYPE_NONE` sentinel; a program that wants the source type must omit `B.DATR` or encode `DTYPE_NONE` deliberately.
 
@@ -67,7 +67,7 @@ Design point: an encoded `DataType` of zero names `FP64` and is never absence, s
 
 - A malformed binding stream, a missing or zero dimension, an unsupported DataType, an unsupported or mixed layout, an undefined source element, a mismatched source geometry, or an invalid consumed operation-view encoding raises `Fault_TileLegality` before effects. An unrepresentable destination shape, insufficient `TSize`, an unavailable renamed destination, or exhausted Tile capacity raises `Fault_TileAllocation` before publication.
 
-Design point: the exponential stage accepts only `FP32`, `FP16`, and `BF16`, and every legal pair of this operation maps onto those types, so legality and the executable definition agree on the accepted pair set.
+Design point: the exponential stage accepts `FP64`, `FP32`, `FP16`, and `BF16`, and every legal pair maps onto those executable types. A 64-bit CUBE form requires `CUBE_M32`.
 
 Design point: for `CUBE_M32` and `CUBE_M16`, `B.DATR.RMode` is the unsigned `BroadcastByteOffset` and not a numeric rounding selector, `RowMajor` requires it to be zero, and the offset must be element-aligned and stay inside one `CELL` slice.
 
@@ -207,7 +207,8 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TROWEXPANDEXPDIF(
     data_type: TileDataType) => boolean
 begin
-    return data_type == TileDataType_FP16 ||
+    return data_type == TileDataType_FP64 ||
+           data_type == TileDataType_FP16 ||
            data_type == TileDataType_BF16 ||
            data_type == TileDataType_FP32;
 end;
@@ -257,7 +258,7 @@ end;
 
 ## Legality
 
-- TROWEXPANDEXPDIF and TCOLEXPANDEXPDIF accept exactly (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32) as (SrcDataType,DstDataType) pairs.
+- TROWEXPANDEXPDIF and TCOLEXPANDEXPDIF accept exactly (FP64,FP64), (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32) as (SrcDataType,DstDataType) pairs.
 - BSTART DataType selects SrcDataType; omitted B.DATR or explicit DataType=DTYPE_NONE selects DstDataType=SrcDataType, while a concrete B.DATR DataType selects DstDataType. Each source backing may differ from SrcDataType only through an equal-width non-packed carrier view; raw bits are interpreted as SrcDataType without retagging or numeric conversion.
 - Mixed FP16/BF16 to FP32 widens the operation-view source bits exactly to FP32 before FP32 subtraction and FP32 exponential. Same-type pairs retain their selected type.
 - The destination is newly allocated with DstDataType; no destination alias or source descriptor retag is introduced.
@@ -266,7 +267,9 @@ end;
 - Without ExecutionMask, each source valid region remains fully defined. With ExecutionMask, only full-shape source coordinates consumed by active destinations and the selected broadcast element for each row with an active destination coordinate must be defined. Numeric encoding validation uses the source operation DataType for consumed full-shape elements and the selected broadcast element; unselected broadcast columns are not encoding-validated. Inactive rows contribute no source read, encoding validation, or numeric-status flags.
 - Layout, PadValueOrByteId, DataType, and operation-specific RMode are applicable as encoded by the selected layout; RMode means BroadcastByteOffset only for CUBE_M16/M32 and must be zero for RowMajor. B.IOR and B.IOS are illegal.
 - All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
-- For CUBE_M32/CUBE_M16, the source-operation-typed BroadcastSlot is BroadcastByteOffset DIV ElementBytes. The offset must be less than the 4-byte M32 or 8-byte M16 per-row CELL slice, aligned to ElementBytes, and select a slot below both TileCubeCellColumns(Layout, SourceOperationDataType) and BroadcastTile.ValidColumns. The selector addresses only the first CELL of the bound broadcast Tile; B.SUBVIEW selects a later CELL/range when needed. RowMajor requires RMode zero.
+- For CUBE_M32/CUBE_M16, the source-operation-typed BroadcastSlot is BroadcastByteOffset DIV ElementBytes. The offset must be less than the 4-byte lower-width M32 or 8-byte M16 per-row CELL slice (a b64 M32 group spans 8 bytes across the pair), aligned to ElementBytes, and select a slot below both TileCubeCellColumns(Layout, SourceOperationDataType) and BroadcastTile.ValidColumns. The selector addresses only the first logical CELL group of the bound broadcast Tile, including both planes for b64 M32; B.SUBVIEW selects a later CELL/range when needed. RowMajor requires RMode zero.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
+- FP64 source and FP64 destination form an accepted same-type pair; mixed FP64 type pairs are not added.
 
 ## State effects
 

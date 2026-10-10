@@ -52,7 +52,7 @@ The destination descriptor, the valid-region results, the padding, and every ele
 <!-- PTO-READER-BLOCK: tile-tnot-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The accepted data-type set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Floating and packed formats are rejected. The layout is `RowMajor` by default, or `CUBE_M16` or `CUBE_M32` when an explicit `Layout` selects it; `CUBE_N8`, Shared Tiles, and mixed layouts are illegal.
+The accepted data-type set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Floating and packed formats are rejected. The layout is `RowMajor` by default, or `CUBE_M16` or `CUBE_M32` when an explicit `Layout` selects it; `CUBE_N8`, Shared Tiles, and mixed layouts are illegal. Among CUBE layouts, a 64-bit operation type is legal only in `CUBE_M32`; `CUBE_M16` rejects it.
 
 Malformed bindings, missing or zero dimensions, undefined or mismatched source state, an unsupported `DataType`, a non-selected layout, or a nondefault `CMode`, `Sat`, `Canonicalize`, secondary `DataType`, or `RMode` raises `Fault_TileLegality` before any effect. An unrepresentable destination shape or insufficient `TSize` capacity raises `Fault_TileAllocation` before allocation.
 
@@ -177,6 +177,7 @@ end;
 - Source and destination match physical shape, valid shape, selected layout, DataType, and PE_MASK; the source valid region is fully defined.
 - B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal.
 - PE_MASK zero is a strict no-op before dimensions, source access, schema checks, or destination allocation.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

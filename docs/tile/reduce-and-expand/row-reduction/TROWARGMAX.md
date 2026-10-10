@@ -41,7 +41,7 @@ Design point: initializing the accumulator from the first element makes index 0 
 
 - `destination0` is a newly allocated Local `U32` Tile whose logical shape is 7 valid rows by one valid column, one index per valid row; its other physical coordinates are padding coordinates.
 
-- The destination uses the source layout, and only `RowMajor`, `CUBE_M16`, and `CUBE_M32` are admitted.
+- The destination uses the source layout, and only `RowMajor`, `CUBE_M16`, and `CUBE_M32` are admitted. A 64-bit CUBE operand requires the `CUBE_M32` double-CELL mapping; `CUBE_M16` rejects it.
 
 - The operands share one `PE_MASK`. `PE_MASK=0000` is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
@@ -59,7 +59,7 @@ Design point: omitting `B.DATR` selects `Null`, while an explicit `PadValue` cod
 <!-- PTO-READER-BLOCK: tile-c-trowargmax-constraints role=constraints -->
 ## Legality, fault, and order boundaries
 
-The accepted operation types are `S32`, `U32`, `FP32`, `S16`, `U16`, `FP16`, `BF16`, `S8`, and `U8`. The destination DataType is `U32` regardless of the source type. The source may be stored with a different same-width, non-packed backing type, but `RCPE6M2` must never be a reduction backing, and an active bundle must resolve the operation DataType from `BSTART` or reject.
+The accepted operation types are `FP64`, `S64`, `U64`, `S32`, `U32`, `FP32`, `S16`, `U16`, `FP16`, `BF16`, `S8`, and `U8`. The destination DataType is `U32` regardless of the source type. The source may be stored with a different same-width, non-packed backing type, but `RCPE6M2` must never be a reduction backing, and an active bundle must resolve the operation DataType from `BSTART` or reject.
 
 - Exactly one terminating Local `B.IOT` supplies the source and the new destination, so `B.IOR`, `B.IOS`, a second `B.IOT`, a nonterminating binding, and a destination that names the source are illegal.
 
@@ -202,12 +202,13 @@ end;
 
 - TROWARGMAX is selected by the TEPL raw encoding carrier Mode 2 Function 12; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.
 - Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.
-- The operation DataType selected by BSTART is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.
+- The operation DataType selected by BSTART is exactly FP64, S64, U64, S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.
 - The destination DataType is U32 regardless of source DataType. The destination contains one logical index per valid source row. Its capacity is derived from the U32 destination physical footprint and need not equal source capacity; for U8 or U16 sources it may be strictly greater.
 - The source is a fully defined persistent numeric Tile with a legal descriptor in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; its stored backing DataType MAY differ from the operation DataType only when the unchanged TileCarrierWidthCompatible relation admits equal-width, non-packed interpretation. RCPE6M2 MUST NOT be a reduction backing. Every valid source coordinate MUST be defined and encoding-valid under the operation DataType. All valid source coordinates are checked and included in the reduction; Local CUBE ExecutionMask is unsupported and MUST reject before effects, including when mask state is injected directly into the model. For a cross-type view, backing encodings are not independently validated. The source descriptor, backing DataType, and payload persist unchanged without retagging or numeric conversion. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.
 - The destination has ValidRow equal to source.ValidRow and logical ValidCol equal to one. For RowMajor, Rows equals DerivedTileRows(DstCapacity, 1, DstDataType) and Columns equals one. For CUBE_M16/M32, Columns equals source Columns and Rows equals the minimum legal physical Rows covering Dst.ValidRows (16 for M16, 32 for M32).
 - Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 - An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

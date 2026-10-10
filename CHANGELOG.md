@@ -11,7 +11,12 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ### Cross-cutting
 - [ADR-BLOCK-0012](docs/status/decisions/ADR-BLOCK-0012-block-attributes-and-lifecycle.md): Block attributes and lifecycle
+- [ADR-CUBE-0005](docs/status/decisions/ADR-CUBE-0005-gm-local-cube-layout-transport.md): GM/Local CUBE Layout Transport
 - [ADR-TILE-0008](docs/status/decisions/ADR-TILE-0008-tile-elementwise-and-irregular-operations.md): Tile elementwise and irregular operations
+- [ADR-TILE-0009](docs/status/decisions/ADR-TILE-0009-tile-scalar-and-immediate-operations.md): Tile scalar and immediate operations
+
+### Tile
+- [ADR-CUBE-0004](docs/status/decisions/ADR-CUBE-0004-local-cube-cell-state-and-geometry.md): Local CUBE CELL State and Geometry
 
 ## Release 0.58.7.0
 

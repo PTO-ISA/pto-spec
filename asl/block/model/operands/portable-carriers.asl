@@ -449,7 +449,7 @@ begin
              TileHandler_GMOV,
              TileHandler_MGATHER,
              TileHandler_MGATHER_MASK,
-             TileHandler_TCI,
+             TileHandler_TCI, TileHandler_TLEA,
              TileHandler_TCVT,
              TileHandler_TFMA,
              TileHandler_TGATHER,

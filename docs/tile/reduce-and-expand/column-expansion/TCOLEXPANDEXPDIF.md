@@ -59,7 +59,7 @@ Design point: omitting `B.DATR` selects `Null`, while an explicit `PadValue` cod
 <!-- PTO-READER-BLOCK: tile-tcolexpandexpdif-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-`TROWEXPANDEXPDIF` and `TCOLEXPANDEXPDIF` accept exactly `(FP16,FP16)`, `(BF16,BF16)`, `(FP32,FP32)`, `(FP16,FP32)`, and `(BF16,FP32)` as `(SrcDataType,DstDataType)` pairs. `BSTART` selects `SrcDataType`; an omitted `B.DATR` or an explicit `DataType` equal to `DTYPE_NONE` selects `DstDataType` equal to `SrcDataType`, while a concrete `B.DATR` `DataType` selects `DstDataType`.
+`TROWEXPANDEXPDIF` and `TCOLEXPANDEXPDIF` accept exactly `(FP64,FP64)`, `(FP32,FP32)`, `(FP16,FP16)`, `(BF16,BF16)`, `(FP16,FP32)`, and `(BF16,FP32)` as `(SrcDataType,DstDataType)` pairs. `BSTART` selects `SrcDataType`; an omitted `B.DATR` or `DTYPE_NONE` makes `DstDataType` inherit it.
 
 Design point: an encoded `DataType` of zero names `FP64` and is never absence, so inheritance needs the separate `DTYPE_NONE` sentinel; a program that wants the source type must omit `B.DATR` or encode `DTYPE_NONE` deliberately.
 
@@ -67,7 +67,7 @@ Design point: an encoded `DataType` of zero names `FP64` and is never absence, s
 
 - A malformed binding stream, a missing or zero dimension, an unsupported DataType, an unsupported or mixed layout, an undefined source element, a mismatched source geometry, or an invalid consumed operation-view encoding raises `Fault_TileLegality` before effects. An unrepresentable destination shape, insufficient `TSize`, an unavailable renamed destination, or exhausted Tile capacity raises `Fault_TileAllocation` before publication.
 
-Design point: the exponential stage accepts only `FP32`, `FP16`, and `BF16`, and every legal pair of this operation maps onto those types, so legality and the executable definition agree on the accepted pair set.
+Design point: the exponential stage accepts `FP64`, `FP32`, `FP16`, and `BF16`, and every legal pair maps onto those executable types. A 64-bit CUBE form requires `CUBE_M32`.
 
 <!-- PTO-READER-BLOCK: tile-tcolexpandexpdif-example role=example -->
 ## Non-normative worked example
@@ -203,7 +203,8 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TCOLEXPANDEXPDIF(
     data_type: TileDataType) => boolean
 begin
-    return data_type == TileDataType_FP16 ||
+    return data_type == TileDataType_FP64 ||
+           data_type == TileDataType_FP16 ||
            data_type == TileDataType_BF16 ||
            data_type == TileDataType_FP32;
 end;
@@ -252,7 +253,7 @@ end;
 
 ## Legality
 
-- TROWEXPANDEXPDIF and TCOLEXPANDEXPDIF accept exactly (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32) as (SrcDataType,DstDataType) pairs.
+- TROWEXPANDEXPDIF and TCOLEXPANDEXPDIF accept exactly (FP64,FP64), (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32) as (SrcDataType,DstDataType) pairs.
 - BSTART DataType selects SrcDataType; omitted B.DATR or explicit DataType=DTYPE_NONE selects DstDataType=SrcDataType, while a concrete B.DATR DataType selects DstDataType. Each source backing may differ from SrcDataType only through an equal-width non-packed carrier view; raw bits are interpreted as SrcDataType without retagging or numeric conversion.
 - Mixed FP16/BF16 to FP32 widens the operation-view source bits exactly to FP32 before FP32 subtraction and FP32 exponential. Same-type pairs retain their selected type.
 - The destination is newly allocated with DstDataType; no destination alias or source descriptor retag is introduced.
@@ -261,6 +262,8 @@ end;
 - All source valid regions are fully defined and Numeric in the selected RowMajor, CUBE_M16, or CUBE_M32 layout. Full-shape and selected broadcast operation-view payloads must have valid SrcDataType encodings; ignored extra broadcast elements need definedness but are not encoding-validated.
 - Layout, PadValueOrByteId, and DataType are the only applicable nonzero B.DATR fields. B.IOR and B.IOS are illegal.
 - All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
+- FP64 source and FP64 destination form an accepted same-type pair; mixed FP64 type pairs are not added.
 
 ## State effects
 

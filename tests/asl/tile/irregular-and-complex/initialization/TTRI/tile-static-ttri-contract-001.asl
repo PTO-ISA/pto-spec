@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: irregular-and-complex/initialization
-    // block: BSTART.SFU TTRI, FP32|FP16|S32|S16|U32|U16 | B.DATR all-zero (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional, default 1) | B.DIM LB2=Col (optional, default ValidCol) | B.IOR Diagonal, Orientation (optional; omission selects 0 and lower) | B.IOT mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
+    // block: BSTART.SFU TTRI, FP64|FP32|FP16|S64|S32|S16|U64|U32|U16 | B.DATR all-zero (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional, default 1) | B.DIM LB2=Col (optional, default ValidCol) | B.IOR Diagonal, Orientation (optional; omission selects 0 and lower) | B.IOT mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
     assert DecodeTileOperation(TileDecode_TEPL, '000001100111') == 69;
     assert TileOperationOfIndex(69) == TileOperation_TTRI;
     assert TileHandlerOfIndex(69) == TileHandler_TTRI;

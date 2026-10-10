@@ -55,9 +55,9 @@ Design point: definedness is copied rather than recomputed, so a later consumer 
 <!-- PTO-READER-BLOCK: tile-gmov-constraints role=constraints -->
 ## Types, layouts, and faults
 
-`InstructionContractDataTypeLegal_GMOV` accepts exactly the types `TileCarrierOrPackedBaselineDataTypeSupported` admits: non-four-bit carriers up to 4 bytes wide, plus the packed four-bit types. `B64` carriers such as `U64` and `FP64` are outside that set.
+`InstructionContractDataTypeLegal_GMOV` accepts exactly the types `TileCarrierOrPackedBaselineDataTypeSupported` admits: every non-packed carrier through 64 bits, plus the packed four-bit baseline. A 64-bit source remains legal in `RowMajor`; among CUBE layouts it requires `CUBE_M32` double-CELL storage.
 
-Source and destination must agree on data type, layout, storage kind, rows, columns, valid rows, and valid columns (`TileOperandsLegal_GMOV`). The layout must be `RowMajor`, `CUBE_M16`, or `CUBE_M32`; `CUBE_N8` and Shared operands are illegal.
+Source and destination must agree on data type, layout, storage kind, rows, columns, valid rows, and valid columns (`TileOperandsLegal_GMOV`). The layout must be `RowMajor`, `CUBE_M16`, or `CUBE_M32`; `CUBE_N8` and Shared operands are illegal. A 64-bit CUBE operand requires the `CUBE_M32` double-CELL mapping; `CUBE_M16` rejects it.
 
 A `peer_tid` outside `0..3` in any PE, an incomplete Core4 source, a `B.DIM` value other than `1`, a `TSize` mismatch, a surplus or nonterminating binding, or a `B.IOS` raises `Fault_TileLegality` before the copy, and a failed collective preflight allocates and writes no destination.
 
@@ -170,6 +170,7 @@ end;
 - Exactly one terminating Local source-plus-destination B.IOT is required. Its destination TSize equals the source per-PE capacity.
 - Any nonzero PE_MASK is legal; it selects destination writes but not rendezvous or source readiness. Mask zero is a strict no-op.
 - All four peer-resolved source fragments are ready before any selected request; each private peer_tid is 0..3 and may repeat. Local RowMajor, CUBE_M16, and CUBE_M32 forms preserve one selected layout; CUBE_N8 and Shared are illegal.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

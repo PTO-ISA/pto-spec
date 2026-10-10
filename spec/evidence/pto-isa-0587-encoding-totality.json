@@ -1,6 +1,6 @@
 {
   "contract_status_counts": {
-    "reviewed-complete": 118
+    "reviewed-complete": 119
   },
   "cube": {
     "function_map": {
@@ -55,12 +55,12 @@
     "unknown_or_reserved_selector": "TileExecution_Rejected"
   },
   "encoding_abi": "pto-isa-0.58.7-mode-function-v1",
-  "encoding_projection_sha256": "9c49cdfa79a4eda6b27c1548bfd06ef681b6189f7d02d466ddfd43f59993b93d",
+  "encoding_projection_sha256": "2fda3ba1a0147ddae3b3a2dbe98bfb8ba9b592862850850652cd5af79752e93b",
   "family_counts": {
     "CUBE": 12,
-    "TEPL": 78,
+    "TEPL": 79,
     "TLSU": 28,
-    "total": 118
+    "total": 119
   },
   "negative_raw_vectors": [
     {
@@ -367,6 +367,7 @@
         11,
         12,
         13,
+        14,
         26,
         27
       ],
@@ -454,18 +455,18 @@
     },
     "mode_counts": {
       "0": 26,
-      "1": 15,
+      "1": 16,
       "2": 28,
       "3": 9
     },
     "raw_space": {
-      "accepted": 1950,
-      "classification_sha256": "d35f1e36066d7de8044e83d2460162eba7025251f7fed3235c74eb832ef1ff82",
+      "accepted": 1975,
+      "classification_sha256": "a4969995804c3381531c6b0d2363bb2ad6a1daa6fb56709a7f2aa429be420e51",
       "illegal": 128,
-      "reserved": 2018,
+      "reserved": 1993,
       "total": 4096
     },
-    "selector_count": 78
+    "selector_count": 79
   },
   "tlsu": {
     "function_map": {

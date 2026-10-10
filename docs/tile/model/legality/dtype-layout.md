@@ -33,7 +33,7 @@ The main type sets are:
 - `TileVecArithmeticDataTypeSupported`: FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, and the signed and unsigned 8, 16, 32, and 64-bit integers.
 - `TileVecScalarIntegerDataTypeSupported`: the eight signed and unsigned integer types S8 to U64.
 - `TileFloatingElementwiseDataTypeSupported`: FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2.
-- `TileCarrierOnlyDataTypeSupported`: non-packed types of at most 4 bytes, so 64-bit types are excluded.
+- `TileCarrierOnlyDataTypeSupported`: every non-packed type up to 8 bytes, including raw 64-bit carriers.
 - `TileExpdifTypePairLegal`: FP16 to FP16 or FP32, BF16 to BF16 or FP32, and FP32 to FP32.
 
 `TileElementwiseLayoutSupported` accepts RowMajor, CUBE_M16, and CUBE_M32.
@@ -56,7 +56,7 @@ Design point: CUBE_N8 is not an elementwise layout. The source comment states it
 <!-- PTO-READER-BLOCK: tile-model-legality-dtype-layout-boundaries role=boundaries -->
 ## Architectural boundaries
 
-These tables say what legality admits. They do not promise that every admitted type has a numeric result. For example, `TileVecArithmeticDataTypeSupported` admits TF32, HF32, E4M3, and E5M2 for TADD, but the floating ADD path calls `ScalarFPBinaryProfile`, which asserts on types other than FP64, FP32, FP16, and BF16. Floating TREM calls `ReferenceTileFloatingModulo`, and the SFU unary operations call `ReferenceTileUnaryFinite`; both accept only FP32, FP16, and BF16.
+These tables separate operation kind from layout. Applicable floating operations admit `FP64`, integer operations admit `S64` and `U64`, and carrier operations admit raw b64. A 64-bit Local CUBE operand is legal only in `CUBE_M32` with the double-CELL descriptor; `CUBE_M16` remains illegal. Explicitly narrow conversion tuples, Matrix/MX type sets, fixed-width atomics, and `TGPR2T` keep their operation-owned exclusions.
 
 Several helpers have no caller in `asl/` today: `TileF3DataTypeSupported`, `TileImg2ColDataTypeSupported`, `TileCarrierOrMove24BaselineDataTypeSupported` (and through it `TileMove24DataTypeSupported`), and `TileShapeAndTypeMatch`.
 
@@ -89,6 +89,17 @@ An RCPE6M2 operation type accepts an E6M2 backing but rejects a U8 backing, alth
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/legality/dtype-layout.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","surface":"tile","classification":["model","legality","dtype-layout"],"depends_on":["PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE"]}
+// NDF-BEGIN: PTO-LOCAL-TILE-B64-APPLICABILITY-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// Applicable Local Tile operations MUST admit their 64-bit counterparts:
+// FP64 for floating operations, S64/U64 for integer operations, and raw b64
+// for carrier operations. CUBE_M32 b64 operands MUST use the double-CELL
+// mapping while preserving logical shape, source snapshots, definedness,
+// per-element masks and complete publication. Existing operation-kind and
+// explicit narrow tuple contracts remain authoritative; layout support MUST
+// NOT imply a new Matrix/MX arithmetic or fixed-width atomic contract.
+// NDF-END: PTO-LOCAL-TILE-B64-APPLICABILITY-001
+
 pure func TileTeplRawCarrierTypeSupported(data_type: TileDataType) => boolean
 begin
     // PTO-v0 TEPL operates over the raw XLEN carrier for every architectural
@@ -194,12 +205,12 @@ pure func TileCarrierOnlyDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
     return !TileDataTypeIsFourBit(data_type) &&
-           TileElementBytes(data_type) <= 4;
+           TileElementBytes(data_type) <= 8;
 end;
 
 // These operations already have a packed-X2 baseline.  Preserve that
 // baseline while admitting only the new non-packed B8/B16/B32 carrier set;
-// B64 remains outside the Stage 4 extension.
+// Issue #371 adds B64 carriers with the M32 double-CELL mapping.
 pure func TileCarrierOrPackedBaselineDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
@@ -240,7 +251,8 @@ pure func TileA9DataTypeSupported(
     data_type: TileDataType) => boolean
 begin
     case data_type of
-        when TileDataType_S32, TileDataType_U32,
+        when TileDataType_FP64, TileDataType_S64, TileDataType_U64,
+             TileDataType_S32, TileDataType_U32,
              TileDataType_FP32, TileDataType_S16,
              TileDataType_U16, TileDataType_FP16,
              TileDataType_BF16, TileDataType_S8,
@@ -253,7 +265,8 @@ pure func TileA7DataTypeSupported(
     data_type: TileDataType) => boolean
 begin
     case data_type of
-        when TileDataType_S32, TileDataType_U32,
+        when TileDataType_FP64, TileDataType_S64, TileDataType_U64,
+             TileDataType_S32, TileDataType_U32,
              TileDataType_FP32, TileDataType_S16,
              TileDataType_U16, TileDataType_FP16,
              TileDataType_BF16 => return TRUE;
@@ -264,7 +277,8 @@ end;
 pure func TileF3DataTypeSupported(
     data_type: TileDataType) => boolean
 begin
-    return data_type == TileDataType_FP16 ||
+    return data_type == TileDataType_FP64 ||
+           data_type == TileDataType_FP16 ||
            data_type == TileDataType_FP32 ||
            data_type == TileDataType_BF16;
 end;
@@ -286,7 +300,8 @@ pure func TileI6DataTypeSupported(
     data_type: TileDataType) => boolean
 begin
     case data_type of
-        when TileDataType_S32, TileDataType_U32,
+        when TileDataType_S64, TileDataType_U64,
+             TileDataType_S32, TileDataType_U32,
              TileDataType_S16, TileDataType_U16,
              TileDataType_S8, TileDataType_U8 => return TRUE;
         otherwise => return FALSE;
@@ -296,13 +311,20 @@ end;
 pure func TileTNegDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
-    return TileVecArithmeticDataTypeSupported(data_type);
+    return data_type == TileDataType_FP64 || data_type == TileDataType_S64 ||
+           data_type == TileDataType_U64 || data_type == TileDataType_S32 ||
+           data_type == TileDataType_S16 || data_type == TileDataType_S8 ||
+           data_type == TileDataType_FP32 || data_type == TileDataType_FP16 ||
+           data_type == TileDataType_BF16;
 end;
 
 pure func TileTReluDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
-    return TileVecArithmeticDataTypeSupported(data_type);
+    return data_type == TileDataType_FP64 || data_type == TileDataType_S64 ||
+           data_type == TileDataType_U64 || data_type == TileDataType_FP16 ||
+           data_type == TileDataType_BF16 || data_type == TileDataType_FP32 ||
+           data_type == TileDataType_S32;
 end;
 
 pure func TileArgReductionSourceDataTypeSupported(
@@ -314,7 +336,9 @@ end;
 pure func TileFusedMultiplyAddDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
-    return TileVecArithmeticDataTypeSupported(data_type);
+    return data_type == TileDataType_FP64 || data_type == TileDataType_S64 ||
+           data_type == TileDataType_U64 || data_type == TileDataType_FP16 ||
+           data_type == TileDataType_FP32 || data_type == TileDataType_BF16;
 end;
 
 pure func TileMove24DataTypeSupported(
@@ -363,7 +387,9 @@ pure func TileExpdifTypePairLegal(
     source_operation_type: TileDataType,
     destination_type: TileDataType) => boolean
 begin
-    return (source_operation_type == TileDataType_FP16 &&
+    return (source_operation_type == TileDataType_FP64 &&
+            destination_type == TileDataType_FP64) ||
+           (source_operation_type == TileDataType_FP16 &&
             (destination_type == TileDataType_FP16 ||
              destination_type == TileDataType_FP32)) ||
            (source_operation_type == TileDataType_BF16 &&
@@ -397,6 +423,13 @@ pure func TileBinaryDataTypeSupported(
     operation: TileBinaryOperation,
     data_type: TileDataType) => boolean
 begin
+    // Exact mnemonic domains remain closed; storage widening must not admit
+    // unrelated compact formats that their operation owner rejects.
+    if operation == TileBinary_SUB || operation == TileBinary_MIN ||
+       operation == TileBinary_MAX then return TileA9DataTypeSupported(data_type); end;
+    if operation == TileBinary_MUL || operation == TileBinary_REM then
+        return TileA7DataTypeSupported(data_type);
+    end;
     // EXPDIF belongs only to ExecuteTileExpdif and never to generic binary or
     // Tile-scalar execution.
     if operation == TileBinary_EXPDIF then return FALSE; end;

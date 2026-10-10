@@ -27,7 +27,7 @@ This page is a generated reference view of the normative ASL unit.
 
 本单元写入 `_BundleExecutionMask`：`valid`、`carrier`、坐标域（`layout`、`valid_rows`、`valid_columns`）、`word_count`、`predicate_tile`、`predicate_source_ordinal`、`invert`、`zero_inactive`，并在合并准备时写入 `merge_base` 和 `merge_base_valid`。`invert` 和 `zero_inactive` 复制自 `B.DATR` 的 `PredInv` 和 `Zero` 字段。
 
-坐标域是掩码覆盖的网格。对大多数操作，它是第一个普通源的有效形状和布局。当第一个源是谓词单元时，`TSEL` 和 `TSELS` 使用第二个源。`TGATHER`、`TSCATTER`、`MSCATTER` 和 `MSCATTER_MASK` 使用第二个源。CUBE 传输和封闭扩展操作使用 `LB0` 和 `LB1`。`TPACK` 和 `TUNPACK` 以每行的 32 位字数计列。
+坐标域是掩码覆盖的网格。对大多数操作，它是第一个普通源的有效形状和布局。当第一个源是谓词单元时，`TSEL` 和 `TSELS` 使用第二个源。`TGATHER`、`TSCATTER`、`MSCATTER` 和 `MSCATTER_MASK` 使用第二个源。CUBE 传输和封闭扩展操作使用 `LB0` 和 `LB1`。`TPACK` 与 `TUNPACK` 按每行 32 位 word 计活动性，保留 U64 结果低、高 word 可分别受控的 raw-carrier 例外。
 
 <!-- PTO-READER-BLOCK: block-model-dispatch-execution-mask-schema-rules role=rules-interactions -->
 ## 规则与交互
@@ -404,14 +404,21 @@ begin
         if result_type == TileDataType_U8 then 4
         else if result_type == TileDataType_U16 then 2
         else if result_type == TileDataType_U32 then 1
+        else if result_type == TileDataType_U64 then 0
         else 0;
     let packed_columns_unbounded = if pack_unpack then
-        (TileCellRearrangementWordsPerRow(source_tile) *
-            result_elements_per_word) as integer {0..262144}
+        (if result_type == TileDataType_U64 then
+             TileCellRearrangementWordsPerRow(source_tile) DIVRM 2
+         else TileCellRearrangementWordsPerRow(source_tile) *
+             result_elements_per_word) as integer {0..262144}
         else 0;
     if !result_type_valid ||
        (pack_unpack &&
-        (result_elements_per_word == 0 ||
+        ((result_elements_per_word == 0 &&
+          result_type != TileDataType_U64) ||
+         (result_type == TileDataType_U64 &&
+          (source_tile.layout != TileLayout_CUBE_M32 ||
+           TileCellRearrangementWordsPerRow(source_tile) MOD 2 != 0)) ||
          packed_columns_unbounded > 65535)) then
         return FALSE;
     end;

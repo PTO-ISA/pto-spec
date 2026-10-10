@@ -37,7 +37,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tshuf-inputs-outputs role=inputs-outputs -->
 ## 操作数与描述符
 
-- `source0` 是数据源：数值 `CUBE_M16` 或 `CUBE_M32` Tile，类型可以是除 64 位类型之外的任何 CUBE 类型。
+- `source0` 是数据源：数值 `CUBE_M16` 或 `CUBE_M32` Tile；64 位载体要求 `CUBE_M32`。 64 位 CUBE 操作数要求 `CUBE_M32` double-CELL 映射；`CUBE_M16` 会拒绝。
 - `source1` 是控制 Tile：`U32`，布局与有效行相同，源行的每个 32 位字对应一个有效列，cell 数量相同。
 - `scalar0` 是来自一条 `B.IOR` 的控制字；RegSrc1、RegSrc2 与 RegDst 为零。
 - `destination0` 是新的，保持源类型、有效形状与布局。它必须不同于源与控制 Tile。
@@ -139,8 +139,7 @@ end;
 pure func InstructionContractDataTypeLegal_TSHUF(
     data_type: TileDataType) => boolean
 begin
-    return TileCubeDataTypeSupported(data_type) &&
-           TileElementBits(data_type) != 64;
+    return TileCubeDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TSHUF(
@@ -167,9 +166,9 @@ end;
 
 ## Legality
 
-- TSHUF accepts Local CUBE_M16 or CUBE_M32 data and U32 control Tiles with matching geometry.
+- TSHUF accepts Local CUBE_M16 data and Local CUBE_M32 data, including FP64/S64/U64 and U32 control Tiles with matching geometry.
 - The control word selects UP, DOWN, BFLY, or IDX; segment and boundary fields are checked before execution.
-- Raw 32-bit words are shuffled without byte permutation.
+- Raw 32-bit words are shuffled without byte permutation; M32 64-bit low and high words use independent controls and publish coherently.
 
 ## State effects
 

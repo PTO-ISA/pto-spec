@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/layout-and-rearrangement/layout/TUNPACK.asl`
 
-Extract selected byte fields from 8/16/32-bit Local CUBE source carriers into U8/U16/U32 destination words.
+Extract selected byte fields from 8/16/32-bit and M32 64-bit Local CUBE source carriers into U8/U16/U32/U64 destination words.
 
 ## Normative identity {#PTO-INST-TILE-TUNPACK}
 
@@ -21,7 +21,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `TUNPACK` extracts one contiguous byte field from every participating 32-bit word of a Local CUBE source and places it in the low bytes of a destination word. It rearranges raw bytes and performs no numeric conversion.
 
-Design point: `TUNPACK` is selected by `BSTART.SFU` with TEPL Mode 3 Function 24 (selector `0x078`). The `BSTART` type, `U8`, `U16`, or `U32`, is the destination type; the source backing type need not equal it.
+Design point: `TUNPACK` is selected by `BSTART.SFU` with TEPL Mode 3 Function 24 (selector `0x078`). The `BSTART` type, `U8`, `U16`, `U32`, or `U64`, is the destination type; the source backing type need not equal it.
 
 <!-- PTO-READER-BLOCK: tile-tunpack-mechanism role=mechanism -->
 ## Extraction rule
@@ -35,9 +35,9 @@ Only selected bytes are read, and each selected byte of a participating word mus
 <!-- PTO-READER-BLOCK: tile-tunpack-inputs-outputs role=inputs-outputs -->
 ## Inputs and result
 
-- `source0` is a Local numeric `CUBE_M16` or `CUBE_M32` Tile with non-packed 8-, 16-, or 32-bit elements.
+- `source0` is a Local numeric CUBE Tile with non-packed 8-, 16-, 32-, or M32 64-bit elements.
 - `scalar0` is the unpack control word from one `B.IOR`; RegSrc1, RegSrc2, and RegDst are zero.
-- `destination0` is fresh, with the `BSTART` type, the source layout and valid rows, and `words per row x elements per word` valid columns: 4 for `U8`, 2 for `U16`, and 1 for `U32`.
+- `destination0` is fresh. U8/U16/U32 use 4/2/1 elements per raw word. U64 requires `CUBE_M32`, an even raw-word count, and one logical column per complete low/high pair.
 
 Like `TPACK`, the destination shape is derived from the source descriptor rather than from `B.DIM`.
 
@@ -111,7 +111,7 @@ end;
 ## Block composition
 
 ```asm
-BSTART.SFU TUNPACK, U8/U16/U32
+BSTART.SFU TUNPACK, U8/U16/U32/U64
 B.DATR Layout (optional)
 B.DIM LB0/LB1/LB2 (optional)
 B.IOT source, ->destination
@@ -133,7 +133,8 @@ pure func InstructionContractDataTypeLegal_TUNPACK(
 begin
     return data_type == TileDataType_U8 ||
            data_type == TileDataType_U16 ||
-           data_type == TileDataType_U32;
+           data_type == TileDataType_U32 ||
+           data_type == TileDataType_U64;
 end;
 
 readonly func InstructionContractOperandsLegal_TUNPACK(
@@ -157,9 +158,9 @@ end;
 
 ## Legality
 
-- TUNPACK accepts Local Numeric CUBE_M16 or CUBE_M32 source backing with non-packed 8/16/32-bit elements.
-- BSTART selects exactly U8, U16, or U32 for the fresh destination. The control selects a contiguous byte field within each independent 32-bit source word.
-- Only selected source bytes are read. Every selected interval is inside its word logical valid-byte span and every selected byte has a defined containing element; each participating word produces one complete zero-filled destination word.
+- TUNPACK accepts Local Numeric CUBE_M16 or CUBE_M32 source backing with non-packed 8/16/32-bit or M32 64-bit elements.
+- BSTART selects U8, U16, U32, or U64 for the fresh destination. The control selects a contiguous byte field within each independent 32-bit source word.
+- Only selected source bytes are read. Every selected interval is inside its word logical valid-byte span and every selected byte has a defined containing element; each participating word produces one zero-filled result word; U64 joins complete low/high pairs and rejects odd tails.
 
 ## State effects
 
@@ -182,4 +183,4 @@ end;
 
 ## Examples
 
-- BSTART.SFU TUNPACK, U8/U16/U32; B.DATR Layout; B.DIM LB0; B.IOT source, ->destination; B.IOR a0; BSTOP
+- BSTART.SFU TUNPACK, U8/U16/U32/U64; B.DATR Layout; B.DIM LB0; B.IOT source, ->destination; B.IOR a0; BSTOP

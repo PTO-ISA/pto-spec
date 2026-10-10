@@ -120,5 +120,6 @@ begin
     assert InstructionContractAcceptsTileOperation_BSTART_VEC(115) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_VEC(116) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_VEC(117) == FALSE;
+    assert InstructionContractAcceptsTileOperation_BSTART_VEC(118) == TRUE;
     return 0;
 end;

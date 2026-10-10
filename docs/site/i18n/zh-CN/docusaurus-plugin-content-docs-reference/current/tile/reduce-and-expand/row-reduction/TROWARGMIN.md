@@ -41,7 +41,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 - `destination0` 是新分配的 Local `U32` Tile，逻辑形状为 7 个有效行乘一个有效列，每个有效行一个下标；其余物理坐标是填充坐标。
 
-- 目标使用源的布局，只有 `RowMajor`、`CUBE_M16` 与 `CUBE_M32` 是允许的布局。
+- 目标使用源的布局，只有 `RowMajor`、`CUBE_M16` 与 `CUBE_M32` 是允许的布局。 64 位 CUBE 操作数要求 `CUBE_M32` double-CELL 映射；`CUBE_M16` 会拒绝。
 
 - 各操作数共享同一个 `PE_MASK`。`PE_MASK=0000` 是严格无操作，发生在描述符读取、分配、故障、状态或载荷效果之前。
 
@@ -59,7 +59,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-trowargmin-constraints role=constraints -->
 ## 合法性、故障与顺序边界
 
-可接受的操作类型为 `S32`、`U32`、`FP32`、`S16`、`U16`、`FP16`、`BF16`、`S8` 与 `U8`。无论源类型是什么，目标 DataType 都是 `U32`。源可以使用位宽相同、非打包的其他后备类型，但 `RCPE6M2` 绝不能作为归约后备；活动的指令束必须从 `BSTART` 解析出操作 DataType，否则拒绝。
+可接受的操作类型为 `FP64`、`S64`、`U64`、`S32`、`U32`、`FP32`、`S16`、`U16`、`FP16`、`BF16`、`S8` 与 `U8`。无论源类型是什么，目标 DataType 都是 `U32`。源可以使用位宽相同、非打包的其他后备类型，但 `RCPE6M2` 绝不能作为归约后备；活动的指令束必须从 `BSTART` 解析出操作 DataType，否则拒绝。
 
 - 恰好一条终止的 Local `B.IOT` 提供源与新目标，因此 `B.IOR`、`B.IOS`、第二条 `B.IOT`、非终止绑定，以及把目标命名为源的写法都非法。
 
@@ -202,12 +202,13 @@ end;
 
 - TROWARGMIN is selected by the TEPL raw encoding carrier Mode 2 Function 13; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.
 - Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.
-- The operation DataType selected by BSTART is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.
+- The operation DataType selected by BSTART is exactly FP64, S64, U64, S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.
 - The destination DataType is U32 regardless of source DataType. The destination contains one logical index per valid source row. Its capacity is derived from the U32 destination physical footprint and need not equal source capacity; for U8 or U16 sources it may be strictly greater.
 - The source is a fully defined persistent numeric Tile with a legal descriptor in the selected RowMajor, CUBE_M16, or CUBE_M32 layout whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; its stored backing DataType MAY differ from the operation DataType only when the unchanged TileCarrierWidthCompatible relation admits equal-width, non-packed interpretation. RCPE6M2 MUST NOT be a reduction backing. Every valid source coordinate MUST be defined and encoding-valid under the operation DataType. All valid source coordinates are checked and included in the reduction; Local CUBE ExecutionMask is unsupported and MUST reject before effects, including when mask state is injected directly into the model. For a cross-type view, backing encodings are not independently validated. The source descriptor, backing DataType, and payload persist unchanged without retagging or numeric conversion. The source capacity is checked by generic allocation and the reduction operation imposes no additional 2048-byte ceiling.
 - The destination has ValidRow equal to source.ValidRow and logical ValidCol equal to one. For RowMajor, Rows equals DerivedTileRows(DstCapacity, 1, DstDataType) and Columns equals one. For CUBE_M16/M32, Columns equals source Columns and Rows equals the minimum legal physical Rows covering Dst.ValidRows (16 for M16, 32 for M32).
 - Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 - An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

@@ -55,9 +55,9 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-gmov-constraints role=constraints -->
 ## 类型、布局与故障
 
-`InstructionContractDataTypeLegal_GMOV` 恰好接受 `TileCarrierOrPackedBaselineDataTypeSupported` 允许的类型：位宽不超过 4 字节的非四位载体，加上打包四位类型。`B64` 载体（如 `U64` 与 `FP64`）不在该集合内。
+`InstructionContractDataTypeLegal_GMOV` 恰好接受 `TileCarrierOrPackedBaselineDataTypeSupported` 允许的类型：所有最高 64 位的非打包载体，加上打包四位基线。64 位源在 `RowMajor` 中仍合法；在 CUBE 布局中则要求 `CUBE_M32` double-CELL 存储。
 
-源与目标必须在数据类型、布局、存储种类、行数、列数、有效行数与有效列数上一致（`TileOperandsLegal_GMOV`）。布局必须是 `RowMajor`、`CUBE_M16` 或 `CUBE_M32`；`CUBE_N8` 与 Shared 操作数非法。
+源与目标必须在数据类型、布局、存储种类、行数、列数、有效行数与有效列数上一致（`TileOperandsLegal_GMOV`）。布局必须是 `RowMajor`、`CUBE_M16` 或 `CUBE_M32`；`CUBE_N8` 与 Shared 操作数非法。 64 位 CUBE 操作数要求 `CUBE_M32` double-CELL 映射；`CUBE_M16` 会拒绝。
 
 任一 PE 的 `peer_tid` 超出 `0..3`、Core4 源未就绪、`B.DIM` 值不为 `1`、`TSize` 不匹配、绑定多余或未终止，或出现 `B.IOS`，都会在复制之前引发 `Fault_TileLegality`；集体预检失败时不分配也不写入任何目标。
 
@@ -170,6 +170,7 @@ end;
 - Exactly one terminating Local source-plus-destination B.IOT is required. Its destination TSize equals the source per-PE capacity.
 - Any nonzero PE_MASK is legal; it selects destination writes but not rendezvous or source readiness. Mask zero is a strict no-op.
 - All four peer-resolved source fragments are ready before any selected request; each private peer_tid is 0..3 and may repeat. Local RowMajor, CUBE_M16, and CUBE_M32 forms preserve one selected layout; CUBE_N8 and Shared are illegal.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

@@ -39,7 +39,7 @@ The descriptor is stored in the modifier's `derived` field. The temporary copy i
 - the offset is above 65535 or not below the parent's CELL count;
 - the view origin lies outside the parent's valid region, the derived shape is empty, or the derived CUBE geometry is unusable (zero CELL rows or columns, a `CUBE_N8` K repeat of 0 or above 16384, or more derived CELLs than the view allows).
 
-Otherwise the view covers `min(requested, remaining)` CELLs. For `CUBE_N8` the view stops at the end of the current N column of cells. For the other CUBE layouts the view origin column is `offset_cells` times the CELL width. The valid region is clipped to the parent's.
+Otherwise the view covers `min(requested, remaining)` CELLs. For `CUBE_N8` the view stops at the end of the current N column of cells. For M32 64-bit parents, offset and count must both cover complete low/high CELL pairs, and the origin column is `offset_cells / 2`; no view may expose half of one logical column. Other M layouts use one CELL group per column group. The valid region is clipped to the parent's.
 
 An empty descriptor raises `Fault_TileLegality`. `MaterializeBundleSubview` then finds a free register in the parent's hand, allocates a CUBE Tile with the parent's layout, data type, and PE mask, and copies each defined parent element in the view. If `TileElementwiseSourceContentsDefined` holds for the parent, the view's valid region is marked defined. The binding's source is redirected to the copy.
 
@@ -74,7 +74,7 @@ A `CUBE_M16` FP16 parent has valid shape 16 by 32. Each CELL is 16 rows by 4 col
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/operands/subview-descriptor.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","surface":"block","classification":["model","operands","subview-descriptor"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-TILE-MODEL-SHAPE-CUBE-CELL"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","surface":"block","classification":["model","operands","subview-descriptor"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-TILE-MODEL-SHAPE-CUBE-CELL","PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL"]}
 
 // NDF-BEGIN: PTO-B-SUBVIEW-DESCRIPTOR-001
 // ndf: kind=contract level=L1 layer=block status=accepted
@@ -128,6 +128,9 @@ begin
     let offset_cells = raw_offset as integer {0..65535};
     let requested_cells = (TileSizeCodeBytes(size_code) DIVRM PTO_TILE_CELL_BYTES)
         as integer {1..2048};
+    if !TileCubePhysicalCellRangeComplete(
+           parent.layout, parent.data_type, offset_cells,
+           requested_cells) then return empty; end;
     let remaining = (parent.cube_cell_count - offset_cells)
         as integer {1..16384};
     let cell_count = if requested_cells < remaining then requested_cells
@@ -154,7 +157,9 @@ begin
         origin_row = (cell_k * cell_rows) as integer {0..65535};
         origin_column = (cell_n * cell_columns) as integer {0..65535};
     else
-        origin_column = (offset_cells * cell_columns)
+        let logical_offset = TileCubeLogicalGroupsForPhysicalCells(
+            parent.layout, parent.data_type, offset_cells);
+        origin_column = (logical_offset * cell_columns)
             as integer {0..65535};
     end;
     if origin_row >= parent.valid_rows || origin_column >= parent.valid_columns then
@@ -169,9 +174,11 @@ begin
             as integer {1..65535};
         if valid_rows > requested_rows then valid_rows = requested_rows; end;
     end;
+    let view_groups = TileCubeLogicalGroupsForPhysicalCells(
+        parent.layout, parent.data_type, view_cell_count);
     let requested_columns: integer {1..65535} =
         if parent.layout == TileLayout_CUBE_N8 then cell_columns as integer {1..65535}
-        else (view_cell_count * cell_columns) as integer {1..65535};
+        else (view_groups * cell_columns) as integer {1..65535};
     var valid_columns: integer {0..65535} = requested_columns;
     if origin_column < parent.valid_columns &&
        parent.valid_columns - origin_column < requested_columns then

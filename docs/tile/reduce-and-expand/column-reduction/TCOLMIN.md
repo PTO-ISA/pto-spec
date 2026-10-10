@@ -39,7 +39,7 @@ Design point: `TCOLMIN` is an ordered fold, not a tree. Reassociation changes a 
 
 - `destination0` is a newly allocated Local Tile with the operation DataType and a logical shape of one valid row by 60 valid columns, one result per valid column; its other physical coordinates are padding coordinates, and for `RowMajor` the physical row count is derived from the destination capacity.
 
-- The destination uses the source layout, and only `RowMajor`, `CUBE_M16`, and `CUBE_M32` are admitted.
+- The destination uses the source layout, and only `RowMajor`, `CUBE_M16`, and `CUBE_M32` are admitted. A 64-bit CUBE operand requires the `CUBE_M32` double-CELL mapping; `CUBE_M16` rejects it.
 
 - The operands share one `PE_MASK`. `PE_MASK=0000` is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
@@ -206,6 +206,7 @@ end;
 - The destination has logical ValidRow equal to one and ValidCol equal to source.ValidCol. For RowMajor, Rows equals DerivedTileRows(DstCapacity, source physical Columns, DstDataType) and Columns equals source physical Columns. For CUBE_M16/M32, Rows equals source Rows and Columns equals align_up(Dst.ValidColumns, Dst CellCols), where Dst CellCols is computed from destination DataType.
 - Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 - An active bundle MUST resolve the operation DataType from BSTART or reject; a direct semantic call with no active bundle uses source backing DataType as the operation-type fallback.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

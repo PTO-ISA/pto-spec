@@ -1,9 +1,9 @@
 {
   "schema_version": 3,
   "status": "closed",
-  "accepted_operation_count": 118,
-  "operation_role_case_count": 316,
-  "independent_result_file_count": 316,
+  "accepted_operation_count": 119,
+  "operation_role_case_count": 318,
+  "independent_result_file_count": 318,
   "normal_dispatch": "ExecuteBundleTileOperation",
   "fixture_rule": "Every accepted operation-role record has an independent decoded authoritative-family fixture recipe, exactly its selected Local source B.SUBVIEW or Local destination B.ASSEMBLE INIT_LAST or Shared B.IOS role case, all required roles/attributes, and an exact normal or fault assertion.",
   "effect_class_owner": "asl/block/model/operands/portable-carriers.asl::BundleProducerEffectClassOfHandler",
@@ -39,6 +39,7 @@
     "TGEMV_MX_ACC": "atomic-auxiliary",
     "TGEMV_MX_BIAS": "atomic-auxiliary",
     "TGPR2T": "rollback-safe",
+    "TLEA": "rollback-safe",
     "TLOAD": "rollback-safe",
     "TMATMUL": "atomic-auxiliary",
     "TMATMUL_ACC": "atomic-auxiliary",
@@ -59,14 +60,14 @@
   "effect_class_counts": {
     "atomic-auxiliary": 56,
     "nonrollback-auxiliary": 58,
-    "rollback-safe": 202
+    "rollback-safe": 204
   },
   "outcome_counts": {
     "cell-rearrangement-subview-preserved-commit": 12,
     "nonrollback-pre-effect-fault": 1,
-    "normal-success": 183,
+    "normal-success": 184,
     "predicate-role-pre-effect-fault": 2,
-    "preserved-cube-subview-pre-effect-fault": 53,
+    "preserved-cube-subview-pre-effect-fault": 54,
     "shared-stage3-fault": 61,
     "shared-stage3-success": 4
   },
@@ -18602,6 +18603,110 @@
         "source1": "persistent Local SrcOperationType subtrahend"
       },
       "datr_word": "0x00401023",
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0317",
+      "operation_index": 118,
+      "operation": "TLEA",
+      "family": "TEPL",
+      "semantic_handler": "TLEA",
+      "handler_effect_class": "rollback-safe",
+      "fixture_recipe": "cube-parent-local-view",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "destination0"
+      ],
+      "decoded_start": "0xcae19181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0",
+          "destination0"
+        ]
+      ],
+      "binding_words": [
+        "0x0018de13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "preserved-cube-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (preserved-cube-subview-pre-effect-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-317",
+      "row_assertion": "case_0317_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 25,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "persistent Local S32/U32/S64/U64 element indices"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0318",
+      "operation_index": 118,
+      "operation": "TLEA",
+      "family": "TEPL",
+      "semantic_handler": "TLEA",
+      "handler_effect_class": "rollback-safe",
+      "fixture_recipe": "cube-parent-local-view",
+      "role": "destination0",
+      "role_kind": "destination",
+      "all_required_roles": [
+        "source0",
+        "destination0"
+      ],
+      "decoded_start": "0xcae19181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.ASSEMBLE INIT_LAST",
+      "binding_groups": [
+        [
+          "source0",
+          "destination0"
+        ]
+      ],
+      "binding_words": [
+        "0x0018de13"
+      ],
+      "modifier_word": "0x800018d3",
+      "modifier_words": [],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": null,
+      "outcome": "normal-success",
+      "observable": "decoded B.ASSEMBLE INIT_LAST reaches normal dispatch for destination0; the handler commits and the destination/generation observable is defined",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-318",
+      "row_assertion": "case_0318_normal_commit",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 25,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "persistent Local S32/U32/S64/U64 element indices"
+      },
+      "datr_word": null,
       "destination_size_code": 1
     }
   ]

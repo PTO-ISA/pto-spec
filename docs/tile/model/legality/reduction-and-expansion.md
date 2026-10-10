@@ -320,7 +320,8 @@ begin
     let byte_offset = TileExpansionBroadcastByteOffset(axis);
     let element_bytes = TileElementBytes(operation_type);
     assert element_bytes == 1 || element_bytes == 2 ||
-           element_bytes == 4;
+           element_bytes == 4 ||
+           (layout == TileLayout_CUBE_M32 && element_bytes == 8);
     return (byte_offset DIV element_bytes) as integer {0..7};
 end;
 
@@ -339,8 +340,9 @@ begin
         return FALSE;
     end;
     let element_bytes = TileElementBytes(operation_type);
-    if (element_bytes != 1 && element_bytes != 2 && element_bytes != 4) ||
-       byte_offset >= (if tile.layout == TileLayout_CUBE_M32 then 4 else 8) ||
+    if (element_bytes != 1 && element_bytes != 2 && element_bytes != 4 &&
+        !(tile.layout == TileLayout_CUBE_M32 && element_bytes == 8)) ||
+       byte_offset >= (if tile.layout == TileLayout_CUBE_M32 && element_bytes != 8 then 4 else 8) ||
        byte_offset MOD element_bytes != 0 then
         return FALSE;
     end;

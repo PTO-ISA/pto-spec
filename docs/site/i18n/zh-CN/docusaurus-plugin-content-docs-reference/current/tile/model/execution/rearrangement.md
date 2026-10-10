@@ -39,12 +39,12 @@ This page is a generated reference view of the normative ASL unit.
 
 设计要点：`TileOperandsLegal_TPERMUTE` 在任何效果之前检查每个活动目标字节：其索引必须已定义且小于两倍行字节数，其选中的源字节也必须已定义。因此非法索引以 Fault_TileLegality 拒绝，目标不会被发布；处理函数在构建结果之前以断言重复范围检查。
 
-设计要点：在 ExecutionMask 下，非活动坐标不读取任何索引、控制或源字节；例外是 `TPERMUTE` 中容纳两个 4 位元素的字节只要其中一个元素活动就会被读取。`TPERMUTE` 和 `TSHUF` 使用目标元素坐标；`TPACK` 和 `TUNPACK` 使用 (源行, 字索引)，一个位控制整个目标字组：4 个 U8、2 个 U16 或 1 个 U32 元素。
+设计要点：在 ExecutionMask 下，非活动坐标不读取任何索引、控制或源字节；例外是 `TPERMUTE` 中容纳两个 4 位元素的字节只要其中一个元素活动就会被读取。普通 64 位 `TPERMUTE` 与 `TSHUF` 坐标对完整逻辑元素使用一个位。raw `TPACK` 与 `TUNPACK` 保留按 word 的例外：U64 结果的低、高 32 位 word 可分别受控后再合并。
 
 <!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-boundaries role=boundaries -->
 ## 架构边界
 
-四个操作都仅适用于 CUBE_M16 或 CUBE_M32。`TPACK` 和 `TUNPACK` 的目标为 U8、U16 或 U32，其 `valid_columns` 等于每行字数乘以每字元素数。64 位元素类型被排除。
+四个操作都仅适用于 CUBE_M16 或 CUBE_M32，但 64 位操作数与 `U64` pack/unpack 目标要求 `CUBE_M32`。U64 目标把每个偶数/奇数 raw-word pair 合成一个逻辑列；不完整 pair 在产生效果前拒绝。`CUBE_M16` 仍限于更窄元素。
 
 `TPERMUTE` 和 `TSHUF` 的非活动路径调用 `BundleExecutionMaskDestinationValue`。`TPACK` 和 `TUNPACK` 的非活动路径在未选择 ZERO 时直接读取 `_BundleExecutionMask.merge_base`。它不断言 `merge_base_valid`；分派在 `PrepareSelectedBundleExecutionMaskMerge` 中建立合并基准。
 
@@ -74,14 +74,14 @@ This page is a generated reference view of the normative ASL unit.
 ```asl
 // NDF-BEGIN: PTO-TILE-MODEL-EXECUTION-MASK-REARRANGEMENT-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
-// For TPACK/TUNPACK, ExecutionMask coordinates are (source row, source CELL word index), with word_index below the source words-per-row. PredicateCell shape is source ValidRow by source words-per-row; GPR mapping uses word_index as the column. One bit gates the complete destination CELL word group (4 U8, 2 U16, or 1 U32 elements). Active groups perform the existing selected-byte reads and whole-word write; inactive groups do not read selected source bytes and apply the common MERGE/ZERO destination rule. Source/destination shape, type, control, word-count, capacity, and allocation checks remain in force for every mask value.
+// For TPACK/TUNPACK, ExecutionMask coordinates are (source row, source CELL word index), with word_index below the source words-per-row. PredicateCell shape is source ValidRow by source words-per-row; GPR mapping uses word_index as the column. One bit gates one 32-bit result word (4 U8, 2 U16, or 1 U32 elements); an M32 U64 destination joins each complete pair of independently gated result words and publishes the combined logical element once. Active groups perform the selected-byte reads; inactive groups do not read selected source bytes and apply the common MERGE/ZERO destination rule to their result plane. Source/destination shape, type, control, complete-pair, capacity, and allocation checks remain in force for every mask value.
 // For TPERMUTE and TSHUF, ExecutionMask coordinates are destination logical
 // element coordinates. Inactive elements MUST NOT read index, control, or
 // mapped source payload and MUST apply the common MERGE/ZERO destination rule;
 // descriptor, shape, type, scalar-control, capacity, and allocation checks
 // remain unconditional.
 // NDF-END: PTO-TILE-MODEL-EXECUTION-MASK-REARRANGEMENT-001
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-REARRANGEMENT","surface":"tile","classification":["model","execution","rearrangement"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-NUMERIC-EXCEPTIONS","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-REARRANGEMENT","surface":"tile","classification":["model","execution","rearrangement"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-NUMERIC-EXCEPTIONS","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT","PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL"]}
 // PTO-REQ-TEPL-REARRANGE-001: direct tile layout and indexing operations.
 
 readonly func TileInfoWithCellByte(tile: TileInfo,
@@ -236,61 +236,46 @@ begin
         else if segment_code == 2 then 8
         else if segment_code == 3 then 16
         else 32;
-    let cell_rows = if destination_tile.layout == TileLayout_CUBE_M32 then 32
-        else 16;
     var result = destination_tile;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
-        let lane = (row MOD cell_rows) as integer {0..31};
-        let segment_base = ((lane DIVRM segment_width) * segment_width)
-            as integer {0..31};
-        let local_lane = (lane - segment_base) as integer {0..31};
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
             var value = Zeros{PTO_XLEN};
             if BundleExecutionMaskActiveAt(
                    source_tile.layout, row as integer {0..65535},
                    column as integer {0..65535}) then
-                let word_index = TileCellRearrangementElementWordIndex(
+                let first_word = TileCellRearrangementElementWordIndex(
                     source_tile.data_type,
                     column as integer {0..65535});
-                let control_element = TileLogicalLinearIndex(
-                    controls_tile, row as integer {0..65535}, word_index);
-                let control_word = TileReadLogicalElement(
-                    controls_tile, control_element);
-                let b = UInt(control_word[4:0]);
-                var candidate_valid = TRUE;
-                var candidate_lane: integer {0..31} = lane;
-                if mode == 0 then
-                    if b > lane - segment_base then candidate_valid = FALSE;
-                    else candidate_lane = (lane - b) as integer {0..31}; end;
-                elsif mode == 1 then
-                    if (lane - segment_base) + b >= segment_width then
-                        candidate_valid = FALSE;
-                    else candidate_lane = (lane + b) as integer {0..31}; end;
-                elsif mode == 2 then
-                    candidate_lane = (segment_base +
-                        UInt(((Zeros{5} + local_lane) as bits(5)) XOR
-                             ((Zeros{5} + b) as bits(5))))
-                        as integer {0..31};
-                    if candidate_lane >= segment_base + segment_width then
-                        candidate_valid = FALSE;
+                let raw_words = if TileElementBits(source_tile.data_type) == 64
+                    then 2 else 1;
+                for raw_word = 0 to raw_words - 1 looplimit 2 do
+                    let word_index = (first_word + raw_word)
+                        as integer {0..65535};
+                    let control_element = TileLogicalLinearIndex(
+                        controls_tile, row as integer {0..65535}, word_index);
+                    let control_word = TileReadLogicalElement(
+                        controls_tile, control_element);
+                    let (source_required, source_row) = TileShuffleSelectedRow(
+                        control_word, row as integer {0..65535},
+                        source_tile.valid_rows as integer {1..65535},
+                        source_tile.layout,
+                        segment_width, mode as integer {0..3},
+                        boundary as integer {0..1});
+                    if source_required then
+                        let source_element = TileLogicalLinearIndex(
+                            source_tile, source_row,
+                            column as integer {0..65535});
+                        let source_value = TileReadLogicalElement(
+                            source_tile, source_element);
+                        if raw_words == 2 then
+                            value = TileCubeM32B64WithRawPlaneWord(
+                                value,
+                                TileCubeM32B64RawPlaneWord(
+                                    source_value, raw_word == 1),
+                                raw_word == 1);
+                        else value = source_value;
+                        end;
                     end;
-                else
-                    candidate_lane = (segment_base +
-                        (b MOD segment_width)) as integer {0..31};
-                end;
-                let candidate_row = (row - lane) + candidate_lane;
-                var source_row: integer {0..65535} =
-                    row as integer {0..65535};
-                var source_required = boundary == 0;
-                if candidate_valid && candidate_row < source_tile.valid_rows then
-                    source_row = candidate_row as integer {0..65535};
-                    source_required = TRUE;
-                end;
-                if source_required then
-                    let source_element = TileLogicalLinearIndex(
-                        source_tile, source_row,
-                        column as integer {0..65535});
-                    value = TileReadLogicalElement(source_tile, source_element);
                 end;
             else
                 value = BundleExecutionMaskDestinationValue(
@@ -320,6 +305,55 @@ begin
     let source1_bytes = UInt(control[15:8]);
     let words = TileCellRearrangementWordsPerRow(source0_tile);
     var result = destination_tile;
+    if destination_tile.data_type == TileDataType_U64 then
+        for row = 0 to source0_tile.valid_rows - 1 looplimit 65536 do
+            for pair = 0 to (words DIVRM 2) - 1 looplimit 32768 do
+                let column = pair as integer {0..65535};
+                let destination_element = TileLogicalLinearIndex(
+                    result, row as integer {0..65535}, column);
+                var joined = Zeros{PTO_XLEN};
+                if _BundleExecutionMask.valid &&
+                   !_BundleExecutionMask.zero_inactive then
+                    let base = _Tiles[[_BundleExecutionMask.merge_base]];
+                    let base_element = TileLogicalLinearIndex(
+                        base, row as integer {0..65535}, column);
+                    joined = TileReadLogicalElement(base, base_element);
+                end;
+                for raw_word = 0 to 1 looplimit 2 do
+                    let word_index = (pair * 2 + raw_word)
+                        as integer {0..65535};
+                    if BundleExecutionMaskActiveAt(
+                           source0_tile.layout, row as integer {0..65535},
+                           word_index) then
+                        let word_start = (word_index * 4)
+                            as integer {0..262143};
+                        var packed = Zeros{32};
+                        for byte_index = 0 to source0_bytes - 1 looplimit 3 do
+                            packed[(byte_index * 8) +: 8] = TileReadCellByte(
+                                source0_tile, row as integer {0..65535},
+                                (word_start + byte_index)
+                                    as integer {0..262143});
+                        end;
+                        for byte_index = 0 to source1_bytes - 1 looplimit 3 do
+                            packed[((source0_bytes + byte_index) * 8) +: 8] =
+                                TileReadCellByte(source1_tile,
+                                    row as integer {0..65535},
+                                    (word_start + byte_index)
+                                        as integer {0..262143});
+                        end;
+                        joined = TileCubeM32B64WithRawPlaneWord(
+                            joined, packed, raw_word == 1);
+                    end;
+                end;
+                result = TileInfoWithLogicalElementAndDefined(
+                    result, destination_element, joined, TRUE);
+            end;
+        end;
+        result = TileWithValidRegionDefined(result);
+        result = TileWithPadding(result, TilePad_Null);
+        _Tiles[[destination]] = result;
+        return;
+    end;
     for row = 0 to source0_tile.valid_rows - 1 looplimit 65536 do
         for word_index = 0 to words - 1 looplimit 65536 do
             let word_start = (word_index * 4) as integer {0..262143};
@@ -377,6 +411,49 @@ begin
     let byte_count = UInt(control[15:8]);
     let words = TileCellRearrangementWordsPerRow(source_tile);
     var result = destination_tile;
+    if destination_tile.data_type == TileDataType_U64 then
+        for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
+            for pair = 0 to (words DIVRM 2) - 1 looplimit 32768 do
+                let column = pair as integer {0..65535};
+                let destination_element = TileLogicalLinearIndex(
+                    result, row as integer {0..65535}, column);
+                var joined = Zeros{PTO_XLEN};
+                if _BundleExecutionMask.valid &&
+                   !_BundleExecutionMask.zero_inactive then
+                    let base = _Tiles[[_BundleExecutionMask.merge_base]];
+                    let base_element = TileLogicalLinearIndex(
+                        base, row as integer {0..65535}, column);
+                    joined = TileReadLogicalElement(base, base_element);
+                end;
+                for raw_word = 0 to 1 looplimit 2 do
+                    let word_index = (pair * 2 + raw_word)
+                        as integer {0..65535};
+                    if BundleExecutionMaskActiveAt(
+                           source_tile.layout, row as integer {0..65535},
+                           word_index) then
+                        let word_start = (word_index * 4)
+                            as integer {0..262143};
+                        var unpacked = Zeros{32};
+                        for byte_index = 0 to byte_count - 1 looplimit 4 do
+                            unpacked[(byte_index * 8) +: 8] =
+                                TileReadCellByte(source_tile,
+                                    row as integer {0..65535},
+                                    (word_start + byte_offset + byte_index)
+                                        as integer {0..262143});
+                        end;
+                        joined = TileCubeM32B64WithRawPlaneWord(
+                            joined, unpacked, raw_word == 1);
+                    end;
+                end;
+                result = TileInfoWithLogicalElementAndDefined(
+                    result, destination_element, joined, TRUE);
+            end;
+        end;
+        result = TileWithValidRegionDefined(result);
+        result = TileWithPadding(result, TilePad_Null);
+        _Tiles[[destination]] = result;
+        return;
+    end;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for word_index = 0 to words - 1 looplimit 65536 do
             let word_start = (word_index * 4) as integer {0..262143};

@@ -181,8 +181,8 @@ begin
         let binding = _BundleTileBindings[[0]];
         let tile_index = if binding.source0_subview.materialized then binding.source0_subview.materialized_index else binding.source0;
         let tile = _Tiles[[tile_index]];
-        let bytes_per_element = (TileElementBits(tile.data_type) DIVRM 8) as integer {0..4};
-        let valid_bytes = (tile.valid_columns * bytes_per_element) as integer {0..262140};
+        let bytes_per_element = (TileElementBits(tile.data_type) DIVRM 8) as integer {0..8};
+        let valid_bytes = (tile.valid_columns * bytes_per_element) as integer {0..524280};
         let words_per_row = ((valid_bytes + 3) DIVRM 4) as integer {0..65535};
         if tile.valid_rows == 0 || words_per_row == 0 then return 1; end;
         let row_bits = if tile.layout == TileLayout_CUBE_M32 then 32 else 16;

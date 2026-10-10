@@ -60,7 +60,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 可接受的数据类型集合为 `FP64`、`FP32`、`TF32`、`HF32`、`FP16`、`BF16`、`E4M3`、`E5M2`、`S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。打包四位格式不在其中。
 
-默认布局为 `RowMajor`。显式 `B.DATR` `Layout` 可以选择 `CUBE_M16`（最多 16 个有效行）或 `CUBE_M32`（最多 32 个有效行）。`Layout` 与 `PadValueOrByteId` 是唯一适用的 `B.DATR` 字段。
+默认布局为 `RowMajor`。显式 `B.DATR` `Layout` 可以选择 `CUBE_M16`（最多 16 个有效行）或 `CUBE_M32`（最多 32 个有效行）。在 CUBE 布局中，64 位类型要求 `CUBE_M32`；`CUBE_M16` 会拒绝。`Layout` 与 `PadValueOrByteId` 是唯一适用的 `B.DATR` 字段。
 
 目标绑定格式错误、出现 `B.IOS`、`B.IOR` 字段多余、`DataType` 不受支持、维度缺失或为零、容量或分配失败时，会在任何效果之前引发 `Fault_TileLegality` 或 `Fault_TileAllocation`。
 
@@ -241,6 +241,7 @@ end;
 - The destination uses selected RowMajor, CUBE_M16, or CUBE_M32 layout; CUBE_M16 valid_rows is at most 16 and CUBE_M32 valid_rows is at most 32, with physical geometry derived from the selected layout and capacity.
 - Only RegSrc0 may be nonzero in B.IOR; Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields.
 - PE_MASK=0000 is a strict no-op before GPR reads, allocation, faults, or destination effects.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

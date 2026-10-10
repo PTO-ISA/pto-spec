@@ -1,6 +1,6 @@
 {
   "isa": "PTO Instruction Set Architecture",
-  "operation_count": 118,
+  "operation_count": 119,
   "rejected_review_only_codes": {
     "CUBE": [],
     "TEPL": [
@@ -4007,7 +4007,7 @@
       "operands": [
         {
           "field": "destination0",
-          "role": "new Local S32, S16, U32, or U16 destination"
+          "role": "new Local S64, S32, S16, U64, U32, or U16 destination"
         },
         {
           "field": "scalar0",
@@ -7110,6 +7110,61 @@
       ],
       "classification": "elementwise-tile-tile",
       "engine": "SFU"
+    },
+    {
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "scalar0"
+        }
+      ],
+      "command_mnemonic": "BSTART.TEPL",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "TLEA",
+      "family": "TEPL",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 14,
+      "legality_handler": "TileOperandsLegal_TLEA",
+      "mode": 1,
+      "name": "TLEA",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "new Local S64/U64 byte-offset destination"
+        },
+        {
+          "field": "source0",
+          "role": "persistent Local S32/U32/S64/U64 element indices"
+        },
+        {
+          "field": "scalar0",
+          "role": "per-PE element width in bits"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "selector": "0x02E",
+      "semantic_handler": "TLEA",
+      "state_effects": [
+        "operand:destination0:new-local-byte-offset-destination",
+        "operand:source0:persistent-local-element-indices",
+        "operand:scalar0:element-width-bits",
+        "runtime:CurrentBundlePadValue:numeric-padding"
+      ],
+      "classification": "tile-scalar-and-immediate",
+      "engine": "VEC"
     }
   ],
   "reserved": {
@@ -7149,7 +7204,7 @@
         "0x025"
       ],
       [
-        "0x02E",
+        "0x02F",
         "0x039"
       ],
       [

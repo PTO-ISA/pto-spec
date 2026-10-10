@@ -48,6 +48,8 @@ Design point: the selected operation `DataType` still matters. It is the destina
 | PredicateCell | `CUBE_M16` or `CUBE_M32` | The same two `B.IOT` records, with a PredicateCell as the predicate |
 | GPR | `CUBE_M16` or `CUBE_M32` | One `B.IOT` with SrcTrue, SrcFalse, and the new destination, plus one source-only `B.IOR` carrying the mask |
 
+A 64-bit CUBE operand requires the `CUBE_M32` double-CELL mapping; `CUBE_M16` rejects it. This layout rule applies to both PredicateCell and GPR carrier forms.
+
 The legacy predicate is a packed Tile with one bit per element, and every predicate bit in its valid region must be defined. A PredicateCell holds one byte per element, and its basis type must equal the operation `DataType`. A PredicateCell byte is checked and read at every valid coordinate, or only at active coordinates when an ExecutionMask is in force, and each such byte must be defined and canonical: `0x00` or `0x01`. In the GPR form, an 8-bit operation type uses two mask GPRs, and 16- and 32-bit types use one.
 
 Each data source may use a different same-width, non-packed backing type. Its bits are copied unchanged into a destination tagged with the operation `DataType`.
@@ -66,7 +68,7 @@ In the CUBE forms, an ExecutionMask may be in force. Inactive coordinates then r
 <!-- PTO-READER-BLOCK: tile-c-tsel-constraints role=constraints -->
 ## Legality, fault, and order boundaries
 
-The operation `DataType` set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. The CUBE forms further restrict it to the CUBE predicate types, which exclude the 64-bit types.
+The operation `DataType` set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. The CUBE forms use the CUBE predicate type set; `FP64`, `S64`, and `U64` are legal only with `CUBE_M32` double-CELL numeric operands.
 
 Source data must be defined (at every active coordinate, in the CUBE forms), even though its encoding is not validated. `PE_MASK=0000` is a strict no-op before GPR, predicate, source, allocation, or payload checks.
 
@@ -199,8 +201,9 @@ end;
 - TSEL selects VEC Mode 0 Function 26. PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.
 - Legacy RowMajor form uses two ordered B.IOT records: packed Predicate plus SrcTrue, then SrcFalse plus one new destination; B.IOR is absent, each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers, and selected bits are copied raw.
 - CUBE_M16/M32 PredicateCell form uses the same two-record Tile structure with a descriptor-valid PredicateCell whose basis equals the operation DataType and whose ExecutionMask-active bytes are defined and canonical, while valid shape/layout and physical geometry match the numeric sources. Each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; B.IOR is absent.
-- CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue, SrcFalse, and one new CUBE destination plus one source-only B.IOR carrying the complete mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8; each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; U8 consumes two mask GPRs and other accepted types consume one.
+- CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue, SrcFalse, and one new CUBE destination plus one source-only B.IOR carrying the complete mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8, or FP64/S64/U64 for CUBE_M32; each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; U8 consumes two mask GPRs and other accepted types consume one.
 - Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 

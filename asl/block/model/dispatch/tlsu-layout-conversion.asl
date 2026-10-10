@@ -16,10 +16,14 @@ begin
     // HiF4X2 is accepted only by the Matrix-MX input-role contract.  U64 is
     // the single descriptor-level exception, and only ND2N8 TLOAD may create
     // that Local CUBE_N8 representation.
+    if layout == TileLayout_CUBE_M32 &&
+       TileCubeM32B64DataType(data_type) then
+        return function == 0 || function == 1;
+    end;
     if data_type == TileDataType_U64 then
         return function == 0 && layout == TileLayout_CUBE_N8;
     end;
-    return TileCubeDataTypeSupported(data_type) &&
+    return TileCubeLayoutDataTypeSupported(layout, data_type) &&
            data_type != TileDataType_HiF4X2;
 end;
 

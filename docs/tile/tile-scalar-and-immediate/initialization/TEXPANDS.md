@@ -60,7 +60,7 @@ When an ExecutionMask is in force, inactive coordinates receive the mask's zero 
 
 The accepted data-type set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. Packed four-bit formats are excluded.
 
-The layout is `RowMajor` by default. An explicit `B.DATR` `Layout` may select `CUBE_M16`, which allows at most 16 valid rows, or `CUBE_M32`, which allows at most 32. `Layout` and `PadValueOrByteId` are the only applicable `B.DATR` fields.
+The layout is `RowMajor` by default. An explicit `B.DATR` `Layout` may select `CUBE_M16`, which allows at most 16 valid rows, or `CUBE_M32`, which allows at most 32. Among CUBE layouts, a 64-bit type requires `CUBE_M32`; `CUBE_M16` rejects it. `Layout` and `PadValueOrByteId` are the only applicable `B.DATR` fields.
 
 A malformed destination binding, `B.IOS`, a surplus `B.IOR` field, an unsupported `DataType`, a missing or zero dimension, or a capacity or allocation failure raises `Fault_TileLegality` or `Fault_TileAllocation` before any effect.
 
@@ -241,6 +241,7 @@ end;
 - The destination uses selected RowMajor, CUBE_M16, or CUBE_M32 layout; CUBE_M16 valid_rows is at most 16 and CUBE_M32 valid_rows is at most 32, with physical geometry derived from the selected layout and capacity.
 - Only RegSrc0 may be nonzero in B.IOR; Layout and PadValueOrByteId are the only applicable nonzero B.DATR fields.
 - PE_MASK=0000 is a strict no-op before GPR reads, allocation, faults, or destination effects.
+- A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 
 ## State effects
 
