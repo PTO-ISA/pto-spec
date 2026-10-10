@@ -77,6 +77,7 @@ end;
 
 func ClearBundleHeaderState()
 begin
+    _BundleStartEncodedInstruction = Zeros{64};
     _BundleCommitTargetSet = FALSE;
     _BundleConditionSet = FALSE;
     _SystemBlockTerminalPending = FALSE;
@@ -124,6 +125,11 @@ begin
         _BundleTileBindings[[index]].source1_subview.materialized = FALSE;
         _BundleTileBindings[[index]].source1_subview.materialized_index = 0;
         _BundleTileBindings[[index]].destination_assemble.valid = FALSE;
+        _BundleTileBindings[[index]].destination_assemble.shared_request_identity_valid = FALSE;
+        _BundleTileBindings[[index]].destination_assemble.shared_request_waiting = FALSE;
+        _BundleTileBindings[[index]].destination_assemble.shared_request_squashed = FALSE;
+        _BundleTileBindings[[index]].destination_assemble.shared_request_execution_domain = 0;
+        _BundleTileBindings[[index]].destination_assemble.shared_request_operation_ordinal = 0;
         _BundleTileBindings[[index]].destination_assemble.derived.valid = FALSE;
         _BundleTileBindings[[index]].destination_assemble.materialized = FALSE;
         _BundleTileBindings[[index]].destination_assemble.materialized_index = 0;
@@ -140,6 +146,11 @@ begin
         _BundleSharedBindings[[index]].source0_subview.materialized = FALSE;
         _BundleSharedBindings[[index]].source0_subview.materialized_index = 0;
         _BundleSharedBindings[[index]].destination_assemble.valid = FALSE;
+        _BundleSharedBindings[[index]].destination_assemble.shared_request_identity_valid = FALSE;
+        _BundleSharedBindings[[index]].destination_assemble.shared_request_waiting = FALSE;
+        _BundleSharedBindings[[index]].destination_assemble.shared_request_squashed = FALSE;
+        _BundleSharedBindings[[index]].destination_assemble.shared_request_execution_domain = 0;
+        _BundleSharedBindings[[index]].destination_assemble.shared_request_operation_ordinal = 0;
         _BundleSharedBindings[[index]].destination_assemble.derived.valid = FALSE;
         _BundleSharedBindings[[index]].destination_assemble.materialized = FALSE;
         _BundleSharedBindings[[index]].destination_assemble.materialized_index = 0;

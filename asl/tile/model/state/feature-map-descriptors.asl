@@ -1,5 +1,5 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-STATE-FEATURE-MAP-DESCRIPTORS","surface":"tile","classification":["model","state","feature-map-descriptors"],"depends_on":["PTO-TILE-MODEL-STATE-LOCAL-REGISTERS"]}
-// PTO-STATE: {"id":"PTO-STATE-TILE-FEATURE-MAP","classification":["tile","feature-map"],"scope":"core","owner":"PTO-TILE-MODEL-STATE-FEATURE-MAP-DESCRIPTORS","members":["_TileFeatureMapDescriptors"],"depends_on":["PTO-STATE-TILE-LOCAL"]}
+// PTO-STATE: {"id":"PTO-STATE-TILE-FEATURE-MAP","classification":["tile","feature-map"],"scope":"pe","owner":"PTO-TILE-MODEL-STATE-FEATURE-MAP-DESCRIPTORS","members":["_TileFeatureMapDescriptors"],"depends_on":["PTO-STATE-TILE-LOCAL"]}
 
 type TileFeatureMapLayout of enumeration {
     TileFeatureMapLayout_NC1HWC0,
@@ -30,8 +30,10 @@ type TileFeatureMapDescriptor of record {
     transposed: boolean
 };
 
-var _TileFeatureMapDescriptors :
-    array [[PTO_TILE_REGISTER_COUNT]] of TileFeatureMapDescriptor;
+type TileFeatureMapDescriptorSnapshot of array [[PTO_TILE_REGISTER_COUNT]]
+    of TileFeatureMapDescriptor;
+
+var _TileFeatureMapDescriptors : TileFeatureMapDescriptorSnapshot;
 
 readonly func ReadTileFeatureMapDescriptor(
     index: TileIndex) => TileFeatureMapDescriptor

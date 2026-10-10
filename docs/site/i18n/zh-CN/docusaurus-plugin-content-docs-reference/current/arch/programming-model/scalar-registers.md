@@ -73,7 +73,7 @@ begin
     if index == 0 then
         return Zeros{PTO_XLEN};
     else
-        return _PEGPRs[[pe]][[index]];
+        return _PEGPRs[[_CurrentModelCore]][[pe]][[index]];
     end;
 end;
 
@@ -85,7 +85,7 @@ end;
 func WritePEGPR(pe: MemoryAgentId, index: GPRIndex, value: Word)
 begin
     if index != 0 then
-        _PEGPRs[[pe]][[index]] = value;
+        _PEGPRs[[_CurrentModelCore]][[pe]][[index]] = value;
     end;
 end;
 ```

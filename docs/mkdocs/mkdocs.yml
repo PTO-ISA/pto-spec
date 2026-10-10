@@ -68,6 +68,7 @@ nav:
           - Atomicity: arch/memory-model/atomicity.md
           - Fault Precision: arch/memory-model/fault-precision.md
           - Global Memory Access: arch/memory-model/global-memory-access.md
+          - Gm Obligations: arch/memory-model/gm-obligations.md
           - Instruction Fetch: arch/memory-model/instruction-fetch.md
           - Memory Events: arch/memory-model/memory-events.md
           - Ordering: arch/memory-model/ordering.md
@@ -84,8 +85,11 @@ nav:
           - Shared Tile Registers: arch/programming-model/shared-tile-registers.md
           - Tile Registers: arch/programming-model/tile-registers.md
       - State:
+          - Core Synchronization: arch/state/core-synchronization.md
           - Definedness: arch/state/definedness.md
+          - Kernel Lifecycle: arch/state/kernel-lifecycle.md
           - Numeric Status: arch/state/numeric-status.md
+          - PE Execution Context: arch/state/pe-execution-context.md
           - Program Counter: arch/state/program-counter.md
           - Tile Descriptor: arch/state/tile-descriptor.md
           - Trap Context: arch/state/trap-context.md
@@ -197,6 +201,7 @@ nav:
               - Expansion Schema: block/model/dispatch/expansion-schema.md
               - Expdif Schema: block/model/dispatch/expdif-schema.md
               - Generation Schema: block/model/dispatch/generation-schema.md
+              - Gm Obligation Dispatch: block/model/dispatch/gm-obligation-dispatch.md
               - Lea Schema: block/model/dispatch/lea-schema.md
               - Matrix Scale: block/model/dispatch/matrix-scale.md
               - Numeric Control: block/model/dispatch/numeric-control.md
@@ -239,11 +244,13 @@ nav:
               - Weight To Shared Gm: block/model/memory/weight-to-shared-gm.md
           - Operands:
               - Local Generation CUBE: block/model/operands/local-generation-cube.md
+              - Local Generation Squash: block/model/operands/local-generation-squash.md
               - Local Generation: block/model/operands/local-generation.md
               - Portable Carriers: block/model/operands/portable-carriers.md
               - Range Modifiers: block/model/operands/range-modifiers.md
               - Scalar Bindings: block/model/operands/scalar-bindings.md
               - Shared Bindings: block/model/operands/shared-bindings.md
+              - Shared Generation PE Requests: block/model/operands/shared-generation-pe-requests.md
               - Shared Generation: block/model/operands/shared-generation.md
               - Subview Descriptor: block/model/operands/subview-descriptor.md
               - Tile Bindings: block/model/operands/tile-bindings.md
@@ -766,6 +773,7 @@ nav:
           - SSRGET: scalar/sys/SSRGET.md
           - SSRSET: scalar/sys/SSRSET.md
           - SSRSWAP: scalar/sys/SSRSWAP.md
+          - SYNC.CORE: scalar/sys/SYNC.CORE.md
           - TLB.IA: scalar/sys/TLB.IA.md
           - TLB.IALL: scalar/sys/TLB.IALL.md
           - TLB.IAV: scalar/sys/TLB.IAV.md
@@ -1078,6 +1086,7 @@ nav:
               - "ADR-SCALAR-0004: Scalar FSU totality and numeric-profile boundary": status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md
               - "ADR-SCALAR-0005: ADDTPC page-scaled immediate": status/decisions/ADR-SCALAR-0005-addtpc-page-scaled-immediate.md
               - "ADR-SCALAR-0006: Scalar, system, and queue operations": status/decisions/ADR-SCALAR-0006-scalar-system-and-queue-operations.md
+              - "ADR-SCALAR-0007: SYNC.CORE collective architectural phase barrier": status/decisions/ADR-SCALAR-0007-sync-core-collective-phase-barrier.md
           - TILE:
               - "ADR-TILE-0001: Define tile capacity and packed storage": status/decisions/ADR-TILE-0001-tile-capacity-and-packed-storage.md
               - "ADR-TILE-0002: Track tile definedness per element": status/decisions/ADR-TILE-0002-element-level-tile-definedness.md

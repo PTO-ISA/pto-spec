@@ -999,6 +999,18 @@
         "en": "This clause describes the word form of split-immediate exclusive-or. It combines the low 32 bits of the source and sign-extended immediate, sign-extends the 32-bit result to XLEN, publishes through the common destination map, and advances TPC.",
         "zh-CN": "本条说明分段立即数按位异或的字宽形式：使用源值和符号扩展立即数的低 32 位，将 32 位结果符号扩展到 XLEN，经通用目的映射发布，并推进 TPC。"
       }
+    },
+    {
+      "id": "PTO-SYNC-CORE-DECISION-BINDING-001",
+      "source_path": "asl/scalar/sys/SYNC.CORE.asl",
+      "title": {
+        "en": "SYNC.CORE scalar instruction contract",
+        "zh-CN": "SYNC.CORE 标量指令契约"
+      },
+      "summary": {
+        "en": "The operand-free L32 SYS operation joins the Core-local four-PE phase barrier. Its legal envelope, earlier-memory obligations, completion ordering, retained releases, reservation effects, and recovery boundary are defined by this owner and its referenced contracts.",
+        "zh-CN": "无操作数的 L32 SYS 操作加入 Core 内四 PE 阶段屏障。合法 envelope、较早内存义务、完成顺序、保留的释放状态、reservation 效果和恢复边界由本所有者及其引用契约定义。"
+      }
     }
   ]
 }

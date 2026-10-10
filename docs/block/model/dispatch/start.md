@@ -164,6 +164,7 @@ begin
         return_target, taken);
     if _LastFault == Fault_None then
         InstallBundleOperationDescriptor(descriptor);
+        _BundleStartEncodedInstruction = instruction;
     end;
 end;
 

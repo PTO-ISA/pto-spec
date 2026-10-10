@@ -319,6 +319,14 @@ begin
             .destination_assemble.init = init;
         _BundleTileBindings[[_BundleRangeGroup.tile_binding]]
             .destination_assemble.last = last;
+        _BundleTileBindings[[_BundleRangeGroup.tile_binding]]
+            .destination_assemble.shared_request_identity_valid = FALSE;
+        _BundleTileBindings[[_BundleRangeGroup.tile_binding]]
+            .destination_assemble.shared_request_waiting = FALSE;
+        _BundleTileBindings[[_BundleRangeGroup.tile_binding]]
+            .destination_assemble.shared_request_execution_domain = 0;
+        _BundleTileBindings[[_BundleRangeGroup.tile_binding]]
+            .destination_assemble.shared_request_operation_ordinal = 0;
     else
         _BundleSharedBindings[[_BundleRangeGroup.shared_binding]]
             .destination_assemble.valid = TRUE;
@@ -334,6 +342,14 @@ begin
             .destination_assemble.init = init;
         _BundleSharedBindings[[_BundleRangeGroup.shared_binding]]
             .destination_assemble.last = last;
+        _BundleSharedBindings[[_BundleRangeGroup.shared_binding]]
+            .destination_assemble.shared_request_identity_valid = FALSE;
+        _BundleSharedBindings[[_BundleRangeGroup.shared_binding]]
+            .destination_assemble.shared_request_waiting = FALSE;
+        _BundleSharedBindings[[_BundleRangeGroup.shared_binding]]
+            .destination_assemble.shared_request_execution_domain = 0;
+        _BundleSharedBindings[[_BundleRangeGroup.shared_binding]]
+            .destination_assemble.shared_request_operation_ordinal = 0;
     end;
     MarkBundleRangeRole(2);
 end;

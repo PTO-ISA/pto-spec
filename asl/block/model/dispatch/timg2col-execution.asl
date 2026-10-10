@@ -401,7 +401,9 @@ begin
             if !coverage_legal then return FALSE; end;
             _BundleSharedBindings[[0]].destination_assemble.offset =
                 Zeros{PTO_XLEN} + derived_offset;
-            if !CommitBundleSharedGenerationCandidateRange(
+            let payload_elements = ((writer_cells * 32 * 8) DIVRM
+                TileElementBits(data_type)) as integer {0..524288};
+            if !CommitBundleSharedGenerationCandidateRangeWithPayloadElements(
                    0, SharedTileInfo {
                        descriptor_valid = TRUE,
                        allocation_mask = mask,
@@ -410,7 +412,8 @@ begin
                        published = FALSE,
                        tile = candidate },
                    derived_offset as integer {0..8192}, coverage_cells,
-                   writer_cells, BundleTIMG2COLPEBit(), TRUE, gm_base,
+                   writer_cells, payload_elements, TRUE, FALSE,
+                   BundleTIMG2COLPEBit(), TRUE, gm_base,
                    param0, param1, param2, generation_metadata) then
                 AbortBundleSharedGeneration(
                     BundleSharedBindingId(0));

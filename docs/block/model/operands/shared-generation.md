@@ -15,14 +15,14 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: block-model-operands-shared-generation-purpose role=purpose-scope -->
 ## Purpose and scope
 
-This unit owns Shared generations and Shared subviews. A Shared generation is a Shared Tile built by one or more writers with `B.ASSEMBLE`. A Shared subview is a `B.SUBVIEW` range of a published Shared Tile that each PE may place differently.
+This unit owns Shared-generation range validation, low-level candidate merging and atomic publication, plus Shared-subview validation and materialization. A Shared generation is a Shared Tile built with `B.ASSEMBLE`; a Shared subview is a range of a published Shared Tile that each PE may place differently.
 
-The unit validates writer ranges, merges each writer's payload into a working copy, and publishes the complete object at LAST.
+The adjacent per-PE request owner handles encoded request identity, actual-PE source capture, admission, and retained completion. The logical `pe_mask` still describes the operation's participants and shapes; an encoded request contributes only its executing PE.
 
 <!-- PTO-READER-BLOCK: block-model-operands-shared-generation-concepts role=concepts-state -->
 ## Concepts and visible state
 
-The unit updates the `_SharedGenerations` record of one Shared Tile ID and, at LAST, the published `_SharedTiles` entry.
+The range and aggregate helpers in this unit update the `_SharedGenerations` record for a Shared Tile ID and publish the complete `_SharedTiles` entry at LAST. Encoded per-PE request identity and release tracking are maintained by the adjacent request owner.
 
 Coverage is tracked in 32-byte units, with 8192 units in a map. An ordinary `B.ASSEMBLE` offset and size code are in 128-byte CELLs, and the wrappers multiply by 4. The ASL comment states the reason: the finer unit lets specialized complete-row producers express the TIMG2COL row ranges without partial CELL rules. Weight `TLOAD` also commits through the same range entry point.
 
@@ -39,36 +39,38 @@ Coverage is tracked in 32-byte units, with 8192 units in a map. An ordinary `B.A
 - the range fits in the parent and, for a continuation, overlaps no covered unit;
 - at LAST, every parent unit is covered and every participant has arrived.
 
-`ValidateBundleSharedGeneration` applies this to ordinary writers during stage-2 preparation, with the whole binding mask arriving.
+The `PTO-B-ASSEMBLE-SHARED-GENERATION-001` contract distinguishes the logical participant mask from an encoded arrival: each encoded submission captures only its executing PE, while standalone aggregate verification retains whole-mask arrival semantics. The actual-PE request owner performs that encoded admission.
 
-`CommitBundleSharedGenerationCandidateRange` repeats the validation. INIT resets the record and starts a working Tile from the candidate with the parent capacity and no defined elements. A continuation requires matching columns, data type, and layout. The candidate's defined elements are copied into the working Tile at the writer's offset, and the valid region grows to cover them. Coverage, readiness, and arrival are updated. At LAST the working Tile becomes the published Shared Tile in the same commit step.
+`CommitBundleSharedGenerationCandidateRange` repeats range validation and merges a candidate into the working Tile at the writer's offset. INIT starts the working Tile with the parent capacity and no defined elements; continuations require matching columns, data type, and layout. The low-level operation updates coverage, readiness, and arrival, and at LAST publishes the complete working Tile in the same commit step. Encoded per-PE admission, once-only contribution, and retained release are handled by the adjacent request owner.
 
 Design point: `CommitBundleSharedGenerationCandidateRange` writes `_SharedTiles` only at LAST; earlier calls change only the generation record. The NDF `PTO-B-ASSEMBLE-SHARED-GENERATION-001` requires publication to replace descriptor and payload atomically and every rejection to preserve the prior published generation.
 
 Design point: participant arrival is tracked apart from coverage. A specialized cooperative producer passes one PE's arrival bit per writer, and a PE with zero rows can arrive without writing cells, so the collective can still close.
 
-`BeginBundleSharedGenerationProbe` saves the published record and hides it while a Shared `TLOAD` or a Local-to-Shared `TMOV` builds a candidate. On the fault-free `TLOAD` path, and always for `TMOV`, `RestoreBundleSharedGenerationProbe` puts it back before the commit. The Shared TLSU comment states that after a first fault the candidate record is left in place and is neither ready nor published.
+Under the Shared-generation contract, a squashed actual request cannot later contribute to an incomplete candidate; a published candidate keeps its pending releases. The state and per-PE request owners handle request-token invalidation across saved PE and trap contexts.
+
+The per-PE request and Shared TLSU owners describe the temporary Shared `TLOAD`/`TMOV` candidate probe and its first-fault behavior; see those related owners below.
 
 <!-- PTO-READER-BLOCK: block-model-operands-shared-generation-boundaries role=boundaries -->
 ## Architectural boundaries
 
 `BundleSharedSubviewLegal` requires a size-code-0 source binding of a published, non-CUBE Shared Tile. For every selected PE, it evaluates `GPR[RegSrc] + uimm11` in that PE's own registers, then requires the range to fit the parent and to be either within one row or whole rows starting at column 0. `MaterializeBundleSharedSubviewForPE` builds that PE's view. One bad view rejects the operation.
 
-`AbortBundleSharedGenerationsForBundle` aborts every generation the bundle touched when a tile operation fails.
+`AbortBundleSharedGenerationsForBundle` visits the bundle's valid Shared assembly destination bindings and aborts those destination generations after a tile-operation failure. It does not abort an arbitrary Shared source generation merely because the operation read that source.
 
 <!-- PTO-READER-BLOCK: block-model-operands-shared-generation-example role=example-usage -->
 ## Non-normative reading example
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-Shared Tile 3 is built by two ordinary writer bundles with mask `1111` and parent size code 7 (8192 bytes, 64 CELLs, 256 units). Bundle A carries INIT with writer size code 6 (32 CELLs) at offset 0. After A, units 0..127 are covered and all four PEs have arrived, because an ordinary writer arrives with its whole mask. Bundle B carries LAST with writer size code 6 at offset 32 and covers units 128..255. Coverage is then complete, and the working Tile replaces Shared Tile 3. If B used offset 16 instead, its range would overlap covered units, B would fault with `Fault_TileLegality`, the open generation would be aborted, and any previously published Shared Tile 3 would remain published.
+In encoded witness `PTO-AVS-BLOCK-SHARED-TLSU-ASSEMBLE-PE-009`, four PEs use the same logical mask `1111`, Shared Tile 19, and 512-byte parent, with one 128-byte CELL written at offset 0, 1, 2, or 3 by its actual PE. Each request carries matching `INIT_LAST` metadata but captures only that PE's private source. The first three stops remain fault-free and parked without advancing TPC or publishing; the fourth completes coverage and atomically publishes all four distinct fragments. Retrying the earlier stops consumes their retained completion once without replaying a fragment. A later use of the same static operation gets a fresh ordinal and new fragments while the prior parent remains visible until the replacement completes.
 
 <!-- PTO-READER-BLOCK: block-model-operands-shared-generation-related role=related-owners-navigation -->
 ## Related owners
 
 - [Shared generation state](../state/shared-generation-state.md) clears, resets, and aborts the records.
 - [Shared bindings](shared-bindings.md) defines reused destinations.
-- [Shared TLSU](../dispatch/shared-tlsu.md), [TIMG2COL execution](../dispatch/timg2col-execution.md), and [Weight-to-shared execution](../dispatch/weight-to-shared-execution.md) commit candidates.
+- [Per-PE Shared-generation requests](shared-generation-pe-requests.md) owns encoded source capture, admission, publication, and retained release; [Shared TLSU](../dispatch/shared-tlsu.md), [TIMG2COL execution](../dispatch/timg2col-execution.md), and [Weight-to-shared execution](../dispatch/weight-to-shared-execution.md) call the applicable commit path.
 - [B.ASSEMBLE](../../operands/B.ASSEMBLE.md) is the command page.
 <!-- SUPPLEMENTARY-END -->
 
@@ -85,7 +87,19 @@ Shared Tile 3 is built by two ordinary writer bundles with mask `1111` and paren
 // the same generation ordinal with matching metadata, and no participant has
 // faulted or been squashed.  Publication MUST replace the complete Shared
 // descriptor and payload atomically; every rejection MUST preserve the prior
-// published generation.
+// published generation. Encoded per-PE submissions MUST capture only the
+// executing participant's real source and arrival. A matching participant
+// may join one open Core-owned candidate once; an incomplete collective LAST
+// remains parked without a fault or PC advance until every declared range and
+// participant is present. A later request from an already-arrived PE MUST NOT
+// be merged into that earlier candidate. Completed candidates remain retained
+// until every parked request has consumed its completion, and a new INIT MUST
+// use a new operation ordinal rather than reusing the old candidate. Squashing
+// an execution domain whose actual arrival token belongs to an incomplete
+// PE-owned candidate MUST abort that candidate and invalidate the retained
+// request identity across saved PE and trap contexts. A published candidate
+// is irrevocable: squash MUST preserve its payload and outstanding release
+// state.
 // NDF-END: PTO-B-ASSEMBLE-SHARED-GENERATION-001
 // NDF-BEGIN: PTO-B-SUBVIEW-SHARED-PER-PE-001
 // ndf: kind=contract level=L1 layer=block status=accepted
@@ -105,16 +119,21 @@ begin
     for binding = 0 to 3 do
         if _BundleSharedBindings[[binding]].valid &&
            _BundleSharedBindings[[binding]].destination_assemble.valid then
-            AbortBundleSharedGeneration(
+            let index = SharedTileArrayIndex(
                 _BundleSharedBindings[[binding]].shared_tile_id);
+            // Publication is irrevocable. A later unrelated or malformed
+            // request cannot erase a published parent's outstanding releases;
+            // explicit invocation retirement owns their metadata cleanup.
+            if !_SharedGenerations[[index]].actual_pe_owned ||
+               !_SharedGenerations[[index]].published then
+                AbortBundleSharedGeneration(
+                    _BundleSharedBindings[[binding]].shared_tile_id);
+            end;
         end;
     end;
 end;
-// Shared generation coverage is tracked internally in 32-byte units. Ordinary
-// B.ASSEMBLE offsets and SizeCodes remain 128-byte Tile CELL quantities and
-// the compatibility wrappers below expand each such CELL to four units. The
-// finer internal granularity lets specialized complete-row producers express
-// the frozen TIMG2COL row ranges without inventing partial generic CELL rules.
+// Coverage uses 32-byte units; wrappers expand existing 128-byte CELL
+// quantities to four units for specialized complete-row producers.
 readonly func BundleSharedGenerationCoverageWithCurrent(
     shared_tile_id: SharedTileID,
     offset_cells: integer {0..8192},
@@ -131,10 +150,8 @@ begin
     end;
     return covered;
 end;
-// A specialized collective may contribute fewer physical cells than the
-// size-coded carrier and may contribute no cells at all.  Participant arrival
-// remains independent of CELL coverage so a zero-row PE can complete the
-// collective without writing payload or definedness.
+// Specialized collectives may contribute fewer cells (including zero);
+// arrival remains independent of coverage and payload definedness.
 readonly func ValidateBundleSharedGenerationRange(
     binding: BundleSharedBindingIndex,
     offset_cells: integer {0..8192},
@@ -215,54 +232,14 @@ begin
     end;
     return TRUE;
 end;
-readonly func ValidateBundleSharedGeneration() => boolean
-begin
-    for binding = 0 to 3 do
-        if _BundleSharedBindings[[binding]].valid &&
-           _BundleSharedBindings[[binding]].destination_assemble.valid then
-            let shared_tile_id =
-                _BundleSharedBindings[[binding]].shared_tile_id;
-            let index = SharedTileArrayIndex(shared_tile_id);
-            let assemble =
-                _BundleSharedBindings[[binding]].destination_assemble;
-            let writer_size = assemble.size_code;
-            let participant_mask = _BundleSharedBindings[[binding]].pe_mask;
-            if writer_size < 1 || writer_size > 12 then return FALSE; end;
-            if assemble.init && _BundleSharedBindings[[binding]].size_code == 0 then return FALSE; end;
-            if !assemble.init && !BundleSharedBindingIsReusedDestination(binding) then return FALSE; end;
-            if assemble.init && _SharedGenerations[[index]].open then
-                return FALSE;
-            end;
-            if !assemble.init &&
-               (!_SharedGenerations[[index]].open ||
-                _SharedGenerations[[index]].closed) then
-                return FALSE;
-            end;
-            if !assemble.init &&
-               _SharedGenerations[[index]].participant_mask !=
-                   participant_mask then
-                return FALSE;
-            end;
-            let raw_offset = UInt(assemble.offset);
-            if raw_offset > 2047 then return FALSE; end;
-            let offset_cells = (raw_offset * 4) as integer {0..8188};
-            let writer_cells = (BundleLocalGenerationCellCount(
-                writer_size as integer {1..12}) * 4) as integer {4..8192};
-            if !ValidateBundleSharedGenerationRange(binding, offset_cells,
-                   writer_cells, participant_mask, FALSE,
-                   Zeros{PTO_XLEN}, Zeros{PTO_XLEN},
-                   Zeros{PTO_XLEN}, Zeros{PTO_XLEN}, Zeros{PTO_XLEN}) then
-                return FALSE;
-            end;
-        end;
-    end;
-    return TRUE;
-end;
-func CommitBundleSharedGenerationCandidateRange(
+func CommitBundleSharedGenerationCandidateRangeWithPayloadElements(
     binding: BundleSharedBindingIndex, candidate: SharedTileInfo,
     offset_cells: integer {0..8192},
     coverage_cells: integer {0..8192},
     payload_cells: integer {0..8192},
+    payload_elements: integer {0..524288},
+    placed_fragment: boolean,
+    preserve_source_geometry: boolean,
     participant_arrival: bits(4),
     specialized_inputs_valid: boolean,
     specialized_input0: Word, specialized_input1: Word, specialized_input2: Word,
@@ -278,6 +255,8 @@ begin
     if !candidate.descriptor_valid ||
        candidate.allocation_mask != participant_mask ||
        payload_cells > coverage_cells ||
+       payload_elements > ((payload_cells * 32 * 8) DIVRM
+           TileElementBits(candidate.tile.data_type)) ||
        !ValidateBundleSharedGenerationRange(binding, offset_cells,
            coverage_cells, participant_arrival, specialized_inputs_valid,
            specialized_input0, specialized_input1,
@@ -287,17 +266,19 @@ begin
     if assemble.init then
         let parent_size = _BundleSharedBindings[[binding]].size_code as integer {1..12};
         let parent_bytes = TileSizeCodeBytes(parent_size);
-        let parent_rows = DerivedTileRows(
-            parent_bytes, candidate.tile.columns, candidate.tile.data_type);
+        let parent_rows = DerivedTileRows(parent_bytes, candidate.tile.columns, candidate.tile.data_type);
         if parent_rows == 0 then return FALSE; end;
+        let complete_source_view = preserve_source_geometry && placed_fragment &&
+            offset_cells == 0 && candidate.tile.capacity_bytes == parent_bytes &&
+            coverage_cells == BundleLocalGenerationCellCount(parent_size) * 4 &&
+            payload_cells == coverage_cells && payload_elements == TileLogicalElementCapacity(parent_bytes, candidate.tile.data_type);
         _SharedGenerations[[index]].open = TRUE;
         _SharedGenerations[[index]].closed = FALSE;
         _SharedGenerations[[index]].published = FALSE;
         _SharedGenerations[[index]].shared_tile_id = shared_tile_id;
         _SharedGenerations[[index]].participant_mask = participant_mask;
         _SharedGenerations[[index]].parent_size_code = parent_size;
-        _SharedGenerations[[index]].parent_cell_count =
-            BundleLocalGenerationCellCount(parent_size) * 4;
+        _SharedGenerations[[index]].parent_cell_count = BundleLocalGenerationCellCount(parent_size) * 4;
         _SharedGenerations[[index]].covered_cells = Zeros{8192};
         _SharedGenerations[[index]].ready_cells = Zeros{8192};
         _SharedGenerations[[index]].arrived_participants = Zeros{4};
@@ -312,7 +293,11 @@ begin
         _SharedGenerations[[index]].working_valid = TRUE;
         _SharedGenerations[[index]].working_tile = candidate.tile;
         _SharedGenerations[[index]].working_tile.capacity_bytes = parent_bytes;
-        _SharedGenerations[[index]].working_tile.rows = parent_rows;
+        _SharedGenerations[[index]].working_tile.rows = if complete_source_view then
+            candidate.tile.rows else parent_rows;
+        // Rebuild placed-fragment validity in the destination geometry.
+        if placed_fragment then _SharedGenerations[[index]].working_tile.valid_rows = 0;
+            _SharedGenerations[[index]].working_tile.valid_columns = 0; end;
         _SharedGenerations[[index]].working_tile.contents_defined = FALSE;
         _SharedGenerations[[index]].working_tile.defined_elements =
             Zeros{PTO_MODEL_TILE_ELEMENTS};
@@ -331,12 +316,11 @@ begin
             return FALSE;
         end;
     end;
-    if payload_cells != 0 then
+    var descriptor_expanded = FALSE;
+    if payload_elements != 0 then
         let element_bits = TileElementBits(candidate.tile.data_type);
-        let destination_offset = ((offset_cells * 32 * 8) DIVRM element_bits)
-            as integer {0..524287};
-        let source_elements = ((payload_cells * 32 * 8) DIVRM element_bits)
-            as integer {1..524288};
+        let destination_offset = ((offset_cells * 32 * 8) DIVRM element_bits) as integer {0..524287};
+        let source_elements = payload_elements;
         let parent_elements = TileLogicalElementCapacity(
             _SharedGenerations[[index]].working_tile.capacity_bytes,
             candidate.tile.data_type);
@@ -359,32 +343,42 @@ begin
             end;
         end;
         _SharedGenerations[[index]].working_tile = working;
-        let working_columns = working.columns as integer {1..65535};
-        let last_valid_row = (candidate.tile.valid_rows - 1)
-            as integer {0..65534};
-        let last_valid_column = (candidate.tile.valid_columns - 1)
-            as integer {0..65534};
-        let candidate_valid_extent =
-            (TileLogicalLinearIndex(candidate.tile, last_valid_row,
-                 last_valid_column) + 1) as integer {1..524288};
-        let required_end = destination_offset + candidate_valid_extent;
-        if required_end > parent_elements then return FALSE; end;
-        let required_rows = ((required_end +
-            (working_columns - 1)) DIVRM working_columns)
-            as integer {1..65535};
-        if _SharedGenerations[[index]].working_tile.valid_rows < required_rows then
-            _SharedGenerations[[index]].working_tile.valid_rows = required_rows;
+        // Actual PE fragments compose validity; TLOAD retains whole-parent shape.
+        let previous_valid_rows = _SharedGenerations[[index]].working_tile.valid_rows;
+        let previous_valid_columns = _SharedGenerations[[index]].working_tile.valid_columns;
+        let candidate_rows = if placed_fragment then
+            BundleSharedGenerationPlacedExtent(candidate.tile, _SharedGenerations[[index]].working_tile,
+                source_elements, destination_offset, previous_valid_rows, FALSE)
+            else candidate.tile.valid_rows;
+        let candidate_columns = if placed_fragment then
+            BundleSharedGenerationPlacedExtent(candidate.tile, _SharedGenerations[[index]].working_tile,
+                source_elements, destination_offset, previous_valid_columns, TRUE)
+            else candidate.tile.valid_columns;
+        descriptor_expanded = candidate_rows > previous_valid_rows ||
+            candidate_columns > previous_valid_columns;
+        if _SharedGenerations[[index]].working_tile.valid_rows <
+           candidate_rows then
+            _SharedGenerations[[index]].working_tile.valid_rows = candidate_rows;
         end;
         if _SharedGenerations[[index]].working_tile.valid_columns <
-           candidate.tile.valid_columns then
-            _SharedGenerations[[index]].working_tile.valid_columns =
-                candidate.tile.valid_columns;
+           candidate_columns then
+            _SharedGenerations[[index]].working_tile.valid_columns = candidate_columns;
         end;
     end;
     let covered = BundleSharedGenerationCoverageWithCurrent(
         shared_tile_id, offset_cells, coverage_cells, assemble.init);
     _SharedGenerations[[index]].covered_cells = covered;
-    _SharedGenerations[[index]].ready_cells = covered;
+    let prior_ready = if assemble.init then Zeros{8192}
+        else _SharedGenerations[[index]].ready_cells;
+    let range_ready = BundleSharedGenerationReadyCellsWithRange(
+        _SharedGenerations[[index]].working_tile, prior_ready,
+        offset_cells, coverage_cells);
+    _SharedGenerations[[index]].ready_cells = if payload_elements != 0 &&
+        descriptor_expanded then
+            BundleSharedGenerationReadyCellsWithRange(
+                _SharedGenerations[[index]].working_tile, range_ready,
+                0, _SharedGenerations[[index]].parent_cell_count)
+        else range_ready;
     _SharedGenerations[[index]].arrived_participants =
         _SharedGenerations[[index]].arrived_participants OR
         participant_arrival;
@@ -392,6 +386,14 @@ begin
         _SharedGenerations[[index]].working_initialized_mask OR
         candidate.initialized_mask;
     if assemble.last then
+        var all_data_ready = TRUE;
+        for cell = 0 to 8191 do
+            if cell < _SharedGenerations[[index]].parent_cell_count &&
+               _SharedGenerations[[index]].ready_cells[cell] == '0' then
+                all_data_ready = FALSE;
+            end;
+        end;
+        if !all_data_ready then return FALSE; end;
         _SharedGenerations[[index]].last_seen = TRUE;
         _SharedGenerations[[index]].closed = TRUE;
         _SharedGenerations[[index]].open = FALSE;
@@ -406,6 +408,24 @@ begin
             _SharedGenerations[[index]].working_tile;
     end;
     return TRUE;
+end;
+func CommitBundleSharedGenerationCandidateRange(
+    binding: BundleSharedBindingIndex, candidate: SharedTileInfo,
+    offset_cells: integer {0..8192},
+    coverage_cells: integer {0..8192},
+    payload_cells: integer {0..8192},
+    participant_arrival: bits(4),
+    specialized_inputs_valid: boolean,
+    specialized_input0: Word, specialized_input1: Word, specialized_input2: Word,
+    specialized_input3: Word, specialized_metadata: Word) => boolean
+begin
+    let payload_elements = ((payload_cells * 32 * 8) DIVRM
+        TileElementBits(candidate.tile.data_type)) as integer {0..524288};
+    return CommitBundleSharedGenerationCandidateRangeWithPayloadElements(
+        binding, candidate, offset_cells, coverage_cells, payload_cells,
+        payload_elements, FALSE, FALSE, participant_arrival, specialized_inputs_valid,
+        specialized_input0, specialized_input1, specialized_input2,
+        specialized_input3, specialized_metadata);
 end;
 // Ordinary B.ASSEMBLE retains its size-coded range and represents arrival of
 // the complete decoded PE mask.  Specialized collectives use the explicit
@@ -422,23 +442,6 @@ begin
         _BundleSharedBindings[[binding]].pe_mask, FALSE,
         Zeros{PTO_XLEN}, Zeros{PTO_XLEN},
         Zeros{PTO_XLEN}, Zeros{PTO_XLEN}, Zeros{PTO_XLEN});
-end;
-func BeginBundleSharedGenerationProbe(shared_tile_id: SharedTileID)
-    => SharedTileInfo
-begin
-    let index = SharedTileArrayIndex(shared_tile_id);
-    let prior = _SharedTiles[[index]];
-    _SharedTiles[[index]].descriptor_valid = FALSE;
-    _SharedTiles[[index]].allocation_mask = Zeros{4};
-    _SharedTiles[[index]].initialized_mask = Zeros{4};
-    _SharedTiles[[index]].whole_parent_ready = FALSE;
-    _SharedTiles[[index]].published = FALSE;
-    return prior;
-end;
-func RestoreBundleSharedGenerationProbe(
-    shared_tile_id: SharedTileID, prior: SharedTileInfo)
-begin
-    _SharedTiles[[SharedTileArrayIndex(shared_tile_id)]] = prior;
 end;
 readonly func BundleSharedSubviewOffsetRawForPE(
     binding: BundleSharedBindingIndex, pe_identity: MemoryAgentId) => Word

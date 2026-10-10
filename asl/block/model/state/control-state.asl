@@ -1,5 +1,9 @@
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","surface":"block","classification":["model","state","control-state"],"depends_on":["PTO-BLOCK-MODEL-STATE-TYPES"]}
-// PTO-STATE: {"id":"PTO-STATE-BLOCK-CONTROL","classification":["block","control"],"scope":"core","owner":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","members":["_BARG","_BundleCommitTargetSet","_BundleConditionSet","_SystemBlockTerminalPending","_BundleSequentialPC","_FrameStackReturnTarget","_BundleArgument","_BundleArgumentKind","_BundleOperation","_BundleDimensions","_BundleDimensionPresent","_BundleScalarBindings","_BundleTileBindings","_BundleSharedBindings","_BundleRangeGroup","_BundleZeroParticipationSeen","_BundleControlAttributes","_BundleDataAttributes","_BundleDataAttributesPresent","_BundleExecutionMask","_BundleHint","_BundleFixedPointAttributes","_MemoryCopyTemplate","_FrameTemplate","_LocalGenerations","_SharedGenerations","_BundleExecutionDomainToken","_NextBundleExecutionDomainToken","_TileDataLayoutCapabilities","_FrameDepth","_LastFrameBegin","_LastFrameEnd","_LastFrameSize","_LastQueueLeft","_LastQueueRight","_LastQueueFlags","_LastMemoryCommandAddress","_LastMemoryCommandSize","_LastCrossBlockACR","_LastCrossBlockID","_LastBundleHintPayload"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-BLOCK-CONTROL","classification":["block","control"],"scope":"pe","owner":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","members":["_BARG","_BundleCommitTargetSet","_BundleConditionSet","_SystemBlockTerminalPending","_BundleSequentialPC","_FrameStackReturnTarget","_BundleStartEncodedInstruction","_BundleArgument","_BundleArgumentKind","_BundleOperation","_BundleDimensions","_BundleDimensionPresent","_BundleScalarBindings","_BundleTileBindings","_BundleSharedBindings","_BundleRangeGroup","_BundleZeroParticipationSeen","_BundleControlAttributes","_BundleDataAttributes","_BundleDataAttributesPresent","_BundleExecutionMask","_BundleHint","_BundleFixedPointAttributes","_MemoryCopyTemplate","_FrameTemplate","_BundleExecutionDomainToken","_FrameDepth","_LastFrameBegin","_LastFrameEnd","_LastFrameSize","_LastQueueLeft","_LastQueueRight","_LastQueueFlags","_LastMemoryCommandAddress","_LastMemoryCommandSize","_LastCrossBlockACR","_LastCrossBlockID","_LastBundleHintPayload"],"depends_on":["PTO-STATE-TILE-LOCAL"]}
+// PTO-STATE: {"id":"PTO-STATE-BLOCK-LOCAL-GENERATIONS","classification":["block","local-generations"],"scope":"core","owner":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","members":["_LocalGenerations"],"depends_on":["PTO-STATE-TILE-LOCAL"]}
+// PTO-STATE: {"id":"PTO-STATE-BLOCK-SHARED-GENERATIONS","classification":["block","shared-generations"],"scope":"core","owner":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","members":["_SharedGenerations"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-BLOCK-CORE-TILE-CAPABILITIES","classification":["block","tile-capabilities"],"scope":"core","owner":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","members":["_TileDataLayoutCapabilities"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-BLOCK-EXECUTION-DOMAIN-ALLOCATOR","classification":["block","execution-domain-allocator"],"scope":"system","owner":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","members":["_NextBundleExecutionDomainToken"],"depends_on":[]}
 
 // NDF-BEGIN: PTO-REQ-BUNDLE-STATE-001
 // ndf: kind=contract level=L1 layer=block status=accepted
@@ -8,6 +12,7 @@
 // NDF-END: PTO-REQ-BUNDLE-STATE-001
 
 var _BARG : BundleArgumentRegister;
+var _BundleStartEncodedInstruction : bits(64);
 // C.SETC.TGT owns one successful value snapshot per active block. This marker
 // is separate from BARG.BPCN because BSTART initializes BPCN before any setter.
 var _BundleCommitTargetSet : boolean;

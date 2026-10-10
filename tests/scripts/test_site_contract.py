@@ -210,6 +210,34 @@ class SiteContractTests(unittest.TestCase):
             hashlib.sha256(owner.encode("ascii")).hexdigest(),
         )
         projection_text = json.dumps(projection)
+        self.assertIn(
+            "One Shared issuer reads the whole valid GM parent, including when B.ASSEMBLE is present.",
+            projection_text,
+        )
+        self.assertIn(
+            "For multi-PE Shared B.ASSEMBLE, each actual PE reads its existing GM source stripe; encoded offset and writer size select only the destination range.",
+            projection_text,
+        )
+        first_fault_stage = next(
+            stage
+            for stage in projection["semanticExecution"]["stages"]
+            if stage["id"] == "first-fault"
+        )
+        read_facts = first_fault_stage["facts"][0]["items"]
+        self.assertTrue(
+            any(
+                item["zh-CN"]
+                == "单个 Shared issuer 即使带有 B.ASSEMBLE，也读取整个有效 GM parent。"
+                for item in read_facts
+            )
+        )
+        self.assertTrue(
+            any(
+                item["zh-CN"]
+                == "多 PE Shared B.ASSEMBLE 中，每个实际 PE 读取其既有 GM 源 stripe；编码 offset 与 writer size 只选择目标写入范围。"
+                for item in read_facts
+            )
+        )
         self.assertIn("complete Shared logical parent", projection_text)
         self.assertIn("B.ASSEMBLE", projection_text)
         self.assertIn("first access fault stops the request", projection_text)

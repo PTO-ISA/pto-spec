@@ -3,7 +3,7 @@
   "family_constraint_count": 0,
   "family_constraints": [],
   "form_constraint_count": 98,
-  "form_count": 466,
+  "form_count": 467,
   "forms": [
     {
       "asm": "acrc rst_type",
@@ -34220,6 +34220,28 @@
       "semantic_handler": "ScalarBinaryW",
       "semantic_summary": "XORW applies the selected right-source transformation before its encoded logical left shift, performs word bitwise exclusive OR, and publishes the low 32-bit result sign-extended to XLEN.",
       "status": "accepted"
+    },
+    {
+      "asm": "sync.core",
+      "constraints": [],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0xffffffff",
+          "match": "0x0330a02b",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [],
+      "length_bits": 32,
+      "mnemonic": "SYNC.CORE",
+      "semantic_family": "SYS",
+      "semantic_group": "SYS",
+      "semantic_handler": "SyncCore",
+      "semantic_summary": "Waits for all four PEs at the same Core-local phase boundary and completes their earlier GM obligations.",
+      "status": "accepted",
+      "form_id": "sync_core_32_0330a02b7c32"
     }
   ],
   "isa": "PTO Instruction Set Architecture",
@@ -34243,5 +34265,5 @@
     }
   ],
   "schema_version": 2,
-  "semantic_handler_count": 72
+  "semantic_handler_count": 73
 }

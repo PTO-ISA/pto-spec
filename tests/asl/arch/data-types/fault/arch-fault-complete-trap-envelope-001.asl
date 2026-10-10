@@ -32,12 +32,16 @@ end;
 func CheckServiceRequestTrapMapping()
 begin
     ResetProfileState();
+    let launch = LaunchKernelInvocation(0, Zeros{PTO_XLEN} + 0x300);
+    assert launch == KernelLifecycle_Started;
+    SelectExecutionContext(0, 0);
     WriteSystemRegisterAddress(Zeros{24} + 0x1f01,
         Zeros{PTO_XLEN} + 0x900);
     SetCurrentACR(2);
     WriteTPC(Zeros{PTO_XLEN} + 0x400);
     let entered = RaiseServiceRequest('0001');
     assert entered;
+    assert _CurrentMemoryOrigin == MemoryEventOrigin_Handler;
     assert _LastFault == Fault_ServiceRequest;
     assert _FaultAddress == Zeros{PTO_XLEN} + 0x400;
     assert CurrentACR() == 1;
@@ -65,7 +69,44 @@ begin
     assert CurrentACR() == 2;
     // TRAP-WITNESS scall/assert-restart
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x404;
+    assert _CurrentMemoryOrigin == MemoryEventOrigin_Kernel;
     assert !_TrapContexts[[1]].valid;
+end;
+
+func CheckNestedServiceHandlerOrigins()
+begin
+    ResetProfileState();
+    let launch = LaunchKernelInvocation(0, Zeros{PTO_XLEN} + 0x300);
+    assert launch == KernelLifecycle_Started;
+    SelectExecutionContext(0, 0);
+    SetCurrentACR(2);
+    WriteTPC(Zeros{PTO_XLEN} + 0x400);
+    StartMemoryEventCapture(0);
+    let outer = RaiseServiceRequest('0001');
+    assert outer && CurrentACR() == 1;
+    assert _CurrentMemoryOrigin == MemoryEventOrigin_Handler;
+    StoreWithOrder(Zeros{PTO_XLEN} + 0x800, 8,
+        Zeros{PTO_XLEN} + 0x11, MemoryOrder_Relaxed);
+    let inner = RaiseServiceRequest('0000');
+    assert inner && CurrentACR() == 0;
+    assert _CurrentMemoryOrigin == MemoryEventOrigin_Handler;
+    StoreWithOrder(Zeros{PTO_XLEN} + 0x808, 8,
+        Zeros{PTO_XLEN} + 0x22, MemoryOrder_Relaxed);
+    let inner_return = RecoverTrapContext(0);
+    assert inner_return;
+    assert CurrentACR() == 1;
+    assert _CurrentMemoryOrigin == MemoryEventOrigin_Handler;
+    let outer_return = RecoverTrapContext(1);
+    assert outer_return;
+    assert CurrentACR() == 2;
+    assert _CurrentMemoryOrigin == MemoryEventOrigin_Kernel;
+    StoreWithOrder(Zeros{PTO_XLEN} + 0x810, 8,
+        Zeros{PTO_XLEN} + 0x33, MemoryOrder_Relaxed);
+    assert _MemoryEventCount == 3;
+    assert _MemoryEvents[[0]].origin == MemoryEventOrigin_Handler;
+    assert _MemoryEvents[[1]].origin == MemoryEventOrigin_Handler;
+    assert _MemoryEvents[[2]].origin == MemoryEventOrigin_Kernel;
+    StopMemoryEventCapture();
 end;
 
 func TestCompleteTrapEnvelope()
@@ -82,6 +123,7 @@ begin
     CheckSynchronousTrapMapping(Fault_ServiceRequest, Zeros{6} + 6);
     // TRAP-WITNESS case/SCALL
     CheckServiceRequestTrapMapping();
+    CheckNestedServiceHandlerOrigins();
     // TRAP-WITNESS case/INST_PC_FAULT
     CheckSynchronousTrapMapping(Fault_InstructionPC, Zeros{6} + 32);
     // TRAP-WITNESS case/INST_PAGE_FAULT
@@ -100,10 +142,15 @@ begin
     CheckSynchronousTrapMapping(Fault_Assert, Zeros{6} + 52);
 
     ResetProfileState();
+    let interrupt_launch = LaunchKernelInvocation(0,
+        Zeros{PTO_XLEN} + 0x2f00);
+    assert interrupt_launch == KernelLifecycle_Started;
+    SelectExecutionContext(0, 0);
     SetCurrentACR(15);
     WriteTPC(Zeros{PTO_XLEN} + 0x3000);
     // TRAP-WITNESS case/INTERRUPT
     RaiseInterrupt(63, Zeros{24} + 0x55);
+    assert _CurrentMemoryOrigin == MemoryEventOrigin_Handler;
     assert CurrentACR() == 1;
     // TRAP-WITNESS interrupt/assert-number
     assert _ACRTrapNumber[[1]] == Zeros{6} + 44;
@@ -119,6 +166,7 @@ begin
     assert CurrentACR() == 15;
     // TRAP-WITNESS interrupt/assert-restart
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x3000;
+    assert _CurrentMemoryOrigin == MemoryEventOrigin_Kernel;
     ResetProfileState();
 end;
 func main() => integer

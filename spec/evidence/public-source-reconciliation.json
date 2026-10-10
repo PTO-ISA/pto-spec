@@ -305,8 +305,8 @@
   },
   "summary": {
     "scalar_forms": {
-      "count": 466,
-      "closed": 466,
+      "count": 467,
+      "closed": 467,
       "open": 0
     },
     "tile_operations": {
@@ -3590,6 +3590,13 @@
       "semantic_family": "ALU",
       "closure_status": "closed",
       "public_layer": "shared-scalar-source-layer"
+    },
+    {
+      "form_id": "sync_core_32_0330a02b7c32",
+      "mnemonic": "SYNC.CORE",
+      "semantic_family": "SYS",
+      "closure_status": "closed",
+      "public_layer": "scalar-control-or-lowering-layer"
     }
   ],
   "tile_operations": [

@@ -109,6 +109,43 @@ begin
            right_start < left_start + left_size;
 end;
 
+pure func ReservationGranuleAddressFor(address: Word) => Word
+begin
+    return address - NaturalToWord(
+        (UInt(address) MOD PTO_RESERVATION_GRANULE_BYTES) as
+            integer {0..262144});
+end;
+
+func InvalidateReservationsForGMWrite(address: Word,
+                                     size_bytes: integer {0..262144})
+begin
+    if size_bytes == 0 then return; end;
+    if _ReservationValid &&
+       RangesOverlap(address, size_bytes,
+           ReservationGranuleAddressFor(_ReservationAddress),
+           PTO_RESERVATION_GRANULE_BYTES) then
+        _ReservationValid = FALSE;
+    end;
+    for core = 0 to PTO_MODEL_CORE_INSTANCES - 1 do
+        for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+            let saved = _PEExecutionContexts[[core]][[pe]];
+            if saved.reservation_valid &&
+               RangesOverlap(address, size_bytes,
+                   ReservationGranuleAddressFor(saved.reservation_address),
+                   PTO_RESERVATION_GRANULE_BYTES) then
+                _PEExecutionContexts[[core]][[pe]].reservation_valid = FALSE;
+            end;
+        end;
+    end;
+    let default_context = _DefaultPEExecutionContext;
+    if default_context.reservation_valid &&
+       RangesOverlap(address, size_bytes,
+           ReservationGranuleAddressFor(default_context.reservation_address),
+           PTO_RESERVATION_GRANULE_BYTES) then
+        _DefaultPEExecutionContext.reservation_valid = FALSE;
+    end;
+end;
+
 readonly func ReservationGranuleAddress() => Word
 begin
     return _ReservationAddress - NaturalToWord(
@@ -256,12 +293,7 @@ begin
             NaturalToWord(byte_index as integer {0..262144});
         WriteMemoryByte(byte_address, value[[byte_index]]);
     end;
-    if _ReservationValid &&
-       RangesOverlap(original_address, 64,
-                     ReservationGranuleAddress(),
-                     PTO_RESERVATION_GRANULE_BYTES) then
-        _ReservationValid = FALSE;
-    end;
+    InvalidateReservationsForGMWrite(original_address, 64);
 end;
 
 func StoreTranslatedBytesBounded(original_address: Word,
@@ -276,12 +308,7 @@ begin
             WriteMemoryByte(byte_address, value[[byte_index]]);
         end;
     end;
-    if _ReservationValid &&
-       RangesOverlap(original_address, byte_count,
-                     ReservationGranuleAddress(),
-                     PTO_RESERVATION_GRANULE_BYTES) then
-        _ReservationValid = FALSE;
-    end;
+    InvalidateReservationsForGMWrite(original_address, byte_count);
 end;
 
 func StoreTranslatedFillModelBounded(
@@ -296,12 +323,7 @@ begin
             NaturalToWord(byte_index as integer {0..262144});
         WriteMemoryByte(byte_address, value);
     end;
-    if _ReservationValid &&
-       RangesOverlap(original_address, byte_count,
-                     ReservationGranuleAddress(),
-                     PTO_RESERVATION_GRANULE_BYTES) then
-        _ReservationValid = FALSE;
-    end;
+    InvalidateReservationsForGMWrite(original_address, byte_count);
 end;
 
 func StoreTranslated(original_address: Word, translated_address: Word,
@@ -312,12 +334,7 @@ begin
             NaturalToWord(byte_index as integer {0..262144});
         WriteMemoryByte(byte_address, value[(byte_index * 8) +: 8]);
     end;
-    if _ReservationValid &&
-       RangesOverlap(original_address, size_bytes,
-                     ReservationGranuleAddress(),
-                     PTO_RESERVATION_GRANULE_BYTES) then
-        _ReservationValid = FALSE;
-    end;
+    InvalidateReservationsForGMWrite(original_address, size_bytes);
 end;
 
 func LoadWithOrder(address: Word, size_bytes: integer {1,2,4,8},

@@ -58,6 +58,15 @@ begin
         return FALSE;
     end;
     var candidate = _Tiles[[binding.source0]];
+    if _CurrentPEContextValid &&
+       _BundleSharedBindings[[0]].destination_assemble.valid then
+        // B.ASSEMBLE replaces a complete Shared parent only after matching
+        // per-PE fragments have formed its candidate. The old published
+        // descriptor describes that parent, not an individual writer's
+        // private fragment, so candidate compatibility is checked against
+        // the open Core-owned generation by its submission owner.
+        return TRUE;
+    end;
     return SharedTileUpdateCompatible(
         BundleSharedBindingId(0), candidate, shared_mask);
 end;
@@ -116,6 +125,14 @@ begin
         BundleSharedGenerationCapacity(0)
         else BundleSharedBindingSize(0);
     let shared_mask = BundleSharedBindingMask(0);
+    if _CurrentPEContextValid &&
+       _BundleSharedBindings[[0]].destination_assemble.valid &&
+       _BundleSharedBindings[[0]].destination_assemble
+           .shared_request_squashed then
+        _BundleSharedBindings[[0]].destination_assemble
+            .shared_request_waiting = TRUE;
+        return FALSE;
+    end;
     if shared_mask == Zeros{4} then return TRUE; end;
     let decoded = DecodeTileOperation(TileDecode_TLSU,
         BundleOperationDecodeCode(_BundleOperation));
@@ -138,6 +155,13 @@ begin
     if !SelectedBundleTileDataAttributesLegal(operation) then
         return FALSE;
     end;
+    if _CurrentPEContextValid &&
+       shared_mask[PTOPEMaskBitOfPEIdentity(
+           _CurrentMemoryAgent as integer {0..3})] != '1' then
+        ConsumeBundleSharedBindings(1);
+        FinalizeBundleTileAttempt(TileExecution_Executed);
+        return TRUE;
+    end;
     if function == 0 then
         if (!BundleSharedBindingIsDestination(0) &&
             !BundleSharedBindingIsReusedDestination(0)) ||
@@ -159,13 +183,15 @@ begin
         var load_row_stride_bytes: CorePEWords;
         for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
             let agent = pe as MemoryAgentId;
+            let actual_source = !_CurrentPEContextValid ||
+                agent == _CurrentMemoryAgent;
             load_base_addresses[[agent]] =
-                if _BundleScalarBindings[[0]].valid then
+                if actual_source && _BundleScalarBindings[[0]].valid then
                     ReadPEAbsoluteGPROperand(agent,
                         _BundleScalarBindings[[0]].source0)
                 else Zeros{PTO_XLEN};
             load_row_stride_bytes[[agent]] =
-                if _BundleScalarBindings[[0]].valid then
+                if actual_source && _BundleScalarBindings[[0]].valid then
                     ReadPEAbsoluteGPROperand(agent,
                         _BundleScalarBindings[[0]].source1)
                 else TileDenseRowStrideBytes(
@@ -191,7 +217,14 @@ begin
             // or published. Successful candidates still commit atomically.
             if _LastFault == Fault_None then
                 RestoreBundleSharedGenerationProbe(shared_tile_id, prior_shared);
-                if !CommitBundleSharedGenerationCandidate(0, candidate) then
+                let committed = if _CurrentPEContextValid then
+                    CommitBundleSharedGenerationCandidateForCurrentPE(
+                        0, candidate)
+                    else CommitBundleSharedGenerationCandidate(0, candidate);
+                if !committed then
+                    if BundleSharedGenerationRequestWaiting(0) then
+                        return FALSE;
+                    end;
                     SetFault(Fault_TileLegality, ReadTPC());
                 end;
             end;
@@ -275,16 +308,26 @@ begin
             var prior_shared = SharedTileRecord(shared_tile_id);
             if assembling then
                 prior_shared = BeginBundleSharedGenerationProbe(shared_tile_id);
-            end;
-            TMOVLocalToShared(shared_tile_id, binding.source0,
-                shared_size as integer {1..12}, shared_mask, !assembling);
-            if assembling then
+                TMOVLocalToShared(shared_tile_id, binding.source0,
+                    shared_size as integer {1..12}, shared_mask, FALSE);
                 let candidate = SharedTileRecord(shared_tile_id);
                 RestoreBundleSharedGenerationProbe(shared_tile_id, prior_shared);
-                if _LastFault == Fault_None &&
-                   !CommitBundleSharedGenerationCandidate(0, candidate) then
-                    SetFault(Fault_TileLegality, ReadTPC());
+                if _LastFault == Fault_None then
+                    let committed = if _CurrentPEContextValid then
+                        CommitBundleSharedGenerationCandidateForCurrentPE(
+                            0, candidate)
+                        else CommitBundleSharedGenerationCandidate(0,
+                            candidate);
+                    if !committed then
+                        if BundleSharedGenerationRequestWaiting(0) then
+                            return FALSE;
+                        end;
+                        SetFault(Fault_TileLegality, ReadTPC());
+                    end;
                 end;
+            else
+                TMOVLocalToShared(shared_tile_id, binding.source0,
+                    shared_size as integer {1..12}, shared_mask, TRUE);
             end;
         else
             // The same parent-level readiness gate applies before any Local

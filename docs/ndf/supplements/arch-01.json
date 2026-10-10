@@ -209,6 +209,18 @@
       }
     },
     {
+      "id": "PTO-ARCH-MEMORY-MODEL-TRAP-RESTORE-001",
+      "source_path": "asl/arch/memory-model/fault-precision.asl",
+      "title": {
+        "en": "Trap return preserves shared progress",
+        "zh-CN": "陷阱返回保留共享进度"
+      },
+      "summary": {
+        "en": "Trap return resumes the interrupted PE from its precise instruction and Block restart point while retaining shared GM/event history, Core synchronization, shared Tile state, and peer-local publication progress. Instruction owners perform any scoped abort or squash before establishing the restart point.",
+        "zh-CN": "陷阱返回从中断 PE 的精确指令和 Block 重启点继续，同时保留共享 GM/事件历史、Core 同步、Shared Tile 状态及其他 PE 的本地发布进度。指令所有者须在建立重启点前执行所需的限定范围 abort 或 squash。"
+      }
+    },
+    {
       "id": "PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001",
       "source_path": "asl/arch/overview/architecture.asl",
       "title": {
@@ -506,6 +518,66 @@
       "summary": {
         "en": "This clause defines RCPE6M2 as the exact mathematical reciprocal interpretation of an E6M2 code. It is source-only for TCVT, has no destination encoding, and converts directly to FP16 or BF16 with one final destination rounding step.",
         "zh-CN": "本条款定义 RCPE6M2 为 E6M2 编码的精确数学倒数解释。它仅可作为 TCVT 源类型，不提供目标编码，并直接转换为 FP16 或 BF16，最后只进行一次目标舍入。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-CORE-SYNCHRONIZATION-001",
+      "source_path": "asl/arch/state/core-synchronization.asl",
+      "title": {
+        "en": "Core-local four-PE collective synchronization",
+        "zh-CN": "Core 内四 PE 集体同步"
+      },
+      "summary": {
+        "en": "Each Core synchronizes PE0 through PE3 at a matching site and generation. A PE stays parked until every arrival and earlier GM obligation is complete, then consumes its retained release once; completed ordering survives active-record reuse.",
+        "zh-CN": "每个 Core 都要求 PE0 至 PE3 在匹配的指令位置和代次同步。所有参与到达且更早的 GM 义务完成前，PE 保持停驻；随后每个 PE 只消费一次保留的释放令牌，已完成的顺序关系在活动记录复用后仍然保留。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-GM-OBLIGATIONS-001",
+      "source_path": "asl/arch/memory-model/gm-obligations.asl",
+      "title": {
+        "en": "Earlier global-memory request obligations",
+        "zh-CN": "较早全局内存请求义务"
+      },
+      "summary": {
+        "en": "Request identity keeps its Core, PE, invocation, and program-order provenance through progress and retry. A participant cannot arrive while an earlier request can still fault, and collective release waits for the request's real producer, issue, and completion path.",
+        "zh-CN": "请求身份在推进和重试期间保留 Core、PE、调用实例和程序顺序来源。较早请求仍可能发生故障时，参与者不能到达同步点；集体释放须等待该请求经真实生产者、发出和完成路径解决。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-KERNEL-LIFECYCLE-001",
+      "source_path": "asl/arch/state/kernel-lifecycle.asl",
+      "title": {
+        "en": "Core kernel invocation lifecycle",
+        "zh-CN": "Core 内 kernel 调用生命周期"
+      },
+      "summary": {
+        "en": "A Core has one active invocation shared by its four PE contexts. Abort discards incomplete collective state and reversible work while preserving committed effects; successful End and Abort also retire matching active-PE Shared candidate/release metadata without erasing published payloads or operation ordinals. A later launch waits for irrevocable work to quiesce, and old completions cannot update the new invocation.",
+        "zh-CN": "每个 Core 只有一个由四个 PE 上下文共享的活动调用。Abort 丢弃未完成的集体状态和可撤销工作，同时保留已提交效果；成功 End 和 Abort 也会回收匹配的实际 PE Shared 候选/释放元数据，但不清除已发布载荷或 operation ordinal。新调用须等待不可撤销工作静止，旧完成事件不能更新新调用状态。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-MEMORY-MODEL-COLLECTIVE-SYNC-001",
+      "source_path": "asl/arch/memory-model/ordering.asl",
+      "title": {
+        "en": "Memory ordering through completed Core collectives",
+        "zh-CN": "已完成 Core 集体同步建立的内存顺序"
+      },
+      "summary": {
+        "en": "A completed collective orders earlier and later kernel GM events from its participating PEs within the same Core and invocation. Handler events and events from other Cores or invocations remain outside that relation, which persists after active synchronization records are reused.",
+        "zh-CN": "已完成的集体同步对同一 Core、同一调用中参与 PE 的较早和较晚 kernel GM 事件建立顺序。handler 事件以及其他 Core 或调用实例的事件不属于该关系；活动同步记录复用后，该关系仍然保留。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-PE-EXECUTION-CONTEXT-001",
+      "source_path": "asl/arch/state/pe-execution-context.asl",
+      "title": {
+        "en": "Independent PE execution contexts",
+        "zh-CN": "独立的 PE 执行上下文"
+      },
+      "summary": {
+        "en": "Each modeled Core keeps independent PE0 through PE3 instruction, Block, queue, fault, trap, reservation, and Local Tile state. Selecting or restoring a PE context does not rewind shared GM, event history, synchronization, Shared Tile state, or peer progress.",
+        "zh-CN": "每个建模 Core 为 PE0 至 PE3 分别保存指令、Block、队列、故障、陷阱、reservation 和 Local Tile 状态。选择或恢复 PE 上下文不会回退共享 GM、事件历史、同步状态、Shared Tile 状态或其他 PE 的进度。"
       }
     }
   ]

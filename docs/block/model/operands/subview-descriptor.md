@@ -74,7 +74,7 @@ A `CUBE_M16` FP16 parent has valid shape 16 by 32. Each CELL is 16 rows by 4 col
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/operands/subview-descriptor.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","surface":"block","classification":["model","operands","subview-descriptor"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-TILE-MODEL-SHAPE-CUBE-CELL","PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","surface":"block","classification":["model","operands","subview-descriptor"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS","PTO-TILE-MODEL-SHAPE-CUBE-CELL","PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL"]}
 
 // NDF-BEGIN: PTO-B-SUBVIEW-DESCRIPTOR-001
 // ndf: kind=contract level=L1 layer=block status=accepted
@@ -225,7 +225,6 @@ end;
 func PrepareSelectedBundleStage2() => boolean
 begin
     if !_BundleOperation.valid then return TRUE; end;
-    if !ResolveBundleRelativeTileSources() then return FALSE; end;
     let family = BundleTileDecodeFamily(_BundleOperation.operation_class);
     let code = BundleOperationDecodeCode(_BundleOperation);
     let decoded = DecodeTileOperation(family, code);
@@ -234,6 +233,24 @@ begin
         return FALSE;
     end;
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
+    if BundleCurrentPEIsNonparticipantSharedAssembly() then
+        // Keep assembly wire/range checks for malformed requests, but avoid
+        // resolving private source tiles or consulting producer readiness on
+        // a PE that is not a logical participant.
+        if !ValidateBundleSharedGeneration() then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        return TRUE;
+    end;
+    if BundleSharedGenerationCompletionAvailableForCurrentPE() then
+        // This is the same admitted request resuming at its original stop.
+        // Dispatch performs the structural guard and consumes the retained
+        // completion; stage2 must not reread source readiness or rebuild the
+        // contribution before that check.
+        return TRUE;
+    end;
+    if !ResolveBundleRelativeTileSources() then return FALSE; end;
     if !PrepareBundleSubviewDescriptors(operation) then return FALSE; end;
     if !ValidateBundleLocalGenerationStructure() then return FALSE; end;
     if !ValidateBundleSharedGeneration() then

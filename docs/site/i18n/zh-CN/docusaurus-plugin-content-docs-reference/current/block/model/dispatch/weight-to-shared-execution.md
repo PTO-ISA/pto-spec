@@ -359,7 +359,9 @@ begin
         _BundleDimensions[[0]][15:0], _BundleDimensions[[1]][15:0],
         _BundleDimensions[[2]][15:0],
         Zeros{4} + (parent_size_code as integer {1..12}));
-    if !CommitBundleSharedGenerationCandidateRange(0,
+    let payload_elements = ((payload_cells * 32 * 8) DIVRM
+        TileElementBits(data_type)) as integer {0..524288};
+    if !CommitBundleSharedGenerationCandidateRangeWithPayloadElements(0,
            SharedTileInfo {
                descriptor_valid = TRUE,
                allocation_mask = mask,
@@ -368,7 +370,8 @@ begin
                published = FALSE,
                tile = candidate },
            derived_offset as integer {0..8192}, coverage_cells,
-           payload_cells, BundleWeightTLOADPEBit(), TRUE,
+           payload_cells, payload_elements, TRUE, FALSE,
+           BundleWeightTLOADPEBit(), TRUE,
            gm_base, shape_word, start_word, generation_metadata,
            Zeros{PTO_XLEN}) then
         AbortBundleSharedGeneration(BundleSharedBindingId(0));

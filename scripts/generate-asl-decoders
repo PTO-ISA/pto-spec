@@ -225,6 +225,7 @@ SCALAR_SYS_EFFECT_CLASS_COUNTS = {
     "scalar-architecture-close-request": 1,
     "scalar-architecture-enter-request": 1,
     "scalar-set-commit-target": 1,
+    "scalar-core-collective-barrier": 1,
 }
 SCALAR_AGU_EFFECT_CLASS_COUNTS = {
     "scalar-agu-load": 47,
@@ -410,6 +411,8 @@ def scalar_sys_effect_class(row: dict) -> str | None:
         return "scalar-architecture-enter-request"
     if handler == "SetCommitTarget":
         return "scalar-set-commit-target"
+    if handler == "SyncCore":
+        return "scalar-core-collective-barrier"
     raise ValueError(f"SYS form has no reviewed effect class: {row['form_id']}")
 
 
@@ -10951,6 +10954,20 @@ def _emit_monolithic() -> None:
             print("    assert ReadGPR(5) == Zeros{PTO_XLEN} + 0xabc;")
             print("    assert ReadTPC() == Zeros{PTO_XLEN} + 0x104;")
             print("    assert _SystemRegisters.cycle == Zeros{PTO_XLEN} + 1;")
+
+        elif class_id == "scalar-core-collective-barrier":
+            print(
+                f"    assert DecodeScalarForm({bit_literal(witness, 48)}, "
+                f"{row['length_bits']}) == {row['_form_index']};"
+            )
+            print(
+                f"    assert ScalarOperationOfForm({row['_form_index']}) == "
+                "ScalarOperation_SYNC_CORE;"
+            )
+            print(
+                f"    assert ScalarHandlerOfForm({row['_form_index']}) == "
+                "ScalarHandler_SyncCore;"
+            )
 
         else:
             raise ValueError(f"unhandled SYS effect class: {class_id}")
