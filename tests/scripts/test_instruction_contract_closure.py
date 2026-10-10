@@ -99,7 +99,7 @@ class InstructionContractClosureTest(unittest.TestCase):
         traceability = json.loads(TRACEABILITY.read_text(encoding="utf-8"))
         mnemonic_rows = [row for row in traceability["units"] if row["mnemonic"]]
 
-        self.assertEqual(len(mnemonic_rows), 664)
+        self.assertEqual(len(mnemonic_rows), 665)
         self.assertTrue(
             all(
                 row["instruction_contract"]["artifact"]
