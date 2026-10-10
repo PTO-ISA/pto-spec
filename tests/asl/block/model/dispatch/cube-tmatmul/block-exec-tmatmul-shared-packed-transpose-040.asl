@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-SHARED-PACKED-TRANSPOSE-040","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-TMATMUL-CONTRACT-001","PTO-CUBE-SHARED-TRANSPOSE-001","PTO-CUBE-GROUP-M-DISTRIBUTION-001"],"kind":"execution","summary":"Packed Shared primaries accept even non-power K with odd valid M/N across all transpose pairs and padded even pitch.","pass_condition":"M=17,N=3,K=6 completes for all four transpose pairs using E2M1X2 Shared primaries, exact logical shapes, even padded original pitch, independent packed-coordinate witnesses, and defined exact-shape output.","related_sources":["asl/block/model/dispatch/shared-cube-matrix.asl","asl/tile/model/definedness/packed-boundary.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-SHARED-PACKED-TRANSPOSE-040","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-TMATMUL-CONTRACT-001","PTO-CUBE-SHARED-TRANSPOSE-001","PTO-CUBE-GROUP-M-DISTRIBUTION-001"],"kind":"execution","summary":"Packed Shared primaries accept even non-power K with odd valid M/N across all transpose pairs and padded even pitch.","pass_condition":"M=17,N=3,K=6 completes for all four transpose pairs using E2M1X2 Shared primaries; exact canonical private A/B reads match independent sentinels across PE0/PE1 global row 16, adjacent packed lanes, and a valid-tail/padding discriminator, with defined exact-shape output.","related_sources":["asl/block/model/dispatch/shared-cube-matrix.asl","asl/tile/model/definedness/packed-boundary.asl"]}
 
 func PreparePackedShared(index: TileIndex, shared_tile_id: bits(6),
                         left: boolean, transpose: boolean)
@@ -45,13 +45,31 @@ begin
 
     let witness_row = if left then
         (if transpose then 5 else 16)
-        else (if transpose then 4 else 2);
+        else (if transpose then 5 else 2);
     let witness_column = if left then
         (if transpose then 16 else 5)
-        else (if transpose then 2 else 4);
-    let witness_value = if left then 13 else 5;
+        else (if transpose then 2 else 5);
+    let witness_value = if left then 13 else 11;
+    let adjacent_value = if left then
+        (if transpose then 3 else 6)
+        else (if transpose then 4 else 5);
+    // Pin the PE0/PE1 boundary and adjacent inner coordinates independently
+    // of the canonical view's storage formula.
+    if left then
+        let pe0_boundary_row = if transpose then 5 else 15;
+        let pe0_boundary_column = if transpose then 15 else 5;
+        WriteTileElement(index, pe0_boundary_row, pe0_boundary_column,
+            Zeros{PTO_XLEN} + 3);
+        let pe1_adjacent_row = if transpose then 4 else 16;
+        let pe1_adjacent_column = if transpose then 16 else 4;
+        WriteTileElement(index, pe1_adjacent_row, pe1_adjacent_column,
+            Zeros{PTO_XLEN} + 6);
+    elsif transpose then
+        // B[k=4,n=2] is adjacent to B[k=5,n=2] in its private view.
+        WriteTileElement(index, 4, 2, Zeros{PTO_XLEN} + 5);
+    end;
     WriteTileElement(index, witness_row, witness_column - 1,
-        Zeros{PTO_XLEN} + 3);
+        Zeros{PTO_XLEN} + adjacent_value);
     WriteTileElement(index, witness_row, witness_column,
         Zeros{PTO_XLEN} + witness_value);
     let expected_nibble_index = witness_row * physical_pitch +
@@ -71,13 +89,25 @@ begin
     assert TilePackedLaneIndex(TileDataType_E2M1X2, adjacent_element) ==
         (expected_nibble_index - 1) MOD 16;
     assert TileReadLogicalElement(_Tiles[[index]], adjacent_element) ==
-        Zeros{PTO_XLEN} + 3;
+        Zeros{PTO_XLEN} + adjacent_value;
     assert TileReadLogicalElement(_Tiles[[index]], element) ==
         Zeros{PTO_XLEN} + witness_value;
-    assert ReadTileElement(index, 0, stored_columns) ==
+    assert ReadTileElement(index, witness_row, stored_columns) ==
         Zeros{PTO_XLEN} + 15;
     InstallSharedTile(shared_tile_id as SharedTileID,
         _Tiles[[index]], '1111');
+    let published = SharedTileRecord(
+        shared_tile_id as SharedTileID).tile;
+    let published_element = TileLogicalLinearIndex(
+        published, witness_row, witness_column);
+    let published_adjacent = TileLogicalLinearIndex(
+        published, witness_row, witness_column - 1);
+    assert TileReadLogicalElement(published, published_element) ==
+        Zeros{PTO_XLEN} + witness_value;
+    assert TileReadLogicalElement(published, published_adjacent) ==
+        Zeros{PTO_XLEN} + adjacent_value;
+    assert ReadTileElement(index, witness_row, stored_columns) ==
+        Zeros{PTO_XLEN} + 15;
 end;
 
 func main() => integer
@@ -103,6 +133,32 @@ begin
         BindBundleSharedIO((Zeros{6} + 41) as SharedTileID, 0, '1111');
         AddBundleTileBinding(
             TRUE, 0, 2, '1111', FALSE, FALSE, 0, 0, TRUE);
+        let left_pe0 = MaterializeBundleSharedMatrixLeftPrimary(
+            0, 17, 6, TileDataType_E2M1X2, trans_a, 0 as MemoryAgentId);
+        let left_pe1 = MaterializeBundleSharedMatrixLeftPrimary(
+            0, 17, 6, TileDataType_E2M1X2, trans_a, 1 as MemoryAgentId);
+        let right_private = MaterializeBundleSharedMatrixPrimary(
+            1, 6, 3, TileDataType_E2M1X2, trans_b, 0 as MemoryAgentId);
+        assert BundleMatrixPrivateSharedViewLegal(
+            left_pe0, 16, 6, TileDataType_E2M1X2, FALSE);
+        assert BundleMatrixPrivateSharedViewLegal(
+            left_pe1, 1, 6, TileDataType_E2M1X2, FALSE);
+        assert BundleMatrixPrivateSharedViewLegal(
+            right_private, 6, 3, TileDataType_E2M1X2, TRUE);
+        assert MatrixReadLogicalElement(left_pe0, 15, 5) ==
+            Zeros{PTO_XLEN} + 3;
+        assert MatrixReadLogicalElement(left_pe1, 0, 4) ==
+            Zeros{PTO_XLEN} + 6;
+        assert MatrixReadLogicalElement(left_pe1, 0, 5) ==
+            Zeros{PTO_XLEN} + 13;
+        assert MatrixReadLogicalElement(right_private, 4, 2) ==
+            Zeros{PTO_XLEN} + 5;
+        assert MatrixReadLogicalElement(right_private, 5, 2) ==
+            Zeros{PTO_XLEN} + 11;
+        let right_padding_row = if trans_b then 5 else 2;
+        let right_padding_column = if trans_b then 3 else 6;
+        assert ReadTileElement(11, right_padding_row, right_padding_column) ==
+            Zeros{PTO_XLEN} + 15;
         assert TileOrdinaryMatrixInputTypesSameClass(
             TileDataType_E2M1X2, TileDataType_E2M1X2);
         assert BundleMatrixSharedLeftPrimarySchemaLegal(
