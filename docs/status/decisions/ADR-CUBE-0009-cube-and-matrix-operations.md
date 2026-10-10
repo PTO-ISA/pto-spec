@@ -139,20 +139,14 @@ ADR 0062 recorded a single repository-wide mnemonic audit. This record preserves
 
 `BSTART.TMATMUL` uses `LB0=M`, `LB1=N`, and `LB2=K`. Omission of any one of
 these fields supplies the value one for that field. An explicitly encoded or
-otherwise resolved value of zero is illegal. Local-only TMATMUL dimensions
-remain positive and are constrained by their existing Local CUBE descriptors
-and capacities. Cooperative Shared forms use `group_M` in 1..128 and `N/K` in
-1..65535 without a blanket power-of-two restriction.
+otherwise resolved value of zero is illegal. Each of `M`, `N`, and `K` MUST
+be a nonzero power of two.
 
-The left source has logical shape `M x K`, the right source has logical shape
-`K x N`, and the destination has logical shape `M x N`. Each real source,
-physical pitch, destination geometry, and capacity MUST independently satisfy
-its assigned descriptor and role rules; no temporary Local shape or capacity
-may replace validation of an original Shared source. Shape, capacity, and
-compatibility checks MUST complete before destination allocation or any other
-effect. This paragraph supersedes the historical uniform power-of-two wording
-for cooperative Shared forms; Local-only behavior remains with the live ASL/NDF
-owners.
+The left source has valid shape `M x K`, the right source has valid shape
+`K x N`, and the destination has valid shape `M x N`. Each physical Tile row
+and column extent MUST be a power of two, and the physical extent MUST contain
+the complete valid rectangle. Shape, capacity, and compatibility checks MUST
+complete before destination allocation or any other effect.
 
 ## Decision 050: `TMATMUL` supports mixed same-class input types and fixed accumulator classes
 
@@ -287,8 +281,7 @@ boundary.
 `BSTART.TGEMV` is exactly the ordinary `TMATMUL` contract specialized to
 `M=1`. `LB0` is therefore fixed to one; canonical assembly omits it, while an
 explicit `LB0` is legal only when it resolves to one. `LB1=N` and `LB2=K`,
-with the ordinary omission default one and positive resolved dimensions subject
-to the existing Local descriptor and capacity rules.
+with the ordinary omission default one and nonzero power-of-two requirement.
 
 The left source is a row vector with valid shape `1 x K`, the right source is
 a matrix with valid shape `K x N`, and the explicit new Local destination has
@@ -375,7 +368,6 @@ authorize behavior beyond the individual decisions and their later amendments.
 
 **中文。** 此历史整合本身不改变编码，也不授权逐项决策及后续修订之外的行为。
 
-
 ## 2026-10-10 accepted amendment: cooperative Shared shapes (Issue #374)
 
 This amendment supersedes the uniform power-of-two Matrix dimension wording
@@ -389,9 +381,21 @@ K-even and original-pitch-even rule is owned by the Issue #374 amendment to
 ADR-CUBE-0007. Encodings, arithmetic, and unrelated family decisions remain
 unchanged.
 
+
+Current normative details are owned by `asl/block/execution/BSTART.TMATMUL.asl`
+(`PTO-BSTART-TMATMUL-CONTRACT-001`),
+`asl/block/model/dispatch/cube-tmatmul.asl` (`PTO-CUBE-GROUP-M-DISTRIBUTION-001`),
+and `asl/block/attributes/B.FPATR.asl` (`PTO-CUBE-SHARED-TRANSPOSE-001`);
+this amendment records decision history only.
+
 中文：本修订仅在 cooperative Shared TMATMUL 范围内取代 Decision 049 和 055 的
 统一幂二维度措辞。`group_M` 为 1..128，`N/K` 为 1..65535 正值，不要求幂二；
 Local-only TMATMUL 与 TGEMV 保留原有正维度范围及 Local CUBE 描述符/容量检查。
 Shared 来源按原始描述符与物理 pitch 检查，内部逻辑读取视图不引入 Local 限制。
 Shared packed 主操作数的 K 偶数与原始 pitch 偶数规则由 ADR-CUBE-0007 的 Issue #374
 修订负责。编码、算术和其他家族决策保持不变。
+
+当前规范细节以 `asl/block/execution/BSTART.TMATMUL.asl`
+（`PTO-BSTART-TMATMUL-CONTRACT-001`）、`asl/block/model/dispatch/cube-tmatmul.asl`
+（`PTO-CUBE-GROUP-M-DISTRIBUTION-001`）和 `asl/block/attributes/B.FPATR.asl`
+（`PTO-CUBE-SHARED-TRANSPOSE-001`）为准；本修订仅记录决策历史。
