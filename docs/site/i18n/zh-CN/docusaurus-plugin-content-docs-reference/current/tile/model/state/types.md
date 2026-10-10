@@ -35,7 +35,7 @@ This page is a generated reference view of the normative ASL unit.
 
 `payload` 是由 `PTO_MODEL_TILE_ELEMENTS` 个 64 位 Word 组成的数组。
 
-`SharedTileInfo` 用仅 Shared 使用的元数据包装一个 `TileInfo`：`descriptor_valid`、`allocation_mask`、`initialized_mask`、`whole_parent_ready` 和 `published`。
+`SharedTileInfo` 在一个 `TileInfo` 外包装 Shared 描述符、覆盖、就绪和发布元数据。`payload_live` 区分可读 backing 与保留身份；`payload_generation` 区分同一 Sx 的不同发布；`reserved_capacity_bytes` 记录开放组装父对象的独立预约计费。
 
 <!-- PTO-READER-BLOCK: tile-model-state-types-rules role=rules-interactions -->
 ## 规则与交互
@@ -279,6 +279,11 @@ type TileInfo of record {
 // PEs in one core address the same 64 records.
 type SharedTileInfo of record {
     descriptor_valid: boolean,
+    payload_live: boolean,
+    // Monotonic model identity for the currently published payload.
+    payload_generation: integer,
+    // Pending B.ASSEMBLE capacity is a model reservation, not a second payload.
+    reserved_capacity_bytes: integer {0..262144},
     allocation_mask: bits(4),
     initialized_mask: bits(4),
     whole_parent_ready: boolean,

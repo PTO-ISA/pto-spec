@@ -175,6 +175,7 @@ begin
         return TRUE;
     end;
     if !ResolveBundleRelativeTileSources() then return FALSE; end;
+    if !RequireBundleTileSourcePayloads() then return FALSE; end;
     if !PrepareBundleSubviewDescriptors(operation) then return FALSE; end;
     if !ValidateBundleLocalGenerationStructure() then return FALSE; end;
     if !ValidateBundleSharedGeneration() then

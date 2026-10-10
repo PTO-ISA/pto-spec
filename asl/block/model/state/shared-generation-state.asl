@@ -183,6 +183,7 @@ begin
     let index = SharedTileArrayIndex(shared_tile_id);
     let next_operation_ordinal =
         _SharedGenerations[[index]].next_operation_ordinal;
+    ReleaseSharedTileGenerationCapacity(shared_tile_id);
     _SharedGenerations[[index]].open = FALSE;
     _SharedGenerations[[index]].closed = FALSE;
     _SharedGenerations[[index]].published = FALSE;
@@ -242,6 +243,22 @@ end;
 func AbortBundleSharedGeneration(shared_tile_id: SharedTileID)
 begin
     ClearBundleSharedGenerationState(shared_tile_id);
+end;
+
+func PublishPEOwnedSharedGeneration(shared_tile_id: SharedTileID,
+                                    participant_mask: bits(4))
+begin
+    let index = SharedTileArrayIndex(shared_tile_id);
+    _SharedTiles[[index]].descriptor_valid = TRUE;
+    _SharedTiles[[index]].payload_live = TRUE;
+    _SharedTiles[[index]].payload_generation =
+        _SharedTiles[[index]].payload_generation + 1;
+    _SharedTiles[[index]].allocation_mask = participant_mask;
+    _SharedTiles[[index]].initialized_mask = participant_mask;
+    _SharedTiles[[index]].whole_parent_ready = TRUE;
+    _SharedTiles[[index]].published = TRUE;
+    _SharedTiles[[index]].tile = _SharedGenerations[[index]].working_tile;
+    ReleaseSharedTileGenerationCapacity(shared_tile_id);
 end;
 
 // Invocation lifecycle retirement discards only the active-PE Shared

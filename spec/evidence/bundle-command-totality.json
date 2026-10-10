@@ -2,18 +2,18 @@
   "schema_version": 1,
   "target": "S4-T7",
   "status": "closed",
-  "accepted_form_count": 96,
+  "accepted_form_count": 105,
   "encoding_variant_count": 0,
   "disposition_counts": {
-    "executed": 86,
+    "executed": 95,
     "pto-v0-rejected": 10
   },
   "handler_counts": {
     "ApplyBundleAssemble": 1,
     "ApplyBundleSubview": 1,
     "BindBundleScalarIO": 1,
-    "BindBundleSharedIO": 1,
-    "BindBundleTileIO": 5,
+    "BindBundleSharedIO": 2,
+    "BindBundleTileIO": 13,
     "ExecuteBundleStart": 63,
     "ExecuteBundleStop": 3,
     "ExecuteCrossBlockTransfer": 1,
@@ -1714,6 +1714,212 @@
       "effect_class": "bundle-start-descriptor",
       "rejection_precedes_effects": false,
       "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 96,
+      "form_id": "b_iot_32_ll_src",
+      "mnemonic": "B.IOT",
+      "semantic_handler": "BindBundleTileIO",
+      "decoded_fields": [
+        "SrcTile1",
+        "SrcTile0",
+        "L",
+        "PEMode"
+      ],
+      "consumed_fields": [
+        "SrcTile1",
+        "SrcTile0",
+        "L",
+        "PEMode"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-tile-binding",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 97,
+      "form_id": "b_iot_32_rl_src",
+      "mnemonic": "B.IOT",
+      "semantic_handler": "BindBundleTileIO",
+      "decoded_fields": [
+        "SrcTile1",
+        "SrcTile0",
+        "L",
+        "PEMode"
+      ],
+      "consumed_fields": [
+        "SrcTile1",
+        "SrcTile0",
+        "L",
+        "PEMode"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-tile-binding",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 98,
+      "form_id": "b_iot_32_lr_src",
+      "mnemonic": "B.IOT",
+      "semantic_handler": "BindBundleTileIO",
+      "decoded_fields": [
+        "SrcTile1",
+        "SrcTile0",
+        "L",
+        "PEMode"
+      ],
+      "consumed_fields": [
+        "SrcTile1",
+        "SrcTile0",
+        "L",
+        "PEMode"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-tile-binding",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 99,
+      "form_id": "b_iot_32_ll_dst",
+      "mnemonic": "B.IOT",
+      "semantic_handler": "BindBundleTileIO",
+      "decoded_fields": [
+        "SrcTile1",
+        "SrcTile0",
+        "L",
+        "SizeCode",
+        "PEMode",
+        "DstTile"
+      ],
+      "consumed_fields": [
+        "SrcTile1",
+        "SrcTile0",
+        "L",
+        "SizeCode",
+        "PEMode",
+        "DstTile"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-tile-binding",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 100,
+      "form_id": "b_iot_32_rl_dst",
+      "mnemonic": "B.IOT",
+      "semantic_handler": "BindBundleTileIO",
+      "decoded_fields": [
+        "SrcTile1",
+        "SrcTile0",
+        "L",
+        "SizeCode",
+        "PEMode",
+        "DstTile"
+      ],
+      "consumed_fields": [
+        "SrcTile1",
+        "SrcTile0",
+        "L",
+        "SizeCode",
+        "PEMode",
+        "DstTile"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-tile-binding",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 101,
+      "form_id": "b_iot_32_lr_dst",
+      "mnemonic": "B.IOT",
+      "semantic_handler": "BindBundleTileIO",
+      "decoded_fields": [
+        "SrcTile1",
+        "SrcTile0",
+        "L",
+        "SizeCode",
+        "PEMode",
+        "DstTile"
+      ],
+      "consumed_fields": [
+        "SrcTile1",
+        "SrcTile0",
+        "L",
+        "SizeCode",
+        "PEMode",
+        "DstTile"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-tile-binding",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 102,
+      "form_id": "b_iot_32_last_src",
+      "mnemonic": "B.IOT",
+      "semantic_handler": "BindBundleTileIO",
+      "decoded_fields": [
+        "SrcTile0",
+        "L",
+        "PEMode"
+      ],
+      "consumed_fields": [
+        "SrcTile0",
+        "L",
+        "PEMode"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-tile-binding",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 103,
+      "form_id": "b_iot_32_last_dst",
+      "mnemonic": "B.IOT",
+      "semantic_handler": "BindBundleTileIO",
+      "decoded_fields": [
+        "SrcTile0",
+        "L",
+        "SizeCode",
+        "PEMode",
+        "DstTile"
+      ],
+      "consumed_fields": [
+        "SrcTile0",
+        "L",
+        "SizeCode",
+        "PEMode",
+        "DstTile"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-tile-binding",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 104,
+      "form_id": "b_ios_32_last_src",
+      "mnemonic": "B.IOS",
+      "semantic_handler": "BindBundleSharedIO",
+      "decoded_fields": [
+        "SharedTileID",
+        "PEMode"
+      ],
+      "consumed_fields": [
+        "SharedTileID",
+        "PEMode"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-shared-binding",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
     }
   ],
   "encoding_variant_matrix": [],
@@ -7537,7 +7743,7 @@
       "tests/asl/block/model/faults/rollback/block-exec-tile-commit-001.asl:TestBundleTileCommitRollback",
       "tests/asl/block/operands/B.IOR/block-exec-b-ior-end-to-end-001.asl:TestBundleScalarBindingSchemaDefaults"
     ],
-    "canonical_form_case_count": 96,
+    "canonical_form_case_count": 105,
     "decoded_complete_bundle_matrix": [
       {
         "case": "canonical-none-observable-D",
@@ -7609,12 +7815,12 @@
   "independent_comparison": {
     "source": "content-addressed independent executable ISA snapshot",
     "aggregate_sha256": "1f8862ef90ee72d0e917398b2d96b2799f541f2e7198c103d9fc47af998a54ec",
-    "matched_form_ids": 96,
+    "matched_form_ids": 105,
     "exact_encoding_matches": 62,
     "accepted_abi_encoding_divergences": 8,
     "executable_subset": 54,
     "decode_only": 16,
-    "missing": 26,
+    "missing": 35,
     "authority": "non-normative structural comparison only",
     "limitation": "The independent snapshot predates seven accepted PTO 0.58.0 command encoding changes and the completed direct-operation bundle schema. It stages bundle headers rather than tile payload execution, so the PTO catalogs, ADR 0055, and PTO-owned ASL evidence remain authoritative."
   },

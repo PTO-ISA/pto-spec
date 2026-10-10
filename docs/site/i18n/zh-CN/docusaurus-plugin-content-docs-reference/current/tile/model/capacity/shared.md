@@ -15,18 +15,19 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: tile-model-capacity-shared-purpose role=purpose-scope -->
 ## 用途与范围
 
-本单元度量 Core 范围的 Shared Tile 池，并报告一个 Core 的 Tile 总用量。它只包含三个辅助函数：
+本单元衡量 Core 范围的 Shared Tile 池并报告合计 Tile 用量。`SharedTileCapacityCharge` 单独计算一个 Shared 寄存器的计费，使分配、替换、源回收和开放组装采用同一套记账。
 
-- `SharedTileCapacityInUse` 对每个具有描述符的 Shared 寄存器的容量求和。
-- `SharedTileCapacityLimitBytes` 返回 Shared 池的大小。
-- `CoreTileCapacityInUse` 把 Local 用量与 Shared 用量相加。
+- `SharedTileCapacityInUse` 汇总每个寄存器的计费。
+- `SharedTileCapacityCharge` 比较存活载荷与待发布父对象预约。
+- `SharedTileCapacityLimitBytes` 给出独立的 Shared 上限。
+- `CoreTileCapacityInUse` 报告 Local 与 Shared 用量之和。
 
 <!-- PTO-READER-BLOCK: tile-model-capacity-shared-concepts role=concepts-state -->
 ## 概念与可见状态
 
 Shared Tile 寄存器是 `_SharedTiles` 中 S0 到 S63 之一。它属于 Core 而不属于某个 PE，全部四个 PE 寻址同一组 64 条记录。
 
-当 Shared 寄存器的 `descriptor_valid` 标志置位时，它占用容量。其计费量是所包装 `TileInfo` 的 `capacity_bytes`，只计一次。
+有效描述符本身不产生载荷容量计费。计费取存活载荷字节数与开放组装的 `reserved_capacity_bytes` 较大值。因此，消费旧载荷不会把待发布父对象的预约空间借给另一个 Shared 寄存器。
 
 上限为 `PTO_SHARED_TILE_MAX_ALLOCATION_BYTES`，即 262144 字节（256 KiB）。
 
@@ -53,7 +54,7 @@ Shared 寄存器单元中的 `SharedTileUpdateCompatible` 使用这些辅助函�
 <!-- PTO-READER-BLOCK: tile-model-capacity-shared-example role=example-usage -->
 ## 非规范阅读示例
 
-S4 持有一个 128 KiB 描述符，S9 持有一个 64 KiB 描述符。`SharedTileCapacityInUse` 为 131072 + 65536 = 196608 字节。
+S4 有存活的 128 KiB 载荷，S9 有存活的 64 KiB 载荷，初始计费为 196608 字节。若 S4 开启同容量组装，其计费仍为 128 KiB。即使回收 S4 的旧源，该预约仍持续计费，直到发布或中止。
 
 - 在空寄存器中新建一个 64 KiB Shared 父级可以容纳：196608 + 65536 = 262144。
 - 新建一个 128 KiB 父级无法容纳，因为总和将为 327680。
@@ -77,11 +78,20 @@ readonly func SharedTileCapacityInUse() => integer
 begin
     var total: integer = 0;
     for index = 0 to PTO_SHARED_TILE_COUNT - 1 do
-        if _SharedTiles[[index]].descriptor_valid then
-            total = total + _SharedTiles[[index]].tile.capacity_bytes;
-        end;
+        total = total + SharedTileCapacityCharge(
+            (Zeros{6} + index) as SharedTileID);
     end;
     return total;
+end;
+
+readonly func SharedTileCapacityCharge(shared_tile_id: SharedTileID) => integer
+begin
+    let index = UInt(shared_tile_id) as SharedTileIndex;
+    let live_bytes = if _SharedTiles[[index]].descriptor_valid &&
+        _SharedTiles[[index]].payload_live then
+        _SharedTiles[[index]].tile.capacity_bytes else 0;
+    let reserved_bytes = _SharedTiles[[index]].reserved_capacity_bytes;
+    return if live_bytes > reserved_bytes then live_bytes else reserved_bytes;
 end;
 
 pure func SharedTileCapacityLimitBytes() => integer

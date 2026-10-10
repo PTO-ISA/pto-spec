@@ -21,16 +21,37 @@
     "0.59.0"
   ],
   "affected_ndf": [
+    "PTO-ARCH-LOCAL-VTAG-LIFETIME-001",
+    "PTO-ARCH-SHARED-VTAG-LIFETIME-001",
+    "PTO-B-ASSEMBLE-SHARED-GENERATION-001",
     "PTO-B-IOR-BINDING-001",
     "PTO-B-IOS-SHARED-STATE-001",
-    "PTO-B-IOT-STREAM-001"
+    "PTO-B-IOT-STREAM-001",
+    "PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001"
   ],
   "affected_units": [
+    "PTO-ARCH-FEATURES-TILE-ALLOCATION",
+    "PTO-ARCH-STATE-LOCAL-PAYLOAD-GENERATION",
+    "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT",
     "PTO-BLOCK-B-IOR",
     "PTO-BLOCK-B-IOS",
     "PTO-BLOCK-B-IOT",
+    "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+    "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
     "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
-    "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA"
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV",
+    "PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS",
+    "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+    "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+    "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+    "PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME",
+    "PTO-TILE-MODEL-CAPACITY-LOCAL",
+    "PTO-TILE-MODEL-CAPACITY-SHARED",
+    "PTO-TILE-MODEL-STATE-ALLOCATION",
+    "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS",
+    "PTO-TILE-MODEL-STATE-SHARED-REGISTERS"
   ],
   "resolves": [],
   "supersedes": [
@@ -73,8 +94,76 @@
         "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
         "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA"
       ]
+    },
+    {
+      "date": "2026-09-22",
+      "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/340",
+      "affected_ndf": [
+        "PTO-B-IOT-STREAM-001",
+        "PTO-ARCH-LOCAL-VTAG-LIFETIME-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-FEATURES-TILE-ALLOCATION",
+        "PTO-BLOCK-B-IOT",
+        "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+        "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS",
+        "PTO-TILE-MODEL-STATE-ALLOCATION",
+        "PTO-TILE-MODEL-CAPACITY-LOCAL"
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/347",
+      "affected_ndf": [
+        "PTO-B-IOS-SHARED-STATE-001",
+        "PTO-ARCH-SHARED-VTAG-LIFETIME-001",
+        "PTO-B-ASSEMBLE-SHARED-GENERATION-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-FEATURES-TILE-ALLOCATION",
+        "PTO-BLOCK-B-IOS",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+        "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+        "PTO-TILE-MODEL-STATE-SHARED-REGISTERS",
+        "PTO-TILE-MODEL-CAPACITY-SHARED"
+      ]
+    },
+    {
+      "date": "2026-10-10",
+      "baseline": "f3fa24331df452248366550f71cd1be22e62aeb1",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/347",
+      "affected_ndf": [
+        "PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001",
+        "PTO-ARCH-LOCAL-VTAG-LIFETIME-001",
+        "PTO-ARCH-SHARED-VTAG-LIFETIME-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-STATE-LOCAL-PAYLOAD-GENERATION",
+        "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS",
+        "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+        "PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME",
+        "PTO-TILE-MODEL-CAPACITY-LOCAL",
+        "PTO-TILE-MODEL-STATE-SHARED-REGISTERS"
+      ]
     }
-  ]
+  ],
+  "interface_change": true
 }
 ---
 # ADR-BLOCK-0013: Block scalar and tile bindings
@@ -190,6 +279,23 @@ block commit. Consumers refer to the renamed result through the architectural
 Local Tile queue model; they do not identify the physical allocation by
 reusing the producer's `PE_MASK`.
 
+## Amendment 2026-09-22: source payload last-use retains virtual generations
+
+Issue [#340](https://github.com/PTO-ISA/pto-spec/issues/340) restores an
+independent `.reuse` decision for every ordinary Local source. Explicit
+`.reuse` preserves the source payload; omission declares the successful block
+to be the last architectural payload consumer for the participating PEs.
+Duplicate occurrences resolving to one generation aggregate retain-dominantly
+for each PE.
+
+Last-use consumes only physical payload capacity. The virtual generation,
+epoch, descriptor, hand, and relative position remain present, so later
+relative selectors still resolve that exact generation and then fault
+`Fault_TileLegality` if the selected PE payload was consumed. They never skip
+to an older generation. Faulted, retried, squashed, and zero-participation
+attempts do not consume payload. A Local `B.ASSEMBLE` ParentRef is not an
+ordinary data consumer and must encode `.reuse`.
+
 ## Decision 027: `B.IOS` binds absolute Core-private Shared registers
 
 Each core contains one architectural bank of 256 persistent Shared Tile
@@ -201,6 +307,15 @@ index, so encoded zero names `S0` and does not mean omission.
 `B.IOS mask=PE_MASK, ->Sx<TSize>` is the destination form and requires
 `TSize=1..7`, encoding 128 B through 8 KiB per participating PE. The role
 encoded by `TSize` MUST agree with the selected operation schema.
+
+## Amendment 2026-09-23: Shared source last-use retains Sx identity
+
+Issue [#347](https://github.com/PTO-ISA/pto-spec/issues/347) adds the
+source-lifetime decision to B.IOS. Canonical `.reuse` retains a Shared source;
+bare source assembly marks last-use. Successful consumption returns the
+complete Core-wide payload capacity but retains Sx and its descriptor. A later
+use of that consumed generation faults rather than reading recycled backing.
+Fault, retry, squash, and zero participation do not consume it.
 
 ## Decision 028: `B.IOS` uses an ordered four-entry binding stream
 
@@ -310,3 +425,50 @@ Predicate-Tile forms. This makes GPR0 a legal mask selector distinct from an
 unused zero selector. `B.IOR` does not own `PredInv` or `Zero`. Each schema
 rejects missing, misplaced, duplicate, and surplus roles before effects.
 Current binding semantics remain in the owning B.IOT/B.IOR ASL/NDF clauses.
+
+
+## 2026-10-10 amendment: participant-aware source lifetime
+
+The repository owner approved adapting #341 to the independent PE execution
+contexts landed in #373: Shared payload remains available until all declared
+participants finish, and GMOV lifetime effects belong to the actual source PE.
+The decision baseline is `f3fa24331df452248366550f71cd1be22e62aeb1`.
+Current meaning belongs to `PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001` and the
+named Local/Shared lifetime ASL owners, rather than this decision rationale.
+
+Completion accounting is Core-owned and occurrence-specific. It records exact
+source generation, invocation, site/form/selector, declared participation and
+PE request identities. Successful PEs return independently; incomplete source
+retirement is not a Tile-operation barrier. Fault, retry, squash, nonparticipation,
+or a stale completion cannot retire a different or newer payload. Invocation
+retirement preserves any source whose required successful completions are absent.
+Model-bounded record arrays and monotonic generation tokens are representation
+choices, not new software-visible registers or hardware capacity claims.
+
+The Local live mask follows its PE bank. GMOV resolves the original relative
+selector in the selected source PE bank and retires that exact generation only
+after its selected consumers complete. Repeated peer selections remain legal;
+retirement must not invalidate a slower consumer. ExecutionMask carriers keep
+their separately typed behavior and are excluded from ordinary-data lifetime
+effects without introducing a new encoding restriction. Open Shared assembly
+capacity reservations remain independent of source retirement.
+
+This preserves old binary reuse behavior. Reassembling bare source operands is
+still a breaking source-level change under the original lifetime decision.
+Compiler lifetime analysis, downstream model adoption, refreshed ELFs and
+exact-commit release validation remain obligations; this merge makes no release
+or downstream-runtime conformance claim.
+
+### Bilingual amendment rationale / 双语修订理由
+
+**English.** The previous aggregate model completed a Tile operation for every
+selected PE at once. Independent PE streams expose an early-reclamation bug:
+one PE can finish while another still needs the same payload. Tracking actual
+participant completion and exact source ownership repairs that mismatch without
+adding a rendezvous or hiding a consumed-generation fault.
+
+**中文。** 旧聚合模型一次完成所有选中 PE 的 Tile 操作。独立 PE 指令流使提前
+回收问题显现：一个 PE 已完成时，另一个 PE 仍可能需要同一载荷。按真实参与者
+完成情况与精确源代次归属记账可以修复该错配，无需新增会合点，也不掩盖对已消费
+代次的非法读取。GMOV 的载荷归属于实际源 PE；重复选择同一源的较慢消费者仍须
+能够完成。异常、重试、撤销和旧请求均不能释放新的载荷。

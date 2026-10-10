@@ -22,7 +22,7 @@ The unit appends bindings, counts them in several ways, marks them consumed, and
 <!-- PTO-READER-BLOCK: block-model-operands-shared-bindings-concepts role=concepts-state -->
 ## Concepts and visible state
 
-`_BundleSharedBindings` has four entries. Each holds `valid`, `shared_tile_id`, `size_code` (0 to 12), `pe_mask`, `consumed`, and two range modifiers: `source0_subview` and `destination_assemble`.
+`_BundleSharedBindings` has four entries. Besides the source/destination role, mask and range modifiers, an ordinary source records reuse and a captured lifetime occurrence. The binding is PE-private; the occurrence’s participant completions are Core-owned and are not restored from a PE trap snapshot.
 
 The size code sets the role. A nonzero size code makes the binding a destination of that capacity. Size code 0 makes it a source. A size-code-0 binding whose `destination_assemble` modifier is valid and is not an INIT phase is a reused destination: it names the Shared Tile that an open `B.ASSEMBLE` generation keeps building.
 
@@ -41,7 +41,7 @@ Design point: `BindBundleSharedIO` requires a new Shared binding's mask to equal
 
 Design point: one Shared Tile ID may appear only once per bundle. `BindBundleSharedIO` rejects a repeated ID with `Fault_BundleControl` before it fills an entry, so every valid entry names a distinct Shared Tile.
 
-`BundleSharedBindingId`, `BundleSharedBindingSize`, and `BundleSharedBindingMask` assert that the entry is valid and not consumed. `ConsumeBundleSharedBindings(count)` marks the first `count` ordinary entries consumed, skipping reused destinations. `BundleSharedBindingsUnconsumed` reports whether any ordinary entry is still unconsumed, and tile execution uses it.
+`ConsumeBundleSharedBindings` marks operation-level binding use. That bookkeeping is separate from source retirement: `FinalizeBundleSharedLastUseSources` reports successful participant completion to the lifetime owner. `.reuse` and a continuation binding reclassified as a destination do not retire a Shared source.
 
 <!-- PTO-READER-BLOCK: block-model-operands-shared-bindings-boundaries role=boundaries -->
 ## Architectural boundaries
@@ -70,7 +70,7 @@ A bundle binds Shared Tile 2 as a source (size 0, mask `1111`) and then Shared T
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/operands/shared-bindings.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS","surface":"block","classification":["model","operands","shared-bindings"],"depends_on":["PTO-BLOCK-MODEL-SCHEMA-DIMENSIONS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS","surface":"block","classification":["model","operands","shared-bindings"],"depends_on":["PTO-BLOCK-MODEL-SCHEMA-DIMENSIONS","PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME"]}
 func BindBundleSharedIO(shared_tile_id: SharedTileID,
                         size_code: integer {0..12},
                         pe_mask: bits(4))
@@ -92,11 +92,113 @@ begin
             _BundleSharedBindings[[index]].shared_tile_id = shared_tile_id;
             _BundleSharedBindings[[index]].size_code = size_code;
             _BundleSharedBindings[[index]].pe_mask = pe_mask;
+            _BundleSharedBindings[[index]].source_reuse = TRUE;
+            _BundleSharedBindings[[index]].source_lifetime_captured = FALSE;
+            _BundleSharedBindings[[index]].source_lifetime_ordinal = 0;
             _BundleSharedBindings[[index]].consumed = FALSE;
             return;
         end;
     end;
     SetFault(Fault_BundleControl, ReadTPC());
+end;
+
+func BindBundleSharedIOWithReuse(
+    shared_tile_id: SharedTileID, size_code: integer {0..12},
+    pe_mask: bits(4), source_reuse: boolean)
+begin
+    BindBundleSharedIO(shared_tile_id, size_code, pe_mask);
+    if _LastFault == Fault_None then
+        let binding = BundleSharedBindingLastIndex();
+        _BundleSharedBindings[[binding]].source_reuse = source_reuse;
+    end;
+end;
+
+readonly func BundleSharedSourcePayloadsAvailable() => boolean
+begin
+    for binding = 0 to 3 do
+        if _BundleSharedBindings[[binding]].valid &&
+           _BundleSharedBindings[[binding]].size_code == 0 &&
+           !BundleSharedBindingIsReusedDestination(binding) &&
+           !SharedTilePayloadIntact(
+               _BundleSharedBindings[[binding]].shared_tile_id) then
+            return FALSE;
+        end;
+    end;
+    return TRUE;
+end;
+
+func RequireBundleSharedSourcePayloads() => boolean
+begin
+    if BundleSharedSourcePayloadsAvailable() &&
+       CaptureBundleSharedSourceLifetimes() then return TRUE; end;
+    if BundleSharedSourcePayloadsAvailable() then return FALSE; end;
+    SetFault(Fault_TileLegality, ReadTPC());
+    return FALSE;
+end;
+
+func CaptureBundleSharedSourceLifetimes() => boolean
+begin
+    if !_CurrentPEContextValid then
+        return TRUE;
+    end;
+    let participant = PTOPEMaskBitOfPEIdentity(_CurrentMemoryAgent);
+    for binding = 0 to 3 do
+        if _BundleSharedBindings[[binding]].valid &&
+           _BundleSharedBindings[[binding]].size_code == 0 &&
+           !BundleSharedBindingIsReusedDestination(binding) &&
+           !_BundleSharedBindings[[binding]].source_reuse &&
+           _BundleSharedBindings[[binding]].pe_mask[participant] == '1' then
+            let shared_id = _BundleSharedBindings[[binding]].shared_tile_id;
+            let shared = SharedTileRecord(shared_id);
+            let ordinal = CaptureBundleSourceLifetime(TRUE,
+                0, UInt(shared_id) as TileIndex, 0,
+                shared.payload_generation,
+                _BundleSharedBindings[[binding]].pe_mask,
+                _BundleSharedBindings[[binding]].source_lifetime_ordinal);
+            if ordinal == 0 then return FALSE; end;
+            _BundleSharedBindings[[binding]].source_lifetime_captured = TRUE;
+            _BundleSharedBindings[[binding]].source_lifetime_ordinal = ordinal;
+        end;
+    end;
+    return TRUE;
+end;
+
+// Every Shared destination path passes this common pre-effect gate, including
+// ordinary destinations and INIT/continuation B.ASSEMBLE destinations.
+readonly func BundleSharedPublicationAvailable() => boolean
+begin
+    for binding = 0 to 3 do
+        if _BundleSharedBindings[[binding]].valid &&
+           (_BundleSharedBindings[[binding]].size_code != 0 ||
+            BundleSharedBindingIsReusedDestination(binding)) then
+            let participant = !_CurrentPEContextValid ||
+                _BundleSharedBindings[[binding]].pe_mask[
+                    PTOPEMaskBitOfPEIdentity(_CurrentMemoryAgent)] == '1';
+            if participant && SharedSourceLifetimePinned(
+                   _BundleSharedBindings[[binding]].shared_tile_id) then
+                return FALSE;
+            end;
+        end;
+    end;
+    return TRUE;
+end;
+
+func FinalizeBundleSharedLastUseSources()
+begin
+    for binding = 0 to 3 do
+        if _BundleSharedBindings[[binding]].valid &&
+           _BundleSharedBindings[[binding]].size_code == 0 &&
+           !BundleSharedBindingIsReusedDestination(binding) &&
+           !_BundleSharedBindings[[binding]].source_reuse then
+            if _BundleSharedBindings[[binding]].source_lifetime_captured then
+                CompleteBundleSourceLifetime(
+                    _BundleSharedBindings[[binding]].source_lifetime_ordinal);
+            elsif !_CurrentPEContextValid then
+                ConsumeSharedTilePayload(
+                    _BundleSharedBindings[[binding]].shared_tile_id);
+            end;
+        end;
+    end;
 end;
 
 readonly func BundleSharedMaskCanAppend(pe_mask: bits(4)) => boolean

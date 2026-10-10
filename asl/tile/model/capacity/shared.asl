@@ -3,11 +3,20 @@ readonly func SharedTileCapacityInUse() => integer
 begin
     var total: integer = 0;
     for index = 0 to PTO_SHARED_TILE_COUNT - 1 do
-        if _SharedTiles[[index]].descriptor_valid then
-            total = total + _SharedTiles[[index]].tile.capacity_bytes;
-        end;
+        total = total + SharedTileCapacityCharge(
+            (Zeros{6} + index) as SharedTileID);
     end;
     return total;
+end;
+
+readonly func SharedTileCapacityCharge(shared_tile_id: SharedTileID) => integer
+begin
+    let index = UInt(shared_tile_id) as SharedTileIndex;
+    let live_bytes = if _SharedTiles[[index]].descriptor_valid &&
+        _SharedTiles[[index]].payload_live then
+        _SharedTiles[[index]].tile.capacity_bytes else 0;
+    let reserved_bytes = _SharedTiles[[index]].reserved_capacity_bytes;
+    return if live_bytes > reserved_bytes then live_bytes else reserved_bytes;
 end;
 
 pure func SharedTileCapacityLimitBytes() => integer

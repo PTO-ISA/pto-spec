@@ -52,7 +52,7 @@ Design point: the SizeCode table is shared, but the legal range depends on the r
 <!-- PTO-READER-BLOCK: tile-model-state-descriptors-boundaries role=boundaries -->
 ## Architectural boundaries
 
-These are pure or read-only helpers. Faults for an illegal SizeCode or an unavailable relative source are raised by the bundle binders that call them, such as the Tile-binding, command, range-modifier, and Shared TLSU owners.
+The size and lookup queries are pure or read-only. Lifecycle helpers separately publish relative identities, release allocations, and consume payload-live bits. Relative lookup can still find a consumed generation; the operation’s payload check then diagnoses that unavailable source. This separation prevents last-use from silently changing which relative generation is selected.
 
 `InstallRelativeTileFixture` places a register at an arbitrary distance. `ConfigureTile`, `ConfigurePredicateTile`, and `ConfigureCubeTile` call it with the register's own index as the selector, after it removes any other entry for that register; it is not the publication rule.
 
@@ -120,6 +120,32 @@ begin
     assert RelativeTileSourceAvailable(selector);
     return _TileRelativeOrder[[RelativeTileHandIndex(selector)]]
         [[RelativeTileDistance(selector)]];
+end;
+
+readonly func TilePayloadLiveForMask(
+    index: TileIndex, pe_mask: bits(4)) => boolean
+begin
+    return _Tiles[[index]].allocated &&
+           (_TilePayloadLiveMasks[[index]] AND pe_mask) == pe_mask;
+end;
+
+// A Local generation is payload-intact for a binding when every participating
+// PE it was allocated for still has readable backing. PEs outside the
+// generation's descriptor allocation mask never consumed its payload, so a
+// wider binding mask cannot by itself make the generation unavailable.
+readonly func TilePayloadIntactForMask(
+    index: TileIndex, pe_mask: bits(4)) => boolean
+begin
+    let participating = pe_mask AND _TileAllocationMasks[[index]];
+    return _Tiles[[index]].allocated &&
+           (_TilePayloadLiveMasks[[index]] AND participating) == participating;
+end;
+
+func ConsumeTilePayloadForMask(index: TileIndex, pe_mask: bits(4))
+begin
+    assert _Tiles[[index]].allocated;
+    _TilePayloadLiveMasks[[index]] =
+        _TilePayloadLiveMasks[[index]] AND NOT(pe_mask);
 end;
 
 func RemoveRelativeTileMapping(index: TileIndex)

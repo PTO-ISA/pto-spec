@@ -84,6 +84,8 @@ begin
     end;
     SquashPEOwnedSharedGenerationRequest(_CurrentModelCore,
         _CurrentKernelInvocation, domain);
+    SquashSourceLifetimes(_CurrentModelCore,
+        _CurrentKernelInvocation, domain);
 end;
 
 // PTO-NDF: PTO-B-ASSEMBLE-SPECULATION-001

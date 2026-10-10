@@ -446,12 +446,7 @@ begin
             (_SharedGenerations[[index]].working_tile.valid_rows *
              _SharedGenerations[[index]].working_tile.valid_columns)
                 as integer {0..524288};
-        _SharedTiles[[index]].descriptor_valid = TRUE;
-        _SharedTiles[[index]].allocation_mask = participant_mask;
-        _SharedTiles[[index]].initialized_mask = participant_mask;
-        _SharedTiles[[index]].whole_parent_ready = TRUE;
-        _SharedTiles[[index]].published = TRUE;
-        _SharedTiles[[index]].tile = _SharedGenerations[[index]].working_tile;
+        PublishPEOwnedSharedGeneration(shared_tile_id, participant_mask);
         _SharedGenerations[[index]].released_participants =
             _SharedGenerations[[index]].released_participants OR participant;
         _BundleSharedBindings[[binding]].destination_assemble

@@ -175,6 +175,11 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
+    if !RequireBundleSharedSourcePayloads() then return FALSE; end;
+    // A pending last-use cohort pins its exact Shared generation. Every
+    // publisher waits here before descriptor preparation, GM effects, or
+    // allocation; pinning never creates a new legality fault.
+    if !BundleSharedPublicationAvailable() then return FALSE; end;
     let matrix_selected = BundleCubeMatrixSelected();
     let weight_tload_selected = BundleWeightTLOADSelected();
     var stage2_prepared = TRUE;

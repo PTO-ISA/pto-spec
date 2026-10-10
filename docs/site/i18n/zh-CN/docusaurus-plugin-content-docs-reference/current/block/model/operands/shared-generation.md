@@ -100,14 +100,12 @@ Tile 操作失败后，`AbortBundleSharedGenerationsForBundle` 会遍历该指�
 // request identity across saved PE and trap contexts. A published candidate
 // is irrevocable: squash MUST preserve its payload and outstanding release
 // state.
+// INIT MUST reserve complete parent capacity, charged as the greater of old
+// live payload and open-generation reservation for that Sx. LAST MUST replace the charge atomically; abort MUST release the reservation.
 // NDF-END: PTO-B-ASSEMBLE-SHARED-GENERATION-001
 // NDF-BEGIN: PTO-B-SUBVIEW-SHARED-PER-PE-001
 // ndf: kind=contract level=L1 layer=block status=accepted
-// A Shared B.SUBVIEW source MUST evaluate GPR[RegSrc]+uimm11 in each
-// participating PE's private GPR context. The encoded size is common, but
-// selected PEs may materialize distinct ranges of one published parent.
-// Matrix consumers derive/validate each selected view's metadata before any
-// payload snapshot or destination allocation; one bad view rejects the whole operation.
+// A Shared B.SUBVIEW source MUST evaluate GPR[RegSrc]+uimm11 in each participating PE's private GPR context. The encoded size is common, but selected PEs may materialize distinct ranges of one published parent. Matrix consumers derive/validate each selected view's metadata before any payload snapshot or destination allocation; one bad view rejects the whole operation.
 // NDF-END: PTO-B-SUBVIEW-SHARED-PER-PE-001
 readonly func BundleSharedGenerationCapacity(binding: BundleSharedBindingIndex) => integer {0..12}
 begin
@@ -132,8 +130,7 @@ begin
         end;
     end;
 end;
-// Coverage uses 32-byte units; wrappers expand existing 128-byte CELL
-// quantities to four units for specialized complete-row producers.
+// Coverage uses 32-byte units; wrappers expand existing 128-byte CELL quantities to four units for specialized complete-row producers.
 readonly func BundleSharedGenerationCoverageWithCurrent(
     shared_tile_id: SharedTileID,
     offset_cells: integer {0..8192},
@@ -150,8 +147,7 @@ begin
     end;
     return covered;
 end;
-// Specialized collectives may contribute fewer cells (including zero);
-// arrival remains independent of coverage and payload definedness.
+// Specialized collectives may contribute fewer cells (including zero); arrival remains independent of coverage and payload definedness.
 readonly func ValidateBundleSharedGenerationRange(
     binding: BundleSharedBindingIndex,
     offset_cells: integer {0..8192},
@@ -272,6 +268,7 @@ begin
             offset_cells == 0 && candidate.tile.capacity_bytes == parent_bytes &&
             coverage_cells == BundleLocalGenerationCellCount(parent_size) * 4 &&
             payload_cells == coverage_cells && payload_elements == TileLogicalElementCapacity(parent_bytes, candidate.tile.data_type);
+        if !ReserveSharedTileGenerationCapacity(shared_tile_id, parent_bytes) then return FALSE; end;
         _SharedGenerations[[index]].open = TRUE;
         _SharedGenerations[[index]].closed = FALSE;
         _SharedGenerations[[index]].published = FALSE;
@@ -400,12 +397,15 @@ begin
         _SharedGenerations[[index]].published = TRUE;
         _SharedGenerations[[index]].working_tile.contents_defined = TRUE;
         _SharedTiles[[index]].descriptor_valid = TRUE;
+        _SharedTiles[[index]].payload_live = TRUE;
+        _SharedTiles[[index]].payload_generation =
+            _SharedTiles[[index]].payload_generation + 1;
         _SharedTiles[[index]].allocation_mask = participant_mask;
         _SharedTiles[[index]].initialized_mask = participant_mask;
         _SharedTiles[[index]].whole_parent_ready = TRUE;
         _SharedTiles[[index]].published = TRUE;
-        _SharedTiles[[index]].tile =
-            _SharedGenerations[[index]].working_tile;
+        _SharedTiles[[index]].tile = _SharedGenerations[[index]].working_tile;
+        ReleaseSharedTileGenerationCapacity(shared_tile_id);
     end;
     return TRUE;
 end;
@@ -427,9 +427,7 @@ begin
         specialized_input0, specialized_input1, specialized_input2,
         specialized_input3, specialized_metadata);
 end;
-// Ordinary B.ASSEMBLE retains its size-coded range and represents arrival of
-// the complete decoded PE mask.  Specialized collectives use the explicit
-// range entry point above.
+// Ordinary B.ASSEMBLE retains its size-coded range and represents arrival of the complete decoded PE mask.  Specialized collectives use the explicit range entry point above.
 func CommitBundleSharedGenerationCandidate(
     binding: BundleSharedBindingIndex,
     candidate: SharedTileInfo) => boolean

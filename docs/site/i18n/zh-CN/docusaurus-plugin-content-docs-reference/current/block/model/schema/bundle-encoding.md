@@ -48,7 +48,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: block-model-schema-bundle-encoding-boundaries role=boundaries -->
 ## 架构边界
 
-元数据记录了三处经过评审的重叠。其中两处涉及 `B.IOT` 的仅源形式和目标形式：前者把 `SizeCode` 固定为零，后者要求 `SizeCode` 为 1 到 12。第三处是 `C.BSTOP`，它使用了 `C.BSTART.STD` 所排除的 `BrType` 值 0。
+元数据记录七组已评审编码重叠。其中六组配对 `B.IOT` 的纯源与目标形态，包括生命周期变体；纯源的零大小形状通过约束与目标形状区分。另一组是边界编码中的 `C.BSTOP` 与 `C.BSTART.STD`。精确形态约束仍以生成目录为准。
 
 编码 `0011`、`0100` 以及 `1001` 到 `1111` 未分配给任何种类。
 
@@ -72,7 +72,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/schema/bundle-encoding.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-SCHEMA-BUNDLE-ENCODING","surface":"block","classification":["model","schema","bundle-encoding"],"depends_on":["PTO-BLOCK-MODEL-STATE-TYPES"],"catalog_projection":{"catalog":"command-forms","isa":"PTO Instruction Set Architecture","reviewed_encoding_overlaps":[{"broad_form_id":"b_iot_32_10db6db84f5d","narrow_form_id":"b_iot_32_c11eb189dd83","reason":"source-only form fixes SizeCode to zero; destination form requires SizeCode 1..12 and a 2-bit DstTile"},{"broad_form_id":"b_iot_32_8b8bce6bffe8","narrow_form_id":"b_iot_32_2c07e7177fad","reason":"source-only form fixes SizeCode to zero; destination form requires SizeCode 1..12 and a 2-bit DstTile"},{"broad_form_id":"c_bstart_std_16_8b40f078c14a","narrow_form_id":"c_bstop_16_ca4743d8a95e","reason":"C.BSTOP fixes the broad C.BSTART.STD BrType field to excluded value 0"}],"schema_version":2,"surface":"command-and-boundary"}}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-SCHEMA-BUNDLE-ENCODING","surface":"block","classification":["model","schema","bundle-encoding"],"depends_on":["PTO-BLOCK-MODEL-STATE-TYPES"],"catalog_projection":{"catalog":"command-forms","isa":"PTO Instruction Set Architecture","reviewed_encoding_overlaps":[{"broad_form_id":"b_iot_32_10db6db84f5d","narrow_form_id":"b_iot_32_c11eb189dd83","reason":"source-only form fixes SizeCode to zero; destination form requires SizeCode 1..12 and a 2-bit DstTile"},{"broad_form_id":"b_iot_32_8b8bce6bffe8","narrow_form_id":"b_iot_32_2c07e7177fad","reason":"source-only form fixes SizeCode to zero; destination form requires SizeCode 1..12 and a 2-bit DstTile"},{"broad_form_id":"c_bstart_std_16_8b40f078c14a","narrow_form_id":"c_bstop_16_ca4743d8a95e","reason":"C.BSTOP fixes the broad C.BSTART.STD BrType field to excluded value 0"},{"broad_form_id":"b_iot_32_ll_dst","narrow_form_id":"b_iot_32_ll_src","reason":"source-only form fixes SizeCode and DstTile to zero; destination form requires SizeCode 1..10 and carries DstTile"},{"broad_form_id":"b_iot_32_rl_dst","narrow_form_id":"b_iot_32_rl_src","reason":"source-only form fixes SizeCode and DstTile to zero; destination form requires SizeCode 1..10 and carries DstTile"},{"broad_form_id":"b_iot_32_lr_dst","narrow_form_id":"b_iot_32_lr_src","reason":"source-only form fixes SizeCode and DstTile to zero; destination form requires SizeCode 1..10 and carries DstTile"},{"broad_form_id":"b_iot_32_last_dst","narrow_form_id":"b_iot_32_last_src","reason":"source-only form fixes SizeCode and DstTile to zero; destination form requires SizeCode 1..10 and carries DstTile"}],"schema_version":2,"surface":"command-and-boundary"}}
 pure func BundleKindCode(kind: BundleKind) => bits(4)
 begin
     case kind of

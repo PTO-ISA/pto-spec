@@ -166,6 +166,11 @@ begin
         SelectExecutionContext(0 as PTOModelCoreIdentity, agent);
         assert !_BundleActive;
     end;
+    let first_payload_generation =
+        SharedTileRecord(shared_id).payload_generation;
+    ConsumeSharedTilePayload(shared_id);
+    let consumed_parent = SharedTileRecord(shared_id);
+    assert !consumed_parent.payload_live;
 
     // Reuse the same static operation after every old request consumed its
     // completion. The next ordinal gets four fresh private source snapshots;
@@ -193,19 +198,10 @@ begin
             assert SharedTilePublished(shared_id);
             assert _SharedGenerations[[SharedTileArrayIndex(shared_id)]]
                 .operation_ordinal == first_ordinal + 1;
-            for cell = 0 to 63 do
-                let row = cell DIVRM 16;
-                let column = cell MOD 16;
-                if column < 8 then
-                    assert ReadSharedTileWord(shared_id,
-                        cell as PackedTileElementIndex) ==
-                        Zeros{PTO_XLEN} + 0x1000 + row * 0x100 + column;
-                else
-                    assert !TileLogicalElementDefined(
-                        SharedTileRecord(shared_id).tile,
-                        cell as PackedTileElementIndex);
-                end;
-            end;
+            let pending_parent = SharedTileRecord(shared_id);
+            assert !pending_parent.payload_live &&
+                   pending_parent.payload_generation ==
+                       first_payload_generation;
         else
             assert stopped == CommandExecution_Executed;
         end;
@@ -215,6 +211,8 @@ begin
     assert _SharedGenerations[[SharedTileArrayIndex(shared_id)]]
         .released_participants == '0010';
     let replacement = SharedTileRecord(shared_id);
+    assert replacement.payload_live &&
+           replacement.payload_generation == first_payload_generation + 1;
     for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
         for column = 0 to 7 do
             let index = TileLogicalLinearIndex(replacement.tile,

@@ -143,14 +143,26 @@ class CommonV058ContractTest(unittest.TestCase):
     def test_b_ios_reuses_the_former_b_iod_slot(self) -> None:
         forms = [form for form in self.command["forms"] if form["mnemonic"] == "B.IOS"]
 
-        self.assertEqual(len(forms), 1)
+        self.assertEqual(len(forms), 2)
+        by_id = {form["form_id"]: form for form in forms}
         self.assertEqual(
-            forms[0]["encoding"],
+            by_id["b_ios_32_4ba5ef98fdaa"]["encoding"],
             [
                 {
                     "index": 0,
                     "mask": "0xfc0871ff",
                     "match": "0x00001013",
+                    "width_bits": 32,
+                }
+            ],
+        )
+        self.assertEqual(
+            by_id["b_ios_32_last_src"]["encoding"],
+            [
+                {
+                    "index": 0,
+                    "mask": "0xfc0ff1ff",
+                    "match": "0x04001013",
                     "width_bits": 32,
                 }
             ],

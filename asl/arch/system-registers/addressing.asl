@@ -57,6 +57,8 @@ begin
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
         _TileFeatureMapDescriptors[[index]].valid = FALSE;
         _TileAllocationMasks[[index]] = Zeros{4};
+        _TilePayloadLiveMasks[[index]] = Zeros{4};
+        _TilePayloadGenerations[[index]] = 0;
         _Tiles[[index]].allocated = FALSE;
         _Tiles[[index]].contents_defined = FALSE;
         _Tiles[[index]].defined_elements = zero_tile_elements;
@@ -84,6 +86,9 @@ begin
     end;
     for index = 0 to PTO_SHARED_TILE_COUNT - 1 do
         _SharedTiles[[index]].descriptor_valid = FALSE;
+        _SharedTiles[[index]].payload_live = FALSE;
+        _SharedTiles[[index]].payload_generation = 0;
+        _SharedTiles[[index]].reserved_capacity_bytes = 0;
         _SharedTiles[[index]].allocation_mask = Zeros{4};
         _SharedTiles[[index]].initialized_mask = Zeros{4};
         _SharedTiles[[index]].published = FALSE;
@@ -209,5 +214,6 @@ begin
     ResetPEExecutionContextBank();
     ResetKernelGMObligations();
     ResetCoreSynchronizationState();
+    ResetSourceLifetimeState();
     ResetKernelLifecycleState();
 end;

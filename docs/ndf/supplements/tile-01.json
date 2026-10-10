@@ -336,8 +336,8 @@
         "zh-CN": "Local Tile 寄存器的代次管理"
       },
       "summary": {
-        "en": "Local Tile registers and allocation masks belong to PTO-STATE-TILE-LOCAL. For each T, U, M, or N hand, #1 names the newest published generation; publishing a destination shifts older live generations toward #16 while source generations remain available.",
-        "zh-CN": "Local Tile 寄存器及其分配掩码归 PTO-STATE-TILE-LOCAL 所有。对于 T、U、M、N 各组，#1 表示最新发布的代次；发布新目标时，较旧的存活代次向 #16 方向移动，而源代次继续保留。"
+        "en": "Local Tile registers, descriptor allocation masks, and payload-live masks belong to PTO-STATE-TILE-LOCAL. For each T, U, M, or N hand, #1 names the newest published generation; consuming payload capacity does not remove or compact that virtual generation.",
+        "zh-CN": "Local Tile 寄存器、描述符分配掩码及载荷存活掩码归 PTO-STATE-TILE-LOCAL 所有。对于 T、U、M、N 各组，#1 表示最新发布的代次；消费载荷容量不会移除或压缩该虚拟代次。"
       }
     },
     {

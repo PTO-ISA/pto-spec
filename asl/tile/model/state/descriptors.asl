@@ -38,6 +38,32 @@ begin
         [[RelativeTileDistance(selector)]];
 end;
 
+readonly func TilePayloadLiveForMask(
+    index: TileIndex, pe_mask: bits(4)) => boolean
+begin
+    return _Tiles[[index]].allocated &&
+           (_TilePayloadLiveMasks[[index]] AND pe_mask) == pe_mask;
+end;
+
+// A Local generation is payload-intact for a binding when every participating
+// PE it was allocated for still has readable backing. PEs outside the
+// generation's descriptor allocation mask never consumed its payload, so a
+// wider binding mask cannot by itself make the generation unavailable.
+readonly func TilePayloadIntactForMask(
+    index: TileIndex, pe_mask: bits(4)) => boolean
+begin
+    let participating = pe_mask AND _TileAllocationMasks[[index]];
+    return _Tiles[[index]].allocated &&
+           (_TilePayloadLiveMasks[[index]] AND participating) == participating;
+end;
+
+func ConsumeTilePayloadForMask(index: TileIndex, pe_mask: bits(4))
+begin
+    assert _Tiles[[index]].allocated;
+    _TilePayloadLiveMasks[[index]] =
+        _TilePayloadLiveMasks[[index]] AND NOT(pe_mask);
+end;
+
 func RemoveRelativeTileMapping(index: TileIndex)
 begin
     for hand = 0 to 3 do

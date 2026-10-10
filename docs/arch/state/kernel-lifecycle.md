@@ -137,6 +137,7 @@ begin
         return KernelLifecycle_Waiting;
     end;
     RetirePEOwnedSharedGenerationsForInvocation(core, invocation);
+    RetireSourceLifetimes(core, invocation);
     _RetiredKernelInvocationByCore[[core]] = invocation;
     RetireCoreSynchronizationInvocation(core, invocation);
     _KernelInvocationByCore[[core]] = 0;
@@ -154,6 +155,7 @@ begin
     AbortKernelGMObligations(core, invocation);
     AbortCoreSynchronizationInvocation(core, invocation);
     RetirePEOwnedSharedGenerationsForInvocation(core, invocation);
+    RetireSourceLifetimes(core, invocation);
     _RetiredKernelInvocationByCore[[core]] = invocation;
     _KernelInvocationByCore[[core]] = 0;
     _KernelInvocationActiveByCore[[core]] = FALSE;
