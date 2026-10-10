@@ -17,12 +17,12 @@ This page is a generated reference view of the normative ASL unit.
 
 This unit owns three things: the base system-register record type, the single instance of that record for the current core, and the reset function that installs the reference-profile values.
 
-The record holds the registers that address decoding treats as base registers, so a reader can see every field, its reset value, and whether software may write it in one place. Cross-ACR context registers, the 24-bit address decode, and the side effects of individual control registers are other owners.
+The record holds the storage-backed subset of base registers, so a reader can inspect those fields and their reset values together. The base-address-decoded `TIME` and `THREAD_ID` values are derived by the Scalar SYS owner and have no fields here. Cross-ACR context registers, the 24-bit address decode, and the side effects of individual control registers are other owners.
 
 <!-- PTO-READER-BLOCK: arch-system-addressing-concepts-state role=concepts-state -->
 ## Base system-register state
 
-`BaseSystemRegisterState` is a record of thirteen `Word` fields: `thread_ptr`, `global_ptr`, `core_state`, `core_id`, `thread_id`, `vendor`, `version`, `core_feature`, `core_feature_enable`, `tile_capacity`, `blocknum`, `blockid`, and `cycle`.
+`BaseSystemRegisterState` is a record of twelve `Word` fields: `thread_ptr`, `global_ptr`, `core_state`, `core_id`, `vendor`, `version`, `core_feature`, `core_feature_enable`, `tile_capacity`, `blocknum`, `blockid`, and `cycle`.
 
 | Field | Reset value | Software writable |
 | --- | --- | --- |
@@ -30,7 +30,6 @@ The record holds the registers that address decoding treats as base registers, s
 | `global_ptr` | zero | yes |
 | `core_state` | zero | yes |
 | `core_id` | zero | no |
-| `thread_id` | zero | no |
 | `vendor` | zero | no |
 | `version` | one | no |
 | `core_feature` | zero | no |
@@ -63,7 +62,7 @@ Design point: the reset body clears the context-register low-index range in all 
 <!-- PTO-READER-BLOCK: arch-system-addressing-example-usage role=example-usage -->
 ## Non-normative reset reading example
 
-After `ResetProfileState`, reading the base registers gives `version` one, `tile_capacity` equal to `PTO_MODEL_MAX_TILE_CAPACITY_BYTES`, `cycle` zero, and the current ACR ACR0. The fields `core_id`, `vendor`, `thread_id`, `blocknum`, and `blockid` read zero because reset writes zero and software cannot write them.
+After `ResetProfileState`, reading the base registers gives `version` one, `tile_capacity` equal to `PTO_MODEL_MAX_TILE_CAPACITY_BYTES`, `cycle` zero, and the current ACR ACR0. The fields `core_id`, `vendor`, `blocknum`, and `blockid` read zero because reset writes zero and software cannot write them.
 
 Reading low index `0x0f07` of ACR1 gives 3, and reading `0x0f08` and `0x0f09` of ACR1 gives zero.
 
@@ -86,7 +85,6 @@ type BaseSystemRegisterState of record {
     global_ptr: Word,
     core_state: Word,
     core_id: Word,
-    thread_id: Word,
     vendor: Word,
     version: Word,
     core_feature: Word,
@@ -258,7 +256,6 @@ begin
     _SystemRegisters.global_ptr = Zeros{PTO_XLEN};
     _SystemRegisters.core_state = Zeros{PTO_XLEN};
     _SystemRegisters.core_id = Zeros{PTO_XLEN};
-    _SystemRegisters.thread_id = Zeros{PTO_XLEN};
     _SystemRegisters.vendor = Zeros{PTO_XLEN};
     _SystemRegisters.version = Zeros{PTO_XLEN} + 1;
     _SystemRegisters.core_feature = Zeros{PTO_XLEN};

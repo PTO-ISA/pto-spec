@@ -5,7 +5,6 @@ type BaseSystemRegisterState of record {
     global_ptr: Word,
     core_state: Word,
     core_id: Word,
-    thread_id: Word,
     vendor: Word,
     version: Word,
     core_feature: Word,
@@ -177,7 +176,6 @@ begin
     _SystemRegisters.global_ptr = Zeros{PTO_XLEN};
     _SystemRegisters.core_state = Zeros{PTO_XLEN};
     _SystemRegisters.core_id = Zeros{PTO_XLEN};
-    _SystemRegisters.thread_id = Zeros{PTO_XLEN};
     _SystemRegisters.vendor = Zeros{PTO_XLEN};
     _SystemRegisters.version = Zeros{PTO_XLEN} + 1;
     _SystemRegisters.core_feature = Zeros{PTO_XLEN};

@@ -17,12 +17,12 @@ This page is a generated reference view of the normative ASL unit.
 
 本单元拥有三样东西：基础系统寄存器记录类型、当前核心上该记录的唯一实例，以及安装参考配置档取值的复位函数。
 
-该记录保存地址解码视为基础寄存器的那些寄存器，因此读者可以在一处看到每个字段、它的复位取值，以及软件是否可以写入它。跨 ACR 的上下文寄存器、24 位地址解码以及各个控制寄存器的副作用属于其他所有者。
+该记录保存基础寄存器中具有存储字段的子集，便于读者在一处查看这些字段及其复位值。基础地址解码也包含 `TIME` 和 `THREAD_ID`，但它们的值由标量 SYS 归属单元派生，在此没有字段。跨 ACR 的上下文寄存器、24 位地址解码以及各个控制寄存器的副作用属于其他所有者。
 
 <!-- PTO-READER-BLOCK: arch-system-addressing-concepts-state role=concepts-state -->
 ## 基础系统寄存器状态
 
-`BaseSystemRegisterState` 是包含 13 个 `Word` 字段的记录：`thread_ptr`、`global_ptr`、`core_state`、`core_id`、`thread_id`、`vendor`、`version`、`core_feature`、`core_feature_enable`、`tile_capacity`、`blocknum`、`blockid` 和 `cycle`。
+`BaseSystemRegisterState` 是包含 12 个 `Word` 字段的记录：`thread_ptr`、`global_ptr`、`core_state`、`core_id`、`vendor`、`version`、`core_feature`、`core_feature_enable`、`tile_capacity`、`blocknum`、`blockid` 和 `cycle`。
 
 | 字段 | 复位取值 | 软件可写 |
 | --- | --- | --- |
@@ -30,7 +30,6 @@ This page is a generated reference view of the normative ASL unit.
 | `global_ptr` | 零 | 是 |
 | `core_state` | 零 | 是 |
 | `core_id` | 零 | 否 |
-| `thread_id` | 零 | 否 |
 | `vendor` | 零 | 否 |
 | `version` | 一 | 否 |
 | `core_feature` | 零 | 否 |
@@ -63,7 +62,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-system-addressing-example-usage role=example-usage -->
 ## 非规范复位阅读示例
 
-执行 `ResetProfileState` 之后，读取基础寄存器得到：`version` 为一、`tile_capacity` 等于 `PTO_MODEL_MAX_TILE_CAPACITY_BYTES`、`cycle` 为零，并且当前 ACR 为 ACR0。字段 `core_id`、`vendor`、`thread_id`、`blocknum` 和 `blockid` 读为零，因为复位写入零且软件无法写入它们。
+执行 `ResetProfileState` 之后，读取基础寄存器得到：`version` 为一、`tile_capacity` 等于 `PTO_MODEL_MAX_TILE_CAPACITY_BYTES`、`cycle` 为零，并且当前 ACR 为 ACR0。字段 `core_id`、`vendor`、`blocknum` 和 `blockid` 读为零，因为复位写入零且软件无法写入它们。
 
 读取 ACR1 的低位索引 `0x0f07` 得到 3，而读取 ACR1 的 `0x0f08` 和 `0x0f09` 得到零。
 
@@ -86,7 +85,6 @@ type BaseSystemRegisterState of record {
     global_ptr: Word,
     core_state: Word,
     core_id: Word,
-    thread_id: Word,
     vendor: Word,
     version: Word,
     core_feature: Word,
@@ -258,7 +256,6 @@ begin
     _SystemRegisters.global_ptr = Zeros{PTO_XLEN};
     _SystemRegisters.core_state = Zeros{PTO_XLEN};
     _SystemRegisters.core_id = Zeros{PTO_XLEN};
-    _SystemRegisters.thread_id = Zeros{PTO_XLEN};
     _SystemRegisters.vendor = Zeros{PTO_XLEN};
     _SystemRegisters.version = Zeros{PTO_XLEN} + 1;
     _SystemRegisters.core_feature = Zeros{PTO_XLEN};

@@ -23,16 +23,20 @@
     "PTO-ARCH-STATE-CLOSURE-001",
     "PTO-RELEASE-VERIFICATION",
     "PTO-SOURCE-HIERARCHY",
+    "PTO-THREAD-ID-PE-IDENTITY-001",
     "PTO-TILE-CAPACITY-PER-PE"
   ],
   "affected_units": [
+    "PTO-ARCH-DATA-TYPES-SYSTEM-REGISTERS",
     "PTO-ARCH-OVERVIEW-ARCHITECTURE",
+    "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT",
     "PTO-ARCH-SYSTEM-REGISTERS-ACCESS-CONTROL",
     "PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING",
     "PTO-ARCH-SYSTEM-REGISTERS-CONTEXT",
     "PTO-ARCH-SYSTEM-REGISTERS-INTERRUPT",
     "PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE",
-    "PTO-ARCH-SYSTEM-REGISTERS-TIMER"
+    "PTO-ARCH-SYSTEM-REGISTERS-TIMER",
+    "PTO-SCALAR-MODEL-SYS-SEMANTICS"
   ],
   "resolves": [],
   "supersedes": [],
@@ -42,7 +46,26 @@
   "legacy_ids": [
     "ADR-0017"
   ],
-  "amendments": []
+  "amendments": [
+    {
+      "date": "2026-10-10",
+      "baseline": "e182c9b70d54a3a264bac54af9b915a0e43bb519",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/150",
+      "affected_ndf": [
+        "PTO-THREAD-ID-PE-IDENTITY-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DATA-TYPES-SYSTEM-REGISTERS",
+        "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT",
+        "PTO-SCALAR-MODEL-SYS-SEMANTICS",
+        "PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING"
+      ]
+    }
+  ],
+  "interface_change": true
 }
 ---
 # ADR-STATE-0008: Classify every visible system register behavior
@@ -144,3 +167,44 @@ Every visible register is assigned exactly one checked behavior class that defin
 Storage-only does not define an MMU, debug matcher, breakpoint, or watchpoint producer. Trap-producer closure remains separate from register-behavior closure.
 
 storage-only 不定义 MMU、debug matcher、breakpoint 或 watchpoint producer。陷阱 producer 闭合与寄存器行为闭合仍是不同任务。
+
+
+## 2026-10-10 amendment: canonical executing-PE identity (#150)
+
+The repository owner selected common entry for all four PEs and canonical
+`THREAD_ID` as the executing PE index in the issue #150 implementation review.
+Baseline: `e182c9b70d54a3a264bac54af9b915a0e43bb519`. This amends the
+system-register behavior owner rather than creating a second identity ADR.
+Current behavior is owned by `PTO-THREAD-ID-PE-IDENTITY-001` in
+`asl/scalar/model/sys/semantics.asl`; the catalog is its projection. The common
+entry and independent context lifecycle remain owned by ADR-SCALAR-0007's ASL.
+
+The old zero-value class did not distinguish PE1..PE3. The selected interface
+uses the existing read-only address, with no writable identity storage, retired
+`0x0802` alias, new instruction or Standard-Block placement exemption.
+
+Compatibility is **breaking** for code that relied on zero on PE1..PE3; PE0,
+address bits, instruction encodings and access classes are unchanged. LLVM and
+TileOP must emit a legal SYS envelope for canonical `THREAD_ID`; changing only
+the old address in an illegal Standard Block is insufficient. Runtime startup
+must branch from the common entry before entering libc. Old hosted ELF images
+and historical execution-only passes do not establish migration acceptance.
+
+Verification requires decoded four-PE reads, all-ring permissions, read-only
+write/swap and unknown-address rejection, Standard-Block rejection, context
+switches, fault/retry, reset and relaunch. Exact-commit release validation and
+regenerated downstream ELFs remain required. The complete musl/TLS/fd/ELF
+runtime ABI and same-ELF independent-golden gfrun/QEMU acceptance remain tracked
+by #150; this amendment does not assert those external obligations are complete.
+
+### Bilingual amendment rationale / 双语修订理由
+
+**English.** A stable PE identity lets common-entry software distinguish the
+leader and workers without reviving a retired target profile. The identity is
+computed from the execution context, so a saved register bank or trap frame
+cannot overwrite it. This amendment is limited to the portable identity
+contract; host process services remain a separate runtime responsibility.
+
+**中文。** 稳定的 PE 身份使共同入口的软件能够区分主 PE 和工作 PE，而不恢复
+已退役的目标 profile。身份由执行上下文确定，因此寄存器备份或异常帧无法
+覆盖该身份。本修订仅规定可移植的身份契约；宿主进程服务仍属于运行时职责。

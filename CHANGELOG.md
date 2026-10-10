@@ -159,7 +159,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-STATE-0004](docs/status/decisions/ADR-STATE-0004-acr-routing-and-context-reset.md): PTO v0 ACR routing and context reset
 - [ADR-STATE-0005](docs/status/decisions/ADR-STATE-0005-visible-ebarg-snapshot.md): Make EBARG the visible PTO v0 trap snapshot
 - [ADR-STATE-0007](docs/status/decisions/ADR-STATE-0007-interrupt-pending-and-timer-state.md): Define interrupt pending and timer state
-- [ADR-STATE-0008](docs/status/decisions/ADR-STATE-0008-system-register-behavior-classes.md): Classify every visible system register behavior
 
 ### Block
 - [ADR-STATE-0011](docs/status/decisions/ADR-STATE-0011-bundle-operation-descriptor-and-commit.md): Bundle operation descriptor and transactional commit
@@ -190,6 +189,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-STATE-0001](docs/status/decisions/ADR-STATE-0001-pto-owned-system-register-names.md): Use PTO-owned system-register names
 - [ADR-STATE-0002](docs/status/decisions/ADR-STATE-0002-architectural-state-contract.md): Define the PTO architectural state contract
 - [ADR-STATE-0003](docs/status/decisions/ADR-STATE-0003-scalar-tpc-and-execution-status.md): scalar TPC and execution status
+- [ADR-STATE-0008](docs/status/decisions/ADR-STATE-0008-system-register-behavior-classes.md): Classify every visible system register behavior
 - [ADR-STATE-0009](docs/status/decisions/ADR-STATE-0009-pto-v0-trap-disposition.md): Define the PTO v0 disposition of every trap identity
 - [ADR-STATE-0010](docs/status/decisions/ADR-STATE-0010-scalar-pc-relative-and-return-address.md): Scalar PC-relative and return-address state
 - [ADR-STATE-0012](docs/status/decisions/ADR-STATE-0012-uniform-instruction-attempt-status.md): Uniform instruction-attempt status and fault isolation

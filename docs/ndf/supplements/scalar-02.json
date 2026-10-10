@@ -881,6 +881,18 @@
       }
     },
     {
+      "id": "PTO-THREAD-ID-PE-IDENTITY-001",
+      "source_path": "asl/scalar/model/sys/semantics.asl",
+      "title": {
+        "en": "Executing PE identity",
+        "zh-CN": "当前执行 PE 身份"
+      },
+      "summary": {
+        "en": "Connects the canonical THREAD_ID read to the selected PE execution context and preserves the existing SYS placement and access checks.",
+        "zh-CN": "将规范 THREAD_ID 读取绑定到所选 PE 执行上下文，保留现有 SYS 放置和访问检查。"
+      }
+    },
+    {
       "id": "PTO-TLB-IA-ADR-CONTRACT-001",
       "source_path": "asl/scalar/sys/TLB.IA.asl",
       "title": {

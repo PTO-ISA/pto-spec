@@ -503,7 +503,6 @@
         "CORE_ID",
         "VENDOR",
         "CORE_FEATURE",
-        "THREAD_ID",
         "BLOCKNUM",
         "BLOCKID"
       ],
@@ -809,6 +808,17 @@
         "debug-matching-disabled"
       ],
       "write": "store-value"
+    },
+    {
+      "id": "executing-pe-identity",
+      "behavior_status": "architectural-active",
+      "read": "executing-pe-index",
+      "registers": [
+        "THREAD_ID"
+      ],
+      "reset": "zero",
+      "side_effects": [],
+      "write": "reject-read-only"
     }
   ],
   "schema_version": 1,

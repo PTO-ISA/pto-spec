@@ -4535,16 +4535,39 @@
         "PTO-ARCH-STATE-CLOSURE-001",
         "PTO-RELEASE-VERIFICATION",
         "PTO-SOURCE-HIERARCHY",
+        "PTO-THREAD-ID-PE-IDENTITY-001",
         "PTO-TILE-CAPACITY-PER-PE"
       ],
       "affected_units": [
+        "PTO-ARCH-DATA-TYPES-SYSTEM-REGISTERS",
         "PTO-ARCH-OVERVIEW-ARCHITECTURE",
+        "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT",
         "PTO-ARCH-SYSTEM-REGISTERS-ACCESS-CONTROL",
         "PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING",
         "PTO-ARCH-SYSTEM-REGISTERS-CONTEXT",
         "PTO-ARCH-SYSTEM-REGISTERS-INTERRUPT",
         "PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE",
-        "PTO-ARCH-SYSTEM-REGISTERS-TIMER"
+        "PTO-ARCH-SYSTEM-REGISTERS-TIMER",
+        "PTO-SCALAR-MODEL-SYS-SEMANTICS"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-THREAD-ID-PE-IDENTITY-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-DATA-TYPES-SYSTEM-REGISTERS",
+            "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT",
+            "PTO-SCALAR-MODEL-SYS-SEMANTICS",
+            "PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "e182c9b70d54a3a264bac54af9b915a0e43bb519",
+          "date": "2026-10-10",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/150"
+        }
       ],
       "approvers": [
         "Kevin Zhou <zhoubot@gmail.com>"
@@ -4556,6 +4579,7 @@
       "created": "2026-07-31",
       "id": "ADR-STATE-0008",
       "implementation_issue": null,
+      "interface_change": true,
       "legacy_ids": [
         "ADR-0017"
       ],

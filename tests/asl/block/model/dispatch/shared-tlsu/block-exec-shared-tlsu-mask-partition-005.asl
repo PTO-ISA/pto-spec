@@ -154,7 +154,6 @@ begin
     // Canonical Function 1 accepts a partial consumer mask.
     ResetBundleControlState();
     ClearFault();
-    _SystemRegisters.thread_id = Zeros{PTO_XLEN};
     WriteGPR(2, Zeros{PTO_XLEN} + 16);
     let partition_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('00001', Zeros{5} + 24), 32);
