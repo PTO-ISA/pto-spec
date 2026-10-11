@@ -54,7 +54,11 @@
     "PTO-INST-SCALAR-SCVTF",
     "PTO-INST-SCALAR-UCVTF",
     "PTO-COMMON-CONVERSION-001",
-    "PTO-TCVT-CONTRACT-001"
+    "PTO-TADD-CONTRACT-001",
+    "PTO-TADDS-CONTRACT-001",
+    "PTO-TCVT-CONTRACT-001",
+    "PTO-TSUB-CONTRACT-001",
+    "PTO-TSUBS-CONTRACT-001"
   ],
   "affected_units": [
     "PTO-SCALAR-FABS",
@@ -100,6 +104,7 @@
     "PTO-TILE-MODEL-EXECUTION-CUBE",
     "PTO-TILE-MODEL-EXECUTION-ELEMENTWISE",
     "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+    "PTO-TILE-MODEL-EXECUTION-EXPDIF",
     "PTO-TILE-MODEL-EXECUTION-FUSED-MULTIPLY-ADD",
     "PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE",
     "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
@@ -112,7 +117,11 @@
     "PTO-TILE-MODEL-EXECUTION-MATRIX-QUANTIZATION",
     "PTO-TILE-MODEL-NUMERIC-REFERENCE-CONVERSION",
     "PTO-SCALAR-MODEL-DISPATCH-FSU",
+    "PTO-TILE-TADD",
+    "PTO-TILE-TADDS",
     "PTO-TILE-TCVT",
+    "PTO-TILE-TSUB",
+    "PTO-TILE-TSUBS",
     "PTO-TILE-MODEL-EXECUTION-MATRIX-POSTPROCESS"
   ],
   "resolves": [],
@@ -263,11 +272,51 @@
         "PTO-SCALAR-UCVTF",
         "PTO-TILE-TCVT"
       ]
+    },
+    {
+      "date": "2026-10-11",
+      "baseline": "ee64ee4fc68ac13f81b0cf6780e3fd631c6187f9",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/384",
+      "affected_ndf": [
+        "PTO-INST-SCALAR-FADD",
+        "PTO-INST-SCALAR-FSUB",
+        "PTO-TADD-CONTRACT-001",
+        "PTO-TADDS-CONTRACT-001",
+        "PTO-TSUB-CONTRACT-001",
+        "PTO-TSUBS-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-SCALAR-FADD",
+        "PTO-SCALAR-FSUB",
+        "PTO-SCALAR-MODEL-FSU-SCALAR-FP",
+        "PTO-TILE-MODEL-EXECUTION-ELEMENTWISE",
+        "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+        "PTO-TILE-MODEL-EXECUTION-EXPDIF",
+        "PTO-TILE-MODEL-EXECUTION-REDUCTION",
+        "PTO-TILE-TADD",
+        "PTO-TILE-TADDS",
+        "PTO-TILE-TSUB",
+        "PTO-TILE-TSUBS"
+      ]
     }
   ]
 }
 ---
 # ADR-SCALAR-0004: Scalar FSU totality and numeric-profile boundary
+
+## 2026-10-11 accepted amendment: IEEE-754 ADD/SUB signed zero
+
+Issue [#384](https://github.com/PTO-ISA/pto-spec/issues/384) corrects the
+shared scalar floating profile used by scalar and Tile addition/subtraction.
+For an exact zero, subtraction negates the effective right sign, equal
+effective signs are preserved, and opposite effective signs select negative
+zero only under roundTowardNegative. Other accepted rounding modes select
+positive zero. The correction does not change conversions, fused operations,
+special-value handling, subnormal handling, exception flags, or instruction
+state ordering.
 
 > Inventory counts in this record are acceptance-time historical context; the current inventory is owned by the ASL tree and its generated projections.
 
