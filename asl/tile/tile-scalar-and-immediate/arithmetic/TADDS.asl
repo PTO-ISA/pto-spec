@@ -8,6 +8,12 @@
 // The selected DataType MUST satisfy TileA9DataTypeSupported; PadValueOrByteId and Layout are applicable in B.DATR; omitted Layout MUST select NORM/RowMajor and Layout 29/31 MUST select CUBE_M32/CUBE_M16. Complete legality and
 // allocation preflight MUST precede source/scalar snapshots and atomic
 // payload, padding, status, and descriptor publication.
+// Floating addition MUST apply IEEE-754 exact-zero sign selection to the Tile
+// element and raw scalar element: equal zero signs MUST be preserved, while
+// opposite-sign exact cancellation MUST produce negative zero only for
+// roundTowardNegative and positive zero for every other accepted rounding
+// mode. Exact-zero addition MUST set no numeric exception flag; a format
+// without negative zero MUST retain its representable zero.
 // The selected DataType MUST be the operation interpretation and new destination
 // backing type. An ordinary source backing type MAY differ only for a same-width
 // non-packed carrier; numeric validation MUST use the selected DataType.

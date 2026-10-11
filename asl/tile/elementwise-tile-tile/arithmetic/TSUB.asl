@@ -7,6 +7,12 @@
 // Tile schema, shape defaults, arithmetic DataType set, PadValue behavior,
 // complete preflight, source snapshot, and atomic destination publication
 // MUST match the TADD family contract. Rejection MUST precede all effects.
+// Floating subtraction MUST negate the effective right operand sign before
+// applying IEEE-754 exact-zero sign selection. Equal effective signs MUST be
+// preserved; opposite-sign exact cancellation MUST produce negative zero only
+// for roundTowardNegative and positive zero for every other accepted rounding
+// mode. Exact-zero subtraction MUST set no numeric exception flag; a format
+// without negative zero MUST retain its representable zero.
 // The selected DataType MUST be the operation interpretation and new destination
 // backing type. An ordinary source backing type MAY differ only for a same-width
 // non-packed carrier; numeric validation MUST use the selected DataType.
