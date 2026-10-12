@@ -86,11 +86,10 @@ TMATMUL_ACC <M=16, N=16, K=16, FP16>, T#3, T#2, T#1, ->T<1KB>
 // Every Matrix ACC form MUST bind explicit C and D. C's encoded relative
 // selector MUST differ from zero-extended DstTile before any effects, and
 // direct Tile calls MUST use different C/D TileIndex values. C MUST remain the
-// read-only architectural accumulator input while D, reductions, and numeric
-// status publish atomically. Its payload lifetime MUST follow its B.IOT source
-// binding; rejection MUST NOT complete last-use. CCTRL[1] MAY hint cache use or
-// prefetch of C. CCTRL[0] selects raw accumulator-type D and MAY hint transparent
-// cache replacement with the identical published D value.
+// read-only accumulator input while D, reductions, and numeric status publish
+// atomically. Its payload lifetime MUST follow B.IOT; rejection MUST NOT complete
+// last-use. CCTRL[1] MAY hint transparent cache use or prefetch of C. CCTRL[0]
+// selects raw accumulator-type D and MAY hint cache replacement with identical D.
 // NDF-END: PTO-CUBE-ACCUMULATOR-OUTPUT-001
 // NDF-BEGIN: PTO-CUBE-GROUP-M-DISTRIBUTION-001
 // ndf: kind=contract level=L1 layer=block status=accepted
