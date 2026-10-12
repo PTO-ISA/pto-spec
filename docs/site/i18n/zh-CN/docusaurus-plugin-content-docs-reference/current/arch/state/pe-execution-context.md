@@ -43,6 +43,8 @@ type PEExecutionContext of record {
     bundle_start_encoded_instruction: bits(64),
     tiles: array [[PTO_TILE_REGISTER_COUNT]] of TileInfo,
     tile_allocation_masks: array [[PTO_TILE_REGISTER_COUNT]] of bits(4),
+    tile_payload_live_masks: array [[PTO_TILE_REGISTER_COUNT]] of bits(4),
+    tile_payload_generations: array [[PTO_TILE_REGISTER_COUNT]] of integer,
     tile_relative_order: RelativeTileSnapshot,
     tile_relative_valid: RelativeTileValiditySnapshot,
     tile_feature_map_descriptors: TileFeatureMapDescriptorSnapshot,
@@ -161,14 +163,15 @@ begin
         bundle_start_encoded_instruction = _BundleStartEncodedInstruction,
         tiles = _Tiles,
         tile_allocation_masks = _TileAllocationMasks,
+        tile_payload_live_masks = _TilePayloadLiveMasks,
+        tile_payload_generations = _TilePayloadGenerations,
         tile_relative_order = _TileRelativeOrder,
         tile_relative_valid = _TileRelativeValid,
         tile_feature_map_descriptors = _TileFeatureMapDescriptors,
         thread_ptr = _SystemRegisters.thread_ptr,
         global_ptr = _SystemRegisters.global_ptr,
         core_state = _SystemRegisters.core_state,
-        t_queue = _TQueue,
-        t_queue_valid = _TQueueValid,
+        t_queue = _TQueue, t_queue_valid = _TQueueValid,
         u_queue = _UQueue,
         u_queue_valid = _UQueueValid,
         bundle_active = _BundleActive,
@@ -242,10 +245,11 @@ begin
     _PC = context.pc;
     _BPC = context.bpc;
     _CurrentEncodedInstruction = context.current_encoded_instruction;
-    _BundleStartEncodedInstruction =
-        context.bundle_start_encoded_instruction;
+    _BundleStartEncodedInstruction = context.bundle_start_encoded_instruction;
     _Tiles = context.tiles;
     _TileAllocationMasks = context.tile_allocation_masks;
+    _TilePayloadLiveMasks = context.tile_payload_live_masks;
+    _TilePayloadGenerations = context.tile_payload_generations;
     _TileRelativeOrder = context.tile_relative_order;
     _TileRelativeValid = context.tile_relative_valid;
     _TileFeatureMapDescriptors = context.tile_feature_map_descriptors;
@@ -391,10 +395,11 @@ begin
         _DefaultPEExecutionContext = PEExecutionContext {
             pc = _PC, bpc = _BPC,
             current_encoded_instruction = _CurrentEncodedInstruction,
-            bundle_start_encoded_instruction =
-                _BundleStartEncodedInstruction,
+            bundle_start_encoded_instruction = _BundleStartEncodedInstruction,
             tiles = _Tiles,
             tile_allocation_masks = _TileAllocationMasks,
+            tile_payload_live_masks = _TilePayloadLiveMasks,
+            tile_payload_generations = _TilePayloadGenerations,
             tile_relative_order = _TileRelativeOrder,
             tile_relative_valid = _TileRelativeValid,
             tile_feature_map_descriptors = _TileFeatureMapDescriptors,

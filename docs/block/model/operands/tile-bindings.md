@@ -22,11 +22,10 @@ This unit owns the Local Tile bindings of a bundle. A Tile binding is the record
 
 `_BundleTileBindings` has `PTO_BUNDLE_TILE_BINDING_COUNT` (16) entries. Important fields of a `BundleTileBinding` are:
 
-- `source0`, `source1` with `source0_valid`, `source1_valid`, and the `source0_relative`, `source1_relative` flags;
-- `destination_valid`, `destination`, `destination_hand`, and `destination_size`;
-- `destination_allocated_by_bundle` and `destination_reused_by_generation`;
-- `parent_ref_valid`, `parent_ref_relative`, and `parent_ref`, used by an assemble continuation;
-- `pe_mask`, `last`, and the three range modifiers.
+- `source0` and `source1`, their valid/relative flags, and `source0_reuse` / `source1_reuse`;
+- Destination hand, size, allocation and generation-reuse fields;
+- Continuation parent references, participation mask and range modifiers;
+- Captured source-lifetime and GMOV-selection ordinals, which bind retries to the original occurrence.
 
 A relative selector names a Tile by position in the relative queue of one hand (T, U, M, or N). Distance 0 is the newest destination published in that hand; assembly writes it `#1`, so `T#1` is distance 0 and `T#2` is distance 1.
 
@@ -35,7 +34,7 @@ A relative selector names a Tile by position in the relative queue of one hand (
 
 `AddBundleTileBinding` faults with `Fault_BundleControl` if an entry with `last` already exists. It fills the first free entry through `SetBundleTileBinding`, and with 16 entries full it raises `Fault_TileLegality`. `SetBundleTileBinding` rejects a destination whose hand index is above 3 or whose size code is outside 1..10 with `Fault_TileLegality`, stores the fields, and clears the relative, parent, and allocation flags. The `B.IOT` handler then calls `MarkBundleTileBindingSourcesRelative`, so every encoded source is a relative selector.
 
-`ResolveBundleRelativeTileSources` runs at stage-2 preparation. Its first loop checks that every relative source is available and raises `Fault_TileLegality` otherwise. Its second loop replaces each selector with the absolute register index, and it does the same for a relative `parent_ref`.
+Ordinary stage-2 resolution checks relative selectors before replacing them with physical indices. GMOV keeps its raw relative selector for resolution in the selected peer bank. Later source-lifetime checks distinguish a valid retained descriptor from readable payload; the separately typed ExecutionMask carrier does not inherit ordinary-data last-use effects.
 
 Design point: availability of every relative source is checked before any source selector is rewritten, so a missing source faults with every binding still in its encoded form. A relative `parent_ref` is checked later, in the second loop, so a missing parent can fault after earlier sources have been rewritten.
 
@@ -55,7 +54,7 @@ Destination allocation is not done here; the destination resolvers do it after s
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-`TADD` with `B.IOT T#1, T#2, mask=PE_MASK, <last>, ->T<2KB>` gives one binding with two relative sources in hand T and a destination of size 5. At stage 2 the sources resolve to the Tiles now at distances 0 and 1. After a successful add, the new destination is published as `T#1`, and the old `T#1` becomes `T#2`.
+`TADD` with `B.IOT T#1.reuse, T#2.reuse, mask=PE_MASK, <last>, ->T<2KB>` gives one binding with two relative sources in hand T and a destination of size 5. At stage 2 the sources resolve to the Tiles now at distances 0 and 1. After a successful add, the new destination is published as `T#1`, and the old `T#1` becomes `T#2`.
 
 <!-- PTO-READER-BLOCK: block-model-operands-tile-bindings-related role=related-owners-navigation -->
 ## Related owners
@@ -98,6 +97,12 @@ begin
     _BundleTileBindings[[index]].pe_mask = pe_mask;
     _BundleTileBindings[[index]].source0_valid = source0_valid;
     _BundleTileBindings[[index]].source1_valid = source1_valid;
+    _BundleTileBindings[[index]].source0_reuse = TRUE;
+    _BundleTileBindings[[index]].source1_reuse = TRUE;
+    _BundleTileBindings[[index]].source0_lifetime_captured = FALSE;
+    _BundleTileBindings[[index]].source0_lifetime_ordinal = 0;
+    _BundleTileBindings[[index]].gmov_selection_captured = FALSE;
+    _BundleTileBindings[[index]].gmov_selection_ordinal = 0;
     _BundleTileBindings[[index]].source0_relative = FALSE;
     _BundleTileBindings[[index]].source1_relative = FALSE;
     _BundleTileBindings[[index]].source0 = source0;
@@ -236,14 +241,16 @@ func ResolveBundleRelativeTileSources() => boolean
 begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid then
-            if _BundleTileBindings[[binding]].source0_relative &&
+            if !BundleGMOVSelected() &&
+               _BundleTileBindings[[binding]].source0_relative &&
                !BundleRelativeTileSourceAvailable(
                    binding as BundleTileBindingIndex,
                    _BundleTileBindings[[binding]].source0) then
                 SetFault(Fault_TileLegality, ReadTPC());
                 return FALSE;
             end;
-            if _BundleTileBindings[[binding]].source1_relative &&
+            if !BundleGMOVSelected() &&
+               _BundleTileBindings[[binding]].source1_relative &&
                !BundleRelativeTileSourceAvailable(
                    binding as BundleTileBindingIndex,
                    _BundleTileBindings[[binding]].source1) then
@@ -254,14 +261,16 @@ begin
     end;
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid then
-            if _BundleTileBindings[[binding]].source0_relative then
+            if !BundleGMOVSelected() &&
+               _BundleTileBindings[[binding]].source0_relative then
                 _BundleTileBindings[[binding]].source0 =
                     ResolveBundleRelativeTileSource(
                         binding as BundleTileBindingIndex,
                         _BundleTileBindings[[binding]].source0);
                 _BundleTileBindings[[binding]].source0_relative = FALSE;
             end;
-            if _BundleTileBindings[[binding]].source1_relative then
+            if !BundleGMOVSelected() &&
+               _BundleTileBindings[[binding]].source1_relative then
                 _BundleTileBindings[[binding]].source1 =
                     ResolveBundleRelativeTileSource(
                         binding as BundleTileBindingIndex,
@@ -283,6 +292,55 @@ begin
         end;
     end;
     return TRUE;
+end;
+
+readonly func BundleTileSourcePayloadsAvailable() => boolean
+begin
+    if BundleGMOVSelected() then return TRUE; end;
+    let current_mask_bit = PTOPEMaskBitOfPEIdentity(_CurrentMemoryAgent);
+    var current_pe_mask = Zeros{4};
+    current_pe_mask[current_mask_bit] = '1';
+    var source_ordinal: integer {0..31} = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            if _BundleTileBindings[[binding]].source0_valid &&
+               (!_CurrentPEContextValid || _BundleTileBindings[[binding]].pe_mask[current_mask_bit] == '1') &&
+               (!_BundleExecutionMask.valid ||
+                _BundleExecutionMask.carrier != BundleExecutionMask_PredicateTile ||
+                source_ordinal !=
+                    _BundleExecutionMask.predicate_source_ordinal) &&
+               !TilePayloadIntactForMask(
+                   _BundleTileBindings[[binding]].source0,
+                   if _CurrentPEContextValid then current_pe_mask else _BundleTileBindings[[binding]].pe_mask) then
+                return FALSE;
+            end;
+            if _BundleTileBindings[[binding]].source0_valid then
+                source_ordinal = (source_ordinal + 1) as integer {0..31};
+            end;
+            if _BundleTileBindings[[binding]].source1_valid &&
+               (!_CurrentPEContextValid || _BundleTileBindings[[binding]].pe_mask[current_mask_bit] == '1') &&
+               (!_BundleExecutionMask.valid ||
+                _BundleExecutionMask.carrier != BundleExecutionMask_PredicateTile ||
+                source_ordinal !=
+                    _BundleExecutionMask.predicate_source_ordinal) &&
+               !TilePayloadIntactForMask(
+                   _BundleTileBindings[[binding]].source1,
+                   if _CurrentPEContextValid then current_pe_mask else _BundleTileBindings[[binding]].pe_mask) then
+                return FALSE;
+            end;
+            if _BundleTileBindings[[binding]].source1_valid then
+                source_ordinal = (source_ordinal + 1) as integer {0..31};
+            end;
+        end;
+    end;
+    return TRUE;
+end;
+
+func RequireBundleTileSourcePayloads() => boolean
+begin
+    if BundleTileSourcePayloadsAvailable() then return TRUE; end;
+    SetFault(Fault_TileLegality, ReadTPC());
+    return FALSE;
 end;
 
 func AddBundleTileBinding(destination_valid: boolean,
@@ -309,6 +367,27 @@ begin
         end;
     end;
     if !added then SetFault(Fault_TileLegality, ReadTPC()); end;
+end;
+
+func AddBundleTileBindingWithReuse(destination_valid: boolean,
+                          destination: TileIndex,
+                          destination_size: integer {0..15},
+                          pe_mask: bits(4),
+                          source0_valid: boolean,
+                          source1_valid: boolean,
+                          source0: TileIndex,
+                          source1: TileIndex,
+                          source0_reuse: boolean,
+                          source1_reuse: boolean,
+                          last: boolean)
+begin
+    AddBundleTileBinding(destination_valid, destination, destination_size,
+        pe_mask, source0_valid, source1_valid, source0, source1, last);
+    if _LastFault == Fault_None then
+        let binding = BundleTileBindingLastIndex();
+        _BundleTileBindings[[binding]].source0_reuse = source0_reuse;
+        _BundleTileBindings[[binding]].source1_reuse = source1_reuse;
+    end;
 end;
 
 readonly func BundleTileBindingSequenceClosed() => boolean
@@ -380,6 +459,66 @@ begin
     return FALSE;
 end;
 
+readonly func BundleTileSourceReusedForPE(
+    source: TileIndex, pe: integer {0..3}) => boolean
+begin
+    let mask_bit = PTOPEMaskBitOfPEIdentity(pe);
+    var source_ordinal: integer {0..31} = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            if _BundleTileBindings[[binding]].pe_mask[mask_bit] == '1' &&
+               _BundleTileBindings[[binding]].source0_valid &&
+               (!_BundleExecutionMask.valid ||
+                _BundleExecutionMask.carrier != BundleExecutionMask_PredicateTile ||
+                source_ordinal !=
+                    _BundleExecutionMask.predicate_source_ordinal) &&
+               _BundleTileBindings[[binding]].source0 == source &&
+               _BundleTileBindings[[binding]].source0_reuse then
+                return TRUE;
+            end;
+            if _BundleTileBindings[[binding]].source0_valid then
+                source_ordinal = (source_ordinal + 1) as integer {0..31};
+            end;
+            if _BundleTileBindings[[binding]].pe_mask[mask_bit] == '1' &&
+               _BundleTileBindings[[binding]].source1_valid &&
+               (!_BundleExecutionMask.valid ||
+                _BundleExecutionMask.carrier != BundleExecutionMask_PredicateTile ||
+                source_ordinal !=
+                    _BundleExecutionMask.predicate_source_ordinal) &&
+               _BundleTileBindings[[binding]].source1 == source &&
+               _BundleTileBindings[[binding]].source1_reuse then
+                return TRUE;
+            end;
+            if _BundleTileBindings[[binding]].source1_valid then
+                source_ordinal = (source_ordinal + 1) as integer {0..31};
+            end;
+        end;
+    end;
+    return FALSE;
+end;
+
+func ConsumeBundleTileLastUseSource(source: TileIndex, pe_mask: bits(4))
+begin
+    if !_CurrentPEContextValid then
+        for pe = 0 to 3 do
+            let mask_bit = PTOPEMaskBitOfPEIdentity(pe);
+            if pe_mask[mask_bit] == '1' &&
+               !BundleTileSourceReusedForPE(source, pe) then
+                var consume_mask = Zeros{4};
+                consume_mask[mask_bit] = '1';
+                ConsumeTilePayloadForMask(source, consume_mask);
+            end;
+        end;
+        return;
+    end;
+    let pe = _CurrentMemoryAgent;
+    if BundleTileSourceReusedForPE(source, pe) then return; end;
+    let mask_bit = PTOPEMaskBitOfPEIdentity(pe);
+    var consume_mask = Zeros{4};
+    consume_mask[mask_bit] = '1';
+    ConsumeTilePayloadForMask(source, consume_mask);
+end;
+
 func FinalizeBundleTileAttempt(status: TileExecutionStatus)
 begin
     if status != TileExecution_Executed then return; end;
@@ -392,6 +531,43 @@ begin
                 _BundleTileBindings[[binding]].destination);
         end;
     end;
+    let current_mask_bit = PTOPEMaskBitOfPEIdentity(_CurrentMemoryAgent);
+    var source_ordinal: integer {0..31} = 0;
+    if !BundleGMOVSelected() then
+        for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+            if _BundleTileBindings[[binding]].valid then
+                if _BundleTileBindings[[binding]].source0_valid &&
+                   (!_CurrentPEContextValid || _BundleTileBindings[[binding]].pe_mask[current_mask_bit] == '1') &&
+                   (!_BundleExecutionMask.valid ||
+                    _BundleExecutionMask.carrier != BundleExecutionMask_PredicateTile ||
+                    source_ordinal !=
+                        _BundleExecutionMask.predicate_source_ordinal) &&
+                   !_BundleTileBindings[[binding]].source0_reuse then
+                    ConsumeBundleTileLastUseSource(
+                        _BundleTileBindings[[binding]].source0,
+                        _BundleTileBindings[[binding]].pe_mask);
+                end;
+                if _BundleTileBindings[[binding]].source0_valid then
+                    source_ordinal = (source_ordinal + 1) as integer {0..31};
+                end;
+                if _BundleTileBindings[[binding]].source1_valid &&
+                   (!_CurrentPEContextValid || _BundleTileBindings[[binding]].pe_mask[current_mask_bit] == '1') &&
+                   (!_BundleExecutionMask.valid ||
+                    _BundleExecutionMask.carrier != BundleExecutionMask_PredicateTile ||
+                    source_ordinal !=
+                        _BundleExecutionMask.predicate_source_ordinal) &&
+                   !_BundleTileBindings[[binding]].source1_reuse then
+                    ConsumeBundleTileLastUseSource(
+                        _BundleTileBindings[[binding]].source1,
+                        _BundleTileBindings[[binding]].pe_mask);
+                end;
+                if _BundleTileBindings[[binding]].source1_valid then
+                    source_ordinal = (source_ordinal + 1) as integer {0..31};
+                end;
+            end;
+        end;
+    end;
+    FinalizeBundleSharedLastUseSources();
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

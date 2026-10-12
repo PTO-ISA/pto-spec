@@ -469,7 +469,9 @@ FPATR_EFFECTIVE_TYPE_CLASSIFICATION = (
     "B.FPATR final-D effective data-type resolution (Issue #345 / ADR-NUM-0012)"
 )
 # Issue #360 adds Core-scoped GM obligation capture/TSTORE progress and
-# actual-PE Shared request completion/eligibility helpers. These helpers are
+# actual-PE Shared request completion/eligibility helpers. Issue #341 extends
+# that exact layout-neutral bookkeeping closure with participant-aware Local
+# source selection and Shared publication pinning. These helpers are
 # visible to this census because their names/call graph overlap the bundle and
 # Tile execution roots, but they carry no portable-layout relation. Keep the
 # exact owner paths, empty layout sets, and direct caller closure here so the
@@ -490,7 +492,43 @@ ISSUE360_GM_OBLIGATION_HELPERS = {
         "before_callers": set(),
         "after_callers": {
             ("BundleGMOVCore4SourceReady", "asl/block/model/dispatch/tlsu-gmov.asl"),
+            ("BundleGMOVPESourceAvailable", "asl/block/model/dispatch/tlsu-gmov.asl"),
             ("ExecuteBundleGMOVOperation", "asl/block/model/dispatch/tlsu-gmov.asl"),
+        },
+    },
+    "BundleGMOVPESourcePayloadLive": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/tlsu-gmov.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleGMOVCore4SourceReady", "asl/block/model/dispatch/tlsu-gmov.asl"),
+        },
+    },
+    "BundleGMOVSourceParticipantMask": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/tlsu-gmov.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleGMOVOperation", "asl/block/model/dispatch/tlsu-gmov.asl"),
+        },
+    },
+    "BundleGMOVSourceSelectionIdentityMatches": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/tlsu-gmov.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleGMOVCore4SourceReady", "asl/block/model/dispatch/tlsu-gmov.asl"),
+            ("CaptureBundleGMOVSourceSelection", "asl/block/model/dispatch/tlsu-gmov.asl"),
+            ("CompleteBundleGMOVSourceSelection", "asl/block/model/dispatch/tlsu-gmov.asl"),
+        },
+    },
+    "BundleSharedPublicationAvailable": {
+        "before": [],
+        "after": [("asl/block/model/operands/shared-bindings.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/tile-execution.asl"),
         },
     },
     "BundleGMOVPESourceTileReady": {
@@ -657,7 +695,7 @@ ISSUE360_GM_OBLIGATION_HELPERS = {
     },
 }
 ISSUE360_GM_OBLIGATION_HELPER_CLASSIFICATION = (
-    "Issue #360 Core-scoped GM and Shared request plumbing "
+    "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing "
     "(layout-neutral)"
 )
 # Issue #277/#349 adds a carrier-independent ExecutionMask to existing Local
@@ -4149,7 +4187,7 @@ def _issue356_reduction_source_mutation_canaries() -> None:
 
 
 def _issue360_gm_obligation_helper_mutation_canaries() -> None:
-    """Keep the #360 layout-neutral helper owner/caller inventory exact."""
+    """Keep the #360/#341 layout-neutral helper inventory exact."""
     paths = source_paths(BASELINE_OBJECT, "working-tree")
     baseline = _ref_texts(BASELINE_OBJECT, paths)
     candidate = _ref_texts("working-tree", paths)
@@ -4166,6 +4204,45 @@ def _issue360_gm_obligation_helper_mutation_canaries() -> None:
             "Issue #360 helper owner/layout/caller inventory is incomplete: "
             + "; ".join(result["errors"][:12])
         )
+
+    shared_path = "asl/block/model/operands/shared-bindings.asl"
+    wrong_owner_path = "asl/block/model/dispatch/gm-obligation-dispatch.asl"
+    publication_definition = next(
+        row["body"] for row in _function_defs(candidate[shared_path], shared_path)
+        if row["name"] == "BundleSharedPublicationAvailable"
+    )
+    mutated = dict(candidate)
+    mutated[shared_path] = mutated[shared_path].replace(
+        publication_definition, "", 1)
+    mutated[wrong_owner_path] += "\n" + publication_definition + "\n"
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-issue341-publication-owner", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #360 GM-obligation helper owner/layout/caller closure mismatch: "
+        "BundleSharedPublicationAvailable" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("wrong-owner #341 publication helper did not fail closed")
+
+    mutated = dict(candidate)
+    mutated[shared_path] += (
+        "\nreadonly func BundleUnlistedSharedPublicationCaller() => boolean\n"
+        "begin\n"
+        "    return BundleSharedPublicationAvailable();\n"
+        "end;\n"
+    )
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-issue341-publication-caller", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #360 GM-obligation helper owner/layout/caller closure mismatch: "
+        "BundleSharedPublicationAvailable" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("unlisted #341 publication helper caller did not fail closed")
 
     gmov_path = "asl/block/model/dispatch/tlsu-gmov.asl"
     mutated = dict(candidate)
@@ -4284,7 +4361,7 @@ def self_test() -> None:
     _issue371_b64_mutation_canaries()
     _issue360_gm_obligation_helper_mutation_canaries()
     _issue356_reduction_source_mutation_canaries()
-    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, Issue #371 M32 b64 double-CELL, Issue #360 GM-obligation helper owner/caller/layout, Issue #374 packed private Shared view, and bounded reduction-source mutations rejected")
+    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, Issue #371 M32 b64 double-CELL, Issue #360/#341 GM and source-lifetime helper owner/caller/layout, Issue #374 packed private Shared view, and bounded reduction-source mutations rejected")
 
 
 def main() -> int:

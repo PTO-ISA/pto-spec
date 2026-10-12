@@ -9,6 +9,7 @@ from scripts.layout_relation_census import (
     EXECUTION_MASK_HELPER_CLASSIFICATION,
     EXECUTION_MASK_HELPER_DEFINITION_DELTAS,
     INDEXED_TLSU,
+    ISSUE360_GM_OBLIGATION_HELPERS,
     ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION,
     ROW_EXPANSION_BROADCAST_HELPER_DEFINITION_DELTAS,
     TLEA_COMMON_HELPERS,
@@ -21,6 +22,7 @@ from scripts.layout_relation_census import (
     _helper_deltas,
     _inventory,
     _issue371_b64_mutation_canaries,
+    _issue360_gm_obligation_helper_mutation_canaries,
     _load_baseline_fixture,
     _metadata_map,
     _narrow_indexed_tlsu_layout_helper,
@@ -32,6 +34,41 @@ from scripts.layout_relation_census import (
 
 
 class LayoutRelationCensusTest(unittest.TestCase):
+    def test_issue341_lifetime_helper_inventory_is_exact_and_fail_closed(self) -> None:
+        self.assertEqual(
+            ISSUE360_GM_OBLIGATION_HELPERS["BundleGMOVPESourcePayloadLive"],
+            {
+                "before": [],
+                "after": [("asl/block/model/dispatch/tlsu-gmov.asl", set())],
+                "before_callers": set(),
+                "after_callers": {
+                    ("BundleGMOVCore4SourceReady",
+                     "asl/block/model/dispatch/tlsu-gmov.asl"),
+                },
+            },
+        )
+        self.assertEqual(
+            ISSUE360_GM_OBLIGATION_HELPERS["BundleSharedPublicationAvailable"]
+                ["after_callers"],
+            {
+                ("ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
+                 "asl/block/model/dispatch/tile-execution.asl"),
+            },
+        )
+        self.assertEqual(
+            ISSUE360_GM_OBLIGATION_HELPERS["BundleGMOVPESourceTile"]
+                ["after_callers"],
+            {
+                ("BundleGMOVCore4SourceReady",
+                 "asl/block/model/dispatch/tlsu-gmov.asl"),
+                ("BundleGMOVPESourceAvailable",
+                 "asl/block/model/dispatch/tlsu-gmov.asl"),
+                ("ExecuteBundleGMOVOperation",
+                 "asl/block/model/dispatch/tlsu-gmov.asl"),
+            },
+        )
+        _issue360_gm_obligation_helper_mutation_canaries()
+
     def test_issue371_b64_double_cell_mutations_fail_closed(self) -> None:
         _issue371_b64_mutation_canaries()
 

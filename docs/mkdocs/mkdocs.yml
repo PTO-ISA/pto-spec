@@ -88,6 +88,7 @@ nav:
           - Core Synchronization: arch/state/core-synchronization.md
           - Definedness: arch/state/definedness.md
           - Kernel Lifecycle: arch/state/kernel-lifecycle.md
+          - Local Payload Generation: arch/state/local-payload-generation.md
           - Numeric Status: arch/state/numeric-status.md
           - PE Execution Context: arch/state/pe-execution-context.md
           - Program Counter: arch/state/program-counter.md
@@ -267,6 +268,7 @@ nav:
               - Control State: block/model/state/control-state.md
               - Descriptor State: block/model/state/descriptor-state.md
               - Shared Generation State: block/model/state/shared-generation-state.md
+              - Source Lifetime: block/model/state/source-lifetime.md
               - Types: block/model/state/types.md
       - Operands:
           - B.ASSEMBLE: block/operands/B.ASSEMBLE.md

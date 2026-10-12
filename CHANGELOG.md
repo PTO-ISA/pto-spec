@@ -7,10 +7,10 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ### Block
 - [ADR-BLOCK-0005](docs/status/decisions/ADR-BLOCK-0005-complete-bundle-bior-schema-and-defaults.md): Complete-Bundle B.IOR Schema and Defaults
-- [ADR-BLOCK-0013](docs/status/decisions/ADR-BLOCK-0013-block-scalar-and-tile-bindings.md): Block scalar and tile bindings
 
 ### Cross-cutting
 - [ADR-BLOCK-0012](docs/status/decisions/ADR-BLOCK-0012-block-attributes-and-lifecycle.md): Block attributes and lifecycle
+- [ADR-BLOCK-0013](docs/status/decisions/ADR-BLOCK-0013-block-scalar-and-tile-bindings.md): Block scalar and tile bindings
 - [ADR-CUBE-0005](docs/status/decisions/ADR-CUBE-0005-gm-local-cube-layout-transport.md): GM/Local CUBE Layout Transport
 - [ADR-TILE-0008](docs/status/decisions/ADR-TILE-0008-tile-elementwise-and-irregular-operations.md): Tile elementwise and irregular operations
 - [ADR-TILE-0009](docs/status/decisions/ADR-TILE-0009-tile-scalar-and-immediate-operations.md): Tile scalar and immediate operations
@@ -106,11 +106,9 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 ### Architecture
 - [ADR-BLOCK-0010](docs/status/decisions/ADR-BLOCK-0010-conditional-branch-extension-reservation.md): conditional branch extension reservation
 
-### Block
-- [ADR-BLOCK-0013](docs/status/decisions/ADR-BLOCK-0013-block-scalar-and-tile-bindings.md): Block scalar and tile bindings
-
 ### Cross-cutting
 - [ADR-BLOCK-0012](docs/status/decisions/ADR-BLOCK-0012-block-attributes-and-lifecycle.md): Block attributes and lifecycle
+- [ADR-BLOCK-0013](docs/status/decisions/ADR-BLOCK-0013-block-scalar-and-tile-bindings.md): Block scalar and tile bindings
 - [ADR-BLOCK-0014](docs/status/decisions/ADR-BLOCK-0014-block-start-and-extension-reservations.md): Block start and extension reservations
 - [ADR-CUBE-0009](docs/status/decisions/ADR-CUBE-0009-cube-and-matrix-operations.md): CUBE and matrix operations
 - [ADR-MEM-0009](docs/status/decisions/ADR-MEM-0009-tlsu-and-global-memory-operations.md): TLSU and global-memory operations
@@ -128,11 +126,11 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ### Block
 - [ADR-BLOCK-0008](docs/status/decisions/ADR-BLOCK-0008-l-bstop-common-long-form.md): Restore `L.BSTOP` as the common 64-bit bundle stop
-- [ADR-BLOCK-0013](docs/status/decisions/ADR-BLOCK-0013-block-scalar-and-tile-bindings.md): Block scalar and tile bindings
 
 ### Cross-cutting
 - [ADR-BLOCK-0009](docs/status/decisions/ADR-BLOCK-0009-barg-bpcn-commit-state.md): Bundle commit state uses BARG/BPCN
 - [ADR-BLOCK-0012](docs/status/decisions/ADR-BLOCK-0012-block-attributes-and-lifecycle.md): Block attributes and lifecycle
+- [ADR-BLOCK-0013](docs/status/decisions/ADR-BLOCK-0013-block-scalar-and-tile-bindings.md): Block scalar and tile bindings
 - [ADR-BLOCK-0014](docs/status/decisions/ADR-BLOCK-0014-block-start-and-extension-reservations.md): Block start and extension reservations
 - [ADR-CUBE-0003](docs/status/decisions/ADR-CUBE-0003-cube-matrix-family-contract.md): CUBE Matrix Family Contract
 - [ADR-CUBE-0009](docs/status/decisions/ADR-CUBE-0009-cube-and-matrix-operations.md): CUBE and matrix operations

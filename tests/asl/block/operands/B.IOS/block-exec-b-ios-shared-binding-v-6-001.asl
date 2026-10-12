@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOS-ENCODING-002","source":"asl/block/operands/B.IOS.asl","requirements":["PTO-INST-BLOCK-B-IOS"],"kind":"execution","summary":"Decoded B.IOS accepts the six-bit absolute SharedTileID namespace while preserving reserved-bit ownership.","pass_condition":"S0 and S63 bind with decoded SizeCode and PEMode fields, bits 27:26 reject, and the retired compressed word remains owned only by C.B.DIMI.","related_sources":["asl/block/model/dispatch/commands.asl","asl/block/model/schema/bundle-encoding.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOS-ENCODING-002","source":"asl/block/operands/B.IOS.asl","requirements":["PTO-INST-BLOCK-B-IOS"],"kind":"execution","summary":"Decoded B.IOS accepts the six-bit absolute SharedTileID namespace while preserving destination reserved-bit ownership.","pass_condition":"S0 and S63 bind with decoded SizeCode and PEMode fields, bit 27 and destination bit 26 reject, and the retired compressed word remains owned only by C.B.DIMI.","related_sources":["asl/block/model/dispatch/commands.asl","asl/block/model/schema/bundle-encoding.asl"]}
 pure func BundleTestRetiredCompressedSharedBinding(shared_tile_id: bits(8))
         => bits(64)
 begin
@@ -74,10 +74,18 @@ begin
     reserved8[8] = '1';
     assert DecodeCommandForm(reserved8, 32) == PTO_COMMAND_FORM_COUNT;
 
+    // funct3=010 with the common opcode is the B.IOT two-source last/last
+    // lifetime form, so the Local binder -- never a Shared binder -- owns it.
     var wrong_func3 = BundleTestSharedBindingEncoding(
         Zeros{6} + 1, '0001', '001');
+    let shared_form = DecodeCommandForm(wrong_func3, 32);
     wrong_func3[14:12] = '010';
-    assert DecodeCommandForm(wrong_func3, 32) == PTO_COMMAND_FORM_COUNT;
+    let local_raw = DecodeCommandForm(wrong_func3, 32);
+    assert local_raw != shared_form;
+    let local_form = local_raw as integer {0..PTO_COMMAND_FORM_COUNT-1};
+    assert CommandHandlerOfForm(local_form) == CommandHandler_BindBundleTileIO;
+    let shared_scalar = shared_form as integer {0..PTO_COMMAND_FORM_COUNT-1};
+    assert CommandHandlerOfForm(shared_scalar) != CommandHandler_BindBundleTileIO;
 
     // The retired C.B.IOS bit pattern overlaps the still-active C.B.DIMI form.
     // Raw instruction bits carry no mnemonic provenance, so the decoder must

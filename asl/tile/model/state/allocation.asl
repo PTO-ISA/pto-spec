@@ -22,8 +22,10 @@ begin
         valid_rows, valid_columns, data_type);
     assert LocalTileAllocationFitsExcept(
         index, allocation_mask, capacity_bytes);
+    AdvanceCurrentLocalTilePayloadGeneration(index);
     InvalidateTileFeatureMapDescriptor(index);
     _TileAllocationMasks[[index]] = allocation_mask;
+    _TilePayloadLiveMasks[[index]] = allocation_mask;
     _Tiles[[index]].allocated = TRUE;
     _Tiles[[index]].storage_kind = TileStorage_Numeric;
     // Allocation defines TileInfo but not the payload. A producer must write
@@ -72,8 +74,10 @@ begin
     assert PredicateTileStorageBytes(rows, columns) <= capacity_bytes;
     assert LocalTileAllocationFitsExcept(
         index, allocation_mask, capacity_bytes);
+    AdvanceCurrentLocalTilePayloadGeneration(index);
     InvalidateTileFeatureMapDescriptor(index);
     _TileAllocationMasks[[index]] = allocation_mask;
+    _TilePayloadLiveMasks[[index]] = allocation_mask;
     _Tiles[[index]].allocated = TRUE;
     _Tiles[[index]].storage_kind = TileStorage_Predicate;
     _Tiles[[index]].contents_defined = FALSE;
@@ -147,6 +151,7 @@ begin
            index, allocation_mask, capacity_bytes) then
         return FALSE;
     end;
+    AdvanceCurrentLocalTilePayloadGeneration(index);
     let rows = physical_rows;
     let columns = physical_columns;
     let k_repeat = TileCubePhysicalKRepeat(
@@ -161,6 +166,7 @@ begin
            n_repeat != 0 && cell_count != 0 && storage_bytes != 0;
     InvalidateTileFeatureMapDescriptor(index);
     _TileAllocationMasks[[index]] = allocation_mask;
+    _TilePayloadLiveMasks[[index]] = allocation_mask;
     _Tiles[[index]].allocated = TRUE;
     _Tiles[[index]].storage_kind = TileStorage_Numeric;
     _Tiles[[index]].contents_defined = FALSE;
@@ -231,6 +237,7 @@ begin
     RemoveRelativeTileMapping(index);
     InvalidateTileFeatureMapDescriptor(index);
     _TileAllocationMasks[[index]] = Zeros{4};
+    _TilePayloadLiveMasks[[index]] = Zeros{4};
     _Tiles[[index]].allocated = FALSE;
     _Tiles[[index]].storage_kind = TileStorage_Numeric;
     _Tiles[[index]].contents_defined = FALSE;

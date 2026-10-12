@@ -70,7 +70,7 @@ Suppose a `TSTORE` bundle binds Shared Tile `s2` with PE mask `1111`, sets `LB0`
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/shared-tlsu.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","surface":"block","classification":["model","dispatch","shared-tlsu"],"depends_on":["PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","surface":"block","classification":["model","dispatch","shared-tlsu"],"depends_on":["PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS"]}
 readonly func BundleSharedTLSUSelected() => boolean
 begin
     if !_BundleOperation.valid ||
@@ -233,6 +233,12 @@ begin
         ConsumeBundleSharedBindings(1);
         FinalizeBundleTileAttempt(TileExecution_Executed);
         return TRUE;
+    end;
+    let replaces_shared = function == 0 ||
+        (function == 2 && (BundleSharedBindingIsDestination(0) ||
+         BundleSharedBindingIsReusedDestination(0)));
+    if replaces_shared && SharedSourceLifetimePinned(shared_tile_id) then
+        return FALSE;
     end;
     if function == 0 then
         if (!BundleSharedBindingIsDestination(0) &&

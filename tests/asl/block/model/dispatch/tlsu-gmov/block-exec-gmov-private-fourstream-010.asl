@@ -64,8 +64,11 @@ begin
     for pe_number = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
         let pe = pe_number as MemoryAgentId;
         SelectExecutionContext(0 as PTOModelCoreIdentity, pe);
-        ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U8,
-            TileLayout_RowMajor);
+        var source_mask = Zeros{4};
+        source_mask[PTOPEMaskBitOfPEIdentity(pe)] = '1';
+        ConfigureTileForMask(0, 128, 1, 1, 1, 1, TileDataType_U8,
+            TileLayout_RowMajor, source_mask);
+        InstallRelativeTileFixture(0, 0);
         let source_value = Zeros{PTO_XLEN} + (0x40 + pe_number);
         WriteTileElement(0, 0, 0, source_value);
         WriteGPR(2, Zeros{PTO_XLEN} + peers[[pe_number]]);

@@ -36,7 +36,7 @@ This page is a generated reference view of the normative ASL unit.
 2. 它要求存在 `B.FPATR`，否则引发 `Fault_BundleControl`；并要求可解码的 CUBE 操作，否则引发 `Fault_IllegalInstruction`。
 3. 它检查指令束结构。类型对、源与目标数量、`B.DATR` 字段、`CCTRL` 用法、维度和 PE 掩码都必须合法。所有掩码必须一致，协作指令束需要掩码 `1111`。GEMV 功能要求 M 等于 1。失败时引发 `Fault_TileLegality`。
 4. 它在不故障的情况下等待每个 Shared 源都已发布，然后检查 Shared schema。
-5. 行数为零的协作 PE 消费其 Shared 绑定并返回成功。
+5. 行数为零的协作 PE 消费其 Shared 绑定，报告 Shared 源生命周期的成功完成，并在没有 Local 计算效果的情况下返回成功。
 6. 否则它解析相对源和 subview，并检查 Local 源、CScale、累加器与 CScale 的别名、结果布局以及后处理源。分派条款 `PTO-CUBE-ACCUMULATOR-OUTPUT-001` 要求编码的 C 选择器在重命名前不同于零扩展后的目标句柄。当前可执行模型却在解析后执行累加器检查，并把 C 的物理 `TileIndex` 与 D 的目标句柄（`DstTile MOD 4`）比较；issue #367 跟踪此冲突。
 7. 它分配目标组，对操作数做快照，并运行操作。若此后故障，则回滚目标。
 
@@ -354,7 +354,7 @@ begin
     else m;
     if cooperative && valid_m == 0 then
         ConsumeBundleSharedBindings(shared_count as integer {1..4});
-        FinalizeBundleTileAttempt(TileExecution_Executed);
+        FinalizeBundleSharedLastUseSources();
         return TRUE;
     end;
     let pe_m = valid_m as integer {1..65535};

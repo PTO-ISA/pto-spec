@@ -20,8 +20,11 @@
   ],
   "affected_ndf": [
     "PTO-ARCH-GM-ACCESS-001",
+    "PTO-ARCH-LOCAL-VTAG-LIFETIME-001",
+    "PTO-ARCH-SHARED-VTAG-LIFETIME-001",
     "PTO-B-IOS-SHARED-STATE-001",
     "PTO-B-IOT-STREAM-001",
+    "PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001",
     "PTO-CUBE-ACCUMULATOR-OUTPUT-001",
     "PTO-TLOAD-CUBE-001",
     "PTO-TLOAD-MEMORY-001"
@@ -30,8 +33,10 @@
     "PTO-ARCH-DATA-TYPES-INTEGER",
     "PTO-ARCH-FEATURES-TILE-ALLOCATION",
     "PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS",
-    "PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING",
     "PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY",
+    "PTO-ARCH-STATE-LOCAL-PAYLOAD-GENERATION",
+    "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT",
+    "PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING",
     "PTO-BLOCK-B-IOS",
     "PTO-BLOCK-B-IOT",
     "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
@@ -39,10 +44,13 @@
     "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
     "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
     "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV",
     "PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS",
     "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
     "PTO-BLOCK-MODEL-SCHEMA-BUNDLE-ENCODING",
+    "PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME",
     "PTO-BLOCK-MODEL-STATE-TYPES",
+    "PTO-TILE-MODEL-CAPACITY-LOCAL",
     "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS",
     "PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY",
     "PTO-TILE-MODEL-EXECUTION-COMPARISON",
@@ -82,6 +90,7 @@
   "superseded_by": [],
   "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/118",
   "release_impact": "required",
+  "interface_change": true,
   "legacy_ids": [
     "ADR-0096"
   ],
@@ -99,6 +108,63 @@
       ],
       "affected_units": [
         "PTO-BLOCK-B-IOT"
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "baseline": "01445483d778b1bcfccba1641f71c20f00e39385",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/340",
+      "affected_ndf": [
+        "PTO-B-IOT-STREAM-001",
+        "PTO-ARCH-LOCAL-VTAG-LIFETIME-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-IOT",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "baseline": "6c41bde8cb418cbcf57e7d2ef4a61163a5378b7d",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/347",
+      "affected_ndf": [
+        "PTO-B-IOS-SHARED-STATE-001",
+        "PTO-ARCH-SHARED-VTAG-LIFETIME-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-IOS",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
+      ]
+    },
+    {
+      "date": "2026-10-10",
+      "baseline": "f3fa24331df452248366550f71cd1be22e62aeb1",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/347",
+      "affected_ndf": [
+        "PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001",
+        "PTO-ARCH-LOCAL-VTAG-LIFETIME-001",
+        "PTO-ARCH-SHARED-VTAG-LIFETIME-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-STATE-LOCAL-PAYLOAD-GENERATION",
+        "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS",
+        "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+        "PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME",
+        "PTO-TILE-MODEL-CAPACITY-LOCAL",
+        "PTO-TILE-MODEL-STATE-SHARED-REGISTERS"
       ]
     }
   ]
@@ -165,6 +231,32 @@ rejects with `Fault_IllegalInstruction`, consistent with the family's reserved
 wording. Recorded for issue
 [#289](https://github.com/PTO-ISA/pto-spec/issues/289).
 
+## Amendment 2026-09-22: additive B.IOT source-lifetime encodings
+
+Issue [#340](https://github.com/PTO-ISA/pto-spec/issues/340) assigns the three
+previously unused `opcode=0x13` roots `funct3=010`, `011`, and `111` to the
+remaining two-source lifetime combinations. The frozen mapping is:
+
+| funct3 | source 0 | source 1 |
+| --- | --- | --- |
+| `100` | reuse | reuse |
+| `010` | last-use | last-use |
+| `011` | reuse | last-use |
+| `111` | last-use | reuse |
+
+For one-source `funct3=101`, bit 26 zero means reuse and preserves every
+pre-amendment word; bit 26 one means last-use. Bits 31:27 remain zero.
+Destination-only `funct3=110`, `SizeCode`, `PEMode`, source selectors, and `L`
+are unchanged. Canonical assembly prints `.reuse` for retained sources and no
+suffix for last-use sources.
+
+## Amendment 2026-09-23: additive B.IOS source-lifetime bit
+
+Issue [#347](https://github.com/PTO-ISA/pto-spec/issues/347) assigns B.IOS
+bit 26 one to an ordinary Shared source's last-use state. Bit 26 zero retains
+the prior binary meaning and prints `.reuse`; bit 27 stays reserved. Bare
+source assembly encodes last-use. Destination forms do not assign bit 26.
+
 ## Consequences
 
 The mnemonic metadata, decoder witnesses, common dispatch path, generated
@@ -224,3 +316,50 @@ The binders are re-encoded so size codes and PE mode occupy explicit, consistent
 This is an encoding and field-interpretation change for existing binding forms. It does not add a new `B.IOT` form, selector, Tile operation, or independent Shared mode model.
 
 这是针对既有绑定形式的编码和字段解释变更；不新增 `B.IOT` 形式、selector、Tile 操作或独立 Shared 模式模型。
+
+
+## 2026-10-10 amendment: participant-aware source lifetime
+
+The repository owner approved adapting #341 to the independent PE execution
+contexts landed in #373: Shared payload remains available until all declared
+participants finish, and GMOV lifetime effects belong to the actual source PE.
+The decision baseline is `f3fa24331df452248366550f71cd1be22e62aeb1`.
+Current meaning belongs to `PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001` and the
+named Local/Shared lifetime ASL owners, rather than this decision rationale.
+
+Completion accounting is Core-owned and occurrence-specific. It records exact
+source generation, invocation, site/form/selector, declared participation and
+PE request identities. Successful PEs return independently; incomplete source
+retirement is not a Tile-operation barrier. Fault, retry, squash, nonparticipation,
+or a stale completion cannot retire a different or newer payload. Invocation
+retirement preserves any source whose required successful completions are absent.
+Model-bounded record arrays and monotonic generation tokens are representation
+choices, not new software-visible registers or hardware capacity claims.
+
+The Local live mask follows its PE bank. GMOV resolves the original relative
+selector in the selected source PE bank and retires that exact generation only
+after its selected consumers complete. Repeated peer selections remain legal;
+retirement must not invalidate a slower consumer. ExecutionMask carriers keep
+their separately typed behavior and are excluded from ordinary-data lifetime
+effects without introducing a new encoding restriction. Open Shared assembly
+capacity reservations remain independent of source retirement.
+
+This preserves old binary reuse behavior. Reassembling bare source operands is
+still a breaking source-level change under the original lifetime decision.
+Compiler lifetime analysis, downstream model adoption, refreshed ELFs and
+exact-commit release validation remain obligations; this merge makes no release
+or downstream-runtime conformance claim.
+
+### Bilingual amendment rationale / 双语修订理由
+
+**English.** The previous aggregate model completed a Tile operation for every
+selected PE at once. Independent PE streams expose an early-reclamation bug:
+one PE can finish while another still needs the same payload. Tracking actual
+participant completion and exact source ownership repairs that mismatch without
+adding a rendezvous or hiding a consumed-generation fault.
+
+**中文。** 旧聚合模型一次完成所有选中 PE 的 Tile 操作。独立 PE 指令流使提前
+回收问题显现：一个 PE 已完成时，另一个 PE 仍可能需要同一载荷。按真实参与者
+完成情况与精确源代次归属记账可以修复该错配，无需新增会合点，也不掩盖对已消费
+代次的非法读取。GMOV 的载荷归属于实际源 PE；重复选择同一源的较慢消费者仍须
+能够完成。异常、重试、撤销和旧请求均不能释放新的载荷。

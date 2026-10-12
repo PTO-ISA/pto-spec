@@ -16430,9 +16430,9 @@
       ],
       "before": [],
       "before_callers": [],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)",
       "name": "BundleCurrentPEIsNonparticipantSharedAssembly",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after_layouts": [],
@@ -16940,9 +16940,9 @@
       ],
       "before": [],
       "before_callers": [],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)",
       "name": "BundleFirstGMSourceTile",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after_layouts": [],
@@ -16974,9 +16974,9 @@
       ],
       "before": [],
       "before_callers": [],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "UNCLASSIFIED",
       "name": "BundleGMOVPESourceTile",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after": [
@@ -17003,9 +17003,9 @@
       ],
       "before": [],
       "before_callers": [],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)",
       "name": "BundleGMOVPESourceTileReady",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after": [
@@ -17024,9 +17024,9 @@
       ],
       "before": [],
       "before_callers": [],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)",
       "name": "BundleGMOVSourceDescriptorsMatch",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after": [
@@ -17094,9 +17094,9 @@
           "asl/block/model/operands/local-generation.asl"
         ]
       ],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)",
       "name": "BundleLocalGenerationSlotForDestination",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after": [
@@ -17130,9 +17130,9 @@
           "asl/block/model/operands/portable-carriers.asl"
         ]
       ],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)",
       "name": "BundleLocalGenerationSlotForSource",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after_layouts": [],
@@ -17406,9 +17406,9 @@
       ],
       "before": [],
       "before_callers": [],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)",
       "name": "BundleSharedGenerationCompletionAvailableForCurrentPE",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after": [
@@ -17435,9 +17435,9 @@
       ],
       "before": [],
       "before_callers": [],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)",
       "name": "BundleSharedGenerationRequestWaiting",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after_layouts": [
@@ -17534,9 +17534,9 @@
       ],
       "before": [],
       "before_callers": [],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)",
       "name": "BundleTileGMRequestClass",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after": [
@@ -17710,9 +17710,9 @@
       ],
       "before": [],
       "before_callers": [],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)",
       "name": "BundleTileOperationHasGMEffect",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after_layouts": [
@@ -17918,9 +17918,9 @@
           "asl/block/model/dispatch/tile-execution.asl"
         ]
       ],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)",
       "name": "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after_layouts": [],
@@ -18248,9 +18248,9 @@
       ],
       "before": [],
       "before_callers": [],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)",
       "name": "ExecuteTileStoreSnapshot",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after": [
@@ -18289,9 +18289,9 @@
       ],
       "before": [],
       "before_callers": [],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)",
       "name": "ExecuteTileStoreSnapshotProgress",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after_layouts": [],
@@ -21439,9 +21439,9 @@
       ],
       "before": [],
       "before_callers": [],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)",
       "name": "TileStoreFootprintIsValidated",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after": [
@@ -21462,9 +21462,9 @@
       ],
       "before": [],
       "before_callers": [],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)",
       "name": "TileStoreHasActiveElements",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after": [
@@ -21485,9 +21485,9 @@
       ],
       "before": [],
       "before_callers": [],
-      "classification": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)",
+      "classification": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)",
       "name": "TileStoreSourceGeneration",
-      "owner_decision": "Issue #360 Core-scoped GM and Shared request plumbing (layout-neutral)"
+      "owner_decision": "Issue #360/#341 Core-scoped GM, source-lifetime, and Shared request plumbing (layout-neutral)"
     },
     {
       "after_layouts": [],
@@ -34785,7 +34785,9 @@
     }
   ],
   "empty_layout_sets": [],
-  "errors": [],
+  "errors": [
+    "Issue #360 GM-obligation helper owner/layout/caller closure mismatch: BundleGMOVPESourceTile"
+  ],
   "exact_34": [
     "TADD",
     "TAND",
@@ -47583,7 +47585,7 @@
   ],
   "operative_baseline": "577e7b06422d87ec09c925401b477b4e524eded3",
   "original_durable_provenance": "fbdfc56bef714a98a080461d926d54dcfbaf851e",
-  "pass": true,
+  "pass": false,
   "reachability": {
     "after": {
       "helpers": {

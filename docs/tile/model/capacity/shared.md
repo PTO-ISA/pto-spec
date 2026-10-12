@@ -15,18 +15,19 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: tile-model-capacity-shared-purpose role=purpose-scope -->
 ## Purpose and scope
 
-This unit measures the Core-wide Shared Tile pool and reports the combined Tile usage of a Core. It is three helpers long:
+This unit measures the Core-wide Shared Tile pool and reports combined Tile usage. `SharedTileCapacityCharge` isolates the charge for one Shared register so allocation, replacement, source retirement and open assembly use the same accounting.
 
-- `SharedTileCapacityInUse` sums the capacity of every Shared register that has a descriptor.
-- `SharedTileCapacityLimitBytes` returns the Shared pool size.
-- `CoreTileCapacityInUse` adds Local and Shared usage.
+- `SharedTileCapacityInUse` sums per-register charges.
+- `SharedTileCapacityCharge` compares live payload with a pending parent reservation.
+- `SharedTileCapacityLimitBytes` supplies the separate Shared limit.
+- `CoreTileCapacityInUse` reports Local plus Shared usage.
 
 <!-- PTO-READER-BLOCK: tile-model-capacity-shared-concepts role=concepts-state -->
 ## Concepts and visible state
 
 A Shared Tile register is one of S0 to S63 in `_SharedTiles`. It belongs to the Core, not to a PE, and all four PEs address the same 64 records.
 
-A Shared register uses capacity when its `descriptor_valid` flag is set. Its charge is the `capacity_bytes` of the wrapped `TileInfo`, counted once.
+A valid descriptor alone does not charge payload capacity. The charge is the larger of live payload bytes and `reserved_capacity_bytes` for an open assembly. Thus consuming an old payload does not lend a pending parent’s reserved space to another Shared register.
 
 The limit is `PTO_SHARED_TILE_MAX_ALLOCATION_BYTES`, which is 262144 bytes (256 KiB).
 
@@ -53,7 +54,7 @@ Object legality, including the 128-byte granule, is checked by `SharedTileCapaci
 <!-- PTO-READER-BLOCK: tile-model-capacity-shared-example role=example-usage -->
 ## Non-normative reading example
 
-S4 holds a 128 KiB descriptor and S9 holds a 64 KiB descriptor. `SharedTileCapacityInUse` is 131072 + 65536 = 196608 bytes.
+S4 has a live 128 KiB payload and S9 has a live 64 KiB payload, so the initial charge is 196608 bytes. If S4 opens a same-size assembly, its charge remains 128 KiB. Retiring S4’s old source still leaves that reservation charged until publication or abort.
 
 - A new 64 KiB Shared parent in an empty register fits: 196608 + 65536 = 262144.
 - A new 128 KiB parent does not fit, because the sum would be 327680.
@@ -77,11 +78,20 @@ readonly func SharedTileCapacityInUse() => integer
 begin
     var total: integer = 0;
     for index = 0 to PTO_SHARED_TILE_COUNT - 1 do
-        if _SharedTiles[[index]].descriptor_valid then
-            total = total + _SharedTiles[[index]].tile.capacity_bytes;
-        end;
+        total = total + SharedTileCapacityCharge(
+            (Zeros{6} + index) as SharedTileID);
     end;
     return total;
+end;
+
+readonly func SharedTileCapacityCharge(shared_tile_id: SharedTileID) => integer
+begin
+    let index = UInt(shared_tile_id) as SharedTileIndex;
+    let live_bytes = if _SharedTiles[[index]].descriptor_valid &&
+        _SharedTiles[[index]].payload_live then
+        _SharedTiles[[index]].tile.capacity_bytes else 0;
+    let reserved_bytes = _SharedTiles[[index]].reserved_capacity_bytes;
+    return if live_bytes > reserved_bytes then live_bytes else reserved_bytes;
 end;
 
 pure func SharedTileCapacityLimitBytes() => integer

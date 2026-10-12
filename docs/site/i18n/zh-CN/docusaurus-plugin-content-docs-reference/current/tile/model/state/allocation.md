@@ -46,7 +46,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: tile-model-state-allocation-rules role=rules-interactions -->
 ## 规则与交互
 
-`ConfigureTileForMask` 按以下顺序断言：容量合法（`TileCapacityIsLegal`）、掩码非零、`rows` 为正、`valid_rows <= rows`、在推导行数下描述符形状合法、`valid_rows` 不超过配置行数、在配置行数下物理形状合法，以及每个选中 PE 的 Local 池都有空间（`LocalTileAllocationFitsExcept`）。只有此后才写入状态。
+`ConfigureTileForMask` 在写入分配状态前验证容量、掩码、逻辑与物理形状及相应 Local 池容量。实际分配调用者在调用这些模型 helper 前检查就绪与 pin 状态。新分配推进 bank 的载荷代次 token，使延迟完成不能影响同一槽中的替换对象。
 
 配置行数取决于列数。列数为二的幂时，行数来自 `DerivedTileRows`；对于 E2M1X2 和 E1M2X2 以外的类型，Tile 随后恰好填满其容量。列数不是二的幂时，对于 FP32、FP16、BF16、E2M1X2 或 E1M2X2，保留调用者给出的 `rows`，它只需放得下即可。
 
@@ -117,8 +117,10 @@ begin
         valid_rows, valid_columns, data_type);
     assert LocalTileAllocationFitsExcept(
         index, allocation_mask, capacity_bytes);
+    AdvanceCurrentLocalTilePayloadGeneration(index);
     InvalidateTileFeatureMapDescriptor(index);
     _TileAllocationMasks[[index]] = allocation_mask;
+    _TilePayloadLiveMasks[[index]] = allocation_mask;
     _Tiles[[index]].allocated = TRUE;
     _Tiles[[index]].storage_kind = TileStorage_Numeric;
     // Allocation defines TileInfo but not the payload. A producer must write
@@ -167,8 +169,10 @@ begin
     assert PredicateTileStorageBytes(rows, columns) <= capacity_bytes;
     assert LocalTileAllocationFitsExcept(
         index, allocation_mask, capacity_bytes);
+    AdvanceCurrentLocalTilePayloadGeneration(index);
     InvalidateTileFeatureMapDescriptor(index);
     _TileAllocationMasks[[index]] = allocation_mask;
+    _TilePayloadLiveMasks[[index]] = allocation_mask;
     _Tiles[[index]].allocated = TRUE;
     _Tiles[[index]].storage_kind = TileStorage_Predicate;
     _Tiles[[index]].contents_defined = FALSE;
@@ -242,6 +246,7 @@ begin
            index, allocation_mask, capacity_bytes) then
         return FALSE;
     end;
+    AdvanceCurrentLocalTilePayloadGeneration(index);
     let rows = physical_rows;
     let columns = physical_columns;
     let k_repeat = TileCubePhysicalKRepeat(
@@ -256,6 +261,7 @@ begin
            n_repeat != 0 && cell_count != 0 && storage_bytes != 0;
     InvalidateTileFeatureMapDescriptor(index);
     _TileAllocationMasks[[index]] = allocation_mask;
+    _TilePayloadLiveMasks[[index]] = allocation_mask;
     _Tiles[[index]].allocated = TRUE;
     _Tiles[[index]].storage_kind = TileStorage_Numeric;
     _Tiles[[index]].contents_defined = FALSE;
@@ -326,6 +332,7 @@ begin
     RemoveRelativeTileMapping(index);
     InvalidateTileFeatureMapDescriptor(index);
     _TileAllocationMasks[[index]] = Zeros{4};
+    _TilePayloadLiveMasks[[index]] = Zeros{4};
     _Tiles[[index]].allocated = FALSE;
     _Tiles[[index]].storage_kind = TileStorage_Numeric;
     _Tiles[[index]].contents_defined = FALSE;

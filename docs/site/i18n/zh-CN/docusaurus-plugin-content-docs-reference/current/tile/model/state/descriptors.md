@@ -52,7 +52,7 @@ SizeCode 是一个选择字节预算的四位字段。`TileSizeCodeBytes` 把编
 <!-- PTO-READER-BLOCK: tile-model-state-descriptors-boundaries role=boundaries -->
 ## 架构边界
 
-这些都是纯函数或只读辅助函数。非法 SizeCode 或不可用相对源的故障由调用它们的指令束绑定器引发，例如 Tile 绑定、命令、范围修饰符和 Shared TLSU 所有者。
+大小及查找查询是纯函数或只读操作；生命周期 helper 另行发布相对身份、释放分配并消费载荷存活位。相对查找仍可能找到已消费代次，由操作的载荷检查诊断该源不可用。如此可避免最后使用悄然改变相对选择子所指代次。
 
 `InstallRelativeTileFixture` 把寄存器放到任意距离。`ConfigureTile`、`ConfigurePredicateTile` 和 `ConfigureCubeTile` 在移除该寄存器的其他条目之后，以寄存器自身的索引作为选择子调用它；它不是发布规则。
 
@@ -120,6 +120,32 @@ begin
     assert RelativeTileSourceAvailable(selector);
     return _TileRelativeOrder[[RelativeTileHandIndex(selector)]]
         [[RelativeTileDistance(selector)]];
+end;
+
+readonly func TilePayloadLiveForMask(
+    index: TileIndex, pe_mask: bits(4)) => boolean
+begin
+    return _Tiles[[index]].allocated &&
+           (_TilePayloadLiveMasks[[index]] AND pe_mask) == pe_mask;
+end;
+
+// A Local generation is payload-intact for a binding when every participating
+// PE it was allocated for still has readable backing. PEs outside the
+// generation's descriptor allocation mask never consumed its payload, so a
+// wider binding mask cannot by itself make the generation unavailable.
+readonly func TilePayloadIntactForMask(
+    index: TileIndex, pe_mask: bits(4)) => boolean
+begin
+    let participating = pe_mask AND _TileAllocationMasks[[index]];
+    return _Tiles[[index]].allocated &&
+           (_TilePayloadLiveMasks[[index]] AND participating) == participating;
+end;
+
+func ConsumeTilePayloadForMask(index: TileIndex, pe_mask: bits(4))
+begin
+    assert _Tiles[[index]].allocated;
+    _TilePayloadLiveMasks[[index]] =
+        _TilePayloadLiveMasks[[index]] AND NOT(pe_mask);
 end;
 
 func RemoveRelativeTileMapping(index: TileIndex)

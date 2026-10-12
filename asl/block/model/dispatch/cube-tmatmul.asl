@@ -272,7 +272,7 @@ begin
     else m;
     if cooperative && valid_m == 0 then
         ConsumeBundleSharedBindings(shared_count as integer {1..4});
-        FinalizeBundleTileAttempt(TileExecution_Executed);
+        FinalizeBundleSharedLastUseSources();
         return TRUE;
     end;
     let pe_m = valid_m as integer {1..65535};

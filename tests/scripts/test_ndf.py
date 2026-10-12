@@ -340,6 +340,8 @@ class NdfTest(unittest.TestCase):
             "PTO-STATE-TILE-LOCAL": (
                 "_Tiles",
                 "_TileAllocationMasks",
+                "_TilePayloadLiveMasks",
+                "_TilePayloadGenerations",
                 "_TileRelativeOrder",
                 "_TileRelativeValid",
             ),
@@ -387,6 +389,12 @@ class NdfTest(unittest.TestCase):
             ),
             "PTO-STATE-BLOCK-LOCAL-GENERATIONS": ("_LocalGenerations",),
             "PTO-STATE-BLOCK-SHARED-GENERATIONS": ("_SharedGenerations",),
+            "PTO-STATE-BLOCK-SOURCE-LIFETIME": (
+                "_BundleSourceLifetimes",
+                "_NextBundleSourceLifetimeOrdinal",
+                "_BundleGMOVSourceSelections",
+                "_NextBundleGMOVSourceSelectionOrdinal",
+            ),
             "PTO-STATE-BLOCK-CORE-TILE-CAPABILITIES": (
                 "_TileDataLayoutCapabilities",
             ),
@@ -409,6 +417,7 @@ class NdfTest(unittest.TestCase):
             "PTO-STATE-ARCH-PE-EXECUTION-CONTEXT": "pe",
             "PTO-STATE-ARCH-CORE-LOCAL-CONTEXT": "core",
             "PTO-STATE-BLOCK-CONTROL": "pe",
+            "PTO-STATE-BLOCK-SOURCE-LIFETIME": "system",
             "PTO-STATE-TILE-LOCAL": "pe",
             "PTO-STATE-TILE-FEATURE-MAP": "pe",
         }
