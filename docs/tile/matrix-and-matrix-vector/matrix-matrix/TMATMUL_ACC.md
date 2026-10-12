@@ -21,7 +21,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `TMATMUL_ACC` multiplies a left matrix A with M rows and K columns by a right matrix B with K rows and N columns. It publishes the M x N result D in a newly allocated Local CUBE Tile.
 
-The product is added to an explicit accumulator Tile C of the same shape, and C itself is not changed.
+The product is added to an explicit accumulator Tile C of the same shape. The operation does not write C's value or descriptor; C's payload lifetime is selected by its `B.IOT` binding.
 
 Design point: `TMATMUL_ACC` is selected by `BSTART.TMATMUL.ACC` (CUBE Function 2) and has no standalone opcode. All twelve CUBE matrix instructions share one bundle handler; the function number selects whether a bias, an accumulator, MX scales, the M = 1 and Local-only rules, and CScale apply. The [matrix function table](../../model/legality/matrix-functions.md) lists every form.
 
@@ -58,9 +58,9 @@ AType is the `BSTART` data type. BType is the `B.DATR` `DataType`, and equals AT
 
 AType and BType must both be ordinary Matrix types of one numeric class: both floating, both signed integer, or both unsigned integer. HiF4X2 is not an ordinary Matrix type; it is accepted only by the MX forms.
 
-Design point: the mnemonic NDF allows C and D to use one architectural Tile name, while dispatch clause `PTO-CUBE-ACCUMULATOR-OUTPUT-001` requires their encoded selector and destination hand to differ before rename. The current executable model resolves C first, then compares its physical `TileIndex` with D's destination hand (`DstTile MOD 4`). Issue #367 tracks this three-way source conflict. C is read into a private copy before D is written and stays unchanged after success or rejection, but an accumulating chain is executable only when the resolved C index passes the current comparison.
+Design point: the mnemonic NDF allows C and D to use one architectural Tile name, while dispatch clause `PTO-CUBE-ACCUMULATOR-OUTPUT-001` requires their encoded selector and destination hand to differ before rename. The current executable model resolves C first, then compares its physical `TileIndex` with D's destination hand (`DstTile MOD 4`). Issue #367 tracks this three-way source conflict. C is read into a private copy before D is written; its value and descriptor are not modified, while its payload lifetime follows its [B.IOT](../../../block/operands/B.IOT.md) source binding and rejection does not complete last-use. An accumulating chain is executable only when the resolved C index passes the current comparison.
 
-Cooperative execution: `B.IOS` may replace the complete right group (B), or both groups, with published Shared Tiles. LB0 then holds the Core-total group M, from 1 to 128, N and K must be powers of two, and every binding needs `PE_MASK` 1111. Each PE takes 16 rows when group M is at most 64 and 32 rows otherwise; PE i starts at row i times that count, and a PE with no rows allocates nothing. [Shared CUBE matrix](../../../block/model/dispatch/shared-cube-matrix.md) defines the split.
+Cooperative execution: `B.IOS` may replace the complete right group (B), or both groups, with published Shared Tiles. LB0 then holds the Core-total group M from 1 to 128; the N and K dimension fields may each range from 1 to 65535 without a power-of-two restriction, and every binding needs `PE_MASK` 1111. Shared descriptor, capacity, and packed four-bit K and pitch checks still apply. Each PE takes 16 rows when group M is at most 64 and 32 rows otherwise; PE i starts at row i times that count, and a PE with no rows allocates nothing. [Shared CUBE matrix](../../../block/model/dispatch/shared-cube-matrix.md) defines the split.
 
 A Shared A is stored [group M, K], or [K, group M] with `TransA`. A Shared B is stored [N, K], or [K, N] with `TransB`. Each transpose control is legal only for a Shared primary. C, CScale, and every destination stay Local.
 
@@ -69,13 +69,13 @@ A Shared A is stored [group M, K], or [K, group M] with `TransA`. A Shared B is 
 
 Complete preflight comes first: types, bindings, dimensions, masks, Shared readiness and schemas, Local descriptors, aliases, the M layout, and post-processing sources. Only then is the destination group allocated and are the sources read. [CUBE TMATMUL dispatch](../../../block/model/dispatch/cube-tmatmul.md) lists the stages.
 
-D and any enabled RowMaxOut and GroupMaxOut publish as one group. D is defined only in its valid region; its padding stays undefined, because no `PadValue` is applied. A rejected bundle publishes nothing, and every source persists unchanged.
+D and any enabled RowMaxOut and GroupMaxOut publish as one group. D is defined only in its valid region; its padding stays undefined, because no `PadValue` is applied. A rejected bundle publishes nothing and does not complete source last-use. Matrix computation does not modify source values or descriptors; payload retention and retirement follow the bound [B.IOT](../../../block/operands/B.IOT.md) and [B.IOS](../../../block/operands/B.IOS.md) reuse and last-use contracts.
 
 Design point: allocation happens after every rule is checked and before the first source snapshot. A legality fault therefore leaves no allocated destination, and a fault after allocation rolls the destination group back.
 
 The operation has no global-memory effect. CScale records the flags of each scaled C element as it computes them. Post-processing ORs the flags of all its outputs and records them at commit.
 
-A cooperative bundle waits, without a fault, until every Shared source is whole-ready and published. Successful Shared reads leave every Shared descriptor, payload, and lifetime unchanged.
+A cooperative bundle waits, without a fault, until every Shared source is whole-ready and published. A successful read does not modify a Shared value or descriptor; its payload lifetime follows the bound [B.IOS](../../../block/operands/B.IOS.md) reuse or last-use form.
 
 <!-- PTO-READER-BLOCK: tile-tmatmul-acc-constraints role=constraints -->
 ## Legality and fault boundary

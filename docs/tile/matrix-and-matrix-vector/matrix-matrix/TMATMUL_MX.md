@@ -60,7 +60,7 @@ AType and BType are chosen independently from FP16, BF16, E4M3, E5M2, E2M1X2, E1
 
 Design point: a side carries a scale exactly when it needs one. FP16 and BF16 need none, so a form with an FP16 left side and an E4M3 right side binds only the right scale, and a form with two FP16 sides takes the FP32 rounding path described above.
 
-Cooperative execution: `B.IOS` may replace the complete right group (B and its scale when one is needed), or both groups, with published Shared Tiles. LB0 then holds the Core-total group M, from 1 to 128, N and K must be powers of two, and every binding needs `PE_MASK` 1111. Each PE takes 16 rows when group M is at most 64 and 32 rows otherwise; PE i starts at row i times that count, and a PE with no rows allocates nothing. [Shared CUBE matrix](../../../block/model/dispatch/shared-cube-matrix.md) defines the split.
+Cooperative execution: `B.IOS` may replace the complete right group (B and its scale when one is needed), or both groups, with published Shared Tiles. LB0 then holds the Core-total group M from 1 to 128; the N and K dimension fields may each range from 1 to 65535 without a power-of-two restriction, and every binding needs `PE_MASK` 1111. Shared descriptor, capacity, and packed four-bit K and pitch checks still apply. Each PE takes 16 rows when group M is at most 64 and 32 rows otherwise; PE i starts at row i times that count, and a PE with no rows allocates nothing. [Shared CUBE matrix](../../../block/model/dispatch/shared-cube-matrix.md) defines the split.
 
 A Shared A is stored [group M, K], or [K, group M] with `TransA`. A Shared B is stored [N, K], or [K, N] with `TransB`. Each transpose control is legal only for a Shared primary. Every destination stays Local.
 
@@ -69,13 +69,13 @@ A Shared A is stored [group M, K], or [K, group M] with `TransA`. A Shared B is 
 
 Complete preflight comes first: types, bindings, dimensions, masks, Shared readiness and schemas, Local descriptors, aliases, the M layout, and post-processing sources. Only then is the destination group allocated and are the sources read. [CUBE TMATMUL dispatch](../../../block/model/dispatch/cube-tmatmul.md) lists the stages.
 
-D and any enabled RowMaxOut and GroupMaxOut publish as one group. D is defined only in its valid region; its padding stays undefined, because no `PadValue` is applied. A rejected bundle publishes nothing, and every source persists unchanged.
+D and any enabled RowMaxOut and GroupMaxOut publish as one group. D is defined only in its valid region; its padding stays undefined, because no `PadValue` is applied. A rejected bundle publishes nothing and does not complete source last-use. Matrix computation does not modify source values or descriptors; payload retention and retirement follow the bound [B.IOT](../../../block/operands/B.IOT.md) and [B.IOS](../../../block/operands/B.IOS.md) reuse and last-use contracts.
 
 Design point: allocation happens after every rule is checked and before the first source snapshot. A legality fault therefore leaves no allocated destination, and a fault after allocation rolls the destination group back.
 
 The operation has no global-memory effect. Post-processing is the only source of numeric status; it ORs the flags of all its outputs and records them at commit.
 
-A cooperative bundle waits, without a fault, until every Shared source is whole-ready and published. Successful Shared reads leave every Shared descriptor, payload, and lifetime unchanged.
+A cooperative bundle waits, without a fault, until every Shared source is whole-ready and published. A successful read does not modify a Shared value or descriptor; its payload lifetime follows the bound [B.IOS](../../../block/operands/B.IOS.md) reuse or last-use form.
 
 <!-- PTO-READER-BLOCK: tile-tmatmul-mx-constraints role=constraints -->
 ## Legality and fault boundary

@@ -69,7 +69,7 @@ Design point: Bias is checked against the result type, not against AType. A Bias
 
 The start command changes only bundle state. It records a fallthrough `BARG` of kind `TileMatrix` and installs the descriptor; no Tile, Shared Tile, or memory changes.
 
-On success, D and every enabled RowMaxOut and GroupMaxOut are published as one atomic group. A rejected bundle publishes none of them. No source is consumed or modified, and a successful read leaves every Shared source descriptor, publication state, and payload unchanged.
+On success, D and every enabled RowMaxOut and GroupMaxOut are published as one atomic group. A rejected bundle publishes none of them and does not complete source last-use. Matrix computation does not modify source values or descriptors; payload retention and retirement follow the bound [B.IOT](../operands/B.IOT.md) and [B.IOS](../operands/B.IOS.md) reuse and last-use contracts.
 
 D is allocated in A's M layout. When A itself is Shared, the layout is `CUBE_M16` for up to 16 rows per PE and `CUBE_M32` for up to 32.
 
@@ -84,7 +84,7 @@ The bundle has no global-memory effect.
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-bias-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-A bundle with any Shared source is cooperative. Every binding must then use `PE_MASK` 1111, group_M must be 1 to 128, and N and K must be powers of two. Each PE owns 16 rows when group_M is at most 64 and 32 rows otherwise. A PE whose rows start at or beyond group_M consumes its Shared bindings and finishes with no Local effect. See [Shared CUBE matrix](../model/dispatch/shared-cube-matrix.md).
+A bundle with any Shared source is cooperative. Every binding must then use `PE_MASK` 1111, group_M must be 1 to 128, and the N and K dimension fields may each range from 1 to 65535 without a power-of-two restriction. Shared descriptor, capacity, and packed four-bit K and pitch checks still apply. Each PE owns 16 rows when group_M is at most 64 and 32 rows otherwise. A PE whose rows start at or beyond group_M still completes Shared readiness but has no compute-only Local effect. See [Shared CUBE matrix](../model/dispatch/shared-cube-matrix.md).
 
 `TransA` and `TransB` are legal only when the corresponding primary is Shared. A Shared source that is not yet published makes the commit return without a fault, and the bundle stays active.
 

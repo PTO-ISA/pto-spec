@@ -21,7 +21,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `TMATMUL_ACC` 把 M 行 K 列的左矩阵 A 与 K 行 N 列的右矩阵 B 相乘，并把 M x N 的结果 D 发布到一个新分配的 Local CUBE Tile 中。
 
-乘积会加到一个同形状的显式累加器 Tile C 上，而 C 本身保持不变。
+乘积会加到一个同形状的显式累加器 Tile C 上。该操作不写入 C 的值或描述符；C 的载荷生命周期由其 `B.IOT` 绑定选择。
 
 设计要点：`TMATMUL_ACC` 由 `BSTART.TMATMUL.ACC`（CUBE Function 2）选中，没有独立 opcode。全部 12 条 CUBE 矩阵指令共用一个指令束处理程序；功能号决定是否使用偏置、累加器、MX 缩放、M = 1 与仅 Local 规则，以及是否允许 CScale。[矩阵功能表](../../model/legality/matrix-functions.md)列出了所有形式。
 
@@ -58,9 +58,9 @@ AType 是 `BSTART` 数据类型。BType 是 `B.DATR` 的 `DataType`，省略 `B.
 
 AType 与 BType 必须都是同一数值类别的普通矩阵类型：同为浮点、同为有符号整数或同为无符号整数。HiF4X2 不是普通矩阵类型；只有 MX 形式接受它。
 
-设计要点：助记符 NDF 允许 C 与 D 使用同一个架构 Tile 名称，而分派条款 `PTO-CUBE-ACCUMULATOR-OUTPUT-001` 要求它们的编码选择器与目标句柄在重命名前不同。当前可执行模型先解析 C，再把它的物理 `TileIndex` 与 D 的目标句柄（`DstTile MOD 4`）比较。Issue #367 跟踪这一三方来源冲突。在写入 D 之前，C 被读入私有副本，并且无论成功还是被拒绝都保持不变；但累加链只有在解析后的 C 索引通过当前比较时才可执行。
+设计要点：助记符 NDF 允许 C 与 D 使用同一个架构 Tile 名称，而分派条款 `PTO-CUBE-ACCUMULATOR-OUTPUT-001` 要求它们的编码选择器与目标句柄在重命名前不同。当前可执行模型先解析 C，再把它的物理 `TileIndex` 与 D 的目标句柄（`DstTile MOD 4`）比较。Issue #367 跟踪这一三方来源冲突。在写入 D 之前，C 被读入私有副本；其值与描述符不会被修改，而其载荷生命周期遵循 [B.IOT](../../../block/operands/B.IOT.md) 源绑定，被拒绝时不会完成最后使用。累加链只有在解析后的 C 索引通过当前比较时才可执行。
 
-协作执行：`B.IOS` 可以用已发布的 Shared Tile 替换完整的右组（B），或替换两组。此时 LB0 表示整个 Core 的 group M，取值 1 到 128，N 与 K 必须是 2 的幂，且每个绑定都需要 `PE_MASK` 1111。group M 不超过 64 时每个 PE 负责 16 行，否则负责 32 行；PE i 从第 i 乘以该行数的行开始，没有行的 PE 不分配任何 Tile。[Shared CUBE 矩阵](../../../block/model/dispatch/shared-cube-matrix.md)定义了该划分。
+协作执行：`B.IOS` 可以用已发布的 Shared Tile 替换完整的右组（B），或替换两组。此时 LB0 表示整个 Core 的 group M，取值 1 到 128；N 与 K 维度字段各自在 1 到 65535 之间且没有 2 的幂限制，每个绑定都需要 `PE_MASK` 1111。Shared 描述符、容量以及压缩四位类型的 K 与 pitch 检查仍然适用。group M 不超过 64 时每个 PE 负责 16 行，否则负责 32 行；PE i 从第 i 乘以该行数的行开始，没有行的 PE 不分配任何 Tile。[Shared CUBE 矩阵](../../../block/model/dispatch/shared-cube-matrix.md)定义了该划分。
 
 Shared A 以 [group M, K] 存储，设置 `TransA` 时以 [K, group M] 存储。Shared B 以 [N, K] 存储，设置 `TransB` 时以 [K, N] 存储。每个转置控制只对 Shared 主操作数合法。C、CScale 以及所有目标保持 Local。
 
@@ -69,13 +69,13 @@ Shared A 以 [group M, K] 存储，设置 `TransA` 时以 [K, group M] 存储。
 
 首先进行完整预检：类型、绑定、维度、掩码、Shared 就绪与模式、Local 描述符、别名、M 布局以及后处理源。只有这之后才分配目标组并读取源。[CUBE TMATMUL 分派](../../../block/model/dispatch/cube-tmatmul.md)列出了各个阶段。
 
-D 与任何已启用的 RowMaxOut 和 GroupMaxOut 作为一组发布。D 只在其有效区域内已定义；由于不应用任何 `PadValue`，其填充保持未定义。被拒绝的指令束不发布任何内容，所有源保持不变。
+D 与任何已启用的 RowMaxOut 和 GroupMaxOut 作为一组发布。D 只在其有效区域内已定义；由于不应用任何 `PadValue`，其填充保持未定义。被拒绝的指令束不发布任何内容，也不会完成源的最后使用。矩阵计算不修改源值或描述符；载荷保留与回收遵循绑定的 [B.IOT](../../../block/operands/B.IOT.md) 和 [B.IOS](../../../block/operands/B.IOS.md) 复用与最后使用契约。
 
 设计要点：分配发生在所有规则检查完成之后、第一次源快照之前。因此合法性故障不会留下已分配的目标，而分配之后发生的故障会回滚整个目标组。
 
 该操作没有全局内存效果。CScale 在计算每个缩放后的 C 元素时记录其标志。后处理把所有输出的标志按位或，并在提交时记录。
 
-协作指令束会在不产生故障的情况下等待，直到每个 Shared 源都整体就绪并已发布。成功的 Shared 读取不改变任何 Shared 描述符、载荷与生命周期。
+协作指令束会在不产生故障的情况下等待，直到每个 Shared 源都整体就绪并已发布。成功的读取不修改 Shared 值或描述符；其载荷生命周期遵循绑定的 [B.IOS](../../../block/operands/B.IOS.md) 复用或最后使用形式。
 
 <!-- PTO-READER-BLOCK: tile-tmatmul-acc-constraints role=constraints -->
 ## 合法性与故障边界

@@ -69,7 +69,7 @@ D 的元素类型为 `FP32`。非零的 `PreQuantMode` 会为 D 选择该模式�
 
 起始命令只改变指令束状态。它记录一个类型为 `TileMatrix` 的顺序执行 `BARG`，并安装描述符；Tile、Shared Tile 与内存都不改变。
 
-成功时，D 以及每个已启用的 RowMaxOut 与 GroupMaxOut 作为一个原子组发布。被拒绝的指令束不发布其中任何一个。任何源都不会被消耗或修改，成功的读取也不会改变任何 Shared 源的描述符、发布状态与载荷。
+成功时，D 以及每个已启用的 RowMaxOut 与 GroupMaxOut 作为一个原子组发布。被拒绝的指令束不发布其中任何一个，也不会完成源的最后使用。矩阵计算不修改源值或描述符；载荷保留与回收遵循绑定的 [B.IOT](../operands/B.IOT.md) 和 [B.IOS](../operands/B.IOS.md) 复用与最后使用契约。
 
 D 按 A 的 M 布局分配。当 A 本身为 Shared 时，每个 PE 不超过 16 行时布局为 `CUBE_M16`，不超过 32 行时为 `CUBE_M32`。
 
@@ -84,7 +84,7 @@ D 按 A 的 M 布局分配。当 A 本身为 Shared 时，每个 PE 不超过 16
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-bias-constraints role=constraints -->
 ## 合法性、故障与原子性
 
-带有任何 Shared 源的指令束是协作式的。此时每个绑定都必须使用 `PE_MASK` 1111，group_M 必须在 1 到 128 之间，N 与 K 必须是 2 的幂。group_M 不超过 64 时每个 PE 拥有 16 行，否则拥有 32 行。起始行位于 group_M 或其之后的 PE 会消耗其 Shared 绑定并在没有 Local 效果的情况下结束。参见 [Shared CUBE 矩阵](../model/dispatch/shared-cube-matrix.md)。
+带有任何 Shared 源的指令束是协作式的。此时每个绑定都必须使用 `PE_MASK` 1111，group_M 必须在 1 到 128 之间，N 与 K 维度字段各自在 1 到 65535 之间且没有 2 的幂限制。Shared 描述符、容量以及压缩四位类型的 K 与 pitch 检查仍然适用。group_M 不超过 64 时每个 PE 拥有 16 行，否则拥有 32 行。起始行位于 group_M 或其之后的 PE 仍完成 Shared 就绪检查，但没有仅用于计算的 Local 效果。参见 [Shared CUBE 矩阵](../model/dispatch/shared-cube-matrix.md)。
 
 只有当对应的主操作数为 Shared 时，`TransA` 与 `TransB` 才合法。尚未发布的 Shared 源会使提交在不引发故障的情况下返回，指令束保持活动。
 
