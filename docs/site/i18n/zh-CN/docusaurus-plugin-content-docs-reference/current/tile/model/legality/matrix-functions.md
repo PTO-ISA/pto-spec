@@ -113,13 +113,15 @@ MX 输入是 FP16、BF16、E4M3、E5M2、E2M1X2、E1M2X2 或 HiF4X2 之一。FP1
 // be accepted only by Matrix-MX input roles; ordinary Matrix MUST not gain it.
 // Each Local scale MUST use one-block CUBE_M32 storage with a valid major no
 // greater than 32, while each Shared scale MUST remain an independently bound
-// ordinary Tile with the corresponding primary location.
-// For Shared Matrix-MX, ScaleA has semantic shape [M,G_A] and always uses
-// the K-group-major physical shape [M,G_A]; ScaleB has semantic shape
-// [G_B,N] and always uses the K-group-major physical shape [N,G_B].
-// TransA and TransB affect only the corresponding primary data operand;
-// each physical shape is exact while physical columns MAY use legal capacity
-// padding.
+// ordinary Tile with the corresponding primary location. Shared ScaleA MUST
+// have exact stored-valid shape [group_M,G_A] and ScaleB [N,G_B], where each G
+// equals ceil(K/group_size) for its own primary type. TransA and TransB affect
+// only their primary data operand; neither changes scale shape/indexing, and
+// each valid k selects floor(k/group_size). Cooperative Shared Matrix-MX MUST
+// accept positive bounded N/K without power-of-two restrictions. A supported
+// packed-four-bit Shared primary requires even K and even original parent
+// physical `columns` pitch under every transpose; M/group_M and N have no added
+// parity rule. Local CUBE rules and generic Shared legality remain unchanged.
 // NDF-END: PTO-CUBE-MATRIX-SCALE-001
 
 pure func TileMXInputTypeSupported(data_type: TileDataType) => boolean

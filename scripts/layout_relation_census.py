@@ -891,6 +891,63 @@ EXECUTION_MASK_HELPER_CLASSIFICATION = (
     "Local CUBE ExecutionMask support (Issues #277/#349, ADR-TILE-0008, "
     "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001)"
 )
+# Issue #374 changes cooperative Shared Matrix execution views while preserving
+# the portable Local layout inventory. The private right-primary view may use
+# ColumnMajor only as an internal dense representation for packed four-bit
+# data; published Shared descriptors remain RowMajor and Local operands keep
+# their existing layout domains. Keep the helper owners, call sites, and
+# internal layout footprint exact so this exception cannot widen operation
+# layouts or authorize an unrelated ColumnMajor source.
+ISSUE374_SHARED_MATRIX_CLASSIFICATION = (
+    "Issue #374 cooperative Shared Matrix logical views and packed-even rule "
+    "(ADR-CUBE-0007/0003/0009/0012)"
+)
+ISSUE374_SHARED_MATRIX_HELPER_DEFINITION_DELTAS = {
+    "BundleMatrixCooperativeInfosMatchDimensions": {
+        "before": [],
+        "after": [(
+            "asl/block/model/dispatch/matrix-scale.asl", set(),
+        )],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleTMATMULOperation", "asl/block/model/dispatch/cube-tmatmul.asl"),
+        },
+    },
+    "BundleMatrixCooperativeScalesLegal": {
+        "before": [],
+        "after": [(
+            "asl/block/model/dispatch/matrix-scale.asl", {"CUBE_M32", "RowMajor"},
+        )],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleTMATMULOperation", "asl/block/model/dispatch/cube-tmatmul.asl"),
+        },
+    },
+    "BundleMatrixPrivateSharedViewLegal": {
+        "before": [],
+        "after": [(
+            "asl/block/model/dispatch/shared-cube-matrix.asl",
+            {"ColumnMajor", "RowMajor"},
+        )],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleMatrixCooperativeInfosMatchDimensions",
+             "asl/block/model/dispatch/matrix-scale.asl"),
+            ("BundleMatrixCooperativeScalesLegal",
+             "asl/block/model/dispatch/matrix-scale.asl"),
+        },
+    },
+    "TileMatrixInfosMatchDimensions": {
+        "before": [(
+            "asl/tile/model/legality/matrix-shape.asl", set(),
+        )],
+        "after": [],
+        "before_callers": {
+            ("ExecuteBundleTMATMULOperation", "asl/block/model/dispatch/cube-tmatmul.asl"),
+        },
+        "after_callers": set(),
+    },
+}
 # Issue #207 adds the selected-CUBE row-expansion byte-offset selector. Keep
 # these helpers under their own classification so the census does not attribute
 # their provenance to the separate ExecutionMask decision above.
@@ -2447,6 +2504,102 @@ def _issue371_b64_closure(
     return errors
 
 
+def _issue374_shared_matrix_closure(
+    after_defs: dict[str, list[dict[str, Any]]],
+) -> list[str]:
+    """Keep ColumnMajor private to packed Shared-B canonical read views."""
+    if "BundleMatrixPrivateSharedViewLegal" not in after_defs:
+        return []
+    errors: list[str] = []
+    shared_path = "asl/block/model/dispatch/shared-cube-matrix.asl"
+    scale_path = "asl/block/model/dispatch/matrix-scale.asl"
+
+    def body(name: str, path: str) -> str:
+        rows = after_defs.get(name, [])
+        if len(rows) != 1 or rows[0].get("path") != path:
+            errors.append(f"Issue #374 Shared Matrix helper owner mismatch: {name}")
+            return ""
+        return rows[0].get("body", "")
+
+    private_view = body("BundleMatrixPrivateSharedViewLegal", shared_path)
+    compact_view = re.sub(r"\s+", " ", private_view)
+    if not (
+        "tile.layout == TileLayout_RowMajor || "
+        "(allow_column_major_packed && tile.layout == TileLayout_ColumnMajor && "
+        "TileDataTypeIsFourBit(data_type))" in compact_view and
+        "tile.data_type == data_type" in compact_view and
+        "SharedTileCapacityIsLegal(tile.capacity_bytes)" in compact_view
+    ):
+        errors.append(
+            "Issue #374 private ColumnMajor view is not guarded by packed-type and role permission"
+        )
+    if set(LAYOUT_RE.findall(private_view)) != {"RowMajor", "ColumnMajor"}:
+        errors.append(
+            "Issue #374 private Shared view layout footprint is not exactly RowMajor/ColumnMajor"
+        )
+
+    expected_calls = {
+        ("BundleMatrixCooperativeInfosMatchDimensions", scale_path,
+         "left, m, k, left_type, FALSE"),
+        ("BundleMatrixCooperativeInfosMatchDimensions", scale_path,
+         "right, k, n, right_type, TRUE"),
+        ("BundleMatrixCooperativeScalesLegal", scale_path,
+         "left_scale, left.valid_rows as integer {1..65535}, left_groups, left_scale_type, FALSE"),
+        ("BundleMatrixCooperativeScalesLegal", scale_path,
+         "right_scale, right_groups, right.valid_columns as integer {1..65535}, right_scale_type, FALSE"),
+    }
+    actual_calls = {
+        (name, row["path"], re.sub(r"\s+", " ", args).strip())
+        for name, rows in after_defs.items()
+        for row in rows
+        for call, args in row["calls"]
+        if call == "BundleMatrixPrivateSharedViewLegal"
+    }
+    if actual_calls != expected_calls:
+        errors.append(
+            "Issue #374 private ColumnMajor permission escaped the packed right-primary call site"
+        )
+
+    shared_source = body("BundleMatrixSharedSourceSchemaLegal", shared_path)
+    compact_source = re.sub(r"\s+", " ", shared_source)
+    if not (
+        "shared.tile.layout == TileLayout_RowMajor" in compact_source and
+        "TileLayout_ColumnMajor" not in shared_source and
+        "!TileDataTypeIsFourBit(data_type) || shared.tile.columns MOD 2 == 0" in compact_source
+    ):
+        errors.append(
+            "Issue #374 original Shared descriptors must remain RowMajor with packed even pitch"
+        )
+
+    right_materializer = body("MaterializeBundleSharedMatrixPrimary", shared_path)
+    compact_right = re.sub(r"\s+", " ", right_materializer)
+    if not (
+        "var tile = source;" in compact_right and
+        "tile.layout = if TileDataTypeIsFourBit(data_type) then "
+        "TileLayout_ColumnMajor else TileLayout_RowMajor;" in compact_right
+    ):
+        errors.append(
+            "Issue #374 private ColumnMajor storage is not limited to right-primary four-bit views"
+        )
+
+    left_materializer = body("MaterializeBundleSharedMatrixLeftPrimary", shared_path)
+    if "tile.layout = TileLayout_RowMajor;" not in left_materializer:
+        errors.append("Issue #374 Shared left-primary private layout changed")
+
+    matrix_read = body(
+        "MatrixReadLogicalElement", "asl/tile/model/execution/matrix-scale.asl"
+    )
+    compact_read = re.sub(r"\s+", " ", matrix_read)
+    if not (
+        "TileLogicalLinearIndex(tile, row, column)" in compact_read and
+        "TileReadLogicalElement(tile, element)" in compact_read
+    ):
+        errors.append(
+            "Issue #374 Matrix coordinate reads must use typed logical indexing"
+        )
+    return errors
+
+
 def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: dict[str, list[dict[str, Any]]], after_defs: dict[str, list[dict[str, Any]]], authorized_helper_names: set[str], allow_texpdif_changes: bool = False, allow_tlea_changes: bool = False) -> tuple[list[dict[str, Any]], list[str]]:
     rows: list[dict[str, Any]] = []
     errors: list[str] = []
@@ -2550,8 +2703,16 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                     "owner_decision": ISSUE356_REDUCTION_CLASSIFICATION,
                 })
                 continue
+            helper_spec = None
             if name in ISSUE360_GM_OBLIGATION_HELPERS:
-                spec = ISSUE360_GM_OBLIGATION_HELPERS[name]
+                helper_spec = ISSUE360_GM_OBLIGATION_HELPERS[name]
+                helper_classification = ISSUE360_GM_OBLIGATION_HELPER_CLASSIFICATION
+                helper_issue = "Issue #360 GM-obligation"
+            elif name in ISSUE374_SHARED_MATRIX_HELPER_DEFINITION_DELTAS:
+                helper_spec = ISSUE374_SHARED_MATRIX_HELPER_DEFINITION_DELTAS[name]
+                helper_classification = ISSUE374_SHARED_MATRIX_CLASSIFICATION
+                helper_issue = "Issue #374 Shared Matrix"
+            if helper_spec is not None:
                 old_shape = sorted(
                     (row["path"], tuple(sorted(row["layouts"])))
                     for row in old_defs
@@ -2562,33 +2723,34 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 )
                 expected_old_shape = sorted(
                     (path, tuple(sorted(layouts)))
-                    for path, layouts in spec["before"]
+                    for path, layouts in helper_spec["before"]
                 )
                 expected_new_shape = sorted(
                     (path, tuple(sorted(layouts)))
-                    for path, layouts in spec["after"]
+                    for path, layouts in helper_spec["after"]
                 )
                 before_callers = _direct_callers(before_defs, name)
                 after_callers = _direct_callers(after_defs, name)
                 valid = (
                     old_shape == expected_old_shape and
                     new_shape == expected_new_shape and
-                    before_callers == spec["before_callers"] and
-                    after_callers == spec["after_callers"]
+                    before_callers == helper_spec["before_callers"] and
+                    after_callers == helper_spec["after_callers"]
                 )
                 if not valid:
                     errors.append(
-                        f"Issue #360 GM-obligation helper owner/layout/caller closure mismatch: {name}"
+                        f"{helper_issue} helper owner/layout/caller closure mismatch: {name}"
                     )
                 rows.append({
                     "name": name,
-                    "classification": ISSUE360_GM_OBLIGATION_HELPER_CLASSIFICATION
-                        if valid else "UNCLASSIFIED",
+                    "classification": (
+                        helper_classification if valid else "UNCLASSIFIED"
+                    ),
                     "before": old_defs,
                     "after": new_defs,
                     "before_callers": sorted(before_callers),
                     "after_callers": sorted(after_callers),
-                    "owner_decision": ISSUE360_GM_OBLIGATION_HELPER_CLASSIFICATION,
+                    "owner_decision": helper_classification,
                 })
                 continue
             if name in EXECUTION_MASK_HELPER_DEFINITION_DELTAS:
@@ -3036,6 +3198,7 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
     after_reach, e, after_defs = _helper_snapshot(after_map, after_meta)
     errors.extend(e)
     errors.extend(_issue371_b64_closure(after_map, after_defs))
+    errors.extend(_issue374_shared_matrix_closure(after_defs))
     baseline_fixture, fixture_errors, fixture_payload = _load_baseline_fixture(before_inventory, baseline)
     errors.extend(fixture_errors)
     old_rows, new_rows = _operation_key_rows(before_inventory), _operation_key_rows(after_inventory)
@@ -3699,6 +3862,126 @@ def _execution_mask_support_mutation_canaries() -> None:
         raise AssertionError("ExecutionMask PredicateCell layout expansion did not fail closed")
 
 
+def _issue374_shared_matrix_mutation_canaries() -> None:
+    """Keep Issue #374's packed ColumnMajor read view private and exact."""
+    paths = source_paths(BASELINE_OBJECT, "working-tree")
+    baseline = _ref_texts(BASELINE_OBJECT, paths)
+    candidate = _ref_texts("working-tree", paths)
+    result = _census_texts(
+        baseline, candidate, BASELINE_OBJECT,
+        "real-issue374-shared-matrix-candidate", enforce_closure=True,
+    )
+    classified = {
+        row["name"] for row in result["common_helper_deltas"]
+        if row.get("classification") == ISSUE374_SHARED_MATRIX_CLASSIFICATION
+    }
+    expected = set(ISSUE374_SHARED_MATRIX_HELPER_DEFINITION_DELTAS)
+    matrix_mnemonics = {
+        "TMATMUL", "TMATMUL_ACC", "TMATMUL_BIAS", "TMATMUL_MX",
+        "TMATMUL_MX_ACC", "TMATMUL_MX_BIAS", "TGEMV", "TGEMV_ACC",
+        "TGEMV_BIAS", "TGEMV_MX", "TGEMV_MX_ACC", "TGEMV_MX_BIAS",
+    }
+    has_portable_column_major = any(
+        row["mnemonic"] in matrix_mnemonics and
+        any("ColumnMajor" in layouts for layouts in row["L1"].values())
+        for row in result["operation_signatures"]
+    )
+    if not result["pass"] or classified != expected or has_portable_column_major:
+        raise AssertionError(
+            "Issue #374 Shared Matrix owner/layout closure is incomplete: "
+            + "; ".join(result["errors"][:12])
+        )
+
+    shared_path = "asl/block/model/dispatch/shared-cube-matrix.asl"
+    scale_path = "asl/block/model/dispatch/matrix-scale.asl"
+    cube_path = "asl/block/model/dispatch/cube-tmatmul.asl"
+
+    packed_guard = (
+        "(allow_column_major_packed &&\n"
+        "          tile.layout == TileLayout_ColumnMajor &&\n"
+        "          TileDataTypeIsFourBit(data_type))"
+    )
+    widened = dict(candidate)
+    if packed_guard not in candidate.get(shared_path, ""):
+        raise AssertionError("Issue #374 packed private-view guard canary source is missing")
+    widened[shared_path] = candidate[shared_path].replace(
+        packed_guard,
+        "(tile.layout == TileLayout_ColumnMajor)",
+        1,
+    )
+    result = _census_texts(
+        baseline, widened, BASELINE_OBJECT,
+        "real-mutated-issue374-private-column-major-guard", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #374 private ColumnMajor view is not guarded" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #374 private ColumnMajor type/role widening did not fail closed")
+
+    wrong_owner = dict(candidate)
+    private_defs = _function_defs(candidate[shared_path], shared_path)
+    private_body = next(
+        (row["body"] for row in private_defs
+         if row["name"] == "BundleMatrixPrivateSharedViewLegal"),
+        "",
+    )
+    if not private_body:
+        raise AssertionError("Issue #374 private-view owner canary source is missing")
+    wrong_owner[scale_path] = wrong_owner[scale_path] + "\n\n" + private_body + "\n"
+    result = _census_texts(
+        baseline, wrong_owner, BASELINE_OBJECT,
+        "real-mutated-issue374-private-view-duplicate-owner", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #374 Shared Matrix helper owner/layout/caller closure mismatch: "
+        "BundleMatrixPrivateSharedViewLegal" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #374 private-view relocation/duplication did not fail closed")
+
+    extra_caller = dict(candidate)
+    anchor = "    let shape_legal = if shared_count == 0 then"
+    probe = (
+        "    let issue374_private_view_probe = BundleMatrixPrivateSharedViewLegal("
+        "left, m, k, left_type, TRUE);\n"
+    )
+    if anchor not in candidate.get(cube_path, ""):
+        raise AssertionError("Issue #374 private-view caller canary source is missing")
+    extra_caller[cube_path] = candidate[cube_path].replace(anchor, probe + anchor, 1)
+    result = _census_texts(
+        baseline, extra_caller, BASELINE_OBJECT,
+        "real-mutated-issue374-private-view-extra-caller", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #374 private ColumnMajor permission escaped" in error or
+        "Issue #374 Shared Matrix helper owner/layout/caller closure mismatch: "
+        "BundleMatrixPrivateSharedViewLegal" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #374 private-view caller expansion did not fail closed")
+
+    shared_source_widened = dict(candidate)
+    row_major = "shared.tile.layout == TileLayout_RowMajor"
+    if row_major not in candidate.get(shared_path, ""):
+        raise AssertionError("Issue #374 source-layout canary source is missing")
+    shared_source_widened[shared_path] = candidate[shared_path].replace(
+        row_major,
+        "(shared.tile.layout == TileLayout_RowMajor || "
+        "shared.tile.layout == TileLayout_ColumnMajor)",
+        1,
+    )
+    result = _census_texts(
+        baseline, shared_source_widened, BASELINE_OBJECT,
+        "real-mutated-issue374-original-shared-layout", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #374 original Shared descriptors must remain RowMajor" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #374 source-layout widening did not fail closed")
+
+
 def _issue371_b64_mutation_canaries() -> None:
     """Prove the M32-only double-CELL classification fails closed."""
     paths = source_paths(BASELINE_OBJECT, "working-tree")
@@ -4074,10 +4357,11 @@ def self_test() -> None:
         raise AssertionError("missing inventory owner canary failed closed")
     _real_relation_mutation_canaries()
     _execution_mask_support_mutation_canaries()
+    _issue374_shared_matrix_mutation_canaries()
     _issue371_b64_mutation_canaries()
     _issue360_gm_obligation_helper_mutation_canaries()
     _issue356_reduction_source_mutation_canaries()
-    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, Issue #371 M32 b64 double-CELL, Issue #360/#341 GM and source-lifetime helper owner/caller/layout, and bounded reduction-source mutations rejected")
+    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, Issue #371 M32 b64 double-CELL, Issue #360/#341 GM and source-lifetime helper owner/caller/layout, Issue #374 packed private Shared view, and bounded reduction-source mutations rejected")
 
 
 def main() -> int:

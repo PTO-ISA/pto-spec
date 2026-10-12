@@ -266,3 +266,31 @@ its payload is broadcast by logical output column. Vector quant and
 vector ReLU/PReLU parameters use `CUBE_N8/U64` with logical `[1,N]`; their
 carrier bits and numeric legality are unchanged. This amendment has required
 release impact and is owned by the ASL/NDF clauses named in the front matter.
+
+## Amendment — 2026-10-10 (Issue #374)
+
+Cooperative Shared TMATMUL-family forms no longer have a uniform power-of-two
+requirement for `N` and `K`; `group_M` is 1..128 and `N/K` are positive values
+through 65535, subject to each original Shared descriptor, Local CUBE operand,
+capacity, and destination rule. Local-only TMATMUL and Local-only TGEMV keep
+their existing positive-dimension and physical descriptor domains. Issue #374
+also assigns the packed Shared-primary parity restriction to ADR-CUBE-0007;
+this family inventory does not widen generic Shared, TGEMV, or arithmetic
+semantics.
+
+
+Current normative details are owned by `asl/block/model/dispatch/cube-tmatmul.asl`
+(`PTO-CUBE-GROUP-M-DISTRIBUTION-001`),
+`asl/block/model/dispatch/shared-cube-matrix.asl`, and
+`asl/block/model/dispatch/matrix-scale.asl`; this amendment records decision
+history only.
+
+中文：协作式 Shared TMATMUL 不再对 `N/K` 施加统一幂二限制；`group_M` 为 1..128，
+`N/K` 为 1..65535 内正值，并继续分别受原始 Shared 描述符、Local CUBE 操作数、
+容量和目的布局约束。Local-only TMATMUL 与 TGEMV 保留原有正维度及物理描述符范围。
+Issue #374 的 Shared packed 主操作数奇偶约束归 ADR-CUBE-0007，本家族记录不扩展通用
+Shared、TGEMV 或算术语义。
+
+当前规范细节以 `asl/block/model/dispatch/cube-tmatmul.asl`
+（`PTO-CUBE-GROUP-M-DISTRIBUTION-001`）、`asl/block/model/dispatch/shared-cube-matrix.asl`
+和 `asl/block/model/dispatch/matrix-scale.asl` 为准；本修订仅记录决策历史。

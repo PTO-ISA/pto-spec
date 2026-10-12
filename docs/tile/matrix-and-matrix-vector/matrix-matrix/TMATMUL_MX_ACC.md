@@ -21,7 +21,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `TMATMUL_MX_ACC` multiplies a left matrix A with M rows and K columns by a right matrix B with K rows and N columns. It publishes the M x N result D in a newly allocated Local CUBE Tile.
 
-The product is added to an explicit accumulator Tile C of the same shape, and C itself is not changed. Each input may use a narrow MX format; such a side carries a per-group scale Tile.
+The product is added to an explicit accumulator Tile C of the same shape. The operation does not write C's value or descriptor; C's payload lifetime is selected by its `B.IOT` binding. Each input may use a narrow MX format; such a side carries a per-group scale Tile.
 
 Design point: `TMATMUL_MX_ACC` is selected by `BSTART.TMATMULMX.ACC` (CUBE Function 6) and has no standalone opcode. All twelve CUBE matrix instructions share one bundle handler; the function number selects whether a bias, an accumulator, MX scales, and the TGEMV rules (M = 1 and Local-only operands) apply, and it also gates CScale, which only the two ACC forms accept. The [matrix function table](../../model/legality/matrix-functions.md) lists every form.
 
@@ -62,9 +62,9 @@ AType and BType are chosen independently from FP16, BF16, E4M3, E5M2, E2M1X2, E1
 
 Design point: a side carries a scale exactly when it needs one. FP16 and BF16 need none, so a form with an FP16 left side and an E4M3 right side binds only the right scale, and a form with two FP16 sides takes the FP32 rounding path described above.
 
-Design point: mnemonic clause `PTO-TMATMUL-MX-ACC-CONTRACT-001` and dispatch clause `PTO-CUBE-ACCUMULATOR-OUTPUT-001` require C's encoded relative selector to differ from D's zero-extended `DstTile` hand before rename. The current executable model resolves C first, then compares its physical `TileIndex` with D's destination hand (`DstTile MOD 4`). Issue #367 tracks this conflict. C is read into a private copy before D is written and stays unchanged after success or rejection, but an accumulating chain is executable only when the resolved C index passes the current comparison.
+Design point: mnemonic clause `PTO-TMATMUL-MX-ACC-CONTRACT-001` and dispatch clause `PTO-CUBE-ACCUMULATOR-OUTPUT-001` require C's encoded relative selector to differ from D's zero-extended `DstTile` hand before rename. The current executable model resolves C first, then compares its physical `TileIndex` with D's destination hand (`DstTile MOD 4`). Issue #367 tracks this conflict. C is read into a private copy before D is written; its value and descriptor are not modified, while its payload lifetime follows its [B.IOT](../../../block/operands/B.IOT.md) source binding and rejection does not complete last-use. An accumulating chain is executable only when the resolved C index passes the current comparison.
 
-Cooperative execution: `B.IOS` may replace the complete right group (B and its scale when one is needed), or both groups, with published Shared Tiles. LB0 then holds the Core-total group M, from 1 to 128, N and K must be powers of two, and every binding needs `PE_MASK` 1111. Each PE takes 16 rows when group M is at most 64 and 32 rows otherwise; PE i starts at row i times that count, and a PE with no rows allocates nothing. [Shared CUBE matrix](../../../block/model/dispatch/shared-cube-matrix.md) defines the split.
+Cooperative execution: `B.IOS` may replace the complete right group (B and its scale when one is needed), or both groups, with published Shared Tiles. LB0 then holds the Core-total group M from 1 to 128; the N and K dimension fields may each range from 1 to 65535 without a power-of-two restriction, and every binding needs `PE_MASK` 1111. Shared descriptor, capacity, and packed four-bit K and pitch checks still apply. Each PE takes 16 rows when group M is at most 64 and 32 rows otherwise; PE i starts at row i times that count, and a PE with no rows allocates nothing. [Shared CUBE matrix](../../../block/model/dispatch/shared-cube-matrix.md) defines the split.
 
 A Shared A is stored [group M, K], or [K, group M] with `TransA`. A Shared B is stored [N, K], or [K, N] with `TransB`. Each transpose control is legal only for a Shared primary. C, CScale, and every destination stay Local.
 
@@ -73,13 +73,13 @@ A Shared A is stored [group M, K], or [K, group M] with `TransA`. A Shared B is 
 
 Complete preflight comes first: types, bindings, dimensions, masks, Shared readiness and schemas, Local descriptors, aliases, the M layout, and post-processing sources. Only then is the destination group allocated and are the sources read. [CUBE TMATMUL dispatch](../../../block/model/dispatch/cube-tmatmul.md) lists the stages.
 
-D and any enabled RowMaxOut and GroupMaxOut publish as one group. D is defined only in its valid region; its padding stays undefined, because no `PadValue` is applied. A rejected bundle publishes nothing, and every source persists unchanged.
+D and any enabled RowMaxOut and GroupMaxOut publish as one group. D is defined only in its valid region; its padding stays undefined, because no `PadValue` is applied. A rejected bundle publishes nothing and does not complete source last-use. Matrix computation does not modify source values or descriptors; payload retention and retirement follow the bound [B.IOT](../../../block/operands/B.IOT.md) and [B.IOS](../../../block/operands/B.IOS.md) reuse and last-use contracts.
 
 Design point: allocation happens after every rule is checked and before the first source snapshot. A legality fault therefore leaves no allocated destination, and a fault after allocation rolls the destination group back.
 
 The operation has no global-memory effect. CScale records the flags of each scaled C element as it computes them. Post-processing ORs the flags of all its outputs and records them at commit.
 
-A cooperative bundle waits, without a fault, until every Shared source is whole-ready and published. Successful Shared reads leave every Shared descriptor, payload, and lifetime unchanged.
+A cooperative bundle waits, without a fault, until every Shared source is whole-ready and published. A successful read does not modify a Shared value or descriptor; its payload lifetime follows the bound [B.IOS](../../../block/operands/B.IOS.md) reuse or last-use form.
 
 <!-- PTO-READER-BLOCK: tile-tmatmul-mx-acc-constraints role=constraints -->
 ## Legality and fault boundary
@@ -233,14 +233,17 @@ end;
 - Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.
 - B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.
 - For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D.
+- Cooperative Shared Matrix forms accept group_M in 1..128 and N/K in 1..65535 without power-of-two restrictions. Validate Local CUBE roles with existing descriptor and capacity rules; validate Shared roles against the original legal Shared descriptor and physical pitch. Internal read views preserve original pitch and use typed logical element/carrier/lane reads without a transient Local descriptor or 64 KiB capacity limit.
+- If any supported four-bit Shared primary is present (E2M1X2, E1M2X2, HiF4X2 for Matrix-MX only, S4X2, or U4X2), K and each such original parent physical columns pitch are even under every transpose combination. Valid M/group_M and N gain no parity restriction. This does not affect Local-only TMATMUL, TGEMV, generic Shared allocation, or Local packed A when Shared B is not packed.
+- Shared Matrix-MX ScaleA has exact stored-valid shape [group_M,G_A] and ScaleB [N,G_B], with each G equal to ceil(K/group_size) for its side (group-32 E8M0 or group-64 U32), independent of TransA/TransB; valid k selects floor(k/group_size).
 
 ## State effects
 
 - Multiply scaled matrices and accumulate into the supplied accumulator Tile.
 - After complete preflight, execute TMATMUL_MX_ACC with the operand bindings listed above; destination definedness changes only as specified by that handler.
 - For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.
-- Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.
-- C is snapshotted before multiplication and remains descriptor-and-payload unchanged after success or rejection.
+- Matrix computation does not modify Shared source values or descriptors; payload retention and retirement follow the bound B.IOS reuse and last-use contract.
+- C is a distinct read-only accumulator input snapshotted before multiplication; its payload lifetime follows its B.IOT source binding, and rejection does not complete last-use.
 - Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable.
 
 ## Memory effects and ordering
@@ -252,7 +255,7 @@ end;
 ### Ordering
 
 - Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.
-- D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.
+- D and every enabled reduction output publish as one atomic group; rejection publishes none and does not complete source last-use. Matrix computation leaves source values and descriptors unmodified; payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.
 - Transparent-cache hints occur only after complete preflight and cannot alter source snapshots, D allocation or publication, faults, or numeric status.
 
 ## Exceptions

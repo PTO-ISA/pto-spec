@@ -59,7 +59,7 @@ AType 是 `BSTART` 数据类型。BType 是 `B.DATR` 的 `DataType`，省略 `B.
 
 AType 与 BType 必须都是同一数值类别的普通矩阵类型：同为浮点、同为有符号整数或同为无符号整数。HiF4X2 不是普通矩阵类型；只有 MX 形式接受它。
 
-协作执行：`B.IOS` 可以用已发布的 Shared Tile 替换完整的右组（B），或替换两组。此时 LB0 表示整个 Core 的 group M，取值 1 到 128，N 与 K 必须是 2 的幂，且每个绑定都需要 `PE_MASK` 1111。group M 不超过 64 时每个 PE 负责 16 行，否则负责 32 行；PE i 从第 i 乘以该行数的行开始，没有行的 PE 不分配任何 Tile。[Shared CUBE 矩阵](../../../block/model/dispatch/shared-cube-matrix.md)定义了该划分。
+协作执行：`B.IOS` 可以用已发布的 Shared Tile 替换完整的右组（B），或替换两组。此时 LB0 表示整个 Core 的 group M，取值 1 到 128；N 与 K 维度字段各自在 1 到 65535 之间且没有 2 的幂限制，每个绑定都需要 `PE_MASK` 1111。Shared 描述符、容量以及压缩四位类型的 K 与 pitch 检查仍然适用。group M 不超过 64 时每个 PE 负责 16 行，否则负责 32 行；PE i 从第 i 乘以该行数的行开始，没有行的 PE 不分配任何 Tile。[Shared CUBE 矩阵](../../../block/model/dispatch/shared-cube-matrix.md)定义了该划分。
 
 Shared A 以 [group M, K] 存储，设置 `TransA` 时以 [K, group M] 存储。Shared B 以 [N, K] 存储，设置 `TransB` 时以 [K, N] 存储。每个转置控制只对 Shared 主操作数合法。偏置以及所有目标保持 Local。
 
@@ -68,13 +68,13 @@ Shared A 以 [group M, K] 存储，设置 `TransA` 时以 [K, group M] 存储。
 
 首先进行完整预检：类型、绑定、维度、掩码、Shared 就绪与模式、Local 描述符、别名、M 布局以及后处理源。只有这之后才分配目标组并读取源。[CUBE TMATMUL 分派](../../../block/model/dispatch/cube-tmatmul.md)列出了各个阶段。
 
-D 与任何已启用的 RowMaxOut 和 GroupMaxOut 作为一组发布。D 只在其有效区域内已定义；由于不应用任何 `PadValue`，其填充保持未定义。被拒绝的指令束不发布任何内容，所有源保持不变。
+D 与任何已启用的 RowMaxOut 和 GroupMaxOut 作为一组发布。D 只在其有效区域内已定义；由于不应用任何 `PadValue`，其填充保持未定义。被拒绝的指令束不发布任何内容，也不会完成源的最后使用。矩阵计算不修改源值或描述符；载荷保留与回收遵循绑定的 [B.IOT](../../../block/operands/B.IOT.md) 和 [B.IOS](../../../block/operands/B.IOS.md) 复用与最后使用契约。
 
 设计要点：分配发生在所有规则检查完成之后、第一次源快照之前。因此合法性故障不会留下已分配的目标，而分配之后发生的故障会回滚整个目标组。
 
 该操作没有全局内存效果。后处理是数值状态的唯一来源；它把所有输出的标志按位或，并在提交时记录。
 
-协作指令束会在不产生故障的情况下等待，直到每个 Shared 源都整体就绪并已发布。成功的 Shared 读取不改变任何 Shared 描述符、载荷与生命周期。
+协作指令束会在不产生故障的情况下等待，直到每个 Shared 源都整体就绪并已发布。成功的读取不修改 Shared 值或描述符；其载荷生命周期遵循绑定的 [B.IOS](../../../block/operands/B.IOS.md) 复用或最后使用形式。
 
 <!-- PTO-READER-BLOCK: tile-tmatmul-bias-constraints role=constraints -->
 ## 合法性与故障边界
@@ -219,13 +219,15 @@ end;
 - Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.
 - B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.
 - For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D.
+- Cooperative Shared Matrix forms accept group_M in 1..128 and N/K in 1..65535 without power-of-two restrictions. Validate Local CUBE roles with existing descriptor and capacity rules; validate Shared roles against the original legal Shared descriptor and physical pitch. Internal read views preserve original pitch and use typed logical element/carrier/lane reads without a transient Local descriptor or 64 KiB capacity limit.
+- If any supported four-bit Shared primary is present (E2M1X2, E1M2X2, HiF4X2 for Matrix-MX only, S4X2, or U4X2), K and each such original parent physical columns pitch are even under every transpose combination. Valid M/group_M and N gain no parity restriction. This does not affect Local-only TMATMUL, TGEMV, generic Shared allocation, or Local packed A when Shared B is not packed.
 
 ## State effects
 
 - Compute A[M x K] times B[K x N], then add one Local CUBE_N8 1xN private-result Bias into a new Local destination.
 - After complete preflight, execute TMATMUL_BIAS with the operand bindings listed above; destination definedness changes only as specified by that handler.
 - For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.
-- Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.
+- Matrix computation does not modify Shared source values or descriptors; payload retention and retirement follow the bound B.IOS reuse and last-use contract.
 - Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable.
 
 ## Memory effects and ordering
@@ -237,7 +239,7 @@ end;
 ### Ordering
 
 - Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.
-- D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.
+- D and every enabled reduction output publish as one atomic group; rejection publishes none and does not complete source last-use. Matrix computation leaves source values and descriptors unmodified; payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.
 - Transparent-cache hints occur only after complete preflight and cannot alter source snapshots, D allocation or publication, faults, or numeric status.
 
 ## Exceptions

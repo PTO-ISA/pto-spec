@@ -359,3 +359,25 @@ exact-valid-shape、capacity-padding 与数值规则保持不变。对应 transp
 
 Local scale layout、Local transpose 非法性、Shared primary A/B 映射、encoding、
 opcode allocation 与 Matrix-MX operand order 均不变。
+
+
+## 2026-10-10 accepted amendment: non-power Shared MX scale groups (Issue #374)
+
+For the cooperative Shared Matrix-MX shapes accepted by Issue #374, each
+scaled side computes its group count independently as
+`G=ceil(K/group_size)`: group-32 E8M0 uses `ceil(K/32)` and group-64 U32 uses
+`ceil(K/64)`. Shared ScaleA has exact stored-valid shape `[group_M,G_A]`;
+Shared ScaleB has `[N,G_B]`, regardless of `TransA` or `TransB`. Thus K values
+that are not multiples of a group size may produce G values such as 3, 6, or 7,
+and K=194 produces G7/G4 for mixed group-32/group-64 sides. Valid `k` selects
+only `floor(k/group_size)`. This amendment closes scale shape/address legality
+for non-power dimensions; it does not change scale values, arithmetic,
+rounding, special values, carriers, Local scale geometry, or CScale behavior.
+
+中文：Issue #374 接受的 cooperative Shared Matrix-MX 形状中，每个需 scale 的侧分别按
+`G=ceil(K/group_size)` 计算组数：group-32 E8M0 使用 `ceil(K/32)`，group-64 U32 使用
+`ceil(K/64)`。Shared ScaleA 的 exact stored-valid 形状为 `[group_M,G_A]`，ScaleB 为
+`[N,G_B]`，不受 `TransA/TransB` 影响。因此 K 不整除 group size 时可得到 G=3、6、7；
+K=194 的 mixed group-32/group-64 得到 G7/G4。有效 `k` 仅选择 `floor(k/group_size)`。本修订
+闭合非幂二维度的 scale 形状/地址合法性，不改变 scale 数值、算术、舍入、特殊值、carrier、
+Local scale 几何或 CScale 行为。

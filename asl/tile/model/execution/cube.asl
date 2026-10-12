@@ -65,8 +65,6 @@ begin
                    c_scale,
                    left_tile.valid_rows as integer {1..65535});
     end;
-    let left_payload = left_tile.payload;
-    let right_payload = right_tile.payload;
     var result: TileInfo = destination_tile;
     result.contents_defined = FALSE;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
@@ -87,12 +85,13 @@ begin
                 row as integer {0..65535}, column as integer {0..65535},
                 c_scale, c_scale_present);
             for inner = 0 to left_tile.valid_columns - 1 looplimit 65536 do
-                let left_element = TileStorageIndex(left_tile,
-                    row as integer {0..65535}, inner as integer {0..65535});
-                let right_element = TileStorageIndex(right_tile,
-                    inner as integer {0..65535}, column as integer {0..65535});
                 sum = TileProfileMatrixAccumulate(sum,
-                    left_payload[[left_element]], right_payload[[right_element]],
+                    MatrixReadLogicalElement(left_tile,
+                        row as integer {0..65535},
+                        inner as integer {0..65535}),
+                    MatrixReadLogicalElement(right_tile,
+                        inner as integer {0..65535},
+                        column as integer {0..65535}),
                     accumulator_data_type, left_tile.data_type,
                     right_tile.data_type, control);
             end;
@@ -188,10 +187,6 @@ begin
                    c_scale,
                    left_tile.valid_rows as integer {1..65535});
     end;
-    let left_payload = left_tile.payload;
-    let right_payload = right_tile.payload;
-    let left_scale_payload = left_scale_tile.payload;
-    let right_scale_payload = right_scale_tile.payload;
     var result: TileInfo = destination_tile;
     result.contents_defined = FALSE;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
@@ -207,10 +202,6 @@ begin
                 row as integer {0..65535}, column as integer {0..65535},
                 c_scale, c_scale_present);
             for inner = 0 to left_tile.valid_columns - 1 looplimit 65536 do
-                let left_element = TileStorageIndex(left_tile,
-                    row as integer {0..65535}, inner as integer {0..65535});
-                let right_element = TileStorageIndex(right_tile,
-                    inner as integer {0..65535}, column as integer {0..65535});
                 let left_scale_element = if left_scale_present then
                     MatrixLeftScaleElement(
                         left_scale_tile, left_tile.data_type,
@@ -226,16 +217,22 @@ begin
                 else
                     0;
                 let left_scale_value = if left_scale_present then
-                    left_scale_payload[[left_scale_element]]
+                    TileReadLogicalElement(
+                        left_scale_tile, left_scale_element)
                 else
                     Zeros{PTO_XLEN};
                 let right_scale_value = if right_scale_present then
-                    right_scale_payload[[right_scale_element]]
+                    TileReadLogicalElement(
+                        right_scale_tile, right_scale_element)
                 else
                     Zeros{PTO_XLEN};
                 sum = TileProfileMatrixScaledAccumulate(
-                    sum, left_payload[[left_element]],
-                    right_payload[[right_element]],
+                    sum, MatrixReadLogicalElement(left_tile,
+                            row as integer {0..65535},
+                            inner as integer {0..65535}),
+                    MatrixReadLogicalElement(right_tile,
+                            inner as integer {0..65535},
+                            column as integer {0..65535}),
                     left_scale_value, right_scale_value,
                     left_scale_present, right_scale_present,
                     accumulator_data_type, left_tile.data_type,

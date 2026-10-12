@@ -67,7 +67,7 @@ Design point: a scale Tile is present exactly when its side needs one. `FP16` an
 
 The start command changes only bundle state. It records a fallthrough `BARG` of kind `TileMatrix` and installs the descriptor; no Tile, Shared Tile, or memory changes.
 
-On success, D and every enabled RowMaxOut and GroupMaxOut are published as one atomic group. A rejected bundle publishes none of them. No source is consumed or modified, and a successful read leaves every Shared source descriptor, publication state, and payload unchanged.
+On success, D and every enabled RowMaxOut and GroupMaxOut are published as one atomic group. A rejected bundle publishes none of them and does not complete source last-use. Matrix computation does not modify source values or descriptors; payload retention and retirement follow the bound [B.IOT](../operands/B.IOT.md) and [B.IOS](../operands/B.IOS.md) reuse and last-use contracts.
 
 D is allocated in A's M layout. When A itself is Shared, the layout is `CUBE_M16` for up to 16 rows per PE and `CUBE_M32` for up to 32.
 
@@ -82,7 +82,7 @@ The bundle has no global-memory effect.
 <!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-constraints role=constraints -->
 ## Legality, faults, and atomicity
 
-A bundle with any Shared source is cooperative. Every binding must then use `PE_MASK` 1111, group_M must be 1 to 128, and N and K must be powers of two. Each PE owns 16 rows when group_M is at most 64 and 32 rows otherwise. A PE whose rows start at or beyond group_M consumes its Shared bindings and finishes with no Local effect. See [Shared CUBE matrix](../model/dispatch/shared-cube-matrix.md).
+A bundle with any Shared source is cooperative. Every binding must then use `PE_MASK` 1111, group_M must be 1 to 128, and the N and K dimension fields may each range from 1 to 65535 without a power-of-two restriction. Shared descriptor, capacity, and packed four-bit K and pitch checks still apply. Each PE owns 16 rows when group_M is at most 64 and 32 rows otherwise. A PE whose rows start at or beyond group_M still completes Shared readiness but has no compute-only Local effect. See [Shared CUBE matrix](../model/dispatch/shared-cube-matrix.md).
 
 `TransA` and `TransB` are legal only when the corresponding primary is Shared. A Shared source that is not yet published makes the commit return without a fault, and the bundle stays active.
 
@@ -280,14 +280,17 @@ end;
 - Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.
 - B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.
 - For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D.
+- Cooperative Shared Matrix forms accept group_M in 1..128 and N/K in 1..65535 without power-of-two restrictions. Validate Local CUBE roles with existing descriptor and capacity rules; validate Shared roles against the original legal Shared descriptor and physical pitch. Internal read views preserve original pitch and use typed logical element/carrier/lane reads without a transient Local descriptor or 64 KiB capacity limit.
+- If any supported four-bit Shared primary is present (E2M1X2, E1M2X2, HiF4X2 for Matrix-MX only, S4X2, or U4X2), K and each such original parent physical columns pitch are even under every transpose combination. Valid M/group_M and N gain no parity restriction. This does not affect Local-only TMATMUL, TGEMV, generic Shared allocation, or Local packed A when Shared B is not packed.
+- Shared Matrix-MX ScaleA has exact stored-valid shape [group_M,G_A] and ScaleB [N,G_B], with each G equal to ceil(K/group_size) for its side (group-32 E8M0 or group-64 U32), independent of TransA/TransB; valid k selects floor(k/group_size).
 
 ## State effects
 
 - Start a CUBE Function 4 descriptor with encoded DataType preserved as AType.
 - At block completion execute TileOperation_TMATMUL_MX using the resolved M, N, K, input types, mathematical operands, and B.FPATR postprocess schema.
-- Publish the complete output group atomically after successful preflight and computation; do not consume mathematical or postprocess sources.
+- Publish the complete output group atomically after successful preflight and computation; source payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.
 - For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.
-- Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.
+- Matrix computation does not modify Shared source values or descriptors; payload retention and retirement follow the bound B.IOS reuse and last-use contract.
 - Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable.
 
 ## Memory effects and ordering
@@ -299,7 +302,7 @@ end;
 ### Ordering
 
 - Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.
-- D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.
+- D and every enabled reduction output publish as one atomic group; rejection publishes none and does not complete source last-use. Matrix computation leaves source values and descriptors unmodified; payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.
 - Transparent-cache hints occur only after complete preflight and cannot alter source snapshots, D allocation or publication, faults, or numeric status.
 
 ## Exceptions
