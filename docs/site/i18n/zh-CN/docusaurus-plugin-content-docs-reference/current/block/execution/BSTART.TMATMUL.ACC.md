@@ -289,10 +289,10 @@ end;
 
 - Start a CUBE Function 2 descriptor with encoded DataType preserved as AType.
 - At block completion execute TileOperation_TMATMUL_ACC using the resolved M, N, K, input types, mathematical operands, and B.FPATR postprocess schema.
-- Publish the complete output group atomically after successful preflight and computation; do not consume mathematical or postprocess sources.
+- Publish the complete output group atomically after successful preflight and computation; source payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.
 - For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.
-- Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.
-- C is snapshotted before multiplication and remains descriptor-and-payload unchanged after success or rejection.
+- Matrix computation does not modify Shared source values or descriptors; payload retention and retirement follow the bound B.IOS reuse and last-use contract.
+- C is a distinct read-only accumulator input snapshotted before multiplication; its payload lifetime follows its B.IOT source binding, and rejection does not complete last-use.
 - Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable.
 
 ## Memory effects and ordering
@@ -304,7 +304,7 @@ end;
 ### Ordering
 
 - Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.
-- D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.
+- D and every enabled reduction output publish as one atomic group; rejection publishes none and does not complete source last-use. Matrix computation leaves source values and descriptors unmodified; payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.
 - Transparent-cache hints occur only after complete preflight and cannot alter source snapshots, D allocation or publication, faults, or numeric status.
 
 ## Exceptions

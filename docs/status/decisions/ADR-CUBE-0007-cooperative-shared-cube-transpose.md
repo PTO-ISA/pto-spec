@@ -380,3 +380,18 @@ Shared Matrix-MX ScaleA 固定 stored-valid `[group_M,G_A]`，ScaleB 固定 `[N,
 自身 group-size 独立计算 `G=ceil(K/group_size)`（group-32 E8M0 或 group-64 U32）。转置不
 改变 scale 形状或索引；有效 `k` 选取 `floor(k/group_size)`。scale 数值解释、编码、C/D
 区分、就绪、group_M 分布、原子发布和零 mask 行为不变，本修订不添加算术 oracle。
+
+
+### 2026-10-12 integration with participant-aware source lifetime (#341)
+
+The Issue #374 source-preservation requirement concerns matrix input values and
+descriptors. It does not override the B.IOT/B.IOS reuse and last-use contracts
+introduced by #341. The TMATMUL instruction owners and
+`PTO-CUBE-ACCUMULATOR-OUTPUT-001` now qualify retention accordingly, including
+explicit accumulator C. This reconciliation changes no runtime behavior; the
+existing participant and zero-row-PE lifetime tests remain the evidence.
+
+中文：Issue #374 的源保留要求针对矩阵输入值与描述符，不覆盖 #341 引入的
+B.IOT/B.IOS reuse 与 last-use 合同。TMATMUL 指令所有者和
+`PTO-CUBE-ACCUMULATOR-OUTPUT-001` 已据此明确 payload 生命周期，包括显式累加器 C。
+本次协调不改变运行时行为，沿用参与 PE 与零行 PE 的生命周期测试作为证据。
