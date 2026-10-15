@@ -4065,6 +4065,7 @@
         "PTO-AVS-TILE-TCMP-LOCAL64-DECODED-CELL-001",
         "PTO-AVS-TILE-TCMP-LOCAL64-DECODED-GPR-001",
         "PTO-AVS-TILE-TCMPS-LOCAL64-DECODED-CELL-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-FP64-CUBE-001",
         "PTO-AVS-TILE-TLEA-M32-DECODED-MASK-001",
         "PTO-AVS-TILE-TLEA-M32-MEMORY-001",
         "PTO-AVS-TILE-TPACK-UNPACK-LOCAL64-002",
@@ -18544,6 +18545,7 @@
         "PTO-AVS-TILE-TCVT-FORMAT-PROFILES-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-BOUNDARIES-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-DECODED-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-FP64-CUBE-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-MASK-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-MATRIX-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-RNE-001",
@@ -25955,6 +25957,7 @@
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-fractal-001.asl": "949fcbd27ad7d8b7805ac43e7b82c796aa37671f9a36a89a0df168846fc0b7c0",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integer-001.asl": "36591559b9de686433ff303ea1c617e724e8db2832a0a4b3aabedeb2d9a0a439",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-decoded-001.asl": "40fbff84fcd5fe918d3d692dac71314d932392b94f9db06741c09afe24723ace",
+    "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-fp64-cube-001.asl": "12cc9603f9eac64d2df40740cf6461731aaf9b478a25ee00b77e877f5cb0e535",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-mask-001.asl": "b0db5499c58c225f7a8c0df3d5e062d460000b116f957b49a45e5134bb839ac0",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-matrix-001.asl": "1e7f9b52bfa797f766cfab6ea24fae74918964d8159c5c0340b1843d3e12e1e2",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-rne-001.asl": "bc1ffa1a1713adc06e1b0ad32f40705f1f3a11f505542c11df37d2396ab2a233",
@@ -26683,7 +26686,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1115,
     "status": "closed",
-    "test_count": 4253,
+    "test_count": 4254,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -65820,6 +65823,17 @@
       "source": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl"
     },
     {
+      "id": "PTO-AVS-TILE-TCVT-INTEGRAL-FP64-CUBE-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-fp64-cube-001.asl",
+      "requirements": [
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-CUBE-M32-B64-DOUBLE-CELL-001"
+      ],
+      "sha256": "12cc9603f9eac64d2df40740cf6461731aaf9b478a25ee00b77e877f5cb0e535",
+      "source": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-TCVT-INTEGRAL-MASK-001",
       "kind": "execution",
       "path": "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-mask-001.asl",
@@ -94069,6 +94083,7 @@
         "PTO-AVS-TILE-TCVT-INTEGER-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-BOUNDARIES-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-DECODED-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-FP64-CUBE-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-MASK-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-MATRIX-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-RNE-001",
@@ -94110,6 +94125,7 @@
         "PTO-AVS-TILE-TCVT-INTEGER-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-BOUNDARIES-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-DECODED-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-FP64-CUBE-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-MASK-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-MATRIX-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-RNE-001",
