@@ -651,8 +651,8 @@
       "candidate_profile_ids": [
         "pto-numeric-v1"
       ],
-      "selector_owner": "TileNumericSelection from direct operands or B.DATR.RMode",
-      "rounding_rule": "Resolve NONE to RTZ for floating-to-integer TCVT and to RNE otherwise; explicit codes 1 through 7 use their bundle mapping, then round once to the destination format.",
+      "selector_owner": "TileNumericSelection from direct operands or B.DATR.RMode; PTO-TCVT-CONTRACT-001 owns identical floating operation-type specialization.",
+      "rounding_rule": "Resolve NONE to RTZ for floating-to-integer TCVT and to RNE otherwise; explicit codes 1 through 7 keep their bundle mappings. Under PTO-TCVT-CONTRACT-001, identical FP16, BF16, FP32, or FP64 operation types with explicit RNE, RTZ, RTM, RTP, RNA, or RHB round active finite values to integer-valued results in that same format, while RTO rejects before effects. Other legal TCVT pairs, including cross-type conversions, retain common-conversion results and their selected bundle mapping at the ordinary destination-format conversion boundary.",
       "saturation_order_rule": "round-before-saturation-clamp-or-ADR-NUM-0017-nonsaturating-result-selection",
       "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
@@ -793,11 +793,11 @@
   "sources": [
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "2767dc6302e8d777b517c198d3ead8a5acb62602c26f517eb9ee581bc4afd4da"
+      "sha256": "26480019549de28e8636ff77963c56b096a62a98b0f1e326d2acde782f7b9def"
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "992ebe9c84cdb89d28ffa641e7a6a19d7b89bf12860d76383d71ba28eb176f24"
+      "sha256": "d2817054e96456d058d88c27cef1eb034a2b164b486d5c11fe3c796f08e02f3e"
     },
     {
       "path": "spec/catalog/numeric-contract-identities.json",
@@ -845,7 +845,7 @@
     },
     {
       "path": "asl/scalar/model/dispatch/decode.asl",
-      "sha256": "3ae5694456463c805871a6bcc7d6a3d08a9b5498495941c9dbed6eb784e33e9d"
+      "sha256": "4a8ebb42308e5fcf27d70c4fbbe97a3544ed3d4f3fc0044dc294fc9d27c495e2"
     },
     {
       "path": "asl/scalar/model/dispatch/fsu.asl",
@@ -853,11 +853,11 @@
     },
     {
       "path": "asl/scalar/model/dispatch/sys.asl",
-      "sha256": "3962b4109ea93dfb583d5f27b5eff22367ddd1e33b55f364a5ce0b7dfa43e8e5"
+      "sha256": "d5bee4a6d78af882b6ad9a8d7ca6200d3df3f9495061a617f5b3532f45d8ad20"
     },
     {
       "path": "asl/scalar/model/dispatch/top-level.asl",
-      "sha256": "ddab80194961559047af378635173792ea4855c8a7d3ce597b9ff1ea62865fd3"
+      "sha256": "595e7805a9b0a5cb3c0691373b161ea906a8044339ed3dcadec08065d4f118a7"
     },
     {
       "path": "asl/block/model/state/barg.asl",
@@ -869,19 +869,23 @@
     },
     {
       "path": "asl/block/model/state/control-state.asl",
-      "sha256": "7922c460f09a73dbc706139e41d5cafe7e4c3f38683dd1238ff1f5643ad6730f"
+      "sha256": "b231ec9445006ff6c2a42e6ce5855cc2cb97bcaef1c73c3746a31368bdb13a7c"
     },
     {
       "path": "asl/block/model/state/descriptor-state.asl",
-      "sha256": "047fbd6d867b2b1eb9027a460f92bf385e2178b01bc24cc8cacf049a24df129f"
+      "sha256": "b989f398e701566d9577ac26af7291660df319a7713eedcdc7d40ebff3099dec"
     },
     {
       "path": "asl/block/model/state/shared-generation-state.asl",
-      "sha256": "fb8d85dc010af90aaf4e10e77c87807a02628a6ab21ded62549d1655074043a2"
+      "sha256": "20df38ba18b2673a06885b39d28a21b0adadf6c3886c827a9da1de66fa12cce9"
+    },
+    {
+      "path": "asl/block/model/state/source-lifetime.asl",
+      "sha256": "84c5e913dc43a180a55f67cd4f3fa97c7b6a0b20065f877e8a7e0d63fbed4abd"
     },
     {
       "path": "asl/block/model/state/types.asl",
-      "sha256": "c082c6b735c23694820b83f58baf8a21943c7fdac51249d320a9aaa031f7fafa"
+      "sha256": "aa5e90c6515a1b5e153e116b0992011c4573d831351de82f9dbef2da742dc304"
     },
     {
       "path": "asl/block/model/dispatch/binary-operation-classification.asl",
@@ -889,7 +893,7 @@
     },
     {
       "path": "asl/block/model/dispatch/cell-rearrangement-schema.asl",
-      "sha256": "96cf406b52848e9ae35e63b4dcc26e860f7ee4680bdab61fc46c8a14640073cb"
+      "sha256": "08f3760d99552382f4f8cbcfc5c5fba3ac7cb021efa6db24287e97cc84b40dbb"
     },
     {
       "path": "asl/block/model/dispatch/command-data-attributes.asl",
@@ -897,7 +901,7 @@
     },
     {
       "path": "asl/block/model/dispatch/commands.asl",
-      "sha256": "e02e5c02823747f4e749376125ff361d2ce744cf68726aec9a200a47d9d22f9b"
+      "sha256": "7e316ef8154ccb570408dd8bfc60f3c8d772ef40989f34c0c9ce2fdc7a9f729a"
     },
     {
       "path": "asl/block/model/dispatch/comparison-schema.asl",
@@ -913,7 +917,7 @@
     },
     {
       "path": "asl/block/model/dispatch/cube-tmatmul.asl",
-      "sha256": "47aee38948cdc4340cb35a630e3fa3b6f315a6c3be47339ddef77524c1ec9108"
+      "sha256": "9784c273f1f41a83c3a2de29c6245f97d985c2bdfb48c5c4345d058098497b05"
     },
     {
       "path": "asl/block/model/dispatch/decode.asl",
@@ -921,7 +925,7 @@
     },
     {
       "path": "asl/block/model/dispatch/descriptor-legality.asl",
-      "sha256": "e890a7d13935a7d26559a9fac4d8c1c75b3ddb7af31d6941caf73562761f22d3"
+      "sha256": "0bc759593abf4b5af2309d2c53d080719c34c47384ea8b95a1cf3e2be64e90c0"
     },
     {
       "path": "asl/block/model/dispatch/destination-auxiliary.asl",
@@ -929,15 +933,15 @@
     },
     {
       "path": "asl/block/model/dispatch/destination-operation.asl",
-      "sha256": "0528afa1a33c9c04cd1c690ac40fb82226aa99fee7db803a543d6e42b1e3f87e"
+      "sha256": "0baa1872d57ee7ae4345ad5e48ac1dd32e9f06aa5e7428762b8c3f2138c89eae"
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
-      "sha256": "067f667a2c1c2e96ee77902a5edd153ea87335d2d903b913b0df0c5202bf303c"
+      "sha256": "a4d8397ec479ffb4fb57a3cac7e39ea4ff60df32d8358bfdf58ec2e8024c3fd5"
     },
     {
       "path": "asl/block/model/dispatch/execution-mask-schema.asl",
-      "sha256": "9c1e1eccc940bed1911b471d6ffac7e621938121e539a884f35d9af99d9eabf1"
+      "sha256": "6832f19864bcc1986b964e2b34f871f1f92dbb83108f71f7fbc9629c6ea841eb"
     },
     {
       "path": "asl/block/model/dispatch/expansion-schema.asl",
@@ -952,8 +956,16 @@
       "sha256": "76cfceccdce296468d71b0e4605eb4b0b2702c5ea6bdabec16826b9517f86653"
     },
     {
+      "path": "asl/block/model/dispatch/gm-obligation-dispatch.asl",
+      "sha256": "5e3c44ef17111fffc114f457b13ee170d17a95171eb03abea09167fd973df7b1"
+    },
+    {
+      "path": "asl/block/model/dispatch/lea-schema.asl",
+      "sha256": "913306d0fb506c01067f5b41bd3d8451c35ed8d1a68f6f2ae467ad18ac5c3eb0"
+    },
+    {
       "path": "asl/block/model/dispatch/matrix-scale.asl",
-      "sha256": "b6ec56e602786648e5e764aafef07837029b84b9595707d389bd1b998cab4505"
+      "sha256": "829c5e871e5f4719fa65e7f642e757b7771b35e92f8f6102673ef1a55286c035"
     },
     {
       "path": "asl/block/model/dispatch/numeric-control.asl",
@@ -965,23 +977,23 @@
     },
     {
       "path": "asl/block/model/dispatch/reduction-schema.asl",
-      "sha256": "64553aa5a95ec920ed43e46b2e3e027db9eca767c811ae88a2e4a119b6df8c7c"
+      "sha256": "0abfc3f6391e5ff4907be7e0571314c80106a8760bb7af6cae8cae811a64f392"
     },
     {
       "path": "asl/block/model/dispatch/scalar-schema.asl",
-      "sha256": "b4412ec583fd36c941867c8c3df7916e817e4e252c61350ce63bffde0ddfed64"
+      "sha256": "03939cf0b88b2e1677a6384790028a5e8f68dceded1b7bc880caef6da8161a6f"
     },
     {
       "path": "asl/block/model/dispatch/shared-cube-matrix.asl",
-      "sha256": "0b9fdd4d8d39a9679ff275a866fff510fdc407a163b6645cfee7b3db75db6d8f"
+      "sha256": "070edfcfc15de9cc36bfbcf917ce145d74453aa09e65a5de059a27a2200b1444"
     },
     {
       "path": "asl/block/model/dispatch/shared-tlsu.asl",
-      "sha256": "7e29fa92195753fae53a08eae4c7a6b66fb71062bd8f7e17e0afb47b39223661"
+      "sha256": "1a92f53fb1237ea1d2af9a037897b0568c1e62d8c6c498cbc6870c1d10d4fb68"
     },
     {
       "path": "asl/block/model/dispatch/start.asl",
-      "sha256": "9e962389e579c0383e1cb2f63b904ac86e0ab0288cf31cb0444ad154375b9af9"
+      "sha256": "5d9b10ae87d39befc98d966b6ca63a4c600879d2b2b3b131a101b48793f7a127"
     },
     {
       "path": "asl/block/model/dispatch/tcvt-destination.asl",
@@ -989,7 +1001,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tcvt-schema.asl",
-      "sha256": "773c7cf951933ef27252adb864e19bb5e0ccc7694b8a4a91b4ab3ddf64bd6ece"
+      "sha256": "2c9c7ec6214f8321416573735a0df6415e2374a97595a9b12f2cec834a50506c"
     },
     {
       "path": "asl/block/model/dispatch/tgpr2t-schema.asl",
@@ -997,7 +1009,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tile-execution.asl",
-      "sha256": "4fcff277e568ca0f251cdcf09f21c314111f8611f37b861199c1ce1d93022c83"
+      "sha256": "42efaba3a37e44ae54294025585dc84981f1bc0f0bd0fc8ac9191ff18cfc9fda"
     },
     {
       "path": "asl/block/model/dispatch/tile-instruction-operands.asl",
@@ -1013,7 +1025,7 @@
     },
     {
       "path": "asl/block/model/dispatch/timg2col-execution.asl",
-      "sha256": "c8e1b73903e8dee4ea7239e40423dd2ed5dcc52446481c381386459a71657feb"
+      "sha256": "0c3059b3e4a06d2d9ef056d9c4e1ee499f528b7c1d8df4061335002ae60583f1"
     },
     {
       "path": "asl/block/model/dispatch/timg2col-schema.asl",
@@ -1025,11 +1037,11 @@
     },
     {
       "path": "asl/block/model/dispatch/tlsu-gmov.asl",
-      "sha256": "e7667ccbaf14a491489ba4add52e681e0dc88cc873fd4f6ff93027860f3b98d3"
+      "sha256": "3e18f7c02712555be07f5b463d467b2df1924e55a18673ab5f24af16e3a8f155"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-layout-conversion.asl",
-      "sha256": "cd271d85035193f9b09f685babec56620c67c399243b0b2fe1a41a43120e24f1"
+      "sha256": "166898ac69d971fc62953c426f7d14494443caa86d701e7286dc485ed4753ad1"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-cas.asl",
@@ -1061,7 +1073,7 @@
     },
     {
       "path": "asl/block/model/dispatch/weight-to-shared-execution.asl",
-      "sha256": "b14a55f0dcba8a3bc206a404763cf0cacb88f6d15c83e15a1dae663abf01c28b"
+      "sha256": "439de9b3a9cd8d8db01b077fd7684efca712ee1689b5d94ac5d212514c611b5a"
     },
     {
       "path": "asl/block/model/dispatch/weight-to-shared-schema.asl",
@@ -1069,7 +1081,7 @@
     },
     {
       "path": "asl/tile/model/numeric/e8m0-conversion.asl",
-      "sha256": "77cf18fde554db95f48330f6bc26092aa90e28aa46804c1ff57a6977fb053f1b"
+      "sha256": "f5154537ff355cf0b8754eef331f1ef89027c3b3885e1b29379629e224ddb776"
     },
     {
       "path": "asl/tile/model/numeric/exceptions.asl",
@@ -1077,7 +1089,7 @@
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "a91e1b5888393b465589dd8f76e55790cc1c50b77689fa982137c3734c20ebfa"
+      "sha256": "e069fffc8971ee5fcdbb654b3a500da8ce11240f5112720a0676e090a47db0e9"
     },
     {
       "path": "asl/tile/model/numeric/packed-conversion.asl",
@@ -1085,7 +1097,11 @@
     },
     {
       "path": "asl/tile/model/numeric/reference-conversion.asl",
-      "sha256": "2e2b4d966d2e6173f231afd2530da5c169b292c11da2350e9b4dbfe8e3ecd33d"
+      "sha256": "0ca29f5b9c02bd99bd284eecf06d80966af49ce428775096970126f0972b8a49"
+    },
+    {
+      "path": "asl/tile/model/numeric/reference-fixed-binary.asl",
+      "sha256": "51ed7c5807a4426efbed8bb4727d123d616676ebcb81df2c87cbc954b66f8ee3"
     },
     {
       "path": "asl/tile/model/numeric/rounding.asl",
@@ -1093,47 +1109,47 @@
     },
     {
       "path": "asl/tile/model/numeric/tcvt-conversion.asl",
-      "sha256": "62625b9c4604139b80b1eec7c3a3fd3a757613cab1dfddade61fae7bba93027b"
+      "sha256": "3361e47af7db5d218c66628630d8813911cfd8ba51e98fee9e6e52d5ac7489fe"
     },
     {
       "path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPAND.asl",
-      "sha256": "1ee414dba09a63d9036f426b8a61f8c18b1c02a6ef2d08c8cd2a4ea9b894da9a"
+      "sha256": "43dcec7e9f118a1d8f6d888145d53bbcf5382b79a6aa820dd4b154cfde891109"
     },
     {
       "path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDADD.asl",
-      "sha256": "1c5b8c737773a4b6373dfddceebdaecdba154cc2b449ac9f99742c2d72afc24b"
+      "sha256": "87efed414dd81e2e7f17b897c813451c06f8426d7855dbb91ec7c1aa34bb82ab"
     },
     {
       "path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.asl",
-      "sha256": "15daac7cc6d8d31b9d228b4e2b2e136af61ece185c04cd37e0d2260563174747"
+      "sha256": "634746b3aa017a99fe5e0af743c1f28e921347efddfd36e89e89cf1452a77e60"
     },
     {
       "path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.asl",
-      "sha256": "b6e9f6a769d4e87c7d1826642c361ae428a166da989a7c427b2716ad92e1644f"
+      "sha256": "7197386304a3acd9edb58b51ac64b9dff8354de9d24f502bdd9db0531e8ada53"
     },
     {
       "path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMAX.asl",
-      "sha256": "84fae869c37a72a635377e6edecfb916d8db8c9a7e75b26224e518a55c1ea0a7"
+      "sha256": "cedc6a1706b1bb778efb888185edd3fe3a7f083242cd2652c89ca4bb52a259ba"
     },
     {
       "path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.asl",
-      "sha256": "73a8748f7bc7124b1983a7c1856d2b36a74cde6d24965869431ff8aaab38ede8"
+      "sha256": "ce50aa256ecc33cc6357fd083c8e6f64ae7a0759488fa887db4fdce070e81bc5"
     },
     {
       "path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.asl",
-      "sha256": "6ad3f1df3d42967482d5d17b4fe7539b7ef7d2193554354c9d4f137b68aefe4d"
+      "sha256": "7dd1eaac11653e47d47051fd4a06050ad743cbb7a2695ba3f823dc97762627d7"
     },
     {
       "path": "asl/tile/reduce-and-expand/row-expansion/TROWEXPANDSUB.asl",
-      "sha256": "16ba79f9a3072fd7a3c7605958fc79b61508597e3ea022c55f2280b63197fdcc"
+      "sha256": "c9464f2b6e2e1d55f64b17f24040627f9d766791eb60057631de0c9a8fcbe9d9"
     },
     {
       "path": "asl/tile/model/execution/cube.asl",
-      "sha256": "52a8a594dc46c4873649563efa843c450fd8b876d00e859c1be6fff2f78b1880"
+      "sha256": "365bbba65a64acf7c9155892ec5691edeef2c8872787e24e09c1c8a815e83e12"
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "dfe3e30d8c30b7043699ad31279ff120340aa2c0ee849187eef4ebcc6c2aa7a2"
+      "sha256": "533db9b8f31f118af5978de813cfaa3fa738de820ee24655faa2ee71f343a706"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -1149,7 +1165,7 @@
     },
     {
       "path": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
-      "sha256": "a510b3930dbd78c401b19882483792383ae60144817c41ab368a970824a32862"
+      "sha256": "2542fff558271eb01fefbc3b33ab642e6046ba3d43859d1714561684d441c584"
     }
   ],
   "summary": {

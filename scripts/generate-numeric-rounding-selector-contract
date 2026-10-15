@@ -121,8 +121,8 @@ DOMAIN_RULES = {
         "not-applicable",
     ),
     "tile-convert": (
-        "TileNumericSelection from direct operands or B.DATR.RMode",
-        "Resolve NONE to RTZ for floating-to-integer TCVT and to RNE otherwise; explicit codes 1 through 7 use their bundle mapping, then round once to the destination format.",
+        "TileNumericSelection from direct operands or B.DATR.RMode; PTO-TCVT-CONTRACT-001 owns identical floating operation-type specialization.",
+        "Resolve NONE to RTZ for floating-to-integer TCVT and to RNE otherwise; explicit codes 1 through 7 keep their bundle mappings. Under PTO-TCVT-CONTRACT-001, identical FP16, BF16, FP32, or FP64 operation types with explicit RNE, RTZ, RTM, RTP, RNA, or RHB round active finite values to integer-valued results in that same format, while RTO rejects before effects. Other legal TCVT pairs, including cross-type conversions, retain common-conversion results and their selected bundle mapping at the ordinary destination-format conversion boundary.",
         "round-before-saturation-clamp-or-ADR-NUM-0017-nonsaturating-result-selection",
     ),
     "tile-quantize": (

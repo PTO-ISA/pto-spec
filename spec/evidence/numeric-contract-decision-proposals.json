@@ -26,7 +26,7 @@
   },
   "rounding_selector_contract": {
     "path": "spec/evidence/numeric-rounding-selector-contract.json",
-    "sha256": "102c0f791904279493324c3b6507e1a5e717e937f324c7071cc38d45b0339a51",
+    "sha256": "8316800d4845be1e0f873c2ac7ebc41e104ed6fbc0f33aa796acc38037cbfd89",
     "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
     "scalar_active_selector_count": 8,
@@ -172,7 +172,7 @@
   },
   "variation_point_contract": {
     "path": "spec/evidence/numeric-variation-point-ownership.json",
-    "sha256": "b8f52d5e2993bc9efe8779055d40928b21095f0b8a4814b3ea59524f52127978",
+    "sha256": "8a7a6e60fd69cf18414936f808400842d2c219b1b3f4dba94c486e5b55ea6ed8",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md",
     "variation_point_count": 69,
