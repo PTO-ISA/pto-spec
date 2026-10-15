@@ -122,7 +122,7 @@ DOMAIN_RULES = {
     ),
     "tile-convert": (
         "TileNumericSelection from direct operands or B.DATR.RMode; PTO-TCVT-CONTRACT-001 owns identical floating operation-type specialization.",
-        "Resolve NONE to RTZ for floating-to-integer TCVT and to RNE otherwise; explicit codes 1 through 7 keep their bundle mappings. Under PTO-TCVT-CONTRACT-001, identical FP16, BF16, FP32, or FP64 operation types with explicit RNE, RTZ, RTM, RTP, RNA, or RHB round active finite values to integer-valued results in that same format, while RTO rejects before effects. Other legal TCVT pairs, including cross-type conversions, retain common-conversion results and their selected bundle mapping at the ordinary destination-format conversion boundary.",
+        "Resolve NONE to RTZ for floating-to-integer TCVT and to RNE otherwise; explicit codes 1 through 7 keep their bundle mappings. Under PTO-TCVT-CONTRACT-001, identical FP16, BF16, FP32, or FP64 operation types with explicit RNE, RTZ, RTM, RTP, RNA, or RHB round active finite values to integer-valued results in that same format, while RTO rejects before effects. For other pairs in ReferenceCommonConversionTypeSupported, retain common-conversion results and flags under the resolved mode. Dedicated E8M0 exponent, E6M2/RCPE6M2, and packed conversion profiles remain governed by their owning contracts.",
         "round-before-saturation-clamp-or-ADR-NUM-0017-nonsaturating-result-selection",
     ),
     "tile-quantize": (

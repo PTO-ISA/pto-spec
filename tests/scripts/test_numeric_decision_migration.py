@@ -212,7 +212,11 @@ class NumericDecisionMigrationTest(unittest.TestCase):
         self.assertIn("PTO-TCVT-CONTRACT-001", rule)
         self.assertIn("RTO rejects before effects", rule)
         self.assertIn(
-            "Other legal TCVT pairs, including cross-type conversions, retain common-conversion results",
+            "For other pairs in ReferenceCommonConversionTypeSupported, retain common-conversion results and flags",
+            rule,
+        )
+        self.assertIn(
+            "Dedicated E8M0 exponent, E6M2/RCPE6M2, and packed conversion profiles remain governed by their owning contracts",
             rule,
         )
         self.assertNotIn("then round once to the destination format", rule)
