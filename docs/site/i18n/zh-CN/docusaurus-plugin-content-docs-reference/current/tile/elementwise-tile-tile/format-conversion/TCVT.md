@@ -315,7 +315,7 @@ end;
 - Define or undefine every physical padding coordinate according to PadValue and publish the destination; ordinary conversions use the resolved public layout, while CUBE_M16 and CUBE_M32 conversions retain the source CUBE layout.
 - The source may alias the destination; execution observes the complete pre-execution source snapshot.
 - For a supported conversion to an E8M0 destination, map the rounded base-two exponent to code exponent+127 and accumulate exact NV/UF/OF/NX status before atomic publication.
-- For FP64, FP32, FP16, E4M3, S64, S32, S16, S8, U64, U32, U16, and U8 source/destination pairs, TCVT uses the same deterministic conversion result and flags as the scalar conversion family.
+- For conversions in the common scalar conversion domain, TCVT uses the same deterministic result and flags as scalar conversion, except that identical FP16, BF16, FP32, or FP64 operation types with explicit nonzero accepted RMode follow the TCVT-only round-to-integral rule below. Scalar conversions and all other TCVT pairs retain common-conversion parity.
 - For identical FP16, BF16, FP32, or FP64 operation types with an explicit nonzero accepted RMode, round active finite values to an integer-valued result in the same format, set NX only for nonintegral finite inputs, preserve signed zero and infinity, and use common NaN canonicalization and signaling-NaN NV behavior. Other TCVT pairs and scalar conversions retain common-conversion parity.
 
 ## Memory effects and ordering
