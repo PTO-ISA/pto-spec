@@ -14067,7 +14067,9 @@
         "PTO-FCVTZ-DECISION-BINDING-001",
         "PTO-NUMERIC-E6M2-FORMAT-001",
         "PTO-NUMERIC-RCPE6M2-FORMAT-001",
-        "PTO-TCVT-CONTRACT-001"
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-INST-TILE-TCVT",
+        "PTO-COMMON-CONVERSION-001"
       ],
       "affected_units": [
         "PTO-ARCH-DATA-TYPES-ROUNDING",
@@ -14080,7 +14082,13 @@
         "PTO-SCALAR-FCVTZ",
         "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
         "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
-        "PTO-TILE-TCVT"
+        "PTO-TILE-TCVT",
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL",
+        "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+        "PTO-TILE-MODEL-NUMERIC-FORMATS",
+        "PTO-TILE-MODEL-NUMERIC-REFERENCE-CONVERSION",
+        "PTO-TILE-MODEL-NUMERIC-E8M0-CONVERSION"
       ],
       "amendments": [
         {
@@ -14100,6 +14108,28 @@
           "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
           "date": "2026-09-16",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/254"
+        },
+        {
+          "affected_ndf": [
+            "PTO-INST-TILE-TCVT",
+            "PTO-TCVT-CONTRACT-001",
+            "PTO-COMMON-CONVERSION-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-TCVT",
+            "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL",
+            "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+            "PTO-TILE-MODEL-NUMERIC-FORMATS",
+            "PTO-TILE-MODEL-NUMERIC-REFERENCE-CONVERSION",
+            "PTO-TILE-MODEL-NUMERIC-E8M0-CONVERSION"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "03eb383fab9311f7d76def8b46cdbd04e1e50d23",
+          "date": "2026-10-15",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/387"
         }
       ],
       "approvers": [
@@ -14112,6 +14142,7 @@
       "created": "2026-08-01",
       "id": "ADR-NUM-0008",
       "implementation_issue": null,
+      "interface_change": true,
       "legacy_ids": [
         "PD-03",
         "ADR-0047"
