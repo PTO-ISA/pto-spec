@@ -273,7 +273,12 @@ begin
                     source_tile, source_element);
                 var converted: Word = source_value;
                 var flags: bits(5) = Zeros{5};
-                if (source_operation_type == TileDataType_E8M0 ||
+                if TCVTExplicitRoundIntegralSelected(
+                       source_operation_type, result.data_type) then
+                    (converted, flags) = ReferenceTCVTRoundIntegral(
+                        source_value, source_operation_type,
+                        control.rounding_mode, control.saturating);
+                elsif (source_operation_type == TileDataType_E8M0 ||
                     source_operation_type == TileDataType_E2M1X2 ||
                     source_operation_type == TileDataType_E1M2X2 ||
                     result.data_type == TileDataType_E2M1X2 ||

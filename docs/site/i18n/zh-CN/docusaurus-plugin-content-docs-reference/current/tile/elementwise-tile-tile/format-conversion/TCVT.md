@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl`
 
-Convert every valid source element to a separately typed and laid-out Local destination.
+Convert every active valid source element to a separately typed and laid-out Local destination; explicit same-type floating rounding can produce an integer-valued result in that format.
 
 ## Normative identity {#PTO-INST-TILE-TCVT}
 
@@ -291,7 +291,7 @@ end;
 
 - The BSTART DataType is SrcDataType. Omitted B.DATR or DTYPE_NONE inherits SrcDataType as DstDataType; an explicitly encoded DataType zero selects FP64.
 - LB0 is required and supplies ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol. Every present dimension must be nonzero.
-- RMode zero selects RTZ for floating-to-integer conversion and RNE for every other conversion that requires rounding. Sat zero disables saturation and Canonicalize zero selects an ordinary public source.
+- RMode zero selects RTZ for floating-to-integer conversion and RNE for every other conversion that requires rounding. For identical FP16, BF16, FP32, or FP64 operation types, an explicit nonzero accepted RMode selects round-to-integral; omitted B.DATR and present RMode zero retain ordinary conversion. Sat zero disables saturation and Canonicalize zero selects an ordinary public source.
 - Omitted B.DATR selects Layout=NORM and PadValue=Null. Explicit PadValue codes 00, 01, 10, and 11 select Zero, Max, Min, and Null.
 - For an E8M0 destination, RMode rounds the base-two exponent. Exact powers of two are exact; Sat selects finite endpoint clamp versus 0xFF for finite range overflow or underflow.
 
@@ -303,18 +303,20 @@ end;
 - TCVT legal pairs are profile-scoped: FP32/FP16/BF16 <-> E2M1X2/E1M2X2; FP16/BF16 <-> E6M2; RCPE6M2 -> FP16/BF16. No pair contains HiF4X2, and RCPE6M2 has no destination encoding. Reserved five-bit DataType codes reject before effects.
 - Every assigned Layout code has executable indexing. The source descriptor matches the transform source layout and the destination descriptor matches its target layout; CUBE_M16 and CUBE_M32 conversions retain the source layout.
 - Canonicalize=1 is reserved-illegal before effects. CUBE_M16 and CUBE_M32 sources with Canonicalize=0 preserve the source layout while the destination independently derives its geometry from the destination DataType. An ordinary source requires Canonicalize=0.
-- The source valid region is fully defined and contains valid encodings. PE_MASK=0000 is a strict no-op before schema, descriptor, allocation, or payload checks.
+- Every active valid source coordinate is defined and contains a valid encoding; without an execution mask, every valid coordinate is active. Inactive source coordinates may be undefined and are not read or used to accumulate numeric status. Inactive destination coordinates follow the selected ExecutionMask MERGE/ZERO policy. PE_MASK=0000 is a strict no-op before schema, descriptor, allocation, or payload checks.
 - Under the named hardware profile, an E8M0 destination accepts exactly FP16, BF16, or FP32 sources. E8M0 as a source accepts exactly FP16, BF16, or FP32 destinations; 0x00..0xFE denote powers of two and 0xFF produces the target canonical quiet NaN without NV. Every other E8M0 pair rejects before destination allocation.
 - The BSTART DataType is the TCVT source operation interpretation, not necessarily the source backing DataType. RowMajor and CUBE_M16/M32 sources may differ only when backing and operation types are non-packed, equal-width, and carrier-compatible; the operation view never mutates the backing descriptor. The destination backing type is the resolved B.DATR destination type.
 - A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
+- For identical FP16, BF16, FP32, or FP64 source and destination operation types, explicit nonzero RNE, RTZ, RTM, RTP, RNA, and RHB round active finite values to integer-valued results in the same floating type. RMode zero retains ordinary conversion. Explicit RTO rejects before destination allocation.
 
 ## State effects
 
-- Snapshot the persistent source, convert every valid logical element under the resolved rounding and saturation controls, and write the corresponding logical coordinate in the destination layout.
+- Snapshot the persistent source and convert each active valid logical element under the resolved rounding and saturation controls. Inactive coordinates use the selected ExecutionMask MERGE/ZERO destination policy without reading source payload or accumulating numeric status. Write each result at the corresponding logical coordinate in the destination layout.
 - Define or undefine every physical padding coordinate according to PadValue and publish the destination; ordinary conversions use the resolved public layout, while CUBE_M16 and CUBE_M32 conversions retain the source CUBE layout.
 - The source may alias the destination; execution observes the complete pre-execution source snapshot.
 - For a supported conversion to an E8M0 destination, map the rounded base-two exponent to code exponent+127 and accumulate exact NV/UF/OF/NX status before atomic publication.
 - For FP64, FP32, FP16, E4M3, S64, S32, S16, S8, U64, U32, U16, and U8 source/destination pairs, TCVT uses the same deterministic conversion result and flags as the scalar conversion family.
+- For identical FP16, BF16, FP32, or FP64 operation types with an explicit nonzero accepted RMode, round active finite values to an integer-valued result in the same format, set NX only for nonintegral finite inputs, preserve signed zero and infinity, and use common NaN canonicalization and signaling-NaN NV behavior. Other TCVT pairs and scalar conversions retain common-conversion parity.
 
 ## Memory effects and ordering
 
@@ -326,6 +328,7 @@ end;
 
 - Complete schema, type, logical geometry, layout, canonicalization, capacity, encoding, and definedness preflight precedes the source snapshot and destination allocation.
 - Converted payload, numeric status, padding definedness, public representation state, and destination descriptor publish atomically.
+- The same-type floating RTO applicability rejection is part of complete TCVT preflight and precedes destination allocation, numeric status updates, and payload publication; PE_MASK=0000 remains an earlier strict no-op.
 
 ## Exceptions
 
@@ -333,6 +336,7 @@ end;
 - Reserved selector, DataType, or Layout encodings raise the corresponding instruction or Tile legality fault before effects.
 - CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation.
 - For conversion to an E8M0 destination, zero, negative values, and NaNs produce 0xFF with NV. Positive infinity follows the overflow rule. Finite values below 2^-127 or above 2^127 produce 0xFF when Sat=0 or clamp to 0x00/0xFE when Sat=1, with UF/OF plus NX.
+- For identical FP16, BF16, FP32, or FP64 operation types, explicit RTO is illegal and raises Fault_TileLegality during complete preflight before allocation or effects; PE_MASK=0000 retains strict-no-op precedence.
 
 ## Examples
 

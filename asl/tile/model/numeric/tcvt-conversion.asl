@@ -1,5 +1,70 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-NUMERIC-TCVT-CONVERSION","surface":"tile","classification":["model","numeric","tcvt-conversion"],"depends_on":["PTO-TILE-MODEL-NUMERIC-REFERENCE-CONVERSION","PTO-TILE-MODEL-EXECUTION-MATRIX-QUANTIZATION","PTO-TILE-MODEL-NUMERIC-PACKED-CONVERSION"]}
 
+pure func TCVTSameTypeRoundIntegralType(data_type: TileDataType)
+    => boolean
+begin
+    return data_type == TileDataType_FP16 ||
+           data_type == TileDataType_BF16 ||
+           data_type == TileDataType_FP32 ||
+           data_type == TileDataType_FP64;
+end;
+
+readonly func TCVTExplicitRoundIntegralSelected(
+    source_operation_type: TileDataType,
+    destination_type: TileDataType) => boolean
+begin
+    let selection = DecodeBundleRoundingSelection(
+        _BundleDataAttributes.rounding_mode);
+    return source_operation_type == destination_type &&
+           TCVTSameTypeRoundIntegralType(source_operation_type) &&
+           !selection.use_operation_default;
+end;
+
+func ReferenceTCVTRoundIntegral(
+    value: Word,
+    data_type: TileDataType,
+    mode: NumericRoundingMode,
+    saturating: boolean) => (Word, bits(5))
+begin
+    assert TCVTSameTypeRoundIntegralType(data_type);
+    assert mode != NumericRound_RTO;
+    let control = NumericExecutionControl {
+        rounding_mode = mode,
+        saturating = saturating
+    };
+    let (handled, special, special_flags) = ReferenceCommonConvertSpecial(
+        value, data_type, data_type, control);
+    if handled then return (special, special_flags); end;
+
+    let finite = ReferenceCommonFloatingFiniteValue(value, data_type);
+    // Every finite binary value at or beyond 2^(precision-1) is already an
+    // integer. Preserve its exact encoding without passing a potentially
+    // out-of-range FP64 value through the model's integer type.
+    let precision_boundary = if data_type == TileDataType_FP16 then 1024.0
+        else if data_type == TileDataType_BF16 then 128.0
+        else if data_type == TileDataType_FP32 then 8388608.0
+        else 4503599627370496.0;
+    if finite >= precision_boundary || finite <= -precision_boundary then
+        return (value, Zeros{5});
+    end;
+    let rounded = FloatingToInteger(finite, mode);
+    let inexact = Real(rounded) != finite;
+    let flags = if inexact then Zeros{5} + 0x10 else Zeros{5};
+    if rounded == 0 && finite < 0.0 then
+        let (available, positive_zero, negative_zero) =
+            HardwareNumericSignedZeroEncodings(data_type);
+        assert available;
+        return (negative_zero, flags);
+    end;
+    let (encoded, encoding_flags) = ReferenceMatrixFloatingEncoding(
+        Real(rounded), data_type,
+        NumericExecutionControl {
+            rounding_mode = NumericRound_RNE,
+            saturating = saturating
+        });
+    return (encoded, flags OR encoding_flags);
+end;
+
 pure func ReferenceTCVTOrdinaryFloatingSourceSupported(
     data_type: TileDataType) => boolean
 begin
