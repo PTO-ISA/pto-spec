@@ -6418,7 +6418,7 @@
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "102c0f791904279493324c3b6507e1a5e717e937f324c7071cc38d45b0339a51"
+      "sha256": "208da5d2e83e50e571b53fa14e488cdfb9cb17642e186091e39361fa0f9eb778"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",

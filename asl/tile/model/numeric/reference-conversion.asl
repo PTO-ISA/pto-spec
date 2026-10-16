@@ -3,11 +3,14 @@
 // NDF-BEGIN: PTO-COMMON-CONVERSION-001
 // ndf: kind=executable level=L3 layer=architecture status=accepted
 // TCVT MUST use this common result rule for FP64, FP32, TF32, HF32, FP16,
-// BF16, E4M3, E5M2, and signed/unsigned 64/32/16/8 conversions. Scalar
-// conversion MUST use it for its FP64/FP32/FP16/E4M3 and integer subset and
-// MUST supply saturation disabled. Exact, inexact, underflow, overflow,
-// saturation, wrap, signed-zero, NaN, infinity, and flag results MUST be
-// identical for equal source, destination, and control inputs.
+// BF16, E4M3, E5M2, and signed/unsigned 64/32/16/8 conversions, except for
+// the explicitly selected same-type FP16/BF16/FP32/FP64 round-to-integral
+// specialization defined by PTO-TCVT-CONTRACT-001. Scalar conversion MUST
+// use it for its FP64/FP32/FP16/E4M3 and integer subset and MUST supply
+// saturation disabled. Outside that TCVT-only specialization, exact,
+// inexact, underflow, overflow, saturation, wrap, signed-zero, NaN,
+// infinity, and flag results MUST be identical for equal source,
+// destination, and control inputs.
 // NDF-END: PTO-COMMON-CONVERSION-001
 
 pure func ReferenceCommonConversionTypeSupported(

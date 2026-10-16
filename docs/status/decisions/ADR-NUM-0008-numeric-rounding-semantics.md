@@ -27,7 +27,9 @@
     "PTO-FCVTZ-DECISION-BINDING-001",
     "PTO-NUMERIC-E6M2-FORMAT-001",
     "PTO-NUMERIC-RCPE6M2-FORMAT-001",
-    "PTO-TCVT-CONTRACT-001"
+    "PTO-TCVT-CONTRACT-001",
+    "PTO-INST-TILE-TCVT",
+    "PTO-COMMON-CONVERSION-001"
   ],
   "affected_units": [
     "PTO-ARCH-DATA-TYPES-ROUNDING",
@@ -40,7 +42,13 @@
     "PTO-SCALAR-FCVTZ",
     "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
     "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
-    "PTO-TILE-TCVT"
+    "PTO-TILE-TCVT",
+    "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL",
+    "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+    "PTO-TILE-MODEL-NUMERIC-FORMATS",
+    "PTO-TILE-MODEL-NUMERIC-REFERENCE-CONVERSION",
+    "PTO-TILE-MODEL-NUMERIC-E8M0-CONVERSION"
   ],
   "resolves": [],
   "supersedes": [],
@@ -69,8 +77,31 @@
         "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
         "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2"
       ]
+    },
+    {
+      "date": "2026-10-15",
+      "baseline": "03eb383fab9311f7d76def8b46cdbd04e1e50d23",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/387",
+      "affected_ndf": [
+        "PTO-INST-TILE-TCVT",
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-COMMON-CONVERSION-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-TCVT",
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL",
+        "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+        "PTO-TILE-MODEL-NUMERIC-FORMATS",
+        "PTO-TILE-MODEL-NUMERIC-REFERENCE-CONVERSION",
+        "PTO-TILE-MODEL-NUMERIC-E8M0-CONVERSION"
+      ]
     }
-  ]
+  ],
+  "interface_change": true
 }
 ---
 # ADR-NUM-0008: Numeric rounding semantics
@@ -330,3 +361,43 @@ TCVT 的 FP16/BF16-to-E6M2 仅接受 RNE 与 RNA，并对 E6M2 目标舍入一�
 E6M2-to-FP16 以及 RCPE6M2-to-FP16/BF16 在结果不精确时接受 RNE 与 RNA。
 RCPE6M2 先表示 E6M2 code 的精确数学倒数，再向目标舍入一次；中间 BF16 或 FP16
 舍入不是架构行为。
+
+## 2026-10-15 accepted amendment: same-type TCVT integral rounding
+
+Issue [#387](https://github.com/PTO-ISA/pto-spec/issues/387) records the accepted
+extension of the existing TCVT interface. The architecture owner confirmed the
+choice in the design-review conversation on this date. This provenance records
+architecture acceptance, not an independent implementation review or a GitHub
+approval.
+
+The decision reuses explicit bundle rounding selections for integral-valued
+results in identical FP16, BF16, FP32, or FP64 operation types. The ordinary
+zero/default selection remains destination-format conversion. This adds a
+TCVT-specific rounding point owned by PTO-TCVT-CONTRACT-001; the applicability
+of PTO-COMMON-CONVERSION-001 must be delimited accordingly without changing
+its shared conversion implementation or scalar and cross-type clients.
+
+Reusing the encoding makes existing same-type explicit-mode binaries observably
+incompatible. That cost was explicitly accepted instead of allocating TRND,
+a new selector, or a version discriminator. RTO is intentionally rejected only
+for these four pairs because integral round-to-odd is outside the accepted
+scope; its existing mathematical definition and other legal clients remain
+unchanged. Integral rounding reports NX for active nonintegral finite inputs,
+while NaN, signed-zero, saturation, and other flags follow the named owners.
+There is no intermediate integer Tile or architectural S32/S64 bound.
+
+The owning ASL/NDF clauses carry the complete result, legality, and flag rules.
+Implementation evidence must distinguish default from explicit RNE through
+actual decoded bundles, test independent rounding goldens and pre-effect RTO
+faults, and preserve carrier views, legal layouts, masks, aliasing, and atomic
+publication. Downstream integration and exact-commit release qualification are
+separate obligations; this acceptance alone does not establish either.
+
+**中文。** Issue #387 记录本次已接受的架构选择：复用 TCVT 的显式舍入编码，
+在相同 FP16/BF16/FP32/FP64 操作类型之间产生整数值的浮点结果，零编码仍执行
+原格式转换。架构负责人已在当日设计审阅对话中确认编码复用及其兼容性代价、
+NX 策略和限定范围内的 RTO 拒绝；该记录不是独立实现审查或 GitHub approval。
+完整语义归属于 PTO-TCVT-CONTRACT-001，并须修正公共转换条款的适用范围；
+共享转换实现、标量及跨类型客户端保持既有行为。RTO 的数学定义不变，拒绝仅
+表示本次不纳入整数值 round-to-odd。实现须提供真实解码路径、独立期望值、
+预效果故障及布局、mask、alias、原子发布证据；下游集成与发布资格另行验证。

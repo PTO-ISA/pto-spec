@@ -193,6 +193,34 @@ class NumericDecisionMigrationTest(unittest.TestCase):
             subnormal_body,
         )
 
+    def test_tcvt_rounding_evidence_points_to_integral_specialization(self) -> None:
+        evidence = json.loads(
+            (ROOT / "spec/evidence/numeric-rounding-selector-contract.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        tile_convert = next(
+            row for row in evidence["domains"] if row["domain"] == "tile-convert"
+        )
+        self.assertIn("PTO-TCVT-CONTRACT-001", tile_convert["selector_owner"])
+        rule = tile_convert["rounding_rule"]
+        self.assertIn(
+            "Resolve NONE to RTZ for floating-to-integer TCVT and to RNE otherwise",
+            rule,
+        )
+        self.assertIn("explicit codes 1 through 7", rule)
+        self.assertIn("PTO-TCVT-CONTRACT-001", rule)
+        self.assertIn("RTO rejects before effects", rule)
+        self.assertIn(
+            "For other pairs in ReferenceCommonConversionTypeSupported, retain common-conversion results and flags",
+            rule,
+        )
+        self.assertIn(
+            "Dedicated E8M0 exponent, E6M2/RCPE6M2, and packed conversion profiles remain governed by their owning contracts",
+            rule,
+        )
+        self.assertNotIn("then round once to the destination format", rule)
+
     def test_active_numeric_surfaces_contain_no_pd_identity(self) -> None:
         result = subprocess.run(
             [

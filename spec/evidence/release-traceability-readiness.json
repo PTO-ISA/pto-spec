@@ -1407,6 +1407,9 @@
         "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-SUBVIEW-001",
         "PTO-AVS-BLOCK-TCVT-SOURCE-LAYOUT-MASK-DECODED-002",
         "PTO-AVS-BLOCK-TPACK-GPR-MASK-MERGE-DECODED-002",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-DECODED-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-MASK-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-RTO-001",
         "PTO-AVS-TILE-TEXPANDS-CUBE-LAYOUT-002"
       ]
     },
@@ -1443,7 +1446,9 @@
         "ADR-TILE-0004"
       ],
       "tests": [
-        "PTO-AVS-BLOCK-EXECUTION-MASK-OVERSIZED-DIMENSIONS-007"
+        "PTO-AVS-BLOCK-EXECUTION-MASK-OVERSIZED-DIMENSIONS-007",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-DECODED-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-MASK-001"
       ]
     },
     {
@@ -3754,6 +3759,7 @@
       "readiness_subjects": [
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-NUM-0008",
         "ADR-SCALAR-0004"
       ],
       "tests": [
@@ -3765,7 +3771,9 @@
         "PTO-AVS-SCALAR-FCVTZ-NARROW-SOURCES-003",
         "PTO-AVS-SCALAR-SCVTF-WIDTHS-002",
         "PTO-AVS-SCALAR-UCVTF-WIDTHS-002",
-        "PTO-AVS-TILE-MODEL-NUMERIC-REFERENCE-CONVERSION-STATIC-001"
+        "PTO-AVS-TILE-MODEL-NUMERIC-REFERENCE-CONVERSION-STATIC-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-MATRIX-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-SCOPE-001"
       ]
     },
     {
@@ -4057,6 +4065,7 @@
         "PTO-AVS-TILE-TCMP-LOCAL64-DECODED-CELL-001",
         "PTO-AVS-TILE-TCMP-LOCAL64-DECODED-GPR-001",
         "PTO-AVS-TILE-TCMPS-LOCAL64-DECODED-CELL-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-FP64-CUBE-001",
         "PTO-AVS-TILE-TLEA-M32-DECODED-MASK-001",
         "PTO-AVS-TILE-TLEA-M32-MEMORY-001",
         "PTO-AVS-TILE-TPACK-UNPACK-LOCAL64-002",
@@ -5392,7 +5401,9 @@
         "PTO-AVS-BLOCK-B-SUBVIEW-ENCODING-001",
         "PTO-AVS-BLOCK-RANGE-GROUP-ORDER-001",
         "PTO-AVS-BLOCK-RANGE-PEMODE-ZERO-001",
-        "PTO-AVS-BLOCK-SUBVIEW-CUBE-DESCRIPTOR-001"
+        "PTO-AVS-BLOCK-SUBVIEW-CUBE-DESCRIPTOR-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-DECODED-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-MASK-001"
       ]
     },
     {
@@ -15065,6 +15076,7 @@
       "readiness_subjects": [
         "ADR-CUBE-0017",
         "ADR-GOV-0013",
+        "ADR-NUM-0008",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -16837,7 +16849,8 @@
       ],
       "tests": [
         "PTO-AVS-ARCH-NUMERIC-STATUS-001",
-        "PTO-AVS-ARCH-STATE-NUMERIC-STATUS-STATIC-001"
+        "PTO-AVS-ARCH-STATE-NUMERIC-STATUS-STATIC-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-BOUNDARIES-001"
       ]
     },
     {
@@ -18530,6 +18543,14 @@
         "PTO-AVS-TILE-TCVT-E8M0-SPECIAL-004",
         "PTO-AVS-TILE-TCVT-FLAGS-001",
         "PTO-AVS-TILE-TCVT-FORMAT-PROFILES-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-BOUNDARIES-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-DECODED-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-FP64-CUBE-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-MASK-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-MATRIX-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-RNE-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-RTO-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-SCOPE-001",
         "PTO-AVS-TILE-TCVT-NORM-PHYSICAL-SHAPE-006",
         "PTO-AVS-TILE-TCVT-PACKED-PAIRING-001",
         "PTO-AVS-TILE-TCVT-PACKED-TAIL-001",
@@ -18937,6 +18958,7 @@
         "PTO-AVS-TILE-TCOLSUM-OPERATION-VIEW-001",
         "PTO-AVS-TILE-TCVT-CUBE-REINTERPRET-007",
         "PTO-AVS-TILE-TCVT-E8M0-SOURCE-VIEW-008",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-SCOPE-001",
         "PTO-AVS-TILE-TCVT-SOURCE-VIEW-BOUNDARY-009",
         "PTO-AVS-TILE-TROWARGMAX-OPERATION-VIEW-001",
         "PTO-AVS-TILE-TROWSUM-CUBE-M16-HELPER-MASK-ROLLBACK-001",
@@ -19029,6 +19051,7 @@
         "PTO-AVS-TILE-GPR-MASK-EIGHT-BIT-001",
         "PTO-AVS-TILE-MODEL-LEGALITY-EXEC-MASK-SRC-SCHEMA-STATIC-001",
         "PTO-AVS-TILE-PREDICATE-CARRIERS-LOCAL64-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-MASK-001",
         "PTO-AVS-TILE-TLEA-CUBE-MASK-001",
         "PTO-AVS-TILE-TLEA-M32-DECODED-MASK-001",
         "PTO-AVS-TILE-TLEA-M32-MEMORY-001",
@@ -21282,7 +21305,7 @@
     "asl/tile/elementwise-tile-tile/arithmetic/TMIN.asl": "6abee85729fb004b43cce630542759442624e207c764ac58193581232b32ac04",
     "asl/tile/elementwise-tile-tile/arithmetic/TMUL.asl": "b0880482b675fc791cfb4a35c30978bd570b295e4a86db6cf9a96ec9ba56ad0f",
     "asl/tile/elementwise-tile-tile/arithmetic/TSUB.asl": "c7e06f84f43c47d97ad4b79c7aeb8ab05388894df6994f4bf6ff2c0b6332e00e",
-    "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl": "da3fc432c8b61372b24ebc51f9d29601c5b26d69e426cd7be976b72c06d025b5",
+    "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl": "be364ce419d8349e8d0bfc89c0756b8e40c2c3341a0dade9f6a31353826a8c15",
     "asl/tile/elementwise-tile-tile/logical/TABS.asl": "0df54aa56bd32661f92065c6e0e3b1f979cfb8440dd6497b0bbce9eb3306c5bd",
     "asl/tile/elementwise-tile-tile/logical/TAND.asl": "07b592e5e8981a4689b5824095cd3ea31b401ce2bc173bc7e127fd2965083a7d",
     "asl/tile/elementwise-tile-tile/logical/TCMP.asl": "8e4f0ba385a260017125a68eaec459d88f173184ff6cd24159afdf925fad62ea",
@@ -21414,14 +21437,14 @@
     "asl/tile/model/memory/restart.asl": "952183301020042b382a7c7eb14adfc52b2d3c74b99cf130e8912e89b6205b2e",
     "asl/tile/model/memory/shared-movement.asl": "1d70613d120d04c747d475b9c6474e4a480eccfb2e592c07059d7cbf695bb36a",
     "asl/tile/model/memory/stride.asl": "92960da5561ea8d7b3869d028893279dbde4541b554097cef7eea067224eba46",
-    "asl/tile/model/numeric/e8m0-conversion.asl": "77cf18fde554db95f48330f6bc26092aa90e28aa46804c1ff57a6977fb053f1b",
+    "asl/tile/model/numeric/e8m0-conversion.asl": "f5154537ff355cf0b8754eef331f1ef89027c3b3885e1b29379629e224ddb776",
     "asl/tile/model/numeric/exceptions.asl": "7acbde42269981937c4b34454cde84242dd6e22c4daec4c57e8318b347f7adfa",
-    "asl/tile/model/numeric/formats.asl": "a91e1b5888393b465589dd8f76e55790cc1c50b77689fa982137c3734c20ebfa",
+    "asl/tile/model/numeric/formats.asl": "e069fffc8971ee5fcdbb654b3a500da8ce11240f5112720a0676e090a47db0e9",
     "asl/tile/model/numeric/packed-conversion.asl": "34b4aa34acce70059fbebe0c45d2a260fa3309580783b6ad15b3b240437920a1",
-    "asl/tile/model/numeric/reference-conversion.asl": "5b7ac361fad1d588ff7b73781b46729ed6c239dfd6a73cb2661bf803670859af",
+    "asl/tile/model/numeric/reference-conversion.asl": "0ca29f5b9c02bd99bd284eecf06d80966af49ce428775096970126f0972b8a49",
     "asl/tile/model/numeric/reference-fixed-binary.asl": "51ed7c5807a4426efbed8bb4727d123d616676ebcb81df2c87cbc954b66f8ee3",
     "asl/tile/model/numeric/rounding.asl": "749f652fb0fdd9dc7e87c2ef889ff7ecf5f17debdf10590a72f98bcb0e6adb6f",
-    "asl/tile/model/numeric/tcvt-conversion.asl": "62625b9c4604139b80b1eec7c3a3fd3a757613cab1dfddade61fae7bba93027b",
+    "asl/tile/model/numeric/tcvt-conversion.asl": "3361e47af7db5d218c66628630d8813911cfd8ba51e98fee9e6e52d5ac7489fe",
     "asl/tile/model/ordering/sorting.asl": "c4286a8cda10cce0bebe7ff7cfe29a07d4564004b715c924818ef9881109e743",
     "asl/tile/model/shape/cube-cell.asl": "e180e3f12cae7252b35d21d15fef7ed6e8e4305f2ad328adc0be36fca9b6ee23",
     "asl/tile/model/shape/cube-double-cell.asl": "3c62fc259c9ce363f74142bde27a42bb2dfb7c3fe15ad697b75a48fb184bdbb8",
@@ -22203,7 +22226,7 @@
     "docs/tile/elementwise-tile-tile/arithmetic/TMIN.md": "2a146ae443ce319f015b2fea426f3f5699ce3c37ba4beae6b35a1d93e5331e2b",
     "docs/tile/elementwise-tile-tile/arithmetic/TMUL.md": "5d8d14432b753e867eaba92b9f9485cddf2a4da2e5a9daa7f711fa54cbf80dd0",
     "docs/tile/elementwise-tile-tile/arithmetic/TSUB.md": "5a45c57c4164712ed48f264c1b95be93db0ada0250495f56488cd7c51d03963b",
-    "docs/tile/elementwise-tile-tile/format-conversion/TCVT.md": "bed2832e23821121d0b817f25fc07410e9b8be4edd5ab31fa8fa5e2446e07a89",
+    "docs/tile/elementwise-tile-tile/format-conversion/TCVT.md": "dc8b9bdc0b16e8de1dc76faaa59c04ddc765ff9d96b0aec335ece12733abcc54",
     "docs/tile/elementwise-tile-tile/logical/TABS.md": "f2c560a1ec14e5f826f31a7209f79172b3321fe4d663d8c318501ec8f798f872",
     "docs/tile/elementwise-tile-tile/logical/TAND.md": "78ec52a8f18baae34f39c1e5b3644d2484c5c9bdb06c05d938c7a71c26a139f5",
     "docs/tile/elementwise-tile-tile/logical/TCMP.md": "c3da2452fba6b7994bf59cf5ffec04503eae118245bc73e8c930eae9b3de70bb",
@@ -22335,14 +22358,14 @@
     "docs/tile/model/memory/restart.md": "8ddcdc458251f6737b889092bc1aa225619f7fbfc9f530652e4a10f6f7433249",
     "docs/tile/model/memory/shared-movement.md": "fa5eb6249b91f78484d4a5628992848e9d5b820173e297226e6aad77a5ef626b",
     "docs/tile/model/memory/stride.md": "dd52e9eed1ffc21f51de2730affd980c1cb77cced945950e72ba2a66927f9d22",
-    "docs/tile/model/numeric/e8m0-conversion.md": "9b8364ad0b4d66e587e0d99ff735dc5de2492df4da89a6ed8b01a32a50c65f21",
+    "docs/tile/model/numeric/e8m0-conversion.md": "1109a7e9fc4782843e5878c51415ff1e274ef48b325fe8d4975aedeb92d1e148",
     "docs/tile/model/numeric/exceptions.md": "4c81558de0b463ff826edb5975aa98f46f6229e2500bb3d2341dc0cad0433a78",
-    "docs/tile/model/numeric/formats.md": "957f5e3d3d89bbdbe52818f7c08059a5106f85a6785b2b2b6506e295906d9982",
+    "docs/tile/model/numeric/formats.md": "4c7d919b4f4d17fa22922501a568943ff97f549e0b6c49579805d1a8e67d54a7",
     "docs/tile/model/numeric/packed-conversion.md": "74abb63dbf49dbc0f0ccf5af7d4b576d08055c153fa95d598caffc6dff66cd48",
-    "docs/tile/model/numeric/reference-conversion.md": "46adc08ac9c576aa718f1ac76249f3e421c99d4d50a4e980fa1c73798b2a405c",
+    "docs/tile/model/numeric/reference-conversion.md": "81960ef05b652c904a9d3e903f1ce91bc1911e2a8fd05536750506d7f20f2d9c",
     "docs/tile/model/numeric/reference-fixed-binary.md": "3954044b53c440a4ed3636fdbaca111dc6b341404446bcdc335f60b82a301a2c",
     "docs/tile/model/numeric/rounding.md": "277ed3eac560cb139e9b51d1d32bf67cabb02c1445f1a66d313d1703380933a0",
-    "docs/tile/model/numeric/tcvt-conversion.md": "8763adc9e77905f3e1cfd4e2d5b1ca3aa546aa8bba20fd5089046fc1b06cf43f",
+    "docs/tile/model/numeric/tcvt-conversion.md": "5cc2ffe3cdb821a22e2cc78a217b365c707a67f3b847213a9bfc7591e3220f93",
     "docs/tile/model/ordering/sorting.md": "7deae4d2577462ffd889f03dce14cc3bad4dcd7cde1621f8c4c306fdf3368a7a",
     "docs/tile/model/shape/cube-cell.md": "9f753528686e888380c1a9ae9f5d4e33533ad8b70627df56d7f4d0c2ea8426e4",
     "docs/tile/model/shape/cube-double-cell.md": "1db092a0da5e6d1deabb4c544c07ce78680e95f5b582332b140896f9b45d674b",
@@ -22398,7 +22421,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "c1332aa895d5a70170b6f193674ad97371cbdd4314f5336de4ce4eb703d4d484",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "4fdb0facff519fecde8ba33ed966ed54c04b04c3f5f344024b2ce1a859434d67",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "c2bba4aad8073962fc18443147a53b3492eee9629f7a5975591087d1d8834e67",
-    "spec/evidence/adr-index.json": "5451c6eb297b5ff4a21792a17b3c4b2e05fd841b851716073fa3b8b1fb65306b",
+    "spec/evidence/adr-index.json": "0bd1770e46466edf68c780709161672c847c9569dbb02b9ce8f9a517a56a88bb",
     "spec/evidence/instruction-contract-closure.json": "1b8b89480c85a2a9d39e31434ed06872e8cfbc3c67a9a657973a1a0d0daa915c",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6c18bfdff0279b6d4fbaf3cb3c8e1ee111b4d5e82e1688136b88be6fa7902ba3",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -25933,17 +25956,25 @@
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-e8m0-source-view-008.asl": "59fbbfc7b02f9a25b84fde4d36005637767853ef0c7bf183c945e87984fc5121",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-fractal-001.asl": "949fcbd27ad7d8b7805ac43e7b82c796aa37671f9a36a89a0df168846fc0b7c0",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integer-001.asl": "36591559b9de686433ff303ea1c617e724e8db2832a0a4b3aabedeb2d9a0a439",
+    "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-decoded-001.asl": "40fbff84fcd5fe918d3d692dac71314d932392b94f9db06741c09afe24723ace",
+    "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-fp64-cube-001.asl": "12cc9603f9eac64d2df40740cf6461731aaf9b478a25ee00b77e877f5cb0e535",
+    "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-mask-001.asl": "b0db5499c58c225f7a8c0df3d5e062d460000b116f957b49a45e5134bb839ac0",
+    "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-matrix-001.asl": "1e7f9b52bfa797f766cfab6ea24fae74918964d8159c5c0340b1843d3e12e1e2",
+    "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-rne-001.asl": "bc1ffa1a1713adc06e1b0ad32f40705f1f3a11f505542c11df37d2396ab2a233",
+    "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-scope-001.asl": "40f63fa8e021a39091f639dee949884e0b4223b8d0302b4f99664f829ac43241",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-packed-pairing-001.asl": "cd0342cfa693b3ae40b114f06e0e33126529fa71a3083ef940292fbbbd5e4c3c",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-fault-tcvt-cube-capacity-001.asl": "839573afa4943e8d82aacaaf9c6270736693b810a44a968ddd5b80c5d1869785",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-fault-tcvt-cube-lb2-001.asl": "7b8944cad5fdfed5b478aeecd35317c26465095d95cca80c21a72111bcfb2db5",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-fault-tcvt-cube-shape-001.asl": "fc96500e7fb9291d9efe6c45e64ecb4d881acbad87d4562d9e9f2ae4bbf3eda5",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-fault-tcvt-e8m0-pairs-005.asl": "25308d4219fb89199776996901a9121527f429f7f5c09fb81ebdf582537295e7",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-fault-tcvt-format-profiles-001.asl": "f25e4664ddb9a1ab79b1b3020c963fec68f79e59d275ae52ab02d8ccb2312e13",
+    "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-fault-tcvt-integral-rto-001.asl": "314cdfe732c1509c6c45e16fc06a8d25239a30c9c6ef50de44de341427def303",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-fault-tcvt-norm-physical-shape-006.asl": "78d2524c0c6cab5b13926e9cc159425c1a312b41fe7dec8c03fd051c6b44a46a",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-fault-tcvt-schema-001.asl": "35f5ef4545d559f969bcc353eb0ef2bcf2f4e07b48ad50cfd5e3b7992bbbdb36",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-fault-tcvt-source-view-boundary-009.asl": "4f99f52169a4dce8bd6d0d845b3d6e4463c844d29f79548b49cacac2063b0160",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-state-tcvt-e8m0-special-004.asl": "05b25cdd5f3d9d8953b910e33c9909ed5d7739f508b0f217af7f69dfcd878ea2",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-state-tcvt-flags-001.asl": "6bf61bd618a5ca167c9740bbfea174dd2a3824684fadaab82fe0fe6fb05f83f0",
+    "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-state-tcvt-integral-boundaries-001.asl": "9c454d8bd6057ff2088dc78b73a4a221a5e7c70a43f3233e5dbc2414962f7ecd",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-state-tcvt-packed-tail-001.asl": "94685ba2db131b80ccde593d8da0ea8d862f5da831241cce5030d199a89de704",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-static-tcvt-contract-001.asl": "d8bbce1609f46c86e69c882201131388a3d52446d220bfeff07095ed455c3bc9",
     "tests/asl/tile/elementwise-tile-tile/logical/TABS/tile-bound-tabs-datr-001.asl": "c2915907ee48f3eec6fd7609c01b097c28cd3146b9f4175f354f79c35252508b",
@@ -26655,7 +26686,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1115,
     "status": "closed",
-    "test_count": 4246,
+    "test_count": 4254,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -65768,6 +65799,99 @@
       "source": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl"
     },
     {
+      "id": "PTO-AVS-TILE-TCVT-INTEGRAL-BOUNDARIES-001",
+      "kind": "state-transition",
+      "path": "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-state-tcvt-integral-boundaries-001.asl",
+      "requirements": [
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-NUMERIC-STATUS-STICKY-001"
+      ],
+      "sha256": "9c454d8bd6057ff2088dc78b73a4a221a5e7c70a43f3233e5dbc2414962f7ecd",
+      "source": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TCVT-INTEGRAL-DECODED-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-decoded-001.asl",
+      "requirements": [
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-B-DATR-FIELDS-001",
+        "PTO-B-DIM-WRITE-001",
+        "PTO-INST-BLOCK-B-IOT"
+      ],
+      "sha256": "40fbff84fcd5fe918d3d692dac71314d932392b94f9db06741c09afe24723ace",
+      "source": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TCVT-INTEGRAL-FP64-CUBE-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-fp64-cube-001.asl",
+      "requirements": [
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-CUBE-M32-B64-DOUBLE-CELL-001"
+      ],
+      "sha256": "12cc9603f9eac64d2df40740cf6461731aaf9b478a25ee00b77e877f5cb0e535",
+      "source": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TCVT-INTEGRAL-MASK-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-mask-001.asl",
+      "requirements": [
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001",
+        "PTO-B-DATR-FIELDS-001",
+        "PTO-INST-BLOCK-B-IOT",
+        "PTO-B-DIM-WRITE-001"
+      ],
+      "sha256": "b0db5499c58c225f7a8c0df3d5e062d460000b116f957b49a45e5134bb839ac0",
+      "source": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TCVT-INTEGRAL-MATRIX-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-matrix-001.asl",
+      "requirements": [
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-COMMON-CONVERSION-001"
+      ],
+      "sha256": "1e7f9b52bfa797f766cfab6ea24fae74918964d8159c5c0340b1843d3e12e1e2",
+      "source": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TCVT-INTEGRAL-RNE-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-rne-001.asl",
+      "requirements": [
+        "PTO-TCVT-CONTRACT-001"
+      ],
+      "sha256": "bc1ffa1a1713adc06e1b0ad32f40705f1f3a11f505542c11df37d2396ab2a233",
+      "source": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TCVT-INTEGRAL-RTO-001",
+      "kind": "fault",
+      "path": "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-fault-tcvt-integral-rto-001.asl",
+      "requirements": [
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-B-DATR-FIELDS-001"
+      ],
+      "sha256": "314cdfe732c1509c6c45e16fc06a8d25239a30c9c6ef50de44de341427def303",
+      "source": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TCVT-INTEGRAL-SCOPE-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-exec-tcvt-integral-scope-001.asl",
+      "requirements": [
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-COMMON-CONVERSION-001",
+        "PTO-TILE-CARRIER-REINTERPRETATION-001"
+      ],
+      "sha256": "40f63fa8e021a39091f639dee949884e0b4223b8d0302b4f99664f829ac43241",
+      "source": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-TCVT-LAYOUT-001",
       "kind": "boundary",
       "path": "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-bound-tcvt-layout-001.asl",
@@ -75086,6 +75210,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-BLOCK-0005",
+        "ADR-NUM-0008",
         "ADR-TILE-0004"
       ],
       "semantic_tests": [],
@@ -75373,6 +75498,7 @@
         "ADR-BLOCK-0012",
         "ADR-CUBE-0017",
         "ADR-GOV-0013",
+        "ADR-NUM-0008",
         "ADR-TILE-0004",
         "ADR-TILE-0008"
       ],
@@ -93955,6 +94081,14 @@
         "PTO-AVS-TILE-TCVT-FORMAT-PROFILES-001",
         "PTO-AVS-TILE-TCVT-FRACTAL-001",
         "PTO-AVS-TILE-TCVT-INTEGER-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-BOUNDARIES-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-DECODED-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-FP64-CUBE-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-MASK-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-MATRIX-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-RNE-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-RTO-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-SCOPE-001",
         "PTO-AVS-TILE-TCVT-LAYOUT-001",
         "PTO-AVS-TILE-TCVT-NORM-PHYSICAL-SHAPE-006",
         "PTO-AVS-TILE-TCVT-PACKED-PAIRING-001",
@@ -93989,6 +94123,14 @@
         "PTO-AVS-TILE-TCVT-FORMAT-PROFILES-001",
         "PTO-AVS-TILE-TCVT-FRACTAL-001",
         "PTO-AVS-TILE-TCVT-INTEGER-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-BOUNDARIES-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-DECODED-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-FP64-CUBE-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-MASK-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-MATRIX-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-RNE-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-RTO-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-SCOPE-001",
         "PTO-AVS-TILE-TCVT-LAYOUT-001",
         "PTO-AVS-TILE-TCVT-NORM-PHYSICAL-SHAPE-006",
         "PTO-AVS-TILE-TCVT-PACKED-PAIRING-001",
@@ -97844,6 +97986,7 @@
         "ADR-CUBE-0017",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-NUM-0008",
         "ADR-TILE-0008",
         "ADR-TILE-0009",
         "ADR-TILE-0012"
@@ -98188,6 +98331,7 @@
         "ADR-GOV-0013",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
+        "ADR-NUM-0008",
         "ADR-NUM-0012",
         "ADR-SCALAR-0004"
       ],
@@ -98233,6 +98377,7 @@
         "ADR-GOV-0013",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
+        "ADR-NUM-0008",
         "ADR-NUM-0009",
         "ADR-NUM-0012",
         "ADR-SCALAR-0004",
@@ -98290,6 +98435,7 @@
       "readiness_subjects": [
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-NUM-0008",
         "ADR-NUM-0012",
         "ADR-SCALAR-0004",
         "ADR-TILE-0008"

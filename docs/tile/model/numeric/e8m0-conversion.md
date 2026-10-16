@@ -179,6 +179,14 @@ pure func HardwareTCVTRoundingModeSupported(
     destination_type: TileDataType,
     mode: NumericRoundingMode) => boolean
 begin
+    if source_type == destination_type &&
+       (source_type == TileDataType_FP16 ||
+        source_type == TileDataType_BF16 ||
+        source_type == TileDataType_FP32 ||
+        source_type == TileDataType_FP64) &&
+       mode == NumericRound_RTO then
+        return FALSE;
+    end;
     if source_type == TileDataType_E6M2 ||
        destination_type == TileDataType_E6M2 ||
        source_type == TileDataType_RCPE6M2 then
