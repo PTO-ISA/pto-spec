@@ -7891,6 +7891,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-NUM-0008",
         "ADR-SCALAR-0004"
       ],
       "tests": [
@@ -7903,7 +7904,8 @@
         "PTO-AVS-FSU-FADD-SNAP-001",
         "PTO-AVS-FSU-FADD-SRC-001",
         "PTO-AVS-FSU-FADD-TYPE-001",
-        "PTO-AVS-SCALAR-FADD-DECODE-001"
+        "PTO-AVS-SCALAR-FADD-DECODE-001",
+        "PTO-AVS-SCALAR-FP-IEEE-ADD-SUB-SIGNED-ZERO-015"
       ]
     },
     {
@@ -8509,6 +8511,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-NUM-0008",
         "ADR-SCALAR-0004"
       ],
       "tests": [
@@ -8521,6 +8524,7 @@
         "PTO-AVS-FSU-FSUB-SNAP-001",
         "PTO-AVS-FSU-FSUB-SRC-001",
         "PTO-AVS-FSU-FSUB-TYPE-001",
+        "PTO-AVS-SCALAR-FP-IEEE-ADD-SUB-SIGNED-ZERO-015",
         "PTO-AVS-SCALAR-FSUB-DECODE-001"
       ]
     },
@@ -18055,6 +18059,8 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-NUM-0008",
+        "ADR-SCALAR-0004",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -18062,7 +18068,8 @@
         "PTO-AVS-BLOCK-EXECUTION-MASK-LAST-USE-EXCLUDED-008",
         "PTO-AVS-BLOCK-EXECUTION-MASK-MERGE-HAND-OUTPUT-002",
         "PTO-AVS-BLOCK-EXECUTION-MASK-PREDICATETILE-BINARY-001",
-        "PTO-AVS-TILE-TADD-REINTERPRET-ENCODING-002"
+        "PTO-AVS-TILE-TADD-REINTERPRET-ENCODING-002",
+        "PTO-AVS-TILE-TADD-SIGNED-ZERO-002"
       ]
     },
     {
@@ -18076,12 +18083,15 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-NUM-0008",
+        "ADR-SCALAR-0004",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
       ],
       "tests": [
-        "PTO-AVS-BLOCK-TILE-SCHEMA-FAMILY-APPLICABILITY-002"
+        "PTO-AVS-BLOCK-TILE-SCHEMA-FAMILY-APPLICABILITY-002",
+        "PTO-AVS-TILE-TADDS-SIGNED-ZERO-002"
       ]
     },
     {
@@ -20411,10 +20421,14 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-NUM-0008",
+        "ADR-SCALAR-0004",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
-      "tests": []
+      "tests": [
+        "PTO-AVS-TILE-TSUB-SIGNED-ZERO-002"
+      ]
     },
     {
       "executable": false,
@@ -20427,11 +20441,15 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-NUM-0008",
+        "ADR-SCALAR-0004",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
       ],
-      "tests": []
+      "tests": [
+        "PTO-AVS-TILE-TSUBS-SIGNED-ZERO-002"
+      ]
     },
     {
       "executable": false,
@@ -21256,9 +21274,9 @@
     "asl/scalar/model/dispatch/sys.asl": "d5bee4a6d78af882b6ad9a8d7ca6200d3df3f9495061a617f5b3532f45d8ad20",
     "asl/scalar/model/dispatch/top-level.asl": "595e7805a9b0a5cb3c0691373b161ea906a8044339ed3dcadec08065d4f118a7",
     "asl/scalar/model/fsu/arithmetic.asl": "caf8abe955be90b30655112166b5844e02e575cbbc9e447a2ce84c0284b56f96",
-    "asl/scalar/model/fsu/reference-quantization.asl": "e13894a4bb0969202171ee431bf3cd490b7011282547ebce15bbfad910d8b586",
+    "asl/scalar/model/fsu/reference-quantization.asl": "4362fd87078b965d2e1730608497f0711da18a819a918e349c60952ce5c4fe5b",
     "asl/scalar/model/fsu/reference-scalar-fp-specials.asl": "f4005e8d87791a0479196b656d98c339e7fa66b839a50aeb7d35b39108a8c6a8",
-    "asl/scalar/model/fsu/scalar-fp.asl": "5015671b9435e0c2cf4185071937d8150ceec9d64172b926926c1cb9a7a039fa",
+    "asl/scalar/model/fsu/scalar-fp.asl": "28baac177cc1a57c5e5be667329ae061265a558b0c4332cb4a219dcd56b38e23",
     "asl/scalar/model/sys/registers.asl": "58ae7d723a370e9df17541ffcc60f46dbfa7a17d05cceae6eb6b4445dcecf126",
     "asl/scalar/model/sys/semantics.asl": "3fcf8eb96dbd23e683b05a4f5dcf7eacb028c17641f658fc692f7cde88a05306",
     "asl/scalar/model/types/operands.asl": "f1bfb9a3ea9012c6895705aa0ce14c20eb17976bf0a98b1f31290786bd0c5fcb",
@@ -21299,12 +21317,12 @@
     "asl/scalar/sys/TLB.IALL.asl": "d2494dfaf0f9f09ed3e05f23fb1be5041c6928a881962b8be282afdf95573b22",
     "asl/scalar/sys/TLB.IAV.asl": "c32ae60a4693ea542e6e4f5a30367354b14b3cf27ecf2be3907c7b413f341e63",
     "asl/scalar/sys/TLB.IV.asl": "1158e89723ae3fd6b2dfd42def866da9c866a9f6f1513a5894bd796daf85ade9",
-    "asl/tile/elementwise-tile-tile/arithmetic/TADD.asl": "d76500a633292581cc345d2e5e4c0805ba223e603917384aefafd16562168d98",
+    "asl/tile/elementwise-tile-tile/arithmetic/TADD.asl": "d331ed3055477b71268a51a2ae935fd94c2e4dd08b57ee99f505b3f8f9873f50",
     "asl/tile/elementwise-tile-tile/arithmetic/TFMA.asl": "f616cb6caf440a05294d878c5044701a7968c5cca37963a524478b6d1db324ab",
     "asl/tile/elementwise-tile-tile/arithmetic/TMAX.asl": "4150048f7769d903a219e2d83b2ce772bcdf5a1f63e9b3feb8a7e2107230de9e",
     "asl/tile/elementwise-tile-tile/arithmetic/TMIN.asl": "6abee85729fb004b43cce630542759442624e207c764ac58193581232b32ac04",
     "asl/tile/elementwise-tile-tile/arithmetic/TMUL.asl": "b0880482b675fc791cfb4a35c30978bd570b295e4a86db6cf9a96ec9ba56ad0f",
-    "asl/tile/elementwise-tile-tile/arithmetic/TSUB.asl": "c7e06f84f43c47d97ad4b79c7aeb8ab05388894df6994f4bf6ff2c0b6332e00e",
+    "asl/tile/elementwise-tile-tile/arithmetic/TSUB.asl": "9e92ea89e3bf5791bdd53cb2690f17db452c1973b09770ea74880e8811a8b894",
     "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl": "be364ce419d8349e8d0bfc89c0756b8e40c2c3341a0dade9f6a31353826a8c15",
     "asl/tile/elementwise-tile-tile/logical/TABS.asl": "0df54aa56bd32661f92065c6e0e3b1f979cfb8440dd6497b0bbce9eb3306c5bd",
     "asl/tile/elementwise-tile-tile/logical/TAND.asl": "07b592e5e8981a4689b5824095cd3ea31b401ce2bc173bc7e127fd2965083a7d",
@@ -21484,14 +21502,14 @@
     "asl/tile/reduce-and-expand/row-reduction/TROWMIN.asl": "91ff9c1e354f0ccb06ff65b41e0e19b1fa473f4855a80621da1be3809a1f7f35",
     "asl/tile/reduce-and-expand/row-reduction/TROWPROD.asl": "34ae7da4a2773c73d2c514fab7c23317096e10378614b5bee1eab3aa432b1fc1",
     "asl/tile/reduce-and-expand/row-reduction/TROWSUM.asl": "e56bdff3bbb74f9c9025d0080d4b9688d8157ac0c0adc2c3c4a66045288fb7f6",
-    "asl/tile/tile-scalar-and-immediate/arithmetic/TADDS.asl": "4d345cf3d1ecbb4abbba5ad85693ce079fd944ded4220c855f8711216387340a",
+    "asl/tile/tile-scalar-and-immediate/arithmetic/TADDS.asl": "052eef22c1e39b9578f150430c1088ce4c898526a03243edf0bc2eb23be49ec0",
     "asl/tile/tile-scalar-and-immediate/arithmetic/TDIVS.asl": "e1be6ff6e8ddf71cd14919c49f3cccd3b43ed5a5b5e66d806532a0aa92e4129f",
     "asl/tile/tile-scalar-and-immediate/arithmetic/TLEA.asl": "993a39603503fcfbe683f2f9eeed785dda68287c1fa6ee17cacfad31992ef1e8",
     "asl/tile/tile-scalar-and-immediate/arithmetic/TMAXS.asl": "2458a4bc6651208392d2c8e720d17a19e043e221d2083bb02281821cd94fdd8b",
     "asl/tile/tile-scalar-and-immediate/arithmetic/TMINS.asl": "da84e390592bb467518b4d49c39c2ed45d6ac7990242b80002076aa888be25a2",
     "asl/tile/tile-scalar-and-immediate/arithmetic/TMULS.asl": "8a072aeb9acd912c7c876d2151317f7c3e49a89f5e5ffd6161a249db5bcac7d1",
     "asl/tile/tile-scalar-and-immediate/arithmetic/TREMS.asl": "1c07abf8b1c050de31d4344f397d274ae4703a2771396a0048c87d2807b709a0",
-    "asl/tile/tile-scalar-and-immediate/arithmetic/TSUBS.asl": "bec1d93c126ee3384d75261a1cf5b0d03bab9bb01879e8fe58a674f5ea16d535",
+    "asl/tile/tile-scalar-and-immediate/arithmetic/TSUBS.asl": "a9048de29d8592a2f7bf1f49232cb356a614f63a4bc6269d702a3b2add7bc965",
     "asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS.asl": "c8cfda2ee39d4d08cf8fbb23ba24af8790e2afd21b3058797af6cb9ec155c64f",
     "asl/tile/tile-scalar-and-immediate/logical/TANDS.asl": "366b4e07925a15cc6458e295cd9af2ffc1e98e2493e2232f3ba502614f96b157",
     "asl/tile/tile-scalar-and-immediate/logical/TCMPS.asl": "ca4e21af8970ecad28cc1fd1009e12b9dfaa1be225d09cc8ae8d6e4fd90eb6d1",
@@ -22177,9 +22195,9 @@
     "docs/scalar/model/dispatch/sys.md": "aaf5226438c77df2d2931105f59cb2651b52819cd2fa41d2b5dcdef14d3adc3b",
     "docs/scalar/model/dispatch/top-level.md": "3b172745dcf4a978f919d3fb412cfae3cfe8a1caede2dd71d2997dd1078a4a7b",
     "docs/scalar/model/fsu/arithmetic.md": "743fdd2546ae42bf8df0ea277e20faf0312e519189bbbbf95559be92871059ec",
-    "docs/scalar/model/fsu/reference-quantization.md": "87561e7252a3524bf5bbc59f560ac91c6e2abc92482e9d6e825f5ce3c1abb2e0",
+    "docs/scalar/model/fsu/reference-quantization.md": "331f1b3b97ceb5f26a4807bb6226afeabae9091e8a5ad794b990d9d2c442df6d",
     "docs/scalar/model/fsu/reference-scalar-fp-specials.md": "867e0125622d804007a11416e5728f4961cb12f04d4fa5fc0e98b20ef7bc6879",
-    "docs/scalar/model/fsu/scalar-fp.md": "98ed9198bd1682b9f6d3c8c8fbd31dab83174dad90097af16130bbb259549328",
+    "docs/scalar/model/fsu/scalar-fp.md": "101d87091ae84913a4b93bbc35f3e103f9e23e9c8ad126eee86133c5ad1e00d5",
     "docs/scalar/model/sys/registers.md": "0136bd7cd5ee90a68f4952d70fe296d76c1f89ecbb719abbe20a150a75105ea9",
     "docs/scalar/model/sys/semantics.md": "9cbf4adfd6aaa35cc50cad35c30cfed383f7ba0fbb7412980e3c57dcc3c9f247",
     "docs/scalar/model/types/operands.md": "57bb2b0fd62e69416ccfc4c8a33c870afeaec3283e8dfa3bb86b2dea96645bac",
@@ -22421,7 +22439,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "c1332aa895d5a70170b6f193674ad97371cbdd4314f5336de4ce4eb703d4d484",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "4fdb0facff519fecde8ba33ed966ed54c04b04c3f5f344024b2ce1a859434d67",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "c2bba4aad8073962fc18443147a53b3492eee9629f7a5975591087d1d8834e67",
-    "spec/evidence/adr-index.json": "0bd1770e46466edf68c780709161672c847c9569dbb02b9ce8f9a517a56a88bb",
+    "spec/evidence/adr-index.json": "315829e24b3c0e68a81fe2c62c73f6a34597f32944fdc7ca68cc24c52cf7adca",
     "spec/evidence/instruction-contract-closure.json": "1b8b89480c85a2a9d39e31434ed06872e8cfbc3c67a9a657973a1a0d0daa915c",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6c18bfdff0279b6d4fbaf3cb3c8e1ee111b4d5e82e1688136b88be6fa7902ba3",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -25648,6 +25666,7 @@
     "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-001.asl": "77b1a6a1aa966b05fc37d5f82940832da5dee2b2cf6d18e3425596927c314bff",
     "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-rounding-004.asl": "ce667fd20c9ff2cfea179bd4f0b0856f3d19b853e78ebbe12d42e546fff2dba4",
     "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-special-values-002.asl": "479b2ce4777c8bd2d386e3e0d88bf686e3f6c8410b48df8d34816e10fc76baf5",
+    "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-ieee-add-sub-signed-zero-015.asl": "514cb6a94957b33862acb659c3cabd785a696f35596c385f8d0c3cb1bcefef20",
     "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-reference-divzero-009.asl": "b3c146f85d45a3c5369b994b60640bce6b050b49055458523a29c9f297cf9b84",
     "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-reference-fp32-010.asl": "c3eaf19ea6485d6ac6fa245c8acb53c739207b4b5642998905898d77c2c5a709",
     "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-reference-fp64-011.asl": "907afb52d53988ece18450a1be7286a196fc94f07eefa2666bc1e1cc2fb48e79",
@@ -25881,6 +25900,7 @@
     "tests/asl/tile/elementwise-tile-tile/arithmetic/TADD/tile-exec-tadd-cube-decoded-001.asl": "81c9281770a394e429c9d3fbe424f91f22980d3212824fe38c623d93d205501a",
     "tests/asl/tile/elementwise-tile-tile/arithmetic/TADD/tile-exec-tadd-dim-defaults-001.asl": "af9c4550f77a8c6c11c72d5c2da7226b4a8cb70b7ec2dbeebe3cf296d1c8b082",
     "tests/asl/tile/elementwise-tile-tile/arithmetic/TADD/tile-exec-tadd-elements-001.asl": "561e3f8ea579eb78b015c338fe6160eaa9f396ef5c861cabca869a75c78561ef",
+    "tests/asl/tile/elementwise-tile-tile/arithmetic/TADD/tile-exec-tadd-signed-zero-002.asl": "f507ade39286071414e8f1f293ae3400e2bec74a0a7c881fc499b73fc48f12a5",
     "tests/asl/tile/elementwise-tile-tile/arithmetic/TADD/tile-fault-tadd-missing-lb0-001.asl": "9d5f117939b3ef1a53d116b6ff54e02cd33897a795cf10f3b54530c0dd77a1d7",
     "tests/asl/tile/elementwise-tile-tile/arithmetic/TADD/tile-fault-tadd-reinterpret-encoding-002.asl": "b931d54f4621afe4f72c2b85566553174f8844ecfb33c709d8c2479cc28118d4",
     "tests/asl/tile/elementwise-tile-tile/arithmetic/TADD/tile-state-tadd-padding-001.asl": "d6628b221a6b453c2246556e9e404e78e8ded7247d92bef7398a1fe50f36cdec",
@@ -25936,6 +25956,7 @@
     "tests/asl/tile/elementwise-tile-tile/arithmetic/TMUL/tile-static-tmul-contract-001.asl": "ed04c0f539760c07aa6fcb64bba2d0ac15d4b4c0525abdffbb1954346113517a",
     "tests/asl/tile/elementwise-tile-tile/arithmetic/TSUB/tile-bound-tsub-types-001.asl": "c38681962184f5214a31540e9bfbaa35d98d34107ba54f1ded43cf3a9726f431",
     "tests/asl/tile/elementwise-tile-tile/arithmetic/TSUB/tile-exec-tsub-order-001.asl": "d573b9cbc55a60a00c9f97e32609cfac13ca9147525280b065ca045bc49371d3",
+    "tests/asl/tile/elementwise-tile-tile/arithmetic/TSUB/tile-exec-tsub-signed-zero-002.asl": "e2e2a89d1b32c76a83e59eb6d3fb50bae20f118bf750147bca849022dd1edc8d",
     "tests/asl/tile/elementwise-tile-tile/arithmetic/TSUB/tile-state-tsub-padding-001.asl": "2c3cd22ec5df8bd639438b020c71fbe88c3e2d2bf92726fa497447b5f91a75cc",
     "tests/asl/tile/elementwise-tile-tile/arithmetic/TSUB/tile-static-tsub-contract-001.asl": "2775f1c78a0a7764dd37b97d3602047217601564a4ffdf9ce20b0a989955666f",
     "tests/asl/tile/elementwise-tile-tile/format-conversion/TCVT/tile-bound-tcvt-canonical-001.asl": "9c24ab84e806f7e772e8111e8d2ce09f1f47bee14387693ff9a8b5a6285bf358",
@@ -26596,6 +26617,7 @@
     "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TADDS/tile-bound-tadds-type-domain-002.asl": "df64f5ca871157a8ab8d74f47a93cef8add7e72fd12842f6da915a6c89b88ba8",
     "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TADDS/tile-bound-tadds-types-001.asl": "374ca0a01db1979c6a520f1f11acd6c493ad5c1e33a72a6ad3a96291c3dbbd6a",
     "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TADDS/tile-exec-tadds-bundle-001.asl": "e2247852cc993ff8b79c465da4a547b01c6bf6c3cc099d1d31c5f4cbf62119c4",
+    "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TADDS/tile-exec-tadds-signed-zero-002.asl": "00a61384801328903382cacf7d447673be259ea1319c21eb5aee4a5f4a4ce935",
     "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TADDS/tile-state-tadds-padding-001.asl": "63867572701bb289a405bb9f28efb2db41274a5e577bc10d9b193613de08ff6c",
     "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TADDS/tile-static-tadds-contract-001.asl": "54faa40ec0c0d14df495a7bff740b67a8ef0e54a7d50e9e45df24a48beea9ab5",
     "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TDIVS/tile-bound-tdivs-type-domain-002.asl": "4914e52fb8556b87110e81ec2f9bf39030f31984babde3f735ba9858e6d05ed5",
@@ -26630,6 +26652,7 @@
     "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TREMS/tile-static-trems-contract-001.asl": "7e0dfe2e575af9491ae49164cd24b6540b932fa48dae6d01b471d5d529ca9294",
     "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TSUBS/tile-bound-tsubs-types-001.asl": "8503c40881bfaf0066e6fc5d1ad76bcc96cb9efc7a5516dfa22b1a0ea0ecc996",
     "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TSUBS/tile-exec-tsubs-order-001.asl": "863e68cc4f098ee1e49e2f4b431a5bc78e4225293cdecc1212f6abd90e935831",
+    "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TSUBS/tile-exec-tsubs-signed-zero-002.asl": "0d5a9b0c53366046b8abe51b5202845e8b6061db5fd56d394ef22a990fa10d81",
     "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TSUBS/tile-static-tsubs-contract-001.asl": "ea4aef354eb7f38dc05c2dbd0f45997416d2b75f074dca1504f5507b7607429b",
     "tests/asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS/tile-bound-texpands-types-001.asl": "b31dcbdb1c207dc473287b04265fcc5685901df4a80d9472a5169b3656469f7e",
     "tests/asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS/tile-exec-texpands-bundle-001.asl": "af1fc4e611a57aaa2194d67883f7286dea4f9f525b6c11ee49c969c1ee9bd98e",
@@ -26686,7 +26709,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1115,
     "status": "closed",
-    "test_count": 4254,
+    "test_count": 4259,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -53472,6 +53495,17 @@
       "source": "asl/scalar/model/dispatch/fsu.asl"
     },
     {
+      "id": "PTO-AVS-SCALAR-FP-IEEE-ADD-SUB-SIGNED-ZERO-015",
+      "kind": "execution",
+      "path": "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-ieee-add-sub-signed-zero-015.asl",
+      "requirements": [
+        "PTO-INST-SCALAR-FADD",
+        "PTO-INST-SCALAR-FSUB"
+      ],
+      "sha256": "514cb6a94957b33862acb659c3cabd785a696f35596c385f8d0c3cb1bcefef20",
+      "source": "asl/scalar/model/fsu/scalar-fp.asl"
+    },
+    {
       "id": "PTO-AVS-SCALAR-FP-ROUND-001",
       "kind": "boundary",
       "path": "tests/asl/scalar/model/dispatch/fsu/scalar-bound-fp-rounding-001.asl",
@@ -64584,6 +64618,16 @@
       "source": "asl/tile/elementwise-tile-tile/arithmetic/TADD.asl"
     },
     {
+      "id": "PTO-AVS-TILE-TADD-SIGNED-ZERO-002",
+      "kind": "execution",
+      "path": "tests/asl/tile/elementwise-tile-tile/arithmetic/TADD/tile-exec-tadd-signed-zero-002.asl",
+      "requirements": [
+        "PTO-TADD-CONTRACT-001"
+      ],
+      "sha256": "f507ade39286071414e8f1f293ae3400e2bec74a0a7c881fc499b73fc48f12a5",
+      "source": "asl/tile/elementwise-tile-tile/arithmetic/TADD.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-TADD-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/tile/elementwise-tile-tile/arithmetic/TADD/tile-static-tadd-contract-001.asl",
@@ -64611,6 +64655,16 @@
         "PTO-INST-TILE-TADDS"
       ],
       "sha256": "63867572701bb289a405bb9f28efb2db41274a5e577bc10d9b193613de08ff6c",
+      "source": "asl/tile/tile-scalar-and-immediate/arithmetic/TADDS.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TADDS-SIGNED-ZERO-002",
+      "kind": "execution",
+      "path": "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TADDS/tile-exec-tadds-signed-zero-002.asl",
+      "requirements": [
+        "PTO-TADDS-CONTRACT-001"
+      ],
+      "sha256": "00a61384801328903382cacf7d447673be259ea1319c21eb5aee4a5f4a4ce935",
       "source": "asl/tile/tile-scalar-and-immediate/arithmetic/TADDS.asl"
     },
     {
@@ -69747,6 +69801,16 @@
       "source": "asl/tile/elementwise-tile-tile/arithmetic/TSUB.asl"
     },
     {
+      "id": "PTO-AVS-TILE-TSUB-SIGNED-ZERO-002",
+      "kind": "execution",
+      "path": "tests/asl/tile/elementwise-tile-tile/arithmetic/TSUB/tile-exec-tsub-signed-zero-002.asl",
+      "requirements": [
+        "PTO-TSUB-CONTRACT-001"
+      ],
+      "sha256": "e2e2a89d1b32c76a83e59eb6d3fb50bae20f118bf750147bca849022dd1edc8d",
+      "source": "asl/tile/elementwise-tile-tile/arithmetic/TSUB.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-TSUB-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/tile/elementwise-tile-tile/arithmetic/TSUB/tile-static-tsub-contract-001.asl",
@@ -69774,6 +69838,16 @@
         "PTO-INST-TILE-TSUBS"
       ],
       "sha256": "863e68cc4f098ee1e49e2f4b431a5bc78e4225293cdecc1212f6abd90e935831",
+      "source": "asl/tile/tile-scalar-and-immediate/arithmetic/TSUBS.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TSUBS-SIGNED-ZERO-002",
+      "kind": "execution",
+      "path": "tests/asl/tile/tile-scalar-and-immediate/arithmetic/TSUBS/tile-exec-tsubs-signed-zero-002.asl",
+      "requirements": [
+        "PTO-TSUBS-CONTRACT-001"
+      ],
+      "sha256": "0d5a9b0c53366046b8abe51b5202845e8b6061db5fd56d394ef22a990fa10d81",
       "source": "asl/tile/tile-scalar-and-immediate/arithmetic/TSUBS.asl"
     },
     {
@@ -90560,6 +90634,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0013",
         "ADR-NUM-0002",
+        "ADR-NUM-0008",
         "ADR-SCALAR-0004"
       ],
       "semantic_tests": [
@@ -91720,6 +91795,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0013",
         "ADR-NUM-0002",
+        "ADR-NUM-0008",
         "ADR-SCALAR-0004"
       ],
       "semantic_tests": [
@@ -92328,6 +92404,7 @@
         "ADR-GOV-0013",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
+        "ADR-NUM-0008",
         "ADR-NUM-0009",
         "ADR-SCALAR-0004",
         "ADR-TILE-0008"
@@ -92340,7 +92417,8 @@
         "PTO-AVS-ARCH-REFERENCE-FP32-010",
         "PTO-AVS-ARCH-REFERENCE-FP32-POWER-013",
         "PTO-AVS-ARCH-REFERENCE-FP32-STREAM-014",
-        "PTO-AVS-ARCH-REFERENCE-FP64-011"
+        "PTO-AVS-ARCH-REFERENCE-FP64-011",
+        "PTO-AVS-SCALAR-FP-IEEE-ADD-SUB-SIGNED-ZERO-015"
       ],
       "source": "asl/scalar/model/fsu/scalar-fp.asl",
       "surface": "scalar",
@@ -92353,6 +92431,7 @@
         "PTO-AVS-ARCH-REFERENCE-FP32-POWER-013",
         "PTO-AVS-ARCH-REFERENCE-FP32-STREAM-014",
         "PTO-AVS-ARCH-REFERENCE-FP64-011",
+        "PTO-AVS-SCALAR-FP-IEEE-ADD-SUB-SIGNED-ZERO-015",
         "PTO-AVS-SCALAR-MODEL-FSU-SCALAR-FP-STATIC-001"
       ]
     },
@@ -93754,6 +93833,8 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-NUM-0008",
+        "ADR-SCALAR-0004",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -93766,7 +93847,8 @@
         "PTO-AVS-TILE-TADD-LAYOUT-001",
         "PTO-AVS-TILE-TADD-MISSING-LB0-001",
         "PTO-AVS-TILE-TADD-PADDING-001",
-        "PTO-AVS-TILE-TADD-REINTERPRET-ENCODING-002"
+        "PTO-AVS-TILE-TADD-REINTERPRET-ENCODING-002",
+        "PTO-AVS-TILE-TADD-SIGNED-ZERO-002"
       ],
       "source": "asl/tile/elementwise-tile-tile/arithmetic/TADD.asl",
       "surface": "tile",
@@ -93780,6 +93862,7 @@
         "PTO-AVS-TILE-TADD-MISSING-LB0-001",
         "PTO-AVS-TILE-TADD-PADDING-001",
         "PTO-AVS-TILE-TADD-REINTERPRET-ENCODING-002",
+        "PTO-AVS-TILE-TADD-SIGNED-ZERO-002",
         "PTO-AVS-TILE-TADD-STATIC-001"
       ]
     },
@@ -94011,12 +94094,15 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-NUM-0008",
+        "ADR-SCALAR-0004",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TSUB-ORDER-001",
         "PTO-AVS-TILE-TSUB-PADDING-001",
+        "PTO-AVS-TILE-TSUB-SIGNED-ZERO-002",
         "PTO-AVS-TILE-TSUB-TYPES-001"
       ],
       "source": "asl/tile/elementwise-tile-tile/arithmetic/TSUB.asl",
@@ -94024,6 +94110,7 @@
       "tests": [
         "PTO-AVS-TILE-TSUB-ORDER-001",
         "PTO-AVS-TILE-TSUB-PADDING-001",
+        "PTO-AVS-TILE-TSUB-SIGNED-ZERO-002",
         "PTO-AVS-TILE-TSUB-STATIC-001",
         "PTO-AVS-TILE-TSUB-TYPES-001"
       ]
@@ -97037,6 +97124,7 @@
         "ADR-GOV-0013",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
+        "ADR-NUM-0008",
         "ADR-SCALAR-0004",
         "ADR-TILE-0008"
       ],
@@ -97136,6 +97224,7 @@
         "ADR-GOV-0013",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
+        "ADR-NUM-0008",
         "ADR-SCALAR-0004",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -97168,6 +97257,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-NUM-0008",
+        "ADR-SCALAR-0004",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
@@ -97529,6 +97620,7 @@
         "ADR-GOV-0013",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
+        "ADR-NUM-0008",
         "ADR-SCALAR-0004",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -99806,6 +99898,8 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-NUM-0008",
+        "ADR-SCALAR-0004",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -99813,6 +99907,7 @@
       "semantic_tests": [
         "PTO-AVS-TILE-TADDS-BUNDLE-001",
         "PTO-AVS-TILE-TADDS-PADDING-001",
+        "PTO-AVS-TILE-TADDS-SIGNED-ZERO-002",
         "PTO-AVS-TILE-TADDS-TYPE-DOMAIN-002",
         "PTO-AVS-TILE-TADDS-TYPES-001"
       ],
@@ -99821,6 +99916,7 @@
       "tests": [
         "PTO-AVS-TILE-TADDS-BUNDLE-001",
         "PTO-AVS-TILE-TADDS-PADDING-001",
+        "PTO-AVS-TILE-TADDS-SIGNED-ZERO-002",
         "PTO-AVS-TILE-TADDS-STATIC-001",
         "PTO-AVS-TILE-TADDS-TYPE-DOMAIN-002",
         "PTO-AVS-TILE-TADDS-TYPES-001"
@@ -100066,18 +100162,22 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-NUM-0008",
+        "ADR-SCALAR-0004",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TSUBS-ORDER-001",
+        "PTO-AVS-TILE-TSUBS-SIGNED-ZERO-002",
         "PTO-AVS-TILE-TSUBS-TYPES-001"
       ],
       "source": "asl/tile/tile-scalar-and-immediate/arithmetic/TSUBS.asl",
       "surface": "tile",
       "tests": [
         "PTO-AVS-TILE-TSUBS-ORDER-001",
+        "PTO-AVS-TILE-TSUBS-SIGNED-ZERO-002",
         "PTO-AVS-TILE-TSUBS-STATIC-001",
         "PTO-AVS-TILE-TSUBS-TYPES-001"
       ]

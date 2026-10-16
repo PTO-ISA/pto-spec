@@ -360,6 +360,76 @@ begin
         NumericValue_NegativeZero else NumericValue_PositiveZero);
 end;
 
+// IEEE-754 addition and subtraction assign an exact zero from the effective
+// operand signs. Subtraction first negates the right sign. Equal effective
+// signs preserve that sign; cancellation chooses negative zero only under
+// roundTowardNegative. A format without a negative-zero encoding retains its
+// representable positive zero.
+pure func ReferenceScalarFPAddSubExactZero(
+    operation: FloatingBinaryOperation,
+    rounding_mode: NumericRoundingMode,
+    source_type: bits(5),
+    left: Word,
+    right: Word) => Word
+begin
+    assert operation == FloatingBinary_ADD ||
+           operation == FloatingBinary_SUB;
+    let left_negative = ReferenceScalarFPClassIsNegative(
+        ReferenceScalarFPClass(left, source_type));
+    let right_negative = ReferenceScalarFPClassIsNegative(
+        ReferenceScalarFPClass(right, source_type));
+    let effective_right_negative =
+        if operation == FloatingBinary_SUB then !right_negative
+        else right_negative;
+    let result_negative =
+        if left_negative == effective_right_negative then left_negative
+        else rounding_mode == NumericRound_RTM;
+    let (signed_zero_available, positive_zero, negative_zero) =
+        HardwareNumericSignedZeroEncodings(
+            ReferenceScalarFPDataType(source_type));
+    if signed_zero_available && result_negative then return negative_zero; end;
+    return positive_zero;
+end;
+
+func ReferenceScalarFPFiniteBinary(
+    operation: FloatingBinaryOperation,
+    rounding_mode: NumericRoundingMode,
+    source_type: bits(5),
+    left: Word,
+    right: Word) => (Word, bits(5))
+begin
+    assert operation == FloatingBinary_ADD ||
+           operation == FloatingBinary_SUB ||
+           operation == FloatingBinary_MUL ||
+           operation == FloatingBinary_DIV;
+    let left_value = if source_type == '00101' then
+        ReferenceBinary16FiniteValue(left, TileDataType_BF16)
+        else ReferenceScalarFPFiniteValue(left, source_type);
+    let right_value = if source_type == '00101' then
+        ReferenceBinary16FiniteValue(right, TileDataType_BF16)
+        else ReferenceScalarFPFiniteValue(right, source_type);
+    let exact_value = FloatingBinary(operation, left_value, right_value);
+    if (operation == FloatingBinary_ADD ||
+        operation == FloatingBinary_SUB) && exact_value == 0.0 then
+        let zero = ReferenceScalarFPAddSubExactZero(
+            operation, rounding_mode, source_type, left, right);
+        return (zero, Zeros{5});
+    end;
+    if source_type == '00101' then
+        return ReferenceBinary16Encoding(
+            exact_value,
+            TileDataType_BF16,
+            NumericExecutionControl {
+                rounding_mode = rounding_mode,
+                saturating = FALSE
+            });
+    end;
+    return ReferenceScalarFPFiniteEncoding(
+        exact_value,
+        source_type,
+        rounding_mode);
+end;
+
 pure func ReferenceScalarFPBinarySpecial(
     operation: FloatingBinaryOperation, source_type: bits(5),
     left: Word, right: Word) => (boolean, Word, bits(5))

@@ -25,9 +25,15 @@
     "PTO-FCVTN-DECISION-BINDING-001",
     "PTO-FCVTP-DECISION-BINDING-001",
     "PTO-FCVTZ-DECISION-BINDING-001",
+    "PTO-INST-SCALAR-FADD",
+    "PTO-INST-SCALAR-FSUB",
     "PTO-NUMERIC-E6M2-FORMAT-001",
     "PTO-NUMERIC-RCPE6M2-FORMAT-001",
+    "PTO-TADD-CONTRACT-001",
+    "PTO-TADDS-CONTRACT-001",
     "PTO-TCVT-CONTRACT-001",
+    "PTO-TSUB-CONTRACT-001",
+    "PTO-TSUBS-CONTRACT-001",
     "PTO-INST-TILE-TCVT",
     "PTO-COMMON-CONVERSION-001"
   ],
@@ -40,9 +46,20 @@
     "PTO-SCALAR-FCVTN",
     "PTO-SCALAR-FCVTP",
     "PTO-SCALAR-FCVTZ",
+    "PTO-SCALAR-FADD",
+    "PTO-SCALAR-FSUB",
+    "PTO-SCALAR-MODEL-FSU-SCALAR-FP",
     "PTO-ARCH-DATA-TYPES-FORMAT-E6M2",
     "PTO-ARCH-DATA-TYPES-FORMAT-RCPE6M2",
+    "PTO-TILE-MODEL-EXECUTION-ELEMENTWISE",
+    "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+    "PTO-TILE-MODEL-EXECUTION-EXPDIF",
+    "PTO-TILE-MODEL-EXECUTION-REDUCTION",
+    "PTO-TILE-TADD",
+    "PTO-TILE-TADDS",
     "PTO-TILE-TCVT",
+    "PTO-TILE-TSUB",
+    "PTO-TILE-TSUBS",
     "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
     "PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL",
     "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
@@ -79,6 +96,35 @@
       ]
     },
     {
+      "date": "2026-10-11",
+      "baseline": "ee64ee4fc68ac13f81b0cf6780e3fd631c6187f9",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/384",
+      "affected_ndf": [
+        "PTO-INST-SCALAR-FADD",
+        "PTO-INST-SCALAR-FSUB",
+        "PTO-TADD-CONTRACT-001",
+        "PTO-TADDS-CONTRACT-001",
+        "PTO-TSUB-CONTRACT-001",
+        "PTO-TSUBS-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-SCALAR-FADD",
+        "PTO-SCALAR-FSUB",
+        "PTO-SCALAR-MODEL-FSU-SCALAR-FP",
+        "PTO-TILE-MODEL-EXECUTION-ELEMENTWISE",
+        "PTO-TILE-MODEL-EXECUTION-EXPANSION",
+        "PTO-TILE-MODEL-EXECUTION-EXPDIF",
+        "PTO-TILE-MODEL-EXECUTION-REDUCTION",
+        "PTO-TILE-TADD",
+        "PTO-TILE-TADDS",
+        "PTO-TILE-TSUB",
+        "PTO-TILE-TSUBS"
+      ]
+    },
+    {
       "date": "2026-10-15",
       "baseline": "03eb383fab9311f7d76def8b46cdbd04e1e50d23",
       "approvers": [
@@ -105,6 +151,25 @@
 }
 ---
 # ADR-NUM-0008: Numeric rounding semantics
+
+## 2026-10-11 accepted amendment: IEEE-754 exact-zero sign for ADD/SUB
+
+Issue [#384](https://github.com/PTO-ISA/pto-spec/issues/384) closes the zero
+sign lost by the rational finite reference kernel. Floating addition and
+subtraction first determine the effective operand signs, with subtraction
+negating the right sign. An exact zero with equal effective signs preserves
+that sign. Opposite-sign cancellation produces negative zero only under
+roundTowardNegative and positive zero under every other accepted rounding
+mode. Formats without a negative-zero encoding retain their representable
+zero, and an exact-zero result sets no numeric exception flag.
+
+The shared scalar profile supplies this rule to scalar `FADD`/`FSUB`, direct
+Tile `TADD`/`TSUB`, Tile-scalar `TADDS`/`TSUBS`, and existing expansion,
+EXPDIF, and reduction callers that invoke the corresponding typed Tile
+addition or subtraction. Their legality, masking, traversal or reduction
+order, preflight, publication, NaN, infinity, subnormal, and flag contracts
+remain unchanged. Conversion and fused-operation zero rules are outside this
+amendment.
 
 > Historical-evidence note: test paths named below record the evidence used when this ADR was accepted; they are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
 

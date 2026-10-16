@@ -489,19 +489,8 @@ begin
     case operation of
         when FloatingBinary_ADD, FloatingBinary_SUB,
              FloatingBinary_MUL, FloatingBinary_DIV =>
-            if source_type == '00101' then
-                return ReferenceBinary16Encoding(
-                    FloatingBinary(operation, left_value, right_value),
-                    TileDataType_BF16,
-                    NumericExecutionControl {
-                        rounding_mode = rounding_mode,
-                        saturating = FALSE
-                    });
-            end;
-            return ReferenceScalarFPFiniteEncoding(
-                FloatingBinary(operation, left_value, right_value),
-                source_type,
-                rounding_mode);
+            return ReferenceScalarFPFiniteBinary(
+                operation, rounding_mode, source_type, left, right);
         // Scalar dispatch owns MIN/MAX NaN and signed-zero behavior. These
         // totality arms are not reached by decoded FMIN/FMAX.
         when FloatingBinary_MIN =>
