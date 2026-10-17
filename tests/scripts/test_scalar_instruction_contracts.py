@@ -238,7 +238,7 @@ class ScalarInstructionContractsTest(unittest.TestCase):
             unit for unit in units if unit.surface == "scalar" and unit.mnemonic is not None
         ]
 
-        self.assertEqual(len(scalar_units), 467)
+        self.assertEqual(len(scalar_units), 473)
         self.assertEqual(
             Counter(unit.classification[0] for unit in scalar_units),
             Counter(
@@ -246,7 +246,7 @@ class ScalarInstructionContractsTest(unittest.TestCase):
                     "agu": 183,
                     "alu": 107,
                     "bru": 58,
-                    "amo": 53,
+                    "amo": 59,
                     "sys": 36,
                     "fsu": 30,
                 }
@@ -284,9 +284,10 @@ class ScalarInstructionContractsTest(unittest.TestCase):
         expected = {
             f"{width}.{operation}"
             for width in ("SW", "SD")
-            for operation in ("ADD", "AND", "OR", "XOR", "SMIN", "SMAX", "UMIN", "UMAX")
+            for operation in ("ADD", "SUB", "AND", "OR", "XOR", "SMIN", "SMAX", "UMIN", "UMAX")
         }
 
+        expected.update({"SB.ADD", "SB.SUB", "SH.ADD", "SH.SUB"})
         for mnemonic in sorted(expected):
             unit = by_mnemonic[mnemonic]
             contract = resolve_instruction_contract(unit, domains)
@@ -298,7 +299,6 @@ class ScalarInstructionContractsTest(unittest.TestCase):
                 (
                     ("SrcL", "Reg5 atomic address source"),
                     ("SrcR", "Reg5 atomic operand source"),
-                    ("far", "flat-address routing hint"),
                     ("rl", "release ordering bit"),
                 ),
                 unit.source_path,
@@ -345,7 +345,7 @@ class ScalarInstructionContractsTest(unittest.TestCase):
         expected = {
             f"{width}.{operation}"
             for width in ("SW", "SD")
-            for operation in ("ADD", "AND", "OR", "XOR", "SMIN", "SMAX", "UMIN", "UMAX")
+            for operation in ("ADD", "SUB", "AND", "OR", "XOR", "SMIN", "SMAX", "UMIN", "UMAX")
         }
 
         for unit in units:

@@ -395,20 +395,25 @@ def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
     return catalog, by_family
 
 
-def encoding_projection(tile_catalog: dict) -> dict:
+def encoding_projection(tile_catalog: dict, *, form_counts: dict | None = None,
+                        command_family_counts: dict | None = None) -> dict:
+    # Defaults remain the frozen publication contract. Development callers
+    # supply separately validated current-source inventory counts.
+    form_counts = FORM_COUNTS if form_counts is None else form_counts
+    command_family_counts = COMMAND_FAMILY_COUNTS if command_family_counts is None else command_family_counts
     forms: list[dict] = []
     for label, relative in (
         ("scalar_forms", "spec/catalog/scalar-forms.json"),
         ("command_forms", "spec/catalog/command-forms.json"),
     ):
         catalog = load_json(relative)
-        if catalog.get("form_count") != FORM_COUNTS[label] or len(catalog.get("forms", [])) != FORM_COUNTS[label]:
-            raise SystemExit(f"{label} closure must remain exactly {FORM_COUNTS[label]}")
+        if catalog.get("form_count") != form_counts[label] or len(catalog.get("forms", [])) != form_counts[label]:
+            raise SystemExit(f"{label} closure must remain exactly {form_counts[label]}")
         if label == "command_forms":
             families = dict(Counter(row.get("semantic_family") for row in catalog["forms"]))
-            if families != COMMAND_FAMILY_COUNTS:
+            if families != command_family_counts:
                 raise SystemExit(
-                    f"command form families must remain exactly {COMMAND_FAMILY_COUNTS}, got {families}"
+                    f"command form families must remain exactly {command_family_counts}, got {families}"
                 )
         forms.extend(catalog["forms"])
     form_projection = [

@@ -5736,7 +5736,7 @@
       "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
       "created": "2026-07-30",
       "id": "ADR-MEM-0005",
-      "implementation_issue": null,
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/389",
       "legacy_ids": [
         "ADR-0030"
       ],

@@ -18,6 +18,7 @@ source_commands=(
     "./scripts/generate-readme-inventory --check"
     "python3 scripts/manual_semantic_audit.py"
     "git diff --check"
+    "python3 scripts/development_identity.py --check"
 )
 tooling_commands=(
     "./scripts/run-python-tests --exclude-module tests.scripts.test_release_closure --exclude-module tests.scripts.test_release_selection"
@@ -35,6 +36,7 @@ run_source_checks() {
     check_ui_step "README development inventory" bash -c "${source_commands[7]}"
     check_ui_step "Formal review field completeness" bash -c "${source_commands[8]}"
     check_ui_step "Patch whitespace" bash -c "${source_commands[9]}"
+    check_ui_step "Development encoding identity" bash -c "${source_commands[10]}"
 }
 
 run_tooling_checks() {

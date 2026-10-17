@@ -103,7 +103,7 @@
   "resolves": [],
   "supersedes": [],
   "superseded_by": [],
-  "implementation_issue": null,
+  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/389",
   "release_impact": "required",
   "legacy_ids": [
     "ADR-0030"
