@@ -35,6 +35,7 @@ class PullRequestCheckTest(unittest.TestCase):
                 "./scripts/generate-readme-inventory --check",
                 "python3 scripts/manual_semantic_audit.py",
                 "git diff --check",
+                "python3 scripts/development_identity.py --check",
                 "./scripts/run-python-tests --exclude-module tests.scripts.test_release_closure --exclude-module tests.scripts.test_release_selection",
             ],
         )

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Current-source encoding identity, explicitly independent of publication."""
 
 from collections import Counter

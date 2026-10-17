@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 README = ROOT / "README.md"
 MANIFEST = ROOT / "spec/release-manifest.json"
+DEVELOPMENT_MANIFEST = ROOT / "spec/development-manifest.json"
 TRACEABILITY = ROOT / "spec/evidence/release-traceability-readiness.json"
 RESERVATIONS = ROOT / "spec/catalog/extension-encoding-reservations.json"
 AUDIT_ADR = ROOT / "docs/status/decisions/ADR-GOV-0006-mnemonic-review-decisions.md"
@@ -108,7 +109,7 @@ class PublicationInventoryTest(unittest.TestCase):
                 self.test_audit_adr_preserves_historical_active_reserved_inventory()
 
     def test_architecture_scope_matches_current_catalogs(self) -> None:
-        manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        manifest = json.loads(DEVELOPMENT_MANIFEST.read_text(encoding="utf-8"))
         reservations = json.loads(RESERVATIONS.read_text(encoding="utf-8"))
         text = self.normalized(ARCH_SCOPE_ADR.read_text(encoding="utf-8"))
         counts = manifest["catalog_counts"]
@@ -116,7 +117,7 @@ class PublicationInventoryTest(unittest.TestCase):
         self.assertIn(
             f"{counts['scalar_forms']} Scalar forms, "
             f"{counts['command_forms']} active Block forms, "
-            f"{counts['tile_operations_total']} direct Tile operations, and "
+            f"{counts['tile_operations']} direct Tile operations, and "
             f"{len(reservations['reservations'])} occupied extension reservations",
             text,
         )

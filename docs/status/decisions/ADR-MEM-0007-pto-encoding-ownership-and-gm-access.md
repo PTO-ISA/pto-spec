@@ -19,6 +19,7 @@
     "unassigned"
   ],
   "affected_ndf": [
+    "PTO-ARCH-DMA-ENCODING-ONLY-001",
     "PTO-ARCH-ENCODING-OWNERSHIP-001",
     "PTO-ARCH-GM-ACCESS-001",
     "PTO-BSTART-GMOV-COLLECTIVE-001",
