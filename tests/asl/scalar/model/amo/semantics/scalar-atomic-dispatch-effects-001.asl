@@ -5,10 +5,10 @@ begin
     ClearFault();
     WriteGPR(2, Zeros{PTO_XLEN} + 128);
     Store(Zeros{PTO_XLEN} + 128, 4, Zeros{PTO_XLEN} + 0x80000001);
-    var load_reserved: bits(48) = Zeros{48} + 0x2000000b;
+    var load_reserved: bits(48) = Zeros{48} + 0x1000000b;
     load_reserved[11:7] = Zeros{5} + 5;
     load_reserved[19:15] = Zeros{5} + 2;
-    load_reserved[27] = '1';
+    load_reserved[31] = '1';
     load_reserved[26] = '1';
     load_reserved[25] = '1';
     let load_reserved_form_index = DecodeScalarForm(load_reserved, 32);
@@ -25,7 +25,7 @@ begin
     assert _ReservationSize == 4;
 
     WriteGPR(3, Zeros{PTO_XLEN} + 0x11223344);
-    var store_conditional: bits(48) = Zeros{48} + 0x2000100b;
+    var store_conditional: bits(48) = Zeros{48} + 0x1000100b;
     store_conditional[11:7] = Zeros{5} + 6;
     store_conditional[19:15] = Zeros{5} + 3;
     store_conditional[24:20] = Zeros{5} + 2;
@@ -53,10 +53,9 @@ begin
     WriteGPR(2, Zeros{PTO_XLEN} + 144);
     WriteGPR(3, Zeros{PTO_XLEN} + 0xff00ff00);
     Store(Zeros{PTO_XLEN} + 144, 4, Zeros{PTO_XLEN} + 0xffff0000);
-    var atomic_store_xor: bits(48) = Zeros{48} + 0x3000300b;
+    var atomic_store_xor: bits(48) = Zeros{48} + 0x1800300b;
     atomic_store_xor[19:15] = Zeros{5} + 2;
     atomic_store_xor[24:20] = Zeros{5} + 3;
-    atomic_store_xor[27] = '1';
     atomic_store_xor[25] = '1';
     let atomic_store_status =
         ExecuteScalarInstruction(atomic_store_xor, 32);

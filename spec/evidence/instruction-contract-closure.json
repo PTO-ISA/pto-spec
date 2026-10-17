@@ -18628,7 +18628,9 @@
           "AType and BType must be supported ordinary Matrix types from one numeric class. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
-          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
+          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D.",
+          "Cooperative Shared Matrix forms accept group_M in 1..128 and N/K in 1..65535 without power-of-two restrictions. Validate Local CUBE roles with existing descriptor and capacity rules; validate Shared roles against the original legal Shared descriptor and physical pitch. Internal read views preserve original pitch and use typed logical element/carrier/lane reads without a transient Local descriptor or 64 KiB capacity limit.",
+          "If any supported four-bit Shared primary is present (E2M1X2, E1M2X2, HiF4X2 for Matrix-MX only, S4X2, or U4X2), K and each such original parent physical columns pitch are even under every transpose combination. Valid M/group_M and N gain no parity restriction. This does not affect Local-only TMATMUL, TGEMV, generic Shared allocation, or Local packed A when Shared B is not packed."
         ],
         "memory_effects": [
           "none"
@@ -18641,16 +18643,16 @@
         ],
         "ordering": [
           "Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.",
-          "D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.",
+          "D and every enabled reduction output publish as one atomic group; rejection publishes none and does not complete source last-use. Matrix computation leaves source values and descriptors unmodified; payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "Transparent-cache hints occur only after complete preflight and cannot alter source snapshots, D allocation or publication, faults, or numeric status."
         ],
         "standalone_opcode": true,
         "state_effects": [
           "Start a CUBE Function 0 descriptor with encoded DataType preserved as AType.",
           "At block completion execute TileOperation_TMATMUL using the resolved M, N, K, input types, mathematical operands, and B.FPATR postprocess schema.",
-          "Publish the complete output group atomically after successful preflight and computation; do not consume mathematical or postprocess sources.",
+          "Publish the complete output group atomically after successful preflight and computation; source payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.",
-          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.",
+          "Matrix computation does not modify Shared source values or descriptors; payload retention and retirement follow the bound B.IOS reuse and last-use contract.",
           "Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable."
         ]
       },
@@ -18951,7 +18953,9 @@
           "AType and BType must be supported ordinary Matrix types from one numeric class. C is one explicit Local MxN accumulator source and D is a distinct newly published destination; C's encoded relative selector and D's zero-extended DstTile hand must differ before rename. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
-          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
+          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D.",
+          "Cooperative Shared Matrix forms accept group_M in 1..128 and N/K in 1..65535 without power-of-two restrictions. Validate Local CUBE roles with existing descriptor and capacity rules; validate Shared roles against the original legal Shared descriptor and physical pitch. Internal read views preserve original pitch and use typed logical element/carrier/lane reads without a transient Local descriptor or 64 KiB capacity limit.",
+          "If any supported four-bit Shared primary is present (E2M1X2, E1M2X2, HiF4X2 for Matrix-MX only, S4X2, or U4X2), K and each such original parent physical columns pitch are even under every transpose combination. Valid M/group_M and N gain no parity restriction. This does not affect Local-only TMATMUL, TGEMV, generic Shared allocation, or Local packed A when Shared B is not packed."
         ],
         "memory_effects": [
           "none"
@@ -18964,17 +18968,17 @@
         ],
         "ordering": [
           "Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.",
-          "D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.",
+          "D and every enabled reduction output publish as one atomic group; rejection publishes none and does not complete source last-use. Matrix computation leaves source values and descriptors unmodified; payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "Transparent-cache hints occur only after complete preflight and cannot alter source snapshots, D allocation or publication, faults, or numeric status."
         ],
         "standalone_opcode": true,
         "state_effects": [
           "Start a CUBE Function 2 descriptor with encoded DataType preserved as AType.",
           "At block completion execute TileOperation_TMATMUL_ACC using the resolved M, N, K, input types, mathematical operands, and B.FPATR postprocess schema.",
-          "Publish the complete output group atomically after successful preflight and computation; do not consume mathematical or postprocess sources.",
+          "Publish the complete output group atomically after successful preflight and computation; source payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.",
-          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.",
-          "C is snapshotted before multiplication and remains descriptor-and-payload unchanged after success or rejection.",
+          "Matrix computation does not modify Shared source values or descriptors; payload retention and retirement follow the bound B.IOS reuse and last-use contract.",
+          "C is a distinct read-only accumulator input snapshotted before multiplication; its payload lifetime follows its B.IOT source binding, and rejection does not complete last-use.",
           "Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable."
         ]
       },
@@ -19273,7 +19277,9 @@
           "AType and BType must be supported ordinary Matrix types from one numeric class. Bias uses one Local CUBE_N8 logical 1xN accumulator-type source (FP32 for MX), broadcast by logical output column. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
-          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
+          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D.",
+          "Cooperative Shared Matrix forms accept group_M in 1..128 and N/K in 1..65535 without power-of-two restrictions. Validate Local CUBE roles with existing descriptor and capacity rules; validate Shared roles against the original legal Shared descriptor and physical pitch. Internal read views preserve original pitch and use typed logical element/carrier/lane reads without a transient Local descriptor or 64 KiB capacity limit.",
+          "If any supported four-bit Shared primary is present (E2M1X2, E1M2X2, HiF4X2 for Matrix-MX only, S4X2, or U4X2), K and each such original parent physical columns pitch are even under every transpose combination. Valid M/group_M and N gain no parity restriction. This does not affect Local-only TMATMUL, TGEMV, generic Shared allocation, or Local packed A when Shared B is not packed."
         ],
         "memory_effects": [
           "none"
@@ -19286,16 +19292,16 @@
         ],
         "ordering": [
           "Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.",
-          "D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.",
+          "D and every enabled reduction output publish as one atomic group; rejection publishes none and does not complete source last-use. Matrix computation leaves source values and descriptors unmodified; payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "Transparent-cache hints occur only after complete preflight and cannot alter source snapshots, D allocation or publication, faults, or numeric status."
         ],
         "standalone_opcode": true,
         "state_effects": [
           "Start a CUBE Function 1 descriptor with encoded DataType preserved as AType.",
           "At block completion execute TileOperation_TMATMUL_BIAS using the resolved M, N, K, input types, mathematical operands, and B.FPATR postprocess schema.",
-          "Publish the complete output group atomically after successful preflight and computation; do not consume mathematical or postprocess sources.",
+          "Publish the complete output group atomically after successful preflight and computation; source payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.",
-          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.",
+          "Matrix computation does not modify Shared source values or descriptors; payload retention and retirement follow the bound B.IOS reuse and last-use contract.",
           "Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable."
         ]
       },
@@ -19594,7 +19600,10 @@
           "Each non-FP16/BF16 side requires its assigned scale: group-32 E8M0 for MX FP8/FP4 or group-64 U32 for HiF4X2. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
-          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
+          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D.",
+          "Cooperative Shared Matrix forms accept group_M in 1..128 and N/K in 1..65535 without power-of-two restrictions. Validate Local CUBE roles with existing descriptor and capacity rules; validate Shared roles against the original legal Shared descriptor and physical pitch. Internal read views preserve original pitch and use typed logical element/carrier/lane reads without a transient Local descriptor or 64 KiB capacity limit.",
+          "If any supported four-bit Shared primary is present (E2M1X2, E1M2X2, HiF4X2 for Matrix-MX only, S4X2, or U4X2), K and each such original parent physical columns pitch are even under every transpose combination. Valid M/group_M and N gain no parity restriction. This does not affect Local-only TMATMUL, TGEMV, generic Shared allocation, or Local packed A when Shared B is not packed.",
+          "Shared Matrix-MX ScaleA has exact stored-valid shape [group_M,G_A] and ScaleB [N,G_B], with each G equal to ceil(K/group_size) for its side (group-32 E8M0 or group-64 U32), independent of TransA/TransB; valid k selects floor(k/group_size)."
         ],
         "memory_effects": [
           "none"
@@ -19607,16 +19616,16 @@
         ],
         "ordering": [
           "Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.",
-          "D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.",
+          "D and every enabled reduction output publish as one atomic group; rejection publishes none and does not complete source last-use. Matrix computation leaves source values and descriptors unmodified; payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "Transparent-cache hints occur only after complete preflight and cannot alter source snapshots, D allocation or publication, faults, or numeric status."
         ],
         "standalone_opcode": true,
         "state_effects": [
           "Start a CUBE Function 4 descriptor with encoded DataType preserved as AType.",
           "At block completion execute TileOperation_TMATMUL_MX using the resolved M, N, K, input types, mathematical operands, and B.FPATR postprocess schema.",
-          "Publish the complete output group atomically after successful preflight and computation; do not consume mathematical or postprocess sources.",
+          "Publish the complete output group atomically after successful preflight and computation; source payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.",
-          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.",
+          "Matrix computation does not modify Shared source values or descriptors; payload retention and retirement follow the bound B.IOS reuse and last-use contract.",
           "Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable."
         ]
       },
@@ -19917,7 +19926,10 @@
           "Each non-FP16/BF16 side requires its assigned scale: group-32 E8M0 for MX FP8/FP4 or group-64 U32 for HiF4X2. C is one explicit Local MxN accumulator source and D is a distinct newly published destination; C's encoded relative selector and D's zero-extended DstTile hand must differ before rename. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
-          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
+          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D.",
+          "Cooperative Shared Matrix forms accept group_M in 1..128 and N/K in 1..65535 without power-of-two restrictions. Validate Local CUBE roles with existing descriptor and capacity rules; validate Shared roles against the original legal Shared descriptor and physical pitch. Internal read views preserve original pitch and use typed logical element/carrier/lane reads without a transient Local descriptor or 64 KiB capacity limit.",
+          "If any supported four-bit Shared primary is present (E2M1X2, E1M2X2, HiF4X2 for Matrix-MX only, S4X2, or U4X2), K and each such original parent physical columns pitch are even under every transpose combination. Valid M/group_M and N gain no parity restriction. This does not affect Local-only TMATMUL, TGEMV, generic Shared allocation, or Local packed A when Shared B is not packed.",
+          "Shared Matrix-MX ScaleA has exact stored-valid shape [group_M,G_A] and ScaleB [N,G_B], with each G equal to ceil(K/group_size) for its side (group-32 E8M0 or group-64 U32), independent of TransA/TransB; valid k selects floor(k/group_size)."
         ],
         "memory_effects": [
           "none"
@@ -19930,17 +19942,17 @@
         ],
         "ordering": [
           "Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.",
-          "D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.",
+          "D and every enabled reduction output publish as one atomic group; rejection publishes none and does not complete source last-use. Matrix computation leaves source values and descriptors unmodified; payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "Transparent-cache hints occur only after complete preflight and cannot alter source snapshots, D allocation or publication, faults, or numeric status."
         ],
         "standalone_opcode": true,
         "state_effects": [
           "Start a CUBE Function 6 descriptor with encoded DataType preserved as AType.",
           "At block completion execute TileOperation_TMATMUL_MX_ACC using the resolved M, N, K, input types, mathematical operands, and B.FPATR postprocess schema.",
-          "Publish the complete output group atomically after successful preflight and computation; do not consume mathematical or postprocess sources.",
+          "Publish the complete output group atomically after successful preflight and computation; source payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.",
-          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.",
-          "C is snapshotted before multiplication and remains descriptor-and-payload unchanged after success or rejection.",
+          "Matrix computation does not modify Shared source values or descriptors; payload retention and retirement follow the bound B.IOS reuse and last-use contract.",
+          "C is a distinct read-only accumulator input snapshotted before multiplication; its payload lifetime follows its B.IOT source binding, and rejection does not complete last-use.",
           "Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable."
         ]
       },
@@ -20239,7 +20251,10 @@
           "Each non-FP16/BF16 side requires its assigned scale: group-32 E8M0 for MX FP8/FP4 or group-64 U32 for HiF4X2. Bias uses one Local CUBE_N8 logical 1xN accumulator-type source (FP32 for MX), broadcast by logical output column. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
-          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
+          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D.",
+          "Cooperative Shared Matrix forms accept group_M in 1..128 and N/K in 1..65535 without power-of-two restrictions. Validate Local CUBE roles with existing descriptor and capacity rules; validate Shared roles against the original legal Shared descriptor and physical pitch. Internal read views preserve original pitch and use typed logical element/carrier/lane reads without a transient Local descriptor or 64 KiB capacity limit.",
+          "If any supported four-bit Shared primary is present (E2M1X2, E1M2X2, HiF4X2 for Matrix-MX only, S4X2, or U4X2), K and each such original parent physical columns pitch are even under every transpose combination. Valid M/group_M and N gain no parity restriction. This does not affect Local-only TMATMUL, TGEMV, generic Shared allocation, or Local packed A when Shared B is not packed.",
+          "Shared Matrix-MX ScaleA has exact stored-valid shape [group_M,G_A] and ScaleB [N,G_B], with each G equal to ceil(K/group_size) for its side (group-32 E8M0 or group-64 U32), independent of TransA/TransB; valid k selects floor(k/group_size)."
         ],
         "memory_effects": [
           "none"
@@ -20252,16 +20267,16 @@
         ],
         "ordering": [
           "Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.",
-          "D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.",
+          "D and every enabled reduction output publish as one atomic group; rejection publishes none and does not complete source last-use. Matrix computation leaves source values and descriptors unmodified; payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "Transparent-cache hints occur only after complete preflight and cannot alter source snapshots, D allocation or publication, faults, or numeric status."
         ],
         "standalone_opcode": true,
         "state_effects": [
           "Start a CUBE Function 5 descriptor with encoded DataType preserved as AType.",
           "At block completion execute TileOperation_TMATMUL_MX_BIAS using the resolved M, N, K, input types, mathematical operands, and B.FPATR postprocess schema.",
-          "Publish the complete output group atomically after successful preflight and computation; do not consume mathematical or postprocess sources.",
+          "Publish the complete output group atomically after successful preflight and computation; source payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.",
-          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.",
+          "Matrix computation does not modify Shared source values or descriptors; payload retention and retirement follow the bound B.IOS reuse and last-use contract.",
           "Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable."
         ]
       },
@@ -91497,7 +91512,7 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
+              "mask": "0x7800707f",
               "match": "0x0000400b",
               "width_bits": 32
             }
@@ -91556,7 +91571,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -91792,8 +91807,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x1000400b",
+              "mask": "0x7800707f",
+              "match": "0x0800400b",
               "width_bits": 32
             }
           ],
@@ -91851,7 +91866,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -92087,8 +92102,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x2000400b",
+              "mask": "0x7800707f",
+              "match": "0x1000400b",
               "width_bits": 32
             }
           ],
@@ -92146,7 +92161,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -92541,8 +92556,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x4000400b",
+              "mask": "0x7800707f",
+              "match": "0x2000400b",
               "width_bits": 32
             }
           ],
@@ -92600,7 +92615,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -92836,8 +92851,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x5000400b",
+              "mask": "0x7800707f",
+              "match": "0x2800400b",
               "width_bits": 32
             }
           ],
@@ -92895,7 +92910,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -93131,8 +93146,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x6000400b",
+              "mask": "0x7800707f",
+              "match": "0x3000400b",
               "width_bits": 32
             }
           ],
@@ -93190,7 +93205,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -93426,8 +93441,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x7000400b",
+              "mask": "0x7800707f",
+              "match": "0x3800400b",
               "width_bits": 32
             }
           ],
@@ -93485,7 +93500,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -93721,8 +93736,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x3000400b",
+              "mask": "0x7800707f",
+              "match": "0x1800400b",
               "width_bits": 32
             }
           ],
@@ -93780,7 +93795,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -96042,7 +96057,7 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
+              "mask": "0x7800707f",
               "match": "0x0000000b",
               "width_bits": 32
             }
@@ -96101,7 +96116,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -96338,8 +96353,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x3000000b",
+              "mask": "0x7800707f",
+              "match": "0x1800000b",
               "width_bits": 32
             }
           ],
@@ -96397,7 +96412,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -96634,8 +96649,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x1000000b",
+              "mask": "0x7800707f",
+              "match": "0x0800000b",
               "width_bits": 32
             }
           ],
@@ -96693,7 +96708,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -96930,8 +96945,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x2000000b",
+              "mask": "0x7800707f",
+              "match": "0x1000000b",
               "width_bits": 32
             }
           ],
@@ -96989,7 +97004,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -97794,7 +97809,7 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
+              "mask": "0x7800707f",
               "match": "0x0000200b",
               "width_bits": 32
             }
@@ -97853,7 +97868,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -98089,8 +98104,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x1000200b",
+              "mask": "0x7800707f",
+              "match": "0x0800200b",
               "width_bits": 32
             }
           ],
@@ -98148,7 +98163,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -98384,8 +98399,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x2000200b",
+              "mask": "0x7800707f",
+              "match": "0x1000200b",
               "width_bits": 32
             }
           ],
@@ -98443,7 +98458,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -98838,8 +98853,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x4000200b",
+              "mask": "0x7800707f",
+              "match": "0x2000200b",
               "width_bits": 32
             }
           ],
@@ -98897,7 +98912,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -99133,8 +99148,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x5000200b",
+              "mask": "0x7800707f",
+              "match": "0x2800200b",
               "width_bits": 32
             }
           ],
@@ -99192,7 +99207,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -99428,8 +99443,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x6000200b",
+              "mask": "0x7800707f",
+              "match": "0x3000200b",
               "width_bits": 32
             }
           ],
@@ -99487,7 +99502,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -99723,8 +99738,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x7000200b",
+              "mask": "0x7800707f",
+              "match": "0x3800200b",
               "width_bits": 32
             }
           ],
@@ -99782,7 +99797,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -100018,8 +100033,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x3000200b",
+              "mask": "0x7800707f",
+              "match": "0x1800200b",
               "width_bits": 32
             }
           ],
@@ -100077,7 +100092,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -105918,6 +105933,191 @@
       "alias_of": null,
       "catalog_records": [
         {
+          "asm": "sb.add<.{rl}> [SrcL], SrcR",
+          "constraints": [],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0xfc007fff",
+              "match": "0x8000300b",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "SrcL",
+              "pieces": [
+                {
+                  "instruction_lsb": 15,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "SrcR",
+              "pieces": [
+                {
+                  "instruction_lsb": 20,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "rl",
+              "pieces": [
+                {
+                  "instruction_lsb": 25,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            }
+          ],
+          "form_id": "sb_add_32_op5_v0587",
+          "length_bits": 32,
+          "mnemonic": "SB.ADD",
+          "semantic_family": "AMO",
+          "semantic_group": "AMO",
+          "semantic_handler": "AtomicReadModifyWrite",
+          "semantic_summary": "SB.ADD atomically applies width-sized modular add and does not publish the old value.",
+          "status": "accepted"
+        }
+      ],
+      "classification": [
+        "amo"
+      ],
+      "contract": {
+        "block_composition": [
+          "none"
+        ],
+        "canonical_assembly": [
+          "sb.add [SrcL], SrcR",
+          "sb.add.rl [SrcL], SrcR"
+        ],
+        "defaults": [
+          "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
+        ],
+        "encoded_fields": [
+          {
+            "assigned_ranges": [
+              [
+                0,
+                31
+              ]
+            ],
+            "field": "SrcL",
+            "form_id": "sb_add_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "Reg5 atomic address source",
+            "signedness": "encoding-defined",
+            "width": 5,
+            "zero_meaning": "Encoded zero reads the architectural zero register as the atomic address."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                31
+              ]
+            ],
+            "field": "SrcR",
+            "form_id": "sb_add_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "Reg5 atomic operand source",
+            "signedness": "encoding-defined",
+            "width": 5,
+            "zero_meaning": "Encoded zero supplies numeric zero as the atomic operand."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "field": "rl",
+            "form_id": "sb_add_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "release ordering bit",
+            "signedness": "encoding-defined",
+            "width": 1,
+            "zero_meaning": "Encoded zero selects relaxed ordering."
+          }
+        ],
+        "encoding_class": "standalone-encoded",
+        "examples": [
+          "sb.add [a0], a1",
+          "sb.add.rl [t#1], u#1"
+        ],
+        "exceptions": [
+          "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
+          "If either read or write preflight fails, the instruction performs no load, store, event, reservation update, result publication, or TPC advance.",
+          "An undecodable or operand-illegal form raises Fault_IllegalInstruction before effects."
+        ],
+        "field_domains": [],
+        "legality": [
+          "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
+          "The effective address must be aligned to 1 byte. SrcL, SrcR, and rl have no reserved encodings in this form.",
+          "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
+        ],
+        "memory_effects": [
+          "Atomically read one aligned 1-byte little-endian value, compute the 8-bit modular sum, and write one 1-byte result to the same location.",
+          "Complete both read and write access probes before the memory load or store, and require both probes to resolve to the same translated address.",
+          "On success, record one atomic memory event, invalidate an overlapping local reservation, and preserve a nonoverlapping reservation."
+        ],
+        "operands": [
+          {
+            "field": "SrcL",
+            "role": "Reg5 atomic address source"
+          },
+          {
+            "field": "SrcR",
+            "role": "Reg5 atomic operand source"
+          },
+          {
+            "field": "rl",
+            "role": "release ordering bit"
+          }
+        ],
+        "ordering": [
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
+        ],
+        "standalone_opcode": true,
+        "state_effects": [
+          "Snapshot SrcL and SrcR before any memory or architectural effect.",
+          "SB.ADD stores the 8-bit modular sum; it does not publish the old value.",
+          "Successful execution advances TPC by four bytes. On a fault, the instruction does not retire; trap entry saves the original TPC, redirects the live TPC to the trap vector, and recovery restores that TPC for full reissue. GPRs, T/U queues, memory events, reservation state, and memory remain unchanged by the failed instruction."
+        ]
+      },
+      "documentation": "docs/scalar/amo/SB.ADD.md",
+      "engine": null,
+      "mnemonic": "SB.ADD",
+      "ndf_clause": "PTO-INST-SCALAR-SB-ADD",
+      "source": "asl/scalar/amo/SB.ADD.asl",
+      "summary": "SB.ADD atomically applies width-sized modular add and does not publish the old value.",
+      "surface": "scalar"
+    },
+    {
+      "alias_engine": null,
+      "alias_of": null,
+      "catalog_records": [
+        {
           "agu": {
             "action": "Store",
             "address_kind": "PCRelative",
@@ -106075,6 +106275,191 @@
       "ndf_clause": "PTO-INST-SCALAR-SB-PCR",
       "source": "asl/scalar/agu/SB.PCR.asl",
       "summary": "SB.PCR snapshots its scalar sources, forms its encoded address, and stores one aligned little-endian 1-byte value.",
+      "surface": "scalar"
+    },
+    {
+      "alias_engine": null,
+      "alias_of": null,
+      "catalog_records": [
+        {
+          "asm": "sb.sub<.{rl}> [SrcL], SrcR",
+          "constraints": [],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0xfc007fff",
+              "match": "0xc000300b",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "SrcL",
+              "pieces": [
+                {
+                  "instruction_lsb": 15,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "SrcR",
+              "pieces": [
+                {
+                  "instruction_lsb": 20,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "rl",
+              "pieces": [
+                {
+                  "instruction_lsb": 25,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            }
+          ],
+          "form_id": "sb_sub_32_op5_v0587",
+          "length_bits": 32,
+          "mnemonic": "SB.SUB",
+          "semantic_family": "AMO",
+          "semantic_group": "AMO",
+          "semantic_handler": "AtomicReadModifyWrite",
+          "semantic_summary": "SB.SUB atomically applies width-sized modular sub and does not publish the old value.",
+          "status": "accepted"
+        }
+      ],
+      "classification": [
+        "amo"
+      ],
+      "contract": {
+        "block_composition": [
+          "none"
+        ],
+        "canonical_assembly": [
+          "sb.sub [SrcL], SrcR",
+          "sb.sub.rl [SrcL], SrcR"
+        ],
+        "defaults": [
+          "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
+        ],
+        "encoded_fields": [
+          {
+            "assigned_ranges": [
+              [
+                0,
+                31
+              ]
+            ],
+            "field": "SrcL",
+            "form_id": "sb_sub_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "Reg5 atomic address source",
+            "signedness": "encoding-defined",
+            "width": 5,
+            "zero_meaning": "Encoded zero reads the architectural zero register as the atomic address."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                31
+              ]
+            ],
+            "field": "SrcR",
+            "form_id": "sb_sub_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "Reg5 atomic operand source",
+            "signedness": "encoding-defined",
+            "width": 5,
+            "zero_meaning": "Encoded zero supplies numeric zero as the atomic operand."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "field": "rl",
+            "form_id": "sb_sub_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "release ordering bit",
+            "signedness": "encoding-defined",
+            "width": 1,
+            "zero_meaning": "Encoded zero selects relaxed ordering."
+          }
+        ],
+        "encoding_class": "standalone-encoded",
+        "examples": [
+          "sb.sub [a0], a1",
+          "sb.sub.rl [t#1], u#1"
+        ],
+        "exceptions": [
+          "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
+          "If either read or write preflight fails, the instruction performs no load, store, event, reservation update, result publication, or TPC advance.",
+          "An undecodable or operand-illegal form raises Fault_IllegalInstruction before effects."
+        ],
+        "field_domains": [],
+        "legality": [
+          "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
+          "The effective address must be aligned to 1 byte. SrcL, SrcR, and rl have no reserved encodings in this form.",
+          "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
+        ],
+        "memory_effects": [
+          "Atomically read one aligned 1-byte little-endian value, compute the 8-bit modular difference, and write one 1-byte result to the same location.",
+          "Complete both read and write access probes before the memory load or store, and require both probes to resolve to the same translated address.",
+          "On success, record one atomic memory event, invalidate an overlapping local reservation, and preserve a nonoverlapping reservation."
+        ],
+        "operands": [
+          {
+            "field": "SrcL",
+            "role": "Reg5 atomic address source"
+          },
+          {
+            "field": "SrcR",
+            "role": "Reg5 atomic operand source"
+          },
+          {
+            "field": "rl",
+            "role": "release ordering bit"
+          }
+        ],
+        "ordering": [
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
+        ],
+        "standalone_opcode": true,
+        "state_effects": [
+          "Snapshot SrcL and SrcR before any memory or architectural effect.",
+          "SB.SUB stores the 8-bit modular difference; it does not publish the old value.",
+          "Successful execution advances TPC by four bytes. On a fault, the instruction does not retire; trap entry saves the original TPC, redirects the live TPC to the trap vector, and recovery restores that TPC for full reissue. GPRs, T/U queues, memory events, reservation state, and memory remain unchanged by the failed instruction."
+        ]
+      },
+      "documentation": "docs/scalar/amo/SB.SUB.md",
+      "engine": null,
+      "mnemonic": "SB.SUB",
+      "ndf_clause": "PTO-INST-SCALAR-SB-SUB",
+      "source": "asl/scalar/amo/SB.SUB.asl",
+      "summary": "SB.SUB atomically applies width-sized modular sub and does not publish the old value.",
       "surface": "scalar"
     },
     {
@@ -106284,7 +106669,7 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
+              "mask": "0x7800707f",
               "match": "0x0000100b",
               "width_bits": 32
             }
@@ -106343,7 +106728,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -106580,8 +106965,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x3000100b",
+              "mask": "0x7800707f",
+              "match": "0x1800100b",
               "width_bits": 32
             }
           ],
@@ -106639,7 +107024,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -106876,8 +107261,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x1000100b",
+              "mask": "0x7800707f",
+              "match": "0x0800100b",
               "width_bits": 32
             }
           ],
@@ -106935,7 +107320,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -107172,8 +107557,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x2000100b",
+              "mask": "0x7800707f",
+              "match": "0x1000100b",
               "width_bits": 32
             }
           ],
@@ -107231,7 +107616,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -107940,12 +108325,12 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "sd.add<.{rl, f, rlf}> [SrcL], SrcR",
+          "asm": "sd.add<.{rl}> [SrcL], SrcR",
           "constraints": [],
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf4007fff",
+              "mask": "0xfc007fff",
               "match": "0x0000500b",
               "width_bits": 32
             }
@@ -107975,18 +108360,6 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
-            },
-            {
-              "name": "far",
-              "pieces": [
-                {
-                  "instruction_lsb": 27,
-                  "value_lsb": 0,
-                  "width": 1
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 1
             },
             {
               "name": "rl",
@@ -108020,14 +108393,11 @@
         ],
         "canonical_assembly": [
           "sd.add [SrcL], SrcR",
-          "sd.add.rl [SrcL], SrcR",
-          "sd.add.f [SrcL], SrcR",
-          "sd.add.rlf [SrcL], SrcR"
+          "sd.add.rl [SrcL], SrcR"
         ],
         "defaults": [
           "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
-          "rl=0 selects relaxed ordering; rl=1 selects release ordering.",
-          "far=0 selects the default flat-address route. far=1 is a routing hint and does not change the architectural address or atomic operation in the reference profile."
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
         ],
         "encoded_fields": [
           {
@@ -108071,23 +108441,6 @@
                 1
               ]
             ],
-            "field": "far",
-            "form_id": "sd_add_32_2a55ae1228bd",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "flat-address routing hint",
-            "signedness": "encoding-defined",
-            "width": 1,
-            "zero_meaning": "Encoded zero selects the default flat-address route."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                1
-              ]
-            ],
             "field": "rl",
             "form_id": "sd_add_32_2a55ae1228bd",
             "other_owner_values": [],
@@ -108102,8 +108455,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "sd.add [a0], a1",
-          "sd.add.rl [t#1], u#1",
-          "sd.add.f [sp], a0"
+          "sd.add.rl [t#1], u#1"
         ],
         "exceptions": [
           "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
@@ -108113,7 +108465,7 @@
         "field_domains": [],
         "legality": [
           "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
-          "The effective address must be aligned to 8 bytes. SrcL, SrcR, far, and rl have no reserved encodings in this form.",
+          "The effective address must be aligned to 8 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
           "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
         ],
         "memory_effects": [
@@ -108131,17 +108483,12 @@
             "role": "Reg5 atomic operand source"
           },
           {
-            "field": "far",
-            "role": "flat-address routing hint"
-          },
-          {
             "field": "rl",
             "role": "release ordering bit"
           }
         ],
         "ordering": [
-          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit.",
-          "far changes only the route hint in the reference profile and does not change ordering, address arithmetic, or the read-modify-write result."
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -108163,13 +108510,13 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "sd.and<.{rl, f, rlf}> [SrcL], SrcR",
+          "asm": "sd.and<.{rl}> [SrcL], SrcR",
           "constraints": [],
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf4007fff",
-              "match": "0x1000500b",
+              "mask": "0xfc007fff",
+              "match": "0x0800500b",
               "width_bits": 32
             }
           ],
@@ -108198,18 +108545,6 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
-            },
-            {
-              "name": "far",
-              "pieces": [
-                {
-                  "instruction_lsb": 27,
-                  "value_lsb": 0,
-                  "width": 1
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 1
             },
             {
               "name": "rl",
@@ -108243,14 +108578,11 @@
         ],
         "canonical_assembly": [
           "sd.and [SrcL], SrcR",
-          "sd.and.rl [SrcL], SrcR",
-          "sd.and.f [SrcL], SrcR",
-          "sd.and.rlf [SrcL], SrcR"
+          "sd.and.rl [SrcL], SrcR"
         ],
         "defaults": [
           "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
-          "rl=0 selects relaxed ordering; rl=1 selects release ordering.",
-          "far=0 selects the default flat-address route. far=1 is a routing hint and does not change the architectural address or atomic operation in the reference profile."
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
         ],
         "encoded_fields": [
           {
@@ -108294,23 +108626,6 @@
                 1
               ]
             ],
-            "field": "far",
-            "form_id": "sd_and_32_71963e1769c2",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "flat-address routing hint",
-            "signedness": "encoding-defined",
-            "width": 1,
-            "zero_meaning": "Encoded zero selects the default flat-address route."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                1
-              ]
-            ],
             "field": "rl",
             "form_id": "sd_and_32_71963e1769c2",
             "other_owner_values": [],
@@ -108325,8 +108640,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "sd.and [a0], a1",
-          "sd.and.rl [t#1], u#1",
-          "sd.and.f [sp], a0"
+          "sd.and.rl [t#1], u#1"
         ],
         "exceptions": [
           "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
@@ -108336,7 +108650,7 @@
         "field_domains": [],
         "legality": [
           "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
-          "The effective address must be aligned to 8 bytes. SrcL, SrcR, far, and rl have no reserved encodings in this form.",
+          "The effective address must be aligned to 8 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
           "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
         ],
         "memory_effects": [
@@ -108354,17 +108668,12 @@
             "role": "Reg5 atomic operand source"
           },
           {
-            "field": "far",
-            "role": "flat-address routing hint"
-          },
-          {
             "field": "rl",
             "role": "release ordering bit"
           }
         ],
         "ordering": [
-          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit.",
-          "far changes only the route hint in the reference profile and does not change ordering, address arithmetic, or the read-modify-write result."
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -108386,13 +108695,13 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "sd.or<.{rl, f, rlf}> [SrcL], SrcR",
+          "asm": "sd.or<.{rl}> [SrcL], SrcR",
           "constraints": [],
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf4007fff",
-              "match": "0x2000500b",
+              "mask": "0xfc007fff",
+              "match": "0x1000500b",
               "width_bits": 32
             }
           ],
@@ -108421,18 +108730,6 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
-            },
-            {
-              "name": "far",
-              "pieces": [
-                {
-                  "instruction_lsb": 27,
-                  "value_lsb": 0,
-                  "width": 1
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 1
             },
             {
               "name": "rl",
@@ -108466,14 +108763,11 @@
         ],
         "canonical_assembly": [
           "sd.or [SrcL], SrcR",
-          "sd.or.rl [SrcL], SrcR",
-          "sd.or.f [SrcL], SrcR",
-          "sd.or.rlf [SrcL], SrcR"
+          "sd.or.rl [SrcL], SrcR"
         ],
         "defaults": [
           "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
-          "rl=0 selects relaxed ordering; rl=1 selects release ordering.",
-          "far=0 selects the default flat-address route. far=1 is a routing hint and does not change the architectural address or atomic operation in the reference profile."
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
         ],
         "encoded_fields": [
           {
@@ -108517,23 +108811,6 @@
                 1
               ]
             ],
-            "field": "far",
-            "form_id": "sd_or_32_2a65eedfae0f",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "flat-address routing hint",
-            "signedness": "encoding-defined",
-            "width": 1,
-            "zero_meaning": "Encoded zero selects the default flat-address route."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                1
-              ]
-            ],
             "field": "rl",
             "form_id": "sd_or_32_2a65eedfae0f",
             "other_owner_values": [],
@@ -108548,8 +108825,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "sd.or [a0], a1",
-          "sd.or.rl [t#1], u#1",
-          "sd.or.f [sp], a0"
+          "sd.or.rl [t#1], u#1"
         ],
         "exceptions": [
           "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
@@ -108559,7 +108835,7 @@
         "field_domains": [],
         "legality": [
           "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
-          "The effective address must be aligned to 8 bytes. SrcL, SrcR, far, and rl have no reserved encodings in this form.",
+          "The effective address must be aligned to 8 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
           "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
         ],
         "memory_effects": [
@@ -108577,17 +108853,12 @@
             "role": "Reg5 atomic operand source"
           },
           {
-            "field": "far",
-            "role": "flat-address routing hint"
-          },
-          {
             "field": "rl",
             "role": "release ordering bit"
           }
         ],
         "ordering": [
-          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit.",
-          "far changes only the route hint in the reference profile and does not change ordering, address arithmetic, or the read-modify-write result."
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -108773,13 +109044,13 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "sd.smax<.{rl, f, rlf}> [SrcL], SrcR",
+          "asm": "sd.smax<.{rl}> [SrcL], SrcR",
           "constraints": [],
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf4007fff",
-              "match": "0x4000500b",
+              "mask": "0xfc007fff",
+              "match": "0x2000500b",
               "width_bits": 32
             }
           ],
@@ -108808,18 +109079,6 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
-            },
-            {
-              "name": "far",
-              "pieces": [
-                {
-                  "instruction_lsb": 27,
-                  "value_lsb": 0,
-                  "width": 1
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 1
             },
             {
               "name": "rl",
@@ -108853,14 +109112,11 @@
         ],
         "canonical_assembly": [
           "sd.smax [SrcL], SrcR",
-          "sd.smax.rl [SrcL], SrcR",
-          "sd.smax.f [SrcL], SrcR",
-          "sd.smax.rlf [SrcL], SrcR"
+          "sd.smax.rl [SrcL], SrcR"
         ],
         "defaults": [
           "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
-          "rl=0 selects relaxed ordering; rl=1 selects release ordering.",
-          "far=0 selects the default flat-address route. far=1 is a routing hint and does not change the architectural address or atomic operation in the reference profile."
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
         ],
         "encoded_fields": [
           {
@@ -108904,23 +109160,6 @@
                 1
               ]
             ],
-            "field": "far",
-            "form_id": "sd_smax_32_e59bf90b50c3",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "flat-address routing hint",
-            "signedness": "encoding-defined",
-            "width": 1,
-            "zero_meaning": "Encoded zero selects the default flat-address route."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                1
-              ]
-            ],
             "field": "rl",
             "form_id": "sd_smax_32_e59bf90b50c3",
             "other_owner_values": [],
@@ -108935,8 +109174,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "sd.smax [a0], a1",
-          "sd.smax.rl [t#1], u#1",
-          "sd.smax.f [sp], a0"
+          "sd.smax.rl [t#1], u#1"
         ],
         "exceptions": [
           "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
@@ -108946,7 +109184,7 @@
         "field_domains": [],
         "legality": [
           "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
-          "The effective address must be aligned to 8 bytes. SrcL, SrcR, far, and rl have no reserved encodings in this form.",
+          "The effective address must be aligned to 8 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
           "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
         ],
         "memory_effects": [
@@ -108964,17 +109202,12 @@
             "role": "Reg5 atomic operand source"
           },
           {
-            "field": "far",
-            "role": "flat-address routing hint"
-          },
-          {
             "field": "rl",
             "role": "release ordering bit"
           }
         ],
         "ordering": [
-          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit.",
-          "far changes only the route hint in the reference profile and does not change ordering, address arithmetic, or the read-modify-write result."
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -108996,13 +109229,13 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "sd.smin<.{rl, f, rlf}> [SrcL], SrcR",
+          "asm": "sd.smin<.{rl}> [SrcL], SrcR",
           "constraints": [],
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf4007fff",
-              "match": "0x5000500b",
+              "mask": "0xfc007fff",
+              "match": "0x2800500b",
               "width_bits": 32
             }
           ],
@@ -109031,18 +109264,6 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
-            },
-            {
-              "name": "far",
-              "pieces": [
-                {
-                  "instruction_lsb": 27,
-                  "value_lsb": 0,
-                  "width": 1
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 1
             },
             {
               "name": "rl",
@@ -109076,14 +109297,11 @@
         ],
         "canonical_assembly": [
           "sd.smin [SrcL], SrcR",
-          "sd.smin.rl [SrcL], SrcR",
-          "sd.smin.f [SrcL], SrcR",
-          "sd.smin.rlf [SrcL], SrcR"
+          "sd.smin.rl [SrcL], SrcR"
         ],
         "defaults": [
           "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
-          "rl=0 selects relaxed ordering; rl=1 selects release ordering.",
-          "far=0 selects the default flat-address route. far=1 is a routing hint and does not change the architectural address or atomic operation in the reference profile."
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
         ],
         "encoded_fields": [
           {
@@ -109127,23 +109345,6 @@
                 1
               ]
             ],
-            "field": "far",
-            "form_id": "sd_smin_32_188d93125032",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "flat-address routing hint",
-            "signedness": "encoding-defined",
-            "width": 1,
-            "zero_meaning": "Encoded zero selects the default flat-address route."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                1
-              ]
-            ],
             "field": "rl",
             "form_id": "sd_smin_32_188d93125032",
             "other_owner_values": [],
@@ -109158,8 +109359,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "sd.smin [a0], a1",
-          "sd.smin.rl [t#1], u#1",
-          "sd.smin.f [sp], a0"
+          "sd.smin.rl [t#1], u#1"
         ],
         "exceptions": [
           "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
@@ -109169,7 +109369,7 @@
         "field_domains": [],
         "legality": [
           "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
-          "The effective address must be aligned to 8 bytes. SrcL, SrcR, far, and rl have no reserved encodings in this form.",
+          "The effective address must be aligned to 8 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
           "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
         ],
         "memory_effects": [
@@ -109187,17 +109387,12 @@
             "role": "Reg5 atomic operand source"
           },
           {
-            "field": "far",
-            "role": "flat-address routing hint"
-          },
-          {
             "field": "rl",
             "role": "release ordering bit"
           }
         ],
         "ordering": [
-          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit.",
-          "far changes only the route hint in the reference profile and does not change ordering, address arithmetic, or the read-modify-write result."
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -109212,6 +109407,191 @@
       "ndf_clause": "PTO-INST-SCALAR-SD-SMIN",
       "source": "asl/scalar/amo/SD.SMIN.asl",
       "summary": "SD.SMIN atomically replaces the aligned 64-bit memory value with its signed minimum with SrcR; it does not publish the old value.",
+      "surface": "scalar"
+    },
+    {
+      "alias_engine": null,
+      "alias_of": null,
+      "catalog_records": [
+        {
+          "asm": "sd.sub<.{rl}> [SrcL], SrcR",
+          "constraints": [],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0xfc007fff",
+              "match": "0x4000500b",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "SrcL",
+              "pieces": [
+                {
+                  "instruction_lsb": 15,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "SrcR",
+              "pieces": [
+                {
+                  "instruction_lsb": 20,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "rl",
+              "pieces": [
+                {
+                  "instruction_lsb": 25,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            }
+          ],
+          "form_id": "sd_sub_32_op5_v0587",
+          "length_bits": 32,
+          "mnemonic": "SD.SUB",
+          "semantic_family": "AMO",
+          "semantic_group": "AMO",
+          "semantic_handler": "AtomicReadModifyWrite",
+          "semantic_summary": "SD.SUB atomically applies width-sized modular sub and does not publish the old value.",
+          "status": "accepted"
+        }
+      ],
+      "classification": [
+        "amo"
+      ],
+      "contract": {
+        "block_composition": [
+          "none"
+        ],
+        "canonical_assembly": [
+          "sd.sub [SrcL], SrcR",
+          "sd.sub.rl [SrcL], SrcR"
+        ],
+        "defaults": [
+          "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
+        ],
+        "encoded_fields": [
+          {
+            "assigned_ranges": [
+              [
+                0,
+                31
+              ]
+            ],
+            "field": "SrcL",
+            "form_id": "sd_sub_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "Reg5 atomic address source",
+            "signedness": "encoding-defined",
+            "width": 5,
+            "zero_meaning": "Encoded zero reads the architectural zero register as the atomic address."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                31
+              ]
+            ],
+            "field": "SrcR",
+            "form_id": "sd_sub_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "Reg5 atomic operand source",
+            "signedness": "encoding-defined",
+            "width": 5,
+            "zero_meaning": "Encoded zero supplies numeric zero as the atomic operand."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "field": "rl",
+            "form_id": "sd_sub_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "release ordering bit",
+            "signedness": "encoding-defined",
+            "width": 1,
+            "zero_meaning": "Encoded zero selects relaxed ordering."
+          }
+        ],
+        "encoding_class": "standalone-encoded",
+        "examples": [
+          "sd.sub [a0], a1",
+          "sd.sub.rl [t#1], u#1"
+        ],
+        "exceptions": [
+          "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
+          "If either read or write preflight fails, the instruction performs no load, store, event, reservation update, result publication, or TPC advance.",
+          "An undecodable or operand-illegal form raises Fault_IllegalInstruction before effects."
+        ],
+        "field_domains": [],
+        "legality": [
+          "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
+          "The effective address must be aligned to 8 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
+          "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
+        ],
+        "memory_effects": [
+          "Atomically read one aligned 8-byte little-endian value, compute the 64-bit modular difference, and write one 8-byte result to the same location.",
+          "Complete both read and write access probes before the memory load or store, and require both probes to resolve to the same translated address.",
+          "On success, record one atomic memory event, invalidate an overlapping local reservation, and preserve a nonoverlapping reservation."
+        ],
+        "operands": [
+          {
+            "field": "SrcL",
+            "role": "Reg5 atomic address source"
+          },
+          {
+            "field": "SrcR",
+            "role": "Reg5 atomic operand source"
+          },
+          {
+            "field": "rl",
+            "role": "release ordering bit"
+          }
+        ],
+        "ordering": [
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
+        ],
+        "standalone_opcode": true,
+        "state_effects": [
+          "Snapshot SrcL and SrcR before any memory or architectural effect.",
+          "SD.SUB stores the 64-bit modular difference; it does not publish the old value.",
+          "Successful execution advances TPC by four bytes. On a fault, the instruction does not retire; trap entry saves the original TPC, redirects the live TPC to the trap vector, and recovery restores that TPC for full reissue. GPRs, T/U queues, memory events, reservation state, and memory remain unchanged by the failed instruction."
+        ]
+      },
+      "documentation": "docs/scalar/amo/SD.SUB.md",
+      "engine": null,
+      "mnemonic": "SD.SUB",
+      "ndf_clause": "PTO-INST-SCALAR-SD-SUB",
+      "source": "asl/scalar/amo/SD.SUB.asl",
+      "summary": "SD.SUB atomically applies width-sized modular sub and does not publish the old value.",
       "surface": "scalar"
     },
     {
@@ -109460,13 +109840,13 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "sd.umax<.{rl, f, rlf}> [SrcL], SrcR",
+          "asm": "sd.umax<.{rl}> [SrcL], SrcR",
           "constraints": [],
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf4007fff",
-              "match": "0x6000500b",
+              "mask": "0xfc007fff",
+              "match": "0x3000500b",
               "width_bits": 32
             }
           ],
@@ -109495,18 +109875,6 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
-            },
-            {
-              "name": "far",
-              "pieces": [
-                {
-                  "instruction_lsb": 27,
-                  "value_lsb": 0,
-                  "width": 1
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 1
             },
             {
               "name": "rl",
@@ -109540,14 +109908,11 @@
         ],
         "canonical_assembly": [
           "sd.umax [SrcL], SrcR",
-          "sd.umax.rl [SrcL], SrcR",
-          "sd.umax.f [SrcL], SrcR",
-          "sd.umax.rlf [SrcL], SrcR"
+          "sd.umax.rl [SrcL], SrcR"
         ],
         "defaults": [
           "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
-          "rl=0 selects relaxed ordering; rl=1 selects release ordering.",
-          "far=0 selects the default flat-address route. far=1 is a routing hint and does not change the architectural address or atomic operation in the reference profile."
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
         ],
         "encoded_fields": [
           {
@@ -109591,23 +109956,6 @@
                 1
               ]
             ],
-            "field": "far",
-            "form_id": "sd_umax_32_89c5ec42be68",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "flat-address routing hint",
-            "signedness": "encoding-defined",
-            "width": 1,
-            "zero_meaning": "Encoded zero selects the default flat-address route."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                1
-              ]
-            ],
             "field": "rl",
             "form_id": "sd_umax_32_89c5ec42be68",
             "other_owner_values": [],
@@ -109622,8 +109970,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "sd.umax [a0], a1",
-          "sd.umax.rl [t#1], u#1",
-          "sd.umax.f [sp], a0"
+          "sd.umax.rl [t#1], u#1"
         ],
         "exceptions": [
           "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
@@ -109633,7 +109980,7 @@
         "field_domains": [],
         "legality": [
           "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
-          "The effective address must be aligned to 8 bytes. SrcL, SrcR, far, and rl have no reserved encodings in this form.",
+          "The effective address must be aligned to 8 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
           "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
         ],
         "memory_effects": [
@@ -109651,17 +109998,12 @@
             "role": "Reg5 atomic operand source"
           },
           {
-            "field": "far",
-            "role": "flat-address routing hint"
-          },
-          {
             "field": "rl",
             "role": "release ordering bit"
           }
         ],
         "ordering": [
-          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit.",
-          "far changes only the route hint in the reference profile and does not change ordering, address arithmetic, or the read-modify-write result."
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -109683,13 +110025,13 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "sd.umin<.{rl, f, rlf}> [SrcL], SrcR",
+          "asm": "sd.umin<.{rl}> [SrcL], SrcR",
           "constraints": [],
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf4007fff",
-              "match": "0x7000500b",
+              "mask": "0xfc007fff",
+              "match": "0x3800500b",
               "width_bits": 32
             }
           ],
@@ -109718,18 +110060,6 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
-            },
-            {
-              "name": "far",
-              "pieces": [
-                {
-                  "instruction_lsb": 27,
-                  "value_lsb": 0,
-                  "width": 1
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 1
             },
             {
               "name": "rl",
@@ -109763,14 +110093,11 @@
         ],
         "canonical_assembly": [
           "sd.umin [SrcL], SrcR",
-          "sd.umin.rl [SrcL], SrcR",
-          "sd.umin.f [SrcL], SrcR",
-          "sd.umin.rlf [SrcL], SrcR"
+          "sd.umin.rl [SrcL], SrcR"
         ],
         "defaults": [
           "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
-          "rl=0 selects relaxed ordering; rl=1 selects release ordering.",
-          "far=0 selects the default flat-address route. far=1 is a routing hint and does not change the architectural address or atomic operation in the reference profile."
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
         ],
         "encoded_fields": [
           {
@@ -109814,23 +110141,6 @@
                 1
               ]
             ],
-            "field": "far",
-            "form_id": "sd_umin_32_2388cbb378ac",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "flat-address routing hint",
-            "signedness": "encoding-defined",
-            "width": 1,
-            "zero_meaning": "Encoded zero selects the default flat-address route."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                1
-              ]
-            ],
             "field": "rl",
             "form_id": "sd_umin_32_2388cbb378ac",
             "other_owner_values": [],
@@ -109845,8 +110155,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "sd.umin [a0], a1",
-          "sd.umin.rl [t#1], u#1",
-          "sd.umin.f [sp], a0"
+          "sd.umin.rl [t#1], u#1"
         ],
         "exceptions": [
           "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
@@ -109856,7 +110165,7 @@
         "field_domains": [],
         "legality": [
           "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
-          "The effective address must be aligned to 8 bytes. SrcL, SrcR, far, and rl have no reserved encodings in this form.",
+          "The effective address must be aligned to 8 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
           "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
         ],
         "memory_effects": [
@@ -109874,17 +110183,12 @@
             "role": "Reg5 atomic operand source"
           },
           {
-            "field": "far",
-            "role": "flat-address routing hint"
-          },
-          {
             "field": "rl",
             "role": "release ordering bit"
           }
         ],
         "ordering": [
-          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit.",
-          "far changes only the route hint in the reference profile and does not change ordering, address arithmetic, or the read-modify-write result."
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -109906,13 +110210,13 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "sd.xor<.{rl, f, rlf}> [SrcL], SrcR",
+          "asm": "sd.xor<.{rl}> [SrcL], SrcR",
           "constraints": [],
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf4007fff",
-              "match": "0x3000500b",
+              "mask": "0xfc007fff",
+              "match": "0x1800500b",
               "width_bits": 32
             }
           ],
@@ -109941,18 +110245,6 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
-            },
-            {
-              "name": "far",
-              "pieces": [
-                {
-                  "instruction_lsb": 27,
-                  "value_lsb": 0,
-                  "width": 1
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 1
             },
             {
               "name": "rl",
@@ -109986,14 +110278,11 @@
         ],
         "canonical_assembly": [
           "sd.xor [SrcL], SrcR",
-          "sd.xor.rl [SrcL], SrcR",
-          "sd.xor.f [SrcL], SrcR",
-          "sd.xor.rlf [SrcL], SrcR"
+          "sd.xor.rl [SrcL], SrcR"
         ],
         "defaults": [
           "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
-          "rl=0 selects relaxed ordering; rl=1 selects release ordering.",
-          "far=0 selects the default flat-address route. far=1 is a routing hint and does not change the architectural address or atomic operation in the reference profile."
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
         ],
         "encoded_fields": [
           {
@@ -110037,23 +110326,6 @@
                 1
               ]
             ],
-            "field": "far",
-            "form_id": "sd_xor_32_7655ceaf9497",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "flat-address routing hint",
-            "signedness": "encoding-defined",
-            "width": 1,
-            "zero_meaning": "Encoded zero selects the default flat-address route."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                1
-              ]
-            ],
             "field": "rl",
             "form_id": "sd_xor_32_7655ceaf9497",
             "other_owner_values": [],
@@ -110068,8 +110340,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "sd.xor [a0], a1",
-          "sd.xor.rl [t#1], u#1",
-          "sd.xor.f [sp], a0"
+          "sd.xor.rl [t#1], u#1"
         ],
         "exceptions": [
           "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
@@ -110079,7 +110350,7 @@
         "field_domains": [],
         "legality": [
           "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
-          "The effective address must be aligned to 8 bytes. SrcL, SrcR, far, and rl have no reserved encodings in this form.",
+          "The effective address must be aligned to 8 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
           "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
         ],
         "memory_effects": [
@@ -110097,17 +110368,12 @@
             "role": "Reg5 atomic operand source"
           },
           {
-            "field": "far",
-            "role": "flat-address routing hint"
-          },
-          {
             "field": "rl",
             "role": "release ordering bit"
           }
         ],
         "ordering": [
-          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit.",
-          "far changes only the route hint in the reference profile and does not change ordering, address arithmetic, or the read-modify-write result."
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -113830,6 +114096,191 @@
       "alias_of": null,
       "catalog_records": [
         {
+          "asm": "sh.add<.{rl}> [SrcL], SrcR",
+          "constraints": [],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0xfc007fff",
+              "match": "0x8000500b",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "SrcL",
+              "pieces": [
+                {
+                  "instruction_lsb": 15,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "SrcR",
+              "pieces": [
+                {
+                  "instruction_lsb": 20,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "rl",
+              "pieces": [
+                {
+                  "instruction_lsb": 25,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            }
+          ],
+          "form_id": "sh_add_32_op5_v0587",
+          "length_bits": 32,
+          "mnemonic": "SH.ADD",
+          "semantic_family": "AMO",
+          "semantic_group": "AMO",
+          "semantic_handler": "AtomicReadModifyWrite",
+          "semantic_summary": "SH.ADD atomically applies width-sized modular add and does not publish the old value.",
+          "status": "accepted"
+        }
+      ],
+      "classification": [
+        "amo"
+      ],
+      "contract": {
+        "block_composition": [
+          "none"
+        ],
+        "canonical_assembly": [
+          "sh.add [SrcL], SrcR",
+          "sh.add.rl [SrcL], SrcR"
+        ],
+        "defaults": [
+          "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
+        ],
+        "encoded_fields": [
+          {
+            "assigned_ranges": [
+              [
+                0,
+                31
+              ]
+            ],
+            "field": "SrcL",
+            "form_id": "sh_add_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "Reg5 atomic address source",
+            "signedness": "encoding-defined",
+            "width": 5,
+            "zero_meaning": "Encoded zero reads the architectural zero register as the atomic address."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                31
+              ]
+            ],
+            "field": "SrcR",
+            "form_id": "sh_add_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "Reg5 atomic operand source",
+            "signedness": "encoding-defined",
+            "width": 5,
+            "zero_meaning": "Encoded zero supplies numeric zero as the atomic operand."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "field": "rl",
+            "form_id": "sh_add_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "release ordering bit",
+            "signedness": "encoding-defined",
+            "width": 1,
+            "zero_meaning": "Encoded zero selects relaxed ordering."
+          }
+        ],
+        "encoding_class": "standalone-encoded",
+        "examples": [
+          "sh.add [a0], a1",
+          "sh.add.rl [t#1], u#1"
+        ],
+        "exceptions": [
+          "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
+          "If either read or write preflight fails, the instruction performs no load, store, event, reservation update, result publication, or TPC advance.",
+          "An undecodable or operand-illegal form raises Fault_IllegalInstruction before effects."
+        ],
+        "field_domains": [],
+        "legality": [
+          "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
+          "The effective address must be aligned to 2 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
+          "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
+        ],
+        "memory_effects": [
+          "Atomically read one aligned 2-byte little-endian value, compute the 16-bit modular sum, and write one 2-byte result to the same location.",
+          "Complete both read and write access probes before the memory load or store, and require both probes to resolve to the same translated address.",
+          "On success, record one atomic memory event, invalidate an overlapping local reservation, and preserve a nonoverlapping reservation."
+        ],
+        "operands": [
+          {
+            "field": "SrcL",
+            "role": "Reg5 atomic address source"
+          },
+          {
+            "field": "SrcR",
+            "role": "Reg5 atomic operand source"
+          },
+          {
+            "field": "rl",
+            "role": "release ordering bit"
+          }
+        ],
+        "ordering": [
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
+        ],
+        "standalone_opcode": true,
+        "state_effects": [
+          "Snapshot SrcL and SrcR before any memory or architectural effect.",
+          "SH.ADD stores the 16-bit modular sum; it does not publish the old value.",
+          "Successful execution advances TPC by four bytes. On a fault, the instruction does not retire; trap entry saves the original TPC, redirects the live TPC to the trap vector, and recovery restores that TPC for full reissue. GPRs, T/U queues, memory events, reservation state, and memory remain unchanged by the failed instruction."
+        ]
+      },
+      "documentation": "docs/scalar/amo/SH.ADD.md",
+      "engine": null,
+      "mnemonic": "SH.ADD",
+      "ndf_clause": "PTO-INST-SCALAR-SH-ADD",
+      "source": "asl/scalar/amo/SH.ADD.asl",
+      "summary": "SH.ADD atomically applies width-sized modular add and does not publish the old value.",
+      "surface": "scalar"
+    },
+    {
+      "alias_engine": null,
+      "alias_of": null,
+      "catalog_records": [
+        {
           "agu": {
             "action": "Store",
             "address_kind": "PCRelative",
@@ -113987,6 +114438,191 @@
       "ndf_clause": "PTO-INST-SCALAR-SH-PCR",
       "source": "asl/scalar/agu/SH.PCR.asl",
       "summary": "SH.PCR snapshots its scalar sources, forms its encoded address, and stores one aligned little-endian 2-byte value.",
+      "surface": "scalar"
+    },
+    {
+      "alias_engine": null,
+      "alias_of": null,
+      "catalog_records": [
+        {
+          "asm": "sh.sub<.{rl}> [SrcL], SrcR",
+          "constraints": [],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0xfc007fff",
+              "match": "0xc000500b",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "SrcL",
+              "pieces": [
+                {
+                  "instruction_lsb": 15,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "SrcR",
+              "pieces": [
+                {
+                  "instruction_lsb": 20,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "rl",
+              "pieces": [
+                {
+                  "instruction_lsb": 25,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            }
+          ],
+          "form_id": "sh_sub_32_op5_v0587",
+          "length_bits": 32,
+          "mnemonic": "SH.SUB",
+          "semantic_family": "AMO",
+          "semantic_group": "AMO",
+          "semantic_handler": "AtomicReadModifyWrite",
+          "semantic_summary": "SH.SUB atomically applies width-sized modular sub and does not publish the old value.",
+          "status": "accepted"
+        }
+      ],
+      "classification": [
+        "amo"
+      ],
+      "contract": {
+        "block_composition": [
+          "none"
+        ],
+        "canonical_assembly": [
+          "sh.sub [SrcL], SrcR",
+          "sh.sub.rl [SrcL], SrcR"
+        ],
+        "defaults": [
+          "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
+        ],
+        "encoded_fields": [
+          {
+            "assigned_ranges": [
+              [
+                0,
+                31
+              ]
+            ],
+            "field": "SrcL",
+            "form_id": "sh_sub_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "Reg5 atomic address source",
+            "signedness": "encoding-defined",
+            "width": 5,
+            "zero_meaning": "Encoded zero reads the architectural zero register as the atomic address."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                31
+              ]
+            ],
+            "field": "SrcR",
+            "form_id": "sh_sub_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "Reg5 atomic operand source",
+            "signedness": "encoding-defined",
+            "width": 5,
+            "zero_meaning": "Encoded zero supplies numeric zero as the atomic operand."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "field": "rl",
+            "form_id": "sh_sub_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "release ordering bit",
+            "signedness": "encoding-defined",
+            "width": 1,
+            "zero_meaning": "Encoded zero selects relaxed ordering."
+          }
+        ],
+        "encoding_class": "standalone-encoded",
+        "examples": [
+          "sh.sub [a0], a1",
+          "sh.sub.rl [t#1], u#1"
+        ],
+        "exceptions": [
+          "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
+          "If either read or write preflight fails, the instruction performs no load, store, event, reservation update, result publication, or TPC advance.",
+          "An undecodable or operand-illegal form raises Fault_IllegalInstruction before effects."
+        ],
+        "field_domains": [],
+        "legality": [
+          "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
+          "The effective address must be aligned to 2 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
+          "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
+        ],
+        "memory_effects": [
+          "Atomically read one aligned 2-byte little-endian value, compute the 16-bit modular difference, and write one 2-byte result to the same location.",
+          "Complete both read and write access probes before the memory load or store, and require both probes to resolve to the same translated address.",
+          "On success, record one atomic memory event, invalidate an overlapping local reservation, and preserve a nonoverlapping reservation."
+        ],
+        "operands": [
+          {
+            "field": "SrcL",
+            "role": "Reg5 atomic address source"
+          },
+          {
+            "field": "SrcR",
+            "role": "Reg5 atomic operand source"
+          },
+          {
+            "field": "rl",
+            "role": "release ordering bit"
+          }
+        ],
+        "ordering": [
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
+        ],
+        "standalone_opcode": true,
+        "state_effects": [
+          "Snapshot SrcL and SrcR before any memory or architectural effect.",
+          "SH.SUB stores the 16-bit modular difference; it does not publish the old value.",
+          "Successful execution advances TPC by four bytes. On a fault, the instruction does not retire; trap entry saves the original TPC, redirects the live TPC to the trap vector, and recovery restores that TPC for full reissue. GPRs, T/U queues, memory events, reservation state, and memory remain unchanged by the failed instruction."
+        ]
+      },
+      "documentation": "docs/scalar/amo/SH.SUB.md",
+      "engine": null,
+      "mnemonic": "SH.SUB",
+      "ndf_clause": "PTO-INST-SCALAR-SH-SUB",
+      "source": "asl/scalar/amo/SH.SUB.asl",
+      "summary": "SH.SUB atomically applies width-sized modular sub and does not publish the old value.",
       "surface": "scalar"
     },
     {
@@ -118404,12 +119040,12 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "sw.add<.{rl, f, rlf}> [SrcL], SrcR",
+          "asm": "sw.add<.{rl}> [SrcL], SrcR",
           "constraints": [],
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf4007fff",
+              "mask": "0xfc007fff",
               "match": "0x0000300b",
               "width_bits": 32
             }
@@ -118439,18 +119075,6 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
-            },
-            {
-              "name": "far",
-              "pieces": [
-                {
-                  "instruction_lsb": 27,
-                  "value_lsb": 0,
-                  "width": 1
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 1
             },
             {
               "name": "rl",
@@ -118484,14 +119108,11 @@
         ],
         "canonical_assembly": [
           "sw.add [SrcL], SrcR",
-          "sw.add.rl [SrcL], SrcR",
-          "sw.add.f [SrcL], SrcR",
-          "sw.add.rlf [SrcL], SrcR"
+          "sw.add.rl [SrcL], SrcR"
         ],
         "defaults": [
           "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
-          "rl=0 selects relaxed ordering; rl=1 selects release ordering.",
-          "far=0 selects the default flat-address route. far=1 is a routing hint and does not change the architectural address or atomic operation in the reference profile."
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
         ],
         "encoded_fields": [
           {
@@ -118535,23 +119156,6 @@
                 1
               ]
             ],
-            "field": "far",
-            "form_id": "sw_add_32_3dca755552cb",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "flat-address routing hint",
-            "signedness": "encoding-defined",
-            "width": 1,
-            "zero_meaning": "Encoded zero selects the default flat-address route."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                1
-              ]
-            ],
             "field": "rl",
             "form_id": "sw_add_32_3dca755552cb",
             "other_owner_values": [],
@@ -118566,8 +119170,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "sw.add [a0], a1",
-          "sw.add.rl [t#1], u#1",
-          "sw.add.f [sp], a0"
+          "sw.add.rl [t#1], u#1"
         ],
         "exceptions": [
           "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
@@ -118577,7 +119180,7 @@
         "field_domains": [],
         "legality": [
           "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
-          "The effective address must be aligned to 4 bytes. SrcL, SrcR, far, and rl have no reserved encodings in this form.",
+          "The effective address must be aligned to 4 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
           "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
         ],
         "memory_effects": [
@@ -118595,17 +119198,12 @@
             "role": "Reg5 atomic operand source"
           },
           {
-            "field": "far",
-            "role": "flat-address routing hint"
-          },
-          {
             "field": "rl",
             "role": "release ordering bit"
           }
         ],
         "ordering": [
-          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit.",
-          "far changes only the route hint in the reference profile and does not change ordering, address arithmetic, or the read-modify-write result."
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -118627,13 +119225,13 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "sw.and<.{rl, f, rlf}> [SrcL], SrcR",
+          "asm": "sw.and<.{rl}> [SrcL], SrcR",
           "constraints": [],
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf4007fff",
-              "match": "0x1000300b",
+              "mask": "0xfc007fff",
+              "match": "0x0800300b",
               "width_bits": 32
             }
           ],
@@ -118662,18 +119260,6 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
-            },
-            {
-              "name": "far",
-              "pieces": [
-                {
-                  "instruction_lsb": 27,
-                  "value_lsb": 0,
-                  "width": 1
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 1
             },
             {
               "name": "rl",
@@ -118707,14 +119293,11 @@
         ],
         "canonical_assembly": [
           "sw.and [SrcL], SrcR",
-          "sw.and.rl [SrcL], SrcR",
-          "sw.and.f [SrcL], SrcR",
-          "sw.and.rlf [SrcL], SrcR"
+          "sw.and.rl [SrcL], SrcR"
         ],
         "defaults": [
           "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
-          "rl=0 selects relaxed ordering; rl=1 selects release ordering.",
-          "far=0 selects the default flat-address route. far=1 is a routing hint and does not change the architectural address or atomic operation in the reference profile."
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
         ],
         "encoded_fields": [
           {
@@ -118758,23 +119341,6 @@
                 1
               ]
             ],
-            "field": "far",
-            "form_id": "sw_and_32_7ef0872d5502",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "flat-address routing hint",
-            "signedness": "encoding-defined",
-            "width": 1,
-            "zero_meaning": "Encoded zero selects the default flat-address route."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                1
-              ]
-            ],
             "field": "rl",
             "form_id": "sw_and_32_7ef0872d5502",
             "other_owner_values": [],
@@ -118789,8 +119355,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "sw.and [a0], a1",
-          "sw.and.rl [t#1], u#1",
-          "sw.and.f [sp], a0"
+          "sw.and.rl [t#1], u#1"
         ],
         "exceptions": [
           "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
@@ -118800,7 +119365,7 @@
         "field_domains": [],
         "legality": [
           "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
-          "The effective address must be aligned to 4 bytes. SrcL, SrcR, far, and rl have no reserved encodings in this form.",
+          "The effective address must be aligned to 4 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
           "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
         ],
         "memory_effects": [
@@ -118818,17 +119383,12 @@
             "role": "Reg5 atomic operand source"
           },
           {
-            "field": "far",
-            "role": "flat-address routing hint"
-          },
-          {
             "field": "rl",
             "role": "release ordering bit"
           }
         ],
         "ordering": [
-          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit.",
-          "far changes only the route hint in the reference profile and does not change ordering, address arithmetic, or the read-modify-write result."
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -118850,13 +119410,13 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "sw.or<.{rl, f, rlf}> [SrcL], SrcR",
+          "asm": "sw.or<.{rl}> [SrcL], SrcR",
           "constraints": [],
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf4007fff",
-              "match": "0x2000300b",
+              "mask": "0xfc007fff",
+              "match": "0x1000300b",
               "width_bits": 32
             }
           ],
@@ -118885,18 +119445,6 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
-            },
-            {
-              "name": "far",
-              "pieces": [
-                {
-                  "instruction_lsb": 27,
-                  "value_lsb": 0,
-                  "width": 1
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 1
             },
             {
               "name": "rl",
@@ -118930,14 +119478,11 @@
         ],
         "canonical_assembly": [
           "sw.or [SrcL], SrcR",
-          "sw.or.rl [SrcL], SrcR",
-          "sw.or.f [SrcL], SrcR",
-          "sw.or.rlf [SrcL], SrcR"
+          "sw.or.rl [SrcL], SrcR"
         ],
         "defaults": [
           "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
-          "rl=0 selects relaxed ordering; rl=1 selects release ordering.",
-          "far=0 selects the default flat-address route. far=1 is a routing hint and does not change the architectural address or atomic operation in the reference profile."
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
         ],
         "encoded_fields": [
           {
@@ -118981,23 +119526,6 @@
                 1
               ]
             ],
-            "field": "far",
-            "form_id": "sw_or_32_354579538c4e",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "flat-address routing hint",
-            "signedness": "encoding-defined",
-            "width": 1,
-            "zero_meaning": "Encoded zero selects the default flat-address route."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                1
-              ]
-            ],
             "field": "rl",
             "form_id": "sw_or_32_354579538c4e",
             "other_owner_values": [],
@@ -119012,8 +119540,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "sw.or [a0], a1",
-          "sw.or.rl [t#1], u#1",
-          "sw.or.f [sp], a0"
+          "sw.or.rl [t#1], u#1"
         ],
         "exceptions": [
           "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
@@ -119023,7 +119550,7 @@
         "field_domains": [],
         "legality": [
           "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
-          "The effective address must be aligned to 4 bytes. SrcL, SrcR, far, and rl have no reserved encodings in this form.",
+          "The effective address must be aligned to 4 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
           "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
         ],
         "memory_effects": [
@@ -119041,17 +119568,12 @@
             "role": "Reg5 atomic operand source"
           },
           {
-            "field": "far",
-            "role": "flat-address routing hint"
-          },
-          {
             "field": "rl",
             "role": "release ordering bit"
           }
         ],
         "ordering": [
-          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit.",
-          "far changes only the route hint in the reference profile and does not change ordering, address arithmetic, or the read-modify-write result."
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -119237,13 +119759,13 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "sw.smax<.{rl, f, rlf}> [SrcL], SrcR",
+          "asm": "sw.smax<.{rl}> [SrcL], SrcR",
           "constraints": [],
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf4007fff",
-              "match": "0x4000300b",
+              "mask": "0xfc007fff",
+              "match": "0x2000300b",
               "width_bits": 32
             }
           ],
@@ -119272,18 +119794,6 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
-            },
-            {
-              "name": "far",
-              "pieces": [
-                {
-                  "instruction_lsb": 27,
-                  "value_lsb": 0,
-                  "width": 1
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 1
             },
             {
               "name": "rl",
@@ -119317,14 +119827,11 @@
         ],
         "canonical_assembly": [
           "sw.smax [SrcL], SrcR",
-          "sw.smax.rl [SrcL], SrcR",
-          "sw.smax.f [SrcL], SrcR",
-          "sw.smax.rlf [SrcL], SrcR"
+          "sw.smax.rl [SrcL], SrcR"
         ],
         "defaults": [
           "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
-          "rl=0 selects relaxed ordering; rl=1 selects release ordering.",
-          "far=0 selects the default flat-address route. far=1 is a routing hint and does not change the architectural address or atomic operation in the reference profile."
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
         ],
         "encoded_fields": [
           {
@@ -119368,23 +119875,6 @@
                 1
               ]
             ],
-            "field": "far",
-            "form_id": "sw_smax_32_8bab38a878d7",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "flat-address routing hint",
-            "signedness": "encoding-defined",
-            "width": 1,
-            "zero_meaning": "Encoded zero selects the default flat-address route."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                1
-              ]
-            ],
             "field": "rl",
             "form_id": "sw_smax_32_8bab38a878d7",
             "other_owner_values": [],
@@ -119399,8 +119889,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "sw.smax [a0], a1",
-          "sw.smax.rl [t#1], u#1",
-          "sw.smax.f [sp], a0"
+          "sw.smax.rl [t#1], u#1"
         ],
         "exceptions": [
           "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
@@ -119410,7 +119899,7 @@
         "field_domains": [],
         "legality": [
           "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
-          "The effective address must be aligned to 4 bytes. SrcL, SrcR, far, and rl have no reserved encodings in this form.",
+          "The effective address must be aligned to 4 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
           "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
         ],
         "memory_effects": [
@@ -119428,17 +119917,12 @@
             "role": "Reg5 atomic operand source"
           },
           {
-            "field": "far",
-            "role": "flat-address routing hint"
-          },
-          {
             "field": "rl",
             "role": "release ordering bit"
           }
         ],
         "ordering": [
-          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit.",
-          "far changes only the route hint in the reference profile and does not change ordering, address arithmetic, or the read-modify-write result."
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -119460,13 +119944,13 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "sw.smin<.{rl, f, rlf}> [SrcL], SrcR",
+          "asm": "sw.smin<.{rl}> [SrcL], SrcR",
           "constraints": [],
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf4007fff",
-              "match": "0x5000300b",
+              "mask": "0xfc007fff",
+              "match": "0x2800300b",
               "width_bits": 32
             }
           ],
@@ -119495,18 +119979,6 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
-            },
-            {
-              "name": "far",
-              "pieces": [
-                {
-                  "instruction_lsb": 27,
-                  "value_lsb": 0,
-                  "width": 1
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 1
             },
             {
               "name": "rl",
@@ -119540,14 +120012,11 @@
         ],
         "canonical_assembly": [
           "sw.smin [SrcL], SrcR",
-          "sw.smin.rl [SrcL], SrcR",
-          "sw.smin.f [SrcL], SrcR",
-          "sw.smin.rlf [SrcL], SrcR"
+          "sw.smin.rl [SrcL], SrcR"
         ],
         "defaults": [
           "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
-          "rl=0 selects relaxed ordering; rl=1 selects release ordering.",
-          "far=0 selects the default flat-address route. far=1 is a routing hint and does not change the architectural address or atomic operation in the reference profile."
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
         ],
         "encoded_fields": [
           {
@@ -119591,23 +120060,6 @@
                 1
               ]
             ],
-            "field": "far",
-            "form_id": "sw_smin_32_773e7d83b011",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "flat-address routing hint",
-            "signedness": "encoding-defined",
-            "width": 1,
-            "zero_meaning": "Encoded zero selects the default flat-address route."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                1
-              ]
-            ],
             "field": "rl",
             "form_id": "sw_smin_32_773e7d83b011",
             "other_owner_values": [],
@@ -119622,8 +120074,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "sw.smin [a0], a1",
-          "sw.smin.rl [t#1], u#1",
-          "sw.smin.f [sp], a0"
+          "sw.smin.rl [t#1], u#1"
         ],
         "exceptions": [
           "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
@@ -119633,7 +120084,7 @@
         "field_domains": [],
         "legality": [
           "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
-          "The effective address must be aligned to 4 bytes. SrcL, SrcR, far, and rl have no reserved encodings in this form.",
+          "The effective address must be aligned to 4 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
           "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
         ],
         "memory_effects": [
@@ -119651,17 +120102,12 @@
             "role": "Reg5 atomic operand source"
           },
           {
-            "field": "far",
-            "role": "flat-address routing hint"
-          },
-          {
             "field": "rl",
             "role": "release ordering bit"
           }
         ],
         "ordering": [
-          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit.",
-          "far changes only the route hint in the reference profile and does not change ordering, address arithmetic, or the read-modify-write result."
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -119676,6 +120122,191 @@
       "ndf_clause": "PTO-INST-SCALAR-SW-SMIN",
       "source": "asl/scalar/amo/SW.SMIN.asl",
       "summary": "SW.SMIN atomically replaces the aligned 32-bit memory value with its signed minimum with SrcR; it does not publish the old value.",
+      "surface": "scalar"
+    },
+    {
+      "alias_engine": null,
+      "alias_of": null,
+      "catalog_records": [
+        {
+          "asm": "sw.sub<.{rl}> [SrcL], SrcR",
+          "constraints": [],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0xfc007fff",
+              "match": "0x4000300b",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "SrcL",
+              "pieces": [
+                {
+                  "instruction_lsb": 15,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "SrcR",
+              "pieces": [
+                {
+                  "instruction_lsb": 20,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "rl",
+              "pieces": [
+                {
+                  "instruction_lsb": 25,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            }
+          ],
+          "form_id": "sw_sub_32_op5_v0587",
+          "length_bits": 32,
+          "mnemonic": "SW.SUB",
+          "semantic_family": "AMO",
+          "semantic_group": "AMO",
+          "semantic_handler": "AtomicReadModifyWrite",
+          "semantic_summary": "SW.SUB atomically applies width-sized modular sub and does not publish the old value.",
+          "status": "accepted"
+        }
+      ],
+      "classification": [
+        "amo"
+      ],
+      "contract": {
+        "block_composition": [
+          "none"
+        ],
+        "canonical_assembly": [
+          "sw.sub [SrcL], SrcR",
+          "sw.sub.rl [SrcL], SrcR"
+        ],
+        "defaults": [
+          "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
+        ],
+        "encoded_fields": [
+          {
+            "assigned_ranges": [
+              [
+                0,
+                31
+              ]
+            ],
+            "field": "SrcL",
+            "form_id": "sw_sub_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "Reg5 atomic address source",
+            "signedness": "encoding-defined",
+            "width": 5,
+            "zero_meaning": "Encoded zero reads the architectural zero register as the atomic address."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                31
+              ]
+            ],
+            "field": "SrcR",
+            "form_id": "sw_sub_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "Reg5 atomic operand source",
+            "signedness": "encoding-defined",
+            "width": 5,
+            "zero_meaning": "Encoded zero supplies numeric zero as the atomic operand."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "field": "rl",
+            "form_id": "sw_sub_32_op5_v0587",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "release ordering bit",
+            "signedness": "encoding-defined",
+            "width": 1,
+            "zero_meaning": "Encoded zero selects relaxed ordering."
+          }
+        ],
+        "encoding_class": "standalone-encoded",
+        "examples": [
+          "sw.sub [a0], a1",
+          "sw.sub.rl [t#1], u#1"
+        ],
+        "exceptions": [
+          "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
+          "If either read or write preflight fails, the instruction performs no load, store, event, reservation update, result publication, or TPC advance.",
+          "An undecodable or operand-illegal form raises Fault_IllegalInstruction before effects."
+        ],
+        "field_domains": [],
+        "legality": [
+          "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
+          "The effective address must be aligned to 4 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
+          "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
+        ],
+        "memory_effects": [
+          "Atomically read one aligned 4-byte little-endian value, compute the 32-bit modular difference, and write one 4-byte result to the same location.",
+          "Complete both read and write access probes before the memory load or store, and require both probes to resolve to the same translated address.",
+          "On success, record one atomic memory event, invalidate an overlapping local reservation, and preserve a nonoverlapping reservation."
+        ],
+        "operands": [
+          {
+            "field": "SrcL",
+            "role": "Reg5 atomic address source"
+          },
+          {
+            "field": "SrcR",
+            "role": "Reg5 atomic operand source"
+          },
+          {
+            "field": "rl",
+            "role": "release ordering bit"
+          }
+        ],
+        "ordering": [
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
+        ],
+        "standalone_opcode": true,
+        "state_effects": [
+          "Snapshot SrcL and SrcR before any memory or architectural effect.",
+          "SW.SUB stores the 32-bit modular difference; it does not publish the old value.",
+          "Successful execution advances TPC by four bytes. On a fault, the instruction does not retire; trap entry saves the original TPC, redirects the live TPC to the trap vector, and recovery restores that TPC for full reissue. GPRs, T/U queues, memory events, reservation state, and memory remain unchanged by the failed instruction."
+        ]
+      },
+      "documentation": "docs/scalar/amo/SW.SUB.md",
+      "engine": null,
+      "mnemonic": "SW.SUB",
+      "ndf_clause": "PTO-INST-SCALAR-SW-SUB",
+      "source": "asl/scalar/amo/SW.SUB.asl",
+      "summary": "SW.SUB atomically applies width-sized modular sub and does not publish the old value.",
       "surface": "scalar"
     },
     {
@@ -119924,13 +120555,13 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "sw.umax<.{rl, f, rlf}> [SrcL], SrcR",
+          "asm": "sw.umax<.{rl}> [SrcL], SrcR",
           "constraints": [],
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf4007fff",
-              "match": "0x6000300b",
+              "mask": "0xfc007fff",
+              "match": "0x3000300b",
               "width_bits": 32
             }
           ],
@@ -119959,18 +120590,6 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
-            },
-            {
-              "name": "far",
-              "pieces": [
-                {
-                  "instruction_lsb": 27,
-                  "value_lsb": 0,
-                  "width": 1
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 1
             },
             {
               "name": "rl",
@@ -120004,14 +120623,11 @@
         ],
         "canonical_assembly": [
           "sw.umax [SrcL], SrcR",
-          "sw.umax.rl [SrcL], SrcR",
-          "sw.umax.f [SrcL], SrcR",
-          "sw.umax.rlf [SrcL], SrcR"
+          "sw.umax.rl [SrcL], SrcR"
         ],
         "defaults": [
           "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
-          "rl=0 selects relaxed ordering; rl=1 selects release ordering.",
-          "far=0 selects the default flat-address route. far=1 is a routing hint and does not change the architectural address or atomic operation in the reference profile."
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
         ],
         "encoded_fields": [
           {
@@ -120055,23 +120671,6 @@
                 1
               ]
             ],
-            "field": "far",
-            "form_id": "sw_umax_32_5530dfa23323",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "flat-address routing hint",
-            "signedness": "encoding-defined",
-            "width": 1,
-            "zero_meaning": "Encoded zero selects the default flat-address route."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                1
-              ]
-            ],
             "field": "rl",
             "form_id": "sw_umax_32_5530dfa23323",
             "other_owner_values": [],
@@ -120086,8 +120685,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "sw.umax [a0], a1",
-          "sw.umax.rl [t#1], u#1",
-          "sw.umax.f [sp], a0"
+          "sw.umax.rl [t#1], u#1"
         ],
         "exceptions": [
           "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
@@ -120097,7 +120695,7 @@
         "field_domains": [],
         "legality": [
           "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
-          "The effective address must be aligned to 4 bytes. SrcL, SrcR, far, and rl have no reserved encodings in this form.",
+          "The effective address must be aligned to 4 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
           "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
         ],
         "memory_effects": [
@@ -120115,17 +120713,12 @@
             "role": "Reg5 atomic operand source"
           },
           {
-            "field": "far",
-            "role": "flat-address routing hint"
-          },
-          {
             "field": "rl",
             "role": "release ordering bit"
           }
         ],
         "ordering": [
-          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit.",
-          "far changes only the route hint in the reference profile and does not change ordering, address arithmetic, or the read-modify-write result."
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -120147,13 +120740,13 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "sw.umin<.{rl, f, rlf}> [SrcL], SrcR",
+          "asm": "sw.umin<.{rl}> [SrcL], SrcR",
           "constraints": [],
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf4007fff",
-              "match": "0x7000300b",
+              "mask": "0xfc007fff",
+              "match": "0x3800300b",
               "width_bits": 32
             }
           ],
@@ -120182,18 +120775,6 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
-            },
-            {
-              "name": "far",
-              "pieces": [
-                {
-                  "instruction_lsb": 27,
-                  "value_lsb": 0,
-                  "width": 1
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 1
             },
             {
               "name": "rl",
@@ -120227,14 +120808,11 @@
         ],
         "canonical_assembly": [
           "sw.umin [SrcL], SrcR",
-          "sw.umin.rl [SrcL], SrcR",
-          "sw.umin.f [SrcL], SrcR",
-          "sw.umin.rlf [SrcL], SrcR"
+          "sw.umin.rl [SrcL], SrcR"
         ],
         "defaults": [
           "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
-          "rl=0 selects relaxed ordering; rl=1 selects release ordering.",
-          "far=0 selects the default flat-address route. far=1 is a routing hint and does not change the architectural address or atomic operation in the reference profile."
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
         ],
         "encoded_fields": [
           {
@@ -120278,23 +120856,6 @@
                 1
               ]
             ],
-            "field": "far",
-            "form_id": "sw_umin_32_3ce114819cfc",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "flat-address routing hint",
-            "signedness": "encoding-defined",
-            "width": 1,
-            "zero_meaning": "Encoded zero selects the default flat-address route."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                1
-              ]
-            ],
             "field": "rl",
             "form_id": "sw_umin_32_3ce114819cfc",
             "other_owner_values": [],
@@ -120309,8 +120870,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "sw.umin [a0], a1",
-          "sw.umin.rl [t#1], u#1",
-          "sw.umin.f [sp], a0"
+          "sw.umin.rl [t#1], u#1"
         ],
         "exceptions": [
           "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
@@ -120320,7 +120880,7 @@
         "field_domains": [],
         "legality": [
           "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
-          "The effective address must be aligned to 4 bytes. SrcL, SrcR, far, and rl have no reserved encodings in this form.",
+          "The effective address must be aligned to 4 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
           "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
         ],
         "memory_effects": [
@@ -120338,17 +120898,12 @@
             "role": "Reg5 atomic operand source"
           },
           {
-            "field": "far",
-            "role": "flat-address routing hint"
-          },
-          {
             "field": "rl",
             "role": "release ordering bit"
           }
         ],
         "ordering": [
-          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit.",
-          "far changes only the route hint in the reference profile and does not change ordering, address arithmetic, or the read-modify-write result."
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -120370,13 +120925,13 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "sw.xor<.{rl, f, rlf}> [SrcL], SrcR",
+          "asm": "sw.xor<.{rl}> [SrcL], SrcR",
           "constraints": [],
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf4007fff",
-              "match": "0x3000300b",
+              "mask": "0xfc007fff",
+              "match": "0x1800300b",
               "width_bits": 32
             }
           ],
@@ -120405,18 +120960,6 @@
               ],
               "signedness": "encoding-defined",
               "width": 5
-            },
-            {
-              "name": "far",
-              "pieces": [
-                {
-                  "instruction_lsb": 27,
-                  "value_lsb": 0,
-                  "width": 1
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 1
             },
             {
               "name": "rl",
@@ -120450,14 +120993,11 @@
         ],
         "canonical_assembly": [
           "sw.xor [SrcL], SrcR",
-          "sw.xor.rl [SrcL], SrcR",
-          "sw.xor.f [SrcL], SrcR",
-          "sw.xor.rlf [SrcL], SrcR"
+          "sw.xor.rl [SrcL], SrcR"
         ],
         "defaults": [
           "SrcL and SrcR are required Reg5 sources. Encoded zero reads the architectural zero register.",
-          "rl=0 selects relaxed ordering; rl=1 selects release ordering.",
-          "far=0 selects the default flat-address route. far=1 is a routing hint and does not change the architectural address or atomic operation in the reference profile."
+          "rl=0 selects relaxed ordering; rl=1 selects release ordering."
         ],
         "encoded_fields": [
           {
@@ -120501,23 +121041,6 @@
                 1
               ]
             ],
-            "field": "far",
-            "form_id": "sw_xor_32_874c32572226",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "flat-address routing hint",
-            "signedness": "encoding-defined",
-            "width": 1,
-            "zero_meaning": "Encoded zero selects the default flat-address route."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                1
-              ]
-            ],
             "field": "rl",
             "form_id": "sw_xor_32_874c32572226",
             "other_owner_values": [],
@@ -120532,8 +121055,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "sw.xor [a0], a1",
-          "sw.xor.rl [t#1], u#1",
-          "sw.xor.f [sp], a0"
+          "sw.xor.rl [t#1], u#1"
         ],
         "exceptions": [
           "Misalignment, translation, and permission checks occur before effects in that precedence order and report the original address.",
@@ -120543,7 +121065,7 @@
         "field_domains": [],
         "legality": [
           "All 32 Reg5 source encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.",
-          "The effective address must be aligned to 4 bytes. SrcL, SrcR, far, and rl have no reserved encodings in this form.",
+          "The effective address must be aligned to 4 bytes. SrcL, SrcR, and rl have no reserved encodings in this form.",
           "The instruction has no destination field and cannot publish the old memory value to a GPR or temporary queue."
         ],
         "memory_effects": [
@@ -120561,17 +121083,12 @@
             "role": "Reg5 atomic operand source"
           },
           {
-            "field": "far",
-            "role": "flat-address routing hint"
-          },
-          {
             "field": "rl",
             "role": "release ordering bit"
           }
         ],
         "ordering": [
-          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit.",
-          "far changes only the route hint in the reference profile and does not change ordering, address arithmetic, or the read-modify-write result."
+          "rl=0 records the atomic event with relaxed ordering; rl=1 records it with release ordering. This encoding has no acquire bit."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -120598,7 +121115,7 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
+              "mask": "0x7800707f",
               "match": "0x0000600b",
               "width_bits": 32
             }
@@ -120657,7 +121174,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -120893,8 +121410,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x3000600b",
+              "mask": "0x7800707f",
+              "match": "0x1800600b",
               "width_bits": 32
             }
           ],
@@ -120952,7 +121469,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -121188,8 +121705,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x1000600b",
+              "mask": "0x7800707f",
+              "match": "0x0800600b",
               "width_bits": 32
             }
           ],
@@ -121247,7 +121764,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -121483,8 +122000,8 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf000707f",
-              "match": "0x2000600b",
+              "mask": "0x7800707f",
+              "match": "0x1000600b",
               "width_bits": 32
             }
           ],
@@ -121542,7 +122059,7 @@
               "name": "far",
               "pieces": [
                 {
-                  "instruction_lsb": 27,
+                  "instruction_lsb": 31,
                   "value_lsb": 0,
                   "width": 1
                 }
@@ -131909,7 +132426,7 @@
         "defaults": [
           "The BSTART DataType is SrcDataType. Omitted B.DATR or DTYPE_NONE inherits SrcDataType as DstDataType; an explicitly encoded DataType zero selects FP64.",
           "LB0 is required and supplies ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol. Every present dimension must be nonzero.",
-          "RMode zero selects RTZ for floating-to-integer conversion and RNE for every other conversion that requires rounding. Sat zero disables saturation and Canonicalize zero selects an ordinary public source.",
+          "RMode zero selects RTZ for floating-to-integer conversion and RNE for every other conversion that requires rounding. For identical FP16, BF16, FP32, or FP64 operation types, an explicit nonzero accepted RMode selects round-to-integral; omitted B.DATR and present RMode zero retain ordinary conversion. Sat zero disables saturation and Canonicalize zero selects an ordinary public source.",
           "Omitted B.DATR selects Layout=NORM and PadValue=Null. Explicit PadValue codes 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
           "For an E8M0 destination, RMode rounds the base-two exponent. Exact powers of two are exact; Sat selects finite endpoint clamp versus 0xFF for finite range overflow or underflow."
         ],
@@ -131922,7 +132439,8 @@
           "Malformed bindings, missing or zero dimensions, type, shape, capacity, layout, canonicalization, encoding, or definedness mismatch raises Fault_TileLegality before destination allocation or payload effects.",
           "Reserved selector, DataType, or Layout encodings raise the corresponding instruction or Tile legality fault before effects.",
           "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation.",
-          "For conversion to an E8M0 destination, zero, negative values, and NaNs produce 0xFF with NV. Positive infinity follows the overflow rule. Finite values below 2^-127 or above 2^127 produce 0xFF when Sat=0 or clamp to 0x00/0xFE when Sat=1, with UF/OF plus NX."
+          "For conversion to an E8M0 destination, zero, negative values, and NaNs produce 0xFF with NV. Positive infinity follows the overflow rule. Finite values below 2^-127 or above 2^127 produce 0xFF when Sat=0 or clamp to 0x00/0xFE when Sat=1, with UF/OF plus NX.",
+          "For identical FP16, BF16, FP32, or FP64 operation types, explicit RTO is illegal and raises Fault_TileLegality during complete preflight before allocation or effects; PE_MASK=0000 retains strict-no-op precedence."
         ],
         "field_domains": [
           {
@@ -132185,10 +132703,11 @@
           "TCVT legal pairs are profile-scoped: FP32/FP16/BF16 <-> E2M1X2/E1M2X2; FP16/BF16 <-> E6M2; RCPE6M2 -> FP16/BF16. No pair contains HiF4X2, and RCPE6M2 has no destination encoding. Reserved five-bit DataType codes reject before effects.",
           "Every assigned Layout code has executable indexing. The source descriptor matches the transform source layout and the destination descriptor matches its target layout; CUBE_M16 and CUBE_M32 conversions retain the source layout.",
           "Canonicalize=1 is reserved-illegal before effects. CUBE_M16 and CUBE_M32 sources with Canonicalize=0 preserve the source layout while the destination independently derives its geometry from the destination DataType. An ordinary source requires Canonicalize=0.",
-          "The source valid region is fully defined and contains valid encodings. PE_MASK=0000 is a strict no-op before schema, descriptor, allocation, or payload checks.",
+          "Every active valid source coordinate is defined and contains a valid encoding; without an execution mask, every valid coordinate is active. Inactive source coordinates may be undefined and are not read or used to accumulate numeric status. Inactive destination coordinates follow the selected ExecutionMask MERGE/ZERO policy. PE_MASK=0000 is a strict no-op before schema, descriptor, allocation, or payload checks.",
           "Under the named hardware profile, an E8M0 destination accepts exactly FP16, BF16, or FP32 sources. E8M0 as a source accepts exactly FP16, BF16, or FP32 destinations; 0x00..0xFE denote powers of two and 0xFF produces the target canonical quiet NaN without NV. Every other E8M0 pair rejects before destination allocation.",
           "The BSTART DataType is the TCVT source operation interpretation, not necessarily the source backing DataType. RowMajor and CUBE_M16/M32 sources may differ only when backing and operation types are non-packed, equal-width, and carrier-compatible; the operation view never mutates the backing descriptor. The destination backing type is the resolved B.DATR destination type.",
-          "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage."
+          "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.",
+          "For identical FP16, BF16, FP32, or FP64 source and destination operation types, explicit nonzero RNE, RTZ, RTM, RTP, RNA, and RHB round active finite values to integer-valued results in the same floating type. RMode zero retains ordinary conversion. Explicit RTO rejects before destination allocation."
         ],
         "memory_effects": [
           "none"
@@ -132209,15 +132728,17 @@
         ],
         "ordering": [
           "Complete schema, type, logical geometry, layout, canonicalization, capacity, encoding, and definedness preflight precedes the source snapshot and destination allocation.",
-          "Converted payload, numeric status, padding definedness, public representation state, and destination descriptor publish atomically."
+          "Converted payload, numeric status, padding definedness, public representation state, and destination descriptor publish atomically.",
+          "The same-type floating RTO applicability rejection is part of complete TCVT preflight and precedes destination allocation, numeric status updates, and payload publication; PE_MASK=0000 remains an earlier strict no-op."
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "Snapshot the persistent source, convert every valid logical element under the resolved rounding and saturation controls, and write the corresponding logical coordinate in the destination layout.",
+          "Snapshot the persistent source and convert each active valid logical element under the resolved rounding and saturation controls. Inactive coordinates use the selected ExecutionMask MERGE/ZERO destination policy without reading source payload or accumulating numeric status. Write each result at the corresponding logical coordinate in the destination layout.",
           "Define or undefine every physical padding coordinate according to PadValue and publish the destination; ordinary conversions use the resolved public layout, while CUBE_M16 and CUBE_M32 conversions retain the source CUBE layout.",
           "The source may alias the destination; execution observes the complete pre-execution source snapshot.",
           "For a supported conversion to an E8M0 destination, map the rounded base-two exponent to code exponent+127 and accumulate exact NV/UF/OF/NX status before atomic publication.",
-          "For FP64, FP32, FP16, E4M3, S64, S32, S16, S8, U64, U32, U16, and U8 source/destination pairs, TCVT uses the same deterministic conversion result and flags as the scalar conversion family."
+          "For conversions in the common scalar conversion domain, TCVT uses the same deterministic result and flags as scalar conversion, except that identical FP16, BF16, FP32, or FP64 operation types with explicit nonzero accepted RMode follow the TCVT-only round-to-integral rule below. Scalar conversions and all other TCVT pairs retain common-conversion parity.",
+          "For identical FP16, BF16, FP32, or FP64 operation types with an explicit nonzero accepted RMode, round active finite values to an integer-valued result in the same format, set NX only for nonintegral finite inputs, preserve signed zero and infinity, and use common NaN canonicalization and signaling-NaN NV behavior. Other TCVT pairs and scalar conversions retain common-conversion parity."
         ]
       },
       "documentation": "docs/tile/elementwise-tile-tile/format-conversion/TCVT.md",
@@ -132225,7 +132746,7 @@
       "mnemonic": "TCVT",
       "ndf_clause": "PTO-INST-TILE-TCVT",
       "source": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl",
-      "summary": "Convert every valid source element to a separately typed and laid-out Local destination.",
+      "summary": "Convert every active valid source element to a separately typed and laid-out Local destination; explicit same-type floating rounding can produce an integer-valued result in that format.",
       "surface": "tile"
     },
     {
@@ -135483,7 +136004,9 @@
           "AType and BType must be supported ordinary Matrix types from one numeric class. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
-          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
+          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D.",
+          "Cooperative Shared Matrix forms accept group_M in 1..128 and N/K in 1..65535 without power-of-two restrictions. Validate Local CUBE roles with existing descriptor and capacity rules; validate Shared roles against the original legal Shared descriptor and physical pitch. Internal read views preserve original pitch and use typed logical element/carrier/lane reads without a transient Local descriptor or 64 KiB capacity limit.",
+          "If any supported four-bit Shared primary is present (E2M1X2, E1M2X2, HiF4X2 for Matrix-MX only, S4X2, or U4X2), K and each such original parent physical columns pitch are even under every transpose combination. Valid M/group_M and N gain no parity restriction. This does not affect Local-only TMATMUL, TGEMV, generic Shared allocation, or Local packed A when Shared B is not packed."
         ],
         "memory_effects": [
           "none"
@@ -135504,7 +136027,7 @@
         ],
         "ordering": [
           "Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.",
-          "D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.",
+          "D and every enabled reduction output publish as one atomic group; rejection publishes none and does not complete source last-use. Matrix computation leaves source values and descriptors unmodified; payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "Transparent-cache hints occur only after complete preflight and cannot alter source snapshots, D allocation or publication, faults, or numeric status."
         ],
         "standalone_opcode": false,
@@ -135512,7 +136035,7 @@
           "Multiply A[M x K] by B[K x N] into one private FP32, S32, or U32 CUBE destination.",
           "After complete preflight, execute TMATMUL with the operand bindings listed above; destination definedness changes only as specified by that handler.",
           "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.",
-          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.",
+          "Matrix computation does not modify Shared source values or descriptors; payload retention and retirement follow the bound B.IOS reuse and last-use contract.",
           "Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable."
         ]
       },
@@ -135641,7 +136164,9 @@
           "AType and BType must be supported ordinary Matrix types from one numeric class. C is one explicit Local MxN accumulator source and D is a distinct newly published destination; C's encoded relative selector and D's zero-extended DstTile hand must differ before rename. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
-          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
+          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D.",
+          "Cooperative Shared Matrix forms accept group_M in 1..128 and N/K in 1..65535 without power-of-two restrictions. Validate Local CUBE roles with existing descriptor and capacity rules; validate Shared roles against the original legal Shared descriptor and physical pitch. Internal read views preserve original pitch and use typed logical element/carrier/lane reads without a transient Local descriptor or 64 KiB capacity limit.",
+          "If any supported four-bit Shared primary is present (E2M1X2, E1M2X2, HiF4X2 for Matrix-MX only, S4X2, or U4X2), K and each such original parent physical columns pitch are even under every transpose combination. Valid M/group_M and N gain no parity restriction. This does not affect Local-only TMATMUL, TGEMV, generic Shared allocation, or Local packed A when Shared B is not packed."
         ],
         "memory_effects": [
           "none"
@@ -135666,7 +136191,7 @@
         ],
         "ordering": [
           "Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.",
-          "D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.",
+          "D and every enabled reduction output publish as one atomic group; rejection publishes none and does not complete source last-use. Matrix computation leaves source values and descriptors unmodified; payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "Transparent-cache hints occur only after complete preflight and cannot alter source snapshots, D allocation or publication, faults, or numeric status."
         ],
         "standalone_opcode": false,
@@ -135674,8 +136199,8 @@
           "Multiply matrices and accumulate into the supplied accumulator Tile.",
           "After complete preflight, execute TMATMUL_ACC with the operand bindings listed above; destination definedness changes only as specified by that handler.",
           "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.",
-          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.",
-          "C is snapshotted before multiplication and remains descriptor-and-payload unchanged after success or rejection.",
+          "Matrix computation does not modify Shared source values or descriptors; payload retention and retirement follow the bound B.IOS reuse and last-use contract.",
+          "C is a distinct read-only accumulator input snapshotted before multiplication; its payload lifetime follows its B.IOT source binding, and rejection does not complete last-use.",
           "Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable."
         ]
       },
@@ -135802,7 +136327,9 @@
           "AType and BType must be supported ordinary Matrix types from one numeric class. Bias uses one Local CUBE_N8 logical 1xN accumulator-type source (FP32 for MX), broadcast by logical output column. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
-          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
+          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D.",
+          "Cooperative Shared Matrix forms accept group_M in 1..128 and N/K in 1..65535 without power-of-two restrictions. Validate Local CUBE roles with existing descriptor and capacity rules; validate Shared roles against the original legal Shared descriptor and physical pitch. Internal read views preserve original pitch and use typed logical element/carrier/lane reads without a transient Local descriptor or 64 KiB capacity limit.",
+          "If any supported four-bit Shared primary is present (E2M1X2, E1M2X2, HiF4X2 for Matrix-MX only, S4X2, or U4X2), K and each such original parent physical columns pitch are even under every transpose combination. Valid M/group_M and N gain no parity restriction. This does not affect Local-only TMATMUL, TGEMV, generic Shared allocation, or Local packed A when Shared B is not packed."
         ],
         "memory_effects": [
           "none"
@@ -135827,7 +136354,7 @@
         ],
         "ordering": [
           "Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.",
-          "D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.",
+          "D and every enabled reduction output publish as one atomic group; rejection publishes none and does not complete source last-use. Matrix computation leaves source values and descriptors unmodified; payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "Transparent-cache hints occur only after complete preflight and cannot alter source snapshots, D allocation or publication, faults, or numeric status."
         ],
         "standalone_opcode": false,
@@ -135835,7 +136362,7 @@
           "Compute A[M x K] times B[K x N], then add one Local CUBE_N8 1xN private-result Bias into a new Local destination.",
           "After complete preflight, execute TMATMUL_BIAS with the operand bindings listed above; destination definedness changes only as specified by that handler.",
           "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.",
-          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.",
+          "Matrix computation does not modify Shared source values or descriptors; payload retention and retirement follow the bound B.IOS reuse and last-use contract.",
           "Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable."
         ]
       },
@@ -135970,7 +136497,10 @@
           "Each non-FP16/BF16 side requires its assigned scale: group-32 E8M0 for MX FP8/FP4 or group-64 U32 for HiF4X2. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
-          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
+          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D.",
+          "Cooperative Shared Matrix forms accept group_M in 1..128 and N/K in 1..65535 without power-of-two restrictions. Validate Local CUBE roles with existing descriptor and capacity rules; validate Shared roles against the original legal Shared descriptor and physical pitch. Internal read views preserve original pitch and use typed logical element/carrier/lane reads without a transient Local descriptor or 64 KiB capacity limit.",
+          "If any supported four-bit Shared primary is present (E2M1X2, E1M2X2, HiF4X2 for Matrix-MX only, S4X2, or U4X2), K and each such original parent physical columns pitch are even under every transpose combination. Valid M/group_M and N gain no parity restriction. This does not affect Local-only TMATMUL, TGEMV, generic Shared allocation, or Local packed A when Shared B is not packed.",
+          "Shared Matrix-MX ScaleA has exact stored-valid shape [group_M,G_A] and ScaleB [N,G_B], with each G equal to ceil(K/group_size) for its side (group-32 E8M0 or group-64 U32), independent of TransA/TransB; valid k selects floor(k/group_size)."
         ],
         "memory_effects": [
           "none"
@@ -135999,7 +136529,7 @@
         ],
         "ordering": [
           "Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.",
-          "D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.",
+          "D and every enabled reduction output publish as one atomic group; rejection publishes none and does not complete source last-use. Matrix computation leaves source values and descriptors unmodified; payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "Transparent-cache hints occur only after complete preflight and cannot alter source snapshots, D allocation or publication, faults, or numeric status."
         ],
         "standalone_opcode": false,
@@ -136007,7 +136537,7 @@
           "Multiply matrices using row and column scale Tiles.",
           "After complete preflight, execute TMATMUL_MX with the operand bindings listed above; destination definedness changes only as specified by that handler.",
           "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.",
-          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.",
+          "Matrix computation does not modify Shared source values or descriptors; payload retention and retirement follow the bound B.IOS reuse and last-use contract.",
           "Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable."
         ]
       },
@@ -136152,7 +136682,10 @@
           "Each non-FP16/BF16 side requires its assigned scale: group-32 E8M0 for MX FP8/FP4 or group-64 U32 for HiF4X2. C is one explicit Local MxN accumulator source and D is a distinct newly published destination; C's encoded relative selector and D's zero-extended DstTile hand must differ before rename. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
-          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
+          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D.",
+          "Cooperative Shared Matrix forms accept group_M in 1..128 and N/K in 1..65535 without power-of-two restrictions. Validate Local CUBE roles with existing descriptor and capacity rules; validate Shared roles against the original legal Shared descriptor and physical pitch. Internal read views preserve original pitch and use typed logical element/carrier/lane reads without a transient Local descriptor or 64 KiB capacity limit.",
+          "If any supported four-bit Shared primary is present (E2M1X2, E1M2X2, HiF4X2 for Matrix-MX only, S4X2, or U4X2), K and each such original parent physical columns pitch are even under every transpose combination. Valid M/group_M and N gain no parity restriction. This does not affect Local-only TMATMUL, TGEMV, generic Shared allocation, or Local packed A when Shared B is not packed.",
+          "Shared Matrix-MX ScaleA has exact stored-valid shape [group_M,G_A] and ScaleB [N,G_B], with each G equal to ceil(K/group_size) for its side (group-32 E8M0 or group-64 U32), independent of TransA/TransB; valid k selects floor(k/group_size)."
         ],
         "memory_effects": [
           "none"
@@ -136185,7 +136718,7 @@
         ],
         "ordering": [
           "Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.",
-          "D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.",
+          "D and every enabled reduction output publish as one atomic group; rejection publishes none and does not complete source last-use. Matrix computation leaves source values and descriptors unmodified; payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "Transparent-cache hints occur only after complete preflight and cannot alter source snapshots, D allocation or publication, faults, or numeric status."
         ],
         "standalone_opcode": false,
@@ -136193,8 +136726,8 @@
           "Multiply scaled matrices and accumulate into the supplied accumulator Tile.",
           "After complete preflight, execute TMATMUL_MX_ACC with the operand bindings listed above; destination definedness changes only as specified by that handler.",
           "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.",
-          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.",
-          "C is snapshotted before multiplication and remains descriptor-and-payload unchanged after success or rejection.",
+          "Matrix computation does not modify Shared source values or descriptors; payload retention and retirement follow the bound B.IOS reuse and last-use contract.",
+          "C is a distinct read-only accumulator input snapshotted before multiplication; its payload lifetime follows its B.IOT source binding, and rejection does not complete last-use.",
           "Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable."
         ]
       },
@@ -136337,7 +136870,10 @@
           "Each non-FP16/BF16 side requires its assigned scale: group-32 E8M0 for MX FP8/FP4 or group-64 U32 for HiF4X2. Bias uses one Local CUBE_N8 logical 1xN accumulator-type source (FP32 for MX), broadcast by logical output column. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every cooperative nonzero PE_MASK must be 1111; all four PEs complete Shared readiness, while zero-row PEs suppress every compute-only Local resolution and effect. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits BType, matrix CCTRL via PadValueOrByteId, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.",
-          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D."
+          "For init=1 forms CCTRL[1] must be zero. CCTRL[0]=1 selects raw accumulator-type D and forbids final-output post-processing and auxiliary outputs except legal CScale; CCTRL[1] is an ACC-only non-binding explicit-C cache-use or prefetch hint. Every successful form allocates and publishes D.",
+          "Cooperative Shared Matrix forms accept group_M in 1..128 and N/K in 1..65535 without power-of-two restrictions. Validate Local CUBE roles with existing descriptor and capacity rules; validate Shared roles against the original legal Shared descriptor and physical pitch. Internal read views preserve original pitch and use typed logical element/carrier/lane reads without a transient Local descriptor or 64 KiB capacity limit.",
+          "If any supported four-bit Shared primary is present (E2M1X2, E1M2X2, HiF4X2 for Matrix-MX only, S4X2, or U4X2), K and each such original parent physical columns pitch are even under every transpose combination. Valid M/group_M and N gain no parity restriction. This does not affect Local-only TMATMUL, TGEMV, generic Shared allocation, or Local packed A when Shared B is not packed.",
+          "Shared Matrix-MX ScaleA has exact stored-valid shape [group_M,G_A] and ScaleB [N,G_B], with each G equal to ceil(K/group_size) for its side (group-32 E8M0 or group-64 U32), independent of TransA/TransB; valid k selects floor(k/group_size)."
         ],
         "memory_effects": [
           "none"
@@ -136370,7 +136906,7 @@
         ],
         "ordering": [
           "Complete schema, field, type, dimension, descriptor, shape, capacity, readiness, alias, and allocation preflight precedes every source snapshot and destination effect.",
-          "D and every enabled reduction output publish as one atomic group; rejection publishes none and successful sources persist.",
+          "D and every enabled reduction output publish as one atomic group; rejection publishes none and does not complete source last-use. Matrix computation leaves source values and descriptors unmodified; payload retention and retirement follow the bound B.IOT/B.IOS reuse and last-use contracts.",
           "Transparent-cache hints occur only after complete preflight and cannot alter source snapshots, D allocation or publication, faults, or numeric status."
         ],
         "standalone_opcode": false,
@@ -136378,7 +136914,7 @@
           "Multiply scaled matrices and add the bias Tile.",
           "After complete preflight, execute TMATMUL_MX_BIAS with the operand bindings listed above; destination definedness changes only as specified by that handler.",
           "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; Bias uses Local CUBE_N8; RowMaxIn/Out and GroupMaxOut use the resolved M layout; vector quant/PReLU parameters use Local CUBE_N8/U64; MX scales keep their operation-owned layouts.",
-          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged.",
+          "Matrix computation does not modify Shared source values or descriptors; payload retention and retirement follow the bound B.IOS reuse and last-use contract.",
           "Always publish D; CCTRL[0]=1 publishes raw accumulator-type D and may hint cache replacement, while ACC CCTRL[1]=1 may hint cache use or prefetch of explicit C. Hint handling is not architecturally observable."
         ]
       },
@@ -145975,8 +146511,8 @@
   ],
   "schema": "pto.instruction-contract-closure.v1",
   "summary": {
-    "encoded_form_count": 572,
-    "mnemonic_count": 665,
+    "encoded_form_count": 578,
+    "mnemonic_count": 671,
     "placeholder_count": 0,
     "selector_operation_count": 119,
     "status": "closed",

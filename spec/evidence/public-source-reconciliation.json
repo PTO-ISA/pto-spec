@@ -305,8 +305,8 @@
   },
   "summary": {
     "scalar_forms": {
-      "count": 467,
-      "closed": 467,
+      "count": 473,
+      "closed": 473,
       "open": 0
     },
     "tile_operations": {
@@ -3595,6 +3595,48 @@
       "form_id": "sync_core_32_0330a02b7c32",
       "mnemonic": "SYNC.CORE",
       "semantic_family": "SYS",
+      "closure_status": "closed",
+      "public_layer": "scalar-control-or-lowering-layer"
+    },
+    {
+      "form_id": "sw_sub_32_op5_v0587",
+      "mnemonic": "SW.SUB",
+      "semantic_family": "AMO",
+      "closure_status": "closed",
+      "public_layer": "scalar-control-or-lowering-layer"
+    },
+    {
+      "form_id": "sd_sub_32_op5_v0587",
+      "mnemonic": "SD.SUB",
+      "semantic_family": "AMO",
+      "closure_status": "closed",
+      "public_layer": "scalar-control-or-lowering-layer"
+    },
+    {
+      "form_id": "sb_add_32_op5_v0587",
+      "mnemonic": "SB.ADD",
+      "semantic_family": "AMO",
+      "closure_status": "closed",
+      "public_layer": "scalar-control-or-lowering-layer"
+    },
+    {
+      "form_id": "sb_sub_32_op5_v0587",
+      "mnemonic": "SB.SUB",
+      "semantic_family": "AMO",
+      "closure_status": "closed",
+      "public_layer": "scalar-control-or-lowering-layer"
+    },
+    {
+      "form_id": "sh_add_32_op5_v0587",
+      "mnemonic": "SH.ADD",
+      "semantic_family": "AMO",
+      "closure_status": "closed",
+      "public_layer": "scalar-control-or-lowering-layer"
+    },
+    {
+      "form_id": "sh_sub_32_op5_v0587",
+      "mnemonic": "SH.SUB",
+      "semantic_family": "AMO",
       "closure_status": "closed",
       "public_layer": "scalar-control-or-lowering-layer"
     }

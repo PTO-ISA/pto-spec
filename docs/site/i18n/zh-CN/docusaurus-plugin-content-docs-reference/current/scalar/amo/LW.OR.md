@@ -83,7 +83,7 @@ lw.or.aqrlf [SrcL], SrcR, ->Rd
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| lw_or_32_d6d2f87706fd | L32 | 32 | 0x2000200b / 0xf000707f | [] |
+| lw_or_32_d6d2f87706fd | L32 | 32 | 0x1000200b / 0x7800707f | [] |
 
 ### Fields
 
@@ -93,7 +93,7 @@ lw.or.aqrlf [SrcL], SrcR, ->Rd
 | lw_or_32_d6d2f87706fd | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | lw_or_32_d6d2f87706fd | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | lw_or_32_d6d2f87706fd | aq | 1 | encoding-defined | [{"instruction_lsb":26,"value_lsb":0,"width":1}] |
-| lw_or_32_d6d2f87706fd | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
+| lw_or_32_d6d2f87706fd | far | 1 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":1}] |
 | lw_or_32_d6d2f87706fd | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
 
 ## Encoding class

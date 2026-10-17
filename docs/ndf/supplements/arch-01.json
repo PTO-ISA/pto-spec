@@ -603,6 +603,18 @@
         "en": "Each modeled Core keeps independent PE0 through PE3 instruction, Block, queue, fault, trap, reservation, and Local Tile state. Selecting or restoring a PE context does not rewind shared GM, event history, synchronization, Shared Tile state, or peer progress.",
         "zh-CN": "每个建模 Core 为 PE0 至 PE3 分别保存指令、Block、队列、故障、陷阱、reservation 和 Local Tile 状态。选择或恢复 PE 上下文不会回退共享 GM、事件历史、同步状态、Shared Tile 状态或其他 PE 的进度。"
       }
+    },
+    {
+      "id": "PTO-ARCH-DMA-ENCODING-ONLY-001",
+      "source_path": "asl/arch/overview/encoding-ownership.asl",
+      "title": {
+        "en": "DMA resource encoding reservations",
+        "zh-CN": "DMA 资源指令编码保留"
+      },
+      "summary": {
+        "en": "Reserves the four DMA.FREE and MCOPY.DS/DL encodings without implementing execution semantics. The model rejects them before operand reads or architectural effects.",
+        "zh-CN": "保留四条 DMA.FREE 和 MCOPY.DS/DL 指令的编码，不实现执行语义。模型在读取操作数或产生架构效果前拒绝执行。"
+      }
     }
   ]
 }

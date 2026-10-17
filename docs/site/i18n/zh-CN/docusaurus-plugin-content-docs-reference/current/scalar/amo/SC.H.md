@@ -87,7 +87,7 @@ sc.h.aqrlf SrcL, [SrcR], ->Rd
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| sc_h_32_108941eabac6 | L32 | 32 | 0x1000100b / 0xf000707f | [] |
+| sc_h_32_108941eabac6 | L32 | 32 | 0x0800100b / 0x7800707f | [] |
 
 ### Fields
 
@@ -97,7 +97,7 @@ sc.h.aqrlf SrcL, [SrcR], ->Rd
 | sc_h_32_108941eabac6 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | sc_h_32_108941eabac6 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | sc_h_32_108941eabac6 | aq | 1 | encoding-defined | [{"instruction_lsb":26,"value_lsb":0,"width":1}] |
-| sc_h_32_108941eabac6 | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
+| sc_h_32_108941eabac6 | far | 1 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":1}] |
 | sc_h_32_108941eabac6 | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
 
 ## Encoding class

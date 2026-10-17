@@ -163,6 +163,10 @@ projection to 466 Scalar forms, 105 active Block forms, 117 direct Tile
 operations, and 46 occupied extension reservations while preserving the
 earlier inventory lines.
 
+The current development projection contains 473 Scalar forms, 105 active Block
+forms, 119 direct Tile operations, and 50 occupied extension reservations. The
+published release manifest remains an immutable historical release record.
+
 ## Consequences
 
 - Binary encodings preserve PTO selector facts without prescribing physical

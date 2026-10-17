@@ -15,13 +15,13 @@ begin
     WriteTPC(Zeros{PTO_XLEN} + 0x40);
     ClearFault();
 
-    var instruction: bits(48) = Zeros{48} + 0x3000100b;
+    var instruction: bits(48) = Zeros{48} + 0x1800100b;
     instruction[11:7] = Zeros{5} + 5;
     instruction[19:15] = Zeros{5} + 2;
     instruction[24:20] = Zeros{5} + 3;
     instruction[25] = '1';
     instruction[26] = '1';
-    instruction[27] = '1';
+    instruction[31] = '1';
 
     let status = ExecuteScalarInstruction(instruction, 32);
     assert status == ScalarExecution_Executed;

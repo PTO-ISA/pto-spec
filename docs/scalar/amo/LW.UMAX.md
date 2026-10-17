@@ -83,7 +83,7 @@ lw.umax.aqrlf [SrcL], SrcR, ->Rd
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| lw_umax_32_3c6a5a534674 | L32 | 32 | 0x6000200b / 0xf000707f | [] |
+| lw_umax_32_3c6a5a534674 | L32 | 32 | 0x3000200b / 0x7800707f | [] |
 
 ### Fields
 
@@ -93,7 +93,7 @@ lw.umax.aqrlf [SrcL], SrcR, ->Rd
 | lw_umax_32_3c6a5a534674 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | lw_umax_32_3c6a5a534674 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | lw_umax_32_3c6a5a534674 | aq | 1 | encoding-defined | [{"instruction_lsb":26,"value_lsb":0,"width":1}] |
-| lw_umax_32_3c6a5a534674 | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
+| lw_umax_32_3c6a5a534674 | far | 1 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":1}] |
 | lw_umax_32_3c6a5a534674 | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
 
 ## Encoding class

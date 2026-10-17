@@ -81,6 +81,7 @@ type AddressUpdateMode of enumeration {
 type AtomicOperation of enumeration {
     Atomic_SWAP,
     Atomic_ADD,
+    Atomic_SUB,
     Atomic_AND,
     Atomic_OR,
     Atomic_XOR,

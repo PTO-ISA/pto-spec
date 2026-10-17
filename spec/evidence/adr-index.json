@@ -5658,7 +5658,13 @@
         "PTO-SWAPB-ADR-CONTRACT-001",
         "PTO-SWAPD-ADR-CONTRACT-001",
         "PTO-SWAPH-ADR-CONTRACT-001",
-        "PTO-SWAPW-ADR-CONTRACT-001"
+        "PTO-SWAPW-ADR-CONTRACT-001",
+        "PTO-SW-SUB-CONTRACT-001",
+        "PTO-SD-SUB-CONTRACT-001",
+        "PTO-SB-ADD-CONTRACT-001",
+        "PTO-SB-SUB-CONTRACT-001",
+        "PTO-SH-ADD-CONTRACT-001",
+        "PTO-SH-SUB-CONTRACT-001"
       ],
       "affected_units": [
         "PTO-SCALAR-CASB",
@@ -5713,7 +5719,13 @@
         "PTO-SCALAR-SWAPB",
         "PTO-SCALAR-SWAPD",
         "PTO-SCALAR-SWAPH",
-        "PTO-SCALAR-SWAPW"
+        "PTO-SCALAR-SWAPW",
+        "PTO-SCALAR-SW-SUB",
+        "PTO-SCALAR-SD-SUB",
+        "PTO-SCALAR-SB-ADD",
+        "PTO-SCALAR-SB-SUB",
+        "PTO-SCALAR-SH-ADD",
+        "PTO-SCALAR-SH-SUB"
       ],
       "approvers": [
         "Kevin Zhou <zhoubot@gmail.com>"
@@ -5724,7 +5736,7 @@
       "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
       "created": "2026-07-30",
       "id": "ADR-MEM-0005",
-      "implementation_issue": null,
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/389",
       "legacy_ids": [
         "ADR-0030"
       ],
@@ -5829,6 +5841,7 @@
     {
       "accepted": "2026-08-08",
       "affected_ndf": [
+        "PTO-ARCH-DMA-ENCODING-ONLY-001",
         "PTO-ARCH-ENCODING-OWNERSHIP-001",
         "PTO-ARCH-GM-ACCESS-001",
         "PTO-BSTART-GMOV-COLLECTIVE-001",

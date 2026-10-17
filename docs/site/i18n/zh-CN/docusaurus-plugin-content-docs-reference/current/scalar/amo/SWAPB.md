@@ -92,7 +92,7 @@ swapb.aqrlf [SrcL], SrcR, ->Rd
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| swapb_32_80733f03b77f | L32 | 32 | 0x0000600b / 0xf000707f | [] |
+| swapb_32_80733f03b77f | L32 | 32 | 0x0000600b / 0x7800707f | [] |
 
 ### Fields
 
@@ -102,7 +102,7 @@ swapb.aqrlf [SrcL], SrcR, ->Rd
 | swapb_32_80733f03b77f | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | swapb_32_80733f03b77f | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | swapb_32_80733f03b77f | aq | 1 | encoding-defined | [{"instruction_lsb":26,"value_lsb":0,"width":1}] |
-| swapb_32_80733f03b77f | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
+| swapb_32_80733f03b77f | far | 1 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":1}] |
 | swapb_32_80733f03b77f | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
 
 ## Encoding class

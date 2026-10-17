@@ -14,7 +14,7 @@ begin
     WriteTPC(Zeros{PTO_XLEN} + 0x80);
     ClearFault();
 
-    var instruction: bits(48) = Zeros{48} + 0x2000600b;
+    var instruction: bits(48) = Zeros{48} + 0x1000600b;
     instruction[11:7] = Zeros{5} + 30;
     instruction[19:15] = Zeros{5} + 24;
     instruction[24:20] = Zeros{5} + 28;

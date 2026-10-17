@@ -1,0 +1,40 @@
+{
+  "catalog_counts": {
+    "command_forms": 105,
+    "reservations": 50,
+    "scalar_forms": 473,
+    "tile_operations": 119
+  },
+  "catalogs": {
+    "command_forms": {
+      "path": "spec/catalog/command-forms.json",
+      "sha256": "d2817054e96456d058d88c27cef1eb034a2b164b486d5c11fe3c796f08e02f3e"
+    },
+    "reservations": {
+      "path": "spec/catalog/extension-encoding-reservations.json",
+      "sha256": "d34f6b560f19a531a962c6d8abf812a911e83ea57f721ef53102ed6f62c9c41c"
+    },
+    "scalar_forms": {
+      "path": "spec/catalog/scalar-forms.json",
+      "sha256": "840ae680f9193ae7a9422a0e7c0e264cd61fa83429149b7b0fff77d41282627d"
+    },
+    "system_registers": {
+      "path": "spec/catalog/system-registers.json",
+      "sha256": "2a5d6669b95c28f80651f5917558781de25b8465655399063790e50549e1e2a9"
+    },
+    "tile_operations": {
+      "path": "spec/catalog/tile-operations.json",
+      "sha256": "533db9b8f31f118af5978de813cfaa3fa738de820ee24655faa2ee71f343a706"
+    }
+  },
+  "identity": {
+    "encoding_abi": "pto-isa-0.58.7-mode-function-v1",
+    "encoding_projection_sha256": "a5f78ecd707bde4a014542158ea257c783796b95fa4fbcce37742e41fee6a881",
+    "release": "0.58.7"
+  },
+  "normative_source_count": 927,
+  "normative_sources_sha256": "24e161ed2b9e0bac22f9a54e3c967ebdf1ec4395e99698c5b063a9bbd27544d6",
+  "publication": null,
+  "schema": "pto.development-manifest.v1",
+  "status": "development-not-published"
+}

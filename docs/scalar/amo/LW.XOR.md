@@ -83,7 +83,7 @@ lw.xor.aqrlf [SrcL], SrcR, ->Rd
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| lw_xor_32_4d4aa82c676a | L32 | 32 | 0x3000200b / 0xf000707f | [] |
+| lw_xor_32_4d4aa82c676a | L32 | 32 | 0x1800200b / 0x7800707f | [] |
 
 ### Fields
 
@@ -93,7 +93,7 @@ lw.xor.aqrlf [SrcL], SrcR, ->Rd
 | lw_xor_32_4d4aa82c676a | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | lw_xor_32_4d4aa82c676a | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | lw_xor_32_4d4aa82c676a | aq | 1 | encoding-defined | [{"instruction_lsb":26,"value_lsb":0,"width":1}] |
-| lw_xor_32_4d4aa82c676a | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
+| lw_xor_32_4d4aa82c676a | far | 1 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":1}] |
 | lw_xor_32_4d4aa82c676a | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
 
 ## Encoding class

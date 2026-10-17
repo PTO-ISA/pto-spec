@@ -19,7 +19,7 @@ begin
     instruction[24:20] = Ones{5};
     instruction[25] = '1';
     instruction[26] = '1';
-    instruction[27] = '1';
+    instruction[31] = '1';
 
     let status = ExecuteScalarInstruction(instruction, 32);
     assert status == ScalarExecution_Executed;
