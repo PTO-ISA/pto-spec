@@ -88,7 +88,7 @@ ld.and.aqrlf [SrcL], SrcR, ->Rd
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| ld_and_32_2a46b3003480 | L32 | 32 | 0x1000400b / 0xf000707f | [] |
+| ld_and_32_2a46b3003480 | L32 | 32 | 0x0800400b / 0x7800707f | [] |
 
 ### Fields
 
@@ -98,7 +98,7 @@ ld.and.aqrlf [SrcL], SrcR, ->Rd
 | ld_and_32_2a46b3003480 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | ld_and_32_2a46b3003480 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | ld_and_32_2a46b3003480 | aq | 1 | encoding-defined | [{"instruction_lsb":26,"value_lsb":0,"width":1}] |
-| ld_and_32_2a46b3003480 | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
+| ld_and_32_2a46b3003480 | far | 1 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":1}] |
 | ld_and_32_2a46b3003480 | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
 
 ## Encoding class

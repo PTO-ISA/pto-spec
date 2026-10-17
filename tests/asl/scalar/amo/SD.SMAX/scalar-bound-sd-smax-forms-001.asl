@@ -19,7 +19,7 @@ begin
     ClearFault();
     StartMemoryEventCapture(0);
 
-    var instruction: bits(48) = Zeros{48} + 0x4000500b;
+    var instruction: bits(48) = Zeros{48} + 0x2000500b;
     instruction[19:15] = Zeros{5} + 24;
     instruction[24:20] = Zeros{5} + 28;
 

@@ -84,7 +84,7 @@ lr.b.aqrlf [SrcL], ->Rd
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| lr_b_32_cf80903a761a | L32 | 32 | 0x0000000b / 0xf000707f | [] |
+| lr_b_32_cf80903a761a | L32 | 32 | 0x0000000b / 0x7800707f | [] |
 
 ### Fields
 
@@ -94,7 +94,7 @@ lr.b.aqrlf [SrcL], ->Rd
 | lr_b_32_cf80903a761a | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | lr_b_32_cf80903a761a | SrcZero | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | lr_b_32_cf80903a761a | aq | 1 | encoding-defined | [{"instruction_lsb":26,"value_lsb":0,"width":1}] |
-| lr_b_32_cf80903a761a | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
+| lr_b_32_cf80903a761a | far | 1 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":1}] |
 | lr_b_32_cf80903a761a | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
 
 ## Encoding class

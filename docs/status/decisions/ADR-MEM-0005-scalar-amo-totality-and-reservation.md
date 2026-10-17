@@ -31,7 +31,13 @@
     "PTO-SWAPB-ADR-CONTRACT-001",
     "PTO-SWAPD-ADR-CONTRACT-001",
     "PTO-SWAPH-ADR-CONTRACT-001",
-    "PTO-SWAPW-ADR-CONTRACT-001"
+    "PTO-SWAPW-ADR-CONTRACT-001",
+    "PTO-SW-SUB-CONTRACT-001",
+    "PTO-SD-SUB-CONTRACT-001",
+    "PTO-SB-ADD-CONTRACT-001",
+    "PTO-SB-SUB-CONTRACT-001",
+    "PTO-SH-ADD-CONTRACT-001",
+    "PTO-SH-SUB-CONTRACT-001"
   ],
   "affected_units": [
     "PTO-SCALAR-CASB",
@@ -86,7 +92,13 @@
     "PTO-SCALAR-SWAPB",
     "PTO-SCALAR-SWAPD",
     "PTO-SCALAR-SWAPH",
-    "PTO-SCALAR-SWAPW"
+    "PTO-SCALAR-SWAPW",
+    "PTO-SCALAR-SW-SUB",
+    "PTO-SCALAR-SD-SUB",
+    "PTO-SCALAR-SB-ADD",
+    "PTO-SCALAR-SB-SUB",
+    "PTO-SCALAR-SH-ADD",
+    "PTO-SCALAR-SH-SUB"
   ],
   "resolves": [],
   "supersedes": [],
@@ -279,3 +291,19 @@ The record defines width normalization, signed and unsigned min/max, wrapping ar
 The 64-byte line rule and failed-SC no-probe rule are architecture choices. Physical cache topology and refinements to the address-class hint remain outside this record.
 
 64 字节行规则和失败 SC 不探测规则属于架构选择。物理 cache 拓扑以及地址类别提示的进一步细化不在本记录范围内。
+
+## Scalar op5 store-only RMW extension
+
+The scalar amendment retains this ADR's store-only RMW state, ordering,
+reservation, precise-fault, and restart contract. SW.SUB/SD.SUB subtract at
+32/64-bit width; SB.ADD/SB.SUB and SH.ADD/SH.SUB operate at 8/16-bit width.
+Subtraction wraps modulo the access width, including zero minus one. Bytes
+outside the accessed width remain unchanged. The 44 existing atomic forms
+adopt the shared op5 encoding; store-only forms no longer encode far.
+
+DMA.FREE.S/L and MCOPY.DS/DL are encoding-only reservations and are not
+implemented. They acquire no execution semantics from this ADR.
+
+本次标量提案沿用既有的仅写入原子操作、顺序、保留、精确异常及重启契约。
+减法按访问宽度回绕，包括零减一；访问范围以外的字节保持不变。
+四条 DMA/MCOPY 资源指令仅保留编码，不实现执行语义。

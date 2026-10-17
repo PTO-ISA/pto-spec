@@ -193,7 +193,7 @@ SCALAR_AMO_EFFECT_CLASS_COUNTS = {
     "scalar-amo-swap": 4,
     "scalar-amo-cas": 8,
     "scalar-amo-load-rmw": 16,
-    "scalar-amo-store-rmw": 16,
+    "scalar-amo-store-rmw": 22,
     "scalar-dma-copy": 1,
 }
 SCALAR_AMO_TEMP_SOURCE_SELECTORS = tuple(range(24, 32))
@@ -2235,7 +2235,7 @@ def scalar_amo_effect_class(row: dict) -> str | None:
             return "scalar-amo-swap"
         if mnemonic.startswith(("LW.", "LD.")):
             return "scalar-amo-load-rmw"
-        if mnemonic.startswith(("SW.", "SD.")):
+        if mnemonic.startswith(("SB.", "SH.", "SW.", "SD.")):
             return "scalar-amo-store-rmw"
     raise ValueError(
         f"AMO form does not have exactly one reviewed effect class: "
@@ -2251,6 +2251,10 @@ def scalar_amo_size_bytes(mnemonic: str) -> int:
         suffix = mnemonic.removeprefix("SWAP")
     elif mnemonic.startswith("CAS") or mnemonic.startswith("HL.CAS"):
         suffix = core.removeprefix("CAS")
+    elif mnemonic.startswith("SB."):
+        return 1
+    elif mnemonic.startswith("SH."):
+        return 2
     elif mnemonic.startswith(("LW.", "SW.")):
         return 4
     elif mnemonic.startswith(("LD.", "SD.")):
@@ -2351,6 +2355,8 @@ def scalar_amo_rmw_result(
         result = operand_unsigned
     elif op == "ADD":
         result = old_unsigned + operand_unsigned
+    elif op == "SUB":
+        result = old_unsigned - operand_unsigned
     elif op == "AND":
         result = old_unsigned & operand_unsigned
     elif op == "OR":
@@ -2500,7 +2506,7 @@ def scalar_amo_value_cases(row: dict) -> tuple[tuple[str, int, int, int, bool], 
             for index, operand in enumerate(boundaries)
         )
     operation = scalar_amo_operation(row["mnemonic"])
-    if operation in {"ADD", "AND", "OR", "XOR"}:
+    if operation in {"ADD", "SUB", "AND", "OR", "XOR"}:
         cases = tuple(
             (f"{operation.lower()}-{index}", old, operand, 0, True)
             for index, (old, operand) in enumerate(
@@ -8278,7 +8284,7 @@ def _emit_monolithic() -> None:
         scalar_amo_ignored_src_zero_case_count,
         scalar_amo_alias_case_count,
     )
-    expected_amo_stage4_stable_counts = (337, 320, 110, 880, 36, 324, 76, 128, 1408)
+    expected_amo_stage4_stable_counts = (317, 344, 122, 976, 36, 324, 76, 128, 1504)
     if actual_amo_stage4_stable_counts != expected_amo_stage4_stable_counts:
         raise ValueError(
             "reviewed AMO stable Stage 4 inventory drift: expected "
@@ -8332,7 +8338,7 @@ def _emit_monolithic() -> None:
         scalar_amo_retained_stage1_case_count,
         scalar_amo_executable_case_count,
     )
-    expected_amo_closure_counts = (151, 151, 11, 313, 81, 15, 1066, 2474, 66, 2540)
+    expected_amo_closure_counts = (167, 167, 11, 345, 81, 15, 1102, 2606, 72, 2678)
     if actual_amo_closure_counts != expected_amo_closure_counts:
         raise ValueError(
             "reviewed AMO closure inventory drift: expected "

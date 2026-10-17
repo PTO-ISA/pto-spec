@@ -87,7 +87,7 @@ sc.w.aqrlf SrcL, [SrcR], ->Rd
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| sc_w_32_14b238f02bfd | L32 | 32 | 0x2000100b / 0xf000707f | [] |
+| sc_w_32_14b238f02bfd | L32 | 32 | 0x1000100b / 0x7800707f | [] |
 
 ### Fields
 
@@ -97,7 +97,7 @@ sc.w.aqrlf SrcL, [SrcR], ->Rd
 | sc_w_32_14b238f02bfd | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | sc_w_32_14b238f02bfd | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | sc_w_32_14b238f02bfd | aq | 1 | encoding-defined | [{"instruction_lsb":26,"value_lsb":0,"width":1}] |
-| sc_w_32_14b238f02bfd | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
+| sc_w_32_14b238f02bfd | far | 1 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":1}] |
 | sc_w_32_14b238f02bfd | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
 
 ## Encoding class

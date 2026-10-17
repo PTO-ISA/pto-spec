@@ -93,14 +93,18 @@ LR 形式带有 `SrcZero` 字段。LR 处理函数从不读取它。
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/dispatch/amo.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-DISPATCH-AMO","surface":"scalar","classification":["model","dispatch","amo"],"depends_on":["PTO-SCALAR-MODEL-DISPATCH-DECODE","PTO-SCALAR-MODEL-AMO-SEMANTICS","PTO-SCALAR-CASB","PTO-SCALAR-CASD","PTO-SCALAR-CASH","PTO-SCALAR-CASW","PTO-SCALAR-DMA","PTO-SCALAR-HL-CASB","PTO-SCALAR-HL-CASD","PTO-SCALAR-HL-CASH","PTO-SCALAR-HL-CASW","PTO-SCALAR-LD-ADD","PTO-SCALAR-LD-AND","PTO-SCALAR-LD-OR","PTO-SCALAR-LD-SMAX","PTO-SCALAR-LD-SMIN","PTO-SCALAR-LD-UMAX","PTO-SCALAR-LD-UMIN","PTO-SCALAR-LD-XOR","PTO-SCALAR-LR-B","PTO-SCALAR-LR-D","PTO-SCALAR-LR-H","PTO-SCALAR-LR-W","PTO-SCALAR-LW-ADD","PTO-SCALAR-LW-AND","PTO-SCALAR-LW-OR","PTO-SCALAR-LW-SMAX","PTO-SCALAR-LW-SMIN","PTO-SCALAR-LW-UMAX","PTO-SCALAR-LW-UMIN","PTO-SCALAR-LW-XOR","PTO-SCALAR-SC-B","PTO-SCALAR-SC-D","PTO-SCALAR-SC-H","PTO-SCALAR-SC-W","PTO-SCALAR-SD-ADD","PTO-SCALAR-SD-AND","PTO-SCALAR-SD-OR","PTO-SCALAR-SD-SMAX","PTO-SCALAR-SD-SMIN","PTO-SCALAR-SD-UMAX","PTO-SCALAR-SD-UMIN","PTO-SCALAR-SD-XOR","PTO-SCALAR-SW-ADD","PTO-SCALAR-SW-AND","PTO-SCALAR-SW-OR","PTO-SCALAR-SW-SMAX","PTO-SCALAR-SW-SMIN","PTO-SCALAR-SW-UMAX","PTO-SCALAR-SW-UMIN","PTO-SCALAR-SW-XOR","PTO-SCALAR-SWAPB","PTO-SCALAR-SWAPD","PTO-SCALAR-SWAPH","PTO-SCALAR-SWAPW"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-DISPATCH-AMO","surface":"scalar","classification":["model","dispatch","amo"],"depends_on":["PTO-SCALAR-MODEL-DISPATCH-DECODE","PTO-SCALAR-MODEL-AMO-SEMANTICS","PTO-SCALAR-CASB","PTO-SCALAR-CASD","PTO-SCALAR-CASH","PTO-SCALAR-CASW","PTO-SCALAR-DMA","PTO-SCALAR-HL-CASB","PTO-SCALAR-HL-CASD","PTO-SCALAR-HL-CASH","PTO-SCALAR-HL-CASW","PTO-SCALAR-LD-ADD","PTO-SCALAR-LD-AND","PTO-SCALAR-LD-OR","PTO-SCALAR-LD-SMAX","PTO-SCALAR-LD-SMIN","PTO-SCALAR-LD-UMAX","PTO-SCALAR-LD-UMIN","PTO-SCALAR-LD-XOR","PTO-SCALAR-LR-B","PTO-SCALAR-LR-D","PTO-SCALAR-LR-H","PTO-SCALAR-LR-W","PTO-SCALAR-LW-ADD","PTO-SCALAR-LW-AND","PTO-SCALAR-LW-OR","PTO-SCALAR-LW-SMAX","PTO-SCALAR-LW-SMIN","PTO-SCALAR-LW-UMAX","PTO-SCALAR-LW-UMIN","PTO-SCALAR-LW-XOR","PTO-SCALAR-SC-B","PTO-SCALAR-SC-D","PTO-SCALAR-SC-H","PTO-SCALAR-SC-W","PTO-SCALAR-SD-ADD","PTO-SCALAR-SD-AND","PTO-SCALAR-SD-OR","PTO-SCALAR-SD-SMAX","PTO-SCALAR-SD-SMIN","PTO-SCALAR-SD-UMAX","PTO-SCALAR-SD-UMIN","PTO-SCALAR-SD-XOR","PTO-SCALAR-SW-ADD","PTO-SCALAR-SW-AND","PTO-SCALAR-SW-OR","PTO-SCALAR-SW-SMAX","PTO-SCALAR-SW-SMIN","PTO-SCALAR-SW-UMAX","PTO-SCALAR-SW-UMIN","PTO-SCALAR-SW-XOR","PTO-SCALAR-SWAPB","PTO-SCALAR-SWAPD","PTO-SCALAR-SWAPH","PTO-SCALAR-SWAPW","PTO-SCALAR-SW-SUB","PTO-SCALAR-SD-SUB","PTO-SCALAR-SB-ADD","PTO-SCALAR-SB-SUB","PTO-SCALAR-SH-ADD","PTO-SCALAR-SH-SUB"]}
 pure func ScalarAtomicOperationForOperation(operation: ScalarOperation)
         => AtomicOperation
 begin
     case operation of
         when ScalarOperation_LD_ADD, ScalarOperation_LW_ADD,
-             ScalarOperation_SD_ADD, ScalarOperation_SW_ADD =>
+             ScalarOperation_SD_ADD, ScalarOperation_SW_ADD,
+             ScalarOperation_SB_ADD, ScalarOperation_SH_ADD =>
             return Atomic_ADD;
+        when ScalarOperation_SD_SUB, ScalarOperation_SW_SUB,
+             ScalarOperation_SB_SUB, ScalarOperation_SH_SUB =>
+            return Atomic_SUB;
         when ScalarOperation_LD_AND, ScalarOperation_LW_AND,
              ScalarOperation_SD_AND, ScalarOperation_SW_AND =>
             return Atomic_AND;
@@ -250,13 +254,19 @@ begin
              ScalarOperation_LD_UMIN, ScalarOperation_LD_UMAX =>
             ExecuteDecodedAtomicReadModifyWrite(instruction, form,
                 ScalarAtomicOperationForOperation(operation), 8, TRUE);
-        when ScalarOperation_SW_ADD, ScalarOperation_SW_AND,
+        when ScalarOperation_SB_ADD, ScalarOperation_SB_SUB =>
+            ExecuteDecodedAtomicReadModifyWrite(instruction, form,
+                ScalarAtomicOperationForOperation(operation), 1, FALSE);
+        when ScalarOperation_SH_ADD, ScalarOperation_SH_SUB =>
+            ExecuteDecodedAtomicReadModifyWrite(instruction, form,
+                ScalarAtomicOperationForOperation(operation), 2, FALSE);
+        when ScalarOperation_SW_ADD, ScalarOperation_SW_SUB, ScalarOperation_SW_AND,
              ScalarOperation_SW_OR, ScalarOperation_SW_XOR,
              ScalarOperation_SW_SMIN, ScalarOperation_SW_SMAX,
              ScalarOperation_SW_UMIN, ScalarOperation_SW_UMAX =>
             ExecuteDecodedAtomicReadModifyWrite(instruction, form,
                 ScalarAtomicOperationForOperation(operation), 4, FALSE);
-        when ScalarOperation_SD_ADD, ScalarOperation_SD_AND,
+        when ScalarOperation_SD_ADD, ScalarOperation_SD_SUB, ScalarOperation_SD_AND,
              ScalarOperation_SD_OR, ScalarOperation_SD_XOR,
              ScalarOperation_SD_SMIN, ScalarOperation_SD_SMAX,
              ScalarOperation_SD_UMIN, ScalarOperation_SD_UMAX =>

@@ -599,6 +599,8 @@ nav:
           - LW.UMAX: scalar/amo/LW.UMAX.md
           - LW.UMIN: scalar/amo/LW.UMIN.md
           - LW.XOR: scalar/amo/LW.XOR.md
+          - SB.ADD: scalar/amo/SB.ADD.md
+          - SB.SUB: scalar/amo/SB.SUB.md
           - SC.B: scalar/amo/SC.B.md
           - SC.D: scalar/amo/SC.D.md
           - SC.H: scalar/amo/SC.H.md
@@ -608,14 +610,18 @@ nav:
           - SD.OR: scalar/amo/SD.OR.md
           - SD.SMAX: scalar/amo/SD.SMAX.md
           - SD.SMIN: scalar/amo/SD.SMIN.md
+          - SD.SUB: scalar/amo/SD.SUB.md
           - SD.UMAX: scalar/amo/SD.UMAX.md
           - SD.UMIN: scalar/amo/SD.UMIN.md
           - SD.XOR: scalar/amo/SD.XOR.md
+          - SH.ADD: scalar/amo/SH.ADD.md
+          - SH.SUB: scalar/amo/SH.SUB.md
           - SW.ADD: scalar/amo/SW.ADD.md
           - SW.AND: scalar/amo/SW.AND.md
           - SW.OR: scalar/amo/SW.OR.md
           - SW.SMAX: scalar/amo/SW.SMAX.md
           - SW.SMIN: scalar/amo/SW.SMIN.md
+          - SW.SUB: scalar/amo/SW.SUB.md
           - SW.UMAX: scalar/amo/SW.UMAX.md
           - SW.UMIN: scalar/amo/SW.UMIN.md
           - SW.XOR: scalar/amo/SW.XOR.md

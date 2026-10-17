@@ -999,6 +999,78 @@
         "en": "This clause records XORW's ADR-defined execution boundary: scalar sources are snapshotted before its mnemonic-owned width, immediate, modifier, and wrapping rules are applied, then the assigned destination or commit effect is published in alias-safe order.",
         "zh-CN": "本条目记录 XORW 的 ADR 执行边界：先快照 Scalar 源操作数，再应用该助记符负责的位宽、立即数、修饰和回绕规则，最后按别名安全的顺序发布到指定目标或提交影响。"
       }
+    },
+    {
+      "id": "PTO-SW-SUB-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SW.SUB.asl",
+      "title": {
+        "en": "SW.SUB store-only atomic contract",
+        "zh-CN": "SW.SUB 仅写入原子操作契约"
+      },
+      "summary": {
+        "en": "Defines modular arithmetic at the encoded width under the existing store-only atomic preflight, ordering, reservation, precise-fault and restart contract.",
+        "zh-CN": "在既有仅写入原子操作的预检、顺序、保留、精确异常和重启契约下，定义编码宽度上的模算术。"
+      }
+    },
+    {
+      "id": "PTO-SD-SUB-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SD.SUB.asl",
+      "title": {
+        "en": "SD.SUB store-only atomic contract",
+        "zh-CN": "SD.SUB 仅写入原子操作契约"
+      },
+      "summary": {
+        "en": "Defines modular arithmetic at the encoded width under the existing store-only atomic preflight, ordering, reservation, precise-fault and restart contract.",
+        "zh-CN": "在既有仅写入原子操作的预检、顺序、保留、精确异常和重启契约下，定义编码宽度上的模算术。"
+      }
+    },
+    {
+      "id": "PTO-SB-ADD-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SB.ADD.asl",
+      "title": {
+        "en": "SB.ADD store-only atomic contract",
+        "zh-CN": "SB.ADD 仅写入原子操作契约"
+      },
+      "summary": {
+        "en": "Defines modular arithmetic at the encoded width under the existing store-only atomic preflight, ordering, reservation, precise-fault and restart contract.",
+        "zh-CN": "在既有仅写入原子操作的预检、顺序、保留、精确异常和重启契约下，定义编码宽度上的模算术。"
+      }
+    },
+    {
+      "id": "PTO-SB-SUB-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SB.SUB.asl",
+      "title": {
+        "en": "SB.SUB store-only atomic contract",
+        "zh-CN": "SB.SUB 仅写入原子操作契约"
+      },
+      "summary": {
+        "en": "Defines modular arithmetic at the encoded width under the existing store-only atomic preflight, ordering, reservation, precise-fault and restart contract.",
+        "zh-CN": "在既有仅写入原子操作的预检、顺序、保留、精确异常和重启契约下，定义编码宽度上的模算术。"
+      }
+    },
+    {
+      "id": "PTO-SH-ADD-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SH.ADD.asl",
+      "title": {
+        "en": "SH.ADD store-only atomic contract",
+        "zh-CN": "SH.ADD 仅写入原子操作契约"
+      },
+      "summary": {
+        "en": "Defines modular arithmetic at the encoded width under the existing store-only atomic preflight, ordering, reservation, precise-fault and restart contract.",
+        "zh-CN": "在既有仅写入原子操作的预检、顺序、保留、精确异常和重启契约下，定义编码宽度上的模算术。"
+      }
+    },
+    {
+      "id": "PTO-SH-SUB-CONTRACT-001",
+      "source_path": "asl/scalar/amo/SH.SUB.asl",
+      "title": {
+        "en": "SH.SUB store-only atomic contract",
+        "zh-CN": "SH.SUB 仅写入原子操作契约"
+      },
+      "summary": {
+        "en": "Defines modular arithmetic at the encoded width under the existing store-only atomic preflight, ordering, reservation, precise-fault and restart contract.",
+        "zh-CN": "在既有仅写入原子操作的预检、顺序、保留、精确异常和重启契约下，定义编码宽度上的模算术。"
+      }
     }
   ]
 }

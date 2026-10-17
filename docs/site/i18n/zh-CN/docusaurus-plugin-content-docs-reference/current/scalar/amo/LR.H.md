@@ -82,7 +82,7 @@ lr.h.aqrlf [SrcL], ->Rd
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| lr_h_32_f936df218d63 | L32 | 32 | 0x1000000b / 0xf000707f | [] |
+| lr_h_32_f936df218d63 | L32 | 32 | 0x0800000b / 0x7800707f | [] |
 
 ### Fields
 
@@ -92,7 +92,7 @@ lr.h.aqrlf [SrcL], ->Rd
 | lr_h_32_f936df218d63 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | lr_h_32_f936df218d63 | SrcZero | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | lr_h_32_f936df218d63 | aq | 1 | encoding-defined | [{"instruction_lsb":26,"value_lsb":0,"width":1}] |
-| lr_h_32_f936df218d63 | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
+| lr_h_32_f936df218d63 | far | 1 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":1}] |
 | lr_h_32_f936df218d63 | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
 
 ## Encoding class

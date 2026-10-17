@@ -83,7 +83,7 @@ lw.smin.aqrlf [SrcL], SrcR, ->Rd
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| lw_smin_32_44452ae44d02 | L32 | 32 | 0x5000200b / 0xf000707f | [] |
+| lw_smin_32_44452ae44d02 | L32 | 32 | 0x2800200b / 0x7800707f | [] |
 
 ### Fields
 
@@ -93,7 +93,7 @@ lw.smin.aqrlf [SrcL], SrcR, ->Rd
 | lw_smin_32_44452ae44d02 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | lw_smin_32_44452ae44d02 | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | lw_smin_32_44452ae44d02 | aq | 1 | encoding-defined | [{"instruction_lsb":26,"value_lsb":0,"width":1}] |
-| lw_smin_32_44452ae44d02 | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
+| lw_smin_32_44452ae44d02 | far | 1 | encoding-defined | [{"instruction_lsb":31,"value_lsb":0,"width":1}] |
 | lw_smin_32_44452ae44d02 | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
 
 ## Encoding class

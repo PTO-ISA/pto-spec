@@ -1,0 +1,63 @@
+// PTO-TEST: {"id":"PTO-AVS-SCALAR-SB-ADD-STORE-001","source":"asl/scalar/amo/SB.ADD.asl","requirements":["PTO-INST-SCALAR-SB-ADD"],"kind":"execution","summary":"SB.ADD performs one store-only atomic update without publishing the old value","pass_condition":"memory, event, ordering, reservation, queues, registers, and TPC match the mnemonic contract","related_sources":["asl/scalar/model/dispatch/amo.asl","asl/scalar/model/amo/semantics.asl","asl/arch/memory-model/atomicity.asl"]}
+func CheckSBADDStoreOnly()
+begin
+    let address = Zeros{PTO_XLEN} + 256;
+    let old_value = Zeros{PTO_XLEN} + 7;
+    let operand = Zeros{PTO_XLEN} + 5;
+    let expected = Zeros{PTO_XLEN} + 12;
+
+    // Seed values that expose an accidental RegDst or queue result.
+    WriteGPR(5, Zeros{PTO_XLEN} + 0x55);
+    PushTemporaryQueue(TRUE, Zeros{PTO_XLEN} + 0x66);
+    PushTemporaryQueue(FALSE, Zeros{PTO_XLEN} + 0x77);
+    let old_t = ReadTemporaryQueue(TRUE, 0);
+    let old_u = ReadTemporaryQueue(FALSE, 0);
+
+    Store(address, 4, old_value);
+    WriteMemoryByte(address + 1, '10100101');
+    _ReservationValid = TRUE;
+    _ReservationAddress = address;
+    _ReservationSize = 1;
+    WriteGPR(2, address);
+    WriteGPR(3, operand);
+    WriteTPC(Zeros{PTO_XLEN} + 0x40);
+    ClearFault();
+    StartMemoryEventCapture(0);
+
+    var instruction: bits(48) = Zeros{48} + 0x8000300b;
+    instruction[19:15] = Zeros{5} + 2;
+    instruction[24:20] = Zeros{5} + 3;
+    instruction[25] = '1';
+
+    let status = ExecuteScalarInstruction(instruction, 32);
+    assert status == ScalarExecution_Executed;
+    assert _LastFault == Fault_None;
+    assert LoadTranslatedUnsigned(address, 1) == expected;
+    assert ReadGPR(5) == Zeros{PTO_XLEN} + 0x55;
+    assert ReadTemporaryQueue(TRUE, 0) == old_t;
+    assert ReadTemporaryQueue(FALSE, 0) == old_u;
+    assert ReadTPC() == Zeros{PTO_XLEN} + 0x44;
+    assert !_ReservationValid;
+
+    assert ReadMemoryByte(address + 1) == '10100101';
+    assert _MemoryEventCount == 1;
+    assert _MemoryEvents[[0]].kind == MemoryEvent_Atomic;
+    assert _MemoryEvents[[0]].address == address;
+    assert _MemoryEvents[[0]].size_bytes == 1;
+    assert _MemoryEvents[[0]].read_value ==
+        NormalizeMemoryAccessValue(old_value, 1);
+    assert _MemoryEvents[[0]].write_value == expected;
+    assert _MemoryEvents[[0]].write_performed;
+    assert _MemoryEvents[[0]].order == MemoryOrder_Release;
+
+    assert InstructionContractAtomicOperation_SB_ADD() == Atomic_ADD;
+    assert InstructionContractAtomicSizeBytes_SB_ADD() == 1;
+    assert !InstructionContractPublishesOldValue_SB_ADD();
+end;
+
+func main() => integer
+begin
+    ResetProfileState();
+    CheckSBADDStoreOnly();
+    return 0;
+end;

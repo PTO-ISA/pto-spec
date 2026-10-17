@@ -202,6 +202,7 @@ begin
     case op of
         when Atomic_SWAP => return operand;
         when Atomic_ADD  => return old_value + operand;
+        when Atomic_SUB  => return old_value - operand;
         when Atomic_AND  => return old_value AND operand;
         when Atomic_OR   => return old_value OR operand;
         when Atomic_XOR  => return old_value XOR operand;

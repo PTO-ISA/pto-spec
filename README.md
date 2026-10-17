@@ -26,10 +26,10 @@ it does not establish publication or release readiness.
 
 | Surface | Current executable inventory |
 | --- | ---: |
-| Scalar instruction forms | 467 |
+| Scalar instruction forms | 473 |
 | Active bundle and command forms | 105 |
 | Direct Tile operations | 119 |
-| Architecture and instruction ASL units | 921 |
+| Architecture and instruction ASL units | 927 |
 
 <!-- PTO-INVENTORY-END -->
 
