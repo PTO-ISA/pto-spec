@@ -11,6 +11,20 @@ ABI, profile, maturity, and pinned toolchain entry points. The generated
 [`spec/release-manifest.json`](../../spec/release-manifest.json) binds canonical
 content and encoding fingerprints for that identity.
 
+## 0.59 candidate
+
+The `0.59.0` architecture candidate has first publication identity `0.59.0.0`.
+Its main themes are mask/predicate mechanisms and elementwise control flow,
+with the accepted atomic, reduction, scalar-encoding, and numeric changes since
+`v0.58.7.0`. The
+[compatibility boundary](../status/decisions/ADR-GOV-0014-0587-0-to-0590-compatibility.md)
+records the complete changed-owner inventory and the breaking migration impact.
+
+Current instruction applicability remains in the owning ASL/NDF. A candidate
+number does not establish release qualification: the signed `v0.59.0.0` tag and
+GitHub Release may be created only after the final candidate's complete Release
+workflow and artifact certification succeed.
+
 ## Evidence entry points
 
 - [`spec/release-inputs.json`](../../spec/release-inputs.json) registers every

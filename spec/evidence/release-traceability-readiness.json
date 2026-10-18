@@ -122,6 +122,7 @@
         "asl/arch/state/core-synchronization.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "tests": [
@@ -149,7 +150,10 @@
       "owners": [
         "asl/arch/overview/encoding-ownership.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-GOV-0014",
+        "ADR-MEM-0007"
+      ],
       "tests": [
         "PTO-AVS-ARCH-ENCODING-OWNERSHIP-DMA-FREE-L-001",
         "PTO-AVS-ARCH-ENCODING-OWNERSHIP-DMA-FREE-S-001",
@@ -238,6 +242,7 @@
         "asl/arch/memory-model/gm-obligations.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "tests": [
@@ -260,6 +265,7 @@
         "asl/arch/state/kernel-lifecycle.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "tests": [
@@ -291,7 +297,8 @@
       ],
       "readiness_subjects": [
         "ADR-BLOCK-0013",
-        "ADR-BLOCK-0015"
+        "ADR-BLOCK-0015",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-ARCH-FEATURES-TILE-ALLOCATION-STATIC-001",
@@ -341,6 +348,7 @@
         "asl/arch/memory-model/ordering.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "tests": [
@@ -563,6 +571,7 @@
         "asl/arch/memory-model/fault-precision.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "tests": [
@@ -600,6 +609,7 @@
         "asl/arch/state/pe-execution-context.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "tests": [
@@ -635,7 +645,8 @@
       ],
       "readiness_subjects": [
         "ADR-BLOCK-0013",
-        "ADR-BLOCK-0015"
+        "ADR-BLOCK-0015",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-ARCH-FEATURES-TILE-ALLOCATION-STATIC-001",
@@ -740,7 +751,8 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0004",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION-STATIC-001"
@@ -1279,6 +1291,7 @@
         "ADR-BLOCK-0013",
         "ADR-BLOCK-0016",
         "ADR-CUBE-0014",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "tests": [
@@ -1354,6 +1367,7 @@
       ],
       "readiness_subjects": [
         "ADR-BLOCK-0016",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-SCALAR-0007"
       ],
@@ -1394,6 +1408,7 @@
         "ADR-CUBE-0018",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-NUM-0003",
         "ADR-NUM-0004",
@@ -1532,6 +1547,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0008",
         "ADR-MEM-0009",
         "ADR-STATE-0011",
@@ -1582,6 +1598,7 @@
         "ADR-GOV-0007",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-STATE-0011",
         "ADR-TILE-0003",
@@ -1621,6 +1638,7 @@
         "ADR-GOV-0007",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-STATE-0011",
         "ADR-TILE-0003",
@@ -1665,6 +1683,7 @@
       "readiness_subjects": [
         "ADR-CUBE-0014",
         "ADR-GOV-0009",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "tests": [
@@ -1694,7 +1713,8 @@
       ],
       "readiness_subjects": [
         "ADR-BLOCK-0013",
-        "ADR-BLOCK-0015"
+        "ADR-BLOCK-0015",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-BLOCK-B-IOS-LAST-USE-PUBLICATION-PIN-010",
@@ -2073,7 +2093,8 @@
         "ADR-CUBE-0012",
         "ADR-CUBE-0015",
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-STATIC-001",
@@ -3219,6 +3240,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0005"
       ],
@@ -3244,6 +3266,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0005"
       ],
@@ -3269,6 +3292,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0005"
       ],
@@ -3299,6 +3323,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0005"
       ],
@@ -3326,6 +3351,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0005"
       ],
@@ -3353,6 +3379,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0005"
       ],
@@ -3774,6 +3801,7 @@
       "readiness_subjects": [
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0008",
         "ADR-SCALAR-0004"
       ],
@@ -3815,7 +3843,8 @@
         "ADR-BLOCK-0015",
         "ADR-CUBE-0008",
         "ADR-CUBE-0009",
-        "ADR-CUBE-0018"
+        "ADR-CUBE-0018",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-BLOCK-CUBE-ACCUMULATOR-CCTRL-002",
@@ -3869,7 +3898,8 @@
         "ADR-CUBE-0004",
         "ADR-CUBE-0005",
         "ADR-CUBE-0006",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-ARCH-CUBE-RESET-001",
@@ -4064,6 +4094,7 @@
       "readiness_subjects": [
         "ADR-CUBE-0004",
         "ADR-CUBE-0005",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -4100,7 +4131,8 @@
       ],
       "readiness_subjects": [
         "ADR-CUBE-0012",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-CONTROL-ZERO-004",
@@ -4147,7 +4179,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0007",
         "ADR-CUBE-0012",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-BLOCK-B-FPATR-TRANSPOSE-011",
@@ -5224,6 +5257,7 @@
       "readiness_subjects": [
         "ADR-CUBE-0018",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -5266,7 +5300,8 @@
       ],
       "readiness_subjects": [
         "ADR-CUBE-0018",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-BLOCK-B-FPATR-ACT-004",
@@ -5329,6 +5364,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0008"
       ],
@@ -5351,7 +5387,8 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-BLOCK-B-ASSEMBLE-ENCODING-001",
@@ -5383,6 +5420,7 @@
       "readiness_subjects": [
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -6072,7 +6110,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0018",
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TMATMUL-DECODE-001",
@@ -6088,7 +6127,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0018",
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TMATMUL-ACC-DECODE-001",
@@ -6104,7 +6144,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0018",
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TMATMUL-BIAS-DECODE-001",
@@ -6120,7 +6161,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0018",
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-DECODED-CONSUMER-002",
@@ -6138,7 +6180,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0018",
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TMATMULMX-ACC-DECODE-001",
@@ -6154,7 +6197,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0018",
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TMATMULMX-BIAS-DECODE-001",
@@ -11865,7 +11909,8 @@
         "asl/scalar/amo/LD.ADD.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LD-ADD-DECODE-001",
@@ -11881,7 +11926,8 @@
         "asl/scalar/amo/LD.AND.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LD-AND-DECODE-001",
@@ -11897,7 +11943,8 @@
         "asl/scalar/amo/LD.OR.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LD-OR-DECODE-001",
@@ -11930,7 +11977,8 @@
         "asl/scalar/amo/LD.SMAX.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LD-SMAX-DECODE-001",
@@ -11946,7 +11994,8 @@
         "asl/scalar/amo/LD.SMIN.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LD-SMIN-DECODE-001",
@@ -11962,7 +12011,8 @@
         "asl/scalar/amo/LD.UMAX.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LD-UMAX-DECODE-001",
@@ -11978,7 +12028,8 @@
         "asl/scalar/amo/LD.UMIN.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LD-UMIN-DECODE-001",
@@ -11994,7 +12045,8 @@
         "asl/scalar/amo/LD.XOR.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LD-XOR-DECODE-001",
@@ -12182,7 +12234,8 @@
         "asl/scalar/amo/LR.B.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LR-B-ALIASES-001",
@@ -12198,7 +12251,8 @@
         "asl/scalar/amo/LR.D.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LR-D-ALIASES-001",
@@ -12214,7 +12268,8 @@
         "asl/scalar/amo/LR.H.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LR-H-ALIASES-001",
@@ -12230,7 +12285,8 @@
         "asl/scalar/amo/LR.W.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LR-W-ALIASES-001",
@@ -12298,7 +12354,8 @@
         "asl/scalar/amo/LW.ADD.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LW-ADD-DECODE-001",
@@ -12314,7 +12371,8 @@
         "asl/scalar/amo/LW.AND.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LW-AND-DECODE-001",
@@ -12330,7 +12388,8 @@
         "asl/scalar/amo/LW.OR.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LW-OR-DECODE-001",
@@ -12363,7 +12422,8 @@
         "asl/scalar/amo/LW.SMAX.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LW-SMAX-DECODE-001",
@@ -12379,7 +12439,8 @@
         "asl/scalar/amo/LW.SMIN.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LW-SMIN-DECODE-001",
@@ -12395,7 +12456,8 @@
         "asl/scalar/amo/LW.UMAX.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LW-UMAX-DECODE-001",
@@ -12411,7 +12473,8 @@
         "asl/scalar/amo/LW.UMIN.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LW-UMIN-DECODE-001",
@@ -12427,7 +12490,8 @@
         "asl/scalar/amo/LW.XOR.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-LW-XOR-DECODE-001",
@@ -12875,7 +12939,9 @@
       "owners": [
         "asl/scalar/amo/SB.ADD.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-GOV-0014"
+      ],
       "tests": [
         "PTO-AVS-SCALAR-SB-ADD-DECODE-001",
         "PTO-AVS-SCALAR-SB-ADD-FORMS-001",
@@ -12906,7 +12972,9 @@
       "owners": [
         "asl/scalar/amo/SB.SUB.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-GOV-0014"
+      ],
       "tests": [
         "PTO-AVS-SCALAR-SB-SUB-DECODE-001",
         "PTO-AVS-SCALAR-SB-SUB-FORMS-001",
@@ -12939,7 +13007,8 @@
         "asl/scalar/amo/SC.B.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SC-B-DECODE-001",
@@ -12955,7 +13024,8 @@
         "asl/scalar/amo/SC.D.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SC-D-DECODE-001",
@@ -12971,7 +13041,8 @@
         "asl/scalar/amo/SC.H.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SC-H-DECODE-001",
@@ -12987,7 +13058,8 @@
         "asl/scalar/amo/SC.W.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SC-W-DECODE-001",
@@ -13045,7 +13117,8 @@
         "asl/scalar/amo/SD.ADD.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SD-ADD-DECODE-001",
@@ -13061,7 +13134,8 @@
         "asl/scalar/amo/SD.AND.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SD-AND-DECODE-001",
@@ -13077,7 +13151,8 @@
         "asl/scalar/amo/SD.OR.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SD-OR-DECODE-001",
@@ -13110,7 +13185,8 @@
         "asl/scalar/amo/SD.SMAX.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SD-SMAX-DECODE-001",
@@ -13126,7 +13202,8 @@
         "asl/scalar/amo/SD.SMIN.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SD-SMIN-DECODE-001",
@@ -13141,7 +13218,9 @@
       "owners": [
         "asl/scalar/amo/SD.SUB.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-GOV-0014"
+      ],
       "tests": [
         "PTO-AVS-SCALAR-SD-SUB-DECODE-001",
         "PTO-AVS-SCALAR-SD-SUB-FORMS-001",
@@ -13175,7 +13254,8 @@
         "asl/scalar/amo/SD.UMAX.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SD-UMAX-DECODE-001",
@@ -13191,7 +13271,8 @@
         "asl/scalar/amo/SD.UMIN.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SD-UMIN-DECODE-001",
@@ -13207,7 +13288,8 @@
         "asl/scalar/amo/SD.XOR.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SD-XOR-DECODE-001",
@@ -13551,7 +13633,9 @@
       "owners": [
         "asl/scalar/amo/SH.ADD.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-GOV-0014"
+      ],
       "tests": [
         "PTO-AVS-SCALAR-SH-ADD-DECODE-001",
         "PTO-AVS-SCALAR-SH-ADD-FORMS-001",
@@ -13582,7 +13666,9 @@
       "owners": [
         "asl/scalar/amo/SH.SUB.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-GOV-0014"
+      ],
       "tests": [
         "PTO-AVS-SCALAR-SH-SUB-DECODE-001",
         "PTO-AVS-SCALAR-SH-SUB-FORMS-001",
@@ -13966,7 +14052,8 @@
         "asl/scalar/amo/SW.ADD.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SW-ADD-DECODE-001",
@@ -13982,7 +14069,8 @@
         "asl/scalar/amo/SW.AND.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SW-AND-DECODE-001",
@@ -13998,7 +14086,8 @@
         "asl/scalar/amo/SW.OR.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SW-OR-DECODE-001",
@@ -14031,7 +14120,8 @@
         "asl/scalar/amo/SW.SMAX.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SW-SMAX-DECODE-001",
@@ -14047,7 +14137,8 @@
         "asl/scalar/amo/SW.SMIN.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SW-SMIN-DECODE-001",
@@ -14062,7 +14153,9 @@
       "owners": [
         "asl/scalar/amo/SW.SUB.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-GOV-0014"
+      ],
       "tests": [
         "PTO-AVS-SCALAR-SW-SUB-DECODE-001",
         "PTO-AVS-SCALAR-SW-SUB-FORMS-001",
@@ -14096,7 +14189,8 @@
         "asl/scalar/amo/SW.UMAX.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SW-UMAX-DECODE-001",
@@ -14112,7 +14206,8 @@
         "asl/scalar/amo/SW.UMIN.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SW-UMIN-DECODE-001",
@@ -14128,7 +14223,8 @@
         "asl/scalar/amo/SW.XOR.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SW-XOR-DECODE-001",
@@ -14144,7 +14240,8 @@
         "asl/scalar/amo/SWAPB.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SWAPB-ALIASES-001",
@@ -14160,7 +14257,8 @@
         "asl/scalar/amo/SWAPD.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SWAPD-ALIASES-001",
@@ -14176,7 +14274,8 @@
         "asl/scalar/amo/SWAPH.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SWAPH-ALIASES-001",
@@ -14192,7 +14291,8 @@
         "asl/scalar/amo/SWAPW.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-SCALAR-SWAPW-ALIASES-001",
@@ -14241,7 +14341,9 @@
       "owners": [
         "asl/scalar/sys/SYNC.CORE.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-GOV-0014"
+      ],
       "tests": [
         "PTO-AVS-SCALAR-SYNC-CORE-DECODE-001",
         "PTO-AVS-SCALAR-SYNC-CORE-NEAR-NEIGHBORS-001",
@@ -14408,6 +14510,7 @@
       "readiness_subjects": [
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0013"
       ],
       "tests": [
@@ -14815,6 +14918,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -14832,6 +14936,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -14854,6 +14959,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -14873,6 +14979,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -14890,6 +14997,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -14907,6 +15015,7 @@
       "readiness_subjects": [
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0013"
       ],
       "tests": [
@@ -14929,6 +15038,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -14948,6 +15058,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -14967,6 +15078,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -14982,6 +15094,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -14997,6 +15110,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15012,6 +15126,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15027,6 +15142,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15042,6 +15158,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15058,6 +15175,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15073,6 +15191,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15088,6 +15207,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15103,6 +15223,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15118,6 +15239,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15134,6 +15256,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15150,6 +15273,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15166,6 +15290,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15183,6 +15308,7 @@
       "readiness_subjects": [
         "ADR-CUBE-0017",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0008",
         "ADR-TILE-0008"
       ],
@@ -15210,6 +15336,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15229,6 +15356,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15247,6 +15375,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15267,6 +15396,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15286,6 +15416,7 @@
       "readiness_subjects": [
         "ADR-GOV-0004",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15312,7 +15443,8 @@
         "asl/tile/elementwise-tile-tile/arithmetic/TFMA.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-TILE-CUBE-ELEMENTWISE-DECODED-001",
@@ -15454,7 +15586,9 @@
       "owners": [
         "asl/tile/tile-scalar-and-immediate/arithmetic/TLEA.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-GOV-0014"
+      ],
       "tests": [
         "PTO-AVS-TILE-TLEA-DECODED-001",
         "PTO-AVS-TILE-TLEA-DECODED-UNSIGNED-001",
@@ -15472,6 +15606,7 @@
       "readiness_subjects": [
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0013"
       ],
       "tests": [
@@ -15502,6 +15637,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15520,7 +15656,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0018",
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-TILE-TMATMUL-EXEC-001",
@@ -15536,7 +15673,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0018",
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-TILE-TMATMUL-ACC-EXEC-001",
@@ -15552,7 +15690,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0018",
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-TILE-TMATMUL-BIAS-EXEC-001",
@@ -15568,7 +15707,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0018",
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-BLOCK-TMATMUL-MX-NOSCALE-001",
@@ -15586,7 +15726,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0018",
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-TILE-TMATMUL-MX-ACC-EXEC-001",
@@ -15602,7 +15743,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0018",
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-TILE-TMATMUL-MX-BIAS-EXEC-001",
@@ -15617,6 +15759,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15638,6 +15781,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15654,6 +15798,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15675,6 +15820,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15691,6 +15837,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0009",
+        "ADR-GOV-0014",
         "ADR-TILE-0008",
         "ADR-TILE-0013"
       ],
@@ -15707,6 +15854,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15724,6 +15872,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15740,6 +15889,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15754,7 +15904,8 @@
         "asl/tile/elementwise-tile-tile/logical/TNOT.asl"
       ],
       "readiness_subjects": [
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-TILE-TNOT-ALIAS-001",
@@ -15769,6 +15920,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15786,6 +15938,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15803,6 +15956,7 @@
       "readiness_subjects": [
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0013"
       ],
       "tests": [
@@ -15818,6 +15972,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0009",
+        "ADR-GOV-0014",
         "ADR-TILE-0013"
       ],
       "tests": [
@@ -15835,6 +15990,7 @@
       "readiness_subjects": [
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0013"
       ],
       "tests": [
@@ -15852,6 +16008,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15870,6 +16027,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15885,6 +16043,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15903,6 +16062,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -15920,6 +16080,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15935,6 +16096,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15952,6 +16114,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15967,6 +16130,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15982,6 +16146,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -15997,6 +16162,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -16013,6 +16179,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -16028,6 +16195,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -16043,6 +16211,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -16058,6 +16227,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -16073,6 +16243,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -16091,6 +16262,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -16108,6 +16280,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -16123,6 +16296,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0012"
       ],
       "tests": [
@@ -16138,6 +16312,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -16171,6 +16346,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -16189,6 +16365,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -16207,6 +16384,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -16224,6 +16402,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -16240,6 +16419,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -16257,6 +16437,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -16273,6 +16454,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0009",
+        "ADR-GOV-0014",
         "ADR-TILE-0013"
       ],
       "tests": [
@@ -16289,6 +16471,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -16309,6 +16492,7 @@
       "readiness_subjects": [
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0013"
       ],
       "tests": [
@@ -16331,6 +16515,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -16348,6 +16533,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -16364,6 +16550,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0009",
+        "ADR-GOV-0014",
         "ADR-TILE-0013"
       ],
       "tests": [
@@ -16388,6 +16575,7 @@
       "readiness_subjects": [
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0013"
       ],
       "tests": [
@@ -16403,6 +16591,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -16420,6 +16609,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -16491,6 +16681,7 @@
         "asl/tile/model/legality/dtype-layout.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -17175,6 +17366,7 @@
         "asl/arch/programming-model/execution-context.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007",
         "ADR-STATE-0002",
         "ADR-STATE-0003",
@@ -17196,6 +17388,7 @@
         "asl/tile/model/state/local-registers.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-SCALAR-0007",
         "ADR-STATE-0002",
@@ -17230,6 +17423,7 @@
         "asl/scalar/amo/SB.ADD.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-MEM-0005"
       ],
       "tests": []
@@ -17241,6 +17435,7 @@
         "asl/scalar/amo/SB.SUB.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-MEM-0005"
       ],
       "tests": []
@@ -17268,6 +17463,7 @@
         "asl/scalar/amo/SD.SUB.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-MEM-0005"
       ],
       "tests": []
@@ -17570,6 +17766,7 @@
         "asl/scalar/amo/SH.ADD.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-MEM-0005"
       ],
       "tests": []
@@ -17608,6 +17805,7 @@
         "asl/scalar/amo/SH.SUB.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-MEM-0005"
       ],
       "tests": []
@@ -18027,6 +18225,7 @@
         "asl/scalar/amo/SW.SUB.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-MEM-0005"
       ],
       "tests": []
@@ -18175,6 +18374,7 @@
         "asl/scalar/sys/SYNC.CORE.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "tests": [
@@ -18228,6 +18428,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0008",
         "ADR-SCALAR-0004",
         "ADR-TILE-0006",
@@ -18252,6 +18453,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0008",
         "ADR-SCALAR-0004",
         "ADR-TILE-0006",
@@ -18311,6 +18513,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010"
       ],
@@ -18335,6 +18538,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -18377,6 +18581,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -18404,6 +18609,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -18425,6 +18631,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -18510,6 +18717,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -18613,6 +18821,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -18630,6 +18839,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -18647,6 +18857,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -18664,6 +18875,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -18689,6 +18901,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0004",
         "ADR-NUM-0006",
         "ADR-NUM-0007",
@@ -18782,6 +18995,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -18801,6 +19015,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -18836,6 +19051,7 @@
       ],
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -19063,6 +19279,7 @@
         "asl/scalar/model/sys/semantics.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-STATE-0008"
       ],
       "tests": [
@@ -19112,6 +19329,7 @@
       "readiness_subjects": [
         "ADR-CUBE-0017",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008",
         "ADR-TILE-0009",
         "ADR-TILE-0010"
@@ -19179,6 +19397,7 @@
         "asl/tile/model/legality/execution-mask-source-schema.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -19245,6 +19464,7 @@
         "asl/tile/model/execution/expansion.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0008",
         "ADR-TILE-0012"
       ],
@@ -19260,6 +19480,7 @@
         "asl/tile/model/execution/expdif.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -19273,6 +19494,7 @@
         "asl/tile/model/execution/rearrangement.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "tests": [
@@ -19347,6 +19569,7 @@
         "asl/tile/tile-scalar-and-immediate/arithmetic/TLEA.asl"
       ],
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0009"
       ],
       "tests": [
@@ -19398,6 +19621,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0006",
         "ADR-MEM-0007",
@@ -19454,6 +19678,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0005"
       ],
       "tests": [
@@ -19477,6 +19702,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0005"
       ],
       "tests": [
@@ -19503,6 +19729,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0005"
       ],
       "tests": [
@@ -19557,6 +19784,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0005"
       ],
       "tests": [
@@ -19582,6 +19810,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0005"
       ],
       "tests": [
@@ -19607,6 +19836,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0005"
       ],
       "tests": [
@@ -19877,7 +20107,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0013",
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-BLOCK-TPACK-GPR-MASK-MERGE-DECODED-002",
@@ -19895,7 +20126,8 @@
       ],
       "readiness_subjects": [
         "ADR-CUBE-0013",
-        "ADR-GOV-0009"
+        "ADR-GOV-0009",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-TILE-EXECUTION-MASK-PERMUTE-SHUF-DECODED-002",
@@ -20004,6 +20236,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -20023,6 +20256,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -20045,6 +20279,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -20065,6 +20300,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -20096,6 +20332,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -20119,6 +20356,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -20142,6 +20380,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -20166,6 +20405,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -20187,6 +20427,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -20207,6 +20448,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -20230,6 +20472,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -20250,6 +20493,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -20267,6 +20511,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -20284,6 +20529,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -20301,6 +20547,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -20374,6 +20621,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0008",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -20414,6 +20662,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -20508,7 +20757,8 @@
       ],
       "readiness_subjects": [
         "ADR-CUBE-0013",
-        "ADR-GOV-0009"
+        "ADR-GOV-0009",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-TILE-EXECUTION-MASK-PERMUTE-SHUF-DECODED-002",
@@ -20590,6 +20840,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0008",
         "ADR-SCALAR-0004",
         "ADR-TILE-0006",
@@ -20610,6 +20861,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0008",
         "ADR-SCALAR-0004",
         "ADR-TILE-0006",
@@ -20631,6 +20883,7 @@
         "ADR-BLOCK-0007",
         "ADR-GOV-0004",
         "ADR-GOV-0005",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010"
       ],
@@ -20649,7 +20902,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0013",
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "tests": [
         "PTO-AVS-BLOCK-EXECUTION-MASK-MERGE-CELLWORD-OUTPUT-003",
@@ -21736,7 +21990,7 @@
     "docs/arch/memory-model/atomicity.md": "3c841dfbc25e9bbc6df7dac8137e6e2f95b90a121ec0d5d193a3d0b5fdba4d67",
     "docs/arch/memory-model/fault-precision.md": "e9f13cde946c623eb0a9cfef43a5513abfce44f6b266f2b11ac7349076013c1f",
     "docs/arch/memory-model/global-memory-access.md": "8d73f4b551245f46e8fc1a4f939505d01e2fd7a8c4df6528e21e402175b87b67",
-    "docs/arch/memory-model/gm-obligations.md": "d334983493da3422ac4c7ceeb3c902f518248ee2939567f0e5ef660818b240db",
+    "docs/arch/memory-model/gm-obligations.md": "4672bdb4ab732a255036c09102f7f1bcb24ddb779a37a16a72e6cffa1fed0433",
     "docs/arch/memory-model/instruction-fetch.md": "99e3d3942db1d54a1141bc39c89a398ca4100d0a7e29d17787bd6201eee9d6c2",
     "docs/arch/memory-model/memory-events.md": "09a2a882988cf8934942530f54bfa5c64d311a32fb74a49d8b6b73d9279fbec0",
     "docs/arch/memory-model/ordering.md": "a0df6ecb59e04efd99830bad013ad841e8eeaf675ca74f4571fa38e3906bbca6",
@@ -21750,12 +22004,12 @@
     "docs/arch/programming-model/scalar-registers.md": "39c408f98c3c3726776ece030012bfa8a14d9b7273412d807ffb945b59f45fd9",
     "docs/arch/programming-model/shared-tile-registers.md": "237cc55bb75644b2c562f0fce7eb7f96de89ec221fec3b786344713d6c46ab35",
     "docs/arch/programming-model/tile-registers.md": "93e2cffab8050b30e112d3371f37e950e9bff9e8373cb06172cf6cab51a501ef",
-    "docs/arch/state/core-synchronization.md": "1f23701fdb2c36edd7f1162962fb399475f0761c1e7533056b8e54c4bc8840ce",
+    "docs/arch/state/core-synchronization.md": "213103de8013ffa95f1f545ccacbf5d6659c1c4f482e3da0d982c74c8c01c390",
     "docs/arch/state/definedness.md": "0c592e7785591408293173237e5ae537b04d33f1c15de2a02985605e8a0b8892",
-    "docs/arch/state/kernel-lifecycle.md": "9b92faf00008ef560a91937088d45fede26a1a625e6590706b7a0dfd1d858a74",
-    "docs/arch/state/local-payload-generation.md": "e60d0b47dc77d03057a9df6c2a064166ad1366afa47b806e38d6e9b1e3b235c5",
+    "docs/arch/state/kernel-lifecycle.md": "0878db470445c3e7c88aaf7915a7f3148d7b48eb9d4e584ae5d815824661cac0",
+    "docs/arch/state/local-payload-generation.md": "e2c7cf72c098774fb518d0f8168a651f9b60f2d220009281adf3b0a95418708d",
     "docs/arch/state/numeric-status.md": "2bc1485eab64147a553ddb269fb3e520dd0b63dc7c31614996dc32c53b57d06f",
-    "docs/arch/state/pe-execution-context.md": "027f18e5cacfd93b3c3ccd767040d4a3e0e39b958fbe1d8d832f4e515d930163",
+    "docs/arch/state/pe-execution-context.md": "69586d85be83c5bec6067eb1a4e569636bf2d132d2becc4fff94a6cb6507b8a9",
     "docs/arch/state/program-counter.md": "4a404e9aef444c6e1ea3a1cbb273eeafaee3d2f00197613718dcd3b305375140",
     "docs/arch/state/tile-descriptor.md": "553189c10a9b6ff1ca07f4f54865f6dabeccb7d05a48b6cae72ecd107bc15fc0",
     "docs/arch/state/trap-context.md": "d47e090d96e3718aa5b6260b431ef051793aa0e5e37e35e27a182b2d865d8b69",
@@ -21858,7 +22112,7 @@
     "docs/block/model/dispatch/expansion-schema.md": "6710c6a738d7a88550b8b2ec03aa8a5d37ba8615a425de2c82ec4ba780668ae9",
     "docs/block/model/dispatch/expdif-schema.md": "ead0e79bb9672a9054380ed4990a64be25765ef6372d66a9d9d27ce626b74595",
     "docs/block/model/dispatch/generation-schema.md": "a03da15f04299c836cc635cf6c67b3561910edcbc43870667395aae28cd7026b",
-    "docs/block/model/dispatch/gm-obligation-dispatch.md": "03493b6ce1d6d2d29ff95e105ef59323f0db362bbb9a04741b96dbeb6fd4ec6e",
+    "docs/block/model/dispatch/gm-obligation-dispatch.md": "92203a8c6c6a0445d34123cb7916c506288498daf5bf6d2be5c06b4785aaec2c",
     "docs/block/model/dispatch/lea-schema.md": "38dd2b3562f26f47f7caeee510bb75a666646af3af6db40a8d211609f6ca4f0b",
     "docs/block/model/dispatch/matrix-scale.md": "ace0b903395ab0bc11f7fb6acd195f35885c50a8b42fb2deef64bb697fd03a17",
     "docs/block/model/dispatch/numeric-control.md": "249bba1dbaa9ccd2202580cd8d405022318f459c4f5ca453f3a4b10d25922490",
@@ -21897,13 +22151,13 @@
     "docs/block/model/memory/timg2col-gm.md": "569cdece4d949659acdd37a8aba04a6311d78748633c0c4cac2b8de29ccb7c88",
     "docs/block/model/memory/weight-to-shared-gm.md": "9eec952da21d1fb7074d704935d5bcaf978a43b3b1d7006d9e9c0162bb7512d6",
     "docs/block/model/operands/local-generation-cube.md": "d1426984dea76f2f9fe56d11c329d2d4402a71f228910efbe9c8632fd970a7f0",
-    "docs/block/model/operands/local-generation-squash.md": "60662f2464d832cef45816bc7c917290bf7573bc09bfa8246cde582101c2f94e",
+    "docs/block/model/operands/local-generation-squash.md": "0e3233cd7d3825d043677f4d69ca7e28226cfaa0cf29bfb7c752ebb88acc0f90",
     "docs/block/model/operands/local-generation.md": "be7e7e37f4ac1ebc9d8c2644caec2333d4c7b8354e9dd92df0c0ad938c7b3049",
     "docs/block/model/operands/portable-carriers.md": "ccf0536199487d748160e0bb4a2c6c053f61e3ecbb4aeffcb7fc725bcbc01268",
     "docs/block/model/operands/range-modifiers.md": "7cbdf94b560734247511366190dc73a6c9c6d4fc20071049a7515b3e5a03f4b3",
     "docs/block/model/operands/scalar-bindings.md": "39e5ccd0918e2b38a0311bd4281518d2af7a50bf8197b35571070a391db53d2b",
     "docs/block/model/operands/shared-bindings.md": "65640c9e135111c5b8f0ec18c63c159eb411d38acb1078592b3a1066d14206a5",
-    "docs/block/model/operands/shared-generation-pe-requests.md": "2a7c0774e596b7bc83ae8118685e18b5d61afb42933e69c579d687ba64dd0f00",
+    "docs/block/model/operands/shared-generation-pe-requests.md": "6a95b8dbd210d037ccc86cdca74d0060913f38693edf71b5aba8cf91e39d5219",
     "docs/block/model/operands/shared-generation.md": "063c47df06c7f8b390131a531d8e0333fc337b66186ea581b29908bf4c50ac0b",
     "docs/block/model/operands/subview-descriptor.md": "18214b3a178ff56210f04611632facc0febdcc4cf905c3e21bd4c355ca9e5bfd",
     "docs/block/model/operands/tile-bindings.md": "3548e109bbe469a419ed3d5f34ad92c998c67724a8031701a2ebdd78a1a2430d",
@@ -21918,7 +22172,7 @@
     "docs/block/model/state/control-state.md": "8ecbdc659f02dbf2c18e60a152c7de28eb1fd3046070846f21c50b3b58d73252",
     "docs/block/model/state/descriptor-state.md": "db0d04255c4e9c93f04d5dd66f4a6fc13449b5c44ed3013c7fbd1279e36663d8",
     "docs/block/model/state/shared-generation-state.md": "03f9f80562cba0a7ce169ba11be8671f94380e8309a4205244f9d473c753e8db",
-    "docs/block/model/state/source-lifetime.md": "bf93c2c3b51eb9cc9bbd1c6243d1377619cadeb5ff7204abfcfbd8788d495525",
+    "docs/block/model/state/source-lifetime.md": "ce1699c8cea313817ab4f0cfa0735df713869bb0364d53771fc8aa5a6900bdff",
     "docs/block/model/state/types.md": "9bf62feb3b7af6a1595cc0d1a3631e9dfc71ffc7936a68cb08811884a1fcf473",
     "docs/block/operands/B.ASSEMBLE.md": "bafc4a596cc59766cf39d80ac2267f53669229ddda77458e68a9afb1456fb43b",
     "docs/block/operands/B.IOR.md": "de5579e1b73c8db84c8e843f32d223030e97304bd5df0a4539257c024e81061c",
@@ -22244,8 +22498,8 @@
     "docs/scalar/amo/LW.UMAX.md": "b7a94a0546c6e9325bc1d43f937aeb63b340770c7fc41ca0812fd8af4656207f",
     "docs/scalar/amo/LW.UMIN.md": "771dd749e3dcdbc11ac1fdbf8728286cbea916af48ffdb538ee402fa114b2054",
     "docs/scalar/amo/LW.XOR.md": "e766b8cec6c8f108476e1625b8bf40bb33665555553083eda1b6ee19b6dfd383",
-    "docs/scalar/amo/SB.ADD.md": "c6aefb2713b44e596f181badf58a6c118894dd289ee861a5f82424fa876e4532",
-    "docs/scalar/amo/SB.SUB.md": "c9af9890f20a881153e53ff23d0f7375e09d338519562810c53e8cbd293bedf3",
+    "docs/scalar/amo/SB.ADD.md": "738745d7033d0e30e3821cd19c8c286ff1cf876bc2adb035f900044b3dbd3f21",
+    "docs/scalar/amo/SB.SUB.md": "c603ff614c83b55549cc28176190699524ed8bf615306a2b53f26816c4053502",
     "docs/scalar/amo/SC.B.md": "645c343e20b80b2fc27019ae275687f836134f190e70fd56b2a0a7ffe252bd44",
     "docs/scalar/amo/SC.D.md": "6e308c6f19ebb34ae4d7a04cad3c45a6c1a634af95e4222c54c519705b221437",
     "docs/scalar/amo/SC.H.md": "04f44818348eb9462a3d37f98ea7866ad98ea7a8b9c42d3e56d5e7833f96acca",
@@ -22255,18 +22509,18 @@
     "docs/scalar/amo/SD.OR.md": "e27cf2ea3c0130b0cacc6a86909e6666b6f775096cc38d5bd955ba8189896a80",
     "docs/scalar/amo/SD.SMAX.md": "9b2c496d63932fed3ee79205a114b5bee59c5b15cb9af5c0699857e0a8d4f9ab",
     "docs/scalar/amo/SD.SMIN.md": "459ae11a7f2fbba05462228150985eae2bb669045beb5115d73db9f98b9b064d",
-    "docs/scalar/amo/SD.SUB.md": "aeafd1bb6bb45ba6135537f03693e442e769167c335fee98bfcfff0952d436a6",
+    "docs/scalar/amo/SD.SUB.md": "e7151a35d39b787e0f9068de63743f7a573033f38b7b4b21f02e117148833f36",
     "docs/scalar/amo/SD.UMAX.md": "a4827d42707245f5fd3b4db8ae95e12e0a62ffabc3a168012c3f18c3b9dd7059",
     "docs/scalar/amo/SD.UMIN.md": "bdd54669e195aeecb0010b1f05681b5c130dc551c6017ed153adb3c4b2deb762",
     "docs/scalar/amo/SD.XOR.md": "54eb11156bfa570ffda08a85b304b807a2fbac06121751bdff65af46cfcc969d",
-    "docs/scalar/amo/SH.ADD.md": "c632e77a29504c1a65f31ffd7b76860cf7f7e9b48043e8ff391a51e117b95579",
-    "docs/scalar/amo/SH.SUB.md": "c46733198d7455d1c6494cfadd981bff68a8fe5a7cbb2e2c4d43f91a5dcc1609",
+    "docs/scalar/amo/SH.ADD.md": "3745cd7d6f6c42de04ed162108c238bc4cbe9d429b5b0eaa579f6526d372a891",
+    "docs/scalar/amo/SH.SUB.md": "77aa65952e2d708a8f8dbb14acc7a4ff76df7032eb842d2a6307b799e900b37f",
     "docs/scalar/amo/SW.ADD.md": "5fe0afb8761c1bb424642117f5ed3a7c1e88b2db2a5a9eda3ac39633326a0d0e",
     "docs/scalar/amo/SW.AND.md": "5e05623bb6fa6d976c6b2d8da8a4eff9f78ebb4a4cfd33db843d561d78cd0f0e",
     "docs/scalar/amo/SW.OR.md": "cab1e9fae828de8111d2d465c57897a78674910e9548d5972fda9aa6eba876d0",
     "docs/scalar/amo/SW.SMAX.md": "fc51d8c647f6e18fc2acae0460978160d194b679aa5e9bcc5c73aa06ce66a8c9",
     "docs/scalar/amo/SW.SMIN.md": "b2d8de45ff7da3f0fe40a5b6c1a3541128b5eead6889628fdae01bd0f9c3e82a",
-    "docs/scalar/amo/SW.SUB.md": "ba071bc082b1e86af25441c6dc3fdc2273149822fd3c151452851ed2b3ca20d7",
+    "docs/scalar/amo/SW.SUB.md": "443ae2aa7a2014f384ad7077787c18ad88433040317d7beb58aaa676b5c7d285",
     "docs/scalar/amo/SW.UMAX.md": "06c85cbfe0c623913cd2f75ae97d15e318ea7b98e8436290cbbf372306d2a1a6",
     "docs/scalar/amo/SW.UMIN.md": "5e02be83a271c46f736b76100da5917f37412b99bb15914da8f5805b863a94ca",
     "docs/scalar/amo/SW.XOR.md": "fd706a8dc857ce9b507d18b02e32bfc6c19a926a9990f5e3ad968b4e5be18b03",
@@ -22414,7 +22668,7 @@
     "docs/scalar/sys/SSRGET.md": "5ffbd95f175df2b8c2ad66e9b486cfd1caa84bf7263f93e591b9e82808d8f779",
     "docs/scalar/sys/SSRSET.md": "15ee45df964cb44491acdf595460bc46e5cdd6a072be26e75b5d1f61ba0ec1f3",
     "docs/scalar/sys/SSRSWAP.md": "c7502826d6d132ad69f37849155f9394949d5bc53f898be43b457b9e5b945753",
-    "docs/scalar/sys/SYNC.CORE.md": "b63070cc3959b73d1340e8621e51f1ccdfc33b0885559682835f6c11dfde9023",
+    "docs/scalar/sys/SYNC.CORE.md": "57b886991bf4b89b79d4b55b43b66232f4ecdbcb5f47dede42854f6f04f15e2a",
     "docs/scalar/sys/TLB.IA.md": "446c258c8767c445f3e637663cd0619fe01e4a5a0a809cf991459eeeba0ddb6e",
     "docs/scalar/sys/TLB.IALL.md": "4370748498e7ce8594a0a5d08ab1aec3cf2517e2677fae7e3777e699f8a398a1",
     "docs/scalar/sys/TLB.IAV.md": "9d12027c4baba489ca93b732f3aeb54cc990115065eabead38507ba9fb1ce01b",
@@ -22620,7 +22874,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "c1332aa895d5a70170b6f193674ad97371cbdd4314f5336de4ce4eb703d4d484",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "4fdb0facff519fecde8ba33ed966ed54c04b04c3f5f344024b2ce1a859434d67",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "c2bba4aad8073962fc18443147a53b3492eee9629f7a5975591087d1d8834e67",
-    "spec/evidence/adr-index.json": "c411548e75ab5d8a80207af4e7843b6ce98a3e05756a21e4c7c968cea66df951",
+    "spec/evidence/adr-index.json": "d723f28afc6a6962de3845b68ad58bdbd2f0687b0becd8d42926c8ff3d1ef62b",
     "spec/evidence/instruction-contract-closure.json": "6c6cdc48026ec2b9d861e02ed80e5ce8a4739de25bf5769785f226361bcafff5",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6c18bfdff0279b6d4fbaf3cb3c8e1ee111b4d5e82e1688136b88be6fa7902ba3",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -71173,6 +71427,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0011",
         "ADR-SCALAR-0007"
       ],
@@ -71191,7 +71446,9 @@
       "documentation": "docs/arch/data-types/memory-operations.md",
       "id": "PTO-ARCH-DATA-TYPES-MEMORY-OPERATIONS",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-GOV-0014"
+      ],
       "semantic_tests": [],
       "source": "asl/arch/data-types/memory-operations.asl",
       "surface": "arch",
@@ -71292,6 +71549,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-STATE-0008"
       ],
       "semantic_tests": [
@@ -71341,6 +71599,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0016",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0011",
         "ADR-SCALAR-0007",
         "ADR-STATE-0005",
@@ -71367,6 +71626,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0012",
         "ADR-GOV-0001",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [
@@ -71523,7 +71783,8 @@
         "ADR-BLOCK-0015",
         "ADR-CUBE-0010",
         "ADR-GOV-0009",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "semantic_tests": [
         "PTO-AVS-ARCH-TESTTILEALLOCATIONSTATE-STATE-TRANSITION-001",
@@ -71594,6 +71855,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0011",
         "ADR-SCALAR-0007"
@@ -71639,6 +71901,7 @@
       "id": "PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [
@@ -71703,6 +71966,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0011",
         "ADR-SCALAR-0007"
@@ -71724,6 +71988,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0011",
         "ADR-SCALAR-0007"
@@ -71795,6 +72060,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0010",
+        "ADR-GOV-0014",
         "ADR-MEM-0007",
         "ADR-SCALAR-0006",
         "ADR-TILE-0007",
@@ -71856,6 +72122,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [],
@@ -71877,6 +72144,7 @@
         "ADR-BLOCK-0015",
         "ADR-CUBE-0010",
         "ADR-GOV-0007",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [],
@@ -71896,6 +72164,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0011",
         "ADR-SCALAR-0007",
         "ADR-STATE-0002",
@@ -71967,6 +72236,7 @@
       "id": "PTO-ARCH-PROGRAMMING-MODEL-SCALAR-REGISTERS",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007",
         "ADR-STATE-0002"
       ],
@@ -72033,6 +72303,7 @@
       "id": "PTO-ARCH-STATE-CORE-SYNCHRONIZATION",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [
@@ -72083,6 +72354,7 @@
       "id": "PTO-ARCH-STATE-KERNEL-LIFECYCLE",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [
@@ -72109,7 +72381,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-BLOCK-0013",
-        "ADR-BLOCK-0015"
+        "ADR-BLOCK-0015",
+        "ADR-GOV-0014"
       ],
       "semantic_tests": [],
       "source": "asl/arch/state/local-payload-generation.asl",
@@ -72150,6 +72423,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0013",
         "ADR-BLOCK-0015",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007",
         "ADR-STATE-0008"
       ],
@@ -72222,6 +72496,7 @@
         "ADR-GOV-0001",
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-SCALAR-0004",
@@ -72288,6 +72563,7 @@
         "ADR-GOV-0001",
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-NUM-0001",
         "ADR-NUM-0002",
@@ -72469,6 +72745,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-NUM-0003",
         "ADR-NUM-0004",
@@ -72566,6 +72843,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0012",
         "ADR-STATE-0011",
         "ADR-TILE-0004"
@@ -74105,6 +74383,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0005"
       ],
@@ -74141,6 +74420,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0005"
       ],
@@ -74181,6 +74461,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0005"
       ],
@@ -74236,6 +74517,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0005"
       ],
@@ -74274,6 +74556,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0005"
       ],
@@ -74312,6 +74595,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0005"
       ],
@@ -75069,6 +75353,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007",
         "ADR-STATE-0011",
         "ADR-TILE-0004"
@@ -75114,6 +75399,7 @@
         "ADR-CUBE-0013",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
@@ -75146,6 +75432,7 @@
       "id": "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
@@ -75180,6 +75467,7 @@
         "ADR-GOV-0007",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0004",
         "ADR-TILE-0008"
@@ -75218,6 +75506,7 @@
         "ADR-BLOCK-0012",
         "ADR-BLOCK-0013",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -75317,6 +75606,7 @@
         "ADR-CUBE-0018",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0012",
         "ADR-TILE-0004"
       ],
@@ -75507,6 +75797,7 @@
         "ADR-BLOCK-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0004",
         "ADR-TILE-0008"
@@ -75560,6 +75851,7 @@
       "readiness_subjects": [
         "ADR-GOV-0004",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
@@ -75596,6 +75888,7 @@
         "ADR-CUBE-0017",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0012",
         "ADR-TILE-0004",
         "ADR-TILE-0008",
@@ -75623,6 +75916,7 @@
       "id": "PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
@@ -75668,6 +75962,7 @@
         "ADR-BLOCK-0005",
         "ADR-BLOCK-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -75739,6 +76034,7 @@
         "ADR-BLOCK-0005",
         "ADR-BLOCK-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0008",
         "ADR-TILE-0010"
@@ -75765,6 +76061,7 @@
       "id": "PTO-BLOCK-MODEL-DISPATCH-GM-OBLIGATION",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [
@@ -75787,6 +76084,7 @@
       "id": "PTO-BLOCK-MODEL-DISPATCH-LEA-SCHEMA",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0009"
       ],
       "semantic_tests": [],
@@ -75806,7 +76104,8 @@
       "id": "PTO-BLOCK-MODEL-DISPATCH-MATRIX-SCALE",
       "mnemonic": null,
       "readiness_subjects": [
-        "ADR-CUBE-0012"
+        "ADR-CUBE-0012",
+        "ADR-GOV-0014"
       ],
       "semantic_tests": [],
       "source": "asl/block/model/dispatch/matrix-scale.asl",
@@ -75847,6 +76146,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
       ],
@@ -75874,6 +76174,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -75903,6 +76204,7 @@
         "ADR-BLOCK-0005",
         "ADR-BLOCK-0019",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -75941,6 +76243,7 @@
         "ADR-CUBE-0015",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
@@ -75982,6 +76285,7 @@
         "ADR-CUBE-0016",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007",
         "ADR-TILE-0004"
       ],
@@ -76063,6 +76367,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0005",
         "ADR-BLOCK-0009",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007",
         "ADR-TILE-0004"
       ],
@@ -76114,6 +76419,7 @@
         "ADR-BLOCK-0012",
         "ADR-CUBE-0017",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0008",
         "ADR-TILE-0004",
         "ADR-TILE-0008"
@@ -76140,6 +76446,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [],
@@ -76166,6 +76473,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0004",
         "ADR-TILE-0008",
@@ -76189,6 +76497,7 @@
       "id": "PTO-BLOCK-MODEL-DISPATCH-TILE-INSTRUCTION-OPERANDS",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [],
@@ -76212,6 +76521,7 @@
         "ADR-BLOCK-0012",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0008",
         "ADR-TILE-0009",
@@ -76247,6 +76557,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0004",
         "ADR-TILE-0008",
@@ -76282,6 +76593,7 @@
         "ADR-BLOCK-0016",
         "ADR-BLOCK-0018",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [
@@ -76336,6 +76648,7 @@
         "ADR-BLOCK-0012",
         "ADR-BLOCK-0016",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0008"
       ],
@@ -76365,6 +76678,7 @@
         "ADR-BLOCK-0015",
         "ADR-BLOCK-0016",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007",
         "ADR-TILE-0004"
       ],
@@ -76402,6 +76716,7 @@
         "ADR-CUBE-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004",
         "ADR-TILE-0008"
       ],
@@ -76439,6 +76754,7 @@
         "ADR-BLOCK-0012",
         "ADR-BLOCK-0016",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0004",
         "ADR-TILE-0008"
@@ -76464,6 +76780,7 @@
         "ADR-BLOCK-0012",
         "ADR-BLOCK-0016",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0004",
         "ADR-TILE-0008"
@@ -76489,6 +76806,7 @@
         "ADR-BLOCK-0012",
         "ADR-BLOCK-0016",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0004",
         "ADR-TILE-0008"
@@ -76518,6 +76836,7 @@
         "ADR-BLOCK-0005",
         "ADR-BLOCK-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0004",
         "ADR-TILE-0008"
@@ -76542,6 +76861,7 @@
         "ADR-BLOCK-0005",
         "ADR-BLOCK-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0004",
         "ADR-TILE-0008"
@@ -76612,6 +76932,7 @@
         "ADR-BLOCK-0012",
         "ADR-BLOCK-0019",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [
@@ -76769,6 +77090,7 @@
         "ADR-BLOCK-0016",
         "ADR-CUBE-0007",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-SCALAR-0007",
         "ADR-TILE-0004",
@@ -76839,7 +77161,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-BLOCK-0016",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-DECODED-CONSUMER-002",
@@ -76867,6 +77190,7 @@
       "id": "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-SQUASH",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [
@@ -76932,6 +77256,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-SCALAR-0007",
         "ADR-TILE-0008"
@@ -76964,6 +77289,7 @@
         "ADR-BLOCK-0017",
         "ADR-GOV-0007",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [
@@ -76989,6 +77315,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-BLOCK-0005",
+        "ADR-GOV-0014",
         "ADR-STATE-0011",
         "ADR-TILE-0004",
         "ADR-TILE-0008"
@@ -77016,6 +77343,7 @@
         "ADR-BLOCK-0016",
         "ADR-CUBE-0010",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-STATE-0011",
         "ADR-TILE-0004"
       ],
@@ -77036,6 +77364,7 @@
       "id": "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [
@@ -77083,6 +77412,7 @@
         "ADR-CUBE-0015",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [
@@ -77120,6 +77450,7 @@
         "ADR-CUBE-0011",
         "ADR-CUBE-0015",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-SCALAR-0007"
       ],
@@ -77790,6 +78121,7 @@
         "ADR-BLOCK-0017",
         "ADR-CUBE-0008",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-STATE-0011",
         "ADR-TILE-0004"
@@ -77885,6 +78217,7 @@
         "ADR-BLOCK-0015",
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0004"
       ],
       "semantic_tests": [],
@@ -78002,6 +78335,7 @@
         "ADR-BLOCK-0016",
         "ADR-BLOCK-0019",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007",
         "ADR-STATE-0002",
         "ADR-STATE-0003",
@@ -78035,6 +78369,7 @@
         "ADR-BLOCK-0016",
         "ADR-CUBE-0007",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-SCALAR-0007",
         "ADR-STATE-0002",
@@ -78065,6 +78400,7 @@
         "ADR-BLOCK-0013",
         "ADR-BLOCK-0016",
         "ADR-BLOCK-0018",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [
@@ -78088,7 +78424,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-BLOCK-0013",
-        "ADR-BLOCK-0015"
+        "ADR-BLOCK-0015",
+        "ADR-GOV-0014"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-SOURCE-LIFETIME-CORE-LIFECYCLE-003",
@@ -78122,6 +78459,7 @@
         "ADR-CUBE-0010",
         "ADR-CUBE-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-SCALAR-0007",
         "ADR-STATE-0002",
@@ -78184,6 +78522,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0008",
         "ADR-MEM-0009",
         "ADR-STATE-0002",
@@ -78239,6 +78578,7 @@
         "ADR-GOV-0007",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-STATE-0002",
         "ADR-STATE-0011",
@@ -78322,6 +78662,7 @@
         "ADR-GOV-0007",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-STATE-0002",
         "ADR-STATE-0011",
@@ -87960,6 +88301,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -87992,6 +88334,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88024,6 +88367,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88056,6 +88400,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88088,6 +88433,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88120,6 +88466,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88152,6 +88499,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88184,6 +88532,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88216,6 +88565,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88248,6 +88598,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88280,6 +88631,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88312,6 +88664,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88344,6 +88697,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88376,6 +88730,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88408,6 +88763,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88440,6 +88796,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88472,6 +88829,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88504,6 +88862,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88536,6 +88895,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88568,6 +88928,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88598,6 +88959,7 @@
       },
       "mnemonic": "SB.ADD",
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-MEM-0005"
       ],
       "semantic_tests": [
@@ -88627,6 +88989,7 @@
       },
       "mnemonic": "SB.SUB",
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-MEM-0005"
       ],
       "semantic_tests": [
@@ -88660,6 +89023,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88692,6 +89056,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88724,6 +89089,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88756,6 +89122,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88788,6 +89155,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88820,6 +89188,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88852,6 +89221,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88884,6 +89254,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88916,6 +89287,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -88946,6 +89318,7 @@
       },
       "mnemonic": "SD.SUB",
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-MEM-0005"
       ],
       "semantic_tests": [
@@ -88979,6 +89352,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -89011,6 +89385,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005"
       ],
@@ -89043,6 +89418,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005",
         "ADR-SCALAR-0006"
@@ -89074,6 +89450,7 @@
       },
       "mnemonic": "SH.ADD",
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-MEM-0005"
       ],
       "semantic_tests": [
@@ -89103,6 +89480,7 @@
       },
       "mnemonic": "SH.SUB",
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-MEM-0005"
       ],
       "semantic_tests": [
@@ -89136,6 +89514,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005",
         "ADR-SCALAR-0006"
@@ -89169,6 +89548,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005",
         "ADR-SCALAR-0006"
@@ -89202,6 +89582,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005",
         "ADR-SCALAR-0006"
@@ -89235,6 +89616,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005",
         "ADR-SCALAR-0006"
@@ -89268,6 +89650,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005",
         "ADR-SCALAR-0006"
@@ -89299,6 +89682,7 @@
       },
       "mnemonic": "SW.SUB",
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-MEM-0005"
       ],
       "semantic_tests": [
@@ -89332,6 +89716,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005",
         "ADR-SCALAR-0006"
@@ -89365,6 +89750,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005",
         "ADR-SCALAR-0006"
@@ -89398,6 +89784,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005",
         "ADR-SCALAR-0006"
@@ -89431,6 +89818,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005",
         "ADR-SCALAR-0006"
@@ -89464,6 +89852,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005",
         "ADR-SCALAR-0006"
@@ -89497,6 +89886,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005",
         "ADR-SCALAR-0006"
@@ -89530,6 +89920,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0005",
         "ADR-SCALAR-0006"
@@ -92676,6 +93067,7 @@
         "ADR-GOV-0001",
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-SCALAR-0004",
@@ -92749,6 +93141,7 @@
         "ADR-GOV-0001",
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-SCALAR-0004",
@@ -92835,7 +93228,9 @@
       "documentation": "docs/scalar/model/dispatch/amo.md",
       "id": "PTO-SCALAR-MODEL-DISPATCH-AMO",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-GOV-0014"
+      ],
       "semantic_tests": [
         "PTO-AVS-SCALAR-AMO-ALIASES-001",
         "PTO-AVS-SCALAR-AMO-EFFECTS-001",
@@ -92879,6 +93274,7 @@
       "readiness_subjects": [
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0004",
         "ADR-SCALAR-0007"
       ],
@@ -92929,6 +93325,7 @@
       "id": "PTO-SCALAR-MODEL-DISPATCH-SYS",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [
@@ -92989,6 +93386,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [
@@ -93070,6 +93468,7 @@
       "readiness_subjects": [
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-SCALAR-0004"
@@ -93126,6 +93525,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-NUM-0008",
@@ -93196,6 +93596,7 @@
         "ADR-GOV-0001",
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-SCALAR-0004",
@@ -94375,6 +94776,7 @@
       },
       "mnemonic": "SYNC.CORE",
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [
@@ -94557,6 +94959,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0008",
         "ADR-SCALAR-0004",
         "ADR-TILE-0006",
@@ -94608,6 +95011,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -94665,6 +95069,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0009",
         "ADR-NUM-0011",
         "ADR-TILE-0006",
@@ -94724,6 +95129,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0009",
         "ADR-NUM-0011",
         "ADR-TILE-0006",
@@ -94783,6 +95189,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -94818,6 +95225,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0008",
         "ADR-SCALAR-0004",
         "ADR-TILE-0006",
@@ -94859,6 +95267,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0004",
         "ADR-NUM-0006",
         "ADR-NUM-0007",
@@ -94970,6 +95379,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95033,6 +95443,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95068,6 +95479,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95137,6 +95549,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95196,6 +95609,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95253,6 +95667,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95288,6 +95703,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95350,6 +95766,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0008",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95419,6 +95836,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95458,6 +95876,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95493,6 +95912,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95528,6 +95948,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95567,6 +95988,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95606,6 +96028,7 @@
       "readiness_subjects": [
         "ADR-GOV-0004",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
@@ -95656,6 +96079,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95691,6 +96115,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95728,6 +96153,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95765,6 +96191,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95800,6 +96227,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008"
       ],
@@ -95841,6 +96269,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0013"
@@ -95892,6 +96321,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0009",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0013"
@@ -96042,6 +96472,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0009",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0006",
         "ADR-MEM-0007",
@@ -96076,6 +96507,7 @@
         "ADR-CUBE-0013",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0013"
       ],
       "semantic_tests": [
@@ -96106,6 +96538,7 @@
       "readiness_subjects": [
         "ADR-CUBE-0013",
         "ADR-GOV-0009",
+        "ADR-GOV-0014",
         "ADR-TILE-0013"
       ],
       "semantic_tests": [
@@ -96136,6 +96569,7 @@
       "readiness_subjects": [
         "ADR-CUBE-0013",
         "ADR-GOV-0009",
+        "ADR-GOV-0014",
         "ADR-TILE-0013"
       ],
       "semantic_tests": [
@@ -96167,6 +96601,7 @@
         "ADR-CUBE-0013",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0013"
       ],
       "semantic_tests": [
@@ -96205,6 +96640,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0005"
       ],
       "semantic_tests": [
@@ -96242,6 +96678,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0005"
       ],
       "semantic_tests": [
@@ -96280,6 +96717,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0005"
       ],
       "semantic_tests": [
@@ -96318,6 +96756,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0005"
       ],
       "semantic_tests": [
@@ -96361,6 +96800,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0005"
       ],
       "semantic_tests": [
@@ -96401,6 +96841,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0005"
       ],
       "semantic_tests": [
@@ -97333,6 +97774,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0006",
         "ADR-MEM-0007",
@@ -97372,6 +97814,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0006",
         "ADR-MEM-0007",
@@ -97416,6 +97859,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0006",
         "ADR-MEM-0007",
@@ -97454,6 +97898,7 @@
         "ADR-GOV-0005",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0006",
         "ADR-MEM-0007",
@@ -97486,7 +97931,8 @@
       "readiness_subjects": [
         "ADR-BLOCK-0013",
         "ADR-BLOCK-0015",
-        "ADR-CUBE-0010"
+        "ADR-CUBE-0010",
+        "ADR-GOV-0014"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-LOCAL-CAPACITY-ISOLATION-002",
@@ -97511,7 +97957,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-BLOCK-0013",
-        "ADR-CUBE-0010"
+        "ADR-CUBE-0010",
+        "ADR-GOV-0014"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-SHARED-CAPACITY-ISOLATION-002"
@@ -97702,7 +98149,9 @@
       "documentation": "docs/tile/model/dispatch/tile-scalar-and-immediate.md",
       "id": "PTO-TILE-MODEL-DISPATCH-TILE-SCALAR-AND-IMMEDIATE",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-GOV-0014"
+      ],
       "semantic_tests": [],
       "source": "asl/tile/model/dispatch/tile-scalar-and-immediate.asl",
       "surface": "tile",
@@ -97723,6 +98172,7 @@
         "ADR-CUBE-0013",
         "ADR-GOV-0004",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0008",
         "ADR-TILE-0013"
@@ -97770,6 +98220,7 @@
         "ADR-GOV-0001",
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-NUM-0009",
@@ -97808,6 +98259,7 @@
         "ADR-GOV-0001",
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-SCALAR-0004",
@@ -97846,6 +98298,7 @@
         "ADR-GOV-0001",
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-NUM-0008",
@@ -97878,6 +98331,7 @@
       "id": "PTO-TILE-MODEL-EXECUTION-MASK-COMPARISON",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
@@ -97900,6 +98354,7 @@
       "id": "PTO-TILE-MODEL-EXECUTION-MASK-STATE",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [],
@@ -97919,6 +98374,7 @@
       "id": "PTO-TILE-MODEL-EXECUTION-MASK",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
@@ -97946,6 +98402,7 @@
         "ADR-GOV-0001",
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-NUM-0008",
@@ -97981,6 +98438,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0008",
         "ADR-SCALAR-0004",
         "ADR-TILE-0008"
@@ -98012,6 +98470,7 @@
         "ADR-GOV-0001",
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-NUM-0009",
@@ -98038,6 +98497,7 @@
         "ADR-BLOCK-0015",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008",
         "ADR-TILE-0010"
       ],
@@ -98063,6 +98523,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0015",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
@@ -98110,6 +98571,7 @@
       "id": "PTO-TILE-MODEL-EXECUTION-LEA",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0009"
       ],
       "semantic_tests": [],
@@ -98198,6 +98660,7 @@
         "ADR-GOV-0001",
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-SCALAR-0004",
@@ -98279,6 +98742,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
       ],
@@ -98310,6 +98774,7 @@
         "ADR-CUBE-0013",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008",
         "ADR-TILE-0013"
       ],
@@ -98342,6 +98807,7 @@
         "ADR-GOV-0001",
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-NUM-0008",
@@ -98383,6 +98849,7 @@
         "ADR-GOV-0001",
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-NUM-0009",
@@ -98411,6 +98878,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0015",
         "ADR-GOV-0009",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
@@ -98461,6 +98929,7 @@
         "ADR-CUBE-0017",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008",
         "ADR-TILE-0009",
         "ADR-TILE-0010",
@@ -98489,6 +98958,7 @@
       "id": "PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [],
@@ -98552,6 +99022,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-BLOCK-0015",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
@@ -98577,6 +99048,7 @@
         "ADR-CUBE-0013",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008",
         "ADR-TILE-0013"
       ],
@@ -98597,6 +99069,7 @@
       "id": "PTO-TILE-MODEL-LEGALITY-LEA-OPERANDS",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0009"
       ],
       "semantic_tests": [],
@@ -98640,7 +99113,8 @@
       "readiness_subjects": [
         "ADR-CUBE-0012",
         "ADR-CUBE-0018",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-MATRIX-FN-BOUND-001"
@@ -98754,7 +99228,8 @@
         "ADR-CUBE-0008",
         "ADR-CUBE-0011",
         "ADR-CUBE-0012",
-        "ADR-GOV-0013"
+        "ADR-GOV-0013",
+        "ADR-GOV-0014"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TESTMATRIXNUMERICCONTRACTLEGALITY-BOUNDARY-001",
@@ -98779,6 +99254,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0008"
       ],
@@ -98802,6 +99278,7 @@
         "ADR-CUBE-0017",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0008",
         "ADR-TILE-0008",
         "ADR-TILE-0009",
@@ -98853,6 +99330,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -98880,6 +99358,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -98927,6 +99406,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0008"
       ],
@@ -98951,6 +99431,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0008"
       ],
@@ -98979,6 +99460,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0008"
       ],
@@ -99006,6 +99488,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0002",
         "ADR-MEM-0006",
         "ADR-MEM-0007",
@@ -99032,6 +99515,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0015",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0011",
         "ADR-SCALAR-0007",
         "ADR-TILE-0008"
@@ -99105,6 +99589,7 @@
         "ADR-CUBE-0014",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0011",
         "ADR-SCALAR-0007",
         "ADR-TILE-0008"
@@ -99145,6 +99630,7 @@
       "readiness_subjects": [
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-NUM-0008",
@@ -99191,6 +99677,7 @@
         "ADR-GOV-0001",
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-NUM-0008",
@@ -99251,6 +99738,7 @@
       "readiness_subjects": [
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0008",
         "ADR-NUM-0012",
         "ADR-SCALAR-0004",
@@ -99286,6 +99774,7 @@
       "id": "PTO-TILE-MODEL-NUMERIC-REFERENCE-FIXED-BINARY",
       "mnemonic": null,
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
@@ -99327,6 +99816,7 @@
       "readiness_subjects": [
         "ADR-GOV-0012",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0012"
       ],
       "semantic_tests": [
@@ -99379,6 +99869,7 @@
         "ADR-CUBE-0012",
         "ADR-CUBE-0017",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0010"
       ],
       "semantic_tests": [
@@ -99425,6 +99916,7 @@
       "readiness_subjects": [
         "ADR-CUBE-0004",
         "ADR-CUBE-0005",
+        "ADR-GOV-0014",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
@@ -99491,6 +99983,7 @@
         "ADR-CUBE-0004",
         "ADR-CUBE-0010",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0008",
         "ADR-TILE-0010"
@@ -99524,6 +100017,7 @@
         "ADR-CUBE-0010",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009"
       ],
       "semantic_tests": [
@@ -99547,6 +100041,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-BLOCK-0015",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007"
       ],
       "semantic_tests": [
@@ -99570,6 +100065,7 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-BLOCK-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-SCALAR-0007",
         "ADR-STATE-0002",
@@ -99602,6 +100098,7 @@
         "ADR-CUBE-0014",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-SCALAR-0007",
         "ADR-TILE-0003",
         "ADR-TILE-0008"
@@ -99632,6 +100129,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0009",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-MEM-0009",
         "ADR-TILE-0008"
       ],
@@ -99660,6 +100158,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -99693,6 +100192,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -99726,6 +100226,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -99759,6 +100260,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -99792,6 +100294,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -99825,6 +100328,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -99858,6 +100362,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -99891,6 +100396,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -99924,6 +100430,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -99958,6 +100465,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -99992,6 +100500,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -100026,6 +100535,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -100060,6 +100570,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -100094,6 +100605,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -100130,6 +100642,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -100163,6 +100676,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -100196,6 +100710,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -100229,6 +100744,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -100264,6 +100780,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -100297,6 +100814,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -100330,6 +100848,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -100363,6 +100882,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0010",
@@ -100396,6 +100916,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -100430,6 +100951,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -100468,6 +100990,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -100506,6 +101029,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -100542,6 +101066,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -100574,6 +101099,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0010",
         "ADR-TILE-0012"
@@ -100622,6 +101148,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0008",
         "ADR-SCALAR-0004",
         "ADR-TILE-0006",
@@ -100664,6 +101191,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -100696,6 +101224,7 @@
       },
       "mnemonic": "TLEA",
       "readiness_subjects": [
+        "ADR-GOV-0014",
         "ADR-TILE-0009"
       ],
       "semantic_tests": [
@@ -100746,6 +101275,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -100780,6 +101310,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -100814,6 +101345,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -100852,6 +101384,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -100886,6 +101419,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-NUM-0008",
         "ADR-SCALAR-0004",
         "ADR-TILE-0006",
@@ -100924,6 +101458,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0009",
         "ADR-TILE-0012"
@@ -100964,6 +101499,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -101002,6 +101538,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -101056,6 +101593,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -101090,6 +101628,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -101138,6 +101677,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -101172,6 +101712,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"
@@ -101206,6 +101747,7 @@
         "ADR-GOV-0004",
         "ADR-GOV-0005",
         "ADR-GOV-0013",
+        "ADR-GOV-0014",
         "ADR-TILE-0006",
         "ADR-TILE-0008",
         "ADR-TILE-0009"

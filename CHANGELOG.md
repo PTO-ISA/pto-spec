@@ -18,6 +18,11 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 ### Tile
 - [ADR-CUBE-0004](docs/status/decisions/ADR-CUBE-0004-local-cube-cell-state-and-geometry.md): Local CUBE CELL State and Geometry
 
+## Release 0.59.0.0
+
+### Cross-cutting
+- [ADR-GOV-0014](docs/status/decisions/ADR-GOV-0014-0587-0-to-0590-compatibility.md): PTO ISA 0.58.7.0 to 0.59.0 compatibility and release identity
+
 ## Release 0.58.7.0
 
 ### Cross-cutting
