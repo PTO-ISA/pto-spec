@@ -16,7 +16,32 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sd-sub-purpose role=purpose -->
+## SD.SUB 的用途
+`SD.SUB` 从一个对齐的 64 位内存双字中原子减去操作数并存储结果。当程序只需要不可分割的更新、不需要旧内存值时，它避免了不必要的目的操作数。
 
+<!-- PTO-READER-BLOCK: scalar-sd-sub-mechanism role=mechanism -->
+## 更新机制
+指令快照 `SrcL` 和 `SrcR`，预检读写访问，读取八个小端字节，计算 `old_value - operand`，再写回 64 位差。运算按模 2^64 进行。原子辅助函数在内部返回旧双字，但只存储分派会将其丢弃。
+
+<!-- PTO-READER-BLOCK: scalar-sd-sub-inputs-outputs role=inputs-outputs -->
+## 输入与输出
+`SrcL` 命名原子访问地址，`SrcR` 提供 64 位减数。Reg5 编码 `0` 命名架构零寄存器，`1`..`23` 选择其他 GPR，`24`..`27` 选择 `T#1`..`T#4`，`28`..`31` 选择 `U#1`..`U#4`。更新后的八字节内存值是唯一输出；旧值不会写入 GPR 或临时队列。
+
+<!-- PTO-READER-BLOCK: scalar-sd-sub-effects role=effects -->
+## 效果与排序
+成功执行会记录一个原子事件，使重叠的本地保留失效，并使 `TPC` 前进四个字节。`rl=0` 记录宽松排序，`rl=1` 记录释放排序。该形式没有获取语义。
+
+<!-- PTO-READER-BLOCK: scalar-sd-sub-constraints role=constraints -->
+## 约束与故障
+地址必须按八字节对齐。对齐检查先于翻译和权限检查，两次预检还必须在读取内存前识别出同一翻译地址。失败时，内存、事件、保留、寄存器、队列和 `TPC` 均不改变，并通过精确故障路径报告原始架构地址。
+
+<!-- PTO-READER-BLOCK: scalar-sd-sub-example role=example -->
+## 示例
+```text
+sd.sub [a0], a1
+```
+若对齐双字包含 `0x0000000000000003`，且 `a1` 包含 `0x0000000000000005`，则写回的模差为 `0xfffffffffffffffe`。旧值 `3` 不会被返回。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

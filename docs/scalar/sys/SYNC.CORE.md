@@ -16,7 +16,34 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sync-core-purpose role=purpose -->
+## What SYNC.CORE is for
+`SYNC.CORE` creates a Core-local phase boundary for the four PEs in one kernel invocation. It exists so later work cannot outrun an earlier phase whose participating PEs and GM obligations must all be complete.
 
+<!-- PTO-READER-BLOCK: scalar-sync-core-mechanism role=mechanism -->
+## Rendezvous mechanism
+Each PE arrives at the same static `SYNC.CORE` in the same dynamic order and invocation. Arrival becomes irrevocable only after older work can no longer fault or require recovery. Validated but incomplete earlier GM work may remain after arrival, but collective completion waits until that work resolves through its actual producer, issue, and completion path. The PE parks until all four participants have arrived and all cut-off GM obligations are complete; the completed generation is then retained until every parked PE consumes its release once.
+
+<!-- PTO-READER-BLOCK: scalar-sync-core-inputs-outputs role=inputs-outputs -->
+## Inputs and outputs
+The instruction has no encoded operands and always names PE0, PE1, PE2, and PE3 of the current Core. It produces no register or memory value. Its observable result is that every participant may proceed past the same phase boundary after the rendezvous and required GM progress complete.
+
+<!-- PTO-READER-BLOCK: scalar-sync-core-effects role=effects -->
+## State and ordering effects
+A blocked PE keeps its `TPC` on `SYNC.CORE`. Completion orders every participant's earlier qualifying GM operations before every participant's later qualifying GM operations, invalidates each participant's current local reservation, and permits each PE to advance exactly once. Retaining the release until consumption prevents a fast PE from losing its completion signal.
+
+<!-- PTO-READER-BLOCK: scalar-sync-core-constraints role=constraints -->
+## Legal envelope and rejection
+The only legal body is `BSTART.SYS FALL`, one exact `sync.core` word `0x0330a02b`, and `BSTOP`. The instruction requires an active kernel invocation and cannot be entered from handler-origin execution. Wrong block kind or transfer, an extra body operation, a malformed or unfetchable stop, or handler entry rejects before any barrier arrival is recorded; the existing bundle, instruction, or fetch fault identifies the failed check.
+
+<!-- PTO-READER-BLOCK: scalar-sync-core-example role=example -->
+## Example phase boundary
+```text
+BSTART.SYS FALL
+sync.core
+BSTOP
+```
+If PE0, PE1, and PE2 reach this sequence first, each remains parked with `TPC` at `sync.core`. When PE3 arrives irrevocably and prior GM obligations are complete, PE3 proceeds and the retained release lets the other three PEs each proceed once.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

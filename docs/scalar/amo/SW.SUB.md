@@ -16,7 +16,32 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sw-sub-purpose role=purpose -->
+## What SW.SUB is for
+`SW.SUB` atomically subtracts from one aligned 32-bit memory word and stores the result. It is the store-only form: use it when the update must be indivisible but the replaced value is not needed as an output.
 
+<!-- PTO-READER-BLOCK: scalar-sw-sub-mechanism role=mechanism -->
+## How the update works
+The instruction snapshots both sources, preflights read and write access, reads four little-endian bytes, subtracts the low 32 bits of `SrcR`, and stores the low 32 bits of the difference. Arithmetic is modulo 2^32. Although the atomic helper reads the old word, dispatch discards that value because this form has no destination.
+
+<!-- PTO-READER-BLOCK: scalar-sw-sub-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+`SrcL` supplies the atomic address and `SrcR` supplies the subtrahend. Reg5 code `0` names the architectural zero register, `1`..`23` select the other GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`. The updated four-byte memory word is the only result; upper operand bits and the old word are not published.
+
+<!-- PTO-READER-BLOCK: scalar-sw-sub-effects role=effects -->
+## Effects and ordering
+On success, `SW.SUB` records one atomic event, invalidates an overlapping local reservation, and advances `TPC` by four bytes. `rl=0` selects relaxed ordering and `rl=1` selects release ordering. This store-only encoding cannot request acquire ordering.
+
+<!-- PTO-READER-BLOCK: scalar-sw-sub-constraints role=constraints -->
+## Constraints and faults
+The address must be four-byte aligned. Alignment, translation, and permission are checked before effects, and read and write probes must resolve to one translated address. If any check fails, the operation performs no memory access, event, reservation update, result publication, or `TPC` advance and remains fully restartable.
+
+<!-- PTO-READER-BLOCK: scalar-sw-sub-example role=example -->
+## Example
+```text
+sw.sub.rl [a0], a1
+```
+If the aligned word is `0x00000000` and the low 32 bits of `a1` are `0x00000001`, the stored result is `0xffffffff`. Release ordering is recorded, while the original word is discarded.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

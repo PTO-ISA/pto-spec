@@ -16,7 +16,32 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sb-sub-purpose role=purpose -->
+## SB.SUB 的用途
+`SB.SUB` 对一个字节执行只存储的原子减法。它支持不可分割的字节宽度递减，同时刻意不生成加载并返回旧值的原子形式所具有的旧值结果。
 
+<!-- PTO-READER-BLOCK: scalar-sb-sub-mechanism role=mechanism -->
+## 更新机制
+指令先快照 `SrcL` 和 `SrcR`，对同一地址完成读写预检，读取一个字节，从旧字节减去操作数的低 8 位，再写回差的低 8 位。运算按模 2^8 进行，因此下溢会回绕。旧字节不会成为架构结果。
+
+<!-- PTO-READER-BLOCK: scalar-sb-sub-inputs-outputs role=inputs-outputs -->
+## 输入与输出
+`SrcL` 命名原子访问地址，`SrcR` 提供减数。全部 Reg5 编码均已分配：`0` 命名架构零寄存器，`1`..`23` 选择其他 GPR，`24`..`27` 选择 `T#1`..`T#4`，`28`..`31` 选择 `U#1`..`U#4`。更新后的内存字节是唯一输出；被替换值不会写入 GPR 或临时队列。
+
+<!-- PTO-READER-BLOCK: scalar-sb-sub-effects role=effects -->
+## 效果与排序
+成功时，`SB.SUB` 记录一个原子内存事件，并使与写入字节重叠的本地保留失效。`rl=0` 选择宽松排序，`rl=1` 选择释放排序；该编码没有获取位。成功执行后，`TPC` 前进四个字节。
+
+<!-- PTO-READER-BLOCK: scalar-sb-sub-constraints role=constraints -->
+## 约束与故障
+单字节访问没有额外对齐约束。任何内存效果发生前，两次访问预检必须成功并解析到同一翻译地址。预检失败、翻译地址不一致、临时队列源无效或指令字无法解码时，内存、事件、保留、结果状态和 `TPC` 保持不变，然后进入精确陷入处理。
+
+<!-- PTO-READER-BLOCK: scalar-sb-sub-example role=example -->
+## 示例
+```text
+sb.sub [a0], a1
+```
+若 `a0` 命名的字节为 `0x00`，且 `a1` 的低字节为 `0x01`，则写回的模差为 `0xff`。指令不会发布原来的 `0x00`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

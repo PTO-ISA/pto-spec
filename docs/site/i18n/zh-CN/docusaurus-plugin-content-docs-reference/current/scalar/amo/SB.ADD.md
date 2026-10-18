@@ -16,7 +16,32 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sb-add-purpose role=purpose -->
+## SB.ADD 的用途
+`SB.ADD` 对一个字节执行只存储的原子加法。当多个代理更新字节宽度的计数器或标志字段，且程序要求更新不可分割、又不需要取得被替换值时，可以使用它。
 
+<!-- PTO-READER-BLOCK: scalar-sb-add-mechanism role=mechanism -->
+## 更新机制
+指令先快照 `SrcL` 和 `SrcR`，对同一地址完成读写预检，读取一个字节，加上操作数的低 8 位，再写回和的低 8 位。运算按模 2^8 进行，因此溢出会回绕。旧字节只在内部参与计算；由于该形式没有目的操作数，旧值会被丢弃。
+
+<!-- PTO-READER-BLOCK: scalar-sb-add-inputs-outputs role=inputs-outputs -->
+## 输入与输出
+`SrcL` 命名原子访问地址，`SrcR` 提供操作数。全部 Reg5 编码均已分配：`0` 命名架构零寄存器，`1`..`23` 选择其他 GPR，`24`..`27` 选择 `T#1`..`T#4`，`28`..`31` 选择 `U#1`..`U#4`。唯一的架构输出是内存中更新后的字节；旧值不会写入 GPR 或临时队列。
+
+<!-- PTO-READER-BLOCK: scalar-sb-add-effects role=effects -->
+## 效果与排序
+成功时，`SB.ADD` 记录一个原子内存事件，并使与写入字节重叠的本地保留失效。`rl=0` 记录宽松排序，`rl=1` 记录释放排序；该形式没有获取语义。成功执行后，`TPC` 前进四个字节。
+
+<!-- PTO-READER-BLOCK: scalar-sb-add-constraints role=constraints -->
+## 约束与故障
+单字节访问不要求比字节地址更强的对齐。加载或存储发生前，读写预检都必须成功并解析到同一翻译地址。预检失败、翻译地址不一致、临时队列源无效或指令字无法解码时，内存、事件、保留、结果和 `TPC` 均不改变；随后按精确故障与重启路径处理。
+
+<!-- PTO-READER-BLOCK: scalar-sb-add-example role=example -->
+## 示例
+```text
+sb.add.rl [a0], a1
+```
+若 `a0` 命名的字节为 `0xff`，且 `a1` 的低字节为 `0x01`，则写回结果为 `0x00`。`.rl` 后缀只改变排序，不改变模运算，也不会返回原来的 `0xff`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

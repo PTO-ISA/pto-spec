@@ -16,7 +16,32 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sw-sub-purpose role=purpose -->
+## SW.SUB 的用途
+`SW.SUB` 从一个对齐的 32 位内存字中原子减去操作数并存储结果。它属于只存储形式：当更新必须不可分割、但不需要输出被替换值时使用。
 
+<!-- PTO-READER-BLOCK: scalar-sw-sub-mechanism role=mechanism -->
+## 更新机制
+指令快照两个源，预检读写访问，读取四个小端字节，减去 `SrcR` 的低 32 位，再存储差的低 32 位。运算按模 2^32 进行。原子辅助函数虽然会读取旧字，但由于该形式没有目的操作数，分派会丢弃该值。
+
+<!-- PTO-READER-BLOCK: scalar-sw-sub-inputs-outputs role=inputs-outputs -->
+## 输入与输出
+`SrcL` 提供原子访问地址，`SrcR` 提供减数。Reg5 编码 `0` 命名架构零寄存器，`1`..`23` 选择其他 GPR，`24`..`27` 选择 `T#1`..`T#4`，`28`..`31` 选择 `U#1`..`U#4`。更新后的四字节内存字是唯一结果；操作数高位和旧字均不会被发布。
+
+<!-- PTO-READER-BLOCK: scalar-sw-sub-effects role=effects -->
+## 效果与排序
+成功时，`SW.SUB` 记录一个原子事件，使重叠的本地保留失效，并使 `TPC` 前进四个字节。`rl=0` 选择宽松排序，`rl=1` 选择释放排序。这个只存储编码不能请求获取排序。
+
+<!-- PTO-READER-BLOCK: scalar-sw-sub-constraints role=constraints -->
+## 约束与故障
+地址必须按四字节对齐。对齐、翻译和权限都在产生效果前检查，且读写预检必须解析到同一翻译地址。任何检查失败时，操作都不执行内存访问、不记录事件、不更新保留、不发布结果、也不推进 `TPC`，因此可以完整重启。
+
+<!-- PTO-READER-BLOCK: scalar-sw-sub-example role=example -->
+## 示例
+```text
+sw.sub.rl [a0], a1
+```
+若对齐字为 `0x00000000`，且 `a1` 的低 32 位为 `0x00000001`，则写回结果为 `0xffffffff`。指令记录释放排序，同时丢弃原来的内存字。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

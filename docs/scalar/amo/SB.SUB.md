@@ -16,7 +16,32 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sb-sub-purpose role=purpose -->
+## What SB.SUB is for
+`SB.SUB` performs a store-only atomic subtraction on one byte. It supports indivisible byte-sized decrements while deliberately omitting the old-value result used by load-returning atomic forms.
 
+<!-- PTO-READER-BLOCK: scalar-sb-sub-mechanism role=mechanism -->
+## How the update works
+The instruction snapshots `SrcL` and `SrcR`, preflights the same address for read and write access, reads one byte, subtracts the low 8 bits of the operand from the old byte, and writes the low 8 bits of the difference back. Arithmetic is modulo 2^8, so underflow wraps. The old byte never becomes an architectural result.
+
+<!-- PTO-READER-BLOCK: scalar-sb-sub-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+`SrcL` names the atomic address and `SrcR` supplies the subtrahend. Every Reg5 code is assigned: `0` names the architectural zero register, `1`..`23` select the other GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`. The updated byte in memory is the only output; no GPR or temporary queue receives the replaced value.
+
+<!-- PTO-READER-BLOCK: scalar-sb-sub-effects role=effects -->
+## Effects and ordering
+On success, `SB.SUB` records one atomic memory event and invalidates a local reservation that overlaps the written byte. `rl=0` selects relaxed ordering and `rl=1` selects release ordering; this encoding has no acquire bit. Successful execution advances `TPC` by four bytes.
+
+<!-- PTO-READER-BLOCK: scalar-sb-sub-constraints role=constraints -->
+## Constraints and faults
+One-byte access needs no additional alignment constraint. Both access probes must succeed and resolve to the same translated address before any memory effect. A probe failure, translation mismatch, invalid temporary-queue source, or undecodable word leaves memory, events, reservations, result state, and `TPC` unchanged before precise trap handling.
+
+<!-- PTO-READER-BLOCK: scalar-sb-sub-example role=example -->
+## Example
+```text
+sb.sub [a0], a1
+```
+If `a0` names a byte containing `0x00` and the low byte of `a1` is `0x01`, the stored modular difference is `0xff`. The instruction publishes no copy of the original `0x00`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly
