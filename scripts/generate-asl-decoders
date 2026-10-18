@@ -7058,6 +7058,43 @@ def emit_scalar_sys_body_setup(kind: str = "System") -> None:
     print("    EnterBundleBody();")
 
 
+def emit_scalar_sync_core_execution_setup(execution_witness_index: int) -> None:
+    """Emit an active kernel and fetched canonical envelope for SYNC.CORE."""
+
+    print("    let sync_entry = Zeros{PTO_XLEN} + 0x100;")
+    print("    WriteMemoryByte(sync_entry, Zeros{8} + 0x81);")
+    print("    WriteMemoryByte(sync_entry + 1, Zeros{8} + 0x10);")
+    print("    WriteMemoryByte(sync_entry + 2, Zeros{8});")
+    print("    WriteMemoryByte(sync_entry + 3, Zeros{8});")
+    print("    WriteMemoryByte(sync_entry + 4, Zeros{8} + 0x2b);")
+    print("    WriteMemoryByte(sync_entry + 5, Zeros{8} + 0xa0);")
+    print("    WriteMemoryByte(sync_entry + 6, Zeros{8} + 0x30);")
+    print("    WriteMemoryByte(sync_entry + 7, Zeros{8} + 0x03);")
+    print("    WriteMemoryByte(sync_entry + 8, Zeros{8} + 1);")
+    print("    WriteMemoryByte(sync_entry + 9, Zeros{8});")
+    print("    WriteMemoryByte(sync_entry + 10, Zeros{8});")
+    print("    WriteMemoryByte(sync_entry + 11, Zeros{8});")
+    print("    WriteMemoryByte(sync_entry + 12, Zeros{8});")
+    print("    WriteMemoryByte(sync_entry + 13, Zeros{8});")
+    print(
+        f"    let launch_status_{execution_witness_index} = "
+        "LaunchKernelInvocation(0, sync_entry);"
+    )
+    print(
+        f"    assert launch_status_{execution_witness_index} == "
+        "KernelLifecycle_Started;"
+    )
+    print("    SelectExecutionContext(0, 0);")
+    print(
+        f"    let start_status_{execution_witness_index} = "
+        "ExecuteCommandInstruction(Zeros{64} + 0x00001081, 32);"
+    )
+    print(
+        f"    assert start_status_{execution_witness_index} == "
+        "CommandExecution_Executed;"
+    )
+
+
 CANONICAL_COMMAND_BLOCK_HANDLERS = {
     "SetBundleControlAttributes",
     "SetBundleDataAttributes",
@@ -8973,6 +9010,7 @@ def _emit_monolithic() -> None:
         for row in scalar:
             if row["semantic_family"] != family:
                 continue
+            sync_core_witness = row["mnemonic"] == "SYNC.CORE"
             witness = legal_scalar_witness(row, family_constraints)
             match = bit_literal(witness, 48)
             print("    ResetBundleControlState();")
@@ -9004,7 +9042,9 @@ def _emit_monolithic() -> None:
                     "Zeros{PTO_XLEN} + 0x100, Zeros{PTO_XLEN} + 4, FALSE);"
                 )
                 print("    EnterBundleBody();")
-            if row["mnemonic"] == "SETC.TGT":
+            if sync_core_witness:
+                emit_scalar_sync_core_execution_setup(execution_witness_index)
+            elif row["mnemonic"] == "SETC.TGT":
                 emit_scalar_sys_body_setup("Standard")
             elif row["semantic_family"] == "SYS":
                 emit_scalar_sys_body_setup()
@@ -9017,16 +9057,28 @@ def _emit_monolithic() -> None:
             expected_fault = CANONICAL_EXECUTION_FAULTS.get(
                 row["mnemonic"], "Fault_None"
             )
-            expected_status = (
-                "ScalarExecution_Executed"
-                if expected_fault == "Fault_None"
-                else "ScalarExecution_Rejected"
-            )
+            if sync_core_witness:
+                expected_status = "ScalarExecution_Blocked"
+            elif expected_fault == "Fault_None":
+                expected_status = "ScalarExecution_Executed"
+            else:
+                expected_status = "ScalarExecution_Rejected"
             print(
                 f"    assert execution_status_{execution_witness_index} "
                 f"== {expected_status};"
             )
             print(f"    assert _LastFault == {expected_fault};")
+            if sync_core_witness:
+                print("    assert ReadTPC() == sync_entry + 4;")
+                print("    assert _CoreSyncRecords[[0]][[0]].arrived == '1000';")
+                print(
+                    f"    let abort_status_{execution_witness_index} = "
+                    "AbortKernelInvocation(0);"
+                )
+                print(
+                    f"    assert abort_status_{execution_witness_index} == "
+                    "KernelLifecycle_Started;"
+                )
             execution_witness_index += 1
         print("    ClearFault();")
         print(

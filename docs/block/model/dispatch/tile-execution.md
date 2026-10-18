@@ -35,16 +35,17 @@ The local path runs in this order:
 
 1. A bundle with zero participation and no bindings returns true with no effect.
 2. Unless `TIMG2COL` is selected, the operation must decode and `BundleProducerEffectEligible` must accept it. A decode failure raises `Fault_IllegalInstruction`.
-3. The assemble output structure must be legal (`Fault_BundleControl`), and the Shared destination assembly policy must be legal (`Fault_TileLegality`).
-4. For operations other than matrix, `TIMG2COL`, and weight `TLOAD`, stage 2 is prepared and a Local continuation destination is reused.
-5. When the Tile mask is not zero and `TIMG2COL` is not selected, the execution mask is marked, captured, and checked. For the memory-transport operations and weight `TLOAD`, its merge is prepared here.
-6. The specialized dispatcher tries, in order: `TIMG2COL`, weight `TLOAD`, matrix, CUBE transport, GMOV, MGATHER.CAS, GM atomics and reductions, MGATHER.MASK, MGATHER, MSCATTER, MSCATTER.MASK, TPREFETCH, and Shared TLSU. If Shared bindings remain unconsumed and no handler matched, it raises `Fault_TileLegality`.
+3. After that operation check, a bundle whose existing Tile bindings all have mask `0000` returns true with no effect. This exit precedes assemble structure, Shared policy and payload readiness, stage 2, schema, source, and destination checks.
+4. The assemble output structure must be legal (`Fault_BundleControl`), and the Shared destination assembly policy must be legal (`Fault_TileLegality`).
+5. For operations other than matrix, `TIMG2COL`, and weight `TLOAD`, stage 2 is prepared and a Local continuation destination is reused.
+6. When `TIMG2COL` is not selected, the execution mask is marked, captured, and checked. For the memory-transport operations and weight `TLOAD`, its merge is prepared here.
+7. The specialized dispatcher tries, in order: `TIMG2COL`, weight `TLOAD`, matrix, CUBE transport, GMOV, MGATHER.CAS, GM atomics and reductions, MGATHER.MASK, MGATHER, MSCATTER, MSCATTER.MASK, TPREFETCH, and Shared TLSU. If Shared bindings remain unconsumed and no handler matched, it raises `Fault_TileLegality`.
 
 Design point: the ASL comment says effect eligibility is checked before descriptor preparation, specialized dispatch, body execution, allocation, or auxiliary effects. An ineligible operation leaves Tile state unchanged.
 
 Design point: the order of the specialized branch matters. MGATHER.CAS uses selector function 8, which also lies in the GM atomic range 8 to 12. Because `BundleMGATHERCASSelected` is tested before `BundleGMAtomRedSelected`, a function 8 bundle that no earlier selector claims (for example CUBE transport, which matches on the `B.DATR` layout alone) reaches the dedicated `MGATHER.CAS` handler, not the atomic-and-reduction handler.
 
-When the generic path is taken, the unit decodes the operation and returns true if the Tile mask is zero. It then checks, in order: fixed-point attributes only for matrix operations, binding completeness, B.IOR values, data attributes, the cell-rearrangement schema, and all closed schemas. Comparisons that produce a GPR run and commit at that point. Otherwise the PE masks must agree, the execution-mask merge must be prepared, and destinations are resolved and validated. Only then does the handler run.
+When the generic path is taken, operation validity and zero participation have already been resolved. It checks, in order: fixed-point attributes only for matrix operations, binding completeness, B.IOR values, data attributes, the cell-rearrangement schema, and all closed schemas. Comparisons that produce a GPR run and commit at that point. Otherwise the PE masks must agree, the execution-mask merge must be prepared, and destinations are resolved and validated. Only then does the handler run.
 
 Design point: the ASL comment says raw B.IOR values are validated after the zero-mask exit and before destination allocation. Invalid values never reach the operand record or Tile state.
 
@@ -64,7 +65,7 @@ This unit orders checks and effects; it does not define them. Each closed schema
 
 This example illustrates the current ASL owner and does not replace the normative operation.
 
-A `TADD` bundle commits with one legal binding and mask `1111`. No specialized handler matches, so the generic path runs. All schemas pass, the destination is allocated, and the handler writes it. The unit commits generations and publishes the destination. If the handler had faulted, the destination would be released and no result would be visible. A bundle whose only `B.IOT` used mask `0000` would instead return true at step 1, before decoding, because a zero-mask `B.IOT` creates no binding.
+A `TADD` bundle commits with one legal binding and mask `1111`. No specialized handler matches, so the generic path runs. All schemas pass, the destination is allocated, and the handler writes it. The unit commits generations and publishes the destination. If the handler had faulted, the destination would be released and no result would be visible. A decoded operation whose retained Tile bindings all have mask `0000` instead returns true at step 3, before schema, payload, source, or destination checks. A zero-mask `B.IOT` that creates no binding still takes the earlier step 1 exit.
 
 <!-- PTO-READER-BLOCK: block-model-dispatch-tile-execution-related role=related-owners-navigation -->
 ## Related owners
@@ -244,12 +245,12 @@ begin
             return FALSE;
         end;
     end;
+    if SelectedBundleTileMaskIsZero() then return TRUE; end;
     // ParentRef/output structure is a bundle contract and must fault before
     // relative-parent resolution, consumer readiness, descriptor preparation,
-    // or any destination allocation.  Zero-participation groups retain their
-    // strict no-effect path below the existing binder contract.
-    if !SelectedBundleTileMaskIsZero() &&
-       !BundleAssembleOutputStructureLegal() then
+    // or any destination allocation. Zero-participation groups have already
+    // retired through the strict no-effect path after operation validation.
+    if !BundleAssembleOutputStructureLegal() then
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
@@ -385,7 +386,6 @@ begin
         return FALSE;
     end;
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
-    if SelectedBundleTileMaskIsZero() then return TRUE; end;
     if _BundleFixedPointAttributes.valid &&
        _BundleOperation.operation_class != BundleOperation_TileMatrix then
         SetFault(Fault_BundleControl, ReadTPC());

@@ -251,6 +251,46 @@ class GenerateMnemonicAvsTest(unittest.TestCase):
         self.assertIn("ScalarExecution_Executed", documents[t_path])
         self.assertIn("ScalarExecution_Executed", documents[u_path])
 
+    def test_sync_core_execution_uses_kernel_collective_envelope(self) -> None:
+        unit = instruction_unit(
+            "scalar",
+            "SYNC.CORE",
+            {
+                "constraints": [],
+                "encoding": [
+                    {
+                        "index": 0,
+                        "mask": "0xffffffff",
+                        "match": "0x0330a02b",
+                        "width_bits": 32,
+                    }
+                ],
+                "fields": [],
+                "form_id": "sync_core_32_fixture",
+                "length_bits": 32,
+                "semantic_family": "SYS",
+                "semantic_handler": "SyncCore",
+            },
+        )
+        unit = replace(
+            unit,
+            classification=("sys",),
+            source_path=Path("asl/scalar/sys/SYNC.CORE.asl"),
+        )
+
+        documents = dict(self.module["render_scalar_sys_avs"](unit))
+        path = Path(
+            "tests/asl/scalar/sys/SYNC.CORE/"
+            "scalar-exec-sync-core-direct-001.asl"
+        )
+        document = documents[path]
+
+        self.assertIn("LaunchKernelInvocation(0, entry)", document)
+        self.assertIn("ExecuteCommandInstruction(", document)
+        self.assertIn("ScalarExecution_Blocked", document)
+        self.assertIn("_CoreSyncRecords[[0]][[0]].arrived == '1000'", document)
+        self.assertNotIn("assert status == ScalarExecution_Executed", document)
+
     def test_scalar_sys_destination_owner_gets_discard_u_and_t_points(self) -> None:
         unit = instruction_unit(
             "scalar",

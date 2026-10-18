@@ -31,7 +31,7 @@ begin
     WriteMemoryByte(Zeros{PTO_XLEN} + 0xa05, Zeros{8} + 0x9a);
     WriteMemoryByte(Zeros{PTO_XLEN} + 0xa06, Zeros{8} + 0xf0);
     WriteMemoryByte(Zeros{PTO_XLEN} + 0xa07, Zeros{8} + 0xde);
-    var handler_lr: bits(48) = ZeroExtend{48}(Zeros{32} + 0x3000000b);
+    var handler_lr: bits(48) = ZeroExtend{48}(Zeros{32} + 0x1800000b);
     handler_lr[11:7] = Zeros{5} + 5;
     handler_lr[19:15] = Zeros{5} + 2;
     handler_lr[24:20] = Ones{5};

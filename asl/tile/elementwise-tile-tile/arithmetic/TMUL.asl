@@ -4,9 +4,10 @@
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // TMUL MUST select VEC Mode 0 Function 2 and MUST multiply corresponding
 // elements of two ordered Local sources. The closed binary Tile schema,
-// shape defaults, arithmetic DataType set, PadValue behavior, complete
-// preflight, source snapshot, and atomic destination publication MUST match
-// the TADD family contract. Rejection MUST precede all effects.
+// shape defaults, PadValue behavior, complete preflight, source snapshot,
+// and atomic destination publication MUST match the closed binary contract.
+// The selected DataType MUST satisfy TileA7DataTypeSupported. Rejection MUST
+// precede all effects.
 // The selected DataType MUST be the operation interpretation and new destination
 // backing type. An ordinary source backing type MAY differ only for a same-width
 // non-packed carrier; numeric validation MUST use the selected DataType.
@@ -22,7 +23,9 @@ end;
 pure func InstructionContractDataTypeLegal_TMUL(
     data_type: TileDataType) => boolean
 begin
-    return TileVecArithmeticDataTypeSupported(data_type);
+    return TileBinaryDataTypeSupported(
+        TileBinary_MUL,
+        data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TMUL(

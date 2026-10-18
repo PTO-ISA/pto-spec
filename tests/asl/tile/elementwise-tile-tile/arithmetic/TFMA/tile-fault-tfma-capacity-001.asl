@@ -1,10 +1,15 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TFMA-CAPACITY-001","source":"asl/tile/elementwise-tile-tile/arithmetic/TFMA.asl","requirements":["PTO-TFMA-CONTRACT-001"],"kind":"fault","summary":"TFMA validates the complete destination shape against per-PE TSize.","pass_condition":"A two-row by 128-column U64 result rejects TSize code one before allocation or source access.","related_sources":["asl/block/model/dispatch/destination-shape.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TFMA-CAPACITY-001","source":"asl/tile/elementwise-tile-tile/arithmetic/TFMA.asl","requirements":["PTO-TFMA-CONTRACT-001"],"kind":"fault","summary":"TFMA validates the complete destination shape against per-PE TSize.","pass_condition":"With three complete U64 sources, a two-row by 128-column result rejects TSize code one before destination allocation.","related_sources":["asl/block/model/dispatch/destination-shape.asl"]}
 func main() => integer
 begin
     ResetProfileState();
     let started = ExecuteCommandInstruction(
         Zeros{64} + 0xc1c19181, 32);
     assert started == CommandExecution_Executed;
+    for source = 1 to 3 looplimit 3 do
+        ConfigureTileForMask(source as TileIndex, 2048, 2, 128, 2, 128,
+            TileDataType_U64, TileLayout_RowMajor, '1111');
+        MarkTileValidRegionDefined(source as TileIndex);
+    end;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 128);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 128);

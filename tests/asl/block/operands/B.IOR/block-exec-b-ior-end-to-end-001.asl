@@ -66,7 +66,7 @@ begin
 
     ResetProfileState();
     let duplicate_start = ExecuteCommandInstruction(
-        BundleTestTEPLStart(Zeros{10} + 0x20, Zeros{5} + 24), 32);
+        BundleTestTEPLStart(Zeros{10} + 0x41, Zeros{5} + 24), 32);
     assert duplicate_start == CommandExecution_Executed;
     let first = ExecuteCommandInstruction(
         BundleTestScalarBinding(

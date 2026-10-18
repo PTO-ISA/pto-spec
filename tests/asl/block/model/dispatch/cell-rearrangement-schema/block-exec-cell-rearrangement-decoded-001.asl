@@ -23,6 +23,19 @@ begin
     return instruction;
 end;
 
+pure func CellRearrangementZeroMaskBinding(
+    destination: bits(2), source0: bits(6), source1: bits(6)) => bits(64)
+begin
+    var instruction: bits(64) = Zeros{64} + 0x00002013;
+    instruction[31:26] = source1;
+    instruction[25:20] = source0;
+    instruction[19] = '1';
+    instruction[18:15] = '0001';
+    instruction[11:9] = '000';
+    instruction[8:7] = destination;
+    return instruction;
+end;
+
 func PrepareDecodedTshufBundle()
 begin
     ResetProfileState();
@@ -173,9 +186,12 @@ begin
     let no_op_start = ExecuteCommandInstruction(
         CellRearrangementTEPLStart(Zeros{10} + 0x076,
             TileDataTypeToEncoding(TileDataType_U32)), 32);
-    AddBundleTileBinding(TRUE, 3, 1, '0000', TRUE, TRUE, 60, 61, TRUE);
+    let no_op_binding = ExecuteCommandInstruction(
+        CellRearrangementZeroMaskBinding('11', Zeros{6} + 60,
+            Zeros{6} + 61), 32);
     let no_op = ExecuteBundleTileOperation();
     assert no_op_start == CommandExecution_Executed;
+    assert no_op_binding == CommandExecution_Executed;
     assert no_op && _LastFault == Fault_None;
     assert !_Tiles[[3]].allocated;
 

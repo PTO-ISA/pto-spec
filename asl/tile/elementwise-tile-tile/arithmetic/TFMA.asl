@@ -3,10 +3,11 @@
 // NDF-BEGIN: PTO-TFMA-CONTRACT-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // TFMA MUST select VEC Mode 0 Function 28 and MUST execute one same-type fused
-// elementwise left multiplied by right plus addend operation. Supported types,
-// the closed two-B.IOT schema, PadValue, exceptional floating cases, complete
-// preflight, three-source snapshot, and atomic publication MUST follow ADR-0080
-// and NDF clause PTO-TFMA-CONTRACT-001.
+// elementwise left multiplied by right plus addend operation. The supported
+// DataTypes MUST be exactly FP64, S64, U64, FP16, FP32, and BF16; every other
+// DataType MUST reject before effects. The closed two-B.IOT schema, PadValue,
+// exceptional floating cases, complete preflight, three-source snapshot, and
+// atomic publication MUST follow the owning TFMA legality and execution units.
 // Rejection MUST precede every architectural effect.
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TFMA-CONTRACT-001
@@ -20,7 +21,7 @@ end;
 pure func InstructionContractDataTypeLegal_TFMA(
     data_type: TileDataType) => boolean
 begin
-    return TileVecArithmeticDataTypeSupported(data_type);
+    return TileFusedMultiplyAddDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TFMA(

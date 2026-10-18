@@ -5097,7 +5097,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "e3dd074c26032f0c3a66432427ab47095a37caa9",
+  "candidate_head": "66bdd8fb45013bf7511df2f69e07986780905226",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -17966,7 +17966,7 @@
         "CUBE_M16",
         "CUBE_M32"
       ],
-      "after_sha256": "169c446a062f698bfc8eed741a3f2a30378175e2ef3bb2f50ac07c53c8227bb1",
+      "after_sha256": "fe95b1d6a671c21ef9c84db34886a94cc8d0a0b9d0423dca9c2d1e64493709a2",
       "before_layouts": [],
       "before_sha256": "3269fa3785bfe7f8e4ef45fde7c8339f5063584c27642308c6001cbdbd178a1c",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -51952,7 +51952,6 @@
               "SelectedBundleTileDataAttributesLegal",
               "SelectedBundleTileMaskIsZero",
               "SelectedBundleTileMaskIsZero",
-              "SelectedBundleTileMaskIsZero",
               "SelectedBundleTileMasksLegal",
               "SetFault",
               "SetFault",
@@ -51988,7 +51987,7 @@
               "CUBE_M32"
             ],
             "path": "asl/block/model/dispatch/tile-execution.asl",
-            "sha256": "169c446a062f698bfc8eed741a3f2a30378175e2ef3bb2f50ac07c53c8227bb1"
+            "sha256": "fe95b1d6a671c21ef9c84db34886a94cc8d0a0b9d0423dca9c2d1e64493709a2"
           }
         ],
         "ExecuteBundleTileOperationWithAcceptedApplicabilityRules": [

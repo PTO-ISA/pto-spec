@@ -165,14 +165,14 @@ begin
     end;
     if decoded == TileOperation_TSEL then
         return _BundleTileBindings[[0]].source0_valid &&
-               _Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind !=
-                   TileStorage_PredicateCell &&
+               _Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind ==
+                   TileStorage_Numeric &&
                _BundleScalarBindings[[0]].valid;
     end;
     if decoded == TileOperation_TSELS then
         return _BundleTileBindings[[0]].source0_valid &&
-               _Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind !=
-                   TileStorage_PredicateCell &&
+               _Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind ==
+                   TileStorage_Numeric &&
                _BundleScalarBindings[[0]].valid;
     end;
     return FALSE;
@@ -314,14 +314,17 @@ begin
     let cell_select = inputs.source0_valid &&
         _Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind ==
             TileStorage_PredicateCell;
+    let predicate_tile_select = inputs.source0_valid &&
+        (_Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind ==
+             TileStorage_Predicate || cell_select);
     if BundleTileBindingCount() !=
-       (if cell_select || execution_mask_tile then 2 else 1) then
+       (if predicate_tile_select || execution_mask_tile then 2 else 1) then
         return FALSE;
     end;
     let result = if BundleTileBindingCount() == 2 then
         _BundleTileBindings[[1]] else inputs;
-    let split_gpr_select = !cell_select && execution_mask_tile;
-    let binding_shape_invalid = if cell_select then
+    let split_gpr_select = !predicate_tile_select && execution_mask_tile;
+    let binding_shape_invalid = if predicate_tile_select then
         inputs.destination_valid || !inputs.source0_valid ||
         !inputs.source1_valid || inputs.last ||
         !result.destination_valid || !result.source0_valid ||
@@ -340,27 +343,27 @@ begin
            if BundleTileBindingCount() == 2 then 1 else 0) ||
        (execution_mask_tile &&
         _BundleExecutionMask.predicate_source_ordinal !=
-            (if cell_select then 3 else 2)) then
+            (if predicate_tile_select then 3 else 2)) then
         return FALSE;
     end;
-    let source_true = if cell_select then
+    let source_true = if predicate_tile_select then
         BundleTileSourceIndex(0, TRUE) else BundleTileSourceIndex(0, FALSE);
-    let source_false = if cell_select then
+    let source_false = if predicate_tile_select then
         BundleTileSourceIndex(1, FALSE) else BundleTileSourceIndex(0, TRUE);
-    if cell_select then
+    if predicate_tile_select then
         let mask = BundleTileSourceIndex(0, FALSE);
         return (!execution_mask_gpr ||
                 (_BundleScalarBindings[[0]].valid &&
                  _BundleScalarBindings[[0]].destination == 0 &&
                  BundleExecutionMaskGPRBindingSchemaLegal(operation))) &&
                (execution_mask_gpr || !_BundleScalarBindings[[0]].valid) &&
-               (!SelectedBundleComparisonCUBE(source_true) ||
-                TileCubePredicateDataTypeSupported(data_type)) &&
-               (if SelectedBundleComparisonCUBE(source_true) then
+               (if cell_select then
+                   TileCubePredicateDataTypeSupported(data_type) &&
                    TilePredicateCellOperationValuesLegal(mask) &&
                    TilePredicateCellShapeMatchesNumericAs(
                        mask, source_true, data_type)
                 else
+                   !SelectedBundleComparisonCUBE(source_true) &&
                    TilePredicateValuesLegal(mask)) &&
                SelectedBundleComparisonShapeMatch(source_true, source_false) &&
                _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&

@@ -54,16 +54,16 @@ begin
     assert scalar_status == TileExecution_Executed;
     assert ReadTileElement(6, 1, 0) == Zeros{PTO_XLEN} + 9;
 
-    let configured_8 = ConfigureCubeTile(8, 128, 2, 2, TileDataType_U32,
-        TileLayout_CUBE_M16);
-    let configured_9 = ConfigureCubeTile(9, 128, 2, 2, TileDataType_U32,
-        TileLayout_CUBE_M16);
-    let configured_10 = ConfigureCubeTile(10, 128, 2, 2, TileDataType_U32,
-        TileLayout_CUBE_M16);
-    let configured_11 = ConfigureCubeTile(11, 128, 2, 2, TileDataType_U32,
-        TileLayout_CUBE_M16);
+    let configured_8 = ConfigureCubeTile(8, 256, 2, 1, TileDataType_U64,
+        TileLayout_CUBE_M32);
+    let configured_9 = ConfigureCubeTile(9, 256, 2, 1, TileDataType_U64,
+        TileLayout_CUBE_M32);
+    let configured_10 = ConfigureCubeTile(10, 256, 2, 1, TileDataType_U64,
+        TileLayout_CUBE_M32);
+    let configured_11 = ConfigureCubeTile(11, 256, 2, 1, TileDataType_U64,
+        TileLayout_CUBE_M32);
     for row = 0 to 1 looplimit 2 do
-        for column = 0 to 1 looplimit 2 do
+        for column = 0 to 0 looplimit 1 do
             WriteTileElement(9, row, column, Zeros{PTO_XLEN} + 2);
             WriteTileElement(10, row, column, Zeros{PTO_XLEN} + 3);
             WriteTileElement(11, row, column, Zeros{PTO_XLEN} + 4);
@@ -77,7 +77,7 @@ begin
     let (fma_status, -) = ExecuteTileInstruction(
         TileDecode_TEPL, '000000011100', fma);
     assert fma_status == TileExecution_Executed;
-    assert ReadTileElement(8, 0, 1) == Zeros{PTO_XLEN} + 10;
+    assert ReadTileElement(8, 0, 0) == Zeros{PTO_XLEN} + 10;
 
     let configured_12 = ConfigureCubeTile(12, 128, 4, 8, TileDataType_U32,
         TileLayout_CUBE_N8);

@@ -4,7 +4,7 @@ begin
     var instruction: bits(64) = Zeros{64} + 0x00019181;
     instruction[26:25] = '00';
     instruction[24:20] = '11100';
-    instruction[31:27] = TileDataTypeToEncoding(TileDataType_U32);
+    instruction[31:27] = TileDataTypeToEncoding(TileDataType_U64);
     return instruction;
 end;
 
@@ -12,7 +12,7 @@ pure func TFMAMaskAttributes() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001023;
     instruction[24:20] = DTYPE_NONE;
-    instruction[11:7] = Zeros{5} + 31;
+    instruction[11:7] = Zeros{5} + 29;
     instruction[13] = '1';
     return instruction;
 end;
@@ -29,11 +29,11 @@ func PrepareDecodedTFMAMaskBundle(mask_present: boolean)
 begin
     ResetProfileState();
     let left_ready = ConfigureCubeTile(
-        1, 128, 1, 1, TileDataType_U32, TileLayout_CUBE_M16);
+        1, 256, 1, 1, TileDataType_U64, TileLayout_CUBE_M32);
     let right_ready = ConfigureCubeTile(
-        2, 128, 1, 1, TileDataType_U32, TileLayout_CUBE_M16);
+        2, 256, 1, 1, TileDataType_U64, TileLayout_CUBE_M32);
     let addend_ready = ConfigureCubeTile(
-        3, 128, 1, 1, TileDataType_U32, TileLayout_CUBE_M16);
+        3, 256, 1, 1, TileDataType_U64, TileLayout_CUBE_M32);
     assert left_ready && right_ready && addend_ready;
     InstallRelativeTileFixture(1, 1);
     InstallRelativeTileFixture(2, 2);
@@ -58,7 +58,7 @@ begin
     AddBundleTileBinding(
         FALSE, 0, 0, '1111', TRUE, TRUE, 1, 2, FALSE);
     AddBundleTileBinding(
-        TRUE, 0, 1, '1111', TRUE, FALSE, 3, 0, TRUE);
+        TRUE, 0, 2, '1111', TRUE, FALSE, 3, 0, TRUE);
 end;
 
 func main() => integer

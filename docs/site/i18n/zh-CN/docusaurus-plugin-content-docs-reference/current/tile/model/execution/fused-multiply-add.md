@@ -50,26 +50,24 @@ This page is a generated reference view of the normative ASL unit.
 
 在 ExecutionMask 下，非活动坐标不读取任何源，并取 ZERO 或 MERGE 值。它不贡献标志。
 
-`TileFusedMultiplyAddDataTypeSupported` 允许 16 种算术类型。`ScalarFPFusedProfile` 断言类型为 FP64、FP32 或 FP16。对合法性允许的其他浮点类型，只有这三种无效情况产生结果，即规范静默 NaN；其他所有输入都会到达 `ScalarFPFusedProfile`，而其断言只允许 FP64、FP32 和 FP16。
+`TileFusedMultiplyAddDataTypeSupported` 恰好允许 FP64、S64、U64、FP16、FP32 与 BF16。`TileFixedFusedMultiplyAddValue` 在选择整数或浮点执行之前强制执行同一类型集合。`ScalarFPFusedProfile` 为 FP64、FP32 与 FP16 实现有限浮点结果。BF16 仍由指令契约接纳，但除上述三种无效情况外，其有限结果配置仍是一个明确的模型缺口。
 
 <!-- PTO-READER-BLOCK: tile-model-execution-fused-multiply-add-example role=example-usage -->
 ## 非规范阅读示例
 
-考虑在 32 乘 4 元素、有效行为一行的 U8 Tile 上执行 TFMA，没有 ExecutionMask：
+考虑在只有一个有效坐标的 U64 CUBE_M32 Tile 上执行 TFMA，没有 ExecutionMask：
 
 ```text
-TFMA <Row=32, Col=4, ValidRow=1, U8>, T#1, T#2, T#3, ->T<128B>
+TFMA <Row=32, Col=2, ValidRow=1, ValidCol=1, U64, Layout=CUBE_M32>, T#1, T#2, T#3, ->T<256B>
 ```
 
-第一个有效列中，左源为 20，右源为 13，加数为 7。
+有效坐标中，左源为 `0x8000000000000000`，右源为 2，加数为 1。
 
-1. 乘积为 20 x 13 = 260。
-2. 加上加数得到 267。
-3. U8 元素保留低八位：267 - 256 = 11。
+1. 乘积为 `0x10000000000000000`。
+2. 加上加数得到 `0x10000000000000001`。
+3. U64 元素保留低 64 位，结果为 1。
 
-目标元素为 11，不记录任何标志。在 S8 Tile 中，相同的位模式会产生相同的结果位。
-
-TFMA 生成的合法性列表只列出 FP16、FP32 和 BF16，因此这个 U8 情况说明的是可执行 ASL 的值辅助函数，而不是该列表允许的形式。
+目标元素为 1，不记录任何标志。U8 与 S8 不属于 TFMA 的精确类型契约，会在执行此值辅助函数之前被拒绝。
 
 <!-- PTO-READER-BLOCK: tile-model-execution-fused-multiply-add-related role=related-owners-navigation -->
 ## 相关所有者

@@ -24,10 +24,6 @@ end;
 
 func PrepareGMOVPeerBlock()
 begin
-    ConfigureTileForMask(0, 128, 1, 128, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, '1111');
-    InstallRelativeTileFixture(0, 0);
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 7);
     let started = ExecuteCommandInstruction(GMOVPeerStart(), 32);
     let tiles = ExecuteCommandInstruction(GMOVPeerBinding(), 32);
     let peers = ExecuteCommandInstruction(GMOVPeerIOR(), 32);
@@ -39,6 +35,18 @@ end;
 func main() => integer
 begin
     ResetProfileState();
+    let launched = LaunchKernelInvocation(0 as PTOModelCoreIdentity,
+        Zeros{PTO_XLEN} + 0x200);
+    assert launched == KernelLifecycle_Started;
+    SelectExecutionContext(0 as PTOModelCoreIdentity, 2 as MemoryAgentId);
+    var source_mask = Zeros{4};
+    source_mask[PTOPEMaskBitOfPEIdentity(2)] = '1';
+    ConfigureTileForMask(0, 128, 1, 128, 1, 1, TileDataType_U8,
+        TileLayout_RowMajor, source_mask);
+    InstallRelativeTileFixture(0, 0);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 7);
+    SelectExecutionContext(0 as PTOModelCoreIdentity, 0 as MemoryAgentId);
+    let capacity_before = CoreTileCapacityInUse();
     PrepareGMOVPeerBlock();
     for pe = 0 to 3 do
         WritePEGPR(pe as MemoryAgentId, 2, Zeros{PTO_XLEN} + 2);
@@ -47,13 +55,14 @@ begin
     let rejected = ExecuteBundleTileOperation();
     assert !rejected;
     assert _LastFault == Fault_TileLegality;
-    assert CoreTileCapacityInUse() == 512;
+    assert CoreTileCapacityInUse() == capacity_before;
 
     ClearFault();
     WritePEGPR(3, 2, Zeros{PTO_XLEN} + 2);
     let completed = ExecuteBundleTileOperation();
     assert completed;
-    assert _TileAllocationMasks[[_BundleTileBindings[[0]].destination]] ==
-        '1111';
+    let destination = _BundleTileBindings[[0]].destination;
+    assert _Tiles[[destination]].allocated;
+    assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 7;
     return 0;
 end;

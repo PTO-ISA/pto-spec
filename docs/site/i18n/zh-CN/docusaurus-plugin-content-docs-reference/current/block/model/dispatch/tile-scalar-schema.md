@@ -345,6 +345,9 @@ begin
     let cell_select = inputs.source0_valid &&
         _Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind ==
             TileStorage_PredicateCell;
+    let predicate_tile_select = inputs.source0_valid &&
+        (_Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind ==
+             TileStorage_Predicate || cell_select);
     let split_final_binding = cell_select && execution_mask_tile;
     if BundleTileBindingCount() != (if split_final_binding then 2 else 1) then
         return FALSE;
@@ -352,7 +355,7 @@ begin
     let result = if split_final_binding then
         _BundleTileBindings[[1]] else inputs;
     if !inputs.source0_valid ||
-       (if cell_select then
+       (if predicate_tile_select then
             !inputs.source1_valid
         else
             inputs.source1_valid != execution_mask_tile) ||
@@ -370,7 +373,8 @@ begin
         return FALSE;
     end;
     let first = BundleTileSourceIndex(0, FALSE);
-    let source_true = if cell_select then BundleTileSourceIndex(0, TRUE)
+    let source_true = if predicate_tile_select then
+        BundleTileSourceIndex(0, TRUE)
         else first;
     let cube = SelectedBundleComparisonCUBE(source_true);
     let capacity_bytes = BundleLocalDestinationAllocationBytes(

@@ -3,16 +3,34 @@
 func main() => integer
 begin
     ResetProfileState();
-    SetCurrentACR(0);
-    WriteTPC(Zeros{PTO_XLEN} + 0x100);
-    BeginBundle(BundleKind_System, BundleTransfer_Fallthrough,
-        Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x180,
-        Zeros{PTO_XLEN}, FALSE);
-    EnterBundleBody();
+    let entry = Zeros{PTO_XLEN} + 0x100;
+    WriteMemoryByte(entry, Zeros{8} + 0x81);
+    WriteMemoryByte(entry + 1, Zeros{8} + 0x10);
+    WriteMemoryByte(entry + 2, Zeros{8});
+    WriteMemoryByte(entry + 3, Zeros{8});
+    WriteMemoryByte(entry + 4, Zeros{8} + 0x2b);
+    WriteMemoryByte(entry + 5, Zeros{8} + 0xa0);
+    WriteMemoryByte(entry + 6, Zeros{8} + 0x30);
+    WriteMemoryByte(entry + 7, Zeros{8} + 0x03);
+    WriteMemoryByte(entry + 8, Zeros{8} + 1);
+    WriteMemoryByte(entry + 9, Zeros{8});
+    WriteMemoryByte(entry + 10, Zeros{8});
+    WriteMemoryByte(entry + 11, Zeros{8});
+    WriteMemoryByte(entry + 12, Zeros{8});
+    WriteMemoryByte(entry + 13, Zeros{8});
+    let launched = LaunchKernelInvocation(0, entry);
+    assert launched == KernelLifecycle_Started;
+    SelectExecutionContext(0, 0);
+    let start_status = ExecuteCommandInstruction(
+        Zeros{64} + 0x00001081, 32);
+    assert start_status == CommandExecution_Executed;
     let status = ExecuteScalarInstruction('000000000000000000000011001100001010000000101011', 32);
-    assert status == ScalarExecution_Executed;
+    assert status == ScalarExecution_Blocked;
     assert _LastFault == Fault_None;
-    assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
+    assert ReadTPC() == entry + 4;
+    assert _CoreSyncRecords[[0]][[0]].arrived == '1000';
     assert InstructionContractOperation_SYNC_CORE() == ScalarOperation_SYNC_CORE;
+    let aborted = AbortKernelInvocation(0);
+    assert aborted == KernelLifecycle_Started;
     return 0;
 end;

@@ -35,16 +35,17 @@ This page is a generated reference view of the normative ASL unit.
 
 1. 零参与且没有绑定的指令束直接返回真，没有任何效果。
 2. 除非选择了 `TIMG2COL`，操作必须能够译码，且 `BundleProducerEffectEligible` 必须接受它。译码失败引发 `Fault_IllegalInstruction`。
-3. 组装输出结构必须合法（`Fault_BundleControl`），Shared 目标组装策略必须合法（`Fault_TileLegality`）。
-4. 对于矩阵、`TIMG2COL` 和权重 `TLOAD` 以外的操作，准备阶段 2 并复用 Local 续接目标。
-5. 当 Tile 掩码不为零且未选择 `TIMG2COL` 时，标记、捕获并检查执行掩码。对于内存传输类操作和权重 `TLOAD`，在此准备其合并。
-6. 专用分派器依次尝试：`TIMG2COL`、权重 `TLOAD`、矩阵、CUBE 传输、GMOV、MGATHER.CAS、GM 原子与归约、MGATHER.MASK、MGATHER、MSCATTER、MSCATTER.MASK、TPREFETCH 以及 Shared TLSU。如果仍有未消费的 Shared 绑定且没有处理器匹配，引发 `Fault_TileLegality`。
+3. 完成上述操作检查后，如果现有 Tile 绑定的掩码全为 `0000`，指令束直接返回真且没有任何效果。此退出早于组装结构、Shared 策略与载荷就绪、阶段 2、schema、源和目标检查。
+4. 组装输出结构必须合法（`Fault_BundleControl`），Shared 目标组装策略必须合法（`Fault_TileLegality`）。
+5. 对于矩阵、`TIMG2COL` 和权重 `TLOAD` 以外的操作，准备阶段 2 并复用 Local 续接目标。
+6. 未选择 `TIMG2COL` 时，标记、捕获并检查执行掩码。对于内存传输类操作和权重 `TLOAD`，在此准备其合并。
+7. 专用分派器依次尝试：`TIMG2COL`、权重 `TLOAD`、矩阵、CUBE 传输、GMOV、MGATHER.CAS、GM 原子与归约、MGATHER.MASK、MGATHER、MSCATTER、MSCATTER.MASK、TPREFETCH 以及 Shared TLSU。如果仍有未消费的 Shared 绑定且没有处理器匹配，引发 `Fault_TileLegality`。
 
 设计要点：ASL 注释指出，效果资格在描述符准备、专用分派、主体执行、分配或辅助效果之前检查。不具资格的操作不会改变 Tile 状态。
 
 设计要点：专用分支的顺序很重要。MGATHER.CAS 使用选择子功能号 8，它也落在 GM 原子范围 8 到 12 内。由于 `BundleMGATHERCASSelected` 在 `BundleGMAtomRedSelected` 之前测试，未被更早选择器（例如仅依据 `B.DATR` 布局匹配的 CUBE 传输）认领的功能号 8 指令束会到达专用的 `MGATHER.CAS` 处理器，而不是原子与归约处理器。
 
-走通用路径时，本单元译码操作；如果 Tile 掩码为零则返回真。随后依次检查：定点属性只用于矩阵操作、绑定完整性、B.IOR 值、数据属性、单元重排 schema 以及所有封闭 schema。产生 GPR 的比较在此处运行并提交。否则 PE 掩码必须一致，必须准备好执行掩码合并，然后解析并校验目标。只有这之后处理器才运行。
+走通用路径时，操作有效性与零参与已经处理完毕。随后依次检查：定点属性只用于矩阵操作、绑定完整性、B.IOR 值、数据属性、单元重排 schema 以及所有封闭 schema。产生 GPR 的比较在此处运行并提交。否则 PE 掩码必须一致，必须准备好执行掩码合并，然后解析并校验目标。只有这之后处理器才运行。
 
 设计要点：ASL 注释指出，原始 B.IOR 值在零掩码退出之后、目标分配之前校验。非法值永远不会进入操作数记录或 Tile 状态。
 
@@ -64,7 +65,7 @@ This page is a generated reference view of the normative ASL unit.
 
 本示例只用于演示当前 ASL 所有者，不替代规范操作。
 
-某 `TADD` 指令束以一个合法绑定和掩码 `1111` 提交。没有专用处理器匹配，因此运行通用路径。所有 schema 通过，分配目标，处理器写入它。本单元提交代际并发布目标。如果处理器发生故障，目标会被释放，结果不可见。如果指令束唯一的 `B.IOT` 使用掩码 `0000`，则会在第 1 步、译码之前返回真，因为零掩码的 `B.IOT` 不创建绑定。
+某 `TADD` 指令束以一个合法绑定和掩码 `1111` 提交。没有专用处理器匹配，因此运行通用路径。所有 schema 通过，分配目标，处理器写入它。本单元提交代际并发布目标。如果处理器发生故障，目标会被释放，结果不可见。对于已译码且保留的 Tile 绑定掩码全为 `0000` 的操作，会在第 3 步直接返回真，早于 schema、载荷、源或目标检查。零掩码 `B.IOT` 若不创建绑定，仍走更早的第 1 步退出。
 
 <!-- PTO-READER-BLOCK: block-model-dispatch-tile-execution-related role=related-owners-navigation -->
 ## 相关所有者
@@ -244,12 +245,12 @@ begin
             return FALSE;
         end;
     end;
+    if SelectedBundleTileMaskIsZero() then return TRUE; end;
     // ParentRef/output structure is a bundle contract and must fault before
     // relative-parent resolution, consumer readiness, descriptor preparation,
-    // or any destination allocation.  Zero-participation groups retain their
-    // strict no-effect path below the existing binder contract.
-    if !SelectedBundleTileMaskIsZero() &&
-       !BundleAssembleOutputStructureLegal() then
+    // or any destination allocation. Zero-participation groups have already
+    // retired through the strict no-effect path after operation validation.
+    if !BundleAssembleOutputStructureLegal() then
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
@@ -385,7 +386,6 @@ begin
         return FALSE;
     end;
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
-    if SelectedBundleTileMaskIsZero() then return TRUE; end;
     if _BundleFixedPointAttributes.valid &&
        _BundleOperation.operation_class != BundleOperation_TileMatrix then
         SetFault(Fault_BundleControl, ReadTPC());

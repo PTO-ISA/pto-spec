@@ -50,26 +50,24 @@ Operand legality is checked before the handler runs, and the handler itself rais
 
 Under an ExecutionMask, an inactive coordinate reads no source and takes the ZERO or MERGE value. It contributes no flags.
 
-`TileFusedMultiplyAddDataTypeSupported` admits the 16 arithmetic types. `ScalarFPFusedProfile` asserts that the type is FP64, FP32, or FP16. For the other floating types that legality admits, only the three invalid cases produce a result, the canonical quiet NaN; every other input reaches `ScalarFPFusedProfile`, whose assertion admits only FP64, FP32, and FP16.
+`TileFusedMultiplyAddDataTypeSupported` admits exactly FP64, S64, U64, FP16, FP32, and BF16. `TileFixedFusedMultiplyAddValue` enforces that same set before selecting integer or floating execution. `ScalarFPFusedProfile` implements finite floating results for FP64, FP32, and FP16. BF16 remains admitted by the instruction contract, but outside those three invalid cases its finite-result profile is still an explicit model gap.
 
 <!-- PTO-READER-BLOCK: tile-model-execution-fused-multiply-add-example role=example-usage -->
 ## Non-normative reading example
 
-Take TFMA on a U8 Tile of 32 by 4 elements with one valid row and no ExecutionMask:
+Take TFMA on a U64 CUBE_M32 Tile with one valid coordinate and no ExecutionMask:
 
 ```text
-TFMA <Row=32, Col=4, ValidRow=1, U8>, T#1, T#2, T#3, ->T<128B>
+TFMA <Row=32, Col=2, ValidRow=1, ValidCol=1, U64, Layout=CUBE_M32>, T#1, T#2, T#3, ->T<256B>
 ```
 
-The first valid column holds left 20, right 13, and addend 7.
+The valid coordinate holds left `0x8000000000000000`, right 2, and addend 1.
 
-1. The product is 20 x 13 = 260.
-2. Adding the addend gives 267.
-3. The U8 element keeps the low eight bits: 267 - 256 = 11.
+1. The product is `0x10000000000000000`.
+2. Adding the addend gives `0x10000000000000001`.
+3. The U64 element keeps the low 64 bits, producing 1.
 
-The destination element is 11 and no flag is recorded. In an S8 Tile the same bit patterns would produce the same result bits.
-
-The TFMA generated legality list names only FP16, FP32, and BF16, so this U8 case illustrates the executable ASL value helper rather than a form that list admits.
+The destination element is 1 and no flag is recorded. U8 and S8 are outside the exact TFMA type contract and reject before this value helper executes.
 
 <!-- PTO-READER-BLOCK: tile-model-execution-fused-multiply-add-related role=related-owners-navigation -->
 ## Related owners

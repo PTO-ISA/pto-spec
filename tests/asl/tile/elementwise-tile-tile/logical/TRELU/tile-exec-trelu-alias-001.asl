@@ -2,9 +2,9 @@
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_S8,
+    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_S32,
         TileLayout_RowMajor);
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xff);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xffffffff);
 
     assert InstructionContractOperandsLegal_TRELU(0, 0);
     InstructionContractExecute_TRELU(0, 0);

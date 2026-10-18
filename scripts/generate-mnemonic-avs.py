@@ -1001,6 +1001,46 @@ def _scalar_sys_destination_assertions(selector: int, value: int) -> list[str]:
     ]
 
 
+def _scalar_sys_sync_core_body(unit: AslUnit) -> list[str]:
+    """Render one real PE arrival at the encoded SYNC.CORE envelope."""
+
+    instruction, length = _scalar_sys_witness(unit, {})
+    identifier = asl_identifier(unit.mnemonic or "")
+    return [
+        "    ResetProfileState();",
+        "    let entry = Zeros{PTO_XLEN} + 0x100;",
+        "    WriteMemoryByte(entry, Zeros{8} + 0x81);",
+        "    WriteMemoryByte(entry + 1, Zeros{8} + 0x10);",
+        "    WriteMemoryByte(entry + 2, Zeros{8});",
+        "    WriteMemoryByte(entry + 3, Zeros{8});",
+        "    WriteMemoryByte(entry + 4, Zeros{8} + 0x2b);",
+        "    WriteMemoryByte(entry + 5, Zeros{8} + 0xa0);",
+        "    WriteMemoryByte(entry + 6, Zeros{8} + 0x30);",
+        "    WriteMemoryByte(entry + 7, Zeros{8} + 0x03);",
+        "    WriteMemoryByte(entry + 8, Zeros{8} + 1);",
+        "    WriteMemoryByte(entry + 9, Zeros{8});",
+        "    WriteMemoryByte(entry + 10, Zeros{8});",
+        "    WriteMemoryByte(entry + 11, Zeros{8});",
+        "    WriteMemoryByte(entry + 12, Zeros{8});",
+        "    WriteMemoryByte(entry + 13, Zeros{8});",
+        "    let launched = LaunchKernelInvocation(0, entry);",
+        "    assert launched == KernelLifecycle_Started;",
+        "    SelectExecutionContext(0, 0);",
+        "    let start_status = ExecuteCommandInstruction(",
+        "        Zeros{64} + 0x00001081, 32);",
+        "    assert start_status == CommandExecution_Executed;",
+        f"    let status = ExecuteScalarInstruction({bit_literal(instruction, 48)}, {length});",
+        "    assert status == ScalarExecution_Blocked;",
+        "    assert _LastFault == Fault_None;",
+        "    assert ReadTPC() == entry + 4;",
+        "    assert _CoreSyncRecords[[0]][[0]].arrived == '1000';",
+        f"    assert InstructionContractOperation_{identifier}() == "
+        f"ScalarOperation_{identifier};",
+        "    let aborted = AbortKernelInvocation(0);",
+        "    assert aborted == KernelLifecycle_Started;",
+    ]
+
+
 def _scalar_sys_execution_body(
     unit: AslUnit,
     source_selector: int = 5,
@@ -1039,6 +1079,8 @@ def _scalar_sys_execution_body(
     instruction, length = _scalar_sys_witness(unit, overrides)
     encoded = bit_literal(instruction, 48)
     lines: list[str]
+    if name == "SYNC.CORE":
+        return _scalar_sys_sync_core_body(unit)
     if name == "ACRE":
         lines = _scalar_sys_acre_success_body(unit, 0)
     else:

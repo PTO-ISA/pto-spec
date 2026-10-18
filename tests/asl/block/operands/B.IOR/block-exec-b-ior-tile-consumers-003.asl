@@ -167,10 +167,10 @@ begin
     assert _LastFault == Fault_None;
     assert !_Tiles[[0]].allocated;
 
-    // A second B.IOR faults at the command boundary and preserves the first.
+    // TROWMAX is mask-ineligible: a second B.IOR faults and preserves the first.
     ResetProfileState();
     let second_start = ExecuteCommandInstruction(
-        BundleTestTEPLStart(Zeros{10} + 0x066, Zeros{5} + 25), 32);
+        BundleTestTEPLStart(Zeros{10} + 0x041, Zeros{5} + 24), 32);
     let first_ior = ExecuteCommandInstruction(BundleTestScalarBinding(
         Zeros{5}, Zeros{5} + 2, Zeros{5}, Zeros{5}), 32);
     let second_ior = ExecuteCommandInstruction(BundleTestScalarBinding(
