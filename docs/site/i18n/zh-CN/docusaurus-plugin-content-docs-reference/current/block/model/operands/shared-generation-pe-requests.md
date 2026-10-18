@@ -12,7 +12,47 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-本单元为既有 Shared generation owner 实现逐 PE 请求身份。每个编码贡献从所选 Core 与 PE 上下文捕获；发布和 release 仍由现有 generation 契约管理。
+<!-- PTO-READER-BLOCK: block-shared-pe-requests-purpose role=purpose-scope -->
+## 目的和范围
+
+本单元将每个 PE 的 Shared `B.ASSEMBLE` stop 转换为携带标识的 request。它验证 request 如何加入 Core-wide candidate、提交一次 contribution，并在之后让同一 PE 消费其 publication release，而不重放 contribution。
+
+request layer 之所以存在，是因为各 PE 可以在不同时间抵达 stop。当慢 PE 完成同一 Shared generation 时，快 PE 必须始终与其确切 Core、invocation、execution domain、TPC、BPC 和 operand 相关联。
+
+<!-- PTO-READER-BLOCK: block-shared-pe-requests-concepts role=concepts-state -->
+## Request 和 completion 状态
+
+活跃 Block 状态记录当前 PE 是否已提交 Shared-generation request、是否在等待，以及它加入了哪个 candidate ordinal。Core-wide Shared-generation owner 保存 candidate 和 per-PE release record；已发布 Shared parent 是单独的 committed object。
+
+nonparticipant 仍会通过 structural validation，随后消费自己的 Block binding 并 retire，而不改变 fragment、candidate、parent、ordinal、arrival 或 release record。participant request 仅在记录的 Core、invocation、PE、execution-domain token、instruction site、destination、assembly attribute、participant mask、fragment descriptor 和 source binding 全部匹配时才匹配。
+
+<!-- PTO-READER-BLOCK: block-shared-pe-requests-rules role=rules-interactions -->
+## Submission 和 release 规则
+
+validation 拒绝不匹配 open candidate 的 request，也拒绝与同一 participating PE set 的更早 contribution 重叠的 request。成功 submission 提交一个 candidate fragment，然后停驻直到 publication。completed generation 为每个声明 PE 提供 release record，消费该 release 会恰好一次清除该 PE 的 request。
+
+readiness 按最终 candidate descriptor 检查。若后续 contribution 扩大 valid row 或 column，较早 fragment 仍必须定义后来成为 valid 的每个 element。unready request 保持停驻，并使之前发布的 parent 和 candidate ordinal 不变。
+
+<!-- PTO-READER-BLOCK: block-shared-pe-requests-boundaries role=boundaries -->
+## 边界
+
+incomplete candidate 不是 published Shared Tile。fault、abort 或 matching domain squash 可以丢弃 candidate metadata，同时保留之前发布的 parent。成功 kernel retirement 移除 invocation-owned candidate 和 release metadata，但也保留该 parent 和 monotonic operation ordinal。
+
+本单元不会创造 fallback fragment、合并无关的 Core candidate，或允许恢复的 stale context 复活 squashed request。Shared-generation owner 定义 candidate assembly；operation-specific dispatch 定义每个 source fragment 的产生方式。
+
+<!-- PTO-READER-BLOCK: block-shared-pe-requests-example role=example-usage -->
+## 阅读示例
+
+在完整四 PE participant mask 下，PE0 可以提交 generation-12 INIT contribution，并在 PE1 到 PE3 抵达期间等待。第四个 valid contribution 发布 generation 12 后，PE0 可以立即消费其 release 并抵达下一次 INIT。若 PE2 仍持有 generation-12 release，PE0 的下一 request 保持完整，但不能替换旧 publication 或复用 PE2 的 token；只有在之前的 release state 允许后，它才能加入下一个 candidate。
+
+<!-- PTO-READER-BLOCK: block-shared-pe-requests-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Shared generation](shared-generation.md) 拥有 candidate construction、publication 和 release record。
+- [Shared-generation state](../state/shared-generation-state.md) 声明 Core-wide candidate 和 ordinal storage。
+- [Local generation squash](local-generation-squash.md) 移除 matching speculative domain 的 request state。
+- [Kernel lifecycle](../../../arch/state/kernel-lifecycle.md) 退役 invocation-owned candidate 和 release metadata。
+- [PE execution context](../../../arch/state/pe-execution-context.md) 在选择切换期间保存每个 PE 的 waiting request。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

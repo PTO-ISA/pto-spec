@@ -12,7 +12,47 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-gm-obligations-purpose role=purpose-scope -->
+## 目的和范围
 
+GM obligation 跟踪其效果或 fault 尚未完全解决的 kernel memory request。它们连接 precise retry、asynchronous producer progress、`SYNC.CORE` 和 kernel retirement，使 request 不会只因其 instruction wrapper 已返回或其 PE 已抵达 collective 而消失。
+
+该所有者记录 request identity 和 lifecycle。各 scalar、tile、TLSU、atomic 和 prefetch owner 仍定义 memory operation 本身。
+
+<!-- PTO-READER-BLOCK: arch-gm-obligations-concepts role=concepts-state -->
+## 标识和状态
+
+一个 obligation 标识 Core、PE、invocation、dynamic instruction occurrence、execution-domain token、program order、request class 和 encoded request。其状态在 submitted、validated、issued、completed、faulted 和 cancelled 之间变化。captured TSTORE progress 还保存获准的 source snapshot、address、stride、mask、memory order 和 access-control ring。
+
+同一 occurrence 的 registration 和 retry 复用一个 identity。同一 PC 上较晚的 dynamic occurrence 获得另一个 identity。首次成功的 executable capture 不可变，因此 retry 不会悄然采用新 operand 或新 access-control ring。
+
+<!-- PTO-READER-BLOCK: arch-gm-obligations-rules role=rules-interactions -->
+## 与同步和生命周期的交互
+
+仍可能 fault 或需要 recovery 的 obligation 会阻止其 PE 形成 irrevocable collective arrival。validated work 可以允许 arrival，但 collective release 仍会等待所有符合条件的更早 obligation 通过其真实 producer、issue 和 completion path 完成。
+
+kernel end 等待该 invocation 的每个 obligation 静止。abort 取消 reversible work，但保留 irrevocable work 直至其完成。completion 按记录的 identity 检查，因此旧 invocation 的 stale completion 不能解决新 request。
+
+<!-- PTO-READER-BLOCK: arch-gm-obligations-boundaries role=boundaries -->
+## 边界
+
+本单元中的 verification progress control 只调度普通 producer path；它们不是 ISA-visible gate。同样，有界 slot bank 是模型容量，而非软件可移植限制。
+
+只有 validated Local TSTORE 使用 captured progress executor。其他 fault-capable request 留在其 instruction owner 中，直到真实所有者报告 validation、issue、fault、retry 或 completion。
+
+<!-- PTO-READER-BLOCK: arch-gm-obligations-example role=example-usage -->
+## 阅读示例
+
+考虑同一 TPC 上两个 encoded TSTORE occurrence。第一个在 ACR2 下获准并捕获 source generation 4 和地址 A。恢复后，第二个 occurrence 在 ACR0 下获准，使用 source generation 5 和地址 B。它们保留不同 obligation identity 和 immutable capture；推进第一个不能写入 B 或清除第二个。后续 `SYNC.CORE` 只有在两个更早 obligation 都完成后才能 release。
+
+<!-- PTO-READER-BLOCK: arch-gm-obligations-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Core synchronization](../state/core-synchronization.md) 使用 obligation state gate arrival 和 release。
+- [Kernel lifecycle](../state/kernel-lifecycle.md) 在 abort 时等待 quiescence 并取消 reversible work。
+- [GM-obligation dispatch](../../block/model/dispatch/gm-obligation-dispatch.md) 注册 Block tile operation 并驱动 accepted execution。
+- [Memory events](memory-events.md) 记录 completed operation 产生的 effect 和 provenance。
+- [Fault precision](fault-precision.md) 拥有 retryable request 周围的 fault 和 recovery 行为。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

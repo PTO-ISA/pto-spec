@@ -12,7 +12,47 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-kernel-lifecycle-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit controls the lifetime of one kernel invocation on a modeled Core: launch, successful end, and abort. It exists so work left by one invocation cannot be mistaken for work belonging to a later invocation, while effects that have already committed remain visible.
+
+The lifecycle owner coordinates PE initialization, Core synchronization, GM obligations, Shared-generation metadata, and source lifetimes. The owners of those mechanisms still define their detailed behavior.
+
+<!-- PTO-READER-BLOCK: arch-kernel-lifecycle-concepts role=concepts-state -->
+## Invocation state
+
+Each Core records whether an invocation is active, its current identity, the next identity to allocate, and the most recently retired identity. Launch assigns the same entry PC and fresh invocation identity to PE0 through PE3, initializes the entry, Block-header, queue, predicate, fault, origin, and ordering fields named by `InitializePEForKernelEntry`, and starts synchronization generation zero.
+
+The invocation identity is the key separation mechanism. Synchronization records, GM obligations, Shared-generation requests, and source-lifetime occurrences carry it, so a completion from an older invocation cannot update the current one.
+
+<!-- PTO-READER-BLOCK: arch-kernel-lifecycle-rules role=rules-interactions -->
+## Lifecycle interactions
+
+`LaunchKernelInvocation` waits if the Core already has an active invocation or if the retired invocation still has non-quiescent GM obligations. It rejects an odd entry address. Once admitted, it initializes every PE and returns `KernelLifecycle_Started`.
+
+`EndKernelInvocation` waits for all GM obligations of the active identity to become quiescent, then retires invocation-owned Shared-generation metadata and source-lifetime records before closing synchronization state. `AbortKernelInvocation` first cancels reversible GM work and incomplete synchronization, performs the same identity-scoped retirement, and reports waiting when irrevocable older work still has to finish.
+
+<!-- PTO-READER-BLOCK: arch-kernel-lifecycle-boundaries role=boundaries -->
+## Boundaries
+
+End and abort do not erase committed memory effects or a published Shared parent. They clear active metadata that matches the retiring Core and invocation; records for another identity remain intact. Abort also does not pretend that irrevocable work was cancelled: a later launch stays blocked until that work is quiescent.
+
+The fixed number of modeled Cores, PEs, and bounded records is a model capacity. This page does not add a portable software-visible limit beyond the behavior stated by the owning ASL.
+
+<!-- PTO-READER-BLOCK: arch-kernel-lifecycle-example role=example-usage -->
+## Reading example
+
+Suppose Core 0 launches invocation 7 and PE0 has an incomplete reversible store while a Shared parent from invocation 7 has already published. An abort cancels the reversible store and removes invocation-7 candidate and release metadata, but preserves the published parent. If another store has already become irrevocable, the abort can return `KernelLifecycle_Waiting`; Core 0 cannot launch invocation 8 until that obligation completes.
+
+<!-- PTO-READER-BLOCK: arch-kernel-lifecycle-related role=related-owners-navigation -->
+## Related owners
+
+- [PE execution context](pe-execution-context.md) defines the private state initialized for each PE.
+- [Core synchronization](core-synchronization.md) owns invocation-scoped rendezvous and release tokens.
+- [GM obligations](../memory-model/gm-obligations.md) decide when end, abort, and a later launch may proceed.
+- [Shared-generation PE requests](../../block/model/operands/shared-generation-pe-requests.md) owns the candidate and release metadata retired here.
+- [Source lifetime](../../block/model/state/source-lifetime.md) owns the captured occurrences retired here.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

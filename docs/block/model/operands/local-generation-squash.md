@@ -12,10 +12,47 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-<!-- PTO-READER-BLOCK: block-model-operands-local-generation-squash-shared-request role=rules-interactions -->
-## Shared request interaction
+<!-- PTO-READER-BLOCK: block-local-generation-squash-purpose role=purpose-scope -->
+## Purpose and scope
 
-The same architecture event passes its dynamic request identity to the Shared-generation owner after it cancels Local writers and consumers. The Shared owner applies its existing incomplete-candidate abort rule and preserves any published generation's completion state.
+This unit removes speculative Block state belonging to one execution-domain token. It coordinates Local-generation writers and consumers, Shared-generation requests, and source-lifetime or GMOV captures so a squashed domain cannot later complete that retained work.
+
+The domain token is the scope key. State owned by another Core, invocation, PE, or token must survive.
+
+<!-- PTO-READER-BLOCK: block-local-generation-squash-concepts role=concepts-state -->
+## What a squash identifies
+
+`SquashBundleExecutionDomain` uses the current Core and invocation together with the supplied domain token. It removes matching Local-generation writer and consumer entries, then passes the identity to the Shared-request and source-lifetime owners.
+
+When an incomplete Shared candidate contains a matching arrival, `MarkBundleSharedRequestDomainSquashed` marks that request in the live bindings, saved PE images, and retained trap images before the candidate is aborted. Restoring one of those copies therefore cannot revive the cancelled Shared request.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-squash-shared-request role=rules-interactions -->
+## Squash interactions
+
+For a matching Local-generation writer, the squash removes that writer's coverage and readiness contribution. If no writers remain, the incomplete generation can be discarded; successful writers from another domain stay attached. Matching Shared candidate participation is removed without reopening data that has already published.
+
+Source-lifetime and GMOV records lose only PE captures whose token matches, while successful completions from other PEs remain. The function does not inspect GM obligations or generic replay state.
+
+<!-- PTO-READER-BLOCK: block-local-generation-squash-boundaries role=boundaries -->
+## Boundaries
+
+A squash is narrower than kernel abort. It does not retire the whole invocation, erase peer readiness, remove another Core's candidate, or undo a published Shared Tile or committed memory event. A token that does not match leaves the inspected record unchanged.
+
+The unit also does not manufacture a retry. Recovery may restore ordinary saved fields, but the squashed marker prevents the retired domain from submitting or completing as if it were still live.
+
+<!-- PTO-READER-BLOCK: block-local-generation-squash-example role=example-usage -->
+## Reading example
+
+Suppose PE0 and PE1 have contributed Local-generation writers under different domain tokens. PE0 is interrupted after its token is saved, then its domain is squashed. PE0's writer, source-lifetime capture, and matching request state are removed, while PE1's writer and readiness remain. Restoring PE0's saved trap context does not revive the old contribution; a fresh Block receives a new domain token.
+
+<!-- PTO-READER-BLOCK: block-local-generation-squash-related role=related-owners-navigation -->
+## Related owners
+
+- [Local generation](local-generation.md) owns writer coverage, readiness, and publication.
+- [Shared-generation PE requests](shared-generation-pe-requests.md) owns per-PE candidate submissions and releases.
+- [Source lifetime](../state/source-lifetime.md) owns captured generations and participant completion.
+- [Shared-generation state](../state/shared-generation-state.md) marks live and saved copies of matching Shared requests before aborting an incomplete candidate.
+- [Trap context](../../../arch/state/trap-context.md) saves Block state that must not revive a squashed token.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,47 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-pe-context-purpose role=purpose-scope -->
+## 目的和范围
 
+本单元使模型能够在 PE0 到 PE3 以及建模 Core 之间切换，而不把一组全局 ASL 工作状态误作共享私有状态。切换会保存当前私有执行上下文并恢复所选上下文；Core-local 状态单独分组保存。
+
+当一个 PE 停驻、故障或重试，而另一个 PE 继续执行时，这种隔离至关重要。选择另一个 PE 必须呈现该 PE 的 PC、Block 状态、队列、Local Tile 和 trap 状态，同时不能倒退共享进度。
+
+<!-- PTO-READER-BLOCK: arch-pe-context-concepts role=concepts-state -->
+## 分组保存的内容
+
+`PEExecutionContext` 包含指令计数器、编码指令状态、Local Tile 描述符和 payload generation、临时队列、Block 绑定与 execution-domain 状态、fault 与 trap 状态、reservation、numeric status 及其他 PE-private 字段。`CoreExecutionContext` 包含 Core-local access-control、timer、interrupt 及相关 system-register 状态。
+
+活跃全局变量是现有 helper 使用的工作副本。`_PEExecutionContexts` 和 `_CoreExecutionContexts` 是后备 bank，并带有 validity bit 和尚未保存条目的 default context。
+
+<!-- PTO-READER-BLOCK: arch-pe-context-rules role=rules-interactions -->
+## 选择规则
+
+`SelectExecutionContext` 在加载不同选择前保存当前有效的 PE 和 Core 工作集。选择同一 Core 内的另一个 PE 只改变 PE 工作集；选择另一个 Core 还会改变 Core-local 工作集。首次选择会加载相应 default context。
+
+快照有意包含 Local Tile 和 Block 进度，因为重试必须恢复同一 PE-private 操作。Shared GM 状态、memory-event history、同步记录和 Shared Tile 状态不会从 PE 快照恢复，因此 peer progress 和 committed effect 保持当前值。
+
+<!-- PTO-READER-BLOCK: arch-pe-context-boundaries role=boundaries -->
+## 边界
+
+保存的上下文不是整机检查点。恢复 PE0 不能回滚 PE1 完成的 Shared publication、移除 memory event 或撤销已完成的 Core collective。这些对象有各自的 Core-wide 或 system-wide 所有者。
+
+上下文切换也不决定被 trap 的操作能否重试。Trap recovery、GM-obligation identity、source lifetime 和 generation owner 围绕保存的私有字段执行这些条件。
+
+<!-- PTO-READER-BLOCK: arch-pe-context-example role=example-usage -->
+## 阅读示例
+
+PE0 可以在 Block 活跃且 Local Tile generation 打开时停止。执行 `SelectExecutionContext(core, PE1)` 后，PE1 看到自己的 PC、队列、Block 绑定和 Local Tile。如果 PE1 发布 Shared 数据后模型再次选择 PE0，PE0 会恢复其保存的本地 Block 状态，而 Shared publication 仍然可见，因为它从未属于 PE0 的快照。
+
+<!-- PTO-READER-BLOCK: arch-pe-context-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Kernel lifecycle](kernel-lifecycle.md) 在启动时初始化所有 PE context。
+- [Local payload generation](local-payload-generation.md) 读取并消费所选或 banked PE context 中的 generation 状态。
+- [Core synchronization](core-synchronization.md) 将共享 rendezvous 记录保留在 PE 快照之外。
+- [GM obligations](../memory-model/gm-obligations.md) 在上下文切换和恢复期间保留 request identity。
+- [Trap context](trap-context.md) 拥有 fault 和 return 使用的保存与恢复协议。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

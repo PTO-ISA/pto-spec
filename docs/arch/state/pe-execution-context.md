@@ -12,7 +12,47 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-pe-context-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit lets the model switch among PE0 through PE3 and among modeled Cores without treating one global ASL working set as shared private state. A switch saves the current private execution context and restores the selected context; Core-local state is banked separately.
+
+The separation matters whenever one PE parks, faults, or retries while a peer continues. Selecting the peer must expose that peer's PC, Block state, queues, Local Tiles, and trap state without rewinding shared progress.
+
+<!-- PTO-READER-BLOCK: arch-pe-context-concepts role=concepts-state -->
+## What is banked
+
+`PEExecutionContext` contains the instruction counters, encoded instruction state, Local Tile descriptors and payload generations, temporary queues, Block bindings and execution-domain state, fault and trap state, reservations, numeric status, and other PE-private fields. `CoreExecutionContext` contains the Core-local access-control, timer, interrupt, and related system-register state.
+
+The active globals are the working copy used by existing helpers. `_PEExecutionContexts` and `_CoreExecutionContexts` are the backing banks, with validity bits and default contexts for entries that have not yet been saved.
+
+<!-- PTO-READER-BLOCK: arch-pe-context-rules role=rules-interactions -->
+## Selection rules
+
+`SelectExecutionContext` saves the current valid PE and Core working sets before loading a different selection. Selecting another PE in the same Core changes only the PE working set; selecting another Core also changes the Core-local working set. A first selection loads the corresponding default context.
+
+The snapshot deliberately includes Local Tile and Block progress because retry must resume the same PE-private operation. Shared GM state, memory-event history, synchronization records, and Shared Tile state are not restored from a PE snapshot, so peer progress and committed effects remain current.
+
+<!-- PTO-READER-BLOCK: arch-pe-context-boundaries role=boundaries -->
+## Boundaries
+
+A saved context is not a checkpoint of the whole machine. Restoring PE0 cannot roll back a Shared publication made by PE1, remove a memory event, or undo a completed Core collective. Those objects have their own Core-wide or system-wide owners.
+
+The context switch also does not decide whether a trapped operation may retry. Trap recovery, GM-obligation identity, source lifetimes, and generation owners enforce those conditions around the saved private fields.
+
+<!-- PTO-READER-BLOCK: arch-pe-context-example role=example-usage -->
+## Reading example
+
+PE0 may stop with a Block active and a Local Tile generation open. After `SelectExecutionContext(core, PE1)`, PE1 sees its own PC, queues, Block bindings, and Local Tiles. If PE1 publishes Shared data and the model selects PE0 again, PE0 resumes its saved local Block state while the Shared publication remains visible because it was never part of PE0's snapshot.
+
+<!-- PTO-READER-BLOCK: arch-pe-context-related role=related-owners-navigation -->
+## Related owners
+
+- [Kernel lifecycle](kernel-lifecycle.md) initializes all PE contexts at launch.
+- [Local payload generation](local-payload-generation.md) reads and consumes generation state in the selected or banked PE context.
+- [Core synchronization](core-synchronization.md) keeps shared rendezvous records outside PE snapshots.
+- [GM obligations](../memory-model/gm-obligations.md) retains request identity across context switches and recovery.
+- [Trap context](trap-context.md) owns the save-and-restore protocol used for faults and returns.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

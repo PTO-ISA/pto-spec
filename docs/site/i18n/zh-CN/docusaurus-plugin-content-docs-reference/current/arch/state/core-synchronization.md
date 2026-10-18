@@ -12,7 +12,46 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-core-sync-purpose role=purpose-scope -->
+## 目的和范围
 
+本单元将 `SYNC.CORE` 实现为一个 Core 和一个活跃 kernel invocation 内的四 PE rendezvous。该 rendezvous 延迟每个 participant，直到四个 PE 都抵达同一 static site，且更早的 GM obligation 已完成。
+
+显式 generation 和 release record 使快慢 PE 能够独立推进而不丢失 release。active generation record 回收后，保留的 memory-event provenance 继续承载 ordering effect。
+
+<!-- PTO-READER-BLOCK: arch-core-sync-concepts role=concepts-state -->
+## Generation、arrival 和 release
+
+一个 generation record 包含 Core、invocation、generation number、static site、arrival mask、每个 PE 的 arrival program order、release state 和 consumed mask。每个 PE 还分别跟踪其 next generation 和一个可选的 once-only release token。
+
+participant mask 始终是全部四个 PE。`PE_MASK` 不会减少成员。`_CoreCollectiveHistorySequence` 在 release 时递增，并复制到 memory-event provenance，因此 completed relation 能在 record reuse 后继续存在。
+
+<!-- PTO-READER-BLOCK: arch-core-sync-rules role=rules-interactions -->
+## Rendezvous 规则
+
+`SyncCore` 首先通过停驻 scalar path 拒绝 handler-origin execution 和 active invocation 之外的执行。若已有 release token，则先消费。否则，它要求更早的 fault-capable GM work 允许 arrival，再按当前 TPC 查找或分配该 PE 的 generation record。
+
+位于不同 static site 的 arrival 不能加入该 record。四个 arrival bit 全部设置后，completion 仍会等待每个 participant 在其记录 arrival order 之前的 GM obligation 完成。release 为每个 PE 提供一个 token，使 Core PE reservation 失效，并仅在该 PE 消费 token 时推进其 generation。
+
+<!-- PTO-READER-BLOCK: arch-core-sync-boundaries role=boundaries -->
+## 边界
+
+participant 在停驻时不会推进 PC。后续 generation 不能覆盖未消费的 release token，lifecycle retirement 只清除 closing invocation 的 active record 和 token。此 helper 描述 dispatch 已选择它之后的同步；encoded `SYNC.CORE` envelope 的 legality 和 fault 仍属于 scalar instruction 和 dispatch owner。
+
+有界 generation ring 是模型存储，并不构成软件可见的许可，不能据此跳过 participant 或合并 site。completed ordering 不属于可重用 ring slot：`MemoryCollectiveSyncBefore` 比较同一 Core 和 invocation 中 kernel event 所保留的 provenance。
+
+<!-- PTO-READER-BLOCK: arch-core-sync-example role=example-usage -->
+## 阅读示例
+
+PE0、PE1 和 PE2 可以抵达 generation 0，并在 PE3 仍有一个更早的 fault-capable store 时保持停驻。一旦该 store 的 fault risk 已解除且验证成功，PE3 即使在 store 尚未完成时也可以不可逆地抵达同一 TPC。generation 只在 store 完成后 release，随后每个 PE 都收到自己的 token。PE0 可以立即消费并进入 generation 1，而 PE2 仍持有 generation-0 token；PE2 必须恰好消费一次旧 token，才能加入 generation 1。
+
+<!-- PTO-READER-BLOCK: arch-core-sync-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Kernel lifecycle](kernel-lifecycle.md) 开始和退役 invocation-scoped synchronization state。
+- [GM obligations](../memory-model/gm-obligations.md) 按更早 memory request gate arrival 和 completion。
+- [Memory events](../memory-model/memory-events.md) 在 active record reuse 后保留 collective history。
+- [PE execution context](pe-execution-context.md) 在选择切换时保持 per-PE program order 和 blocked execution 一致。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

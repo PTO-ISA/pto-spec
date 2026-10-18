@@ -12,7 +12,47 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-source-lifetime-purpose role=purpose-scope -->
+## 目的和范围
 
+本单元在一个 dynamic last-use occurrence 中保持 source payload 存活，直到每个声明 participant 都成功完成。它将 occurrence 绑定到一个不可变 Local 或 Shared generation，因此 delayed PE 不会意外消费同一物理 slot 中的 replacement payload。
+
+同一 owner 还跟踪 per-destination GMOV source selection。两种机制都在 PE 独立停止、fault、retry 或 squash 时保留 cross-PE source identity。
+
+<!-- PTO-READER-BLOCK: block-source-lifetime-concepts role=concepts-state -->
+## Occurrence 和 participant 状态
+
+source-lifetime occurrence 记录其 ordinal、Core、invocation、instruction site、source kind 和 index、captured generation、declared participant mask、captured mask、completed mask，以及每个 PE 的 execution-domain token。ordinal 区分在其他方面命名同一 site 和 source 的并发 dynamic occurrence。
+
+captured generation 不可变。occurrence outstanding 时，`SharedSourceLifetimePinned` 或 `LocalSourceLifetimePinned` 阻止替换这个确切 payload generation。
+
+<!-- PTO-READER-BLOCK: block-source-lifetime-rules role=rules-interactions -->
+## Capture 和 completion 规则
+
+每个 participating PE 捕获一次，也只能完成一次。当其他 declared participant 仍未完成时，successful PE 直接返回而不消费 payload。当另一个 incomplete occurrence 仍固定同一 captured generation 时，一个 occurrence 的 completion 不会消费任何内容。最后一个这类 occurrence 完成后，owner 恰好一次消费该 generation，并退役所有与其匹配的 completed occurrence。
+
+fault、retry、nonparticipation 和 squash 不计为 successful completion。domain squash 只移除 Core、invocation、PE 和 domain 匹配的 capture token；其他 PE 的 completed bit 仍属于该 occurrence。kernel end 或 abort 退役属于 closing invocation 的 occurrence。
+
+<!-- PTO-READER-BLOCK: block-source-lifetime-boundaries role=boundaries -->
+## 边界
+
+unmatched 或 incomplete occurrence 可以无限期保持 payload live；此 owner 不会猜测 absent participant 已完成。有界 reference table 是模型界限，不是 portable rejection condition，也不是无关 group 发生冲突的规则。
+
+仅当 Local 或 Shared slot 仍保存 captured generation 时，consumption 才改变 liveness。因此，slot reuse 后的 stale completion 不能消费 newer generation。
+
+<!-- PTO-READER-BLOCK: block-source-lifetime-example role=example-usage -->
+## 阅读示例
+
+PE0 到 PE3 声明最后一次使用 Shared Tile S14 generation 6。PE0 首先完成，但 generation 6 仍被固定，因为还有三个 participant outstanding。PE1 在 capture 后 fault，因此其 bit 未完成。若 PE1 的 domain 被 squash，只移除该 stale capture；PE0 的 successful completion 保留。fresh-domain retry 可以在同一 occurrence 上重新 capture PE1。PE1 到 PE3 完成后，如果没有其他 incomplete occurrence 继续固定该 generation，generation 6 会被恰好消费一次。
+
+<!-- PTO-READER-BLOCK: block-source-lifetime-related role=related-owners-navigation -->
+## 相关所有者
+
+- [Local payload generation](../../../arch/state/local-payload-generation.md) 读取并消费 PE-private generation。
+- [Local generation squash](../operands/local-generation-squash.md) 移除 matching speculative capture。
+- [PE execution context](../../../arch/state/pe-execution-context.md) 在选择切换和 trap 期间保存 per-PE capture state。
+- [Kernel lifecycle](../../../arch/state/kernel-lifecycle.md) 在 end 和 abort 时退役 occurrence。
+- [Shared registers](../../../tile/model/state/shared-registers.md) 拥有 Shared payload generation 和 liveness。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

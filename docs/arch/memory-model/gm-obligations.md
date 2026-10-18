@@ -12,7 +12,47 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-gm-obligations-purpose role=purpose-scope -->
+## Purpose and scope
 
+GM obligations track kernel memory requests whose effects or faults are not yet fully resolved. They connect precise retry, asynchronous producer progress, `SYNC.CORE`, and kernel retirement so a request cannot disappear merely because its instruction wrapper returned or its PE reached a collective.
+
+The owner records request identity and lifecycle. Individual scalar, tile, TLSU, atomic, and prefetch owners still define the memory operation itself.
+
+<!-- PTO-READER-BLOCK: arch-gm-obligations-concepts role=concepts-state -->
+## Identity and state
+
+An obligation identifies the Core, PE, invocation, dynamic instruction occurrence, execution-domain token, program order, request class, and encoded request. Its state moves among submitted, validated, issued, completed, faulted, and cancelled. Captured TSTORE progress also stores the accepted source snapshot, address, strides, mask, memory order, and access-control ring.
+
+Registration and retry of the same occurrence reuse one identity. A later dynamic occurrence at the same PC receives another identity. The first successful executable capture is immutable, which keeps a retry from silently adopting new operands or a new access-control ring.
+
+<!-- PTO-READER-BLOCK: arch-gm-obligations-rules role=rules-interactions -->
+## Interaction with synchronization and lifecycle
+
+An obligation that may still fault or require recovery prevents its PE from making an irrevocable collective arrival. Validated work may permit arrival, but collective release still waits until all qualifying earlier obligations complete through their real producer, issue, and completion paths.
+
+Kernel end waits for every obligation of the invocation to become quiescent. Abort cancels reversible work but retains irrevocable work until it completes. Completion is checked against the recorded identity, so a stale completion from an old invocation cannot resolve a new request.
+
+<!-- PTO-READER-BLOCK: arch-gm-obligations-boundaries role=boundaries -->
+## Boundaries
+
+The verification progress controls in this unit only schedule the ordinary producer path; they are not ISA-visible gates. Likewise, the bounded slot bank is model capacity rather than a portable software limit.
+
+Only a validated Local TSTORE uses the captured progress executor. Other fault-capable requests remain with their instruction owner until that real owner reports validation, issue, fault, retry, or completion.
+
+<!-- PTO-READER-BLOCK: arch-gm-obligations-example role=example-usage -->
+## Reading example
+
+Consider two encoded TSTORE occurrences at the same TPC. The first is admitted under ACR2 and captures source generation 4 and address A. After recovery, the second occurrence is admitted under ACR0 with source generation 5 and address B. They retain different obligation identities and immutable captures; progressing the first cannot write B or clear the second. A following `SYNC.CORE` cannot release until both earlier obligations complete.
+
+<!-- PTO-READER-BLOCK: arch-gm-obligations-related role=related-owners-navigation -->
+## Related owners
+
+- [Core synchronization](../state/core-synchronization.md) uses obligation state to gate arrival and release.
+- [Kernel lifecycle](../state/kernel-lifecycle.md) waits for quiescence and cancels reversible work on abort.
+- [GM-obligation dispatch](../../block/model/dispatch/gm-obligation-dispatch.md) registers Block tile operations and drives accepted execution.
+- [Memory events](memory-events.md) records the effects and provenance produced by completed operations.
+- [Fault precision](fault-precision.md) owns fault and recovery behavior around retryable requests.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL
