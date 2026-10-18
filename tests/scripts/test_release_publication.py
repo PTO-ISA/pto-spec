@@ -42,17 +42,17 @@ def release_archive(path: Path, *, matrix_commit: str = PTO, stale: bool = False
     inputs = {"asl/arch.asl": "b" * 64, "asl/scalar.asl": "c" * 64}
     manifest = {
         "schema_version": 1,
-        "release": "0.58.7",
-        "publication_version": "0.58.7.0",
-        "encoding_abi": "pto-isa-0.58.7-mode-function-v1",
+        "release": "0.59.0",
+        "publication_version": "0.59.0.0",
+        "encoding_abi": "pto-isa-0.59.0-mode-function-v1",
         "encoding_projection_sha256": ENCODING,
         "content_sha256": "0" * 64 if stale else canonical_sha256(inputs),
         "canonical_inputs": [
             {"path": key, "sha256": value} for key, value in inputs.items()
         ],
         "release_selection": {
-            "architecture_version": "0.58.7",
-            "publication_version": "0.58.7.0",
+            "architecture_version": "0.59.0",
+            "publication_version": "0.59.0.0",
             "blockers": [],
         },
     }
@@ -99,9 +99,9 @@ def preflight_candidate() -> dict[str, object]:
         "scope": "pto-spec",
         "commits": {"pto": PTO, "workflow": PTO},
         "identity": {
-            "release": "0.58.7",
-            "publication_version": "0.58.7.0",
-            "encoding_abi": "pto-isa-0.58.7-mode-function-v1",
+            "release": "0.59.0",
+            "publication_version": "0.59.0.0",
+            "encoding_abi": "pto-isa-0.59.0-mode-function-v1",
             "encoding_projection_sha256": ENCODING,
         },
         "dependencies": {"pto_ndf": NDF, "aslref": ASLREF},
@@ -258,9 +258,9 @@ class ReleasePublicationTest(unittest.TestCase):
     def test_published_metadata_produces_v2_event_from_certification(self) -> None:
         metadata = {
             "id": 77,
-            "tag_name": "v0.58.7.0",
+            "tag_name": "v0.59.0.0",
             "commit": PTO,
-            "html_url": "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.7.0",
+            "html_url": "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.59.0.0",
             "published_at": "2026-09-05T03:00:00Z",
             "draft": False,
             "prerelease": False,

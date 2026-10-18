@@ -8,22 +8,32 @@ from scripts.development_identity import ROOT, build, digest, generator
 
 
 class DevelopmentIdentityTests(unittest.TestCase):
-    def test_current_identity_cannot_impersonate_publication(self):
+    def test_current_identity_matches_candidate_without_claiming_publication(self):
         current = build()
-        published = json.loads((ROOT / "spec/release-manifest.json").read_text())
+        candidate = json.loads((ROOT / "spec/release-manifest.json").read_text())
         self.assertEqual(current["status"], "development-not-published")
         self.assertIsNone(current["publication"])
-        self.assertNotEqual(current["identity"]["encoding_projection_sha256"], published["encoding_projection_sha256"])
+        self.assertEqual(current["identity"]["release"], "0.59.0")
+        self.assertEqual(
+            current["identity"]["encoding_abi"],
+            "pto-isa-0.59.0-mode-function-v1",
+        )
+        self.assertEqual(
+            current["identity"]["encoding_projection_sha256"],
+            candidate["encoding_projection_sha256"],
+        )
         self.assertEqual(current["catalog_counts"], {
             "scalar_forms": 473, "command_forms": 105,
             "tile_operations": 119, "reservations": 50,
         })
 
-    def test_frozen_release_guards_still_reject_development_inventory(self):
+    def test_release_guards_accept_only_the_reviewed_candidate_inventory(self):
         module = generator(ROOT)
         tiles = module.load_json("spec/catalog/tile-operations.json")
-        with self.assertRaisesRegex(SystemExit, "exactly 466"):
-            module.encoding_projection(tiles)
+        projection = module.encoding_projection(tiles)
+        self.assertEqual(len(projection["scalar_and_command_forms"]), 578)
+        self.assertEqual(len(projection["extension_encoding_reservations"]), 50)
+        self.assertEqual(len(projection["tile_operations"]), 119)
 
     def test_encoding_mutation_changes_development_identity(self):
         module = generator(ROOT)
