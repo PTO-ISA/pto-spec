@@ -13,7 +13,8 @@ begin
             else tile.columns as integer {1..65535};
         return (element DIVRM row_pitch) as integer {0..524287};
     elsif tile.layout == TileLayout_ColumnMajor then
-        return (element MOD tile.rows) as integer {0..524287};
+        let rows = tile.rows as integer {1..65535};
+        return (element MOD rows) as integer {0..524287};
     else
         let inner_elements = TileFractalInnerElements(tile.data_type)
             as integer {4..64};
@@ -56,7 +57,8 @@ begin
             else tile.columns as integer {1..65535};
         return (element MOD row_pitch) as integer {0..524287};
     elsif tile.layout == TileLayout_ColumnMajor then
-        return (element DIVRM tile.rows) as integer {0..524287};
+        let rows = tile.rows as integer {1..65535};
+        return (element DIVRM rows) as integer {0..524287};
     else
         let inner_elements = TileFractalInnerElements(tile.data_type)
             as integer {4..64};

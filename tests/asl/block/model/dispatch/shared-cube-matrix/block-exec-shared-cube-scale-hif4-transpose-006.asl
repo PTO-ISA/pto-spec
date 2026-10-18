@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HIF4-TRANSPOSE-006","source":"asl/block/model/dispatch/shared-cube-matrix.asl","requirements":["PTO-CUBE-MATRIX-SCALE-001","PTO-CUBE-SHARED-TRANSPOSE-001","PTO-CUBE-HIF4-SCALE-001"],"kind":"execution","summary":"Shared HiF4X2 ScaleB remains group-64 and fixed physical [N,G_B] under TransB=1.","pass_condition":"A shared Matrix-MX operation with K=128, HiF4X2 B, G_B=2, TransB=1, physical B [K,N]=[128,1], and physical ScaleB [N,G_B]=[1,2] executes without a legality fault; distinct scale words materialize in canonical group order and only the B primary is transpose-sensitive.","related_sources":["asl/block/model/dispatch/cube-tmatmul.asl","asl/tile/model/legality/matrix-functions.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-CUBE-SCALE-HIF4-TRANSPOSE-006","source":"asl/block/model/dispatch/shared-cube-matrix.asl","requirements":["PTO-CUBE-MATRIX-SCALE-001","PTO-CUBE-SHARED-TRANSPOSE-001","PTO-CUBE-HIF4-SCALE-001"],"kind":"execution","summary":"Shared HiF4X2 ScaleB remains group-64 and fixed physical [N,G_B] under TransB=1.","pass_condition":"A shared Matrix-MX operation with K=128, HiF4X2 B, G_B=2, TransB=1, even-pitch physical B [128,2] with valid shape [128,1], and physical ScaleB [1,2] executes without a legality fault; distinct scale words materialize in canonical group order and only the B primary is transpose-sensitive.","related_sources":["asl/block/model/dispatch/cube-tmatmul.asl","asl/tile/model/legality/matrix-functions.asl"]}
 
 func main() => integer
 begin
@@ -8,8 +8,8 @@ begin
         TileDataType_E4M3, TileLayout_RowMajor, '1111');
     ConfigureTileForMask(11, 128, 1, 4, 1, 4,
         TileDataType_E8M0, TileLayout_RowMajor, '1111');
-    // TransB=1 makes the Shared B primary physical [K,N]=[128,1].
-    ConfigureTileForMask(12, 128, 128, 1, 128, 1,
+    // TransB=1 keeps valid B [K,N]=[128,1] in an even packed pitch.
+    ConfigureTileForMask(12, 128, 128, 2, 128, 1,
         TileDataType_HiF4X2, TileLayout_RowMajor, '1111');
     // Shared ScaleB is fixed physical [N,G_B]=[1,2], not [G_B,N].
     ConfigureTileForMask(13, 128, 1, 2, 1, 2,

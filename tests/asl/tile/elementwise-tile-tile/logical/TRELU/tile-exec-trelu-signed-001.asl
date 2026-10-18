@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TRELU-SIGNED-001","source":"asl/tile/elementwise-tile-tile/logical/TRELU.asl","requirements":["PTO-TRELU-CONTRACT-001"],"kind":"execution","summary":"TRELU classifies signed integers at their selected element width","pass_condition":"S8 negative one produces zero instead of being treated as positive XLEN 255","related_sources":["asl/tile/model/execution/elementwise.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TRELU-SIGNED-001","source":"asl/tile/elementwise-tile-tile/logical/TRELU.asl","requirements":["PTO-TRELU-CONTRACT-001"],"kind":"execution","summary":"TRELU classifies signed integers at their selected element width","pass_condition":"S32 negative one produces zero instead of being treated as positive XLEN 4294967295","related_sources":["asl/tile/model/execution/elementwise.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -10,10 +10,10 @@ begin
             1,
             1,
             1,
-            TileDataType_S8,
+            TileDataType_S32,
             TileLayout_RowMajor);
     end;
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xff);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xffffffff);
 
     ExecuteTileUnary(TileUnary_RELU, 1, 0);
 

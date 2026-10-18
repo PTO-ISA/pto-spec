@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TNEG-WIDTH-001","source":"asl/tile/elementwise-tile-tile/logical/TNEG.asl","requirements":["PTO-TNEG-CONTRACT-001"],"kind":"execution","summary":"TNEG negates modulo the selected integer element width","pass_condition":"U8 one produces zero-extended 0xff rather than an XLEN-wide result","related_sources":["asl/tile/model/execution/elementwise.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TNEG-WIDTH-001","source":"asl/tile/elementwise-tile-tile/logical/TNEG.asl","requirements":["PTO-TNEG-CONTRACT-001"],"kind":"execution","summary":"TNEG negates modulo the selected integer element width","pass_condition":"S8 one produces zero-extended 0xff rather than an XLEN-wide result","related_sources":["asl/tile/model/execution/elementwise.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -10,7 +10,7 @@ begin
             1,
             1,
             1,
-            TileDataType_U8,
+            TileDataType_S8,
             TileLayout_RowMajor);
     end;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);

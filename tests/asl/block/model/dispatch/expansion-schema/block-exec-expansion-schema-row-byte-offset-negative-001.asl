@@ -31,6 +31,19 @@ begin
     return instruction;
 end;
 
+pure func RowExpandZeroMaskBinding(
+    destination: bits(2), source0: bits(6), source1: bits(6)) => bits(64)
+begin
+    var instruction: bits(64) = Zeros{64} + 0x00002013;
+    instruction[31:26] = source1;
+    instruction[25:20] = source0;
+    instruction[19] = '1';
+    instruction[18:15] = '0001';
+    instruction[11:9] = '000';
+    instruction[8:7] = destination;
+    return instruction;
+end;
+
 func RunIllegalRowSelector(layout: TileLayout, layout_code: bits(5),
                            data_type: TileDataType,
                            valid_columns: integer {1..8},
@@ -113,7 +126,10 @@ begin
             Zeros{3} + 1), 32);
     assert started == CommandExecution_Executed &&
            attributed == CommandExecution_Executed;
-    AddBundleTileBinding(TRUE, 3, 1, '0000', TRUE, TRUE, 60, 61, TRUE);
+    let zero_binding = ExecuteCommandInstruction(
+        RowExpandZeroMaskBinding('11', Zeros{6} + 60,
+            Zeros{6} + 61), 32);
+    assert zero_binding == CommandExecution_Executed;
     let completed = ExecuteBundleTileOperation();
     assert completed && _LastFault == Fault_None;
     assert !_Tiles[[0]].allocated && !_Tiles[[60]].allocated &&

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TREMS-SIGNED-001","source":"asl/tile/tile-scalar-and-immediate/arithmetic/TREMS.asl","requirements":["PTO-INST-TILE-TREMS"],"kind":"execution","summary":"TREMS uses divisor-signed modulo for signed integer elements","pass_condition":"S8 minus five modulo positive three produces positive one and positive five modulo three produces two","related_sources":["asl/tile/model/execution/elementwise.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TREMS-SIGNED-001","source":"asl/tile/tile-scalar-and-immediate/arithmetic/TREMS.asl","requirements":["PTO-INST-TILE-TREMS"],"kind":"execution","summary":"TREMS uses divisor-signed modulo for signed integer elements","pass_condition":"S16 minus five modulo positive three produces positive one and positive five modulo three produces two","related_sources":["asl/tile/model/execution/elementwise.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -9,7 +9,7 @@ begin
         2,
         1,
         2,
-        TileDataType_S8,
+        TileDataType_S16,
         TileLayout_RowMajor);
     ConfigureTile(
         1,
@@ -18,13 +18,13 @@ begin
         2,
         1,
         2,
-        TileDataType_S8,
+        TileDataType_S16,
         TileLayout_RowMajor);
     WriteTileElement(
         0,
         0,
         0,
-        Zeros{PTO_XLEN} + 251);
+        Zeros{PTO_XLEN} + 65531);
     WriteTileElement(
         0,
         0,
@@ -38,6 +38,6 @@ begin
 
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 1;
     assert ReadTileElement(1, 0, 1) == Zeros{PTO_XLEN} + 2;
-    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 251;
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 65531;
     return 0;
 end;

@@ -162,12 +162,12 @@ begin
             return FALSE;
         end;
     end;
+    if SelectedBundleTileMaskIsZero() then return TRUE; end;
     // ParentRef/output structure is a bundle contract and must fault before
     // relative-parent resolution, consumer readiness, descriptor preparation,
-    // or any destination allocation.  Zero-participation groups retain their
-    // strict no-effect path below the existing binder contract.
-    if !SelectedBundleTileMaskIsZero() &&
-       !BundleAssembleOutputStructureLegal() then
+    // or any destination allocation. Zero-participation groups have already
+    // retired through the strict no-effect path after operation validation.
+    if !BundleAssembleOutputStructureLegal() then
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
@@ -303,7 +303,6 @@ begin
         return FALSE;
     end;
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
-    if SelectedBundleTileMaskIsZero() then return TRUE; end;
     if _BundleFixedPointAttributes.valid &&
        _BundleOperation.operation_class != BundleOperation_TileMatrix then
         SetFault(Fault_BundleControl, ReadTPC());

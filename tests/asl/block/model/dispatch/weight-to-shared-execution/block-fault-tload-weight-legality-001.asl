@@ -111,7 +111,6 @@ begin
     assert started == CommandExecution_Executed;
     return datr != CommandExecution_Executed && CoreTileCapacityInUse() == 0;
 end;
-
 func RejectSurplusIORCommand() => boolean
 begin
     ResetProfileState();
@@ -130,10 +129,15 @@ begin
     let first = ExecuteCommandInstruction(WeightNegIOR(2, 3, 4), 32);
     let surplus = ExecuteCommandInstruction(WeightNegIOR(2, 3, 4), 32);
     assert destination == CommandExecution_Executed &&
-           first == CommandExecution_Executed;
-    return surplus != CommandExecution_Executed && CoreTileCapacityInUse() == 0;
+           first == CommandExecution_Executed &&
+           surplus == CommandExecution_Executed;
+    StartMemoryEventCapture(0);
+    let completed = ExecuteBundleTileOperation();
+    let rejected = !completed && _LastFault == Fault_TileLegality &&
+        _MemoryEventCount == 0 && CoreTileCapacityInUse() == 0;
+    StopMemoryEventCapture();
+    return rejected;
 end;
-
 func AssertLegalityFault() => boolean
 begin
     StartMemoryEventCapture(0);
@@ -183,7 +187,6 @@ begin
     let zero_result = AssertLegalityFault();
     assert !zero_result;
     assert _LastFault == Fault_None && _MemoryEventCount == 0;
-
     // Fixed B.DATR fields fault before effects.
     ResetProfileState();
     let fixed_setup = WeightNegSetup(4, valid_shape, valid_start, 10, 8,
@@ -202,7 +205,6 @@ begin
            ior == CommandExecution_Executed;
     let malformed_result = AssertLegalityFault();
     assert malformed_result;
-
     // Unassigned and reserved layout codes are rejected at B.DATR decode before
     // a weight bundle can create payload or allocation effects.
     let unassigned_result = RejectLayoutCommand(2);
@@ -213,7 +215,6 @@ begin
     assert reserved_weight_layout_12_result;
     let reserved_weight_layout_13_result = RejectLayoutCommand(13);
     assert reserved_weight_layout_13_result;
-
     // B.IOR schema is complete: missing, surplus, and misordered records reject.
     ResetProfileState();
     let missing_ior_setup = WeightNegSetup(4, valid_shape, valid_start, 10, 8,
@@ -229,7 +230,6 @@ begin
     assert misordered_ior_setup;
     let misordered_ior_result = AssertLegalityFault();
     assert misordered_ior_result;
-
     // Invalid N/K bounds and non-power-of-two total columns reject preflight.
     ResetProfileState();
     let col_bound_setup = WeightNegSetup(4, valid_shape, valid_start, 10, 8,

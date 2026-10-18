@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TROWARGMIN-INDEX-DTYPE-DECODED-001","source":"asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl","requirements":["PTO-INST-TILE-TROWARGMIN"],"kind":"execution","summary":"decoded TROWARGMIN publishes a U32 index destination and rejects S32 or S16 destinations before result publication","pass_condition":"the complete decoded bundle allocates and publishes U32 indices; manually preallocated S32 and S16 destinations fault atomically before result effects","related_sources":["asl/block/model/dispatch/tile-execution.asl","asl/block/model/dispatch/destination-shape.asl","asl/tile/model/legality/reduction-and-expansion.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TROWARGMIN-INDEX-DTYPE-DECODED-001","source":"asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl","requirements":["PTO-INST-TILE-TROWARGMIN"],"kind":"execution","summary":"decoded TROWARGMIN publishes a U32 index destination and rejects S32 or S16 destinations before result publication","pass_condition":"the complete decoded bundle allocates and publishes U32 indices; direct semantic calls with manually preallocated S32 and S16 destinations fault atomically before result effects","related_sources":["asl/block/model/dispatch/tile-execution.asl","asl/block/model/dispatch/destination-shape.asl","asl/tile/model/legality/reduction-and-expansion.asl"]}
 pure func TrowargminIndexDtypeDecodedStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00019181;
@@ -56,17 +56,17 @@ begin
     assert TileOperationOfIndex(rejected_operation) == TileOperation_TROWARGMIN;
     assert BundleOperationBindingsComplete(rejected_operation);
     assert SelectedBundleClosedReductionSchemaLegal(rejected_operation);
-    let rejected_resolved = ResolveBundleTileDestinationsWithShapeAndType(
-        TRUE,
-        2,
-        1,
-        1,
-        TRUE,
-        data_type);
-    assert rejected_resolved;
-    let rejected_destination = _BundleTileBindings[[0]].destination;
+    let rejected_destination: TileIndex = 5;
+    ConfigureTileForMask(rejected_destination, 128, 2, 1, 2, 1,
+        data_type, TileLayout_RowMajor, '1111');
+    WriteTileElement(rejected_destination, 0, 0,
+        Zeros{PTO_XLEN} + 0x55);
+    MarkTileValidRegionDefined(rejected_destination);
+    _BundleTileBindings[[0]].destination = rejected_destination;
+    _BundleTileBindings[[0]].destination_allocated_by_bundle = TRUE;
     assert _Tiles[[rejected_destination]].data_type == data_type;
     let source_before = ReadTileElement(0, 0, 0);
+    let destination_before = ReadTileElement(rejected_destination, 0, 0);
     let (rejected_status, -) = ExecuteTileInstruction(
         TileDecode_TEPL,
         Zeros{12} + 0x04D,
@@ -74,9 +74,8 @@ begin
     assert rejected_status == TileExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
     assert ReadTileElement(0, 0, 0) == source_before;
-    RollBackBundleTileDestinations();
-    assert !_Tiles[[rejected_destination]].allocated;
-    assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
+    assert ReadTileElement(rejected_destination, 0, 0) == destination_before;
+    assert _Tiles[[rejected_destination]].allocated;
 end;
 
 func main() => integer

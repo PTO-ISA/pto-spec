@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TMULS-WIDTH-001","source":"asl/tile/tile-scalar-and-immediate/arithmetic/TMULS.asl","requirements":["PTO-INST-TILE-TMULS"],"kind":"execution","summary":"TMULS multiplies each element by the normalized scalar and wraps at element width","pass_condition":"U8 values seven and eighty-six times scalar three produce twenty-one and two","related_sources":["asl/tile/model/execution/elementwise.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TMULS-WIDTH-001","source":"asl/tile/tile-scalar-and-immediate/arithmetic/TMULS.asl","requirements":["PTO-INST-TILE-TMULS"],"kind":"execution","summary":"TMULS multiplies each element by the normalized scalar and wraps at element width","pass_condition":"U16 values seven and 0x5556 times scalar three produce twenty-one and two","related_sources":["asl/tile/model/execution/elementwise.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -9,7 +9,7 @@ begin
         2,
         1,
         2,
-        TileDataType_U8,
+        TileDataType_U16,
         TileLayout_RowMajor);
     ConfigureTile(
         1,
@@ -18,7 +18,7 @@ begin
         2,
         1,
         2,
-        TileDataType_U8,
+        TileDataType_U16,
         TileLayout_RowMajor);
     WriteTileElement(
         0,
@@ -29,7 +29,7 @@ begin
         0,
         0,
         1,
-        Zeros{PTO_XLEN} + 86);
+        Zeros{PTO_XLEN} + 0x5556);
 
     InstructionContractExecute_TMULS(
         1,

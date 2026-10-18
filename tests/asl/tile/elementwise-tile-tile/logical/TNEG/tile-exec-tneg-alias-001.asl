@@ -2,7 +2,7 @@
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U8,
+    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_S8,
         TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
 

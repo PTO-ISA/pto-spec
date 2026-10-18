@@ -1,11 +1,11 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TMULS-CUBE-M16-M32-001","source":"asl/tile/tile-scalar-and-immediate/arithmetic/TMULS.asl","requirements":["PTO-TMULS-CONTRACT-001"],"kind":"execution","summary":"TMULS multiplies integer elements on both accepted Local CUBE layouts.","pass_condition":"Direct TMULS on U8 CUBE_M16 and CUBE_M32 publishes 21 for source 7 and scalar 3 with no fault.","related_sources":["asl/tile/model/legality/operand-schema.asl","asl/tile/model/execution/elementwise.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TMULS-CUBE-M16-M32-001","source":"asl/tile/tile-scalar-and-immediate/arithmetic/TMULS.asl","requirements":["PTO-TMULS-CONTRACT-001"],"kind":"execution","summary":"TMULS multiplies integer elements on both accepted Local CUBE layouts.","pass_condition":"Direct TMULS on U16 CUBE_M16 and CUBE_M32 publishes 21 for source 7 and scalar 3 with no fault.","related_sources":["asl/tile/model/legality/operand-schema.asl","asl/tile/model/execution/elementwise.asl"]}
 func RunTMULSCube(layout: TileLayout) => boolean
 begin
     ResetProfileState();
     let source_configured = ConfigureCubeTile(
-        0, 128, 1, 1, TileDataType_U8, layout);
+        0, 128, 1, 1, TileDataType_U16, layout);
     let destination_configured = ConfigureCubeTile(
-        1, 128, 1, 1, TileDataType_U8, layout);
+        1, 128, 1, 1, TileDataType_U16, layout);
     assert source_configured && destination_configured;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 7);
     assert InstructionContractOperandsLegal_TMULS(

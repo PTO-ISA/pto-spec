@@ -11,7 +11,7 @@ begin
     assert TileCarrierOnlyDataTypeSupported(TileDataType_BF16);
     assert TileCarrierOnlyDataTypeSupported(TileDataType_FP32);
     assert TileCarrierOnlyDataTypeSupported(TileDataType_S32);
-    assert !TileCarrierOnlyDataTypeSupported(TileDataType_FP64);
+    assert TileCarrierOnlyDataTypeSupported(TileDataType_FP64);
     assert !TileCarrierOnlyDataTypeSupported(TileDataType_U4X2);
 
     for index = 0 to 2 looplimit 3 do

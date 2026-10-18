@@ -77,9 +77,10 @@ begin
         2, 64, 4, TileDataType_E5M2, TRUE, 0);
     let debug_right_scale = MaterializeBundleSharedMatrixPrimary(
         3, 2, 4, TileDataType_E8M0, FALSE, 0);
-    assert TileMatrixInfoOptionalScalesLegal(
-        debug_left, debug_left_scale, TRUE,
-        debug_right, debug_right_scale, TRUE);
+    assert BundleMatrixCooperativeScalesLegal(
+        debug_left, debug_left_scale, TRUE, TRUE,
+        debug_right, debug_right_scale, TRUE,
+        TileDataType_E4M3, TileDataType_E5M2);
     let completed = ExecuteBundleTileOperation();
     assert completed && _LastFault == Fault_None;
     let destination = BundleMatrixDestinationAt(0);

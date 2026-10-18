@@ -20,7 +20,7 @@ end;
 pure func InstructionContractDataTypeLegal_TFMA(
     data_type: TileDataType) => boolean
 begin
-    return TileVecArithmeticDataTypeSupported(data_type);
+    return TileFusedMultiplyAddDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TFMA(
