@@ -16,7 +16,32 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sh-sub-purpose role=purpose -->
+## SH.SUB 的用途
+`SH.SUB` 对一个对齐半字执行只存储的原子减法。它提供不可分割的 16 位递减，而不为旧内存值创建目的操作数。
 
+<!-- PTO-READER-BLOCK: scalar-sh-sub-mechanism role=mechanism -->
+## 更新机制
+快照 `SrcL` 和 `SrcR` 后，指令预检读写访问，读取两个小端字节，减去操作数的低 16 位，再写回差的低 16 位。计算按模 2^16 进行，因此下溢会回绕。辅助函数返回的旧值会被丢弃。
+
+<!-- PTO-READER-BLOCK: scalar-sh-sub-inputs-outputs role=inputs-outputs -->
+## 输入与输出
+`SrcL` 提供地址，`SrcR` 提供减数。Reg5 编码 `0` 命名架构零寄存器，`1`..`23` 命名其他 GPR，`24`..`27` 命名 `T#1`..`T#4`，`28`..`31` 命名 `U#1`..`U#4`。只有两字节内存值被更新；寄存器或队列都不会收到被替换的半字。
+
+<!-- PTO-READER-BLOCK: scalar-sh-sub-effects role=effects -->
+## 效果与排序
+成功的 `SH.SUB` 记录一个原子事件，使重叠的本地保留失效，并使 `TPC` 前进四个字节。`rl=0` 记录宽松排序，`rl=1` 记录释放排序。该形式没有获取位。
+
+<!-- PTO-READER-BLOCK: scalar-sh-sub-constraints role=constraints -->
+## 约束与故障
+地址必须按两字节对齐。未对齐故障先于翻译和权限故障，两次读写预检还必须得到相同的翻译地址。在原子更新前发生失败时，内存、事件、保留、GPR、临时队列和原始 `TPC` 均被保留，以便完整重发。
+
+<!-- PTO-READER-BLOCK: scalar-sh-sub-example role=example -->
+## 示例
+```text
+sh.sub [a0], a1
+```
+若对齐半字为 `0x0000`，且 `a1` 的低 16 位为 `0x0001`，则写回的模差为 `0xffff`。原来的 `0x0000` 不会被发布。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

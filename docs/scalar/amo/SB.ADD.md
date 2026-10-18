@@ -16,7 +16,32 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sb-add-purpose role=purpose -->
+## What SB.ADD is for
+`SB.ADD` performs a store-only atomic addition on one byte. It is useful when several agents update a byte-sized counter or flag field and the program needs the update to be indivisible without receiving the replaced value.
 
+<!-- PTO-READER-BLOCK: scalar-sb-add-mechanism role=mechanism -->
+## How the update works
+The instruction snapshots `SrcL` and `SrcR`, preflights the same address for both read and write access, reads one byte, adds the low 8 bits of the operand, and writes the low 8 bits of the sum back. Arithmetic is modulo 2^8, so overflow wraps. The old byte is used internally but is discarded because this form has no destination.
+
+<!-- PTO-READER-BLOCK: scalar-sb-add-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+`SrcL` names the atomic address and `SrcR` supplies the operand. Every Reg5 code is assigned: `0` names the architectural zero register, `1`..`23` select the other GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`. The only architectural output is the updated byte in memory; no GPR or temporary queue receives the old value.
+
+<!-- PTO-READER-BLOCK: scalar-sb-add-effects role=effects -->
+## Effects and ordering
+On success, `SB.ADD` records one atomic memory event and invalidates a local reservation that overlaps the written byte. `rl=0` records relaxed ordering, while `rl=1` records release ordering; there is no acquire form. Successful execution advances `TPC` by four bytes.
+
+<!-- PTO-READER-BLOCK: scalar-sb-add-constraints role=constraints -->
+## Constraints and faults
+One-byte access needs no stronger alignment than the byte address itself. Read and write probes must both succeed and resolve to the same translated address before the load or store occurs. A probe failure, translation mismatch, invalid temporary-queue source, or undecodable word changes no memory, event, reservation, result, or `TPC`; the instruction then follows the precise fault and restart path.
+
+<!-- PTO-READER-BLOCK: scalar-sb-add-example role=example -->
+## Example
+```text
+sb.add.rl [a0], a1
+```
+If `a0` names a byte containing `0xff` and the low byte of `a1` is `0x01`, the stored result is `0x00`. The `.rl` suffix changes ordering, not the modular arithmetic, and the prior `0xff` is not returned.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

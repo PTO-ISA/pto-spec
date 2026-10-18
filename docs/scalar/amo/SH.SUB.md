@@ -16,7 +16,32 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sh-sub-purpose role=purpose -->
+## What SH.SUB is for
+`SH.SUB` performs a store-only atomic subtraction on one aligned halfword. It gives programs an indivisible 16-bit decrement without creating a destination for the old memory value.
 
+<!-- PTO-READER-BLOCK: scalar-sh-sub-mechanism role=mechanism -->
+## How the update works
+After snapshotting `SrcL` and `SrcR`, the instruction preflights read and write access, reads two little-endian bytes, subtracts the low 16 bits of the operand, and writes the low 16 bits of the difference. The calculation is modulo 2^16, so underflow wraps. The helper's old-value result is discarded.
+
+<!-- PTO-READER-BLOCK: scalar-sh-sub-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+`SrcL` provides the address and `SrcR` provides the subtrahend. Reg5 code `0` names the architectural zero register, `1`..`23` name the other GPRs, `24`..`27` name `T#1`..`T#4`, and `28`..`31` name `U#1`..`U#4`. Only the two-byte memory value is updated; no register or queue receives the replaced halfword.
+
+<!-- PTO-READER-BLOCK: scalar-sh-sub-effects role=effects -->
+## Effects and ordering
+A successful `SH.SUB` records one atomic event, invalidates an overlapping local reservation, and advances `TPC` by four bytes. `rl=0` records relaxed ordering and `rl=1` records release ordering. No acquire bit is present.
+
+<!-- PTO-READER-BLOCK: scalar-sh-sub-constraints role=constraints -->
+## Constraints and faults
+The address must be two-byte aligned. Misalignment precedes translation and permission faults, and the read and write probes must agree on the translated address. Failure before the atomic update preserves memory, events, reservations, GPRs, temporary queues, and the original `TPC` for full reissue.
+
+<!-- PTO-READER-BLOCK: scalar-sh-sub-example role=example -->
+## Example
+```text
+sh.sub [a0], a1
+```
+If the aligned halfword is `0x0000` and the low 16 bits of `a1` are `0x0001`, the stored modular difference is `0xffff`. The prior `0x0000` is not published.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

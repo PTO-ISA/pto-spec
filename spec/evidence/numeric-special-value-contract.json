@@ -6,7 +6,7 @@
   "status": "named-hardware-special-value-checkpoint-accepted-adr0088-open",
   "acceptance_record": "docs/status/decisions/ADR-NUM-0011-hardware-special-value-checkpoint.md",
   "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
-  "current_profile_evidence_id": "pto-hardware-numeric-0.58.7-ieee-v1",
+  "current_profile_evidence_id": "pto-hardware-numeric-0.59.0-ieee-v1",
   "policy": {
     "produced_nan": "canonical-destination-format-nan",
     "comparison_nan": "NE-true-all-other-relations-false",
@@ -587,7 +587,7 @@
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "fc4060954c19cab7e70751d5e8735a349fcaafe331508195650fd276423d72c2"
+      "sha256": "e9005ec245ed7e825c399b7b30503ca78b61d443cc29473364986a2157b31bdb"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -599,15 +599,15 @@
     },
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "2767dc6302e8d777b517c198d3ead8a5acb62602c26f517eb9ee581bc4afd4da"
+      "sha256": "840ae680f9193ae7a9422a0e7c0e264cd61fa83429149b7b0fff77d41282627d"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "05ee56b8b1b82669226eae91e6ecd81fbb1d2df738fe705cbee025438d7b6ce3"
+      "sha256": "a691a3370855e940c1588abd6846cb5e35c4809608e9e7e461402aa9a5cdb9fe"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "58e4072d9238c53ac865cda0d214dcb2c8602f9c8d13329e64506761f10d8ff0"
+      "sha256": "e069fffc8971ee5fcdbb654b3a500da8ce11240f5112720a0676e090a47db0e9"
     },
     {
       "path": "asl/scalar/model/fsu/arithmetic.asl",
@@ -615,7 +615,7 @@
     },
     {
       "path": "asl/scalar/model/fsu/reference-quantization.asl",
-      "sha256": "e13894a4bb0969202171ee431bf3cd490b7011282547ebce15bbfad910d8b586"
+      "sha256": "4362fd87078b965d2e1730608497f0711da18a819a918e349c60952ce5c4fe5b"
     },
     {
       "path": "asl/scalar/model/fsu/reference-scalar-fp-specials.asl",
@@ -623,7 +623,7 @@
     },
     {
       "path": "asl/scalar/model/fsu/scalar-fp.asl",
-      "sha256": "5015671b9435e0c2cf4185071937d8150ceec9d64172b926926c1cb9a7a039fa"
+      "sha256": "28baac177cc1a57c5e5be667329ae061265a558b0c4332cb4a219dcd56b38e23"
     },
     {
       "path": "asl/scalar/model/dispatch/agu.asl",
@@ -635,7 +635,7 @@
     },
     {
       "path": "asl/scalar/model/dispatch/amo.asl",
-      "sha256": "6c1cbff9ffb76d530083ce68fc0b2b288475080ba5713b28d363f3fb23ea2666"
+      "sha256": "0b1254f13d49c65d7013e7595f0f4f6d4334b8ca83a94e5eb6f504b750adf16d"
     },
     {
       "path": "asl/scalar/model/dispatch/bru.asl",
@@ -643,7 +643,7 @@
     },
     {
       "path": "asl/scalar/model/dispatch/decode.asl",
-      "sha256": "3ae5694456463c805871a6bcc7d6a3d08a9b5498495941c9dbed6eb784e33e9d"
+      "sha256": "4a8ebb42308e5fcf27d70c4fbbe97a3544ed3d4f3fc0044dc294fc9d27c495e2"
     },
     {
       "path": "asl/scalar/model/dispatch/fsu.asl",
@@ -651,11 +651,11 @@
     },
     {
       "path": "asl/scalar/model/dispatch/sys.asl",
-      "sha256": "3962b4109ea93dfb583d5f27b5eff22367ddd1e33b55f364a5ce0b7dfa43e8e5"
+      "sha256": "d5bee4a6d78af882b6ad9a8d7ca6200d3df3f9495061a617f5b3532f45d8ad20"
     },
     {
       "path": "asl/scalar/model/dispatch/top-level.asl",
-      "sha256": "ddab80194961559047af378635173792ea4855c8a7d3ce597b9ff1ea62865fd3"
+      "sha256": "595e7805a9b0a5cb3c0691373b161ea906a8044339ed3dcadec08065d4f118a7"
     },
     {
       "path": "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-001.asl",

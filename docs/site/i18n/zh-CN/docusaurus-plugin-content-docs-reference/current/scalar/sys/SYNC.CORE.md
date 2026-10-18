@@ -16,7 +16,34 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sync-core-purpose role=purpose -->
+## SYNC.CORE 的用途
+`SYNC.CORE` 为一次内核调用中同一 Core 的四个 PE 建立局部阶段边界。它确保后续工作不会越过一个尚未完成的早期阶段；该阶段要求所有参与 PE 及其 GM 义务都已完成。
 
+<!-- PTO-READER-BLOCK: scalar-sync-core-mechanism role=mechanism -->
+## 会合机制
+每个 PE 在同一调用和动态顺序中到达同一个静态 `SYNC.CORE`。只有当更早的工作不再可能发生故障或需要恢复时，到达才成为不可撤销。已经验证但尚未完成的早期 GM 工作可以在到达后继续存在，但集体完成必须等待它通过实际的生产、发出和完成路径得到解决。PE 会停驻，直到四个参与者都已到达且截止点之前的 GM 义务全部完成；随后已完成的代会被保留，直到每个停驻 PE 恰好消费一次释放。
+
+<!-- PTO-READER-BLOCK: scalar-sync-core-inputs-outputs role=inputs-outputs -->
+## 输入与输出
+该指令没有编码操作数，并且始终指代当前 Core 的 PE0、PE1、PE2 和 PE3。它不产生寄存器值或内存值。其可观察结果是：会合和所需 GM 推进完成后，每个参与者都可以越过同一个阶段边界继续执行。
+
+<!-- PTO-READER-BLOCK: scalar-sync-core-effects role=effects -->
+## 状态与排序效果
+被阻塞的 PE 将 `TPC` 保持在 `SYNC.CORE`。完成后，每个参与者较早的合格 GM 操作都排在每个参与者较晚的合格 GM 操作之前；同时使各参与者当前的本地保留失效，并允许每个 PE 恰好前进一次。释放信号会一直保留到被消费，从而避免较快的 PE 丢失完成通知。
+
+<!-- PTO-READER-BLOCK: scalar-sync-core-constraints role=constraints -->
+## 合法包络与拒绝
+唯一合法的主体是 `BSTART.SYS FALL`、一个精确的 `sync.core` 指令字 `0x0330a02b` 和 `BSTOP`。该指令要求存在活动内核调用，且不能从处理程序来源的执行进入。错误的块类型或转移、额外主体操作、畸形或不可取指的结束指令，以及处理程序进入，都会在记录任何屏障到达之前拒绝；既有的包、指令或取指故障指出失败检查。
+
+<!-- PTO-READER-BLOCK: scalar-sync-core-example role=example -->
+## 阶段边界示例
+```text
+BSTART.SYS FALL
+sync.core
+BSTOP
+```
+若 PE0、PE1 和 PE2 先到达该序列，它们都会停驻并把 `TPC` 保持在 `sync.core`。当 PE3 不可撤销地到达且先前 GM 义务已经完成后，PE3 继续执行，保留的释放则让另外三个 PE 各继续一次。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -16,7 +16,32 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sh-add-purpose role=purpose -->
+## SH.ADD 的用途
+`SH.ADD` 对一个对齐半字执行只存储的原子加法。当程序需要不可分割的 16 位更新，但不需要返回被替换值时，它提供所需操作。
 
+<!-- PTO-READER-BLOCK: scalar-sh-add-mechanism role=mechanism -->
+## 更新机制
+指令先快照 `SrcL` 和 `SrcR`，完成读写预检，读取两个小端字节，加上操作数的低 16 位，再写回和的低 16 位。运算按模 2^16 进行。内部读取的旧半字会被丢弃，因为该形式没有目的操作数。
+
+<!-- PTO-READER-BLOCK: scalar-sh-add-inputs-outputs role=inputs-outputs -->
+## 输入与输出
+`SrcL` 提供地址，`SrcR` 提供加数。Reg5 编码 `0` 命名架构零寄存器，`1`..`23` 命名其他 GPR，`24`..`27` 命名 `T#1`..`T#4`，`28`..`31` 命名 `U#1`..`U#4`。唯一输出是更新后的两字节内存值；旧值既不会到达 GPR，也不会到达临时队列。
+
+<!-- PTO-READER-BLOCK: scalar-sh-add-effects role=effects -->
+## 效果与排序
+成功时，`SH.ADD` 记录一个原子事件，使重叠的本地保留失效，并使 `TPC` 前进四个字节。`rl=0` 选择宽松排序，`rl=1` 选择释放排序。该指令没有获取或获取-释放写法。
+
+<!-- PTO-READER-BLOCK: scalar-sh-add-constraints role=constraints -->
+## 约束与故障
+地址必须按两字节对齐。对齐先于翻译或权限检查，两次预检还必须解析到同一翻译地址。任何失败都发生在加载或存储之前，并为精确重启保留内存、内存事件、保留、寄存器、队列和 `TPC`。
+
+<!-- PTO-READER-BLOCK: scalar-sh-add-example role=example -->
+## 示例
+```text
+sh.add.rl [a0], a1
+```
+若对齐半字为 `0xffff`，且 `a1` 的低 16 位为 `0x0001`，则写回结果回绕为 `0x0000`。`.rl` 后缀记录释放排序，但不会返回 `0xffff`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

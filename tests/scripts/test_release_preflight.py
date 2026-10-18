@@ -14,9 +14,9 @@ ROOT = Path(__file__).resolve().parents[2]
 PTO = "a" * 40
 WORKFLOW = PTO
 IDENTITY = {
-    "release": "0.58.7",
-    "publication_version": "0.58.7.0",
-    "encoding_abi": "pto-isa-0.58.7-mode-function-v1",
+    "release": "0.59.0",
+    "publication_version": "0.59.0.0",
+    "encoding_abi": "pto-isa-0.59.0-mode-function-v1",
     "encoding_projection_sha256": "d" * 64,
 }
 
@@ -28,9 +28,9 @@ class Fixture:
         (self.pto / "scripts").mkdir()
         (self.pto / "tools/ndf").mkdir(parents=True)
         (self.pto / "specification.toml").write_text(
-            "[release]\narchitecture_version='0.58.7'\n"
-            "publication_version='0.58.7.0'\n"
-            "encoding_abi='pto-isa-0.58.7-mode-function-v1'\n",
+            "[release]\narchitecture_version='0.59.0'\n"
+            "publication_version='0.59.0.0'\n"
+            "encoding_abi='pto-isa-0.59.0-mode-function-v1'\n",
             encoding="utf-8",
         )
         self.manifest = {

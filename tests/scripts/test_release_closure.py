@@ -6,6 +6,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from scripts.adr_records import load_adrs
 
@@ -17,6 +18,7 @@ MAKEFILE = ROOT / "Makefile"
 RELEASE_GATE = ROOT / "spec/evidence/release-gate-readiness.json"
 SPECIFICATION = ROOT / "specification.toml"
 RELEASE_GENERATOR = ROOT / "scripts/generate-release-manifest"
+RESERVATIONS = ROOT / "spec/catalog/extension-encoding-reservations.json"
 MODEL_CLOSURE_RUNNER = ROOT / "scripts/run-model-closure"
 TRACEABILITY = ROOT / "spec/evidence/release-traceability-readiness.json"
 
@@ -58,20 +60,61 @@ class ReleaseClosureTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "canonical GitHub HTTPS"):
             canonicalize("git@github.com:PTO-ISA/asl-model.git")
 
-    def test_release_identity_is_0587_and_owns_0587_evidence(self) -> None:
+    def test_release_identity_is_0590_and_owns_0590_evidence(self) -> None:
         specification = SPECIFICATION.read_text(encoding="utf-8")
         generator = RELEASE_GENERATOR.read_text(encoding="utf-8")
 
-        self.assertIn('architecture_version = "0.58.7"', specification)
-        self.assertIn('publication_version = "0.58.7.0"', specification)
+        self.assertIn('architecture_version = "0.59.0"', specification)
+        self.assertIn('publication_version = "0.59.0.0"', specification)
         self.assertIn(
-            'encoding_abi = "pto-isa-0.58.7-mode-function-v1"', specification
+            'encoding_abi = "pto-isa-0.59.0-mode-function-v1"', specification
         )
-        self.assertIn('RELEASE = "0.58.7"', generator)
+        self.assertIn('RELEASE = "0.59.0"', generator)
         self.assertIn(
-            'ENCODING_ABI = "pto-isa-0.58.7-mode-function-v1"', generator
+            'ENCODING_ABI = "pto-isa-0.59.0-mode-function-v1"', generator
         )
-        self.assertIn("pto-isa-0587-encoding-totality.json", generator)
+        self.assertIn(
+            'NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.59.0-ieee-v1"',
+            generator,
+        )
+        self.assertIn("pto-isa-0590-encoding-totality.json", generator)
+
+    def test_release_inventory_is_the_reviewed_0590_candidate(self) -> None:
+        release = runpy.run_path(str(RELEASE_GENERATOR))
+        self.assertEqual(
+            release["FORM_COUNTS"],
+            {"scalar_forms": 473, "command_forms": 105},
+        )
+        self.assertEqual(
+            release["COMMAND_FAMILY_COUNTS"], {"CMD": 101, "BBD": 4}
+        )
+        self.assertEqual(
+            release["FAMILY_COUNTS"], {"TEPL": 79, "TLSU": 28, "CUBE": 12}
+        )
+        self.assertEqual(release["EXTENSION_ENCODING_RESERVATION_COUNT"], 50)
+        self.assertEqual(release["EXPECTED_TEPL_MAP"][0x2E], "TLEA")
+
+        reservations = json.loads(RESERVATIONS.read_text(encoding="utf-8"))
+        self.assertEqual(len(reservations["reservations"]), 50)
+
+    def test_release_generator_rejects_unreviewed_reservation_drift(self) -> None:
+        release = runpy.run_path(str(RELEASE_GENERATOR))
+        tile_catalog = release["load_json"]("spec/catalog/tile-operations.json")
+        original_load = release["load_json"]
+
+        def drifted_load(relative: str) -> dict:
+            document = original_load(relative)
+            if relative != "spec/catalog/extension-encoding-reservations.json":
+                return document
+            return {**document, "reservations": [*document["reservations"], {}]}
+
+        with patch.dict(
+            release["encoding_projection"].__globals__, {"load_json": drifted_load}
+        ):
+            with self.assertRaisesRegex(
+                SystemExit, "reservation closure must remain exactly 50"
+            ):
+                release["encoding_projection"](tile_catalog)
 
     def test_release_gate_provenance_covers_workflow_validator_implementation(
         self,
@@ -171,9 +214,9 @@ class ReleaseClosureTest(unittest.TestCase):
         self.assertEqual(
             set(paths),
             {
-                "spec/evidence/pto-isa-0587-abi-vectors.json",
-                "spec/evidence/pto-isa-0587-encoding-totality.json",
-                "spec/evidence/pto-isa-0587-hardware-numeric-vectors.json",
+                "spec/evidence/pto-isa-0590-abi-vectors.json",
+                "spec/evidence/pto-isa-0590-encoding-totality.json",
+                "spec/evidence/pto-isa-0590-hardware-numeric-vectors.json",
                 "spec/evidence/architecture-readiness.json",
                 "spec/evidence/instruction-contract-closure.json",
                 "spec/evidence/release-gate-readiness.json",

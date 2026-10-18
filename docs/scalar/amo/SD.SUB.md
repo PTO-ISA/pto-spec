@@ -16,7 +16,32 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sd-sub-purpose role=purpose -->
+## What SD.SUB is for
+`SD.SUB` atomically subtracts from one aligned 64-bit memory doubleword and stores the result. It avoids an unnecessary destination when a program needs only an indivisible update, not the old memory value.
 
+<!-- PTO-READER-BLOCK: scalar-sd-sub-mechanism role=mechanism -->
+## How the update works
+The instruction snapshots `SrcL` and `SrcR`, preflights read and write access, reads eight little-endian bytes, computes `old_value - operand`, and writes the 64-bit difference back. Arithmetic is modulo 2^64. The atomic helper returns the old doubleword internally, but store-only dispatch discards it.
+
+<!-- PTO-READER-BLOCK: scalar-sd-sub-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+`SrcL` names the atomic address and `SrcR` supplies the 64-bit subtrahend. Reg5 code `0` names the architectural zero register, `1`..`23` select the other GPRs, `24`..`27` select `T#1`..`T#4`, and `28`..`31` select `U#1`..`U#4`. The updated eight-byte memory value is the only output; no GPR or temporary queue receives the old value.
+
+<!-- PTO-READER-BLOCK: scalar-sd-sub-effects role=effects -->
+## Effects and ordering
+Successful execution records one atomic event, invalidates an overlapping local reservation, and advances `TPC` by four bytes. `rl=0` records relaxed ordering and `rl=1` records release ordering. There is no acquire form.
+
+<!-- PTO-READER-BLOCK: scalar-sd-sub-constraints role=constraints -->
+## Constraints and faults
+The address must be eight-byte aligned. Alignment precedes translation and permission checks, and both probes must identify the same translated address before memory is read. A failure leaves memory, events, reservations, registers, queues, and `TPC` unchanged and reports the original architectural address through the precise fault path.
+
+<!-- PTO-READER-BLOCK: scalar-sd-sub-example role=example -->
+## Example
+```text
+sd.sub [a0], a1
+```
+If the aligned doubleword contains `0x0000000000000003` and `a1` contains `0x0000000000000005`, the stored modular difference is `0xfffffffffffffffe`. The old value `3` is not returned.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

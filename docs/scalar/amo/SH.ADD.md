@@ -16,7 +16,32 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sh-add-purpose role=purpose -->
+## What SH.ADD is for
+`SH.ADD` performs a store-only atomic addition on one aligned halfword. It provides an indivisible 16-bit update when the program needs the new memory value but does not need the replaced value returned.
 
+<!-- PTO-READER-BLOCK: scalar-sh-add-mechanism role=mechanism -->
+## How the update works
+The instruction snapshots `SrcL` and `SrcR`, completes read and write preflight, reads two little-endian bytes, adds the low 16 bits of the operand, and writes the low 16 bits of the sum back. Arithmetic is modulo 2^16. The internally read old halfword is discarded because the form has no destination.
+
+<!-- PTO-READER-BLOCK: scalar-sh-add-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+`SrcL` supplies the address and `SrcR` supplies the addend. Reg5 code `0` names the architectural zero register, `1`..`23` name the other GPRs, `24`..`27` name `T#1`..`T#4`, and `28`..`31` name `U#1`..`U#4`. The only output is the updated two-byte memory value; the old value reaches neither a GPR nor a temporary queue.
+
+<!-- PTO-READER-BLOCK: scalar-sh-add-effects role=effects -->
+## Effects and ordering
+On success, `SH.ADD` records one atomic event, invalidates an overlapping local reservation, and advances `TPC` by four bytes. `rl=0` selects relaxed ordering and `rl=1` selects release ordering. The instruction has no acquire or acquire-release spelling.
+
+<!-- PTO-READER-BLOCK: scalar-sh-add-constraints role=constraints -->
+## Constraints and faults
+The address must be aligned to two bytes. Alignment is checked before translation or permission, and both probes must resolve to the same translated address. Any failure occurs before the load or store and leaves memory, memory events, reservations, registers, queues, and `TPC` unchanged for precise restart.
+
+<!-- PTO-READER-BLOCK: scalar-sh-add-example role=example -->
+## Example
+```text
+sh.add.rl [a0], a1
+```
+If the aligned halfword is `0xffff` and the low 16 bits of `a1` are `0x0001`, the stored result wraps to `0x0000`. The `.rl` suffix records release ordering and does not return `0xffff`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

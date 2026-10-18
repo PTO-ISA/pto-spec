@@ -5,7 +5,7 @@
   "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
   "acceptance_record": "docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md",
   "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
-  "current_profile_evidence_id": "pto-hardware-numeric-0.58.7-ieee-v1",
+  "current_profile_evidence_id": "pto-hardware-numeric-0.59.0-ieee-v1",
   "policy": {
     "input_subnormals": "preserve-exact-source-value",
     "result_subnormals": "gradual-underflow-to-destination-format",
@@ -2364,7 +2364,7 @@
   "sources": [
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "fc4060954c19cab7e70751d5e8735a349fcaafe331508195650fd276423d72c2"
+      "sha256": "e9005ec245ed7e825c399b7b30503ca78b61d443cc29473364986a2157b31bdb"
     },
     {
       "path": "spec/evidence/numeric-contract-decision-inputs.json",
@@ -2380,7 +2380,7 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "05ee56b8b1b82669226eae91e6ecd81fbb1d2df738fe705cbee025438d7b6ce3"
+      "sha256": "a691a3370855e940c1588abd6846cb5e35c4809608e9e7e461402aa9a5cdb9fe"
     },
     {
       "path": "asl/arch/data-types/fault.asl",
@@ -2404,11 +2404,11 @@
     },
     {
       "path": "asl/arch/data-types/memory-model.asl",
-      "sha256": "4ff0552a05f90dcc9442167370c2ac242f92bbb3999bcd97635045b73cdc8465"
+      "sha256": "b8472609df8e85562f7379bfb013d04a29b78e6987d9ce7b09390a6d38ffc8d4"
     },
     {
       "path": "asl/arch/data-types/memory-operations.asl",
-      "sha256": "4c5b08dd7c47caa6b1917185886bd8ea6929a9bf00c2b8578b86ead04e110b71"
+      "sha256": "600e918da40aa18ee8f876394f17aa2ca8a3b336743ceda3e534f07ab2b69d32"
     },
     {
       "path": "asl/arch/data-types/numeric-classification.asl",
@@ -2428,7 +2428,7 @@
     },
     {
       "path": "asl/arch/data-types/system-registers.asl",
-      "sha256": "4493903781b924264641d185c2680758d7e96b700cbc915b4c6b5815c0a1e2d4"
+      "sha256": "ca6e241606145b7fb26ebfbca7a6e735eaaff24952ddb8e2580491130dc0bf6d"
     },
     {
       "path": "asl/arch/data-types/tile-data-types.asl",
@@ -2436,11 +2436,11 @@
     },
     {
       "path": "asl/arch/data-types/trap-context.asl",
-      "sha256": "aba39318d6277a1239966ba58d4db42b11afe3913376a6a78c65091121b8859d"
+      "sha256": "cf0361a5e1e262d15ad8ef5328f19528a7fcc781b4a575b703dc99e9647539b9"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "58e4072d9238c53ac865cda0d214dcb2c8602f9c8d13329e64506761f10d8ff0"
+      "sha256": "e069fffc8971ee5fcdbb654b3a500da8ce11240f5112720a0676e090a47db0e9"
     },
     {
       "path": "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-001.asl",

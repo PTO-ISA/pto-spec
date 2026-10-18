@@ -12,7 +12,47 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-gm-dispatch-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit is the Block dispatch bridge for tile operations that can touch global memory. It classifies the operation, chooses the request class and source, registers or reuses the matching GM obligation, validates early Shared-generation retirement, and invokes accepted tile execution.
+
+The bridge keeps the Block stop and the asynchronous memory request tied to one dynamic occurrence. That allows waiting, fault, retry, and completion to update the same obligation instead of creating duplicate effects.
+
+<!-- PTO-READER-BLOCK: block-gm-dispatch-concepts role=concepts-state -->
+## Classification and request identity
+
+`BundleTileOperationHasGMEffect` recognizes the Block tile operations whose execution can create GM work. `BundleTileGMRequestClass` maps them to tile, TLSU, atomic, or prefetch request classes, and `BundleFirstGMSourceTile` identifies the relevant source when the operation has one.
+
+The registered obligation captures the current Core, PE, invocation, encoded occurrence, program order, execution-domain token, descriptor, bindings, and request class. Re-entering the same waiting stop reuses that record; another dynamic stop, even at the same PC, receives a distinct identity.
+
+<!-- PTO-READER-BLOCK: block-gm-dispatch-rules role=rules-interactions -->
+## Dispatch sequence
+
+Before producer effects, the dispatcher checks whether a Shared-generation source can be retired early and records enough state to undo that retirement if applicability or execution fails. It then runs accepted applicability rules and the real tile operation. Success finalizes the retirement and advances the obligation through its owner-reported state.
+
+If a source is not ready, the unchanged request remains waiting. A fault or failed accepted execution retires the failed early request and preserves retry identity as required by the GM-obligation owner. In particular, an unpublished Shared TSTORE source produces no GM effect and keeps collective arrival blocked until publication makes the original request executable.
+
+<!-- PTO-READER-BLOCK: block-gm-dispatch-boundaries role=boundaries -->
+## Boundaries
+
+This unit does not implement the memory transfer, address calculation, atomic operation, or prefetch. Those semantics stay with the selected tile operation. It also cannot treat early source retirement as committed when the operation did not pass applicability and execution.
+
+Operations without a GM effect bypass this obligation path. The bounded obligation storage and verification progress controls remain model mechanisms, not additional instruction operands or portable rejection rules.
+
+<!-- PTO-READER-BLOCK: block-gm-dispatch-example role=example-usage -->
+## Reading example
+
+A TSTORE stop names a Shared source whose next generation has not published. Dispatch registers the dynamic request but does not consume bindings, emit a memory event, or fault merely because the source is waiting. `SYNC.CORE` cannot make an irrevocable arrival past that fault-capable request. After the producer publishes the source, the same stop and obligation retry, execute the real store, record completion, and only then allow the later collective to release.
+
+<!-- PTO-READER-BLOCK: block-gm-dispatch-related role=related-owners-navigation -->
+## Related owners
+
+- [GM obligations](../../../arch/memory-model/gm-obligations.md) owns request identity and lifecycle state.
+- [Shared-generation PE requests](../operands/shared-generation-pe-requests.md) owns waiting and publication for Shared sources.
+- [Source lifetime](../state/source-lifetime.md) pins source generations used by dynamic occurrences.
+- [Core synchronization](../../../arch/state/core-synchronization.md) observes unresolved obligations at collective boundaries.
+- [Tile execution](tile-execution.md) routes accepted operations to their operation-specific owners.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

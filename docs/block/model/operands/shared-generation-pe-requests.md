@@ -12,7 +12,47 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-This unit implements per-PE request identity for the existing Shared generation owner. Each encoded contribution is captured under the selected Core and PE context, while publication and release remain governed by the existing generation contract.
+<!-- PTO-READER-BLOCK: block-shared-pe-requests-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit turns each PE's Shared `B.ASSEMBLE` stop into an identity-bearing request. It validates how that request joins a Core-wide candidate, commits one contribution, and later lets the same PE consume its publication release without replaying the contribution.
+
+The request layer exists because PEs can reach the stop at different times. A fast PE must remain associated with its exact Core, invocation, execution domain, TPC, BPC, and operands while slow peers finish the same Shared generation.
+
+<!-- PTO-READER-BLOCK: block-shared-pe-requests-concepts role=concepts-state -->
+## Request and completion state
+
+The live Block state records whether the current PE has submitted a Shared-generation request, whether it is waiting, and which candidate ordinal it joined. The Core-wide Shared-generation owner holds the candidate and per-PE release records; the published Shared parent remains a separate committed object.
+
+A nonparticipant still passes structural validation, then consumes its own Block binding and retires without changing a fragment, candidate, parent, ordinal, arrival, or release record. A participant's request matches only the recorded Core, invocation, PE, execution-domain token, instruction sites, destination, assembly attributes, participant mask, fragment descriptor, and source bindings.
+
+<!-- PTO-READER-BLOCK: block-shared-pe-requests-rules role=rules-interactions -->
+## Submission and release rules
+
+Validation rejects a request that does not match the open candidate or that overlaps an earlier contribution from the same participating PE set. A successful submission commits one candidate fragment and then parks until publication. The completed generation gives each declared PE a release record, and consuming that release clears the PE's request exactly once.
+
+Readiness is checked against the final candidate descriptor. If later contributions grow valid rows or columns, earlier fragments must still define every element that becomes valid. An unready request remains parked and leaves the previous published parent and the candidate ordinal unchanged.
+
+<!-- PTO-READER-BLOCK: block-shared-pe-requests-boundaries role=boundaries -->
+## Boundaries
+
+An incomplete candidate is not a published Shared Tile. Fault, abort, or a matching domain squash may discard candidate metadata while preserving the previously published parent. Successful kernel retirement removes invocation-owned candidate and release metadata but also preserves that parent and the monotonic operation ordinal.
+
+This unit does not invent a fallback fragment, merge unrelated Core candidates, or let a restored stale context revive a squashed request. The Shared-generation owner defines candidate assembly; operation-specific dispatch defines how each source fragment is produced.
+
+<!-- PTO-READER-BLOCK: block-shared-pe-requests-example role=example-usage -->
+## Reading example
+
+With the full four-PE participant mask, PE0 can submit a generation-12 INIT contribution and wait while PE1 through PE3 arrive. When the fourth valid contribution publishes generation 12, PE0 may immediately consume its release and reach the next INIT. If PE2 still holds its generation-12 release, PE0's next request remains intact but cannot replace the old publication or reuse PE2's token; it joins the next candidate only after the preceding release state permits it.
+
+<!-- PTO-READER-BLOCK: block-shared-pe-requests-related role=related-owners-navigation -->
+## Related owners
+
+- [Shared generation](shared-generation.md) owns candidate construction, publication, and release records.
+- [Shared-generation state](../state/shared-generation-state.md) declares the Core-wide candidate and ordinal storage.
+- [Local generation squash](local-generation-squash.md) removes request state for a matching speculative domain.
+- [Kernel lifecycle](../../../arch/state/kernel-lifecycle.md) retires invocation-owned candidate and release metadata.
+- [PE execution context](../../../arch/state/pe-execution-context.md) banks each PE's waiting request across selection.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

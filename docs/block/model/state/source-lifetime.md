@@ -12,7 +12,47 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-source-lifetime-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit keeps a source payload alive across a dynamic last-use occurrence until every declared participant has completed successfully. It binds the occurrence to one immutable Local or Shared generation, so a delayed PE cannot accidentally consume a replacement payload in the same physical slot.
+
+The same owner tracks per-destination GMOV source selections. Both mechanisms preserve cross-PE source identity while PEs stop, fault, retry, or are squashed independently.
+
+<!-- PTO-READER-BLOCK: block-source-lifetime-concepts role=concepts-state -->
+## Occurrences and participant state
+
+A source-lifetime occurrence records its ordinal, Core, invocation, instruction site, source kind and index, captured generation, declared participant mask, captured mask, completed mask, and each PE's execution-domain token. The ordinal distinguishes concurrent dynamic occurrences that otherwise name the same site and source.
+
+The captured generation is immutable. While an occurrence remains outstanding, `SharedSourceLifetimePinned` or `LocalSourceLifetimePinned` prevents replacement of that exact payload generation.
+
+<!-- PTO-READER-BLOCK: block-source-lifetime-rules role=rules-interactions -->
+## Capture and completion rules
+
+Each participating PE captures once and can complete once. A successful PE returns without consuming the payload when other declared participants remain. Completion of one occurrence consumes nothing while another incomplete occurrence pins the same captured generation. After the last such occurrence completes, the owner consumes that generation exactly once and retires all completed occurrences that match it.
+
+Fault, retry, nonparticipation, and squash do not count as successful completion. A domain squash removes only capture tokens whose Core, invocation, PE, and domain match; completed bits from other PEs remain attached to the occurrence. Kernel end or abort retires occurrences belonging to the closing invocation.
+
+<!-- PTO-READER-BLOCK: block-source-lifetime-boundaries role=boundaries -->
+## Boundaries
+
+An unmatched or incomplete occurrence may keep a payload live indefinitely; this owner does not guess that an absent participant has completed. The bounded reference tables are model bounds, not portable rejection conditions or a rule that unrelated groups conflict.
+
+Consumption changes liveness only when the Local or Shared slot still holds the captured generation. A stale completion therefore cannot consume a newer generation after slot reuse.
+
+<!-- PTO-READER-BLOCK: block-source-lifetime-example role=example-usage -->
+## Reading example
+
+PE0 through PE3 declare the last use of Shared Tile S14 generation 6. PE0 completes first, but generation 6 remains pinned because three participants are outstanding. PE1 faults after capture, so its bit is not completed. If PE1's domain is squashed, only that stale capture is removed; PE0's successful completion remains. A fresh-domain retry can recapture PE1 on the same occurrence. After PE1 through PE3 complete, generation 6 is consumed once if no other incomplete occurrence still pins it.
+
+<!-- PTO-READER-BLOCK: block-source-lifetime-related role=related-owners-navigation -->
+## Related owners
+
+- [Local payload generation](../../../arch/state/local-payload-generation.md) reads and consumes PE-private generations.
+- [Local generation squash](../operands/local-generation-squash.md) removes matching speculative captures.
+- [PE execution context](../../../arch/state/pe-execution-context.md) banks per-PE capture state across selection and traps.
+- [Kernel lifecycle](../../../arch/state/kernel-lifecycle.md) retires occurrences at end and abort.
+- [Shared registers](../../../tile/model/state/shared-registers.md) owns Shared payload generations and liveness.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL
