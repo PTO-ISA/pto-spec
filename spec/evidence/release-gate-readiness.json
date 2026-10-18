@@ -197,7 +197,7 @@
     "scripts/setup-aslref": "85f1a33594bc74f1f8f53cf0234f39e06c4228e78b4e1dc85dece7110f10368b",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
     "scripts/workflow_contract.py": "409df4d48033f9b0801b1452f74a9924aad0cfece9ae636f65855fd3c20b4bf4",
-    "spec/evidence/architecture-readiness.json": "1c99df36c6f04868ab99dcf0a3854c8d7262e227c451240132275d9d9a35c589",
+    "spec/evidence/architecture-readiness.json": "2cd419c36a525f383745f6674b988c2b369b92d4b9f81043d82b8b25b1943b40",
     "spec/evidence/release-traceability-readiness.json": "0fb8d80f1c42f2639ab0ba1ffef0417c5022760d1d09a8a0b8d68ada7f8fce16",
     "spec/release-inputs.json": "4dc6a039c78951ed8452659d6e966aa6d719a70a4e2f0090aa9285721f012bf9",
     "spec/release-selection.json": "cd13f71f8279b033e45a5817371ea6cdf3348e9a039eea9a881df103c240aa61",
