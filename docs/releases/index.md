@@ -11,7 +11,7 @@ ABI, profile, maturity, and pinned toolchain entry points. The generated
 [`spec/release-manifest.json`](../../spec/release-manifest.json) binds canonical
 content and encoding fingerprints for that identity.
 
-## 0.59 candidate
+## Release candidate
 
 The `0.59.0` architecture candidate has first publication identity `0.59.0.0`.
 Its main themes are mask/predicate mechanisms and elementwise control flow,
