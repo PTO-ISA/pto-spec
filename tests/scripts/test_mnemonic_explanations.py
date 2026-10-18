@@ -601,6 +601,40 @@ class MnemonicExplanationTests(unittest.TestCase):
             self.assertNotIn(retired, {unit["id"] for unit in changed})
             self.assertIn("PTO-TILE-NEW", {unit["id"] for unit in changed})
 
+    def test_frozen_scalar_accepts_completed_owner_rewrite_only(self):
+        from unittest.mock import patch
+
+        unit = {"id": "PTO-SCALAR-NEW", "surface": "scalar"}
+        inventory = {"pages": [], "archive_sha256": "synthetic"}
+        shard = {
+            "status": "complete",
+            "migration": {
+                "source_page_ids": [],
+                "mapping_status": "current-owner-rewrite",
+                "mapping_basis": "current-owner-only",
+                "copyright_disposition": "current-owner-rewrite",
+            },
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            (root / "scalar").mkdir()
+            path = root / "scalar/PTO-SCALAR-NEW.json"
+            with patch.object(GENERATE, "current_units", return_value=[unit]):
+                path.write_text(json.dumps(shard))
+                summary = GENERATE.validate_frozen_scalar_mappings(root, root, inventory)
+                self.assertEqual(summary["mapped_units"], 0)
+                for field, value in (("status", "pending"),
+                                     ("mapping_basis", "reviewed-alias"),
+                                     ("source_page_ids", ["unreviewed-page"])):
+                    invalid = copy.deepcopy(shard)
+                    if field == "status":
+                        invalid[field] = value
+                    else:
+                        invalid["migration"][field] = value
+                    path.write_text(json.dumps(invalid))
+                    with self.assertRaisesRegex(SystemExit, "mapping mismatch"):
+                        GENERATE.validate_frozen_scalar_mappings(root, root, inventory)
+
     def test_scalar_mapper_uses_internal_titles_and_only_reviewed_alias_rules(self):
         def page(title, eyebrow="scalar"):
             return (

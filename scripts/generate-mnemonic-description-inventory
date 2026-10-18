@@ -424,6 +424,9 @@ def validate_frozen_scalar_mappings(evidence_root: pathlib.Path, traceability: p
         unmapped_state = (
             (migration.get("mapping_status"), migration.get("mapping_basis"))
             in {("pending", "unreviewed"), ("current-owner-only", "current-owner-only")}
+            or (shard.get("status") == "complete"
+                and migration.get("mapping_status") == "current-owner-rewrite"
+                and migration.get("mapping_basis") == "current-owner-only")
         )
         if (
             shard.get("status") not in {"pending", "complete"}
