@@ -30,7 +30,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `TRECIP` 的特殊输入表如下：
 
-- 正零或负零记录 DZ 并产生同号无穷。`E4M3` 没有无穷，因此在该类型上任一零都产生规范静默 NaN `0x7F`，只记录 DZ 而不记录 OF。
+- 正零或负零记录 DZ 并产生同号无穷。
 - `+inf` 产生 `+0`，`-inf` 产生 `-0`。
 - 任何 NaN 产生规范静默 NaN；信号 NaN 还会记录 NV。
 
@@ -225,7 +225,6 @@ end;
 
 - Malformed Local bindings, B.IOR or B.IOS presence, missing or zero dimensions, unsupported DataType, undefined or invalid source encoding, descriptor mismatch, invalid capacity, or allocation failure raises the applicable Tile fault before effects.
 - Floating zero is legal, reports divide-by-zero, and produces signed infinity where representable; signed infinity produces signed zero; signaling NaN records invalid and every NaN produces a quiet-NaN result.
-- E4M3 has no infinity encoding and TRECIP does not admit saturation, so either signed zero produces canonical E4M3 quiet NaN 0x7F and records only divide-by-zero without overflow.
 
 ## Examples
 

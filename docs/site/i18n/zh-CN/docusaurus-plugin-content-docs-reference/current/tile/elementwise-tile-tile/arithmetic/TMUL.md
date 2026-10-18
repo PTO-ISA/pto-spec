@@ -135,7 +135,9 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TMUL(
     data_type: TileDataType) => boolean
 begin
-    return TileVecArithmeticDataTypeSupported(data_type);
+    return TileBinaryDataTypeSupported(
+        TileBinary_MUL,
+        data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TMUL(

@@ -126604,8 +126604,7 @@
       "engine": "SFU",
       "exceptions": [
         "Malformed Local bindings, B.IOR or B.IOS presence, missing or zero dimensions, unsupported DataType, undefined or invalid source encoding, descriptor mismatch, invalid capacity, or allocation failure raises the applicable Tile fault before effects.",
-        "log(positive one) is positive zero; zero reports divide-by-zero and produces negative infinity where representable; negative nonzero values report invalid and produce quiet NaN; signaling NaN also records invalid.",
-        "E4M3 has no infinity encoding and TLOG does not admit saturation, so zero produces canonical E4M3 quiet NaN 0x7F and records only divide-by-zero without overflow."
+        "log(positive one) is positive zero; zero reports divide-by-zero and produces negative infinity where representable; negative nonzero values report invalid and produce quiet NaN; signaling NaN also records invalid."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -213114,8 +213113,7 @@
       "engine": "SFU",
       "exceptions": [
         "Malformed Local bindings, B.IOR or B.IOS presence, missing or zero dimensions, unsupported DataType, undefined or invalid source encoding, descriptor mismatch, invalid capacity, or allocation failure raises the applicable Tile fault before effects.",
-        "Floating zero is legal, reports divide-by-zero, and produces signed infinity where representable; signed infinity produces signed zero; signaling NaN records invalid and every NaN produces a quiet-NaN result.",
-        "E4M3 has no infinity encoding and TRECIP does not admit saturation, so either signed zero produces canonical E4M3 quiet NaN 0x7F and records only divide-by-zero without overflow."
+        "Floating zero is legal, reports divide-by-zero, and produces signed infinity where representable; signed infinity produces signed zero; signaling NaN records invalid and every NaN produces a quiet-NaN result."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [
@@ -245958,8 +245956,7 @@
       "engine": "SFU",
       "exceptions": [
         "Malformed Local bindings, B.IOR or B.IOS presence, missing or zero dimensions, unsupported DataType, undefined or invalid source encoding, descriptor mismatch, invalid capacity, or allocation failure raises the applicable Tile fault before effects.",
-        "Floating zero is legal, reports divide-by-zero, and produces signed infinity where representable; positive infinity produces positive zero; negative nonzero values report invalid and produce quiet NaN.",
-        "E4M3 has no infinity encoding and TRSQRT does not admit saturation, so either signed zero produces canonical E4M3 quiet NaN 0x7F and records only divide-by-zero without overflow."
+        "Floating zero is legal, reports divide-by-zero, and produces signed infinity where representable; positive infinity produces positive zero; negative nonzero values report invalid and produce quiet NaN."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [

@@ -31,7 +31,7 @@ After complete preflight, `ExecuteTileUnary` computes one result for each coordi
 The special-input table for `TLOG` is:
 
 - Exactly `1.0` produces `+0`.
-- Positive or negative zero records DZ and produces `-inf`. `E4M3` has no infinity, so there it produces the canonical quiet NaN `0x7F` and records DZ without OF.
+- Positive or negative zero records DZ and produces `-inf`.
 - `+inf` stays `+inf`.
 - Any negative nonzero value, including `-inf`, records NV and produces the canonical quiet NaN.
 - Any NaN produces the canonical quiet NaN; a signaling NaN also records NV.
@@ -227,7 +227,6 @@ end;
 
 - Malformed Local bindings, B.IOR or B.IOS presence, missing or zero dimensions, unsupported DataType, undefined or invalid source encoding, descriptor mismatch, invalid capacity, or allocation failure raises the applicable Tile fault before effects.
 - log(positive one) is positive zero; zero reports divide-by-zero and produces negative infinity where representable; negative nonzero values report invalid and produce quiet NaN; signaling NaN also records invalid.
-- E4M3 has no infinity encoding and TLOG does not admit saturation, so zero produces canonical E4M3 quiet NaN 0x7F and records only divide-by-zero without overflow.
 
 ## Examples
 

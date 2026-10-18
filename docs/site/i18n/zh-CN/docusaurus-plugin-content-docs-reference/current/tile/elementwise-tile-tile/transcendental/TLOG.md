@@ -31,7 +31,7 @@ The current instruction contract is owned by the ASL source linked above.
 `TLOG` 的特殊输入表如下：
 
 - 恰为 `1.0` 时产生 `+0`。
-- 正零或负零记录 DZ 并产生 `-inf`。`E4M3` 没有无穷，因此在该类型上产生规范静默 NaN `0x7F`，只记录 DZ 而不记录 OF。
+- 正零或负零记录 DZ 并产生 `-inf`。
 - `+inf` 保持为 `+inf`。
 - 任何负的非零值（包括 `-inf`）记录 NV 并产生规范静默 NaN。
 - 任何 NaN 产生规范静默 NaN；信号 NaN 还会记录 NV。
@@ -227,7 +227,6 @@ end;
 
 - Malformed Local bindings, B.IOR or B.IOS presence, missing or zero dimensions, unsupported DataType, undefined or invalid source encoding, descriptor mismatch, invalid capacity, or allocation failure raises the applicable Tile fault before effects.
 - log(positive one) is positive zero; zero reports divide-by-zero and produces negative infinity where representable; negative nonzero values report invalid and produce quiet NaN; signaling NaN also records invalid.
-- E4M3 has no infinity encoding and TLOG does not admit saturation, so zero produces canonical E4M3 quiet NaN 0x7F and records only divide-by-zero without overflow.
 
 ## Examples
 
