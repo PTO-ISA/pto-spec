@@ -577,10 +577,9 @@ This record classifies the publication boundary; it defines no instruction seman
 The immutable prior publication is `v0.58.7.0` at
 `de57af400cf607f03730aa522a4e9bfb160596de`. The preparation baseline is merged
 main `a5551dbb6c5ea48a8db7913eaf26140fc4caf2e9`. Issue #391 records the operator's
-0.59 request and exact changed-owner inventory. Scalar atomic synchronization
-already landed in #390; the scalar and reservation projections match LinxISA
-main `a30de2ad8ba79f9c39b022ad94622e86c2310afc` after removing its source-lock
-annotation. That comparison does not turn a development identity into a release.
+0.59 request and exact changed-owner inventory. The accepted scalar atomic
+encoding and reservation updates already landed in #390. Their current meaning
+is defined by the PTO ASL/NDF owners; a development identity is not a publication.
 
 ## Decision
 

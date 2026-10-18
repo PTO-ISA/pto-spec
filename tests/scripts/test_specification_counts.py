@@ -53,12 +53,14 @@ class SpecificationCountsTest(unittest.TestCase):
         self.assertEqual(manifest["publication_version"], release["publication_version"])
         self.assertEqual(manifest["encoding_abi"], release["encoding_abi"])
         counts = manifest["catalog_counts"]
-        # This manifest is the immutable 0.58.7 release artifact. New draft
-        # catalog forms are checked against specification.toml above and must
-        # not silently rewrite the already-published release identity.
-        self.assertEqual(counts["scalar_forms"], 466)
-        self.assertEqual(counts["command_forms"], 96)
-        self.assertEqual(counts["tile_operations_total"], 118)
+        # The reviewed 0.59 candidate has its own exact inventory. Its metadata
+        # does not establish publication; the previous immutable release stays
+        # available under its original tag and must not be silently relabeled.
+        self.assertEqual(manifest["release"], "0.59.0")
+        self.assertEqual(manifest["publication_version"], "0.59.0.0")
+        self.assertEqual(counts["scalar_forms"], 473)
+        self.assertEqual(counts["command_forms"], 105)
+        self.assertEqual(counts["tile_operations_total"], 119)
 
 
 if __name__ == "__main__":
