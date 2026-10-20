@@ -15,6 +15,40 @@
 // M322ND, M162ND, or N82ND, MUST stop at the first fault while storing its
 // valid LB1 by LB0 GM elements, and MUST not modify source or padding.
 // NDF-END: PTO-TSTORE-CUBE-001
+// NDF-BEGIN: PTO-TSTORE-STRIDED-ATOMIC-RED-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// TLSU Function 1 TSTORE with B.DATR Canonicalize=1 MUST perform no-return,
+// no-index per-element GM reductions: CMode 0..7 selects ADD, MIN, MAX, AND,
+// OR, XOR, INC, DEC. Canonicalize=0,CMode=0 remains Normal TSTORE. Codes
+// 6/7 MUST reject at B.DATR except in the active atomic TSTORE context.
+// Local B.IOT and whole-parent-published Shared B.IOS sources MUST use the
+// existing source schema, PE-private base/byte stride, valid rectangle and
+// Word-width AGU, including explicit zero and overlapping strides. Local
+// CUBE MUST use M322ND or M162ND, DTYPE_NONE, explicit LB0/LB1, absent LB2;
+// CUBE_N8 MUST NOT be admitted. No IndexTile, return, new Function, implicit
+// PE partition, fence, publication or source write is introduced.
+// Dtype legality and numeric updates MUST use GMReductionOperationDataTypeLegal
+// and GMReductionResult. Every active occurrence, including translated exact
+// aliases, MUST contribute once in implementation-defined serialization order;
+// mixed-size partial overlap remains fail-closed. Inactive/padded coordinates
+// MUST NOT probe or update. PE_MASK=0 MUST retain strict no-effect precedence.
+// Participating atomic TSTORE with B.CATR.atom=1 MUST fault TileLegality before
+// effects; omitted B.CATR or atom=0 MUST retain intrinsic atomicity (A1).
+// Before the first effect, a PE MUST snapshot its source and active set and
+// preflight every read/write target, translation, permission and alignment.
+// Admission MUST freeze operator, dtype, geometry, generation, source values,
+// active coordinates, AGU results, validated targets and access context (B1).
+// Old GM values MUST be sampled at each RMW, not at admission. Failed preflight
+// MUST have zero atomic effects for that PE and MAY revalidate after recovery.
+// An admitted request MAY cancel before its first effect; after any effect it
+// MUST drain remaining occurrences exactly once despite squash/abort (B2).
+// Repeated service MUST NOT repeat committed occurrences; new dynamic requests
+// at the same PC MUST remain distinct. No Core4 rollback is introduced.
+// Source capture/admission MUST NOT complete last-use. Existing .reuse and
+// required-participant/generation completion MUST govern consumption (C1).
+// Existing aq/rl/aqrl/far/trap completion paths remain applicable. Numeric ADD
+// MUST follow PTO-GM-FLOATING-ADD-NUMERIC-001 for indexed and strided forms.
+// NDF-END: PTO-TSTORE-STRIDED-ATOMIC-RED-001
 // DOC-BEGIN: decode
 readonly func InstructionContractOperation_TSTORE() => TileOperation
 begin

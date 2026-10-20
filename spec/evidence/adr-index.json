@@ -6572,6 +6572,7 @@
         "PTO-BSTART-TSTORE-CUBE-001",
         "PTO-BSTART-TSTORE-MEMORY-001",
         "PTO-CUBE-CELL-TRANSPORT-001",
+        "PTO-GM-FLOATING-ADD-NUMERIC-001",
         "PTO-GMOV-CORE4-PEER-001",
         "PTO-INDEXED-TLSU-STRIDE-001",
         "PTO-INST-BLOCK-B-IOR",
@@ -6633,7 +6634,8 @@
         "PTO-TLOAD-MEMORY-001",
         "PTO-TPREFETCH-FOOTPRINT-001",
         "PTO-TSTORE-CUBE-001",
-        "PTO-TSTORE-MEMORY-001"
+        "PTO-TSTORE-MEMORY-001",
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001"
       ],
       "affected_units": [
         "PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING",
@@ -6990,6 +6992,7 @@
       "created": "2026-08-21",
       "id": "ADR-MEM-0009",
       "implementation_issue": null,
+      "interface_change": true,
       "legacy_ids": [
         "PRD-040",
         "PRD-041",

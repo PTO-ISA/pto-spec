@@ -53,6 +53,19 @@
 // failures are preflighted before any architectural effect.
 // NDF-END: PTO-ATOM-RED-FAULTS-001
 
+// NDF-BEGIN: PTO-GM-FLOATING-ADD-NUMERIC-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// GM FP16/BF16/FP32/FP64 ADD MUST preserve subnormal inputs and round once per
+// RMW to its own dtype using RN-even with gradual-underflow results. This
+// accepted issue #397 N1 amendment supersedes issue #208's FP32 GM FTZ rule.
+// NaN operands or opposite infinities MUST yield the format canonical NaN;
+// other infinity sums MUST retain infinity. Overflow MUST yield signed
+// infinity. Minus zero plus minus zero MUST yield minus zero; other exact
+// cancellation MUST yield plus zero. Narrow carriers MUST ignore high bits.
+// Indexed atom.add/red.add and strided atomic TSTORE MUST share the readonly
+// helper and MUST NOT introduce numeric-status writes or scalar results.
+// NDF-END: PTO-GM-FLOATING-ADD-NUMERIC-001
+
 type GMAtomicOperation of enumeration {
     GMAtomic_CAS,
     GMAtomic_EXCH,
