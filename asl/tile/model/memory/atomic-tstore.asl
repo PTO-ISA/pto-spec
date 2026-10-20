@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-ATOMIC-TSTORE","surface":"tile","classification":["model","memory","atomic-tstore"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMICITY","PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-TILE-MODEL-MEMORY-LOAD-STORE","PTO-TILE-MODEL-MEMORY-GM-ATOM-RED"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-ATOMIC-TSTORE","surface":"tile","classification":["model","memory","atomic-tstore"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMICITY","PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","PTO-TILE-MODEL-MEMORY-LOAD-STORE","PTO-TILE-MODEL-MEMORY-GM-ATOM-RED"]}
 func PreflightAtomicTStore(tile: TileInfo, base_address: Word,
     row_stride_bytes: Word, execution_mask: BundleExecutionMaskBinding)
     => (boolean, bits(PTO_MODEL_TILE_ELEMENTS), TilePayload,
@@ -174,6 +174,24 @@ begin
     CompleteMemoryReplay();
 end;
 
+func FinalizeAtomicTStoreOccurrence(core: PTOModelCoreIdentity,
+    pe: MemoryAgentId, obligation_slot: GMObligationIndex)
+begin
+    let obligation = _GMObligations[[core]][[pe]][[obligation_slot]];
+    if !obligation.active || !obligation.captured_atomic_tstore ||
+       obligation.state != GMObligation_Completed ||
+       !obligation.atomic_tstore_finalization_pending then return; end;
+    if obligation.atomic_tstore_source_lifetime_ordinal != 0 then
+        CompleteBundleSourceLifetime(
+            obligation.atomic_tstore_source_lifetime_ordinal);
+    end;
+    RetireAtomicTStoreConsumerDependencies(
+        obligation.bundle_tile_bindings, obligation.instruction_pc,
+        obligation.execution_domain_token, pe);
+    _GMObligations[[core]][[pe]][[obligation_slot]]
+        .atomic_tstore_finalization_pending = FALSE;
+end;
+
 func TSTOREAtomic(base_address: Word, row_stride_bytes: Word,
     source: TileIndex, source_generation: Word, tile: TileInfo) => boolean
 begin
@@ -181,12 +199,16 @@ begin
     let pe = _CurrentMemoryAgent;
     let request_pc = ReadBPC();
     let order = CurrentBundleMemoryOrder();
-    let existing = FindCurrentAtomicTStoreObligation();
+    let existing = FindCurrentAtomicTStoreOccurrence();
     var slot: GMObligationIndex = 0;
     if existing >= 0 &&
        _GMObligations[[core]][[pe]][[existing as GMObligationIndex]]
            .captured_atomic_tstore then
         slot = existing as GMObligationIndex;
+        if _GMObligations[[core]][[pe]][[slot]].state ==
+           GMObligation_Completed then
+            return TRUE;
+        end;
         if _GMObligations[[core]][[pe]][[slot]].state ==
            GMObligation_Validated then
             IssueGMObligation(core, pe, slot);
@@ -204,6 +226,14 @@ begin
         active_elements = selected_elements;
         translated_targets = selected_targets;
         target_count = selected_count;
+        let source_shared = BundleSharedBindingPhysicalCount() != 0;
+        var source_payload_epoch = LocalTilePayloadGeneration(pe, source);
+        if source_shared then
+            let shared_record = SharedTileRecord(
+                _BundleSharedBindings[[0]].shared_tile_id);
+            source_payload_epoch = shared_record.payload_generation;
+        end;
+        var source_lifetime_ordinal: integer = 0;
         if !_KernelInvocationActiveByCore[[core]] ||
            _CurrentKernelInvocation == 0 ||
            _CurrentMemoryOrigin != MemoryEventOrigin_Kernel then
@@ -215,6 +245,11 @@ begin
             end;
             return TRUE;
         end;
+        let (source_capture_ready, captured_source_lifetime) =
+            CaptureAtomicTStoreSourceLifetime(source_shared, source,
+                source_payload_epoch);
+        if !source_capture_ready then return FALSE; end;
+        source_lifetime_ordinal = captured_source_lifetime;
         if existing >= 0 then
             slot = existing as GMObligationIndex;
         else
@@ -241,6 +276,15 @@ begin
         _GMObligations[[core]][[pe]][[slot]].source_generation =
             source_generation;
         _GMObligations[[core]][[pe]][[slot]].source_snapshot = tile;
+        _GMObligations[[core]][[pe]][[slot]].atomic_tstore_source_shared =
+            source_shared;
+        _GMObligations[[core]][[pe]][[slot]].atomic_tstore_source_pe =
+            if source_shared then 0 as MemoryAgentId else pe;
+        _GMObligations[[core]][[pe]][[slot]]
+            .atomic_tstore_source_payload_epoch = source_payload_epoch;
+        _GMObligations[[core]][[pe]][[slot]]
+            .atomic_tstore_source_lifetime_ordinal =
+                source_lifetime_ordinal;
         _GMObligations[[core]][[pe]][[slot]].base_address = base_address;
         _GMObligations[[core]][[pe]][[slot]].row_stride_bytes =
             row_stride_bytes;

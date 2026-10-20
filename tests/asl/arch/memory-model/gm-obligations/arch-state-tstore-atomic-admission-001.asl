@@ -185,14 +185,9 @@ begin
     let rejected = ExecuteBundleTileOperation();
     assert !rejected && _LastFault == Fault_TileLegality &&
            _FaultAddress == ReadTPC() && _MemoryEventCount == 0;
-    let pending_slot = FindCurrentAtomicTStoreObligation();
-    assert pending_slot >= 0;
-    let pending = _GMObligations[[0]][[0]]
-        [[pending_slot as GMObligationIndex]];
-    assert !pending.captured_atomic_tstore &&
-           pending.atomic_tstore_target_count == 0 &&
-           pending.atomic_tstore_committed_count == 0 &&
-           !pending.atomic_tstore_finalization_pending;
+    // A failed preflight is not an admitted immutable Atomic occurrence.
+    // The same live bundle can revalidate after source recovery.
+    assert FindCurrentAtomicTStoreObligation() < 0;
     var any_lifetime_completion = FALSE;
     for lifetime = 0 to 63 do
         if _BundleSourceLifetimes[[lifetime]].valid &&

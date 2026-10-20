@@ -81,9 +81,7 @@ begin
                        obligation.atomic_tstore_finalization_pending &&
                        _KernelInvocationActiveByCore[[core]] &&
                        _KernelInvocationByCore[[core]] == invocation then
-                        CommitBundleLocalGeneration();
-                        RetireBundleConsumerDependencies();
-                        FinalizeBundleTileAttempt(TileExecution_Executed);
+                        FinalizeAtomicTStoreOccurrence(core, pe, slot);
                         if obligation.bundle_tile_bindings[[0]].source0_valid then
                             let source = obligation.bundle_tile_bindings[[0]]
                                 .source0;

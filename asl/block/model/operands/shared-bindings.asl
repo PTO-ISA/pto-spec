@@ -82,6 +82,16 @@ begin
     return FALSE;
 end;
 
+// Atomic TSTORE captures its last-use lifetime only after target preflight has
+// accepted the complete request.  This readiness-only gate preserves the
+// same Shared fault/wait behavior without creating a failed-admission pin.
+func RequireBundleSharedSourcePayloadReadiness() => boolean
+begin
+    if BundleSharedSourcePayloadsAvailable() then return TRUE; end;
+    SetFault(Fault_TileLegality, ReadTPC());
+    return FALSE;
+end;
+
 func CaptureBundleSharedSourceLifetimes() => boolean
 begin
     if !_CurrentPEContextValid then

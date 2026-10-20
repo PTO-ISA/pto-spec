@@ -34,6 +34,12 @@ begin
             return FALSE;
         end;
     end;
+    // Atomic TSTORE is a completed block effect only after its per-PE request
+    // has drained. A wait preserves the live bundle and selected continuation;
+    // the same BSTOP/BSTART commit instruction retries after service.
+    if _LastFault != Fault_None || CurrentAtomicTStoreDrainPending() then
+        return FALSE;
+    end;
     StopBundleAt(continuation);
     return _LastFault == Fault_None;
 end;

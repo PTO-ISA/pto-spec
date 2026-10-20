@@ -17,6 +17,55 @@ begin
     return instruction;
 end;
 
+pure func CompareContextStart(selector: bits(10)) => bits(64)
+begin
+    var instruction = Zeros{64} + 0x00019181;
+    instruction[26:25] = selector[6:5];
+    instruction[24:20] = selector[4:0];
+    instruction[31:27] = TileDataTypeToEncoding(TileDataType_U32);
+    return instruction;
+end;
+
+func TestComparisonCMode(selector: bits(10), mode: bits(3), legal: boolean)
+begin
+    ResetProfileState();
+    let started = ExecuteCommandInstruction(
+        CompareContextStart(selector), 32);
+    assert started == CommandExecution_Executed;
+    assert _BundleOperation.valid && _BundleOperation.selector_valid &&
+           _BundleOperation.operation_class == BundleOperation_TileElement &&
+           _BundleOperation.selector == selector &&
+           _BundleOperation.data_type_valid &&
+           _BundleOperation.data_type ==
+               TileDataTypeToEncoding(TileDataType_U32);
+    let datr = ExecuteCommandInstruction(
+        AtomicContextDATR(mode, TRUE), 32);
+    if legal then
+        assert datr == CommandExecution_Executed &&
+               _LastFault == Fault_None && _BundleDataAttributesPresent &&
+               _BundleDataAttributes.comparison_mode == mode &&
+               _BundleDataAttributes.canonicalize;
+    else
+        assert datr == CommandExecution_Rejected &&
+               _LastFault == Fault_IllegalInstruction &&
+               !_BundleDataAttributesPresent &&
+               !_BundleDataAttributes.data_type_present &&
+               _BundleDataAttributes.comparison_mode == Zeros{3};
+    end;
+end;
+
+func TestComparisonCModeMatrix(selector: bits(10))
+begin
+    TestComparisonCMode(selector, '000', TRUE);
+    TestComparisonCMode(selector, '001', TRUE);
+    TestComparisonCMode(selector, '010', TRUE);
+    TestComparisonCMode(selector, '011', TRUE);
+    TestComparisonCMode(selector, '100', TRUE);
+    TestComparisonCMode(selector, '101', TRUE);
+    TestComparisonCMode(selector, '110', FALSE);
+    TestComparisonCMode(selector, '111', FALSE);
+end;
+
 func TestAtomicTStoreCModeContext(mode: bits(3))
 begin
     ResetProfileState();
@@ -55,5 +104,9 @@ func main() => integer
 begin
     TestAtomicTStoreCModeContext('110');
     TestAtomicTStoreCModeContext('111');
+    // The two extended CMode values are reserved for atomic TSTORE, not
+    // comparison commands. Each comparison form also retains modes 0..5.
+    TestComparisonCModeMatrix(Zeros{10} + 0x00d);
+    TestComparisonCModeMatrix(Zeros{10} + 0x02d);
     return 0;
 end;

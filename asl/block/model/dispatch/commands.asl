@@ -336,6 +336,9 @@ begin
                 let instruction_pc = ReadTPC();
                 if _BundleActive then
                     if !CompleteBundleAt(instruction_pc) then
+                        if CurrentAtomicTStoreDrainPending() then
+                            return CommandExecution_Blocked;
+                        end;
                         return CommandExecution_Rejected;
                     end;
                     if ReadTPC() != instruction_pc then
@@ -478,6 +481,9 @@ begin
                     CommandField_CROSS_BID)[6:0]);
         otherwise =>
             unreachable;
+    end;
+    if CurrentAtomicTStoreDrainPending() then
+        return CommandExecution_Blocked;
     end;
     if _LastFault != Fault_None then
         return CommandExecution_Rejected;

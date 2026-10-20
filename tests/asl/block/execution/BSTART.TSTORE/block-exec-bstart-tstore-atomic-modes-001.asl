@@ -1,8 +1,8 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001","source":"asl/block/execution/BSTART.TSTORE.asl","requirements":["PTO-TSTORE-STRIDED-ATOMIC-RED-001","PTO-ATOM-RED-ORDERING-001"],"kind":"execution","summary":"TLSU Function 1 TSTORE applies every CMode reduction as one intrinsic Atomic effect","pass_condition":"all eight CMode values update one U32 GM word with the selected ADD/MIN/MAX/AND/OR/XOR/INC/DEC operation, emit exactly one Atomic event, and use only the existing TSTORE source binding","related_sources":["asl/tile/model/memory/load-store.asl","asl/tile/model/memory/gm-atom-red.asl"]}
-pure func AtomicModeStart() => bits(64)
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001","source":"asl/block/execution/BSTART.TSTORE.asl","requirements":["PTO-TSTORE-STRIDED-ATOMIC-RED-001","PTO-ATOM-RED-ORDERING-001"],"kind":"execution","summary":"TLSU Function 1 TSTORE applies every CMode reduction as one intrinsic Atomic effect with element-width integer normalization","pass_condition":"all eight CMode values update one U32 GM word with the selected ADD/MIN/MAX/AND/OR/XOR/INC/DEC operation, emit exactly one Atomic event, and S32 MIN/MAX plus U32 INC/DEC ignore carrier bits outside their selected 32-bit element","related_sources":["asl/tile/model/memory/load-store.asl","asl/tile/model/memory/gm-atom-red.asl"]}
+pure func AtomicModeStart(data_type: TileDataType) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00111181;
-    instruction[31:27] = Zeros{5} + 25;
+    instruction[31:27] = TileDataTypeToEncoding(data_type);
     return instruction;
 end;
 
@@ -47,7 +47,8 @@ begin
     WriteGPR(2, Zeros{PTO_XLEN} + 0x200);
     WriteGPR(3, Zeros{PTO_XLEN} + 4);
 
-    let started = ExecuteCommandInstruction(AtomicModeStart(), 32);
+    let started = ExecuteCommandInstruction(
+        AtomicModeStart(TileDataType_U32), 32);
     let attributes = ExecuteCommandInstruction(AtomicModeDATR(
         (Zeros{3} + mode) as bits(3)), 32);
     SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
@@ -78,6 +79,44 @@ begin
     assert actual == Zeros{PTO_XLEN} + expected;
 end;
 
+func RunAtomicModeCarrier(data_type: TileDataType, mode: bits(3),
+                          initial: Word, input: Word, expected: Word)
+begin
+    ResetProfileState();
+    ConfigureTile(0, 128, 1, 1, 1, 1, data_type,
+        TileLayout_RowMajor);
+    WriteTileElement(0, 0, 0, input);
+    MarkTileValidRegionDefined(0);
+    let target = Zeros{PTO_XLEN} + 0x240;
+    Store(target, 4, initial);
+    WriteGPR(2, target);
+    WriteGPR(3, Zeros{PTO_XLEN} + 4);
+
+    let started = ExecuteCommandInstruction(AtomicModeStart(data_type), 32);
+    let attributes = ExecuteCommandInstruction(
+        AtomicModeDATR(mode), 32);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
+    let source = ExecuteCommandInstruction(AtomicModeSource(), 32);
+    let address = ExecuteCommandInstruction(AtomicModeIOR(), 32);
+    StartMemoryEventCapture(0);
+    assert started == CommandExecution_Executed &&
+           attributes == CommandExecution_Executed &&
+           source == CommandExecution_Executed &&
+           address == CommandExecution_Executed;
+    let completed = ExecuteBundleTileOperation();
+    assert completed && _LastFault == Fault_None && _MemoryEventCount == 1;
+    let event = _MemoryEvents[[0 as MemoryEventIndex]];
+    assert event.active && event.committed &&
+           event.kind == MemoryEvent_Atomic && event.address == target;
+    assert event.read_value == NormalizeMemoryAccessValue(initial, 4);
+    assert event.write_value == NormalizeMemoryAccessValue(expected, 4);
+    StopMemoryEventCapture();
+    let actual = LoadUnsigned(target, 4);
+    assert actual == NormalizeMemoryAccessValue(expected, 4);
+end;
+
 func main() => integer
 begin
     RunAtomicMode(0, 5, 2, 7);  // ADD
@@ -88,5 +127,23 @@ begin
     RunAtomicMode(5, 5, 3, 6);  // XOR
     RunAtomicMode(6, 4, 7, 5);  // INC to limit
     RunAtomicMode(7, 4, 7, 3);  // DEC to limit
+    // The source and old value are XLEN carriers; selected U32/S32
+    // semantics use only their low 32 bits for ordering and INC/DEC limits.
+    RunAtomicModeCarrier(TileDataType_S32, '001',
+        Zeros{PTO_XLEN} + 0x00000000_00000010,
+        Zeros{PTO_XLEN} + 0x00000001_ffffffff,
+        Zeros{PTO_XLEN} + 0x00000000_ffffffff); // signed MIN: -16 vs -1
+    RunAtomicModeCarrier(TileDataType_S32, '010',
+        Zeros{PTO_XLEN} + 0x00000001_ffffffff,
+        Zeros{PTO_XLEN} + 0x00000000_00000010,
+        Zeros{PTO_XLEN} + 0x00000000_00000010); // signed MAX: -1 vs 16
+    RunAtomicModeCarrier(TileDataType_U32, '110',
+        Zeros{PTO_XLEN} + 5,
+        Zeros{PTO_XLEN} + 0x00000001_00000001,
+        Zeros{PTO_XLEN}); // INC limit is low32=1, so 5 wraps to 0
+    RunAtomicModeCarrier(TileDataType_U32, '111',
+        Zeros{PTO_XLEN} + 6,
+        Zeros{PTO_XLEN} + 0x00000001_00000001,
+        Zeros{PTO_XLEN} + 1); // DEC limit is low32=1
     return 0;
 end;

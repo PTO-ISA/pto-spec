@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","surface":"tile","classification":["model","memory","gm-atom-red"],"depends_on":["PTO-ARCH-DATA-TYPES-NUMERIC-CLASSIFICATION","PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS","PTO-ARCH-FEATURES-MX-FORMATS","PTO-TILE-MODEL-MEMORY-ATOMICS","PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","surface":"tile","classification":["model","memory","gm-atom-red"],"depends_on":["PTO-ARCH-DATA-TYPES-NUMERIC-CLASSIFICATION","PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS","PTO-ARCH-FEATURES-MX-FORMATS","PTO-SCALAR-MODEL-AGU-MEMORY","PTO-TILE-MODEL-MEMORY-LOAD-STORE","PTO-TILE-MODEL-MEMORY-ATOMICS","PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA"]}
 // NDF-BEGIN: PTO-MGATHER-CAS-ATOMIC-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // The legacy MGATHER_CAS spelling aliases mgather.cas and MUST accept only
@@ -27,8 +27,10 @@
 // NDF-END: PTO-ATOM-RED-BODY-SCHEMA-001
 // NDF-BEGIN: PTO-ATOM-RED-TYPE-LEGALITY-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
-// The GM operation/type matrix is explicit and excludes Shared, vectors,
-// packed f16x2/bf16x2, and U128.
+// The indexed GM atom/red operation/type matrix is explicit and excludes
+// Shared sources, vectors, packed f16x2/bf16x2, and U128. These exclusions
+// apply to indexed atom/red bodies; strided Atomic TSTORE has its separate
+// Function 1 source-domain and dtype contract.
 // NDF-END: PTO-ATOM-RED-TYPE-LEGALITY-001
 // NDF-BEGIN: PTO-ATOM-RED-INC-DEC-SEMANTICS-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
@@ -112,27 +114,72 @@ end;
 readonly func GMReductionResult(operation: GMReductionOperation,
     data_type: TileDataType, old: Word, input: Word) => Word
 begin
+    // Tile payloads use XLEN carriers for every memory element.  Integer GM
+    // reductions operate on the selected architectural element, so discard
+    // carrier bits before interpreting either operand and keep the result in
+    // that element's representation.  Signed MIN/MAX need sign-extended
+    // operands; all other integer operations can use the same normalized
+    // low-width bit patterns.
+    let element_bytes = TileMemoryElementBytes(data_type);
+    let signed = TileDataTypeIsSigned(data_type);
+    let normalized_old = if signed then
+        NormalizeLoadedValue(old, element_bytes, TRUE)
+        else NormalizeMemoryAccessValue(old, element_bytes);
+    let normalized_input = if signed then
+        NormalizeLoadedValue(input, element_bytes, TRUE)
+        else NormalizeMemoryAccessValue(input, element_bytes);
     case operation of
         when GMReduction_ADD =>
             if TileDataTypeIsFloating(data_type) then
                 return GMFloatingAddPTX(data_type, old, input);
             end;
-            return old + input;
-        when GMReduction_INC => return GMIncValue(old, input);
-        when GMReduction_DEC => return GMDecValue(old, input);
-        when GMReduction_AND => return old AND input;
-        when GMReduction_OR => return old OR input;
-        when GMReduction_XOR => return old XOR input;
+            return NormalizeMemoryAccessValue(
+                normalized_old + normalized_input, element_bytes);
+        when GMReduction_INC =>
+            return NormalizeMemoryAccessValue(
+                GMIncValue(normalized_old, normalized_input), element_bytes);
+        when GMReduction_DEC =>
+            return NormalizeMemoryAccessValue(
+                GMDecValue(normalized_old, normalized_input), element_bytes);
+        when GMReduction_AND =>
+            return NormalizeMemoryAccessValue(
+                normalized_old AND normalized_input, element_bytes);
+        when GMReduction_OR =>
+            return NormalizeMemoryAccessValue(
+                normalized_old OR normalized_input, element_bytes);
+        when GMReduction_XOR =>
+            return NormalizeMemoryAccessValue(
+                normalized_old XOR normalized_input, element_bytes);
         when GMReduction_MAX =>
-            if TileDataTypeIsSigned(data_type) then
-                if SInt(old) > SInt(input) then return old; else return input; end;
+            if signed then
+                if SInt(normalized_old) > SInt(normalized_input) then
+                    return NormalizeMemoryAccessValue(
+                        normalized_old, element_bytes);
+                else
+                    return NormalizeMemoryAccessValue(
+                        normalized_input, element_bytes);
+                end;
             end;
-            if UInt(old) > UInt(input) then return old; else return input; end;
+            if UInt(normalized_old) > UInt(normalized_input) then
+                return NormalizeMemoryAccessValue(normalized_old, element_bytes);
+            else
+                return NormalizeMemoryAccessValue(normalized_input, element_bytes);
+            end;
         when GMReduction_MIN =>
-            if TileDataTypeIsSigned(data_type) then
-                if SInt(old) < SInt(input) then return old; else return input; end;
+            if signed then
+                if SInt(normalized_old) < SInt(normalized_input) then
+                    return NormalizeMemoryAccessValue(
+                        normalized_old, element_bytes);
+                else
+                    return NormalizeMemoryAccessValue(
+                        normalized_input, element_bytes);
+                end;
             end;
-            if UInt(old) < UInt(input) then return old; else return input; end;
+            if UInt(normalized_old) < UInt(normalized_input) then
+                return NormalizeMemoryAccessValue(normalized_old, element_bytes);
+            else
+                return NormalizeMemoryAccessValue(normalized_input, element_bytes);
+            end;
         otherwise => return old;
     end;
 end;

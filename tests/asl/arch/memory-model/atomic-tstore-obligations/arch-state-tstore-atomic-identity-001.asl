@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-TSTORE-ATOMIC-IDENTITY-001","source":"asl/arch/memory-model/atomic-tstore-obligations.asl","requirements":["PTO-TSTORE-STRIDED-ATOMIC-RED-001","PTO-ARCH-GM-OBLIGATIONS-001","PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001"],"kind":"state-transition","summary":"same dynamic Atomic TSTORE resumes without duplicates and a same-PC later occurrence is distinct","pass_condition":"one deferred occurrence at fixed core/PE/invocation/PC/program order commits once and retains source generation; a second identical encoded occurrence at the same PC with a new program order has a distinct obligation identity and commits exactly one additional Atomic update with original provenance","related_sources":["asl/arch/memory-model/gm-obligations.asl","asl/block/model/dispatch/tlsu-atomic-tstore.asl","asl/tile/model/memory/atomic-tstore.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-TSTORE-ATOMIC-IDENTITY-001","source":"asl/arch/memory-model/atomic-tstore-obligations.asl","requirements":["PTO-TSTORE-STRIDED-ATOMIC-RED-001","PTO-ARCH-GM-OBLIGATIONS-001","PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001"],"kind":"state-transition","summary":"same dynamic Atomic TSTORE resumes without duplicates and a same-PC later occurrence is distinct","pass_condition":"one deferred occurrence at fixed core/PE/invocation/PC/program order commits once; an actual encoded BSTOP retires it, then a real same-PC BSTART reached through control flow receives a distinct domain/obligation identity and later order while capturing the newly published Local payload epoch; each request commits exactly one Atomic update with original provenance and final BSTOP does not replay","related_sources":["asl/arch/memory-model/gm-obligations.asl","asl/block/model/dispatch/tlsu-atomic-tstore.asl","asl/tile/model/memory/atomic-tstore.asl"]}
 
 pure func AtomicIdentityStart() => bits(64)
 begin
@@ -32,15 +32,21 @@ begin
     return instruction;
 end;
 
-func PrepareAtomicIdentityOccurrence(entry: Word, program_order: integer)
+func PrepareAtomicIdentityOccurrence(
+    entry: Word, initial_program_order: integer,
+    reset_control_state: boolean)
 begin
     SelectExecutionContext(0, 0);
-    ResetBundleControlState();
-    _PC = entry;
-    _BPC = entry;
-    _CurrentProgramOrder = program_order;
-    _PEProgramOrder[[0]][[0]] = program_order;
-    let start = ExecuteCommandInstruction(AtomicIdentityStart(), 32);
+    if reset_control_state then
+        ResetBundleControlState();
+        _CurrentProgramOrder = initial_program_order;
+        _PEProgramOrder[[0]][[0]] = initial_program_order;
+    end;
+    // The second dynamic occurrence reaches the same static BSTART through
+    // ordinary control flow after the first block has committed. Keep its
+    // execution-domain allocator and all lifetime state intact.
+    WriteTPC(entry);
+    let start = ExecutePTOInstruction(AtomicIdentityStart(), 32);
     SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
@@ -49,7 +55,7 @@ begin
     WriteGPR(2, Zeros{PTO_XLEN} + 0x300);
     WriteGPR(3, Zeros{PTO_XLEN} + 4);
     let address = ExecuteCommandInstruction(AtomicIdentityIOR(), 32);
-    assert start == CommandExecution_Executed &&
+    assert start == PTOInstruction_Executed &&
            attributes == CommandExecution_Executed &&
            source == CommandExecution_Executed &&
            address == CommandExecution_Executed &&
@@ -75,7 +81,7 @@ begin
 
     // Four command attempts (start, DATR, IOT, IOR) advance the selected PE's
     // order before TLSU admits the request.
-    PrepareAtomicIdentityOccurrence(entry, 1);
+    PrepareAtomicIdentityOccurrence(entry, 1, TRUE);
     SetVerificationGMProgressDeferred(TRUE);
     let first_admitted = ExecuteBundleTileOperation();
     assert first_admitted && _MemoryEventCount == 0 &&
@@ -90,6 +96,7 @@ begin
     assert first_pending.agent == 0;
     assert first_pending.submission_order == 5;
     assert first_pending.source_generation == TileStoreSourceGeneration(0);
+    let first_domain = first_pending.execution_domain_token;
     // A repeat of the same dynamic identity resumes its captured request;
     // it cannot reinterpret live fields or issue a second atomic effect.
     let resumed = ExecuteBundleTileOperation();
@@ -111,8 +118,23 @@ begin
            first_event.read_value == Zeros{PTO_XLEN} &&
            first_event.write_value == Zeros{PTO_XLEN} + 2;
 
-    // Same encoded request and PC, but a new dynamic program-order occurrence.
-    PrepareAtomicIdentityOccurrence(entry, 2);
+    // Retire the first bundle through encoded BSTOP. Re-publish the Local
+    // payload through the production allocator, then reach the same static
+    // BSTART through control flow.
+    let first_stop = ExecutePTOInstruction(Zeros{64} + 1, 32);
+    assert first_stop == PTOInstruction_Executed && !_BundleActive &&
+           ReadBPC() == Zeros{PTO_XLEN} && _MemoryEventCount == 1;
+    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U32,
+        TileLayout_RowMajor);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 3);
+    MarkTileValidRegionDefined(0);
+
+    // Same encoded request and PC, but a new BSTART/domain/program-order
+    // occurrence; no lifecycle allocator or source state is reset.
+    PrepareAtomicIdentityOccurrence(entry, 0, FALSE);
+    assert _BundleExecutionDomainToken != first_domain &&
+           ReadBPC() == entry && _CurrentProgramOrder == 10 &&
+           _CurrentKernelInvocation == invocation;
     SetVerificationGMProgressDeferred(TRUE);
     let second_admitted = ExecuteBundleTileOperation();
     assert second_admitted && _LastFault == Fault_None &&
@@ -121,13 +143,15 @@ begin
     assert second_slot >= 0;
     let second_pending = _GMObligations[[0]][[0]]
         [[second_slot as GMObligationIndex]];
-    assert second_pending.captured_atomic_tstore &&
-           second_pending.instruction_pc == first_pending.instruction_pc &&
-           second_pending.invocation == first_pending.invocation &&
-           second_pending.agent == first_pending.agent &&
-           second_pending.submission_order == 6 &&
-           second_pending.identity != first_pending.identity &&
-           second_pending.source_generation == first_pending.source_generation;
+    assert second_pending.captured_atomic_tstore;
+    assert second_pending.instruction_pc == first_pending.instruction_pc;
+    assert second_pending.invocation == first_pending.invocation;
+    assert second_pending.agent == first_pending.agent;
+    assert second_pending.submission_order == 10;
+    assert second_pending.identity != first_pending.identity;
+    assert second_pending.source_generation == first_pending.source_generation;
+    assert second_pending.atomic_tstore_source_payload_epoch !=
+           first_pending.atomic_tstore_source_payload_epoch;
     SetVerificationGMProgressDeferred(FALSE);
     ProgressKernelGMObligationsForCore(0, invocation);
     let second_completed = _GMObligations[[0]][[0]]
@@ -142,10 +166,13 @@ begin
            second_event.program_order == second_pending.submission_order &&
            second_event.address == Zeros{PTO_XLEN} + 0x300 &&
            second_event.read_value == Zeros{PTO_XLEN} + 2 &&
-           second_event.write_value == Zeros{PTO_XLEN} + 4;
+           second_event.write_value == Zeros{PTO_XLEN} + 5;
+    let second_stop = ExecutePTOInstruction(Zeros{64} + 1, 32);
+    assert second_stop == PTOInstruction_Executed && !_BundleActive &&
+           _MemoryEventCount == 2;
     StopMemoryEventCapture();
     let actual = LoadUnsigned(Zeros{PTO_XLEN} + 0x300, 4);
-    assert actual == Zeros{PTO_XLEN} + 4;
+    assert actual == Zeros{PTO_XLEN} + 5;
     SetVerificationGMProgressBeatBudget(0);
     return 0;
 end;

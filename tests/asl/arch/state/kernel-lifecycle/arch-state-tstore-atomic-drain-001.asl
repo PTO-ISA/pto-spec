@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001","source":"asl/arch/state/kernel-lifecycle.asl","requirements":["PTO-TSTORE-STRIDED-ATOMIC-RED-001","PTO-ARCH-GM-OBLIGATIONS-001","PTO-ARCH-KERNEL-LIFECYCLE-001","PTO-B-IOS-SHARED-STATE-001","PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001"],"kind":"state-transition","summary":"a partially committed Atomic TSTORE drains under its captured invocation after abort without consuming an incomplete last-use cohort","pass_condition":"encoded TLSU Function 1 TSTORE preflights a two-element Shared last-use request, one scheduler beat commits exactly one RMW, abort retains its generation pin, and drain emits the remaining event once with original provenance before cleanup while the uncompleted PE cohort leaves Shared payload intact","related_sources":["asl/arch/memory-model/atomic-tstore-obligations.asl","asl/tile/model/memory/atomic-tstore.asl","asl/tile/model/memory/gm-obligation-progress.asl","asl/block/model/state/source-lifetime.asl","asl/block/model/dispatch/tile-execution.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001","source":"asl/arch/state/kernel-lifecycle.asl","requirements":["PTO-TSTORE-STRIDED-ATOMIC-RED-001","PTO-ARCH-GM-OBLIGATIONS-001","PTO-ARCH-KERNEL-LIFECYCLE-001","PTO-B-IOS-SHARED-STATE-001","PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001","PTO-B-ASSEMBLE-SPECULATION-001","PTO-ARCH-SHARED-VTAG-LIFETIME-001"],"kind":"state-transition","summary":"a partially committed Atomic TSTORE drains under its captured invocation while squash cancels unrelated source lifetimes","pass_condition":"encoded TLSU Function 1 TSTORE preflights a two-element Shared last-use request, one scheduler beat commits exactly one RMW, and a real execution-domain squash of a second Shared last-use capture cancels only that unrelated PE/domain occurrence while the Atomic source remains pinned; abort retains its generation pin, drain emits the remaining event once with original provenance before cleanup, and neither incomplete cohort is consumed","related_sources":["asl/arch/memory-model/atomic-tstore-obligations.asl","asl/tile/model/memory/atomic-tstore.asl","asl/tile/model/memory/gm-obligation-progress.asl","asl/block/model/state/source-lifetime.asl","asl/block/model/dispatch/tile-execution.asl","asl/block/model/operands/local-generation-squash.asl"]}
 
 pure func AtomicDrainStart() => bits(64)
 begin
@@ -21,6 +21,14 @@ begin
     var instruction: bits(64) = Zeros{64} + 0x04001013;
     instruction[25:20] = shared_id;
     instruction[11:9] = '101';
+    return instruction;
+end;
+
+pure func AtomicDrainOtherLastUse(shared_id: bits(6)) => bits(64)
+begin
+    var instruction: bits(64) = Zeros{64} + 0x04001013;
+    instruction[25:20] = shared_id;
+    instruction[11:9] = '010';
     return instruction;
 end;
 
@@ -152,12 +160,77 @@ begin
     assert first_event.read_value == Zeros{PTO_XLEN} + 10;
     assert first_event.write_value == Zeros{PTO_XLEN} + 11;
 
+    // A second dynamic source-lifetime occurrence in PE1's execution domain
+    // is captured after the Atomic request has become irrevocable. Squashing
+    // that domain must cancel the unrelated S32 capture while preserving the
+    // exact PE0/S31 token owned by the retained request.
+    let atomic_domain = before_service.execution_domain_token;
+    let atomic_lifetime_ordinal =
+        before_service.atomic_tstore_source_lifetime_ordinal;
+    let unrelated_shared_id = (Zeros{6} + 32) as SharedTileID;
+    InstallSharedTile(unrelated_shared_id, _Tiles[[4]], '0100');
+    assert SharedTilePublished(unrelated_shared_id) &&
+           SharedTilePayloadIntact(unrelated_shared_id);
+    SelectExecutionContext(0, 1);
+    assert _CurrentKernelInvocation == invocation;
+    ClearBundleHeaderState();
+    let unrelated_pc = Zeros{PTO_XLEN} + 0x640;
+    WriteTPC(unrelated_pc);
+    WriteBPC(unrelated_pc);
+    let unrelated_start = ExecuteCommandInstruction(AtomicDrainStart(), 32);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
+    let unrelated_attributes = ExecuteCommandInstruction(
+        AtomicDrainDATR(), 32);
+    let unrelated_source = ExecuteCommandInstruction(
+        AtomicDrainOtherLastUse(Zeros{6} + 32), 32);
+    let unrelated_address = ExecuteCommandInstruction(
+        AtomicDrainAddress(), 32);
+    assert unrelated_start == CommandExecution_Executed &&
+           unrelated_attributes == CommandExecution_Executed &&
+           unrelated_source == CommandExecution_Executed &&
+           unrelated_address == CommandExecution_Executed &&
+           _BundleSharedBindings[[0]].pe_mask == '0100' &&
+           !_BundleSharedBindings[[0]].source_reuse;
+    let unrelated_domain = _BundleExecutionDomainToken;
+    assert unrelated_domain != atomic_domain;
+    let unrelated_captured = RequireBundleSharedSourcePayloads();
+    let unrelated_ordinal =
+        _BundleSharedBindings[[0]].source_lifetime_ordinal;
+    assert unrelated_captured && unrelated_ordinal > 0 &&
+           SharedSourceLifetimePinned(unrelated_shared_id) &&
+           SharedSourceLifetimePinned(shared_id);
+    EnterBundleExecutionDomainSquashEvent(unrelated_domain);
+    assert FindBundleSourceLifetimeOrdinal(unrelated_ordinal) < 0 &&
+           !SharedSourceLifetimePinned(unrelated_shared_id) &&
+           SharedSourceLifetimePinned(shared_id);
+    SelectExecutionContext(0, 0);
+    assert AtomicTStoreOwnsSourceLifetime(0, invocation, 0,
+               atomic_domain, atomic_lifetime_ordinal);
+
+    // The exact execution domain that owns the now-irrevocable Atomic
+    // request may itself be squashed. Its committed first element is kept,
+    // and the captured lifetime stays pinned until the remaining element
+    // drains under the original request identity.
+    EnterBundleExecutionDomainSquashEvent(atomic_domain);
+    let after_atomic_squash = _GMObligations[[0]][[0]][[0]];
+    assert after_atomic_squash.active &&
+           after_atomic_squash.captured_atomic_tstore &&
+           after_atomic_squash.irrevocable &&
+           after_atomic_squash.invocation == invocation &&
+           after_atomic_squash.atomic_tstore_committed_count == 1 &&
+           SharedSourceLifetimePinned(shared_id) &&
+           AtomicTStoreOwnsSourceLifetime(0, invocation, 0,
+               atomic_domain, atomic_lifetime_ordinal);
+
     let aborted = AbortKernelInvocation(0);
     assert aborted == KernelLifecycle_Waiting &&
            !_KernelInvocationActiveByCore[[0]] &&
            _KernelInvocationByCore[[0]] == 0 &&
            _RetiredKernelInvocationByCore[[0]] == invocation &&
            SharedSourceLifetimePinned(shared_id) &&
+           !SharedSourceLifetimePinned(unrelated_shared_id) &&
            _BundleSourceLifetimes[[lifetime_slot]].completed_mask == Zeros{4};
     let blocked_launch = LaunchKernelInvocation(0, entry + 0x100);
     assert blocked_launch == KernelLifecycle_Waiting &&
@@ -185,6 +258,7 @@ begin
            second_event.read_value == Zeros{PTO_XLEN} + 20 &&
            second_event.write_value == Zeros{PTO_XLEN} + 22;
     assert !SharedSourceLifetimePinned(shared_id) &&
+           !SharedSourceLifetimePinned(unrelated_shared_id) &&
            SharedTilePayloadIntact(shared_id) &&
            !_BundleSourceLifetimes[[lifetime_slot]].valid;
     StopMemoryEventCapture();

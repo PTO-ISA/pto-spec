@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TSTORE-ATOMIC-TRANSLATION-001","source":"asl/tile/model/memory/atomic-tstore.asl","requirements":["PTO-TSTORE-STRIDED-ATOMIC-RED-001","PTO-ATOM-RED-FAULTS-001"],"kind":"fault","summary":"Atomic TSTORE rejects a read/write translation disagreement before any physical effect","pass_condition":"a known-good identity control commits one Atomic update; the same valid request with read and write translations disagreeing faults before effects, emits no Atomic event, and preserves every physical sentinel","related_sources":["asl/scalar/model/agu/memory.asl","asl/block/model/dispatch/tlsu-atomic-tstore.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TSTORE-ATOMIC-TRANSLATION-001","source":"asl/tile/model/memory/atomic-tstore.asl","requirements":["PTO-TSTORE-STRIDED-ATOMIC-RED-001","PTO-ATOM-RED-FAULTS-001","PTO-ARCH-GM-OBLIGATIONS-001"],"kind":"fault","summary":"Atomic TSTORE rejects a read/write translation disagreement without effects and retries the same unadmitted dynamic request after mapping recovery","pass_condition":"a known-good identity control commits one Atomic update; a valid selected request with read and write translations disagreeing faults before effects; then the kernel retry restores the captured trap context and retries the same bundle word, execution domain, program order, invocation, and PC after identity mapping recovery, captures the recovered target, drains once, and preserves all unrelated physical sentinels","related_sources":["asl/scalar/model/agu/memory.asl","asl/block/model/dispatch/tlsu-atomic-tstore.asl","asl/arch/memory-model/atomic-tstore-obligations.asl"]}
 
 pure func TranslationFaultStart() => bits(64)
 begin
@@ -93,5 +93,92 @@ begin
     assert va_after == Zeros{PTO_XLEN} + 41 &&
            read_target_after == Zeros{PTO_XLEN} + 51 &&
            write_target_after == Zeros{PTO_XLEN} + 61;
+
+    // A kernel request that fails only target translation remains an
+    // unadmitted dynamic occurrence. Mapping recovery at the same PC retries
+    // that identity, captures the now-valid physical target and emits one
+    // Atomic update through production scheduler service.
+    ResetProfileState();
+    _Issue397TranslationMode = 0;
+    let entry = Zeros{PTO_XLEN} + 0xc00;
+    let launch = LaunchKernelInvocation(0, entry);
+    assert launch == KernelLifecycle_Started;
+    let invocation = _KernelInvocationByCore[[0]];
+    SelectExecutionContext(0, 0);
+    Store(Zeros{PTO_XLEN} + 0x300, 4, Zeros{PTO_XLEN} + 5);
+    Store(Zeros{PTO_XLEN} + 0x500, 4, Zeros{PTO_XLEN} + 51);
+    Store(Zeros{PTO_XLEN} + 0x504, 4, Zeros{PTO_XLEN} + 61);
+    PrepareTranslationFaultRequest();
+    WriteGPR(2, Zeros{PTO_XLEN} + 0x300);
+    WriteGPR(3, Zeros{PTO_XLEN} + 4);
+    _PC = entry;
+    _BPC = entry;
+    _CurrentProgramOrder = 12;
+    _PEProgramOrder[[0]][[0]] = 12;
+    assert _KernelInvocationActiveByCore[[0]] &&
+           _CurrentKernelInvocation == invocation &&
+           _CurrentMemoryOrigin == MemoryEventOrigin_Kernel;
+    SetVerificationGMProgressDeferred(TRUE);
+    _Issue397TranslationMode = 2;
+    StartMemoryEventCapture(0);
+    let failed_retry = ExecuteBundleTileOperation();
+    assert !failed_retry && _LastFault == Fault_DataPage &&
+           _FaultAddress == Zeros{PTO_XLEN} + 0x300 &&
+           ReadBPC() == entry && _MemoryEventCount == 0 &&
+           _CurrentKernelInvocation == invocation &&
+           _CurrentMemoryOrigin == MemoryEventOrigin_Handler;
+    let fault_ring = CurrentACR();
+    assert _TrapContexts[[fault_ring]].valid &&
+           _TrapContexts[[fault_ring]].memory_origin ==
+               MemoryEventOrigin_Kernel;
+    assert FindCurrentAtomicTStoreObligation() < 0;
+    let request_word = _BundleStartEncodedInstruction;
+    let request_domain = _BundleExecutionDomainToken;
+    let request_order = _CurrentProgramOrder;
+    StopMemoryEventCapture();
+    _Issue397TranslationMode = 0;
+    let failed_target = LoadUnsigned(Zeros{PTO_XLEN} + 0x300, 4);
+    let failed_read_map = LoadUnsigned(Zeros{PTO_XLEN} + 0x500, 4);
+    let failed_write_map = LoadUnsigned(Zeros{PTO_XLEN} + 0x504, 4);
+    assert failed_target == Zeros{PTO_XLEN} + 5 &&
+           failed_read_map == Zeros{PTO_XLEN} + 51 &&
+           failed_write_map == Zeros{PTO_XLEN} + 61;
+
+    let trap_ring = CurrentACR();
+    let recovered_context = RecoverTrapContext(trap_ring);
+    assert recovered_context;
+    ClearFault();
+    assert ReadBPC() == entry &&
+           _BundleStartEncodedInstruction == request_word &&
+           _BundleExecutionDomainToken == request_domain &&
+           _CurrentProgramOrder == request_order &&
+           _KernelInvocationByCore[[0]] == invocation &&
+           _CurrentKernelInvocation == invocation &&
+           _CurrentMemoryOrigin == MemoryEventOrigin_Kernel;
+    SetVerificationGMProgressDeferred(FALSE);
+    StartMemoryEventCapture(0);
+    let retried = ExecuteBundleTileOperation();
+    assert _LastFault == Fault_None;
+    assert retried;
+    assert _MemoryEventCount == 1 &&
+           _CurrentKernelInvocation == invocation &&
+           _CurrentMemoryOrigin == MemoryEventOrigin_Kernel;
+    let retry_event = _MemoryEvents[[0 as MemoryEventIndex]];
+    assert retry_event.active && retry_event.committed &&
+           retry_event.kind == MemoryEvent_Atomic;
+    assert retry_event.core_identity == 0 && retry_event.agent == 0;
+    assert retry_event.origin == MemoryEventOrigin_Kernel;
+    assert retry_event.invocation == invocation;
+    assert retry_event.address == Zeros{PTO_XLEN} + 0x300 &&
+           retry_event.read_value == Zeros{PTO_XLEN} + 5 &&
+           retry_event.write_value == Zeros{PTO_XLEN} + 7;
+    StopMemoryEventCapture();
+    let recovered_target = LoadUnsigned(Zeros{PTO_XLEN} + 0x300, 4);
+    let preserved_read_map = LoadUnsigned(Zeros{PTO_XLEN} + 0x500, 4);
+    let preserved_write_map = LoadUnsigned(Zeros{PTO_XLEN} + 0x504, 4);
+    assert recovered_target == Zeros{PTO_XLEN} + 7 &&
+           preserved_read_map == Zeros{PTO_XLEN} + 51 &&
+           preserved_write_map == Zeros{PTO_XLEN} + 61;
+    SetVerificationGMProgressBeatBudget(0);
     return 0;
 end;

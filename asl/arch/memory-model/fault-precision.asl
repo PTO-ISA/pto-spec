@@ -3,17 +3,24 @@
 // ndf: kind=contract level=L1 layer=memory status=accepted
 // A scalar fault is precise: effects committed by older instructions remain,
 // the faulting instruction is the restart point, and younger work has no
-// architectural effect.  A Tile memory request is precise at its Block
+// architectural effect. A Normal Tile memory request is precise at its Block
 // boundary; completed TLOAD/TSTORE beats remain visible, while retrying a
 // fault re-executes the whole logical request and never exposes an internal
-// lane or cursor as architectural state.
+// lane or cursor as architectural state. An admitted Atomic TSTORE request
+// waits for all remaining active occurrences after its first committed effect;
+// the exact request identity survives completion retry so drained effects are
+// not reissued and the existing continuation/trap path commits once.
 // NDF-END: PTO-ARCH-MEMORY-MODEL-REPLAY-001
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-FLUSH-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
 // A replay flush discards only uncommitted event records and younger pending
-// work.  It MUST NOT roll back committed GM writes, committed Tile payload
-// elements, or a memory event already admitted before the fault.  Recovery
-// retries from the saved instruction/request template.
+// work. It MUST NOT roll back committed GM writes, committed Tile payload
+// elements, or a memory event already admitted before the fault. Recovery
+// retries from the saved instruction/request template. For Atomic TSTORE, a
+// flush or squash after an irrevocable occurrence MUST preserve only the exact
+// captured Atomic request and its unfinished occurrences; unrelated captures
+// MUST still be cancelled. Completion retry MUST reuse that request occurrence
+// until it drains, then advance the existing continuation once.
 // NDF-END: PTO-ARCH-MEMORY-MODEL-FLUSH-001
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-TRAP-RESTORE-001
 // ndf: kind=contract level=L1 layer=memory status=accepted

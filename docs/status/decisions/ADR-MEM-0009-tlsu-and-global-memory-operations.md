@@ -834,3 +834,20 @@ macro witnesses, AVS and traceability advance together. No release is
 published by this amendment. Compiler/assembler/disassembler, TileOP,
 gfrun/gfsim, RTL and FA-backward/performance integration remain downstream
 obligations tracked by #397; the specification work must not auto-close it.
+
+Atomic TSTORE completion is part of the same accepted occurrence contract. If
+its admitted request has zero or partial effects but still has active targets,
+the actual block-completion attempt remains pending without a fault, header
+clear, or continuation advance. A retry resumes the same captured dynamic
+request and never reissues committed occurrences. Once every active occurrence
+has drained, the existing completion path commits and performs any requested
+post-commit trap exactly once. Normal TSTORE retains its posted completion
+behavior. This preserves the one-level block model and adds no architectural
+cursor, queue, or body replay state.
+
+Atomic TSTORE 完成也属于同一已接受的 occurrence 契约。若已准入请求仅有零个或部分
+效果但仍有活动目标，实际 block-completion 尝试必须保持 pending，不得产生故障、清除
+header 或推进 continuation。重试必须恢复同一已捕获 dynamic request，且不得重放已提交
+的 occurrence。所有活动 occurrence 排空后，现有完成路径必须恰好提交一次，并执行任何
+请求的 post-commit trap。Normal TSTORE 保留其 posted completion 行为。该规则保持单层
+block 模型，不增加架构 cursor、queue 或 body replay 状态。
