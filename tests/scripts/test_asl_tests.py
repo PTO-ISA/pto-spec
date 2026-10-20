@@ -121,6 +121,40 @@ class AslTestsTest(unittest.TestCase):
         target.write_text(text or test_source(), encoding="utf-8")
         return target
 
+    def write_execution_profiles(
+        self,
+        assignments: dict[str, str],
+        *,
+        memory_launcher: str = "scripts/aslref-memory",
+    ) -> None:
+        for launcher in ("scripts/aslref", memory_launcher, "scripts/aslref-translation"):
+            path = self.root / launcher
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+            path.chmod(0o755)
+        fixture = self.root / "tests/config/asl/profile-fixture.asl"
+        fixture.parent.mkdir(parents=True, exist_ok=True)
+        fixture.write_text("config test_profile : integer {1} = 1;\n", encoding="utf-8")
+        registry = {
+            "schema_version": 1,
+            "default_profile": "default",
+            "profiles": {
+                "default": {"launcher": "scripts/aslref", "inputs": []},
+                "memory": {
+                    "launcher": memory_launcher,
+                    "inputs": ["tests/config/asl/profile-fixture.asl"],
+                },
+                "translation": {
+                    "launcher": "scripts/aslref-translation",
+                    "inputs": ["tests/config/asl/profile-fixture.asl"],
+                },
+            },
+            "assignments": assignments,
+        }
+        path = self.root / asl_tests.PROFILE_REGISTRY_PATH
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(registry, indent=2) + "\n", encoding="utf-8")
+
     def test_loads_one_strictly_mirrored_test_point(self) -> None:
         body = test_source()
         self.write(body)
@@ -503,8 +537,99 @@ class AslTestsTest(unittest.TestCase):
                 "sha256",
                 "validation_entrypoint",
                 "validation_sha256",
+                "execution_profile",
+                "profile_fingerprint",
+                "profile_registry_sha256",
+                "profile_inputs",
+                "aslref_command",
             },
         )
+
+    def test_profile_registry_routes_and_fingerprints_the_selected_launcher(self) -> None:
+        self.write()
+        self.write_execution_profiles(
+            {"PTO-AVS-ARCH-STATE-REGISTERS-001": "memory"}
+        )
+        with patch.dict("os.environ", {}, clear=True):
+            point = load_test_points(self.root, (unit(),))[0]
+        self.assertEqual(point.execution_profile, "memory")
+        self.assertEqual(point.aslref_command, ("scripts/aslref-memory",))
+        row = matrix((point,))[0]
+        self.assertEqual(row["execution_profile"], "memory")
+        self.assertEqual(row["profile_registry_sha256"], point.profile_registry_sha256)
+        self.assertEqual(
+            row["profile_inputs"], [list(item) for item in point.profile_inputs]
+        )
+        self.assertEqual(len(point.profile_fingerprint), 64)
+
+    def test_profile_wrapper_override_must_match_the_point_assignment(self) -> None:
+        self.write()
+        self.write_execution_profiles(
+            {"PTO-AVS-ARCH-STATE-REGISTERS-001": "memory"}
+        )
+        with patch.dict("os.environ", {"ASLREF": "./scripts/aslref"}, clear=True):
+            point = load_test_points(self.root, (unit(),))[0]
+            self.assertEqual(point.aslref_command, ("scripts/aslref-memory",))
+        with patch.dict(
+            "os.environ", {"ASLREF": "./scripts/aslref-translation"}, clear=True
+        ):
+            with self.assertRaisesRegex(ValueError, "incompatible with"):
+                load_test_points(self.root, (unit(),))
+
+    def test_custom_aslref_override_remains_bound_for_default_points(self) -> None:
+        self.write()
+        custom = self.root / "scripts/aslref-local"
+        custom.parent.mkdir(parents=True, exist_ok=True)
+        custom.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+        custom.chmod(0o755)
+        with patch.dict(
+            "os.environ", {"ASLREF": "scripts/aslref-local --local"}, clear=True
+        ):
+            point = load_test_points(self.root, (unit(),))[0]
+        self.assertEqual(point.execution_profile, "custom")
+        self.assertEqual(point.aslref_command, ("scripts/aslref-local", "--local"))
+        self.assertEqual(matrix((point,))[0]["execution_profile"], "custom")
+        self.assertEqual(len(point.profile_fingerprint), 64)
+
+    def test_profile_registry_rejects_stale_ids_unknown_profiles_and_unsafe_paths(
+        self,
+    ) -> None:
+        self.write()
+        self.write_execution_profiles(
+            {"PTO-AVS-ARCH-STATE-REGISTERS-999": "memory"}
+        )
+        with patch.dict("os.environ", {}, clear=True):
+            with self.assertRaisesRegex(ValueError, "stale IDs"):
+                load_test_points(self.root, (unit(),))
+        self.write_execution_profiles(
+            {"PTO-AVS-ARCH-STATE-REGISTERS-001": "missing"}
+        )
+        with patch.dict("os.environ", {}, clear=True):
+            with self.assertRaisesRegex(ValueError, "unknown profile"):
+                load_test_points(self.root, (unit(),))
+        self.write_execution_profiles({})
+        registry_path = self.root / asl_tests.PROFILE_REGISTRY_PATH
+        document = json.loads(registry_path.read_text(encoding="utf-8"))
+        document["profiles"]["memory"]["launcher"] = "../outside"
+        registry_path.write_text(json.dumps(document), encoding="utf-8")
+        with patch.dict("os.environ", {}, clear=True):
+            with self.assertRaisesRegex(ValueError, "unsafe path"):
+                load_test_points(self.root, (unit(),))
+
+    def test_profile_registry_rejects_duplicate_json_keys(self) -> None:
+        self.write()
+        registry_path = self.root / asl_tests.PROFILE_REGISTRY_PATH
+        registry_path.parent.mkdir(parents=True, exist_ok=True)
+        registry_path.write_text(
+            '{"schema_version":1,"default_profile":"default",'
+            '"profiles":{},"assignments":{'
+            '"PTO-AVS-ARCH-STATE-REGISTERS-001":"a",'
+            '"PTO-AVS-ARCH-STATE-REGISTERS-001":"b"}}',
+            encoding="utf-8",
+        )
+        with patch.dict("os.environ", {}, clear=True):
+            with self.assertRaisesRegex(ValueError, "duplicate JSON key"):
+                load_test_points(self.root, (unit(),))
 
     def test_matrix_page_is_compact_sorted_and_bound_to_exact_commit(self) -> None:
         self.write()
@@ -835,6 +960,11 @@ class AslTestsTest(unittest.TestCase):
                 "sha256",
                 "validation_entrypoint",
                 "validation_sha256",
+                "execution_profile",
+                "profile_fingerprint",
+                "profile_registry_sha256",
+                "profile_inputs",
+                "aslref_command",
             },
         )
 

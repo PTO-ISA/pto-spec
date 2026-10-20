@@ -158,6 +158,11 @@ def aggregate_results(
             "kind",
             "validation_entrypoint",
             "validation_sha256",
+            "execution_profile",
+            "profile_fingerprint",
+            "profile_registry_sha256",
+            "profile_inputs",
+            "aslref_command",
         ):
             if result.get(field) != entry.get(field):
                 raise ValueError(f"{field} mismatch for {test_id}")
@@ -186,7 +191,17 @@ def aggregate_results(
 def execution_point(entry: MatrixEntry) -> AslExecutionPoint:
     """Validate and convert one exact matrix entry for direct execution."""
 
-    required = ("id", "display_name", "path", "source", "kind", "sha256")
+    required = (
+        "id",
+        "display_name",
+        "path",
+        "source",
+        "kind",
+        "sha256",
+        "execution_profile",
+        "profile_fingerprint",
+        "profile_registry_sha256",
+    )
     values: dict[str, str] = {}
     for field in required:
         value = entry.get(field)
@@ -201,6 +216,19 @@ def execution_point(entry: MatrixEntry) -> AslExecutionPoint:
     validation_sha256 = entry.get("validation_sha256")
     if not isinstance(validation_sha256, str) or not validation_sha256:
         raise ValueError("matrix entry contains invalid validation_sha256")
+    raw_profile_inputs = entry.get("profile_inputs")
+    if not isinstance(raw_profile_inputs, list) or any(
+        not isinstance(item, list)
+        or len(item) != 2
+        or any(not isinstance(value, str) or not value for value in item)
+        for item in raw_profile_inputs
+    ):
+        raise ValueError("matrix entry contains invalid profile_inputs")
+    raw_aslref_command = entry.get("aslref_command")
+    if not isinstance(raw_aslref_command, list) or not raw_aslref_command or any(
+        not isinstance(value, str) or not value for value in raw_aslref_command
+    ):
+        raise ValueError("matrix entry contains invalid aslref_command")
     return AslExecutionPoint(
         test_id=values["id"],
         display_name=values["display_name"],
@@ -210,6 +238,11 @@ def execution_point(entry: MatrixEntry) -> AslExecutionPoint:
         sha256=values["sha256"],
         validation_entrypoint=validation_entrypoint,
         validation_sha256=validation_sha256,
+        execution_profile=values["execution_profile"],
+        profile_fingerprint=values["profile_fingerprint"],
+        profile_registry_sha256=values["profile_registry_sha256"],
+        profile_inputs=tuple((item[0], item[1]) for item in raw_profile_inputs),
+        aslref_command=tuple(raw_aslref_command),
     )
 
 

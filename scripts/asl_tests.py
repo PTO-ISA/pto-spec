@@ -14,7 +14,7 @@ import shutil
 import subprocess
 import sys
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Callable, Mapping, Sequence, TextIO
 
@@ -94,6 +94,8 @@ METADATA_FIELDS = frozenset(
 )
 DEFAULT_TIMEOUT_SECONDS = 360 * 60
 MAX_LOG_EXCERPT_CHARS = 8192
+PROFILE_REGISTRY_PATH = Path("tests/config/asl/execution-profiles.json")
+PROFILE_NAME = re.compile(r"[a-z][a-z0-9_-]{0,63}")
 
 
 @dataclass(frozen=True)
@@ -110,6 +112,11 @@ class AslTestPoint:
     sha256: str
     validation_entrypoint: str | None
     validation_sha256: str
+    execution_profile: str = "default"
+    profile_fingerprint: str = ""
+    profile_registry_sha256: str = ""
+    profile_inputs: tuple[tuple[str, str], ...] = ()
+    aslref_command: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -124,6 +131,27 @@ class AslExecutionPoint:
     sha256: str
     validation_entrypoint: str | None
     validation_sha256: str
+    execution_profile: str = "default"
+    profile_fingerprint: str = ""
+    profile_registry_sha256: str = ""
+    profile_inputs: tuple[tuple[str, str], ...] = ()
+    aslref_command: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class AslExecutionProfile:
+    name: str
+    launcher: str
+    inputs: tuple[tuple[str, str], ...]
+    fingerprint: str
+
+
+@dataclass(frozen=True)
+class AslExecutionProfileRegistry:
+    default_profile: str
+    registry_sha256: str
+    profiles: Mapping[str, AslExecutionProfile]
+    assignments: Mapping[str, str]
 
 
 @dataclass(frozen=True)
@@ -295,6 +323,237 @@ def _call_names(text: str) -> frozenset[str]:
     return frozenset(CALL_NAME.findall(uncommented))
 
 
+def _strict_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    value: dict[str, object] = {}
+    for key, item in pairs:
+        if key in value:
+            raise ValueError(f"duplicate JSON key {key}")
+        value[key] = item
+    return value
+
+
+def _profile_file(root: Path, value: object, field: str) -> tuple[str, str]:
+    if not isinstance(value, str) or not value:
+        raise ValueError(f"execution profile {field} must be a repository-relative path")
+    path = Path(value)
+    if (
+        path.is_absolute()
+        or ".." in path.parts
+        or path.as_posix() != value
+        or not path.parts
+    ):
+        raise ValueError(f"execution profile {field} has an unsafe path: {value}")
+    absolute = root / path
+    try:
+        resolved = absolute.resolve(strict=True)
+        resolved.relative_to(root.resolve())
+    except (OSError, ValueError) as error:
+        raise ValueError(
+            f"execution profile {field} is missing or escapes the repository: {value}"
+        ) from error
+    if not resolved.is_file():
+        raise ValueError(f"execution profile {field} is not a file: {value}")
+    if field == "launcher" and not os.access(resolved, os.X_OK):
+        raise ValueError(f"execution profile launcher is not executable: {value}")
+    return value, hashlib.sha256(resolved.read_bytes()).hexdigest()
+
+
+def load_execution_profile_registry(
+    root: Path, *, known_test_ids: set[str] | None = None
+) -> AslExecutionProfileRegistry:
+    """Load and validate the canonical per-point test execution profile table."""
+
+    registry_path = root / PROFILE_REGISTRY_PATH
+    if not registry_path.exists():
+        # Small isolated runner unit tests use synthetic roots without repository
+        # configuration. The real repository carries the tracked registry.
+        default_launcher = "scripts/aslref"
+        registry_hash = hashlib.sha256(b"missing-test-profile-registry").hexdigest()
+        profile_hash = hashlib.sha256(
+            f"{registry_hash}:{default_launcher}".encode()
+        ).hexdigest()
+        return AslExecutionProfileRegistry(
+            default_profile="default",
+            registry_sha256=registry_hash,
+            profiles={
+                "default": AslExecutionProfile(
+                    "default", default_launcher, (), profile_hash
+                )
+            },
+            assignments={},
+        )
+    try:
+        raw_text = registry_path.read_text(encoding="utf-8")
+        document = json.loads(raw_text, object_pairs_hook=_strict_json_object)
+    except (OSError, json.JSONDecodeError, ValueError) as error:
+        raise ValueError(f"invalid execution profile registry: {error}") from error
+    if not isinstance(document, dict) or set(document) != {
+        "schema_version",
+        "default_profile",
+        "profiles",
+        "assignments",
+    }:
+        raise ValueError("execution profile registry has an invalid schema")
+    if document.get("schema_version") != 1:
+        raise ValueError("execution profile registry schema_version must be 1")
+    default_name = document.get("default_profile")
+    raw_profiles = document.get("profiles")
+    raw_assignments = document.get("assignments")
+    if not isinstance(default_name, str) or PROFILE_NAME.fullmatch(default_name) is None:
+        raise ValueError("execution profile registry has invalid default_profile")
+    if not isinstance(raw_profiles, dict) or not raw_profiles:
+        raise ValueError("execution profile registry profiles must be a non-empty object")
+    if not isinstance(raw_assignments, dict):
+        raise ValueError("execution profile registry assignments must be an object")
+
+    registry_hash = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+    profiles: dict[str, AslExecutionProfile] = {}
+    for name, raw_profile in sorted(raw_profiles.items()):
+        if not isinstance(name, str) or PROFILE_NAME.fullmatch(name) is None:
+            raise ValueError(f"invalid execution profile name {name!r}")
+        if not isinstance(raw_profile, dict) or set(raw_profile) != {
+            "launcher",
+            "inputs",
+        }:
+            raise ValueError(f"execution profile {name} has an invalid schema")
+        launcher, launcher_hash = _profile_file(
+            root, raw_profile.get("launcher"), "launcher"
+        )
+        raw_inputs = raw_profile.get("inputs")
+        if not isinstance(raw_inputs, list) or any(
+            not isinstance(item, str) or not item for item in raw_inputs
+        ):
+            raise ValueError(f"execution profile {name} inputs must be a path array")
+        if len(raw_inputs) != len(set(raw_inputs)):
+            raise ValueError(f"execution profile {name} contains duplicate inputs")
+        inputs = [
+            _profile_file(root, value, f"{name} input")[0:2]
+            for value in raw_inputs
+        ]
+        hashed_inputs = [
+            (path, digest)
+            for path, digest in inputs
+        ]
+        profile_inputs = ((launcher, launcher_hash), *hashed_inputs)
+        fingerprint_payload = {
+            "registry_sha256": registry_hash,
+            "name": name,
+            "inputs": [list(item) for item in profile_inputs],
+        }
+        fingerprint = hashlib.sha256(
+            json.dumps(fingerprint_payload, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        profiles[name] = AslExecutionProfile(
+            name, launcher, tuple(profile_inputs), fingerprint
+        )
+    if default_name not in profiles:
+        raise ValueError("execution profile default_profile is not registered")
+
+    assignments: dict[str, str] = {}
+    for test_id, name in sorted(raw_assignments.items()):
+        if not isinstance(test_id, str) or TEST_ID.fullmatch(test_id) is None:
+            raise ValueError(f"invalid execution profile test ID {test_id!r}")
+        if not isinstance(name, str) or name not in profiles:
+            raise ValueError(
+                f"execution profile assignment for {test_id} names unknown profile {name!r}"
+            )
+        if name == default_name:
+            raise ValueError(
+                f"execution profile assignment for {test_id} redundantly names the default"
+            )
+        assignments[test_id] = name
+    if known_test_ids is not None:
+        stale = sorted(set(assignments) - known_test_ids)
+        if stale:
+            raise ValueError("execution profile registry contains stale IDs: " + ", ".join(stale))
+    return AslExecutionProfileRegistry(
+        default_name, registry_hash, profiles, assignments
+    )
+
+
+def _resolve_point_profile(
+    root: Path, test_id: str, registry: AslExecutionProfileRegistry
+) -> tuple[str, str, str, tuple[tuple[str, str], ...], tuple[str, ...]]:
+    assigned = registry.assignments.get(test_id, registry.default_profile)
+    override = os.environ.get("ASLREF")
+    if override is None:
+        selected = registry.profiles[assigned]
+        return (
+            assigned,
+            selected.fingerprint,
+            registry.registry_sha256,
+            selected.inputs,
+            (selected.launcher,),
+        )
+    try:
+        command = tuple(shlex.split(override))
+    except ValueError as error:
+        raise ValueError(f"invalid ASLREF override: {error}") from error
+    if not command:
+        raise ValueError("ASLREF override must not be empty")
+
+    def resolved_command_path(token: str) -> Path:
+        candidate = Path(token)
+        if not candidate.is_absolute():
+            candidate = root / candidate
+        return candidate.resolve(strict=False)
+
+    requested_path = resolved_command_path(command[0])
+    known_by_path = {
+        resolved_command_path(profile.launcher): name
+        for name, profile in registry.profiles.items()
+    }
+    known_name = known_by_path.get(requested_path)
+    if known_name is not None:
+        expected = registry.profiles[assigned]
+        if len(command) != 1:
+            raise ValueError(
+                "ASLREF profile launcher overrides cannot include extra arguments"
+            )
+        if known_name == registry.default_profile:
+            # The canonical launcher selects the registry's per-point route.
+            selected = expected
+        elif known_name == assigned:
+            selected = expected
+        else:
+            raise ValueError(
+                f"ASLREF profile {known_name} is incompatible with {test_id}; "
+                f"the registered profile is {assigned}"
+            )
+        return (
+            assigned,
+            selected.fingerprint,
+            registry.registry_sha256,
+            selected.inputs,
+            (selected.launcher,),
+        )
+    if assigned != registry.default_profile:
+        raise ValueError(
+            f"ASLREF override bypasses required profile {assigned} for {test_id}"
+        )
+    custom_payload = {
+        "registry_sha256": registry.registry_sha256,
+        "command": list(command),
+    }
+    custom_fingerprint = hashlib.sha256(
+        json.dumps(custom_payload, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    custom_inputs: tuple[tuple[str, str], ...] = ()
+    if requested_path.is_file():
+        try:
+            relative = requested_path.relative_to(root.resolve()).as_posix()
+        except ValueError:
+            relative = str(requested_path)
+        custom_inputs = ((relative, hashlib.sha256(requested_path.read_bytes()).hexdigest()),)
+    return (
+        "custom",
+        custom_fingerprint,
+        registry.registry_sha256,
+        custom_inputs,
+        command,
+    )
+
+
 def load_test_points(
     root: Path,
     units: Sequence[AslUnit],
@@ -430,6 +689,35 @@ def load_test_points(
             )
         )
 
+    registry = load_execution_profile_registry(
+        root,
+        known_test_ids=set(raw_ids) if selected_ids is None else None,
+    )
+    profiled: list[tuple[AslTestPoint, tuple[str, ...], frozenset[str]]] = []
+    for point, helpers, calls in loaded:
+        (
+            profile_name,
+            profile_fingerprint,
+            profile_registry_sha256,
+            profile_inputs,
+            aslref_command,
+        ) = _resolve_point_profile(root, point.test_id, registry)
+        profiled.append(
+            (
+                replace(
+                    point,
+                    execution_profile=profile_name,
+                    profile_fingerprint=profile_fingerprint,
+                    profile_registry_sha256=profile_registry_sha256,
+                    profile_inputs=profile_inputs,
+                    aslref_command=aslref_command,
+                ),
+                helpers,
+                calls,
+            )
+        )
+    loaded = profiled
+
     helper_owners: dict[str, set[Path]] = {}
     for point, helpers, _ in loaded:
         for helper in helpers:
@@ -548,6 +836,11 @@ def matrix(points: Sequence[AslTestPoint]) -> list[dict[str, object]]:
             "sha256": point.sha256,
             "validation_entrypoint": point.validation_entrypoint,
             "validation_sha256": point.validation_sha256,
+            "execution_profile": point.execution_profile,
+            "profile_fingerprint": point.profile_fingerprint,
+            "profile_registry_sha256": point.profile_registry_sha256,
+            "profile_inputs": [list(item) for item in point.profile_inputs],
+            "aslref_command": list(point.aslref_command),
         }
         for point in sorted(points, key=lambda item: item.test_id)
     ]
@@ -776,6 +1069,7 @@ def _write_result(
     duration: float,
     error: str | None,
     log: str,
+    model_sha256: str | None = None,
 ) -> None:
     result_dir.mkdir(parents=True, exist_ok=True)
     (result_dir / "aslref.log").write_text(log, encoding="utf-8")
@@ -788,6 +1082,12 @@ def _write_result(
         "sha256": point.sha256,
         "validation_entrypoint": point.validation_entrypoint,
         "validation_sha256": point.validation_sha256,
+        "execution_profile": point.execution_profile,
+        "profile_fingerprint": point.profile_fingerprint,
+        "profile_registry_sha256": point.profile_registry_sha256,
+        "profile_inputs": [list(item) for item in point.profile_inputs],
+        "aslref_command": list(point.aslref_command),
+        "profile_model_sha256": model_sha256,
         "status": status,
         "returncode": returncode,
         "duration_seconds": round(duration, 6),
@@ -880,6 +1180,11 @@ def report_page_results(
         "kind",
         "validation_entrypoint",
         "validation_sha256",
+        "execution_profile",
+        "profile_fingerprint",
+        "profile_registry_sha256",
+        "profile_inputs",
+        "aslref_command",
     )
     for test_id, entry in sorted(planned.items()):
         result = observed.get(test_id)
@@ -1027,6 +1332,7 @@ def execute_test_point(
     started = time.monotonic()
     command: list[str] = []
     log_parts: list[str] = []
+    model_input: Path | None = None
     try:
         if prepared is None:
             order_path.write_text(
@@ -1141,8 +1447,34 @@ def execute_test_point(
                 raise RuntimeError(
                     f"ASL assembly failed with exit {assembled.returncode}"
                 )
-        aslref = shlex.split(os.environ.get("ASLREF", "./scripts/aslref"))
-        command = [*aslref, "--type-check-strict", str(test_path)]
+        registry = load_execution_profile_registry(root)
+        (
+            profile_name,
+            profile_fingerprint,
+            profile_registry_sha256,
+            profile_inputs,
+            aslref_command,
+        ) = _resolve_point_profile(root, point.test_id, registry)
+        expected_profile = (
+            point.execution_profile,
+            point.profile_fingerprint,
+            point.profile_registry_sha256,
+            point.profile_inputs,
+            point.aslref_command,
+        )
+        actual_profile = (
+            profile_name,
+            profile_fingerprint,
+            profile_registry_sha256,
+            profile_inputs,
+            aslref_command,
+        )
+        if expected_profile != actual_profile:
+            raise ValueError(
+                f"execution profile identity changed for {point.test_id}; "
+                "regenerate the selected matrix"
+            )
+        command = [*aslref_command, "--type-check-strict", str(test_path)]
         completed = run(
             command,
             cwd=root,
@@ -1162,6 +1494,11 @@ def execute_test_point(
             duration=time.monotonic() - started,
             error=None if completed.returncode == 0 else "ASLRef execution failed",
             log="".join(log_parts),
+            model_sha256=(
+                hashlib.sha256(model_input.read_bytes()).hexdigest()
+                if model_input is not None and model_input.is_file()
+                else None
+            ),
         )
         return 0 if completed.returncode == 0 else 1
     except subprocess.TimeoutExpired as error:
@@ -1176,6 +1513,11 @@ def execute_test_point(
             duration=time.monotonic() - started,
             error=message,
             log="".join(log_parts),
+            model_sha256=(
+                hashlib.sha256(model_input.read_bytes()).hexdigest()
+                if model_input is not None and model_input.is_file()
+                else None
+            ),
         )
         return 1
     except (OSError, RuntimeError, ValueError) as error:
@@ -1190,6 +1532,11 @@ def execute_test_point(
             duration=time.monotonic() - started,
             error=message,
             log="".join(log_parts),
+            model_sha256=(
+                hashlib.sha256(model_input.read_bytes()).hexdigest()
+                if model_input is not None and model_input.is_file()
+                else None
+            ),
         )
         return 1
 

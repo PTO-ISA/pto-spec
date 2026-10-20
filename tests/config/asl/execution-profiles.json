@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "default_profile": "default",
+  "profiles": {
+    "default": {
+      "launcher": "scripts/aslref",
+      "inputs": []
+    },
+    "memory-64k": {
+      "launcher": "scripts/aslref-64k",
+      "inputs": [
+        "tests/config/asl/memory-64k.asl"
+      ]
+    },
+    "atomic-translation": {
+      "launcher": "scripts/aslref-atomic-translation",
+      "inputs": [
+        "tests/config/asl/atomic-translation-test-profile.asl"
+      ]
+    }
+  },
+  "assignments": {
+    "PTO-AVS-ARCH-TSTORE-ATOMIC-TRANSLATION-001": "atomic-translation",
+    "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001": "memory-64k",
+    "PTO-AVS-TILE-TSTORE-ATOMIC-BOUNDARY-001": "memory-64k",
+    "PTO-AVS-TILE-TSTORE-ATOMIC-CUBE-STRIDE-001": "memory-64k",
+    "PTO-AVS-TILE-TSTORE-ATOMIC-TRANSLATION-001": "atomic-translation",
+    "PTO-AVS-TILE-TSTORE-ATOMIC-VIRTUAL-ALIAS-001": "atomic-translation"
+  }
+}
