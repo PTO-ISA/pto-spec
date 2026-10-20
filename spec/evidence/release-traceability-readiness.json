@@ -827,6 +827,8 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-TLSU-GM-ATOM-RED-MASKED-DECODED-002",
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-001",
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-002",
         "PTO-AVS-TILE-GM-ATOM-RED-FAMILY-001",
         "PTO-AVS-TILE-MGATHER-CUBE-LAYOUTS-001",
         "PTO-AVS-TILE-MODEL-MEMORY-GM-ATOM-RED-STATIC-001"
@@ -4507,6 +4509,24 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-FRET-STK-FRAME-PRESERVATION-004"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-GM-FLOATING-ADD-NUMERIC-001",
+      "owners": [
+        "asl/tile/model/memory/gm-atom-red.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-MEM-0009"
+      ],
+      "tests": [
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-001",
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-002",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-BF16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP32-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP64-001"
       ]
     },
     {
@@ -20841,6 +20861,17 @@
     },
     {
       "executable": false,
+      "id": "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+      "owners": [
+        "asl/tile/memory-and-data-movement/regular/TSTORE.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-MEM-0009"
+      ],
+      "tests": []
+    },
+    {
+      "executable": false,
       "id": "PTO-TSUB-CONTRACT-001",
       "owners": [
         "asl/tile/elementwise-tile-tile/arithmetic/TSUB.asl"
@@ -21830,7 +21861,7 @@
     "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl": "7fa34ae4a96b3b5ea1c9c5bf242281a78d4c9296e921a62a7f53696d646bbe9a",
     "asl/tile/memory-and-data-movement/regular/TLOAD.asl": "d7896d6b0dee6b63de04ef7ce19b2a09d95424746732a211bc33fbe34f9a9cca",
     "asl/tile/memory-and-data-movement/regular/TPREFETCH.asl": "17dd4668691f90f1336195b7684499af3122ee5fa8ee295ebf8647929407a213",
-    "asl/tile/memory-and-data-movement/regular/TSTORE.asl": "4d66d254cdcfab079d81d59a108954870e5bfeb005ca4f04057a9583ff292967",
+    "asl/tile/memory-and-data-movement/regular/TSTORE.asl": "45a700dfb362c96e57138968e15600edaf2b772ad11dd2407c0ba17eaf4e61be",
     "asl/tile/model/capacity/local.asl": "dd8738f3d04b7fd95311f17acde8bd6a575cb360c02aec5391fd6819f961832f",
     "asl/tile/model/capacity/shared.asl": "5b39ed396475d12d4ce981fe4d2611e4b3e531f534367da04d19ddf8c72392fc",
     "asl/tile/model/definedness/elements.asl": "b76b2595c4a259cfcbff1f248f8ce5291cf4562e6c1a5438b4da924ba35d09ce",
@@ -21889,7 +21920,7 @@
     "asl/tile/model/memory/atomics.asl": "34a183a32f3d4b9b423249d17bf9583dd5f6642997f6f9706813778d4144d190",
     "asl/tile/model/memory/gather-scatter.asl": "fa010aa4b823ff1cb4a5bd0cc7d902420736652f49a0b0ef0719a2a401de6ea2",
     "asl/tile/model/memory/gm-atom-red-execution.asl": "af0f486684c30141a2be622dc55bb057401bbf4d2440457681e61828262d0f53",
-    "asl/tile/model/memory/gm-atom-red.asl": "70b79380d4a469a7e6b925877aaa34303385544a7f5457abd12619fe23187519",
+    "asl/tile/model/memory/gm-atom-red.asl": "7678a0772189879733758dc574f9ad3b88adcd11f78e703f86a5ead4a0bf135c",
     "asl/tile/model/memory/load-store.asl": "106c6a296e37f230a5d090e3c6f92e731628380fbc017a5741c973c80232502a",
     "asl/tile/model/memory/restart.asl": "952183301020042b382a7c7eb14adfc52b2d3c74b99cf130e8912e89b6205b2e",
     "asl/tile/model/memory/shared-movement.asl": "1d70613d120d04c747d475b9c6474e4a480eccfb2e592c07059d7cbf695bb36a",
@@ -22816,7 +22847,7 @@
     "docs/tile/model/memory/atomics.md": "c1cdbee761ac37b75c5562a36ef1620b969c071e19635ef97f3ca4f95bbcdd89",
     "docs/tile/model/memory/gather-scatter.md": "7b2eef7342af4b0ee951f0e0062cc4072b613279c5a56030eb3fd77cf3119b7e",
     "docs/tile/model/memory/gm-atom-red-execution.md": "11ba215eb846f385216a7fba1e632c72320689f3f96928fe0e858af44fe323d4",
-    "docs/tile/model/memory/gm-atom-red.md": "fbfa934de7f74f2b90857f2926e149d427f532ce60aa28f0ab769435154ab75f",
+    "docs/tile/model/memory/gm-atom-red.md": "14c755e69bef419373805966c7ad87b87cb9ebbe06fdc06952d3b7523594b261",
     "docs/tile/model/memory/load-store.md": "69b1685c18e897e2c46717550441b3a7847e533744e7030722a9cf93e19f8880",
     "docs/tile/model/memory/restart.md": "8ddcdc458251f6737b889092bc1aa225619f7fbfc9f530652e4a10f6f7433249",
     "docs/tile/model/memory/shared-movement.md": "fa5eb6249b91f78484d4a5628992848e9d5b820173e297226e6aad77a5ef626b",
@@ -22884,7 +22915,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "c1332aa895d5a70170b6f193674ad97371cbdd4314f5336de4ce4eb703d4d484",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "4fdb0facff519fecde8ba33ed966ed54c04b04c3f5f344024b2ce1a859434d67",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "c2bba4aad8073962fc18443147a53b3492eee9629f7a5975591087d1d8834e67",
-    "spec/evidence/adr-index.json": "5ce03109b6fe321bbe7e8ca98c31118df30f5c7328465c85861ad5baf7d8d908",
+    "spec/evidence/adr-index.json": "26ceb44db4e2f4cd4cb791ad9f92b1994bcf935d0fb971f1e6b651d2427e3283",
     "spec/evidence/instruction-contract-closure.json": "29bda316fcdc437076a370db86d61e8ca766b79a73eaa8e685e01352095a8723",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6c18bfdff0279b6d4fbaf3cb3c8e1ee111b4d5e82e1688136b88be6fa7902ba3",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -26936,8 +26967,14 @@
     "tests/asl/tile/model/memory/gather-scatter/tile-exec-mask-mgather-packed-002.asl": "f2756d76bb63006643e615e051022b617a1086bf0bff87906fec92438e9f97b7",
     "tests/asl/tile/model/memory/gather-scatter/tile-fault-exec-mask-mgather-no-probe-001.asl": "edf5ce0d98a30289805594cd7e363138bba7e5828f420f9f1a7e03bc1871b775",
     "tests/asl/tile/model/memory/gather-scatter/tile-static-gather-scatter-contract-001.asl": "d6cab96d0eebc246fb74ecdff0f75f334333306b431e54d11980faba4d944d02",
+    "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-add-gradual-001.asl": "9f7be912e741b889948beba88de37b7be61a033c10df6b6e4eb78fa697a4963d",
+    "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-add-old-value-001.asl": "fad8b26ac2cbd91e22910af2b35164ca61a9994e28ee317e777e62cc146f5cbf",
     "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-atom-red-family-001.asl": "1b0d73d49df34ad9ec3ae5f93aa7c340a024731dbd2bfefb5255cf5f1c009a12",
     "tests/asl/tile/model/memory/gm-atom-red-execution/tile-static-gm-atom-red-execution-contract-001.asl": "8b90081cb2d2969c894634bc2c6f868bd52ad5668f851cd115108498a0a967f7",
+    "tests/asl/tile/model/memory/gm-atom-red/tile-exec-gm-add-bf16-001.asl": "1c3813ee77a1cb93cd283f60682c1dd70dd8e4b1e07c104296ed44b6c2ef099b",
+    "tests/asl/tile/model/memory/gm-atom-red/tile-exec-gm-add-fp16-001.asl": "b3c462c71d184a084ee42496a485aa1f5478b05eb04e061d04c474c4d039b270",
+    "tests/asl/tile/model/memory/gm-atom-red/tile-exec-gm-add-fp32-001.asl": "5eb01c6dd3e8627d7542054b72a29381bde33da0740aa7c39b87c71cfc25ead2",
+    "tests/asl/tile/model/memory/gm-atom-red/tile-exec-gm-add-fp64-001.asl": "90694db025b00d345c25c3ea0dc633728368d87f2c9346b869ef20a3ba0c0ee1",
     "tests/asl/tile/model/memory/gm-atom-red/tile-static-gm-atom-red-contract-001.asl": "6dc7556ecd6590bde1aa7cad2cd5e182f4feb30b3d333bf643272af5f15ae16d",
     "tests/asl/tile/model/memory/load-store/tile-bound-tload-cube-widths-003.asl": "f98cef0232d9a837f4cf935b9b42f7149710f80c8d18203a085aea6c52bb5623",
     "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-decode-004.asl": "7467581a803ae2dab23d693dceb2f2a352f643554c2731caeb335f8f29b81836",
@@ -27184,9 +27221,9 @@
     "mnemonic_count": 671,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 1128,
+    "requirement_count": 1130,
     "status": "closed",
-    "test_count": 4291,
+    "test_count": 4297,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -63489,6 +63526,68 @@
       "source": "asl/tile/model/execution/generation.asl"
     },
     {
+      "id": "PTO-AVS-TILE-GM-ADD-GRADUAL-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-add-gradual-001.asl",
+      "requirements": [
+        "PTO-GM-FLOATING-ADD-NUMERIC-001",
+        "PTO-ATOM-RED-ORDERING-001"
+      ],
+      "sha256": "9f7be912e741b889948beba88de37b7be61a033c10df6b6e4eb78fa697a4963d",
+      "source": "asl/tile/model/memory/gm-atom-red-execution.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-GM-ADD-GRADUAL-002",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-add-old-value-001.asl",
+      "requirements": [
+        "PTO-GM-FLOATING-ADD-NUMERIC-001",
+        "PTO-ATOM-RED-ORDERING-001"
+      ],
+      "sha256": "fad8b26ac2cbd91e22910af2b35164ca61a9994e28ee317e777e62cc146f5cbf",
+      "source": "asl/tile/model/memory/gm-atom-red-execution.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-GM-ADD-NUMERIC-BF16-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/gm-atom-red/tile-exec-gm-add-bf16-001.asl",
+      "requirements": [
+        "PTO-GM-FLOATING-ADD-NUMERIC-001"
+      ],
+      "sha256": "1c3813ee77a1cb93cd283f60682c1dd70dd8e4b1e07c104296ed44b6c2ef099b",
+      "source": "asl/tile/model/memory/gm-atom-red.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-GM-ADD-NUMERIC-FP16-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/gm-atom-red/tile-exec-gm-add-fp16-001.asl",
+      "requirements": [
+        "PTO-GM-FLOATING-ADD-NUMERIC-001"
+      ],
+      "sha256": "b3c462c71d184a084ee42496a485aa1f5478b05eb04e061d04c474c4d039b270",
+      "source": "asl/tile/model/memory/gm-atom-red.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-GM-ADD-NUMERIC-FP32-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/gm-atom-red/tile-exec-gm-add-fp32-001.asl",
+      "requirements": [
+        "PTO-GM-FLOATING-ADD-NUMERIC-001"
+      ],
+      "sha256": "5eb01c6dd3e8627d7542054b72a29381bde33da0740aa7c39b87c71cfc25ead2",
+      "source": "asl/tile/model/memory/gm-atom-red.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-GM-ADD-NUMERIC-FP64-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/gm-atom-red/tile-exec-gm-add-fp64-001.asl",
+      "requirements": [
+        "PTO-GM-FLOATING-ADD-NUMERIC-001"
+      ],
+      "sha256": "90694db025b00d345c25c3ea0dc633728368d87f2c9346b869ef20a3ba0c0ee1",
+      "source": "asl/tile/model/memory/gm-atom-red.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-GM-ATOM-RED-FAMILY-001",
       "kind": "execution",
       "path": "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-atom-red-family-001.asl",
@@ -99480,11 +99579,15 @@
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-001",
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-002",
         "PTO-AVS-TILE-GM-ATOM-RED-FAMILY-001"
       ],
       "source": "asl/tile/model/memory/gm-atom-red-execution.asl",
       "surface": "tile",
       "tests": [
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-001",
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-002",
         "PTO-AVS-TILE-GM-ATOM-RED-FAMILY-001",
         "PTO-AVS-TILE-MODEL-MEMORY-GM-ATOM-RED-EXECUTION-STATIC-001"
       ]
@@ -99511,10 +99614,19 @@
         "ADR-TILE-0007",
         "ADR-TILE-0008"
       ],
-      "semantic_tests": [],
+      "semantic_tests": [
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-BF16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP32-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP64-001"
+      ],
       "source": "asl/tile/model/memory/gm-atom-red.asl",
       "surface": "tile",
       "tests": [
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-BF16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP32-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP64-001",
         "PTO-AVS-TILE-MODEL-MEMORY-GM-ATOM-RED-STATIC-001"
       ]
     },

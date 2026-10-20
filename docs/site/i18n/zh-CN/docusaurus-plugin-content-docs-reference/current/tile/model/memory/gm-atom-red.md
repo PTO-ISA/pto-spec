@@ -95,7 +95,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/memory/gm-atom-red.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","surface":"tile","classification":["model","memory","gm-atom-red"],"depends_on":["PTO-TILE-MODEL-MEMORY-ATOMICS","PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","surface":"tile","classification":["model","memory","gm-atom-red"],"depends_on":["PTO-ARCH-DATA-TYPES-NUMERIC-CLASSIFICATION","PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS","PTO-ARCH-FEATURES-MX-FORMATS","PTO-TILE-MODEL-MEMORY-ATOMICS","PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA"]}
 // NDF-BEGIN: PTO-MGATHER-CAS-ATOMIC-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // The legacy MGATHER_CAS spelling aliases mgather.cas and MUST accept only
@@ -149,6 +149,19 @@ This page is a generated reference view of the normative ASL unit.
 // TileLegality, malformed bundles fault BundleControl, and alignment/page
 // failures are preflighted before any architectural effect.
 // NDF-END: PTO-ATOM-RED-FAULTS-001
+
+// NDF-BEGIN: PTO-GM-FLOATING-ADD-NUMERIC-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// GM FP16/BF16/FP32/FP64 ADD MUST preserve subnormal inputs and round once per
+// RMW to its own dtype using RN-even with gradual-underflow results. This
+// accepted issue #397 N1 amendment supersedes issue #208's FP32 GM FTZ rule.
+// NaN operands or opposite infinities MUST yield the format canonical NaN;
+// other infinity sums MUST retain infinity. Overflow MUST yield signed
+// infinity. Minus zero plus minus zero MUST yield minus zero; other exact
+// cancellation MUST yield plus zero. Narrow carriers MUST ignore high bits.
+// Indexed atom.add/red.add and strided atomic TSTORE MUST share the readonly
+// helper and MUST NOT introduce numeric-status writes or scalar results.
+// NDF-END: PTO-GM-FLOATING-ADD-NUMERIC-001
 
 type GMAtomicOperation of enumeration {
     GMAtomic_CAS,
@@ -243,13 +256,108 @@ begin
     return old - (Zeros{PTO_XLEN} + 1);
 end;
 
-readonly impdef func GMFloatingAddPTX(data_type: TileDataType, old: Word,
+// Build exact powers for FP64 exponent alignment without host floating point.
+pure func GMFloatingAddPowerOfTwo(exponent: integer {0..2100}) => integer
+begin
+    var result: integer = 1;
+    var remaining = exponent;
+    var factor: integer = 2;
+    while remaining > 0 looplimit 12 do
+        if remaining MOD 2 == 1 then result = result * factor; end;
+        factor = factor * factor;
+        remaining = (remaining DIVRM 2) as integer {0..2100};
+    end;
+    return result;
+end;
+
+readonly func GMFloatingAddPTX(data_type: TileDataType, old: Word,
                              value: Word) => Word
 begin
-    // PTO GM floating ADD follows the frozen PTX-derived profile: RN-even;
-    // FP16/BF16 no-FTZ, FP32 global-atomic FTZ, and the profile's explicit
-    // NaN, infinity, signed-zero, overflow, and payload rules.
-    return old + value;
+    assert data_type == TileDataType_FP64 || data_type == TileDataType_FP32 ||
+           data_type == TileDataType_FP16 || data_type == TileDataType_BF16;
+    let descriptor = TileNumericFormatDescriptor(data_type);
+    let fraction_bits = descriptor.fraction_bits_min;
+    let bias = descriptor.exponent_bias;
+    let minimum_exponent = 1 - bias;
+    let maximum_exponent = bias;
+    let hidden = GMFloatingAddPowerOfTwo(fraction_bits as integer {0..2100});
+    let infinity = hidden * (2 * bias + 1);
+    let sign_bit = GMFloatingAddPowerOfTwo(descriptor.sign_bit as integer {0..2100});
+    let left = TileRawElementValue(old, data_type);
+    let right = TileRawElementValue(value, data_type);
+    let left_class = TileNumericValueClass(data_type, left);
+    let right_class = TileNumericValueClass(data_type, right);
+    if NumericValueClassIsNaN(left_class) || NumericValueClassIsNaN(right_class) then
+        let (available, nan) = TileNumericCanonicalNaN(data_type);
+        assert available;
+        return nan;
+    end;
+    let left_negative = left[descriptor.sign_bit] == '1';
+    let right_negative = right[descriptor.sign_bit] == '1';
+    let left_infinite = NumericValueClassIsInfinity(left_class);
+    let right_infinite = NumericValueClassIsInfinity(right_class);
+    if left_infinite && right_infinite && left_negative != right_negative then
+        let (available, nan) = TileNumericCanonicalNaN(data_type);
+        assert available;
+        return nan;
+    elsif left_infinite then return left;
+    elsif right_infinite then return right;
+    end;
+    let (left_valid, -, left_significand, left_exponent) =
+        TileNumericFiniteDecomposition(data_type, left);
+    let (right_valid, -, right_significand, right_exponent) =
+        TileNumericFiniteDecomposition(data_type, right);
+    assert left_valid && right_valid;
+    let common_exponent = if left_exponent < right_exponent then
+        left_exponent else right_exponent;
+    let left_integer = UInt(left_significand) * GMFloatingAddPowerOfTwo(
+        (left_exponent - common_exponent) as integer {0..2100});
+    let right_integer = UInt(right_significand) * GMFloatingAddPowerOfTwo(
+        (right_exponent - common_exponent) as integer {0..2100});
+    let exact = (if left_negative then -left_integer else left_integer) +
+                (if right_negative then -right_integer else right_integer);
+    if exact == 0 then
+        if left_integer == 0 && right_integer == 0 && left_negative && right_negative then
+            return Zeros{PTO_XLEN} + sign_bit;
+        end;
+        return Zeros{PTO_XLEN};
+    end;
+    let negative = exact < 0;
+    let magnitude = if negative then -exact else exact;
+    let sign = if negative then sign_bit else 0;
+    var scaled = magnitude;
+    var bit_count: integer {0..2101} = 0;
+    while scaled > 0 looplimit 2101 do
+        scaled = scaled DIVRM 2;
+        bit_count = (bit_count + 1) as integer {0..2101};
+    end;
+    let exact_exponent = (common_exponent + bit_count) - 1;
+    let quantum = if exact_exponent < minimum_exponent then
+        minimum_exponent - fraction_bits else exact_exponent - fraction_bits;
+    let shift = quantum - common_exponent;
+    var rounded: integer = magnitude;
+    if shift > 0 then
+        let divisor = GMFloatingAddPowerOfTwo(shift as integer {0..2100});
+        rounded = magnitude DIVRM divisor;
+        let remainder = magnitude MOD divisor;
+        if 2 * remainder > divisor ||
+           (2 * remainder == divisor && rounded MOD 2 == 1) then
+            rounded = rounded + 1;
+        end;
+    elsif shift < 0 then
+        rounded = magnitude * GMFloatingAddPowerOfTwo((-shift) as integer {0..2100});
+    end;
+    if rounded < hidden then return Zeros{PTO_XLEN} + sign + rounded; end;
+    var result_exponent: integer = quantum + fraction_bits;
+    if rounded >= 2 * hidden then
+        rounded = rounded DIVRM 2;
+        result_exponent = result_exponent + 1;
+    end;
+    if result_exponent > maximum_exponent then
+        return Zeros{PTO_XLEN} + sign + infinity;
+    end;
+    return Zeros{PTO_XLEN} + sign +
+        (result_exponent + bias) * hidden + (rounded - hidden);
 end;
 
 func GMAtomicResult(operation: GMAtomicOperation,
