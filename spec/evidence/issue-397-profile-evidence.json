@@ -1,0 +1,171 @@
+{
+  "schema": "pto.issue-397-profile-evidence.v1",
+  "candidate_commit": "fda56c0185a2af362f9420a180c4ac3fc8ac1a20",
+  "candidate_asl_tree": "021e07d39e079f5791e57e399c4850f7d7469b2a",
+  "matrix_commit": "fda56c0185a2af362f9420a180c4ac3fc8ac1a20",
+  "assembled_model": {
+    "path": "build/asl-page-inputs/pto-spec.asl",
+    "sha256": "820b26b6779ee5cc6818e8ea7716e58aa6d61c6f126a703c94e9576525b9e2e5"
+  },
+  "baseline_profile": {
+    "launcher": "scripts/aslref",
+    "launcher_sha256": "2939fb60f0e4e574ff5a7b2743fb0486b035bc51f9db3feac584dafd6d1d2ef5",
+    "memory_bytes": 4096,
+    "event_capacity": 16,
+    "production_default_sources": {
+      "memory_config": "asl/arch/features/tile-allocation.asl",
+      "memory_config_sha256": "7a11b91b603905dfbeec05c0b0eeb1accd16b7127c81373b19077c242933520b",
+      "event_capacity": "asl/arch/programming-model/core-pe-topology.asl",
+      "event_capacity_sha256": "da295e6d0b163888ccc5fd813815c255453956125b9ac9ccced1b2f1227ffe7a"
+    }
+  },
+  "profiles": {
+    "default": {
+      "launcher": "./scripts/aslref",
+      "selected_ids": [
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001",
+        "PTO-AVS-TILE-TSTORE-DIRECT-001",
+        "PTO-AVS-TILE-TSTORE-CUBE-002",
+        "PTO-AVS-BLOCK-SHARED-TSTORE-FOURSTREAM-009",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-DTYPE-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-OVERLAP-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-MASK-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LEGALITY-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-PREFLIGHT-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-FAULT-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-BF16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP32-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP64-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-NUMERIC-001",
+        "PTO-AVS-BLOCK-BSTART-TSTORE-DECODE-001",
+        "PTO-AVS-TILE-MSCATTER-MIN-SEMANTIC-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-DECODED-001",
+        "PTO-AVS-TILE-TCMP-ORDER-001",
+        "PTO-AVS-TILE-TCMPS-CROSS-CARRIER-001",
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-001",
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-002",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CATR-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-ADMISSION-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-LIFETIME-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-IDENTITY-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-UNEQUAL-LIMITS-001",
+        "PTO-AVS-ARCH-TILE-EVENTS-ORDER-003",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-GRADUAL-001",
+        "PTO-AVS-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS-STATIC-001",
+        "PTO-AVS-BLOCK-MODEL-DISPATCH-TLSU-ATOMIC-TSTORE-STATIC-001",
+        "PTO-AVS-TILE-MODEL-MEMORY-ATOMIC-TSTORE-STATIC-001",
+        "PTO-AVS-TILE-MODEL-MEMORY-GM-OBLIGATION-PROGRESS-STATIC-001"
+      ],
+      "count": 37,
+      "result": "PASS",
+      "passed": 37,
+      "failed": 0,
+      "elapsed_seconds": 139.915,
+      "matrix": "/tmp/issue397-default-matrix/page-0.json",
+      "matrix_command": "scripts/print-asl-test-matrix --page-size 100 --ids-file /tmp/issue397-default-ids.txt --output-dir /tmp/issue397-default-matrix",
+      "run_command": "ASLREF=./scripts/aslref PTO_ASL_TEST_TIMEOUT_SECONDS=600 scripts/run-asl-page --matrix /tmp/issue397-default-matrix/page-0.json -j4"
+    },
+    "memory_64k": {
+      "launcher": "./scripts/aslref-64k",
+      "launcher_sha256": "653f10dc61fab15416d4586c6c5ea171ab11f3b145bf88b21c07677bf493d300",
+      "underlying_launcher": "./scripts/aslref",
+      "underlying_launcher_sha256": "2939fb60f0e4e574ff5a7b2743fb0486b035bc51f9db3feac584dafd6d1d2ef5",
+      "configuration": "tests/config/asl/memory-64k.asl",
+      "configuration_sha256": "291bce9fe2fc5bc08a0526ea61d3ae513067fb8d8995983600c1ee5794c4488c",
+      "memory_bytes": 65536,
+      "selected_ids": [
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-CUBE-STRIDE-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-BOUNDARY-001"
+      ],
+      "count": 3,
+      "result": "PASS",
+      "passed": 3,
+      "failed": 0,
+      "elapsed_seconds": 140.735,
+      "matrix": "/tmp/issue397-64k-matrix/page-0.json",
+      "matrix_command": "scripts/print-asl-test-matrix --page-size 100 --ids-file /tmp/issue397-64k-ids.txt --output-dir /tmp/issue397-64k-matrix",
+      "run_command": "ASLREF=./scripts/aslref-64k PTO_ASL_TEST_TIMEOUT_SECONDS=600 scripts/run-asl-page --matrix /tmp/issue397-64k-matrix/page-0.json -j3",
+      "wrapper_fingerprint_format": "profile=pto-model-memory-64k-v1 size=65536 config_sha256=<configuration_sha256> launcher_sha256=<underlying_launcher_sha256> model_sha256=<assembled_model.sha256>"
+    },
+    "atomic_translation": {
+      "launcher": "./scripts/aslref-atomic-translation",
+      "launcher_sha256": "e09b6917fe2e54b25e453c7815eb83836265695f324d0a9b441d4c863bb13f9f",
+      "underlying_launcher": "./scripts/aslref",
+      "underlying_launcher_sha256": "2939fb60f0e4e574ff5a7b2743fb0486b035bc51f9db3feac584dafd6d1d2ef5",
+      "configuration": "tests/config/asl/atomic-translation-test-profile.asl",
+      "configuration_sha256": "4a549d0611b9a0374b217f8fd505cb8b6fbec2fe3b40208fcee3933e2de0b5df",
+      "memory_bytes": 4096,
+      "event_capacity": 16,
+      "selected_declarations": [
+        "var _Issue397TranslationMode : integer {0..3} = 0",
+        "readonly func TranslateDataAddress(...)"
+      ],
+      "production_components_unchanged": [
+        "ProbeDataAccess",
+        "DataAccessPermitted",
+        "Atomic TSTORE admission",
+        "Atomic TSTORE drain",
+        "GMReductionResult",
+        "GM storage",
+        "memory event recording"
+      ],
+      "selected_ids": [
+        "PTO-AVS-TILE-TSTORE-ATOMIC-TRANSLATION-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-TRANSLATION-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-VIRTUAL-ALIAS-001"
+      ],
+      "count": 3,
+      "result": "PASS",
+      "passed": 3,
+      "failed": 0,
+      "elapsed_seconds": 34.97,
+      "matrix": "/tmp/issue397-translation-matrix/page-0.json",
+      "matrix_command": "scripts/print-asl-test-matrix --page-size 100 --ids-file /tmp/issue397-translation-ids.txt --output-dir /tmp/issue397-translation-matrix",
+      "run_command": "ASLREF=./scripts/aslref-atomic-translation PTO_ASL_TEST_TIMEOUT_SECONDS=600 scripts/run-asl-page --matrix /tmp/issue397-translation-matrix/page-0.json -j3",
+      "captured_runner_fingerprint": "profile=pto-issue397-atomic-translation-test-v1 memory_bytes=4096 event_capacity=16 declarations=_Issue397TranslationMode,TranslateDataAddress fixture_sha256=4a549d0611b9a0374b217f8fd505cb8b6fbec2fe3b40208fcee3933e2de0b5df launcher_sha256=e09b6917fe2e54b25e453c7815eb83836265695f324d0a9b441d4c863bb13f9f model_sha256=820b26b6779ee5cc6816e8ea7716e58aa6d61c6f126a703c94e9576525b9e2e5"
+    }
+  },
+  "scope_note": "Focused exact-ID pages only; no full-matrix discovery or release lane was run. Profile-only IDs must remain excluded from default-profile pass claims.",
+  "baseline_contrast": {
+    "purpose": "Demonstrate the corrected, reachable Atomic TSTORE dispatch witness and CMode 6/7 admission witness fail on the unchanged pre-S3 baseline and pass on the candidate.",
+    "baseline_commit": "b4abf485128941fb41799e667868090368ab8307",
+    "baseline_checkout": "/private/tmp/issue397-baseline-b4",
+    "baseline_matrix": "/private/tmp/issue397-s3-baseline-matrix/page-0.json",
+    "baseline_matrix_sha256": "6345ae78c30d31dbab75da985eb7a34e6acee30165d0b97b1485226ce3f0d3ef",
+    "points": [
+      {
+        "id": "PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001",
+        "source_sha256": "101b6494a4e8038b98b508759a0e8bcbacc1fce97180b8cae85efe90e2fa5422",
+        "baseline_command": [
+          "./scripts/aslref",
+          "--type-check-strict",
+          "/private/tmp/issue397-baseline-b4/build/asl-test-results/PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001/test.asl"
+        ],
+        "baseline_result": "FAIL as expected at reachable assertion `completed && _LastFault == Fault_None` (return code 1; ASL dynamic assertion failure).",
+        "baseline_result_sha256": "168a52182e5b9566258c602bc689d3e6426c06d59ec3cc86c1a7e917f65f6cce",
+        "candidate_result": "PASS on candidate commit fda56c0185a2af362f9420a180c4ac3fc8ac1a20 in the 37-point default page."
+      },
+      {
+        "id": "PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001",
+        "source_sha256": "36ebd9e0fefd90d9fe973c9423d265ff97cfe6a77e43f0ea7c899522d69b11cc",
+        "baseline_command": [
+          "./scripts/aslref",
+          "--type-check-strict",
+          "/private/tmp/issue397-baseline-b4/build/asl-test-results/PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001/test.asl"
+        ],
+        "baseline_result": "FAIL as expected at reachable assertion `accepted == CommandExecution_Executed && _LastFault == Fault_None` for the CMode-enabled B.DATR path (return code 1; ASL dynamic assertion failure).",
+        "baseline_result_sha256": "a2d7ae04e3f94779368b21199ae1c0f372977a8e53330d1c044c296a6fa761d3",
+        "candidate_result": "PASS on candidate commit fda56c0185a2af362f9420a180c4ac3fc8ac1a20 in the 37-point default page."
+      }
+    ],
+    "integrity": "The two source files are byte-identical between the baseline test inputs and candidate. The baseline checkout is detached at b4abf485 and contains no implementation edits; it was used only to assemble/run these two corrected tests.",
+    "candidate_matrix": "/tmp/issue397-default-matrix/page-0.json",
+    "candidate_matrix_sha256": "df13e4700f87949c6ee286e10d3328e9ca70bd2107a2fac6a33197fa800b6096"
+  }
+}

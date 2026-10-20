@@ -2,7 +2,7 @@
   "schema": "pto.issue-397-acceptance-map.v1",
   "contract": "issue-397__tstore-strided-atomic-reduction-frozen.md",
   "baseline": "b0165320a4b575b18d2f4d93faf40178f661ab49",
-  "status": "candidate-focused-witnesses-in-progress",
+  "status": "candidate-focused-witnesses-passing",
   "points": [
     {
       "acceptance": "A01",
@@ -841,5 +841,8 @@
       "PTO-AVS-TILE-MODEL-MEMORY-ATOMIC-TSTORE-STATIC-001",
       "PTO-AVS-TILE-MODEL-MEMORY-GM-OBLIGATION-PROGRESS-STATIC-001"
     ]
-  }
+  },
+  "profile_evidence": "spec/evidence/issue-397-profile-evidence.json",
+  "candidate_commit": "fda56c0185a2af362f9420a180c4ac3fc8ac1a20",
+  "candidate_asl_tree": "021e07d39e079f5791e57e399c4850f7d7469b2a"
 }
