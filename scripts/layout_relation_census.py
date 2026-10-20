@@ -582,6 +582,77 @@ ISSUE360_GM_OBLIGATION_HELPERS = {
             ("TileStoreSourceGeneration", "asl/tile/model/memory/load-store.asl"),
         },
     },
+    "BundleAtomicTStoreCurrentPENonparticipant": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/tlsu-atomic-tstore.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/tile-execution.asl"),
+        },
+    },
+    "BundleAtomicTStoreCurrentPESelected": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/tlsu-atomic-tstore.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/tile-execution.asl"),
+        },
+    },
+    "BundleAtomicTStoreSelected": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/tlsu-atomic-tstore.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleAtomicTStoreCurrentPENonparticipant",
+             "asl/block/model/dispatch/tlsu-atomic-tstore.asl"),
+            ("ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/tile-execution.asl"),
+        },
+    },
+    "BundleSharedSubviewLegalForPE": {
+        "before": [],
+        "after": [("asl/block/model/operands/shared-generation.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleSharedSubviewLegal",
+             "asl/block/model/operands/shared-generation.asl"),
+            ("ExecuteBundleAtomicTSTOREOperation",
+             "asl/block/model/dispatch/tlsu-atomic-tstore.asl"),
+            ("MaterializeBundleSharedSubviewForPE",
+             "asl/block/model/operands/shared-generation.asl"),
+        },
+    },
+    "BundleSharedSubviewOffsetRawForPE": {
+        "before": [("asl/block/model/operands/shared-generation.asl", set())],
+        "after": [("asl/block/model/operands/shared-bindings.asl", set())],
+        "before_callers": {
+            ("BundleSharedSubviewLegal",
+             "asl/block/model/operands/shared-generation.asl"),
+            ("BundleSharedSubviewMatrixMetadataLegalForPE",
+             "asl/block/model/dispatch/shared-cube-matrix.asl"),
+            ("BundleSharedSubviewOffsetCellsForPE",
+             "asl/block/model/operands/shared-generation.asl"),
+        },
+        "after_callers": {
+            ("BundleSharedSubviewLegalForPE",
+             "asl/block/model/operands/shared-generation.asl"),
+            ("BundleSharedSubviewMatrixMetadataLegalForPE",
+             "asl/block/model/dispatch/shared-cube-matrix.asl"),
+            ("BundleSharedSubviewOffsetCellsForPE",
+             "asl/block/model/operands/shared-bindings.asl"),
+        },
+    },
+    "ExecuteBundleAtomicTSTOREOperation": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/tlsu-atomic-tstore.asl", {"RowMajor"})],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/tile-execution.asl"),
+        },
+    },
     "BundleTileGMRequestClass": {
         "before": [],
         "after": [("asl/block/model/dispatch/gm-obligation-dispatch.asl", set())],
@@ -666,7 +737,8 @@ ISSUE360_GM_OBLIGATION_HELPERS = {
         "before_callers": set(),
         "after_callers": {
             ("ExecuteTileStoreSnapshot", "asl/tile/model/memory/load-store.asl"),
-            ("ProgressKernelGMObligationsForCore", "asl/tile/model/memory/load-store.asl"),
+            ("ProgressKernelGMObligationsForCore",
+             "asl/tile/model/memory/gm-obligation-progress.asl"),
         },
     },
     "TileStoreFootprintIsValidated": {
@@ -690,6 +762,8 @@ ISSUE360_GM_OBLIGATION_HELPERS = {
         "after": [("asl/tile/model/memory/load-store.asl", set())],
         "before_callers": set(),
         "after_callers": {
+            ("ExecuteBundleAtomicTSTOREOperation",
+             "asl/block/model/dispatch/tlsu-atomic-tstore.asl"),
             ("TSTORE", "asl/tile/model/memory/load-store.asl"),
         },
     },
@@ -4279,6 +4353,85 @@ def _issue360_gm_obligation_helper_mutation_canaries() -> None:
         for error in result["errors"]
     ):
         raise AssertionError("layout-bearing #360 GMOV source helper did not fail closed")
+
+    atomic_path = "asl/block/model/dispatch/tlsu-atomic-tstore.asl"
+    tile_dispatch_path = "asl/block/model/dispatch/tile-execution.asl"
+    atomic_operation = next(
+        row["body"] for row in _function_defs(candidate[atomic_path], atomic_path)
+        if row["name"] == "ExecuteBundleAtomicTSTOREOperation"
+    )
+    mutated = dict(candidate)
+    mutated[atomic_path] = mutated[atomic_path].replace(atomic_operation, "", 1)
+    mutated[tile_dispatch_path] += "\n" + atomic_operation + "\n"
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-issue397-atomic-dispatch-owner", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #360 GM-obligation helper owner/layout/caller closure mismatch: "
+        "ExecuteBundleAtomicTSTOREOperation" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #397 Atomic TSTORE dispatch owner drift did not fail closed")
+
+    mutated = dict(candidate)
+    mutated[atomic_path] += (
+        "\nreadonly func UnlistedAtomicTStoreServiceCaller() => boolean\n"
+        "begin\n"
+        "    return ExecuteBundleAtomicTSTOREOperation();\n"
+        "end;\n"
+    )
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-issue397-atomic-dispatch-caller", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #360 GM-obligation helper owner/layout/caller closure mismatch: "
+        "ExecuteBundleAtomicTSTOREOperation" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #397 Atomic TSTORE extra helper caller did not fail closed")
+
+    mutated = dict(candidate)
+    row_major_guard = "tile.layout != TileLayout_RowMajor ||"
+    if row_major_guard not in mutated[atomic_path]:
+        raise AssertionError("Issue #397 Atomic TSTORE RowMajor guard canary is missing")
+    mutated[atomic_path] = mutated[atomic_path].replace(
+        row_major_guard, "tile.layout != TileLayout_CUBE_M32 ||", 1
+    )
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-issue397-atomic-dispatch-layout", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #360 GM-obligation helper owner/layout/caller closure mismatch: "
+        "ExecuteBundleAtomicTSTOREOperation" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #397 Atomic TSTORE layout-domain drift did not fail closed")
+
+    shared_binding_path = "asl/block/model/operands/shared-bindings.asl"
+    wrong_shared_owner_path = "asl/block/model/dispatch/gm-obligation-dispatch.asl"
+    shared_offset_helper = next(
+        row["body"] for row in _function_defs(
+            candidate[shared_binding_path], shared_binding_path
+        ) if row["name"] == "BundleSharedSubviewOffsetRawForPE"
+    )
+    mutated = dict(candidate)
+    mutated[shared_binding_path] = mutated[shared_binding_path].replace(
+        shared_offset_helper, "", 1
+    )
+    mutated[wrong_shared_owner_path] += "\n" + shared_offset_helper + "\n"
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-issue397-shared-subview-owner", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #360 GM-obligation helper owner/layout/caller closure mismatch: "
+        "BundleSharedSubviewOffsetRawForPE" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #397 Shared subview helper owner drift did not fail closed")
 
 
 def self_test() -> None:
