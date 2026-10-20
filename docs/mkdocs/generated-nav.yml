@@ -55,6 +55,7 @@ nav:
           - Tile Allocation: arch/features/tile-allocation.md
       - Memory Model:
           - Address Space: arch/memory-model/address-space.md
+          - Atomic Tstore Obligations: arch/memory-model/atomic-tstore-obligations.md
           - Atomicity: arch/memory-model/atomicity.md
           - Fault Precision: arch/memory-model/fault-precision.md
           - Global Memory Access: arch/memory-model/global-memory-access.md
@@ -211,6 +212,7 @@ nav:
               - Tile Schema: block/model/dispatch/tile-schema.md
               - Timg2col Execution: block/model/dispatch/timg2col-execution.md
               - Timg2col Schema: block/model/dispatch/timg2col-schema.md
+              - TLSU Atomic Tstore: block/model/dispatch/tlsu-atomic-tstore.md
               - TLSU Gm Atom Red: block/model/dispatch/tlsu-gm-atom-red.md
               - TLSU Gmov: block/model/dispatch/tlsu-gmov.md
               - TLSU Layout Conversion: block/model/dispatch/tlsu-layout-conversion.md
@@ -931,10 +933,12 @@ nav:
               - Reduction And Expansion: tile/model/legality/reduction-and-expansion.md
           - Memory:
               - Addressing: tile/model/memory/addressing.md
+              - Atomic Tstore: tile/model/memory/atomic-tstore.md
               - Atomics: tile/model/memory/atomics.md
               - Gather Scatter: tile/model/memory/gather-scatter.md
               - Gm Atom Red Execution: tile/model/memory/gm-atom-red-execution.md
               - Gm Atom Red: tile/model/memory/gm-atom-red.md
+              - Gm Obligation Progress: tile/model/memory/gm-obligation-progress.md
               - Load Store: tile/model/memory/load-store.md
               - Restart: tile/model/memory/restart.md
               - Shared Movement: tile/model/memory/shared-movement.md

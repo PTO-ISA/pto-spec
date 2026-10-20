@@ -87,7 +87,7 @@ B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize, p
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| b_datr_32_c161a042ff38 | L32 | 32 | 0x00001023 / 0x000c107f | [{"field":"CMode","operator":"one-of","values":[0,1,2,3,4,5]},{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,24,25,26,27,28,31]},{"field":"Layout","operator":"one-of","values":[0,1,3,4,6,8,9,10,11,17,18,20,21,22,23,24,25,26,27,28,29,30,31]}] |
+| b_datr_32_c161a042ff38 | L32 | 32 | 0x00001023 / 0x000c107f | [{"field":"CMode","operator":"one-of","values":[0,1,2,3,4,5,6,7]},{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,24,25,26,27,28,31]},{"field":"Layout","operator":"one-of","values":[0,1,3,4,6,8,9,10,11,17,18,20,21,22,23,24,25,26,27,28,29,30,31]}] |
 
 ### Fields
 
@@ -112,7 +112,7 @@ B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize, p
 
 ### CMode (`PTO-FIELD-BLOCK-CMODE`)
 
-Selects the comparison relation used by TCMP and TCMPS.
+Selects TCMP/TCMPS comparison relation or, only for Atomic TSTORE, a GM atomic reduction operator.
 
 **Encoded zero:** Code zero selects equality comparison.
 
@@ -127,7 +127,7 @@ Selects the comparison relation used by TCMP and TCMPS.
 | 6 | reserved | future extension |
 | 7 | reserved | future extension |
 
-**Reserved-value behavior:** Codes 6 and 7 are reserved and reject before architectural effects.
+**Reserved-value behavior:** Codes 6 and 7 are reserved at B.DATR execution except for active TLSU Function 1 TSTORE with Canonicalize=1; all other operation and command contexts raise Fault_IllegalInstruction before attributes latch.
 
 ### DataType (`PTO-FIELD-BLOCK-DATATYPE`)
 
@@ -193,7 +193,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 | Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
 | --- | --- | ---: | --- | --- | --- | --- | --- |
-| b_datr_32_c161a042ff38 | CMode | 3 | 0–5 | none | 6–7 | comparison predicate selector: 0 EQ, 1 NE, 2 LT, 3 GT, 4 LE, 5 GE | EQ |
+| b_datr_32_c161a042ff38 | CMode | 3 | 0–7 | none | none | TCMP/TCMPS comparison relation 0..5, or Atomic TSTORE operation 0..7 only with Canonicalize=1 | EQ |
 | b_datr_32_c161a042ff38 | PadValueOrByteId | 2 | 0–3 | none | none | operation-selected padding value, byte identifier, or matrix CCTRL raw-partial/cache-hint control | Zero padding, ByteId zero, or matrix CCTRL=00 as selected by the operation schema |
 | b_datr_32_c161a042ff38 | Sat | 1 | 0–1 | none | none | saturation enable | disabled |
 | b_datr_32_c161a042ff38 | Canonicalize | 1 | 0–1 | none | none | TCVT private-format canonicalization enable | disabled |
@@ -203,7 +203,6 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | b_datr_32_c161a042ff38 | PredInv | 1 | 0–1 | none | none | ExecutionMask polarity control: zero preserves, one inverts the logical predicate | Normal ExecutionMask polarity; zero means do not invert. |
 | b_datr_32_c161a042ff38 | Zero | 1 | 0–1 | none | none | inactive ExecutionMask destination policy: zero MERGE, one ZERO | MERGE inactive-destination policy; zero preserves the prior destination coordinate. |
 
-- `b_datr_32_c161a042ff38.CMode` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 - `b_datr_32_c161a042ff38.DataType` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 - `b_datr_32_c161a042ff38.Layout` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 
@@ -214,7 +213,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | Layout | tile data layout, direct Local CUBE layout selector, or exact GM-to-CUBE/CUBE-to-GM conversion selector |
 | DataType | concrete Tile element type or DTYPE_NONE inheritance sentinel |
 | PadValueOrByteId | operation-selected padding value, byte identifier, or matrix CCTRL raw-partial/cache-hint control |
-| CMode | comparison predicate selector: 0 EQ, 1 NE, 2 LT, 3 GT, 4 LE, 5 GE |
+| CMode | TCMP/TCMPS comparison relation 0..5, or Atomic TSTORE operation 0..7 only with Canonicalize=1 |
 | RMode | operation-specific selector: numeric rounding where applicable; BroadcastByteOffset for TROWEXPAND* on CUBE_M16/CUBE_M32 |
 | Sat | saturation enable |
 | Canonicalize | TCVT private-format canonicalization enable |
@@ -290,7 +289,7 @@ end;
 - B.DATR may appear at most once, after BSTART and before the block body.
 - DataType accepts the 27 concrete TileDataType codes plus code 31 DTYPE_NONE; codes 22, 23, and 29..30 are reserved and reject before effects.
 - Layout codes 0, 1, 3, 4, 6, 8, 9, 10, 11, 17, 18, 20, 21 through 29, and 30 through 31 are assigned. Codes 10 and 11 are weight-mode TLOAD-only layouts; codes 21 through 26 select ND2M32, ND2M16, ND2N8, M322ND, M162ND, and N82ND respectively; code 29 selects direct Local CUBE_M32 and code 31 selects direct Local CUBE_M16.
-- CMode codes 0..5 select EQ, NE, LT, GT, LE, and GE respectively; codes 6..7 are reserved.
+- CMode codes 0..5 select EQ, NE, LT, GT, LE, and GE; codes 6..7 are reserved except at the B.DATR command boundary of an active TLSU Function 1 TSTORE with Canonicalize=1, where they select ATOMIC_INC and ATOMIC_DEC.
 - All RMode codes 0..7 are assigned: operation default, RNE, RTZ, RTM, RTP, RNA, RTO, and RHB.
 - Canonicalize is legal only for TCVT; each selected tile operation separately constrains the applicable nonzero B.DATR fields and PadValueOrByteId interpretation.
 - Matrix/CUBE schemas interpret PadValueOrByteId as CCTRL: bit 0 selects raw-partial D plus a cache-replacement hint, bit 1 is an ACC-only explicit-C cache-use or prefetch hint, and init=1 forms require bit 1 to be zero.
@@ -314,8 +313,8 @@ end;
 ## Exceptions
 
 - A duplicate B.DATR or a B.DATR outside an active block header raises Illegal Block Exception before attribute state changes.
-- Reserved DataType or CMode, unassigned Layout, unsupported Layout, or operation-inapplicable nonzero fields raise an architectural fault before effects.
 - PredInv=1 or Zero=1 on a schema without an explicit eligible Local CUBE_M16/CUBE_M32 ExecutionMask raises Fault_TileLegality before effects.
+- CMode codes 6 and 7 pass raw command-form decoding but are accepted at execution only for an active BSTART.TSTORE TLSU Function 1 with Canonicalize=1; every other context raises Fault_IllegalInstruction before attributes latch.
 
 ## Examples
 

@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","surface":"arch","classification":["memory-model","gm-obligations"],"depends_on":["PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS","PTO-ARCH-STATE-PE-EXECUTION-CONTEXT","PTO-BLOCK-MODEL-STATE-TYPES","PTO-TILE-MODEL-STATE-TYPES"]}
+// PTO-UNIT: {"id":"PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","surface":"arch","classification":["memory-model","gm-obligations"],"depends_on":["PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS","PTO-ARCH-STATE-PE-EXECUTION-CONTEXT","PTO-ARCH-STATE-PROGRAM-COUNTER","PTO-BLOCK-MODEL-STATE-TYPES","PTO-TILE-MODEL-STATE-TYPES"]}
 // PTO-STATE: {"id":"PTO-STATE-ARCH-GM-OBLIGATIONS","classification":["architecture","memory","gm-obligations"],"scope":"pe","owner":"PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","members":["_GMObligations","_NextGMObligationIdentity"],"depends_on":["PTO-STATE-ARCH-PE-EXECUTION-CONTEXT","PTO-STATE-ARCH-KERNEL-LIFECYCLE"]}
 // PTO-STATE: {"id":"PTO-STATE-ARCH-GM-PROGRESS-SCHEDULER","classification":["architecture","memory","gm-progress-scheduler"],"scope":"system","owner":"PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","members":["_VerificationGMProgressDeferred","_VerificationGMProgressBeatBudget"],"depends_on":[]}
 // NDF-BEGIN: PTO-ARCH-GM-OBLIGATIONS-001
@@ -56,6 +56,18 @@ type GMObligationSlot of record {
     source_tile: TileIndex,
     source_generation: Word,
     source_snapshot: TileInfo,
+    // Atomic TSTORE admission captures the complete active-coordinate set
+    // and each successful translated target before any RMW can execute.
+    // The source values and DATR fields remain immutable in this slot while
+    // the scheduler drains the request.
+    captured_atomic_tstore: boolean,
+    atomic_tstore_data_attributes: BundleDataAttributes,
+    atomic_tstore_active_elements: bits(PTO_MODEL_TILE_ELEMENTS),
+    atomic_tstore_committed_elements: bits(PTO_MODEL_TILE_ELEMENTS),
+    atomic_tstore_translated_targets: TilePayload,
+    atomic_tstore_target_count: integer {0..32768},
+    atomic_tstore_committed_count: integer {0..32768},
+    atomic_tstore_finalization_pending: boolean,
     // Only a validated Local TSTORE snapshot may use the captured progress
     // executor. Other fault-capable GM requests remain with their instruction
     // owner until the real producer/retry path resolves them.
@@ -88,6 +100,28 @@ var _VerificationGMProgressDeferred : boolean;
 // Positive values bound the number of real tile-memory beats per call.
 var _VerificationGMProgressBeatBudget : integer {0..32768};
 
+readonly func EmptyBundleDataAttributes() => BundleDataAttributes
+begin
+    return BundleDataAttributes {
+        data_type_present = FALSE,
+        data_type = Zeros{5},
+        data_layout = Zeros{5},
+        pad_value = Zeros{2},
+        comparison_mode = Zeros{3},
+        rounding_mode = Zeros{3},
+        saturating = FALSE,
+        canonicalize = FALSE,
+        execution_mask_invert = FALSE,
+        execution_mask_zero = FALSE
+    };
+end;
+
+readonly func EmptyTilePayload() => TilePayload
+begin
+    var payload: TilePayload;
+    return payload;
+end;
+
 func ResetKernelGMObligations()
 begin
     for core = 0 to PTO_MODEL_CORE_INSTANCES - 1 do
@@ -97,6 +131,8 @@ begin
                 _GMObligations[[core]][[pe]][[slot]].active = FALSE;
                 _GMObligations[[core]][[pe]][[slot]].identity = 0;
                 _GMObligations[[core]][[pe]][[slot]].execution_domain_token = 0;
+                _GMObligations[[core]][[pe]][[slot]].captured_atomic_tstore = FALSE;
+                _GMObligations[[core]][[pe]][[slot]].atomic_tstore_finalization_pending = FALSE;
                 _GMObligations[[core]][[pe]][[slot]].executable_capture_valid = FALSE;
                 _GMObligations[[core]][[pe]][[slot]].state =
                     GMObligation_Empty;
@@ -215,6 +251,22 @@ begin
             else source_generation,
         source_snapshot = if preserve_capture then old.source_snapshot
             else source_snapshot,
+        captured_atomic_tstore = if preserve_capture then
+            old.captured_atomic_tstore else FALSE,
+        atomic_tstore_data_attributes = if preserve_capture then
+            old.atomic_tstore_data_attributes else EmptyBundleDataAttributes(),
+        atomic_tstore_active_elements = if preserve_capture then
+            old.atomic_tstore_active_elements else Zeros{PTO_MODEL_TILE_ELEMENTS},
+        atomic_tstore_committed_elements = if preserve_capture then
+            old.atomic_tstore_committed_elements else Zeros{PTO_MODEL_TILE_ELEMENTS},
+        atomic_tstore_translated_targets = if preserve_capture then
+            old.atomic_tstore_translated_targets else EmptyTilePayload(),
+        atomic_tstore_target_count = if preserve_capture then
+            old.atomic_tstore_target_count else 0,
+        atomic_tstore_committed_count = if preserve_capture then
+            old.atomic_tstore_committed_count else 0,
+        atomic_tstore_finalization_pending = if preserve_capture then
+            old.atomic_tstore_finalization_pending else FALSE,
         captured_tstore_progress = if reuse_incomplete then
             old.captured_tstore_progress else FALSE,
         executable_capture_valid = if reuse_incomplete then

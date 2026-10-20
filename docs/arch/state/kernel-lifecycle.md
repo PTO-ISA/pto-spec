@@ -59,7 +59,7 @@ Suppose Core 0 launches invocation 7 and PE0 has an incomplete reversible store 
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/state/kernel-lifecycle.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-STATE-KERNEL-LIFECYCLE","surface":"arch","classification":["state","kernel-lifecycle"],"depends_on":["PTO-ARCH-STATE-PE-EXECUTION-CONTEXT","PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-BLOCK-MODEL-STATE-SHARED-GENERATION"]}
+// PTO-UNIT: {"id":"PTO-ARCH-STATE-KERNEL-LIFECYCLE","surface":"arch","classification":["state","kernel-lifecycle"],"depends_on":["PTO-ARCH-STATE-PE-EXECUTION-CONTEXT","PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-BLOCK-MODEL-STATE-SHARED-GENERATION"]}
 // NDF-BEGIN: PTO-ARCH-KERNEL-LIFECYCLE-001
 // ndf: kind=contract level=L1 layer=state status=accepted
 // A Core has at most one active kernel invocation. Launch establishes one
@@ -177,7 +177,9 @@ begin
         return KernelLifecycle_Waiting;
     end;
     RetirePEOwnedSharedGenerationsForInvocation(core, invocation);
-    RetireSourceLifetimes(core, invocation);
+    if !KernelHasIrrevocableAtomicTStore(core, invocation) then
+        RetireSourceLifetimes(core, invocation);
+    end;
     _RetiredKernelInvocationByCore[[core]] = invocation;
     RetireCoreSynchronizationInvocation(core, invocation);
     _KernelInvocationByCore[[core]] = 0;
@@ -195,7 +197,9 @@ begin
     AbortKernelGMObligations(core, invocation);
     AbortCoreSynchronizationInvocation(core, invocation);
     RetirePEOwnedSharedGenerationsForInvocation(core, invocation);
-    RetireSourceLifetimes(core, invocation);
+    if !KernelHasIrrevocableAtomicTStore(core, invocation) then
+        RetireSourceLifetimes(core, invocation);
+    end;
     _RetiredKernelInvocationByCore[[core]] = invocation;
     _KernelInvocationByCore[[core]] = 0;
     _KernelInvocationActiveByCore[[core]] = FALSE;

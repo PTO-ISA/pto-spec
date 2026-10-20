@@ -89,7 +89,7 @@ A `TADD` bundle commits with one legal binding and mask `1111`. No specialized h
 // numeric padding checks belong to the TGPR2T complete schema before handler
 // execution and atomic result publication.
 // NDF-END: PTO-BLOCK-MODEL-DISPATCH-TGPR2T-BOUNDARY-001
-// PTO-UNIT: {"classification":["model","dispatch","tile-execution"],"depends_on":["PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION","PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-LEA-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-INSTRUCTION-OPERANDS","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED","PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV","PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-SHARED-EXEC","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-DISPATCH-TOP-LEVEL","PTO-TILE-MODEL-EXECUTION-MASK-COMPARISON"],"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","surface":"block"}
+// PTO-UNIT: {"classification":["model","dispatch","tile-execution"],"depends_on":["PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION","PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-LEA-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-INSTRUCTION-OPERANDS","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TLSU-ATOMIC-TSTORE","PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED","PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV","PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-SHARED-EXEC","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-DISPATCH-TOP-LEVEL","PTO-TILE-MODEL-EXECUTION-MASK-COMPARISON"],"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","surface":"block"}
 readonly func BundleTileTypesMatch(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
     operands: TileInstructionOperands,
@@ -226,6 +226,16 @@ func ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules(
 begin
     if _BundleZeroParticipationSeen && BundleTileBindingCount() == 0 &&
        BundleSharedBindingCount() == 0 then return TRUE; end;
+    let admitted_atomic_tstore = FindCurrentAtomicTStoreObligation();
+    if admitted_atomic_tstore >= 0 &&
+       _GMObligations[[_CurrentModelCore]][[_CurrentMemoryAgent]]
+           [[admitted_atomic_tstore as GMObligationIndex]]
+               .captured_atomic_tstore then
+        // The accepted source, mask, addresses, and data attributes live in
+        // the per-PE GM obligation. Do not reinterpret a resumed request from
+        // mutable live command, descriptor, or source state.
+        return TRUE;
+    end;
     let timg2col_selected =
         BundleDescriptorSelectsTIMG2COL(_BundleOperation);
     // Effect eligibility is a generated handler-group contract and is
@@ -258,6 +268,10 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
+    // Participation is resolved after raw command and structural binding
+    // checks, but before any source/readiness/target preflight.  Atomic TSTORE
+    // service and faults are per PE; a nonparticipant owns no occurrence.
+    if BundleAtomicTStoreCurrentPENonparticipant() then return TRUE; end;
     if !RequireBundleSharedSourcePayloads() then return FALSE; end;
     // A pending last-use cohort pins its exact Shared generation. Every
     // publisher waits here before descriptor preparation, GM effects, or
@@ -337,6 +351,11 @@ begin
         specialized_completed = ExecuteBundleWeightTLOADOperation();
     elsif matrix_selected then
         specialized_completed = ExecuteBundleTMATMULOperation();
+    elsif BundleAtomicTStoreSelected() then
+        // Function-1 TSTORE owns the canonicalized CUBE store schema.  Give
+        // that narrowly selected path precedence over generic CUBE layout
+        // conversion, whose DATR contract intentionally excludes atomic mode.
+        specialized_completed = ExecuteBundleAtomicTSTOREOperation();
     elsif BundleCubeTransportSelected() then
         specialized_completed = ExecuteBundleCubeTransportOperation();
     elsif BundleGMOVSelected() then
@@ -365,7 +384,25 @@ begin
     end;
     if specialized then
         if specialized_completed && _LastFault == Fault_None then
-            if !matrix_selected || !BundleTMATMULCurrentPEInactive() then
+            if BundleAtomicTStoreSelected() then
+                let occurrence = FindCurrentAtomicTStoreObligation();
+                let occurrence_completed = occurrence < 0 ||
+                    _GMObligations[[_CurrentModelCore]][[_CurrentMemoryAgent]]
+                        [[occurrence as GMObligationIndex]].state ==
+                            GMObligation_Completed;
+                if BundleAtomicTStoreCurrentPESelected() &&
+                   occurrence_completed then
+                    CommitBundleLocalGeneration();
+                    RetireBundleConsumerDependencies();
+                    FinalizeBundleTileAttempt(TileExecution_Executed);
+                    if occurrence >= 0 then
+                        _GMObligations[[_CurrentModelCore]]
+                            [[_CurrentMemoryAgent]]
+                            [[occurrence as GMObligationIndex]]
+                                .atomic_tstore_finalization_pending = FALSE;
+                    end;
+                end;
+            elsif !matrix_selected || !BundleTMATMULCurrentPEInactive() then
                 CommitBundleLocalGeneration();
                 RetireBundleConsumerDependencies();
                 if timg2col_selected then

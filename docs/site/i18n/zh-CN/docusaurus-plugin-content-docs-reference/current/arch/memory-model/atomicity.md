@@ -154,10 +154,19 @@ func RecordAtomicEvent(address: Word, size_bytes: integer {1,2,4,8},
                        read_value: Word, write_value: Word,
                        order: MemoryOrder, write_performed: boolean)
 begin
+    RecordAtomicEventForAgent(_CurrentMemoryAgent, address, size_bytes,
+        read_value, write_value, order, write_performed);
+end;
+
+func RecordAtomicEventForAgent(agent: MemoryAgentId, address: Word,
+                       size_bytes: integer {1,2,4,8},
+                       read_value: Word, write_value: Word,
+                       order: MemoryOrder, write_performed: boolean)
+begin
     if _MemoryEventCaptureEnabled then
         let rank = if write_performed then
             NextMemoryCoherenceRank(address, size_bytes) else 0;
-        let event = AddAtomicOutcomeEvent(_CurrentMemoryAgent, address,
+        let event = AddAtomicOutcomeEvent(agent, address,
             size_bytes, read_value, write_value, order,
             rank as MemoryCoherenceRank, write_performed);
         ResolveCapturedReadFrom(event);

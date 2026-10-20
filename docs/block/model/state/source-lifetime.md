@@ -59,7 +59,7 @@ PE0 through PE3 declare the last use of Shared Tile S14 generation 6. PE0 comple
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/state/source-lifetime.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","surface":"block","classification":["model","state","source-lifetime"],"depends_on":["PTO-ARCH-STATE-LOCAL-PAYLOAD-GENERATION","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","surface":"block","classification":["model","state","source-lifetime"],"depends_on":["PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-ARCH-STATE-LOCAL-PAYLOAD-GENERATION","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
 // PTO-STATE: {"id":"PTO-STATE-BLOCK-SOURCE-LIFETIME","classification":["block","source-lifetime"],"scope":"system","owner":"PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","members":["_BundleSourceLifetimes","_NextBundleSourceLifetimeOrdinal","_BundleGMOVSourceSelections","_NextBundleGMOVSourceSelectionOrdinal"],"depends_on":["PTO-STATE-BLOCK-CONTROL","PTO-STATE-TILE-LOCAL"]}
 // NDF-BEGIN: PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001
 // ndf: kind=contract level=L1 layer=block status=accepted
@@ -464,23 +464,29 @@ end;
 func SquashSourceLifetimes(core: PTOModelCoreIdentity, invocation: integer,
                            domain: integer)
 begin
-    for slot = 0 to 63 do
-        if _BundleSourceLifetimes[[slot]].valid &&
-           _BundleSourceLifetimes[[slot]].core == core &&
-           _BundleSourceLifetimes[[slot]].invocation == invocation then
-            for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
-                if _BundleSourceLifetimes[[slot]].captured_mask[
-                       PTOPEMaskBitOfPEIdentity(pe)] == '1' &&
-                   _BundleSourceLifetimes[[slot]].domain_tokens[[pe]] ==
-                       domain then
-                    let mask_bit = PTOPEMaskBitOfPEIdentity(pe);
-                    _BundleSourceLifetimes[[slot]].captured_mask[mask_bit] = '0';
-                    _BundleSourceLifetimes[[slot]].completed_mask[mask_bit] = '0';
-                    _BundleSourceLifetimes[[slot]].domain_tokens[[pe]] = 0;
+    // Preserve the captured cohort while an irrevocable Atomic TSTORE still
+    // owns its source snapshot. The scheduler either completes the original
+    // occurrence after drain or retires the invocation's lifetimes only after
+    // every retained obligation quiesces.
+    if !KernelHasIrrevocableAtomicTStore(core, invocation) then
+        for slot = 0 to 63 do
+            if _BundleSourceLifetimes[[slot]].valid &&
+               _BundleSourceLifetimes[[slot]].core == core &&
+               _BundleSourceLifetimes[[slot]].invocation == invocation then
+                for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+                    if _BundleSourceLifetimes[[slot]].captured_mask[
+                           PTOPEMaskBitOfPEIdentity(pe)] == '1' &&
+                       _BundleSourceLifetimes[[slot]].domain_tokens[[pe]] ==
+                           domain then
+                        let mask_bit = PTOPEMaskBitOfPEIdentity(pe);
+                        _BundleSourceLifetimes[[slot]].captured_mask[mask_bit] = '0';
+                        _BundleSourceLifetimes[[slot]].completed_mask[mask_bit] = '0';
+                        _BundleSourceLifetimes[[slot]].domain_tokens[[pe]] = 0;
+                    end;
                 end;
-            end;
-            if _BundleSourceLifetimes[[slot]].captured_mask == Zeros{4} then
-                _BundleSourceLifetimes[[slot]].valid = FALSE;
+                if _BundleSourceLifetimes[[slot]].captured_mask == Zeros{4} then
+                    _BundleSourceLifetimes[[slot]].valid = FALSE;
+                end;
             end;
         end;
     end;

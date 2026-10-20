@@ -65,6 +65,19 @@ begin
     if !_BundleOperation.valid ||
        _BundleOperation.operation_class != BundleOperation_TileMemory ||
        SelectedBundleTileMaskIsZero() then return FALSE; end;
+    let current_pe_bit = PTOPEMaskBitOfPEIdentity(_CurrentMemoryAgent);
+    if _CurrentPEContextValid then
+        if BundleSharedBindingPhysicalCount() != 0 &&
+           _BundleSharedBindings[[0]].pe_mask[current_pe_bit] != '1' then
+            return FALSE;
+        end;
+        for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+            if _BundleTileBindings[[binding]].valid &&
+               _BundleTileBindings[[binding]].pe_mask[current_pe_bit] != '1' then
+                return FALSE;
+            end;
+        end;
+    end;
     let decoded = DecodeTileOperation(
         BundleTileDecodeFamily(_BundleOperation.operation_class),
         BundleOperationDecodeCode(_BundleOperation));
@@ -98,6 +111,14 @@ begin
        TileOperationOfIndex(decoded as
            integer {0..PTO_TILE_OPERATION_COUNT-1}) ==
            TileOperation_TPREFETCH then return GMRequest_Prefetch; end;
+    if decoded != PTO_TILE_OPERATION_COUNT &&
+       TileOperationOfIndex(decoded as
+           integer {0..PTO_TILE_OPERATION_COUNT-1}) ==
+           TileOperation_TSTORE &&
+       UInt(_BundleOperation.selector[4:0]) == 1 &&
+       _BundleDataAttributesPresent && _BundleDataAttributes.canonicalize then
+        return GMRequest_Atomic;
+    end;
     if decoded != PTO_TILE_OPERATION_COUNT &&
        (TileOperationOfIndex(decoded as
             integer {0..PTO_TILE_OPERATION_COUNT-1}) ==
@@ -327,7 +348,9 @@ begin
                 obligation_slot);
         elsif completed &&
               !_GMObligations[[_CurrentModelCore]][[_CurrentMemoryAgent]]
-                  [[obligation_slot]].captured_tstore_progress then
+                  [[obligation_slot]].captured_tstore_progress &&
+              !_GMObligations[[_CurrentModelCore]][[_CurrentMemoryAgent]]
+                  [[obligation_slot]].captured_atomic_tstore then
             CompleteGMObligationForIdentity(_CurrentModelCore,
                 _CurrentMemoryAgent, obligation_slot,
                 obligation_invocation, obligation_identity);

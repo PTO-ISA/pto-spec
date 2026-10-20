@@ -188,6 +188,52 @@ type GMReductionOperation of enumeration {
     GMReduction_POPC
 };
 
+pure func GMReductionOperationForTStoreMode(mode: bits(3))
+    => GMReductionOperation
+begin
+    case UInt(mode) of
+        when 0 => return GMReduction_ADD;
+        when 1 => return GMReduction_MIN;
+        when 2 => return GMReduction_MAX;
+        when 3 => return GMReduction_AND;
+        when 4 => return GMReduction_OR;
+        when 5 => return GMReduction_XOR;
+        when 6 => return GMReduction_INC;
+        otherwise => return GMReduction_DEC;
+    end;
+end;
+
+// One authoritative no-return reduction primitive is shared by indexed
+// MSCATTER red forms and strided Atomic TSTORE. The address generators differ;
+// dtype legality and per-RMW arithmetic do not.
+readonly func GMReductionResult(operation: GMReductionOperation,
+    data_type: TileDataType, old: Word, input: Word) => Word
+begin
+    case operation of
+        when GMReduction_ADD =>
+            if TileDataTypeIsFloating(data_type) then
+                return GMFloatingAddPTX(data_type, old, input);
+            end;
+            return old + input;
+        when GMReduction_INC => return GMIncValue(old, input);
+        when GMReduction_DEC => return GMDecValue(old, input);
+        when GMReduction_AND => return old AND input;
+        when GMReduction_OR => return old OR input;
+        when GMReduction_XOR => return old XOR input;
+        when GMReduction_MAX =>
+            if TileDataTypeIsSigned(data_type) then
+                if SInt(old) > SInt(input) then return old; else return input; end;
+            end;
+            if UInt(old) > UInt(input) then return old; else return input; end;
+        when GMReduction_MIN =>
+            if TileDataTypeIsSigned(data_type) then
+                if SInt(old) < SInt(input) then return old; else return input; end;
+            end;
+            if UInt(old) < UInt(input) then return old; else return input; end;
+        otherwise => return old;
+    end;
+end;
+
 pure func GMAtomicOperationDataTypeLegal(
     operation: GMAtomicOperation, data_type: TileDataType) => boolean
 begin

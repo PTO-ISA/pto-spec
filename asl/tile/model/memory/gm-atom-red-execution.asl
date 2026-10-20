@@ -129,34 +129,6 @@ begin
 end;
 
 
-readonly func GMReductionResult(operation: GMReductionOperation,
-                            data_type: TileDataType, old: Word,
-                            input: Word) => Word
-begin
-    case operation of
-        when GMReduction_ADD =>
-            if TileDataTypeIsFloating(data_type) then
-                return GMFloatingAddPTX(data_type, old, input);
-            end;
-            return old + input;
-        when GMReduction_INC => return GMIncValue(old, input);
-        when GMReduction_DEC => return GMDecValue(old, input);
-        when GMReduction_AND => return old AND input;
-        when GMReduction_OR => return old OR input;
-        when GMReduction_XOR => return old XOR input;
-        when GMReduction_MAX =>
-            if TileDataTypeIsSigned(data_type) then
-                if SInt(old) > SInt(input) then return old; else return input; end;
-            end;
-            if UInt(old) > UInt(input) then return old; else return input; end;
-        when GMReduction_MIN =>
-            if TileDataTypeIsSigned(data_type) then
-                if SInt(old) < SInt(input) then return old; else return input; end;
-            end;
-            if UInt(old) < UInt(input) then return old; else return input; end;
-        otherwise => return old;
-    end;
-end;
 func GM_RED_VALUE(operation: GMReductionOperation, base_address: Word,
                   indices: TileIndex, value: TileIndex, pad_value: TilePadValue)
 begin

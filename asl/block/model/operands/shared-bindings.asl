@@ -1,4 +1,22 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS","surface":"block","classification":["model","operands","shared-bindings"],"depends_on":["PTO-BLOCK-MODEL-SCHEMA-DIMENSIONS","PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS","surface":"block","classification":["model","operands","shared-bindings"],"depends_on":["PTO-BLOCK-MODEL-SCHEMA-DIMENSIONS","PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","PTO-SCALAR-MODEL-TYPES-OPERANDS"]}
+readonly func BundleSharedSubviewOffsetRawForPE(
+    binding: BundleSharedBindingIndex, pe_identity: MemoryAgentId) => Word
+begin
+    let modifier = _BundleSharedBindings[[binding]].source0_subview;
+    return ReadPEAbsoluteGPROperand(pe_identity, modifier.reg_src) +
+        ZeroExtend{PTO_XLEN}(modifier.uimm11);
+end;
+
+readonly func BundleSharedSubviewOffsetCellsForPE(
+    binding: BundleSharedBindingIndex, pe_identity: MemoryAgentId)
+    => integer {0..2047}
+begin
+    let raw_offset = UInt(BundleSharedSubviewOffsetRawForPE(
+        binding, pe_identity));
+    assert raw_offset <= 2047;
+    return raw_offset as integer {0..2047};
+end;
+
 func BindBundleSharedIO(shared_tile_id: SharedTileID,
                         size_code: integer {0..12},
                         pe_mask: bits(4))

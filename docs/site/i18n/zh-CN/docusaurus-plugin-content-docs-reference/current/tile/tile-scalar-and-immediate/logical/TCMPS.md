@@ -110,7 +110,7 @@ This operation has no standalone opcode.
 
 ### B.DATR.CMode (`PTO-FIELD-BLOCK-CMODE`)
 
-Selects the comparison relation used by TCMP and TCMPS.
+Selects TCMP/TCMPS comparison relation or, only for Atomic TSTORE, a GM atomic reduction operator.
 
 **Encoded zero:** Code zero selects equality comparison.
 
@@ -125,7 +125,7 @@ Selects the comparison relation used by TCMP and TCMPS.
 | 6 | reserved | future extension |
 | 7 | reserved | future extension |
 
-**Reserved-value behavior:** Codes 6 and 7 are reserved and reject before architectural effects.
+**Reserved-value behavior:** Codes 6 and 7 are reserved at B.DATR execution except for active TLSU Function 1 TSTORE with Canonicalize=1; all other operation and command contexts raise Fault_IllegalInstruction before attributes latch.
 
 ### B.DATR.PadValueOrByteId (`PTO-FIELD-BLOCK-PADVALUE-OR-BYTEID`)
 

@@ -361,28 +361,35 @@ begin
         Zeros{PTO_XLEN}, Zeros{PTO_XLEN},
         Zeros{PTO_XLEN}, Zeros{PTO_XLEN}, Zeros{PTO_XLEN});
 end;
-readonly func BundleSharedSubviewOffsetRawForPE(
-    binding: BundleSharedBindingIndex, pe_identity: MemoryAgentId) => Word
-begin
-    let modifier = _BundleSharedBindings[[binding]].source0_subview;
-    return ReadPEAbsoluteGPROperand(pe_identity, modifier.reg_src) +
-        ZeroExtend{PTO_XLEN}(modifier.uimm11);
-end;
-readonly func BundleSharedSubviewOffsetCellsForPE(
-    binding: BundleSharedBindingIndex, pe_identity: MemoryAgentId)
-    => integer {0..2047}
-begin
-    let raw_offset = UInt(BundleSharedSubviewOffsetRawForPE(
-        binding, pe_identity));
-    assert raw_offset <= 2047;
-    return raw_offset as integer {0..2047};
-end;
 readonly func BundleSharedSubviewLegal(
     binding: BundleSharedBindingIndex) => boolean
 begin
     if !_BundleSharedBindings[[binding]].valid ||
        !_BundleSharedBindings[[binding]].source0_subview.valid ||
        _BundleSharedBindings[[binding]].size_code != 0 then
+        return FALSE;
+    end;
+    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+        let pe_identity = pe as MemoryAgentId;
+        if _BundleSharedBindings[[binding]].pe_mask[
+               PTOPEMaskBitOfPEIdentity(pe_identity)] == '1' then
+            if !BundleSharedSubviewLegalForPE(binding, pe_identity) then
+                return FALSE;
+            end;
+        end;
+    end;
+    return TRUE;
+end;
+
+readonly func BundleSharedSubviewLegalForPE(
+    binding: BundleSharedBindingIndex,
+    pe_identity: MemoryAgentId) => boolean
+begin
+    if !_BundleSharedBindings[[binding]].valid ||
+       !_BundleSharedBindings[[binding]].source0_subview.valid ||
+       _BundleSharedBindings[[binding]].size_code != 0 ||
+       _BundleSharedBindings[[binding]].pe_mask[
+           PTOPEMaskBitOfPEIdentity(pe_identity)] != '1' then
         return FALSE;
     end;
     let shared_tile_id = _BundleSharedBindings[[binding]].shared_tile_id;
@@ -395,36 +402,30 @@ begin
     if modifier.size_code == 0 then return FALSE; end;
     let selected_bytes = TileSizeCodeBytes(
         modifier.size_code as integer {1..12});
+    let raw_offset = UInt(BundleSharedSubviewOffsetRawForPE(
+        binding, pe_identity));
+    if raw_offset > 2047 then return FALSE; end;
+    let offset_cells = raw_offset as integer {0..2047};
+    if offset_cells * PTO_TILE_CELL_BYTES + selected_bytes >
+           parent.capacity_bytes then
+        return FALSE;
+    end;
     let element_bits = TileElementBits(parent.data_type);
     let bounded_columns = parent.columns as integer {1..65535};
-    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
-        let pe_identity = pe as MemoryAgentId;
-        if _BundleSharedBindings[[binding]].pe_mask[
-               PTOPEMaskBitOfPEIdentity(pe_identity)] == '1' then
-            let raw_offset = UInt(BundleSharedSubviewOffsetRawForPE(
-                binding, pe_identity));
-            if raw_offset > 2047 then return FALSE; end;
-            let offset_cells = raw_offset as integer {0..2047};
-            if offset_cells * PTO_TILE_CELL_BYTES + selected_bytes >
-                   parent.capacity_bytes then
-                return FALSE;
-            end;
-            let offset_elements =
-                ((offset_cells * PTO_TILE_CELL_BYTES * 8) DIVRM element_bits)
-                as integer {0..524287};
-            let selected_elements = ((selected_bytes * 8) DIVRM element_bits)
-                as integer {1..524288};
-            let origin_column = (offset_elements MOD bounded_columns)
-                as integer {0..65535};
-            if selected_elements > bounded_columns - origin_column &&
-               (origin_column != 0 || selected_elements MOD bounded_columns != 0) then
-                return FALSE;
-            end;
-            if selected_elements > bounded_columns - origin_column &&
-               selected_elements DIVRM bounded_columns > 65535 then
-                return FALSE;
-            end;
-        end;
+    let offset_elements =
+        ((offset_cells * PTO_TILE_CELL_BYTES * 8) DIVRM element_bits)
+        as integer {0..524287};
+    let selected_elements = ((selected_bytes * 8) DIVRM element_bits)
+        as integer {1..524288};
+    let origin_column = (offset_elements MOD bounded_columns)
+        as integer {0..65535};
+    if selected_elements > bounded_columns - origin_column &&
+       (origin_column != 0 || selected_elements MOD bounded_columns != 0) then
+        return FALSE;
+    end;
+    if selected_elements > bounded_columns - origin_column &&
+       selected_elements DIVRM bounded_columns > 65535 then
+        return FALSE;
     end;
     return TRUE;
 end;
@@ -432,7 +433,7 @@ readonly func MaterializeBundleSharedSubviewForPE(
     binding: BundleSharedBindingIndex, pe_identity: MemoryAgentId) => TileInfo
 begin
     let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
-    assert BundleSharedSubviewLegal(binding);
+    assert BundleSharedSubviewLegalForPE(binding, pe_identity);
     let shared_tile_id = _BundleSharedBindings[[binding]].shared_tile_id;
     let parent = SharedTileRecord(shared_tile_id).tile;
     let modifier = _BundleSharedBindings[[binding]].source0_subview;
