@@ -13107,7 +13107,8 @@
         "PTO-INST-BLOCK-BSTART-TMOV",
         "PTO-BSTART-TMOV-SHARED-001",
         "PTO-TMOV-CONTRACT-001",
-        "PTO-ISA-LEGACY-SHARED-MOVEMENT-001"
+        "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
+        "PTO-TMOV-CUBE-TO-SHARED-ND-001"
       ],
       "affected_units": [
         "PTO-BLOCK-B-DATR",
@@ -13175,7 +13176,8 @@
             "PTO-INST-BLOCK-BSTART-TMOV",
             "PTO-BSTART-TMOV-SHARED-001",
             "PTO-TMOV-CONTRACT-001",
-            "PTO-ISA-LEGACY-SHARED-MOVEMENT-001"
+            "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
+            "PTO-TMOV-CUBE-TO-SHARED-ND-001"
           ],
           "affected_units": [
             "PTO-BLOCK-B-DATR",
@@ -14136,7 +14138,8 @@
         "PTO-TMOV-CONTRACT-001",
         "PTO-INST-BLOCK-BSTART-TMOV",
         "PTO-B-DATR-FIELDS-001",
-        "PTO-CUBE-CELL-TRANSPORT-001"
+        "PTO-CUBE-CELL-TRANSPORT-001",
+        "PTO-TMOV-CUBE-TO-SHARED-ND-001"
       ],
       "affected_units": [
         "PTO-BLOCK-BSTART-TMOV",
@@ -14165,7 +14168,8 @@
             "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
             "PTO-INST-BLOCK-BSTART-TMOV",
             "PTO-CUBE-CELL-TRANSPORT-001",
-            "PTO-B-DATR-FIELDS-001"
+            "PTO-B-DATR-FIELDS-001",
+            "PTO-TMOV-CUBE-TO-SHARED-ND-001"
           ],
           "affected_units": [
             "PTO-BLOCK-B-DATR",
