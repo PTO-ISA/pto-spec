@@ -2,7 +2,7 @@
   "schema": "pto.issue-397-acceptance-map.v1",
   "contract": "issue-397__tstore-strided-atomic-reduction-frozen.md",
   "baseline": "b0165320a4b575b18d2f4d93faf40178f661ab49",
-  "status": "correction-round-2-source-committed-focused-closure-passed",
+  "status": "correction-round-3-D1-D2-command-closure-passed",
   "points": [
     {
       "acceptance": "A01",
@@ -1092,11 +1092,11 @@
     ]
   },
   "profile_evidence": "spec/evidence/issue-397-profile-evidence.json",
-  "candidate_commit": "4302fe8565f5a2b72296dfd330d796e01164c9bc",
-  "candidate_asl_tree": "745c7a372f4e65313553d7c942540b4409685563",
+  "candidate_commit": "d6de62cd3b4fb7cef2fec3f437f64b0aff2974a0",
+  "candidate_asl_tree": "acb149890849187ec5113626eb5af5afcfa31c20",
   "profile_registry": {
     "path": "tests/config/asl/execution-profiles.json",
-    "sha256": "0057353a976f421b3ae3b48dc2496f52230186fab62375677e506ffc3cdb25e2",
+    "sha256": "299b12528898d5d9c754b195fb57f4a9b0a857d280f685403f1280e26e295c57",
     "selection_mode": "canonical per-point routing with ASLREF unset",
     "focused_archive": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62",
     "point_count": 62,
@@ -1109,7 +1109,71 @@
       "memory-64k": 3,
       "atomic-translation": 3
     },
-    "metadata_topology_count": 4336,
-    "full_matrix_discovery": false
+    "metadata_topology_count": 4337,
+    "full_matrix_discovery": false,
+    "archive_candidate_commit": "4302fe8565f5a2b72296dfd330d796e01164c9bc",
+    "archive_candidate_asl_tree": "745c7a372f4e65313553d7c942540b4409685563",
+    "archive_metadata_topology_count": 4336
+  },
+  "correction_round_3": {
+    "D1_shared_incomplete_bstart": {
+      "finding": "D1",
+      "owner": "asl/block/model/dispatch/start.asl",
+      "test_id": "PTO-AVS-BLOCK-SHARED-BSTART-INCOMPLETE-PREDECESSOR-001",
+      "test_file": "tests/asl/block/model/dispatch/start/block-state-shared-bstart-incomplete-predecessor-001.asl",
+      "requirements": [
+        "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001",
+        "PTO-ARCH-PE-EXECUTION-CONTEXT-001",
+        "PTO-B-ASSEMBLE-SHARED-GENERATION-001",
+        "PTO-B-ASSEMBLE-SPECULATION-001"
+      ],
+      "assertions": "Real launched PE0 Shared TMOV predecessor; following encoded BSTART returns Executed with no fault while preserving active predecessor, BARG, operation descriptor, execution domain, BPC/TPC and encoded start; Shared request waits, prior published payload remains visible, and no event or successor installation occurs.",
+      "pre_fix_red_archive": "build/issue397-review-evidence/d1-pre-fix-red",
+      "focused_archive": "build/issue397-review-evidence/d1-affected-13-candidate-d6de62c",
+      "focused_archive_manifest_sha256": "ff03832cfae7f558f6ce4695cfdf2bb91996bfaa7ed7eb2dfab5749a88eaa315",
+      "candidate_commit": "d6de62cd3b4fb7cef2fec3f437f64b0aff2974a0",
+      "candidate_asl_tree": "acb149890849187ec5113626eb5af5afcfa31c20",
+      "model_sha256": "fbaee9b647743327d161a3dddbb571523ae9d753686cd6a78764f24590bf7683",
+      "matrix_sha256": "076bf0ad10481d1f3b0e26122425d9ce8f69ea9b5bb3f5a9d1d498dea713c0c2",
+      "ids_sha256": "1490e42d2594e98fc8ffa2c6ff6a64ed1cc1beeb03b86a8f398b8a236fd15748",
+      "profile": "default",
+      "profile_registry_sha256": "299b12528898d5d9c754b195fb57f4a9b0a857d280f685403f1280e26e295c57",
+      "result": "13/13 affected command-risk IDs passed; exact IDs and raw per-point logs are in focused archive.",
+      "exit_status": 0
+    },
+    "D2_current_registry_identity": {
+      "path": "tests/config/asl/execution-profiles.json",
+      "current_sha256": "299b12528898d5d9c754b195fb57f4a9b0a857d280f685403f1280e26e295c57",
+      "stale_copied_sha256": "0057353a976f421b3ae3b48dc2496f52230186fab62375677e506ffc3cdb25e2",
+      "historical_62_archive": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62",
+      "historical_archive_runtime_registry_sha256": "299b12528898d5d9c754b195fb57f4a9b0a857d280f685403f1280e26e295c57",
+      "result": "Current-path copy corrected; original 62-point archive remains bound to the same actual runtime registry hash and is not relabeled or rerun."
+    },
+    "finite_command_caller_audit": [
+      {
+        "caller": "asl/block/model/dispatch/start.asl::ExecuteDecodedBundleStartWithAcceptedApplicabilityRules",
+        "no_fault_non_atomic_incomplete": "Executed, return before clearing/installing; BARG/domain/TPC retained",
+        "fault": "Rejected",
+        "atomic_drain_pending": "Blocked"
+      },
+      {
+        "caller": "asl/block/model/dispatch/commands.asl::CommandHandler_ExecuteBundleStop",
+        "no_fault_non_atomic_incomplete": "falls through to generic Executed, preserving existing Shared behavior",
+        "fault": "Rejected",
+        "atomic_drain_pending": "Blocked"
+      },
+      {
+        "caller": "asl/block/model/dispatch/commands.asl::TRACE B.HINT boundary",
+        "no_fault_non_atomic_incomplete": "Rejected as before round-2 status propagation; return before clear/restart",
+        "fault": "Rejected before pending check",
+        "atomic_drain_pending": "Blocked"
+      },
+      {
+        "caller": "asl/scalar/model/sys/semantics.asl::ArchitectureEnterRequest",
+        "completion_failure": "restores saved trap-context snapshot and returns without clearing/advancing bundle control; no CommandExecutionStatus is returned"
+      }
+    ],
+    "metadata_topology_count": 4337,
+    "metadata_topology_is_execution_count": false
   }
 }

@@ -1,7 +1,7 @@
 {
   "schema": "pto.issue-397-profile-evidence.v1",
-  "candidate_commit": "4302fe8565f5a2b72296dfd330d796e01164c9bc",
-  "candidate_asl_tree": "745c7a372f4e65313553d7c942540b4409685563",
+  "candidate_commit": "d6de62cd3b4fb7cef2fec3f437f64b0aff2974a0",
+  "candidate_asl_tree": "acb149890849187ec5113626eb5af5afcfa31c20",
   "matrix_commit": "4302fe8565f5a2b72296dfd330d796e01164c9bc",
   "assembled_model": {
     "path": "build/asl-page-inputs/pto-spec.asl",
@@ -195,7 +195,7 @@
       "configuration": "tests/config/asl/atomic-translation-test-profile.asl"
     }
   },
-  "scope_note": "Final correction closure is one mixed 62-point exact-ID page on committed source input 4302fe8565f5a2b72296dfd330d796e01164c9bc; the canonical registry routed 56 default, 3 memory-64k and 3 atomic-translation points. Raw per-point results, ASLRef logs, matrices, stdout, IDs, hashes and runner checks are preserved in build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62. The 4,336-point repository metadata/topology closure is distinct from the 62 executable points. No full-matrix discovery or release lane ran.",
+  "scope_note": "Round-2 full focused archive remains 62/62 at its exact source input; round-3 adds a separate 13-point affected command-risk run on the corrected BSTART source input. Current metadata/topology closure is 4,337 points and is not an execution count. No numeric, full-matrix or release rerun was performed.",
   "baseline_contrast": {
     "purpose": "Demonstrate the corrected, reachable Atomic TSTORE dispatch witness and CMode 6/7 admission witness fail on the unchanged baseline and pass on the exact candidate using byte-identical current test inputs.",
     "baseline_commit": "b4abf485128941fb41799e667868090368ab8307",
@@ -359,5 +359,30 @@
         "failure": "PTO-AVS-BLOCK-SHARED-TLSU-ASSEMBLE-SQUASH-014: BSTOP status compatibility changed for a no-fault, no-Atomic-drain Shared assembly cohort wait; fixed in current command path and rerun in the final 62-point page."
       }
     ]
+  },
+  "round3_affected_command_risk_run": {
+    "archive": "build/issue397-review-evidence/d1-affected-13-candidate-d6de62c",
+    "manifest_sha256": "ff03832cfae7f558f6ce4695cfdf2bb91996bfaa7ed7eb2dfab5749a88eaa315",
+    "candidate_commit": "d6de62cd3b4fb7cef2fec3f437f64b0aff2974a0",
+    "candidate_asl_tree": "acb149890849187ec5113626eb5af5afcfa31c20",
+    "matrix_sha256": "076bf0ad10481d1f3b0e26122425d9ce8f69ea9b5bb3f5a9d1d498dea713c0c2",
+    "ids_sha256": "1490e42d2594e98fc8ffa2c6ff6a64ed1cc1beeb03b86a8f398b8a236fd15748",
+    "model_sha256": "fbaee9b647743327d161a3dddbb571523ae9d753686cd6a78764f24590bf7683",
+    "registry_sha256": "299b12528898d5d9c754b195fb57f4a9b0a857d280f685403f1280e26e295c57",
+    "count": 13,
+    "passed": 13,
+    "failed": 0,
+    "exit_status": 0,
+    "profiles": {
+      "default": 13
+    },
+    "command": "env -u ASLREF PTO_ASL_TEST_TIMEOUT_SECONDS=600 scripts/run-asl-page --matrix build/issue397-review-evidence/d1-affected-matrix/page-0.json -j4",
+    "finite_caller_set": [
+      "BSTART predecessor",
+      "BSTOP",
+      "TRACE B.HINT",
+      "scalar ArchitectureEnterRequest"
+    ],
+    "reuse_note": "The existing 62-point archive is reused only for unchanged full input identities and retains source commit 4302fe8565f5a2b72296dfd330d796e01164c9bc/model d6b76b027492c286b6fd1ff9000b2e2f4c769b3c97bcb6fc6d027d9c5b577463. New BSTART source/test inputs are verified by this separate 13-point run on this object."
   }
 }
