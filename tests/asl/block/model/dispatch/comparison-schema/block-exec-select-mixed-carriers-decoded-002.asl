@@ -26,7 +26,7 @@ begin
     instruction[31:26] = source1;
     instruction[25:20] = source0;
     instruction[19] = if last then '1' else '0';
-    instruction[18:15] = if destination_valid then '0010' else '0000';
+    instruction[18:15] = if destination_valid then '0001' else '0000';
     instruction[11:9] = '001';
     instruction[8:7] = destination;
     return instruction;

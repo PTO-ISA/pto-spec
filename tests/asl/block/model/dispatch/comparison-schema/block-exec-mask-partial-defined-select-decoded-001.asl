@@ -114,7 +114,7 @@ begin
         PartialSelectInputs(Zeros{6} + 8, Zeros{6} + 10), 32);
     let result = ExecuteCommandInstruction(
         PartialSelectResult(Zeros{6} + 11, Zeros{6} + 12,
-            Zeros{2}, Zeros{4} + 2), 32);
+            Zeros{2}, Zeros{4} + 1), 32);
     assert inputs == CommandExecution_Executed &&
            result == CommandExecution_Executed;
     let completed = ExecuteBundleTileOperation();
@@ -154,7 +154,7 @@ begin
     BeginPartialSelect(Zeros{10} + 0x03a);
     let input = ExecuteCommandInstruction(
         PartialSelectResult(Zeros{6} + 8, Zeros{6} + 10,
-            Zeros{2}, Zeros{4} + 2), 32);
+            Zeros{2}, Zeros{4} + 1), 32);
     let scalar_mask = ExecuteCommandInstruction(
         PartialSelectIOR(Zeros{5}, Zeros{5} + 2,
             Zeros{5} + 3, TRUE), 32);
@@ -198,7 +198,7 @@ begin
         PartialSelectInputs(Zeros{6} + 8, Zeros{6} + 10), 32);
     let result = ExecuteCommandInstruction(
         PartialSelectResult(Zeros{6} + 11, Zeros{6} + 12,
-            Zeros{2}, Zeros{4} + 2), 32);
+            Zeros{2}, Zeros{4} + 1), 32);
     assert inputs == CommandExecution_Executed &&
            result == CommandExecution_Executed;
     let completed = ExecuteBundleTileOperation();
@@ -228,7 +228,7 @@ begin
         PartialSelectInputs(Zeros{6} + 8, Zeros{6} + 10), 32);
     let result = ExecuteCommandInstruction(
         PartialSelectSingleResult(Zeros{6} + 12,
-            Zeros{2}, Zeros{4} + 2), 32);
+            Zeros{2}, Zeros{4} + 1), 32);
     let scalar = ExecuteCommandInstruction(
         PartialSelectIOR(Zeros{5}, Zeros{5} + 2, Zeros{5}, FALSE), 32);
     assert inputs == CommandExecution_Executed &&

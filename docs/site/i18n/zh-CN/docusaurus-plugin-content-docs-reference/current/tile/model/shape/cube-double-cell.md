@@ -60,7 +60,7 @@ Subview、generation、transport 与 publication 边界不得只暴露 pair 中�
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/shape/cube-double-cell.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL","surface":"tile","classification":["model","shape","cube-double-cell"],"depends_on":["PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES","PTO-ARCH-FEATURES-TILE-ALLOCATION"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL","surface":"tile","classification":["model","shape","cube-double-cell"],"depends_on":["PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES","PTO-ARCH-FEATURES-TILE-ALLOCATION","PTO-TILE-MODEL-STATE-DESCRIPTORS"]}
 // NDF-BEGIN: PTO-CUBE-M32-B64-DOUBLE-CELL-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // Local CUBE_M32 FP64, S64, and U64 storage MUST retain 32 logical rows and
@@ -100,6 +100,26 @@ begin
             TileCubeM32B64DataType(data_type)) ||
            (layout == TileLayout_CUBE_N8 &&
             data_type == TileDataType_U64);
+end;
+
+readonly func TileCubePhysicalColumnsFromCapacity(
+    capacity_bytes: integer {0..262144}, layout: TileLayout,
+    data_type: TileDataType) => integer {0..65535}
+begin
+    if (layout != TileLayout_CUBE_M16 && layout != TileLayout_CUBE_M32) ||
+       !TileCubeLayoutDataTypeSupported(layout, data_type) ||
+       !TileCapacityIsLegal(capacity_bytes) then return 0; end;
+    let rows = if layout == TileLayout_CUBE_M16 then 16 else 32;
+    let bits_per_column: integer {64..2048} =
+        rows * TileElementBits(data_type);
+    let capacity_bits: integer {0..2097152} = capacity_bytes * 8;
+    if bits_per_column == 0 || capacity_bits MOD bits_per_column != 0 then
+        return 0;
+    end;
+    let columns: integer {0..65535} =
+        capacity_bits DIVRM bits_per_column;
+    if columns == 0 || columns > 65535 then return 0; end;
+    return columns as integer {1..65535};
 end;
 
 pure func TileCubePhysicalCellsPerLogicalGroup(

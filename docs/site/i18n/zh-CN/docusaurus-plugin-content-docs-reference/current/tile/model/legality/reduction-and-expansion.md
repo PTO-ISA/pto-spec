@@ -477,10 +477,15 @@ begin
                    destination_tile.data_type) &&
                destination_tile.columns == source_tile.columns;
     end;
+    let required_columns = if destination_tile.layout == TileLayout_CUBE_M16 ||
+        destination_tile.layout == TileLayout_CUBE_M32 then
+        TileCubePhysicalColumnsFromCapacity(
+            destination_tile.capacity_bytes, destination_tile.layout,
+            destination_tile.data_type)
+    else TileCubeStorageColumns(destination_tile.layout,
+        source_tile.valid_columns, destination_tile.data_type);
     return destination_tile.rows == source_tile.rows &&
-           destination_tile.columns == TileCubeStorageColumns(
-               destination_tile.layout, source_tile.valid_columns,
-               destination_tile.data_type);
+           destination_tile.columns == required_columns;
 end;
 
 readonly func TileOperandsLegal_ExecuteTileExpandAs(

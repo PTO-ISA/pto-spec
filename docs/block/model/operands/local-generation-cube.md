@@ -114,6 +114,24 @@ begin
     return BundleLocalGenerationPrefixExtent(covered);
 end;
 
+readonly func BundleLocalGenerationCubeCurrentValidRows() => integer {0..65535}
+begin
+    let index = BundleDimensionIndexOfRegister(BundleDimension_LB1);
+    let raw = UInt(_BundleDimensions[[index]]);
+    return if raw <= 65535 then raw as integer {0..65535} else 0;
+end;
+readonly func BundleLocalGenerationCubeCurrentValidColumns() => integer {0..65535}
+begin
+    let index = BundleDimensionIndexOfRegister(BundleDimension_LB0);
+    let raw = UInt(_BundleDimensions[[index]]);
+    return if raw <= 65535 then raw as integer {0..65535} else 0;
+end;
+readonly func BundleLocalGenerationCubeWriterColumns(writer_size: integer {1..12}, layout: TileLayout, data_type: TileDataType) => integer {0..65535}
+begin
+    return TileCubePhysicalColumnsFromCapacity(
+        TileSizeCodeBytes(writer_size), layout, data_type);
+end;
+
 pure func BundleLocalGenerationCubeValidColumnsAt(
     offset_cells: integer {0..2047}, cell_columns: integer {0,1,2,4,8,16},
     cells_per_group: integer {1..2},
@@ -132,17 +150,28 @@ begin
     let tile = _Tiles[[destination]];
     let writer_cells = (TileSizeCodeBytes(writer_size) DIVRM PTO_TILE_CELL_BYTES) as integer {1..2048};
     let expected_rows = if tile.layout == TileLayout_CUBE_M16 then 16 else 32;
+    let writer_columns = BundleLocalGenerationCubeWriterColumns(
+        writer_size, tile.layout, tile.data_type);
+    let writer_valid_rows = BundleLocalGenerationCubeCurrentValidRows();
+    let writer_valid_columns =
+        BundleLocalGenerationCubeCurrentValidColumns();
     return tile.allocated && tile.storage_kind == TileStorage_Numeric &&
            BundleLocalGenerationCubeLayout(tile.layout) &&
            tile.rows == expected_rows && tile.valid_rows <= tile.rows &&
            tile.valid_rows != 0 && tile.valid_columns <= tile.columns &&
            tile.valid_columns != 0 &&
            TileCubeDescriptorLegal(tile) &&
-           tile.cube_cell_count == writer_cells &&
-           tile.cube_storage_bytes == TileSizeCodeBytes(writer_size) &&
-           tile.cube_storage_bytes ==
-               TileCubePhysicalRequiredBytes(tile.layout, tile.rows,
-                   tile.columns, tile.data_type);
+           tile.capacity_bytes >= TileSizeCodeBytes(writer_size) &&
+           writer_columns != 0 &&
+           TileCubeDescriptorShapeAndPhysicalLegal(
+               TileSizeCodeBytes(writer_size), expected_rows,
+               writer_columns, writer_valid_rows, writer_valid_columns,
+               tile.data_type, tile.layout) &&
+           TileCubePhysicalCellCount(tile.layout, expected_rows,
+               writer_columns, tile.data_type) == writer_cells &&
+           TileCubePhysicalRequiredBytes(tile.layout, expected_rows,
+               writer_columns, tile.data_type) ==
+                   TileSizeCodeBytes(writer_size);
 end;
 
 readonly func BundleLocalGenerationCubeFinalizationLegal(
@@ -169,7 +198,8 @@ begin
            first.data_type != candidate.data_type ||
            first.predicate_basis_type != candidate.predicate_basis_type ||
            first.physical_rows != candidate.rows ||
-           first.valid_rows != candidate.valid_rows then return FALSE; end;
+           first.valid_rows !=
+               BundleLocalGenerationCubeCurrentValidRows() then return FALSE; end;
         for prior_index = 0 to _LocalGenerations[[slot]].writer_count - 1
             looplimit 16 do
             let prior = _LocalGenerations[[slot]].writers[[prior_index]];
@@ -249,8 +279,12 @@ begin
                 let end_cell = offset_cells + writer_cells;
                 if end_cell > extent then return FALSE; end;
                 if end_cell == extent then
-                    if terminal_found || candidate.valid_columns == 0 ||
-                       candidate.valid_columns > candidate.columns then
+                    let writer_valid_columns =
+                        BundleLocalGenerationCubeCurrentValidColumns();
+                    let writer_columns = BundleLocalGenerationCubeWriterColumns(
+                        writer_size, candidate.layout, candidate.data_type);
+                    if terminal_found || writer_valid_columns == 0 ||
+                       writer_valid_columns > writer_columns then
                         return FALSE;
                     end;
                     terminal_found = TRUE;
@@ -258,8 +292,11 @@ begin
                         BundleLocalGenerationCubeValidColumnsAt(
                             offset_cells, cell_columns,
                             cells_per_group,
-                            candidate.valid_columns);
-                elsif candidate.valid_columns != candidate.columns then
+                            writer_valid_columns);
+                elsif BundleLocalGenerationCubeCurrentValidColumns() !=
+                      BundleLocalGenerationCubeWriterColumns(
+                          writer_size, candidate.layout,
+                          candidate.data_type) then
                     return FALSE;
                 end;
             end;
@@ -280,11 +317,12 @@ begin
         return FALSE;
     end;
     if common_extent MOD cells_per_group != 0 then return FALSE; end;
-    let final_columns =
-        (common_extent DIVRM cells_per_group) * cell_columns;
+    let final_columns = TileCubePhysicalColumnsFromCapacity(
+        candidate.capacity_bytes, candidate.layout, candidate.data_type);
     return TileCubeDescriptorShapeAndPhysicalLegal(
         candidate.capacity_bytes, candidate.rows, final_columns,
-        candidate.valid_rows, common_valid_columns, candidate.data_type,
+        BundleLocalGenerationCubeCurrentValidRows(), common_valid_columns,
+        candidate.data_type,
         candidate.layout);
 end;
 readonly func BundleLocalGenerationCubeFinalExtent(
@@ -353,8 +391,9 @@ begin
     let cell_columns = TileCubeCellColumns(first.layout, first.data_type);
     let cells_per_group = TileCubePhysicalCellsPerLogicalGroup(
         first.layout, first.data_type);
-    let physical_columns =
-        (extent DIVRM cells_per_group) * cell_columns;
+    let physical_columns = TileCubePhysicalColumnsFromCapacity(
+        _Tiles[[destination]].capacity_bytes, first.layout,
+        first.data_type);
     let k_repeat = TileCubePhysicalKRepeat(first.layout, first.physical_rows,
         physical_columns, first.data_type);
     let n_repeat = TileCubePhysicalNRepeat(first.layout, first.physical_rows,
@@ -433,47 +472,7 @@ begin
     for pe = 0 to 3 do if writer_mask[PTOPEMaskBitOfPEIdentity(pe)] == '1' && init_mask[PTOPEMaskBitOfPEIdentity(pe)] == '0' then return FALSE; end; end;
     return TRUE;
 end;
-readonly func BundleLocalGenerationDescriptorMatches(
-    slot: integer {0..63}, destination: TileIndex,
-    participant_mask: bits(4)) => boolean
-begin
-    let expected = _LocalGenerations[[slot]].parent_descriptor;
-    let actual = _Tiles[[destination]];
-    if !_LocalGenerations[[slot]].generation_identity_valid ||
-       !actual.allocated || expected.object_name != destination ||
-       expected.object_kind != actual.storage_kind ||
-       expected.participant_mask != _TileAllocationMasks[[destination]] ||
-       !BundleLocalGenerationMaskSubset(participant_mask,
-           expected.participant_mask) ||
-       actual.capacity_bytes != expected.capacity_bytes then
-        return FALSE;
-    end;
-    if BundleLocalGenerationCubeLayout(actual.layout) then
-        if _LocalGenerations[[slot]].writer_count == 0 then return FALSE; end;
-        let first = _LocalGenerations[[slot]].writers[[0]];
-        return first.valid && actual.rows == first.physical_rows &&
-               actual.columns == first.physical_columns &&
-               actual.valid_rows == first.valid_rows &&
-               actual.valid_columns == first.valid_columns &&
-               actual.data_type == first.data_type &&
-               actual.predicate_basis_type == first.predicate_basis_type &&
-               actual.layout == first.layout &&
-               actual.cube_cell_count == first.cell_count &&
-               actual.cube_storage_bytes ==
-                   TileCubePhysicalRequiredBytes(actual.layout,
-                       actual.rows, actual.columns, actual.data_type);
-    end;
-    return actual.rows == expected.rows && actual.columns == expected.columns &&
-           actual.valid_rows == expected.valid_rows &&
-           actual.valid_columns == expected.valid_columns &&
-           actual.data_type == expected.data_type &&
-           actual.predicate_basis_type == expected.predicate_basis_type &&
-           actual.layout == expected.layout &&
-           actual.cube_k_repeat == expected.cube_k_repeat &&
-           actual.cube_n_repeat == expected.cube_n_repeat &&
-           actual.cube_cell_count == expected.cube_cell_count &&
-           actual.cube_storage_bytes == expected.cube_storage_bytes;
-end;
+
 pure func BundleLocalGenerationRangeOverlaps(
     left_offset: integer {0..2047}, left_count: integer {1..2048},
     right_offset: integer {0..2047}, right_count: integer {1..2048}) => boolean

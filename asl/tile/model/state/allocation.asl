@@ -211,9 +211,14 @@ func ConfigureCubeTileForMask(
     layout: TileLayout,
     allocation_mask: bits(4)) => boolean
 begin
+    let physical_columns = if layout == TileLayout_CUBE_M16 ||
+        layout == TileLayout_CUBE_M32 then
+            TileCubePhysicalColumnsFromCapacity(
+                capacity_bytes, layout, data_type)
+        else TileCubeStorageColumns(layout, valid_columns, data_type);
     return ConfigureCubeTileForMaskWithPhysical(index, capacity_bytes,
         TileCubeStorageRows(layout, valid_rows, data_type),
-        TileCubeStorageColumns(layout, valid_columns, data_type), valid_rows,
+        physical_columns, valid_rows,
         valid_columns, data_type, layout, allocation_mask);
 end;
 

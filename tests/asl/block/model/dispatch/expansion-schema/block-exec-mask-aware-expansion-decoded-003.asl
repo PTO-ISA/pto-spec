@@ -26,14 +26,14 @@ begin
 end;
 
 pure func MaskedExpansionIOT(source0: bits(6), source1: bits(6),
-    source1_valid: boolean) => bits(64)
+    source1_valid: boolean, destination_size: bits(4)) => bits(64)
 begin
     var instruction = if source1_valid then
         Zeros{64} + 0x00004013 else Zeros{64} + 0x00005013;
     instruction[25:20] = source0;
     instruction[31:26] = source1;
     instruction[19] = '1';
-    instruction[18:15] = '0010';
+    instruction[18:15] = destination_size;
     instruction[11:9] = '001';
     return instruction;
 end;
@@ -78,7 +78,8 @@ begin
         if row_axis then Zeros{10} + 0x044 else Zeros{10} + 0x054,
         2, 3);
     let binding = ExecuteCommandInstruction(
-        MaskedExpansionIOT(Zeros{6} + 10, Zeros{6} + 12, TRUE), 32);
+        MaskedExpansionIOT(Zeros{6} + 10, Zeros{6} + 12, TRUE,
+            Zeros{4} + 2), 32);
     assert binding == CommandExecution_Executed;
     let completed = ExecuteBundleTileOperation();
     assert _LastFault == Fault_None;
@@ -97,9 +98,9 @@ func RunMaskedExpansionDIV(row_axis: boolean,
 begin
     ResetProfileState();
     let source_ready = ConfigureCubeTile(
-        10, 256, 2, 2, TileDataType_U32, TileLayout_CUBE_M16);
+        10, 128, 2, 2, TileDataType_U32, TileLayout_CUBE_M16);
     let broadcast_ready = ConfigureCubeTile(
-        11, 256,
+        11, 128,
         if row_axis then 2 else 1,
         if row_axis then 1 else 2,
         TileDataType_U32, TileLayout_CUBE_M16);
@@ -128,7 +129,7 @@ begin
         MaskedExpansionIOR(Zeros{5} + 2), 32);
     let binding = ExecuteCommandInstruction(
         MaskedExpansionIOT(
-            Zeros{6} + 10, Zeros{6} + 11, TRUE), 32);
+            Zeros{6} + 10, Zeros{6} + 11, TRUE, Zeros{4} + 1), 32);
     assert execution_mask == CommandExecution_Executed &&
            binding == CommandExecution_Executed;
     let completed = ExecuteBundleTileOperation();

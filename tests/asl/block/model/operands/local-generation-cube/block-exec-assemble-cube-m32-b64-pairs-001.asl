@@ -17,13 +17,15 @@ begin
     _LocalGenerations[[slot]].writers[[ordinal]].predicate_basis_type =
         TileDataType_U64;
     _LocalGenerations[[slot]].writers[[ordinal]].layout = TileLayout_CUBE_M32;
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 32);
 end;
 
 func main() => integer
 begin
     ResetProfileState();
     let configured = ConfigureCubeTileForMaskWithPhysical(
-        1, 512, 32, 1, 32, 1,
+        1, 512, 32, 2, 32, 2,
         TileDataType_U64, TileLayout_CUBE_M32, '1111');
     assert configured;
     let slot: integer {0..63} = 11;

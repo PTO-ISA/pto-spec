@@ -1,7 +1,5 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-ASSEMBLE-CUBE-PARENT-GEOMETRY-001","source":"asl/block/model/operands/local-generation-cube.asl","requirements":["PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001","PTO-CUBE-CELL-STATE-001"],"kind":"execution","summary":"Local CUBE_M32 assembly separates writer descriptors from the finalized parent geometry and derives a common column/K prefix from CELL coverage.","pass_condition":"four 32x32 E2M1X2 writer descriptors with 512-byte envelopes at CELL offsets 0, 4, 8, and 12 finalize to one capacity-preserving 32x128 parent, including an ordered-independent terminal valid-column tail; a gap is rejected before publication.","related_sources":["asl/block/model/operands/local-generation.asl","asl/tile/model/state/allocation.asl","asl/tile/model/legality/descriptor-shape.asl"]}
-func InstallWriter(slot: integer {0..63}, ordinal: integer {0..15},
-                   offset: integer {0..2047}, valid_columns: integer {1..65535},
-                   pe_mask: bits(4))
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-ASSEMBLE-CUBE-PARENT-GEOMETRY-001","source":"asl/block/model/operands/local-generation-cube.asl","requirements":["PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001","PTO-CUBE-CELL-STATE-001"],"kind":"execution","summary":"Local CUBE_M32 assembly retains full capacity-derived parent geometry while writer records retain exact fragment geometry and prefix validity.","pass_condition":"four 32x32 E2M1X2 writer descriptors with 512-byte envelopes at CELL offsets 0, 4, 8, and 12 finalize to a full 32x256 parent with valid 32x128, including an ordered-independent terminal valid-column tail; a gap is rejected before publication.","related_sources":["asl/block/model/operands/local-generation.asl","asl/tile/model/state/allocation.asl","asl/tile/model/legality/descriptor-shape.asl"]}
+func InstallWriter(slot: integer {0..63}, ordinal: integer {0..15}, offset: integer {0..2047}, valid_columns: integer {1..65535}, pe_mask: bits(4))
 begin
     _LocalGenerations[[slot]].writers[[ordinal]].valid = TRUE;
     _LocalGenerations[[slot]].writers[[ordinal]].offset_cells = offset;
@@ -18,16 +16,18 @@ begin
     _LocalGenerations[[slot]].writers[[ordinal]].predicate_basis_type =
         TileDataType_E2M1X2;
     _LocalGenerations[[slot]].writers[[ordinal]].layout = TileLayout_CUBE_M32;
+    SetBundleDimension(0, Zeros{PTO_XLEN} + valid_columns);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 32);
 end;
 
-func PrepareGenerationWithCapacity(slot: integer {0..63},
-                                   capacity_bytes: integer {0..262144},
-                                   parent_size_code: integer {1..12},
-                                   parent_cell_count: integer {1..2048})
+func PrepareGenerationWithCapacity(slot: integer {0..63}, capacity_bytes: integer {0..262144}, parent_size_code: integer {1..12}, parent_cell_count: integer {1..2048})
 begin
     ClearBundleLocalGenerationState(slot);
+    let physical_columns = TileCubePhysicalColumnsFromCapacity(
+        capacity_bytes, TileLayout_CUBE_M32, TileDataType_E2M1X2);
     let configured = ConfigureCubeTileForMaskWithPhysical(1, capacity_bytes,
-        32, 32, 32, 32, TileDataType_E2M1X2, TileLayout_CUBE_M32, '1111');
+        32, physical_columns, 32, 32, TileDataType_E2M1X2,
+        TileLayout_CUBE_M32, '1111');
     assert configured;
     _LocalGenerations[[slot]].open = TRUE;
     _LocalGenerations[[slot]].generation_identity_valid = TRUE;
@@ -36,21 +36,16 @@ begin
     _LocalGenerations[[slot]].parent_size_code = parent_size_code;
     _LocalGenerations[[slot]].parent_cell_count = parent_cell_count;
     _LocalGenerations[[slot]].working_destination = 1;
-    _LocalGenerations[[slot]].parent_descriptor.valid = TRUE;
-    _LocalGenerations[[slot]].parent_descriptor.object_name = 1;
-    _LocalGenerations[[slot]].parent_descriptor.object_kind = TileStorage_Numeric;
-    _LocalGenerations[[slot]].parent_descriptor.participant_mask = '1111';
-    _LocalGenerations[[slot]].parent_descriptor.capacity_bytes = capacity_bytes;
-    _LocalGenerations[[slot]].parent_descriptor.layout = TileLayout_CUBE_M32;
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 32);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 32);
 end;
+
 
 func SetCoverage(slot: integer {0..63}, extent: integer {1..16})
 begin
     for pe = 0 to 3 do
         var covered = Zeros{2048};
-        for cell = 0 to 15 do
-            if cell < extent then covered[cell] = '1'; end;
-        end;
+        for cell = 0 to 15 do if cell < extent then covered[cell] = '1'; end; end;
         _LocalGenerations[[slot]].per_pe_covered_cells[[pe]] = covered;
     end;
 end;
@@ -123,7 +118,9 @@ begin
         slot, 1, 12, 4, 3, '0000', FALSE, TRUE);
     FinalizeBundleLocalGenerationCube(slot);
     assert _Tiles[[1]].capacity_bytes == 4096 && _Tiles[[1]].rows == 32 &&
-           _Tiles[[1]].columns == 128 && _Tiles[[1]].cube_storage_bytes == 2048;
+           _Tiles[[1]].columns == 256 && _Tiles[[1]].valid_columns == 128 &&
+           _Tiles[[1]].cube_cell_count == 32 &&
+           _Tiles[[1]].cube_storage_bytes == 4096;
 
     // Only the terminal writer may carry a valid-column tail.
     ResetProfileState();
@@ -137,7 +134,7 @@ begin
     assert BundleLocalGenerationCubeFinalizationLegal(
         slot, 1, 12, 4, 3, '0000', FALSE, TRUE);
     FinalizeBundleLocalGenerationCube(slot);
-    assert _Tiles[[1]].columns == 128 && _Tiles[[1]].valid_columns == 116;
+    assert _Tiles[[1]].columns == 256 && _Tiles[[1]].valid_columns == 116;
 
     // A physical CELL gap is illegal even when capacity can hold it.
     ResetProfileState();
@@ -155,8 +152,8 @@ begin
     assert !BundleLocalGenerationCubeFinalizationLegal(
         slot, 1, 12, 4, 3, '1111', FALSE, FALSE);
 
-    // Capacity slack is not required before or after finalization, while a
-    // whole-parent consumer still waits for successful LAST.
+    // Before LAST, a whole-parent consumer still waits for successful
+    // publication even though the complete parent geometry is already exact.
     ResetProfileState();
     PrepareGenerationWithCapacity(slot, 4096, 5, 32);
     InstallWriter(slot, 0, 0, 32, '1111');
@@ -186,8 +183,8 @@ begin
     assert !BundleLocalGenerationCubeFinalizationLegal(
         slot, 1, 12, 4, 3, Zeros{4}, FALSE, TRUE);
 
-    // INIT_LAST may finalize at CELL zero with capacity slack, but a
-    // nonzero INIT_LAST offset is rejected before publication.
+    // INIT_LAST may publish a valid prefix ending at CELL zero while the
+    // full capacity-backed parent retains unused physical cells.
     ResetProfileState();
     PrepareGenerationWithCapacity(slot, 4096, 5, 32);
     InstallWriter(slot, 0, 0, 32, '1111');
@@ -201,17 +198,17 @@ begin
     // Same-PE overlap uses the range rule; replay is the exception.
     assert BundleLocalGenerationRangeOverlaps(0, 4, 2, 4);
 
-    // Exact WriterSizeCode envelopes reject both undersized and oversized
-    // fragment descriptors, and #326 row rules remain explicit.
+    // The full parent remains capacity exact; the transient writer view is
+    // bounded by WriterSizeCode, and #326 row rules remain explicit.
     ResetProfileState();
-    let oversized_writer = ConfigureCubeTileForMaskWithPhysical(1, 4096,
-        32, 64, 32, 64, TileDataType_E2M1X2, TileLayout_CUBE_M32, '1111');
-    assert oversized_writer;
-    assert !BundleLocalGenerationCubeWriterLegal(1, 3);
-    let undersized_writer = ConfigureCubeTileForMaskWithPhysical(1, 4096,
-        32, 16, 32, 16, TileDataType_E2M1X2, TileLayout_CUBE_M32, '1111');
-    assert undersized_writer;
-    assert !BundleLocalGenerationCubeWriterLegal(1, 3);
+    let parent = ConfigureCubeTileForMask(1, 4096,
+        32, 32, TileDataType_E2M1X2, TileLayout_CUBE_M32, '1111');
+    assert parent;
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 32);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 32);
+    assert BundleLocalGenerationCubeWriterLegal(1, 3);
+    assert !BundleLocalGenerationCubeWriterLegal(1, 8);
+    assert !BundleLocalGenerationCubeWriterLegal(1, 1);
     _Tiles[[1]].rows = 16;
     assert !BundleLocalGenerationCubeWriterLegal(1, 3);
 
@@ -293,7 +290,7 @@ begin
     assert BundleLocalGenerationCubeFinalizationLegal(
         slot, 1, 12, 4, 3, Zeros{4}, FALSE, TRUE);
     FinalizeBundleLocalGenerationCube(slot);
-    assert _Tiles[[1]].columns == 128 &&
+    assert _Tiles[[1]].columns == 256 &&
            _LocalGenerations[[slot]].descriptor_finalized;
 
     return 0;

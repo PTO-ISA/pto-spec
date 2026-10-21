@@ -94,6 +94,9 @@ begin
     assert _LastFault == Fault_None;
     let decoded_destination = _BundleTileBindings[[1]].destination;
     assert _Tiles[[decoded_destination]].layout == TileLayout_CUBE_M32;
+    assert _Tiles[[decoded_destination]].capacity_bytes == 128 &&
+           _Tiles[[decoded_destination]].rows == 32 &&
+           _Tiles[[decoded_destination]].columns == 1;
     assert ReadTileElement(decoded_destination, 0, 0) ==
         Zeros{PTO_XLEN} + 0x06020501;
 
@@ -142,6 +145,9 @@ begin
     assert scalar == CommandExecution_Executed;
     assert completed && _LastFault == Fault_None;
     let tshuf_destination = _BundleTileBindings[[0]].destination;
+    assert _Tiles[[tshuf_destination]].capacity_bytes == 128 &&
+           _Tiles[[tshuf_destination]].rows == 32 &&
+           _Tiles[[tshuf_destination]].columns == 1;
     assert ReadTileElement(tshuf_destination, 0, 0) ==
         Zeros{PTO_XLEN} + 2;
     assert ReadTileElement(tshuf_destination, 1, 0) ==

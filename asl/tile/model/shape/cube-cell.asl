@@ -1,11 +1,12 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-SHAPE-CUBE-CELL","surface":"tile","classification":["model","shape","cube-cell"],"depends_on":["PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL","PTO-TILE-MODEL-SHAPE-VALID-REGION"]}
 // NDF-BEGIN: PTO-CUBE-CELL-STATE-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
-// Local CUBE layouts MUST use assigned 128-byte width-parametric CELL mappings,
-// derive storage independently of valid M/N/K, and reject unsupported types or
-// insufficient capacity before effects; M16/M32 contain one physical M block.
-// CUBE_N8/U64 retains its K2 x N8 exception; M32 b64 delegates physical
-// pairing to PTO-CUBE-M32-B64-DOUBLE-CELL-001.
+// Local CUBE layouts MUST use assigned width-parametric CELL mappings and
+// derive storage independently of valid M/N/K. Unsupported types or capacity
+// mismatch reject before effects. M16/M32 use fixed M rows and capacity-derived
+// columns; allocation MUST exactly cover their physical CELL envelope, with
+// valid padding only inside it. N8/U64 retains K2 x N8; M32 b64 delegates
+// physical pairing to PTO-CUBE-M32-B64-DOUBLE-CELL-001.
 // NDF-END: PTO-CUBE-CELL-STATE-001
 
 // NDF-BEGIN: PTO-CUBE-MATRIX-SCALE-CELL-001
@@ -104,7 +105,6 @@ begin
     return TileCubeKRepeatForColumns(layout, valid_rows,
         TileCubeStorageColumns(layout, valid_columns, data_type), data_type);
 end;
-
 pure func TileCubeKRepeatForColumns(layout: TileLayout,
                                     valid_rows: integer {0..65535},
                                     columns: integer {0..65535},
@@ -135,7 +135,6 @@ begin
     return TileCubeNRepeatForColumns(layout, valid_rows,
         TileCubeStorageColumns(layout, valid_columns, data_type), data_type);
 end;
-
 pure func TileCubeNRepeatForColumns(layout: TileLayout,
                                     valid_rows: integer {0..65535},
                                     columns: integer {0..65535},
@@ -166,7 +165,6 @@ begin
     return TileCubeCellCountForColumns(layout, valid_rows,
         TileCubeStorageColumns(layout, valid_columns, data_type), data_type);
 end;
-
 pure func TileCubeCellCountForColumns(layout: TileLayout,
                                       valid_rows: integer {0..65535},
                                       columns: integer {0..65535},
@@ -211,7 +209,6 @@ begin
     return TileCubeRequiredBytesForColumns(layout, valid_rows,
         TileCubeStorageColumns(layout, valid_columns, data_type), data_type);
 end;
-
 pure func TileCubeRequiredBytesForColumns(
     layout: TileLayout,
     valid_rows: integer {0..65535},
@@ -226,9 +223,7 @@ begin
     return required as integer {128..262144};
 end;
 
-// The helpers above describe the minimum physical envelope implied by a
-// valid rectangle. M16/M32 descriptors additionally carry an independent
-// physical envelope; N8 deliberately retains the valid-derived geometry.
+// Physical CUBE envelope helpers; N8 retains valid-derived geometry.
 pure func TileCubePhysicalKRepeat(
     layout: TileLayout,
     physical_rows: integer {0..65535},
@@ -248,7 +243,6 @@ begin
     return (physical_columns DIVRM (cell_columns as integer {1,2,4,8,16}))
         as integer {1..65535};
 end;
-
 pure func TileCubePhysicalNRepeat(
     layout: TileLayout,
     physical_rows: integer {0..65535},
@@ -266,7 +260,6 @@ begin
     end;
     return (physical_columns DIVRM 8) as integer {1..8192};
 end;
-
 pure func TileCubePhysicalCellCount(
     layout: TileLayout,
     physical_rows: integer {0..65535},
@@ -283,7 +276,6 @@ begin
     if cells > 16384 then return 0; end;
     return cells as integer {1..16384};
 end;
-
 pure func TileCubePhysicalRequiredBytes(
     layout: TileLayout,
     physical_rows: integer {0..65535},
@@ -357,8 +349,16 @@ begin
         layout, physical_rows, physical_columns, data_type);
     let required_bytes = TileCubePhysicalRequiredBytes(
         layout, physical_rows, physical_columns, data_type);
-    return cell_columns != 0 && cells != 0 && elements != 0 &&
-           required_bytes != 0 && required_bytes <= capacity_bytes;
+    if cell_columns == 0 || cells == 0 || elements == 0 ||
+       required_bytes == 0 then
+        return FALSE;
+    end;
+    if layout == TileLayout_CUBE_M16 || layout == TileLayout_CUBE_M32 then
+        return required_bytes == capacity_bytes &&
+               physical_columns == TileCubePhysicalColumnsFromCapacity(
+                   capacity_bytes, layout, data_type);
+    end;
+    return required_bytes <= capacity_bytes;
 end;
 
 readonly func TileCubeDescriptorShapeLegal(
@@ -369,14 +369,16 @@ readonly func TileCubeDescriptorShapeLegal(
     layout: TileLayout) => boolean
 begin
     let storage_rows = TileCubeStorageRows(layout, valid_rows, data_type);
-    let storage_columns = TileCubeStorageColumns(
-        layout, valid_columns, data_type);
+    let storage_columns = if layout == TileLayout_CUBE_M16 ||
+        layout == TileLayout_CUBE_M32 then
+            TileCubePhysicalColumnsFromCapacity(
+                capacity_bytes, layout, data_type)
+        else TileCubeStorageColumns(layout, valid_columns, data_type);
     return storage_rows != 0 && storage_columns != 0 &&
            TileCubeDescriptorShapeAndPhysicalLegal(
                capacity_bytes, storage_rows, storage_columns,
                valid_rows, valid_columns, data_type, layout);
 end;
-
 readonly func TileCubeDescriptorShapeLegalWithColumns(
     capacity_bytes: integer {0..262144},
     valid_rows: integer {0..65535},

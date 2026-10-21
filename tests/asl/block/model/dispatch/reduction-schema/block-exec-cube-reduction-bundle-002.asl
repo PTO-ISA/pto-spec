@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-CUBE-REDUCTION-BUNDLE-002","source":"asl/block/model/dispatch/reduction-schema.asl","requirements":["PTO-B-DATR-FIELDS-001","PTO-TROWSUM-CONTRACT-001","PTO-TCOLSUM-CONTRACT-001"],"kind":"execution","summary":"Decoded direct-layout CUBE reduction bundles preserve source physical slack in their reduced destinations","pass_condition":"decoded row reductions preserve slack physical Columns, decoded column reductions preserve slack physical Rows, and an undersized M32 destination raises Fault_TileAllocation without allocation or capacity consumption","related_sources":["asl/block/model/dispatch/destination-shape.asl","asl/tile/model/legality/reduction-and-expansion.asl","asl/tile/model/execution/reduction.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-CUBE-REDUCTION-BUNDLE-002","source":"asl/block/model/dispatch/reduction-schema.asl","requirements":["PTO-B-DATR-FIELDS-001","PTO-TROWSUM-CONTRACT-001","PTO-TCOLSUM-CONTRACT-001"],"kind":"execution","summary":"Decoded direct-layout CUBE reduction bundles preserve required dimensions with exact capacity-backed geometry","pass_condition":"decoded row reductions preserve required source Columns, column reductions preserve required source Rows, and an undersized M32 destination raises Fault_TileAllocation without allocation or capacity consumption","related_sources":["asl/block/model/dispatch/destination-shape.asl","asl/tile/model/legality/reduction-and-expansion.asl","asl/tile/model/execution/reduction.asl"]}
 pure func CubeReductionStart(column_reduction: boolean) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00019181;
@@ -75,46 +75,46 @@ begin
     assert TileElementDefined(destination, 0, 1);
     assert ReadTileElement(destination, 0, 1) == Zeros{PTO_XLEN};
 
-    PrepareCubeReduction(4096, Zeros{5} + 31, 16, 2, 2, 2, 1, FALSE);
+    PrepareCubeReduction(4096, Zeros{5} + 31, 16, 64, 2, 2, 6, FALSE);
     let expanded = ExecuteBundleTileOperation();
     assert expanded;
     assert _LastFault == Fault_None;
     let expanded_destination = _BundleTileBindings[[0]].destination;
     assert _Tiles[[expanded_destination]].valid_rows == 2;
     assert _Tiles[[expanded_destination]].valid_columns == 1;
-    assert _Tiles[[expanded_destination]].columns == 2;
+    assert _Tiles[[expanded_destination]].columns == 64;
     assert _Tiles[[expanded_destination]].rows == 16;
 
-    PrepareCubeReduction(512, Zeros{5} + 31, 16, 8, 2, 2, 4, FALSE);
-    let row_slack_completed = ExecuteBundleTileOperation();
+    PrepareCubeReduction(512, Zeros{5} + 31, 16, 8, 2, 2, 3, FALSE);
+    let row_padded_completed = ExecuteBundleTileOperation();
     assert _LastFault == Fault_None;
-    assert row_slack_completed;
+    assert row_padded_completed;
     assert _LastFault == Fault_None;
-    let row_slack_destination = _BundleTileBindings[[0]].destination;
-    assert _Tiles[[row_slack_destination]].layout == TileLayout_CUBE_M16;
-    assert _Tiles[[row_slack_destination]].valid_rows == 2;
-    assert _Tiles[[row_slack_destination]].valid_columns == 1;
-    assert _Tiles[[row_slack_destination]].rows == 16;
-    assert _Tiles[[row_slack_destination]].columns == 8;
-    assert ReadTileElement(row_slack_destination, 0, 0) ==
+    let row_padded_destination = _BundleTileBindings[[0]].destination;
+    assert _Tiles[[row_padded_destination]].layout == TileLayout_CUBE_M16;
+    assert _Tiles[[row_padded_destination]].valid_rows == 2;
+    assert _Tiles[[row_padded_destination]].valid_columns == 1;
+    assert _Tiles[[row_padded_destination]].rows == 16;
+    assert _Tiles[[row_padded_destination]].columns == 8;
+    assert ReadTileElement(row_padded_destination, 0, 0) ==
         Zeros{PTO_XLEN} + 3;
 
-    PrepareCubeReduction(512, Zeros{5} + 29, 32, 2, 16, 2, 4, TRUE);
-    let column_slack_completed = ExecuteBundleTileOperation();
-    assert column_slack_completed;
+    PrepareCubeReduction(512, Zeros{5} + 29, 32, 4, 16, 2, 2, TRUE);
+    let column_padded_completed = ExecuteBundleTileOperation();
+    assert column_padded_completed;
     assert _LastFault == Fault_None;
-    let column_slack_destination = _BundleTileBindings[[0]].destination;
-    assert _Tiles[[column_slack_destination]].layout == TileLayout_CUBE_M32;
-    assert _Tiles[[column_slack_destination]].valid_rows == 1;
-    assert _Tiles[[column_slack_destination]].valid_columns == 2;
-    assert _Tiles[[column_slack_destination]].rows == 32;
-    assert _Tiles[[column_slack_destination]].columns == 2;
-    assert ReadTileElement(column_slack_destination, 0, 0) ==
+    let column_padded_destination = _BundleTileBindings[[0]].destination;
+    assert _Tiles[[column_padded_destination]].layout == TileLayout_CUBE_M32;
+    assert _Tiles[[column_padded_destination]].valid_rows == 1;
+    assert _Tiles[[column_padded_destination]].valid_columns == 2;
+    assert _Tiles[[column_padded_destination]].rows == 32;
+    assert _Tiles[[column_padded_destination]].columns == 2;
+    assert ReadTileElement(column_padded_destination, 0, 0) ==
         Zeros{PTO_XLEN} + 256;
-    assert ReadTileElement(column_slack_destination, 0, 1) ==
+    assert ReadTileElement(column_padded_destination, 0, 1) ==
         Zeros{PTO_XLEN} + 272;
 
-    PrepareCubeReduction(512, Zeros{5} + 29, 32, 2, 16, 2, 1, FALSE);
+    PrepareCubeReduction(512, Zeros{5} + 29, 32, 4, 16, 2, 1, FALSE);
     let capacity_before = CoreTileCapacityInUse();
     let undersized = ExecuteBundleTileOperation();
     assert !undersized;

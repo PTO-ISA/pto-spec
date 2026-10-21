@@ -62,6 +62,21 @@ begin
         _BundleTileBindings[[binding]].pe_mask) ==
         _BundleTileBindings[[binding]].pe_mask;
     if cube then
+        let local_generation =
+            _BundleTileBindings[[binding]].destination_assemble.valid;
+        if local_generation then
+            let expected_parent_columns =
+                TileCubePhysicalColumnsFromCapacity(
+                    capacity_bytes, layout, data_type);
+            return TileCubeDescriptorLegal(destination) &&
+                   destination.capacity_bytes == capacity_bytes &&
+                   destination.rows == expected_physical_rows &&
+                   destination.columns == expected_parent_columns &&
+                   (!exact_cube_columns ||
+                    destination.columns == columns) &&
+                   destination.data_type == data_type &&
+                   destination.layout == layout && mask_legal;
+        end;
         return TileCubeDescriptorLegal(destination) &&
                destination.capacity_bytes == capacity_bytes &&
                destination.valid_rows == valid_rows &&
@@ -250,10 +265,15 @@ begin
             else if ordinary_tcvt then source_geometry.rows else 0;
             let physical_columns = if cube_destination then
                 if exact_cube_columns then auxiliary_columns
-                else if reduction_operation && reduction_row then
-                    source_geometry.columns
-                else TileCubeStorageColumns(destination_layout,
-                    auxiliary_valid_columns, destination_type)
+                else if reduction_operation then
+                    if reduction_row then source_geometry.columns
+                    else TileCubeStorageColumns(destination_layout,
+                        auxiliary_valid_columns, destination_type)
+                else if auxiliary_row || auxiliary_group then
+                    TileCubeStorageColumns(destination_layout,
+                        auxiliary_valid_columns, destination_type)
+                else TileCubePhysicalColumnsFromCapacity(capacity_bytes,
+                    destination_layout, destination_type)
             else auxiliary_columns;
             let rows = if ordinary_tcvt then source_geometry.rows else DerivedTileRows(capacity_bytes, auxiliary_columns, destination_type);
             let shape_legal = if cube_destination then
@@ -352,10 +372,15 @@ begin
                 let physical_columns = if destination_layout == TileLayout_CUBE_M16 ||
                     destination_layout == TileLayout_CUBE_M32 then
                     if exact_cube_columns then auxiliary_columns
-                    else if reduction_operation && reduction_row then
-                        source_geometry.columns
-                    else TileCubeStorageColumns(destination_layout,
-                        auxiliary_valid_columns, destination_type)
+                    else if reduction_operation then
+                        if reduction_row then source_geometry.columns
+                        else TileCubeStorageColumns(destination_layout,
+                            auxiliary_valid_columns, destination_type)
+                    else if auxiliary_row || auxiliary_group then
+                        TileCubeStorageColumns(destination_layout,
+                            auxiliary_valid_columns, destination_type)
+                    else TileCubePhysicalColumnsFromCapacity(capacity_bytes,
+                        destination_layout, destination_type)
                 else auxiliary_columns;
                 if !ConfigureBundleTileDestination(resolved[[binding]],
                         capacity_bytes, physical_rows, physical_columns,

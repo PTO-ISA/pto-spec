@@ -1,13 +1,13 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-MGATHER-CUBE-PHYSICAL-SLACK-002","source":"asl/tile/memory-and-data-movement/irregular/MGATHER.asl","requirements":["PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-MGATHER-MASK-PREDICATE-001","PTO-MGATHER-CAS-ATOMIC-001","PTO-ATOM-RED-TYPE-LEGALITY-001"],"kind":"execution","summary":"Indexed TLSU preserves independent physical CUBE_M32 descriptors with legal row, column, and capacity slack while rejecting Rows=64 atomically.","pass_condition":"Ordinary, masked, CAS, atomic, and reduction paths retain distinct legal physical descriptors; a destination with physical Rows=64 raises Fault_TileLegality before indexed TLSU events, allocation, or publication and leaves descriptor state unchanged.","related_sources":["asl/tile/model/legality/indexed-layout.asl","asl/tile/model/legality/predicate-carriers.asl","asl/tile/model/memory/gather-scatter.asl","asl/tile/model/memory/atomics.asl","asl/tile/model/memory/gm-atom-red.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-MGATHER-CUBE-PHYSICAL-SLACK-002","source":"asl/tile/memory-and-data-movement/irregular/MGATHER.asl","requirements":["PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-MGATHER-MASK-PREDICATE-001","PTO-MGATHER-CAS-ATOMIC-001","PTO-ATOM-RED-TYPE-LEGALITY-001"],"kind":"execution","summary":"Indexed TLSU preserves independent physical CUBE_M32 descriptors with exact allocation envelopes and valid-region padding while rejecting Rows=64 atomically.","pass_condition":"Ordinary, masked, CAS, atomic, and reduction paths retain distinct exact-capacity physical descriptors; a destination with physical Rows=64 raises Fault_TileLegality before indexed TLSU events, allocation, or publication and leaves descriptor state unchanged.","related_sources":["asl/tile/model/legality/indexed-layout.asl","asl/tile/model/legality/predicate-carriers.asl","asl/tile/model/memory/gather-scatter.asl","asl/tile/model/memory/atomics.asl","asl/tile/model/memory/gm-atom-red.asl"]}
 
 func TestOrdinary()
 begin
     ResetProfileState();
     let destination_ready = ConfigureCubeTileForMaskWithPhysical(
-        0, 768, 32, 3, 1, 1,
+        0, 384, 32, 3, 1, 1,
         TileDataType_U32, TileLayout_CUBE_M32, '0001');
     let index_ready = ConfigureCubeTileForMaskWithPhysical(
-        1, 1920, 32, 5, 1, 1,
+        1, 640, 32, 5, 1, 1,
         TileDataType_S32, TileLayout_CUBE_M32, '0001');
     assert destination_ready && index_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
@@ -16,22 +16,22 @@ begin
     MGATHER(0, Zeros{PTO_XLEN} + 0x500, 1, TilePad_Zero);
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0x12345678;
     assert _Tiles[[0]].rows == 32 && _Tiles[[0]].columns == 3 &&
-           _Tiles[[0]].capacity_bytes == 768;
+           _Tiles[[0]].capacity_bytes == 384;
     assert _Tiles[[1]].rows == 32 && _Tiles[[1]].columns == 5 &&
-           _Tiles[[1]].capacity_bytes == 1920;
+           _Tiles[[1]].capacity_bytes == 640;
 end;
 
 func TestMasked()
 begin
     ResetProfileState();
     let destination_ready = ConfigureCubeTileForMaskWithPhysical(
-        0, 768, 32, 3, 1, 1,
+        0, 384, 32, 3, 1, 1,
         TileDataType_U32, TileLayout_CUBE_M32, '0001');
     let index_ready = ConfigureCubeTileForMaskWithPhysical(
-        1, 1920, 32, 5, 1, 1,
+        1, 640, 32, 5, 1, 1,
         TileDataType_S32, TileLayout_CUBE_M32, '0001');
     let mask_ready = ConfigureCubeTileForMaskWithPhysical(
-        2, 768, 32, 12, 1, 1,
+        2, 384, 32, 12, 1, 1,
         TileDataType_U8, TileLayout_CUBE_M32, '0001');
     assert destination_ready && index_ready && mask_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
@@ -50,16 +50,16 @@ func TestCAS()
 begin
     ResetProfileState();
     let destination_ready = ConfigureCubeTileForMaskWithPhysical(
-        0, 768, 32, 6, 1, 1,
+        0, 384, 32, 6, 1, 1,
         TileDataType_U16, TileLayout_CUBE_M32, '0001');
     let index_ready = ConfigureCubeTileForMaskWithPhysical(
-        1, 1152, 32, 3, 1, 1,
+        1, 384, 32, 3, 1, 1,
         TileDataType_S32, TileLayout_CUBE_M32, '0001');
     let expected_ready = ConfigureCubeTileForMaskWithPhysical(
-        2, 1024, 32, 8, 1, 1,
+        2, 512, 32, 8, 1, 1,
         TileDataType_U16, TileLayout_CUBE_M32, '0001');
     let replacement_ready = ConfigureCubeTileForMaskWithPhysical(
-        3, 1152, 32, 6, 1, 1,
+        3, 384, 32, 6, 1, 1,
         TileDataType_U16, TileLayout_CUBE_M32, '0001');
     assert destination_ready && index_ready && expected_ready &&
            replacement_ready;
@@ -81,13 +81,13 @@ func TestAtomReduction()
 begin
     ResetProfileState();
     let destination_ready = ConfigureCubeTileForMaskWithPhysical(
-        0, 768, 32, 3, 1, 1,
+        0, 384, 32, 3, 1, 1,
         TileDataType_U32, TileLayout_CUBE_M32, '0001');
     let index_ready = ConfigureCubeTileForMaskWithPhysical(
-        1, 1920, 32, 5, 1, 1,
+        1, 640, 32, 5, 1, 1,
         TileDataType_S32, TileLayout_CUBE_M32, '0001');
     let value_ready = ConfigureCubeTileForMaskWithPhysical(
-        2, 1536, 32, 3, 1, 1,
+        2, 384, 32, 3, 1, 1,
         TileDataType_U32, TileLayout_CUBE_M32, '0001');
     assert destination_ready && index_ready && value_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
@@ -105,19 +105,19 @@ begin
     assert reduction_result == Zeros{PTO_XLEN} + 25;
     assert _Tiles[[0]].rows == 32 && _Tiles[[0]].columns == 3;
     assert _Tiles[[1]].rows == 32 && _Tiles[[1]].columns == 5 &&
-           _Tiles[[1]].capacity_bytes == 1920;
+           _Tiles[[1]].capacity_bytes == 640;
     assert _Tiles[[2]].rows == 32 && _Tiles[[2]].columns == 3 &&
-           _Tiles[[2]].capacity_bytes == 1536;
+           _Tiles[[2]].capacity_bytes == 384;
 end;
 
 func TestRejectsPhysicalRows()
 begin
     ResetProfileState();
     let destination_ready = ConfigureCubeTileForMaskWithPhysical(
-        0, 768, 32, 3, 1, 1,
+        0, 384, 32, 3, 1, 1,
         TileDataType_U32, TileLayout_CUBE_M32, '0001');
     let index_ready = ConfigureCubeTileForMaskWithPhysical(
-        1, 1920, 32, 5, 1, 1,
+        1, 640, 32, 5, 1, 1,
         TileDataType_S32, TileLayout_CUBE_M32, '0001');
     assert destination_ready && index_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 4);
