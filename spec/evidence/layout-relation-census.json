@@ -5097,7 +5097,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "021e07d39e079f5791e57e399c4850f7d7469b2a",
+  "candidate_head": "1c4f290cb23c11856dbf4b581ac91a54ed88fc17",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -16462,6 +16462,10 @@
         [
           "ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
           "asl/block/model/dispatch/tile-execution.asl"
+        ],
+        [
+          "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+          "asl/block/model/dispatch/gm-obligation-dispatch.asl"
         ]
       ],
       "before": [],
@@ -17308,6 +17312,10 @@
           "asl/block/model/dispatch/gm-obligation-dispatch.asl"
         ],
         [
+          "RetireAtomicTStoreConsumerDependencies",
+          "asl/block/model/operands/portable-carriers.asl"
+        ],
+        [
           "TileStoreSourceGeneration",
           "asl/tile/model/memory/load-store.asl"
         ]
@@ -18089,7 +18097,7 @@
             "BundleTileBindingCount",
             "BundleTileSourceIndex",
             "DecodeTileOperation",
-            "FindCurrentAtomicTStoreObligation",
+            "FindCurrentAtomicTStoreOccurrence",
             "GMReductionOperationDataTypeLegal",
             "GMReductionOperationDataTypeLegal",
             "GMReductionOperationForTStoreMode",
@@ -18173,7 +18181,7 @@
             "RowMajor"
           ],
           "path": "asl/block/model/dispatch/tlsu-atomic-tstore.asl",
-          "sha256": "2aafb8b7e74aefedfe2e26d2d6648891c265c75a285cfbd8598f9548adf9e197"
+          "sha256": "cb06da93b090488c943f0257859d6c937850735e89de6b13509777b68c98dc9c"
         }
       ],
       "after_callers": [
@@ -18292,7 +18300,7 @@
         "CUBE_M16",
         "CUBE_M32"
       ],
-      "after_sha256": "bf267fe003baf950d5843112215819c2744aee465ee85c834a401a0467d83666",
+      "after_sha256": "8f9ae233161fa986f6d1257a3143e0f52be0c1d5b7976a155b3b824698a5935c",
       "before_layouts": [],
       "before_sha256": "3269fa3785bfe7f8e4ef45fde7c8339f5063584c27642308c6001cbdbd178a1c",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -18305,6 +18313,8 @@
           "calls": [
             "AbortBundleLocalGenerationsForBundle",
             "AbortBundleSharedGenerationsForBundle",
+            "BundleAtomicTStoreSelected",
+            "BundleAtomicTStoreSelected",
             "BundleCurrentPEIsNonparticipantSharedAssembly",
             "BundleFirstGMSourceTile",
             "BundleLocalGenerationSlotForSource",
@@ -18321,6 +18331,7 @@
             "FaultGMObligation",
             "FinalizeSharedGenerationEarlyRetirement",
             "FinalizeSharedGenerationEarlyRetirement",
+            "FindCurrentAtomicTStoreOccurrence",
             "IssueGMObligation",
             "ReadBPC",
             "ReadScalarRegisterOperand",
@@ -18334,7 +18345,7 @@
           ],
           "layouts": [],
           "path": "asl/block/model/dispatch/gm-obligation-dispatch.asl",
-          "sha256": "a3f72e093fd8e5938fb25d0313d73de7440d67ed9cc198eca704339a7b931c95"
+          "sha256": "da6502cd0c354f7b9476b00aabfe4b8410e1ac20c7fc20ee5265fee8a15c708c"
         }
       ],
       "after_callers": [
@@ -51439,7 +51450,7 @@
               "BundleTileBindingCount",
               "BundleTileSourceIndex",
               "DecodeTileOperation",
-              "FindCurrentAtomicTStoreObligation",
+              "FindCurrentAtomicTStoreOccurrence",
               "GMReductionOperationDataTypeLegal",
               "GMReductionOperationDataTypeLegal",
               "GMReductionOperationForTStoreMode",
@@ -51523,7 +51534,7 @@
               "RowMajor"
             ],
             "path": "asl/block/model/dispatch/tlsu-atomic-tstore.asl",
-            "sha256": "2aafb8b7e74aefedfe2e26d2d6648891c265c75a285cfbd8598f9548adf9e197"
+            "sha256": "cb06da93b090488c943f0257859d6c937850735e89de6b13509777b68c98dc9c"
           }
         ],
         "ExecuteBundleComparisonGPRCarrier": [
@@ -52341,6 +52352,7 @@
               "BundleAtomicTStoreCurrentPESelected",
               "BundleAtomicTStoreSelected",
               "BundleAtomicTStoreSelected",
+              "BundleAtomicTStoreSelected",
               "BundleCubeMatrixSelected",
               "BundleCubeTransportSelected",
               "BundleCubeTransportSelected",
@@ -52424,13 +52436,14 @@
               "ExecuteBundleTPREFETCHOperation",
               "ExecuteBundleWeightTLOADOperation",
               "ExecuteTileInstructionWithoutTimeWithAcceptedApplicabilityRules",
+              "FinalizeAtomicTStoreOccurrence",
               "FinalizeBundleTileAttempt",
               "FinalizeBundleTileAttempt",
               "FinalizeBundleTileAttempt",
               "FinalizeBundleTileAttempt",
               "FinalizeBundleTileAttempt",
-              "FindCurrentAtomicTStoreObligation",
-              "FindCurrentAtomicTStoreObligation",
+              "FindCurrentAtomicTStoreOccurrence",
+              "FindCurrentAtomicTStoreOccurrence",
               "MarkSelectedBundleExecutionMaskCarrier",
               "PrepareSelectedBundleExecutionMaskMerge",
               "PrepareSelectedBundleExecutionMaskMerge",
@@ -52455,6 +52468,7 @@
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
+              "RequireBundleSharedSourcePayloadReadiness",
               "RequireBundleSharedSourcePayloads",
               "ResolveBundleTileDestinationsForOperation",
               "RetireBundleConsumerDependencies",
@@ -52508,7 +52522,7 @@
               "CUBE_M32"
             ],
             "path": "asl/block/model/dispatch/tile-execution.asl",
-            "sha256": "bf267fe003baf950d5843112215819c2744aee465ee85c834a401a0467d83666"
+            "sha256": "8f9ae233161fa986f6d1257a3143e0f52be0c1d5b7976a155b3b824698a5935c"
           }
         ],
         "ExecuteBundleTileOperationWithAcceptedApplicabilityRules": [
@@ -52516,6 +52530,8 @@
             "calls": [
               "AbortBundleLocalGenerationsForBundle",
               "AbortBundleSharedGenerationsForBundle",
+              "BundleAtomicTStoreSelected",
+              "BundleAtomicTStoreSelected",
               "BundleCurrentPEIsNonparticipantSharedAssembly",
               "BundleFirstGMSourceTile",
               "BundleLocalGenerationSlotForSource",
@@ -52532,6 +52548,7 @@
               "FaultGMObligation",
               "FinalizeSharedGenerationEarlyRetirement",
               "FinalizeSharedGenerationEarlyRetirement",
+              "FindCurrentAtomicTStoreOccurrence",
               "IssueGMObligation",
               "ReadBPC",
               "ReadScalarRegisterOperand",
@@ -52545,7 +52562,7 @@
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/gm-obligation-dispatch.asl",
-            "sha256": "a3f72e093fd8e5938fb25d0313d73de7440d67ed9cc198eca704339a7b931c95"
+            "sha256": "da6502cd0c354f7b9476b00aabfe4b8410e1ac20c7fc20ee5265fee8a15c708c"
           }
         ],
         "ExecuteBundleWeightTLOADOperation": [
