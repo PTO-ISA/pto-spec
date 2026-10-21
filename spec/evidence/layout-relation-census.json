@@ -5097,7 +5097,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "1c4f290cb23c11856dbf4b581ac91a54ed88fc17",
+  "candidate_head": "fdecfecf1db016cc426b69a38520e866787221df",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -18181,7 +18181,7 @@
             "RowMajor"
           ],
           "path": "asl/block/model/dispatch/tlsu-atomic-tstore.asl",
-          "sha256": "cb06da93b090488c943f0257859d6c937850735e89de6b13509777b68c98dc9c"
+          "sha256": "1bc64cfaddeb586c0e4791efdd3a341e10cae5b09c3d6e8dc9ca871f56b3db50"
         }
       ],
       "after_callers": [
@@ -51534,7 +51534,7 @@
               "RowMajor"
             ],
             "path": "asl/block/model/dispatch/tlsu-atomic-tstore.asl",
-            "sha256": "cb06da93b090488c943f0257859d6c937850735e89de6b13509777b68c98dc9c"
+            "sha256": "1bc64cfaddeb586c0e4791efdd3a341e10cae5b09c3d6e8dc9ca871f56b3db50"
           }
         ],
         "ExecuteBundleComparisonGPRCarrier": [
@@ -222628,6 +222628,6 @@
   },
   "refreshed_dispatch_baseline": "cbd64442b0585271fed2db633578b9fb1541e1d9",
   "schema": "pto.layout-relation-census.v3",
-  "source_path_count": 946,
+  "source_path_count": 947,
   "tile_location_normative_refs": []
 }
