@@ -196,7 +196,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | b_datr_32_c161a042ff38 | CMode | 3 | 0–7 | none | none | TCMP/TCMPS comparison relation 0..5, or Atomic TSTORE operation 0..7 only with Canonicalize=1 | EQ |
 | b_datr_32_c161a042ff38 | PadValueOrByteId | 2 | 0–3 | none | none | operation-selected padding value, byte identifier, or matrix CCTRL raw-partial/cache-hint control | Zero padding, ByteId zero, or matrix CCTRL=00 as selected by the operation schema |
 | b_datr_32_c161a042ff38 | Sat | 1 | 0–1 | none | none | saturation enable | disabled |
-| b_datr_32_c161a042ff38 | Canonicalize | 1 | 0–1 | none | none | TCVT private-format canonicalization enable | disabled |
+| b_datr_32_c161a042ff38 | Canonicalize | 1 | 0–1 | none | none | TCVT private-format canonicalization enable or Atomic TSTORE reduction-mode selector when CMode 0..7 | disabled |
 | b_datr_32_c161a042ff38 | DataType | 5 | 0–21, 24–28, 31 | none | 22–23, 29–30 | concrete Tile element type or DTYPE_NONE inheritance sentinel | FP64; code 31, not code zero, is DTYPE_NONE |
 | b_datr_32_c161a042ff38 | RMode | 3 | 0–7 | none | none | operation-specific selector: numeric rounding where applicable; BroadcastByteOffset for TROWEXPAND* on CUBE_M16/CUBE_M32 | Operation-defined default; row-expansion CUBE_M16/M32 uses zero BroadcastByteOffset, and other operations keep their existing zero meaning. |
 | b_datr_32_c161a042ff38 | Layout | 5 | 0–1, 3–4, 6, 8–11, 17–18, 20–31 | none | 2, 5, 7, 12–16, 19 | tile data layout, direct Local CUBE layout selector, or exact GM-to-CUBE/CUBE-to-GM conversion selector | NORM |
@@ -216,7 +216,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | CMode | TCMP/TCMPS comparison relation 0..5, or Atomic TSTORE operation 0..7 only with Canonicalize=1 |
 | RMode | operation-specific selector: numeric rounding where applicable; BroadcastByteOffset for TROWEXPAND* on CUBE_M16/CUBE_M32 |
 | Sat | saturation enable |
-| Canonicalize | TCVT private-format canonicalization enable |
+| Canonicalize | TCVT private-format canonicalization enable or Atomic TSTORE reduction-mode selector when CMode 0..7 |
 | PredInv | ExecutionMask polarity control: zero preserves, one inverts the logical predicate |
 | Zero | inactive ExecutionMask destination policy: zero MERGE, one ZERO |
 
@@ -291,7 +291,7 @@ end;
 - Layout codes 0, 1, 3, 4, 6, 8, 9, 10, 11, 17, 18, 20, 21 through 29, and 30 through 31 are assigned. Codes 10 and 11 are weight-mode TLOAD-only layouts; codes 21 through 26 select ND2M32, ND2M16, ND2N8, M322ND, M162ND, and N82ND respectively; code 29 selects direct Local CUBE_M32 and code 31 selects direct Local CUBE_M16.
 - CMode codes 0..5 select EQ, NE, LT, GT, LE, and GE; codes 6..7 are reserved except at the B.DATR command boundary of an active TLSU Function 1 TSTORE with Canonicalize=1, where they select ATOMIC_INC and ATOMIC_DEC.
 - All RMode codes 0..7 are assigned: operation default, RNE, RTZ, RTM, RTP, RNA, RTO, and RHB.
-- Canonicalize is legal only for TCVT; each selected tile operation separately constrains the applicable nonzero B.DATR fields and PadValueOrByteId interpretation.
+- Canonicalize is legal only for TCVT and, for TLSU Function 1 TSTORE, selects Atomic reduction when enabled with CMode 0..7; other tile operations retain their existing Canonicalize applicability.
 - Matrix/CUBE schemas interpret PadValueOrByteId as CCTRL: bit 0 selects raw-partial D plus a cache-replacement hint, bit 1 is an ACC-only explicit-C cache-use or prefetch hint, and init=1 forms require bit 1 to be zero.
 - PredInv and Zero are legal only for eligible Local CUBE_M16/CUBE_M32 schemas that bind an explicit ExecutionMask; otherwise either nonzero control rejects before effects. Bit 12 remains fixed at one.
 - TROWEXPAND, TROWEXPANDADD, TROWEXPANDSUB, TROWEXPANDMUL, TROWEXPANDDIV, TROWEXPANDMAX, TROWEXPANDMIN, and TROWEXPANDEXPDIF interpret RMode[2:0] as BroadcastByteOffset only for CUBE_M16/CUBE_M32; RowMajor requires zero. Other operation-specific RMode rules are unchanged.

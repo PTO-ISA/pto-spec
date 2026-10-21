@@ -84,7 +84,10 @@ This page is a generated reference view of the normative ASL unit.
 // Shared TSTORE Function 1 MAY use any nonzero participating PE subset.
 // PE_MASK zero MUST have no effect. Selected PE accesses
 // MUST be preflighted before any effect, and the architecture defines no order
-// among them. Programmers MUST avoid conflicting GM regions.
+// among them. Normal TSTORE programmers MUST avoid conflicting GM regions.
+// Atomic Function 1 TSTORE MAY use overlapping exact ranges: each active
+// occurrence is an intrinsic RMW serialized by the GM atomic order. Mixed-size
+// partial overlap remains illegal as defined by the Atomic TSTORE owner.
 // NDF-END: PTO-ARCH-GM-ACCESS-001
 
 pure func SharedStorePEMaskLegal(function: integer {0..31},

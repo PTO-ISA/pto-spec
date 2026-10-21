@@ -180,6 +180,7 @@ end;
 - All six one-bit fields are independently assigned; aq and rl do not require atom=1.
 - B.CATR is header-only and unique per block.
 - DR=1 is assigned only for VEC, SFU, and TLSU blocks and rejects for CUBE and non-tile blocks before effects.
+- Atomic TSTORE rejects B.CATR.atom=1 before effects; this operation exception does not change atom semantics for other operations.
 
 ## State effects
 
@@ -207,6 +208,7 @@ end;
 - A B.CATR outside an active header or a second B.CATR raises Illegal Block Exception before changing pending or architectural state.
 - DR=1 in CUBE or a non-tile block raises Illegal Block Exception before block effects; VEC, SFU, and TLSU blocks may consume dimension-reduction mode.
 - A failed or rejected block commit produces no post-commit trap and exposes no partial atomic-block result.
+- A participating TLSU Function 1 Atomic TSTORE with B.CATR.atom=1 raises Fault_TileLegality before memory effects; omitted B.CATR and atom=0 retain intrinsic Atomic TSTORE behavior.
 
 ## Examples
 

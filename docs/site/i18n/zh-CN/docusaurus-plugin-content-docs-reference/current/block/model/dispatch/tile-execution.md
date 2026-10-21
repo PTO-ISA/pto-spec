@@ -226,7 +226,7 @@ func ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules(
 begin
     if _BundleZeroParticipationSeen && BundleTileBindingCount() == 0 &&
        BundleSharedBindingCount() == 0 then return TRUE; end;
-    let admitted_atomic_tstore = FindCurrentAtomicTStoreObligation();
+    let admitted_atomic_tstore = FindCurrentAtomicTStoreOccurrence();
     if admitted_atomic_tstore >= 0 &&
        _GMObligations[[_CurrentModelCore]][[_CurrentMemoryAgent]]
            [[admitted_atomic_tstore as GMObligationIndex]]
@@ -272,7 +272,11 @@ begin
     // checks, but before any source/readiness/target preflight.  Atomic TSTORE
     // service and faults are per PE; a nonparticipant owns no occurrence.
     if BundleAtomicTStoreCurrentPENonparticipant() then return TRUE; end;
-    if !RequireBundleSharedSourcePayloads() then return FALSE; end;
+    if BundleAtomicTStoreSelected() then
+        if !RequireBundleSharedSourcePayloadReadiness() then return FALSE; end;
+    elsif !RequireBundleSharedSourcePayloads() then
+        return FALSE;
+    end;
     // A pending last-use cohort pins its exact Shared generation. Every
     // publisher waits here before descriptor preparation, GM effects, or
     // allocation; pinning never creates a new legality fault.
@@ -385,21 +389,21 @@ begin
     if specialized then
         if specialized_completed && _LastFault == Fault_None then
             if BundleAtomicTStoreSelected() then
-                let occurrence = FindCurrentAtomicTStoreObligation();
+                let occurrence = FindCurrentAtomicTStoreOccurrence();
                 let occurrence_completed = occurrence < 0 ||
                     _GMObligations[[_CurrentModelCore]][[_CurrentMemoryAgent]]
                         [[occurrence as GMObligationIndex]].state ==
                             GMObligation_Completed;
                 if BundleAtomicTStoreCurrentPESelected() &&
                    occurrence_completed then
-                    CommitBundleLocalGeneration();
-                    RetireBundleConsumerDependencies();
-                    FinalizeBundleTileAttempt(TileExecution_Executed);
                     if occurrence >= 0 then
-                        _GMObligations[[_CurrentModelCore]]
-                            [[_CurrentMemoryAgent]]
-                            [[occurrence as GMObligationIndex]]
-                                .atomic_tstore_finalization_pending = FALSE;
+                        FinalizeAtomicTStoreOccurrence(
+                            _CurrentModelCore, _CurrentMemoryAgent,
+                            occurrence as GMObligationIndex);
+                    else
+                        CommitBundleLocalGeneration();
+                        RetireBundleConsumerDependencies();
+                        FinalizeBundleTileAttempt(TileExecution_Executed);
                     end;
                 end;
             elsif !matrix_selected || !BundleTMATMULCurrentPEInactive() then

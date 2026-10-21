@@ -254,24 +254,25 @@ end;
 ## State effects
 
 - Reads one Local or published, whole-parent-ready Shared source without modifying its payload, descriptor, producer mask, readiness, or lifetime.
-- On success only GM and memory-event state change; the source binding is consumed by normal block completion.
+- Normal TSTORE consumes the source binding through ordinary successful block completion. Atomic TSTORE delays captured source last-use until its active occurrences and the existing required-participant generation are complete.
+- A Shared source that is pending or incomplete causes no payload read and no GM effect.
 
 ## Memory effects and ordering
 
 ### Memory effects
 
-- For every selected PE and each element in ValidRow x ValidCol, write GM at base + row * row_stride_bytes + column * element_size. Packed four-bit columns add floor(column / 2) to each byte-strided row base and select low/high by column parity.
-- The selected-PE footprint is accessed element by element until the first fault. Stores and memory events completed before that fault may remain visible.
+- Normal TSTORE writes every selected element in ValidRow x ValidCol at base + row * row_stride_bytes + column * element_size. Packed four-bit columns add floor(column / 2) to each byte-strided row base and select low/high by column parity.
+- Normal TSTORE accesses the selected-PE footprint element by element until the first fault; stores and memory events completed before that fault may remain visible. Atomic Function 1 TSTORE performs one intrinsic Atomic read-modify-write per active occurrence after complete per-PE preflight; occurrences after the first effect drain exactly once despite squash or abort.
 
 ### Ordering
 
-- Snapshot the source payload, resolve the complete schema and dimensions, validate the source descriptor or temporary descriptor, and access each selected GM element until the first fault.
-- After all requested stores complete without a fault, store beats have no architecture-defined relative order. Software avoids overlapping selected-PE GM regions or establishes ordering separately.
+- Normal TSTORE snapshots the source payload, resolves the complete schema and dimensions, validates the source descriptor or temporary descriptor, then accesses each selected GM element until the first fault.
+- After successful Normal TSTORE completion, store beats have no architecture-defined relative order. Atomic Function 1 TSTORE uses GM atomic serialization for each exact target; no fixed order is imposed across distinct targets or PEs.
 
 ## Exceptions
 
 - A malformed binding stream, missing dimensions, unsupported DataType, non-row-major source, undefined Local source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects. An unpublished or not-whole-ready Shared source waits without fault or effect.
-- A memory translation, permission, or alignment fault stops the request at the first fault; prior GM writes and memory events may remain visible.
+- For Normal TSTORE, a memory translation, permission, or alignment fault stops the request at the first fault; prior GM writes and memory events may remain visible. Atomic Function 1 TSTORE preflights the complete selected-PE footprint and produces no Atomic effects on a failed preflight.
 
 ## Examples
 

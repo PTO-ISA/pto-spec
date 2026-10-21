@@ -124,10 +124,15 @@ begin
     // A successfully admitted occurrence is serviced from its immutable GM
     // obligation by the per-PE progress scheduler. Re-entering the instruction
     // cannot reinterpret live bundle fields or repeat committed coordinates.
-    let existing = FindCurrentAtomicTStoreObligation();
+    let existing = FindCurrentAtomicTStoreOccurrence();
     if existing >= 0 &&
        _GMObligations[[_CurrentModelCore]][[_CurrentMemoryAgent]]
            [[existing as GMObligationIndex]].captured_atomic_tstore then
+        if _GMObligations[[_CurrentModelCore]][[_CurrentMemoryAgent]]
+               [[existing as GMObligationIndex]].state ==
+           GMObligation_Completed then
+            return TRUE;
+        end;
         return TRUE;
     end;
 

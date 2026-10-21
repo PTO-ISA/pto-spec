@@ -254,6 +254,66 @@ begin
     return 0;
 end;
 
+// Atomic TSTORE delays source success until the captured PE request has
+// drained.  Capture its last-use source only after the address/read/write
+// preflight succeeds, so a failed admission leaves no immutable lifetime
+// occurrence behind and a same-dynamic retry can revalidate.
+func CaptureAtomicTStoreSourceLifetime(shared: boolean,
+    source: TileIndex, local_epoch: integer)
+    => (boolean, integer)
+begin
+    if shared then
+        if BundleSharedBindingPhysicalCount() != 1 ||
+           _BundleSharedBindings[[0]].source_reuse then
+            return (TRUE, 0);
+        end;
+        let shared_id = _BundleSharedBindings[[0]].shared_tile_id;
+        let shared_record = SharedTileRecord(shared_id);
+        let ordinal = CaptureBundleSourceLifetime(TRUE, 0,
+            UInt(shared_id) as TileIndex, 0,
+            shared_record.payload_generation,
+            _BundleSharedBindings[[0]].pe_mask,
+            _BundleSharedBindings[[0]].source_lifetime_ordinal);
+        if ordinal == 0 then return (FALSE, 0); end;
+        _BundleSharedBindings[[0]].source_lifetime_captured = TRUE;
+        _BundleSharedBindings[[0]].source_lifetime_ordinal = ordinal;
+        return (TRUE, ordinal);
+    end;
+    if BundleTileBindingCount() != 1 ||
+       !_BundleTileBindings[[0]].source0_valid ||
+       _BundleTileBindings[[0]].source0_reuse then
+        return (TRUE, 0);
+    end;
+    let source_pe = _CurrentMemoryAgent;
+    let ordinal = CaptureBundleSourceLifetime(FALSE, source_pe, source,
+        local_epoch, 0, _BundleTileBindings[[0]].pe_mask,
+        _BundleTileBindings[[0]].source0_lifetime_ordinal);
+    if ordinal == 0 then return (FALSE, 0); end;
+    _BundleTileBindings[[0]].source0_lifetime_captured = TRUE;
+    _BundleTileBindings[[0]].source0_lifetime_ordinal = ordinal;
+    return (TRUE, ordinal);
+end;
+
+readonly func AtomicTStoreOwnsSourceLifetime(
+    core: PTOModelCoreIdentity, invocation: integer, pe: MemoryAgentId,
+    domain: integer, ordinal: integer) => boolean
+begin
+    if ordinal == 0 then return FALSE; end;
+    for slot = 0 to PTO_MODEL_GM_OBLIGATIONS - 1 do
+        let obligation = _GMObligations[[core]][[pe]][[slot]];
+        if obligation.active && obligation.captured_atomic_tstore &&
+           obligation.invocation == invocation &&
+           obligation.execution_domain_token == domain &&
+           obligation.atomic_tstore_source_lifetime_ordinal == ordinal &&
+           obligation.irrevocable &&
+           obligation.state != GMObligation_Completed &&
+           obligation.state != GMObligation_Cancelled then
+            return TRUE;
+        end;
+    end;
+    return FALSE;
+end;
+
 func CompleteBundleSourceLifetime(ordinal: integer)
 begin
     let slot = FindBundleSourceLifetimeOrdinal(ordinal);
@@ -464,29 +524,28 @@ end;
 func SquashSourceLifetimes(core: PTOModelCoreIdentity, invocation: integer,
                            domain: integer)
 begin
-    // Preserve the captured cohort while an irrevocable Atomic TSTORE still
-    // owns its source snapshot. The scheduler either completes the original
-    // occurrence after drain or retires the invocation's lifetimes only after
-    // every retained obligation quiesces.
-    if !KernelHasIrrevocableAtomicTStore(core, invocation) then
-        for slot = 0 to 63 do
-            if _BundleSourceLifetimes[[slot]].valid &&
-               _BundleSourceLifetimes[[slot]].core == core &&
-               _BundleSourceLifetimes[[slot]].invocation == invocation then
-                for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
-                    if _BundleSourceLifetimes[[slot]].captured_mask[
-                           PTOPEMaskBitOfPEIdentity(pe)] == '1' &&
-                       _BundleSourceLifetimes[[slot]].domain_tokens[[pe]] ==
-                           domain then
-                        let mask_bit = PTOPEMaskBitOfPEIdentity(pe);
-                        _BundleSourceLifetimes[[slot]].captured_mask[mask_bit] = '0';
-                        _BundleSourceLifetimes[[slot]].completed_mask[mask_bit] = '0';
-                        _BundleSourceLifetimes[[slot]].domain_tokens[[pe]] = 0;
-                    end;
+    // Keep only an uncompleted token owned by this exact irrevocable request.
+    // Successful PE bits remain attached to their immutable cohort; unrelated
+    // captures in the same invocation still follow ordinary domain squash.
+    for slot = 0 to 63 do
+        if _BundleSourceLifetimes[[slot]].valid &&
+           _BundleSourceLifetimes[[slot]].core == core &&
+           _BundleSourceLifetimes[[slot]].invocation == invocation then
+            for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+                let mask_bit = PTOPEMaskBitOfPEIdentity(pe);
+                if _BundleSourceLifetimes[[slot]].captured_mask[mask_bit] == '1' &&
+                   _BundleSourceLifetimes[[slot]].domain_tokens[[pe]] == domain &&
+                   _BundleSourceLifetimes[[slot]].completed_mask[mask_bit] == '0' &&
+                   !AtomicTStoreOwnsSourceLifetime(core, invocation,
+                       pe as MemoryAgentId, domain,
+                       _BundleSourceLifetimes[[slot]].ordinal) then
+                    _BundleSourceLifetimes[[slot]].captured_mask[mask_bit] = '0';
+                    _BundleSourceLifetimes[[slot]].completed_mask[mask_bit] = '0';
+                    _BundleSourceLifetimes[[slot]].domain_tokens[[pe]] = 0;
                 end;
-                if _BundleSourceLifetimes[[slot]].captured_mask == Zeros{4} then
-                    _BundleSourceLifetimes[[slot]].valid = FALSE;
-                end;
+            end;
+            if _BundleSourceLifetimes[[slot]].captured_mask == Zeros{4} then
+                _BundleSourceLifetimes[[slot]].valid = FALSE;
             end;
         end;
     end;

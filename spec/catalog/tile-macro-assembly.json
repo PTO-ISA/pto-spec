@@ -272351,7 +272351,7 @@
       "engine": "TLSU",
       "exceptions": [
         "A malformed binding stream, missing dimensions, unsupported DataType, non-row-major source, undefined Local source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects. An unpublished or not-whole-ready Shared source waits without fault or effect.",
-        "A memory translation, permission, or alignment fault stops the request at the first fault; prior GM writes and memory events may remain visible."
+        "For Normal TSTORE, a memory translation, permission, or alignment fault stops the request at the first fault; prior GM writes and memory events may remain visible. Atomic Function 1 TSTORE preflights the complete selected-PE footprint and produces no Atomic effects on a failed preflight."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
       "forms": [

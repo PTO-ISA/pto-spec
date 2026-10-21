@@ -108,6 +108,8 @@ begin
         let command_status = ExecuteCommandInstruction(instruction, length_bits);
         if command_status == CommandExecution_Executed then
             return PTOInstruction_Executed;
+        elsif command_status == CommandExecution_Blocked then
+            return PTOInstruction_Blocked;
         else
             return PTOInstruction_Rejected;
         end;

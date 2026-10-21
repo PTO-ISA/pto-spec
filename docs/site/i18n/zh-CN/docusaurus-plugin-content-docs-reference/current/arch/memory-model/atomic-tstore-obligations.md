@@ -33,8 +33,9 @@ begin
            obligation.invocation == _CurrentKernelInvocation &&
            obligation.instruction_pc == ReadBPC() &&
            obligation.execution_domain_token == _BundleExecutionDomainToken &&
-           obligation.state != GMObligation_Completed &&
-           obligation.state != GMObligation_Cancelled then
+           (obligation.state == GMObligation_Submitted ||
+            obligation.state == GMObligation_Validated ||
+            obligation.state == GMObligation_Issued) then
             return TRUE;
         end;
     end;
@@ -56,6 +57,31 @@ begin
         end;
     end;
     return FALSE;
+end;
+
+// A completed request remains discoverable while its owning bundle retries
+// the actual commit boundary. The bundle execution-domain token distinguishes
+// a later dynamic BSTART at the same PC, so retaining this record cannot
+// capture a new occurrence.
+readonly func FindCurrentAtomicTStoreOccurrence()
+    => integer {-1..PTO_MODEL_GM_OBLIGATIONS-1}
+begin
+    for slot = 0 to PTO_MODEL_GM_OBLIGATIONS - 1 do
+        let obligation = _GMObligations[[_CurrentModelCore]]
+            [[_CurrentMemoryAgent]][[slot]];
+        if obligation.active && obligation.captured_atomic_tstore &&
+           obligation.request_class == GMRequest_Atomic &&
+           obligation.descriptor.operation_class == BundleOperation_TileMemory &&
+           obligation.descriptor.selector_valid &&
+           UInt(obligation.descriptor.selector[4:0]) == 1 &&
+           obligation.invocation == _CurrentKernelInvocation &&
+           obligation.instruction_pc == ReadBPC() &&
+           obligation.execution_domain_token == _BundleExecutionDomainToken &&
+           obligation.state != GMObligation_Cancelled then
+            return slot as integer {-1..PTO_MODEL_GM_OBLIGATIONS-1};
+        end;
+    end;
+    return -1;
 end;
 
 readonly func FindCurrentAtomicTStoreObligation()

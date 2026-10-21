@@ -117,6 +117,13 @@ type GMObligationSlot of record {
     source_tile: TileIndex,
     source_generation: Word,
     source_snapshot: TileInfo,
+    // Atomic TSTORE keeps the ordinary Local payload epoch and exact
+    // source-lifetime occurrence separately from any cooperative generation
+    // carried by TileStoreSourceGeneration.
+    atomic_tstore_source_shared: boolean,
+    atomic_tstore_source_pe: MemoryAgentId,
+    atomic_tstore_source_payload_epoch: integer,
+    atomic_tstore_source_lifetime_ordinal: integer,
     // Atomic TSTORE admission captures the complete active-coordinate set
     // and each successful translated target before any RMW can execute.
     // The source values and DATR fields remain immutable in this slot while
@@ -312,6 +319,14 @@ begin
             else source_generation,
         source_snapshot = if preserve_capture then old.source_snapshot
             else source_snapshot,
+        atomic_tstore_source_shared = if preserve_capture then
+            old.atomic_tstore_source_shared else FALSE,
+        atomic_tstore_source_pe = if preserve_capture then
+            old.atomic_tstore_source_pe else pe,
+        atomic_tstore_source_payload_epoch = if preserve_capture then
+            old.atomic_tstore_source_payload_epoch else 0,
+        atomic_tstore_source_lifetime_ordinal = if preserve_capture then
+            old.atomic_tstore_source_lifetime_ordinal else 0,
         captured_atomic_tstore = if preserve_capture then
             old.captured_atomic_tstore else FALSE,
         atomic_tstore_data_attributes = if preserve_capture then

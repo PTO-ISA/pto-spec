@@ -59,7 +59,7 @@ A TSTORE stop names a Shared source whose next generation has not published. Dis
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/gm-obligation-dispatch.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-GM-OBLIGATION","surface":"block","classification":["model","dispatch","gm-obligation-dispatch"],"depends_on":["PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-ARCH-STATE-PROGRAM-COUNTER","PTO-ARCH-PROGRAMMING-MODEL-SCALAR-REGISTERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-GM-OBLIGATION","surface":"block","classification":["model","dispatch","gm-obligation-dispatch"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-ARCH-STATE-PROGRAM-COUNTER","PTO-ARCH-PROGRAMMING-MODEL-SCALAR-REGISTERS"]}
 func BundleTileOperationHasGMEffect() => boolean
 begin
     if !_BundleOperation.valid ||
@@ -296,7 +296,22 @@ begin
         FinalizeSharedGenerationEarlyRetirement();
         return TRUE;
     end;
+    // The owning Atomic TSTORE record survives a drain until its encoded
+    // BSTOP/BSTART boundary retries. Do not allocate a generic GM obligation
+    // on that retry: the captured completion identity already represents the
+    // actual effect and is distinguished from a later same-PC BSTART by its
+    // execution-domain token.
+    if BundleAtomicTStoreSelected() then
+        let atomic_occurrence = FindCurrentAtomicTStoreOccurrence();
+        if atomic_occurrence >= 0 &&
+           _GMObligations[[_CurrentModelCore]][[_CurrentMemoryAgent]]
+               [[atomic_occurrence as GMObligationIndex]]
+                   .captured_atomic_tstore then
+            return TRUE;
+        end;
+    end;
     let tracks_gm = BundleTileOperationHasGMEffect() &&
+        !BundleAtomicTStoreSelected() &&
         _CurrentMemoryOrigin == MemoryEventOrigin_Kernel &&
         _KernelInvocationActiveByCore[[_CurrentModelCore]] &&
         _CurrentKernelInvocation != 0;

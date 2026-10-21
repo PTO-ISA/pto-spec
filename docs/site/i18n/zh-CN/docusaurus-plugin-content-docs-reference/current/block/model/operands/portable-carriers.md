@@ -321,6 +321,54 @@ begin
     end;
 end;
 
+// Deferred Atomic TSTORE completion retires only the consumer records named
+// by its immutable captured bundle and execution-domain provenance. Other
+// eligible consumers in the same Core remain untouched.
+func RetireAtomicTStoreConsumerDependencies(
+    bindings: BundleTileBindingSnapshot, instruction_pc: Word,
+    execution_domain_token: integer, pe: MemoryAgentId)
+begin
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if bindings[[binding]].valid then
+            for source_number = 0 to 1 do
+                let source_valid = if source_number == 0 then
+                    bindings[[binding]].source0_valid
+                    else bindings[[binding]].source1_valid;
+                let source = if source_number == 0 then
+                    bindings[[binding]].source0
+                    else bindings[[binding]].source1;
+                if source_valid && bindings[[binding]].pe_mask[
+                       PTOPEMaskBitOfPEIdentity(pe)] == '1' then
+                    let generation_slot =
+                        BundleLocalGenerationSlotForSource(source);
+                    if generation_slot < 64 then
+                        for index = 0 to _LocalGenerations[[generation_slot]].consumer_count - 1
+                            looplimit 16 do
+                            let dependency = _LocalGenerations[[generation_slot]].consumers[[index]];
+                            if dependency.valid &&
+                               dependency.state ==
+                                   BundleConsumerDependency_Eligible &&
+                               dependency.source == source &&
+                               dependency.participant_mask ==
+                                   bindings[[binding]].pe_mask &&
+                               dependency.consumer_instruction_instance ==
+                                   instruction_pc &&
+                               dependency.execution_domain_token ==
+                                   execution_domain_token then
+                                _LocalGenerations[[generation_slot]]
+                                    .consumers[[index]].state =
+                                        BundleConsumerDependency_Retired;
+                                _LocalGenerations[[generation_slot]]
+                                    .consumers[[index]].valid = FALSE;
+                            end;
+                        end;
+                    end;
+                end;
+            end;
+        end;
+    end;
+end;
+
 // PTO-NDF: PTO-B-ASSEMBLE-CONSUMER-READINESS-001
 // Architecture event entry point for completion of one registered writer.
 // Registration contributes coverage only.  This event contributes readiness
