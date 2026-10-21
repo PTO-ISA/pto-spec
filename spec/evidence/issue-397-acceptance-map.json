@@ -2,7 +2,7 @@
   "schema": "pto.issue-397-acceptance-map.v1",
   "contract": "issue-397__tstore-strided-atomic-reduction-frozen.md",
   "baseline": "b0165320a4b575b18d2f4d93faf40178f661ab49",
-  "status": "candidate-focused-witnesses-passing",
+  "status": "correction-focused-witnesses-passing",
   "points": [
     {
       "acceptance": "A01",
@@ -40,46 +40,52 @@
     {
       "acceptance": "A03",
       "tests": [
-        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001"
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001",
+        "PTO-AVS-BLOCK-B-DATR-PLACEMENT-001"
       ],
       "files": [
-        "tests/asl/block/model/dispatch/command-data-attributes/block-fault-tstore-atomic-cmode-context-001.asl"
+        "tests/asl/block/model/dispatch/command-data-attributes/block-fault-tstore-atomic-cmode-context-001.asl",
+        "tests/asl/block/attributes/B.DATR/block-fault-b-datr-placement-001.asl"
       ],
       "owner": "asl/block/model/dispatch/command-data-attributes.asl",
       "requirements": [
         "PTO-B-DATR-FIELDS-001",
         "PTO-TSTORE-STRIDED-ATOMIC-RED-001"
       ],
-      "assertions": "CMode 6/7 are accepted only for canonicalized TLSU Function 1 TSTORE; other contexts reject at B.DATR without latching state or effects."
+      "assertions": "Encoded TCMP (0x00d) and TCMPS (0x02d) BSTARTs accept comparison modes 0..5 and reject 6/7 at B.DATR without latching data attributes; canonicalized Function 1 TSTORE retains modes 0..7, and standalone/body placement still faults before state changes."
     },
     {
       "acceptance": "A04",
       "tests": [
-        "PTO-AVS-TILE-TSTORE-ATOMIC-DTYPE-001"
+        "PTO-AVS-TILE-TSTORE-ATOMIC-DTYPE-001",
+        "PTO-AVS-TILE-GM-ATOM-RED-FAMILY-001"
       ],
       "files": [
-        "tests/asl/tile/model/memory/atomic-tstore/tile-fault-tstore-atomic-dtype-001.asl"
+        "tests/asl/tile/model/memory/atomic-tstore/tile-fault-tstore-atomic-dtype-001.asl",
+        "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-atom-red-family-001.asl"
       ],
       "owner": "asl/tile/model/memory/atomic-tstore.asl",
       "requirements": [
         "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
         "PTO-ATOM-RED-TYPE-LEGALITY-001"
       ],
-      "assertions": "Independent operation-by-assigned-dtype oracle matches all eight operation legality rows; every admitted pair dispatches Function 1 with exact output and an Atomic event, while excluded examples fault before effects."
+      "assertions": "Independent assigned-dtype matrix exercises every admitted Function 1 pair and excluded rows; the shared integer boundary normalizes carriers, with indexed U32 INC high bits ignored and an indexed S32 MIN 0x00000001ffffffff payload interpreted as -1, each checked by literal Atomic event and stored value."
     },
     {
       "acceptance": "A05",
       "tests": [
-        "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001"
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-INTERLEAVED-001"
       ],
       "files": [
-        "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-atomic-m32-slab-001.asl"
+        "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-atomic-m32-slab-001.asl",
+        "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-interleaved-001.asl"
       ],
       "owner": "asl/tile/model/memory/atomic-tstore.asl",
       "requirements": [
         "PTO-TSTORE-STRIDED-ATOMIC-RED-001"
       ],
-      "assertions": "Two distinct M32 FP32 producers add 1.0 and 2.0 to all 8192 initial 7.0 words, yielding 10.0 with guards intact and no index allocation; selected under 64-KiB profile."
+      "assertions": "The 8192-element M32 FP32 slab yields exact 10.0 values with guards intact; an independent pair of admitted encoded producers alternates real scheduler service beats and asserts every RMW pair, PE/invocation provenance, all contributions, and guards."
     },
     {
       "acceptance": "A06",
@@ -99,17 +105,19 @@
     {
       "acceptance": "A07",
       "tests": [
-        "PTO-AVS-TILE-TSTORE-ATOMIC-OVERLAP-001"
+        "PTO-AVS-TILE-TSTORE-ATOMIC-OVERLAP-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-INTERLEAVED-001"
       ],
       "files": [
-        "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-overlap-001.asl"
+        "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-overlap-001.asl",
+        "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-interleaved-001.asl"
       ],
       "owner": "asl/tile/model/memory/atomic-tstore.asl",
       "requirements": [
         "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
         "PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001"
       ],
-      "assertions": "Zero row stride and cross-PE duplicate targets preserve all four independent U32 ADD contributions and emit four Atomic events."
+      "assertions": "Alongside zero-stride overlap, the interleaved point uses positive aligned stride 4, shorter than the 8-byte row, with repeated exact targets 0x204; two admitted producers receive alternating service and all eight old/new RMW pairs prove no lost or duplicate contribution."
     },
     {
       "acceptance": "A08",
@@ -193,10 +201,12 @@
     {
       "acceptance": "A13",
       "tests": [
-        "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001"
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-CANCEL-001"
       ],
       "files": [
-        "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-drain-001.asl"
+        "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-drain-001.asl",
+        "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-cancel-001.asl"
       ],
       "owner": "asl/arch/state/kernel-lifecycle.asl",
       "requirements": [
@@ -204,7 +214,7 @@
         "PTO-ARCH-GM-OBLIGATIONS-001",
         "PTO-ARCH-MEMORY-MODEL-FLUSH-001"
       ],
-      "assertions": "After the first committed RMW, abort retains the obligation/generation, drain emits each remaining event once with captured invocation provenance, and incomplete required Shared participants are not falsely consumed."
+      "assertions": "The drain witness retains a partially committed Atomic TSTORE across abort and actual owning-domain squash while cancelling a separate wrong-path Shared lifetime; the added pre-effect abort point cancels a reversible admitted request, leaves GM sentinels untouched, emits no Atomic event, and never marks the PE successful."
     },
     {
       "acceptance": "A14",
@@ -258,7 +268,13 @@
         "PTO-AVS-TILE-TCMP-ORDER-001",
         "PTO-AVS-TILE-TCMPS-CROSS-CARRIER-001",
         "PTO-AVS-TILE-GM-ADD-GRADUAL-001",
-        "PTO-AVS-TILE-GM-ADD-GRADUAL-002"
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-002",
+        "PTO-AVS-BLOCK-SUBVIEW-SHARED-001",
+        "PTO-AVS-ARCH-GM-OBLIGATION-DELAYED-TSTORE-001",
+        "PTO-AVS-BLOCK-SOURCE-LIFETIME-FAULT-SQUASH-RETRY-002",
+        "PTO-AVS-BLOCK-SOURCE-LIFETIME-OCCURRENCE-ORDER-004",
+        "PTO-AVS-BLOCK-LOCAL-GENERATION-RECOVERY-ISOLATION-001",
+        "PTO-AVS-BLOCK-SHARED-TLSU-ASSEMBLE-SQUASH-014"
       ],
       "files": [
         "tests/asl/tile/memory-and-data-movement/regular/TSTORE/tile-exec-tstore-direct-001.asl",
@@ -269,14 +285,20 @@
         "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-exec-tcmp-order-001.asl",
         "tests/asl/tile/tile-scalar-and-immediate/logical/TCMPS/tile-exec-tcmps-cross-carrier-001.asl",
         "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-add-gradual-001.asl",
-        "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-add-old-value-001.asl"
+        "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-add-old-value-001.asl",
+        "tests/asl/block/model/operands/shared-generation/block-exec-shared-subview-001.asl",
+        "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-lifecycle-delayed-tstore-001.asl",
+        "tests/asl/block/model/state/source-lifetime/block-state-source-lifetime-fault-squash-retry-002.asl",
+        "tests/asl/block/model/state/source-lifetime/block-state-source-lifetime-occurrence-order-004.asl",
+        "tests/asl/block/model/operands/local-generation-squash/block-state-local-generation-squash-recovery-isolation-001.asl",
+        "tests/asl/block/model/operands/shared-generation-pe-requests/block-exec-shared-tlsu-assemble-squash-014.asl"
       ],
       "owner": "asl/tile/model/memory/load-store.asl",
       "requirements": [
         "PTO-BSTART-TSTORE-MEMORY-001",
         "PTO-GM-FLOATING-ADD-NUMERIC-001"
       ],
-      "assertions": "Nine focused pre-existing compatibility points pass: Local/CUBE/Shared normal TSTORE, indexed non-ADD MSCATTER_MIN, TCVT, TCMP, TCMPS, and both indexed gradual FP32 ADD results including atom.add old-value behavior."
+      "assertions": "The focused Normal group now includes Shared SUBVIEW, posted TSTORE production-beat completion, Shared source lifetime fault/squash retry and concurrent occurrence order, Local generation recovery isolation, and Shared TLSU squash/publication isolation; each point exercises its existing Normal path and checks state/effects."
     },
     {
       "acceptance": "A17",
@@ -297,18 +319,20 @@
       "acceptance": "A18",
       "tests": [
         "PTO-AVS-ARCH-TSTORE-ATOMIC-ADMISSION-001",
-        "PTO-AVS-ARCH-TSTORE-ATOMIC-TRANSLATION-001"
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-TRANSLATION-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-TRANSLATION-001"
       ],
       "files": [
         "tests/asl/arch/memory-model/gm-obligations/arch-state-tstore-atomic-admission-001.asl",
-        "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-translation-001.asl"
+        "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-translation-001.asl",
+        "tests/asl/tile/model/memory/atomic-tstore/tile-fault-tstore-atomic-translation-001.asl"
       ],
       "owner": "asl/arch/memory-model/gm-obligations.asl",
       "requirements": [
         "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
         "PTO-ARCH-GM-OBLIGATIONS-001"
       ],
-      "assertions": "Admission freezes operator, source, mask, target and request provenance while each RMW reads live old GM; a never-admitted fault retries the same request, and controlled post-admission mapping change preserves the captured translated target."
+      "assertions": "Admission freezes operator/source/mask/targets while each RMW samples live GM; the test-only translation profile causes a target translation disagreement before effects, then real trap-context recovery retries the same unadmitted bundle word/domain/order/invocation/PC under restored identity mapping and commits exactly once; a separate post-admission mapping change preserves captured targets."
     },
     {
       "acceptance": "A19",
@@ -335,22 +359,24 @@
         "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
         "PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001"
       ],
-      "assertions": "Local and Shared `.reuse` retain payload; Local last-use consumes only after its committed update; Shared PE0 success leaves the original generation pinned until PE1 required success, then consumes once; wait, fault, retry, abort/drain and inactive paths do not fabricate successful completion."
+      "assertions": "Local and Shared reuse retain payload; Local last-use consumes only after the committed update. Deferred Local admission captures and pins the ordinary payload epoch, and draining the old request leaves a replacement epoch/payload intact. Shared PE0 completion keeps the required cohort generation pinned until PE1 success consumes once; wait, fault, retry, abort/drain and inactive paths never fabricate successful completion."
     },
     {
       "acceptance": "A20",
       "tests": [
-        "PTO-AVS-ARCH-TSTORE-ATOMIC-IDENTITY-001"
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-IDENTITY-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-COMPLETION-001"
       ],
       "files": [
-        "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-identity-001.asl"
+        "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-identity-001.asl",
+        "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-completion-001.asl"
       ],
       "owner": "asl/arch/memory-model/gm-obligations.asl",
       "requirements": [
         "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
         "PTO-ARCH-GM-OBLIGATIONS-001"
       ],
-      "assertions": "Same dynamic request replay preserves captured core/PE/invocation/program-order/source provenance without duplicates; new same-PC occurrence gets a distinct full identity."
+      "assertions": "Same-dynamic replay preserves core/PE/invocation/program-order/source identity; actual encoded BSTOP retries at zero and partial progress keep the same obligation identity through drain, then commit/trap without reissuing any RMW. A separate real encoded BSTOP retires a completed occurrence before control flow reaches the same static BSTART; the new domain/obligation/order captures the republished Local payload epoch and commits one additional exact Atomic update."
     },
     {
       "acceptance": "A21",
@@ -376,17 +402,19 @@
     {
       "acceptance": "A22",
       "tests": [
-        "PTO-AVS-TILE-TSTORE-ATOMIC-BOUNDARY-001"
+        "PTO-AVS-TILE-TSTORE-ATOMIC-BOUNDARY-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-COMPLETION-001"
       ],
       "files": [
-        "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-boundary-001.asl"
+        "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-boundary-001.asl",
+        "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-completion-001.asl"
       ],
       "owner": "asl/tile/model/memory/atomic-tstore.asl",
       "requirements": [
         "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
         "PTO-ARCH-MEMORY-MODEL-QUALIFIER-001"
       ],
-      "assertions": "M32 FP64/U64 lower and upper boundaries dispatch Function 1, M16 b64 rejects before effects, and aq/rl/aqrl, far and post-commit trap retain existing completion behavior; selected under 64-KiB profile."
+      "assertions": "M32 FP64/U64 lower and upper boundaries dispatch Function 1, M16 b64 rejects before effects, and aq/rl/aqrl, far and trap qualifiers retain completion behavior. Encoded Atomic BSTOP waits live at zero and partial beats, drains two updates once, then commits and traps at the continuation once; Normal posted TSTORE remains unchanged."
     },
     {
       "acceptance": "A23",
@@ -432,46 +460,53 @@
       "memory_bytes": 4096,
       "event_capacity": 16,
       "ids": [
-        "PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001",
-        "PTO-AVS-TILE-TSTORE-DIRECT-001",
-        "PTO-AVS-TILE-TSTORE-CUBE-002",
-        "PTO-AVS-BLOCK-SHARED-TSTORE-FOURSTREAM-009",
-        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001",
-        "PTO-AVS-TILE-TSTORE-ATOMIC-DTYPE-001",
-        "PTO-AVS-TILE-TSTORE-ATOMIC-OVERLAP-001",
-        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-001",
-        "PTO-AVS-TILE-TSTORE-ATOMIC-MASK-001",
-        "PTO-AVS-TILE-TSTORE-ATOMIC-LEGALITY-001",
-        "PTO-AVS-TILE-TSTORE-ATOMIC-PREFLIGHT-001",
-        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-FAULT-001",
+        "PTO-AVS-ARCH-GM-OBLIGATION-DELAYED-TSTORE-001",
+        "PTO-AVS-ARCH-TILE-EVENTS-ORDER-003",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-ADMISSION-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-CANCEL-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-COMPLETION-001",
         "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001",
-        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP16-001",
-        "PTO-AVS-TILE-GM-ADD-NUMERIC-BF16-001",
-        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP32-001",
-        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP64-001",
-        "PTO-AVS-TILE-TSTORE-ATOMIC-NUMERIC-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-IDENTITY-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-INTERLEAVED-001",
+        "PTO-AVS-BLOCK-B-DATR-PLACEMENT-001",
         "PTO-AVS-BLOCK-BSTART-TSTORE-DECODE-001",
-        "PTO-AVS-TILE-MSCATTER-MIN-SEMANTIC-001",
-        "PTO-AVS-TILE-TCVT-INTEGRAL-DECODED-001",
-        "PTO-AVS-TILE-TCMP-ORDER-001",
-        "PTO-AVS-TILE-TCMPS-CROSS-CARRIER-001",
+        "PTO-AVS-BLOCK-LOCAL-GENERATION-RECOVERY-ISOLATION-001",
+        "PTO-AVS-BLOCK-SHARED-TLSU-ASSEMBLE-SQUASH-014",
+        "PTO-AVS-BLOCK-SHARED-TSTORE-FOURSTREAM-009",
+        "PTO-AVS-BLOCK-SOURCE-LIFETIME-FAULT-SQUASH-RETRY-002",
+        "PTO-AVS-BLOCK-SOURCE-LIFETIME-OCCURRENCE-ORDER-004",
+        "PTO-AVS-BLOCK-SUBVIEW-SHARED-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CATR-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-LIFETIME-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-FAULT-001",
         "PTO-AVS-TILE-GM-ADD-GRADUAL-001",
         "PTO-AVS-TILE-GM-ADD-GRADUAL-002",
-        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CATR-001",
-        "PTO-AVS-ARCH-TSTORE-ATOMIC-ADMISSION-001",
-        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-001",
-        "PTO-AVS-BLOCK-TSTORE-ATOMIC-LIFETIME-001",
-        "PTO-AVS-ARCH-TSTORE-ATOMIC-IDENTITY-001",
-        "PTO-AVS-TILE-TSTORE-ATOMIC-UNEQUAL-LIMITS-001",
-        "PTO-AVS-ARCH-TILE-EVENTS-ORDER-003",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-BF16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP32-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP64-001",
+        "PTO-AVS-TILE-GM-ATOM-RED-FAMILY-001",
+        "PTO-AVS-TILE-MSCATTER-MIN-SEMANTIC-001",
+        "PTO-AVS-TILE-TCMP-ORDER-001",
+        "PTO-AVS-TILE-TCMPS-CROSS-CARRIER-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-DECODED-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-DTYPE-001",
         "PTO-AVS-TILE-TSTORE-ATOMIC-GRADUAL-001",
-        "PTO-AVS-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS-STATIC-001",
-        "PTO-AVS-BLOCK-MODEL-DISPATCH-TLSU-ATOMIC-TSTORE-STATIC-001",
-        "PTO-AVS-TILE-MODEL-MEMORY-ATOMIC-TSTORE-STATIC-001",
-        "PTO-AVS-TILE-MODEL-MEMORY-GM-OBLIGATION-PROGRESS-STATIC-001"
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LEGALITY-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-MASK-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-NUMERIC-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-OVERLAP-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-PREFLIGHT-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-UNEQUAL-LIMITS-001",
+        "PTO-AVS-TILE-TSTORE-CUBE-002",
+        "PTO-AVS-TILE-TSTORE-DIRECT-001"
       ],
-      "command_template": "scripts/print-asl-test-matrix --page-size 100 --ids-file <exact-id-file> --output-dir <output>; ASLREF=./scripts/aslref PTO_ASL_TEST_TIMEOUT_SECONDS=600 scripts/run-asl-page --matrix <output>/page-0.json -j4",
-      "scope_note": "Only ordinary production defaults; does not cover separately selected 64-KiB or translation-control points."
+      "command_template": "scripts/print-asl-test-matrix --ids-file <exact-id-file> --page-size 64 --output-dir <output>; env -u ASLREF PTO_ASL_TEST_TIMEOUT_SECONDS=600 scripts/run-asl-page --matrix <output>/page-0.json -j4",
+      "scope_note": "Canonical registry selection with ASLREF unset; only IDs assigned to this profile use its configuration, while other selected IDs keep their registered/default profiles."
     },
     "memory_64k": {
       "launcher": "./scripts/aslref-64k",
@@ -480,23 +515,26 @@
       "event_capacity": 16,
       "ids": [
         "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001",
-        "PTO-AVS-TILE-TSTORE-ATOMIC-CUBE-STRIDE-001",
-        "PTO-AVS-TILE-TSTORE-ATOMIC-BOUNDARY-001"
+        "PTO-AVS-TILE-TSTORE-ATOMIC-BOUNDARY-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-CUBE-STRIDE-001"
       ],
-      "command_template": "scripts/print-asl-test-matrix --page-size 100 --ids-file <exact-id-file> --output-dir <output>; ASLREF=./scripts/aslref-64k PTO_ASL_TEST_TIMEOUT_SECONDS=600 scripts/run-asl-page --matrix <output>/page-0.json -j3",
-      "scope_note": "Config-only profile for selected points whose footprint exceeds the unchanged 4096-byte default."
+      "command_template": "scripts/print-asl-test-matrix --ids-file <exact-id-file> --page-size 64 --output-dir <output>; env -u ASLREF PTO_ASL_TEST_TIMEOUT_SECONDS=600 scripts/run-asl-page --matrix <output>/page-0.json -j4",
+      "scope_note": "Canonical registry selection with ASLREF unset; only IDs assigned to this profile use its configuration, while other selected IDs keep their registered/default profiles."
     },
     "atomic_translation": {
       "launcher": "./scripts/aslref-atomic-translation",
       "configuration": "tests/config/asl/atomic-translation-test-profile.asl",
       "ids": [
-        "PTO-AVS-TILE-TSTORE-ATOMIC-TRANSLATION-001",
         "PTO-AVS-ARCH-TSTORE-ATOMIC-TRANSLATION-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-TRANSLATION-001",
         "PTO-AVS-TILE-TSTORE-ATOMIC-VIRTUAL-ALIAS-001"
       ],
-      "command_template": "scripts/print-asl-test-matrix --page-size 100 --ids-file <exact-id-file> --output-dir <output>; ASLREF=./scripts/aslref-atomic-translation PTO_ASL_TEST_TIMEOUT_SECONDS=600 scripts/run-asl-page --matrix <output>/page-0.json -j3",
-      "scope_note": "Test-only environment variation replaces TranslateDataAddress and defines aliases, read/write disagreement, and mapping changes. Probe/access/admission/drain/result/storage/event code stays production."
-    }
+      "command_template": "scripts/print-asl-test-matrix --ids-file <exact-id-file> --page-size 64 --output-dir <output>; env -u ASLREF PTO_ASL_TEST_TIMEOUT_SECONDS=600 scripts/run-asl-page --matrix <output>/page-0.json -j4",
+      "scope_note": "Canonical registry selection with ASLREF unset; only IDs assigned to this profile use its configuration, while other selected IDs keep their registered/default profiles."
+    },
+    "canonical_registry": "tests/config/asl/execution-profiles.json",
+    "mixed_exact_id_evidence": "build/issue397-review-evidence/correction-final-candidate-50/manifest.json",
+    "mixed_exact_id_result": "One mixed 50-point canonical page passed on the committed candidate: 44 default, 3 memory-64k and 3 atomic-translation; ASLREF was unset."
   },
   "profiles_by_test_id": {
     "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001": "memory_64k",
@@ -506,7 +544,7 @@
     "PTO-AVS-ARCH-TSTORE-ATOMIC-TRANSLATION-001": "atomic_translation",
     "PTO-AVS-TILE-TSTORE-ATOMIC-VIRTUAL-ALIAS-001": "atomic_translation"
   },
-  "runner_boundary": "scripts/run_point uses ASLREF=./scripts/aslref by default. Focused 64-KiB and translation-profile IDs must be selected into separate exact pages with matching wrappers; the default full release matrix must not count these profile-only points as passed under default 4096-byte identity behavior.",
+  "runner_boundary": "scripts/run_point uses the canonical tests/config/asl/execution-profiles.json registry when ASLREF is unset or the canonical base launcher is selected. It routes each stable ID to its scoped memory-64k or atomic-translation launcher and fingerprints registry/launcher/config/fixture/model inputs; all remaining IDs use the production default of 4096-byte memory and event capacity 16. Custom ASLREF behavior is retained for default/unregistered points, and incompatible ambient wrappers fail closed.",
   "owner_static_checks": [
     {
       "test": "PTO-AVS-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS-STATIC-001",
@@ -559,32 +597,38 @@
       {
         "acceptance": "A03",
         "tests": [
-          "PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001"
+          "PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001",
+          "PTO-AVS-BLOCK-B-DATR-PLACEMENT-001"
         ],
         "files": [
-          "tests/asl/block/model/dispatch/command-data-attributes/block-fault-tstore-atomic-cmode-context-001.asl"
+          "tests/asl/block/model/dispatch/command-data-attributes/block-fault-tstore-atomic-cmode-context-001.asl",
+          "tests/asl/block/attributes/B.DATR/block-fault-b-datr-placement-001.asl"
         ],
-        "assertions": "CMode 6/7 are accepted only for canonicalized TLSU Function 1 TSTORE; other contexts reject at B.DATR without latching state or effects."
+        "assertions": "Encoded TCMP (0x00d) and TCMPS (0x02d) BSTARTs accept comparison modes 0..5 and reject 6/7 at B.DATR without latching data attributes; canonicalized Function 1 TSTORE retains modes 0..7, and standalone/body placement still faults before state changes."
       },
       {
         "acceptance": "A04",
         "tests": [
-          "PTO-AVS-TILE-TSTORE-ATOMIC-DTYPE-001"
+          "PTO-AVS-TILE-TSTORE-ATOMIC-DTYPE-001",
+          "PTO-AVS-TILE-GM-ATOM-RED-FAMILY-001"
         ],
         "files": [
-          "tests/asl/tile/model/memory/atomic-tstore/tile-fault-tstore-atomic-dtype-001.asl"
+          "tests/asl/tile/model/memory/atomic-tstore/tile-fault-tstore-atomic-dtype-001.asl",
+          "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-atom-red-family-001.asl"
         ],
-        "assertions": "Independent operation-by-assigned-dtype oracle matches all eight operation legality rows; every admitted pair dispatches Function 1 with exact output and an Atomic event, while excluded examples fault before effects."
+        "assertions": "Independent assigned-dtype matrix exercises every admitted Function 1 pair and excluded rows; the shared integer boundary normalizes carriers, with indexed U32 INC high bits ignored and an indexed S32 MIN 0x00000001ffffffff payload interpreted as -1, each checked by literal Atomic event and stored value."
       },
       {
         "acceptance": "A05",
         "tests": [
-          "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001"
+          "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001",
+          "PTO-AVS-ARCH-TSTORE-ATOMIC-INTERLEAVED-001"
         ],
         "files": [
-          "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-atomic-m32-slab-001.asl"
+          "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-atomic-m32-slab-001.asl",
+          "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-interleaved-001.asl"
         ],
-        "assertions": "Two distinct M32 FP32 producers add 1.0 and 2.0 to all 8192 initial 7.0 words, yielding 10.0 with guards intact and no index allocation; selected under 64-KiB profile."
+        "assertions": "The 8192-element M32 FP32 slab yields exact 10.0 values with guards intact; an independent pair of admitted encoded producers alternates real scheduler service beats and asserts every RMW pair, PE/invocation provenance, all contributions, and guards."
       },
       {
         "acceptance": "A06",
@@ -599,12 +643,14 @@
       {
         "acceptance": "A07",
         "tests": [
-          "PTO-AVS-TILE-TSTORE-ATOMIC-OVERLAP-001"
+          "PTO-AVS-TILE-TSTORE-ATOMIC-OVERLAP-001",
+          "PTO-AVS-ARCH-TSTORE-ATOMIC-INTERLEAVED-001"
         ],
         "files": [
-          "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-overlap-001.asl"
+          "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-overlap-001.asl",
+          "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-interleaved-001.asl"
         ],
-        "assertions": "Zero row stride and cross-PE duplicate targets preserve all four independent U32 ADD contributions and emit four Atomic events."
+        "assertions": "Alongside zero-stride overlap, the interleaved point uses positive aligned stride 4, shorter than the 8-byte row, with repeated exact targets 0x204; two admitted producers receive alternating service and all eight old/new RMW pairs prove no lost or duplicate contribution."
       },
       {
         "acceptance": "A08",
@@ -663,12 +709,14 @@
       {
         "acceptance": "A13",
         "tests": [
-          "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001"
+          "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001",
+          "PTO-AVS-ARCH-TSTORE-ATOMIC-CANCEL-001"
         ],
         "files": [
-          "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-drain-001.asl"
+          "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-drain-001.asl",
+          "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-cancel-001.asl"
         ],
-        "assertions": "After the first committed RMW, abort retains the obligation/generation, drain emits each remaining event once with captured invocation provenance, and incomplete required Shared participants are not falsely consumed."
+        "assertions": "The drain witness retains a partially committed Atomic TSTORE across abort and actual owning-domain squash while cancelling a separate wrong-path Shared lifetime; the added pre-effect abort point cancels a reversible admitted request, leaves GM sentinels untouched, emits no Atomic event, and never marks the PE successful."
       },
       {
         "acceptance": "A14",
@@ -712,7 +760,13 @@
           "PTO-AVS-TILE-TCMP-ORDER-001",
           "PTO-AVS-TILE-TCMPS-CROSS-CARRIER-001",
           "PTO-AVS-TILE-GM-ADD-GRADUAL-001",
-          "PTO-AVS-TILE-GM-ADD-GRADUAL-002"
+          "PTO-AVS-TILE-GM-ADD-GRADUAL-002",
+          "PTO-AVS-BLOCK-SUBVIEW-SHARED-001",
+          "PTO-AVS-ARCH-GM-OBLIGATION-DELAYED-TSTORE-001",
+          "PTO-AVS-BLOCK-SOURCE-LIFETIME-FAULT-SQUASH-RETRY-002",
+          "PTO-AVS-BLOCK-SOURCE-LIFETIME-OCCURRENCE-ORDER-004",
+          "PTO-AVS-BLOCK-LOCAL-GENERATION-RECOVERY-ISOLATION-001",
+          "PTO-AVS-BLOCK-SHARED-TLSU-ASSEMBLE-SQUASH-014"
         ],
         "files": [
           "tests/asl/tile/memory-and-data-movement/regular/TSTORE/tile-exec-tstore-direct-001.asl",
@@ -723,9 +777,15 @@
           "tests/asl/tile/elementwise-tile-tile/logical/TCMP/tile-exec-tcmp-order-001.asl",
           "tests/asl/tile/tile-scalar-and-immediate/logical/TCMPS/tile-exec-tcmps-cross-carrier-001.asl",
           "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-add-gradual-001.asl",
-          "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-add-old-value-001.asl"
+          "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-add-old-value-001.asl",
+          "tests/asl/block/model/operands/shared-generation/block-exec-shared-subview-001.asl",
+          "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-lifecycle-delayed-tstore-001.asl",
+          "tests/asl/block/model/state/source-lifetime/block-state-source-lifetime-fault-squash-retry-002.asl",
+          "tests/asl/block/model/state/source-lifetime/block-state-source-lifetime-occurrence-order-004.asl",
+          "tests/asl/block/model/operands/local-generation-squash/block-state-local-generation-squash-recovery-isolation-001.asl",
+          "tests/asl/block/model/operands/shared-generation-pe-requests/block-exec-shared-tlsu-assemble-squash-014.asl"
         ],
-        "assertions": "Nine focused pre-existing compatibility points pass: Local/CUBE/Shared normal TSTORE, indexed non-ADD MSCATTER_MIN, TCVT, TCMP, TCMPS, and both indexed gradual FP32 ADD results including atom.add old-value behavior."
+        "assertions": "The focused Normal group now includes Shared SUBVIEW, posted TSTORE production-beat completion, Shared source lifetime fault/squash retry and concurrent occurrence order, Local generation recovery isolation, and Shared TLSU squash/publication isolation; each point exercises its existing Normal path and checks state/effects."
       },
       {
         "acceptance": "A17",
@@ -741,13 +801,15 @@
         "acceptance": "A18",
         "tests": [
           "PTO-AVS-ARCH-TSTORE-ATOMIC-ADMISSION-001",
-          "PTO-AVS-ARCH-TSTORE-ATOMIC-TRANSLATION-001"
+          "PTO-AVS-ARCH-TSTORE-ATOMIC-TRANSLATION-001",
+          "PTO-AVS-TILE-TSTORE-ATOMIC-TRANSLATION-001"
         ],
         "files": [
           "tests/asl/arch/memory-model/gm-obligations/arch-state-tstore-atomic-admission-001.asl",
-          "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-translation-001.asl"
+          "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-translation-001.asl",
+          "tests/asl/tile/model/memory/atomic-tstore/tile-fault-tstore-atomic-translation-001.asl"
         ],
-        "assertions": "Admission freezes operator, source, mask, target and request provenance while each RMW reads live old GM; a never-admitted fault retries the same request, and controlled post-admission mapping change preserves the captured translated target."
+        "assertions": "Admission freezes operator/source/mask/targets while each RMW samples live GM; the test-only translation profile causes a target translation disagreement before effects, then real trap-context recovery retries the same unadmitted bundle word/domain/order/invocation/PC under restored identity mapping and commits exactly once; a separate post-admission mapping change preserves captured targets."
       },
       {
         "acceptance": "A19",
@@ -769,17 +831,19 @@
           "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-drain-001.asl",
           "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-mask-001.asl"
         ],
-        "assertions": "Local and Shared `.reuse` retain payload; Local last-use consumes only after its committed update; Shared PE0 success leaves the original generation pinned until PE1 required success, then consumes once; wait, fault, retry, abort/drain and inactive paths do not fabricate successful completion."
+        "assertions": "Local and Shared reuse retain payload; Local last-use consumes only after the committed update. Deferred Local admission captures and pins the ordinary payload epoch, and draining the old request leaves a replacement epoch/payload intact. Shared PE0 completion keeps the required cohort generation pinned until PE1 success consumes once; wait, fault, retry, abort/drain and inactive paths never fabricate successful completion."
       },
       {
         "acceptance": "A20",
         "tests": [
-          "PTO-AVS-ARCH-TSTORE-ATOMIC-IDENTITY-001"
+          "PTO-AVS-ARCH-TSTORE-ATOMIC-IDENTITY-001",
+          "PTO-AVS-ARCH-TSTORE-ATOMIC-COMPLETION-001"
         ],
         "files": [
-          "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-identity-001.asl"
+          "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-identity-001.asl",
+          "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-completion-001.asl"
         ],
-        "assertions": "Same dynamic request replay preserves captured core/PE/invocation/program-order/source provenance without duplicates; new same-PC occurrence gets a distinct full identity."
+        "assertions": "Same-dynamic replay preserves core/PE/invocation/program-order/source identity; actual encoded BSTOP retries at zero and partial progress keep the same obligation identity through drain, then commit/trap without reissuing any RMW. A separate real encoded BSTOP retires a completed occurrence before control flow reaches the same static BSTART; the new domain/obligation/order captures the republished Local payload epoch and commits one additional exact Atomic update."
       },
       {
         "acceptance": "A21",
@@ -800,12 +864,14 @@
       {
         "acceptance": "A22",
         "tests": [
-          "PTO-AVS-TILE-TSTORE-ATOMIC-BOUNDARY-001"
+          "PTO-AVS-TILE-TSTORE-ATOMIC-BOUNDARY-001",
+          "PTO-AVS-ARCH-TSTORE-ATOMIC-COMPLETION-001"
         ],
         "files": [
-          "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-boundary-001.asl"
+          "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-boundary-001.asl",
+          "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-completion-001.asl"
         ],
-        "assertions": "M32 FP64/U64 lower and upper boundaries dispatch Function 1, M16 b64 rejects before effects, and aq/rl/aqrl, far and post-commit trap retain existing completion behavior; selected under 64-KiB profile."
+        "assertions": "M32 FP64/U64 lower and upper boundaries dispatch Function 1, M16 b64 rejects before effects, and aq/rl/aqrl, far and trap qualifiers retain completion behavior. Encoded Atomic BSTOP waits live at zero and partial beats, drains two updates once, then commits and traps at the continuation once; Normal posted TSTORE remains unchanged."
       },
       {
         "acceptance": "A23",
@@ -843,6 +909,16 @@
     ]
   },
   "profile_evidence": "spec/evidence/issue-397-profile-evidence.json",
-  "candidate_commit": "fda56c0185a2af362f9420a180c4ac3fc8ac1a20",
-  "candidate_asl_tree": "021e07d39e079f5791e57e399c4850f7d7469b2a"
+  "candidate_commit": "4a1f3046f0477f4e990e7523b1cd162303b70603",
+  "candidate_asl_tree": "1c4f290cb23c11856dbf4b581ac91a54ed88fc17",
+  "profile_registry": {
+    "path": "tests/config/asl/execution-profiles.json",
+    "sha256": "0057353a976f421b3ae3b48dc2496f52230186fab62375677e506ffc3cdb25e2",
+    "selection_mode": "canonical per-point routing with ASLREF unset",
+    "focused_archive": "build/issue397-review-evidence/correction-final-candidate-50",
+    "point_count": 50,
+    "passed": 50,
+    "failed": 0,
+    "manifest_sha256": "315cae22561deef26d62bee32e717d7ba3eafff5817851a642ee7d4411d41a73"
+  }
 }
