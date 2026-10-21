@@ -213,6 +213,103 @@ OWNER_DECISIONS = {
     "TEXPDIF": "Issue #333 / ADR-TILE-0008 accepted amendment",
     "TLEA": "Issue #371 / ADR-TILE-0009 accepted amendment",
 }
+ISSUE395_SHARED_TMOV_CLASSIFICATION = (
+    "Issue #395 Function-2 CUBE-to-Shared-ND TMOV and exact-capacity geometry "
+    "(ADR-CUBE-0005/0016 amendments)"
+)
+ISSUE395_TMOV_LEGACY_LAYOUTS = {"ColumnMajor", "NZ", "RowMajor", "ZN"}
+OWNER_DECISIONS["TMOV"] = ISSUE395_SHARED_TMOV_CLASSIFICATION
+# Keep new and moved helper definitions, lexical layout domains, and direct
+# caller sets exact. The capacity helper is also part of Issue #395's Stage A
+# change; its existing geometry callers are listed so this Stage B census
+# remains closed over the combined candidate.
+ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS = {
+    "BundleSharedTMOVCubeToNDCandidate": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/shared-tmov-cube-to-nd.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+        },
+    },
+    "BundleSharedTMOVCubeToNDSchemaLegal": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/shared-tmov-cube-to-nd.asl", LOCAL_CUBE_LAYOUTS)],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleSharedTMOVLocalSchemaLegal", "asl/block/model/dispatch/shared-tlsu.asl"),
+        },
+    },
+    "BundleSharedTMOVCubeToNDSelected": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/shared-tmov-cube-to-nd.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleSharedTMOVLocalSchemaLegal", "asl/block/model/dispatch/shared-tlsu.asl"),
+            ("CommitBundleSharedGenerationCandidateForCurrentPE",
+             "asl/block/model/operands/shared-generation-pe-requests.asl"),
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+            ("ValidateBundleSharedGeneration",
+             "asl/block/model/operands/shared-generation-pe-requests.asl"),
+        },
+    },
+    "BundleSharedTMOVGenerationModeLegal": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/shared-tmov-cube-to-nd.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleSharedTMOVCubeToNDSchemaLegal",
+             "asl/block/model/dispatch/shared-tmov-cube-to-nd.asl"),
+            ("BundleSharedTMOVLocalSchemaLegal", "asl/block/model/dispatch/shared-tlsu.asl"),
+        },
+    },
+    "TileCubePhysicalColumnsFromCapacity": {
+        "before": [],
+        "after": [("asl/tile/model/shape/cube-double-cell.asl", LOCAL_CUBE_LAYOUTS)],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleLocalGenerationCubeFinalizationLegal",
+             "asl/block/model/operands/local-generation-cube.asl"),
+            ("BundleLocalGenerationCubeWriterColumns",
+             "asl/block/model/operands/local-generation-cube.asl"),
+            ("BundleReusedDestinationDescriptorMatches",
+             "asl/block/model/dispatch/destination-shape.asl"),
+            ("BundleSharedTMOVCubeToNDSchemaLegal",
+             "asl/block/model/dispatch/shared-tmov-cube-to-nd.asl"),
+            ("ConfigureCubeTileForMask", "asl/tile/model/state/allocation.asl"),
+            ("FinalizeBundleLocalGenerationCube",
+             "asl/block/model/operands/local-generation-cube.asl"),
+            ("ResolveBundleTileDestinationsWithShapeAndType",
+             "asl/block/model/dispatch/destination-shape.asl"),
+            ("SelectedBundleComparisonShapeMatches",
+             "asl/block/model/dispatch/comparison-schema.asl"),
+            ("SharedTileFromLocalCubeToND",
+             "asl/tile/model/memory/shared-cube-to-nd.asl"),
+            ("TileCubeDescriptorShapeAndPhysicalLegal",
+             "asl/tile/model/shape/cube-cell.asl"),
+            ("TileCubeDescriptorShapeLegal", "asl/tile/model/shape/cube-cell.asl"),
+            ("TileExpdifBundleGeometryMatches",
+             "asl/tile/model/legality/expdif-operands.asl"),
+            ("TileOperandsLegal_ExecuteTileReduction",
+             "asl/tile/model/legality/reduction-and-expansion.asl"),
+        },
+    },
+    "TileDataLayoutIsCubeToSharedND": {
+        "before": [],
+        "after": [("asl/block/model/state/control-state.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleExecutionMaskDataAttributesLegal",
+             "asl/block/model/dispatch/command-data-attributes.asl"),
+            ("BundleSharedTMOVCubeToNDSelected",
+             "asl/block/model/dispatch/shared-tmov-cube-to-nd.asl"),
+            ("MarkSelectedBundleExecutionMaskCarrier",
+             "asl/block/model/dispatch/execution-mask-schema.asl"),
+            ("SelectedBundleTileDataAttributesLegal",
+             "asl/block/model/dispatch/tile-schema.asl"),
+        },
+    },
+}
 TEXPDIF_LAYOUT_CLASSIFICATION = (
     "TEXPDIF RowMajor/CUBE_M16/CUBE_M32 Local contract "
     "(Issue #333 / ADR-TILE-0008)"
@@ -2678,6 +2775,95 @@ def _issue374_shared_matrix_closure(
     return errors
 
 
+def _issue395_shared_tmov_closure(
+    after_map: dict[str, str],
+    after_inventory: dict[str, Any],
+    after_reach: dict[str, Any],
+    after_defs: dict[str, list[dict[str, Any]]],
+    operation_models_before: dict[tuple[str, str], dict[str, Any]],
+    operation_models_after: dict[tuple[str, str], dict[str, Any]],
+) -> list[str]:
+    """Keep the new Function-2 Shared TMOV variant and its layout evidence exact."""
+    if "TMOV" not in after_inventory["operations"]:
+        # Small synthetic census fixtures do not model PTO instruction owners.
+        return []
+    errors: list[str] = []
+    expected_models = {("TMOV", "direct"), ("TMOV", "bundle")}
+    if not expected_models <= set(operation_models_after):
+        return ["Issue #395 TMOV inventory must contain direct and bundle forms"]
+
+    bundle_owner = after_inventory["operations"]["TMOV"]["form_owners"].get("bundle")
+    if bundle_owner != "asl/block/execution/BSTART.TMOV.asl":
+        errors.append("Issue #395 BSTART.TMOV bundle owner changed")
+    bstart = after_map.get("asl/block/execution/BSTART.TMOV.asl", "")
+    if not all(token in bstart for token in (
+        "PTO-BSTART-TMOV-SHARED-001",
+        "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
+        "Function-2 Local CUBE_M32 or CUBE_M16",
+        "M322ND or M162ND",
+        "DTYPE_NONE",
+        "B.ASSEMBLE",
+        "B.SUBVIEW",
+    )):
+        errors.append("Issue #395 BSTART.TMOV contract lost the frozen Shared/CUBE owner text")
+
+    selector = after_defs.get("TileDataLayoutIsCubeToSharedND", [])
+    if len(selector) != 1 or selector[0].get("path") != "asl/block/model/state/control-state.asl":
+        errors.append("Issue #395 M322ND/M162ND selector owner changed")
+        selector_body = ""
+    else:
+        selector_body = re.sub(r"\s+", " ", selector[0].get("body", ""))
+    if not (
+        "return data_layout == Zeros{5} + 24 || data_layout == Zeros{5} + 25;"
+        in selector_body
+    ):
+        errors.append("Issue #395 DATR conversion selector must be exactly codes 24 and 25")
+
+    schema = after_defs.get("BundleSharedTMOVCubeToNDSchemaLegal", [])
+    schema_body = re.sub(r"\s+", " ", schema[0].get("body", "")) if len(schema) == 1 else ""
+    candidate = after_defs.get("BundleSharedTMOVCubeToNDCandidate", [])
+    candidate_body = re.sub(r"\s+", " ", candidate[0].get("body", "")) if len(candidate) == 1 else ""
+    if not (
+        "data_layout == Zeros{5} + 24 then TileLayout_CUBE_M32 else TileLayout_CUBE_M16"
+        in schema_body and
+        "source_tile.layout != layout" in schema_body and
+        "TileCubePhysicalColumnsFromCapacity(" in schema_body and
+        "TileCarrierWidthCompatible(source_tile.data_type, operation_type)" in schema_body and
+        "SharedTileFromLocalCubeToND(source" in candidate_body and
+        "candidate.tile = SharedTileFromLocalCubeToND" in candidate_body
+    ):
+        errors.append("Issue #395 conversion schema lost its exact CUBE/source/ND candidate closure")
+
+    old_direct = operation_models_before.get(("TMOV", "direct"), {})
+    new_direct = operation_models_after.get(("TMOV", "direct"), {})
+    old_bundle = operation_models_before.get(("TMOV", "bundle"), {})
+    new_bundle = operation_models_after.get(("TMOV", "bundle"), {})
+    if (
+        old_direct.get("layouts") != new_direct.get("layouts") or
+        old_direct.get("relations") != new_direct.get("relations") or
+        set(old_bundle.get("layouts", {}).get("source0", [])) != ISSUE395_TMOV_LEGACY_LAYOUTS or
+        set(new_bundle.get("layouts", {}).get("source0", [])) != ISSUE395_TMOV_LEGACY_LAYOUTS or
+        set(old_bundle.get("layouts", {}).get("destination0", [])) != ISSUE395_TMOV_LEGACY_LAYOUTS or
+        new_bundle.get("layouts", {}).get("destination0") != [] or
+        old_bundle.get("relations") != new_bundle.get("relations")
+    ):
+        errors.append("Issue #395 TMOV direct/legacy Local layout and relation footprint changed")
+
+    # The new helpers are separately classified with exact owner/layout/caller
+    # sets in ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS. Keep the mode and
+    # schema roots reachable in this closure too, so an unreferenced valid
+    # helper cannot stand in for the actual operation path.
+    for name in (
+        "BundleSharedTMOVCubeToNDSelected",
+        "BundleSharedTMOVCubeToNDSchemaLegal",
+        "BundleSharedTMOVCubeToNDCandidate",
+        "BundleSharedTMOVGenerationModeLegal",
+    ):
+        if len(after_reach.get("helpers", {}).get(name, [])) != 1:
+            errors.append(f"Issue #395 TMOV helper is not uniquely reachable: {name}")
+    return errors
+
+
 def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: dict[str, list[dict[str, Any]]], after_defs: dict[str, list[dict[str, Any]]], authorized_helper_names: set[str], allow_texpdif_changes: bool = False, allow_tlea_changes: bool = False) -> tuple[list[dict[str, Any]], list[str]]:
     rows: list[dict[str, Any]] = []
     errors: list[str] = []
@@ -2790,6 +2976,10 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 helper_spec = ISSUE374_SHARED_MATRIX_HELPER_DEFINITION_DELTAS[name]
                 helper_classification = ISSUE374_SHARED_MATRIX_CLASSIFICATION
                 helper_issue = "Issue #374 Shared Matrix"
+            elif name in ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS:
+                helper_spec = ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS[name]
+                helper_classification = ISSUE395_SHARED_TMOV_CLASSIFICATION
+                helper_issue = "Issue #395 Shared TMOV"
             if helper_spec is not None:
                 old_shape = sorted(
                     (row["path"], tuple(sorted(row["layouts"])))
@@ -3311,11 +3501,23 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
         errors.extend(f"{key[0]}:{key[1]}: {error}" for error in e)
         old_model["bias_role"] = _bias_role(old["roles"])
         new_model["bias_role"] = _bias_role(new["roles"])
+        operation_models_before[key], operation_models_after[key] = old_model, new_model
+
+    issue395_errors = _issue395_shared_tmov_closure(
+        after_map, after_inventory, after_reach, after_defs,
+        operation_models_before, operation_models_after,
+    )
+    errors.extend(issue395_errors)
+    issue395_contract_valid = not issue395_errors
+
+    for key, new_model in operation_models_after.items():
+        old_model = operation_models_before[key]
         for side, model in (("L0", old_model), ("L1", new_model)):
             empty_roles = sorted(role for role, values in model.get("layouts", {}).items() if not values)
+            if key == ("TMOV", "bundle") and side == "L1" and issue395_contract_valid:
+                empty_roles = [role for role in empty_roles if role != "destination0"]
             if empty_roles:
                 errors.append(f"{key[0]}:{key[1]}: empty layout-bearing {side} role(s): {', '.join(empty_roles)}")
-        operation_models_before[key], operation_models_after[key] = old_model, new_model
 
     for (mnemonic, form), model in operation_models_after.items():
         if mnemonic == "TEXPDIF":
@@ -3379,6 +3581,12 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
         for item in tuple_delta:
             _m, _f, role, layout = item
             classification = _classify_tuple(mnemonic, role, layout, old_model, new_model)
+            if (classification is None and key == ("TMOV", "bundle") and
+                    issue395_contract_valid and role == "destination0" and
+                    layout in ISSUE395_TMOV_LEGACY_LAYOUTS and
+                    old_layouts.get("destination0") == sorted(ISSUE395_TMOV_LEGACY_LAYOUTS) and
+                    new_layouts.get("destination0") == []):
+                classification = ISSUE395_SHARED_TMOV_CLASSIFICATION
             if (classification is None and r4_contract_valid and
                     mnemonic in R4_LAYOUT_OPERATIONS and
                     item in (new_tuples - old_tuples)):
@@ -3485,7 +3693,7 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
                 # is still inventoried but not assigned a synthetic role.
                 pass
         for key in sorted(set(operation_models_before) & set(operation_models_after)):
-            if key[0] not in set(EXACT_34) | set(BIAS) | INDEXED_TLSU | {"GMOV", "TCVT", "TEXPDIF", "TLEA"} | R4_LAYOUT_OPERATIONS:
+            if key[0] not in set(EXACT_34) | set(BIAS) | INDEXED_TLSU | {"GMOV", "TCVT", "TEXPDIF", "TLEA"} | R4_LAYOUT_OPERATIONS and not (key == ("TMOV", "bundle") and issue395_contract_valid):
                 if (operation_models_before[key].get("layouts") != operation_models_after[key].get("layouts") or
                         operation_models_before[key].get("relations") != operation_models_after[key].get("relations")):
                     # Location retirement is represented only in helper graph;
@@ -4060,6 +4268,64 @@ def _issue374_shared_matrix_mutation_canaries() -> None:
         raise AssertionError("Issue #374 source-layout widening did not fail closed")
 
 
+def _issue395_shared_tmov_mutation_canaries() -> None:
+    """Keep Issue #395 conversion selectors and helper callers finite."""
+    paths = source_paths(BASELINE_OBJECT, "working-tree")
+    baseline = _ref_texts(BASELINE_OBJECT, paths)
+    candidate = _ref_texts("working-tree", paths)
+    result = _census_texts(
+        baseline, candidate, BASELINE_OBJECT,
+        "real-issue395-shared-tmov-candidate", enforce_closure=True,
+    )
+    classified = {
+        row["name"] for row in result["common_helper_deltas"]
+        if row.get("classification") == ISSUE395_SHARED_TMOV_CLASSIFICATION
+    }
+    expected = set(ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS)
+    if not result["pass"] or classified != expected:
+        raise AssertionError(
+            "Issue #395 Shared TMOV owner/layout/caller closure is incomplete: "
+            + "; ".join(result["errors"][:12])
+        )
+
+    selector_path = "asl/block/model/state/control-state.asl"
+    wrong_selector = dict(candidate)
+    exact_code = "data_layout == Zeros{5} + 25;"
+    if exact_code not in candidate.get(selector_path, ""):
+        raise AssertionError("Issue #395 DATR code-25 selector canary source is missing")
+    wrong_selector[selector_path] = candidate[selector_path].replace(
+        exact_code, "data_layout == Zeros{5} + 26;", 1,
+    )
+    result = _census_texts(
+        baseline, wrong_selector, BASELINE_OBJECT,
+        "real-mutated-issue395-shared-tmov-datr-selector", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #395 DATR conversion selector must be exactly codes 24 and 25" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #395 DATR selector widening did not fail closed")
+
+    selector_path = "asl/block/model/dispatch/shared-tlsu.asl"
+    extra_caller = dict(candidate)
+    extra_caller[selector_path] += (
+        "\nreadonly func UnauthorizedIssue395TMOVSelectorCaller() => boolean\n"
+        "begin\n"
+        "    return BundleSharedTMOVCubeToNDSelected();\n"
+        "end;\n"
+    )
+    result = _census_texts(
+        baseline, extra_caller, BASELINE_OBJECT,
+        "real-mutated-issue395-shared-tmov-extra-caller", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #395 Shared TMOV helper owner/layout/caller closure mismatch: "
+        "BundleSharedTMOVCubeToNDSelected" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #395 TMOV selector extra caller did not fail closed")
+
+
 def _issue371_b64_mutation_canaries() -> None:
     """Prove the M32-only double-CELL classification fails closed."""
     paths = source_paths(BASELINE_OBJECT, "working-tree")
@@ -4610,10 +4876,11 @@ def self_test() -> None:
     _real_relation_mutation_canaries()
     _execution_mask_support_mutation_canaries()
     _issue374_shared_matrix_mutation_canaries()
+    _issue395_shared_tmov_mutation_canaries()
     _issue371_b64_mutation_canaries()
     _issue360_gm_obligation_helper_mutation_canaries()
     _issue356_reduction_source_mutation_canaries()
-    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, Issue #371 M32 b64 double-CELL, Issue #360/#341 GM and source-lifetime helper owner/caller/layout, Issue #374 packed private Shared view, and bounded reduction-source mutations rejected")
+    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, Issue #371 M32 b64 double-CELL, Issue #360/#341 GM and source-lifetime helper owner/caller/layout, Issue #374 packed private Shared view, Issue #395 TMOV DATR selector and helper caller closure, and bounded reduction-source mutations rejected")
 
 
 def main() -> int:
