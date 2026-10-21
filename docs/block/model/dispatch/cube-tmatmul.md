@@ -80,7 +80,7 @@ Now suppose a cooperative `TMATMUL` with a Shared right group and group M of 40.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/cube-tmatmul.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","surface":"block","classification":["model","dispatch","cube-tmatmul"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-MATRIX-SCALE","PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS","PTO-TILE-MODEL-EXECUTION-CUBE","PTO-TILE-MODEL-EXECUTION-INTERNAL-ACCUMULATOR"]}
+// PTO-UNIT: {"classification":["model","dispatch","cube-tmatmul"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-MATRIX-SCALE","PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-TILE-MODEL-EXECUTION-CUBE","PTO-TILE-MODEL-EXECUTION-INTERNAL-ACCUMULATOR","PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS"],"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","surface":"block"}
 // NDF-BEGIN: PTO-CUBE-ACCUMULATOR-OUTPUT-001
 // ndf: kind=contract level=L1 layer=block status=accepted
 // Every Matrix ACC form MUST bind explicit C and D. C's encoded relative
@@ -408,9 +408,6 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-    // Every field, stream, Local/Shared descriptor, parameter payload, shape,
-    // and capacity rule is now closed. Allocate the atomic destination group
-    // before taking the first mathematical or scalar payload snapshot.
     let allocation_mask = if cooperative then
         BundleMatrixCooperativeCurrentPEMask(m, _CurrentMemoryAgent)
     else BundleTMATMULSelectedMask();
@@ -548,6 +545,8 @@ begin
             accumulator, _Tiles[[accumulator]].cube_storage_bytes);
     end;
     let destination = BundleMatrixDestinationAt(0);
+    let (writer_effects_legal, writer_effects) = BeginBundleLocalGenerationCubeWriterEffects(pe_m, n);
+    if !writer_effects_legal then SetFault(Fault_TileLegality, ReadTPC()); RollBackBundleTileDestinations(); return FALSE; end;
     let destination_template = _Tiles[[destination]];
     if TileMatrixFunctionUsesMX(function) then
         TMATMULMXSharedWithOptionalScales(
@@ -566,6 +565,7 @@ begin
             c_scale, _BundleFixedPointAttributes.c_scale_en,
             cctrl[0:0] != Zeros{1});
     end;
+    FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
     if _LastFault != Fault_None then
         RollBackBundleTileDestinations();
         return FALSE;

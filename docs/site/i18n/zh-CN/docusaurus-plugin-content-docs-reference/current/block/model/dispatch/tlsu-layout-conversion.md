@@ -81,7 +81,7 @@ CUBE 布局内部的元素放置属于 Tile 加载与存储所有者。
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/tlsu-layout-conversion.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","surface":"block","classification":["model","dispatch","tlsu-layout-conversion"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE","PTO-TILE-MODEL-MEMORY-LOAD-STORE"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","surface":"block","classification":["model","dispatch","tlsu-layout-conversion"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE","PTO-TILE-MODEL-MEMORY-LOAD-STORE"]}
 
 readonly func BundleCubeTransportSelected() => boolean
 begin
@@ -90,11 +90,14 @@ begin
        !_BundleOperation.selector_valid || !_BundleDataAttributesPresent then
         return FALSE;
     end;
-    let function = UInt(_BundleOperation.selector[4:0]);
-    return (function == 0 && TileDataLayoutConversionIsLoad(
-               _BundleDataAttributes.data_layout)) ||
-           (function == 1 && TileDataLayoutConversionIsStore(
-               _BundleDataAttributes.data_layout));
+    // Function-2 TMOV owns its CUBE-to-Shared-ND conversion selectors.
+    if BundleTMOVSelected() then return FALSE; end;
+    // Route every conversion-only selector through the owning CUBE
+    // transport schema. That schema rejects an opposite function/direction
+    // pair before generic layout derivation can reach its conversion-only
+    // unreachable.
+    return TileDataLayoutIsCubeConversion(
+        _BundleDataAttributes.data_layout);
 end;
 
 pure func BundleCubeTransportDataTypeSupported(
@@ -196,10 +199,18 @@ begin
     let capacity_bytes = BundleTileDestinationSizeBytes(0);
     if binding.destination_reused_by_generation then
         let destination = _Tiles[[binding.destination]];
+        let local_generation = binding.destination_assemble.valid;
+        let parent_rows = if layout == TileLayout_CUBE_M16 then 16 else 32;
+        let parent_columns = TileCubePhysicalColumnsFromCapacity(
+            capacity_bytes, layout, data_type);
         if !TileCubeDescriptorLegal(destination) ||
            destination.capacity_bytes != capacity_bytes ||
-           destination.valid_rows != valid_rows ||
-           destination.valid_columns != valid_columns ||
+           (if local_generation then
+                destination.rows != parent_rows ||
+                destination.columns != parent_columns
+            else
+                destination.valid_rows != valid_rows ||
+                destination.valid_columns != valid_columns) ||
            destination.data_type != data_type ||
            destination.layout != layout ||
            (_TileAllocationMasks[[binding.destination]] AND binding.pe_mask) !=
@@ -283,8 +294,17 @@ begin
         if !ValidateBundleLocalGenerationWriters() then
             RollBackBundleTileDestinations(); return FALSE;
         end;
+        let (writer_effects_legal, writer_effects) =
+            BeginBundleLocalGenerationCubeWriterEffects(
+                valid_rows, valid_columns);
+        if !writer_effects_legal then
+            SetFault(Fault_TileLegality, ReadTPC());
+            RollBackBundleTileDestinations();
+            return FALSE;
+        end;
         let destination = _BundleTileBindings[[0]].destination;
         TLOAD(destination, base_address, row_stride_bytes);
+        FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
         if _LastFault != Fault_None then
             // A memory fault retains the beats completed before it but must
             // not publish the speculative Local destination.  Release it and

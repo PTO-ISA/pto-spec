@@ -74,7 +74,7 @@ If the mask Tile had 3 valid rows, the bundle raises `Fault_TileLegality` before
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/tlsu-mgather-mask.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK","surface":"block","classification":["model","dispatch","tlsu-mgather-mask"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-TILE-MODEL-MEMORY-GATHER-SCATTER"]}
+// PTO-UNIT: {"classification":["model","dispatch","tlsu-mgather-mask"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-TILE-MODEL-MEMORY-GATHER-SCATTER"],"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK","surface":"block"}
 
 readonly func BundleMGATHERMASKSelected() => boolean
 begin
@@ -162,6 +162,13 @@ begin
     if !ValidateBundleLocalGenerationWriters() then
         RollBackBundleTileDestinations(); return FALSE;
     end;
+    let (writer_effects_legal, writer_effects) =
+        BeginBundleLocalGenerationCubeWriterEffects(
+            valid_rows, valid_columns);
+    if !writer_effects_legal then
+        SetFault(Fault_TileLegality, ReadTPC());
+        RollBackBundleTileDestinations(); return FALSE;
+    end;
     let destination = if _BundleExecutionMask.valid &&
         _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile
         then _BundleTileBindings[[1]].destination
@@ -169,11 +176,13 @@ begin
     let pad_value = CurrentBundlePadValue();
     if !TileOperandsLegal_MGATHER_MASK(destination, Zeros{PTO_XLEN},
            indices, mask, pad_value) then
+        FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
         RollBackBundleTileDestinations();
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
     MGATHER_MASK(destination, base_address, indices, mask, pad_value);
+    FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
     if _LastFault != Fault_None then
         RollBackBundleTileDestinations();
         return FALSE;

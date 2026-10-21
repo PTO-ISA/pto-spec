@@ -5097,7 +5097,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "f26dcf166abfb3e053b5207c674fd4e62dc918fb",
+  "candidate_head": "8f881b965402bea06e3ae35f84ccae0e5458acae",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -16567,7 +16567,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "47856db05834f15636bacfda8ea1e8c967cf7b27a4e4da8bd1169e1074ce2c2b",
+      "after_sha256": "829116c99fa5a28d4f099eaf695a138ac031e67694a3cfed2551aed899a376cb",
       "before_layouts": [],
       "before_sha256": "8a56fccb894cdaa10cc33124f5b4f1f5b90e65d275dc7f857fd69f73fc0a0788",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -17634,7 +17634,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "3e6f32ee61a0d4b5abad6120bb75fd6150601b44ff21e5ffd21bc99eca9867a0",
+      "after_sha256": "54158a78780342ccc32cf409ac25c75d2951dec5294a219714b3a9e9149ad1c1",
       "before_layouts": [],
       "before_sha256": "38c1e8b8ea7c510d4a0ba8e5b935aeba22fd98fbad265edf109b9ddc51a3a261",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -17972,7 +17972,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "c0acae4827789ab119442bcbf741461c71459302628fdc07de380bc971d71384",
+      "after_sha256": "1671803c8dab45a86d9fbc492f0a709ec16a2ded1441cbd0ab60f9f6eb930e30",
       "before_layouts": [],
       "before_sha256": "c72dac12afeb3adad807353fb5534b4493781ae3e704b8fb194ff4cc21c518b4",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -18010,12 +18010,41 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "d692b6f4f1d2c0d7e9d61b118d7ac34671d083f8a320f6e583dc09ea2ecdbbf3",
+      "after_sha256": "4b4027d924cb8674b93c9f13c9d0186e05105745748fca81dfcca4aaa0644610",
       "before_layouts": [],
       "before_sha256": "372a11969b41479a5ebc0d2d6e934c34e6f7d9f6318d855b536189423aa7feb9",
       "classification": "operation-scoped accepted layout/relation owner",
       "name": "BundleSharedTMOVLocalSchemaLegal",
       "path": "asl/block/model/dispatch/shared-tlsu.asl"
+    },
+    {
+      "after": [
+        {
+          "calls": [
+            "ResolveBundleEffectiveDataType",
+            "TileCarrierWidthCompatible",
+            "let"
+          ],
+          "layouts": [],
+          "path": "asl/block/model/dispatch/shared-tlsu.asl",
+          "sha256": "02d22be1772d0b62e8d1eed97e3267e0be710ceb9417a075c9b8d6b31067a349"
+        }
+      ],
+      "after_callers": [
+        [
+          "BundleSharedTMOVDestinationSchemaLegal",
+          "asl/block/model/dispatch/shared-tlsu.asl"
+        ],
+        [
+          "BundleSharedTMOVLocalSchemaLegal",
+          "asl/block/model/dispatch/shared-tlsu.asl"
+        ]
+      ],
+      "before": [],
+      "before_callers": [],
+      "classification": "Issue #395 Function-2 CUBE-to-Shared-ND TMOV and exact-capacity geometry (ADR-CUBE-0005/0016 amendments)",
+      "name": "BundleSharedTMOVNormalCarrierCompatible",
+      "owner_decision": "Issue #395 Function-2 CUBE-to-Shared-ND TMOV and exact-capacity geometry (ADR-CUBE-0005/0016 amendments)"
     },
     {
       "after_layouts": [
@@ -18432,7 +18461,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "b0be5f5f1f0e12c3383c86c0d0e211c1a667666f4b2fc3182dc5541c2af8ec7c",
+      "after_sha256": "f89b301c6df425e53bec008bb4ec0c78fe12aa2ececfa4d60ab2caeb35f31582",
       "before_layouts": [],
       "before_sha256": "c16888d98541787ef9117b38c9c5f7c069715393978c70d7da2468750a3e4ef1",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -18441,7 +18470,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "54bf294143aa1da3d1686d1a2706aa7704882371816a80bbc9278e61b3f5e050",
+      "after_sha256": "e112d96face67738721dc048766d2b2a403c5a54895fef211e8b8433894d3c38",
       "before_layouts": [],
       "before_sha256": "a75dc3aa464109a6075e9e84f7d4dd51002f2bd489342747e3a91ca60f58a62d",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -18450,7 +18479,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "5a10cb67c20e14ae441c8b8e3f32a520e0f9ad036e446a1552db6387af8b56e6",
+      "after_sha256": "f008467795d291efa2e4eaf0f94a64260f6bb309dbdd6714bcde4fa1bf35caf2",
       "before_layouts": [],
       "before_sha256": "f5443eea3b974c4c7c04475228870d2e0484e6f8a57254cf388b8183119f5bcb",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -18459,7 +18488,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "0fdb3f922a54ef71cde483f5e9f4b91f5dcf296953dc812c0cb61407116af947",
+      "after_sha256": "711a9c05266fcd42f21216feb5ac3cb6530a0815a0b7efa8a6ad546ec9bad588",
       "before_layouts": [],
       "before_sha256": "42fab101fab6df0a41ea610b87cb5c330027b44ed7f119bd9e4eabb678a6cffe",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -18468,7 +18497,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "e13e146d4e69f58a509bd3baf4fbcecdb2da1c7f058131b09493dfc8eb354af8",
+      "after_sha256": "81f7b53716f3b289b6ab560d89056550c590ff7773f1614792d3764098b11adf",
       "before_layouts": [],
       "before_sha256": "42095242c72e56efa04f46cc369e4e0878b0eac68dd31626d4818111e792de2f",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -18477,7 +18506,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "0e80887740f4951622f3cfe5ddfcefa64ebf464398f07673d22cf735a17a6299",
+      "after_sha256": "adb30129f15f0cb1d8dc5e2b2f2d290580f368b30a78d8086b3f79a8549883d5",
       "before_layouts": [],
       "before_sha256": "767d540b3a219ea7649324d77823499584cb2861677b8ff1c5effc6b11646355",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -18504,7 +18533,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "54906807accb14a42f76bc44907fb2e3c9a0495d737c4710914b0c7f712ac68f",
+      "after_sha256": "6c92489bacbe990c837c4e78ab0c9f6dadbfd321490aae14a5ed8b53337c459f",
       "before_layouts": [],
       "before_sha256": "a0cfafdf7a15e038b1002f949fc9f2c29511d435c81401691fd6701bf05992a7",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -18513,7 +18542,7 @@
     },
     {
       "after_layouts": [],
-      "after_sha256": "b22d8eb008e5217dbf96111951dcd01efcd33ca5453de0cde98bc0b095cf7356",
+      "after_sha256": "0fb5a0e736e47510b32408d8c75774ae9b3387a8926e6fa7fccaa67fbc972998",
       "before_layouts": [],
       "before_sha256": "f8dd5ca6309cdb3e15738a5f45b6395acb5312200d7ccc21981e7bc67febacbc",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -18525,7 +18554,7 @@
         "CUBE_M16",
         "CUBE_M32"
       ],
-      "after_sha256": "8f9ae233161fa986f6d1257a3143e0f52be0c1d5b7976a155b3b824698a5935c",
+      "after_sha256": "2f7444c9a3adf41ec57b24d15287bff45d37d0d2eda1239bc4ae653cede2741e",
       "before_layouts": [],
       "before_sha256": "3269fa3785bfe7f8e4ef45fde7c8339f5063584c27642308c6001cbdbd178a1c",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -19227,8 +19256,10 @@
       "owner_decision": "Local CUBE_M32 FP64/S64/U64 double-CELL and Local 64-bit applicability closure (Issue #371 / ADR-CUBE-0004/ADR-CUBE-0005/ADR-TILE-0009, baseline e182c9b70)"
     },
     {
-      "after_layouts": [],
-      "after_sha256": "330a7894f1116dd417d3ec029bb33e506d6b0728024b16530fd89782d3ae2a55",
+      "after_layouts": [
+        "CUBE_M16"
+      ],
+      "after_sha256": "5d4622d4df759a012029d662de36f7dec7aa1ee4c052ec03c59122b81f19d04e",
       "before_layouts": [],
       "before_sha256": "e4446f2a0e02c16042384db7361cb717eb99a6ce9882d8d1bacd04a86ca83c20",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -19237,9 +19268,10 @@
     },
     {
       "after_layouts": [
+        "CUBE_M16",
         "CUBE_M32"
       ],
-      "after_sha256": "d5135c01a66b81ce5f8c572c9ac06e71ed7ca8e22713ed74d836aacbb37ef91d",
+      "after_sha256": "c317b199e6a0595171891ba3f73950af02e0f994758ae6619d5faf0b39dd67d3",
       "before_layouts": [],
       "before_sha256": "c993ef2f2d0aefe376a5e9af6d1e2929a3fcd1d76f49a67d73e2e142e2e4d6d3",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -19247,8 +19279,10 @@
       "path": "asl/block/model/dispatch/cell-rearrangement-schema.asl"
     },
     {
-      "after_layouts": [],
-      "after_sha256": "3fdd8384e51fc711a5cce1c572aa6ff70ab4e692b8586bea44679d95b5bac3e1",
+      "after_layouts": [
+        "CUBE_M16"
+      ],
+      "after_sha256": "e10d80dec455e3dd0e3ae983bbb244a6e5e8507d1abc39eed7fdfe72d67013c4",
       "before_layouts": [],
       "before_sha256": "206c8e9593a0e8c7c0e1923154e3bc06433f63f2ff331b5a4c0c71deb6119738",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -19286,7 +19320,7 @@
         "CUBE_M16",
         "CUBE_M32"
       ],
-      "after_sha256": "81ba9272255d76ec83b69492e84fc6843a7498871cca61e183a73c5e524872f2",
+      "after_sha256": "9a7182fddd3117568dc782d98441749583264acebd88fd231f3d5ff88c899c7d",
       "before_layouts": [
         "CUBE_M16",
         "CUBE_M32"
@@ -19459,7 +19493,7 @@
         "CUBE_M16",
         "CUBE_M32"
       ],
-      "after_sha256": "b0083e9c168cfb07e2e4aaa44b1714ecd08197df62663ace1d0e35d5e604ae45",
+      "after_sha256": "2a076dbf41852d4e071d8b5dafe7b176e0d2233b7ca5f4405646bcaf9b0fb145",
       "before_layouts": [
         "CUBE_M16",
         "CUBE_M32"
@@ -20082,6 +20116,10 @@
           "asl/block/model/operands/local-generation-cube.asl"
         ],
         [
+          "BundleLocalGenerationCubeWriterView",
+          "asl/block/model/operands/local-generation-cube-writer-effects.asl"
+        ],
+        [
           "BundleReusedDestinationDescriptorMatches",
           "asl/block/model/dispatch/destination-shape.asl"
         ],
@@ -20095,7 +20133,23 @@
         ],
         [
           "FinalizeBundleLocalGenerationCube",
-          "asl/block/model/operands/local-generation-cube.asl"
+          "asl/block/model/operands/local-generation-cube-writer-effects.asl"
+        ],
+        [
+          "ResolveBundleCUBESelectDestination",
+          "asl/block/model/dispatch/predicate-destination.asl"
+        ],
+        [
+          "ResolveBundleCellRearrangementDestination",
+          "asl/block/model/dispatch/cell-rearrangement-schema.asl"
+        ],
+        [
+          "ResolveBundleCubeTransportDestination",
+          "asl/block/model/dispatch/tlsu-layout-conversion.asl"
+        ],
+        [
+          "ResolveBundleTCVTCubeDestination",
+          "asl/block/model/dispatch/tcvt-destination.asl"
         ],
         [
           "ResolveBundleTileDestinationsWithShapeAndType",
@@ -48631,13 +48685,12 @@
         "BundleCubeTransportSelected": [
           {
             "calls": [
-              "TileDataLayoutConversionIsLoad",
-              "TileDataLayoutConversionIsStore",
-              "UInt"
+              "BundleTMOVSelected",
+              "TileDataLayoutIsCubeConversion"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/tlsu-layout-conversion.asl",
-            "sha256": "47856db05834f15636bacfda8ea1e8c967cf7b27a4e4da8bd1169e1074ce2c2b"
+            "sha256": "829116c99fa5a28d4f099eaf695a138ac031e67694a3cfed2551aed899a376cb"
           }
         ],
         "BundleCurrentPEIsNonparticipantSharedAssembly": [
@@ -50125,7 +50178,7 @@
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/destination-shape.asl",
-            "sha256": "3e6f32ee61a0d4b5abad6120bb75fd6150601b44ff21e5ffd21bc99eca9867a0"
+            "sha256": "54158a78780342ccc32cf409ac25c75d2951dec5294a219714b3a9e9149ad1c1"
           }
         ],
         "BundleSelectorCode": [
@@ -50467,18 +50520,21 @@
               "BundleSharedBindingIsDestination",
               "BundleSharedBindingMask",
               "BundleSharedSubviewLegal",
+              "BundleSharedTMOVNormalCarrierCompatible",
+              "BundleSharedTMOVNormalCarrierCompatible",
               "BundleTileBindingCount",
               "CurrentBundleTileLayout",
               "LocalTileSizeCodeIsLegal",
               "MaterializeBundleSharedSubview",
               "ResolveBundleEffectiveDataType",
               "SharedTileReadSchemaLegalAtCapacity",
+              "SharedTileRecord",
               "TileSizeCodeBytes",
               "let"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/shared-tlsu.asl",
-            "sha256": "c0acae4827789ab119442bcbf741461c71459302628fdc07de380bc971d71384"
+            "sha256": "1671803c8dab45a86d9fbc492f0a709ec16a2ded1441cbd0ab60f9f6eb930e30"
           }
         ],
         "BundleSharedTMOVGenerationModeLegal": [
@@ -50506,6 +50562,7 @@
               "BundleSharedTMOVCubeToNDSchemaLegal",
               "BundleSharedTMOVCubeToNDSelected",
               "BundleSharedTMOVGenerationModeLegal",
+              "BundleSharedTMOVNormalCarrierCompatible",
               "BundleTileBindingCount",
               "SharedTileUpdateCompatible",
               "TileSizeCodeBytes",
@@ -50514,7 +50571,19 @@
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/shared-tlsu.asl",
-            "sha256": "d692b6f4f1d2c0d7e9d61b118d7ac34671d083f8a320f6e583dc09ea2ecdbbf3"
+            "sha256": "4b4027d924cb8674b93c9f13c9d0186e05105745748fca81dfcca4aaa0644610"
+          }
+        ],
+        "BundleSharedTMOVNormalCarrierCompatible": [
+          {
+            "calls": [
+              "ResolveBundleEffectiveDataType",
+              "TileCarrierWidthCompatible",
+              "let"
+            ],
+            "layouts": [],
+            "path": "asl/block/model/dispatch/shared-tlsu.asl",
+            "sha256": "02d22be1772d0b62e8d1eed97e3267e0be710ceb9417a075c9b8d6b31067a349"
           }
         ],
         "BundleTCVTCubeDestinationCapacityGroupFits": [
@@ -52064,6 +52133,7 @@
         "ExecuteBundleCubeTransportOperation": [
           {
             "calls": [
+              "BeginBundleLocalGenerationCubeWriterEffects",
               "BundleCubeTransportBindingsLegal",
               "BundleCubeTransportDataAttributesLegal",
               "BundleCubeTransportDataTypeSupported",
@@ -52072,8 +52142,10 @@
               "BundleOperationDecodeCode",
               "DecodeTileOperation",
               "FinalizeBundleTileAttempt",
+              "FinishBundleLocalGenerationCubeWriterEffects",
               "ReadScalarRegisterOperand",
               "ReadScalarRegisterOperand",
+              "ReadTPC",
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
@@ -52083,7 +52155,9 @@
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
+              "RollBackBundleTileDestinations",
               "SelectedBundleTileMaskIsZero",
+              "SetFault",
               "SetFault",
               "SetFault",
               "SetFault",
@@ -52098,16 +52172,18 @@
               "UInt",
               "UInt",
               "ValidateBundleLocalGenerationWriters",
+              "let",
               "let"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/tlsu-layout-conversion.asl",
-            "sha256": "b0be5f5f1f0e12c3383c86c0d0e211c1a667666f4b2fc3182dc5541c2af8ec7c"
+            "sha256": "f89b301c6df425e53bec008bb4ec0c78fe12aa2ececfa4d60ab2caeb35f31582"
           }
         ],
         "ExecuteBundleGMAtomRedOperation": [
           {
             "calls": [
+              "BeginBundleLocalGenerationCubeWriterEffects",
               "BundleGMAtomRedDataTypeLegal",
               "BundleMGATHERDimensionsLegal",
               "BundleOperationBindingsComplete",
@@ -52129,6 +52205,9 @@
               "CurrentBundleTileOperationDataTypeCode",
               "DecodeTileOperation",
               "FinalizeBundleTileAttempt",
+              "FinishBundleLocalGenerationCubeWriterEffects",
+              "FinishBundleLocalGenerationCubeWriterEffects",
+              "FinishBundleLocalGenerationCubeWriterEffects",
               "GMAtomicOperationFromFunction",
               "GMAtomicOperationFromFunction",
               "GMReductionOperationFromFunction",
@@ -52157,7 +52236,9 @@
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
+              "ReadTPC",
               "ResolveBundleTileDestinationsWithShapeAndType",
+              "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
@@ -52165,6 +52246,7 @@
               "SelectedBundleTileDataAttributesLegal",
               "SelectedBundleTileMaskIsZero",
               "SelectedBundleTileMasksLegal",
+              "SetFault",
               "SetFault",
               "SetFault",
               "SetFault",
@@ -52188,16 +52270,18 @@
               "UInt",
               "UInt",
               "UInt",
-              "ValidateBundleLocalGenerationWriters"
+              "ValidateBundleLocalGenerationWriters",
+              "let"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/tlsu-gm-atom-red.asl",
-            "sha256": "54bf294143aa1da3d1686d1a2706aa7704882371816a80bbc9278e61b3f5e050"
+            "sha256": "e112d96face67738721dc048766d2b2a403c5a54895fef211e8b8433894d3c38"
           }
         ],
         "ExecuteBundleGMOVOperation": [
           {
             "calls": [
+              "BeginBundleLocalGenerationCubeWriterEffects",
               "BundleGMOVCore4SourceReady",
               "BundleGMOVPESourceTile",
               "BundleGMOVPESourceTileReady",
@@ -52219,6 +52303,7 @@
               "DecodeTileOperation",
               "FinalizeBundleTileAttempt",
               "FindBundleGMOVSourceSelectionOrdinal",
+              "FinishBundleLocalGenerationCubeWriterEffects",
               "GMOV",
               "GMOVFromSourceTile",
               "PTOPEMaskBitOfPEIdentity",
@@ -52229,11 +52314,14 @@
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
+              "ReadTPC",
               "ResolveBundleTileDestinationsWithShapeAndType",
+              "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
               "SelectedBundleTileDataAttributesLegal",
               "SelectedBundleTileMasksLegal",
+              "SetFault",
               "SetFault",
               "SetFault",
               "SetFault",
@@ -52248,16 +52336,18 @@
               "TileElementwiseLayoutSupported",
               "UInt",
               "UInt",
-              "ValidateBundleLocalGenerationWriters"
+              "ValidateBundleLocalGenerationWriters",
+              "let"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/tlsu-gmov.asl",
-            "sha256": "5a10cb67c20e14ae441c8b8e3f32a520e0f9ad036e446a1552db6387af8b56e6"
+            "sha256": "f008467795d291efa2e4eaf0f94a64260f6bb309dbdd6714bcde4fa1bf35caf2"
           }
         ],
         "ExecuteBundleMGATHERCASOperation": [
           {
             "calls": [
+              "BeginBundleLocalGenerationCubeWriterEffects",
               "BundleMGATHERCASBindingsLegal",
               "BundleMGATHERDimensionsLegal",
               "BundleOperationBindingsComplete",
@@ -52272,6 +52362,8 @@
               "CurrentBundleTileOperationDataTypeCode",
               "DecodeTileOperation",
               "FinalizeBundleTileAttempt",
+              "FinishBundleLocalGenerationCubeWriterEffects",
+              "FinishBundleLocalGenerationCubeWriterEffects",
               "IndexedTLSUExecutionMaskContentsDefined",
               "IndexedTLSUExecutionMaskContentsDefined",
               "IndexedTLSUExecutionMaskContentsDefined",
@@ -52284,7 +52376,9 @@
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
+              "ReadTPC",
               "ResolveBundleTileDestinationsWithShapeAndType",
+              "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
@@ -52296,21 +52390,24 @@
               "SetFault",
               "SetFault",
               "SetFault",
+              "SetFault",
               "TileDataTypeFromEncoding",
               "TileOperandsLegal_MGATHER_CAS",
               "UInt",
               "UInt",
               "UInt",
-              "ValidateBundleLocalGenerationWriters"
+              "ValidateBundleLocalGenerationWriters",
+              "let"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/tlsu-mgather-cas.asl",
-            "sha256": "0fdb3f922a54ef71cde483f5e9f4b91f5dcf296953dc812c0cb61407116af947"
+            "sha256": "711a9c05266fcd42f21216feb5ac3cb6530a0815a0b7efa8a6ad546ec9bad588"
           }
         ],
         "ExecuteBundleMGATHERMASKOperation": [
           {
             "calls": [
+              "BeginBundleLocalGenerationCubeWriterEffects",
               "BundleMGATHERDimensionsLegal",
               "BundleMGATHERMASKBindingsLegal",
               "BundleOperationBindingsComplete",
@@ -52324,6 +52421,8 @@
               "CurrentBundleTileOperationDataTypeCode",
               "DecodeTileOperation",
               "FinalizeBundleTileAttempt",
+              "FinishBundleLocalGenerationCubeWriterEffects",
+              "FinishBundleLocalGenerationCubeWriterEffects",
               "IndexedTLSUDataShapeMatchesIndex",
               "IndexedTLSUExecutionMaskContentsDefined",
               "IndexedTLSUMemoryIndexDataTypeLegal",
@@ -52337,7 +52436,9 @@
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
+              "ReadTPC",
               "ResolveBundleTileDestinationsWithShapeAndType",
+              "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
@@ -52349,21 +52450,24 @@
               "SetFault",
               "SetFault",
               "SetFault",
+              "SetFault",
               "TileDataTypeFromEncoding",
               "TileOperandsLegal_MGATHER_MASK",
               "UInt",
               "UInt",
               "UInt",
-              "ValidateBundleLocalGenerationWriters"
+              "ValidateBundleLocalGenerationWriters",
+              "let"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/tlsu-mgather-mask.asl",
-            "sha256": "e13e146d4e69f58a509bd3baf4fbcecdb2da1c7f058131b09493dfc8eb354af8"
+            "sha256": "81f7b53716f3b289b6ab560d89056550c590ff7773f1614792d3764098b11adf"
           }
         ],
         "ExecuteBundleMGATHEROperation": [
           {
             "calls": [
+              "BeginBundleLocalGenerationCubeWriterEffects",
               "BundleMGATHERDimensionsLegal",
               "BundleOperationBindingsComplete",
               "BundleOperationDecodeCode",
@@ -52376,6 +52480,8 @@
               "CurrentBundleTileOperationDataTypeCode",
               "DecodeTileOperation",
               "FinalizeBundleTileAttempt",
+              "FinishBundleLocalGenerationCubeWriterEffects",
+              "FinishBundleLocalGenerationCubeWriterEffects",
               "IndexedTLSUDataShapeMatchesIndex",
               "IndexedTLSUExecutionMaskContentsDefined",
               "IndexedTLSUMemoryIndexDataTypeLegal",
@@ -52389,7 +52495,9 @@
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
+              "ReadTPC",
               "ResolveBundleTileDestinationsWithShapeAndType",
+              "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
@@ -52402,16 +52510,18 @@
               "SetFault",
               "SetFault",
               "SetFault",
+              "SetFault",
               "TileDataTypeFromEncoding",
               "TileOperandsLegal_MGATHER",
               "UInt",
               "UInt",
               "UInt",
-              "ValidateBundleLocalGenerationWriters"
+              "ValidateBundleLocalGenerationWriters",
+              "let"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/tlsu-mgather.asl",
-            "sha256": "0e80887740f4951622f3cfe5ddfcefa64ebf464398f07673d22cf735a17a6299"
+            "sha256": "adb30129f15f0cb1d8dc5e2b2f2d290580f368b30a78d8086b3f79a8549883d5"
           }
         ],
         "ExecuteBundleMSCATTERMASKOperation": [
@@ -52510,6 +52620,7 @@
           {
             "calls": [
               "AtomicUpdateSharedTileWithPublication",
+              "BeginBundleLocalGenerationCubeWriterEffects",
               "BeginBundleSharedGenerationProbe",
               "BeginBundleSharedGenerationProbe",
               "BundleDestinationPhysicalColumns",
@@ -52560,6 +52671,8 @@
               "DecodeTileOperation",
               "FinalizeBundleTileAttempt",
               "FinalizeBundleTileAttempt",
+              "FinishBundleLocalGenerationCubeWriterEffects",
+              "MaterializeBundleSharedSubview",
               "MaterializeBundleSharedSubview",
               "MaterializeBundleSharedSubviewForPE",
               "MaterializeBundleSharedSubviewForPE",
@@ -52590,15 +52703,19 @@
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
+              "ReadTPC",
               "ResolveBundleEffectiveDataType",
               "ResolveBundleTileDestinations",
+              "ResolveBundleTileDestinationsWithShapeAndType",
               "RestoreBundleSharedGenerationProbe",
               "RestoreBundleSharedGenerationProbe",
+              "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
               "SelectedBundleTileDataAttributesLegal",
               "SelectedBundleTileMasksLegal",
+              "SetFault",
               "SetFault",
               "SetFault",
               "SetFault",
@@ -52629,6 +52746,7 @@
               "SharedTileRecord",
               "SharedTileRecord",
               "SharedTileRecord",
+              "SharedTileRecord",
               "TLOADShared",
               "TMOVLocalToShared",
               "TMOVLocalToShared",
@@ -52651,11 +52769,12 @@
               "UInt",
               "UInt",
               "ValidateBundleLocalGenerationWriters",
+              "let",
               "let"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/shared-tlsu.asl",
-            "sha256": "54906807accb14a42f76bc44907fb2e3c9a0495d737c4710914b0c7f712ac68f"
+            "sha256": "6c92489bacbe990c837c4e78ab0c9f6dadbfd321490aae14a5ed8b53337c459f"
           }
         ],
         "ExecuteBundleTIMG2COLOperation": [
@@ -52678,6 +52797,7 @@
         "ExecuteBundleTMATMULOperation": [
           {
             "calls": [
+              "BeginBundleLocalGenerationCubeWriterEffects",
               "BundleCubeDimensionValue",
               "BundleCubeDimensionValue",
               "BundleCubeDimensionValue",
@@ -52727,6 +52847,7 @@
               "DecodeTileOperation",
               "FinalizeBundleSharedLastUseSources",
               "FinalizeBundleTileAttempt",
+              "FinishBundleLocalGenerationCubeWriterEffects",
               "MaterializeBundleSharedMatrixLeftPrimary",
               "MaterializeBundleSharedMatrixLeftScale",
               "MaterializeBundleSharedMatrixPrimary",
@@ -52744,12 +52865,15 @@
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
+              "ReadTPC",
               "ResolveBundleTMATMULDestination",
               "ReuseBundleLocalGenerationDestination",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
+              "RollBackBundleTileDestinations",
               "SelectedBundleTileMaskIsZero",
               "SelectedBundleTileMasksLegal",
+              "SetFault",
               "SetFault",
               "SetFault",
               "SetFault",
@@ -52802,11 +52926,12 @@
               "TileProfileInternalAccumulatorReplacementHint",
               "UInt",
               "ValidateBundleLocalGenerationWriters",
+              "let",
               "let"
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/cube-tmatmul.asl",
-            "sha256": "b22d8eb008e5217dbf96111951dcd01efcd33ca5453de0cde98bc0b095cf7356"
+            "sha256": "0fb5a0e736e47510b32408d8c75774ae9b3387a8926e6fa7fccaa67fbc972998"
           }
         ],
         "ExecuteBundleTPREFETCHOperation": [
@@ -52851,6 +52976,10 @@
               "AbortBundleLocalGenerationsForBundle",
               "AbortBundleLocalGenerationsForBundle",
               "AbortBundleLocalGenerationsForBundle",
+              "AbortBundleLocalGenerationsForBundle",
+              "AbortBundleLocalGenerationsForBundle",
+              "BeginBundleLocalGenerationCubeWriterEffects",
+              "BeginBundleLocalGenerationCubeWriterEffects",
               "BundleAssembleOutputStructureLegal",
               "BundleAtomicTStoreCurrentPENonparticipant",
               "BundleAtomicTStoreCurrentPESelected",
@@ -52923,6 +53052,8 @@
               "DiscardBundleSubviewMaterializations",
               "DiscardBundleSubviewMaterializations",
               "DiscardBundleSubviewMaterializations",
+              "DiscardBundleSubviewMaterializations",
+              "DiscardBundleSubviewMaterializations",
               "ExecuteBundleAtomicTSTOREOperation",
               "ExecuteBundleComparisonGPRCarrier",
               "ExecuteBundleComparisonGPRCarrier",
@@ -52948,11 +53079,15 @@
               "FinalizeBundleTileAttempt",
               "FindCurrentAtomicTStoreOccurrence",
               "FindCurrentAtomicTStoreOccurrence",
+              "FinishBundleLocalGenerationCubeWriterEffects",
+              "FinishBundleLocalGenerationCubeWriterEffects",
               "MarkSelectedBundleExecutionMaskCarrier",
               "PrepareSelectedBundleExecutionMaskMerge",
               "PrepareSelectedBundleExecutionMaskMerge",
               "PrepareSelectedBundleStage2",
               "ReadScalarRegisterOperand",
+              "ReadTPC",
+              "ReadTPC",
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
@@ -52984,6 +53119,8 @@
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
               "RollBackBundleTileDestinations",
+              "RollBackBundleTileDestinations",
+              "RollBackBundleTileDestinations",
               "SelectedBundleCellRearrangementSchemaLegal",
               "SelectedBundleClosedSchemasLegal",
               "SelectedBundleComparisonConsumesGPR",
@@ -53011,6 +53148,8 @@
               "SetFault",
               "SetFault",
               "SetFault",
+              "SetFault",
+              "SetFault",
               "TCICube",
               "TileOperandsLegal_TCICube",
               "TileOperationExecutionMaskEligible",
@@ -53018,7 +53157,13 @@
               "TileOperationExecutionMaskEligible",
               "TileOperationOfIndex",
               "TileOperationUsesCellRearrangementSchema",
+              "UInt",
+              "UInt",
+              "UInt",
+              "UInt",
               "ValidateBundleLocalGenerationWriters",
+              "let",
+              "let",
               "let"
             ],
             "layouts": [
@@ -53026,7 +53171,7 @@
               "CUBE_M32"
             ],
             "path": "asl/block/model/dispatch/tile-execution.asl",
-            "sha256": "8f9ae233161fa986f6d1257a3143e0f52be0c1d5b7976a155b3b824698a5935c"
+            "sha256": "2f7444c9a3adf41ec57b24d15287bff45d37d0d2eda1239bc4ae653cede2741e"
           }
         ],
         "ExecuteBundleTileOperationWithAcceptedApplicabilityRules": [
@@ -53725,13 +53870,16 @@
               "TileCubeDescriptorLegal",
               "TileCubeDescriptorLegal",
               "TileCubeDescriptorShapeLegal",
+              "TileCubePhysicalColumnsFromCapacity",
               "let",
               "let",
               "let"
             ],
-            "layouts": [],
+            "layouts": [
+              "CUBE_M16"
+            ],
             "path": "asl/block/model/dispatch/predicate-destination.asl",
-            "sha256": "330a7894f1116dd417d3ec029bb33e506d6b0728024b16530fd89782d3ae2a55"
+            "sha256": "5d4622d4df759a012029d662de36f7dec7aa1ee4c052ec03c59122b81f19d04e"
           }
         ],
         "ResolveBundleCellRearrangementDestination": [
@@ -53776,16 +53924,18 @@
               "TileCellRearrangementWordsPerRow",
               "TileCubeDescriptorLegal",
               "TileCubeDescriptorShapeLegal",
+              "TileCubePhysicalColumnsFromCapacity",
               "TileDataTypeFromEncoding",
               "TileOperationOfIndex",
               "UInt",
               "then"
             ],
             "layouts": [
+              "CUBE_M16",
               "CUBE_M32"
             ],
             "path": "asl/block/model/dispatch/cell-rearrangement-schema.asl",
-            "sha256": "d5135c01a66b81ce5f8c572c9ac06e71ed7ca8e22713ed74d836aacbb37ef91d"
+            "sha256": "c317b199e6a0595171891ba3f73950af02e0f994758ae6619d5faf0b39dd67d3"
           }
         ],
         "ResolveBundleCubeTransportDestination": [
@@ -53802,11 +53952,14 @@
               "SetFault",
               "TileCubeDescriptorLegal",
               "TileCubeDescriptorShapeLegal",
+              "TileCubePhysicalColumnsFromCapacity",
               "UInt"
             ],
-            "layouts": [],
+            "layouts": [
+              "CUBE_M16"
+            ],
             "path": "asl/block/model/dispatch/tlsu-layout-conversion.asl",
-            "sha256": "3fdd8384e51fc711a5cce1c572aa6ff70ab4e692b8586bea44679d95b5bac3e1"
+            "sha256": "e10d80dec455e3dd0e3ae983bbb244a6e5e8507d1abc39eed7fdfe72d67013c4"
           }
         ],
         "ResolveBundleEffectiveDataType": [
@@ -53903,6 +54056,7 @@
               "SetFault",
               "TileCubeDescriptorLegal",
               "TileCubeDescriptorShapeLegal",
+              "TileCubePhysicalColumnsFromCapacity",
               "UInt",
               "UInt",
               "UInt",
@@ -53913,7 +54067,7 @@
               "CUBE_M32"
             ],
             "path": "asl/block/model/dispatch/tcvt-destination.asl",
-            "sha256": "81ba9272255d76ec83b69492e84fc6843a7498871cca61e183a73c5e524872f2"
+            "sha256": "9a7182fddd3117568dc782d98441749583264acebd88fd231f3d5ff88c899c7d"
           }
         ],
         "ResolveBundleTMATMULCubeDestinationGroup": [
@@ -54099,6 +54253,9 @@
               "BundleDestinationValidColumns",
               "BundleDestinationValidRows",
               "BundleDestinationValidRows",
+              "BundleDimensionIndexOfRegister",
+              "BundleDimensionIndexOfRegister",
+              "BundleDimensionIndexOfRegister",
               "BundleFPATREffectiveDataType",
               "BundleGroupMaxColumns",
               "BundleGroupMaxColumns",
@@ -54126,7 +54283,9 @@
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
+              "ReadTPC",
               "ResolveBundleEffectiveDataType",
+              "SetFault",
               "SetFault",
               "SetFault",
               "SetFault",
@@ -54139,6 +54298,11 @@
               "TileCubeGeometryLegalWithColumns",
               "TileCubePhysicalColumnsFromCapacity",
               "TileCubePhysicalColumnsFromCapacity",
+              "TileCubePhysicalColumnsFromCapacity",
+              "TileCubePhysicalColumnsFromCapacity",
+              "TileCubePhysicalColumnsFromCapacity",
+              "TileCubeStorageColumns",
+              "TileCubeStorageColumns",
               "TileCubeStorageColumns",
               "TileCubeStorageColumns",
               "TileCubeStorageColumns",
@@ -54157,6 +54321,7 @@
               "TileOperationUsesClosedReductionSchema",
               "TileOperationUsesClosedRowReductionSchema",
               "TileReductionOperationReturnsIndex",
+              "TileSizeCodeBytes",
               "UInt",
               "let"
             ],
@@ -54165,7 +54330,7 @@
               "CUBE_M32"
             ],
             "path": "asl/block/model/dispatch/destination-shape.asl",
-            "sha256": "b0083e9c168cfb07e2e4aaa44b1714ecd08197df62663ace1d0e35d5e604ae45"
+            "sha256": "2a076dbf41852d4e071d8b5dafe7b176e0d2233b7ca5f4405646bcaf9b0fb145"
           }
         ],
         "TileA7DataTypeSupported": [
@@ -59444,6 +59609,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -60109,6 +60275,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -60784,6 +60951,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -61449,6 +61617,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -62114,6 +62283,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -62787,6 +62957,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -63452,6 +63623,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -64117,6 +64289,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -64782,6 +64955,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -65473,6 +65647,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -66138,6 +66313,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -66803,6 +66979,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -67468,6 +67645,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -68133,6 +68311,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -68804,6 +68983,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -69472,6 +69652,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -70140,6 +70321,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -70808,6 +70990,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -71476,6 +71659,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -72162,6 +72346,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -72830,6 +73015,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -73498,6 +73684,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -74166,6 +74353,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -74826,6 +75014,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -75494,6 +75683,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -76224,6 +76414,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -76957,6 +77148,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -77682,6 +77874,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -78415,6 +78608,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -79140,6 +79334,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -79795,6 +79990,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -80511,6 +80707,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -81219,6 +81416,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -81947,6 +82145,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -82675,6 +82874,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -83457,6 +83657,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -84247,6 +84448,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -85037,6 +85239,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -85827,6 +86030,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -86617,6 +86821,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -87407,6 +87612,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -88197,6 +88403,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -88987,6 +89194,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -89715,6 +89923,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -90443,6 +90652,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -91171,6 +91381,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -91899,6 +92110,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -92613,6 +92825,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -93346,6 +93559,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -94071,6 +94285,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -94801,6 +95016,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -95470,6 +95686,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -96252,6 +96469,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -96965,6 +97183,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -97651,6 +97870,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -98318,6 +98538,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -98997,6 +99218,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -99702,6 +99924,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -100403,6 +100626,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -101116,6 +101340,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -101848,6 +102073,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -102518,6 +102744,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -103214,6 +103441,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -103885,6 +104113,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -104616,6 +104845,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -105281,6 +105511,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -105958,6 +106189,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -106661,6 +106893,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -107360,6 +107593,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -108071,6 +108305,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -108801,6 +109036,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -109534,6 +109770,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -110259,6 +110496,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -110992,6 +111230,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -111717,6 +111956,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -112387,6 +112627,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -113120,6 +113361,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -113845,6 +114087,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -114575,6 +114818,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -115305,6 +115549,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -116038,6 +116283,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -116763,6 +117009,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -117452,6 +117699,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -118144,6 +118392,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -118745,6 +118994,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -119475,6 +119725,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -120205,6 +120456,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -120938,6 +121190,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -121663,6 +121916,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -122391,6 +122645,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -123119,6 +123374,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -123901,6 +124157,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -124691,6 +124948,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -125481,6 +125739,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -126271,6 +126530,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -127061,6 +127321,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -127851,6 +128112,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -128641,6 +128903,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -129431,6 +129694,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -130159,6 +130423,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -130887,6 +131152,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -131615,6 +131881,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -132343,6 +132610,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -133073,6 +133341,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -133745,6 +134014,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -134466,6 +134736,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -135180,6 +135451,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -135913,6 +136185,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -136638,6 +136911,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -137371,6 +137645,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -138096,6 +138371,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -138780,6 +139056,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -139511,6 +139788,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -140185,6 +140463,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -140918,6 +141197,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -141643,6 +141923,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -142300,6 +142581,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -142981,6 +143263,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -143714,6 +143997,7 @@
             "BundleSharedTMOVDestinationSchemaLegal",
             "BundleSharedTMOVGenerationModeLegal",
             "BundleSharedTMOVLocalSchemaLegal",
+            "BundleSharedTMOVNormalCarrierCompatible",
             "BundleTCVTCubeDestinationCapacityGroupFits",
             "BundleTIMG2COLAbortFailedAttempt",
             "BundleTIMG2COLBaseParameterExtensionLegal",
@@ -224003,6 +224287,6 @@
   },
   "refreshed_dispatch_baseline": "cbd64442b0585271fed2db633578b9fb1541e1d9",
   "schema": "pto.layout-relation-census.v3",
-  "source_path_count": 949,
+  "source_path_count": 950,
   "tile_location_normative_refs": []
 }

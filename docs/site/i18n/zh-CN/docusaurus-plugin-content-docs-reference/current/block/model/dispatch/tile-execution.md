@@ -89,7 +89,7 @@ This page is a generated reference view of the normative ASL unit.
 // numeric padding checks belong to the TGPR2T complete schema before handler
 // execution and atomic result publication.
 // NDF-END: PTO-BLOCK-MODEL-DISPATCH-TGPR2T-BOUNDARY-001
-// PTO-UNIT: {"classification":["model","dispatch","tile-execution"],"depends_on":["PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION","PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-LEA-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-INSTRUCTION-OPERANDS","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TLSU-ATOMIC-TSTORE","PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED","PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV","PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-SHARED-EXEC","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-DISPATCH-TOP-LEVEL","PTO-TILE-MODEL-EXECUTION-MASK-COMPARISON"],"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","surface":"block"}
+// PTO-UNIT: {"classification":["model","dispatch","tile-execution"],"depends_on":["PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION","PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-LEA-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-INSTRUCTION-OPERANDS","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TLSU-ATOMIC-TSTORE","PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED","PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV","PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-SHARED-EXEC","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-DISPATCH-TOP-LEVEL","PTO-TILE-MODEL-EXECUTION-MASK-COMPARISON"],"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","surface":"block"}
 readonly func BundleTileTypesMatch(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
     operands: TileInstructionOperands,
@@ -489,7 +489,20 @@ begin
         return FALSE;
     end;
     if SelectedBundleComparisonConsumesGPR(operation) then
-        if !ExecuteBundleComparisonGPRCarrier(operation) then
+        let (writer_effects_legal, writer_effects) =
+            BeginBundleLocalGenerationCubeWriterEffects(
+                UInt(_BundleDimensions[[1]]) as integer {1..65535},
+                UInt(_BundleDimensions[[0]]) as integer {1..65535});
+        if !writer_effects_legal then
+            SetFault(Fault_TileLegality, ReadTPC());
+            RollBackBundleTileDestinations();
+            AbortBundleLocalGenerationsForBundle();
+            DiscardBundleSubviewMaterializations();
+            return FALSE;
+        end;
+        let comparison_completed = ExecuteBundleComparisonGPRCarrier(operation);
+        FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
+        if !comparison_completed then
             SetFault(Fault_TileLegality, ReadTPC());
             RollBackBundleTileDestinations();
             AbortBundleLocalGenerationsForBundle();
@@ -501,6 +514,17 @@ begin
         DiscardBundleSubviewMaterializations();
         FinalizeBundleTileAttempt(TileExecution_Executed);
         return TRUE;
+    end;
+    let (writer_effects_legal, writer_effects) =
+        BeginBundleLocalGenerationCubeWriterEffects(
+            UInt(_BundleDimensions[[1]]) as integer {1..65535},
+            UInt(_BundleDimensions[[0]]) as integer {1..65535});
+    if !writer_effects_legal then
+        SetFault(Fault_TileLegality, ReadTPC());
+        RollBackBundleTileDestinations();
+        AbortBundleLocalGenerationsForBundle();
+        DiscardBundleSubviewMaterializations();
+        return FALSE;
     end;
     let operands = BundleTileInstructionOperands(operation);
     var status = TileExecution_Rejected;
@@ -524,6 +548,7 @@ begin
             rules, family, code, operands);
         status = generated_status;
     end;
+    FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
     if _LastFault != Fault_None || status != TileExecution_Executed then
         RollBackBundleTileDestinations();
         AbortBundleLocalGenerationsForBundle();

@@ -73,7 +73,7 @@ If the index Tile were FP32, the bundle raises `Fault_TileLegality` before any d
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/tlsu-mgather.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","surface":"block","classification":["model","dispatch","tlsu-mgather"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-TILE-MODEL-MEMORY-GATHER-SCATTER"]}
+// PTO-UNIT: {"classification":["model","dispatch","tlsu-mgather"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-TILE-MODEL-MEMORY-GATHER-SCATTER"],"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","surface":"block"}
 
 readonly func BundleMGATHERSelected() => boolean
 begin
@@ -160,15 +160,24 @@ begin
     if !ValidateBundleLocalGenerationWriters() then
         RollBackBundleTileDestinations(); return FALSE;
     end;
+    let (writer_effects_legal, writer_effects) =
+        BeginBundleLocalGenerationCubeWriterEffects(
+            valid_rows, valid_columns);
+    if !writer_effects_legal then
+        SetFault(Fault_TileLegality, ReadTPC());
+        RollBackBundleTileDestinations(); return FALSE;
+    end;
     let destination = _BundleTileBindings[[0]].destination;
     let pad_value = CurrentBundlePadValue();
     if !TileOperandsLegal_MGATHER(destination, Zeros{PTO_XLEN},
            binding.source0, pad_value) then
+        FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
         RollBackBundleTileDestinations();
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
     MGATHER(destination, base_address, binding.source0, pad_value);
+    FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
     if _LastFault != Fault_None then
         RollBackBundleTileDestinations();
         return FALSE;
