@@ -81,7 +81,9 @@ begin
             elsif CurrentAtomicTStoreDrainPending() then
                 return CommandExecution_Blocked;
             end;
-            return CommandExecution_Rejected;
+            // An incomplete non-Atomic predecessor remains live. Preserve the
+            // legacy command result and leave the fetched BSTART uninstalled.
+            return CommandExecution_Executed;
         end;
         if ReadTPC() != instruction_pc then
             return CommandExecution_Executed;
