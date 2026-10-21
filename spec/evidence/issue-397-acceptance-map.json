@@ -2,7 +2,7 @@
   "schema": "pto.issue-397-acceptance-map.v1",
   "contract": "issue-397__tstore-strided-atomic-reduction-frozen.md",
   "baseline": "b0165320a4b575b18d2f4d93faf40178f661ab49",
-  "status": "correction-round-2-source-committed-focused-closure-pending",
+  "status": "correction-round-2-source-committed-focused-closure-passed",
   "points": [
     {
       "acceptance": "A01",
@@ -305,7 +305,7 @@
         "PTO-BSTART-TSTORE-MEMORY-001",
         "PTO-GM-FLOATING-ADD-NUMERIC-001"
       ],
-      "assertions": "The focused Normal group now includes Shared SUBVIEW, posted TSTORE production-beat completion, Shared source lifetime fault/squash retry and concurrent occurrence order, Local generation recovery isolation, and Shared TLSU squash/publication isolation; each point exercises its existing Normal path and checks state/effects."
+      "assertions": "The focused Normal group now includes Shared SUBVIEW, posted TSTORE production-beat completion, Shared source lifetime fault/squash retry and concurrent occurrence order, Local generation recovery isolation, and Shared TLSU squash/publication isolation; each point exercises its existing Normal path and checks state/effects. The protected Shared TLSU assembly squash control also preserves its legacy Executed status while an incomplete Shared PE cohort remains live; only actual Atomic TSTORE drain waits return Blocked."
     },
     {
       "acceptance": "A17",
@@ -568,8 +568,8 @@
       "scope_note": "Canonical registry selection with ASLREF unset; only IDs assigned to this profile use its configuration, while other selected IDs keep their registered/default profiles."
     },
     "canonical_registry": "tests/config/asl/execution-profiles.json",
-    "mixed_exact_id_evidence": "build/issue397-review-evidence/correction-final-candidate-r2-62/manifest.json",
-    "mixed_exact_id_result": "One mixed 62-point canonical exact-ID page is pending final committed-input execution."
+    "mixed_exact_id_evidence": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/manifest.json",
+    "mixed_exact_id_result": "Passed 62/62 selected points at committed input 4302fe8565f5a2b72296dfd330d796e01164c9bc (56 default, 3 memory-64k, 3 atomic-translation); one exact page, ASLREF unset, -j4."
   },
   "profiles_by_test_id": {
     "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001": "memory_64k",
@@ -911,7 +911,7 @@
           "PTO-BSTART-TSTORE-MEMORY-001",
           "PTO-GM-FLOATING-ADD-NUMERIC-001"
         ],
-        "assertions": "The focused Normal group now includes Shared SUBVIEW, posted TSTORE production-beat completion, Shared source lifetime fault/squash retry and concurrent occurrence order, Local generation recovery isolation, and Shared TLSU squash/publication isolation; each point exercises its existing Normal path and checks state/effects."
+        "assertions": "The focused Normal group now includes Shared SUBVIEW, posted TSTORE production-beat completion, Shared source lifetime fault/squash retry and concurrent occurrence order, Local generation recovery isolation, and Shared TLSU squash/publication isolation; each point exercises its existing Normal path and checks state/effects. The protected Shared TLSU assembly squash control also preserves its legacy Executed status while an incomplete Shared PE cohort remains live; only actual Atomic TSTORE drain waits return Blocked."
       },
       {
         "acceptance": "A17",
@@ -1092,16 +1092,24 @@
     ]
   },
   "profile_evidence": "spec/evidence/issue-397-profile-evidence.json",
-  "candidate_commit": "1d29a945fde9b0dacbd854c180ba47a3ead5de1b",
-  "candidate_asl_tree": "fdecfecf1db016cc426b69a38520e866787221df",
+  "candidate_commit": "4302fe8565f5a2b72296dfd330d796e01164c9bc",
+  "candidate_asl_tree": "745c7a372f4e65313553d7c942540b4409685563",
   "profile_registry": {
     "path": "tests/config/asl/execution-profiles.json",
     "sha256": "0057353a976f421b3ae3b48dc2496f52230186fab62375677e506ffc3cdb25e2",
     "selection_mode": "canonical per-point routing with ASLREF unset",
-    "focused_archive": "build/issue397-review-evidence/correction-final-candidate-50",
-    "point_count": 50,
-    "passed": 50,
+    "focused_archive": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62",
+    "point_count": 62,
+    "passed": 62,
     "failed": 0,
-    "manifest_sha256": "315cae22561deef26d62bee32e717d7ba3eafff5817851a642ee7d4411d41a73"
+    "manifest_sha256": "c7d57f7855bb853d4b2f7745465806f339c5464ff570e93b1ad0e29978c32a1d",
+    "runtime_registry_sha256": "299b12528898d5d9c754b195fb57f4a9b0a857d280f685403f1280e26e295c57",
+    "execution_profile_counts": {
+      "default": 56,
+      "memory-64k": 3,
+      "atomic-translation": 3
+    },
+    "metadata_topology_count": 4336,
+    "full_matrix_discovery": false
   }
 }
