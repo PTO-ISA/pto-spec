@@ -142,11 +142,17 @@ class AslTestsTest(unittest.TestCase):
                 "default": {"launcher": "scripts/aslref", "inputs": []},
                 "memory": {
                     "launcher": memory_launcher,
-                    "inputs": ["tests/config/asl/profile-fixture.asl"],
+                    "inputs": [
+                        "scripts/aslref",
+                        "tests/config/asl/profile-fixture.asl",
+                    ],
                 },
                 "translation": {
                     "launcher": "scripts/aslref-translation",
-                    "inputs": ["tests/config/asl/profile-fixture.asl"],
+                    "inputs": [
+                        "scripts/aslref",
+                        "tests/config/asl/profile-fixture.asl",
+                    ],
                 },
             },
             "assignments": assignments,
@@ -561,6 +567,83 @@ class AslTestsTest(unittest.TestCase):
             row["profile_inputs"], [list(item) for item in point.profile_inputs]
         )
         self.assertEqual(len(point.profile_fingerprint), 64)
+
+    def test_base_launcher_is_fingerprinted_for_every_profile_and_stales_old_points(
+        self,
+    ) -> None:
+        from scripts.asl_tests import PreparedAslInputs
+
+        original = "#!/bin/sh\nexit 0\n"
+        for profile in ("default", "memory", "translation"):
+            with self.subTest(profile=profile):
+                self.write()
+                assignment = (
+                    {"PTO-AVS-ARCH-STATE-REGISTERS-001": profile}
+                    if profile != "default"
+                    else {}
+                )
+                self.write_execution_profiles(assignment)
+                base_launcher = self.root / "scripts/aslref"
+                base_launcher.write_text(original, encoding="utf-8")
+                with patch.dict("os.environ", {}, clear=True):
+                    point = load_test_points(self.root, (unit(),))[0]
+                    before = asl_tests.load_execution_profile_registry(
+                        self.root
+                    ).profiles[profile].fingerprint
+                    self.assertIn(
+                        ("scripts/aslref", hashlib.sha256(original.encode()).hexdigest()),
+                        asl_tests.load_execution_profile_registry(
+                            self.root
+                        ).profiles[profile].inputs,
+                    )
+
+                    base_launcher.write_text(
+                        original + "# changed transitive launcher\n",
+                        encoding="utf-8",
+                    )
+                    after = asl_tests.load_execution_profile_registry(
+                        self.root
+                    ).profiles[profile].fingerprint
+                    self.assertNotEqual(before, after)
+
+                    model = self.root / "build/model.asl"
+                    validation = self.root / "build/validation.asl"
+                    model.parent.mkdir(parents=True, exist_ok=True)
+                    model.write_text("// model\n", encoding="utf-8")
+                    validation.write_text(
+                        asl_tests.EMPTY_VALIDATION_SHARD, encoding="utf-8"
+                    )
+                    calls: list[list[str]] = []
+
+                    def fake_run(command: list[str], **_: object) -> CompletedProcess[str]:
+                        calls.append(command)
+                        return CompletedProcess(command, 0, stdout="", stderr="")
+
+                    result = execute_test_point(
+                        self.root,
+                        point,
+                        timeout_seconds=7,
+                        run=fake_run,
+                        prepared=PreparedAslInputs(
+                            model_path=model,
+                            validation_paths={None: validation},
+                        ),
+                    )
+                    self.assertEqual(result, 1)
+                    self.assertFalse(
+                        any("--type-check-strict" in call for call in calls)
+                    )
+                    payload = json.loads(
+                        (
+                            self.root
+                            / "build/asl-test-results"
+                            / point.test_id
+                            / "result.json"
+                        ).read_text(encoding="utf-8")
+                    )
+                    self.assertIn(
+                        "execution profile identity changed", payload["error"]
+                    )
 
     def test_profile_wrapper_override_must_match_the_point_assignment(self) -> None:
         self.write()

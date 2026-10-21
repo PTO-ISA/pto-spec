@@ -9,12 +9,14 @@
     "memory-64k": {
       "launcher": "scripts/aslref-64k",
       "inputs": [
+        "scripts/aslref",
         "tests/config/asl/memory-64k.asl"
       ]
     },
     "atomic-translation": {
       "launcher": "scripts/aslref-atomic-translation",
       "inputs": [
+        "scripts/aslref",
         "tests/config/asl/atomic-translation-test-profile.asl"
       ]
     }

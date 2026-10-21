@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import argparse
 import re
 import sys
 from pathlib import Path
@@ -68,10 +69,12 @@ def encoded_constructor_word(body: str, *, base_name: str, base_value: int,
     return word
 
 
-def main() -> None:
-    macros = json.loads(CATALOG.read_text())
-    tileops = json.loads(TILEOPS.read_text())
-    command_forms = json.loads(COMMAND_FORMS.read_text())["forms"]
+def main(root: Path = ROOT) -> None:
+    macros = json.loads((root / "spec/catalog/tile-macro-assembly.json").read_text())
+    tileops = json.loads((root / "spec/catalog/tile-operations.json").read_text())
+    command_forms = json.loads(
+        (root / "spec/catalog/command-forms.json").read_text()
+    )["forms"]
     tstore = [entry for entry in macros["operations"] if entry.get("mnemonic") == "TSTORE"]
     if len(tstore) != 1:
         fail(f"expected one TSTORE macro operation, found {len(tstore)}")
@@ -126,19 +129,40 @@ def main() -> None:
     ]:
         fail("BSTART.TSTORE DataType no longer occupies its five assigned high bits")
 
-    modes_test = (ROOT / "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-atomic-modes-001.asl").read_text()
-    start_body = function_body(modes_test, "pure func AtomicModeStart()")
+    modes_test = (
+        root
+        / "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-atomic-modes-001.asl"
+    ).read_text()
+    start_body = function_body(
+        modes_test, "pure func AtomicModeStart(data_type: TileDataType)"
+    )
     start_word = encoded_constructor_word(
         start_body,
         base_name="BSTART.TSTORE",
         base_value=BSTART_TSTORE_MATCH,
         updates=[
-            (r"instruction\[31:27\]\s*=\s*Zeros\{5\}\s*\+\s*25\s*;",
+            (r"instruction\[31:27\]\s*=\s*TileDataTypeToEncoding\(data_type\)\s*;",
              BSTART_TEST_DATATYPE << 27,
-             "DataType=25"),
+             "DataType=TileDataTypeToEncoding(data_type)"),
         ],
     )
-    if start_word >> 27 != BSTART_TEST_DATATYPE or start_word & BSTART_TSTORE_MASK != BSTART_TSTORE_MATCH:
+    dtype_source = (root / "asl/arch/data-types/tile-data-types.asl").read_text()
+    dtype_body = function_body(
+        dtype_source,
+        "pure func TileDataTypeToEncoding(data_type: TileDataType)",
+    )
+    if not re.search(
+        r"when\s+TileDataType_U32\s*=>\s*return\s+Zeros\{5\}\s*\+\s*25\s*;",
+        dtype_body,
+    ):
+        fail("the architecture U32 DataType encoding no longer equals independently pinned 25")
+    run_body = function_body(modes_test, "func RunAtomicMode(")
+    if not re.search(
+        r"AtomicModeStart\(\s*TileDataType_U32\s*\)", run_body
+    ):
+        fail("the executable U32 Function 1 witness does not pass U32 to AtomicModeStart")
+    expected_start_word = BSTART_TSTORE_MATCH | (BSTART_TEST_DATATYPE << 27)
+    if start_word != expected_start_word or start_word & BSTART_TSTORE_MASK != BSTART_TSTORE_MATCH:
         fail(f"resolved BSTART.TSTORE carrier word 0x{start_word:08x} does not preserve fixed bits and DataType")
 
     datr = [form for form in command_forms if form.get("mnemonic") == "B.DATR"]
@@ -154,7 +178,10 @@ def main() -> None:
     ]:
         fail("B.DATR Canonicalize/CMode no longer occupy the existing assigned fields")
 
-    decoder_test = (ROOT / "tests/asl/block/execution/BSTART.TSTORE/block-decode-bstart-tstore-canonical-001.asl").read_text()
+    decoder_test = (
+        root
+        / "tests/asl/block/execution/BSTART.TSTORE/block-decode-bstart-tstore-canonical-001.asl"
+    ).read_text()
     decoder_words = re.findall(r"DecodeCommandForm\('([01]{32,64})',\s*32\)", decoder_test)
     if len(decoder_words) != 1 or int(decoder_words[0], 2) != 0x00111181 or "== 50" not in decoder_test:
         fail("the executable BSTART.TSTORE decoder witness no longer checks the exact fixed-bit word")
@@ -190,4 +217,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root", type=Path, default=ROOT)
+    arguments = parser.parse_args()
+    main(arguments.root.resolve())
