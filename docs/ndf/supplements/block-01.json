@@ -804,8 +804,8 @@
         "zh-CN": "TMOV 的 Shared 发布与消费"
       },
       "summary": {
-        "en": "This clause separates complete single-issuer Local-to-Shared publication from multi-PE assembly and makes Shared-to-Local wait for a whole-ready parent without consuming bindings. B.SUBVIEW is the only partial-source mechanism, and a zero PE mask has no effect.",
-        "zh-CN": "本条款区分单发布者完整 Local-to-Shared 发布与多 PE 组装，并使 Shared-to-Local 在不消费绑定的情况下等待完整父对象就绪。B.SUBVIEW 是唯一的部分源机制，PE 掩码为零时无效果。"
+        "en": "This clause retains atomic singleton and assembled Shared publication, and adds Function-2 M322ND/M162ND Local CUBE-to-ND conversion with DTYPE_NONE. Each assembled source exactly matches its writer size, preserves source backing and physical columns, and uses one conversion mode per generation; the existing explicit-range and atomic LAST protocol remains in force.",
+        "zh-CN": "本条款保留单发布者与组装式 Shared 原子发布，并增加 DTYPE_NONE 下 Function-2 M322ND/M162ND Local CUBE 到 ND 转换。每个组装源的容量必须精确匹配 writer size，保留源 backing 与 physical columns，同一 generation 只能使用一种转换模式；继续沿用既有显式 range 与 LAST 原子发布协议。"
       }
     },
     {
@@ -960,8 +960,8 @@
         "zh-CN": "CUBE CELL 传输布局"
       },
       "summary": {
-        "en": "This clause assigns six B.DATR layout codes to conversion between ND global-memory layout and Local CUBE organizations. The layout selects transport conversion direction and shape but does not create a separate Tile instruction identity.",
-        "zh-CN": "本条款将六个 B.DATR 布局编码分配给 ND 全局内存布局与 Local CUBE 组织之间的转换。布局只选择传输转换的方向与形态，不会产生独立的 Tile 指令身份。"
+        "en": "This clause assigns six B.DATR layout codes to ND/Local CUBE conversions. Codes 21..23 remain GM-to-Local TLOAD and 24..26 remain Local-to-GM TSTORE; only Function-2 TMOV may use 24/25 for raw Local CUBE_M32/M16 to Shared ND conversion. Layout selects conversion behavior without creating a new Tile instruction identity.",
+        "zh-CN": "本条款将六个 B.DATR Layout code 分配给 ND/Local CUBE 转换。21..23 仍供 GM 到 Local 的 TLOAD 使用，24..26 仍供 Local 到 GM 的 TSTORE 使用；仅 Function-2 TMOV 可将 24/25 用于 raw Local CUBE_M32/M16 到 Shared ND 的转换。Layout 选择转换行为，不创建新的 Tile 指令身份。"
       }
     },
     {
@@ -1092,8 +1092,8 @@
         "zh-CN": "保留的旧 Shared 移动形式"
       },
       "summary": {
-        "en": "This clause retires the former independent Shared movement function encodings in favor of canonical TMOV and TSTORE combined with B.SUBVIEW or B.ASSEMBLE. Range, readiness, and publication semantics therefore remain in one path, while Function 13 GMOV is unaffected.",
-        "zh-CN": "本条款停用旧有的独立 Shared 移动功能编码，改由规范 TMOV、TSTORE 配合 B.SUBVIEW 或 B.ASSEMBLE 表达。范围、就绪与发布语义因而保留在一条路径中，Function 13 的 GMOV 不受影响。"
+        "en": "This clause keeps the former independent Shared movement functions reserved and carries Shared movement through canonical TMOV/TSTORE with B.SUBVIEW or B.ASSEMBLE. Function-2 M322ND/M162ND adds Local CUBE-to-Shared-ND conversion through TMOV without reviving a separate selector; Function 13 GMOV remains unchanged.",
+        "zh-CN": "本条款继续将旧有独立 Shared 搬运 function 保留为 reserved，并通过 canonical TMOV/TSTORE 配合 B.SUBVIEW 或 B.ASSEMBLE 表达 Shared 搬运。Function-2 M322ND/M162ND 通过 TMOV 增加 Local CUBE 到 Shared ND 转换，不恢复独立 selector；Function 13 GMOV 保持不变。"
       }
     },
     {

@@ -163,11 +163,13 @@ end;
 - B.DATR applicability is exactly [{"allowed_nonzero_fields":["Layout"],"pad_union":"must-zero"}].
 - The selected DataType is a carrier interpretation. Each non-packed source backing DataType may differ only at the same element width, and the newly allocated destination preserves the source backing DataType; multi-source operations require one common backing DataType.
 - A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
+- Function-2 Local CUBE_M32/M16 to Shared ND uses B.DATR Layout M322ND/M162ND with DTYPE_NONE; it copies raw valid coordinates into normalized ND fragments and retains source backing type under carrier-compatible preflight.
 
 ## State effects
 
 - Copy the source Tile payload and definedness into the destination.
 - After complete preflight, execute TMOV with the operand bindings listed above; destination definedness changes only as specified by that handler.
+- A Local CUBE-to-Shared ND form normalizes each valid raw source coordinate, then publishes a complete singleton parent or commits an explicit B.ASSEMBLE range through the existing atomic Shared generation.
 
 ## Memory effects and ordering
 

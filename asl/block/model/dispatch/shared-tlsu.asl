@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","surface":"block","classification":["model","dispatch","shared-tlsu"],"depends_on":["PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","surface":"block","classification":["model","dispatch","shared-tlsu"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-CUBE-TO-ND","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS"]}
 readonly func BundleSharedTLSUSelected() => boolean
 begin
     if !_BundleOperation.valid ||
@@ -38,6 +38,9 @@ end;
 
 readonly func BundleSharedTMOVLocalSchemaLegal() => boolean
 begin
+    if BundleSharedTMOVCubeToNDSelected() then
+        return BundleSharedTMOVCubeToNDSchemaLegal();
+    end;
     if BundleSharedBindingPhysicalCount() != 1 ||
        BundleTileBindingCount() != 1 then return FALSE; end;
     let binding = _BundleTileBindings[[0]];
@@ -52,6 +55,7 @@ begin
         !BundleSharedBindingIsReusedDestination(0)) ||
        binding.pe_mask != shared_mask then return FALSE; end;
     if shared_mask == Zeros{4} then return TRUE; end;
+    if !BundleSharedTMOVGenerationModeLegal(0, FALSE) then return FALSE; end;
     if !TileSourceContentsDefined(binding.source0) ||
        _Tiles[[binding.source0]].capacity_bytes !=
            TileSizeCodeBytes(shared_size as integer {1..12}) then
@@ -91,8 +95,8 @@ begin
     let columns = BundleDestinationPhysicalColumns(FALSE, 0);
     if valid_rows < 1 || valid_columns < 1 || columns < 1 ||
        valid_columns > columns then return FALSE; end;
-    let data_type = TileDataTypeFromEncoding(
-        CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
+    let (data_type_valid, data_type) = ResolveBundleEffectiveDataType();
+    if !data_type_valid then return FALSE; end;
     let layout = CurrentBundleTileLayout();
     if _BundleSharedBindings[[0]].source0_subview.valid then
         if !BundleSharedSubviewLegal(0) then return FALSE; end;
@@ -141,10 +145,21 @@ begin
         return FALSE;
     end;
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
-    let transfer_data_type = TileDataTypeFromEncoding(
-        CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
-    if (function == 0 || function == 1) &&
-       !TileRegularTLSUDataTypeSupported(transfer_data_type) then
+    var transfer_data_type = TileDataType_FP64;
+    if function == 0 || function == 1 then
+        transfer_data_type = TileDataTypeFromEncoding(
+            CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
+        if !TileRegularTLSUDataTypeSupported(transfer_data_type) then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+    end;
+    // Shared CUBE-to-ND TMOV has no ExecutionMask carrier. Reject its GPR
+    // form here, before the generic mask-schema path derives a layout from a
+    // conversion-only DATR selector.
+    if BundleSharedTMOVCubeToNDSelected() &&
+       (_BundleScalarBindings[[0]].execution_mask_present ||
+        _BundleScalarBindings[[1]].execution_mask_present) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
@@ -303,6 +318,10 @@ begin
     elsif function == 2 then
         let shared_is_destination = BundleSharedBindingIsDestination(0) ||
             BundleSharedBindingIsReusedDestination(0);
+        if BundleSharedTMOVCubeToNDSelected() && !shared_is_destination then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
         if shared_is_destination then
             if !BundleSharedTMOVLocalSchemaLegal() then
                 SetFault(Fault_TileLegality, ReadTPC());
@@ -311,6 +330,44 @@ begin
             let binding = _BundleTileBindings[[0]];
             let assembling =
                 _BundleSharedBindings[[0]].destination_assemble.valid;
+            if BundleSharedTMOVCubeToNDSelected() then
+                let candidate = BundleSharedTMOVCubeToNDCandidate(0);
+                if assembling then
+                    let assemble =
+                        _BundleSharedBindings[[0]].destination_assemble;
+                    let offset_cells =
+                        (UInt(assemble.offset) * 4) as integer {0..8188};
+                    let writer_cells =
+                        (TileSizeCodeBytes(assemble.size_code as integer
+                            {1..12}) DIVRM 32) as integer {4..8192};
+                    let payload_elements =
+                        ((writer_cells * 32 * 8) DIVRM
+                            TileElementBits(candidate.tile.data_type))
+                                as integer {1..524288};
+                    let committed = if _CurrentPEContextValid then
+                        CommitBundleSharedGenerationCandidateForCurrentPE(
+                            0, candidate)
+                        else CommitBundleSharedGenerationCandidateRangeWithPayloadElements(
+                            0, candidate, offset_cells, writer_cells,
+                            writer_cells, payload_elements, TRUE, FALSE,
+                            shared_mask, TRUE, Zeros{PTO_XLEN},
+                            Zeros{PTO_XLEN}, Zeros{PTO_XLEN},
+                            Zeros{PTO_XLEN},
+                            Zeros{PTO_XLEN} +
+                                UInt(_BundleDataAttributes.data_layout));
+                    if !committed then
+                        if BundleSharedGenerationRequestWaiting(0) then
+                            return FALSE;
+                        end;
+                        SetFault(Fault_TileLegality, ReadTPC());
+                    end;
+                elsif !SharedTileProspectiveFullyInitialized(shared_tile_id,
+                        candidate.tile, shared_mask) ||
+                      !AtomicUpdateSharedTileWithPublication(shared_tile_id,
+                          candidate.tile, shared_mask, TRUE) then
+                    SetFault(Fault_TileLegality, ReadTPC());
+                end;
+            else
             var prior_shared = SharedTileRecord(shared_tile_id);
             if assembling then
                 prior_shared = BeginBundleSharedGenerationProbe(shared_tile_id);
@@ -335,6 +392,7 @@ begin
                 TMOVLocalToShared(shared_tile_id, binding.source0,
                     shared_size as integer {1..12}, shared_mask, TRUE);
             end;
+            end;
         else
             // The same parent-level readiness gate applies before any Local
             // destination allocation or Shared payload materialization. The
@@ -355,9 +413,12 @@ begin
             let valid_rows = BundleDestinationValidRows(FALSE, 0);
             let valid_columns = BundleDestinationValidColumns(FALSE, 0);
             let columns = BundleDestinationPhysicalColumns(FALSE, 0);
-            let data_type = TileDataTypeFromEncoding(
-                CurrentBundleTileOperationDataTypeCode()
-                    as TileDataTypeEncoding);
+            let (data_type_valid, data_type) =
+                ResolveBundleEffectiveDataType();
+            if !data_type_valid then
+                SetFault(Fault_TileLegality, ReadTPC());
+                return FALSE;
+            end;
             let has_subview =
                 _BundleSharedBindings[[0]].source0_subview.valid;
             let shared_tile = if has_subview then

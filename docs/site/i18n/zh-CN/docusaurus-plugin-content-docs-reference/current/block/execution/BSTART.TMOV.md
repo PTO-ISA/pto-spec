@@ -92,7 +92,7 @@ BSTART.TMOV DataType
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| bstart_tmov_32_211446509efb | L32 | 32 | 0x00211181 / 0x07ffffff | [{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,24,25,26,27,28,31]}] |
+| bstart_tmov_32_211446509efb | L32 | 32 | 0x00211181 / 0x07ffffff | [{"field":"DataType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,24,25,26,27,28,31]}] |
 
 ### Fields
 
@@ -111,7 +111,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 | Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
 | --- | --- | ---: | --- | --- | --- | --- | --- |
-| bstart_tmov_32_211446509efb | DataType | 5 | 0–14, 16–20, 24–28, 31 | none | 15, 21–23, 29–30 | concrete transfer carrier interpretation or DTYPE_NONE source-descriptor inference | Encoded zero selects FP64. |
+| bstart_tmov_32_211446509efb | DataType | 5 | 0–21, 24–28, 31 | none | 22–23, 29–30 | concrete transfer carrier interpretation or DTYPE_NONE source-descriptor inference | Encoded zero selects FP64. |
 
 - `bstart_tmov_32_211446509efb.DataType` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 
@@ -178,10 +178,10 @@ end;
 
 ## Legality
 
-- DataType accepts the 25 concrete TileDataType codes and code 31 DTYPE_NONE for source-descriptor inference; codes 15, 21..23, and 29..30 are reserved.
-- Function 2 accepts Local-to-Local and canonical Local/Shared or Shared/Local TMOV schemas. A Shared destination with multiple participating PEs requires B.ASSEMBLE; a single-PE no-assemble writer publishes the whole parent.
-- B.SUBVIEW is the source-range modifier and B.ASSEMBLE is the destination-generation modifier. Shared source legality requires hardware-maintained whole-parent readiness and publication.
-- Function 13 GMOV remains accepted and unchanged. Other Shared movement function encodings are reserved and raise Fault_IllegalInstruction.
+- DataType accepts 27 concrete TileDataType codes and code 31 DTYPE_NONE for source-descriptor inference; codes 22..23 and 29..30 are reserved.
+- Function 2 accepts Local-to-Local and canonical Local/Shared or Shared/Local TMOV schemas. With DTYPE_NONE, Layout M322ND/M162ND converts a compatible Local CUBE_M32/M16 source into RowMajor ND Shared storage while preserving its backing type. A Shared destination with multiple participating PEs requires B.ASSEMBLE; a single-PE no-assemble writer transfers the complete parent.
+- B.SUBVIEW is the source-range modifier and B.ASSEMBLE is the destination-generation modifier. Shared source legality requires hardware-maintained whole-parent readiness and publication. Each Shared generation uses one normalized mode: NORM, M322ND, or M162ND.
+- Function 13 GMOV remains accepted and unchanged. Other Shared movement function encodings are reserved and raise Fault_IllegalInstruction. Function-2 M322ND/M162ND adds no independent Shared movement selector.
 - For Local-to-Local TMOV, source and destination descriptors agree on capacity, Layout, physical Col, and completed valid shape. A concrete non-packed DataType may differ from the source backing type only at the same element width, and the destination preserves the source backing DataType.
 
 ## State effects

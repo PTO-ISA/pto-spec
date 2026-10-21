@@ -202,6 +202,7 @@ nav:
               - Scalar Schema: block/model/dispatch/scalar-schema.md
               - Shared CUBE Matrix: block/model/dispatch/shared-cube-matrix.md
               - Shared TLSU: block/model/dispatch/shared-tlsu.md
+              - Shared Tmov CUBE To Nd: block/model/dispatch/shared-tmov-cube-to-nd.md
               - Start: block/model/dispatch/start.md
               - Tcvt Destination: block/model/dispatch/tcvt-destination.md
               - Tcvt Schema: block/model/dispatch/tcvt-schema.md
@@ -942,6 +943,7 @@ nav:
               - Gm Obligation Progress: tile/model/memory/gm-obligation-progress.md
               - Load Store: tile/model/memory/load-store.md
               - Restart: tile/model/memory/restart.md
+              - Shared CUBE To Nd: tile/model/memory/shared-cube-to-nd.md
               - Shared Movement: tile/model/memory/shared-movement.md
               - Stride: tile/model/memory/stride.md
           - Numeric:

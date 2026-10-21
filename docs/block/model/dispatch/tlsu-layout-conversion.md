@@ -85,11 +85,16 @@ If the same bundle also set `LB2` to 64, it raises `Fault_TileLegality` before a
 
 readonly func BundleCubeTransportSelected() => boolean
 begin
-    return _BundleOperation.valid &&
-           _BundleOperation.operation_class == BundleOperation_TileMemory &&
-           _BundleDataAttributesPresent &&
-           TileDataLayoutIsCubeConversion(
-               _BundleDataAttributes.data_layout);
+    if !_BundleOperation.valid ||
+       _BundleOperation.operation_class != BundleOperation_TileMemory ||
+       !_BundleOperation.selector_valid || !_BundleDataAttributesPresent then
+        return FALSE;
+    end;
+    let function = UInt(_BundleOperation.selector[4:0]);
+    return (function == 0 && TileDataLayoutConversionIsLoad(
+               _BundleDataAttributes.data_layout)) ||
+           (function == 1 && TileDataLayoutConversionIsStore(
+               _BundleDataAttributes.data_layout));
 end;
 
 pure func BundleCubeTransportDataTypeSupported(

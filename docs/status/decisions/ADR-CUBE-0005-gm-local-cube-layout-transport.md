@@ -33,7 +33,10 @@
     "PTO-TLOAD-MEMORY-001",
     "PTO-TSTORE-CUBE-001",
     "PTO-TSTORE-MEMORY-001",
-    "PTO-INST-BLOCK-BSTART-TMOV"
+    "PTO-INST-BLOCK-BSTART-TMOV",
+    "PTO-BSTART-TMOV-SHARED-001",
+    "PTO-TMOV-CONTRACT-001",
+    "PTO-ISA-LEGACY-SHARED-MOVEMENT-001"
   ],
   "affected_units": [
     "PTO-BLOCK-B-DATR",
@@ -53,7 +56,11 @@
     "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
     "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
     "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
-    "PTO-TILE-TMOV"
+    "PTO-TILE-TMOV",
+    "PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-CUBE-TO-ND",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+    "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+    "PTO-TILE-MODEL-MEMORY-SHARED-CUBE-TO-ND"
   ],
   "resolves": [],
   "supersedes": [],
@@ -108,7 +115,10 @@
         "PTO-B-DATR-FIELDS-001",
         "PTO-BSTART-TLOAD-CUBE-001",
         "PTO-TLOAD-CUBE-001",
-        "PTO-INST-BLOCK-BSTART-TMOV"
+        "PTO-INST-BLOCK-BSTART-TMOV",
+        "PTO-BSTART-TMOV-SHARED-001",
+        "PTO-TMOV-CONTRACT-001",
+        "PTO-ISA-LEGACY-SHARED-MOVEMENT-001"
       ],
       "affected_units": [
         "PTO-BLOCK-B-DATR",
@@ -123,7 +133,11 @@
         "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
         "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
         "PTO-TILE-TLOAD",
-        "PTO-TILE-TMOV"
+        "PTO-TILE-TMOV",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-CUBE-TO-ND",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+        "PTO-TILE-MODEL-MEMORY-SHARED-CUBE-TO-ND"
       ]
     }
   ],
@@ -152,8 +166,11 @@
 | 26 | `N82ND` | `TSTORE` | Local `CUBE_N8` to GM ordinary |
 
 Codes 21 through 23 are illegal for TSTORE. Codes 24 through 26 are illegal
-for TLOAD. All six are illegal for a Shared Tile binding. A recognized but
-direction-incompatible conversion raises Tile legality before allocation,
+for TLOAD. Shared TLOAD and TSTORE remain outside these Local-CUBE conversion
+forms. Function-2 TMOV may use codes 24 and 25 to normalize a Local CUBE_M32 or
+CUBE_M16 source into RowMajor ND Shared storage; code 26 has no Shared form.
+Function-1 TSTORE with codes 24 and 25 retains its GM behavior. A recognized
+but direction-incompatible conversion raises Tile legality before allocation,
 source consumption, or memory effects.
 
 ## Raw representation
@@ -308,9 +325,9 @@ Accepted on 2026-10-20 by ISA owner `ckwllawliet`, through explicit answers
 in the contract-freeze review, against baseline `b0165320a4b575b18d2f4d93faf40178f661ab49`.
 Linked requirement: [issue #395](https://github.com/PTO-ISA/pto-spec/issues/395).
 
-**English — rationale and scope.** The owner accepted canonical Function-2 TMOV with assigned M322ND/M162ND selectors. BSTART selects the carrier-compatible operation type; explicit DATR DataType is DTYPE_NONE. Source backing dtype and raw bits are retained. Implicit GM-load destination geometry adopts the exact-capacity owner, while existing GM transfer effects and stricter GM type preflight remain distinct. The new layout-neutral TMOV clause is reserved in the handoff; add its affected_ndf reference when its owning ASL region is implemented.
+**English — rationale and scope.** The owner accepted canonical Function-2 TMOV with assigned M322ND/M162ND selectors. BSTART selects the carrier-compatible operation type; explicit DATR DataType is DTYPE_NONE. Source backing dtype and raw bits are retained. Implicit GM-load destination geometry adopts the exact-capacity owner, while existing GM transfer effects and stricter GM type preflight remain distinct. The behavior is owned by `PTO-TMOV-CONTRACT-001` and `PTO-BSTART-TMOV-SHARED-001`; APPLY implements normalized Shared fragments through the existing generation publisher.
 
-**中文 — 原因与范围。** Owner 已确认 canonical Function-2 TMOV 使用既有 M322ND/M162ND selector。操作类型由 BSTART 选择，显式 DATR DataType 为 DTYPE_NONE，允许既有 carrier-compatible backing/operation 类型差异并保留源 backing 与原始位。隐式 GM load 目的几何遵循精确容量 owner，GM 搬运效果及其严格类型预检仍独立保留。新布局中立 TMOV clause 在 handoff 中预留，待 ASL region 实现后再加入 affected_ndf。
+**中文 — 原因与范围。** Owner 已确认 canonical Function-2 TMOV 使用既有 M322ND/M162ND selector。操作类型由 BSTART 选择，显式 DATR DataType 为 DTYPE_NONE，允许既有 carrier-compatible backing/operation 类型差异并保留源 backing 与原始位。隐式 GM load 目的几何遵循精确容量 owner，GM 搬运效果及其严格类型预检仍独立保留。该行为由 `PTO-TMOV-CONTRACT-001` 与 `PTO-BSTART-TMOV-SHARED-001` 约束；APPLY 通过既有 generation publisher 发布已归一化的 Shared fragment。
 
 This is an accepted design for implementation. Current executable meaning
 remains in the owning ASL/NDF until APPLY; this design record does not claim
