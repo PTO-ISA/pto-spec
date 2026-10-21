@@ -263,6 +263,17 @@ ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS = {
             ("BundleSharedTMOVLocalSchemaLegal", "asl/block/model/dispatch/shared-tlsu.asl"),
         },
     },
+    "BundleSharedTMOVNormalCarrierCompatible": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/shared-tlsu.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleSharedTMOVDestinationSchemaLegal",
+             "asl/block/model/dispatch/shared-tlsu.asl"),
+            ("BundleSharedTMOVLocalSchemaLegal",
+             "asl/block/model/dispatch/shared-tlsu.asl"),
+        },
+    },
     "TileCubePhysicalColumnsFromCapacity": {
         "before": [],
         "after": [("asl/tile/model/shape/cube-double-cell.asl", LOCAL_CUBE_LAYOUTS)],
@@ -272,13 +283,23 @@ ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS = {
              "asl/block/model/operands/local-generation-cube.asl"),
             ("BundleLocalGenerationCubeWriterColumns",
              "asl/block/model/operands/local-generation-cube.asl"),
+            ("BundleLocalGenerationCubeWriterView",
+             "asl/block/model/operands/local-generation-cube-writer-effects.asl"),
             ("BundleReusedDestinationDescriptorMatches",
              "asl/block/model/dispatch/destination-shape.asl"),
             ("BundleSharedTMOVCubeToNDSchemaLegal",
              "asl/block/model/dispatch/shared-tmov-cube-to-nd.asl"),
             ("ConfigureCubeTileForMask", "asl/tile/model/state/allocation.asl"),
             ("FinalizeBundleLocalGenerationCube",
-             "asl/block/model/operands/local-generation-cube.asl"),
+             "asl/block/model/operands/local-generation-cube-writer-effects.asl"),
+            ("ResolveBundleCUBESelectDestination",
+             "asl/block/model/dispatch/predicate-destination.asl"),
+            ("ResolveBundleCellRearrangementDestination",
+             "asl/block/model/dispatch/cell-rearrangement-schema.asl"),
+            ("ResolveBundleCubeTransportDestination",
+             "asl/block/model/dispatch/tlsu-layout-conversion.asl"),
+            ("ResolveBundleTCVTCubeDestination",
+             "asl/block/model/dispatch/tcvt-destination.asl"),
             ("ResolveBundleTileDestinationsWithShapeAndType",
              "asl/block/model/dispatch/destination-shape.asl"),
             ("SelectedBundleComparisonShapeMatches",
@@ -4324,6 +4345,25 @@ def _issue395_shared_tmov_mutation_canaries() -> None:
         for error in result["errors"]
     ):
         raise AssertionError("Issue #395 TMOV selector extra caller did not fail closed")
+
+    carrier_extra_caller = dict(candidate)
+    carrier_extra_caller[selector_path] += (
+        "\nreadonly func UnauthorizedIssue395CarrierCaller() => boolean\n"
+        "begin\n"
+        "    return BundleSharedTMOVNormalCarrierCompatible(TileDataType_U16);\n"
+        "end;\n"
+    )
+    result = _census_texts(
+        baseline, carrier_extra_caller, BASELINE_OBJECT,
+        "real-mutated-issue395-shared-tmov-carrier-extra-caller",
+        enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #395 Shared TMOV helper owner/layout/caller closure mismatch: "
+        "BundleSharedTMOVNormalCarrierCompatible" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #395 carrier helper extra caller did not fail closed")
 
 
 def _issue371_b64_mutation_canaries() -> None:
