@@ -237,7 +237,7 @@
       "source_path": "asl/tile/layout-and-rearrangement/layout/TMOV.asl",
       "title": {
         "en": "TMOV Local CUBE to Shared ND",
-        "zh-CN": "TMOV Local CUBE 到 Shared ND"
+        "zh-CN": "TMOV 将本地 CUBE 规范化为 Shared ND Tile"
       },
       "summary": {
         "en": "Function-2 TMOV with DTYPE_NONE and B.DATR Layout M322ND/M162ND copies each valid raw coordinate from a completed Local CUBE_M32/M16 source into the same RowMajor ND Shared coordinate. Shared retains the source backing type; fragments use exact WriterSizeCode capacity and explicit B.ASSEMBLE ranges, while a singleton transfers the complete parent. NORM, M322ND and M162ND cannot mix in one generation.",
