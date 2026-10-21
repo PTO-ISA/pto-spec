@@ -40,7 +40,8 @@ end;
 
 func BeginMaskedExpansion(selector: bits(10),
     valid_rows: integer {1..65535},
-    valid_columns: integer {1..65535})
+    valid_columns: integer {1..65535},
+    physical_columns: integer {1..65535})
 begin
     let started = ExecuteCommandInstruction(
         MaskedExpansionStart(selector), 32);
@@ -50,7 +51,7 @@ begin
            attributes == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + valid_columns);
     SetBundleDimension(1, Zeros{PTO_XLEN} + valid_rows);
-    SetBundleDimension(2, Zeros{PTO_XLEN} + valid_columns);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + physical_columns);
 end;
 
 func RunMaskedExpansionCopy(row_axis: boolean)
@@ -76,7 +77,7 @@ begin
     MarkTileValidRegionDefined(12);
     BeginMaskedExpansion(
         if row_axis then Zeros{10} + 0x044 else Zeros{10} + 0x054,
-        2, 3);
+        2, 3, 4);
     let binding = ExecuteCommandInstruction(
         MaskedExpansionIOT(Zeros{6} + 10, Zeros{6} + 12, TRUE,
             Zeros{4} + 2), 32);
@@ -124,7 +125,7 @@ begin
     WritePEGPR(0, 2, mask);
     BeginMaskedExpansion(
         if row_axis then Zeros{10} + 0x048 else Zeros{10} + 0x058,
-        2, 2);
+        2, 2, 2);
     let execution_mask = ExecuteCommandInstruction(
         MaskedExpansionIOR(Zeros{5} + 2), 32);
     let binding = ExecuteCommandInstruction(

@@ -158,10 +158,19 @@ begin
     if binding.destination_allocated_by_bundle ||
        binding.destination_reused_by_generation then
         let destination_tile = _Tiles[[binding.destination]];
+        let local_generation = binding.destination_assemble.valid;
+        let parent_rows = if source_tile.layout == TileLayout_CUBE_M16 then
+            16 else 32;
+        let parent_columns = TileCubePhysicalColumnsFromCapacity(
+            capacity_bytes, source_tile.layout, operation_type);
         if !TileCubeDescriptorLegal(destination_tile) ||
            destination_tile.storage_kind != TileStorage_Numeric ||
-           destination_tile.valid_rows != source_tile.valid_rows ||
-           destination_tile.valid_columns != source_tile.valid_columns ||
+           (if local_generation then
+                destination_tile.rows != parent_rows ||
+                destination_tile.columns != parent_columns
+            else
+                destination_tile.valid_rows != source_tile.valid_rows ||
+                destination_tile.valid_columns != source_tile.valid_columns) ||
            destination_tile.data_type != operation_type ||
            destination_tile.layout != source_tile.layout ||
            _TileAllocationMasks[[binding.destination]] != binding.pe_mask then

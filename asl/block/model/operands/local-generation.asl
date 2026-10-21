@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","surface":"block","classification":["model","operands","local-generation"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS","PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","surface":"block","classification":["model","operands","local-generation"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS","PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS"]}
 // NDF-BEGIN: PTO-B-ASSEMBLE-LOCAL-GENERATION-001
 // ndf: kind=contract level=L1 layer=block status=accepted
 // A Local generation is one logical entry in the ordinary T/U/M/N relative queue; INIT owns per-PE instances; continuations resolve one entry and subset writers.

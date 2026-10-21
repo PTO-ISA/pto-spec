@@ -34,10 +34,19 @@ begin
     let capacity_bytes = BundleLocalDestinationAllocationBytes(0);
     if binding.destination_reused_by_generation then
         let destination = _Tiles[[binding.destination]];
+        let parent_rows = if source_layout == TileLayout_CUBE_M16 then 16
+            else 32;
+        let parent_columns = TileCubePhysicalColumnsFromCapacity(
+            capacity_bytes, source_layout, destination_type);
+        let local_generation = binding.destination_assemble.valid;
         if !TileCubeDescriptorLegal(destination) ||
            destination.capacity_bytes != capacity_bytes ||
-           destination.valid_rows != valid_rows ||
-           destination.valid_columns != valid_columns ||
+           (if local_generation then
+                destination.rows != parent_rows ||
+                destination.columns != parent_columns
+            else
+                destination.valid_rows != valid_rows ||
+                destination.valid_columns != valid_columns) ||
            destination.data_type != destination_type ||
            destination.layout != source_layout ||
            (_TileAllocationMasks[[binding.destination]] AND binding.pe_mask) !=

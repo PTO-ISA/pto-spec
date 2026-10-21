@@ -112,6 +112,17 @@ begin
     assert ReadTileElement(copy_destination, 1, 1) ==
         Zeros{PTO_XLEN} + 0x3f800002;
 
+    // Explicit LB2 remains a physical extent equality constraint.  A 256-byte
+    // M16/TF32 allocation requires four physical columns, so LB2=2 rejects
+    // before the destination can be allocated or widened.
+    PrepareCubeCopy();
+    _BundleTileBindings[[0]].destination_size = 2;
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
+    let explicit_mismatch = ExecuteBundleTileOperation();
+    assert !explicit_mismatch && _LastFault == Fault_TileAllocation &&
+           !_Tiles[[0]].allocated &&
+           !_BundleTileBindings[[0]].destination_allocated_by_bundle;
+
     PrepareCubeExpansion(TileLayout_CUBE_M32);
     let rejected = ExecuteBundleTileOperation();
     assert !rejected;

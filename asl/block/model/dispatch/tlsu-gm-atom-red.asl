@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED","surface":"block","classification":["model","dispatch","tlsu-gm-atom-red"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","PTO-TILE-MODEL-MEMORY-GM-ATOM-RED-EXECUTION"]}
+// PTO-UNIT: {"classification":["model","dispatch","tlsu-gm-atom-red"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","PTO-TILE-MODEL-MEMORY-GM-ATOM-RED-EXECUTION"],"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED","surface":"block"}
 
 readonly func BundleGMAtomRedSelected() => boolean
 begin
@@ -142,11 +142,20 @@ begin
         destination = if cas || execution_mask_tile then
             _BundleTileBindings[[1]].destination
             else _BundleTileBindings[[0]].destination;
+        let (writer_effects_legal, writer_effects) =
+            BeginBundleLocalGenerationCubeWriterEffects(
+                valid_rows, valid_columns);
+        if !writer_effects_legal then
+            RollBackBundleTileDestinations();
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
         if cas then
             let second = _BundleTileBindings[[1]];
             if !TileOperandsLegal_GM_ATOM_CAS(GMAtomic_CAS, destination, base_address,
                    binding.source0, binding.source1, second.source0,
                    CurrentBundlePadValue()) then
+                FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
                 RollBackBundleTileDestinations();
                 SetFault(Fault_TileLegality, ReadTPC());
                 return FALSE;
@@ -159,6 +168,7 @@ begin
                    GMAtomicOperationFromFunction(function), destination,
                    base_address, binding.source0, binding.source1,
                    CurrentBundlePadValue()) then
+                FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
                 RollBackBundleTileDestinations();
                 SetFault(Fault_TileLegality, ReadTPC());
                 return FALSE;
@@ -167,6 +177,7 @@ begin
                 base_address, binding.source0, binding.source1,
                 CurrentBundlePadValue());
         end;
+        FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
     elsif popc then
         if !TileOperandsLegal_GM_RED_POPC(GMReduction_POPC, base_address,
                binding.source0) then

@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","surface":"block","classification":["model","dispatch","tlsu-mgather-cas"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-TILE-MODEL-MEMORY-ATOMICS"]}
+// PTO-UNIT: {"classification":["model","dispatch","tlsu-mgather-cas"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-TILE-MODEL-MEMORY-ATOMICS"],"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","surface":"block"}
 
 readonly func BundleMGATHERCASSelected() => boolean
 begin
@@ -87,17 +87,26 @@ begin
     if !ValidateBundleLocalGenerationWriters() then
         RollBackBundleTileDestinations(); return FALSE;
     end;
+    let (writer_effects_legal, writer_effects) =
+        BeginBundleLocalGenerationCubeWriterEffects(
+            valid_rows, valid_columns);
+    if !writer_effects_legal then
+        SetFault(Fault_TileLegality, ReadTPC());
+        RollBackBundleTileDestinations(); return FALSE;
+    end;
     let destination = _BundleTileBindings[[1]].destination;
     let pad_value = CurrentBundlePadValue();
     if !TileOperandsLegal_MGATHER_CAS(destination, Zeros{PTO_XLEN},
            indices, expected, replacement,
            pad_value) then
+        FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
         RollBackBundleTileDestinations();
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
     MGATHER_CAS(destination, base_address, indices, expected, replacement,
         pad_value);
+    FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
     if _LastFault != Fault_None then
         RollBackBundleTileDestinations();
         return FALSE;

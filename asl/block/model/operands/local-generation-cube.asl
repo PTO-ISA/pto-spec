@@ -305,58 +305,6 @@ begin
     end;
     return if found then valid_columns else 0;
 end;
-func FinalizeBundleLocalGenerationCube(slot: integer {0..63})
-begin
-    let destination = _LocalGenerations[[slot]].working_destination;
-    let first = _LocalGenerations[[slot]].writers[[0]];
-    let extent = BundleLocalGenerationCubeFinalExtent(slot);
-    let valid_columns = BundleLocalGenerationCubeFinalValidColumns(slot,
-        extent as integer {1..2048});
-    let cell_columns = TileCubeCellColumns(first.layout, first.data_type);
-    let cells_per_group = TileCubePhysicalCellsPerLogicalGroup(
-        first.layout, first.data_type);
-    let physical_columns = TileCubePhysicalColumnsFromCapacity(
-        _Tiles[[destination]].capacity_bytes, first.layout,
-        first.data_type);
-    let k_repeat = TileCubePhysicalKRepeat(first.layout, first.physical_rows,
-        physical_columns, first.data_type);
-    let n_repeat = TileCubePhysicalNRepeat(first.layout, first.physical_rows,
-        physical_columns, first.data_type);
-    let cell_count = TileCubePhysicalCellCount(first.layout, first.physical_rows,
-        physical_columns, first.data_type);
-    let storage_bytes = TileCubePhysicalRequiredBytes(first.layout,
-        first.physical_rows, physical_columns, first.data_type);
-    assert extent != 0 && valid_columns != 0 &&
-           TileCubeDescriptorShapeAndPhysicalLegal(
-               _Tiles[[destination]].capacity_bytes, first.physical_rows,
-               physical_columns, first.valid_rows, valid_columns,
-               first.data_type, first.layout);
-    // Install only descriptor state. Payload and definedness belong to the
-    // writer effects and must survive the aggregate geometry publication.
-    _Tiles[[destination]].rows = first.physical_rows;
-    _Tiles[[destination]].columns = physical_columns;
-    _Tiles[[destination]].valid_rows = first.valid_rows;
-    _Tiles[[destination]].valid_columns = valid_columns;
-    _Tiles[[destination]].cube_k_repeat = k_repeat;
-    _Tiles[[destination]].cube_n_repeat = n_repeat;
-    _Tiles[[destination]].cube_cell_count = cell_count;
-    _Tiles[[destination]].cube_storage_bytes = storage_bytes;
-    _LocalGenerations[[slot]].parent_descriptor.rows = first.physical_rows;
-    _LocalGenerations[[slot]].parent_descriptor.columns = physical_columns;
-    _LocalGenerations[[slot]].parent_descriptor.valid_rows = first.valid_rows;
-    _LocalGenerations[[slot]].parent_descriptor.valid_columns = valid_columns;
-    _LocalGenerations[[slot]].parent_descriptor.data_type = first.data_type;
-    _LocalGenerations[[slot]].parent_descriptor.predicate_basis_type =
-        first.predicate_basis_type;
-    _LocalGenerations[[slot]].parent_descriptor.layout = first.layout;
-    _LocalGenerations[[slot]].parent_descriptor.cube_k_repeat = k_repeat;
-    _LocalGenerations[[slot]].parent_descriptor.cube_n_repeat = n_repeat;
-    _LocalGenerations[[slot]].parent_descriptor.cube_cell_count = cell_count;
-    _LocalGenerations[[slot]].parent_descriptor.cube_storage_bytes =
-        storage_bytes;
-    _LocalGenerations[[slot]].parent_descriptor.valid = TRUE;
-    _LocalGenerations[[slot]].descriptor_finalized = TRUE;
-end;
 readonly func BundleLocalGenerationCoverageComplete(
     slot: integer {0..63}, offset: Word, writer_size: integer {1..12},
     writer_mask: bits(4), init: boolean,
