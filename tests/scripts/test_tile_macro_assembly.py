@@ -99,7 +99,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
             {"VEC": 32, "SFU": 47, "TLSU": 28, "CUBE": 12},
         )
         self.assertEqual(
-            self.catalog["summary"], {"operation_count": 119, "form_count": 144}
+            self.catalog["summary"], {"operation_count": 119, "form_count": 168}
         )
         self.assertEqual(self.catalog["architecture_identity"], "0.59.0")
         self.assertTrue(
@@ -922,16 +922,28 @@ class TileMacroAssemblyTest(unittest.TestCase):
                     )
         self.assertEqual(set(layout_dependent_forms), expected_layout_dependent)
         self.assertEqual(len(layout_dependent_forms), 30)
-        self.assertEqual(len(runtime_forms), 3)
+        expected_atomic_modes = (
+            "ADD", "MIN", "MAX", "AND", "OR", "XOR", "INC", "DEC"
+        )
+        expected_runtime_forms = [
+            ("TCVT", "TCVT", "SrcTile0.Descriptor.Row"),
+            ("TSTORE", "TSTORE", "SrcTile.Descriptor.Row"),
+            ("TSTORE", "TSTORE", "SrcShared.Descriptor.Row"),
+        ]
+        for mode in expected_atomic_modes:
+            expected_runtime_forms.extend(
+                (
+                    ("TSTORE", f"TSTORE.ATOMIC_{mode}", "SrcTile.Descriptor.Row"),
+                    ("TSTORE", f"TSTORE.ATOMIC_{mode}", "SrcShared.Descriptor.Row"),
+                )
+            )
+        self.assertEqual(runtime_forms, expected_runtime_forms)
+        self.assertEqual(len(runtime_forms), 19)
         self.assertFalse(
             any(mnemonic in {"TCMP", "TCMPS"} for mnemonic, _, _ in runtime_forms)
         )
-        self.assertIn(
-            ("TCVT", "TCVT", "SrcTile0.Descriptor.Row"), runtime_forms
-        )
-        self.assertIn(
-            ("TSTORE", "TSTORE", "SrcShared.Descriptor.Row"),
-            runtime_forms,
+        self.assertEqual(
+            runtime_forms[0], ("TCVT", "TCVT", "SrcTile0.Descriptor.Row")
         )
 
         for mnemonic in ("TLOAD", "TSTORE", "TGPR2T"):
@@ -1013,17 +1025,57 @@ class TileMacroAssemblyTest(unittest.TestCase):
             {"command": "B.DATR", "group": None, "slot": "Layout"},
         )
         self.assertEqual(weight_config["PEMask"][0]["command"], "B.IOS")
+        atomic_modes = ("ADD", "MIN", "MAX", "AND", "OR", "XOR", "INC", "DEC")
+        expected_tstore_spellings = ["TSTORE", "TSTORE", "TSTORE"] + [
+            f"TSTORE.ATOMIC_{mode}"
+            for mode in atomic_modes
+            for _ in range(3)
+        ]
+        tstore_forms = self.by_name["TSTORE"]["forms"]
         self.assertEqual(
-            [form["spelling"] for form in self.by_name["TSTORE"]["forms"]],
-            ["TSTORE", "TSTORE", "TSTORE"],
+            [form["spelling"] for form in tstore_forms], expected_tstore_spellings
         )
-        self.assertFalse(
-            any(
-                "." in form["spelling"]
-                for operation in self.operations
-                for form in operation["forms"]
-            )
-        )
+        expected_dotted = [
+            ("TSTORE", f"TSTORE.ATOMIC_{mode}")
+            for mode in atomic_modes
+            for _ in range(3)
+        ]
+        dotted = [
+            (operation["mnemonic"], form["spelling"])
+            for operation in self.operations
+            for form in operation["forms"]
+            if "." in form["spelling"]
+        ]
+        self.assertEqual(dotted, expected_dotted)
+        for mode_index, mode in enumerate(atomic_modes):
+            for variant_index, expected_col in enumerate(
+                ("SourceDescriptor", "SourceOrValidCol", "CubeLayout")
+            ):
+                form = tstore_forms[3 + mode_index * 3 + variant_index]
+                configuration = {
+                    item["field"]: item["default"] for item in form["configuration"]
+                }
+                self.assertEqual(configuration["Canonicalize"], "1")
+                self.assertEqual(configuration["CMode"], mode)
+                self.assertEqual(configuration["Col"], expected_col)
+                self.assertTrue(form["macro_format"].startswith(f"TSTORE.ATOMIC_{mode} "))
+                self.assertEqual(
+                    [item["field"] for item in form["sources"]],
+                    ["SrcShared", "macro_source1"]
+                    if variant_index == 1
+                    else ["SrcTile", "macro_source1"],
+                )
+                cube_layout = next(
+                    (
+                        item
+                        for item in form["configuration"]
+                        if item["field"] == "CubeLayout"
+                    ),
+                    None,
+                )
+                self.assertEqual(variant_index == 2, cube_layout is not None)
+                if cube_layout is not None:
+                    self.assertFalse(cube_layout["optional"])
         shared_store_mask = next(
             field for field in self.by_name["TSTORE"]["forms"][1]["configuration"]
             if field["field"] == "PEMask"

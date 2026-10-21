@@ -1370,6 +1370,34 @@ end;
             64,
         )
 
+    def test_atomic_tstore_lifetime_static_id_stays_within_public_limit(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "asl/block/model/state/atomic-tstore-source-lifetime.asl"
+            source.parent.mkdir(parents=True)
+            source.write_text("constant TEST_ATOMIC_LIFETIME = 0;\n", encoding="utf-8")
+            unit = AslUnit(
+                unit_id="PTO-BLOCK-MODEL-STATE-ATOMIC-TSTORE-SOURCE-LIFETIME",
+                surface="block",
+                classification=("model", "state", "atomic-tstore-source-lifetime"),
+                depends_on=(),
+                source_path=Path("asl/block/model/state/atomic-tstore-source-lifetime.asl"),
+                mnemonic=None,
+                line_count=1,
+            )
+
+            _, document = self.render_concept(root, unit)
+
+        compact_id = (
+            "PTO-AVS-BLOCK-MODEL-STATE-ATOMIC-TSTORE-LIFETIME-STATIC-001"
+        )
+        self.assertIn(f'"id":"{compact_id}"', document)
+        self.assertIn(
+            '"source":"asl/block/model/state/atomic-tstore-source-lifetime.asl"',
+            document,
+        )
+        self.assertLessEqual(len(compact_id), 64)
+
 
 if __name__ == "__main__":
     unittest.main()

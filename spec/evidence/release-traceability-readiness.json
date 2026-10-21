@@ -24209,7 +24209,7 @@
     "tests/asl/block/model/schema/dimensions/block-state-dimension-default-one-001.asl": "ec1e8a0f2200ad2db268be364f6cda48a6309328ae0302e4dc5922be733b7dbe",
     "tests/asl/block/model/schema/dimensions/block-static-dimensions-contract-001.asl": "892406b35511f8a3cdcbc4039d26fe6a539f9497d8acf07a434e4c2b834f5907",
     "tests/asl/block/model/schema/header/block-static-header-contract-001.asl": "ab129b48c9f63f7208bd711f360d76b2b96fb081024facc9994356f08641f074",
-    "tests/asl/block/model/state/atomic-tstore-source-lifetime/block-static-atomic-tstore-source-lifetime-contract-001.asl": "8f0824b821582bac0fb42a27715ac5cc789dbee520f82218776fa61b2643c624",
+    "tests/asl/block/model/state/atomic-tstore-source-lifetime/block-static-atomic-tstore-source-lifetime-contract-001.asl": "89165472f2114854c566837d17eefa52b6d5d2fc3d8d43d219ef6fe66d2378e8",
     "tests/asl/block/model/state/barg/block-static-barg-contract-001.asl": "819dc004cd548c867fed11ae4c745f83e0fc29585f18e675bfe9401ead4395ca",
     "tests/asl/block/model/state/binding-state/block-static-binding-state-contract-001.asl": "823091ff865a95ee238f980119ca3480ae87ea6ab35e8e0830e48c2afcd49dbf",
     "tests/asl/block/model/state/control-state/block-state-configuration-001.asl": "19f982219f8d9c6c9aa43d82fc49841014ec677cb8e2de284cc1d7bf50250966",
@@ -41251,11 +41251,11 @@
       "source": "asl/block/model/schema/bundle-encoding.asl"
     },
     {
-      "id": "PTO-AVS-BLOCK-MODEL-STATE-ATOMIC-TSTORE-SOURCE-LIFETIME-STATIC-001",
+      "id": "PTO-AVS-BLOCK-MODEL-STATE-ATOMIC-TSTORE-LIFETIME-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/block/model/state/atomic-tstore-source-lifetime/block-static-atomic-tstore-source-lifetime-contract-001.asl",
       "requirements": [],
-      "sha256": "8f0824b821582bac0fb42a27715ac5cc789dbee520f82218776fa61b2643c624",
+      "sha256": "89165472f2114854c566837d17eefa52b6d5d2fc3d8d43d219ef6fe66d2378e8",
       "source": "asl/block/model/state/atomic-tstore-source-lifetime.asl"
     },
     {
@@ -79095,7 +79095,7 @@
       "source": "asl/block/model/state/atomic-tstore-source-lifetime.asl",
       "surface": "block",
       "tests": [
-        "PTO-AVS-BLOCK-MODEL-STATE-ATOMIC-TSTORE-SOURCE-LIFETIME-STATIC-001"
+        "PTO-AVS-BLOCK-MODEL-STATE-ATOMIC-TSTORE-LIFETIME-STATIC-001"
       ]
     },
     {
