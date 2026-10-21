@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-MIXED-GENERATION-007","source":"asl/block/model/dispatch/shared-tmov-cube-to-nd.asl","requirements":["PTO-ARCH-PE-EXECUTION-CONTEXT-001","PTO-B-ASSEMBLE-SHARED-GENERATION-001","PTO-BSTART-TMOV-SHARED-001","PTO-TMOV-CUBE-TO-SHARED-ND-001"],"kind":"execution","summary":"Actual PE Shared generations reject M16/M32 and converted/NORM mode mixing without losing accepted arrivals","pass_condition":"An actual PE cohort accepts two 2 KiB M162ND writers then rejects a 4 KiB M322ND writer in the 2+2+4 KiB mixed example, retaining the two accepted arrivals unpublished; a second cohort accepts M162ND then rejects a complete-parent NORM TMOV candidate with the same atomic preservation","related_sources":["asl/block/model/operands/shared-generation-pe-requests.asl","asl/block/model/operands/shared-generation.asl","asl/block/model/dispatch/shared-tlsu.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-MIXED-GENERATION-007","source":"asl/block/model/dispatch/shared-tmov-cube-to-nd.asl","requirements":["PTO-ARCH-PE-EXECUTION-CONTEXT-001","PTO-B-ASSEMBLE-SHARED-GENERATION-001","PTO-BSTART-TMOV-SHARED-001","PTO-TMOV-CUBE-TO-SHARED-ND-001"],"kind":"execution","summary":"Actual PE Shared generations reject M16/M32 and converted/NORM mode mixing without losing accepted arrivals","pass_condition":"An actual PE cohort accepts two 2 KiB M162ND writers then rejects a 4 KiB M322ND writer in the 2+2+4 KiB mixed example, retaining the two accepted arrivals unpublished; a shape-compatible complete-parent ND NORM request is rejected after an M16-converted request while preserving the prior publication, and a separate NORM-mode generation accepts a matching ND request without conversion metadata","related_sources":["asl/block/model/operands/shared-generation-pe-requests.asl","asl/block/model/operands/shared-generation.asl","asl/block/model/dispatch/shared-tlsu.asl"]}
 
 pure func SharedMixedTMOVStart() => bits(64)
 begin
@@ -46,9 +46,14 @@ func ConfigureSharedMixedSource(capacity: integer {2048,4096,16384},
     rows: integer {16,32}, valid_columns: integer {128},
     layout: TileLayout, allocation_mask: bits(4))
 begin
-    let configured = ConfigureCubeTileForMask(0, capacity, rows,
-        valid_columns, TileDataType_E4M3, layout, allocation_mask);
-    assert configured;
+    if layout == TileLayout_RowMajor then
+        ConfigureTileForMask(0, capacity, rows, valid_columns, rows,
+            valid_columns, TileDataType_E4M3, layout, allocation_mask);
+    else
+        let configured = ConfigureCubeTileForMask(0, capacity, rows,
+            valid_columns, TileDataType_E4M3, layout, allocation_mask);
+        assert configured;
+    end;
     InstallRelativeTileFixture(0, 0);
     for row = 0 to rows - 1 looplimit 65536 do
         for column = 0 to valid_columns - 1 looplimit 65536 do
@@ -57,8 +62,10 @@ begin
                 Zeros{PTO_XLEN} + 1 + row * 17 + column * 3);
         end;
     end;
-    assert _Tiles[[0]].contents_defined && TileCubeDescriptorLegal(
-        _Tiles[[0]]);
+    assert _Tiles[[0]].contents_defined &&
+           (if layout == TileLayout_RowMajor then
+                TileDescriptorLegal(0 as TileIndex)
+            else TileCubeDescriptorLegal(_Tiles[[0]]));
 end;
 
 func SubmitSharedMixedTMOV(pe: integer {0..2},
@@ -75,6 +82,11 @@ begin
     let allocation_mask = PEMaskOfPEMode(pemode);
     ConfigureSharedMixedSource(source_capacity, rows, source_columns,
         layout, allocation_mask);
+    if layout == TileLayout_RowMajor then
+        SetBundleDimension(0, Zeros{PTO_XLEN} + source_columns);
+        SetBundleDimension(1, Zeros{PTO_XLEN} + rows);
+        SetBundleDimension(2, Zeros{PTO_XLEN} + source_columns);
+    end;
     WriteGPR(1, Zeros{PTO_XLEN} + offset);
     let started = ExecuteCommandInstruction(SharedMixedTMOVStart(), 32);
     var datr_status = CommandExecution_Executed;
@@ -92,14 +104,19 @@ begin
            shared == CommandExecution_Executed &&
            assemble == CommandExecution_Executed &&
            source == CommandExecution_Executed;
+    if !expect_fault && layout_code == 0 then
+        assert BundleSharedTMOVLocalSchemaLegal();
+    elsif !expect_fault then
+        assert BundleSharedTMOVCubeToNDSchemaLegal();
+    end;
     let stopped = ExecuteCommandInstruction(Zeros{64}, 16);
     if expect_fault then
         assert _LastFault == Fault_TileLegality;
     else
-        assert stopped == CommandExecution_Executed &&
-               _LastFault == Fault_None &&
-               BundleSharedGenerationOpen(shared_id) &&
-               BundleSharedGenerationRequestWaiting(0);
+        assert stopped == CommandExecution_Executed;
+        assert _LastFault == Fault_None;
+        assert BundleSharedGenerationOpen(shared_id);
+        assert BundleSharedGenerationRequestWaiting(0);
     end;
 end;
 
@@ -169,8 +186,13 @@ begin
     assert BundleSharedGenerationOpen((Zeros{6} + 59) as SharedTileID) &&
            _SharedGenerations[[generation_index]].working_initialized_mask ==
                '1000' &&
+           _SharedGenerations[[generation_index]].arrived_participants ==
+               '1000' &&
+           _SharedGenerations[[generation_index]].specialized_inputs_valid &&
+           _SharedGenerations[[generation_index]].specialized_metadata ==
+               Zeros{PTO_XLEN} + 25 &&
            SharedTilePublished((Zeros{6} + 59) as SharedTileID);
-    SubmitSharedMixedTMOV(1, TileLayout_CUBE_M16, 0, 16384, 8, 8, 0,
+    SubmitSharedMixedTMOV(1, TileLayout_RowMajor, 0, 16384, 8, 8, 0,
         (Zeros{6} + 59) as SharedTileID, '111', TRUE);
     assert SharedTilePublished((Zeros{6} + 59) as SharedTileID) &&
            SharedTileRecord((Zeros{6} + 59) as SharedTileID).tile.data_type ==
@@ -182,9 +204,40 @@ begin
     assert _MemoryEventCount == 0;
 end;
 
+func RunAllNORMGenerationControl()
+begin
+    ResetProfileState();
+    InstallPriorSharedGeneration((Zeros{6} + 60) as SharedTileID);
+    let launched = LaunchKernelInvocation(0 as PTOModelCoreIdentity,
+        Zeros{PTO_XLEN});
+    assert launched == KernelLifecycle_Started;
+    StartMemoryEventCapture(0);
+    SubmitSharedMixedTMOV(0, TileLayout_RowMajor, 0, 16384, 8, 8, 0,
+        (Zeros{6} + 60) as SharedTileID, '111', FALSE);
+    let generation_index = SharedTileArrayIndex(
+        (Zeros{6} + 60) as SharedTileID);
+    assert BundleSharedGenerationOpen((Zeros{6} + 60) as SharedTileID) &&
+           _SharedGenerations[[generation_index]].working_initialized_mask ==
+               '1000' &&
+           _SharedGenerations[[generation_index]].arrived_participants ==
+               '1000' &&
+           !_SharedGenerations[[generation_index]].specialized_inputs_valid &&
+           _SharedGenerations[[generation_index]].specialized_metadata ==
+               Zeros{PTO_XLEN} &&
+           SharedTilePublished((Zeros{6} + 60) as SharedTileID) &&
+           SharedTileRecord((Zeros{6} + 60) as SharedTileID).tile.data_type ==
+               TileDataType_U8 &&
+           TileReadLogicalElement(
+               SharedTileRecord((Zeros{6} + 60) as SharedTileID).tile, 0) ==
+               Zeros{PTO_XLEN} + 0x5a;
+    StopMemoryEventCapture();
+    assert _MemoryEventCount == 0;
+end;
+
 func main() => integer
 begin
     RunM16M32MixedGeneration();
     RunConvertedAndNORMMixedGeneration();
+    RunAllNORMGenerationControl();
     return 0;
 end;

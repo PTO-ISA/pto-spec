@@ -124,7 +124,42 @@ begin
     end;
 end;
 
-func RunSharedCubeToNDNormalCarrier()
+func RunSharedCubeToNDTypedNormalCarrier(operation_type: bits(5),
+    shared_id: SharedTileID)
+begin
+    ConfigureTileForMask(0, 128, 2, 2, 2, 2,
+        TileDataType_E6M2, TileLayout_RowMajor, '0001');
+    InstallRelativeTileFixture(0, 0);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x21);
+    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 0x35);
+    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 0x49);
+    WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 0x5d);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
+    let start_status = ExecuteCommandInstruction(
+        SharedCubeToNDTypeStart(operation_type), 32);
+    let shared_status = ExecuteCommandInstruction(
+        SharedCubeToNDTypeShared(shared_id as bits(6), Zeros{4} + 1), 32);
+    let source_status = ExecuteCommandInstruction(
+        SharedCubeToNDTypeSource(), 32);
+    assert start_status == CommandExecution_Executed &&
+           shared_status == CommandExecution_Executed &&
+           source_status == CommandExecution_Executed;
+    assert BundleSharedTMOVLocalSchemaLegal();
+    let stop_status = ExecuteCommandInstruction(Zeros{64}, 16);
+    assert stop_status == CommandExecution_Executed &&
+           _LastFault == Fault_None && SharedTilePublished(shared_id);
+    let copied = SharedTileRecord(shared_id).tile;
+    assert copied.data_type == TileDataType_E6M2 &&
+           copied.layout == TileLayout_RowMajor &&
+           TileReadLogicalElement(copied, 0) == Zeros{PTO_XLEN} + 0x21 &&
+           TileReadLogicalElement(copied, 1) == Zeros{PTO_XLEN} + 0x35 &&
+           TileReadLogicalElement(copied, 2) == Zeros{PTO_XLEN} + 0x49 &&
+           TileReadLogicalElement(copied, 3) == Zeros{PTO_XLEN} + 0x5d;
+end;
+
+func RunSharedCubeToNDIncompatibleNormalCarrier(operation_type: bits(5))
 begin
     ConfigureTileForMask(0, 128, 2, 2, 2, 2,
         TileDataType_U16, TileLayout_RowMajor, '0001');
@@ -133,8 +168,11 @@ begin
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 0x5678);
     WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 0x9abc);
     WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 0xdef0);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     let start_status = ExecuteCommandInstruction(
-        SharedCubeToNDTypeStart(Zeros{5} + 4), 32);
+        SharedCubeToNDTypeStart(operation_type), 32);
     let shared_status = ExecuteCommandInstruction(
         SharedCubeToNDTypeShared((Zeros{6} + 46) as bits(6),
             Zeros{4} + 1), 32);
@@ -143,18 +181,71 @@ begin
     assert start_status == CommandExecution_Executed &&
            shared_status == CommandExecution_Executed &&
            source_status == CommandExecution_Executed;
+    assert !BundleSharedTMOVLocalSchemaLegal();
     let stop_status = ExecuteCommandInstruction(Zeros{64}, 16);
-    assert stop_status == CommandExecution_Executed &&
-           _LastFault == Fault_None &&
-           SharedTilePublished((Zeros{6} + 46) as SharedTileID);
-    let copied = SharedTileRecord((Zeros{6} + 46) as SharedTileID).tile;
-    assert copied.data_type == TileDataType_U16 &&
-           copied.layout == TileLayout_RowMajor &&
-           copied.capacity_bytes == 128 &&
-           TileReadLogicalElement(copied, 0) == Zeros{PTO_XLEN} + 0x1234 &&
-           TileReadLogicalElement(copied, 1) == Zeros{PTO_XLEN} + 0x5678 &&
-           TileReadLogicalElement(copied, 2) == Zeros{PTO_XLEN} + 0x9abc &&
-           TileReadLogicalElement(copied, 3) == Zeros{PTO_XLEN} + 0xdef0;
+    assert stop_status == CommandExecution_Rejected &&
+           _LastFault == Fault_TileLegality &&
+           !SharedTilePublished((Zeros{6} + 46) as SharedTileID);
+end;
+pure func SharedTypedNormalSource(shared_id: bits(6)) => bits(64)
+begin
+    var instruction = Zeros{64} + 0x00001013;
+    instruction[25:20] = shared_id;
+    instruction[11:9] = '100';
+    return instruction;
+end;
+
+pure func SharedTypedNormalDestination() => bits(64)
+begin
+    var instruction = Zeros{64} + 0x00006013;
+    instruction[18:15] = '0001';
+    instruction[8:7] = '10';
+    instruction[11:9] = '100';
+    instruction[19] = '1';
+    return instruction;
+end;
+
+func RunSharedToLocalTypedNormalCarrier(operation_type: bits(5),
+    backing_type: TileDataType, expected_legal: boolean,
+    shared_id: SharedTileID)
+begin
+    ConfigureTileForMask(1, 128, 2, 2, 2, 2,
+        backing_type, TileLayout_RowMajor, '0001');
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x21);
+    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x35);
+    WriteTileElement(1, 1, 0, Zeros{PTO_XLEN} + 0x49);
+    WriteTileElement(1, 1, 1, Zeros{PTO_XLEN} + 0x5d);
+    InstallSharedTile(shared_id, _Tiles[[1]], '0001');
+    let start_status = ExecuteCommandInstruction(
+        SharedCubeToNDTypeStart(operation_type), 32);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
+    let shared_status = ExecuteCommandInstruction(
+        SharedTypedNormalSource(shared_id as bits(6)), 32);
+    let destination_status = ExecuteCommandInstruction(
+        SharedTypedNormalDestination(), 32);
+    assert start_status == CommandExecution_Executed &&
+           shared_status == CommandExecution_Executed &&
+           destination_status == CommandExecution_Executed;
+    let normal_schema_legal = BundleSharedTMOVDestinationSchemaLegal(
+        shared_id, 2);
+    assert normal_schema_legal == expected_legal;
+    let stop_status = ExecuteCommandInstruction(Zeros{64}, 16);
+    if expected_legal then
+        assert stop_status == CommandExecution_Executed;
+        assert _LastFault == Fault_None;
+        let destination = _BundleTileBindings[[0]].destination;
+        assert _Tiles[[destination]].data_type == TileDataType_E6M2 &&
+               _Tiles[[destination]].layout == TileLayout_RowMajor &&
+               ReadTileElement(destination, 0, 0) ==
+                   Zeros{PTO_XLEN} + 0x21 &&
+               ReadTileElement(destination, 1, 1) ==
+                   Zeros{PTO_XLEN} + 0x5d;
+    else
+        assert stop_status == CommandExecution_Rejected &&
+               _LastFault == Fault_TileLegality && !_Tiles[[32]].allocated;
+    end;
 end;
 
 func main() => integer
@@ -187,6 +278,23 @@ begin
     RunSharedCubeToNDTypeCase(TileLayout_CUBE_M32, 512, 3, 32, 12,
         TileDataType_U8, Zeros{5} + 27, (Zeros{6} + 51) as SharedTileID);
     ResetProfileState();
-    RunSharedCubeToNDNormalCarrier();
+    RunSharedCubeToNDIncompatibleNormalCarrier(Zeros{5} + 15);
+    ResetProfileState();
+    RunSharedCubeToNDIncompatibleNormalCarrier(Zeros{5} + 21);
+    ResetProfileState();
+    RunSharedCubeToNDTypedNormalCarrier(Zeros{5} + 15,
+        (Zeros{6} + 52) as SharedTileID);
+    ResetProfileState();
+    RunSharedCubeToNDTypedNormalCarrier(Zeros{5} + 21,
+        (Zeros{6} + 53) as SharedTileID);
+    ResetProfileState();
+    RunSharedToLocalTypedNormalCarrier(Zeros{5} + 21,
+        TileDataType_E6M2, TRUE, (Zeros{6} + 54) as SharedTileID);
+    ResetProfileState();
+    RunSharedToLocalTypedNormalCarrier(Zeros{5} + 15,
+        TileDataType_U16, FALSE, (Zeros{6} + 55) as SharedTileID);
+    ResetProfileState();
+    RunSharedToLocalTypedNormalCarrier(Zeros{5} + 21,
+        TileDataType_U16, FALSE, (Zeros{6} + 56) as SharedTileID);
     return 0;
 end;

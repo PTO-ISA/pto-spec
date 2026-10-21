@@ -27,6 +27,26 @@ begin
     return BundleCubeTransportDataAttributesLegal();
 end;
 
+func CubeDirectionEncodedDispatchRejects(load: boolean,
+    code: integer {21..26}) => boolean
+begin
+    ResetProfileState();
+    let start_status = ExecuteCommandInstruction(
+        CubeDirectionStart(load), 32);
+    let datr_status = ExecuteCommandInstruction(
+        CubeDirectionAttributes(code), 32);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
+    if start_status != CommandExecution_Executed ||
+       datr_status != CommandExecution_Executed then return FALSE; end;
+    if !BundleCubeTransportSelected() ||
+       BundleCubeTransportDataAttributesLegal() then return FALSE; end;
+    let completed = ExecuteBundleTileOperation();
+    return !completed && _LastFault == Fault_TileLegality &&
+           !_Tiles[[0]].allocated;
+end;
+
 func main() => integer
 begin
     for code = 21 to 23 do
@@ -36,11 +56,17 @@ begin
         let store_legal = CubeDirectionLegal(
             FALSE, code as integer {21..26});
         assert !store_legal;
+        let load_rejected = CubeDirectionEncodedDispatchRejects(
+            FALSE, code as integer {21..26});
+        assert load_rejected;
     end;
     for code = 24 to 26 do
         let load_legal = CubeDirectionLegal(
             TRUE, code as integer {21..26});
         assert !load_legal;
+        let store_rejected = CubeDirectionEncodedDispatchRejects(
+            TRUE, code as integer {21..26});
+        assert store_rejected;
         let store_legal = CubeDirectionLegal(
             FALSE, code as integer {21..26});
         assert store_legal;
