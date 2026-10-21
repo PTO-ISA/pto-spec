@@ -891,6 +891,30 @@
         "en": "TPACK and TUNPACK map mask coordinates to source row and source CELL word index; one bit gates a complete destination CELL word group. Active groups perform the selected-byte reads and whole-word write, while inactive groups avoid those source-byte reads and use the common MERGE or ZERO rule; existing shape, type, control, word-count, capacity, and allocation checks remain in force.",
         "zh-CN": "TPACK 和 TUNPACK 将掩码坐标映射到源行与源 CELL 字索引，每个位控制一个完整的目标 CELL 字组。活动组执行所选字节读取和整字写入；非活动组不读取这些源字节并采用通用 MERGE 或 ZERO 规则。既有形状、类型、控制、字数、容量和分配检查仍然有效。"
       }
+    },
+    {
+      "id": "PTO-GM-FLOATING-ADD-NUMERIC-001",
+      "source_path": "asl/tile/model/memory/gm-atom-red.asl",
+      "title": {
+        "en": "Floating GM ADD numeric reference",
+        "zh-CN": "GM 浮点 ADD 数值参考"
+      },
+      "summary": {
+        "en": "This entry connects the shared floating-add numeric reference with the indexed GM atomic operations and the strided Atomic TSTORE clause that use it. Consult those ASL owners for the normative contracts; this supplement provides navigation context.",
+        "zh-CN": "本条目将共享的浮点加法数值参考关联到使用它的索引式 GM 原子操作与步长 Atomic TSTORE 条文。规范契约以这些 ASL owner 为准；此补充仅提供导航背景。"
+      }
+    },
+    {
+      "id": "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+      "source_path": "asl/tile/memory-and-data-movement/regular/TSTORE.asl",
+      "title": {
+        "en": "Strided Atomic TSTORE contract",
+        "zh-CN": "步长 Atomic TSTORE 契约"
+      },
+      "summary": {
+        "en": "This entry points to the ASL owner for the Function 1 strided Atomic TSTORE extension and related source-lifetime material. Exact instruction behavior remains in the linked normative clauses; this supplement is an index aid.",
+        "zh-CN": "本条目指向 Function 1 步长 Atomic TSTORE 扩展及相关源生命周期内容的 ASL owner。精确指令行为以关联的规范条文为准；此补充仅作索引说明。"
+      }
     }
   ]
 }
