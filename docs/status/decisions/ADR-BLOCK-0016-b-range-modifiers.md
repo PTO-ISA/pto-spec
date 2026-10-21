@@ -85,7 +85,11 @@
     "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
     "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
     "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
-    "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
+    "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
+    "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
+    "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+    "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
+    "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT"
   ],
   "resolves": [],
   "supersedes": [],
@@ -123,11 +127,37 @@
         "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
         "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR"
       ]
+    },
+    {
+      "date": "2026-10-20",
+      "baseline": "b0165320a4b575b18d2f4d93faf40178f661ab49",
+      "approvers": [
+        "ckwllawliet <641433195@qq.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/395",
+      "affected_ndf": [
+        "PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
+        "PTO-B-ASSEMBLE-LOCAL-GENERATION-001",
+        "PTO-B-ASSEMBLE-SHARED-GENERATION-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
+        "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
+        "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT"
+      ]
     }
   ],
   "legacy_ids": [
     "ADR-0098"
-  ]
+  ],
+  "interface_change": true
 }
 ---
 
@@ -327,3 +357,20 @@ or models that required full-capacity coverage or retained fragment geometry
 must adopt the finalized-parent rule. The amendment does not publish a
 release; exact-commit release verification and release selection remain
 separate required work.
+
+## Accepted amendment: issue #395 — Complete Local parent geometry and Shared movement identity
+
+Accepted on 2026-10-20 by ISA owner `ckwllawliet`, through explicit answers
+in the contract-freeze review, against baseline `b0165320a4b575b18d2f4d93faf40178f661ab49`.
+Linked requirement: [issue #395](https://github.com/PTO-ISA/pto-spec/issues/395).
+
+**English — rationale and scope.** The owner accepted full capacity-derived Local M16/M32 parent geometry while retaining existing gap-free-prefix coverage, terminal-tail, readiness and publication conditions. Prefix coverage no longer shrinks physical geometry. Local prefix publication does not relax Shared complete-range coverage. Shared TMOV distinguishes original M322ND, M162ND and NORM modes before normalization so otherwise matching ND candidates cannot mix modes.
+
+**中文 — 原因与范围。** Owner 已确认 Local M16/M32 父对象保留容量确定的完整物理几何，沿用既有连续前缀、末端 tail、就绪及发布条件，不再按覆盖前缀收缩物理几何。Local 前缀发布不放宽 Shared 完整范围覆盖。Shared TMOV 在归一化前区分 M322ND、M162ND、NORM，避免相同 ND 输出元数据的不同模式混入同一 generation。
+
+This is an accepted design for implementation. Current executable meaning
+remains in the owning ASL/NDF until APPLY; this design record does not claim
+implementation, AVS, PR or release validation. Compatibility is breaking for
+formerly accepted M16/M32 allocation-slack inputs and changed producer/parent
+physical geometry. TMOV adds legal forms without a new opcode. Release
+impact is required after the review baseline; publication is not authorized.

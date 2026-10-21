@@ -19,14 +19,25 @@
     "0.58.5"
   ],
   "affected_ndf": [
-    "PTO-ISA-LEGACY-SHARED-MOVEMENT-001"
+    "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
+    "PTO-BSTART-TMOV-SHARED-001",
+    "PTO-TMOV-CONTRACT-001",
+    "PTO-INST-BLOCK-BSTART-TMOV"
   ],
   "affected_units": [
     "PTO-BLOCK-BSTART-TMOV",
     "PTO-BLOCK-BSTART-TSTORE",
     "PTO-TILE-TMOV",
     "PTO-TILE-TSTORE",
-    "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU"
+    "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+    "PTO-BLOCK-B-DATR",
+    "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
+    "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+    "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+    "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
+    "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+    "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT"
   ],
   "resolves": [],
   "supersedes": [],
@@ -36,7 +47,36 @@
   "legacy_ids": [
     "ADR-0107"
   ],
-  "amendments": []
+  "amendments": [
+    {
+      "date": "2026-10-20",
+      "baseline": "b0165320a4b575b18d2f4d93faf40178f661ab49",
+      "approvers": [
+        "ckwllawliet <641433195@qq.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/395",
+      "affected_ndf": [
+        "PTO-TMOV-CONTRACT-001",
+        "PTO-BSTART-TMOV-SHARED-001",
+        "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
+        "PTO-INST-BLOCK-BSTART-TMOV"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-DATR",
+        "PTO-BLOCK-BSTART-TMOV",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
+        "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
+        "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+        "PTO-TILE-TMOV"
+      ]
+    }
+  ],
+  "interface_change": true
 }
 ---
 
@@ -110,3 +150,34 @@ TSTORE and TMOV paths.
 **中文。** 此移除不改变 GMOV，也不创建新的 quarter、defined-mask 或发布行为。
 它也不在所引用的 canonical TSTORE 与 TMOV 路径之外定义新的 payload、就绪、
 分配或故障语义。
+
+## Accepted amendment: issue #395 — Canonical TMOV layout extension with explicit assembly
+
+Accepted on 2026-10-20 by ISA owner `ckwllawliet`, through explicit answers
+in the contract-freeze review, against baseline `b0165320a4b575b18d2f4d93faf40178f661ab49`.
+Linked requirement: [issue #395](https://github.com/PTO-ISA/pto-spec/issues/395).
+
+**English — rationale and scope.** The owner accepted Local M16/M32 to Shared ND conversion through canonical TMOV and explicit B.ASSEMBLE ranges, one mode per generation and existing atomic parent publication. Reusing existing operation and layout selectors avoids reviving removed Shared Functions. Exact-capacity geometry is implemented first as a separately reviewable change under issue #395, followed by the TMOV extension; no separate predecessor issue or already-landed PR is required.
+
+**中文 — 原因与范围。** Owner 已确认通过 canonical TMOV 与显式 B.ASSEMBLE range 实现 Local M16/M32 到 Shared ND 转换，同一 generation 使用同一模式并沿用父对象原子发布。复用既有 operation/layout selector，不恢复已移除 Shared Function。精确容量几何先作为 #395 下可单独审查的变化实施，再实现 TMOV；不要求额外前置 issue 或已落地 PR。
+
+This is an accepted design for implementation. Current executable meaning
+remains in the owning ASL/NDF until APPLY; this design record does not claim
+implementation, AVS, PR or release validation. Compatibility is breaking for
+formerly accepted M16/M32 allocation-slack inputs and changed producer/parent
+physical geometry. TMOV adds legal forms without a new opcode. Release
+impact is required after the review baseline; publication is not authorized.
+
+**Type-code closure confirmed in the same owner review.** BSTART.TMOV adds
+E6M2=15 and RCPE6M2=21 under existing carrier-compatible/source-only rules.
+This expands the canonical command's legal DataType set, including otherwise
+legal NORM carrier forms; it does not change fixed encoding fields or other
+BSTART commands. New Local-CUBE-to-Shared forms keep DATR DataType=DTYPE_NONE
+and retain source backing; RCPE6M2 is not persistent descriptor backing.
+
+**同轮 owner 已确认的类型编码补全。** BSTART.TMOV 新增 E6M2=15 和
+RCPE6M2=21，沿用既有 carrier-compatible/source-only 约束，并包含其余条件
+合法的 NORM carrier 形态。此变化扩展该 canonical command 的合法 DataType
+集合，不改变固定编码字段或其他 BSTART。新 Local CUBE 到 Shared 形态的
+DATR DataType 仍为 DTYPE_NONE，保留源 backing；RCPE6M2 不作为持久 descriptor
+backing。实现须更新 owner 白名单及派生 decoder/镜像/正反例。

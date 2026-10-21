@@ -30,7 +30,22 @@
     "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
     "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
     "PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL",
-    "PTO-TILE-MODEL-STATE-ALLOCATION"
+    "PTO-TILE-MODEL-STATE-ALLOCATION",
+    "PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+    "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+    "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
+    "PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-EXECUTION",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+    "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+    "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE",
+    "PTO-TILE-MODEL-LEGALITY-EXPDIF-OPERANDS",
+    "PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT",
+    "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+    "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION"
   ],
   "resolves": [],
   "supersedes": [],
@@ -106,6 +121,39 @@
       "affected_units": [
         "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
         "PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL"
+      ]
+    },
+    {
+      "date": "2026-10-20",
+      "baseline": "b0165320a4b575b18d2f4d93faf40178f661ab49",
+      "approvers": [
+        "ckwllawliet <641433195@qq.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/395",
+      "affected_ndf": [
+        "PTO-CUBE-CELL-STATE-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-EXECUTION",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE",
+        "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS",
+        "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
+        "PTO-TILE-MODEL-LEGALITY-EXPDIF-OPERANDS",
+        "PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
+        "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+        "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+        "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+        "PTO-TILE-MODEL-STATE-ALLOCATION"
       ]
     }
   ],
@@ -313,3 +361,20 @@ The maintainer selected explicit CUBE_M32 double-CELL storage for 64-bit Local e
 It preserves the 128-byte physical CELL and 32-row M axis while making element width independent of logical lane identity. Existing M16/N8 and primary Matrix arithmetic contracts keep their own owners. Applicable Local instruction families must close their datatype, transport, predicate and effect behavior against this storage contract. Compatibility impact is newly accepted M32 b64 tuples; release impact is required, with commit-scoped AVS and downstream adoption obligations.
 
 议题 #371 在既有 M32 行域和 128 字节 CELL 上引入 64 位 Local 元素的双 CELL 存储。低／高字、容量、完整配对视图和发布由 owning ASL/NDF 唯一规定；各 Local 指令族须闭合对应类型与效果。该变更不定义新的 M64 布局，也不替代既有 Matrix 运算合同。
+
+## Accepted amendment: issue #395 — Exact-capacity M16/M32 geometry
+
+Accepted on 2026-10-20 by ISA owner `ckwllawliet`, through explicit answers
+in the contract-freeze review, against baseline `b0165320a4b575b18d2f4d93faf40178f661ab49`.
+Linked requirement: [issue #395](https://github.com/PTO-ISA/pto-spec/issues/395).
+
+**English — rationale and scope.** The owner accepted exact-capacity Local M16/M32 descriptors and capacity-derived implicit physical columns. Physical/valid padding remains legal; independent allocation slack is removed. This gives capacity and the complete CELL envelope one consistent meaning across producers and consumers. Explicit or instruction-required physical dimensions remain constraints, and invalid existing descriptors are not silently retagged. Fixed M rows, backing-width CELL mapping, N8 and ordinary ND remain separately owned.
+
+**中文 — 原因与范围。** Owner 已确认 Local M16/M32 descriptor 精确容量，并由容量推导隐式物理列数；保留 physical/valid padding，移除独立 allocation slack，使生产者与消费者对 capacity 和完整 CELL 几何的理解一致。显式或指令强制的物理维度仍是约束，非法既有 descriptor 不得自动改写。固定 M 行数、backing 位宽映射、N8 与普通 ND 保留各自 owner 边界。
+
+This is an accepted design for implementation. Current executable meaning
+remains in the owning ASL/NDF until APPLY; this design record does not claim
+implementation, AVS, PR or release validation. Compatibility is breaking for
+formerly accepted M16/M32 allocation-slack inputs and changed producer/parent
+physical geometry. TMOV adds legal forms without a new opcode. Release
+impact is required after the review baseline; publication is not authorized.
