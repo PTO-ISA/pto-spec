@@ -130,6 +130,11 @@ begin
            [[existing as GMObligationIndex]].captured_atomic_tstore then
         if _GMObligations[[_CurrentModelCore]][[_CurrentMemoryAgent]]
                [[existing as GMObligationIndex]].state ==
+           GMObligation_Cancelled then
+            return TRUE;
+        end;
+        if _GMObligations[[_CurrentModelCore]][[_CurrentMemoryAgent]]
+               [[existing as GMObligationIndex]].state ==
            GMObligation_Completed then
             return TRUE;
         end;

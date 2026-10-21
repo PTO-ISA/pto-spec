@@ -265,6 +265,7 @@ nav:
               - Dimensions: block/model/schema/dimensions.md
               - Header: block/model/schema/header.md
           - State:
+              - Atomic Tstore Source Lifetime: block/model/state/atomic-tstore-source-lifetime.md
               - Barg: block/model/state/barg.md
               - Binding State: block/model/state/binding-state.md
               - Control State: block/model/state/control-state.md

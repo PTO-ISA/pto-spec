@@ -59,10 +59,10 @@ begin
     return FALSE;
 end;
 
-// A completed request remains discoverable while its owning bundle retries
-// the actual commit boundary. The bundle execution-domain token distinguishes
-// a later dynamic BSTART at the same PC, so retaining this record cannot
-// capture a new occurrence.
+// Completed and cancelled requests remain discoverable while the same dynamic
+// execution domain is still selected. Completion prevents the commit retry
+// from reissuing effects; cancellation prevents a squashed stale domain from
+// readmitting work. A later dynamic BSTART has a different domain token.
 readonly func FindCurrentAtomicTStoreOccurrence()
     => integer {-1..PTO_MODEL_GM_OBLIGATIONS-1}
 begin
@@ -76,8 +76,7 @@ begin
            UInt(obligation.descriptor.selector[4:0]) == 1 &&
            obligation.invocation == _CurrentKernelInvocation &&
            obligation.instruction_pc == ReadBPC() &&
-           obligation.execution_domain_token == _BundleExecutionDomainToken &&
-           obligation.state != GMObligation_Cancelled then
+           obligation.execution_domain_token == _BundleExecutionDomainToken then
             return slot as integer {-1..PTO_MODEL_GM_OBLIGATIONS-1};
         end;
     end;

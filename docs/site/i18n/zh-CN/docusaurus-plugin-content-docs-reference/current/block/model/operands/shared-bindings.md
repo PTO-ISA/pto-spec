@@ -70,7 +70,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/operands/shared-bindings.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS","surface":"block","classification":["model","operands","shared-bindings"],"depends_on":["PTO-BLOCK-MODEL-SCHEMA-DIMENSIONS","PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","PTO-SCALAR-MODEL-TYPES-OPERANDS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS","surface":"block","classification":["model","operands","shared-bindings"],"depends_on":["PTO-BLOCK-MODEL-SCHEMA-DIMENSIONS","PTO-BLOCK-MODEL-STATE-ATOMIC-TSTORE-SOURCE-LIFETIME","PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","PTO-SCALAR-MODEL-TYPES-OPERANDS"]}
 readonly func BundleSharedSubviewOffsetRawForPE(
     binding: BundleSharedBindingIndex, pe_identity: MemoryAgentId) => Word
 begin

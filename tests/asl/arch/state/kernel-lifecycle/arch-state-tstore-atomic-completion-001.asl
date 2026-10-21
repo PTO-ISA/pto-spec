@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-TSTORE-ATOMIC-COMPLETION-001","source":"asl/arch/state/kernel-lifecycle.asl","requirements":["PTO-TSTORE-STRIDED-ATOMIC-RED-001","PTO-ARCH-GM-OBLIGATIONS-001","PTO-B-CATR-CONTROL-001","PTO-ARCH-KERNEL-LIFECYCLE-001"],"kind":"state-transition","summary":"encoded Atomic TSTORE completion waits through zero and partial drain, then commits and traps once without replay","pass_condition":"the actual encoded BSTOP path returns Blocked with the bundle and continuation intact at zero and partial RMWs; the same obligation identity drains two active updates exactly once; final BSTOP clears the bundle and raises its post-commit trap at the continuation once, trap recovery does not replay effects; a Normal TSTORE control retains posted completion while service is deferred","related_sources":["asl/arch/memory-model/atomic-tstore-obligations.asl","asl/block/model/commit/validation.asl","asl/block/model/dispatch/commands.asl","asl/tile/model/memory/gm-obligation-progress.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-TSTORE-ATOMIC-COMPLETION-001","source":"asl/arch/state/kernel-lifecycle.asl","requirements":["PTO-TSTORE-STRIDED-ATOMIC-RED-001","PTO-ARCH-GM-OBLIGATIONS-001","PTO-B-CATR-CONTROL-001","PTO-ARCH-KERNEL-LIFECYCLE-001"],"kind":"state-transition","summary":"encoded Atomic TSTORE completion waits through zero and partial drain, then commits and traps once without replay","pass_condition":"the actual encoded BSTOP path returns Blocked with the bundle and continuation intact at zero and partial RMWs; the same obligation identity drains two active updates exactly once; final BSTOP clears the bundle and raises its post-commit trap at the continuation once, trap recovery does not replay effects; squashing the completed request domain preserves its terminal identity and emits no additional effect; malformed duplicate B.DIM retains its rejection/fault precedence while B.HINT succeeds as non-completion setup; a Normal TSTORE control retains posted completion while service is deferred","related_sources":["asl/arch/memory-model/atomic-tstore-obligations.asl","asl/block/model/commit/validation.asl","asl/block/model/dispatch/commands.asl","asl/tile/model/memory/gm-obligation-progress.asl"]}
 
 pure func AtomicCompletionStart(data_type: TileDataType) => bits(64)
 begin
@@ -113,6 +113,25 @@ begin
     let second_target = initial.atomic_tstore_translated_targets[[1]];
     assert first_target == base && second_target == base + 4;
 
+    // A normal non-completion B.HINT setup command remains successful while
+    // this PE has a pending Atomic request. A malformed duplicate B.DIM must
+    // retain its ordinary fault result instead of being reclassified as wait.
+    var hint = Zeros{64} + 0x00000033;
+    hint[31:20] = Zeros{12} + 64;
+    let hint_status = ExecuteCommandInstruction(hint, 32);
+    assert hint_status == CommandExecution_Executed &&
+           _LastFault == Fault_None && _BundleHint.present &&
+           CurrentAtomicTStoreDrainPending() && _MemoryEventCount == 0;
+    let before_bad_dimension = ReadTPC();
+    let duplicate_dimension = ExecuteCommandInstruction(
+        Zeros{64} + 0x00002043, 32);
+    assert duplicate_dimension == CommandExecution_Rejected &&
+           _LastFault == Fault_BundleControl && _BundleActive &&
+           ReadTPC() == before_bad_dimension && ReadBPC() == entry &&
+           CurrentAtomicTStoreDrainPending() && _MemoryEventCount == 0;
+    ClearFault();
+    assert _LastFault == Fault_None && CurrentAtomicTStoreDrainPending();
+
     SetVerificationGMProgressDeferred(FALSE);
     SetVerificationGMProgressBeatBudget(1);
     ProgressKernelGMObligationsForCore(0, invocation);
@@ -159,6 +178,16 @@ begin
            event1.invocation == invocation && event1.address == second_target &&
            event1.read_value == Zeros{PTO_XLEN} + 20 &&
            event1.write_value == Zeros{PTO_XLEN} + 22;
+
+    EnterBundleExecutionDomainSquashEvent(initial.execution_domain_token);
+    let completed_after_squash = _GMObligations[[0]][[0]]
+        [[slot as GMObligationIndex]];
+    assert completed_after_squash.state == GMObligation_Completed &&
+           completed_after_squash.identity == initial.identity &&
+           completed_after_squash.atomic_tstore_committed_count == 2 &&
+           !completed_after_squash.atomic_tstore_finalization_pending &&
+           _BundleActive && _MemoryEventCount == 2 &&
+           !CurrentAtomicTStoreDrainPending();
 
     assert _BundleControlAttributes.trap_enabled;
     assert ReadBPC() == entry &&

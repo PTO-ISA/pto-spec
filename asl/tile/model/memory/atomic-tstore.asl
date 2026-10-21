@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-ATOMIC-TSTORE","surface":"tile","classification":["model","memory","atomic-tstore"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMICITY","PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","PTO-TILE-MODEL-MEMORY-LOAD-STORE","PTO-TILE-MODEL-MEMORY-GM-ATOM-RED"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-ATOMIC-TSTORE","surface":"tile","classification":["model","memory","atomic-tstore"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-ATOMICITY","PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-STATE-ATOMIC-TSTORE-SOURCE-LIFETIME","PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","PTO-TILE-MODEL-MEMORY-LOAD-STORE"]}
 func PreflightAtomicTStore(tile: TileInfo, base_address: Word,
     row_stride_bytes: Word, execution_mask: BundleExecutionMaskBinding)
     => (boolean, bits(PTO_MODEL_TILE_ELEMENTS), TilePayload,
@@ -205,6 +205,10 @@ begin
        _GMObligations[[core]][[pe]][[existing as GMObligationIndex]]
            .captured_atomic_tstore then
         slot = existing as GMObligationIndex;
+        if _GMObligations[[core]][[pe]][[slot]].state ==
+           GMObligation_Cancelled then
+            return TRUE;
+        end;
         if _GMObligations[[core]][[pe]][[slot]].state ==
            GMObligation_Completed then
             return TRUE;

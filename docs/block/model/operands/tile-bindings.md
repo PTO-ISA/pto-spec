@@ -105,6 +105,8 @@ begin
     _BundleTileBindings[[index]].gmov_selection_ordinal = 0;
     _BundleTileBindings[[index]].source0_relative = FALSE;
     _BundleTileBindings[[index]].source1_relative = FALSE;
+    _BundleTileBindings[[index]].source0_selector = source0;
+    _BundleTileBindings[[index]].source0_selector_relative = FALSE;
     _BundleTileBindings[[index]].source0 = source0;
     _BundleTileBindings[[index]].source1 = source1;
     _BundleTileBindings[[index]].parent_ref_valid = FALSE;
@@ -119,8 +121,9 @@ begin
         _BundleTileBindings[[index]].source0_valid;
     _BundleTileBindings[[index]].source1_relative =
         _BundleTileBindings[[index]].source1_valid;
+    _BundleTileBindings[[index]].source0_selector_relative =
+        _BundleTileBindings[[index]].source0_valid;
 end;
-
 readonly func BundleLocalTileParentRefCount() => integer {0..16}
 begin
     var count: integer {0..16} = 0;
@@ -132,7 +135,6 @@ begin
     end;
     return count;
 end;
-
 readonly func BundleLocalTileParentRefIsFinal() => boolean
 begin
     var final_binding: integer {0..15} = 0;
@@ -147,7 +149,6 @@ begin
     return _BundleTileBindings[[final_binding]].parent_ref_valid &&
            _BundleTileBindings[[final_binding]].last;
 end;
-
 // Convert one already validated continuation ParentRef into the semantic
 // destination consumed by schemas and handlers. A parent-only final carrier
 // is folded into the preceding ordinary binding so it does not add an operand
@@ -189,7 +190,6 @@ begin
     _BundleTileBindings[[semantic_binding]].destination_allocated_by_bundle = FALSE;
     _BundleTileBindings[[semantic_binding]].destination_reused_by_generation = TRUE;
 end;
-
 readonly func BundleLocalGenerationPEPublicationEligible(
     slot: integer {0..63}, pe: integer {0..3}) => boolean
 begin

@@ -258,7 +258,7 @@ end;
 
 ## Exceptions
 
-- Reserved DataType, unsupported Layout, invalid dimensions, source descriptor mismatch, malformed bindings, illegal PE mask, or GM translation, permission, or alignment fault raises the applicable fault before the first GM write.
+- Reserved DataType, unsupported Layout, invalid dimensions, source descriptor mismatch, malformed bindings, or illegal PE mask raises the applicable fault before the first GM effect. Atomic Function 1 TSTORE preflights its selected PE footprint before the first GM write; Normal TSTORE preserves first-fault prefix effects.
 - A Shared source is hardware-waiting/no-effect until whole-parent readiness and publication are true; undefined Shared payload is not a legal source path.
 - Atomic Function 1 TSTORE uses the accepted per-PE preflight and irrevocable-drain contract in PTO-TSTORE-STRIDED-ATOMIC-RED-001; Normal TSTORE retains first-fault partial-store behavior.
 

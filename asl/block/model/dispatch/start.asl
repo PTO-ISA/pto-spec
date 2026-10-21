@@ -27,19 +27,19 @@ func ExecuteDecodedBundleStartWithAcceptedApplicabilityRules(
     rules: NumericApplicabilityRuleSet,
     instruction: bits(64),
     form: integer {0..PTO_COMMAND_FORM_COUNT-1},
-    length_bits: integer {16,32,48,64})
+    length_bits: integer {16,32,48,64}) => CommandExecutionStatus
 begin
     let instruction_pc = ReadTPC();
     let kind = CommandBundleKindOfForm(form);
     let descriptor = DecodeBundleOperationDescriptor(instruction, form);
     if !BundleOperationDescriptorLegal(descriptor) then
         SetFault(Fault_IllegalInstruction, ReadTPC());
-        return;
+        return CommandExecution_Rejected;
     end;
     if BundleOperationDescriptorRejectedByAcceptedApplicabilityRules(
         rules, descriptor) then
         SetFault(Fault_IllegalInstruction, ReadTPC());
-        return;
+        return CommandExecution_Rejected;
     end;
     let transfer = if descriptor.branch_type_valid then
         BundleTransferOfBranchType(descriptor.branch_type)
@@ -51,7 +51,7 @@ begin
         transfer == BundleTransfer_IndirectCall;
     if reads_retiring_bpcn && !RetiringBundleBPCNAvailable() then
         SetFault(Fault_BundleControl, instruction_pc);
-        return;
+        return CommandExecution_Rejected;
     end;
     let retiring_bpcn = _BARG.bpcn;
     let target = if transfer == BundleTransfer_Return then _ReturnAddress
@@ -67,7 +67,7 @@ begin
     let taken = transfer != BundleTransfer_Conditional;
     if target[0] == '1' then
         SetFault(Fault_InstructionPC, target);
-        return;
+        return CommandExecution_Rejected;
     end;
     // A following BSTART first commits the active predecessor.  The fetched
     // BSTART is installed only when that commit selects this instruction PC;
@@ -76,10 +76,15 @@ begin
     if _BundleActive then
         if !CompleteBundleAtWithAcceptedApplicabilityRules(
             rules, instruction_pc) then
-            return;
+            if _LastFault != Fault_None then
+                return CommandExecution_Rejected;
+            elsif CurrentAtomicTStoreDrainPending() then
+                return CommandExecution_Blocked;
+            end;
+            return CommandExecution_Rejected;
         end;
         if ReadTPC() != instruction_pc then
-            return;
+            return CommandExecution_Executed;
         end;
     end;
     ClearBundleHeaderState();
@@ -88,13 +93,16 @@ begin
     if _LastFault == Fault_None then
         InstallBundleOperationDescriptor(descriptor);
         _BundleStartEncodedInstruction = instruction;
+        return CommandExecution_Executed;
     end;
+    return CommandExecution_Rejected;
 end;
 
 func ExecuteDecodedBundleStart(instruction: bits(64),
                               form: integer {0..PTO_COMMAND_FORM_COUNT-1},
                               length_bits: integer {16,32,48,64})
+                              => CommandExecutionStatus
 begin
-    ExecuteDecodedBundleStartWithAcceptedApplicabilityRules(
+    return ExecuteDecodedBundleStartWithAcceptedApplicabilityRules(
         NumericApplicabilityRules_None, instruction, form, length_bits);
 end;

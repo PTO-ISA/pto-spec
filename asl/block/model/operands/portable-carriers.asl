@@ -288,6 +288,21 @@ begin
                                     .consumers[[index]].valid = FALSE;
                             end;
                         end;
+                        if _LocalGenerations[[generation_slot]].open &&
+                           _LocalGenerations[[generation_slot]].writer_count == 0 then
+                            var remaining_consumer = FALSE;
+                            for consumer = 0 to _LocalGenerations[[generation_slot]]
+                                .consumer_count - 1 looplimit 16 do
+                                if _LocalGenerations[[generation_slot]]
+                                       .consumers[[consumer]].valid then
+                                    remaining_consumer = TRUE;
+                                end;
+                            end;
+                            if !remaining_consumer then
+                                AbortBundleLocalGeneration(
+                                    generation_slot as integer {0..63});
+                            end;
+                        end;
                     end;
                 end;
             end;
