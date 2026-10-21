@@ -418,7 +418,6 @@ begin
             if !completed then
                 if _LastFault != Fault_None then return CommandExecution_Rejected; end;
                 if CurrentAtomicTStoreDrainPending() then return CommandExecution_Blocked; end;
-                return CommandExecution_Rejected;
             end;
         when CommandHandler_SetBundleHint =>
             if LinxTraceBoundaryHintApplies(hint_trace, instruction, form) then return ExecuteLinxTraceBoundaryHint(instruction, form); end;
