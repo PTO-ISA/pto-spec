@@ -78,6 +78,9 @@ end;
 readonly func TileCubeNumericOrPredicateCellDescriptorLegal(
     tile: TileInfo) => boolean
 begin
+    // A Local generation parent may retain either ordinary numeric storage or
+    // a U8 comparison PredicateCell. The comparison resolver checks the
+    // requested operation basis before writer effects are admitted.
     if tile.storage_kind == TileStorage_Numeric then
         return TileCubeDescriptorLegal(tile);
     elsif tile.storage_kind == TileStorage_PredicateCell then
