@@ -5097,7 +5097,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "3ed84280e68fb550b00c3cd8f73689d130e6b75c",
+  "candidate_head": "75006f24f2894166cde05dcbf54141ff4456322c",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -24330,6 +24330,10 @@
         }
       ],
       "after_callers": [
+        [
+          "TileCubeNumericOrPredicateCellDescriptorLegal",
+          "asl/tile/model/legality/destination-value-operations.asl"
+        ],
         [
           "TileOperandsLegal_ExecuteTileCompareScalarToValue",
           "asl/tile/model/legality/destination-value-operations.asl"
