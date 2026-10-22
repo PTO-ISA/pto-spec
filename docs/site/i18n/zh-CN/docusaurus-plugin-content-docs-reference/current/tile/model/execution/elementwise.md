@@ -92,24 +92,20 @@ TREMS <Row=32, Col=4, ValidRow=1, S32>, T#1, a0, ->T<512B>
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/elementwise.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","surface":"tile","classification":["model","execution","elementwise"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-EXECUTION-MINMAX","PTO-SCALAR-MODEL-FSU-SCALAR-FP"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","surface":"tile","classification":["model","execution","elementwise"],"depends_on":["PTO-SCALAR-MODEL-FSU-SCALAR-FP","PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-EXECUTION-MINMAX","PTO-TILE-MODEL-STATE-TYPES"]}
 // PTO-REQ-TEPL-001: direct, read-before-write TEPL semantics.
-
 func TileSquareRoot(value: Word) => Word
 begin
     return value;
 end;
-
 func TileLogarithm(value: Word) => Word
 begin
     return value;
 end;
-
 func TileReciprocal(value: Word) => Word
 begin
     return DivideWordUnsigned(Ones{PTO_XLEN}, value);
 end;
-
 func TileReciprocalSquareRoot(value: Word) => Word
 begin
     return value;
@@ -435,54 +431,81 @@ begin
     return result;
 end;
 
-func ExecuteTileBinary(op: TileBinaryOperation, destination: TileIndex,
-                       source_left: TileIndex, source_right: TileIndex)
+func ExecuteTileBinaryToValue(op: TileBinaryOperation,
+                              destination: TileOutputValueTarget,
+                              source_left: TileIndex,
+                              source_right: TileIndex) => TileInfo
 begin
     assert op != TileBinary_EXPDIF;
     let left_tile = _Tiles[[source_left]];
     let right_tile = _Tiles[[source_right]];
-    let operation_type = _Tiles[[destination]].data_type;
+    let destination_tile = destination.value;
+    let operation_type = destination_tile.data_type;
     assert left_tile.allocated && right_tile.allocated;
     assert TileElementwiseShapeMatch(source_left, source_right);
-    assert TileElementwiseShapeMatch(destination, source_left);
+    // The transient view may be narrower than the unchanged parent.
+    assert TileElementwiseShapeMatch(destination.destination, source_left);
+    assert !TileLayoutIsCube(destination_tile.layout) ||
+           TileCubeDescriptorLegal(destination_tile);
+    assert destination_tile.valid_rows == left_tile.valid_rows &&
+           destination_tile.valid_columns == left_tile.valid_columns &&
+           destination_tile.layout == left_tile.layout &&
+           destination_tile.storage_kind == left_tile.storage_kind;
     assert TileCarrierWidthCompatible(left_tile.data_type, operation_type);
     assert TileCarrierWidthCompatible(right_tile.data_type, operation_type);
-    assert _Tiles[[destination]].data_type == operation_type;
+    assert destination_tile.data_type == operation_type;
     assert (op != TileBinary_SHL && op != TileBinary_SHR) ||
            TileDataTypeIsInteger(right_tile.data_type);
-
     // Snapshot both sources before the first destination write. This defines
     // source/destination aliasing as read-before-write.
+    var result = destination_tile;
     for row = 0 to left_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to left_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLogicalLinearIndex(left_tile,
+            let left_element = TileLogicalLinearIndex(left_tile,
+                row as integer {0..65535}, column as integer {0..65535});
+            let right_element = TileLogicalLinearIndex(right_tile,
+                row as integer {0..65535}, column as integer {0..65535});
+            let element = TileLogicalLinearIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
             var value = Zeros{PTO_XLEN};
             if BundleExecutionMaskActiveAt(
                    left_tile.layout, row as integer {0..65535},
                    column as integer {0..65535}) then
                 value = TileProfileBinary(op, operation_type,
-                    TileReadLogicalElement(left_tile, element),
-                    TileReadLogicalElement(right_tile, element));
+                    TileReadLogicalElement(left_tile, left_element),
+                    TileReadLogicalElement(right_tile, right_element));
             else
                 value = BundleExecutionMaskDestinationValue(
                     left_tile.layout, row as integer {0..65535},
                     column as integer {0..65535}, Zeros{PTO_XLEN});
             end;
-            _Tiles[[destination]] = TileInfoWithLogicalElement(
-                _Tiles[[destination]], element, value);
+            result = TileInfoWithLogicalElement(result, element, value);
         end;
     end;
-    MarkTileValidRegionDefined(destination);
+    result = TileWithValidRegionDefined(result);
     if TileBinaryUsesClosedElementwiseContract(op) then
-        ApplyTilePadding(destination, CurrentBundlePadValue());
+        result = TileWithPadding(result, CurrentBundlePadValue());
     end;
+    return result;
 end;
 
-func ExecuteTileFillScalar(destination: TileIndex, scalar: Word)
+func ExecuteTileBinary(op: TileBinaryOperation, destination: TileIndex,
+                       source_left: TileIndex, source_right: TileIndex)
 begin
-    assert TileOperandsLegal_ExecuteTileFillScalar(destination, scalar);
-    var result = _Tiles[[destination]];
+    assert TileOperandsLegal_ExecuteTileBinary(
+        op, destination, source_left, source_right);
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    _Tiles[[destination]] = ExecuteTileBinaryToValue(
+        op, target, source_left, source_right);
+end;
+
+func ExecuteTileFillScalarToValue(
+    destination: TileOutputValueTarget, scalar: Word) => TileInfo
+begin
+    var result = destination.value;
     let normalized_scalar = TileRawElementValue(
         scalar,
         result.data_type);
@@ -504,20 +527,26 @@ begin
     end;
     result = TileWithValidRegionDefined(result);
     result = TileWithPadding(result, CurrentBundlePadValue());
-    _Tiles[[destination]] = result;
+    return result;
 end;
 
-func ExecuteTileScalar(op: TileBinaryOperation, destination: TileIndex,
-                       source: TileIndex, scalar: Word)
+func ExecuteTileFillScalar(destination: TileIndex, scalar: Word)
 begin
-    let operation_type = _Tiles[[destination]].data_type;
-    assert TileOperandsLegal_ExecuteTileScalar(
-        op,
-        destination,
-        source,
-        scalar);
+    assert TileOperandsLegal_ExecuteTileFillScalar(destination, scalar);
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    _Tiles[[destination]] = ExecuteTileFillScalarToValue(target, scalar);
+end;
+
+func ExecuteTileScalarToValue(
+    op: TileBinaryOperation, destination: TileOutputValueTarget,
+    source: TileIndex, scalar: Word) => TileInfo
+begin
+    let operation_type = destination.value.data_type;
     let source_tile = _Tiles[[source]];
-    var result = _Tiles[[destination]];
+    var result = destination.value;
     let normalized_scalar = TileRawElementValue(scalar, operation_type);
     var flags = Zeros{5};
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
@@ -548,7 +577,19 @@ begin
     result = TileWithValidRegionDefined(result);
     result = TileWithPadding(result, CurrentBundlePadValue());
     RecordNumericStatusFlags(flags);
-    _Tiles[[destination]] = result;
+    return result;
+end;
+
+func ExecuteTileScalar(op: TileBinaryOperation, destination: TileIndex,
+                       source: TileIndex, scalar: Word)
+begin
+    assert TileOperandsLegal_ExecuteTileScalar(op, destination, source, scalar);
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    _Tiles[[destination]] = ExecuteTileScalarToValue(
+        op, target, source, scalar);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

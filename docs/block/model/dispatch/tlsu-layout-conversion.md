@@ -81,7 +81,7 @@ If the same bundle also set `LB2` to 64, it raises `Fault_TileLegality` before a
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/tlsu-layout-conversion.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","surface":"block","classification":["model","dispatch","tlsu-layout-conversion"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE","PTO-TILE-MODEL-MEMORY-LOAD-STORE"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","surface":"block","classification":["model","dispatch","tlsu-layout-conversion"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-VALIDATION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE","PTO-TILE-MODEL-MEMORY-LOAD-STORE"]}
 
 readonly func BundleCubeTransportSelected() => boolean
 begin
@@ -247,16 +247,17 @@ begin
     return TRUE;
 end;
 
-func ExecuteBundleCubeTransportOperation() => boolean
+func ExecuteBundleCubeTransportOperation() => (boolean, BundleLocalGenerationCubeWriterEffects)
 begin
+    var result_writer_effects = EmptyBundleLocalGenerationCubeWriterEffects();
     // A zero Local mask is resolved before every schema, GPR, descriptor,
     // allocation, and memory check.
-    if SelectedBundleTileMaskIsZero() then return TRUE; end;
+    if SelectedBundleTileMaskIsZero() then return (TRUE, result_writer_effects); end;
     let decoded = DecodeTileOperation(
         TileDecode_TLSU, BundleOperationDecodeCode(_BundleOperation));
     if decoded == PTO_TILE_OPERATION_COUNT then
         SetFault(Fault_IllegalInstruction, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
     if !BundleCubeTransportDimensionsLegal() ||
@@ -265,7 +266,7 @@ begin
        !BundleCubeTransportBindingsLegal(operation) ||
        _BundleFixedPointAttributes.valid then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     let (type_valid, data_type) = ResolveBundleEffectiveDataType();
     let layout = TileDataLayoutCubeLayout(
@@ -274,7 +275,7 @@ begin
     if !type_valid || !BundleCubeTransportDataTypeSupported(
            data_type, layout, function) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     let valid_columns = UInt(_BundleDimensions[[0]])
         as integer {1..65535};
@@ -289,10 +290,7 @@ begin
     if function == 0 then
         if !ResolveBundleCubeTransportDestination(
                valid_rows, valid_columns, data_type, layout) then
-            return FALSE;
-        end;
-        if !ValidateBundleLocalGenerationWriters() then
-            RollBackBundleTileDestinations(); return FALSE;
+            return (FALSE, result_writer_effects);
         end;
         let (writer_effects_legal, writer_effects) =
             BeginBundleLocalGenerationCubeWriterEffects(
@@ -300,18 +298,34 @@ begin
         if !writer_effects_legal then
             SetFault(Fault_TileLegality, ReadTPC());
             RollBackBundleTileDestinations();
-            return FALSE;
+            return (FALSE, result_writer_effects);
+        end;
+        if !ValidateBundleLocalGenerationWritersWithWriterEffects(
+               writer_effects) then
+            RollBackBundleTileDestinations(); return (FALSE, result_writer_effects);
         end;
         let destination = _BundleTileBindings[[0]].destination;
-        TLOAD(destination, base_address, row_stride_bytes);
+        if writer_effects.count != 0 then
+            let writer_effect = writer_effects.entries[[0]];
+            let result = TLOADToValue(writer_effect.writer,
+                base_address, row_stride_bytes);
+            let updated_effects =
+                BundleLocalGenerationCubeWriterEffectWithOutput(
+                    writer_effects, writer_effect.destination, result);
+            result_writer_effects = updated_effects;
+            FinishBundleLocalGenerationCubeWriterEffects(updated_effects);
+        else
+            TLOAD(destination, base_address, row_stride_bytes);
+            result_writer_effects = writer_effects;
         FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
+        end;
         if _LastFault != Fault_None then
             // A memory fault retains the beats completed before it but must
             // not publish the speculative Local destination.  Release it and
             // re-synchronize the saved trap context exactly like the generic
             // destination path does.
             RollBackBundleTileDestinations();
-            return FALSE;
+            return (FALSE, result_writer_effects);
         end;
     else
         let source = _BundleTileBindings[[0]].source0;
@@ -325,16 +339,16 @@ begin
                _BundleTileBindings[[0]].pe_mask) !=
                _BundleTileBindings[[0]].pe_mask then
             SetFault(Fault_TileLegality, ReadTPC());
-            return FALSE;
+            return (FALSE, result_writer_effects);
         end;
         TSTORE(base_address, row_stride_bytes, source);
         if _LastFault != Fault_None then
             RollBackBundleTileDestinations();
-            return FALSE;
+            return (FALSE, result_writer_effects);
         end;
     end;
     FinalizeBundleTileAttempt(TileExecution_Executed);
-    return TRUE;
+    return (TRUE, result_writer_effects);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

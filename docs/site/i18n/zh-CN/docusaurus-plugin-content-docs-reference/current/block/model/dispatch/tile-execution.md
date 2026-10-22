@@ -89,7 +89,7 @@ This page is a generated reference view of the normative ASL unit.
 // numeric padding checks belong to the TGPR2T complete schema before handler
 // execution and atomic result publication.
 // NDF-END: PTO-BLOCK-MODEL-DISPATCH-TGPR2T-BOUNDARY-001
-// PTO-UNIT: {"classification":["model","dispatch","tile-execution"],"depends_on":["PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION","PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-LEA-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-INSTRUCTION-OPERANDS","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TLSU-ATOMIC-TSTORE","PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED","PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV","PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-SHARED-EXEC","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-DISPATCH-TOP-LEVEL","PTO-TILE-MODEL-EXECUTION-MASK-COMPARISON"],"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","surface":"block"}
+// PTO-UNIT: {"classification":["model","dispatch","tile-execution"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION","PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-LEA-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-INSTRUCTION-OPERANDS","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TLSU-ATOMIC-TSTORE","PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED","PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV","PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-SHARED-EXEC","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-VALIDATION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-DISPATCH-TOP-LEVEL","PTO-TILE-MODEL-EXECUTION-COMPARISON-VALUE","PTO-TILE-MODEL-EXECUTION-CUBE-VALUE","PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-EXECUTION-EXPANSION","PTO-TILE-MODEL-EXECUTION-EXPDIF","PTO-TILE-MODEL-EXECUTION-FUSED-MULTIPLY-ADD","PTO-TILE-MODEL-EXECUTION-INDEXED-REARRANGEMENT","PTO-TILE-MODEL-EXECUTION-LEA","PTO-TILE-MODEL-EXECUTION-MASK-COMPARISON","PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS-VALUE","PTO-TILE-MODEL-EXECUTION-REARRANGEMENT-VALUES","PTO-TILE-MODEL-EXECUTION-REDUCTION","PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE","PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE-OPERATIONS","PTO-TILE-MODEL-LEGALITY-INDEXED-REARRANGEMENT","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT-VALUES","PTO-TILE-MODEL-LEGALITY-LEA-OPERANDS","PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA","PTO-TILE-MODEL-LEGALITY-TCVT-VALUE-OPERANDS","PTO-TILE-MODEL-MEMORY-ATOMICS","PTO-TILE-MODEL-MEMORY-GATHER-SCATTER-VALUES","PTO-TILE-MODEL-MEMORY-GM-ATOM-RED-VALUES","PTO-TILE-MODEL-NUMERIC-FORMATS"],"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","surface":"block"}
 readonly func BundleTileTypesMatch(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
     operands: TileInstructionOperands,
@@ -106,7 +106,6 @@ begin
        _Tiles[[operands.source1]].data_type != expected then return FALSE; end;
     return TRUE;
 end;
-
 readonly func SelectedBundleClosedSchemasLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -136,7 +135,6 @@ begin
                    SelectedBundleClosedLEASchemaLegal(operation);
     end;
 end;
-
 func ExecuteBundleComparisonGPRCarrier(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -219,8 +217,6 @@ begin
     end;
     return TRUE;
 end;
-
-
 func ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules(
     rules: NumericApplicabilityRuleSet) => boolean
 begin
@@ -349,29 +345,30 @@ begin
     end;
     var specialized = TRUE;
     var specialized_completed = FALSE;
+    var specialized_writer_effects = EmptyBundleLocalGenerationCubeWriterEffects();
     if timg2col_selected then
         specialized_completed = ExecuteBundleTIMG2COLOperation();
     elsif weight_tload_selected then
         specialized_completed = ExecuteBundleWeightTLOADOperation();
     elsif matrix_selected then
-        specialized_completed = ExecuteBundleTMATMULOperation();
+        (specialized_completed, specialized_writer_effects) = ExecuteBundleTMATMULOperation();
     elsif BundleAtomicTStoreSelected() then
         // Function-1 TSTORE owns the canonicalized CUBE store schema.  Give
         // that narrowly selected path precedence over generic CUBE layout
         // conversion, whose DATR contract intentionally excludes atomic mode.
         specialized_completed = ExecuteBundleAtomicTSTOREOperation();
     elsif BundleCubeTransportSelected() then
-        specialized_completed = ExecuteBundleCubeTransportOperation();
+        (specialized_completed, specialized_writer_effects) = ExecuteBundleCubeTransportOperation();
     elsif BundleGMOVSelected() then
-        specialized_completed = ExecuteBundleGMOVOperation();
+        (specialized_completed, specialized_writer_effects) = ExecuteBundleGMOVOperation();
     elsif BundleMGATHERCASSelected() then
-        specialized_completed = ExecuteBundleMGATHERCASOperation();
+        (specialized_completed, specialized_writer_effects) = ExecuteBundleMGATHERCASOperation();
     elsif BundleGMAtomRedSelected() then
-        specialized_completed = ExecuteBundleGMAtomRedOperation();
+        (specialized_completed, specialized_writer_effects) = ExecuteBundleGMAtomRedOperation();
     elsif BundleMGATHERMASKSelected() then
-        specialized_completed = ExecuteBundleMGATHERMASKOperation();
+        (specialized_completed, specialized_writer_effects) = ExecuteBundleMGATHERMASKOperation();
     elsif BundleMGATHERSelected() then
-        specialized_completed = ExecuteBundleMGATHEROperation();
+        (specialized_completed, specialized_writer_effects) = ExecuteBundleMGATHEROperation();
     elsif BundleMSCATTERSelected() then
         specialized_completed = ExecuteBundleMSCATTEROperation();
     elsif BundleMSCATTERMASKSelected() then
@@ -379,7 +376,7 @@ begin
     elsif BundleTPREFETCHSelected() then
         specialized_completed = ExecuteBundleTPREFETCHOperation();
     elsif BundleSharedTLSUSelected() then
-        specialized_completed = ExecuteBundleSharedTLSUOperation();
+        (specialized_completed, specialized_writer_effects) = ExecuteBundleSharedTLSUOperation();
     elsif BundleSharedBindingsUnconsumed() then
         SetFault(Fault_TileLegality, ReadTPC());
         specialized_completed = FALSE;
@@ -407,7 +404,8 @@ begin
                     end;
                 end;
             elsif !matrix_selected || !BundleTMATMULCurrentPEInactive() then
-                CommitBundleLocalGeneration();
+                CommitBundleLocalGenerationWithWriterEffects(
+                    specialized_writer_effects);
                 RetireBundleConsumerDependencies();
                 if timg2col_selected then
                     FinalizeBundleTileAttempt(TileExecution_Executed);
@@ -477,29 +475,22 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-    if !ResolveBundleTileDestinationsForOperation(operation) then
+    let (destinations_resolved, resolved_writer_effects) =
+        ResolveBundleTileDestinationsForOperationAndWriterEffects(operation);
+    var writer_effects = resolved_writer_effects;
+    if !destinations_resolved then
         AbortBundleLocalGenerationsForBundle();
         DiscardBundleSubviewMaterializations();
         return FALSE;
     end;
-    if !ValidateBundleLocalGenerationWriters() then
+    if !ValidateBundleLocalGenerationWritersWithWriterEffects(
+           writer_effects) then
         RollBackBundleTileDestinations();
         AbortBundleLocalGenerationsForBundle();
         DiscardBundleSubviewMaterializations();
         return FALSE;
     end;
     if SelectedBundleComparisonConsumesGPR(operation) then
-        let (writer_effects_legal, writer_effects) =
-            BeginBundleLocalGenerationCubeWriterEffects(
-                UInt(_BundleDimensions[[1]]) as integer {1..65535},
-                UInt(_BundleDimensions[[0]]) as integer {1..65535});
-        if !writer_effects_legal then
-            SetFault(Fault_TileLegality, ReadTPC());
-            RollBackBundleTileDestinations();
-            AbortBundleLocalGenerationsForBundle();
-            DiscardBundleSubviewMaterializations();
-            return FALSE;
-        end;
         let comparison_completed = ExecuteBundleComparisonGPRCarrier(operation);
         FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
         if !comparison_completed then
@@ -509,22 +500,11 @@ begin
             DiscardBundleSubviewMaterializations();
             return FALSE;
         end;
-        CommitBundleLocalGeneration();
+        CommitBundleLocalGenerationWithWriterEffects(writer_effects);
         RetireBundleConsumerDependencies();
         DiscardBundleSubviewMaterializations();
         FinalizeBundleTileAttempt(TileExecution_Executed);
         return TRUE;
-    end;
-    let (writer_effects_legal, writer_effects) =
-        BeginBundleLocalGenerationCubeWriterEffects(
-            UInt(_BundleDimensions[[1]]) as integer {1..65535},
-            UInt(_BundleDimensions[[0]]) as integer {1..65535});
-    if !writer_effects_legal then
-        SetFault(Fault_TileLegality, ReadTPC());
-        RollBackBundleTileDestinations();
-        AbortBundleLocalGenerationsForBundle();
-        DiscardBundleSubviewMaterializations();
-        return FALSE;
     end;
     let operands = BundleTileInstructionOperands(operation);
     var status = TileExecution_Rejected;
@@ -539,14 +519,43 @@ begin
                operands.destination0, operands.scalar0, step2d) then
             SetFault(Fault_TileLegality, ReadTPC());
         else
-            TCICube(operands.destination0, operands.scalar0, step2d);
+            if writer_effects.count != 0 then
+                let writer_effect = writer_effects.entries[[0]];
+                let result = TCICubeToValue(
+                    writer_effect.writer, operands.scalar0, step2d);
+                writer_effects =
+                    BundleLocalGenerationCubeWriterEffectWithOutput(
+                        writer_effects, writer_effect.destination, result);
+            else
+                TCICube(operands.destination0, operands.scalar0, step2d);
+            end;
             status = TileExecution_Executed;
         end;
     else
-        let (generated_status, -) =
-            ExecuteTileInstructionWithoutTimeWithAcceptedApplicabilityRules(
-            rules, family, code, operands);
-        status = generated_status;
+        if writer_effects.count != 0 then
+            let writer_effect = writer_effects.entries[[0]];
+            if writer_effect.destination != operands.destination0 then
+                SetFault(Fault_TileLegality, ReadTPC());
+            else
+                let destination_target = TileOutputValueTarget {
+                    destination = writer_effect.destination,
+                    value = writer_effect.writer
+                };
+                let (generated_status, result) =
+                    ExecuteTileInstructionWithoutTimeWithDestinationValue(
+                        rules, family, code, operands,
+                        destination_target);
+                status = generated_status;
+                writer_effects =
+                    BundleLocalGenerationCubeWriterEffectWithOutput(
+                        writer_effects, writer_effect.destination, result);
+            end;
+        else
+            let (generated_status, -) =
+                ExecuteTileInstructionWithoutTimeWithAcceptedApplicabilityRules(
+                rules, family, code, operands);
+            status = generated_status;
+        end;
     end;
     FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
     if _LastFault != Fault_None || status != TileExecution_Executed then
@@ -555,15 +564,14 @@ begin
         DiscardBundleSubviewMaterializations();
         return FALSE;
     end;
-    CommitBundleLocalGeneration();
+    CommitBundleLocalGenerationWithWriterEffects(writer_effects);
     RetireBundleConsumerDependencies();
     DiscardBundleSubviewMaterializations();
     FinalizeBundleTileAttempt(status);
     return TRUE;
 end;
 
-func ExecuteFarBundleTileOperationWithAcceptedApplicabilityRules(
-    rules: NumericApplicabilityRuleSet) => boolean
+func ExecuteFarBundleTileOperationWithAcceptedApplicabilityRules(rules: NumericApplicabilityRuleSet) => boolean
 begin
     // Routing and transport are not architecturally observable.  The formal
     // model therefore executes the selected operation against the initiating
@@ -571,8 +579,7 @@ begin
     // the same commit path as a local block.  A concrete implementation may
     // dispatch this work to the target selected by its routing state, but it
     // may not expose an intermediate remote result or a partial local commit.
-    return ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules(
-        rules);
+    return ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules(rules);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

@@ -87,7 +87,7 @@ An index Tile with valid region 4 by 32 would fail the shape match, because 32 i
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/legality/indexed-layout.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT","surface":"tile","classification":["model","legality","indexed-layout"],"depends_on":["PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT","surface":"tile","classification":["model","legality","indexed-layout"],"depends_on":["PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA","PTO-TILE-MODEL-STATE-TYPES"]}
 pure func IndexedTLSULayoutSupported(layout: TileLayout) => boolean
 begin
     return layout == TileLayout_RowMajor ||
@@ -122,6 +122,20 @@ begin
         return TileCubeDescriptorLegal(tile);
     end;
     return TileDescriptorLegal(index) && tile.layout == TileLayout_RowMajor;
+end;
+
+readonly func IndexedTLSUNumericValueDescriptorLegal(tile: TileInfo)
+    => boolean
+begin
+    if !tile.allocated || tile.storage_kind != TileStorage_Numeric ||
+       !IndexedTLSULayoutSupported(tile.layout) then
+        return FALSE;
+    end;
+    if TileLayoutIsCube(tile.layout) then
+        return TileCubeDescriptorLegal(tile);
+    end;
+    return TileDescriptorShapeLegal(tile.capacity_bytes, tile.columns,
+        tile.valid_rows, tile.valid_columns, tile.data_type);
 end;
 
 readonly func IndexedTLSUNumericContentsDefined(index: TileIndex) => boolean

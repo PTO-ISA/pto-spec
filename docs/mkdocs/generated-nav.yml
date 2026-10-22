@@ -183,6 +183,7 @@ nav:
               - Comparison Schema: block/model/dispatch/comparison-schema.md
               - CUBE Accumulator Routing: block/model/dispatch/cube-accumulator-routing.md
               - CUBE Destination: block/model/dispatch/cube-destination.md
+              - CUBE Tmatmul Writer Values: block/model/dispatch/cube-tmatmul-writer-values.md
               - CUBE Tmatmul: block/model/dispatch/cube-tmatmul.md
               - Decode: block/model/dispatch/decode.md
               - Descriptor Legality: block/model/dispatch/descriptor-legality.md
@@ -201,6 +202,7 @@ nav:
               - Reduction Schema: block/model/dispatch/reduction-schema.md
               - Scalar Schema: block/model/dispatch/scalar-schema.md
               - Shared CUBE Matrix: block/model/dispatch/shared-cube-matrix.md
+              - Shared TLSU Helpers: block/model/dispatch/shared-tlsu-helpers.md
               - Shared TLSU: block/model/dispatch/shared-tlsu.md
               - Shared Tmov CUBE To Nd: block/model/dispatch/shared-tmov-cube-to-nd.md
               - Start: block/model/dispatch/start.md
@@ -215,6 +217,7 @@ nav:
               - Timg2col Schema: block/model/dispatch/timg2col-schema.md
               - TLSU Atomic Tstore: block/model/dispatch/tlsu-atomic-tstore.md
               - TLSU Gm Atom Red: block/model/dispatch/tlsu-gm-atom-red.md
+              - TLSU Gmov Helpers: block/model/dispatch/tlsu-gmov-helpers.md
               - TLSU Gmov: block/model/dispatch/tlsu-gmov.md
               - TLSU Layout Conversion: block/model/dispatch/tlsu-layout-conversion.md
               - TLSU Mgather Cas: block/model/dispatch/tlsu-mgather-cas.md
@@ -237,6 +240,7 @@ nav:
               - Timg2col Gm: block/model/memory/timg2col-gm.md
               - Weight To Shared Gm: block/model/memory/weight-to-shared-gm.md
           - Operands:
+              - Local Generation CUBE Validation: block/model/operands/local-generation-cube-validation.md
               - Local Generation CUBE Writer Effects: block/model/operands/local-generation-cube-writer-effects.md
               - Local Generation CUBE: block/model/operands/local-generation-cube.md
               - Local Generation Squash: block/model/operands/local-generation-squash.md
@@ -891,7 +895,9 @@ nav:
               - Tile Scalar And Immediate: tile/model/dispatch/tile-scalar-and-immediate.md
               - Top Level: tile/model/dispatch/top-level.md
           - Execution:
+              - Comparison Value: tile/model/execution/comparison-value.md
               - Comparison: tile/model/execution/comparison.md
+              - CUBE Value: tile/model/execution/cube-value.md
               - CUBE: tile/model/execution/cube.md
               - Elementwise: tile/model/execution/elementwise.md
               - Execution Mask Comparison: tile/model/execution/execution-mask-comparison.md
@@ -909,18 +915,23 @@ nav:
               - Matrix Scale: tile/model/execution/matrix-scale.md
               - Minmax: tile/model/execution/minmax.md
               - Postprocess: tile/model/execution/postprocess.md
+              - Predicate Carriers Value: tile/model/execution/predicate-carriers-value.md
               - Predicate Carriers: tile/model/execution/predicate-carriers.md
+              - Rearrangement Values: tile/model/execution/rearrangement-values.md
               - Rearrangement: tile/model/execution/rearrangement.md
               - Reduction: tile/model/execution/reduction.md
               - Unary: tile/model/execution/unary.md
           - Legality:
               - Allocation Capacity: tile/model/legality/allocation-capacity.md
               - Descriptor Shape: tile/model/legality/descriptor-shape.md
+              - Destination Value Operations: tile/model/legality/destination-value-operations.md
+              - Destination Value: tile/model/legality/destination-value.md
               - Data Type Layout: tile/model/legality/dtype-layout.md
               - Execution Mask Source Schema: tile/model/legality/execution-mask-source-schema.md
               - Expdif Operands: tile/model/legality/expdif-operands.md
               - Indexed Layout: tile/model/legality/indexed-layout.md
               - Indexed Rearrangement: tile/model/legality/indexed-rearrangement.md
+              - Layout Rearrangement Values: tile/model/legality/layout-rearrangement-values.md
               - Layout Rearrangement: tile/model/legality/layout-rearrangement.md
               - Lea Operands: tile/model/legality/lea-operands.md
               - Matrix CUBE Primary: tile/model/legality/matrix-cube-primary.md
@@ -934,17 +945,22 @@ nav:
               - PE Mask: tile/model/legality/pe-mask.md
               - Predicate Carriers: tile/model/legality/predicate-carriers.md
               - Reduction And Expansion: tile/model/legality/reduction-and-expansion.md
+              - Tcvt Value Operands: tile/model/legality/tcvt-value-operands.md
           - Memory:
               - Addressing: tile/model/memory/addressing.md
               - Atomic Tstore: tile/model/memory/atomic-tstore.md
               - Atomics: tile/model/memory/atomics.md
+              - Gather Scatter Values: tile/model/memory/gather-scatter-values.md
               - Gather Scatter: tile/model/memory/gather-scatter.md
               - Gm Atom Red Execution: tile/model/memory/gm-atom-red-execution.md
+              - Gm Atom Red Values: tile/model/memory/gm-atom-red-values.md
               - Gm Atom Red: tile/model/memory/gm-atom-red.md
               - Gm Obligation Progress: tile/model/memory/gm-obligation-progress.md
               - Load Store: tile/model/memory/load-store.md
               - Restart: tile/model/memory/restart.md
               - Shared CUBE To Nd: tile/model/memory/shared-cube-to-nd.md
+              - Shared Movement Types: tile/model/memory/shared-movement-types.md
+              - Shared Movement Values: tile/model/memory/shared-movement-values.md
               - Shared Movement: tile/model/memory/shared-movement.md
               - Stride: tile/model/memory/stride.md
           - Numeric:

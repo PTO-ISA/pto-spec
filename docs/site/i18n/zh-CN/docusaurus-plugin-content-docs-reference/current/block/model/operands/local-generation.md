@@ -79,7 +79,6 @@ This page is a generated reference view of the normative ASL unit.
 // A Local generation is one logical entry in the ordinary T/U/M/N relative queue; INIT owns per-PE instances; continuations resolve one entry and subset writers.
 // INIT allocates before effects; MIDDLE/LAST reuses it. Coverage, readiness, closure, publication, replay, waiting, abort, and explicit no-fallback selectors follow the per-PE contract; Shared Sx is unchanged.
 // NDF-END: PTO-B-ASSEMBLE-LOCAL-GENERATION-001
-
 // NDF-BEGIN: PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001
 // ndf: kind=contract level=L1 layer=block status=accepted
 // For Local CUBE_M16 and CUBE_M32 B.ASSEMBLE generations, the parent retains its complete capacity-derived physical descriptor while each writer records an exact WriterSizeCode fragment view. A successful LAST derives one common valid-column prefix from participating PEs' gap-free CELL coverage and atomically publishes it inside the unchanged full parent geometry. ParentRef selects the open generation by generation identity and does not require the aggregate valid descriptor to be finalized before LAST.
@@ -346,8 +345,8 @@ begin
     end;
     return TRUE;
 end;
-
-func CommitBundleLocalGeneration()
+func CommitBundleLocalGenerationWithWriterEffects(
+    writer_effects: BundleLocalGenerationCubeWriterEffects)
 begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid &&
@@ -363,6 +362,9 @@ begin
             let offset_cells = UInt(assemble.offset) as integer {0..2047};
             let writer_cells = BundleLocalGenerationCellCount(writer_size)
                 as integer {1..2048};
+            let (writer_effect_found, writer_effect_writer) =
+                BundleLocalGenerationCubeWriterValueForDestination(
+                    writer_effects, destination, _Tiles[[destination]]);
             if assemble.init then
                 ClearBundleLocalGenerationState(slot);
                 _LocalGenerations[[slot]].open = TRUE;
@@ -418,22 +420,30 @@ begin
                 _LocalGenerations[[slot]].writers[[ordinal]].pe_mask = participant_mask;
                 _LocalGenerations[[slot]].writers[[ordinal]].ready = FALSE;
                 _LocalGenerations[[slot]].writers[[ordinal]].physical_rows =
-                    if _Tiles[[destination]].layout == TileLayout_CUBE_M16 then
+                    if writer_effect_found then writer_effect_writer.rows
+                    else if _Tiles[[destination]].layout == TileLayout_CUBE_M16 then
                         16 else 32;
                 _LocalGenerations[[slot]].writers[[ordinal]].physical_columns =
-                    BundleLocalGenerationCubeWriterColumns(
+                    if writer_effect_found then writer_effect_writer.columns
+                    else BundleLocalGenerationCubeWriterColumns(
                         writer_size, _Tiles[[destination]].layout,
                         _Tiles[[destination]].data_type);
                 _LocalGenerations[[slot]].writers[[ordinal]].valid_rows =
-                    BundleLocalGenerationCubeCurrentValidRows();
+                    if writer_effect_found then writer_effect_writer.valid_rows
+                    else BundleLocalGenerationCubeCurrentValidRows();
                 _LocalGenerations[[slot]].writers[[ordinal]].valid_columns =
-                    BundleLocalGenerationCubeCurrentValidColumns();
+                    if writer_effect_found then writer_effect_writer.valid_columns
+                    else BundleLocalGenerationCubeCurrentValidColumns();
                 _LocalGenerations[[slot]].writers[[ordinal]].data_type =
-                    _Tiles[[destination]].data_type;
+                    if writer_effect_found then writer_effect_writer.data_type
+                    else _Tiles[[destination]].data_type;
                 _LocalGenerations[[slot]].writers[[ordinal]].predicate_basis_type =
-                    _Tiles[[destination]].predicate_basis_type;
+                    if writer_effect_found then
+                        writer_effect_writer.predicate_basis_type
+                    else _Tiles[[destination]].predicate_basis_type;
                 _LocalGenerations[[slot]].writers[[ordinal]].layout =
-                    _Tiles[[destination]].layout;
+                    if writer_effect_found then writer_effect_writer.layout
+                    else _Tiles[[destination]].layout;
                 _LocalGenerations[[slot]].writers[[ordinal]].identity.instruction_instance = ReadBPC();
                 _LocalGenerations[[slot]].writers[[ordinal]].identity.execution_domain_token = _BundleExecutionDomainToken;
                 _LocalGenerations[[slot]].writer_count = (ordinal + 1) as integer {0..16};
@@ -478,6 +488,12 @@ begin
             end;
         end;
     end;
+end;
+
+func CommitBundleLocalGeneration()
+begin
+    CommitBundleLocalGenerationWithWriterEffects(
+        EmptyBundleLocalGenerationCubeWriterEffects());
 end;
 readonly func BundleLocalGenerationDescriptorMatches(
     slot: integer {0..63}, destination: TileIndex,

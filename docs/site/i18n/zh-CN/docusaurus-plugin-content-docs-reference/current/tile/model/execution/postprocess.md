@@ -77,7 +77,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/postprocess.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-POSTPROCESS","surface":"tile","classification":["model","execution","postprocess"],"depends_on":["PTO-TILE-MODEL-EXECUTION-CUBE","PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-POSTPROCESS","surface":"tile","classification":["model","execution","postprocess"],"depends_on":["PTO-TILE-MODEL-EXECUTION-CUBE","PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS","PTO-TILE-MODEL-STATE-TYPES"]}
 // Complete-bundle B.FPATR post-processing.  Numeric conversion and activation
 // remain behind the named profile hooks while this unit owns operand routing,
 // reductions, and atomic auxiliary-output publication.
@@ -159,12 +159,13 @@ begin
     return decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
 end;
 
-func MatrixRowMaxResult(input: TileInfo, destination: TileIndex,
+func MatrixRowMaxResultToValue(input: TileInfo,
+                        destination: TileOutputValueTarget,
                         rowmax_input: TileIndex, has_input: boolean,
                         intermediate_type: TileDataType)
                         => (TileInfo, bits(5))
 begin
-    var output = _Tiles[[destination]];
+    var output = destination.value;
     var payload = output.payload;
     var flags = Zeros{5};
     for row = 0 to input.valid_rows - 1 looplimit 65536 do
@@ -200,11 +201,25 @@ begin
     return (MarkLocalTileValidRegionDefined(output), flags);
 end;
 
-func MatrixGroupMaxResult(input: TileInfo, destination: TileIndex,
+func MatrixRowMaxResult(input: TileInfo, destination: TileIndex,
+                        rowmax_input: TileIndex, has_input: boolean,
+                        intermediate_type: TileDataType)
+                        => (TileInfo, bits(5))
+begin
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    return MatrixRowMaxResultToValue(input, target, rowmax_input,
+        has_input, intermediate_type);
+end;
+
+func MatrixGroupMaxResultToValue(input: TileInfo,
+                          destination: TileOutputValueTarget,
                           intermediate_type: TileDataType)
     => (TileInfo, bits(5))
 begin
-    var output = _Tiles[[destination]];
+    var output = destination.value;
     var payload = output.payload;
     var flags = Zeros{5};
     let group_n = BundleFPATRGroupN(_BundleFixedPointAttributes.group_n_code);
@@ -239,6 +254,17 @@ begin
     end;
     output.payload = payload;
     return (MarkLocalTileValidRegionDefined(output), flags);
+end;
+
+func MatrixGroupMaxResult(input: TileInfo, destination: TileIndex,
+                          intermediate_type: TileDataType)
+    => (TileInfo, bits(5))
+begin
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    return MatrixGroupMaxResultToValue(input, target, intermediate_type);
 end;
 
 func MatrixPostProcessResult(input: TileInfo,
@@ -303,32 +329,60 @@ begin
     return (result, flags);
 end;
 
-func CommitMatrixResult(destination: TileIndex, result: TileInfo,
-                        intermediate_type: TileDataType)
+func CommitMatrixResultToValues(
+    primary: TileOutputValueTarget,
+    row_max: TileOutputValueTarget,
+    group_max: TileOutputValueTarget,
+    result: TileInfo, intermediate_type: TileDataType,
+    row_max_enabled: boolean, group_max_enabled: boolean)
+    => (TileInfo, TileInfo, TileInfo)
 begin
     let mathematical_sources = BundleMatrixLocalMathematicalSourceCount();
     let rowmax_input = BundleMatrixSourceAt(
         mathematical_sources as integer {0..8});
     let (processed, process_flags) = MatrixPostProcessResult(
         result, intermediate_type);
-    let rowmax_destination = BundleMatrixDestinationAt(1);
-    let group_destination = if _BundleFixedPointAttributes.row_max_en then BundleMatrixDestinationAt(2)
-        else BundleMatrixDestinationAt(1);
-    let (row_result, row_flags) = if _BundleFixedPointAttributes.row_max_en then
-        MatrixRowMaxResult(
-            processed, rowmax_destination, rowmax_input,
+    let (row_result, row_flags) = if row_max_enabled then
+        MatrixRowMaxResultToValue(
+            processed, row_max, rowmax_input,
             _BundleFixedPointAttributes.row_max_init,
             processed.data_type)
-        else (_Tiles[[0]], Zeros{5});
-    let (group_result, group_flags) = if _BundleFixedPointAttributes.group_max_en then
-        MatrixGroupMaxResult(
-            processed, group_destination, processed.data_type)
-        else (_Tiles[[0]], Zeros{5});
+        else (row_max.value, Zeros{5});
+    let (group_result, group_flags) = if group_max_enabled then
+        MatrixGroupMaxResultToValue(
+            processed, group_max, processed.data_type)
+        else (group_max.value, Zeros{5});
+    RecordNumericStatusFlags(process_flags OR row_flags OR group_flags);
+    return (processed, row_result, group_result);
+end;
+
+func CommitMatrixResult(destination: TileIndex, result: TileInfo,
+                        intermediate_type: TileDataType)
+begin
+    let rowmax_destination = BundleMatrixDestinationAt(1);
+    let group_destination = if _BundleFixedPointAttributes.row_max_en then
+        BundleMatrixDestinationAt(2) else BundleMatrixDestinationAt(1);
+    let primary_target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    let row_target = TileOutputValueTarget {
+        destination = rowmax_destination,
+        value = _Tiles[[rowmax_destination]]
+    };
+    let group_target = TileOutputValueTarget {
+        destination = group_destination,
+        value = _Tiles[[group_destination]]
+    };
+    let (processed, row_result, group_result) =
+        CommitMatrixResultToValues(primary_target, row_target, group_target,
+            result, intermediate_type,
+            _BundleFixedPointAttributes.row_max_en,
+            _BundleFixedPointAttributes.group_max_en);
     // Prepare every output from pre-commit state, then publish as one group.
     _Tiles[[destination]] = processed;
     if _BundleFixedPointAttributes.row_max_en then _Tiles[[rowmax_destination]] = row_result; end;
     if _BundleFixedPointAttributes.group_max_en then _Tiles[[group_destination]] = group_result; end;
-    RecordNumericStatusFlags(process_flags OR row_flags OR group_flags);
 end;
 
 func CommitMatrixResult(destination: TileIndex, result: TileInfo)

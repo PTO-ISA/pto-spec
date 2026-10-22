@@ -74,7 +74,7 @@ Shared ND output with mask `1111`, FP16 data, ValidRow 64, and TotalCol 64 gives
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/timg2col-execution.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-EXECUTION","surface":"block","classification":["model","dispatch","timg2col-execution"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-TIMG2COL-PARAMETERS","PTO-BLOCK-MODEL-MEMORY-TIMG2COL-GM"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-EXECUTION","surface":"block","classification":["model","dispatch","timg2col-execution"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-SCHEMA","PTO-BLOCK-MODEL-MEMORY-TIMG2COL-GM","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-VALIDATION","PTO-BLOCK-MODEL-OPERANDS-TIMG2COL-PARAMETERS"]}
 readonly func BundleTIMG2COLDataTypeSupported(data_type: TileDataType)
     => boolean
 begin

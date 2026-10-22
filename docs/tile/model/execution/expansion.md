@@ -85,7 +85,7 @@ The integer path returns no flags, so the sticky status is unchanged.
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // Predicated expansion reads and validates source coordinates only when the mapped output coordinate is active. A selected row-broadcast element is read only if at least one active output consumes it; inactive outputs use the common MERGE/ZERO rule and contribute no numeric flags. Integer division-by-zero checks apply only to active outputs.
 // NDF-END: PTO-TILE-MODEL-EXECUTION-MASK-EXPANSION-001
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-EXPANSION","surface":"tile","classification":["model","execution","expansion"],"depends_on":["PTO-TILE-MODEL-EXECUTION-EXPDIF","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-EXECUTION-REDUCTION","PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-EXPANSION","surface":"tile","classification":["model","execution","expansion"],"depends_on":["PTO-TILE-MODEL-EXECUTION-EXPDIF","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-EXECUTION-REDUCTION","PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-STATE-TYPES"]}
 // PTO-REQ-TEPL-EXPAND-001: exact typed row and column broadcast operations.
 
 pure func TileExpandBinaryOperation(
@@ -171,20 +171,14 @@ begin
     return result;
 end;
 
-func ExecuteTileExpand(op: TileExpandOperation, axis: TileAxis,
-                       destination: TileIndex, source: TileIndex,
-                       broadcast_source: TileIndex)
+func ExecuteTileExpandToValue(op: TileExpandOperation, axis: TileAxis,
+                              destination: TileOutputValueTarget,
+                              source: TileIndex,
+                              broadcast_source: TileIndex) => TileInfo
 begin
-    assert TileOperandsLegal_ExecuteTileExpand(
-        op,
-        axis,
-        destination,
-        source,
-        broadcast_source);
-
     let source_tile = _Tiles[[source]];
     let broadcast_tile = _Tiles[[broadcast_source]];
-    var result_tile = _Tiles[[destination]];
+    var result_tile = destination.value;
     let expdif = op == TileExpand_EXPDIF;
     let (operation_type_valid, selected_type) =
         ResolveTileSelectedOperationType(result_tile.data_type);
@@ -245,7 +239,21 @@ begin
         result_tile,
         CurrentBundlePadValue());
     RecordNumericStatusFlags(accumulated_flags);
-    _Tiles[[destination]] = result_tile;
+    return result_tile;
+end;
+
+func ExecuteTileExpand(op: TileExpandOperation, axis: TileAxis,
+                       destination: TileIndex, source: TileIndex,
+                       broadcast_source: TileIndex)
+begin
+    assert TileOperandsLegal_ExecuteTileExpand(
+        op, axis, destination, source, broadcast_source);
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    _Tiles[[destination]] = ExecuteTileExpandToValue(
+        op, axis, target, source, broadcast_source);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

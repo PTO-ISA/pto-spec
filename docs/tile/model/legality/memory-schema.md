@@ -90,7 +90,7 @@ Each of the 8 x 16 = 128 index elements covers one pair of 4-bit destination ele
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/legality/memory-schema.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA","surface":"tile","classification":["model","legality","memory-schema"],"depends_on":["PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT","PTO-TILE-MODEL-EXECUTION-MASK-STATE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA","surface":"tile","classification":["model","legality","memory-schema"],"depends_on":["PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-STATE-TYPES"]}
 readonly func IndexedTLSUExecutionMaskContentsDefined(index: TileIndex)
     => boolean
 begin
@@ -187,6 +187,21 @@ begin
                _Tiles[[destination]].data_type);
 end;
 
+readonly func TileOperandsLegal_MGATHERToValue(
+    destination: TileOutputValueTarget, base_address: Word,
+    indices: TileIndex, pad_value: TilePadValue) => boolean
+begin
+    let tile = destination.value;
+    let index = _Tiles[[indices]];
+    return IndexedTLSUNumericValueDescriptorLegal(tile) &&
+           IndexedTLSUExecutionMaskContentsDefined(indices) &&
+           IndexedTLSUDataShapeMatchesIndex(tile.valid_rows,
+               tile.valid_columns, index.valid_rows, index.valid_columns,
+               tile.data_type) && tile.layout == index.layout &&
+           IndexedTLSUMemoryIndexDataTypeLegal(index.data_type) &&
+           IndexedTLSUOrdinaryTransferDataTypeLegal(tile.data_type);
+end;
+
 readonly func TileOperandsLegal_MGATHER(
     destination: TileIndex, base_address: Word,
     indices: TileIndex) => boolean
@@ -233,6 +248,27 @@ begin
            _Tiles[[indices]].valid_columns == _Tiles[[mask]].valid_columns &&
            _Tiles[[destination]].layout == _Tiles[[indices]].layout &&
            _Tiles[[destination]].layout == _Tiles[[mask]].layout;
+end;
+
+readonly func TileOperandsLegal_MGATHER_MASKToValue(
+    destination: TileOutputValueTarget, base_address: Word,
+    indices: TileIndex, mask: TileIndex,
+    pad_value: TilePadValue) => boolean
+begin
+    let tile = destination.value;
+    let index = _Tiles[[indices]];
+    let mask_tile = _Tiles[[mask]];
+    return IndexedTLSUNumericValueDescriptorLegal(tile) &&
+           IndexedTLSUExecutionMaskContentsDefined(indices) &&
+           IndexedTLSUPredicateValuesLegal(mask) &&
+           IndexedTLSUMemoryIndexDataTypeLegal(index.data_type) &&
+           IndexedTLSUOrdinaryTransferDataTypeLegal(tile.data_type) &&
+           IndexedTLSUDataShapeMatchesIndex(tile.valid_rows,
+               tile.valid_columns, index.valid_rows, index.valid_columns,
+               tile.data_type) &&
+           index.valid_rows == mask_tile.valid_rows &&
+           index.valid_columns == mask_tile.valid_columns &&
+           tile.layout == index.layout && tile.layout == mask_tile.layout;
 end;
 
 readonly func TileOperandsLegal_MSCATTER_MASK(
@@ -285,6 +321,33 @@ begin
            _Tiles[[destination]].layout == _Tiles[[indices]].layout &&
            _Tiles[[destination]].layout == _Tiles[[expected]].layout &&
            _Tiles[[destination]].layout == _Tiles[[replacement]].layout;
+end;
+
+readonly func TileOperandsLegal_MGATHER_CASToValue(
+    destination: TileOutputValueTarget, base_address: Word,
+    indices: TileIndex, expected: TileIndex, replacement: TileIndex,
+    pad_value: TilePadValue) => boolean
+begin
+    let tile = destination.value;
+    let index = _Tiles[[indices]];
+    let expected_tile = _Tiles[[expected]];
+    let replacement_tile = _Tiles[[replacement]];
+    return IndexedTLSUNumericValueDescriptorLegal(tile) &&
+           IndexedTLSUExecutionMaskContentsDefined(indices) &&
+           IndexedTLSUExecutionMaskContentsDefined(expected) &&
+           IndexedTLSUExecutionMaskContentsDefined(replacement) &&
+           IndexedTLSUMemoryIndexDataTypeLegal(index.data_type) &&
+           IndexedTLSUTransferDataTypeLegal(tile.data_type) &&
+           tile.valid_rows == index.valid_rows &&
+           tile.valid_columns == index.valid_columns &&
+           tile.valid_rows == expected_tile.valid_rows &&
+           tile.valid_columns == expected_tile.valid_columns &&
+           tile.valid_rows == replacement_tile.valid_rows &&
+           tile.valid_columns == replacement_tile.valid_columns &&
+           tile.data_type == expected_tile.data_type &&
+           tile.data_type == replacement_tile.data_type &&
+           tile.layout == index.layout && tile.layout == expected_tile.layout &&
+           tile.layout == replacement_tile.layout;
 end;
 
 readonly func TileOperandsLegal_MGATHER_CAS(

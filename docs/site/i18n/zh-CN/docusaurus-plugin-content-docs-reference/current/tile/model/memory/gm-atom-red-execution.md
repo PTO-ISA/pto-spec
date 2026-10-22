@@ -87,13 +87,14 @@ Function 13 是 `GMOV`，不属于本族。atom 映射对未列出的 Function �
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/memory/gm-atom-red-execution.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GM-ATOM-RED-EXECUTION","surface":"tile","classification":["model","memory","gm-atom-red-execution"],"depends_on":["PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","PTO-TILE-MODEL-MEMORY-GATHER-SCATTER","PTO-TILE-MODEL-EXECUTION-MASK-STATE"]}
-func GMRunAtomic(destination: TileIndex, base_address: Word, indices: TileIndex,
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GM-ATOM-RED-EXECUTION","surface":"tile","classification":["model","memory","gm-atom-red-execution"],"depends_on":["PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","PTO-TILE-MODEL-MEMORY-GATHER-SCATTER","PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT-TYPES","PTO-TILE-MODEL-EXECUTION-MASK-STATE"]}
+func GMRunAtomicToValue(destination: TileOutputValueTarget,
+                base_address: Word, indices: TileIndex,
                 value: TileIndex, expected: TileIndex, replacement: TileIndex,
                 data_type: TileDataType, operation: GMAtomicOperation,
-                pad_value: TilePadValue)
+                pad_value: TilePadValue) => TileInfo
 begin
-    let destination_tile = _Tiles[[destination]];
+    let destination_tile = destination.value;
     let index_tile = _Tiles[[indices]];
     let value_tile = _Tiles[[value]];
     let expected_tile = _Tiles[[expected]];
@@ -122,12 +123,16 @@ begin
             let address = TileMemoryByteDisplacementAddress(base_address,
                 index_tile.payload[[index_element]], index_tile.data_type);
             let read_probe = ProbeTileMemoryAccess(address, data_type, FALSE);
-            if RaiseDataAccessFault(read_probe, address) then return; end;
+            if RaiseDataAccessFault(read_probe, address) then
+                return destination.value;
+            end;
             let write_probe = ProbeTileMemoryAccess(address, data_type, TRUE);
-            if RaiseDataAccessFault(write_probe, address) then return; end;
+            if RaiseDataAccessFault(write_probe, address) then
+                return destination.value;
+            end;
             if read_probe.translated_address != write_probe.translated_address then
                 SetFault(Fault_DataPage, address);
-                return;
+                return destination.value;
             end;
             original_addresses[[element]] = address;
             translated_addresses[[element]] = read_probe.translated_address;
@@ -198,8 +203,44 @@ begin
             NormalizeMemoryAccessValue(new_value, TileMemoryElementBytes(data_type)),
             CurrentBundleMemoryOrder(), write_performed);
     end;
-    _Tiles[[destination]].payload = result;
-    MarkTilePhysicalRegionDefined(destination);
+    var output = destination_tile;
+    output.payload = result;
+    return TileWithPhysicalRegionDefined(output);
+end;
+
+func GMRunAtomic(destination: TileIndex, base_address: Word,
+                indices: TileIndex, value: TileIndex, expected: TileIndex,
+                replacement: TileIndex, data_type: TileDataType,
+                operation: GMAtomicOperation, pad_value: TilePadValue)
+begin
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    _Tiles[[destination]] = GMRunAtomicToValue(target, base_address,
+        indices, value, expected, replacement, data_type, operation,
+        pad_value);
+end;
+
+func GM_ATOM_CASToValue(operation: GMAtomicOperation,
+                        destination: TileOutputValueTarget,
+                        base_address: Word, indices: TileIndex,
+                        expected: TileIndex, replacement: TileIndex,
+                        pad_value: TilePadValue) => TileInfo
+begin
+    return GMRunAtomicToValue(destination, base_address, indices, expected,
+        expected, replacement, destination.value.data_type, operation,
+        pad_value);
+end;
+
+func GM_ATOM_VALUEToValue(operation: GMAtomicOperation,
+                          destination: TileOutputValueTarget,
+                          base_address: Word, indices: TileIndex,
+                          value: TileIndex,
+                          pad_value: TilePadValue) => TileInfo
+begin
+    return GMRunAtomicToValue(destination, base_address, indices, value,
+        value, value, destination.value.data_type, operation, pad_value);
 end;
 
 func GM_ATOM_CAS(operation: GMAtomicOperation, destination: TileIndex, base_address: Word, indices: TileIndex,

@@ -83,7 +83,7 @@ The destination element is U32 1. A TROWSUM of the same row starts at 0 and give
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/reduction.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-REDUCTION","surface":"tile","classification":["model","execution","reduction"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-REDUCTION","surface":"tile","classification":["model","execution","reduction"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-STATE-TYPES"]}
 // PTO-REQ-TEPL-REDUCE-001: exact row, column, and index reductions.
 
 pure func TileReductionOneEncoding(
@@ -181,23 +181,17 @@ begin
     return (result, selected);
 end;
 
-func ExecuteTileReduction(
+func ExecuteTileReductionToValue(
     operation: TileReductionOperation,
     axis: TileAxis,
-    destination: TileIndex,
-    source: TileIndex)
+    destination: TileOutputValueTarget,
+    source: TileIndex) => TileInfo
 begin
     let source_tile = _Tiles[[source]];
     let (operation_type_valid, operation_type) =
         ResolveTileSelectedOperationType(source_tile.data_type);
     assert operation_type_valid;
-    assert TileOperandsLegal_ExecuteTileReduction(
-        operation,
-        axis,
-        destination,
-        source);
-
-    var result_tile = _Tiles[[destination]];
+    var result_tile = destination.value;
     var accumulated_flags = Zeros{5};
     let outer_count =
         if axis == TileAxis_Row then
@@ -283,7 +277,23 @@ begin
         result_tile,
         CurrentBundlePadValue());
     RecordNumericStatusFlags(accumulated_flags);
-    _Tiles[[destination]] = result_tile;
+    return result_tile;
+end;
+
+func ExecuteTileReduction(
+    operation: TileReductionOperation,
+    axis: TileAxis,
+    destination: TileIndex,
+    source: TileIndex)
+begin
+    assert TileOperandsLegal_ExecuteTileReduction(
+        operation, axis, destination, source);
+    let destination_target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    _Tiles[[destination]] = ExecuteTileReductionToValue(
+        operation, axis, destination_target, source);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
