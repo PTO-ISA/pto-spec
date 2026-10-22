@@ -550,6 +550,15 @@ ISSUE395_WRITER_EFFECT_HELPER_DEFINITION_DELTAS = {
         {
             ("TileOperandsLegal_ExecuteTileCompareScalarToValue", "asl/tile/model/legality/destination-value-operations.asl"),
             ("TileOperandsLegal_ExecuteTileCompareToValue", "asl/tile/model/legality/destination-value-operations.asl"),
+            ("TileCubeNumericOrPredicateCellDescriptorLegal", "asl/tile/model/legality/destination-value-operations.asl"),
+        },
+    ),
+    "TileCubeNumericOrPredicateCellDescriptorLegal": _issue395_writer_effect_helper(
+        "asl/tile/model/legality/destination-value-operations.asl",
+        {
+            ("BundleLocalGenerationCubeWriterView", "asl/block/model/operands/local-generation-cube-writer-effects.asl"),
+            ("BundleLocalGenerationCubeWriterValueLegal", "asl/block/model/operands/local-generation-cube-writer-effects.asl"),
+            ("BundleLocalGenerationCubeWriterLegal", "asl/block/model/operands/local-generation-cube.asl"),
         },
     ),
     "ExecuteBundleComparisonGPRCarrier": {
