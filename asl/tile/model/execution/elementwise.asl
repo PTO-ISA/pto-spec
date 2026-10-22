@@ -349,14 +349,13 @@ begin
     let operation_type = destination_tile.data_type;
     assert left_tile.allocated && right_tile.allocated;
     assert TileElementwiseShapeMatch(source_left, source_right);
-    // The transient view may be narrower than the unchanged parent.
-    assert TileElementwiseShapeMatch(destination.destination, source_left);
-    assert !TileLayoutIsCube(destination_tile.layout) ||
-           TileCubeDescriptorLegal(destination_tile);
+    // The transient writer may be narrower than the unchanged parent.
     assert destination_tile.valid_rows == left_tile.valid_rows &&
            destination_tile.valid_columns == left_tile.valid_columns &&
            destination_tile.layout == left_tile.layout &&
            destination_tile.storage_kind == left_tile.storage_kind;
+    assert !TileLayoutIsCube(destination_tile.layout) ||
+           TileCubeDescriptorLegal(destination_tile);
     assert TileCarrierWidthCompatible(left_tile.data_type, operation_type);
     assert TileCarrierWidthCompatible(right_tile.data_type, operation_type);
     assert destination_tile.data_type == operation_type;

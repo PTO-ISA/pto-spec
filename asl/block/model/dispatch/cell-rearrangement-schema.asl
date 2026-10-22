@@ -1,8 +1,10 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","surface":"block","classification":["model","dispatch","cell-rearrangement-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","surface":"block","classification":["model","dispatch","cell-rearrangement-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS"]}
 
-func ResolveBundleCellRearrangementDestination(
-    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+func ResolveBundleCellRearrangementDestinationWithWriterEffects(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1})
+    => (boolean, BundleLocalGenerationCubeWriterEffects)
 begin
+    var effects = EmptyBundleLocalGenerationCubeWriterEffects();
     var destination_binding: BundleTileBindingIndex = 0;
     var destination_seen = FALSE;
     var source: TileIndex = 0;
@@ -37,7 +39,7 @@ begin
        (source1_seen &&
         !TileCellRearrangementDescriptorLegal(source1)) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, effects);
     end;
     let binding = _BundleTileBindings[[destination_binding]];
     let source_tile = _Tiles[[source]];
@@ -46,7 +48,7 @@ begin
          TileCellRearrangementDataTypeLegal(source_tile.data_type));
     if !source_semantics_legal then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, effects);
     end;
     if decoded == TileOperation_TPACK then
         let source1_tile = _Tiles[[source1]];
@@ -55,12 +57,12 @@ begin
            source1_tile.layout != source_tile.layout ||
            source1_tile.valid_rows != source_tile.valid_rows then
             SetFault(Fault_TileLegality, ReadTPC());
-            return FALSE;
+            return (FALSE, effects);
         end;
         if TileCellRearrangementWordsPerRow(source1_tile) !=
            TileCellRearrangementWordsPerRow(source_tile) then
             SetFault(Fault_TileLegality, ReadTPC());
-            return FALSE;
+            return (FALSE, effects);
         end;
     end;
     let selected_type_valid = !pack_unpack ||
@@ -85,7 +87,7 @@ begin
         (source_tile.layout != TileLayout_CUBE_M32 ||
          TileCellRearrangementWordsPerRow(source_tile) MOD 2 != 0)) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, effects);
     end;
     let destination_columns_unbounded = if pack_unpack then
         (if selected_type == TileDataType_U64 then
@@ -97,7 +99,7 @@ begin
                            else source_tile.data_type;
     if destination_columns_unbounded > 65535 then
         SetFault(Fault_TileAllocation, ReadTPC());
-        return FALSE;
+        return (FALSE, effects);
     end;
     let destination_columns = destination_columns_unbounded
         as integer {0..65535};
@@ -123,15 +125,25 @@ begin
            (_TileAllocationMasks[[binding.destination]] AND binding.pe_mask) !=
                binding.pe_mask then
             SetFault(Fault_TileLegality, ReadTPC());
-            return FALSE;
+            return (FALSE, effects);
         end;
-        return TRUE;
+        let (writer_legal, updated_effects) =
+            AddBundleLocalGenerationCubeWriterEffect(
+                effects, destination_binding,
+                source_tile.valid_rows as integer {1..65535},
+                destination_columns as integer {1..65535});
+        if !writer_legal then
+            SetFault(Fault_TileLegality, ReadTPC());
+            RollBackBundleTileDestinations();
+            return (FALSE, updated_effects);
+        end;
+        return (TRUE, updated_effects);
     end;
     if !TileCubeDescriptorShapeLegal(capacity_bytes,
            source_tile.valid_rows, destination_columns,
            destination_type, source_tile.layout) then
         SetFault(Fault_TileAllocation, ReadTPC());
-        return FALSE;
+        return (FALSE, effects);
     end;
     let hand = UInt(binding.destination_hand);
     var resolved: TileIndex = 0;
@@ -146,7 +158,7 @@ begin
     if !found || !LocalTileAllocationFitsExcept(
            resolved, binding.pe_mask, capacity_bytes) then
         SetFault(Fault_TileAllocation, ReadTPC());
-        return FALSE;
+        return (FALSE, effects);
     end;
     let configured = ConfigureCubeTileForMask(
         resolved, capacity_bytes, source_tile.valid_rows,
@@ -154,12 +166,30 @@ begin
         source_tile.layout, binding.pe_mask);
     if !configured then
         SetFault(Fault_TileAllocation, ReadTPC());
-        return FALSE;
+        return (FALSE, effects);
     end;
     _BundleTileBindings[[destination_binding]].destination = resolved;
     _BundleTileBindings[[destination_binding]].destination_allocated_by_bundle =
         TRUE;
-    return TRUE;
+    let (writer_legal, updated_effects) =
+        AddBundleLocalGenerationCubeWriterEffect(
+            effects, destination_binding,
+            source_tile.valid_rows as integer {1..65535},
+            destination_columns as integer {1..65535});
+    if !writer_legal then
+        SetFault(Fault_TileLegality, ReadTPC());
+        RollBackBundleTileDestinations();
+        return (FALSE, updated_effects);
+    end;
+    return (TRUE, updated_effects);
+end;
+
+func ResolveBundleCellRearrangementDestination(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+begin
+    let (legal, -) =
+        ResolveBundleCellRearrangementDestinationWithWriterEffects(operation);
+    return legal;
 end;
 
 pure func TileOperationUsesCellRearrangementSchema(

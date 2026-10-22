@@ -144,7 +144,6 @@ begin
     return TileCompareCUBEScalarToGPRAs(
         source, scalar, comparison, high, operation_type);
 end;
-
 func TileExecutionMaskPredicateGPRResult(
     result: Word, old_value: Word, data_type: TileDataType,
     layout: TileLayout, valid_rows: integer {1..65535},
@@ -173,20 +172,20 @@ begin
     end;
     return masked;
 end;
-
-func ExecuteTileSelectCUBEGPRAs(destination: TileIndex, mask_low: Word,
-                                mask_high: Word, source_true: TileIndex,
-                                source_false: TileIndex,
-                                operation_type: TileDataType)
+func TileSelectCUBEGPRAsValue(destination: TileInfo,
+                               mask_low: Word, mask_high: Word,
+                               source_true: TileIndex,
+                               source_false: TileIndex,
+                               operation_type: TileDataType) => TileInfo
 begin
-    assert TileOperandsLegal_ExecuteTileSelectCUBEGPRAs(
-        destination, source_true, source_false, operation_type);
     let true_tile = _Tiles[[source_true]];
     let false_tile = _Tiles[[source_false]];
-    var result = _Tiles[[destination]];
+    var result = destination;
     for row = 0 to true_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to true_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLogicalLinearIndex(true_tile,
+            let source_element = TileLogicalLinearIndex(true_tile,
+                row as integer {0..65535}, column as integer {0..65535});
+            let destination_element = TileLogicalLinearIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
             var value = Zeros{PTO_XLEN};
             if BundleExecutionMaskActiveAt(
@@ -197,19 +196,31 @@ begin
                     row as integer {0..65535},
                     column as integer {0..65535});
                 value = if selected then
-                    TileReadLogicalElement(true_tile, element)
-                    else TileReadLogicalElement(false_tile, element);
+                    TileReadLogicalElement(true_tile, source_element)
+                    else TileReadLogicalElement(false_tile, source_element);
             else
                 value = BundleExecutionMaskDestinationValue(
                     true_tile.layout, row as integer {0..65535},
                     column as integer {0..65535}, Zeros{PTO_XLEN});
             end;
-            result = TileInfoWithLogicalElement(result, element, value);
+            result = TileInfoWithLogicalElement(
+                result, destination_element, value);
         end;
     end;
     result = TileWithValidRegionDefined(result);
     result = TileWithPadding(result, CurrentBundlePadValue());
-    _Tiles[[destination]] = result;
+    return result;
+end;
+func ExecuteTileSelectCUBEGPRAs(destination: TileIndex, mask_low: Word,
+                                mask_high: Word, source_true: TileIndex,
+                                source_false: TileIndex,
+                                operation_type: TileDataType)
+begin
+    assert TileOperandsLegal_ExecuteTileSelectCUBEGPRAs(
+        destination, source_true, source_false, operation_type);
+    _Tiles[[destination]] = TileSelectCUBEGPRAsValue(
+        _Tiles[[destination]], mask_low, mask_high, source_true,
+        source_false, operation_type);
 end;
 func ExecuteTileSelectCUBEGPR(destination: TileIndex, mask_low: Word,
                               mask_high: Word, source_true: TileIndex,
@@ -222,21 +233,20 @@ begin
         destination, mask_low, mask_high, source_true, source_false,
         operation_type);
 end;
-
-func ExecuteTileSelectScalarCUBEGPRAs(
-    destination: TileIndex, mask_low: Word, mask_high: Word,
+func TileSelectScalarCUBEGPRAsValue(
+    destination: TileInfo, mask_low: Word, mask_high: Word,
     source_true: TileIndex, scalar_false: Word,
-    operation_type: TileDataType)
+    operation_type: TileDataType) => TileInfo
 begin
-    assert TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs(
-        destination, source_true, scalar_false, operation_type);
     let true_tile = _Tiles[[source_true]];
     let normalized_scalar = TileRawElementValue(scalar_false,
         operation_type);
-    var result = _Tiles[[destination]];
+    var result = destination;
     for row = 0 to true_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to true_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLogicalLinearIndex(true_tile,
+            let source_element = TileLogicalLinearIndex(true_tile,
+                row as integer {0..65535}, column as integer {0..65535});
+            let destination_element = TileLogicalLinearIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
             var value = Zeros{PTO_XLEN};
             if BundleExecutionMaskActiveAt(
@@ -247,19 +257,31 @@ begin
                     row as integer {0..65535},
                     column as integer {0..65535});
                 value = if selected then
-                    TileReadLogicalElement(true_tile, element)
+                    TileReadLogicalElement(true_tile, source_element)
                     else normalized_scalar;
             else
                 value = BundleExecutionMaskDestinationValue(
                     true_tile.layout, row as integer {0..65535},
                     column as integer {0..65535}, Zeros{PTO_XLEN});
             end;
-            result = TileInfoWithLogicalElement(result, element, value);
+            result = TileInfoWithLogicalElement(
+                result, destination_element, value);
         end;
     end;
     result = TileWithValidRegionDefined(result);
     result = TileWithPadding(result, CurrentBundlePadValue());
-    _Tiles[[destination]] = result;
+    return result;
+end;
+func ExecuteTileSelectScalarCUBEGPRAs(
+    destination: TileIndex, mask_low: Word, mask_high: Word,
+    source_true: TileIndex, scalar_false: Word,
+    operation_type: TileDataType)
+begin
+    assert TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAs(
+        destination, source_true, scalar_false, operation_type);
+    _Tiles[[destination]] = TileSelectScalarCUBEGPRAsValue(
+        _Tiles[[destination]], mask_low, mask_high, source_true,
+        scalar_false, operation_type);
 end;
 func ExecuteTileSelectScalarCUBEGPR(destination: TileIndex, mask_low: Word,
                                     mask_high: Word, source_true: TileIndex,

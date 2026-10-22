@@ -166,5 +166,3 @@ begin
         slot, destination, offset_cells, writer_cells, writer_size,
         writer_mask, init, replay, writer);
 end;
-
-

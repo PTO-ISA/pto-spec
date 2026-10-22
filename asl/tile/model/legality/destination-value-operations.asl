@@ -206,4 +206,3 @@ begin
            output.valid_columns == true_tile.valid_columns &&
            output.layout == true_tile.layout;
 end;
-

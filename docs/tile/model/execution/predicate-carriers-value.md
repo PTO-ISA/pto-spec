@@ -116,5 +116,77 @@ begin
     result = TileWithValidRegionDefined(result);
     return result;
 end;
+
+
+
+readonly func TileOperandsLegal_ExecuteTileSelectCUBEGPRAsToValue(
+    destination: TileOutputValueTarget,
+    source_true: TileIndex, source_false: TileIndex,
+    operation_type: TileDataType) => boolean
+begin
+    let output = destination.value;
+    let true_tile = _Tiles[[source_true]];
+    let false_tile = _Tiles[[source_false]];
+    return TileSelectDataTypeSupported(operation_type) &&
+           TileCubePredicateGPRShapeLegalAs(source_true, operation_type) &&
+           TileCubeNumericShapeMatch(source_true, source_false) &&
+           TileCubeNumericContentsDefined(source_true) &&
+           TileCubeNumericContentsDefined(source_false) &&
+           TileCarrierWidthCompatible(true_tile.data_type, operation_type) &&
+           TileCarrierWidthCompatible(false_tile.data_type, operation_type) &&
+           TileCubeDescriptorLegal(output) &&
+           output.storage_kind == TileStorage_Numeric &&
+           output.data_type == operation_type &&
+           TileCubeDescriptorLegal(true_tile) &&
+           output.rows == true_tile.rows &&
+           output.valid_rows == true_tile.valid_rows &&
+           output.valid_columns == true_tile.valid_columns &&
+           output.layout == true_tile.layout;
+end;
+
+func ExecuteTileSelectCUBEGPRAsToValue(
+    destination: TileOutputValueTarget,
+    mask_low: Word, mask_high: Word,
+    source_true: TileIndex, source_false: TileIndex,
+    operation_type: TileDataType) => TileInfo
+begin
+    assert TileOperandsLegal_ExecuteTileSelectCUBEGPRAsToValue(
+        destination, source_true, source_false, operation_type);
+    return TileSelectCUBEGPRAsValue(destination.value, mask_low, mask_high,
+        source_true, source_false, operation_type);
+end;
+
+readonly func TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAsToValue(
+    destination: TileOutputValueTarget,
+    source_true: TileIndex, scalar_false: Word,
+    operation_type: TileDataType) => boolean
+begin
+    let output = destination.value;
+    let true_tile = _Tiles[[source_true]];
+    return TileSelectDataTypeSupported(operation_type) &&
+           TileCubePredicateGPRShapeLegalAs(source_true, operation_type) &&
+           TileCubeNumericContentsDefined(source_true) &&
+           TileCarrierWidthCompatible(true_tile.data_type, operation_type) &&
+           TileCubeDescriptorLegal(output) &&
+           output.storage_kind == TileStorage_Numeric &&
+           output.data_type == operation_type &&
+           TileCubeDescriptorLegal(true_tile) &&
+           output.rows == true_tile.rows &&
+           output.valid_rows == true_tile.valid_rows &&
+           output.valid_columns == true_tile.valid_columns &&
+           output.layout == true_tile.layout;
+end;
+
+func ExecuteTileSelectScalarCUBEGPRAsToValue(
+    destination: TileOutputValueTarget,
+    mask_low: Word, mask_high: Word,
+    source_true: TileIndex, scalar_false: Word,
+    operation_type: TileDataType) => TileInfo
+begin
+    assert TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAsToValue(
+        destination, source_true, scalar_false, operation_type);
+    return TileSelectScalarCUBEGPRAsValue(destination.value, mask_low,
+        mask_high, source_true, scalar_false, operation_type);
+end;
 ```
 <!-- GENERATED-ASL-END: unit -->

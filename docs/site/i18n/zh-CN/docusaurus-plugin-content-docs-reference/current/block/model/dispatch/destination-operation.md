@@ -81,7 +81,7 @@ TADD <Row=8, Col=64, FP32>, T#1, T#2, ->T<2KB>
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/destination-operation.asl -->
 ```asl
-// PTO-UNIT: {"classification":["model","dispatch","destination-operation"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-BINARY-OP-CLASSIFICATION","PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-EXPDIF-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION"],"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION","surface":"block"}
+// PTO-UNIT: {"classification":["model","dispatch","destination-operation"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-BINARY-OP-CLASSIFICATION","PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-EXPDIF-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS"],"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION","surface":"block"}
 func ResolveBundleTileDestinationsForOperationAndWriterEffects(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1})
     => (boolean, BundleLocalGenerationCubeWriterEffects)
@@ -110,8 +110,8 @@ begin
        decoded_operation == TileOperation_TSHUF ||
        decoded_operation == TileOperation_TPACK ||
        decoded_operation == TileOperation_TUNPACK then
-        return (ResolveBundleCellRearrangementDestination(operation),
-                empty_effects);
+        return ResolveBundleCellRearrangementDestinationWithWriterEffects(
+            operation);
     end;
     if TileOperationUsesSourceBackingDestination(decoded_operation) then
         let source = BundleTileSourceIndex(0, FALSE);
@@ -157,14 +157,14 @@ begin
             SetFault(Fault_TileLegality, ReadTPC());
             return (FALSE, empty_effects);
         end;
-        return (ResolveBundlePredicateDestination(operation_type),
-                empty_effects);
+        return ResolveBundlePredicateDestinationWithWriterEffects(
+            operation_type);
     end;
     if (TileOperationUsesClosedTSELSchema(operation) ||
         TileOperationUsesClosedTSELSSchema(operation)) &&
        SelectedBundleComparisonCUBE(
            BundleComparisonSelectTrueSource(operation)) then
-        return (ResolveBundleCUBESelectDestination(operation), empty_effects);
+        return ResolveBundleCUBESelectDestinationWithWriterEffects(operation);
     end;
     if decoded_operation == TileOperation_TEXPDIF then
         let (types_legal, -, destination_type) =
@@ -206,7 +206,8 @@ begin
        !TileOperationUsesClosedTCVTSchema(operation) &&
        !TileOperationUsesClosedComparisonSchema(operation) &&
        !TileOperationUsesClosedTileScalarSchema(operation) then
-        return (ResolveBundleTileDestinations(), empty_effects);
+        return ResolveBundleTileDestinationsWithShapeAndTypeAndWriterEffects(
+            FALSE, 0, 0, 0, FALSE, TileDataType_FP64);
     end;
     let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
     let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};

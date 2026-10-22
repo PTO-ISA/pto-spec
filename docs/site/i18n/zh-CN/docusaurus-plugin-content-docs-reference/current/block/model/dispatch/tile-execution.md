@@ -89,7 +89,7 @@ This page is a generated reference view of the normative ASL unit.
 // numeric padding checks belong to the TGPR2T complete schema before handler
 // execution and atomic result publication.
 // NDF-END: PTO-BLOCK-MODEL-DISPATCH-TGPR2T-BOUNDARY-001
-// PTO-UNIT: {"classification":["model","dispatch","tile-execution"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION","PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-LEA-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-INSTRUCTION-OPERANDS","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TLSU-ATOMIC-TSTORE","PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED","PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV","PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-SHARED-EXEC","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-VALIDATION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-DISPATCH-TOP-LEVEL","PTO-TILE-MODEL-EXECUTION-COMPARISON-VALUE","PTO-TILE-MODEL-EXECUTION-CUBE-VALUE","PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-EXECUTION-EXPANSION","PTO-TILE-MODEL-EXECUTION-EXPDIF","PTO-TILE-MODEL-EXECUTION-FUSED-MULTIPLY-ADD","PTO-TILE-MODEL-EXECUTION-INDEXED-REARRANGEMENT","PTO-TILE-MODEL-EXECUTION-LEA","PTO-TILE-MODEL-EXECUTION-MASK-COMPARISON","PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS-VALUE","PTO-TILE-MODEL-EXECUTION-REARRANGEMENT-VALUES","PTO-TILE-MODEL-EXECUTION-REDUCTION","PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE","PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE-OPERATIONS","PTO-TILE-MODEL-LEGALITY-INDEXED-REARRANGEMENT","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT-VALUES","PTO-TILE-MODEL-LEGALITY-LEA-OPERANDS","PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA","PTO-TILE-MODEL-LEGALITY-TCVT-VALUE-OPERANDS","PTO-TILE-MODEL-MEMORY-ATOMICS","PTO-TILE-MODEL-MEMORY-GATHER-SCATTER-VALUES","PTO-TILE-MODEL-MEMORY-GM-ATOM-RED-VALUES","PTO-TILE-MODEL-NUMERIC-FORMATS"],"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","surface":"block"}
+// PTO-UNIT: {"classification":["model","dispatch","tile-execution"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION","PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-LEA-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-INSTRUCTION-OPERANDS","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TLSU-ATOMIC-TSTORE","PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED","PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV","PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-SHARED-EXEC","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-VALIDATION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-DISPATCH-TOP-LEVEL","PTO-TILE-MODEL-EXECUTION-COMPARISON-VALUE","PTO-TILE-MODEL-EXECUTION-CUBE-VALUE","PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-EXECUTION-EXPANSION","PTO-TILE-MODEL-EXECUTION-EXPDIF","PTO-TILE-MODEL-EXECUTION-FUSED-MULTIPLY-ADD","PTO-TILE-MODEL-EXECUTION-INDEXED-REARRANGEMENT","PTO-TILE-MODEL-EXECUTION-LEA","PTO-TILE-MODEL-EXECUTION-MASK-COMPARISON","PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS-VALUE","PTO-TILE-MODEL-EXECUTION-REARRANGEMENT-VALUES","PTO-TILE-MODEL-EXECUTION-REDUCTION","PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE","PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE-OPERATIONS","PTO-TILE-MODEL-LEGALITY-INDEXED-REARRANGEMENT","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT-VALUES","PTO-TILE-MODEL-LEGALITY-LEA-OPERANDS","PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA","PTO-TILE-MODEL-LEGALITY-TCVT-VALUE-OPERANDS","PTO-TILE-MODEL-MEMORY-ATOMICS","PTO-TILE-MODEL-MEMORY-GATHER-SCATTER-VALUES","PTO-TILE-MODEL-MEMORY-GM-ATOM-RED-VALUES","PTO-TILE-MODEL-NUMERIC-FORMATS","PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION"],"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","surface":"block"}
 readonly func BundleTileTypesMatch(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
     operands: TileInstructionOperands,
@@ -135,88 +135,71 @@ begin
                    SelectedBundleClosedLEASchemaLegal(operation);
     end;
 end;
-func ExecuteBundleComparisonGPRCarrier(
-    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+
+func ExecuteBundleComparisonGPRCarrierWithWriterEffects(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
+    writer_effects: BundleLocalGenerationCubeWriterEffects)
+    => (boolean, BundleLocalGenerationCubeWriterEffects)
 begin
-    if !SelectedBundleComparisonUsesGPRCarrier(operation) then return FALSE; end;
+    if !SelectedBundleComparisonConsumesGPR(operation) then
+        return (FALSE, writer_effects);
+    end;
     let (operation_type_valid, operation_type) =
         ResolveBundleEffectiveDataType();
-    if !operation_type_valid then return FALSE; end;
-    let selected_high = _BundleDataAttributes.saturating;
-    case TileOperationOfIndex(operation) of
-        when TileOperation_TCMP =>
-            let left = BundleTileSourceIndex(0, FALSE);
-            let right = BundleTileSourceIndex(0, TRUE);
-            let gpr_destination = _BundleScalarBindings[[0]].destination
-                as GPRIndex;
-            var value = TileCompareCUBEToGPRAs(
-                left, right, BundleComparisonCodeAsTileComparison(),
-                selected_high, operation_type);
-            if _BundleExecutionMask.valid then
-                let old_value = ReadGPR(gpr_destination);
-                let tile = _Tiles[[left]];
-                value = TileExecutionMaskPredicateGPRResult(
-                    value, old_value, operation_type, tile.layout,
-                    tile.valid_rows as integer {1..65535},
-                    tile.valid_columns as integer {1..65535}, selected_high);
-            end;
-            WriteGPR(gpr_destination, value);
-        when TileOperation_TCMPS =>
-            let source = BundleTileSourceIndex(0, FALSE);
-            let scalar = ReadScalarRegisterOperand(
-                _BundleScalarBindings[[0]].source0);
-            let gpr_destination = _BundleScalarBindings[[0]].destination
-                as GPRIndex;
-            var value = TileCompareCUBEScalarToGPRAs(
-                source, scalar,
-                BundleComparisonCodeAsTileComparison(), selected_high,
-                operation_type);
-            if _BundleExecutionMask.valid then
-                let old_value = ReadGPR(gpr_destination);
-                let tile = _Tiles[[source]];
-                value = TileExecutionMaskPredicateGPRResult(
-                    value, old_value, operation_type, tile.layout,
-                    tile.valid_rows as integer {1..65535},
-                    tile.valid_columns as integer {1..65535}, selected_high);
-            end;
-            WriteGPR(gpr_destination, value);
-        when TileOperation_TSEL =>
-            let source_true = BundleComparisonSelectTrueSource(operation);
-            let (-, destination_binding) = BundleFirstDestinationBinding();
-            let mask_words = SelectedBundleComparisonGPRMaskWordCount(
-                operation_type);
-            let low = ReadScalarRegisterOperand(
-                _BundleScalarBindings[[0]].source0);
-            let high = if mask_words == 2 then
-                ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
-                else Zeros{PTO_XLEN};
-            ExecuteTileSelectCUBEGPRAs(
-                _BundleTileBindings[[destination_binding]].destination,
-                low, high,
-                source_true,
-                BundleTileSourceIndex(0, TRUE), operation_type);
-        when TileOperation_TSELS =>
-            let source_true = BundleComparisonSelectTrueSource(operation);
-            let (-, destination_binding) = BundleFirstDestinationBinding();
-            let mask_words = SelectedBundleComparisonGPRMaskWordCount(
-                operation_type);
-            let low = ReadScalarRegisterOperand(
-                _BundleScalarBindings[[0]].source0);
-            let mask_high = if mask_words == 2 then
-                ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
-                else Zeros{PTO_XLEN};
-            let scalar_selector = if mask_words == 2 then
-                _BundleScalarBindings[[0]].source2
-                else _BundleScalarBindings[[0]].source1;
-            let scalar_false = ReadScalarRegisterOperand(scalar_selector);
-            ExecuteTileSelectScalarCUBEGPRAs(
-                _BundleTileBindings[[destination_binding]].destination,
-                low, mask_high,
-                source_true, scalar_false, operation_type);
-        otherwise => return FALSE;
+    if !operation_type_valid then return (FALSE, writer_effects); end;
+    let source_true = BundleComparisonSelectTrueSource(operation);
+    let (-, destination_binding) = BundleFirstDestinationBinding();
+    let destination =
+        _BundleTileBindings[[destination_binding]].destination;
+    let (writer_found, writer_value) =
+        BundleLocalGenerationCubeWriterValueForDestination(
+            writer_effects, destination, _Tiles[[destination]]);
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = writer_value
+    };
+    let mask_words = SelectedBundleComparisonGPRMaskWordCount(
+        operation_type);
+    let low = ReadScalarRegisterOperand(
+        _BundleScalarBindings[[0]].source0);
+    var output = writer_value;
+    if TileOperationOfIndex(operation) == TileOperation_TSEL then
+        let high = if mask_words == 2 then
+            ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
+            else Zeros{PTO_XLEN};
+        let source_false = BundleTileSourceIndex(0, TRUE);
+        if !TileOperandsLegal_ExecuteTileSelectCUBEGPRAsToValue(
+               target, source_true, source_false, operation_type) then
+            return (FALSE, writer_effects);
+        end;
+        output = ExecuteTileSelectCUBEGPRAsToValue(
+            target, low, high, source_true, source_false, operation_type);
+    elsif TileOperationOfIndex(operation) == TileOperation_TSELS then
+        let mask_high = if mask_words == 2 then
+            ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
+            else Zeros{PTO_XLEN};
+        let scalar_selector = if mask_words == 2 then
+            _BundleScalarBindings[[0]].source2
+            else _BundleScalarBindings[[0]].source1;
+        let scalar_false = ReadScalarRegisterOperand(scalar_selector);
+        if !TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAsToValue(
+               target, source_true, scalar_false, operation_type) then
+            return (FALSE, writer_effects);
+        end;
+        output = ExecuteTileSelectScalarCUBEGPRAsToValue(
+            target, low, mask_high, source_true, scalar_false,
+            operation_type);
+    else
+        return (FALSE, writer_effects);
     end;
-    return TRUE;
+    if writer_found then
+        return (TRUE, BundleLocalGenerationCubeWriterEffectWithOutput(
+            writer_effects, destination, output));
+    end;
+    _Tiles[[destination]] = output;
+    return (TRUE, writer_effects);
 end;
+
 func ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules(
     rules: NumericApplicabilityRuleSet) => boolean
 begin
@@ -491,7 +474,10 @@ begin
         return FALSE;
     end;
     if SelectedBundleComparisonConsumesGPR(operation) then
-        let comparison_completed = ExecuteBundleComparisonGPRCarrier(operation);
+        let (comparison_completed, updated_writer_effects) =
+            ExecuteBundleComparisonGPRCarrierWithWriterEffects(
+                operation, writer_effects);
+        writer_effects = updated_writer_effects;
         FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
         if !comparison_completed then
             SetFault(Fault_TileLegality, ReadTPC());

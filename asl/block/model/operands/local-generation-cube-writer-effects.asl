@@ -91,7 +91,10 @@ begin
     let first_column = if cells_per_group == 0 then 65536 else
         ((offset_cells DIVRM cells_per_group) * cell_columns)
             as integer {0..65536};
-    return parent.allocated && parent.storage_kind == TileStorage_Numeric &&
+    return parent.allocated &&
+           (parent.storage_kind == TileStorage_Numeric ||
+            (parent.storage_kind == TileStorage_PredicateCell &&
+             parent.data_type == TileDataType_U8)) &&
            BundleLocalGenerationCubeLayout(parent.layout) &&
            TileCubeDescriptorLegal(parent) &&
            parent.rows == expected_rows &&
