@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-UNARY","surface":"tile","classification":["model","execution","unary"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-UNARY","surface":"tile","classification":["model","execution","unary"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-STATE-TYPES"]}
 
 pure func TileIntegerUnaryValue(
     operation: TileUnaryOperation,
@@ -410,19 +410,18 @@ begin
     return ReferenceTileUnaryFinite(op, data_type, value);
 end;
 
-func ExecuteTileUnary(
+func ExecuteTileUnaryToValue(
     operation: TileUnaryOperation,
-    destination: TileIndex,
-    source: TileIndex)
+    destination: TileOutputValueTarget,
+    source: TileIndex) => TileInfo
 begin
     let source_tile = _Tiles[[source]];
-    let operation_type = _Tiles[[destination]].data_type;
+    let operation_type = destination.value.data_type;
     assert source_tile.allocated;
-    assert TileElementwiseShapeMatch(destination, source);
     assert TileCarrierWidthCompatible(source_tile.data_type, operation_type);
-    assert _Tiles[[destination]].data_type == operation_type;
+    assert destination.value.data_type == operation_type;
 
-    var result_tile = _Tiles[[destination]];
+    var result_tile = destination.value;
     var flags = Zeros{5};
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
@@ -469,10 +468,24 @@ begin
             end;
         end;
     end;
-    _Tiles[[destination]] = result_tile;
-    MarkTileValidRegionDefined(destination);
+    result_tile = TileWithValidRegionDefined(result_tile);
     if TileUnaryUsesCompleteElementwiseSchema(operation) then
-        ApplyTilePadding(destination, CurrentBundlePadValue());
+        result_tile = TileWithPadding(result_tile, CurrentBundlePadValue());
     end;
     ScalarFPRecordFlags(flags);
+    return result_tile;
+end;
+
+func ExecuteTileUnary(
+    operation: TileUnaryOperation,
+    destination: TileIndex,
+    source: TileIndex)
+begin
+    assert TileOperandsLegal_ExecuteTileUnary(operation, destination, source);
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    _Tiles[[destination]] = ExecuteTileUnaryToValue(
+        operation, target, source);
 end;

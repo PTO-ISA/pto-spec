@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-EXECUTION","surface":"block","classification":["model","dispatch","timg2col-execution"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-TIMG2COL-PARAMETERS","PTO-BLOCK-MODEL-MEMORY-TIMG2COL-GM"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-EXECUTION","surface":"block","classification":["model","dispatch","timg2col-execution"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-SCHEMA","PTO-BLOCK-MODEL-MEMORY-TIMG2COL-GM","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-VALIDATION","PTO-BLOCK-MODEL-OPERANDS-TIMG2COL-PARAMETERS"]}
 readonly func BundleTIMG2COLDataTypeSupported(data_type: TileDataType)
     => boolean
 begin

@@ -1,24 +1,5 @@
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","surface":"block","classification":["model","operands","local-generation-cube-writer-effects"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE","PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY"]}
 
-// A Local CUBE parent remains the architectural object throughout B.ASSEMBLE.
-// Existing tile handlers use a destination index, so this transient effect
-// record retains the complete parent while that index presents the exact
-// writer envelope. The successful handler result is then merged into only the
-// writer's allocated physical-CELL range.
-type BundleLocalGenerationCubeWriterEffectEntry of record {
-    active: boolean,
-    destination: TileIndex,
-    offset_cells: integer {0..2047},
-    parent: TileInfo,
-    writer: TileInfo
-};
-
-type BundleLocalGenerationCubeWriterEffects of record {
-    count: integer {0..PTO_BUNDLE_TILE_BINDING_COUNT},
-    entries: array [[PTO_BUNDLE_TILE_BINDING_COUNT]]
-        of BundleLocalGenerationCubeWriterEffectEntry
-};
-
 readonly func BundleLocalGenerationCubeWriterView(
     parent: TileInfo, writer_size: integer {1..12},
     offset_cells: integer {0..2047},
@@ -76,11 +57,10 @@ begin
     var empty_payload: TilePayload;
     writer.payload = empty_payload;
 
-    // Seed the transient view with the prior contents of this range. This
-    // preserves any read/modify/write semantics of a producer while leaving
-    // every CELL outside the allocated writer range in the saved parent.
+    // The value view includes the prior range contents so in-place producers
+    // retain read/modify/write behavior. The allocated parent remains intact.
     for row = 0 to writer_rows - 1 looplimit 32 do
-        for column = 0 to writer_columns - 1 looplimit 64 do
+        for column = 0 to writer_columns - 1 looplimit 65536 do
             let parent_element = TileLogicalLinearIndex(parent,
                 row as integer {0..65535},
                 (first_column + column) as integer {0..65535});
@@ -95,6 +75,58 @@ begin
     return (TRUE, writer);
 end;
 
+readonly func BundleLocalGenerationCubeWriterValueLegal(
+    parent: TileInfo, writer: TileInfo, writer_size: integer {1..12},
+    offset_cells: integer {0..2047}, writer_cells: integer {1..2048})
+    => boolean
+begin
+    let expected_rows = if parent.layout == TileLayout_CUBE_M16 then 16
+        else 32;
+    let writer_capacity = TileSizeCodeBytes(writer_size);
+    let expected_columns = TileCubePhysicalColumnsFromCapacity(
+        writer_capacity, parent.layout, parent.data_type);
+    let cells_per_group = TileCubePhysicalCellsPerLogicalGroup(
+        parent.layout, parent.data_type);
+    let cell_columns = TileCubeCellColumns(parent.layout, parent.data_type);
+    let first_column = if cells_per_group == 0 then 65536 else
+        ((offset_cells DIVRM cells_per_group) * cell_columns)
+            as integer {0..65536};
+    return parent.allocated && parent.storage_kind == TileStorage_Numeric &&
+           BundleLocalGenerationCubeLayout(parent.layout) &&
+           TileCubeDescriptorLegal(parent) &&
+           parent.rows == expected_rows &&
+           parent.columns == TileCubePhysicalColumnsFromCapacity(
+               parent.capacity_bytes, parent.layout, parent.data_type) &&
+           parent.capacity_bytes >= writer_capacity &&
+           writer.allocated && writer.storage_kind == parent.storage_kind &&
+           writer.layout == parent.layout &&
+           writer.data_type == parent.data_type &&
+           writer.predicate_basis_type == parent.predicate_basis_type &&
+           writer.capacity_bytes == writer_capacity &&
+           writer.rows == expected_rows &&
+           writer.columns == expected_columns &&
+           writer.valid_rows != 0 && writer.valid_rows <= writer.rows &&
+           writer.valid_columns != 0 &&
+           writer.valid_columns <= writer.columns &&
+           TileCubeDescriptorShapeAndPhysicalLegal(
+               writer_capacity, writer.rows, writer.columns,
+               writer.valid_rows, writer.valid_columns,
+               writer.data_type, writer.layout) &&
+           writer_cells == (writer_capacity DIVRM PTO_TILE_CELL_BYTES) &&
+           TileCubePhysicalCellCount(writer.layout, writer.rows,
+               writer.columns, writer.data_type) == writer_cells &&
+           TileCubePhysicalRequiredBytes(writer.layout, writer.rows,
+               writer.columns, writer.data_type) == writer_capacity &&
+           TileCubePhysicalCellRangeComplete(writer.layout,
+               writer.data_type, offset_cells, writer_cells) &&
+           offset_cells + writer_cells <=
+               (parent.capacity_bytes DIVRM PTO_TILE_CELL_BYTES) &&
+           first_column + writer.columns <= parent.columns;
+end;
+
+// A Local CUBE parent remains in architectural state throughout B.ASSEMBLE.
+// Producer results are carried in this local value and merged at the existing
+// effect completion point.
 func BeginBundleLocalGenerationCubeWriterEffects(
     valid_rows: integer {1..65535},
     valid_columns: integer {1..65535})
@@ -129,19 +161,97 @@ begin
                     UInt(assemble.offset) as integer {0..2047};
                 effects.entries[[effects.count]].parent = parent;
                 effects.entries[[effects.count]].writer = writer_view;
+                effects.entries[[effects.count]].size_code =
+                    assemble.size_code as integer {1..12};
+                effects.entries[[effects.count]].cell_count =
+                    (TileSizeCodeBytes(assemble.size_code as integer {1..12})
+                        DIVRM PTO_TILE_CELL_BYTES) as integer {1..2048};
+                effects.entries[[effects.count]].pe_mask =
+                    _BundleTileBindings[[binding]].pe_mask;
                 effects.count = (effects.count + 1) as integer {
                     0..PTO_BUNDLE_TILE_BINDING_COUNT};
             end;
         end;
     end;
+    return (TRUE, effects);
+end;
+
+func AddBundleLocalGenerationCubeWriterEffect(
+    effects: BundleLocalGenerationCubeWriterEffects,
+    binding: BundleTileBindingIndex,
+    valid_rows: integer {1..65535},
+    valid_columns: integer {1..65535})
+    => (boolean, BundleLocalGenerationCubeWriterEffects)
+begin
+    var updated = effects;
+    if !_BundleTileBindings[[binding]].valid ||
+       !_BundleTileBindings[[binding]].destination_valid ||
+       !_BundleTileBindings[[binding]].destination_assemble.valid then
+        return (TRUE, updated);
+    end;
+    let destination = _BundleTileBindings[[binding]].destination;
+    let parent = _Tiles[[destination]];
+    if !BundleLocalGenerationCubeLayout(parent.layout) then
+        return (TRUE, updated);
+    end;
+    let assemble = _BundleTileBindings[[binding]].destination_assemble;
+    let (view_legal, writer_view) = BundleLocalGenerationCubeWriterView(
+        parent, assemble.size_code as integer {1..12},
+        UInt(assemble.offset) as integer {0..2047},
+        valid_rows, valid_columns);
+    if !view_legal || updated.count >= PTO_BUNDLE_TILE_BINDING_COUNT then
+        return (FALSE, updated);
+    end;
+    let index = updated.count;
+    updated.entries[[index]].active = TRUE;
+    updated.entries[[index]].destination = destination;
+    updated.entries[[index]].offset_cells =
+        UInt(assemble.offset) as integer {0..2047};
+    updated.entries[[index]].cell_count =
+        (TileSizeCodeBytes(assemble.size_code as integer {1..12})
+            DIVRM PTO_TILE_CELL_BYTES) as integer {1..2048};
+    updated.entries[[index]].size_code =
+        assemble.size_code as integer {1..12};
+    updated.entries[[index]].pe_mask =
+        _BundleTileBindings[[binding]].pe_mask;
+    updated.entries[[index]].parent = parent;
+    updated.entries[[index]].writer = writer_view;
+    updated.count = (index + 1) as integer {
+        0..PTO_BUNDLE_TILE_BINDING_COUNT};
+    return (TRUE, updated);
+end;
+
+func BundleLocalGenerationCubeWriterEffectWithOutput(
+    effects: BundleLocalGenerationCubeWriterEffects,
+    destination: TileIndex, output: TileInfo)
+    => BundleLocalGenerationCubeWriterEffects
+begin
+    var updated = effects;
+    var found = FALSE;
+    for index = 0 to updated.count - 1 looplimit
+        PTO_BUNDLE_TILE_BINDING_COUNT do
+        if !found && updated.entries[[index]].active &&
+           updated.entries[[index]].destination == destination then
+            updated.entries[[index]].writer = output;
+            found = TRUE;
+        end;
+    end;
+    assert found;
+    return updated;
+end;
+
+readonly func BundleLocalGenerationCubeWriterValueForDestination(
+    effects: BundleLocalGenerationCubeWriterEffects,
+    destination: TileIndex, fallback: TileInfo) => (boolean, TileInfo)
+begin
     for index = 0 to effects.count - 1 looplimit
         PTO_BUNDLE_TILE_BINDING_COUNT do
         let effect = effects.entries[[index]];
-        if effect.active then
-            _Tiles[[effect.destination]] = effect.writer;
+        if effect.active && effect.destination == destination then
+            return (TRUE, effect.writer);
         end;
     end;
-    return (TRUE, effects);
+    return (FALSE, fallback);
 end;
 
 func FinishBundleLocalGenerationCubeWriterEffects(
@@ -151,7 +261,7 @@ begin
         PTO_BUNDLE_TILE_BINDING_COUNT do
         let effect = effects.entries[[index]];
         if effect.active then
-            let writer = _Tiles[[effect.destination]];
+            let writer = effect.writer;
             let cells_per_group = TileCubePhysicalCellsPerLogicalGroup(
                 writer.layout, writer.data_type);
             let first_column = ((effect.offset_cells DIVRM
@@ -160,7 +270,7 @@ begin
                     as integer {0..65535};
             var merged = effect.parent;
             for row = 0 to writer.rows - 1 looplimit 32 do
-                for column = 0 to writer.columns - 1 looplimit 64 do
+                for column = 0 to writer.columns - 1 looplimit 65536 do
                     let writer_element = TileLogicalLinearIndex(writer,
                         row as integer {0..65535},
                         column as integer {0..65535});

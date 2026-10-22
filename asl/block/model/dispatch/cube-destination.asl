@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION","surface":"block","classification":["model","dispatch","cube-destination"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-TILE-MODEL-LEGALITY-MATRIX-CUBE-PRIMARY"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION","surface":"block","classification":["model","dispatch","cube-destination"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-TILE-MODEL-LEGALITY-MATRIX-CUBE-PRIMARY"]}
 
 readonly func BundleTMATMULDestinationCapacityGroupFits(
     allocation_mask: bits(4)) => boolean
@@ -75,11 +75,29 @@ begin
                 binding as BundleTileBindingIndex);
             let reused =
                 _BundleTileBindings[[binding]].destination_reused_by_generation;
+            let local_generation_writer =
+                _BundleTileBindings[[binding]].destination_assemble.valid;
+            let output_columns = if destination_ordinal == 0 then n
+                else if _BundleFixedPointAttributes.row_max_en &&
+                        destination_ordinal == 1 then 1
+                else if _BundleFixedPointAttributes.group_max_en then
+                    BundleGroupMaxColumns(n)
+                else n;
+            let parent_rows = if primary_layout == TileLayout_CUBE_M16 then
+                16 else 32;
+            let parent_columns = TileCubePhysicalColumnsFromCapacity(
+                capacity_bytes, primary_layout, output_type);
+            let local_shape_legal = !local_generation_writer ||
+                (parent_columns != 0 &&
+                 TileCubeDescriptorShapeAndPhysicalLegal(
+                     capacity_bytes, parent_rows, parent_columns, m,
+                     output_columns, output_type, primary_layout));
             if destination_ordinal == 0 then
                 if !TileMatrixMLayoutLegal(primary_layout, m) ||
-                   !TileCubeDescriptorShapeLegal(
-                       capacity_bytes, m, n,
-                       output_type, primary_layout) then
+                   !(if local_generation_writer then local_shape_legal
+                     else TileCubeDescriptorShapeLegal(
+                         capacity_bytes, m, n,
+                         output_type, primary_layout)) then
                     if reused then SetFault(Fault_TileLegality, ReadTPC());
                     else SetFault(Fault_TileAllocation, ReadTPC()); end;
                     return FALSE;
@@ -89,13 +107,22 @@ begin
                         _Tiles[[_BundleTileBindings[[binding]].destination]];
                     if !TileCubeDescriptorLegal(destination) ||
                        destination.capacity_bytes != capacity_bytes ||
-                       destination.valid_rows != m ||
-                       destination.valid_columns != n ||
                        destination.data_type != output_type ||
                        destination.layout != primary_layout ||
                        (_TileAllocationMasks[[_BundleTileBindings[[binding]]
                             .destination]] AND allocation_mask) !=
                            allocation_mask then
+                        SetFault(Fault_TileLegality, ReadTPC());
+                        return FALSE;
+                    end;
+                    if local_generation_writer then
+                        if destination.rows != parent_rows ||
+                           destination.columns != parent_columns then
+                            SetFault(Fault_TileLegality, ReadTPC());
+                            return FALSE;
+                        end;
+                    elsif destination.valid_rows != m ||
+                          destination.valid_columns != n then
                         SetFault(Fault_TileLegality, ReadTPC());
                         return FALSE;
                     end;
@@ -114,9 +141,10 @@ begin
                     else if group_auxiliary then
                         BundleGroupMaxColumns(n)
                     else n;
-                if !TileCubeDescriptorShapeLegal(
-                       capacity_bytes, m, auxiliary_columns,
-                       output_type, primary_layout) then
+                if !(if local_generation_writer then local_shape_legal
+                     else TileCubeDescriptorShapeLegal(
+                         capacity_bytes, m, auxiliary_columns,
+                         output_type, primary_layout)) then
                     if reused then SetFault(Fault_TileLegality, ReadTPC());
                     else SetFault(Fault_TileAllocation, ReadTPC()); end;
                     return FALSE;
@@ -126,13 +154,22 @@ begin
                         _Tiles[[_BundleTileBindings[[binding]].destination]];
                     if !TileCubeDescriptorLegal(destination) ||
                        destination.capacity_bytes != capacity_bytes ||
-                       destination.valid_rows != m ||
-                       destination.valid_columns != auxiliary_columns ||
                        destination.data_type != output_type ||
                        destination.layout != primary_layout ||
                        (_TileAllocationMasks[[_BundleTileBindings[[binding]]
                             .destination]] AND allocation_mask) !=
                            allocation_mask then
+                        SetFault(Fault_TileLegality, ReadTPC());
+                        return FALSE;
+                    end;
+                    if local_generation_writer then
+                        if destination.rows != parent_rows ||
+                           destination.columns != parent_columns then
+                            SetFault(Fault_TileLegality, ReadTPC());
+                            return FALSE;
+                        end;
+                    elsif destination.valid_rows != m ||
+                          destination.valid_columns != auxiliary_columns then
                         SetFault(Fault_TileLegality, ReadTPC());
                         return FALSE;
                     end;
@@ -151,25 +188,30 @@ begin
                !_BundleTileBindings[[binding]].destination_reused_by_generation then
                 let capacity_bytes = BundleTileDestinationSizeBytes(
                     binding as BundleTileBindingIndex);
-                if destination_ordinal == 0 then
+                let local_generation_writer =
+                    _BundleTileBindings[[binding]].destination_assemble.valid;
+                let parent_rows = if primary_layout == TileLayout_CUBE_M16 then
+                    16 else 32;
+                let parent_columns = TileCubePhysicalColumnsFromCapacity(
+                    capacity_bytes, primary_layout, output_type);
+                let auxiliary_columns = if destination_ordinal == 0 then n
+                    else if _BundleFixedPointAttributes.row_max_en &&
+                            destination_ordinal == 1 then 1
+                    else if _BundleFixedPointAttributes.group_max_en then
+                        BundleGroupMaxColumns(n)
+                    else n;
+                if local_generation_writer then
+                    let configured = ConfigureCubeTileForMaskWithPhysical(
+                        resolved[[binding]], capacity_bytes, parent_rows,
+                        parent_columns, m, auxiliary_columns, output_type,
+                        primary_layout, allocation_mask);
+                    assert configured;
+                elsif destination_ordinal == 0 then
                     let configured = ConfigureCubeTileForMask(
                         resolved[[binding]], capacity_bytes, m, n,
                         output_type, primary_layout, allocation_mask);
                     assert configured;
                 else
-                    let row_auxiliary =
-                        _BundleFixedPointAttributes.row_max_en &&
-                        destination_ordinal == 1;
-                    let group_auxiliary =
-                        _BundleFixedPointAttributes.group_max_en &&
-                        ((!_BundleFixedPointAttributes.row_max_en &&
-                          destination_ordinal == 1) ||
-                         (_BundleFixedPointAttributes.row_max_en &&
-                          destination_ordinal == 2));
-                    let auxiliary_columns = if row_auxiliary then 1
-                        else if group_auxiliary then
-                            BundleGroupMaxColumns(n)
-                        else n;
                     let configured = ConfigureCubeTileForMask(
                         resolved[[binding]], capacity_bytes, m,
                         auxiliary_columns, output_type, primary_layout,
@@ -269,4 +311,46 @@ begin
     return ResolveBundleTMATMULDestination(
         m, n, accumulator_type, FALSE, TileLayout_RowMajor,
         allocation_mask);
+end;
+
+func ResolveBundleTMATMULDestinationWithWriterEffects(
+    m: integer {1..65535}, n: integer {1..65535},
+    accumulator_type: TileDataType, cube_primary: boolean,
+    primary_layout: TileLayout, allocation_mask: bits(4))
+    => (boolean, BundleLocalGenerationCubeWriterEffects)
+begin
+    var effects = EmptyBundleLocalGenerationCubeWriterEffects();
+    if !ResolveBundleTMATMULDestination(m, n, accumulator_type,
+           cube_primary, primary_layout, allocation_mask) then
+        return (FALSE, effects);
+    end;
+    let output_type = BundleFPATREffectiveDataType(
+        _BundleFixedPointAttributes.pre_quant_mode, accumulator_type);
+    var ordinal: integer {0..3} = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].destination_valid then
+            let row_auxiliary = _BundleFixedPointAttributes.row_max_en &&
+                ordinal == 1;
+            let group_auxiliary = _BundleFixedPointAttributes.group_max_en &&
+                ((!_BundleFixedPointAttributes.row_max_en && ordinal == 1) ||
+                 (_BundleFixedPointAttributes.row_max_en && ordinal == 2));
+            let valid_columns = if row_auxiliary then 1
+                else if group_auxiliary then BundleGroupMaxColumns(n)
+                else n;
+            let (writer_legal, updated_effects) =
+                AddBundleLocalGenerationCubeWriterEffect(
+                    effects, binding as BundleTileBindingIndex,
+                    m as integer {1..65535},
+                    valid_columns as integer {1..65535});
+            if !writer_legal then
+                SetFault(Fault_TileLegality, ReadTPC());
+                RollBackBundleTileDestinations();
+                return (FALSE, effects);
+            end;
+            effects = updated_effects;
+            ordinal = (ordinal + 1) as integer {0..3};
+        end;
+    end;
+    return (TRUE, effects);
 end;

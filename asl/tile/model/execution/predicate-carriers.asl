@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS","surface":"tile","classification":["model","execution","predicate-carriers"],"depends_on":["PTO-TILE-MODEL-EXECUTION-COMPARISON","PTO-TILE-MODEL-EXECUTION-MASK","PTO-TILE-MODEL-STATE-ALLOCATION","PTO-TILE-MODEL-SHAPE-CUBE-CELL"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS","surface":"tile","classification":["model","execution","predicate-carriers"],"depends_on":["PTO-TILE-MODEL-EXECUTION-COMPARISON","PTO-TILE-MODEL-EXECUTION-MASK","PTO-TILE-MODEL-STATE-ALLOCATION","PTO-TILE-MODEL-STATE-TYPES","PTO-TILE-MODEL-SHAPE-CUBE-CELL"]}
 // PTO-REQ-TEPL-PREDICATE-CARRIER-001: CUBE predicate carriers and explicit ExecutionMask.
 // Eligible Local CUBE_M16/CUBE_M32 TileOps use an explicit ExecutionMask
 // operand represented either by the existing one/two-word GPR mapping or by a

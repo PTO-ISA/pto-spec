@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-MIXED-GENERATION-007","source":"asl/block/model/dispatch/shared-tmov-cube-to-nd.asl","requirements":["PTO-ARCH-PE-EXECUTION-CONTEXT-001","PTO-B-ASSEMBLE-SHARED-GENERATION-001","PTO-BSTART-TMOV-SHARED-001","PTO-TMOV-CUBE-TO-SHARED-ND-001"],"kind":"execution","summary":"Actual PE Shared generations reject M16/M32 and converted/NORM mode mixing without losing accepted arrivals","pass_condition":"An actual PE cohort accepts two 2 KiB M162ND writers then rejects a 4 KiB M322ND writer in the 2+2+4 KiB mixed example, retaining the two accepted arrivals unpublished; a shape-compatible complete-parent ND NORM request is rejected after an M16-converted request while preserving the prior publication, and a separate NORM-mode generation accepts a matching ND request without conversion metadata","related_sources":["asl/block/model/operands/shared-generation-pe-requests.asl","asl/block/model/operands/shared-generation.asl","asl/block/model/dispatch/shared-tlsu.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-MIXED-GENERATION-007","source":"asl/block/model/dispatch/shared-tmov-cube-to-nd.asl","requirements":["PTO-ARCH-PE-EXECUTION-CONTEXT-001","PTO-B-ASSEMBLE-SHARED-GENERATION-001","PTO-BSTART-TMOV-SHARED-001","PTO-TMOV-CUBE-TO-SHARED-ND-001"],"kind":"execution","summary":"Actual PE Shared generations reject M16/M32 and converted/NORM mode mixing without losing accepted arrivals","pass_condition":"An actual PE cohort accepts two 2 KiB M162ND writers then rejects a disjoint 4 KiB M322ND writer in the 2+2+4 KiB mixed example; a shape-compatible disjoint ND NORM request is rejected after an M16-converted request while preserving the prior publication, and the same two disjoint ranges are accepted as a separate all-NORM generation without conversion metadata","related_sources":["asl/block/model/operands/shared-generation-pe-requests.asl","asl/block/model/operands/shared-generation.asl","asl/block/model/dispatch/shared-tlsu.asl"]}
 
 pure func SharedMixedTMOVStart() => bits(64)
 begin
@@ -192,7 +192,7 @@ begin
            _SharedGenerations[[generation_index]].specialized_metadata ==
                Zeros{PTO_XLEN} + 25 &&
            SharedTilePublished((Zeros{6} + 59) as SharedTileID);
-    SubmitSharedMixedTMOV(1, TileLayout_RowMajor, 0, 16384, 8, 8, 0,
+    SubmitSharedMixedTMOV(1, TileLayout_RowMajor, 0, 16384, 5, 8, 16,
         (Zeros{6} + 59) as SharedTileID, '111', TRUE);
     assert SharedTilePublished((Zeros{6} + 59) as SharedTileID) &&
            SharedTileRecord((Zeros{6} + 59) as SharedTileID).tile.data_type ==
@@ -212,7 +212,7 @@ begin
         Zeros{PTO_XLEN});
     assert launched == KernelLifecycle_Started;
     StartMemoryEventCapture(0);
-    SubmitSharedMixedTMOV(0, TileLayout_RowMajor, 0, 16384, 8, 8, 0,
+    SubmitSharedMixedTMOV(0, TileLayout_RowMajor, 0, 16384, 5, 8, 0,
         (Zeros{6} + 60) as SharedTileID, '111', FALSE);
     let generation_index = SharedTileArrayIndex(
         (Zeros{6} + 60) as SharedTileID);
@@ -227,6 +227,18 @@ begin
            SharedTilePublished((Zeros{6} + 60) as SharedTileID) &&
            SharedTileRecord((Zeros{6} + 60) as SharedTileID).tile.data_type ==
                TileDataType_U8 &&
+           TileReadLogicalElement(
+               SharedTileRecord((Zeros{6} + 60) as SharedTileID).tile, 0) ==
+               Zeros{PTO_XLEN} + 0x5a;
+    SubmitSharedMixedTMOV(1, TileLayout_RowMajor, 0, 16384, 5, 8, 16,
+        (Zeros{6} + 60) as SharedTileID, '111', FALSE);
+    assert BundleSharedGenerationOpen((Zeros{6} + 60) as SharedTileID) &&
+           _SharedGenerations[[generation_index]].working_initialized_mask ==
+               '1100' &&
+           _SharedGenerations[[generation_index]].arrived_participants ==
+               '1100' &&
+           !_SharedGenerations[[generation_index]].specialized_inputs_valid &&
+           SharedTilePublished((Zeros{6} + 60) as SharedTileID) &&
            TileReadLogicalElement(
                SharedTileRecord((Zeros{6} + 60) as SharedTileID).tile, 0) ==
                Zeros{PTO_XLEN} + 0x5a;

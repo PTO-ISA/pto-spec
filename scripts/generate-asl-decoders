@@ -122,6 +122,88 @@ TILE_LEGALITY_OWNS_SOURCE_DEFINEDNESS = {
     "TMATMUL_MX_BIAS",
     "TCVT",
 }
+TILE_DESTINATION_VALUE_HANDLERS = {
+    "ExecuteTileBinary": (
+        "TileOperandsLegal_ExecuteTileBinaryToValue",
+        "ExecuteTileBinaryToValue",
+    ),
+    "ExecuteTileReduction": (
+        "TileOperandsLegal_ExecuteTileReductionToValue",
+        "ExecuteTileReductionToValue",
+    ),
+    "ExecuteTileUnary": (
+        "TileOperandsLegal_ExecuteTileUnaryToValue",
+        "ExecuteTileUnaryToValue",
+    ),
+    "ExecuteTileScalar": (
+        "TileOperandsLegal_ExecuteTileScalarToValue",
+        "ExecuteTileScalarToValue",
+    ),
+    "ExecuteTileFillScalar": (
+        "TileOperandsLegal_ExecuteTileFillScalarToValue",
+        "ExecuteTileFillScalarToValue",
+    ),
+    "ExecuteTileExpand": (
+        "TileOperandsLegal_ExecuteTileExpandToValue",
+        "ExecuteTileExpandToValue",
+    ),
+    "ExecuteTileExpdif": (
+        "TileOperandsLegal_ExecuteTileExpdifToValue",
+        "ExecuteTileExpdifToValue",
+    ),
+    "TFMA": (
+        "TileOperandsLegal_TFMAToValue",
+        "TFMAWithDestinationValue",
+    ),
+    "TLEA": (
+        "TileOperandsLegal_TLEAToValue",
+        "TLEAToValue",
+    ),
+    "TCVT": (
+        "TileOperandsLegal_TCVTToValue",
+        "TCVTToValue",
+    ),
+    "ExecuteTileCompare": (
+        "TileOperandsLegal_ExecuteTileCompareToValue",
+        "ExecuteTileCompareToValue",
+    ),
+    "ExecuteTileCompareScalar": (
+        "TileOperandsLegal_ExecuteTileCompareScalarToValue",
+        "ExecuteTileCompareScalarToValue",
+    ),
+    "ExecuteTileSelect": (
+        "TileOperandsLegal_ExecuteTileSelectToValue",
+        "ExecuteTileSelectToValue",
+    ),
+    "ExecuteTileSelectScalar": (
+        "TileOperandsLegal_ExecuteTileSelectScalarToValue",
+        "ExecuteTileSelectScalarToValue",
+    ),
+    "TGATHER": (
+        "TileOperandsLegal_TGATHERToValue",
+        "TGATHERToValue",
+    ),
+    "TGPR2T": (
+        "TileOperandsLegal_TGPR2TToValue",
+        "TGPR2TToValue",
+    ),
+    "TPERMUTE": (
+        "TileOperandsLegal_TPERMUTEToValue",
+        "TPERMUTEToValue",
+    ),
+    "TSHUF": (
+        "TileOperandsLegal_TSHUFToValue",
+        "TSHUFToValue",
+    ),
+    "TPACK": (
+        "TileOperandsLegal_TPACKToValue",
+        "TPACKToValue",
+    ),
+    "TUNPACK": (
+        "TileOperandsLegal_TUNPACKToValue",
+        "TUNPACKToValue",
+    ),
+}
 SCALAR_BINARY_EFFECT_OPERATIONS = {
     "ADD": "ScalarBinary_ADD",
     "SUB": "ScalarBinary_SUB",
@@ -12771,6 +12853,73 @@ def _emit_monolithic() -> None:
             print("                return (TileExecution_Rejected, Zeros{PTO_XLEN});")
             print("            end;")
             print("            return (TileExecution_Executed, Zeros{PTO_XLEN});")
+    print("    end;")
+    print("end;")
+    print()
+    print("func ExecuteTileInstructionWithoutTimeWithDestinationValue(")
+    print("    rules: NumericApplicabilityRuleSet,")
+    print("    family: TileDecodeFamily,")
+    print("    code: bits(12),")
+    print("    operands: TileInstructionOperands,")
+    print("    destination_target: TileOutputValueTarget)")
+    print("    => (TileExecutionStatus, TileInfo)")
+    print("begin")
+    print("    let operation = DecodeTileOperation(family, code);")
+    print("    if operation == PTO_TILE_OPERATION_COUNT then")
+    print("        SetFault(Fault_IllegalInstruction, ReadPC());")
+    print("        return (TileExecution_Rejected, destination_target.value);")
+    print("    end;")
+    print("    let accepted_operation = operation as integer {0..PTO_TILE_OPERATION_COUNT-1};")
+    print("    if TileOperationRejectedByAcceptedApplicabilityRules(")
+    print("           rules, accepted_operation) then")
+    print("        SetFault(Fault_IllegalInstruction, ReadPC());")
+    print("        return (TileExecution_Rejected, destination_target.value);")
+    print("    end;")
+    print("    let numeric_control = ResolveTileNumericExecutionControl(")
+    print("        accepted_operation, operands);")
+    print("    case TileOperationOfIndex(accepted_operation) of")
+    for row, operation_name in zip(tile, tile_operations):
+        handlers = TILE_DESTINATION_VALUE_HANDLERS.get(
+            row["semantic_handler"]
+        )
+        if handlers is None:
+            continue
+        legality_handler, value_handler = handlers
+        arguments = ", ".join(
+            tile_argument_expression(argument).replace(
+                "operands.destination0", "destination_target"
+            )
+            for argument in row["arguments"]
+        )
+        print(f"        when {operation_name} =>")
+        if row["semantic_handler"] not in TILE_LEGALITY_OWNS_SOURCE_DEFINEDNESS:
+            source_fields = [
+                operand["field"]
+                for operand in row["operands"]
+                if operand["field"].startswith("source")
+                or operand["role"] == "bias"
+            ]
+            if source_fields:
+                undefined_sources = " || ".join(
+                    f"!TileSourceContentsDefined(operands.{field})"
+                    for field in source_fields
+                )
+                print(f"            if {undefined_sources} then")
+                print("                SetFault(Fault_TileLegality, ReadPC());")
+                print("                return (TileExecution_Rejected, destination_target.value);")
+                print("            end;")
+        print(f"            if !{legality_handler}({arguments}) then")
+        print("                SetFault(Fault_TileLegality, ReadPC());")
+        print("                return (TileExecution_Rejected, destination_target.value);")
+        print("            end;")
+        print(f"            let result = {value_handler}({arguments});")
+        print("            if _LastFault != Fault_None then")
+        print("                return (TileExecution_Rejected, result);")
+        print("            end;")
+        print("            return (TileExecution_Executed, result);")
+    print("        otherwise =>")
+    print("            SetFault(Fault_TileLegality, ReadPC());")
+    print("            return (TileExecution_Rejected, destination_target.value);")
     print("    end;")
     print("end;")
     print()

@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION","surface":"block","classification":["model","dispatch","tcvt-destination"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS","PTO-TILE-MODEL-STATE-ALLOCATION"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION","surface":"block","classification":["model","dispatch","tcvt-destination"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS","PTO-TILE-MODEL-STATE-ALLOCATION"]}
 readonly func BundleTCVTCubeDestinationCapacityGroupFits() => boolean
 begin
     let capacity_bytes = BundleLocalDestinationAllocationBytes(
@@ -92,4 +92,27 @@ begin
     _BundleTileBindings[[0]].destination = resolved;
     _BundleTileBindings[[0]].destination_allocated_by_bundle = TRUE;
     return TRUE;
+end;
+
+func ResolveBundleTCVTCubeDestinationWithWriterEffects()
+    => (boolean, BundleLocalGenerationCubeWriterEffects)
+begin
+    var effects = EmptyBundleLocalGenerationCubeWriterEffects();
+    if !ResolveBundleTCVTCubeDestination() then
+        return (FALSE, effects);
+    end;
+    let binding = 0 as BundleTileBindingIndex;
+    if _BundleTileBindings[[binding]].destination_assemble.valid then
+        let rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
+        let columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
+        let (effect_legal, updated) =
+            AddBundleLocalGenerationCubeWriterEffect(
+                effects, binding, rows, columns);
+        if !effect_legal then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return (FALSE, effects);
+        end;
+        effects = updated;
+    end;
+    return (TRUE, effects);
 end;

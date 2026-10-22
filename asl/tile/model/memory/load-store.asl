@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-LOAD-STORE","surface":"tile","classification":["model","memory","load-store"],"depends_on":["PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA","PTO-TILE-MODEL-MEMORY-STRIDE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-LOAD-STORE","surface":"tile","classification":["model","memory","load-store"],"depends_on":["PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA","PTO-TILE-MODEL-MEMORY-STRIDE"]}
 pure func DecodeTileMemoryElementRaw(raw: Word,
                                      data_type: TileDataType,
                                      high_nibble: boolean) => Word
@@ -56,10 +56,36 @@ begin
     return ProbeDataAccess(address, element_bytes, element_bytes, write);
 end;
 
-func TLOAD(destination: TileIndex, base_address: Word,
-           row_stride_bytes: Word)
+func TileWithPhysicalRegionDefined(tile: TileInfo) => TileInfo
 begin
-    let tile = _Tiles[[destination]];
+    var result = tile;
+    for row = 0 to tile.rows - 1 looplimit 65536 do
+        for column = 0 to tile.columns - 1 looplimit 65536 do
+            let element = TileLogicalLinearIndex(tile,
+                row as integer {0..65535},
+                column as integer {0..65535});
+            result = TileInfoWithLogicalElement(result, element,
+                TileReadLogicalElement(tile, element));
+        end;
+    end;
+    if TilePackedRowsHavePhysicalSlack(tile) then
+        for row = 0 to tile.rows - 1 looplimit 65536 do
+            result = TileInfoWithPackedRowSlack(result,
+                row as integer {0..65535},
+                TileReadLogicalElement(tile,
+                    TilePackedRowSlackIndex(tile,
+                        row as integer {0..65535})), TRUE);
+        end;
+    end;
+    result.defined_valid_elements =
+        (tile.valid_rows * tile.valid_columns) as integer {0..524288};
+    result.contents_defined = TRUE;
+    return result;
+end;
+
+func TLOADToValue(tile: TileInfo, base_address: Word,
+                  row_stride_bytes: Word) => TileInfo
+begin
     assert tile.allocated;
     if TileLayoutIsCube(tile.layout) then
         assert TileCubeDescriptorLegal(tile);
@@ -84,7 +110,7 @@ begin
                 0, column as integer {0..65535}, row_stride_bytes,
                 tile.data_type);
             let probe = ProbeTileMemoryAccess(address, tile.data_type, FALSE);
-            if RaiseDataAccessFault(probe, address) then return; end;
+            if RaiseDataAccessFault(probe, address) then return tile; end;
             if LoadTranslatedUnsigned(probe.translated_address,
                    TileMemoryElementBytes(tile.data_type)) !=
                    Zeros{PTO_XLEN} then
@@ -93,8 +119,7 @@ begin
         end;
     end;
     if packed_zero_fast then
-        _Tiles[[destination]] = TileWithPackedZeroValidRegionDefined(tile);
-        return;
+        return TileWithPackedZeroValidRegionDefined(tile);
     end;
     var result = tile;
     BeginMemoryReplay(ReadBPC());
@@ -118,9 +143,8 @@ begin
                 row_stride_bytes, tile.data_type);
             let probe = ProbeTileMemoryAccess(address, tile.data_type, FALSE);
             if RaiseDataAccessFault(probe, address) then
-                _Tiles[[destination]] = result;
                 FlushMemoryReplay();
-                return;
+                return result;
             end;
             let translated = probe.translated_address;
             let high_nibble = TileMemoryStridedByteHighNibble(
@@ -142,8 +166,15 @@ begin
     if TileLayoutIsCube(result.layout) then
         result = TileWithPadding(result, CurrentBundlePadValue());
     end;
-    _Tiles[[destination]] = result;
     CompleteMemoryReplay();
+    return result;
+end;
+
+func TLOAD(destination: TileIndex, base_address: Word,
+           row_stride_bytes: Word)
+begin
+    _Tiles[[destination]] = TLOADToValue(
+        _Tiles[[destination]], base_address, row_stride_bytes);
 end;
 
 readonly func TileStoreSourceGeneration(source: TileIndex) => Word

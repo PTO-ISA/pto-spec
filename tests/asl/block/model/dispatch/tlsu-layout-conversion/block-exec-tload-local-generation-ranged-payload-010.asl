@@ -155,7 +155,8 @@ begin
     assert ior == CommandExecution_Executed;
     assert assembled == CommandExecution_Executed;
     let completed = CompleteBundleAt(Zeros{PTO_XLEN} + producer_pc);
-    assert completed && _LastFault == Fault_None;
+    assert _LastFault == Fault_None;
+    assert completed;
     let slot = BundleLocalGenerationSlot(0, '1111');
     let writer = (_LocalGenerations[[slot]].writer_count - 1)
         as integer {0..15};

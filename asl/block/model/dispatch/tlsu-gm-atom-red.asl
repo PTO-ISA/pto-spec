@@ -1,4 +1,4 @@
-// PTO-UNIT: {"classification":["model","dispatch","tlsu-gm-atom-red"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","PTO-TILE-MODEL-MEMORY-GM-ATOM-RED-EXECUTION"],"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED","surface":"block"}
+// PTO-UNIT: {"classification":["model","dispatch","tlsu-gm-atom-red"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-VALIDATION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","PTO-TILE-MODEL-MEMORY-GM-ATOM-RED-EXECUTION","PTO-TILE-MODEL-MEMORY-GM-ATOM-RED-VALUES"],"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED","surface":"block"}
 
 readonly func BundleGMAtomRedSelected() => boolean
 begin
@@ -21,16 +21,17 @@ begin
         GMReductionOperationFromFunction(function), data_type);
 end;
 
-func ExecuteBundleGMAtomRedOperation() => boolean
+func ExecuteBundleGMAtomRedOperation() => (boolean, BundleLocalGenerationCubeWriterEffects)
 begin
+    var result_writer_effects = EmptyBundleLocalGenerationCubeWriterEffects();
     // PE_MASK=0000 exits before every schema, descriptor, type, or memory check.
-    if SelectedBundleTileMaskIsZero() then return TRUE; end;
+    if SelectedBundleTileMaskIsZero() then return (TRUE, result_writer_effects); end;
     let function = UInt(_BundleOperation.selector[4:0]) as integer {0..31};
     let decoded = DecodeTileOperation(TileDecode_TLSU,
         BundleOperationDecodeCode(_BundleOperation));
     if decoded == PTO_TILE_OPERATION_COUNT then
         SetFault(Fault_IllegalInstruction, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
     if BundleSharedBindingCount() != 0 ||
@@ -40,9 +41,9 @@ begin
        !SelectedBundleTileMasksLegal() ||
        !BundleMGATHERDimensionsLegal() then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
-    if !SelectedBundleTileDataAttributesLegal(operation) then return FALSE; end;
+    if !SelectedBundleTileDataAttributesLegal(operation) then return (FALSE, result_writer_effects); end;
     let binding = _BundleTileBindings[[0]];
     let execution_mask_tile = _BundleExecutionMask.valid &&
         _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
@@ -56,11 +57,11 @@ begin
     end;
     if atom && BundleTileBindingCount() != expected_binding_count then
         SetFault(Fault_BundleControl, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     if !atom && BundleTileBindingCount() != expected_binding_count then
         SetFault(Fault_BundleControl, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     // mgather.cas and the legacy MGATHER.CAS alias use the two-command schema:
     // the first B.IOT carries indices and expected values, while the second
@@ -78,7 +79,7 @@ begin
         binding.destination_valid) ||
        (!popc && !cas && !binding.source1_valid) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     if execution_mask_tile && !cas && !popc then
         let final_binding = _BundleTileBindings[[1]];
@@ -86,7 +87,7 @@ begin
            final_binding.source1_valid || !final_binding.last ||
            (final_binding.destination_valid != atom) then
             SetFault(Fault_TileLegality, ReadTPC());
-            return FALSE;
+            return (FALSE, result_writer_effects);
         end;
     end;
     let data_type = TileDataTypeFromEncoding(
@@ -96,7 +97,7 @@ begin
        (!popc && (!IndexedTLSUExecutionMaskContentsDefined(binding.source1) ||
            _Tiles[[binding.source1]].data_type != data_type)) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
     let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
@@ -107,13 +108,13 @@ begin
        !IndexedTLSUMemoryIndexDataTypeLegal(
            _Tiles[[binding.source0]].data_type) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     if !popc && (_Tiles[[binding.source1]].valid_rows != valid_rows ||
        _Tiles[[binding.source1]].valid_columns != valid_columns ||
        _Tiles[[binding.source1]].layout != CurrentBundleTileLayout()) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     let base_address = ReadPEAbsoluteGPROperand(_CurrentMemoryAgent,
         _BundleScalarBindings[[0]].source0);
@@ -128,37 +129,81 @@ begin
                _Tiles[[second.source0]].layout !=
                    CurrentBundleTileLayout() then
                 SetFault(Fault_TileLegality, ReadTPC());
-                return FALSE;
+                return (FALSE, result_writer_effects);
             end;
             destination = second.destination;
         end;
         if !IndexedTLSUPhysicalShapeLegal(CurrentBundleTileLayout(), data_type,
-               valid_rows, valid_columns, columns) ||
-           !ResolveBundleTileDestinationsWithShapeAndType(TRUE, valid_rows,
-               valid_columns, columns, TRUE, data_type) then return FALSE; end;
-        if !ValidateBundleLocalGenerationWriters() then
-            RollBackBundleTileDestinations(); return FALSE;
+               valid_rows, valid_columns, columns) then return (FALSE, result_writer_effects); end;
+        let (destinations_resolved, resolved_writer_effects) =
+            ResolveBundleTileDestinationsWithShapeAndTypeAndWriterEffects(
+                TRUE, valid_rows, valid_columns, columns, TRUE, data_type);
+        if !destinations_resolved then return (FALSE, result_writer_effects); end;
+        var writer_effects = resolved_writer_effects;
+        if !ValidateBundleLocalGenerationWritersWithWriterEffects(
+               writer_effects) then
+            RollBackBundleTileDestinations(); return (FALSE, result_writer_effects);
         end;
         destination = if cas || execution_mask_tile then
             _BundleTileBindings[[1]].destination
             else _BundleTileBindings[[0]].destination;
-        let (writer_effects_legal, writer_effects) =
-            BeginBundleLocalGenerationCubeWriterEffects(
-                valid_rows, valid_columns);
-        if !writer_effects_legal then
-            RollBackBundleTileDestinations();
-            SetFault(Fault_TileLegality, ReadTPC());
-            return FALSE;
-        end;
-        if cas then
+        let (writer_found, writer_value) =
+            BundleLocalGenerationCubeWriterValueForDestination(
+                writer_effects, destination, _Tiles[[destination]]);
+        if writer_found then
+            let target = TileOutputValueTarget {
+                destination = destination,
+                value = writer_value
+            };
+            if cas then
+                let second = _BundleTileBindings[[1]];
+                if !TileOperandsLegal_GM_ATOM_CASToValue(
+                       GMAtomic_CAS, target, base_address,
+                       binding.source0, binding.source1, second.source0,
+                       CurrentBundlePadValue()) then
+                    FinishBundleLocalGenerationCubeWriterEffects(
+                        writer_effects);
+                    RollBackBundleTileDestinations();
+                    SetFault(Fault_TileLegality, ReadTPC());
+                    return (FALSE, result_writer_effects);
+                end;
+                let result = GM_ATOM_CASToValue(GMAtomic_CAS, target,
+                    base_address, binding.source0, binding.source1,
+                    second.source0,
+                    CurrentBundlePadValue());
+                writer_effects =
+                    BundleLocalGenerationCubeWriterEffectWithOutput(
+                        writer_effects, destination, result);
+            else
+                if !TileOperandsLegal_GM_ATOM_VALUEToValue(
+                       GMAtomicOperationFromFunction(function), target,
+                       base_address, binding.source0, binding.source1,
+                       CurrentBundlePadValue()) then
+                    FinishBundleLocalGenerationCubeWriterEffects(
+                        writer_effects);
+                    RollBackBundleTileDestinations();
+                    SetFault(Fault_TileLegality, ReadTPC());
+                    return (FALSE, result_writer_effects);
+                end;
+                let result = GM_ATOM_VALUEToValue(
+                    GMAtomicOperationFromFunction(function), target,
+                    base_address, binding.source0, binding.source1,
+                    CurrentBundlePadValue());
+                writer_effects =
+                    BundleLocalGenerationCubeWriterEffectWithOutput(
+                        writer_effects, destination, result);
+            end;
+        else
+            if cas then
             let second = _BundleTileBindings[[1]];
             if !TileOperandsLegal_GM_ATOM_CAS(GMAtomic_CAS, destination, base_address,
                    binding.source0, binding.source1, second.source0,
                    CurrentBundlePadValue()) then
-                FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
+                result_writer_effects = writer_effects;
+        FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
                 RollBackBundleTileDestinations();
                 SetFault(Fault_TileLegality, ReadTPC());
-                return FALSE;
+                return (FALSE, result_writer_effects);
             end;
             GM_ATOM_CAS(GMAtomic_CAS, destination, base_address,
                 binding.source0, binding.source1, second.source0,
@@ -168,21 +213,24 @@ begin
                    GMAtomicOperationFromFunction(function), destination,
                    base_address, binding.source0, binding.source1,
                    CurrentBundlePadValue()) then
-                FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
+                result_writer_effects = writer_effects;
+        FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
                 RollBackBundleTileDestinations();
                 SetFault(Fault_TileLegality, ReadTPC());
-                return FALSE;
+                return (FALSE, result_writer_effects);
             end;
             GM_ATOM_VALUE(GMAtomicOperationFromFunction(function), destination,
                 base_address, binding.source0, binding.source1,
                 CurrentBundlePadValue());
+            end;
         end;
+        result_writer_effects = writer_effects;
         FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
     elsif popc then
         if !TileOperandsLegal_GM_RED_POPC(GMReduction_POPC, base_address,
                binding.source0) then
             SetFault(Fault_TileLegality, ReadTPC());
-            return FALSE;
+            return (FALSE, result_writer_effects);
         end;
         GM_RED_POPC(GMReduction_POPC, base_address, binding.source0);
     else
@@ -190,15 +238,15 @@ begin
                GMReductionOperationFromFunction(function), base_address,
                binding.source0, binding.source1, CurrentBundlePadValue()) then
             SetFault(Fault_TileLegality, ReadTPC());
-            return FALSE;
+            return (FALSE, result_writer_effects);
         end;
         GM_RED_VALUE(GMReductionOperationFromFunction(function), base_address,
             binding.source0, binding.source1, CurrentBundlePadValue());
     end;
     if _LastFault != Fault_None then
         if atom then RollBackBundleTileDestinations(); end;
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     FinalizeBundleTileAttempt(TileExecution_Executed);
-    return TRUE;
+    return (TRUE, result_writer_effects);
 end;

@@ -1,15 +1,14 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-INDEXED-REARRANGEMENT","surface":"tile","classification":["model","execution","indexed-rearrangement"],"depends_on":["PTO-TILE-MODEL-LEGALITY-INDEXED-REARRANGEMENT","PTO-TILE-MODEL-EXECUTION-MASK-STATE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-INDEXED-REARRANGEMENT","surface":"tile","classification":["model","execution","indexed-rearrangement"],"depends_on":["PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE","PTO-TILE-MODEL-LEGALITY-INDEXED-REARRANGEMENT","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-STATE-TYPES"]}
 
-func TGATHER(
-    destination: TileIndex,
+func TGATHERToValue(
+    destination: TileOutputValueTarget,
     source: TileIndex,
-    indices: TileIndex)
+    indices: TileIndex) => TileInfo
 begin
     let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
-    assert TileOperandsLegal_TGATHER(destination, source, indices);
     let source_tile = _Tiles[[source]];
     let index_tile = _Tiles[[indices]];
-    var result = _Tiles[[destination]];
+    var result = destination.value;
     result.contents_defined = FALSE;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
@@ -49,7 +48,17 @@ begin
             as integer {0..524288};
     result.contents_defined = TRUE;
     result = TileWithPadding(result, TilePad_Null);
-    _Tiles[[destination]] = result;
+    return result;
+end;
+
+func TGATHER(destination: TileIndex, source: TileIndex, indices: TileIndex)
+begin
+    assert TileOperandsLegal_TGATHER(destination, source, indices);
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    _Tiles[[destination]] = TGATHERToValue(target, source, indices);
 end;
 
 func TSCATTER(
