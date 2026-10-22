@@ -96,7 +96,7 @@ R4_NEW_HELPERS = {
         "layouts": set(),
         "decision": "pack_unpack",
         "callers": {
-            ("ResolveBundleCellRearrangementDestination", "asl/block/model/dispatch/cell-rearrangement-schema.asl"),
+            ("ResolveBundleCellRearrangementDestinationWithWriterEffects", "asl/block/model/dispatch/cell-rearrangement-schema.asl"),
             ("TileOperandsLegal_TPACK", "asl/tile/model/legality/layout-rearrangement.asl"),
             ("TileOperandsLegal_TUNPACK", "asl/tile/model/legality/layout-rearrangement.asl"),
         },
@@ -263,6 +263,7 @@ ISSUE395_WRITER_EFFECT_HELPER_DEFINITION_DELTAS = {
         "asl/block/model/operands/local-generation-cube-writer-effects.asl",
         {
             ("ExecuteBundleCubeTransportOperation", "asl/block/model/dispatch/tlsu-layout-conversion.asl"),
+            ("ExecuteBundleComparisonGPRCarrierWithWriterEffects", "asl/block/model/dispatch/tile-execution.asl"),
             ("ExecuteBundleGMAtomRedOperation", "asl/block/model/dispatch/tlsu-gm-atom-red.asl"),
             ("ExecuteBundleGMOVOperation", "asl/block/model/dispatch/tlsu-gmov.asl"),
             ("ExecuteBundleMGATHERCASOperation", "asl/block/model/dispatch/tlsu-mgather-cas.asl"),
@@ -277,6 +278,7 @@ ISSUE395_WRITER_EFFECT_HELPER_DEFINITION_DELTAS = {
         "asl/block/model/operands/local-generation-cube-writer-effects.asl",
         {
             ("CommitBundleLocalGenerationWithWriterEffects", "asl/block/model/operands/local-generation.asl"),
+            ("ExecuteBundleComparisonGPRCarrierWithWriterEffects", "asl/block/model/dispatch/tile-execution.asl"),
             ("ExecuteBundleGMAtomRedOperation", "asl/block/model/dispatch/tlsu-gm-atom-red.asl"),
             ("ExecuteBundleGMOVOperation", "asl/block/model/dispatch/tlsu-gmov.asl"),
             ("ExecuteBundleMGATHERCASOperation", "asl/block/model/dispatch/tlsu-mgather-cas.asl"),
@@ -550,6 +552,124 @@ ISSUE395_WRITER_EFFECT_HELPER_DEFINITION_DELTAS = {
             ("TileOperandsLegal_ExecuteTileCompareToValue", "asl/tile/model/legality/destination-value-operations.asl"),
         },
     ),
+    "ExecuteBundleComparisonGPRCarrier": {
+        "before": [("asl/block/model/dispatch/tile-execution.asl", set())],
+        "after": [("asl/block/model/dispatch/predicate-destination.asl", set())],
+        "before_callers": {
+            ("ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/tile-execution.asl"),
+        },
+        "after_callers": {
+            ("ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/tile-execution.asl"),
+        },
+    },
+    "ExecuteBundleComparisonGPRCarrierWithWriterEffects": _issue395_writer_effect_helper(
+        "asl/block/model/dispatch/tile-execution.asl",
+        {("ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
+          "asl/block/model/dispatch/tile-execution.asl")},
+    ),
+    "ExecuteTileSelectCUBEGPRAs": {
+        "before": [("asl/tile/model/execution/predicate-carriers.asl", set())],
+        "after": [],
+        "before_callers": {
+            ("ExecuteBundleComparisonGPRCarrier", "asl/block/model/dispatch/tile-execution.asl"),
+            ("ExecuteTileSelectCUBEGPR", "asl/tile/model/execution/predicate-carriers.asl"),
+        },
+        "after_callers": {
+            ("ExecuteTileSelectCUBEGPR", "asl/tile/model/execution/predicate-carriers.asl"),
+        },
+    },
+    "ExecuteTileSelectCUBEGPRAsToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/predicate-carriers-value.asl",
+        {("ExecuteBundleComparisonGPRCarrierWithWriterEffects",
+          "asl/block/model/dispatch/tile-execution.asl")},
+    ),
+    "ExecuteTileSelectScalarCUBEGPRAs": {
+        "before": [("asl/tile/model/execution/predicate-carriers.asl", set())],
+        "after": [],
+        "before_callers": {
+            ("ExecuteBundleComparisonGPRCarrier", "asl/block/model/dispatch/tile-execution.asl"),
+            ("ExecuteTileSelectScalarCUBEGPR", "asl/tile/model/execution/predicate-carriers.asl"),
+        },
+        "after_callers": {
+            ("ExecuteTileSelectScalarCUBEGPR", "asl/tile/model/execution/predicate-carriers.asl"),
+        },
+    },
+    "ExecuteTileSelectScalarCUBEGPRAsToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/predicate-carriers-value.asl",
+        {("ExecuteBundleComparisonGPRCarrierWithWriterEffects",
+          "asl/block/model/dispatch/tile-execution.asl")},
+    ),
+    "ResolveBundleCUBESelectDestination": {
+        "before": [("asl/block/model/dispatch/predicate-destination.asl", set())],
+        "after": [],
+        "before_callers": {
+            ("ResolveBundleTileDestinationsForOperation",
+             "asl/block/model/dispatch/destination-shape.asl"),
+        },
+        "after_callers": set(),
+    },
+    "ResolveBundleCUBESelectDestinationWithWriterEffects": _issue395_writer_effect_helper(
+        "asl/block/model/dispatch/predicate-destination.asl",
+        {
+            ("ResolveBundleCUBESelectDestination", "asl/block/model/dispatch/predicate-destination.asl"),
+            ("ResolveBundleTileDestinationsForOperationAndWriterEffects",
+             "asl/block/model/dispatch/destination-operation.asl"),
+        },
+        {"CUBE_M16"},
+    ),
+    "ResolveBundleCellRearrangementDestination": {
+        "before": [("asl/block/model/dispatch/cell-rearrangement-schema.asl", set())],
+        "after": [],
+        "before_callers": {
+            ("ResolveBundleTileDestinationsForOperation",
+             "asl/block/model/dispatch/destination-shape.asl"),
+        },
+        "after_callers": set(),
+    },
+    "ResolveBundleCellRearrangementDestinationWithWriterEffects": _issue395_writer_effect_helper(
+        "asl/block/model/dispatch/cell-rearrangement-schema.asl",
+        {
+            ("ResolveBundleCellRearrangementDestination",
+             "asl/block/model/dispatch/cell-rearrangement-schema.asl"),
+            ("ResolveBundleTileDestinationsForOperationAndWriterEffects",
+             "asl/block/model/dispatch/destination-operation.asl"),
+        },
+        {"CUBE_M16", "CUBE_M32"},
+    ),
+    "ResolveBundlePredicateDestinationWithWriterEffects": _issue395_writer_effect_helper(
+        "asl/block/model/dispatch/predicate-destination.asl",
+        {("ResolveBundleTileDestinationsForOperationAndWriterEffects",
+          "asl/block/model/dispatch/destination-operation.asl")},
+    ),
+    "ResolveBundleTileDestinations": {
+        "before": [("asl/block/model/dispatch/destination-shape.asl", set())],
+        "after": [],
+        "before_callers": {
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+            ("ResolveBundleTileDestinationsForOperation",
+             "asl/block/model/dispatch/destination-shape.asl"),
+        },
+        "after_callers": set(),
+    },
+    "TileSelectCUBEGPRAsValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/predicate-carriers.asl",
+        {
+            ("ExecuteTileSelectCUBEGPRAs", "asl/tile/model/execution/predicate-carriers.asl"),
+            ("ExecuteTileSelectCUBEGPRAsToValue",
+             "asl/tile/model/execution/predicate-carriers-value.asl"),
+        },
+    ),
+    "TileSelectScalarCUBEGPRAsValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/predicate-carriers.asl",
+        {
+            ("ExecuteTileSelectScalarCUBEGPRAs",
+             "asl/tile/model/execution/predicate-carriers.asl"),
+            ("ExecuteTileSelectScalarCUBEGPRAsToValue",
+             "asl/tile/model/execution/predicate-carriers-value.asl"),
+        },
+    ),
     "TileCommitConversionResult": {
         "before": [("asl/tile/model/numeric/formats.asl", set())],
         "after": [],
@@ -634,9 +754,9 @@ ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS = {
             ("ConfigureCubeTileForMask", "asl/tile/model/state/allocation.asl"),
             ("FinalizeBundleLocalGenerationCube",
              "asl/block/model/operands/local-generation-cube-writer-effects.asl"),
-            ("ResolveBundleCUBESelectDestination",
+            ("ResolveBundleCUBESelectDestinationWithWriterEffects",
              "asl/block/model/dispatch/predicate-destination.asl"),
-            ("ResolveBundleCellRearrangementDestination",
+            ("ResolveBundleCellRearrangementDestinationWithWriterEffects",
              "asl/block/model/dispatch/cell-rearrangement-schema.asl"),
             ("ResolveBundleCubeTransportDestination",
              "asl/block/model/dispatch/tlsu-layout-conversion.asl"),
