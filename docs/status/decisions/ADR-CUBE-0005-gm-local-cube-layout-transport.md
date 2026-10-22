@@ -168,11 +168,8 @@
 | 26 | `N82ND` | `TSTORE` | Local `CUBE_N8` to GM ordinary |
 
 Codes 21 through 23 are illegal for TSTORE. Codes 24 through 26 are illegal
-for TLOAD. Shared TLOAD and TSTORE remain outside these Local-CUBE conversion
-forms. Function-2 TMOV may use codes 24 and 25 to normalize a Local CUBE_M32 or
-CUBE_M16 source into RowMajor ND Shared storage; code 26 has no Shared form.
-Function-1 TSTORE with codes 24 and 25 retains its GM behavior. A recognized
-but direction-incompatible conversion raises Tile legality before allocation,
+for TLOAD. All six are illegal for a Shared Tile binding. A recognized but
+direction-incompatible conversion raises Tile legality before allocation,
 source consumption, or memory effects.
 
 ## Raw representation
@@ -327,9 +324,9 @@ Accepted on 2026-10-20 by ISA owner `ckwllawliet`, through explicit answers
 in the contract-freeze review, against baseline `b0165320a4b575b18d2f4d93faf40178f661ab49`.
 Linked requirement: [issue #395](https://github.com/PTO-ISA/pto-spec/issues/395).
 
-**English — rationale and scope.** The owner accepted canonical Function-2 TMOV with assigned M322ND/M162ND selectors. BSTART selects the carrier-compatible operation type; explicit DATR DataType is DTYPE_NONE. Source backing dtype and raw bits are retained. Implicit GM-load destination geometry adopts the exact-capacity owner, while existing GM transfer effects and stricter GM type preflight remain distinct. The behavior is owned by `PTO-TMOV-CONTRACT-001` and `PTO-BSTART-TMOV-SHARED-001`; APPLY implements normalized Shared fragments through the existing generation publisher.
+**English — rationale and scope.** This amendment adds a narrow exception to the preceding Shared-selector ban for canonical Function-2 TMOV only; Shared TLOAD and TSTORE remain outside these conversion forms. The owner accepted TMOV with assigned M322ND/M162ND selectors to normalize a Local CUBE_M32 or CUBE_M16 source into RowMajor ND Shared storage; code 26 has no Shared form. Function-1 TSTORE with codes 24 and 25 retains its GM behavior. BSTART selects the carrier-compatible operation type; explicit DATR DataType is DTYPE_NONE. Source backing dtype and raw bits are retained. Implicit GM-load destination geometry adopts the exact-capacity owner, while existing GM transfer effects and stricter GM type preflight remain distinct. The behavior is owned by `PTO-TMOV-CONTRACT-001` and `PTO-BSTART-TMOV-SHARED-001`; APPLY implements normalized Shared fragments through the existing generation publisher.
 
-**中文 — 原因与范围。** Owner 已确认 canonical Function-2 TMOV 使用既有 M322ND/M162ND selector。操作类型由 BSTART 选择，显式 DATR DataType 为 DTYPE_NONE，允许既有 carrier-compatible backing/operation 类型差异并保留源 backing 与原始位。隐式 GM load 目的几何遵循精确容量 owner，GM 搬运效果及其严格类型预检仍独立保留。该行为由 `PTO-TMOV-CONTRACT-001` 与 `PTO-BSTART-TMOV-SHARED-001` 约束；APPLY 通过既有 generation publisher 发布已归一化的 Shared fragment。
+**中文 — 原因与范围。** 本 amendment 仅为 canonical Function-2 TMOV 增加前述 Shared selector 禁止规则的窄例外；Shared TLOAD 与 TSTORE 仍不支持这些转换形式。Owner 已确认 TMOV 使用既有 M322ND/M162ND selector，将 Local CUBE_M32 或 CUBE_M16 source 归一化为 RowMajor ND Shared storage；code 26 没有 Shared 形式。Function-1 TSTORE 使用 code 24 和 25 时仍保留 GM 行为。操作类型由 BSTART 选择，显式 DATR DataType 为 DTYPE_NONE，允许既有 carrier-compatible backing/operation 类型差异并保留源 backing 与原始位。隐式 GM load 目的几何遵循精确容量 owner，GM 搬运效果及其严格类型预检仍独立保留。该行为由 `PTO-TMOV-CONTRACT-001` 与 `PTO-BSTART-TMOV-SHARED-001` 约束；APPLY 通过既有 generation publisher 发布已归一化的 Shared fragment。
 
 This is an accepted design for implementation. Current executable meaning
 remains in the owning ASL/NDF until APPLY; this design record does not claim
