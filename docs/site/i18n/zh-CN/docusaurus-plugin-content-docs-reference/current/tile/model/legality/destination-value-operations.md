@@ -75,6 +75,18 @@ begin
            tile.cube_storage_bytes <= tile.capacity_bytes;
 end;
 
+readonly func TileCubeNumericOrPredicateCellDescriptorLegal(
+    tile: TileInfo) => boolean
+begin
+    if tile.storage_kind == TileStorage_Numeric then
+        return TileCubeDescriptorLegal(tile);
+    elsif tile.storage_kind == TileStorage_PredicateCell then
+        return TilePredicateCellValueDescriptorLegal(
+            tile, tile.predicate_basis_type);
+    end;
+    return FALSE;
+end;
+
 readonly func TileOperandsLegal_ExecuteTileCompareToValue(
     destination: TileOutputValueTarget, source_left: TileIndex,
     source_right: TileIndex, comparison: TileComparison) => boolean

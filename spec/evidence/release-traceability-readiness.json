@@ -972,6 +972,7 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-ASSEMBLE-ALIAS-CONSUMER-001",
+        "PTO-AVS-BLOCK-ASSEMBLE-CUBE-PREDICATECELL-WRITER-BOUNDARIES-001",
         "PTO-AVS-BLOCK-ASSEMBLE-LOCAL-FAULTS-001",
         "PTO-AVS-BLOCK-ASSEMBLE-LOCAL-LIFECYCLE-001",
         "PTO-AVS-BLOCK-ASSEMBLE-LOCAL-PER-PE-002",
@@ -982,6 +983,7 @@
         "PTO-AVS-BLOCK-ASSEMBLE-RESTART-001",
         "PTO-AVS-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-STATIC-001",
         "PTO-AVS-BLOCK-PREDICATE-DESTINATION-REUSE-002",
+        "PTO-AVS-BLOCK-TCMP-TCMPS-FRESH-PREDICATECELL-ASSEMBLED-001",
         "PTO-AVS-BLOCK-TLOAD-REUSED-DESTINATION-SHAPE-009",
         "PTO-AVS-BLOCK-TMATMUL-REUSED-DESTINATION-SHAPE-011"
       ]
@@ -1746,6 +1748,7 @@
         "PTO-AVS-BLOCK-MSCATTER-MASK-EXECUTION-MASK-BUNDLE-001",
         "PTO-AVS-BLOCK-SELECT-MIXED-CARRIERS-DECODED-002",
         "PTO-AVS-BLOCK-TCMP-FRESH-PREDICATECELL-DECODED-003",
+        "PTO-AVS-BLOCK-TCMP-TCMPS-FRESH-PREDICATECELL-ASSEMBLED-001",
         "PTO-AVS-BLOCK-TCVT-SOURCE-LAYOUT-MASK-DECODED-002",
         "PTO-AVS-BLOCK-TILE-SCALAR-INACTIVE-ZERO-DIVISOR-DECODED-002",
         "PTO-AVS-BLOCK-TLSU-GM-ATOM-RED-MASKED-DECODED-002",
@@ -4010,6 +4013,7 @@
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-M16-PARENT-GEOMETRY-001",
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-M32-U8-PREFIX-001",
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
+        "PTO-AVS-BLOCK-ASSEMBLE-CUBE-PREDICATECELL-WRITER-BOUNDARIES-001",
         "PTO-AVS-BLOCK-TLOAD-CUBE-M32-EXACT-CAPACITY-001",
         "PTO-AVS-TILE-CUBE-ALLOCATE-001",
         "PTO-AVS-TILE-CUBE-CELL-CAPACITY-005",
@@ -18704,12 +18708,14 @@
       ],
       "tests": [
         "PTO-AVS-ARCH-PREDICATE-NULL-GPR-PADDING-002",
+        "PTO-AVS-BLOCK-ASSEMBLE-CUBE-PREDICATECELL-WRITER-BOUNDARIES-001",
         "PTO-AVS-BLOCK-BSTART-TEPL-EXECUTION-MASK-GPR-OUTPUT-ALIAS-001",
         "PTO-AVS-BLOCK-EXEC-MASK-PARTIAL-DEFINED-CMP-DECODED-001",
         "PTO-AVS-BLOCK-EXEC-MASK-PREDICATECELL-ALIAS-DECODED-001",
         "PTO-AVS-BLOCK-EXECUTION-MASK-GPR-STREAM-001",
         "PTO-AVS-BLOCK-PREDICATE-DESTINATION-REUSE-002",
         "PTO-AVS-BLOCK-TCMP-FRESH-PREDICATECELL-DECODED-003",
+        "PTO-AVS-BLOCK-TCMP-TCMPS-FRESH-PREDICATECELL-ASSEMBLED-001",
         "PTO-AVS-TILE-GPR-MASK-EIGHT-BIT-001",
         "PTO-AVS-TILE-PREDICATE-CARRIERS-GPR-SHAPE-002",
         "PTO-AVS-TILE-TCMP-CAPACITY-001",
@@ -18749,6 +18755,7 @@
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TEPL-EXECUTION-MASK-GPR-OUTPUT-ALIAS-001",
         "PTO-AVS-BLOCK-EXEC-MASK-PARTIAL-DEFINED-CMP-DECODED-001",
+        "PTO-AVS-BLOCK-TCMP-TCMPS-FRESH-PREDICATECELL-ASSEMBLED-001",
         "PTO-AVS-TILE-TCMPS-CARRIER-FAULT-005",
         "PTO-AVS-TILE-TCMPS-CROSS-CARRIER-001",
         "PTO-AVS-TILE-TCMPS-CUBE-CELL-002",
@@ -19585,6 +19592,7 @@
         "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-MASK-001",
         "PTO-AVS-BLOCK-SELECT-MIXED-CARRIERS-DECODED-002",
         "PTO-AVS-BLOCK-TCMP-FRESH-PREDICATECELL-DECODED-003",
+        "PTO-AVS-BLOCK-TCMP-TCMPS-FRESH-PREDICATECELL-ASSEMBLED-001",
         "PTO-AVS-BLOCK-TCVT-SOURCE-LAYOUT-MASK-DECODED-002",
         "PTO-AVS-BLOCK-TFMA-GPR-EXECUTION-MASK-003",
         "PTO-AVS-BLOCK-TILE-SCALAR-INACTIVE-ZERO-DIVISOR-DECODED-002",
@@ -21484,8 +21492,8 @@
     "asl/block/model/memory/timg2col-gm.asl": "6fba4b3cba79ea3a34d4ed8703cfad74240485651dabc24b10601227eb46e2c8",
     "asl/block/model/memory/weight-to-shared-gm.asl": "72e752ec70c4fb78d325f7001d5414321aac1f8f1a557b819dabfd604fa4bb10",
     "asl/block/model/operands/local-generation-cube-validation.asl": "f298ecfdbff13ddfc5651b7110141590c362e0322e1f1e73a9ff9c680e390490",
-    "asl/block/model/operands/local-generation-cube-writer-effects.asl": "c83232f740f82b8b88541d5b4f65bb1610a1cc22c4a359d78c95efc41ee32cbe",
-    "asl/block/model/operands/local-generation-cube.asl": "d01632f4dae84b5068997f900e993dfae4002a2672bba76bcf1af5666244f4bc",
+    "asl/block/model/operands/local-generation-cube-writer-effects.asl": "8d23ba83b2be70af7d357bbe079f3b53f42abdda5f22200472d35115a5532ac5",
+    "asl/block/model/operands/local-generation-cube.asl": "c1838ed45f66b958185aac231c1d0a6245ee4f9f155263e3f58ecd93097c1165",
     "asl/block/model/operands/local-generation-squash.asl": "3e7324b6f04964ab2fe5044d854793625ccde5b0816e967dfd0f93ff5b855ab5",
     "asl/block/model/operands/local-generation.asl": "0e1842b5d0fe1ca14aeac8c791ea17f9960a6becb752d27c1604b19ebf717ae3",
     "asl/block/model/operands/portable-carriers.asl": "ba39773fa8ebe8527eba8a9da6abc8f27006274e041d421f4469bfd3eddb65e4",
@@ -22124,7 +22132,7 @@
     "asl/tile/model/execution/unary.asl": "db04cb7da998bda5726d68eb9afaae7b7972641523e800492ad999f72ed10a91",
     "asl/tile/model/legality/allocation-capacity.asl": "b01bdc39897aa3762682e9f9400b69a2d0a5b00f34dd011cc5236b194e43a8af",
     "asl/tile/model/legality/descriptor-shape.asl": "288fde5136d0ff68acd95541c7db222482d8d7a17d1b15e241acbff3c86f28b1",
-    "asl/tile/model/legality/destination-value-operations.asl": "a4183764d42574f0e10324fa86627f236b670aee6c394aa08eb1e7ec46fb094e",
+    "asl/tile/model/legality/destination-value-operations.asl": "1b23cf0f0ec27b8d5f2373222debfaac23dfb7592a4973dd92cd32984401e5ef",
     "asl/tile/model/legality/destination-value.asl": "11214fc0a3cd7c4f530b99d09d27e43a20609241cf06293a09bb0612eeffe07e",
     "asl/tile/model/legality/dtype-layout.asl": "199403c2db27d47050d150ece1bf39506d14c0dee7d01d1c2e8478545cdc6a0e",
     "asl/tile/model/legality/execution-mask-source-schema.asl": "ddd02bfb057a0289a55907708f5048d0e252c37975ecebc9d22d96fb60f03d8f",
@@ -22435,8 +22443,8 @@
     "docs/block/model/memory/timg2col-gm.md": "569cdece4d949659acdd37a8aba04a6311d78748633c0c4cac2b8de29ccb7c88",
     "docs/block/model/memory/weight-to-shared-gm.md": "9eec952da21d1fb7074d704935d5bcaf978a43b3b1d7006d9e9c0162bb7512d6",
     "docs/block/model/operands/local-generation-cube-validation.md": "7c31a513127ade961b7a4df794baf86d62a7009a7fb82bf733e0ef2187054cf1",
-    "docs/block/model/operands/local-generation-cube-writer-effects.md": "fa28cbeb88cd79de2b516b1a16b4c599d18b5071b4fb778e0e78588d1d4a5cc0",
-    "docs/block/model/operands/local-generation-cube.md": "c31087d15aaaceae6f5451822f9f07bc53de6eaf77246adb1e6a51403f97918f",
+    "docs/block/model/operands/local-generation-cube-writer-effects.md": "d282f912a9cea88929a78b75fa43e9febe9150ac7bb1bbe777db5452c62deab1",
+    "docs/block/model/operands/local-generation-cube.md": "76be64f6b7df9fb6be39aab8c0d8b19eac98b45242fc7d12a98f68dec8990438",
     "docs/block/model/operands/local-generation-squash.md": "12f448a3c298fff85add0deb2b427581306758e8ec7be7fccdfca1100821226a",
     "docs/block/model/operands/local-generation.md": "ec3e94deff43565e4e8e2c00691d44ef1be64f1ca0a552c44239a46c96ae48ae",
     "docs/block/model/operands/portable-carriers.md": "c7c1d8a897cf8a77b6380bf62a74d1d77371efc435ae5f3870fe12893d296e1b",
@@ -23075,7 +23083,7 @@
     "docs/tile/model/execution/unary.md": "3cedcff47db6fb1a2d00526b53ba740dc0d3278c5d4368e650f07728ea8fdb0d",
     "docs/tile/model/legality/allocation-capacity.md": "e1cbc2853b10a0527a910253d755797ede6530121e633bc93b45c52911c2a1f2",
     "docs/tile/model/legality/descriptor-shape.md": "47a25e65216e40ce80423e43776bb0772fd3c5039d3eb9f693be9aa7cf2966a5",
-    "docs/tile/model/legality/destination-value-operations.md": "a6307d63c0962420c4dc754be296a2e760c801b01ecc531ccdc527c570c67629",
+    "docs/tile/model/legality/destination-value-operations.md": "470a436fcc57410f0adeef540c31c8532d02c94f9f58aa2fa470ed44d9b0d838",
     "docs/tile/model/legality/destination-value.md": "48b2bbc07face653b94b0b30d5cf7057d80820afa6c205e11b5b5511189ffd9e",
     "docs/tile/model/legality/dtype-layout.md": "4727908ab3df467803502edf5ee46a90f68a69ac66fe6c2797b52baa03e4d2fe",
     "docs/tile/model/legality/execution-mask-source-schema.md": "10d7f53354c42b56678b9f2b17aa719367d649e873ba6d7c0d76681a40da265d",
@@ -23864,6 +23872,7 @@
     "tests/asl/block/model/dispatch/numeric-control/block-static-numeric-control-contract-001.asl": "5f017d6a1efbc475a7a3e96de780a5fde46df5f17913c27834fa16b9e2ff495c",
     "tests/asl/block/model/dispatch/predicate-destination/block-exec-predicate-destination-reuse-002.asl": "56c9df13d30ba6d4b344a4ff4088768a97595344c74e819782611eaf238b76f7",
     "tests/asl/block/model/dispatch/predicate-destination/block-exec-tcmp-fresh-predicatecell-decoded-003.asl": "f3569441c92b60c4708e9e6995a3864f6a0e0efb54e3c0d12587a597e0855040",
+    "tests/asl/block/model/dispatch/predicate-destination/block-exec-tcmp-tcmps-fresh-predicatecell-assembled-001.asl": "86e5e9a676c6f16ae06e82e382228bbf547bafd70e4c64cccc855f0858694503",
     "tests/asl/block/model/dispatch/predicate-destination/block-static-predicate-destination-contract-001.asl": "638633e177fa49bd8f4d0d7fcec0425f9d1d98e0e8dfed51d6baa5cdfd850740",
     "tests/asl/block/model/dispatch/reduction-schema/block-bound-trowsum-schema-001.asl": "f8c85afcfc0809d8c4a30e89e809000d51e3fe8cf1d8bfc1fe9991f2236e2cac",
     "tests/asl/block/model/dispatch/reduction-schema/block-exec-cube-reduction-bundle-002.asl": "85380486d23cc7669fa8c8178cbb1d5973836cc37126d91e2bb0494f2f1b571f",
@@ -24000,6 +24009,7 @@
     "tests/asl/block/model/memory/weight-to-shared-gm/block-exec-tload-weight-windows-001.asl": "6e792e56b64b514140811471d9d25cacdf920e7cc77f4c69901c4a8ff88ac959",
     "tests/asl/block/model/memory/weight-to-shared-gm/block-static-weight-to-shared-gm-contract-001.asl": "0c6b6e0cfc135c5c335e359e4e24519c05d41590c301eb03ecbb37a2f7972d7c",
     "tests/asl/block/model/operands/local-generation-cube-validation/block-static-local-generation-cube-validation-contract-001.asl": "a8138da77e3d05ff023534bb32793969ab12e1429116166dea9d897f691410e2",
+    "tests/asl/block/model/operands/local-generation-cube-writer-effects/block-bound-assemble-cube-predicatecell-writer-001.asl": "7775ce4815af1add2f2d90186fc9fd0664bd5fbc8c76f0a69b57272366b89a47",
     "tests/asl/block/model/operands/local-generation-cube-writer-effects/block-exec-assemble-cube-m16-source-free-parent-004.asl": "c5392283b9495f8f5c4f33833776d5675af97d29b4d7faaa7cb476429b918d38",
     "tests/asl/block/model/operands/local-generation-cube-writer-effects/block-static-local-generation-cube-writer-effects-contract-001.asl": "13ad3b0ac8369f9bfc4e64aa7196812bdbae447f4e10280f105606f7a07139be",
     "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-decoded-consumer-002.asl": "f06fc272d6f8681993c0b5e8d3145849091d7169aaf9ed1462410c7422596c77",
@@ -27568,7 +27578,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1131,
     "status": "closed",
-    "test_count": 4381,
+    "test_count": 4383,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -37214,6 +37224,18 @@
       "source": "asl/block/model/operands/local-generation-cube.asl"
     },
     {
+      "id": "PTO-AVS-BLOCK-ASSEMBLE-CUBE-PREDICATECELL-WRITER-BOUNDARIES-001",
+      "kind": "boundary",
+      "path": "tests/asl/block/model/operands/local-generation-cube-writer-effects/block-bound-assemble-cube-predicatecell-writer-001.asl",
+      "requirements": [
+        "PTO-B-ASSEMBLE-LOCAL-GENERATION-001",
+        "PTO-TCMP-CONTRACT-001",
+        "PTO-CUBE-CELL-STATE-001"
+      ],
+      "sha256": "7775ce4815af1add2f2d90186fc9fd0664bd5fbc8c76f0a69b57272366b89a47",
+      "source": "asl/block/model/operands/local-generation-cube-writer-effects.asl"
+    },
+    {
       "id": "PTO-AVS-BLOCK-ASSEMBLE-DYNAMIC-DOMAIN-002",
       "kind": "state-transition",
       "path": "tests/asl/block/model/operands/portable-carriers/block-state-assemble-dynamic-domain-002.asl",
@@ -46676,6 +46698,20 @@
         "PTO-B-IOT-STREAM-001"
       ],
       "sha256": "f3569441c92b60c4708e9e6995a3864f6a0e0efb54e3c0d12587a597e0855040",
+      "source": "asl/block/model/dispatch/predicate-destination.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-TCMP-TCMPS-FRESH-PREDICATECELL-ASSEMBLED-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/predicate-destination/block-exec-tcmp-tcmps-fresh-predicatecell-assembled-001.asl",
+      "requirements": [
+        "PTO-TCMP-CONTRACT-001",
+        "PTO-TCMPS-CONTRACT-001",
+        "PTO-B-ASSEMBLE-LOCAL-GENERATION-001",
+        "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001",
+        "PTO-B-IOT-STREAM-001"
+      ],
+      "sha256": "86e5e9a676c6f16ae06e82e382228bbf547bafd70e4c64cccc855f0858694503",
       "source": "asl/block/model/dispatch/predicate-destination.asl"
     },
     {
@@ -77620,14 +77656,16 @@
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-PREDICATE-DESTINATION-REUSE-002",
-        "PTO-AVS-BLOCK-TCMP-FRESH-PREDICATECELL-DECODED-003"
+        "PTO-AVS-BLOCK-TCMP-FRESH-PREDICATECELL-DECODED-003",
+        "PTO-AVS-BLOCK-TCMP-TCMPS-FRESH-PREDICATECELL-ASSEMBLED-001"
       ],
       "source": "asl/block/model/dispatch/predicate-destination.asl",
       "surface": "block",
       "tests": [
         "PTO-AVS-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION-STATIC-001",
         "PTO-AVS-BLOCK-PREDICATE-DESTINATION-REUSE-002",
-        "PTO-AVS-BLOCK-TCMP-FRESH-PREDICATECELL-DECODED-003"
+        "PTO-AVS-BLOCK-TCMP-FRESH-PREDICATECELL-DECODED-003",
+        "PTO-AVS-BLOCK-TCMP-TCMPS-FRESH-PREDICATECELL-ASSEMBLED-001"
       ]
     },
     {
@@ -78759,12 +78797,14 @@
       "mnemonic": null,
       "readiness_subjects": [],
       "semantic_tests": [
-        "PTO-AVS-BLOCK-ASSEMBLE-CUBE-M16-SOURCE-FREE-PARENT-004"
+        "PTO-AVS-BLOCK-ASSEMBLE-CUBE-M16-SOURCE-FREE-PARENT-004",
+        "PTO-AVS-BLOCK-ASSEMBLE-CUBE-PREDICATECELL-WRITER-BOUNDARIES-001"
       ],
       "source": "asl/block/model/operands/local-generation-cube-writer-effects.asl",
       "surface": "block",
       "tests": [
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-M16-SOURCE-FREE-PARENT-004",
+        "PTO-AVS-BLOCK-ASSEMBLE-CUBE-PREDICATECELL-WRITER-BOUNDARIES-001",
         "PTO-AVS-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS-STATIC-001"
       ]
     },

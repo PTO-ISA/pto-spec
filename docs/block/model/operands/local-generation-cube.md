@@ -74,7 +74,7 @@ An FP16 `CUBE_M16` parent is allocated with size code 6, which is 4096 bytes or 
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/operands/local-generation-cube.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE","surface":"block","classification":["model","operands","local-generation-cube"],"depends_on":["PTO-BLOCK-MODEL-STATE-TYPES","PTO-TILE-MODEL-SHAPE-CUBE-CELL","PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL","PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE","surface":"block","classification":["model","operands","local-generation-cube"],"depends_on":["PTO-BLOCK-MODEL-STATE-TYPES","PTO-TILE-MODEL-SHAPE-CUBE-CELL","PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL","PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE","PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE-OPERATIONS"]}
 // A resolved writer plan is an ordinary value passed along the current
 // instruction path. It keeps the allocated parent descriptor and the exact
 // operation-specific writer descriptor together without installing a view in
@@ -188,12 +188,12 @@ begin
     let writer_valid_rows = BundleLocalGenerationCubeCurrentValidRows();
     let writer_valid_columns =
         BundleLocalGenerationCubeCurrentValidColumns();
-    return tile.allocated && tile.storage_kind == TileStorage_Numeric &&
+    return tile.allocated &&
            BundleLocalGenerationCubeLayout(tile.layout) &&
            tile.rows == expected_rows && tile.valid_rows <= tile.rows &&
            tile.valid_rows != 0 && tile.valid_columns <= tile.columns &&
            tile.valid_columns != 0 &&
-           TileCubeDescriptorLegal(tile) &&
+           TileCubeNumericOrPredicateCellDescriptorLegal(tile) &&
            tile.capacity_bytes >= TileSizeCodeBytes(writer_size) &&
            writer_columns != 0 &&
            TileCubeDescriptorShapeAndPhysicalLegal(

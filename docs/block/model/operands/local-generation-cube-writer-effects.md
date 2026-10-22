@@ -19,7 +19,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/operands/local-generation-cube-writer-effects.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","surface":"block","classification":["model","operands","local-generation-cube-writer-effects"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE","PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","surface":"block","classification":["model","operands","local-generation-cube-writer-effects"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE","PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY","PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE-OPERATIONS"]}
 
 readonly func BundleLocalGenerationCubeWriterView(
     parent: TileInfo, writer_size: integer {1..12},
@@ -27,7 +27,7 @@ readonly func BundleLocalGenerationCubeWriterView(
     valid_rows: integer {1..65535},
     valid_columns: integer {1..65535}) => (boolean, TileInfo)
 begin
-    if !TileCubeDescriptorLegal(parent) ||
+    if !TileCubeNumericOrPredicateCellDescriptorLegal(parent) ||
        !BundleLocalGenerationCubeLayout(parent.layout) then
         return (FALSE, parent);
     end;
@@ -113,11 +113,8 @@ begin
         ((offset_cells DIVRM cells_per_group) * cell_columns)
             as integer {0..65536};
     return parent.allocated &&
-           (parent.storage_kind == TileStorage_Numeric ||
-            (parent.storage_kind == TileStorage_PredicateCell &&
-             parent.data_type == TileDataType_U8)) &&
            BundleLocalGenerationCubeLayout(parent.layout) &&
-           TileCubeDescriptorLegal(parent) &&
+           TileCubeNumericOrPredicateCellDescriptorLegal(parent) &&
            parent.rows == expected_rows &&
            parent.columns == TileCubePhysicalColumnsFromCapacity(
                parent.capacity_bytes, parent.layout, parent.data_type) &&
