@@ -2115,6 +2115,26 @@ def render_concept_avs(root: Path, unit: AslUnit) -> tuple[Path, str]:
             "BLOCK-SHARED-GENERATION-PE-REQUESTS",
         )
         identity = identity.replace(
+            "BLOCK-MODEL-DISPATCH-CUBE-TMATMUL-WRITER-VALUES",
+            "BLOCK-MODEL-DISPATCH-CUBE-TMATMUL-WRITER",
+        )
+        identity = identity.replace(
+            "BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-VALIDATION",
+            "BLOCK-LOCAL-GEN-CUBE-VALIDATION",
+        )
+        identity = identity.replace(
+            "BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS",
+            "BLOCK-LOCAL-GEN-CUBE-WRITER-EFFECTS",
+        )
+        identity = identity.replace(
+            "TILE-MODEL-LEGALITY-DESTINATION-VALUE-OPERATIONS",
+            "TILE-LEGALITY-DEST-VALUE-OPS",
+        )
+        identity = identity.replace(
+            "TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT-VALUES",
+            "TILE-LEGALITY-LAYOUT-REARR-VALUES",
+        )
+        identity = identity.replace(
             "BLOCK-MODEL-STATE-ATOMIC-TSTORE-SOURCE-LIFETIME",
             "BLOCK-MODEL-STATE-ATOMIC-TSTORE-LIFETIME",
         )
