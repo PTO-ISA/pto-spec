@@ -23750,7 +23750,7 @@
     "tests/asl/block/model/dispatch/cube-destination/block-exec-tmatmul-effective-d-m32-001.asl": "587b91d80cd25b018408967a3d5f4f0199ba406cbe31f062ac4218f339571d8d",
     "tests/asl/block/model/dispatch/cube-destination/block-fault-tmatmul-reused-destination-shape-011.asl": "21f7e3443ba7c408a90039452ec9f2b3d6defc1b9be56269d8681b3d17adab02",
     "tests/asl/block/model/dispatch/cube-destination/block-static-cube-destination-contract-001.asl": "22441e66fded03666f57d37aade6d83299d52d97269427606a36ebd28deffcce",
-    "tests/asl/block/model/dispatch/cube-tmatmul-writer-values/block-static-cube-tmatmul-writer-values-contract-001.asl": "1786c521934d4036aea083758e7d485b040a113f1d3f0dda8fdcfb5847959616",
+    "tests/asl/block/model/dispatch/cube-tmatmul-writer-values/block-static-cube-tmatmul-writer-values-contract-001.asl": "02605d120d17374d0d56146d2d40a12e22b30707d7b03caa2f621aca0b1199ce",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-atomic-tmatmul-shared-packed-subview-052.asl": "e6ff63fae4c086385a9ab83f3cf786e40833e75a1c763327d9d59abd7138affe",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-atomic-tmatmul-shared-subview-preflight-032.asl": "7bb7309664eaacbc07876d72ebdea42afa58df4920277bd3cea1b3701b086ea8",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-bound-tmatmul-cube-dimensions-003.asl": "9b5749c91987e40537fc46f118f0c964468f23e874568748d4c971f9b4d7ea7b",
@@ -24008,10 +24008,10 @@
     "tests/asl/block/model/memory/weight-to-shared-gm/block-exec-tload-weight-korder-padding-001.asl": "83e2b515bf8561800f05f77676a0fcce038bd9f2b1200bfee0fb6b3825f96a26",
     "tests/asl/block/model/memory/weight-to-shared-gm/block-exec-tload-weight-windows-001.asl": "6e792e56b64b514140811471d9d25cacdf920e7cc77f4c69901c4a8ff88ac959",
     "tests/asl/block/model/memory/weight-to-shared-gm/block-static-weight-to-shared-gm-contract-001.asl": "0c6b6e0cfc135c5c335e359e4e24519c05d41590c301eb03ecbb37a2f7972d7c",
-    "tests/asl/block/model/operands/local-generation-cube-validation/block-static-local-generation-cube-validation-contract-001.asl": "a8138da77e3d05ff023534bb32793969ab12e1429116166dea9d897f691410e2",
+    "tests/asl/block/model/operands/local-generation-cube-validation/block-static-local-generation-cube-validation-contract-001.asl": "2eee6e698327b1ec78a1c2fb39ccdb6f55fa933ada04bbfdfe29ddec8c6fa30a",
     "tests/asl/block/model/operands/local-generation-cube-writer-effects/block-bound-assemble-cube-predicatecell-writer-001.asl": "7775ce4815af1add2f2d90186fc9fd0664bd5fbc8c76f0a69b57272366b89a47",
     "tests/asl/block/model/operands/local-generation-cube-writer-effects/block-exec-assemble-cube-m16-source-free-parent-004.asl": "c5392283b9495f8f5c4f33833776d5675af97d29b4d7faaa7cb476429b918d38",
-    "tests/asl/block/model/operands/local-generation-cube-writer-effects/block-static-local-generation-cube-writer-effects-contract-001.asl": "13ad3b0ac8369f9bfc4e64aa7196812bdbae447f4e10280f105606f7a07139be",
+    "tests/asl/block/model/operands/local-generation-cube-writer-effects/block-static-local-generation-cube-writer-effects-contract-001.asl": "e1ab04c19deb82ebd0090b314cc314dc72732665b1aa3fd325b8ca691e8cffcd",
     "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-decoded-consumer-002.asl": "f06fc272d6f8681993c0b5e8d3145849091d7169aaf9ed1462410c7422596c77",
     "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-m16-parent-geometry-001.asl": "7e096ff016f33d67c6a375325e6c2028cadf046d4a59aa0b045b38d156406285",
     "tests/asl/block/model/operands/local-generation-cube/block-exec-assemble-cube-m32-b64-pairs-001.asl": "8966fd332fc28092d3af5ebd33538dcddd8815273125bd279b12b80e740e8405",
@@ -27245,7 +27245,7 @@
     "tests/asl/tile/model/legality/allocation-capacity/tile-static-allocation-capacity-contract-001.asl": "84cf72a19b36cc5b72ad2b8cc19a4320166c30200451ba2d2483c4f0f6705bce",
     "tests/asl/tile/model/legality/descriptor-shape/tile-fault-cube-generic-001.asl": "f84dbdb70602420334dc2bd7ff2992e19a827a79fcce0ab22336806ae2a29f2f",
     "tests/asl/tile/model/legality/descriptor-shape/tile-static-descriptor-shape-contract-001.asl": "4deaaa493ccc5c11488ad4f5c57a386b0f96f93285c9d0b33d1b2fedb71999db",
-    "tests/asl/tile/model/legality/destination-value-operations/tile-static-destination-value-operations-contract-001.asl": "c56af1fedd7398b712f13c73b7cea61e5849664342d7b6c0d82b627e11473356",
+    "tests/asl/tile/model/legality/destination-value-operations/tile-static-destination-value-operations-contract-001.asl": "fcae66a2078e84587730efc58909205666acbdad2ed58327dca512dc4d988e95",
     "tests/asl/tile/model/legality/destination-value/tile-static-destination-value-contract-001.asl": "fc46d9d9797e0fd4f002b48df144d754be59a163c963b96f051a5f693e86a477",
     "tests/asl/tile/model/legality/dtype-layout/tile-bound-carrier-reinterpret-002.asl": "57958acfe479dfa5a2672b010476b9fca5fdd8e4c2a8bb5dc3beec2c395313d1",
     "tests/asl/tile/model/legality/dtype-layout/tile-exec-local64-families-001.asl": "6014a9bbf9b3e98b12ecf40e69d6f8dfe94933947f0fc1f1a62f06d2cb3c2190",
@@ -27255,7 +27255,7 @@
     "tests/asl/tile/model/legality/indexed-layout/tile-static-indexed-layout-contract-001.asl": "3ac5c729e2c134db1f93ed087315a77c7212098a0a57be45e239d80703688934",
     "tests/asl/tile/model/legality/indexed-rearrangement/tile-bound-indexed-types-001.asl": "ae1f8d201af2cf5959a374143c4969a619d7ab0bfdd46e3e077c3d613eca78e6",
     "tests/asl/tile/model/legality/indexed-rearrangement/tile-static-indexed-rearrangement-contract-001.asl": "023e668e351fb591409624908378ac233eafd6d4311173f30bbf7197c0c47fb9",
-    "tests/asl/tile/model/legality/layout-rearrangement-values/tile-static-layout-rearrangement-values-contract-001.asl": "5f38075f35cf60a8f02072c0ae524376a6f65c5dd677178d61aa0ea26c01abf0",
+    "tests/asl/tile/model/legality/layout-rearrangement-values/tile-static-layout-rearrangement-values-contract-001.asl": "9f77169354c6fd22b839648f8f958fef2df675fa38f80d0e34a6efcef5e0fe3b",
     "tests/asl/tile/model/legality/layout-rearrangement/tile-static-layout-rearrangement-contract-001.asl": "6edd1f7d4d9c2f773adda7af3567c81a5f9cbf390c085a587b0382395d76681a",
     "tests/asl/tile/model/legality/lea-operands/tile-static-lea-operands-contract-001.asl": "b93b8d4296e538ca5858fe9bf1394d4f5fdae34d4fbb03591839281890221d39",
     "tests/asl/tile/model/legality/matrix-cube-primary/tile-static-matrix-cube-primary-contract-001.asl": "780e549b5d43c6e1cf10b9fb6dc56f4ca06abfdb2318234a7c20077d09997d1e",
@@ -40577,6 +40577,22 @@
       "source": "asl/block/model/dispatch/tlsu-layout-conversion.asl"
     },
     {
+      "id": "PTO-AVS-BLOCK-LOCAL-GEN-CUBE-VALIDATION-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/block/model/operands/local-generation-cube-validation/block-static-local-generation-cube-validation-contract-001.asl",
+      "requirements": [],
+      "sha256": "2eee6e698327b1ec78a1c2fb39ccdb6f55fa933ada04bbfdfe29ddec8c6fa30a",
+      "source": "asl/block/model/operands/local-generation-cube-validation.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-LOCAL-GEN-CUBE-WRITER-EFFECTS-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/block/model/operands/local-generation-cube-writer-effects/block-static-local-generation-cube-writer-effects-contract-001.asl",
+      "requirements": [],
+      "sha256": "e1ab04c19deb82ebd0090b314cc314dc72732665b1aa3fd325b8ca691e8cffcd",
+      "source": "asl/block/model/operands/local-generation-cube-writer-effects.asl"
+    },
+    {
       "id": "PTO-AVS-BLOCK-LOCAL-GENERATION-RECOVERY-ISOLATION-001",
       "kind": "state-transition",
       "path": "tests/asl/block/model/operands/local-generation-squash/block-state-local-generation-squash-recovery-isolation-001.asl",
@@ -41008,11 +41024,11 @@
       "source": "asl/block/model/dispatch/cube-tmatmul.asl"
     },
     {
-      "id": "PTO-AVS-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL-WRITER-VALUES-STATIC-001",
+      "id": "PTO-AVS-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL-WRITER-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/block/model/dispatch/cube-tmatmul-writer-values/block-static-cube-tmatmul-writer-values-contract-001.asl",
       "requirements": [],
-      "sha256": "1786c521934d4036aea083758e7d485b040a113f1d3f0dda8fdcfb5847959616",
+      "sha256": "02605d120d17374d0d56146d2d40a12e22b30707d7b03caa2f621aca0b1199ce",
       "source": "asl/block/model/dispatch/cube-tmatmul-writer-values.asl"
     },
     {
@@ -41446,22 +41462,6 @@
       "requirements": [],
       "sha256": "e783fc196a584b00172685ff9fa3bda57402ca2ecc0697ae64aef823ab3e5df1",
       "source": "asl/block/model/operands/local-generation-cube.asl"
-    },
-    {
-      "id": "PTO-AVS-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-VALIDATION-STATIC-001",
-      "kind": "static-invariant",
-      "path": "tests/asl/block/model/operands/local-generation-cube-validation/block-static-local-generation-cube-validation-contract-001.asl",
-      "requirements": [],
-      "sha256": "a8138da77e3d05ff023534bb32793969ab12e1429116166dea9d897f691410e2",
-      "source": "asl/block/model/operands/local-generation-cube-validation.asl"
-    },
-    {
-      "id": "PTO-AVS-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS-STATIC-001",
-      "kind": "static-invariant",
-      "path": "tests/asl/block/model/operands/local-generation-cube-writer-effects/block-static-local-generation-cube-writer-effects-contract-001.asl",
-      "requirements": [],
-      "sha256": "13ad3b0ac8369f9bfc4e64aa7196812bdbae447f4e10280f105606f7a07139be",
-      "source": "asl/block/model/operands/local-generation-cube-writer-effects.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-SQUASH-STATIC-001",
@@ -64672,6 +64672,22 @@
       "source": "asl/tile/model/execution/internal-accumulator.asl"
     },
     {
+      "id": "PTO-AVS-TILE-LEGALITY-DEST-VALUE-OPS-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/tile/model/legality/destination-value-operations/tile-static-destination-value-operations-contract-001.asl",
+      "requirements": [],
+      "sha256": "fcae66a2078e84587730efc58909205666acbdad2ed58327dca512dc4d988e95",
+      "source": "asl/tile/model/legality/destination-value-operations.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-LEGALITY-LAYOUT-REARR-VALUES-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/tile/model/legality/layout-rearrangement-values/tile-static-layout-rearrangement-values-contract-001.asl",
+      "requirements": [],
+      "sha256": "9f77169354c6fd22b839648f8f958fef2df675fa38f80d0e34a6efcef5e0fe3b",
+      "source": "asl/tile/model/legality/layout-rearrangement-values.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-LOCAL-CAPACITY-ISOLATION-002",
       "kind": "boundary",
       "path": "tests/asl/tile/model/capacity/local/tile-bound-local-capacity-isolation-002.asl",
@@ -65446,14 +65462,6 @@
       "source": "asl/tile/model/legality/descriptor-shape.asl"
     },
     {
-      "id": "PTO-AVS-TILE-MODEL-LEGALITY-DESTINATION-VALUE-OPERATIONS-STATIC-001",
-      "kind": "static-invariant",
-      "path": "tests/asl/tile/model/legality/destination-value-operations/tile-static-destination-value-operations-contract-001.asl",
-      "requirements": [],
-      "sha256": "c56af1fedd7398b712f13c73b7cea61e5849664342d7b6c0d82b627e11473356",
-      "source": "asl/tile/model/legality/destination-value-operations.asl"
-    },
-    {
       "id": "PTO-AVS-TILE-MODEL-LEGALITY-DESTINATION-VALUE-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/tile/model/legality/destination-value/tile-static-destination-value-contract-001.asl",
@@ -65513,14 +65521,6 @@
       "requirements": [],
       "sha256": "6edd1f7d4d9c2f773adda7af3567c81a5f9cbf390c085a587b0382395d76681a",
       "source": "asl/tile/model/legality/layout-rearrangement.asl"
-    },
-    {
-      "id": "PTO-AVS-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT-VALUES-STATIC-001",
-      "kind": "static-invariant",
-      "path": "tests/asl/tile/model/legality/layout-rearrangement-values/tile-static-layout-rearrangement-values-contract-001.asl",
-      "requirements": [],
-      "sha256": "5f38075f35cf60a8f02072c0ae524376a6f65c5dd677178d61aa0ea26c01abf0",
-      "source": "asl/tile/model/legality/layout-rearrangement-values.asl"
     },
     {
       "id": "PTO-AVS-TILE-MODEL-LEGALITY-LEA-OPERANDS-STATIC-001",
@@ -77076,7 +77076,7 @@
       "source": "asl/block/model/dispatch/cube-tmatmul-writer-values.asl",
       "surface": "block",
       "tests": [
-        "PTO-AVS-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL-WRITER-VALUES-STATIC-001"
+        "PTO-AVS-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL-WRITER-STATIC-001"
       ]
     },
     {
@@ -78783,7 +78783,7 @@
       "source": "asl/block/model/operands/local-generation-cube-validation.asl",
       "surface": "block",
       "tests": [
-        "PTO-AVS-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-VALIDATION-STATIC-001"
+        "PTO-AVS-BLOCK-LOCAL-GEN-CUBE-VALIDATION-STATIC-001"
       ]
     },
     {
@@ -78805,7 +78805,7 @@
       "tests": [
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-M16-SOURCE-FREE-PARENT-004",
         "PTO-AVS-BLOCK-ASSEMBLE-CUBE-PREDICATECELL-WRITER-BOUNDARIES-001",
-        "PTO-AVS-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS-STATIC-001"
+        "PTO-AVS-BLOCK-LOCAL-GEN-CUBE-WRITER-EFFECTS-STATIC-001"
       ]
     },
     {
@@ -100687,7 +100687,7 @@
       "source": "asl/tile/model/legality/destination-value-operations.asl",
       "surface": "tile",
       "tests": [
-        "PTO-AVS-TILE-MODEL-LEGALITY-DESTINATION-VALUE-OPERATIONS-STATIC-001"
+        "PTO-AVS-TILE-LEGALITY-DEST-VALUE-OPS-STATIC-001"
       ]
     },
     {
@@ -100841,7 +100841,7 @@
       "source": "asl/tile/model/legality/layout-rearrangement-values.asl",
       "surface": "tile",
       "tests": [
-        "PTO-AVS-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT-VALUES-STATIC-001"
+        "PTO-AVS-TILE-LEGALITY-LAYOUT-REARR-VALUES-STATIC-001"
       ]
     },
     {
