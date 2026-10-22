@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import bisect
+import functools
 import hashlib
 import io
 import json
@@ -99,6 +100,10 @@ R4_NEW_HELPERS = {
             ("TileOperandsLegal_TPACK", "asl/tile/model/legality/layout-rearrangement.asl"),
             ("TileOperandsLegal_TUNPACK", "asl/tile/model/legality/layout-rearrangement.asl"),
         },
+        "additional_callers": {
+            ("TileOperandsLegal_TPACKToValue", "asl/tile/model/legality/layout-rearrangement-values.asl"),
+            ("TileOperandsLegal_TUNPACKToValue", "asl/tile/model/legality/layout-rearrangement-values.asl"),
+        },
     },
     "TileCellRearrangementSelectedBytesDefined": {
         "path": "asl/tile/model/legality/layout-rearrangement.asl",
@@ -108,6 +113,10 @@ R4_NEW_HELPERS = {
             ("TileOperandsLegal_TPACK", "asl/tile/model/legality/layout-rearrangement.asl"),
             ("TileOperandsLegal_TUNPACK", "asl/tile/model/legality/layout-rearrangement.asl"),
         },
+        "additional_callers": {
+            ("TileOperandsLegal_TPACKToValue", "asl/tile/model/legality/layout-rearrangement-values.asl"),
+            ("TileOperandsLegal_TUNPACKToValue", "asl/tile/model/legality/layout-rearrangement-values.asl"),
+        },
     },
     "TileExpansionBroadcastLegalAs": {
         "path": "asl/tile/model/legality/reduction-and-expansion.asl",
@@ -116,6 +125,9 @@ R4_NEW_HELPERS = {
         "callers": {
             ("SelectedBundleClosedExpansionSchemaLegal", "asl/block/model/dispatch/expansion-schema.asl"),
             ("TileOperandsLegal_ExecuteTileExpandAs", "asl/tile/model/legality/reduction-and-expansion.asl"),
+        },
+        "additional_callers": {
+            ("TileOperandsLegal_ExecuteTileExpandToValue", "asl/tile/model/legality/destination-value.asl"),
         },
     },
     "TileReductionAndExpansionSourceLegalAs": {
@@ -183,6 +195,8 @@ ISSUE356_REDUCTION_HELPER_DEFINITION_DELTAS = {
         "after_callers": {
             ("SelectedBundleClosedReductionSchemaLegal", "asl/block/model/dispatch/reduction-schema.asl"),
             ("TileOperandsLegal_ExecuteTileReduction", ISSUE356_REDUCTION_MODEL_PATH),
+            ("TileOperandsLegal_ExecuteTileReductionToValue",
+             "asl/tile/model/legality/destination-value.asl"),
         },
     },
 }
@@ -214,9 +228,335 @@ OWNER_DECISIONS = {
     "TLEA": "Issue #371 / ADR-TILE-0009 accepted amendment",
 }
 ISSUE395_SHARED_TMOV_CLASSIFICATION = (
-    "Issue #395 Function-2 CUBE-to-Shared-ND TMOV and exact-capacity geometry "
+    "Issue #395 exact-capacity Local CUBE writer geometry and Function-2 "
+    "CUBE-to-Shared-ND TMOV "
     "(ADR-CUBE-0005/0016 amendments)"
 )
+ISSUE395_WRITER_EFFECT_CLASSIFICATION = (
+    "Issue #395 explicit by-value Local CUBE writer effects "
+    "(ADR-CUBE-0005/0016 amendments)"
+)
+ISSUE395_GENERATED_WRITER_DISPATCH_PATH = (
+    "generated/scripts/generate-asl-decoders:decoder"
+)
+
+
+def _issue395_writer_effect_helper(path: str, callers: set[tuple[str, str]],
+                                   layouts: set[str] | None = None) -> dict[str, Any]:
+    return {
+        "before": [],
+        "after": [(path, layouts or set())],
+        "before_callers": set(),
+        "after_callers": callers,
+    }
+
+
+# Exact owner, lexical layout domain, and direct callers for the Issue #395
+# value/effect seam. Keep these entries explicit: the census must fail closed
+# when a new output path is added without extending this caller review.
+ISSUE395_WRITER_EFFECT_HELPER_DEFINITION_DELTAS = {
+    "BundleGMOVDestinationValueMatches": _issue395_writer_effect_helper(
+        "asl/block/model/dispatch/tlsu-gmov-helpers.asl",
+        {("ExecuteBundleGMOVOperation", "asl/block/model/dispatch/tlsu-gmov.asl")},
+    ),
+    "BundleLocalGenerationCubeWriterEffectWithOutput": _issue395_writer_effect_helper(
+        "asl/block/model/operands/local-generation-cube-writer-effects.asl",
+        {
+            ("ExecuteBundleCubeTransportOperation", "asl/block/model/dispatch/tlsu-layout-conversion.asl"),
+            ("ExecuteBundleGMAtomRedOperation", "asl/block/model/dispatch/tlsu-gm-atom-red.asl"),
+            ("ExecuteBundleGMOVOperation", "asl/block/model/dispatch/tlsu-gmov.asl"),
+            ("ExecuteBundleMGATHERCASOperation", "asl/block/model/dispatch/tlsu-mgather-cas.asl"),
+            ("ExecuteBundleMGATHERMASKOperation", "asl/block/model/dispatch/tlsu-mgather-mask.asl"),
+            ("ExecuteBundleMGATHEROperation", "asl/block/model/dispatch/tlsu-mgather.asl"),
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+            ("ExecuteBundleTMATMULWriterValues", "asl/block/model/dispatch/cube-tmatmul-writer-values.asl"),
+            ("ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules", "asl/block/model/dispatch/tile-execution.asl"),
+        },
+    ),
+    "BundleLocalGenerationCubeWriterValueForDestination": _issue395_writer_effect_helper(
+        "asl/block/model/operands/local-generation-cube-writer-effects.asl",
+        {
+            ("CommitBundleLocalGenerationWithWriterEffects", "asl/block/model/operands/local-generation.asl"),
+            ("ExecuteBundleGMAtomRedOperation", "asl/block/model/dispatch/tlsu-gm-atom-red.asl"),
+            ("ExecuteBundleGMOVOperation", "asl/block/model/dispatch/tlsu-gmov.asl"),
+            ("ExecuteBundleMGATHERCASOperation", "asl/block/model/dispatch/tlsu-mgather-cas.asl"),
+            ("ExecuteBundleMGATHERMASKOperation", "asl/block/model/dispatch/tlsu-mgather-mask.asl"),
+            ("ExecuteBundleMGATHEROperation", "asl/block/model/dispatch/tlsu-mgather.asl"),
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+            ("ExecuteBundleTMATMULWriterValues", "asl/block/model/dispatch/cube-tmatmul-writer-values.asl"),
+        },
+    ),
+    "ExecuteBundleTMATMULWriterValues": _issue395_writer_effect_helper(
+        "asl/block/model/dispatch/cube-tmatmul-writer-values.asl",
+        {("ExecuteBundleTMATMULOperation", "asl/block/model/dispatch/cube-tmatmul.asl")},
+    ),
+    "ExecuteTileInstructionWithoutTimeWithDestinationValue": _issue395_writer_effect_helper(
+        ISSUE395_GENERATED_WRITER_DISPATCH_PATH,
+        {("ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules", "asl/block/model/dispatch/tile-execution.asl")},
+    ),
+    "ExecuteTileBinaryToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/elementwise.asl",
+        {
+            ("ExecuteTileBinary", "asl/tile/model/execution/elementwise.asl"),
+            ("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH),
+        },
+    ),
+    "ExecuteTileCompareAsToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/comparison-value.asl",
+        {("ExecuteTileCompareToValue", "asl/tile/model/execution/comparison-value.asl")},
+    ),
+    "ExecuteTileCompareCellAsToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/execution-mask-comparison.asl",
+        {
+            ("ExecuteTileCompareAsToValue", "asl/tile/model/execution/comparison-value.asl"),
+            ("ExecuteTileCompareCellAs", "asl/tile/model/execution/execution-mask-comparison.asl"),
+        },
+    ),
+    "ExecuteTileCompareCellScalarAsToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/execution-mask-comparison.asl",
+        {
+            ("ExecuteTileCompareCellScalarAs", "asl/tile/model/execution/execution-mask-comparison.asl"),
+            ("ExecuteTileCompareScalarAsToValue", "asl/tile/model/execution/comparison-value.asl"),
+        },
+    ),
+    "ExecuteTileCompareScalarAsToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/comparison-value.asl",
+        {("ExecuteTileCompareScalarToValue", "asl/tile/model/execution/comparison-value.asl")},
+    ),
+    "ExecuteTileCompareScalarToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/comparison-value.asl",
+        {("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH)},
+    ),
+    "ExecuteTileCompareToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/comparison-value.asl",
+        {("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH)},
+    ),
+    "ExecuteTileExpandToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/expansion.asl",
+        {
+            ("ExecuteTileExpand", "asl/tile/model/execution/expansion.asl"),
+            ("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH),
+        },
+    ),
+    "ExecuteTileExpdifToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/expdif.asl",
+        {
+            ("ExecuteTileExpdif", "asl/tile/model/execution/expdif.asl"),
+            ("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH),
+        },
+    ),
+    "ExecuteTileFillScalarToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/elementwise.asl",
+        {
+            ("ExecuteTileFillScalar", "asl/tile/model/execution/elementwise.asl"),
+            ("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH),
+        },
+    ),
+    "ExecuteTileReductionToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/reduction.asl",
+        {
+            ("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH),
+            ("ExecuteTileReduction", "asl/tile/model/execution/reduction.asl"),
+        },
+    ),
+    "ExecuteTileScalarToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/elementwise.asl",
+        {
+            ("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH),
+            ("ExecuteTileScalar", "asl/tile/model/execution/elementwise.asl"),
+        },
+    ),
+    "ExecuteTileSelectScalarToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/comparison-value.asl",
+        {("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH)},
+    ),
+    "ExecuteTileSelectToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/comparison-value.asl",
+        {("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH)},
+    ),
+    "ExecuteTileUnaryToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/unary.asl",
+        {
+            ("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH),
+            ("ExecuteTileUnary", "asl/tile/model/execution/unary.asl"),
+        },
+    ),
+    "IndexedTLSUNumericValueDescriptorLegal": _issue395_writer_effect_helper(
+        "asl/tile/model/legality/indexed-layout.asl",
+        {
+            ("MGATHER_MASKToValue", "asl/tile/model/memory/gather-scatter-values.asl"),
+            ("TileOperandsLegal_GM_ATOM_CASToValue", "asl/tile/model/memory/gm-atom-red-values.asl"),
+            ("TileOperandsLegal_GM_ATOM_VALUEToValue", "asl/tile/model/memory/gm-atom-red-values.asl"),
+            ("TileOperandsLegal_MGATHERToValue", "asl/tile/model/legality/memory-schema.asl"),
+            ("TileOperandsLegal_MGATHER_CASToValue", "asl/tile/model/legality/memory-schema.asl"),
+            ("TileOperandsLegal_MGATHER_MASKToValue", "asl/tile/model/legality/memory-schema.asl"),
+        },
+    ),
+    "ResolveBundleTCVTCubeDestinationWithWriterEffects": _issue395_writer_effect_helper(
+        "asl/block/model/dispatch/tcvt-destination.asl",
+        {("ResolveBundleTileDestinationsForOperationAndWriterEffects", "asl/block/model/dispatch/destination-operation.asl")},
+    ),
+    "ResolveBundleTMATMULDestinationWithWriterEffects": _issue395_writer_effect_helper(
+        "asl/block/model/dispatch/cube-destination.asl",
+        {("ExecuteBundleTMATMULOperation", "asl/block/model/dispatch/cube-tmatmul.asl")},
+    ),
+    "ResolveBundleTileDestinationsForOperationAndWriterEffects": _issue395_writer_effect_helper(
+        "asl/block/model/dispatch/destination-operation.asl",
+        {
+            ("ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules", "asl/block/model/dispatch/tile-execution.asl"),
+            ("ResolveBundleTileDestinationsForOperation", "asl/block/model/dispatch/destination-operation.asl"),
+        },
+        {"CUBE_M16", "CUBE_M32", "RowMajor"},
+    ),
+    "ResolveBundleTileDestinationsWithShapeAndTypeAndWriterEffects": _issue395_writer_effect_helper(
+        "asl/block/model/dispatch/destination-shape.asl",
+        {
+            ("ExecuteBundleGMAtomRedOperation", "asl/block/model/dispatch/tlsu-gm-atom-red.asl"),
+            ("ExecuteBundleGMOVOperation", "asl/block/model/dispatch/tlsu-gmov.asl"),
+            ("ExecuteBundleMGATHERCASOperation", "asl/block/model/dispatch/tlsu-mgather-cas.asl"),
+            ("ExecuteBundleMGATHERMASKOperation", "asl/block/model/dispatch/tlsu-mgather-mask.asl"),
+            ("ExecuteBundleMGATHEROperation", "asl/block/model/dispatch/tlsu-mgather.asl"),
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+            ("ResolveBundleTileDestinationsForOperationAndWriterEffects", "asl/block/model/dispatch/destination-operation.asl"),
+            ("ResolveBundleTileDestinationsWithShapeAndType", "asl/block/model/dispatch/destination-shape.asl"),
+        },
+        {"CUBE_M16", "CUBE_M32"},
+    ),
+    "TCICubeToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/generation.asl",
+        {
+            ("ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules", "asl/block/model/dispatch/tile-execution.asl"),
+            ("TCICube", "asl/tile/model/execution/generation.asl"),
+        },
+        {"CUBE_M16", "CUBE_M32"},
+    ),
+    "TCVTToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/numeric/formats.asl",
+        {
+            ("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH),
+            ("TCVT", "asl/tile/model/numeric/formats.asl"),
+        },
+    ),
+    "TFMAWithDestinationValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/fused-multiply-add.asl",
+        {
+            ("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH),
+            ("TFMA", "asl/tile/model/execution/fused-multiply-add.asl"),
+        },
+    ),
+    "TGATHERToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/indexed-rearrangement.asl",
+        {
+            ("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH),
+            ("TGATHER", "asl/tile/model/execution/indexed-rearrangement.asl"),
+        },
+    ),
+    "TGPR2TToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/predicate-carriers-value.asl",
+        {("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH)},
+        {"CUBE_M32"},
+    ),
+    "TLEAToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/lea.asl",
+        {
+            ("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH),
+            ("TLEA", "asl/tile/model/execution/lea.asl"),
+        },
+    ),
+    "TLOADToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/memory/load-store.asl",
+        {
+            ("ExecuteBundleCubeTransportOperation", "asl/block/model/dispatch/tlsu-layout-conversion.asl"),
+            ("TLOAD", "asl/tile/model/memory/load-store.asl"),
+        },
+    ),
+    "TPACKToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/rearrangement-values.asl",
+        {("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH)},
+    ),
+    "TPERMUTEToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/rearrangement-values.asl",
+        {("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH)},
+    ),
+    "TSHUFToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/rearrangement-values.asl",
+        {("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH)},
+    ),
+    "TUNPACKToValue": _issue395_writer_effect_helper(
+        "asl/tile/model/execution/rearrangement-values.asl",
+        {("ExecuteTileInstructionWithoutTimeWithDestinationValue", ISSUE395_GENERATED_WRITER_DISPATCH_PATH)},
+    ),
+    "TileCellRearrangementOutputValueDescriptorLegal": _issue395_writer_effect_helper(
+        "asl/tile/model/legality/layout-rearrangement-values.asl",
+        {
+            ("TileOperandsLegal_TPACKToValue", "asl/tile/model/legality/layout-rearrangement-values.asl"),
+            ("TileOperandsLegal_TPERMUTEToValue", "asl/tile/model/legality/layout-rearrangement-values.asl"),
+            ("TileOperandsLegal_TSHUFToValue", "asl/tile/model/legality/layout-rearrangement-values.asl"),
+            ("TileOperandsLegal_TUNPACKToValue", "asl/tile/model/legality/layout-rearrangement-values.asl"),
+        },
+    ),
+    "TileElementwiseCubeValueShapeMatches": _issue395_writer_effect_helper(
+        "asl/tile/model/legality/destination-value.asl",
+        {
+            ("TileOperandsLegal_ExecuteTileBinaryToValue", "asl/tile/model/legality/destination-value.asl"),
+            ("TileOperandsLegal_ExecuteTileScalarToValue", "asl/tile/model/legality/destination-value.asl"),
+            ("TileOperandsLegal_ExecuteTileSelectScalarToValue", "asl/tile/model/legality/destination-value-operations.asl"),
+            ("TileOperandsLegal_ExecuteTileSelectToValue", "asl/tile/model/legality/destination-value-operations.asl"),
+            ("TileOperandsLegal_ExecuteTileUnaryToValue", "asl/tile/model/legality/destination-value.asl"),
+            ("TileOperandsLegal_TFMAToValue", "asl/tile/model/legality/destination-value-operations.asl"),
+        },
+        {"CUBE_M16", "CUBE_M32"},
+    ),
+    "TileOutputValueSourceContentsDefined": _issue395_writer_effect_helper(
+        "asl/tile/model/legality/destination-value.asl",
+        {
+            ("TileOperandsLegal_ExecuteTileBinaryToValue", "asl/tile/model/legality/destination-value.asl"),
+            ("TileOperandsLegal_ExecuteTileScalarToValue", "asl/tile/model/legality/destination-value.asl"),
+            ("TileOperandsLegal_ExecuteTileUnaryToValue", "asl/tile/model/legality/destination-value.asl"),
+            ("TileOperandsLegal_TFMAToValue", "asl/tile/model/legality/destination-value-operations.asl"),
+            ("TileOutputValueSourceEncodingsValidAs", "asl/tile/model/legality/destination-value.asl"),
+        },
+    ),
+    "TileOutputValueSourceEncodingsValidAs": _issue395_writer_effect_helper(
+        "asl/tile/model/legality/destination-value.asl",
+        {
+            ("TileOperandsLegal_ExecuteTileBinaryToValue", "asl/tile/model/legality/destination-value.asl"),
+            ("TileOperandsLegal_ExecuteTileExpandToValue", "asl/tile/model/legality/destination-value.asl"),
+            ("TileOperandsLegal_ExecuteTileScalarToValue", "asl/tile/model/legality/destination-value.asl"),
+            ("TileOperandsLegal_ExecuteTileUnaryToValue", "asl/tile/model/legality/destination-value.asl"),
+            ("TileOperandsLegal_TFMAToValue", "asl/tile/model/legality/destination-value-operations.asl"),
+        },
+    ),
+    "TileOutputValueSourceTile": _issue395_writer_effect_helper(
+        "asl/tile/model/legality/destination-value.asl",
+        {
+            ("TileOperandsLegal_ExecuteTileBinaryToValue", "asl/tile/model/legality/destination-value.asl"),
+            ("TileOperandsLegal_ExecuteTileCompareScalarToValue", "asl/tile/model/legality/destination-value-operations.asl"),
+            ("TileOperandsLegal_ExecuteTileCompareToValue", "asl/tile/model/legality/destination-value-operations.asl"),
+            ("TileOperandsLegal_ExecuteTileExpandToValue", "asl/tile/model/legality/destination-value.asl"),
+            ("TileOperandsLegal_ExecuteTileExpdifToValue", "asl/tile/model/legality/destination-value.asl"),
+            ("TileOperandsLegal_ExecuteTileScalarToValue", "asl/tile/model/legality/destination-value.asl"),
+            ("TileOperandsLegal_ExecuteTileSelectScalarToValue", "asl/tile/model/legality/destination-value-operations.asl"),
+            ("TileOperandsLegal_ExecuteTileSelectToValue", "asl/tile/model/legality/destination-value-operations.asl"),
+            ("TileOperandsLegal_ExecuteTileUnaryToValue", "asl/tile/model/legality/destination-value.asl"),
+            ("TileOperandsLegal_TFMAToValue", "asl/tile/model/legality/destination-value-operations.asl"),
+            ("TileOutputValueSourceEncodingsValidAs", "asl/tile/model/legality/destination-value.asl"),
+        },
+    ),
+    "TilePredicateCellValueDescriptorLegal": _issue395_writer_effect_helper(
+        "asl/tile/model/legality/destination-value-operations.asl",
+        {
+            ("TileOperandsLegal_ExecuteTileCompareScalarToValue", "asl/tile/model/legality/destination-value-operations.asl"),
+            ("TileOperandsLegal_ExecuteTileCompareToValue", "asl/tile/model/legality/destination-value-operations.asl"),
+        },
+    ),
+    "TileCommitConversionResult": {
+        "before": [("asl/tile/model/numeric/formats.asl", set())],
+        "after": [],
+        "before_callers": {("TCVT", "asl/tile/model/numeric/formats.asl")},
+        "after_callers": set(),
+    },
+}
 ISSUE395_TMOV_LEGACY_LAYOUTS = {"ColumnMajor", "NZ", "RowMajor", "ZN"}
 OWNER_DECISIONS["TMOV"] = ISSUE395_SHARED_TMOV_CLASSIFICATION
 # Keep new and moved helper definitions, lexical layout domains, and direct
@@ -265,7 +605,7 @@ ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS = {
     },
     "BundleSharedTMOVNormalCarrierCompatible": {
         "before": [],
-        "after": [("asl/block/model/dispatch/shared-tlsu.asl", set())],
+        "after": [("asl/block/model/dispatch/shared-tlsu-helpers.asl", set())],
         "before_callers": set(),
         "after_callers": {
             ("BundleSharedTMOVDestinationSchemaLegal",
@@ -279,10 +619,12 @@ ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS = {
         "after": [("asl/tile/model/shape/cube-double-cell.asl", LOCAL_CUBE_LAYOUTS)],
         "before_callers": set(),
         "after_callers": {
-            ("BundleLocalGenerationCubeFinalizationLegal",
-             "asl/block/model/operands/local-generation-cube.asl"),
+            ("BundleLocalGenerationCubeFinalizationWithWriterLegal",
+             "asl/block/model/operands/local-generation-cube-validation.asl"),
             ("BundleLocalGenerationCubeWriterColumns",
              "asl/block/model/operands/local-generation-cube.asl"),
+            ("BundleLocalGenerationCubeWriterValueLegal",
+             "asl/block/model/operands/local-generation-cube-writer-effects.asl"),
             ("BundleLocalGenerationCubeWriterView",
              "asl/block/model/operands/local-generation-cube-writer-effects.asl"),
             ("BundleReusedDestinationDescriptorMatches",
@@ -300,7 +642,9 @@ ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS = {
              "asl/block/model/dispatch/tlsu-layout-conversion.asl"),
             ("ResolveBundleTCVTCubeDestination",
              "asl/block/model/dispatch/tcvt-destination.asl"),
-            ("ResolveBundleTileDestinationsWithShapeAndType",
+            ("ResolveBundleTMATMULCubeDestinationGroup",
+             "asl/block/model/dispatch/cube-destination.asl"),
+            ("ResolveBundleTileDestinationsWithShapeAndTypeAndWriterEffects",
              "asl/block/model/dispatch/destination-shape.asl"),
             ("SelectedBundleComparisonShapeMatches",
              "asl/block/model/dispatch/comparison-schema.asl"),
@@ -313,6 +657,8 @@ ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS = {
              "asl/tile/model/legality/expdif-operands.asl"),
             ("TileOperandsLegal_ExecuteTileReduction",
              "asl/tile/model/legality/reduction-and-expansion.asl"),
+            ("TileOperandsLegal_ExecuteTileReductionToValue",
+             "asl/tile/model/legality/destination-value.asl"),
         },
     },
     "TileDataLayoutIsCubeToSharedND": {
@@ -457,12 +803,23 @@ COMMON_PREFIXES = (
     "Tile", "Bundle", "CurrentBundle", "ResolveBundle", "ConfigureBundle",
     "ExecuteTile", "ExecuteBundle", "IndexedTLSU",
 )
+ISSUE395_VALUE_HANDLER_ROOTS = {
+    "TCVTToValue", "TFMAWithDestinationValue", "TLEAToValue",
+    "TGATHERToValue", "TGPR2TToValue", "TPERMUTEToValue", "TSHUFToValue",
+    "TPACKToValue", "TUNPACKToValue", "TLOADToValue", "TCICubeToValue",
+}
 BUNDLE_PIPELINE_ROOTS = (
     "CompleteBundleAtWithAcceptedApplicabilityRules",
     "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+    "ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
     "ResolveBundleTileDestinationsForOperation",
     "ConfigureBundleTileDestination",
 )
+OPTIONAL_BUNDLE_PIPELINE_ROOTS = {
+    # Introduced by Issue #395; older synthetic and pinned baseline fixtures do
+    # not contain this split dispatch entrypoint.
+    "ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
+}
 BASELINE_OBJECT = "577e7b06422d87ec09c925401b477b4e524eded3"
 BASELINE_FIXTURE_PATH = ROOT / "spec/evidence/layout-relation-census-baseline-577e7b06422d87ec09c925401b477b4e524eded3.json"
 # Prior exact-object fixture kept only as a derivation seed for the exact-34
@@ -649,9 +1006,39 @@ ISSUE360_GM_OBLIGATION_HELPERS = {
              "asl/block/model/dispatch/tile-execution.asl"),
         },
     },
+    "BundleSharedStoreColumns": {
+        "before": [("asl/block/model/dispatch/shared-tlsu.asl", set())],
+        "after": [("asl/block/model/dispatch/shared-tlsu-helpers.asl", set())],
+        "before_callers": {
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+        },
+        "after_callers": {
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+        },
+    },
+    "BundleSharedStoreValidColumns": {
+        "before": [("asl/block/model/dispatch/shared-tlsu.asl", set())],
+        "after": [("asl/block/model/dispatch/shared-tlsu-helpers.asl", set())],
+        "before_callers": {
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+        },
+        "after_callers": {
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+        },
+    },
+    "BundleSharedStoreValidRows": {
+        "before": [("asl/block/model/dispatch/shared-tlsu.asl", set())],
+        "after": [("asl/block/model/dispatch/shared-tlsu-helpers.asl", set())],
+        "before_callers": {
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+        },
+        "after_callers": {
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+        },
+    },
     "BundleGMOVPESourceTileReady": {
         "before": [],
-        "after": [("asl/block/model/dispatch/tlsu-gmov.asl", set())],
+        "after": [("asl/block/model/dispatch/tlsu-gmov-helpers.asl", set())],
         "before_callers": set(),
         "after_callers": {
             ("BundleGMOVCore4SourceReady", "asl/block/model/dispatch/tlsu-gmov.asl"),
@@ -660,7 +1047,7 @@ ISSUE360_GM_OBLIGATION_HELPERS = {
     },
     "BundleGMOVSourceDescriptorsMatch": {
         "before": [],
-        "after": [("asl/block/model/dispatch/tlsu-gmov.asl", set())],
+        "after": [("asl/block/model/dispatch/tlsu-gmov-helpers.asl", set())],
         "before_callers": set(),
         "after_callers": {
             ("BundleGMOVCore4SourceReady", "asl/block/model/dispatch/tlsu-gmov.asl"),
@@ -681,10 +1068,10 @@ ISSUE360_GM_OBLIGATION_HELPERS = {
             ("AbortBundleLocalGenerationsForBundle", "asl/block/model/operands/local-generation.asl"),
             ("BundleLocalGenerationQueueInsertionLegal", "asl/block/model/operands/local-generation.asl"),
             ("BundleLocalGenerationSlotForSource", "asl/block/model/operands/portable-carriers.asl"),
-            ("CommitBundleLocalGeneration", "asl/block/model/operands/local-generation.asl"),
+            ("CommitBundleLocalGenerationWithWriterEffects", "asl/block/model/operands/local-generation.asl"),
             ("ReuseBundleLocalGenerationDestination", "asl/block/model/operands/local-generation.asl"),
             ("ValidateBundleLocalGenerationStructure", "asl/block/model/operands/local-generation.asl"),
-            ("ValidateBundleLocalGenerationWriters", "asl/block/model/operands/local-generation-cube.asl"),
+            ("ValidateBundleLocalGenerationWritersWithWriterEffects", "asl/block/model/operands/local-generation-cube.asl"),
         },
     },
     "BundleLocalGenerationSlotForSource": {
@@ -1696,6 +2083,63 @@ def _function_defs(text: str, path: str) -> list[dict[str, Any]]:
     return result
 
 
+@functools.lru_cache(maxsize=4)
+def _generated_issue395_writer_dispatcher(generator_sha256: str) -> str:
+    """Return the decoder-generated by-value output dispatcher definition.
+
+    The generic operation dispatcher is generated from the catalog; it has no
+    checked-in ASL body.  The Issue #395 value-returning variant is therefore
+    extracted from the real generator output and indexed under an explicit
+    generated owner path, rather than treated as an unresolved helper.
+    """
+    generator = ROOT / "scripts/generate-asl-decoders"
+    actual_sha256 = hashlib.sha256(generator.read_bytes()).hexdigest()
+    if actual_sha256 != generator_sha256:
+        raise RuntimeError("decoder generator changed while extracting its writer dispatcher")
+    generated = subprocess.check_output(
+        [sys.executable, str(generator), "--kind", "decoder"],
+        cwd=ROOT, text=True,
+    )
+    definitions = [
+        item for item in _function_defs(
+            generated, ISSUE395_GENERATED_WRITER_DISPATCH_PATH
+        )
+        if item["name"] == "ExecuteTileInstructionWithoutTimeWithDestinationValue"
+    ]
+    if len(definitions) != 1 or definitions[0]["error"]:
+        raise RuntimeError(
+            "decoder generator must emit exactly one complete Issue #395 writer dispatcher"
+        )
+    return definitions[0]["body"]
+
+
+def _include_issue395_generated_writer_dispatcher(
+    source_map: dict[str, str], candidate_ref: str,
+) -> tuple[dict[str, str], list[str]]:
+    """Index the exact generated helper when the candidate calls it."""
+    caller_path = "asl/block/model/dispatch/tile-execution.asl"
+    helper_name = "ExecuteTileInstructionWithoutTimeWithDestinationValue"
+    if helper_name + "(" not in source_map.get(caller_path, ""):
+        return source_map, []
+    generator_path = "scripts/generate-asl-decoders"
+    generator = ROOT / generator_path
+    local_source = generator.read_text(encoding="utf-8")
+    if candidate_ref != "working-tree":
+        candidate_source = _ref_texts(candidate_ref, [generator_path])[generator_path]
+        if candidate_source != local_source:
+            return source_map, [
+                "Issue #395 generated writer dispatcher cannot be tied to the selected candidate generator source"
+            ]
+    sha256 = hashlib.sha256(local_source.encode()).hexdigest()
+    try:
+        body = _generated_issue395_writer_dispatcher(sha256)
+    except (OSError, subprocess.CalledProcessError, RuntimeError) as error:
+        return source_map, [f"Issue #395 generated writer dispatcher extraction failed: {error}"]
+    indexed = dict(source_map)
+    indexed[ISSUE395_GENERATED_WRITER_DISPATCH_PATH] = body
+    return indexed, []
+
+
 def _call_sites(body: str) -> list[tuple[str, str]]:
     result: list[tuple[str, str]] = []
     # Function signatures contain type-looking parentheses.  Only the body
@@ -1730,6 +2174,7 @@ def _call_sites(body: str) -> list[tuple[str, str]]:
 
 def _helper(name: str) -> bool:
     return (name.startswith(COMMON_PREFIXES) or
+            name in ISSUE395_VALUE_HANDLER_ROOTS or
             name in ISSUE371_NUMERIC_REFERENCE_HELPERS)
 
 
@@ -1842,6 +2287,8 @@ def _operation_reachability(source_map: dict[str, str], metadata: list[tuple[str
                 bundle_roots.update(owner_roots)
             for pipeline_root in BUNDLE_PIPELINE_ROOTS:
                 if pipeline_root not in index:
+                    if pipeline_root in OPTIONAL_BUNDLE_PIPELINE_ROOTS:
+                        continue
                     errors.append(f"{op['path']}: missing bundle pipeline root {pipeline_root}")
                 else:
                     bundle_roots.add(pipeline_root)
@@ -2680,10 +3127,17 @@ def _issue371_b64_closure(
     local_generation = after_map.get(
         "asl/block/model/operands/local-generation-cube.asl", ""
     )
+    local_generation_validation = after_map.get(
+        "asl/block/model/operands/local-generation-cube-validation.asl", ""
+    )
+    local_writer_effects = after_map.get(
+        "asl/block/model/operands/local-generation-cube-writer-effects.asl", ""
+    )
     if not (
-        "TileCubePhysicalCellRangeComplete(" in local_generation
-        and "TileCubePhysicalCellsPerLogicalGroup(" in local_generation
+        "TileCubePhysicalCellsPerLogicalGroup(" in local_generation
         and "extent MOD cells_per_group != 0" in local_generation
+        and "TileCubePhysicalCellRangeComplete(" in local_generation_validation
+        and "TileCubePhysicalCellRangeComplete(" in local_writer_effects
     ):
         errors.append("Issue #371 Local generation does not retain whole double-CELL pairs")
 
@@ -3001,6 +3455,10 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 helper_spec = ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS[name]
                 helper_classification = ISSUE395_SHARED_TMOV_CLASSIFICATION
                 helper_issue = "Issue #395 Shared TMOV"
+            elif name in ISSUE395_WRITER_EFFECT_HELPER_DEFINITION_DELTAS:
+                helper_spec = ISSUE395_WRITER_EFFECT_HELPER_DEFINITION_DELTAS[name]
+                helper_classification = ISSUE395_WRITER_EFFECT_CLASSIFICATION
+                helper_issue = "Issue #395 writer effect"
             if helper_spec is not None:
                 old_shape = sorted(
                     (row["path"], tuple(sorted(row["layouts"])))
@@ -3447,8 +3905,13 @@ def _r4_layout_relation_closure(
 
 
 def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baseline: str, candidate: str,
-                  candidate_head: str = "working-tree", enforce_closure: bool = True) -> dict[str, Any]:
+                  candidate_head: str = "working-tree", enforce_closure: bool = True,
+                  candidate_ref: str = "working-tree") -> dict[str, Any]:
+    after_map, generated_dispatcher_errors = _include_issue395_generated_writer_dispatcher(
+        after_map, candidate_ref
+    )
     before_meta, errors = _metadata_map(before_map)
+    errors.extend(generated_dispatcher_errors)
     after_meta, after_errors = _metadata_map(after_map)
     errors.extend(after_errors)
     before_inventory, e = _inventory(before_meta)
@@ -3780,7 +4243,8 @@ def census(baseline: str, candidate: str) -> dict[str, Any]:
     paths = source_paths(baseline, candidate)
     candidate_identity = git("rev-parse", f"{candidate}:asl").strip() if candidate != "working-tree" else "working-tree"
     return _census_texts(_ref_texts(baseline, paths), _ref_texts(candidate, paths),
-                         _resolved_ref(baseline), candidate, candidate_identity)
+                         _resolved_ref(baseline), candidate, candidate_identity,
+                         candidate_ref=candidate)
 
 
 def _fixture() -> dict[str, str]:
@@ -4366,6 +4830,41 @@ def _issue395_shared_tmov_mutation_canaries() -> None:
         raise AssertionError("Issue #395 carrier helper extra caller did not fail closed")
 
 
+def _issue395_writer_parent_mutation_canaries() -> None:
+    """Reject installing any transient writer value into architectural _Tiles."""
+    paths = source_paths(BASELINE_OBJECT, "working-tree")
+    candidate = _ref_texts("working-tree", paths)
+    owner = "asl/block/model/operands/local-generation-cube-writer-effects.asl"
+
+    def whole_tile_assignments(text: str) -> list[tuple[str, str]]:
+        return re.findall(
+            r"(?m)^\s*_Tiles\[\[([^\]]+)\]\]\s*=\s*([^;]+);",
+            text,
+        )
+
+    assignments = whole_tile_assignments(candidate.get(owner, ""))
+    if assignments != [("effect.destination", "merged")]:
+        raise AssertionError(
+            "Issue #395 writer-effect owner must keep the architectural parent "
+            "intact and install only the completed merged parent"
+        )
+
+    marker = "effects.entries[[effects.count]].writer = writer_view;"
+    source = candidate.get(owner, "")
+    if marker not in source:
+        raise AssertionError("Issue #395 writer-view construction marker is missing")
+    mutated = dict(candidate)
+    mutated[owner] = source.replace(
+        marker,
+        marker + "\n                _Tiles[[destination]] = writer_view;",
+        1,
+    )
+    if whole_tile_assignments(mutated[owner]) == assignments:
+        raise AssertionError(
+            "Issue #395 architectural fragment-assignment mutation was not detected"
+        )
+
+
 def _issue371_b64_mutation_canaries() -> None:
     """Prove the M32-only double-CELL classification fails closed."""
     paths = source_paths(BASELINE_OBJECT, "working-tree")
@@ -4628,7 +5127,7 @@ def _issue360_gm_obligation_helper_mutation_canaries() -> None:
     ):
         raise AssertionError("unlisted #341 publication helper caller did not fail closed")
 
-    gmov_path = "asl/block/model/dispatch/tlsu-gmov.asl"
+    gmov_path = "asl/block/model/dispatch/tlsu-gmov-helpers.asl"
     mutated = dict(candidate)
     mutated[gmov_path] += (
         "\nreadonly func BundleUnlistedGMOVSourceCaller() => boolean\n"
@@ -4917,10 +5416,11 @@ def self_test() -> None:
     _execution_mask_support_mutation_canaries()
     _issue374_shared_matrix_mutation_canaries()
     _issue395_shared_tmov_mutation_canaries()
+    _issue395_writer_parent_mutation_canaries()
     _issue371_b64_mutation_canaries()
     _issue360_gm_obligation_helper_mutation_canaries()
     _issue356_reduction_source_mutation_canaries()
-    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, Issue #371 M32 b64 double-CELL, Issue #360/#341 GM and source-lifetime helper owner/caller/layout, Issue #374 packed private Shared view, Issue #395 TMOV DATR selector and helper caller closure, and bounded reduction-source mutations rejected")
+    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, Issue #371 M32 b64 double-CELL, Issue #360/#341 GM and source-lifetime helper owner/caller/layout, Issue #374 packed private Shared view, Issue #395 TMOV DATR/helper callers, writer-parent preservation, and bounded reduction-source mutations rejected")
 
 
 def main() -> int:
