@@ -255,6 +255,41 @@ def _issue395_writer_effect_helper(path: str, callers: set[tuple[str, str]],
 # value/effect seam. Keep these entries explicit: the census must fail closed
 # when a new output path is added without extending this caller review.
 ISSUE395_WRITER_EFFECT_HELPER_DEFINITION_DELTAS = {
+    "BundleLocalGenerationCubeWriterPreflightLegal": _issue395_writer_effect_helper(
+        "asl/block/model/operands/local-generation-cube-writer-effects.asl",
+        {
+            ("BundleLocalGenerationCubeWriterView", "asl/block/model/operands/local-generation-cube-writer-effects.asl"),
+            ("ResolveBundleTCVTCubeDestination", "asl/block/model/dispatch/tcvt-destination.asl"),
+            ("ResolveBundleTileDestinationsWithShapeAndTypeAndWriterEffects", "asl/block/model/dispatch/destination-shape.asl"),
+        },
+        {"CUBE_M16"},
+    ),
+    "BundleLocalGenerationCubeLayout": _issue395_writer_effect_helper(
+        "asl/block/model/operands/local-generation-cube.asl",
+        {
+            ("AddBundleLocalGenerationCubeWriterEffect", "asl/block/model/operands/local-generation-cube-writer-effects.asl"),
+            ("BeginBundleLocalGenerationCubeWriterEffects", "asl/block/model/operands/local-generation-cube-writer-effects.asl"),
+            ("BundleConsumerDependencyRequiredRange", "asl/block/model/operands/portable-carriers.asl"),
+            ("BundleLocalGenerationCubeWriterLegal", "asl/block/model/operands/local-generation-cube.asl"),
+            ("BundleLocalGenerationCubeWriterPreflightLegal", "asl/block/model/operands/local-generation-cube-writer-effects.asl"),
+            ("BundleLocalGenerationCubeWriterValueLegal", "asl/block/model/operands/local-generation-cube-writer-effects.asl"),
+            ("BundleLocalGenerationDescriptorMatches", "asl/block/model/operands/local-generation.asl"),
+            ("BundleLocalGenerationPEPublicationEligible", "asl/block/model/operands/tile-bindings.asl"),
+            ("BundleLocalGenerationPublicationEligible", "asl/block/model/operands/portable-carriers.asl"),
+            ("CommitBundleLocalGenerationWithWriterEffects", "asl/block/model/operands/local-generation.asl"),
+            ("ValidateBundleLocalGenerationWritersWithWriterEffects", "asl/block/model/operands/local-generation-cube.asl"),
+        },
+        LOCAL_CUBE_LAYOUTS,
+    ),
+    "TileCubePhysicalCellRangeComplete": _issue395_writer_effect_helper(
+        "asl/tile/model/shape/cube-double-cell.asl",
+        {
+            ("BundleCubeSubviewDescriptorOf", "asl/block/model/operands/subview-descriptor.asl"),
+            ("BundleLocalGenerationCubeFinalizationWithWriterLegal", "asl/block/model/operands/local-generation-cube-validation.asl"),
+            ("BundleLocalGenerationCubeWriterPreflightLegal", "asl/block/model/operands/local-generation-cube-writer-effects.asl"),
+            ("BundleLocalGenerationCubeWriterValueLegal", "asl/block/model/operands/local-generation-cube-writer-effects.asl"),
+        },
+    ),
     "BundleGMOVDestinationValueMatches": _issue395_writer_effect_helper(
         "asl/block/model/dispatch/tlsu-gmov-helpers.asl",
         {("ExecuteBundleGMOVOperation", "asl/block/model/dispatch/tlsu-gmov.asl")},
@@ -748,6 +783,8 @@ ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS = {
         "after": [("asl/tile/model/shape/cube-double-cell.asl", LOCAL_CUBE_LAYOUTS)],
         "before_callers": set(),
         "after_callers": {
+            ("BundleLocalGenerationCubeWriterPreflightLegal",
+             "asl/block/model/operands/local-generation-cube-writer-effects.asl"),
             ("BundleLocalGenerationCubeFinalizationWithWriterLegal",
              "asl/block/model/operands/local-generation-cube-validation.asl"),
             ("BundleLocalGenerationCubeWriterColumns",
