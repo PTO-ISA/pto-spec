@@ -156,6 +156,8 @@ begin
     SelectExecutionContext(0, 0);
     let normal_parent = ProduceLocalFP32Parent(normal_entry);
     let normal_slot = BundleLocalGenerationSlot(0, '1111');
+    assert _Tiles[[normal_parent]].cube_cell_count == 2 &&
+           _LocalGenerations[[normal_slot]].per_pe_ready_cells[[0]][1] == '0';
     _PC = normal_entry + 0x20;
     _BPC = normal_entry + 0x20;
     let normal_start = ExecuteCommandInstruction(NormalLocalStart(), 32);
@@ -174,7 +176,8 @@ begin
     assert normal_completed && _LastFault == Fault_None &&
            normal_first == Zeros{PTO_XLEN} + 0x3f800000 &&
            normal_second == Zeros{PTO_XLEN} + 0x40000000 &&
-           _LocalGenerations[[normal_slot]].published;
+           _LocalGenerations[[normal_slot]].published &&
+           _LocalGenerations[[normal_slot]].consumers[[0]].required_cell_count == 1;
 
     ResetProfileState();
     let entry = Zeros{PTO_XLEN} + 0xf00;
@@ -221,6 +224,9 @@ begin
            pending.invocation == invocation &&
            dependency.valid &&
            dependency.state == BundleConsumerDependency_Eligible &&
+           dependency.required_cell_count == 1 &&
+           dependency.required_cells[0] == '1' &&
+           dependency.required_cells[1] == '0' &&
            dependency.source == parent && dependency.participant_mask == '1000' &&
            dependency.execution_domain_token == pending.execution_domain_token &&
            dependency.consumer_instruction_instance == pending.instruction_pc;
