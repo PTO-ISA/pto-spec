@@ -443,6 +443,23 @@ begin
                 else SetFault(Fault_TileAllocation, ReadTPC()); end;
                 return (FALSE, writer_effects);
             end;
+            if local_generation_cube_writer then
+                let assemble = _BundleTileBindings[[binding]]
+                    .destination_assemble;
+                if assemble.size_code < 1 || assemble.size_code > 12 ||
+                   UInt(assemble.offset) > 2047 || valid_rows == 0 ||
+                   auxiliary_valid_columns == 0 ||
+                   !BundleLocalGenerationCubeWriterPreflightLegal(
+                       capacity_bytes, physical_rows, physical_columns,
+                       destination_type, destination_layout,
+                       assemble.size_code as integer {1..12},
+                       UInt(assemble.offset) as integer {0..2047},
+                       valid_rows as integer {1..65535},
+                       auxiliary_valid_columns as integer {1..65535}) then
+                    SetFault(Fault_TileLegality, ReadTPC());
+                    return (FALSE, writer_effects);
+                end;
+            end;
             if reused && !BundleReusedDestinationDescriptorMatches(
                    binding as BundleTileBindingIndex, capacity_bytes,
                    valid_rows, auxiliary_valid_columns, auxiliary_columns,

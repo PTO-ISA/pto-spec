@@ -130,6 +130,20 @@ begin
             SetFault(Fault_TileLegality, ReadTPC());
             return FALSE;
         end;
+        if local_generation then
+            let assemble = binding.destination_assemble;
+            if assemble.size_code < 1 || assemble.size_code > 12 ||
+               UInt(assemble.offset) > 2047 ||
+               !BundleLocalGenerationCubeWriterPreflightLegal(
+                   capacity_bytes, parent_rows, parent_columns,
+                   destination_type, source_layout,
+                   assemble.size_code as integer {1..12},
+                   UInt(assemble.offset) as integer {0..2047},
+                   valid_rows, valid_columns) then
+                SetFault(Fault_TileLegality, ReadTPC());
+                return FALSE;
+            end;
+        end;
         return TRUE;
     end;
     // CUBE physical rows/columns and CELL count are derived from the
@@ -141,6 +155,23 @@ begin
        !BundleTCVTCubeDestinationCapacityGroupFits() then
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;
+    end;
+    if binding.destination_assemble.valid then
+        let assemble = binding.destination_assemble;
+        if assemble.size_code < 1 || assemble.size_code > 12 ||
+           UInt(assemble.offset) > 2047 ||
+           !BundleLocalGenerationCubeWriterPreflightLegal(
+               capacity_bytes,
+               (if source_layout == TileLayout_CUBE_M16 then 16 else 32),
+               TileCubePhysicalColumnsFromCapacity(
+                   capacity_bytes, source_layout, destination_type),
+               destination_type, source_layout,
+               assemble.size_code as integer {1..12},
+               UInt(assemble.offset) as integer {0..2047},
+               valid_rows, valid_columns) then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
     end;
 
     let hand = UInt(binding.destination_hand);

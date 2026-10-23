@@ -42,7 +42,7 @@ begin
     assert _Tiles[[destination]].layout == TileLayout_CUBE_M16;
     assert _Tiles[[destination]].capacity_bytes == 1024;
     assert _Tiles[[destination]].rows == 16;
-    assert _Tiles[[destination]].columns == 10;
+    assert _Tiles[[destination]].columns == 16;
     assert _Tiles[[destination]].valid_rows == 16;
     assert _Tiles[[destination]].valid_columns == 9;
     assert ReadTileElement(destination, 0, 0) ==

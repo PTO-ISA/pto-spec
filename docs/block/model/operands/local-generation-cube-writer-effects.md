@@ -20,6 +20,47 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/operands/local-generation-cube-writer-effects.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","surface":"block","classification":["model","operands","local-generation-cube-writer-effects"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE","PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY","PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE-OPERATIONS"]}
+readonly func BundleLocalGenerationCubeWriterPreflightLegal(
+    parent_capacity: integer {0..262144},
+    parent_rows: integer {0..65535},
+    parent_columns: integer {0..65535},
+    data_type: TileDataType, layout: TileLayout,
+    writer_size: integer {1..12}, offset_cells: integer {0..2047},
+    valid_rows: integer {1..65535},
+    valid_columns: integer {1..65535}) => boolean
+begin
+    let writer_capacity = TileSizeCodeBytes(writer_size);
+    let writer_rows = if layout == TileLayout_CUBE_M16 then 16 else 32;
+    let writer_columns = TileCubePhysicalColumnsFromCapacity(
+        writer_capacity, layout, data_type);
+    let writer_cells = (writer_capacity DIVRM PTO_TILE_CELL_BYTES)
+        as integer {1..2048};
+    let cells_per_group = TileCubePhysicalCellsPerLogicalGroup(
+        layout, data_type);
+    let cell_columns = TileCubeCellColumns(layout, data_type);
+    if !BundleLocalGenerationCubeLayout(layout) || writer_columns == 0 ||
+       cells_per_group == 0 || cell_columns == 0 then
+        return FALSE;
+    end;
+    let first_column =
+        (offset_cells DIVRM cells_per_group) * cell_columns;
+    return parent_rows == writer_rows &&
+           parent_columns == TileCubePhysicalColumnsFromCapacity(
+               parent_capacity, layout, data_type) &&
+           writer_cells == TileCubePhysicalCellCount(
+               layout, writer_rows, writer_columns, data_type) &&
+           TileCubePhysicalRequiredBytes(
+               layout, writer_rows, writer_columns, data_type) ==
+               writer_capacity &&
+           TileCubePhysicalCellRangeComplete(
+               layout, data_type, offset_cells, writer_cells) &&
+           offset_cells + writer_cells <=
+               (parent_capacity DIVRM PTO_TILE_CELL_BYTES) &&
+           first_column + writer_columns <= parent_columns &&
+           TileCubeDescriptorShapeAndPhysicalLegal(
+               writer_capacity, writer_rows, writer_columns,
+               valid_rows, valid_columns, data_type, layout);
+end;
 
 readonly func BundleLocalGenerationCubeWriterView(
     parent: TileInfo, writer_size: integer {1..12},
@@ -28,36 +69,21 @@ readonly func BundleLocalGenerationCubeWriterView(
     valid_columns: integer {1..65535}) => (boolean, TileInfo)
 begin
     if !TileCubeNumericOrPredicateCellDescriptorLegal(parent) ||
-       !BundleLocalGenerationCubeLayout(parent.layout) then
+       !BundleLocalGenerationCubeWriterPreflightLegal(
+           parent.capacity_bytes, parent.rows, parent.columns,
+           parent.data_type, parent.layout, writer_size, offset_cells,
+           valid_rows, valid_columns) then
         return (FALSE, parent);
     end;
     let writer_capacity = TileSizeCodeBytes(writer_size);
     let writer_rows = if parent.layout == TileLayout_CUBE_M16 then 16 else 32;
     let writer_columns = TileCubePhysicalColumnsFromCapacity(
         writer_capacity, parent.layout, parent.data_type);
-    let writer_cells = (writer_capacity DIVRM PTO_TILE_CELL_BYTES)
-        as integer {1..2048};
     let cells_per_group = TileCubePhysicalCellsPerLogicalGroup(
         parent.layout, parent.data_type);
     let cell_columns = TileCubeCellColumns(parent.layout, parent.data_type);
     let first_column = ((offset_cells DIVRM cells_per_group) * cell_columns)
         as integer {0..65535};
-    if parent.rows != writer_rows || writer_columns == 0 ||
-       writer_cells != TileCubePhysicalCellCount(parent.layout,
-           writer_rows, writer_columns, parent.data_type) ||
-       TileCubePhysicalRequiredBytes(parent.layout, writer_rows,
-           writer_columns, parent.data_type) != writer_capacity ||
-       !TileCubePhysicalCellRangeComplete(parent.layout,
-           parent.data_type, offset_cells, writer_cells) ||
-       offset_cells + writer_cells >
-           (parent.capacity_bytes DIVRM PTO_TILE_CELL_BYTES) ||
-       first_column + writer_columns > parent.columns ||
-       !TileCubeDescriptorShapeAndPhysicalLegal(writer_capacity,
-           writer_rows, writer_columns, valid_rows, valid_columns,
-           parent.data_type, parent.layout) then
-        return (FALSE, parent);
-    end;
-
     var writer = parent;
     writer.capacity_bytes = writer_capacity;
     writer.rows = writer_rows;

@@ -22,7 +22,7 @@ begin
     end;
 
     assert _Tiles[[0]].rows == 16;
-    assert _Tiles[[0]].columns == 8;
+    assert _Tiles[[0]].columns == 16;
     assert _Tiles[[1]].rows == 16;
     assert _Tiles[[1]].columns == 16;
     assert _Tiles[[0]].valid_rows == _Tiles[[1]].valid_rows;
