@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-FUSED-MULTIPLY-ADD","surface":"tile","classification":["model","execution","fused-multiply-add"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT","PTO-SCALAR-MODEL-FSU-SCALAR-FP"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-FUSED-MULTIPLY-ADD","surface":"tile","classification":["model","execution","fused-multiply-add"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT","PTO-TILE-MODEL-STATE-TYPES","PTO-SCALAR-MODEL-FSU-SCALAR-FP"]}
 func TileProfileFusedMultiplyAdd(
     data_type: TileDataType,
     addend: Word,
@@ -95,18 +95,13 @@ end;
 // PTO-REQ-TFMA-001: complete preflight precedes three source snapshots. The
 // valid payload, padding definedness, descriptor, and accumulated flags are
 // computed privately and become visible only through the final publication.
-func TFMA(
-    destination: TileIndex,
+func TFMAWithDestinationValue(
+    destination: TileOutputValueTarget,
     source_left: TileIndex,
     source_right: TileIndex,
-    addend: TileIndex)
+    addend: TileIndex) => TileInfo
 begin
-    assert TileOperandsLegal_TFMA(
-        destination,
-        source_left,
-        source_right,
-        addend);
-    let destination_tile = _Tiles[[destination]];
+    let destination_tile = destination.value;
     let left_tile = _Tiles[[source_left]];
     let right_tile = _Tiles[[source_right]];
     let addend_tile = _Tiles[[addend]];
@@ -145,6 +140,25 @@ begin
     result_tile = TileWithPadding(
         result_tile,
         CurrentBundlePadValue());
-    _Tiles[[destination]] = result_tile;
     ScalarFPRecordFlags(flags);
+    return result_tile;
+end;
+
+func TFMA(
+    destination: TileIndex,
+    source_left: TileIndex,
+    source_right: TileIndex,
+    addend: TileIndex)
+begin
+    assert TileOperandsLegal_TFMA(
+        destination,
+        source_left,
+        source_right,
+        addend);
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    _Tiles[[destination]] = TFMAWithDestinationValue(
+        target, source_left, source_right, addend);
 end;

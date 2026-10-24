@@ -180,6 +180,14 @@ type TileInfo of record {
     payload: TilePayload
 };
 
+// Explicit destination identity and value passed through a producer that
+// writes a transient Local-generation envelope. It is a call-local argument,
+// never architectural tile state.
+type TileOutputValueTarget of record {
+    destination: TileIndex,
+    value: TileInfo
+};
+
 // Requirement reference PTO-REQ-SHARED-TILE-001: S0..S63 are absolute,
 // core-private architectural
 // Shared registers. Each record is persistent descriptor-plus-payload state;

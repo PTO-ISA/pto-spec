@@ -45,11 +45,19 @@ begin
         return FALSE;
     end;
     if TileLayoutIsCube(tile.layout) then
+        let expected_physical_columns =
+            if (tile.layout == TileLayout_CUBE_M16 ||
+                tile.layout == TileLayout_CUBE_M32) &&
+               !_BundleDimensionPresent[[2]] then
+                TileCubePhysicalColumnsFromCapacity(
+                    tile.capacity_bytes, tile.layout, tile.data_type)
+            else
+                TileCubeStorageColumns(
+                    tile.layout, columns, tile.data_type);
         return TileCubeDescriptorLegal(tile) &&
                tile.valid_rows == valid_rows &&
                tile.valid_columns == valid_columns &&
-               tile.columns == TileCubeStorageColumns(
-                   tile.layout, columns, tile.data_type);
+               tile.columns == expected_physical_columns;
     end;
     return tile.columns == columns;
 end;

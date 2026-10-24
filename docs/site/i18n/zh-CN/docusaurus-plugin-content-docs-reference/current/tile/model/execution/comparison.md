@@ -83,7 +83,7 @@ CMode 为 LT 的 TCMP 比较两个 FP32 RowMajor Tile，有效区域为 1 行乘
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/comparison.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-COMPARISON","surface":"tile","classification":["model","execution","comparison"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-COMPARISON","surface":"tile","classification":["model","execution","comparison"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS","PTO-TILE-MODEL-STATE-TYPES"]}
 // PTO-REQ-TEPL-COMPARISON-001: packed predicate compare and select semantics.
 pure func TileCompareDataTypeSupported(data_type: TileDataType) => boolean
 begin

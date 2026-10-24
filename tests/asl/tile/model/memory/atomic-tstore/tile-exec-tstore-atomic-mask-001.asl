@@ -100,7 +100,7 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    let source_ready = ConfigureCubeTileForMaskWithPhysical(3, 256,
+    let source_ready = ConfigureCubeTileForMaskWithPhysical(3, 128,
         16, 2, 1, 2, TileDataType_U32, TileLayout_CUBE_M16, '1111');
     let mask_ready = ConfigurePredicateCellForMask(
         4, 128, 1, 2, TileDataType_U32, TileLayout_CUBE_M16, '1111');
@@ -141,7 +141,7 @@ begin
     assert !selected_undefined && _LastFault == Fault_TileLegality &&
            _MemoryEventCount == 0;
     ClearFault();
-    let source_restored = ConfigureCubeTileForMaskWithPhysical(3, 256,
+    let source_restored = ConfigureCubeTileForMaskWithPhysical(3, 128,
         16, 2, 1, 2, TileDataType_U32, TileLayout_CUBE_M16, '1111');
     assert source_restored;
     InstallRelativeTileFixture(3, 3);

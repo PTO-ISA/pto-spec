@@ -210,6 +210,14 @@ end;
 func MarkSelectedBundleExecutionMaskCarrier(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
+    if BundleTMOVSelected() && _BundleDataAttributesPresent &&
+       TileDataLayoutIsCubeToSharedND(
+           _BundleDataAttributes.data_layout) &&
+       (_BundleScalarBindings[[0]].execution_mask_present ||
+        _BundleScalarBindings[[1]].execution_mask_present ||
+        BundleExecutionMaskTileCarrierPresent(operation)) then
+        return FALSE;
+    end;
     _BundleExecutionMask.valid = FALSE;
     _BundleExecutionMask.carrier = BundleExecutionMask_None;
     if _BundleScalarBindings[[0]].execution_mask_present ||

@@ -80,14 +80,16 @@ CMode 为 GE 的 TCMPS 把一个 S16 CUBE_M16 源与标量 `0x00010005` 比较�
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/execution-mask-comparison.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-MASK-COMPARISON","surface":"tile","classification":["model","execution","execution-mask-comparison"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-COMPARISON","PTO-TILE-MODEL-EXECUTION-MASK-STATE"]}
-func ExecuteTileCompareCellAs(destination: TileIndex, source_left: TileIndex,
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-MASK-COMPARISON","surface":"tile","classification":["model","execution","execution-mask-comparison"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-COMPARISON","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-STATE-TYPES"]}
+func ExecuteTileCompareCellAsToValue(
+                              destination: TileOutputValueTarget,
+                              source_left: TileIndex,
                               source_right: TileIndex, comparison: TileComparison,
-                              operation_type: TileDataType)
+                              operation_type: TileDataType) => TileInfo
 begin
     let left = _Tiles[[source_left]];
     let right = _Tiles[[source_right]];
-    var result = _Tiles[[destination]];
+    var result = destination.value;
     var flags = Zeros{5};
     for row = 0 to left.valid_rows - 1 looplimit 65536 do
         for column = 0 to left.valid_columns - 1 looplimit 65536 do
@@ -120,7 +122,19 @@ begin
         (result.valid_rows * result.valid_columns) as integer {0..524288};
     result.contents_defined = TRUE;
     RecordNumericStatusFlags(flags);
-    _Tiles[[destination]] = result;
+    return result;
+end;
+
+func ExecuteTileCompareCellAs(destination: TileIndex, source_left: TileIndex,
+                              source_right: TileIndex, comparison: TileComparison,
+                              operation_type: TileDataType)
+begin
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    _Tiles[[destination]] = ExecuteTileCompareCellAsToValue(target,
+        source_left, source_right, comparison, operation_type);
 end;
 
 func ExecuteTileCompareCell(destination: TileIndex, source_left: TileIndex,
@@ -133,13 +147,15 @@ begin
         destination, source_left, source_right, comparison, operation_type);
 end;
 
-func ExecuteTileCompareCellScalarAs(destination: TileIndex, source: TileIndex,
+func ExecuteTileCompareCellScalarAsToValue(
+                                    destination: TileOutputValueTarget,
+                                    source: TileIndex,
                                     scalar: Word, comparison: TileComparison,
-                                    operation_type: TileDataType)
+                                    operation_type: TileDataType) => TileInfo
 begin
     let source_tile = _Tiles[[source]];
     let normalized_scalar = TileRawElementValue(scalar, operation_type);
-    var result = _Tiles[[destination]];
+    var result = destination.value;
     var flags = Zeros{5};
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
@@ -172,7 +188,19 @@ begin
         (result.valid_rows * result.valid_columns) as integer {0..524288};
     result.contents_defined = TRUE;
     RecordNumericStatusFlags(flags);
-    _Tiles[[destination]] = result;
+    return result;
+end;
+
+func ExecuteTileCompareCellScalarAs(destination: TileIndex, source: TileIndex,
+                                    scalar: Word, comparison: TileComparison,
+                                    operation_type: TileDataType)
+begin
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    _Tiles[[destination]] = ExecuteTileCompareCellScalarAsToValue(
+        target, source, scalar, comparison, operation_type);
 end;
 
 func ExecuteTileCompareCellScalar(destination: TileIndex, source: TileIndex,

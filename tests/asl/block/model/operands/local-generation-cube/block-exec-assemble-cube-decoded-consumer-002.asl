@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-ASSEMBLE-CUBE-DECODED-CONSUMER-002","source":"asl/block/model/operands/local-generation-cube.asl","requirements":["PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001","PTO-INST-BLOCK-B-IOT","PTO-INST-BLOCK-B-ASSEMBLE","PTO-INST-BLOCK-BSTART-TMATMULMX"],"kind":"execution","summary":"Decoded Local B.IOT/B.ASSEMBLE INIT_LAST and multi-writer generations validate materialized CUBE writers before delayed publication and Local-A TMATMULMX consumption.","pass_condition":"Decoded 32x32 E2M1X2 writers with 512-byte envelopes complete explicitly; INIT_LAST publishes one capacity-slack parent, four writers at CELL offsets 0, 4, 8, and 12 publish 32x128 only after every writer event, Local-A TMATMULMX accepts M=32,K=128, and out-of-bounds or last-writer dtype/layout/row/tail mismatches roll back without partial publication.","related_sources":["asl/block/model/operands/local-generation.asl","asl/block/model/operands/portable-carriers.asl","asl/block/model/dispatch/cube-tmatmul.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-ASSEMBLE-CUBE-DECODED-CONSUMER-002","source":"asl/block/model/operands/local-generation-cube.asl","requirements":["PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001","PTO-INST-BLOCK-B-IOT","PTO-INST-BLOCK-B-ASSEMBLE","PTO-INST-BLOCK-BSTART-TMATMULMX"],"kind":"execution","summary":"Decoded Local B.IOT/B.ASSEMBLE INIT_LAST and multi-writer generations validate materialized CUBE writers before delayed publication and Local-A TMATMULMX consumption.","pass_condition":"Decoded 32x32 E2M1X2 writers with 512-byte envelopes complete explicitly; INIT_LAST retains one full capacity-derived parent, four writers at CELL offsets 0, 4, 8, and 12 publish the 32x128 valid prefix only after every writer event, Local-A TMATMULMX accepts M=32,K=128, and out-of-bounds or last-writer dtype/layout/row/tail mismatches roll back without partial publication.","related_sources":["asl/block/model/operands/local-generation.asl","asl/block/model/operands/portable-carriers.asl","asl/block/model/dispatch/cube-tmatmul.asl"]}
 pure func CubeDecodedStartTCVT() => bits(64)
 begin
     return Zeros{64} + 0x21b19181;
@@ -160,7 +160,7 @@ begin
     let slot = BundleLocalGenerationSlot(0, '1111');
     let parent = _LocalGenerations[[slot]].working_destination;
     assert _Tiles[[parent]].layout == TileLayout_CUBE_M32;
-    assert _Tiles[[parent]].rows == 32 && _Tiles[[parent]].columns == 32;
+    assert _Tiles[[parent]].rows == 32 && _Tiles[[parent]].columns == 128;
     CubeDecodedRunWriter(FALSE, FALSE, 4);
     CubeDecodedRunWriter(FALSE, FALSE, 8);
     CubeDecodedRunWriter(FALSE, TRUE, 12);
@@ -181,8 +181,8 @@ begin
     CubeDecodedRunConsumer(parent);
 
     // A decoded INIT_LAST validates the newly materialized 32x32 writer, not
-    // the pre-allocation destination placeholder. Capacity slack is legal and
-    // publication waits for the writer-completion event.
+    // the pre-allocation destination placeholder. The parent keeps its full
+    // capacity-derived geometry and publication waits for writer completion.
     ResetProfileState();
     CubeDecodedPrepareSources();
     CubeDecodedRunWriter(TRUE, TRUE, 0);
@@ -193,7 +193,7 @@ begin
            _LocalGenerations[[init_last_slot]].published &&
            _Tiles[[init_last_parent]].capacity_bytes == 2048 &&
            _Tiles[[init_last_parent]].rows == 32 &&
-           _Tiles[[init_last_parent]].columns == 32;
+           _Tiles[[init_last_parent]].columns == 128;
 
     ResetProfileState();
     CubeDecodedPrepareSources();

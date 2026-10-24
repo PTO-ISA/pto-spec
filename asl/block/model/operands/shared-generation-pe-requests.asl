@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS","surface":"block","classification":["model","operands","shared-generation-pe-requests"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS","surface":"block","classification":["model","operands","shared-generation-pe-requests"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-CUBE-TO-ND","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION"]}
 readonly func BundleSharedGenerationRequestWaiting(
     binding: BundleSharedBindingIndex) => boolean
 begin
@@ -128,7 +128,6 @@ begin
            _SharedGenerations[[index]].parent_size_code ==
                BundleSharedGenerationCapacity(binding);
 end;
-
 readonly func ValidateCurrentPESharedGenerationSubmission(
     binding: BundleSharedBindingIndex) => boolean
 begin
@@ -195,7 +194,6 @@ begin
            _SharedGenerations[[index]].working_tile.layout ==
                candidate.tile.layout;
 end;
-
 readonly func ValidateBundleSharedGeneration() => boolean
 begin
     for binding = 0 to 3 do
@@ -234,10 +232,16 @@ begin
                 let offset_cells = (raw_offset * 4) as integer {0..8188};
                 let writer_cells = (BundleLocalGenerationCellCount(
                     writer_size as integer {1..12}) * 4) as integer {4..8192};
+                let conversion_mode =
+                    BundleSharedTMOVCubeToNDSelected();
                 if !ValidateBundleSharedGenerationRange(binding, offset_cells,
-                       writer_cells, participant_mask, FALSE,
+                       writer_cells, participant_mask, conversion_mode,
                        Zeros{PTO_XLEN}, Zeros{PTO_XLEN},
-                       Zeros{PTO_XLEN}, Zeros{PTO_XLEN}, Zeros{PTO_XLEN}) then
+                       Zeros{PTO_XLEN}, Zeros{PTO_XLEN},
+                       if conversion_mode then
+                           Zeros{PTO_XLEN} +
+                               UInt(_BundleDataAttributes.data_layout)
+                       else Zeros{PTO_XLEN}) then
                     return FALSE;
                 end;
             end;
@@ -245,7 +249,6 @@ begin
     end;
     return TRUE;
 end;
-
 func CommitBundleSharedGenerationCandidateForCurrentPE(
     binding: BundleSharedBindingIndex, candidate: SharedTileInfo) => boolean
 begin
@@ -395,14 +398,18 @@ begin
         _BundleOperation.operation_class == BundleOperation_TileMemory &&
         _BundleOperation.selector_valid && _BundleOperation.selector[4:0] == Zeros{5};
     // Physical writer padding is covered; only defined valid coordinates copy.
-    let preserve_source_geometry = BundleTMOVSelected();
+    let conversion_mode = BundleSharedTMOVCubeToNDSelected();
+    let preserve_source_geometry = BundleTMOVSelected() && !conversion_mode;
     let committed =
         CommitBundleSharedGenerationCandidateRangeWithPayloadElements(
             binding, candidate, offset_cells, writer_cells,
             writer_cells, writer_payload_elements,
             !whole_parent_tload, preserve_source_geometry, participant,
-            FALSE, Zeros{PTO_XLEN}, Zeros{PTO_XLEN}, Zeros{PTO_XLEN},
-            Zeros{PTO_XLEN}, Zeros{PTO_XLEN});
+            conversion_mode, Zeros{PTO_XLEN}, Zeros{PTO_XLEN},
+            Zeros{PTO_XLEN}, Zeros{PTO_XLEN},
+            if conversion_mode then
+                Zeros{PTO_XLEN} + UInt(_BundleDataAttributes.data_layout)
+            else Zeros{PTO_XLEN});
     _BundleSharedBindings[[binding]].destination_assemble.init = assemble.init;
     _BundleSharedBindings[[binding]].destination_assemble.last = assemble.last;
     _BundleSharedBindings[[binding]].size_code = original_shared_size;
@@ -474,7 +481,6 @@ begin
         .shared_request_waiting = FALSE;
     return TRUE;
 end;
-
 func BeginBundleSharedGenerationProbe(shared_tile_id: SharedTileID)
     => SharedTileInfo
 begin

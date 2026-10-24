@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV","surface":"block","classification":["model","dispatch","tlsu-gmov"],"depends_on":["PTO-ARCH-STATE-LOCAL-PAYLOAD-GENERATION","PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-STATE-ATOMIC-TSTORE-SOURCE-LIFETIME","PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT"]}
+// PTO-UNIT: {"classification":["model","dispatch","tlsu-gmov"],"depends_on":["PTO-ARCH-STATE-LOCAL-PAYLOAD-GENERATION","PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV-HELPERS","PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-VALIDATION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-BLOCK-MODEL-STATE-ATOMIC-TSTORE-SOURCE-LIFETIME","PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT","PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT-VALUES"],"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV","surface":"block"}
 
 readonly func BundleGMOVSelected() => boolean
 begin
@@ -236,30 +236,6 @@ begin
     end;
 end;
 
-readonly func BundleGMOVPESourceTileReady(tile: TileInfo) => boolean
-begin
-    if TileLayoutIsCube(tile.layout) then
-        return TileCubeDescriptorLegal(tile) && tile.contents_defined;
-    end;
-    return TileInfoDescriptorLegal(tile);
-end;
-
-readonly func BundleGMOVSourceDescriptorsMatch(left: TileInfo,
-                                                right: TileInfo) => boolean
-begin
-    return left.capacity_bytes == right.capacity_bytes &&
-           left.rows == right.rows && left.columns == right.columns &&
-           left.valid_rows == right.valid_rows &&
-           left.valid_columns == right.valid_columns &&
-           left.data_type == right.data_type &&
-           left.layout == right.layout &&
-           left.storage_kind == right.storage_kind &&
-           left.cube_k_repeat == right.cube_k_repeat &&
-           left.cube_n_repeat == right.cube_n_repeat &&
-           left.cube_cell_count == right.cube_cell_count &&
-           left.cube_storage_bytes == right.cube_storage_bytes;
-end;
-
 readonly func BundleGMOVCore4SourceReady(selector: TileIndex,
                                          relative: boolean,
                                          selection_ordinal: integer) => boolean
@@ -335,13 +311,14 @@ begin
     return participants;
 end;
 
-func ExecuteBundleGMOVOperation() => boolean
+func ExecuteBundleGMOVOperation() => (boolean, BundleLocalGenerationCubeWriterEffects)
 begin
+    var result_writer_effects = EmptyBundleLocalGenerationCubeWriterEffects();
     let decoded = DecodeTileOperation(TileDecode_TLSU,
         BundleOperationDecodeCode(_BundleOperation));
     if decoded == PTO_TILE_OPERATION_COUNT then
         SetFault(Fault_IllegalInstruction, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
     if BundleSharedBindingCount() != 0 ||
@@ -350,9 +327,9 @@ begin
        !SelectedBundleTileMasksLegal() ||
        BundleTileBindingCount() != 1 then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
-    if !SelectedBundleTileDataAttributesLegal(operation) then return FALSE; end;
+    if !SelectedBundleTileDataAttributesLegal(operation) then return (FALSE, result_writer_effects); end;
     let binding = _BundleTileBindings[[0]];
     if _CurrentPEContextValid then
         // Capture every destination's peer-selected physical generation before
@@ -365,7 +342,7 @@ begin
                 else Zeros{PTO_XLEN};
             if UInt(peer_tid) >= PTO_MODEL_MEMORY_AGENTS then
                 SetFault(Fault_TileLegality, ReadTPC());
-                return FALSE;
+                return (FALSE, result_writer_effects);
             end;
         end;
     end;
@@ -374,14 +351,14 @@ begin
             binding.source0_relative, binding.pe_mask,
             binding.gmov_selection_ordinal)
         else 0;
-    if _CurrentPEContextValid && selection_ordinal == 0 then return FALSE; end;
+    if _CurrentPEContextValid && selection_ordinal == 0 then return (FALSE, result_writer_effects); end;
     if _CurrentPEContextValid then
         _BundleTileBindings[[0]].gmov_selection_captured = TRUE;
         _BundleTileBindings[[0]].gmov_selection_ordinal = selection_ordinal;
     end;
     let selection_slot = if selection_ordinal > 0 then
         FindBundleGMOVSourceSelectionOrdinal(selection_ordinal) else 0;
-    if _CurrentPEContextValid && selection_slot < 0 then return FALSE; end;
+    if _CurrentPEContextValid && selection_slot < 0 then return (FALSE, result_writer_effects); end;
     let current_destination = _CurrentMemoryAgent as integer {0..3};
     let current_source_pe = if _CurrentPEContextValid then
         _BundleGMOVSourceSelections[[selection_slot]]
@@ -409,12 +386,12 @@ begin
                as TileDataTypeEncoding) ||
        current_source_tile.layout != CurrentBundleTileLayout() then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     for dimension = 0 to PTO_BUNDLE_DIMENSION_COUNT - 1 do
         if UInt(_BundleDimensions[[dimension]]) != 1 then
             SetFault(Fault_TileLegality, ReadTPC());
-            return FALSE;
+            return (FALSE, result_writer_effects);
         end;
     end;
     let current_mask_bit = PTOPEMaskBitOfPEIdentity(_CurrentMemoryAgent);
@@ -422,7 +399,7 @@ begin
     // generation and readiness preflight above, but has no destination,
     // publication or source-lifetime effect in its private bank.
     if _CurrentPEContextValid &&
-       binding.pe_mask[current_mask_bit] == '0' then return TRUE; end;
+       binding.pe_mask[current_mask_bit] == '0' then return (TRUE, result_writer_effects); end;
     if _CurrentPEContextValid && _CurrentKernelInvocation != 0 &&
        binding.pe_mask[current_mask_bit] == '1' &&
        !binding.source0_reuse then
@@ -434,45 +411,68 @@ begin
         let ordinal = CaptureBundleSourceLifetime(FALSE,
             current_source_pe, current_source, source_epoch, 0,
             participants, binding.source0_lifetime_ordinal);
-        if ordinal == 0 then return FALSE; end;
+        if ordinal == 0 then return (FALSE, result_writer_effects); end;
         _BundleTileBindings[[0]].source0_lifetime_captured = TRUE;
         _BundleTileBindings[[0]].source0_lifetime_ordinal = ordinal;
     end;
     // GMOV has no dimensions that describe a new shape: the destination
     // carries the resolved peer source shape while B.DATR.Layout selects its
     // physical representation.
-    if !ResolveBundleTileDestinationsWithShapeAndType(
-           TRUE, current_source_tile.valid_rows,
-           current_source_tile.valid_columns,
-           current_source_tile.columns, TRUE,
-           current_source_tile.data_type) then return FALSE; end;
-    if !ValidateBundleLocalGenerationWriters() then
-        RollBackBundleTileDestinations(); return FALSE;
+    let (destinations_resolved, resolved_writer_effects) =
+        ResolveBundleTileDestinationsWithShapeAndTypeAndWriterEffects(
+            TRUE, current_source_tile.valid_rows,
+            current_source_tile.valid_columns,
+            current_source_tile.columns, TRUE,
+            current_source_tile.data_type);
+    if !destinations_resolved then return (FALSE, result_writer_effects); end;
+    var writer_effects = resolved_writer_effects;
+    if !ValidateBundleLocalGenerationWritersWithWriterEffects(
+           writer_effects) then
+        RollBackBundleTileDestinations(); return (FALSE, result_writer_effects);
     end;
     let destination = _BundleTileBindings[[0]].destination;
     let source = current_source;
     let selected_source = if _CurrentPEContextValid then
         current_source_tile else _Tiles[[source]];
+    let (writer_found, writer_value) =
+        BundleLocalGenerationCubeWriterValueForDestination(
+            writer_effects, destination, _Tiles[[destination]]);
+    let destination_value = if writer_found then writer_value
+        else _Tiles[[destination]];
     if !BundleGMOVPESourceTileReady(selected_source) ||
-       !TileElementwiseDescriptorLegal(destination) ||
-       _Tiles[[destination]].rows != selected_source.rows ||
-       _Tiles[[destination]].columns != selected_source.columns ||
-       _Tiles[[destination]].valid_rows != selected_source.valid_rows ||
-       _Tiles[[destination]].valid_columns != selected_source.valid_columns ||
-       _Tiles[[destination]].data_type != selected_source.data_type ||
-       _Tiles[[destination]].layout != selected_source.layout ||
+       !(if writer_found then BundleGMOVDestinationValueMatches(
+                 destination_value, selected_source)
+          else TileElementwiseDescriptorLegal(destination) &&
+               _Tiles[[destination]].rows == selected_source.rows &&
+               _Tiles[[destination]].columns == selected_source.columns &&
+               _Tiles[[destination]].valid_rows == selected_source.valid_rows &&
+               _Tiles[[destination]].valid_columns == selected_source.valid_columns &&
+               _Tiles[[destination]].data_type == selected_source.data_type &&
+               _Tiles[[destination]].layout == selected_source.layout) ||
        !TileElementwiseLayoutSupported(selected_source.layout) ||
        !TileCarrierOrPackedBaselineDataTypeSupported(
            selected_source.data_type) then
         RollBackBundleTileDestinations();
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
-    if _CurrentPEContextValid then
-        GMOVFromSourceTile(destination, selected_source);
+    if writer_found then
+        let target = TileOutputValueTarget {
+            destination = destination,
+            value = writer_value
+        };
+        let result = GMOVFromSourceTileToValue(target, selected_source);
+        writer_effects = BundleLocalGenerationCubeWriterEffectWithOutput(
+            writer_effects, destination, result);
     else
-        GMOV(destination, source, Zeros{PTO_XLEN});
+        if _CurrentPEContextValid then
+            GMOVFromSourceTile(destination, selected_source);
+        else
+            GMOV(destination, source, Zeros{PTO_XLEN});
+        end;
     end;
+    result_writer_effects = writer_effects;
+        FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
     if _BundleTileBindings[[0]].source0_lifetime_captured then
         CompleteBundleSourceLifetime(
             _BundleTileBindings[[0]].source0_lifetime_ordinal);
@@ -483,5 +483,5 @@ begin
         CompleteBundleGMOVSourceSelection(selection_ordinal);
     end;
     FinalizeBundleTileAttempt(TileExecution_Executed);
-    return TRUE;
+    return (TRUE, result_writer_effects);
 end;

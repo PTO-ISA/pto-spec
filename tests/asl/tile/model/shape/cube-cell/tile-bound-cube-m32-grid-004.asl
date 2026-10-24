@@ -5,7 +5,7 @@ begin
     ResetProfileState();
 
     let mx = ConfigureCubeTileForMask(
-        1, 512, 32, 5, TileDataType_E8M0,
+        1, 256, 32, 5, TileDataType_E8M0,
         TileLayout_CUBE_M32, '1000');
     assert mx;
     assert _Tiles[[1]].rows == 32;
@@ -17,10 +17,10 @@ begin
     assert TileCubePayloadIndex(_Tiles[[1]], 0, 0) == 0;
     assert TileCubePayloadIndex(_Tiles[[1]], 0, 4) == 128;
     assert !TileCubeDescriptorShapeLegal(
-        512, 33, 5, TileDataType_E8M0, TileLayout_CUBE_M32);
+        256, 33, 5, TileDataType_E8M0, TileLayout_CUBE_M32);
 
     let hif = ConfigureCubeTileForMask(
-        2, 512, 32, 2, TileDataType_U32,
+        2, 256, 32, 2, TileDataType_U32,
         TileLayout_CUBE_M32, '1000');
     assert hif;
     assert _Tiles[[2]].rows == 32;

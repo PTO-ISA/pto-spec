@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-CUBE","surface":"tile","classification":["model","execution","cube"],"depends_on":["PTO-TILE-MODEL-MEMORY-RESTART","PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-CUBE","surface":"tile","classification":["model","execution","cube"],"depends_on":["PTO-TILE-MODEL-MEMORY-RESTART","PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE","PTO-TILE-MODEL-STATE-TYPES"]}
 // PTO-REQ-CUBE-001: profile-defined matrix arithmetic with portable integer
 // defaults. CUBE operations name their Local destination D explicitly. ACC
 // forms also name their Local accumulator input C explicitly;
@@ -337,6 +337,7 @@ begin
         CommitMatrixRawPartial(destination, result, intermediate_type);
     else CommitMatrixResult(destination, result, intermediate_type); end;
 end;
+
 func TMATMUL(destination: TileIndex, left: TileIndex, right: TileIndex)
 begin
     let result = MatrixProductResult(destination, destination,

@@ -2,9 +2,10 @@
 func TestArgSource(data_type: TileDataType)
 begin
     ResetProfileState();
-    let source = ConfigureCubeTileForMaskWithPhysical(0, 512, 16, 16,
+    let source_capacity = if data_type == TileDataType_U8 then 256 else 512;
+    let source = ConfigureCubeTileForMaskWithPhysical(0, source_capacity, 16, 16,
         4, 8, data_type, TileLayout_CUBE_M16, '0001');
-    let destination = ConfigureCubeTileForMaskWithPhysical(1, 1024, 16, 8,
+    let destination = ConfigureCubeTileForMaskWithPhysical(1, 512, 16, 8,
         1, 8, TileDataType_U32, TileLayout_CUBE_M16, '0001');
     assert source && destination;
     assert _Tiles[[0]].data_type == data_type;
@@ -29,9 +30,44 @@ begin
         TileDataType_U32, TileLayout_CUBE_M16);
 end;
 
+func TestM32RowArg()
+begin
+    ResetProfileState();
+    let source = ConfigureCubeTileForMaskWithPhysical(0, 512, 32, 16,
+        4, 8, TileDataType_U8, TileLayout_CUBE_M32, '0001');
+    let exact_destination = ConfigureCubeTileForMaskWithPhysical(
+        1, 2048, 32, 16, 4, 1,
+        TileDataType_U32, TileLayout_CUBE_M32, '0001');
+    let wider_destination = ConfigureCubeTileForMaskWithPhysical(
+        2, 4096, 32, 32, 4, 1,
+        TileDataType_U32, TileLayout_CUBE_M32, '0001');
+    assert source && exact_destination && wider_destination;
+    for row = 0 to 3 looplimit 4 do
+        for column = 0 to 7 looplimit 8 do
+            WriteTileElement(0, row as integer {0..65535},
+                column as integer {0..65535},
+                Zeros{PTO_XLEN} + column);
+        end;
+    end;
+    assert TileOperandsLegal_ExecuteTileReduction(
+        TileReduction_ARGMAX, TileAxis_Row, 1, 0);
+    ExecuteTileReduction(TileReduction_ARGMAX, TileAxis_Row, 1, 0);
+    assert _Tiles[[1]].capacity_bytes == 2048 &&
+           _Tiles[[1]].rows == 32 && _Tiles[[1]].columns == 16 &&
+           _Tiles[[1]].valid_rows == 4 &&
+           _Tiles[[1]].valid_columns == 1;
+    assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 7;
+    assert ReadTileElement(1, 3, 0) == Zeros{PTO_XLEN} + 7;
+    assert _Tiles[[2]].capacity_bytes == 4096 &&
+           _Tiles[[2]].rows == 32 && _Tiles[[2]].columns == 32;
+    assert !TileOperandsLegal_ExecuteTileReduction(
+        TileReduction_ARGMAX, TileAxis_Row, 2, 0);
+end;
+
 func main() => integer
 begin
     TestArgSource(TileDataType_U8);
     TestArgSource(TileDataType_U16);
+    TestM32RowArg();
     return 0;
 end;

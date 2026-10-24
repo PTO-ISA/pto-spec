@@ -82,7 +82,7 @@ None of these integer conversions sets a flag.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/numeric/formats.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-NUMERIC-FORMATS","surface":"tile","classification":["model","numeric","formats"],"depends_on":["PTO-TILE-MODEL-EXECUTION-GENERATION","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-ARCH-DATA-TYPES-NUMERIC-CLASSIFICATION","PTO-ARCH-FEATURES-MX-FORMATS","PTO-ARCH-STATE-NUMERIC-STATUS"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-NUMERIC-FORMATS","surface":"tile","classification":["model","numeric","formats"],"depends_on":["PTO-TILE-MODEL-EXECUTION-GENERATION","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-STATE-TYPES","PTO-ARCH-DATA-TYPES-NUMERIC-CLASSIFICATION","PTO-ARCH-FEATURES-MX-FORMATS","PTO-ARCH-STATE-NUMERIC-STATUS"]}
 // PTO-REQ-TEPL-CONVERT-001: conversion, quantization, and dequantization.
 
 pure func NormalizeTileInteger(value: Word, data_type: TileDataType) => Word
@@ -237,11 +237,11 @@ begin
     _Tiles[[destination]] = result;
 end;
 
-func TCVT(destination: TileIndex, source: TileIndex,
-          control: NumericExecutionControl)
+func TCVTToValue(destination: TileOutputValueTarget, source: TileIndex,
+                 control: NumericExecutionControl) => TileInfo
 begin
     let zero_packed_tile_elements = ZeroPackedTileDefinedElements();
-    var result = _Tiles[[destination]];
+    var result = destination.value;
     let source_tile = _Tiles[[source]];
     let source_operation_type = if BundleTileOperationSelected() &&
         _BundleOperation.data_type_valid then TileDataTypeFromEncoding(
@@ -308,7 +308,18 @@ begin
     end;
     result = TileWithValidRegionDefined(result);
     result = TileWithPadding(result, CurrentBundlePadValue());
-    TileCommitConversionResult(destination, result, conversion_flags);
+    RecordNumericStatusFlags(conversion_flags);
+    return result;
+end;
+
+func TCVT(destination: TileIndex, source: TileIndex,
+          control: NumericExecutionControl)
+begin
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    _Tiles[[destination]] = TCVTToValue(target, source, control);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

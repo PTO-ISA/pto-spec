@@ -228,8 +228,20 @@
         "zh-CN": "TMOV Local 复制与 Shared 搬移"
       },
       "summary": {
-        "en": "Local TMOV copies payload and per-element definedness from a persistent Local source into a renamed Local destination after exact shape and carrier-width checks. Its Shared INSERT, PUBLISH, BROADCAST, and EXTRACT forms use separate BSTART.TMOV schemas and publication paths rather than behaving like an ordinary Local copy. The selected type acts as a same-width non-packed carrier interpretation, and successful publication preserves the source backing type.",
-        "zh-CN": "Local TMOV 在精确形状和载体位宽检查后，把持久化 Local 源的载荷与逐元素定义性复制到重命名 Local 目标。Shared INSERT、PUBLISH、BROADCAST 和 EXTRACT 形式使用各自的 BSTART.TMOV schema 与发布路径，而不是按普通 Local 复制处理。所选类型作为同位宽非打包载体解释，成功发布时保留源 backing type。"
+        "en": "Local TMOV preserves payload and per-element definedness after shape and carrier checks. Function-2 M322ND/M162ND moves valid raw Local CUBE_M32/M16 coordinates into normalized ND Shared fragments with source backing retained, then uses existing singleton or explicit B.ASSEMBLE atomic publication; conversion modes cannot mix within one generation.",
+        "zh-CN": "Local TMOV 在形状与载体检查后保留载荷和逐元素定义性。Function-2 M322ND/M162ND 将有效的 raw Local CUBE_M32/M16 坐标移动到归一化 ND Shared fragment 并保留源 backing，随后沿用既有单写入者或显式 B.ASSEMBLE 原子发布；同一 generation 不得混用转换模式。"
+      }
+    },
+    {
+      "id": "PTO-TMOV-CUBE-TO-SHARED-ND-001",
+      "source_path": "asl/tile/layout-and-rearrangement/layout/TMOV.asl",
+      "title": {
+        "en": "TMOV Local CUBE to Shared ND",
+        "zh-CN": "TMOV 将本地 CUBE 规范化为 Shared ND Tile"
+      },
+      "summary": {
+        "en": "Function-2 TMOV with DTYPE_NONE and B.DATR Layout M322ND/M162ND copies each valid raw coordinate from a completed Local CUBE_M32/M16 source into the same RowMajor ND Shared coordinate. Shared retains the source backing type; fragments use exact WriterSizeCode capacity and explicit B.ASSEMBLE ranges, while a singleton transfers the complete parent. NORM, M322ND and M162ND cannot mix in one generation.",
+        "zh-CN": "Function-2 TMOV 使用 DTYPE_NONE 与 B.DATR Layout M322ND/M162ND，将已完成的 Local CUBE_M32/M16 源中的每个有效 raw 坐标复制到 RowMajor ND Shared 的相同坐标。Shared 保留源 backing 类型；fragment 使用精确的 WriterSizeCode 容量及显式 B.ASSEMBLE 范围，单写入者则传输完整父 Tile。同一 generation 不得混用 NORM、M322ND 和 M162ND。"
       }
     },
     {

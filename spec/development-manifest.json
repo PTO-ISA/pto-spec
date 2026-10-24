@@ -8,7 +8,7 @@
   "catalogs": {
     "command_forms": {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "54b4de4ed2bf1cc8ec03f74ccdcd7369b2fdfed049f4c69d76d1516132590cba"
+      "sha256": "c72925c7aca57ca2b81df6ee1fcb1d54aa80e4660652f1221c3c1128005d2f55"
     },
     "reservations": {
       "path": "spec/catalog/extension-encoding-reservations.json",
@@ -29,11 +29,11 @@
   },
   "identity": {
     "encoding_abi": "pto-isa-0.59.0-mode-function-v1",
-    "encoding_projection_sha256": "885e851fab5ecf69856aa36a654f4da55e1d50c71ad798fc4eb046631e8c1bc9",
+    "encoding_projection_sha256": "4effea27acd51de4f637bddbee7d80e135c2d53775fa90e7d47c49041da8f693",
     "release": "0.59.0"
   },
-  "normative_source_count": 932,
-  "normative_sources_sha256": "086893ee80de6d723247ced1d2aa1c6625e3d9e693de57fa241b951e6e03931e",
+  "normative_source_count": 951,
+  "normative_sources_sha256": "f328980f9465854940270deaa4992456280218c72b8555f0bb5a4a38080ac227",
   "publication": null,
   "schema": "pto.development-manifest.v1",
   "status": "development-not-published"

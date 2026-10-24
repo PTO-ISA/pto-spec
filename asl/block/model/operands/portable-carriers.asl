@@ -97,10 +97,11 @@ begin
     let raw_offset = UInt(offset);
     if raw_offset > 2047 then return FALSE; end;
     let offset_cells = raw_offset as integer {0..2047};
-    let parent_cells = if _LocalGenerations[[slot]].descriptor_finalized &&
+    let parent_cells = if whole &&
+        _LocalGenerations[[slot]].descriptor_finalized &&
         BundleLocalGenerationCubeLayout(
             _LocalGenerations[[slot]].parent_descriptor.layout) then
-        _LocalGenerations[[slot]].parent_descriptor.cube_cell_count
+        BundleLocalGenerationCubeFinalExtent(slot)
         else _LocalGenerations[[slot]].parent_cell_count;
     if parent_cells == 0 || parent_cells > 2048 then return FALSE; end;
     var required: bits(2048) = Zeros{2048};

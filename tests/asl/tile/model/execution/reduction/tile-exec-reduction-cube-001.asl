@@ -17,9 +17,9 @@ func TestCubeReduction()
 begin
     let source_ok = ConfigureCubeTile(0, 2048, 16, 2,
         TileDataType_U32, TileLayout_CUBE_M16);
-    let sum_destination = ConfigureCubeTile(1, 128, 16, 1,
+    let sum_destination = ConfigureCubeTile(1, 2048, 16, 1,
         TileDataType_U32, TileLayout_CUBE_M16);
-    let arg_destination = ConfigureCubeTile(2, 128, 16, 1,
+    let arg_destination = ConfigureCubeTile(2, 2048, 16, 1,
         TileDataType_U32, TileLayout_CUBE_M16);
     let column_destination = ConfigureCubeTileForMaskWithPhysical(3, 128,
         16, 2, 1, 2, TileDataType_U32, TileLayout_CUBE_M16, '0001');
@@ -34,7 +34,7 @@ begin
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 1;
     assert ReadTileElement(2, 15, 0) == Zeros{PTO_XLEN} + 1;
     assert _Tiles[[1]].valid_rows == 16 && _Tiles[[1]].valid_columns == 1;
-    assert _Tiles[[1]].rows == 16 && _Tiles[[1]].columns == 2;
+    assert _Tiles[[1]].rows == 16 && _Tiles[[1]].columns == 32;
     assert _Tiles[[3]].valid_rows == 1 && _Tiles[[3]].valid_columns == 2;
     assert _Tiles[[3]].rows == 16 && _Tiles[[3]].columns == 2;
     assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 16;
@@ -45,7 +45,7 @@ begin
 
     let source_over_capacity = ConfigureCubeTile(5, 4096, 2, 2,
         TileDataType_U32, TileLayout_CUBE_M16);
-    let destination_over_capacity = ConfigureCubeTile(6, 128, 2, 1,
+    let destination_over_capacity = ConfigureCubeTile(6, 4096, 2, 1,
         TileDataType_U32, TileLayout_CUBE_M16);
     assert source_over_capacity && destination_over_capacity;
     FillTile(5, 2, 2);
@@ -53,10 +53,10 @@ begin
         TileReduction_SUM, TileAxis_Row, 6, 5);
 
     let source_m32_ok = ConfigureCubeTileForMaskWithPhysical(7, 512,
-        32, 2, 4, 2, TileDataType_U32, TileLayout_CUBE_M32, '0001');
+        32, 4, 4, 2, TileDataType_U32, TileLayout_CUBE_M32, '0001');
     let destination_m32_row = ConfigureCubeTileForMaskWithPhysical(8, 512,
-        32, 2, 4, 1, TileDataType_U32, TileLayout_CUBE_M32, '0001');
-    let destination_m32_column = ConfigureCubeTileForMaskWithPhysical(9, 512,
+        32, 4, 4, 1, TileDataType_U32, TileLayout_CUBE_M32, '0001');
+    let destination_m32_column = ConfigureCubeTileForMaskWithPhysical(9, 256,
         32, 2, 1, 2, TileDataType_U32, TileLayout_CUBE_M32, '0001');
     assert source_m32_ok && destination_m32_row && destination_m32_column;
     FillTile(7, 4, 2);
@@ -65,7 +65,7 @@ begin
     ExecuteTileReduction(TileReduction_SUM, TileAxis_Row, 8, 7);
     ExecuteTileReduction(TileReduction_SUM, TileAxis_Column, 9, 7);
     assert _Tiles[[8]].valid_rows == 4 && _Tiles[[8]].valid_columns == 1;
-    assert _Tiles[[8]].rows == 32 && _Tiles[[8]].columns == 2;
+    assert _Tiles[[8]].rows == 32 && _Tiles[[8]].columns == 4;
     assert _Tiles[[9]].valid_rows == 1 && _Tiles[[9]].valid_columns == 2;
     assert _Tiles[[9]].rows == 32 && _Tiles[[9]].columns == 2;
     assert ReadTileElement(8, 0, 0) == Zeros{PTO_XLEN} + 3;

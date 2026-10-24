@@ -209,6 +209,12 @@ begin
     return 21 <= code && code <= 26;
 end;
 
+pure func TileDataLayoutIsCubeToSharedND(data_layout: bits(5)) => boolean
+begin
+    return data_layout == Zeros{5} + 24 ||
+           data_layout == Zeros{5} + 25;
+end;
+
 pure func TileDataLayoutConversionIsLoad(data_layout: bits(5)) => boolean
 begin
     let code = UInt(data_layout);

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-ASSEMBLE-CUBE-M16-PARENT-GEOMETRY-001","source":"asl/block/model/operands/local-generation-cube.asl","requirements":["PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001","PTO-CUBE-CELL-STATE-001"],"kind":"execution","summary":"Local CUBE_M16 finalization preserves the one-physical-M-block rule while extending only the column/K CELL prefix.","pass_condition":"four 16x32 E2M1X2 writer fragments with 256-byte envelopes finalize to one 16x128 parent without using ParentCapacity as geometry.","related_sources":["asl/block/model/operands/local-generation-cube.asl","asl/tile/model/state/allocation.asl","asl/tile/model/legality/descriptor-shape.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-ASSEMBLE-CUBE-M16-PARENT-GEOMETRY-001","source":"asl/block/model/operands/local-generation-cube.asl","requirements":["PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001","PTO-CUBE-CELL-STATE-001"],"kind":"execution","summary":"Local CUBE_M16 finalization preserves its full capacity-derived parent while extending only the valid column/K CELL prefix.","pass_condition":"four 16x32 E2M1X2 writer fragments with 256-byte envelopes finalize to a full 16x256 parent with valid columns 128 and exact 2048-byte storage.","related_sources":["asl/block/model/operands/local-generation-cube.asl","asl/tile/model/state/allocation.asl","asl/tile/model/legality/descriptor-shape.asl"]}
 func InstallM16Writer(slot: integer {0..63}, ordinal: integer {0..15},
                       offset: integer {0..2047})
 begin
@@ -17,13 +17,18 @@ begin
     _LocalGenerations[[slot]].writers[[ordinal]].predicate_basis_type =
         TileDataType_E2M1X2;
     _LocalGenerations[[slot]].writers[[ordinal]].layout = TileLayout_CUBE_M16;
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 32);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 12);
 end;
 
 func main() => integer
 begin
     ResetProfileState();
+    let physical_columns = TileCubePhysicalColumnsFromCapacity(
+        2048, TileLayout_CUBE_M16, TileDataType_E2M1X2);
     let configured = ConfigureCubeTileForMaskWithPhysical(1, 2048,
-        16, 32, 12, 32, TileDataType_E2M1X2, TileLayout_CUBE_M16, '1111');
+        16, physical_columns, 12, 32, TileDataType_E2M1X2,
+        TileLayout_CUBE_M16, '1111');
     assert configured;
     let slot: integer {0..63} = 9;
     ClearBundleLocalGenerationState(slot);
@@ -51,12 +56,12 @@ begin
     assert BundleLocalGenerationCubeFinalizationLegal(
         slot, 1, 6, 2, 2, Zeros{4}, FALSE, TRUE);
     FinalizeBundleLocalGenerationCube(slot);
-    assert _Tiles[[1]].rows == 16 && _Tiles[[1]].columns == 128;
+    assert _Tiles[[1]].rows == 16 && _Tiles[[1]].columns == 256;
     assert _Tiles[[1]].valid_rows == 12 && _Tiles[[1]].valid_columns == 128;
-    assert _Tiles[[1]].cube_k_repeat == 8 &&
+    assert _Tiles[[1]].cube_k_repeat == 16 &&
            _Tiles[[1]].cube_n_repeat == 1 &&
-           _Tiles[[1]].cube_cell_count == 8 &&
-           _Tiles[[1]].cube_storage_bytes == 1024;
+           _Tiles[[1]].cube_cell_count == 16 &&
+           _Tiles[[1]].cube_storage_bytes == 2048;
     assert _Tiles[[1]].capacity_bytes == 2048;
     return 0;
 end;

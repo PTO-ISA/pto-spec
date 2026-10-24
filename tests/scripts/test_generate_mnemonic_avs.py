@@ -1398,6 +1398,54 @@ end;
         )
         self.assertLessEqual(len(compact_id), 64)
 
+    def test_cube_tmatmul_writer_static_id_stays_within_public_limit(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            cases = (
+                (
+                    "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL-WRITER-VALUES",
+                    "asl/block/model/dispatch/cube-tmatmul-writer-values.asl",
+                    "PTO-AVS-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL-WRITER-STATIC-001",
+                ),
+                (
+                    "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-VALIDATION",
+                    "asl/block/model/operands/local-generation-cube-validation.asl",
+                    "PTO-AVS-BLOCK-LOCAL-GEN-CUBE-VALIDATION-STATIC-001",
+                ),
+                (
+                    "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS",
+                    "asl/block/model/operands/local-generation-cube-writer-effects.asl",
+                    "PTO-AVS-BLOCK-LOCAL-GEN-CUBE-WRITER-EFFECTS-STATIC-001",
+                ),
+                (
+                    "PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE-OPERATIONS",
+                    "asl/tile/model/legality/destination-value-operations.asl",
+                    "PTO-AVS-TILE-LEGALITY-DEST-VALUE-OPS-STATIC-001",
+                ),
+                (
+                    "PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT-VALUES",
+                    "asl/tile/model/legality/layout-rearrangement-values.asl",
+                    "PTO-AVS-TILE-LEGALITY-LAYOUT-REARR-VALUES-STATIC-001",
+                ),
+            )
+            for unit_id, source_path, expected_id in cases:
+                with self.subTest(unit_id=unit_id):
+                    source = root / source_path
+                    source.parent.mkdir(parents=True, exist_ok=True)
+                    source.write_text("constant TEST_STATIC = 0;\n", encoding="utf-8")
+                    unit = AslUnit(
+                        unit_id=unit_id,
+                        surface="block" if "/block/" in source_path else "tile",
+                        classification=("model", "test"),
+                        depends_on=(),
+                        source_path=Path(source_path),
+                        mnemonic=None,
+                        line_count=1,
+                    )
+                    _, document = self.render_concept(root, unit)
+                    self.assertIn(f'"id":"{expected_id}"', document)
+                    self.assertLessEqual(len(expected_id), 64)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-CUBE-GENERIC-001","source":"asl/tile/model/legality/descriptor-shape.asl","requirements":["PTO-CUBE-CELL-STATE-001"],"kind":"fault","summary":"CUBE descriptors retain physical geometry independently from valid geometry","pass_condition":"M16 and M32 FP16 descriptors with physical slack pass CUBE legality and preserve exact physical metadata while remaining unavailable to generic indexing","related_sources":["asl/tile/model/shape/cube-cell.asl","asl/tile/model/definedness/elements.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-CUBE-GENERIC-001","source":"asl/tile/model/legality/descriptor-shape.asl","requirements":["PTO-CUBE-CELL-STATE-001"],"kind":"fault","summary":"Exact-capacity CUBE descriptors retain valid-region padding while remaining unavailable to generic indexing","pass_condition":"M16 and M32 FP16 descriptors preserve exact physical geometry independently from valid geometry and remain unavailable to generic indexing","related_sources":["asl/tile/model/shape/cube-cell.asl","asl/tile/model/definedness/elements.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -16,7 +16,7 @@ begin
     assert !TileDescriptorLegal(0);
     assert !TileSourceContentsDefined(0);
 
-    let m32_configured = ConfigureCubeTileForMaskWithPhysical(1, 4096,
+    let m32_configured = ConfigureCubeTileForMaskWithPhysical(1, 2048,
         32, 32, 1, 16, TileDataType_FP16, TileLayout_CUBE_M32,
         '0001');
     assert m32_configured;
@@ -26,13 +26,14 @@ begin
     assert m32_tile.valid_rows == 1 && m32_tile.valid_columns == 16;
     assert m32_tile.cube_k_repeat == 16 && m32_tile.cube_n_repeat == 1;
     assert m32_tile.cube_cell_count == 16 &&
-           m32_tile.cube_storage_bytes == 2048;
+           m32_tile.cube_storage_bytes == 2048 &&
+           m32_tile.capacity_bytes == 2048;
     assert TileCubeDescriptorShapeLegal(
         4096, 32, 31, TileDataType_FP16, TileLayout_CUBE_M32);
-    let m32_slack_configured = ConfigureCubeTileForMaskWithPhysical(
-        2, 4096, 32, 32, 31, 32,
+    let m32_padded_configured = ConfigureCubeTileForMaskWithPhysical(
+        2, 2048, 32, 32, 31, 32,
         TileDataType_FP16, TileLayout_CUBE_M32, '0001');
-    assert m32_slack_configured;
+    assert m32_padded_configured;
     assert _Tiles[[2]].valid_rows == 31 && _Tiles[[2]].rows == 32;
     let m32_rows64_valid32 = ConfigureCubeTileForMaskWithPhysical(
         3, 4096, 64, 32, 32, 32,

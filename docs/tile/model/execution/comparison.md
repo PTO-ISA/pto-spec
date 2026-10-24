@@ -83,7 +83,7 @@ The predicate bits for columns 0 to 3 are 1, 0, 0, 0. No NaN is signaling, so no
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/comparison.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-COMPARISON","surface":"tile","classification":["model","execution","comparison"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-COMPARISON","surface":"tile","classification":["model","execution","comparison"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS","PTO-TILE-MODEL-STATE-TYPES"]}
 // PTO-REQ-TEPL-COMPARISON-001: packed predicate compare and select semantics.
 pure func TileCompareDataTypeSupported(data_type: TileDataType) => boolean
 begin

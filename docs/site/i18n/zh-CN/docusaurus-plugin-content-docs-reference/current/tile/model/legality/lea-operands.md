@@ -58,7 +58,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/legality/lea-operands.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-LEA-OPERANDS","surface":"tile","classification":["model","legality","lea-operands"],"depends_on":["PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA","PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-LEA-OPERANDS","surface":"tile","classification":["model","legality","lea-operands"],"depends_on":["PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA","PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA","PTO-TILE-MODEL-STATE-TYPES"]}
 
 pure func TileLEAIndexDataTypeLegal(data_type: TileDataType) => boolean
 begin
@@ -131,6 +131,51 @@ begin
        !TileLEABundleLogicalShapeMatches(source) ||
        !TileLEABundleLogicalShapeMatches(destination) then
         return FALSE;
+    end;
+    return TRUE;
+end;
+
+readonly func TileOperandsLegal_TLEAToValue(
+    destination: TileOutputValueTarget, source: TileIndex,
+    element_bits: Word) => boolean
+begin
+    let (operation_type_valid, operation_type) =
+        TileLEASourceOperationType(source);
+    let source_tile = _Tiles[[source]];
+    let output = destination.value;
+    if !operation_type_valid || operation_type != source_tile.data_type ||
+       !TileLEAIndexDataTypeLegal(operation_type) ||
+       !TileLEAElementBitsLegal(element_bits) ||
+       !TileElementwiseLayoutSupported(source_tile.layout) ||
+       source_tile.storage_kind != TileStorage_Numeric ||
+       output.storage_kind != TileStorage_Numeric ||
+       source_tile.layout != output.layout ||
+       source_tile.valid_rows != output.valid_rows ||
+       source_tile.valid_columns != output.valid_columns ||
+       output.data_type != TileLEADestinationDataType(operation_type) ||
+       !TileElementwiseDescriptorLegal(source) ||
+       (if TileLayoutIsCube(output.layout) then
+            !TileCubeDescriptorLegal(output)
+        else !TileDescriptorPhysicalShapeLegal(output.capacity_bytes,
+            output.rows, output.columns, output.valid_rows,
+            output.valid_columns, output.data_type)) ||
+       !TileElementwiseSourceContentsDefined(source) then
+        return FALSE;
+    end;
+    if BundleTileOperationSelected() then
+        let valid_columns = UInt(_BundleDimensions[[0]]);
+        let valid_rows = if _BundleDimensionPresent[[1]] then
+            UInt(_BundleDimensions[[1]]) else 1;
+        if valid_columns < 1 || valid_columns > 65535 ||
+           valid_rows < 1 || valid_rows > 65535 ||
+           source_tile.valid_columns != valid_columns ||
+           output.valid_columns != valid_columns ||
+           source_tile.valid_rows != valid_rows ||
+           output.valid_rows != valid_rows ||
+           source_tile.layout != CurrentBundleTileLayout() ||
+           output.layout != CurrentBundleTileLayout() then
+            return FALSE;
+        end;
     end;
     return TRUE;
 end;

@@ -11,12 +11,10 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 ### Cross-cutting
 - [ADR-BLOCK-0012](docs/status/decisions/ADR-BLOCK-0012-block-attributes-and-lifecycle.md): Block attributes and lifecycle
 - [ADR-BLOCK-0013](docs/status/decisions/ADR-BLOCK-0013-block-scalar-and-tile-bindings.md): Block scalar and tile bindings
+- [ADR-CUBE-0004](docs/status/decisions/ADR-CUBE-0004-local-cube-cell-state-and-geometry.md): Local CUBE CELL State and Geometry
 - [ADR-CUBE-0005](docs/status/decisions/ADR-CUBE-0005-gm-local-cube-layout-transport.md): GM/Local CUBE Layout Transport
 - [ADR-TILE-0008](docs/status/decisions/ADR-TILE-0008-tile-elementwise-and-irregular-operations.md): Tile elementwise and irregular operations
 - [ADR-TILE-0009](docs/status/decisions/ADR-TILE-0009-tile-scalar-and-immediate-operations.md): Tile scalar and immediate operations
-
-### Tile
-- [ADR-CUBE-0004](docs/status/decisions/ADR-CUBE-0004-local-cube-cell-state-and-geometry.md): Local CUBE CELL State and Geometry
 
 ## Release 0.59.0.0
 
@@ -97,14 +95,12 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 ### Cross-cutting
 - [ADR-BLOCK-0015](docs/status/decisions/ADR-BLOCK-0015-b-iot-b-ios-sizecode-pemode.md): Re-encode B.IOT and B.IOS size and PE mode fields
 - [ADR-CUBE-0002](docs/status/decisions/ADR-CUBE-0002-b-fpatr-complete-bundle-postprocess.md): B.FPATR Complete-Bundle Matrix PostProcess
+- [ADR-CUBE-0004](docs/status/decisions/ADR-CUBE-0004-local-cube-cell-state-and-geometry.md): Local CUBE CELL State and Geometry
 - [ADR-CUBE-0005](docs/status/decisions/ADR-CUBE-0005-gm-local-cube-layout-transport.md): GM/Local CUBE Layout Transport
 - [ADR-CUBE-0006](docs/status/decisions/ADR-CUBE-0006-local-cube-matrix-operands.md): Local CUBE Matrix Operand Contract
 - [ADR-CUBE-0007](docs/status/decisions/ADR-CUBE-0007-cooperative-shared-cube-transpose.md): Cooperative Shared CUBE Inputs and Transpose
 - [ADR-CUBE-0008](docs/status/decisions/ADR-CUBE-0008-cube-accumulator-atomic-output.md): CUBE Accumulator and Atomic Output Contract
 - [ADR-MEM-0008](docs/status/decisions/ADR-MEM-0008-tload-tstore-gm-byte-row-stride.md): TLOAD/TSTORE GM Byte Row Stride
-
-### Tile
-- [ADR-CUBE-0004](docs/status/decisions/ADR-CUBE-0004-local-cube-cell-state-and-geometry.md): Local CUBE CELL State and Geometry
 
 ## Release 0.58.2
 

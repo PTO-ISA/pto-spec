@@ -80,9 +80,10 @@ begin
            (row_step == -1 || row_step == 0 || row_step == 1) &&
            (column_step == -1 || column_step == 0 || column_step == 1);
 end;
-func TCICube(destination: TileIndex, start: Word, step2d: Word)
+func TCICubeToValue(destination: TileInfo, start: Word,
+                    step2d: Word) => TileInfo
 begin
-    var result = _Tiles[[destination]];
+    var result = destination;
     assert result.allocated;
     assert (result.layout == TileLayout_CUBE_M16 ||
             result.layout == TileLayout_CUBE_M32);
@@ -127,8 +128,14 @@ begin
         end;
     end;
     result = TileWithValidRegionDefined(result);
-    result = TileWithPadding(result, TilePad_Null);
-    _Tiles[[destination]] = result;
+    return TileWithPadding(result, TilePad_Null);
+end;
+
+func TCICube(destination: TileIndex, start: Word, step2d: Word)
+begin
+    assert TileOperandsLegal_TCICube(destination, start, step2d);
+    _Tiles[[destination]] = TCICubeToValue(
+        _Tiles[[destination]], start, step2d);
 end;
 
 func TTRI(destination: TileIndex, upper: boolean,

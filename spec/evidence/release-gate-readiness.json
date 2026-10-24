@@ -154,13 +154,13 @@
     "CONTRIBUTING.md": "6ff6f96e12f97aa2d66f5ade1700b8bd7dc8d84436781c7072c7d2f674abd972",
     "GOVERNANCE.md": "b723d0362110a8bef794c1cb2f29a937ab3851a95156e26e11122685f9d383a6",
     "Makefile": "1f37270e6e4480bc6fdeeb0cbc5cd3cf8a32a255939329b174c03d57e1498c58",
-    "scripts/asl_release_suite.py": "4f2d5761d882c003b21a5eba899a4cd3120677252043fc9f4a225027e8b0f476",
-    "scripts/asl_tests.py": "e7e4c970f39618ad487873f31128ed4072b734e5d277c406b83f6c142ae99f25",
+    "scripts/asl_release_suite.py": "6e15b1465675fa636cb12709d7980b46ac29536442185539135b06d57ea2f62f",
+    "scripts/asl_tests.py": "b7341ac723616f59880967709ab58050c5cdb260bcb31d2519520f747bb0335a",
     "scripts/aslref": "2939fb60f0e4e574ff5a7b2743fb0486b035bc51f9db3feac584dafd6d1d2ef5",
     "scripts/check-active-paths": "81cb71759976e6cdd9c337ed2640cf388391d825e6f64de82dcc831b5752666b",
     "scripts/check-asl-layout": "5283ef77e8650d607c537e29de06fb544add29be6b76caf6e431f1954301e39f",
     "scripts/check-asl-tests": "3a0ef89d06725179960c8a7cd3a319d71f18ef76c798e4863036c860cbab2189",
-    "scripts/check-binary-closure": "d41e215ee61d14f17e0503f03ad011073aee29bbd3a3daa46a09ef66e3cc43e2",
+    "scripts/check-binary-closure": "68cc8b5ba934efae1bb26ba7b90d56f43da615c56f857bad0588e457d0667abb",
     "scripts/check-ndf": "288f430cfc09ce3b76fea16a8d02d7eb71f67fc199042b76742ecfed8d68ed0e",
     "scripts/check-pr": "9da883255e6f9201d727f2f9ed96ca19ed4e1aa0f82c6d8f5dc2244efd7536b1",
     "scripts/check-release-artifacts": "0b56313baaf97106f96b89f1f1aa7f42f2c9cb47a3b155bbad1d3b42c0ca7a2d",
@@ -197,8 +197,8 @@
     "scripts/setup-aslref": "85f1a33594bc74f1f8f53cf0234f39e06c4228e78b4e1dc85dece7110f10368b",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
     "scripts/workflow_contract.py": "409df4d48033f9b0801b1452f74a9924aad0cfece9ae636f65855fd3c20b4bf4",
-    "spec/evidence/architecture-readiness.json": "2cd419c36a525f383745f6674b988c2b369b92d4b9f81043d82b8b25b1943b40",
-    "spec/evidence/release-traceability-readiness.json": "0fb8d80f1c42f2639ab0ba1ffef0417c5022760d1d09a8a0b8d68ada7f8fce16",
+    "spec/evidence/architecture-readiness.json": "0a3b16e93c9da693677550ee6c34c21ae9c078a7b5084f1dee95aae59eea3fc1",
+    "spec/evidence/release-traceability-readiness.json": "1cec65475d883bd4960113e768600ade4ce09a083efb3b1aafc6131d279cf9bc",
     "spec/release-inputs.json": "4dc6a039c78951ed8452659d6e966aa6d719a70a4e2f0090aa9285721f012bf9",
     "spec/release-selection.json": "cd13f71f8279b033e45a5817371ea6cdf3348e9a039eea9a881df103c240aa61",
     "spec/schemas/pto-release-selection.schema.json": "5e7b2abaed81613e587cb0cc5aff172538ee9644ffd9d490d4c1bbe8f1d8ae89",
@@ -206,16 +206,16 @@
     "spec/schemas/pto-spec-release-event-v2.schema.json": "292f7997630a0320bce42f6f9c3beae6651ba5d793f95150cdd2fd861603f207"
   },
   "summary": {
-    "documentation_page_count": 927,
+    "documentation_page_count": 951,
     "executable_requirement_count": 677,
     "gate_count": 12,
     "mnemonic_count": 671,
     "status": "ready-for-exact-head-verification",
-    "test_count": 4291,
-    "test_page_count": 43,
+    "test_count": 4383,
+    "test_page_count": 44,
     "test_page_size": 100,
     "uncovered_executable_requirement_count": 0,
     "uncovered_unit_count": 0,
-    "unit_count": 927
+    "unit_count": 951
   }
 }

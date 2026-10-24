@@ -2,7 +2,7 @@
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // Predicated TEXPDIF evaluates source encodings, source reads, arithmetic, and numeric-status contribution only for active logical result coordinates. Inactive destination coordinates use the common MERGE/ZERO rule and contribute no numeric flags; the existing source-operation and destination type-pair contract remains unchanged.
 // NDF-END: PTO-TILE-MODEL-EXECUTION-MASK-EXPDIF-001
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-EXPDIF","surface":"tile","classification":["model","execution","expdif"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-EXPDIF","surface":"tile","classification":["model","execution","expdif"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA","PTO-TILE-MODEL-STATE-TYPES"]}
 // PTO-REQ-TILE-EXPDIF-001: one typed natural-expansion-difference sequence is
 // shared by the binary and broadcast Tile operations.
 
@@ -117,19 +117,17 @@ begin
     return (profile_result, subtract_flags OR profile_flags);
 end;
 
-func ExecuteTileExpdif(
-    destination: TileIndex,
+func ExecuteTileExpdifToValue(
+    destination: TileOutputValueTarget,
     source0: TileIndex,
-    source1: TileIndex)
+    source1: TileIndex) => TileInfo
 begin
-    assert TileOperandsLegal_ExecuteTileExpdif(
-        destination, source0, source1);
     let (operation_type_valid, operation_type) =
         TileExpdifSourceOperationType(source0);
     assert operation_type_valid;
     let left_tile = _Tiles[[source0]];
     let right_tile = _Tiles[[source1]];
-    var result_tile = _Tiles[[destination]];
+    var result_tile = destination.value;
     var accumulated_flags = Zeros{5};
 
     // Capture both complete source records before constructing any result.
@@ -172,5 +170,19 @@ begin
     result_tile = TileWithValidRegionDefined(result_tile);
     result_tile = TileWithPadding(result_tile, CurrentBundlePadValue());
     RecordNumericStatusFlags(accumulated_flags);
-    _Tiles[[destination]] = result_tile;
+    return result_tile;
+end;
+
+func ExecuteTileExpdif(
+    destination: TileIndex,
+    source0: TileIndex,
+    source1: TileIndex)
+begin
+    assert TileOperandsLegal_ExecuteTileExpdif(destination, source0, source1);
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    _Tiles[[destination]] = ExecuteTileExpdifToValue(
+        target, source0, source1);
 end;

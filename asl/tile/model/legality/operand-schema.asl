@@ -425,6 +425,7 @@ begin
     return source_tile.layout == CurrentBundleTileSourceLayout() &&
            destination_tile.layout == CurrentBundleTileLayout();
 end;
+
 readonly func TileOperandsLegal_TRESHAPE(destination: TileIndex, source: TileIndex) => boolean begin
     return TileDescriptorLegal(destination) && TileDescriptorLegal(source) &&
            _Tiles[[destination]].rows * _Tiles[[destination]].columns == _Tiles[[source]].rows * _Tiles[[source]].columns &&

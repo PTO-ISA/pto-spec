@@ -9,6 +9,8 @@ from scripts.layout_relation_census import (
     EXECUTION_MASK_HELPER_CLASSIFICATION,
     EXECUTION_MASK_HELPER_DEFINITION_DELTAS,
     INDEXED_TLSU,
+    ISSUE395_SHARED_TMOV_CLASSIFICATION,
+    ISSUE395_TMOV_LEGACY_LAYOUTS,
     ISSUE360_GM_OBLIGATION_HELPERS,
     ROW_EXPANSION_BROADCAST_HELPER_CLASSIFICATION,
     ROW_EXPANSION_BROADCAST_HELPER_DEFINITION_DELTAS,
@@ -442,8 +444,34 @@ class LayoutRelationCensusTest(unittest.TestCase):
         self.assertTrue(result["pass"], result["errors"])
         for signature in result["operation_signatures"]:
             for side in ("L0", "L1"):
-                self.assertTrue(all(values for values in signature[side].values()),
-                                (signature["mnemonic"], signature["form"], side))
+                if (signature["mnemonic"], signature["form"], side) == (
+                    "TMOV", "bundle", "L1"
+                ):
+                    self.assertEqual(set(signature[side]), {"destination0", "source0"})
+                    self.assertEqual(signature[side]["destination0"], [])
+                    self.assertEqual(
+                        set(signature[side]["source0"]), ISSUE395_TMOV_LEGACY_LAYOUTS
+                    )
+                    continue
+                self.assertTrue(
+                    all(values for values in signature[side].values()),
+                    (signature["mnemonic"], signature["form"], side),
+                )
+        tmov_deltas = [
+            row for row in result["delta"] if row["mnemonic"] == "TMOV"
+        ]
+        self.assertEqual(len(tmov_deltas), len(ISSUE395_TMOV_LEGACY_LAYOUTS))
+        self.assertEqual(
+            {row["classification"] for row in tmov_deltas},
+            {ISSUE395_SHARED_TMOV_CLASSIFICATION},
+        )
+        self.assertEqual(
+            {tuple(row["tuple"]) for row in tmov_deltas},
+            {
+                ("TMOV", "bundle", "destination0", layout)
+                for layout in ISSUE395_TMOV_LEGACY_LAYOUTS
+            },
+        )
         texpdif = [row for row in result["operation_signatures"]
                    if row["mnemonic"] == "TEXPDIF"]
         self.assertEqual({row["form"] for row in texpdif}, {"direct", "bundle"})
@@ -569,12 +597,25 @@ class LayoutRelationCensusTest(unittest.TestCase):
         expected = set(BIAS) | set(result["exact_34"]) | INDEXED_TLSU | {"GMOV", "TCVT"}
         if texpdif_is_committed:
             expected.add("TEXPDIF")
+        if any(
+            row["mnemonic"] == "TMOV"
+            for row in result["operation_signatures"]
+        ):
+            expected.add("TMOV")
         tlea_is_committed = any(
             row["mnemonic"] == "TLEA" for row in result["operation_signatures"]
         )
         if tlea_is_committed:
             expected.add("TLEA")
         self.assertEqual({row["mnemonic"] for row in changed}, expected)
+        tmov = [row for row in changed if row["mnemonic"] == "TMOV"]
+        self.assertEqual(len(tmov), 1)
+        self.assertEqual(tmov[0]["form"], "bundle")
+        self.assertEqual(tmov[0]["owner"], "asl/block/execution/BSTART.TMOV.asl")
+        self.assertEqual(tmov[0]["L1"]["destination0"], [])
+        self.assertEqual(
+            set(tmov[0]["L1"]["source0"]), ISSUE395_TMOV_LEGACY_LAYOUTS
+        )
         self.assertEqual(len([row for row in changed if row["mnemonic"] in result["exact_34"]]), 68)
         self.assertEqual(len(gmov), 2)
         self.assertEqual(len(bias), 8)

@@ -80,7 +80,7 @@ Now suppose a cooperative `TMATMUL` with a Shared right group and group M of 40.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/cube-tmatmul.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","surface":"block","classification":["model","dispatch","cube-tmatmul"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-MATRIX-SCALE","PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS","PTO-TILE-MODEL-EXECUTION-CUBE","PTO-TILE-MODEL-EXECUTION-INTERNAL-ACCUMULATOR"]}
+// PTO-UNIT: {"classification":["model","dispatch","cube-tmatmul"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL-WRITER-VALUES","PTO-BLOCK-MODEL-DISPATCH-MATRIX-SCALE","PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-VALIDATION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-TILE-MODEL-EXECUTION-CUBE","PTO-TILE-MODEL-EXECUTION-CUBE-VALUE","PTO-TILE-MODEL-EXECUTION-INTERNAL-ACCUMULATOR","PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS"],"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","surface":"block"}
 // NDF-BEGIN: PTO-CUBE-ACCUMULATOR-OUTPUT-001
 // ndf: kind=contract level=L1 layer=block status=accepted
 // Every Matrix ACC form MUST bind explicit C and D. C's encoded relative
@@ -283,24 +283,23 @@ begin
     if !found then return FALSE; end;
     return accumulator != destination_hand;
 end;
-func ExecuteBundleTMATMULOperation() => boolean
+func ExecuteBundleTMATMULOperation() => (boolean, BundleLocalGenerationCubeWriterEffects)
 begin
-    // Zero-mask B.IOT/B.IOS commands do not install bindings.  Their sole
-    // architectural trace is the participation marker, which exits before
-    // descriptor, readiness, dimension, allocation, or payload inspection.
+    // Zero-mask B.IOT/B.IOS commands do not install bindings; their sole trace
+    // is the participation marker before descriptor, readiness, dimension, allocation, or payload inspection.
     if SelectedBundleTileMaskIsZero() &&
        BundleTMATMULSharedMasksAreZero() then
-        return TRUE;
+        return (TRUE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
     if !_BundleFixedPointAttributes.valid then
         SetFault(Fault_BundleControl, ReadTPC());
-        return FALSE;
+        return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
     let decoded = DecodeTileOperation(TileDecode_CUBE,
         BundleOperationDecodeCode(_BundleOperation));
     if decoded == PTO_TILE_OPERATION_COUNT then
         SetFault(Fault_IllegalInstruction, ReadTPC());
-        return FALSE;
+        return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
     let function = UInt(_BundleOperation.selector[4:0]);
@@ -327,7 +326,7 @@ begin
        !BundleTMATMULMasksAgree() ||
        !BundleTMATMULCooperativeMasksLegal(function, shared_count) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
     let m_raw = BundleCubeDimensionValue(BundleDimension_LB0);
     let n_raw = BundleCubeDimensionValue(BundleDimension_LB1);
@@ -337,15 +336,15 @@ begin
     let k = k_raw as integer {1..65535};
     if TileMatrixFunctionIsGEMV(function) && m != 1 then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
     // Structurally legal Shared groups wait until whole-ready and published.
-    if !BundleMatrixSharedSourcesReady(shared_count) then return FALSE; end;
+    if !BundleMatrixSharedSourcesReady(shared_count) then return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects()); end;
     if !BundleMatrixSharedSchemasLegal(
            function, left_type, right_type,
            m, n, k, shared_count) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
     let cooperative = BundleTMATMULCooperativeSelected(
         function, shared_count);
@@ -355,17 +354,17 @@ begin
     if cooperative && valid_m == 0 then
         ConsumeBundleSharedBindings(shared_count as integer {1..4});
         FinalizeBundleSharedLastUseSources();
-        return TRUE;
+        return (TRUE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
     let pe_m = valid_m as integer {1..65535};
     // Generic Stage2 Local dependency/subview/generation work occurs only
     // after group-level and Shared preflight has derived a nonzero current-PE
     // fragment. Zero-row PEs returned above without touching Local state.
-    if !PrepareSelectedBundleStage2() then return FALSE; end;
-    if !ReuseBundleLocalGenerationDestination() then return FALSE; end;
+    if !PrepareSelectedBundleStage2() then return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects()); end;
+    if !ReuseBundleLocalGenerationDestination() then return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects()); end;
     if !BundleOperationGPRBindingValuesLegal(operation) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
     let mathematical_sources = TileMatrixLocalMathematicalSourceCount(
         function, left_type, right_type, shared_count) +
@@ -378,51 +377,51 @@ begin
        (!TileMatrixFunctionAllowsCScale(function) ||
         result_type != TileDataType_FP32) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
     if !BundleMatrixLocalMathematicalSourcesLegal(
            function, left_type, right_type, pe_m, n, k, shared_count,
            result_type, BundleMatrixPrimaryDestinationCapacityBytes()) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
     if !BundleMatrixAccumulatorDestinationIndicesDistinct(function) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
     if _BundleFixedPointAttributes.c_scale_en &&
        !BundleMatrixCScaleDestinationIndicesDistinct(
            (mathematical_sources - 1) as integer {0..8}) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
     let (layout_found, primary_layout) =
         BundleMatrixCooperativeMLayout(
             function, right_type, pe_m, shared_count);
     if !layout_found then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
     if !BundleMatrixPostProcessSourcesLegal(
            mathematical_sources, pe_m, n, result_type, primary_layout) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
-    // Every field, stream, Local/Shared descriptor, parameter payload, shape,
-    // and capacity rule is now closed. Allocate the atomic destination group
-    // before taking the first mathematical or scalar payload snapshot.
     let allocation_mask = if cooperative then
         BundleMatrixCooperativeCurrentPEMask(m, _CurrentMemoryAgent)
     else BundleTMATMULSelectedMask();
     let partial_output = BundleTMATMULRawPartialOutput(cctrl);
-    if !ResolveBundleTMATMULDestination(
-           pe_m, n, result_type, TRUE, primary_layout,
-           allocation_mask) then
-        return FALSE;
+    let (destinations_resolved, resolved_writer_effects) =
+        ResolveBundleTMATMULDestinationWithWriterEffects(
+            pe_m, n, result_type, TRUE, primary_layout,
+            allocation_mask);
+    if !destinations_resolved then
+        return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
-    if !ValidateBundleLocalGenerationWriters() then
+    if !ValidateBundleLocalGenerationWritersWithWriterEffects(
+           resolved_writer_effects) then
         RollBackBundleTileDestinations();
-        return FALSE;
+        return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
     let operands = BundleTileInstructionOperands(operation);
     var left = _Tiles[[0]];
@@ -548,37 +547,38 @@ begin
             accumulator, _Tiles[[accumulator]].cube_storage_bytes);
     end;
     let destination = BundleMatrixDestinationAt(0);
-    let destination_template = _Tiles[[destination]];
-    if TileMatrixFunctionUsesMX(function) then
-        TMATMULMXSharedWithOptionalScales(
-            destination, destination_template, accumulator,
-            left, left_scale, left_scale_present,
-            right, right_scale, right_scale_present,
-            bias, TileMatrixFunctionUsesBias(function),
-            TileMatrixFunctionUsesAccumulator(function),
-            c_scale, _BundleFixedPointAttributes.c_scale_en,
+    let row_destination = BundleMatrixDestinationAt(1);
+    let group_destination = if _BundleFixedPointAttributes.row_max_en then BundleMatrixDestinationAt(2) else BundleMatrixDestinationAt(1);
+    let (produced_writer_effects, primary_result, row_result, group_result, primary_writer_found, row_writer_found, group_writer_found) = ExecuteBundleTMATMULWriterValues(resolved_writer_effects, function,
+            partial_output, accumulator, left, left_scale,
+            left_scale_present, right, right_scale, right_scale_present,
+            bias, c_scale, _BundleFixedPointAttributes.c_scale_en,
             cctrl[0:0] != Zeros{1});
-    else
-        TMATMULShared(
-            destination, destination_template, accumulator, left, right, bias,
-            TileMatrixFunctionUsesBias(function),
-            TileMatrixFunctionUsesAccumulator(function),
-            c_scale, _BundleFixedPointAttributes.c_scale_en,
-            cctrl[0:0] != Zeros{1});
-    end;
+    var writer_effects = produced_writer_effects;
+        FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
     if _LastFault != Fault_None then
         RollBackBundleTileDestinations();
-        return FALSE;
+        return (FALSE, EmptyBundleLocalGenerationCubeWriterEffects());
     end;
     if partial_output then
         TileProfileInternalAccumulatorReplacementHint(
             destination, _Tiles[[destination]].cube_storage_bytes);
     end;
+    if writer_effects.count != 0 && !partial_output then
+        if !primary_writer_found then _Tiles[[destination]] = primary_result; end;
+        if _BundleFixedPointAttributes.row_max_en && !row_writer_found then
+            _Tiles[[row_destination]] = row_result;
+        end;
+        if _BundleFixedPointAttributes.group_max_en &&
+           !group_writer_found then
+            _Tiles[[group_destination]] = group_result;
+        end;
+    end;
     if shared_count > 0 then
         ConsumeBundleSharedBindings(shared_count as integer {1..4});
     end;
     FinalizeBundleTileAttempt(TileExecution_Executed);
-    return TRUE;
+    return (TRUE, writer_effects);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

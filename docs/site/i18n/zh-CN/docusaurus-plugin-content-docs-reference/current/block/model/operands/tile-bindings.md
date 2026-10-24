@@ -202,7 +202,7 @@ begin
     let required = if _LocalGenerations[[slot]].descriptor_finalized &&
         BundleLocalGenerationCubeLayout(
             _LocalGenerations[[slot]].parent_descriptor.layout) then
-        _LocalGenerations[[slot]].parent_descriptor.cube_cell_count
+        BundleLocalGenerationCubeFinalExtent(slot)
         else _LocalGenerations[[slot]].parent_cell_count;
     if required == 0 || required > 2048 then return FALSE; end;
     for cell = 0 to 2047 do

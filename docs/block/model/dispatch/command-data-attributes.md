@@ -92,6 +92,11 @@ begin
         _BundleDataAttributes.execution_mask_zero) && !mask_present then
         return FALSE;
     end;
+    if BundleTMOVSelected() && _BundleDataAttributesPresent &&
+       TileDataLayoutIsCubeToSharedND(
+           _BundleDataAttributes.data_layout) then
+        return !mask_present;
+    end;
     var local_cube_layout = FALSE;
     if BundleCubeTransportSelected() then
         let transport_layout = TileDataLayoutCubeLayout(

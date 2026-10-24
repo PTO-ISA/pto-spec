@@ -32,7 +32,12 @@
     "PTO-TLOAD-CUBE-001",
     "PTO-TLOAD-MEMORY-001",
     "PTO-TSTORE-CUBE-001",
-    "PTO-TSTORE-MEMORY-001"
+    "PTO-TSTORE-MEMORY-001",
+    "PTO-INST-BLOCK-BSTART-TMOV",
+    "PTO-BSTART-TMOV-SHARED-001",
+    "PTO-TMOV-CONTRACT-001",
+    "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
+    "PTO-TMOV-CUBE-TO-SHARED-ND-001"
   ],
   "affected_units": [
     "PTO-BLOCK-B-DATR",
@@ -43,7 +48,20 @@
     "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
     "PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL",
     "PTO-TILE-TLOAD",
-    "PTO-TILE-TSTORE"
+    "PTO-TILE-TSTORE",
+    "PTO-BLOCK-BSTART-TMOV",
+    "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
+    "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+    "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+    "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+    "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
+    "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+    "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+    "PTO-TILE-TMOV",
+    "PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-CUBE-TO-ND",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+    "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+    "PTO-TILE-MODEL-MEMORY-SHARED-CUBE-TO-ND"
   ],
   "resolves": [],
   "supersedes": [],
@@ -84,6 +102,44 @@
       "affected_units": [
         "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
         "PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL"
+      ]
+    },
+    {
+      "date": "2026-10-20",
+      "baseline": "b0165320a4b575b18d2f4d93faf40178f661ab49",
+      "approvers": [
+        "ckwllawliet <641433195@qq.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/395",
+      "affected_ndf": [
+        "PTO-CUBE-CELL-TRANSPORT-001",
+        "PTO-B-DATR-FIELDS-001",
+        "PTO-BSTART-TLOAD-CUBE-001",
+        "PTO-TLOAD-CUBE-001",
+        "PTO-INST-BLOCK-BSTART-TMOV",
+        "PTO-BSTART-TMOV-SHARED-001",
+        "PTO-TMOV-CONTRACT-001",
+        "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
+        "PTO-TMOV-CUBE-TO-SHARED-ND-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-DATR",
+        "PTO-BLOCK-BSTART-TLOAD",
+        "PTO-BLOCK-BSTART-TMOV",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
+        "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
+        "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+        "PTO-TILE-TLOAD",
+        "PTO-TILE-TMOV",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-CUBE-TO-ND",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+        "PTO-TILE-MODEL-MEMORY-SHARED-CUBE-TO-ND"
       ]
     }
   ],
@@ -261,3 +317,34 @@ The maintainer selected explicit CUBE_M32 double-CELL storage for 64-bit Local e
 It preserves the 128-byte physical CELL and 32-row M axis while making element width independent of logical lane identity. Existing M16/N8 and primary Matrix arithmetic contracts keep their own owners. Applicable Local instruction families must close their datatype, transport, predicate and effect behavior against this storage contract. Compatibility impact is newly accepted M32 b64 tuples; release impact is required, with commit-scoped AVS and downstream adoption obligations.
 
 议题 #371 在既有 M32 行域和 128 字节 CELL 上引入 64 位 Local 元素的双 CELL 存储。低／高字、容量、完整配对视图和发布由 owning ASL/NDF 唯一规定；各 Local 指令族须闭合对应类型与效果。该变更不定义新的 M64 布局，也不替代既有 Matrix 运算合同。
+
+## Accepted amendment: issue #395 — Canonical Local CUBE to Shared ND conversion
+
+Accepted on 2026-10-20 by ISA owner `ckwllawliet`, through explicit answers
+in the contract-freeze review, against baseline `b0165320a4b575b18d2f4d93faf40178f661ab49`.
+Linked requirement: [issue #395](https://github.com/PTO-ISA/pto-spec/issues/395).
+
+**English — rationale and scope.** This amendment adds a narrow exception to the preceding Shared-selector ban for canonical Function-2 TMOV only; Shared TLOAD and TSTORE remain outside these conversion forms. The owner accepted TMOV with assigned M322ND/M162ND selectors to normalize a Local CUBE_M32 or CUBE_M16 source into RowMajor ND Shared storage; code 26 has no Shared form. Function-1 TSTORE with codes 24 and 25 retains its GM behavior. BSTART selects the carrier-compatible operation type; explicit DATR DataType is DTYPE_NONE. Source backing dtype and raw bits are retained. Implicit GM-load destination geometry adopts the exact-capacity owner, while existing GM transfer effects and stricter GM type preflight remain distinct. The behavior is owned by `PTO-TMOV-CONTRACT-001` and `PTO-BSTART-TMOV-SHARED-001`; APPLY implements normalized Shared fragments through the existing generation publisher.
+
+**中文 — 原因与范围。** 本 amendment 仅为 canonical Function-2 TMOV 增加前述 Shared selector 禁止规则的窄例外；Shared TLOAD 与 TSTORE 仍不支持这些转换形式。Owner 已确认 TMOV 使用既有 M322ND/M162ND selector，将 Local CUBE_M32 或 CUBE_M16 source 归一化为 RowMajor ND Shared storage；code 26 没有 Shared 形式。Function-1 TSTORE 使用 code 24 和 25 时仍保留 GM 行为。操作类型由 BSTART 选择，显式 DATR DataType 为 DTYPE_NONE，允许既有 carrier-compatible backing/operation 类型差异并保留源 backing 与原始位。隐式 GM load 目的几何遵循精确容量 owner，GM 搬运效果及其严格类型预检仍独立保留。该行为由 `PTO-TMOV-CONTRACT-001` 与 `PTO-BSTART-TMOV-SHARED-001` 约束；APPLY 通过既有 generation publisher 发布已归一化的 Shared fragment。
+
+This is an accepted design for implementation. Current executable meaning
+remains in the owning ASL/NDF until APPLY; this design record does not claim
+implementation, AVS, PR or release validation. Compatibility is breaking for
+formerly accepted M16/M32 allocation-slack inputs and changed producer/parent
+physical geometry. TMOV adds legal forms without a new opcode. Release
+impact is required after the review baseline; publication is not authorized.
+
+**Type-code closure confirmed in the same owner review.** BSTART.TMOV adds
+E6M2=15 and RCPE6M2=21 under existing carrier-compatible/source-only rules.
+This expands the canonical command's legal DataType set, including otherwise
+legal NORM carrier forms; it does not change fixed encoding fields or other
+BSTART commands. New Local-CUBE-to-Shared forms keep DATR DataType=DTYPE_NONE
+and retain source backing; RCPE6M2 is not persistent descriptor backing.
+
+**同轮 owner 已确认的类型编码补全。** BSTART.TMOV 新增 E6M2=15 和
+RCPE6M2=21，沿用既有 carrier-compatible/source-only 约束，并包含其余条件
+合法的 NORM carrier 形态。此变化扩展该 canonical command 的合法 DataType
+集合，不改变固定编码字段或其他 BSTART。新 Local CUBE 到 Shared 形态的
+DATR DataType 仍为 DTYPE_NONE，保留源 backing；RCPE6M2 不作为持久 descriptor
+backing。实现须更新 owner 白名单及派生 decoder/镜像/正反例。

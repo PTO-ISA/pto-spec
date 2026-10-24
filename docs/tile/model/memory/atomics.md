@@ -80,17 +80,27 @@ Both outcomes record two atomic events, one with the write performed and one wit
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/memory/atomics.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-ATOMICS","surface":"tile","classification":["model","memory","atomics"],"depends_on":["PTO-TILE-MODEL-MEMORY-GATHER-SCATTER","PTO-ARCH-MEMORY-MODEL-ATOMICITY","PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA","PTO-TILE-MODEL-EXECUTION-MASK-STATE"]}
-func MGATHER_CAS(destination: TileIndex, base_address: Word,
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-ATOMICS","surface":"tile","classification":["model","memory","atomics"],"depends_on":["PTO-TILE-MODEL-MEMORY-GATHER-SCATTER","PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT-TYPES","PTO-ARCH-MEMORY-MODEL-ATOMICITY","PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA","PTO-TILE-MODEL-EXECUTION-MASK-STATE"]}
+func MGATHER_CASToValue(destination: TileOutputValueTarget,
+                 base_address: Word,
                  indices: TileIndex,
                  expected: TileIndex, replacement: TileIndex,
-                 pad_value: TilePadValue)
+                 pad_value: TilePadValue) => TileInfo
 begin
-    let destination_tile = _Tiles[[destination]];
+    let destination_tile = destination.value;
     let index_tile = _Tiles[[indices]];
     let expected_payload = _Tiles[[expected]].payload;
     let replacement_payload = _Tiles[[replacement]].payload;
-    assert IndexedTLSUNumericDescriptorLegal(destination);
+    assert destination_tile.allocated &&
+           destination_tile.storage_kind == TileStorage_Numeric &&
+           IndexedTLSULayoutSupported(destination_tile.layout) &&
+           (if TileLayoutIsCube(destination_tile.layout) then
+                TileCubeDescriptorLegal(destination_tile)
+            else
+                TileDescriptorShapeLegal(destination_tile.capacity_bytes,
+                    destination_tile.columns, destination_tile.valid_rows,
+                    destination_tile.valid_columns,
+                    destination_tile.data_type));
     assert IndexedTLSUExecutionMaskContentsDefined(indices);
     assert IndexedTLSUExecutionMaskContentsDefined(expected);
     assert IndexedTLSUExecutionMaskContentsDefined(replacement);
@@ -124,13 +134,17 @@ begin
                 index_payload[[index_element]], index_tile.data_type);
             let read_probe = ProbeTileMemoryAccess(address,
                 destination_tile.data_type, FALSE);
-            if RaiseDataAccessFault(read_probe, address) then return; end;
+            if RaiseDataAccessFault(read_probe, address) then
+                return result;
+            end;
             let write_probe = ProbeTileMemoryAccess(address,
                 destination_tile.data_type, TRUE);
-            if RaiseDataAccessFault(write_probe, address) then return; end;
+            if RaiseDataAccessFault(write_probe, address) then
+                return result;
+            end;
             if read_probe.translated_address != write_probe.translated_address then
                 SetFault(Fault_DataPage, address);
-                return;
+                return result;
             end;
             original_addresses[[destination_element]] = address;
             translated_addresses[[destination_element]] =
@@ -214,8 +228,22 @@ begin
                 TileMemoryElementBytes(destination_tile.data_type), old_raw,
                 write_value, CurrentBundleMemoryOrder(), succeeds);
     end;
-    _Tiles[[destination]] = result;
-    MarkTilePhysicalRegionDefined(destination);
+    return TileWithPhysicalRegionDefined(result);
+end;
+
+func MGATHER_CAS(destination: TileIndex, base_address: Word,
+                 indices: TileIndex,
+                 expected: TileIndex, replacement: TileIndex,
+                 pad_value: TilePadValue)
+begin
+    assert TileOperandsLegal_MGATHER_CAS(destination, base_address,
+        indices, expected, replacement, pad_value);
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    _Tiles[[destination]] = MGATHER_CASToValue(target, base_address,
+        indices, expected, replacement, pad_value);
 end;
 
 func MGATHER_CAS(destination: TileIndex, base_address: Word,

@@ -73,16 +73,15 @@ Bundle A carries INIT with parent size code 6 (4096 bytes, 32 CELLs), writer siz
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/operands/local-generation.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","surface":"block","classification":["model","operands","local-generation"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS","PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","surface":"block","classification":["model","operands","local-generation"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS","PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS"]}
 // NDF-BEGIN: PTO-B-ASSEMBLE-LOCAL-GENERATION-001
 // ndf: kind=contract level=L1 layer=block status=accepted
 // A Local generation is one logical entry in the ordinary T/U/M/N relative queue; INIT owns per-PE instances; continuations resolve one entry and subset writers.
 // INIT allocates before effects; MIDDLE/LAST reuses it. Coverage, readiness, closure, publication, replay, waiting, abort, and explicit no-fallback selectors follow the per-PE contract; Shared Sx is unchanged.
 // NDF-END: PTO-B-ASSEMBLE-LOCAL-GENERATION-001
-
 // NDF-BEGIN: PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001
 // ndf: kind=contract level=L1 layer=block status=accepted
-// For Local CUBE_M16 and CUBE_M32 B.ASSEMBLE generations, ParentCapacity is allocation metadata only. Each writer retains its fragment descriptor. A successful LAST derives one common parent physical/valid descriptor from the participating PEs' gap-free CELL prefix coverage, and atomically publishes that final descriptor. Capacity slack never creates parent rows, columns, repeats, or CELLs. ParentRef selects the open generation by generation identity and does not require the aggregate descriptor to be finalized before LAST.
+// For Local CUBE_M16 and CUBE_M32 B.ASSEMBLE generations, the parent retains its complete capacity-derived physical descriptor while each writer records an exact WriterSizeCode fragment view. A successful LAST derives one common valid-column prefix from participating PEs' gap-free CELL coverage and atomically publishes it inside the unchanged full parent geometry. ParentRef selects the open generation by generation identity and does not require the aggregate valid descriptor to be finalized before LAST.
 // Generation structure is preflighted before destination resolution. The exact materialized writer descriptor is validated after destination shape/allocation or reuse and before producer effects, coverage registration, LAST closure, or parent finalization.
 // NDF-END: PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001
 pure func BundleLocalGenerationQueueSlot(hand: integer {0..3}, distance: integer {0..15}) => integer {0..63}
@@ -346,8 +345,8 @@ begin
     end;
     return TRUE;
 end;
-
-func CommitBundleLocalGeneration()
+func CommitBundleLocalGenerationWithWriterEffects(
+    writer_effects: BundleLocalGenerationCubeWriterEffects)
 begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid &&
@@ -363,6 +362,9 @@ begin
             let offset_cells = UInt(assemble.offset) as integer {0..2047};
             let writer_cells = BundleLocalGenerationCellCount(writer_size)
                 as integer {1..2048};
+            let (writer_effect_found, writer_effect_writer) =
+                BundleLocalGenerationCubeWriterValueForDestination(
+                    writer_effects, destination, _Tiles[[destination]]);
             if assemble.init then
                 ClearBundleLocalGenerationState(slot);
                 _LocalGenerations[[slot]].open = TRUE;
@@ -418,19 +420,30 @@ begin
                 _LocalGenerations[[slot]].writers[[ordinal]].pe_mask = participant_mask;
                 _LocalGenerations[[slot]].writers[[ordinal]].ready = FALSE;
                 _LocalGenerations[[slot]].writers[[ordinal]].physical_rows =
-                    _Tiles[[destination]].rows;
+                    if writer_effect_found then writer_effect_writer.rows
+                    else if _Tiles[[destination]].layout == TileLayout_CUBE_M16 then
+                        16 else 32;
                 _LocalGenerations[[slot]].writers[[ordinal]].physical_columns =
-                    _Tiles[[destination]].columns;
+                    if writer_effect_found then writer_effect_writer.columns
+                    else BundleLocalGenerationCubeWriterColumns(
+                        writer_size, _Tiles[[destination]].layout,
+                        _Tiles[[destination]].data_type);
                 _LocalGenerations[[slot]].writers[[ordinal]].valid_rows =
-                    _Tiles[[destination]].valid_rows;
+                    if writer_effect_found then writer_effect_writer.valid_rows
+                    else BundleLocalGenerationCubeCurrentValidRows();
                 _LocalGenerations[[slot]].writers[[ordinal]].valid_columns =
-                    _Tiles[[destination]].valid_columns;
+                    if writer_effect_found then writer_effect_writer.valid_columns
+                    else BundleLocalGenerationCubeCurrentValidColumns();
                 _LocalGenerations[[slot]].writers[[ordinal]].data_type =
-                    _Tiles[[destination]].data_type;
+                    if writer_effect_found then writer_effect_writer.data_type
+                    else _Tiles[[destination]].data_type;
                 _LocalGenerations[[slot]].writers[[ordinal]].predicate_basis_type =
-                    _Tiles[[destination]].predicate_basis_type;
+                    if writer_effect_found then
+                        writer_effect_writer.predicate_basis_type
+                    else _Tiles[[destination]].predicate_basis_type;
                 _LocalGenerations[[slot]].writers[[ordinal]].layout =
-                    _Tiles[[destination]].layout;
+                    if writer_effect_found then writer_effect_writer.layout
+                    else _Tiles[[destination]].layout;
                 _LocalGenerations[[slot]].writers[[ordinal]].identity.instruction_instance = ReadBPC();
                 _LocalGenerations[[slot]].writers[[ordinal]].identity.execution_domain_token = _BundleExecutionDomainToken;
                 _LocalGenerations[[slot]].writer_count = (ordinal + 1) as integer {0..16};
@@ -476,6 +489,55 @@ begin
         end;
     end;
 end;
+
+func CommitBundleLocalGeneration()
+begin
+    CommitBundleLocalGenerationWithWriterEffects(
+        EmptyBundleLocalGenerationCubeWriterEffects());
+end;
+readonly func BundleLocalGenerationDescriptorMatches(
+    slot: integer {0..63}, destination: TileIndex,
+    participant_mask: bits(4)) => boolean
+begin
+    let expected = _LocalGenerations[[slot]].parent_descriptor;
+    let actual = _Tiles[[destination]];
+    if !_LocalGenerations[[slot]].generation_identity_valid ||
+       !actual.allocated || expected.object_name != destination ||
+       expected.object_kind != actual.storage_kind ||
+       expected.participant_mask != _TileAllocationMasks[[destination]] ||
+       !BundleLocalGenerationMaskSubset(participant_mask,
+           expected.participant_mask) ||
+       actual.capacity_bytes != expected.capacity_bytes then
+        return FALSE;
+    end;
+    if BundleLocalGenerationCubeLayout(actual.layout) then
+        return expected.valid && actual.rows == expected.rows &&
+               actual.columns == expected.columns &&
+               actual.valid_rows == expected.valid_rows &&
+               actual.valid_columns == expected.valid_columns &&
+               actual.data_type == expected.data_type &&
+               actual.predicate_basis_type == expected.predicate_basis_type &&
+               actual.layout == expected.layout &&
+               actual.cube_k_repeat == expected.cube_k_repeat &&
+               actual.cube_n_repeat == expected.cube_n_repeat &&
+               actual.cube_cell_count == expected.cube_cell_count &&
+               actual.cube_storage_bytes == expected.cube_storage_bytes &&
+               actual.cube_storage_bytes ==
+                   TileCubePhysicalRequiredBytes(actual.layout,
+                       actual.rows, actual.columns, actual.data_type);
+    end;
+    return actual.rows == expected.rows && actual.columns == expected.columns &&
+           actual.valid_rows == expected.valid_rows &&
+           actual.valid_columns == expected.valid_columns &&
+           actual.data_type == expected.data_type &&
+           actual.predicate_basis_type == expected.predicate_basis_type &&
+           actual.layout == expected.layout &&
+           actual.cube_k_repeat == expected.cube_k_repeat &&
+           actual.cube_n_repeat == expected.cube_n_repeat &&
+           actual.cube_cell_count == expected.cube_cell_count &&
+           actual.cube_storage_bytes == expected.cube_storage_bytes;
+end;
+
 func ReuseBundleLocalGenerationDestination() => boolean
 begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do

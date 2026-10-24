@@ -81,7 +81,27 @@ With `->T<1KB>`, the derived row count would be 4. Step 3 would raise `Fault_Til
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/destination-shape.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","surface":"block","classification":["model","dispatch","destination-shape"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL","PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","surface":"block","classification":["model","dispatch","destination-shape"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL","PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-TILE-MODEL-STATE-SHARED-REGISTERS","PTO-TILE-MODEL-STATE-TYPES"]}
+type BundleResolvedDestinationShapeEntry of record {
+    valid: boolean,
+    capacity_bytes: integer {0..262144},
+    physical_rows: integer {0..65535},
+    physical_columns: integer {0..65535},
+    valid_rows: integer {0..65535},
+    valid_columns: integer {0..65535},
+    allocation_columns: integer {0..65535},
+    allocation_valid_columns: integer {0..65535},
+    data_type: TileDataType,
+    layout: TileLayout,
+    tgpr2t: boolean,
+    exact_cube_columns: boolean,
+    ordinary_tcvt: boolean,
+    local_generation_cube_writer: boolean
+};
+
+type BundleResolvedDestinationShapes of array [[PTO_BUNDLE_TILE_BINDING_COUNT]]
+    of BundleResolvedDestinationShapeEntry;
+
 readonly func BundleDestinationValidRows(
     shape_source_valid: boolean, shape_source: TileIndex) => integer {0..65535}
 begin
@@ -145,6 +165,19 @@ begin
         _BundleTileBindings[[binding]].pe_mask) ==
         _BundleTileBindings[[binding]].pe_mask;
     if cube then
+        let local_generation =
+            _BundleTileBindings[[binding]].destination_assemble.valid;
+        if local_generation then
+            let expected_parent_columns =
+                TileCubePhysicalColumnsFromCapacity(
+                    capacity_bytes, layout, data_type);
+            return TileCubeDescriptorLegal(destination) &&
+                   destination.capacity_bytes == capacity_bytes &&
+                   destination.rows == expected_physical_rows &&
+                   destination.columns == expected_parent_columns &&
+                   destination.data_type == data_type &&
+                   destination.layout == layout && mask_legal;
+        end;
         return TileCubeDescriptorLegal(destination) &&
                destination.capacity_bytes == capacity_bytes &&
                destination.valid_rows == valid_rows &&
@@ -194,19 +227,26 @@ begin
     return LocalTileAllocationGroupFits(
         additional0, additional1, additional2, additional3);
 end;
-func ResolveBundleTileDestinationsWithShapeAndType(
+func ResolveBundleTileDestinationsWithShapeAndTypeAndWriterEffects(
     explicit_shape: boolean,
     explicit_valid_rows: integer {0..65535},
     explicit_valid_columns: integer {0..65535},
     explicit_columns: integer {0..65535},
     explicit_primary_type: boolean,
-    primary_type: TileDataType) => boolean
+    primary_type: TileDataType)
+    => (boolean, BundleLocalGenerationCubeWriterEffects)
 begin
+    var writer_effects: BundleLocalGenerationCubeWriterEffects;
+    writer_effects.count = 0;
+    var shapes: BundleResolvedDestinationShapes;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        shapes[[binding]].valid = FALSE;
+    end;
     let (effective_type_valid, selected_type) =
         ResolveBundleEffectiveDataType();
     if !effective_type_valid then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, writer_effects);
     end;
     var reserved: array [[PTO_TILE_REGISTER_COUNT]] of boolean;
     var resolved: array [[PTO_BUNDLE_TILE_BINDING_COUNT]] of TileIndex;
@@ -233,13 +273,13 @@ begin
             end;
             if !found then
                 SetFault(Fault_TileAllocation, ReadTPC());
-                return FALSE;
+                return (FALSE, writer_effects);
             end;
         end;
     end;
     if !BundleLocalDestinationCapacityGroupFits() then
         SetFault(Fault_TileAllocation, ReadTPC());
-        return FALSE;
+        return (FALSE, writer_effects);
     end;
     let matrix = _BundleOperation.valid &&
         _BundleOperation.operation_class == BundleOperation_TileMatrix;
@@ -319,25 +359,64 @@ begin
             let reused = _BundleTileBindings[[binding]].destination_reused_by_generation;
             let cube_destination = destination_layout == TileLayout_CUBE_M16 ||
                 destination_layout == TileLayout_CUBE_M32;
+            let local_generation_cube_writer = cube_destination &&
+                _BundleTileBindings[[binding]].destination_assemble.valid;
+            let writer_columns = if local_generation_cube_writer then
+                TileCubePhysicalColumnsFromCapacity(
+                    TileSizeCodeBytes(_BundleTileBindings[[binding]]
+                        .destination_assemble.size_code as integer {1..12}),
+                    destination_layout, destination_type)
+            else 0;
             let ordinary_tcvt = BundleDestinationIsOrdinaryTCVT(decoded_operation, cube_destination);
             let exact_cube_columns = cube_destination &&
                 decoded_operation != PTO_TILE_OPERATION_COUNT &&
                 TileOperationOfIndex(
                     decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) ==
                     TileOperation_TCI;
+            let tgpr2t = cube_destination;
             let source_geometry = if shape_source_valid then _Tiles[[shape_source]] else _Tiles[[0]];
             let physical_rows = if cube_destination then
                 if reduction_operation && !reduction_row then source_geometry.rows
                 else TileCubeStorageRows(destination_layout, valid_rows,
                     destination_type)
             else if ordinary_tcvt then source_geometry.rows else 0;
-            let physical_columns = if cube_destination then
-                if exact_cube_columns then auxiliary_columns
-                else if reduction_operation && reduction_row then
-                    source_geometry.columns
+            let writer_required_columns = if exact_cube_columns then
+                auxiliary_columns
+            else if reduction_operation then
+                if reduction_row then source_geometry.columns
                 else TileCubeStorageColumns(destination_layout,
                     auxiliary_valid_columns, destination_type)
+            else if auxiliary_row || auxiliary_group then
+                TileCubeStorageColumns(destination_layout,
+                    auxiliary_valid_columns, destination_type)
+            else if _BundleDimensionPresent[[
+                BundleDimensionIndexOfRegister(BundleDimension_LB2)]] then
+                auxiliary_columns
+            else 0;
+            let physical_columns = if cube_destination then
+                if local_generation_cube_writer then
+                    TileCubePhysicalColumnsFromCapacity(capacity_bytes,
+                        destination_layout, destination_type)
+                else if exact_cube_columns then auxiliary_columns
+                else if reduction_operation then
+                    if reduction_row then source_geometry.columns
+                    else TileCubeStorageColumns(destination_layout,
+                        auxiliary_valid_columns, destination_type)
+                else if auxiliary_row || auxiliary_group then
+                    TileCubeStorageColumns(destination_layout,
+                        auxiliary_valid_columns, destination_type)
+                else if _BundleDimensionPresent[[
+                    BundleDimensionIndexOfRegister(BundleDimension_LB2)]] then
+                    auxiliary_columns
+                else TileCubePhysicalColumnsFromCapacity(capacity_bytes,
+                    destination_layout, destination_type)
             else auxiliary_columns;
+            if local_generation_cube_writer &&
+               writer_required_columns != 0 &&
+               writer_required_columns != writer_columns then
+                SetFault(Fault_TileLegality, ReadTPC());
+                return (FALSE, writer_effects);
+            end;
             let rows = if ordinary_tcvt then source_geometry.rows else DerivedTileRows(capacity_bytes, auxiliary_columns, destination_type);
             let shape_legal = if cube_destination then
                 TileCubeDescriptorShapeAndPhysicalLegal(capacity_bytes,
@@ -354,7 +433,7 @@ begin
                    auxiliary_valid_columns, auxiliary_columns,
                    destination_type, destination_layout) then
                 SetFault(Fault_TileLegality, ReadTPC());
-                return FALSE;
+                return (FALSE, writer_effects);
             end;
             if !shape_legal ||
                (!cube_destination && rows * auxiliary_columns >
@@ -362,16 +441,49 @@ begin
                        destination_type)) then
                 if reused then SetFault(Fault_TileLegality, ReadTPC());
                 else SetFault(Fault_TileAllocation, ReadTPC()); end;
-                return FALSE;
+                return (FALSE, writer_effects);
+            end;
+            if local_generation_cube_writer then
+                let assemble = _BundleTileBindings[[binding]]
+                    .destination_assemble;
+                if assemble.size_code < 1 || assemble.size_code > 12 ||
+                   UInt(assemble.offset) > 2047 || valid_rows == 0 ||
+                   auxiliary_valid_columns == 0 ||
+                   !BundleLocalGenerationCubeWriterPreflightLegal(
+                       capacity_bytes, physical_rows, physical_columns,
+                       destination_type, destination_layout,
+                       assemble.size_code as integer {1..12},
+                       UInt(assemble.offset) as integer {0..2047},
+                       valid_rows as integer {1..65535},
+                       auxiliary_valid_columns as integer {1..65535}) then
+                    SetFault(Fault_TileLegality, ReadTPC());
+                    return (FALSE, writer_effects);
+                end;
             end;
             if reused && !BundleReusedDestinationDescriptorMatches(
                    binding as BundleTileBindingIndex, capacity_bytes,
                    valid_rows, auxiliary_valid_columns, auxiliary_columns,
                    destination_type, destination_layout, cube_destination,
-                   exact_cube_columns, ordinary_tcvt, source_geometry.rows) then
+                   exact_cube_columns, ordinary_tcvt, physical_rows) then
                 SetFault(Fault_TileLegality, ReadTPC());
-                return FALSE;
+                return (FALSE, writer_effects);
             end;
+            shapes[[binding]].valid = TRUE;
+            shapes[[binding]].capacity_bytes = capacity_bytes;
+            shapes[[binding]].physical_rows = physical_rows;
+            shapes[[binding]].physical_columns = physical_columns;
+            shapes[[binding]].valid_rows = valid_rows;
+            shapes[[binding]].valid_columns = valid_columns;
+            shapes[[binding]].allocation_columns = auxiliary_columns;
+            shapes[[binding]].allocation_valid_columns =
+                auxiliary_valid_columns;
+            shapes[[binding]].data_type = destination_type;
+            shapes[[binding]].layout = destination_layout;
+            shapes[[binding]].tgpr2t = tgpr2t;
+            shapes[[binding]].exact_cube_columns = exact_cube_columns;
+            shapes[[binding]].ordinary_tcvt = ordinary_tcvt;
+            shapes[[binding]].local_generation_cube_writer =
+                local_generation_cube_writer;
             destination_ordinal = destination_ordinal + 1;
         end;
     end;
@@ -381,73 +493,19 @@ begin
            _BundleTileBindings[[binding]].destination_valid then
             if !_BundleTileBindings[[binding]].destination_allocated_by_bundle &&
                !_BundleTileBindings[[binding]].destination_reused_by_generation then
-                let valid_rows = if explicit_shape then explicit_valid_rows else
-                    BundleDestinationValidRows(shape_source_valid, shape_source);
-                let valid_columns = if explicit_shape then
-                    explicit_valid_columns else BundleDestinationValidColumns(
-                        shape_source_valid, shape_source);
-                let destination_layout = if decoded_operation != PTO_TILE_OPERATION_COUNT &&
-                    TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T then
-                    if valid_rows == 32 then TileLayout_CUBE_M32 else TileLayout_CUBE_M16
-                else CurrentBundleTileLayout();
-                let columns = if explicit_shape then explicit_columns else
-                    BundleDestinationPhysicalColumns(
-                        shape_source_valid, shape_source);
-                let destination_type = if destination_ordinal == 0 then
-                    primary_output_type else if matrix then matrix_output_type
-                    else TileDataType_U32;
-                let auxiliary_row = matrix &&
-                    _BundleFixedPointAttributes.row_max_en &&
-                    destination_ordinal == 1;
-                let auxiliary_group = matrix &&
-                    _BundleFixedPointAttributes.group_max_en &&
-                    ((!_BundleFixedPointAttributes.row_max_en &&
-                      destination_ordinal == 1) ||
-                     (_BundleFixedPointAttributes.row_max_en &&
-                      destination_ordinal == 2));
-                let auxiliary_columns = if auxiliary_row then 1
-                    else if auxiliary_group then
-                        BundleGroupMaxColumns(columns)
-                    else columns;
-                let auxiliary_valid_columns = if auxiliary_row then 1
-                    else if auxiliary_group then
-                        BundleGroupMaxColumns(valid_columns)
-                    else valid_columns;
-                let capacity_bytes = BundleLocalDestinationAllocationBytes(binding as BundleTileBindingIndex);
-                let tgpr2t = (decoded_operation != PTO_TILE_OPERATION_COUNT &&
-                    TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T) ||
-                    destination_layout == TileLayout_CUBE_M16 ||
-                    destination_layout == TileLayout_CUBE_M32;
-                let exact_cube_columns = tgpr2t &&
-                    decoded_operation != PTO_TILE_OPERATION_COUNT &&
-                    TileOperationOfIndex(
-                        decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) ==
-                        TileOperation_TCI;
-                let source_geometry = if shape_source_valid then _Tiles[[shape_source]] else _Tiles[[0]];
-                let ordinary_tcvt = BundleDestinationIsOrdinaryTCVT(decoded_operation, tgpr2t);
-                let physical_rows = if destination_layout == TileLayout_CUBE_M16 ||
-                    destination_layout == TileLayout_CUBE_M32 then
-                    if reduction_operation && !reduction_row then
-                        source_geometry.rows
-                    else TileCubeStorageRows(destination_layout, valid_rows,
-                        destination_type)
-                else if ordinary_tcvt then source_geometry.rows else 0;
-                let physical_columns = if destination_layout == TileLayout_CUBE_M16 ||
-                    destination_layout == TileLayout_CUBE_M32 then
-                    if exact_cube_columns then auxiliary_columns
-                    else if reduction_operation && reduction_row then
-                        source_geometry.columns
-                    else TileCubeStorageColumns(destination_layout,
-                        auxiliary_valid_columns, destination_type)
-                else auxiliary_columns;
-                if !ConfigureBundleTileDestination(resolved[[binding]],
-                        capacity_bytes, physical_rows, physical_columns,
-                        valid_rows, auxiliary_columns,
-                        auxiliary_valid_columns, destination_type,
-                        destination_layout, _BundleTileBindings[[binding]].pe_mask,
-                        tgpr2t, exact_cube_columns, ordinary_tcvt) then
+                let shape = shapes[[binding]];
+                if !shape.valid ||
+                   !ConfigureBundleTileDestination(resolved[[binding]],
+                        shape.capacity_bytes, shape.physical_rows,
+                        shape.physical_columns, shape.valid_rows,
+                        shape.allocation_columns,
+                        shape.allocation_valid_columns, shape.data_type,
+                        shape.layout,
+                        _BundleTileBindings[[binding]].pe_mask,
+                        shape.tgpr2t, shape.exact_cube_columns,
+                        shape.ordinary_tcvt) then
                     SetFault(Fault_TileAllocation, ReadTPC());
-                    return FALSE;
+                    return (FALSE, writer_effects);
                 end;
                 _BundleTileBindings[[binding]].destination = resolved[[binding]];
                 _BundleTileBindings[[binding]].destination_allocated_by_bundle = TRUE;
@@ -459,8 +517,38 @@ begin
             destination_ordinal = destination_ordinal + 1;
         end;
     end;
-    return TRUE;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if shapes[[binding]].valid &&
+           shapes[[binding]].local_generation_cube_writer then
+            let (writer_legal, updated_effects) =
+                AddBundleLocalGenerationCubeWriterEffect(
+                    writer_effects, binding as BundleTileBindingIndex,
+                    shapes[[binding]].valid_rows as integer {1..65535},
+                    shapes[[binding]].allocation_valid_columns
+                        as integer {1..65535});
+            if !writer_legal then
+                SetFault(Fault_TileLegality, ReadTPC());
+                return (FALSE, writer_effects);
+            end;
+            writer_effects = updated_effects;
+        end;
+    end;
+    return (TRUE, writer_effects);
 end;
+func ResolveBundleTileDestinationsWithShapeAndType(
+    explicit_shape: boolean,
+    explicit_valid_rows: integer {0..65535},
+    explicit_valid_columns: integer {0..65535},
+    explicit_columns: integer {0..65535},
+    explicit_primary_type: boolean,
+    primary_type: TileDataType) => boolean
+begin
+    let (legal, -) = ResolveBundleTileDestinationsWithShapeAndTypeAndWriterEffects(
+        explicit_shape, explicit_valid_rows, explicit_valid_columns,
+        explicit_columns, explicit_primary_type, primary_type);
+    return legal;
+end;
+
 func ResolveBundleTileDestinationsWithShape(
     explicit_shape: boolean,
     explicit_valid_rows: integer {0..65535},

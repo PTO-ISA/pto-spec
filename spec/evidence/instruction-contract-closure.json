@@ -550,13 +550,15 @@
         "exceptions": [
           "A B.CATR outside an active header or a second B.CATR raises Illegal Block Exception before changing pending or architectural state.",
           "DR=1 in CUBE or a non-tile block raises Illegal Block Exception before block effects; VEC, SFU, and TLSU blocks may consume dimension-reduction mode.",
-          "A failed or rejected block commit produces no post-commit trap and exposes no partial atomic-block result."
+          "A failed or rejected block commit produces no post-commit trap and exposes no partial atomic-block result.",
+          "A participating TLSU Function 1 Atomic TSTORE with B.CATR.atom=1 raises Fault_TileLegality before memory effects; omitted B.CATR and atom=0 retain intrinsic Atomic TSTORE behavior."
         ],
         "field_domains": [],
         "legality": [
           "All six one-bit fields are independently assigned; aq and rl do not require atom=1.",
           "B.CATR is header-only and unique per block.",
-          "DR=1 is assigned only for VEC, SFU, and TLSU blocks and rejects for CUBE and non-tile blocks before effects."
+          "DR=1 is assigned only for VEC, SFU, and TLSU blocks and rejects for CUBE and non-tile blocks before effects.",
+          "Atomic TSTORE rejects B.CATR.atom=1 before effects; this operation exception does not change atom semantics for other operations."
         ],
         "memory_effects": [
           "aq prevents later-block memory effects from preceding this block; rl prevents earlier-block memory effects from following it; aq+rl applies both constraints.",
@@ -626,7 +628,9 @@
                 2,
                 3,
                 4,
-                5
+                5,
+                6,
+                7
               ]
             },
             {
@@ -844,20 +848,15 @@
             "assigned_ranges": [
               [
                 0,
-                5
+                7
               ]
             ],
             "field": "CMode",
             "form_id": "b_datr_32_c161a042ff38",
             "other_owner_values": [],
-            "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
-            "reserved_ranges": [
-              [
-                6,
-                7
-              ]
-            ],
-            "role": "comparison predicate selector: 0 EQ, 1 NE, 2 LT, 3 GT, 4 LE, 5 GE",
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "TCMP/TCMPS comparison relation 0..5, or Atomic TSTORE operation 0..7 only with Canonicalize=1",
             "signedness": "encoding-defined",
             "width": 3,
             "zero_meaning": "EQ"
@@ -908,7 +907,7 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "TCVT private-format canonicalization enable",
+            "role": "TCVT private-format canonicalization enable or Atomic TSTORE reduction-mode selector when CMode 0..7",
             "signedness": "encoding-defined",
             "width": 1,
             "zero_meaning": "disabled"
@@ -1064,8 +1063,8 @@
         ],
         "exceptions": [
           "A duplicate B.DATR or a B.DATR outside an active block header raises Illegal Block Exception before attribute state changes.",
-          "Reserved DataType or CMode, unassigned Layout, unsupported Layout, or operation-inapplicable nonzero fields raise an architectural fault before effects.",
-          "PredInv=1 or Zero=1 on a schema without an explicit eligible Local CUBE_M16/CUBE_M32 ExecutionMask raises Fault_TileLegality before effects."
+          "PredInv=1 or Zero=1 on a schema without an explicit eligible Local CUBE_M16/CUBE_M32 ExecutionMask raises Fault_TileLegality before effects.",
+          "CMode codes 6 and 7 pass raw command-form decoding but are accepted at execution only for an active BSTART.TSTORE TLSU Function 1 with Canonicalize=1; every other context raises Fault_IllegalInstruction before attributes latch."
         ],
         "field_domains": [
           {
@@ -1097,12 +1096,12 @@
             ],
             "field": "CMode",
             "id": "PTO-FIELD-BLOCK-CMODE",
-            "rejection": "Codes 6 and 7 are reserved and reject before architectural effects.",
+            "rejection": "Codes 6 and 7 are reserved at B.DATR execution except for active TLSU Function 1 TSTORE with Canonicalize=1; all other operation and command contexts raise Fault_IllegalInstruction before attributes latch.",
             "reserved": [
               6,
               7
             ],
-            "role": "Selects the comparison relation used by TCMP and TCMPS.",
+            "role": "Selects TCMP/TCMPS comparison relation or, only for Atomic TSTORE, a GM atomic reduction operator.",
             "source": "asl/block/attributes/B.DATR.asl",
             "width": 3,
             "zero_meaning": "Code zero selects equality comparison."
@@ -1266,9 +1265,9 @@
           "B.DATR may appear at most once, after BSTART and before the block body.",
           "DataType accepts the 27 concrete TileDataType codes plus code 31 DTYPE_NONE; codes 22, 23, and 29..30 are reserved and reject before effects.",
           "Layout codes 0, 1, 3, 4, 6, 8, 9, 10, 11, 17, 18, 20, 21 through 29, and 30 through 31 are assigned. Codes 10 and 11 are weight-mode TLOAD-only layouts; codes 21 through 26 select ND2M32, ND2M16, ND2N8, M322ND, M162ND, and N82ND respectively; code 29 selects direct Local CUBE_M32 and code 31 selects direct Local CUBE_M16.",
-          "CMode codes 0..5 select EQ, NE, LT, GT, LE, and GE respectively; codes 6..7 are reserved.",
+          "CMode codes 0..5 select EQ, NE, LT, GT, LE, and GE; codes 6..7 are reserved except at the B.DATR command boundary of an active TLSU Function 1 TSTORE with Canonicalize=1, where they select ATOMIC_INC and ATOMIC_DEC.",
           "All RMode codes 0..7 are assigned: operation default, RNE, RTZ, RTM, RTP, RNA, RTO, and RHB.",
-          "Canonicalize is legal only for TCVT; each selected tile operation separately constrains the applicable nonzero B.DATR fields and PadValueOrByteId interpretation.",
+          "Canonicalize is legal only for TCVT and, for TLSU Function 1 TSTORE, selects Atomic reduction when enabled with CMode 0..7; other tile operations retain their existing Canonicalize applicability.",
           "Matrix/CUBE schemas interpret PadValueOrByteId as CCTRL: bit 0 selects raw-partial D plus a cache-replacement hint, bit 1 is an ACC-only explicit-C cache-use or prefetch hint, and init=1 forms require bit 1 to be zero.",
           "PredInv and Zero are legal only for eligible Local CUBE_M16/CUBE_M32 schemas that bind an explicit ExecutionMask; otherwise either nonzero control rejects before effects. Bit 12 remains fixed at one.",
           "TROWEXPAND, TROWEXPANDADD, TROWEXPANDSUB, TROWEXPANDMUL, TROWEXPANDDIV, TROWEXPANDMAX, TROWEXPANDMIN, and TROWEXPANDEXPDIF interpret RMode[2:0] as BroadcastByteOffset only for CUBE_M16/CUBE_M32; RowMajor requires zero. Other operation-specific RMode rules are unchanged."
@@ -1291,7 +1290,7 @@
           },
           {
             "field": "CMode",
-            "role": "comparison predicate selector: 0 EQ, 1 NE, 2 LT, 3 GT, 4 LE, 5 GE"
+            "role": "TCMP/TCMPS comparison relation 0..5, or Atomic TSTORE operation 0..7 only with Canonicalize=1"
           },
           {
             "field": "RMode",
@@ -1303,7 +1302,7 @@
           },
           {
             "field": "Canonicalize",
-            "role": "TCVT private-format canonicalization enable"
+            "role": "TCVT private-format canonicalization enable or Atomic TSTORE reduction-mode selector when CMode 0..7"
           },
           {
             "field": "PredInv",
@@ -20314,11 +20313,13 @@
                 12,
                 13,
                 14,
+                15,
                 16,
                 17,
                 18,
                 19,
                 20,
+                21,
                 24,
                 25,
                 26,
@@ -20383,11 +20384,7 @@
             "assigned_ranges": [
               [
                 0,
-                14
-              ],
-              [
-                16,
-                20
+                21
               ],
               [
                 24,
@@ -20404,11 +20401,7 @@
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
               [
-                15,
-                15
-              ],
-              [
-                21,
+                22,
                 23
               ],
               [
@@ -20434,10 +20427,10 @@
         ],
         "field_domains": [],
         "legality": [
-          "DataType accepts the 25 concrete TileDataType codes and code 31 DTYPE_NONE for source-descriptor inference; codes 15, 21..23, and 29..30 are reserved.",
-          "Function 2 accepts Local-to-Local and canonical Local/Shared or Shared/Local TMOV schemas. A Shared destination with multiple participating PEs requires B.ASSEMBLE; a single-PE no-assemble writer publishes the whole parent.",
-          "B.SUBVIEW is the source-range modifier and B.ASSEMBLE is the destination-generation modifier. Shared source legality requires hardware-maintained whole-parent readiness and publication.",
-          "Function 13 GMOV remains accepted and unchanged. Other Shared movement function encodings are reserved and raise Fault_IllegalInstruction.",
+          "DataType accepts 27 concrete TileDataType codes and code 31 DTYPE_NONE for source-descriptor inference; codes 22..23 and 29..30 are reserved.",
+          "Function 2 accepts Local-to-Local and canonical Local/Shared or Shared/Local TMOV schemas. With DTYPE_NONE, Layout M322ND/M162ND converts a compatible Local CUBE_M32/M16 source into RowMajor ND Shared storage while preserving its backing type. A Shared destination with multiple participating PEs requires B.ASSEMBLE; a single-PE no-assemble writer transfers the complete parent.",
+          "B.SUBVIEW is the source-range modifier and B.ASSEMBLE is the destination-generation modifier. Shared source legality requires hardware-maintained whole-parent readiness and publication. Each Shared generation uses one normalized mode: NORM, M322ND, or M162ND.",
+          "Function 13 GMOV remains accepted and unchanged. Other Shared movement function encodings are reserved and raise Fault_IllegalInstruction. Function-2 M322ND/M162ND adds no independent Shared movement selector.",
           "For Local-to-Local TMOV, source and destination descriptors agree on capacity, Layout, physical Col, and completed valid shape. A concrete non-packed DataType may differ from the source backing type only at the same element width, and the destination preserves the source backing DataType."
         ],
         "memory_effects": [
@@ -20938,8 +20931,9 @@
           "BSTART.TSTORE FP16; B.IOS S7, mask=1111; BSTOP"
         ],
         "exceptions": [
-          "Reserved DataType, unsupported Layout, invalid dimensions, source descriptor mismatch, malformed bindings, illegal PE mask, or GM translation, permission, or alignment fault raises the applicable fault before the first GM write.",
-          "A Shared source is hardware-waiting/no-effect until whole-parent readiness and publication are true; undefined Shared payload is not a legal source path."
+          "Reserved DataType, unsupported Layout, invalid dimensions, source descriptor mismatch, malformed bindings, or illegal PE mask raises the applicable fault before the first GM effect. Atomic Function 1 TSTORE preflights its selected PE footprint before the first GM write; Normal TSTORE preserves first-fault prefix effects.",
+          "A Shared source is hardware-waiting/no-effect until whole-parent readiness and publication are true; undefined Shared payload is not a legal source path.",
+          "Atomic Function 1 TSTORE uses the accepted per-PE preflight and irrevocable-drain contract in PTO-TSTORE-STRIDED-ATOMIC-RED-001; Normal TSTORE retains first-fault partial-store behavior."
         ],
         "field_domains": [
           {
@@ -21077,8 +21071,8 @@
           "ValidCol and ValidRow are nonzero, ValidCol does not exceed physical Col, and the valid rectangle fits the persistent source descriptor."
         ],
         "memory_effects": [
-          "For every selected PE and every selected element in ValidRow x ValidCol, write GM at base + row * row_stride_bytes + column * element_size, with packed four-bit columns adding floor(column / 2) to the byte-strided row base and selecting low/high by column parity.",
-          "The selected-PE footprint is accessed element by element until the first fault; prior GM writes and memory events may remain visible. Individual store beats need not be atomic or ordered to observers."
+          "Normal TSTORE writes every selected element at base + row * row_stride_bytes + column * element_size; packed four-bit columns add floor(column / 2) to each byte-strided row base and select low/high by column parity.",
+          "Normal TSTORE accesses selected elements until the first fault, and stores and memory events completed before that fault may remain visible. Atomic Function 1 TSTORE instead preflights the selected PE footprint before its first effect and drains all active occurrences exactly once after any effect."
         ],
         "operands": [
           {
@@ -21111,13 +21105,13 @@
           }
         ],
         "ordering": [
-          "Resolve and validate the complete schema, source descriptor or temporary descriptor, dimensions, masks, and per-PE GPR inputs before accessing each element until the first fault.",
-          "Selected Shared-store PEs have no architecture-defined relative issue or commit order; software avoids overlapping GM regions or establishes ordering separately."
+          "Normal TSTORE resolves the complete schema, source descriptor or temporary descriptor, dimensions, masks, and per-PE GPR inputs, then accesses elements until the first fault.",
+          "Atomic Function 1 TSTORE performs per-PE complete target preflight, samples each old GM value at its RMW, and serializes overlapping exact ranges by the existing GM atomic order; different PEs remain independently serviceable."
         ],
         "standalone_opcode": true,
         "state_effects": [
           "Reads one Local or published, whole-parent-ready Shared source without modifying its payload, descriptor, producer mask, readiness, or lifetime.",
-          "On success only GM and memory-event state change; the source binding is consumed by normal block completion.",
+          "Normal TSTORE consumes its source binding through ordinary successful block completion. Atomic TSTORE delays captured last-use consumption until all active occurrences complete and the existing required-participant generation is complete.",
           "A Shared source that is pending or incomplete causes no payload read and no GM effect."
         ]
       },
@@ -129603,12 +129597,12 @@
             ],
             "field": "B.DATR.CMode",
             "id": "PTO-FIELD-BLOCK-CMODE",
-            "rejection": "Codes 6 and 7 are reserved and reject before architectural effects.",
+            "rejection": "Codes 6 and 7 are reserved at B.DATR execution except for active TLSU Function 1 TSTORE with Canonicalize=1; all other operation and command contexts raise Fault_IllegalInstruction before attributes latch.",
             "reserved": [
               6,
               7
             ],
-            "role": "Selects the comparison relation used by TCMP and TCMPS.",
+            "role": "Selects TCMP/TCMPS comparison relation or, only for Atomic TSTORE, a GM atomic reduction operator.",
             "source": "asl/block/attributes/B.DATR.asl",
             "width": 3,
             "zero_meaning": "Code zero selects equality comparison."
@@ -137860,7 +137854,8 @@
           "Before effects, TileOperandsLegal_TMOV validates the complete assembled bundle, operand roles, dimensions, data attributes, and applicability.",
           "B.DATR applicability is exactly [{\"allowed_nonzero_fields\":[\"Layout\"],\"pad_union\":\"must-zero\"}].",
           "The selected DataType is a carrier interpretation. Each non-packed source backing DataType may differ only at the same element width, and the newly allocated destination preserves the source backing DataType; multi-source operations require one common backing DataType.",
-          "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage."
+          "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.",
+          "Function-2 Local CUBE_M32/M16 to Shared ND uses B.DATR Layout M322ND/M162ND with DTYPE_NONE; it copies raw valid coordinates into normalized ND fragments and retains source backing type under carrier-compatible preflight."
         ],
         "memory_effects": [
           "Perform only the global, Local, or Shared data movement named by the mnemonic after complete access, shape, stride, and descriptor validation; a fault produces no partial destination or memory effect."
@@ -137881,7 +137876,8 @@
         "standalone_opcode": false,
         "state_effects": [
           "Copy the source Tile payload and definedness into the destination.",
-          "After complete preflight, execute TMOV with the operand bindings listed above; destination definedness changes only as specified by that handler."
+          "After complete preflight, execute TMOV with the operand bindings listed above; destination definedness changes only as specified by that handler.",
+          "A Local CUBE-to-Shared ND form normalizes each valid raw source coordinate, then publishes a complete singleton parent or commits an explicit B.ASSEMBLE range through the existing atomic Shared generation."
         ]
       },
       "documentation": "docs/tile/layout-and-rearrangement/layout/TMOV.md",
@@ -144696,7 +144692,9 @@
             "allowed_nonzero_fields": [
               "PadValueOrByteId",
               "Layout",
-              "DataType"
+              "DataType",
+              "Canonicalize",
+              "CMode"
             ],
             "pad_union": "pad-value"
           },
@@ -144758,7 +144756,7 @@
         ],
         "exceptions": [
           "A malformed binding stream, missing dimensions, unsupported DataType, non-row-major source, undefined Local source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects. An unpublished or not-whole-ready Shared source waits without fault or effect.",
-          "A memory translation, permission, or alignment fault stops the request at the first fault; prior GM writes and memory events may remain visible."
+          "For Normal TSTORE, a memory translation, permission, or alignment fault stops the request at the first fault; prior GM writes and memory events may remain visible. Atomic Function 1 TSTORE preflights the complete selected-PE footprint and produces no Atomic effects on a failed preflight."
         ],
         "field_domains": [
           {
@@ -144897,8 +144895,8 @@
           "The existing explicit ND2M32/M322ND Local conversion forms admit FP64, S64 and U64 with 256 physical bytes per column under issue #371; ordinary and Shared form layout rules remain owned separately."
         ],
         "memory_effects": [
-          "For every selected PE and each element in ValidRow x ValidCol, write GM at base + row * row_stride_bytes + column * element_size. Packed four-bit columns add floor(column / 2) to each byte-strided row base and select low/high by column parity.",
-          "The selected-PE footprint is accessed element by element until the first fault. Stores and memory events completed before that fault may remain visible."
+          "Normal TSTORE writes every selected element in ValidRow x ValidCol at base + row * row_stride_bytes + column * element_size. Packed four-bit columns add floor(column / 2) to each byte-strided row base and select low/high by column parity.",
+          "Normal TSTORE accesses the selected-PE footprint element by element until the first fault; stores and memory events completed before that fault may remain visible. Atomic Function 1 TSTORE performs one intrinsic Atomic read-modify-write per active occurrence after complete per-PE preflight; occurrences after the first effect drain exactly once despite squash or abort."
         ],
         "operands": [
           {
@@ -144915,13 +144913,14 @@
           }
         ],
         "ordering": [
-          "Snapshot the source payload, resolve the complete schema and dimensions, validate the source descriptor or temporary descriptor, and access each selected GM element until the first fault.",
-          "After all requested stores complete without a fault, store beats have no architecture-defined relative order. Software avoids overlapping selected-PE GM regions or establishes ordering separately."
+          "Normal TSTORE snapshots the source payload, resolves the complete schema and dimensions, validates the source descriptor or temporary descriptor, then accesses each selected GM element until the first fault.",
+          "After successful Normal TSTORE completion, store beats have no architecture-defined relative order. Atomic Function 1 TSTORE uses GM atomic serialization for each exact target; no fixed order is imposed across distinct targets or PEs."
         ],
         "standalone_opcode": false,
         "state_effects": [
           "Reads one Local or published, whole-parent-ready Shared source without modifying its payload, descriptor, producer mask, readiness, or lifetime.",
-          "On success only GM and memory-event state change; the source binding is consumed by normal block completion."
+          "Normal TSTORE consumes the source binding through ordinary successful block completion. Atomic TSTORE delays captured source last-use until its active occurrences and the existing required-participant generation are complete.",
+          "A Shared source that is pending or incomplete causes no payload read and no GM effect."
         ]
       },
       "documentation": "docs/tile/memory-and-data-movement/regular/TSTORE.md",

@@ -7108,7 +7108,8 @@
         "PTO-ARCH-MEMORY-MODEL-ATOMIC-001",
         "PTO-ARCH-MEMORY-MODEL-OPEN-001",
         "PTO-TLOAD-MEMORY-001",
-        "PTO-TSTORE-MEMORY-001"
+        "PTO-TSTORE-MEMORY-001",
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001"
       ],
       "affected_units": [
         "PTO-ARCH-DATA-TYPES-MEMORY-MODEL",
@@ -8730,7 +8731,11 @@
         "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
         "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
         "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
-        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
+        "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
+        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT"
       ],
       "amendments": [
         {
@@ -8763,6 +8768,31 @@
           "baseline": "072bda20ddc65d624ad9732b14b4222e87bc05ac",
           "date": "2026-09-19",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/328"
+        },
+        {
+          "affected_ndf": [
+            "PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
+            "PTO-B-ASSEMBLE-LOCAL-GENERATION-001",
+            "PTO-B-ASSEMBLE-SHARED-GENERATION-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
+            "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+            "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+            "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+            "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE",
+            "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+            "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
+            "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+            "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT"
+          ],
+          "approvers": [
+            "ckwllawliet <641433195@qq.com>"
+          ],
+          "baseline": "b0165320a4b575b18d2f4d93faf40178f661ab49",
+          "date": "2026-10-20",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/395"
         }
       ],
       "approvers": [
@@ -8775,6 +8805,7 @@
       "created": "2026-08-21",
       "id": "ADR-BLOCK-0016",
       "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/262",
+      "interface_change": true,
       "legacy_ids": [
         "ADR-0098"
       ],
@@ -12908,7 +12939,22 @@
         "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
         "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
         "PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL",
-        "PTO-TILE-MODEL-STATE-ALLOCATION"
+        "PTO-TILE-MODEL-STATE-ALLOCATION",
+        "PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-EXECUTION",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE",
+        "PTO-TILE-MODEL-LEGALITY-EXPDIF-OPERANDS",
+        "PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT",
+        "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+        "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION"
       ],
       "amendments": [
         {
@@ -12978,6 +13024,39 @@
           "baseline": "e182c9b70d54a3a264bac54af9b915a0e43bb519",
           "date": "2026-10-03",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/371"
+        },
+        {
+          "affected_ndf": [
+            "PTO-CUBE-CELL-STATE-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION",
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY",
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+            "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+            "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
+            "PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-EXECUTION",
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+            "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+            "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE",
+            "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS",
+            "PTO-TILE-MODEL-LEGALITY-DESCRIPTOR-SHAPE",
+            "PTO-TILE-MODEL-LEGALITY-EXPDIF-OPERANDS",
+            "PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT",
+            "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
+            "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+            "PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION",
+            "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+            "PTO-TILE-MODEL-STATE-ALLOCATION"
+          ],
+          "approvers": [
+            "ckwllawliet <641433195@qq.com>"
+          ],
+          "baseline": "b0165320a4b575b18d2f4d93faf40178f661ab49",
+          "date": "2026-10-20",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/395"
         }
       ],
       "approvers": [
@@ -13024,7 +13103,12 @@
         "PTO-TLOAD-CUBE-001",
         "PTO-TLOAD-MEMORY-001",
         "PTO-TSTORE-CUBE-001",
-        "PTO-TSTORE-MEMORY-001"
+        "PTO-TSTORE-MEMORY-001",
+        "PTO-INST-BLOCK-BSTART-TMOV",
+        "PTO-BSTART-TMOV-SHARED-001",
+        "PTO-TMOV-CONTRACT-001",
+        "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
+        "PTO-TMOV-CUBE-TO-SHARED-ND-001"
       ],
       "affected_units": [
         "PTO-BLOCK-B-DATR",
@@ -13035,7 +13119,20 @@
         "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
         "PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL",
         "PTO-TILE-TLOAD",
-        "PTO-TILE-TSTORE"
+        "PTO-TILE-TSTORE",
+        "PTO-BLOCK-BSTART-TMOV",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
+        "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
+        "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+        "PTO-TILE-TMOV",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-CUBE-TO-ND",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+        "PTO-TILE-MODEL-MEMORY-SHARED-CUBE-TO-ND"
       ],
       "amendments": [
         {
@@ -13069,6 +13166,44 @@
           "baseline": "e182c9b70d54a3a264bac54af9b915a0e43bb519",
           "date": "2026-10-03",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/371"
+        },
+        {
+          "affected_ndf": [
+            "PTO-CUBE-CELL-TRANSPORT-001",
+            "PTO-B-DATR-FIELDS-001",
+            "PTO-BSTART-TLOAD-CUBE-001",
+            "PTO-TLOAD-CUBE-001",
+            "PTO-INST-BLOCK-BSTART-TMOV",
+            "PTO-BSTART-TMOV-SHARED-001",
+            "PTO-TMOV-CONTRACT-001",
+            "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
+            "PTO-TMOV-CUBE-TO-SHARED-ND-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-B-DATR",
+            "PTO-BLOCK-BSTART-TLOAD",
+            "PTO-BLOCK-BSTART-TMOV",
+            "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
+            "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+            "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+            "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+            "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
+            "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+            "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+            "PTO-TILE-TLOAD",
+            "PTO-TILE-TMOV",
+            "PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-CUBE-TO-ND",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+            "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+            "PTO-TILE-MODEL-MEMORY-SHARED-CUBE-TO-ND"
+          ],
+          "approvers": [
+            "ckwllawliet <641433195@qq.com>"
+          ],
+          "baseline": "b0165320a4b575b18d2f4d93faf40178f661ab49",
+          "date": "2026-10-20",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/395"
         }
       ],
       "approvers": [
@@ -13998,14 +14133,68 @@
     {
       "accepted": "2026-08-26",
       "affected_ndf": [
-        "PTO-ISA-LEGACY-SHARED-MOVEMENT-001"
+        "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
+        "PTO-BSTART-TMOV-SHARED-001",
+        "PTO-TMOV-CONTRACT-001",
+        "PTO-INST-BLOCK-BSTART-TMOV",
+        "PTO-B-DATR-FIELDS-001",
+        "PTO-CUBE-CELL-TRANSPORT-001",
+        "PTO-TMOV-CUBE-TO-SHARED-ND-001"
       ],
       "affected_units": [
         "PTO-BLOCK-BSTART-TMOV",
         "PTO-BLOCK-BSTART-TSTORE",
         "PTO-TILE-TMOV",
         "PTO-TILE-TSTORE",
-        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU"
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+        "PTO-BLOCK-B-DATR",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
+        "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
+        "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-CUBE-TO-ND",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+        "PTO-TILE-MODEL-MEMORY-SHARED-CUBE-TO-ND"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-TMOV-CONTRACT-001",
+            "PTO-BSTART-TMOV-SHARED-001",
+            "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
+            "PTO-INST-BLOCK-BSTART-TMOV",
+            "PTO-CUBE-CELL-TRANSPORT-001",
+            "PTO-B-DATR-FIELDS-001",
+            "PTO-TMOV-CUBE-TO-SHARED-ND-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-B-DATR",
+            "PTO-BLOCK-BSTART-TMOV",
+            "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
+            "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+            "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+            "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+            "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
+            "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+            "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+            "PTO-TILE-TMOV",
+            "PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-CUBE-TO-ND",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+            "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+            "PTO-TILE-MODEL-MEMORY-SHARED-CUBE-TO-ND"
+          ],
+          "approvers": [
+            "ckwllawliet <641433195@qq.com>"
+          ],
+          "baseline": "b0165320a4b575b18d2f4d93faf40178f661ab49",
+          "date": "2026-10-20",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/395"
+        }
       ],
       "approvers": [
         "PTO ISA maintainers"
@@ -14017,6 +14206,7 @@
       "created": "2026-08-26",
       "id": "ADR-CUBE-0016",
       "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/159",
+      "interface_change": true,
       "legacy_ids": [
         "ADR-0107"
       ],

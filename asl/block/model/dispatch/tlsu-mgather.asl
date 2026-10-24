@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","surface":"block","classification":["model","dispatch","tlsu-mgather"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-TILE-MODEL-MEMORY-GATHER-SCATTER"]}
+// PTO-UNIT: {"classification":["model","dispatch","tlsu-mgather"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-VALIDATION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-TILE-MODEL-MEMORY-GATHER-SCATTER","PTO-TILE-MODEL-MEMORY-GATHER-SCATTER-VALUES"],"id":"PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","surface":"block"}
 
 readonly func BundleMGATHERSelected() => boolean
 begin
@@ -26,16 +26,17 @@ begin
            valid_rows * valid_columns <= PTO_MODEL_TILE_ELEMENTS;
 end;
 
-func ExecuteBundleMGATHEROperation() => boolean
+func ExecuteBundleMGATHEROperation() => (boolean, BundleLocalGenerationCubeWriterEffects)
 begin
+    var result_writer_effects = EmptyBundleLocalGenerationCubeWriterEffects();
     // B.IOT PE_MASK=0000 is a strict no-op before schema, source, GPR,
     // dimension, allocation, and memory checks.
-    if SelectedBundleTileMaskIsZero() then return TRUE; end;
+    if SelectedBundleTileMaskIsZero() then return (TRUE, result_writer_effects); end;
     let decoded = DecodeTileOperation(TileDecode_TLSU,
         BundleOperationDecodeCode(_BundleOperation));
     if decoded == PTO_TILE_OPERATION_COUNT then
         SetFault(Fault_IllegalInstruction, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
     if BundleSharedBindingCount() != 0 || BundleTileBindingCount() != 1 ||
@@ -45,9 +46,9 @@ begin
        !SelectedBundleTileMasksLegal() ||
        !BundleMGATHERDimensionsLegal() then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
-    if !SelectedBundleTileDataAttributesLegal(operation) then return FALSE; end;
+    if !SelectedBundleTileDataAttributesLegal(operation) then return (FALSE, result_writer_effects); end;
     let binding = _BundleTileBindings[[0]];
     let execution_mask_tile = _BundleExecutionMask.valid &&
         _BundleExecutionMask.carrier == BundleExecutionMask_PredicateTile;
@@ -57,13 +58,13 @@ begin
        !IndexedTLSUMemoryIndexDataTypeLegal(
            _Tiles[[binding.source0]].data_type) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     if !IndexedTLSUOrdinaryTransferDataTypeLegal(data_type) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
     let valid_rows = UInt(_BundleDimensions[[1]]) as integer {1..65535};
@@ -76,28 +77,54 @@ begin
        !IndexedTLSUPhysicalShapeLegal(CurrentBundleTileLayout(), data_type,
            valid_rows, valid_columns, columns) then
         SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     let base_address = ReadPEAbsoluteGPROperand(_CurrentMemoryAgent,
         _BundleScalarBindings[[0]].source0);
-    if !ResolveBundleTileDestinationsWithShapeAndType(TRUE, valid_rows,
-           valid_columns, columns, TRUE, data_type) then return FALSE; end;
-    if !ValidateBundleLocalGenerationWriters() then
-        RollBackBundleTileDestinations(); return FALSE;
+    let (destinations_resolved, resolved_writer_effects) =
+        ResolveBundleTileDestinationsWithShapeAndTypeAndWriterEffects(
+            TRUE, valid_rows, valid_columns, columns, TRUE, data_type);
+    if !destinations_resolved then return (FALSE, result_writer_effects); end;
+    var writer_effects = resolved_writer_effects;
+    if !ValidateBundleLocalGenerationWritersWithWriterEffects(
+           writer_effects) then
+        RollBackBundleTileDestinations(); return (FALSE, result_writer_effects);
     end;
     let destination = _BundleTileBindings[[0]].destination;
     let pad_value = CurrentBundlePadValue();
-    if !TileOperandsLegal_MGATHER(destination, Zeros{PTO_XLEN},
-           binding.source0, pad_value) then
-        RollBackBundleTileDestinations();
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
+    let (writer_found, writer_value) =
+        BundleLocalGenerationCubeWriterValueForDestination(
+            writer_effects, destination, _Tiles[[destination]]);
+    if writer_found then
+        let target = TileOutputValueTarget {
+            destination = destination,
+            value = writer_value
+        };
+        if !TileOperandsLegal_MGATHERToValue(target, Zeros{PTO_XLEN},
+               binding.source0, pad_value) then
+            RollBackBundleTileDestinations();
+            SetFault(Fault_TileLegality, ReadTPC());
+            return (FALSE, result_writer_effects);
+        end;
+        let result = MGATHERToValue(target, base_address,
+            binding.source0, pad_value);
+        writer_effects = BundleLocalGenerationCubeWriterEffectWithOutput(
+            writer_effects, destination, result);
+    else
+        if !TileOperandsLegal_MGATHER(destination, Zeros{PTO_XLEN},
+               binding.source0, pad_value) then
+            RollBackBundleTileDestinations();
+            SetFault(Fault_TileLegality, ReadTPC());
+            return (FALSE, result_writer_effects);
+        end;
+        MGATHER(destination, base_address, binding.source0, pad_value);
     end;
-    MGATHER(destination, base_address, binding.source0, pad_value);
+    result_writer_effects = writer_effects;
+        FinishBundleLocalGenerationCubeWriterEffects(writer_effects);
     if _LastFault != Fault_None then
         RollBackBundleTileDestinations();
-        return FALSE;
+        return (FALSE, result_writer_effects);
     end;
     FinalizeBundleTileAttempt(TileExecution_Executed);
-    return TRUE;
+    return (TRUE, result_writer_effects);
 end;

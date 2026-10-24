@@ -58,7 +58,7 @@ With an `S32` source value of -1 and `element_bits=32`, `TileLEAExtendedIndex` f
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/lea.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-LEA","surface":"tile","classification":["model","execution","lea"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-LEA-OPERANDS"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-LEA","surface":"tile","classification":["model","execution","lea"],"depends_on":["PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-LEA-OPERANDS","PTO-TILE-MODEL-STATE-TYPES"]}
 
 pure func TileLEAExtendedIndex(value: Word, data_type: TileDataType) => Word
 begin
@@ -93,11 +93,11 @@ begin
         TileLEAByteScale(element_bits));
 end;
 
-func TLEA(destination: TileIndex, source: TileIndex, element_bits: Word)
+func TLEAToValue(destination: TileOutputValueTarget, source: TileIndex,
+                 element_bits: Word) => TileInfo
 begin
-    assert TileOperandsLegal_TLEA(destination, source, element_bits);
     let source_tile = _Tiles[[source]];
-    var result = _Tiles[[destination]];
+    var result = destination.value;
 
     // Snapshot the complete source record before constructing the result.
     // This gives direct S64/U64 destination aliases read-old/write-new behavior.
@@ -128,7 +128,17 @@ begin
 
     result = TileWithValidRegionDefined(result);
     result = TileWithPadding(result, CurrentBundlePadValue());
-    _Tiles[[destination]] = result;
+    return result;
+end;
+
+func TLEA(destination: TileIndex, source: TileIndex, element_bits: Word)
+begin
+    assert TileOperandsLegal_TLEA(destination, source, element_bits);
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    _Tiles[[destination]] = TLEAToValue(target, source, element_bits);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

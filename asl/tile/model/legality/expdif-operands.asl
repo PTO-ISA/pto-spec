@@ -34,7 +34,12 @@ begin
     let columns = columns_raw as integer {1..65535};
     let tile = _Tiles[[index]];
     let selected_layout = CurrentBundleTileLayout();
-    let expected_columns = if TileLayoutIsCube(selected_layout) then
+    let expected_columns = if selected_layout == TileLayout_CUBE_M16 ||
+        selected_layout == TileLayout_CUBE_M32 then
+        if _BundleDimensionPresent[[2]] then columns
+        else TileCubePhysicalColumnsFromCapacity(
+            tile.capacity_bytes, selected_layout, tile.data_type)
+    else if TileLayoutIsCube(selected_layout) then
         TileCubeStorageColumns(selected_layout, columns, tile.data_type)
     else
         columns;

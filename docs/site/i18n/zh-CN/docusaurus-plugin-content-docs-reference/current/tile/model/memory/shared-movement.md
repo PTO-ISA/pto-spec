@@ -87,24 +87,10 @@ Shared Tile 被划分为四个字节四分区。`SharedTileElementRegion` 返回
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/memory/shared-movement.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT","surface":"tile","classification":["model","memory","shared-movement"],"depends_on":["PTO-TILE-MODEL-STATE-SHARED-REGISTERS","PTO-SCALAR-MODEL-AGU-MEMORY","PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT","surface":"tile","classification":["model","memory","shared-movement"],"depends_on":["PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT-TYPES","PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT-VALUES","PTO-TILE-MODEL-STATE-SHARED-REGISTERS","PTO-SCALAR-MODEL-AGU-MEMORY","PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA","PTO-TILE-MODEL-STATE-TYPES"]}
 // PTO-REQ-TLSU-001, PTO-REQ-MEMORY-COMPLETION-001,
 // PTO-REQ-MEMORY-RC-001: precise, restartable direct
 // TLOAD/TSTORE/MGATHER/MSCATTER and destination-free TPREFETCH.
-
-type ScatterLaneOrder of array [[PTO_MODEL_TILE_ELEMENTS]] of Word;
-type CorePETileInfos of array [[PTO_MODEL_MEMORY_AGENTS]] of TileInfo;
-
-readonly func SharedTileElementRegion(tile: TileInfo,
-                                  element: PackedTileElementIndex)
-                                  => integer {0..3}
-begin
-    let bit_offset: integer = element * TileElementBits(tile.data_type);
-    let byte_offset: integer = bit_offset DIVRM 8;
-    assert byte_offset < tile.capacity_bytes;
-    return ((byte_offset * 4) DIVRM tile.capacity_bytes)
-        as integer {0..3};
-end;
 
 func SharedTileFromLocal(source: TileIndex,
                          capacity_bytes: integer {128,256,512,1024,2048,4096,8192,
@@ -545,13 +531,11 @@ end;
 // write-new local copy.  No Shared register or global-memory event is involved.
 func GMOVFromSourceTile(destination: TileIndex, source_tile: TileInfo)
 begin
-    _Tiles[[destination]].payload = source_tile.payload;
-    _Tiles[[destination]].defined_elements = source_tile.defined_elements;
-    _Tiles[[destination]].packed_defined_elements =
-        source_tile.packed_defined_elements;
-    _Tiles[[destination]].defined_valid_elements =
-        source_tile.defined_valid_elements;
-    _Tiles[[destination]].contents_defined = source_tile.contents_defined;
+    let target = TileOutputValueTarget {
+        destination = destination,
+        value = _Tiles[[destination]]
+    };
+    _Tiles[[destination]] = GMOVFromSourceTileToValue(target, source_tile);
 end;
 
 func GMOV(destination: TileIndex, source: TileIndex, peer_tid: Word)

@@ -83,6 +83,9 @@ begin
     let destination = _BundleTileBindings[[0]].destination;
     assert _Tiles[[destination]].layout == TileLayout_CUBE_M16;
     assert _Tiles[[destination]].data_type == TileDataType_U32;
+    assert _Tiles[[destination]].capacity_bytes == 128 &&
+           _Tiles[[destination]].rows == 16 &&
+           _Tiles[[destination]].columns == 2;
     assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 3;
     assert ReadTileElement(destination, 0, 1) == Zeros{PTO_XLEN};
 end;
@@ -112,6 +115,9 @@ begin
     assert destination == 0;
     assert _Tiles[[destination]].layout == TileLayout_CUBE_M16;
     assert _Tiles[[destination]].data_type == TileDataType_U32;
+    assert _Tiles[[destination]].capacity_bytes == 128 &&
+           _Tiles[[destination]].rows == 16 &&
+           _Tiles[[destination]].columns == 2;
     assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 3;
     assert ReadTileElement(destination, 0, 1) == Zeros{PTO_XLEN} + 91;
 end;

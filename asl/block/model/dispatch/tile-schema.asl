@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","surface":"block","classification":["model","dispatch","tile-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-BINARY-OP-CLASSIFICATION","PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES","PTO-BLOCK-MODEL-DISPATCH-EXPDIF-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-INSTRUCTION-OPERANDS","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-LEGALITY-EXPDIF-OPERANDS","PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA"],"surface":"block"}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","surface":"block","classification":["model","dispatch","tile-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-BINARY-OP-CLASSIFICATION","PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES","PTO-BLOCK-MODEL-DISPATCH-EXPDIF-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-INSTRUCTION-OPERANDS","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-LEGALITY-EXPDIF-OPERANDS","PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA"]}
 func SelectedBundleTileDataAttributesLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -22,6 +22,28 @@ begin
         _BundleDataAttributes.rounding_mode else Zeros{3};
     let explicit_layout = if _BundleDataAttributesPresent then
         _BundleDataAttributes.data_layout else Zeros{5};
+    if BundleTMOVSelected() &&
+       TileDataLayoutIsCubeToSharedND(explicit_layout) then
+        if (BundleSharedBindingCount() != 1 &&
+            BundleSharedReusedDestinationCount() != 1) ||
+           !_BundleDataAttributesPresent ||
+           _BundleDataAttributes.data_type != DTYPE_NONE ||
+           _BundleDataAttributes.pad_value != Zeros{2} ||
+           _BundleDataAttributes.comparison_mode != Zeros{3} ||
+           _BundleDataAttributes.rounding_mode != Zeros{3} ||
+           _BundleDataAttributes.saturating ||
+           _BundleDataAttributes.canonicalize ||
+           _BundleDataAttributes.execution_mask_invert ||
+           _BundleDataAttributes.execution_mask_zero ||
+           _BundleFixedPointAttributes.valid ||
+           !TileOperationDATRFieldsLegal(operation, explicit_c_mode,
+               explicit_pad, explicit_saturating, explicit_canonicalize,
+               explicit_data_type, explicit_rounding, explicit_layout) then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        return TRUE;
+    end;
     if _BundleDataAttributesPresent &&
        TileDataLayoutIsWeightTLOAD(TileDataLayoutOfCode(explicit_layout)) &&
        !BundleWeightTLOADSelected() then

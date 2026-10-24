@@ -70,6 +70,10 @@ begin
     assert exact_destination;
     let destination = _BundleTileBindings[[0]].destination;
     assert _Tiles[[destination]].layout == TileLayout_CUBE_M16;
-    assert _Tiles[[destination]].capacity_bytes == 1024;
+    assert _Tiles[[destination]].capacity_bytes == 1024 &&
+           _Tiles[[destination]].rows == 16 &&
+           _Tiles[[destination]].columns == 16 &&
+           _Tiles[[destination]].valid_rows == 16 &&
+           _Tiles[[destination]].valid_columns == 9;
     return 0;
 end;

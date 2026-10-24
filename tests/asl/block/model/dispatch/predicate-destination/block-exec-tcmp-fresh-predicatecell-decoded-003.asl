@@ -74,7 +74,11 @@ begin
     assert _LastFault == Fault_None;
     let destination = _BundleTileBindings[[1]].destination;
     assert _Tiles[[destination]].storage_kind == TileStorage_PredicateCell;
+    assert _Tiles[[destination]].data_type == TileDataType_U8;
     assert _Tiles[[destination]].predicate_basis_type == data_type;
+    assert _Tiles[[destination]].capacity_bytes == 256 &&
+           _Tiles[[destination]].rows == 16 &&
+           _Tiles[[destination]].columns == 16;
     assert _Tiles[[destination]].valid_rows == 1;
     assert _Tiles[[destination]].valid_columns == 2;
     assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 1;

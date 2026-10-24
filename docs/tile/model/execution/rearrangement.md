@@ -117,7 +117,20 @@ begin
     let element = TileLogicalLinearIndex(tile, row, element_column);
     var word = TileReadLogicalElement(tile, element);
     word[(byte_in_element * 8) +: 8] = value;
-    return TileInfoWithLogicalElement(tile, element, word);
+    // A model Word may retain stale bits beyond a narrow element's width when
+    // the Local slot is reallocated. Keep only the numeric bits belonging to
+    // this element while preserving its other in-width byte lanes.
+    var normalized_word = Zeros{PTO_XLEN};
+    if element_bits == 8 then
+        normalized_word[7:0] = word[7:0];
+    elsif element_bits == 16 then
+        normalized_word[15:0] = word[15:0];
+    elsif element_bits == 32 then
+        normalized_word[31:0] = word[31:0];
+    else
+        normalized_word = word;
+    end;
+    return TileInfoWithLogicalElement(tile, element, normalized_word);
 end;
 
 readonly func TileReadCellWord(tile: TileInfo,
