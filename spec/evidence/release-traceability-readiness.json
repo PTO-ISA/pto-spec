@@ -254,8 +254,24 @@
         "PTO-AVS-ARCH-GM-OBLIGATION-TSTORE-QUIESCENCE-002",
         "PTO-AVS-ARCH-GM-PROGRESS-LIVE-HANDLER-CONTEXT-003",
         "PTO-AVS-ARCH-MEMORY-MODEL-GM-OBLIGATIONS-STATIC-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-ADMISSION-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-BSTART-PREDECESSOR-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-CANCEL-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-COMPLETION-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-PARTIAL-003",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-ZERO-002",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-IDENTITY-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-INTERLEAVED-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-LOCAL-CONSUMER-SQUASH-004",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-TRANSLATION-001",
         "PTO-AVS-BLOCK-TSTORE-MASK-001",
-        "PTO-AVS-BLOCK-TSTORE-UNDEF-001"
+        "PTO-AVS-BLOCK-TSTORE-UNDEF-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-002",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-CONSUME-003",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-OVERLAP-004",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-TRANSLATION-001"
       ]
     },
     {
@@ -278,12 +294,19 @@
         "PTO-AVS-ARCH-STATE-KERNEL-LIFECYCLE-STATIC-001",
         "PTO-AVS-ARCH-SYNC-ABORT-RECLAIMS-RING-002",
         "PTO-AVS-ARCH-SYNC-CORE-SITE-MISMATCH-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-BSTART-PREDECESSOR-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-CANCEL-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-COMPLETION-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-PARTIAL-003",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-ZERO-002",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001",
         "PTO-AVS-BLOCK-LOCAL-GENERATION-RECOVERY-ISOLATION-001",
         "PTO-AVS-BLOCK-SHARED-TLSU-ASSEMBLE-ABORT-011",
         "PTO-AVS-BLOCK-SHARED-TLSU-ASSEMBLE-END-012",
         "PTO-AVS-BLOCK-SHARED-TLSU-ASSEMBLE-FOREIGN-RETIREMENT-015",
         "PTO-AVS-BLOCK-SHARED-TLSU-ASSEMBLE-SQUASH-014",
         "PTO-AVS-BLOCK-SOURCE-LIFETIME-CORE-LIFECYCLE-003",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001",
         "PTO-AVS-BLOCK-TSTORE-UNDEF-001",
         "PTO-AVS-SCALAR-SYNC-CORE-FAST-REUSE-001",
         "PTO-AVS-SCALAR-SYNC-CORE-RENDEZVOUS-001"
@@ -338,7 +361,11 @@
       "tests": [
         "PTO-AVS-ARCH-GM-RESERVATION-INVALIDATION-001",
         "PTO-AVS-ARCH-MEMORY-MODEL-MEMORY-EVENTS-STATIC-001",
-        "PTO-AVS-ARCH-RC-ATOMIC-FENCE-ORDER-002"
+        "PTO-AVS-ARCH-RC-ATOMIC-FENCE-ORDER-002",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-INTERLEAVED-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-OVERLAP-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-UNEQUAL-LIMITS-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-VIRTUAL-ALIAS-001"
       ]
     },
     {
@@ -469,7 +496,8 @@
         "ADR-MEM-0011"
       ],
       "tests": [
-        "PTO-AVS-ARCH-MEMORY-MODEL-ORDERING-STATIC-001"
+        "PTO-AVS-ARCH-MEMORY-MODEL-ORDERING-STATIC-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-BOUNDARY-001"
       ]
     },
     {
@@ -618,9 +646,11 @@
         "PTO-AVS-ARCH-GM-RESERVATION-INVALIDATION-001",
         "PTO-AVS-ARCH-PE-LOCAL-PAYLOAD-002",
         "PTO-AVS-ARCH-STATE-PE-EXECUTION-CONTEXT-STATIC-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-INTERLEAVED-001",
         "PTO-AVS-BLOCK-B-IOT-CURRENT-PE-LIFETIME-008",
         "PTO-AVS-BLOCK-GMOV-PEER-LAST-USE-011",
         "PTO-AVS-BLOCK-GMOV-PRIVATE-FOURSTREAM-010",
+        "PTO-AVS-BLOCK-SHARED-BSTART-INCOMPLETE-PREDECESSOR-001",
         "PTO-AVS-BLOCK-SHARED-LOCAL-FOURSTREAM-010",
         "PTO-AVS-BLOCK-SHARED-LOCAL-SUBVIEW-FOURSTREAM-011",
         "PTO-AVS-BLOCK-SHARED-TLOAD-ASSEMBLE-TAILS-021",
@@ -650,6 +680,8 @@
       ],
       "tests": [
         "PTO-AVS-ARCH-FEATURES-TILE-ALLOCATION-STATIC-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-PARTIAL-003",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001",
         "PTO-AVS-BLOCK-B-IOS-LAST-USE-DECODE-003",
         "PTO-AVS-BLOCK-B-IOS-LAST-USE-OPEN-GENERATION-007",
         "PTO-AVS-BLOCK-B-IOS-LAST-USE-PARENT-REF-006",
@@ -799,7 +831,8 @@
       "tests": [
         "PTO-AVS-TILE-GM-ATOM-RED-FAMILY-001",
         "PTO-AVS-TILE-MGATHER-CUBE-LAYOUTS-001",
-        "PTO-AVS-TILE-MODEL-MEMORY-GM-ATOM-RED-STATIC-001"
+        "PTO-AVS-TILE-MODEL-MEMORY-GM-ATOM-RED-STATIC-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-TRANSLATION-001"
       ]
     },
     {
@@ -813,7 +846,8 @@
       ],
       "tests": [
         "PTO-AVS-TILE-GM-ATOM-RED-FAMILY-001",
-        "PTO-AVS-TILE-MODEL-MEMORY-GM-ATOM-RED-STATIC-001"
+        "PTO-AVS-TILE-MODEL-MEMORY-GM-ATOM-RED-STATIC-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-UNEQUAL-LIMITS-001"
       ]
     },
     {
@@ -827,9 +861,14 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-TLSU-GM-ATOM-RED-MASKED-DECODED-002",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001",
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-001",
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-002",
         "PTO-AVS-TILE-GM-ATOM-RED-FAMILY-001",
         "PTO-AVS-TILE-MGATHER-CUBE-LAYOUTS-001",
-        "PTO-AVS-TILE-MODEL-MEMORY-GM-ATOM-RED-STATIC-001"
+        "PTO-AVS-TILE-MODEL-MEMORY-GM-ATOM-RED-STATIC-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-GRADUAL-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-NUMERIC-001"
       ]
     },
     {
@@ -863,7 +902,8 @@
         "PTO-AVS-TILE-MGATHER-CUBE-LAYOUTS-001",
         "PTO-AVS-TILE-MGATHER-CUBE-PHYSICAL-SLACK-002",
         "PTO-AVS-TILE-MODEL-MEMORY-GM-ATOM-RED-STATIC-001",
-        "PTO-AVS-TILE-MSCATTER-ADD-DTYPE-001"
+        "PTO-AVS-TILE-MSCATTER-ADD-DTYPE-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-DTYPE-001"
       ]
     },
     {
@@ -878,6 +918,7 @@
         "ADR-MEM-0009"
       ],
       "tests": [
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-LOCAL-CONSUMER-SQUASH-004",
         "PTO-AVS-BLOCK-ASSEMBLE-LOCAL-PER-PE-002",
         "PTO-AVS-BLOCK-ASSEMBLE-MULTI-OPEN-INTERLEAVED-003",
         "PTO-AVS-BLOCK-ASSEMBLE-PORTABLE-CARRIERS-001",
@@ -1301,6 +1342,7 @@
         "PTO-AVS-BLOCK-BSTART-TIMG2COL-SHARED-001",
         "PTO-AVS-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-STATIC-001",
         "PTO-AVS-BLOCK-SHARED-B-ASSEMBLE-NON-REGRESSION-001",
+        "PTO-AVS-BLOCK-SHARED-BSTART-INCOMPLETE-PREDECESSOR-001",
         "PTO-AVS-BLOCK-SHARED-COMPLETION-SOURCE-MUTATION-021",
         "PTO-AVS-BLOCK-SHARED-COMPLETION-TLOAD-017",
         "PTO-AVS-BLOCK-SHARED-COMPLETION-TMOV-016",
@@ -1372,11 +1414,16 @@
         "ADR-SCALAR-0007"
       ],
       "tests": [
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-PARTIAL-003",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-ZERO-002",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-LOCAL-CONSUMER-SQUASH-004",
         "PTO-AVS-BLOCK-ASSEMBLE-DYNAMIC-DOMAIN-002",
         "PTO-AVS-BLOCK-ASSEMBLE-PORTABLE-CARRIERS-001",
         "PTO-AVS-BLOCK-GMOV-DOMAIN-SQUASH-013",
         "PTO-AVS-BLOCK-LOCAL-GENERATION-RECOVERY-ISOLATION-001",
         "PTO-AVS-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS-STATIC-001",
+        "PTO-AVS-BLOCK-SHARED-BSTART-INCOMPLETE-PREDECESSOR-001",
         "PTO-AVS-BLOCK-SHARED-TLSU-ASSEMBLE-SQUASH-014"
       ]
     },
@@ -1393,7 +1440,10 @@
         "ADR-STATE-0011",
         "ADR-TILE-0004"
       ],
-      "tests": []
+      "tests": [
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-COMPLETION-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CATR-001"
+      ]
     },
     {
       "executable": false,
@@ -1437,6 +1487,7 @@
         "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-SUBVIEW-001",
         "PTO-AVS-BLOCK-TCVT-SOURCE-LAYOUT-MASK-DECODED-002",
         "PTO-AVS-BLOCK-TPACK-GPR-MASK-MERGE-DECODED-002",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-DECODED-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-MASK-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-RTO-001",
@@ -1609,6 +1660,8 @@
         "ADR-TILE-0011"
       ],
       "tests": [
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-PARTIAL-003",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001",
         "PTO-AVS-BLOCK-B-IOS-LAST-USE-DECODE-003",
         "PTO-AVS-BLOCK-B-IOS-LAST-USE-PARENT-REF-006",
         "PTO-AVS-BLOCK-B-IOS-LAST-USE-PARTIAL-REUSE-009",
@@ -1616,6 +1669,9 @@
         "PTO-AVS-BLOCK-B-IOS-LAST-USE-PUBLICATION-PIN-010",
         "PTO-AVS-BLOCK-B-IOS-LAST-USE-STORE-005",
         "PTO-AVS-BLOCK-B-IOS-LAST-USE-VTAG-RETAINED-004",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-LIFETIME-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-FAULT-001",
         "PTO-AVS-TILE-TROWSUM-CUBE-ENCODED-MASK-REJECTION-001"
       ]
     },
@@ -1717,6 +1773,12 @@
         "ADR-GOV-0014"
       ],
       "tests": [
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-CANCEL-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-PARTIAL-003",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-ZERO-002",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-IDENTITY-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-LOCAL-CONSUMER-SQUASH-004",
         "PTO-AVS-BLOCK-B-IOS-LAST-USE-PUBLICATION-PIN-010",
         "PTO-AVS-BLOCK-GMOV-DOMAIN-SQUASH-013",
         "PTO-AVS-BLOCK-GMOV-GENERATION-ISOLATION-014",
@@ -1725,7 +1787,12 @@
         "PTO-AVS-BLOCK-SOURCE-LIFETIME-CORE-LIFECYCLE-003",
         "PTO-AVS-BLOCK-SOURCE-LIFETIME-FAULT-SQUASH-RETRY-002",
         "PTO-AVS-BLOCK-SOURCE-LIFETIME-OCCURRENCE-ORDER-004",
-        "PTO-AVS-BLOCK-TMATMUL-SHARED-LAST-USE-ZERO-ROW-039"
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-LAST-USE-ZERO-ROW-039",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-LIFETIME-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-002",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-CONSUME-003",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-OVERLAP-004"
       ]
     },
     {
@@ -2079,7 +2146,8 @@
       "tests": [
         "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-SUBVIEW-001",
         "PTO-AVS-BLOCK-SUBVIEW-SHARED-001",
-        "PTO-AVS-BLOCK-TMATMUL-MX-SHARED-RIGHT-001"
+        "PTO-AVS-BLOCK-TMATMUL-MX-SHARED-RIGHT-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-001"
       ]
     },
     {
@@ -3968,6 +4036,7 @@
         "PTO-AVS-BLOCK-TLOAD-TSTORE-CUBE-DIMENSIONS-001",
         "PTO-AVS-BLOCK-TLOAD-TSTORE-CUBE-DIRECTION-002",
         "PTO-AVS-BLOCK-TLOAD-TSTORE-CUBE-SHARED-003",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001",
         "PTO-AVS-BLOCK-TSTORE-CUBE-002",
         "PTO-AVS-BLOCK-TSTORE-CUBE-ACCESS-003",
         "PTO-AVS-BLOCK-TSTORE-CUBE-DESCRIPTOR-004",
@@ -3975,6 +4044,9 @@
         "PTO-AVS-TILE-TLOAD-CUBE-M16-B4-005",
         "PTO-AVS-TILE-TLOAD-CUBE-PAD-004",
         "PTO-AVS-TILE-TLOAD-CUBE-WIDTHS-003",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-BOUNDARY-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-CUBE-STRIDE-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LEGALITY-001",
         "PTO-AVS-TILE-TSTORE-CUBE-002"
       ]
     },
@@ -4507,6 +4579,27 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-FRET-STK-FRAME-PRESERVATION-004"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-GM-FLOATING-ADD-NUMERIC-001",
+      "owners": [
+        "asl/tile/model/memory/gm-atom-red.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-MEM-0009"
+      ],
+      "tests": [
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-001",
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-002",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-BF16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP32-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP64-001",
+        "PTO-AVS-TILE-MODEL-MEMORY-GM-ATOM-RED-STATIC-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-GRADUAL-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-NUMERIC-001"
       ]
     },
     {
@@ -17235,6 +17328,7 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-MODEL-DISPATCH-START-STATIC-001",
+        "PTO-AVS-BLOCK-SHARED-BSTART-INCOMPLETE-PREDECESSOR-001",
         "PTO-AVS-BSTART-PREDECESSOR-SEQUENTIAL-002",
         "PTO-AVS-BSTART-PREDECESSOR-TAKEN-001"
       ]
@@ -19457,7 +19551,8 @@
         "PTO-AVS-TILE-TLEA-M32-DECODED-MASK-001",
         "PTO-AVS-TILE-TLEA-M32-MEMORY-001",
         "PTO-AVS-TILE-TROWSUM-CUBE-ENCODED-MASK-REJECTION-001",
-        "PTO-AVS-TILE-TROWSUM-CUBE-M16-HELPER-MASK-ROLLBACK-001"
+        "PTO-AVS-TILE-TROWSUM-CUBE-M16-HELPER-MASK-ROLLBACK-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-MASK-001"
       ]
     },
     {
@@ -20841,6 +20936,52 @@
     },
     {
       "executable": false,
+      "id": "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+      "owners": [
+        "asl/tile/memory-and-data-movement/regular/TSTORE.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-MEM-0009"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-ADMISSION-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-BSTART-PREDECESSOR-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-CANCEL-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-COMPLETION-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-PARTIAL-003",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-ZERO-002",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-IDENTITY-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-INTERLEAVED-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-LOCAL-CONSUMER-SQUASH-004",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-TRANSLATION-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CATR-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-LIFETIME-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-FAULT-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-BOUNDARY-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-CUBE-STRIDE-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-DTYPE-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-GRADUAL-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LEGALITY-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-002",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-CONSUME-003",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-OVERLAP-004",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-MASK-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-NUMERIC-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-OVERLAP-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-PREFLIGHT-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-TRANSLATION-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-UNEQUAL-LIMITS-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-VIRTUAL-ALIAS-001"
+      ]
+    },
+    {
+      "executable": false,
       "id": "PTO-TSUB-CONTRACT-001",
       "owners": [
         "asl/tile/elementwise-tile-tile/arithmetic/TSUB.asl"
@@ -21062,7 +21203,7 @@
     "asl/arch/data-types/system-registers.asl": "ca6e241606145b7fb26ebfbca7a6e735eaaff24952ddb8e2580491130dc0bf6d",
     "asl/arch/data-types/tile-data-types.asl": "70ed87af56adda4d346a76eced16dbb5d80dd53e04b1212d11aeb9d6448f94e0",
     "asl/arch/data-types/trap-context.asl": "cf0361a5e1e262d15ad8ef5328f19528a7fcc781b4a575b703dc99e9647539b9",
-    "asl/arch/dispatch/top-level.asl": "f415e786390c7aa343b32b13ce761767df082ec8a031fb727112aba8a689956e",
+    "asl/arch/dispatch/top-level.asl": "3a8ea3d3c121d5c01db07ed61d619a8250f0b6ee888f051c1235130940b94695",
     "asl/arch/features/extension-first-use.asl": "a93c85af7384b1330d0acef47ab21fc511ca36394c06cffe20ae3d48dfe164c2",
     "asl/arch/features/minmax.asl": "5e5f95621a7e1632b0013e444286fa954bff78754da68d9f49d01db5946ab5f3",
     "asl/arch/features/mx-formats.asl": "44639ab47cd2dec4c6a03231a07003e55835f42c9d58c622e05332e8bedfeb1d",
@@ -21070,16 +21211,17 @@
     "asl/arch/features/shared-tile-state.asl": "68cccab9e8b8d194bde2aa5a99b7ce5d1b6e69722585b5206426d76731ba580f",
     "asl/arch/features/tile-allocation.asl": "7a11b91b603905dfbeec05c0b0eeb1accd16b7127c81373b19077c242933520b",
     "asl/arch/memory-model/address-space.asl": "38f51482e98372cf487b2f33f544ae9640e70f118e075b8f3285c5d6a10ebf52",
-    "asl/arch/memory-model/atomicity.asl": "62f7e2c43e82c804a98665bf2410b8309d581d1ff401a7adcdb9b993e04ec5cb",
-    "asl/arch/memory-model/fault-precision.asl": "feb7b8d6239e4611ed341b208497a328b0f44fd336d9a3989095546360423223",
-    "asl/arch/memory-model/global-memory-access.asl": "b52b8820dceab5f08c6784f0166c59a4c95e300c992f7b10f02a21b273723ac0",
-    "asl/arch/memory-model/gm-obligations.asl": "c21a2ee12b39de495447a4dd2e2e92f4b1d4f2a3929867c05ca492fa1f4465af",
+    "asl/arch/memory-model/atomic-tstore-obligations.asl": "2f910c4f957f327df36a382fd979ea7668896f33c4d420d162907ab0f9ea3a61",
+    "asl/arch/memory-model/atomicity.asl": "de51b4a48ac99ec51b9965b86383a7299961847b6e0ee0ac3934a71309d0f405",
+    "asl/arch/memory-model/fault-precision.asl": "b4e5d75ac8126c11caceca9ba6450483b82ef267011fd5598048f2c861a1c991",
+    "asl/arch/memory-model/global-memory-access.asl": "9d7deccaa7dd916f16c580e75ddc633d8476be88cf4f8213654540b1cda44a49",
+    "asl/arch/memory-model/gm-obligations.asl": "46026c164df2c8437df13fc4a0c969943f46fc8245130f9737316f38d5cd8e94",
     "asl/arch/memory-model/instruction-fetch.asl": "f9bf16659406ddc7cc4ae8ca050612d2c5fd6878d5dbc11ec9434467a9def162",
     "asl/arch/memory-model/memory-events.asl": "23d3194c48d44f8aea4db93194bfff6133dcafeb7c39ac814611024af24e2392",
     "asl/arch/memory-model/ordering.asl": "dc33febbab97e67338b795595846491655479623d7ec82e57b07a3f414a92ad4",
     "asl/arch/overview/architecture.asl": "e1cfad2c51711b1c9f434e57a3da8e68c184ccb6876de5ec02309ef20e52d3ee",
     "asl/arch/overview/encoding-ownership.asl": "4f3bb7cb7732227005046c42c1c3bbdb5a5e39782495d49a49bf489808e66024",
-    "asl/arch/overview/instruction-classification.asl": "96caf76a14524690722a25b4ac82556cec0ab73beb4fb391c4ed2ef1b1824905",
+    "asl/arch/overview/instruction-classification.asl": "e87535306adbd18629ee38dd80f84eb4c4a07c7371bff80ebd26b6b386330c9c",
     "asl/arch/programming-model/core-pe-topology.asl": "da295e6d0b163888ccc5fd813815c255453956125b9ac9ccced1b2f1227ffe7a",
     "asl/arch/programming-model/execution-context.asl": "660233010c2ff4d4bfbe374d2fb712524db3390fadcb5afd96e00eed2c3e2185",
     "asl/arch/programming-model/general-queue-management.asl": "cfabc9f02f3aa0e42e290059bf383640e3f0f5dc007423d2dec4e100138a1b20",
@@ -21089,7 +21231,7 @@
     "asl/arch/programming-model/tile-registers.asl": "59452d3b3b708dc43f6ec4f930b1c7153d6d5247a93119669527bd29b26ec99e",
     "asl/arch/state/core-synchronization.asl": "a9f34342e9982ea84c4ebf797b32745807792a833c95a5d6e8d66157b66aeb53",
     "asl/arch/state/definedness.asl": "f68778534d67e736f701f8e24e03f27a018f3eabcec1421a6b33856030874ad1",
-    "asl/arch/state/kernel-lifecycle.asl": "189117a378820ad148a3b680e2ccf5ba775b0693b5b5767b659b2cbf320c3e09",
+    "asl/arch/state/kernel-lifecycle.asl": "d8497dba432be49a8f1fb441d62c4a69d8f7250b32be5cc80bff7fab7766412a",
     "asl/arch/state/local-payload-generation.asl": "9e8b044814d0542eee5d21bfc995fe8d570e1e8d4c3651c823e68831533cae62",
     "asl/arch/state/numeric-status.asl": "3d3fe1709c7e2903bca96d50e9671a6a484c442ff08ce4a8340168cdb38ac6d9",
     "asl/arch/state/pe-execution-context.asl": "76b8a22396b0441f511c9061c9037ce17d849245e26ea2044c89075d4926b40a",
@@ -21102,8 +21244,8 @@
     "asl/arch/system-registers/interrupt.asl": "2341ac0204294c8619bbfc70f514e70f535ff7bc1ddb3d799639378d5071af34",
     "asl/arch/system-registers/maintenance.asl": "c69cc578f4021c416643dd2b5f608855ef9bfe89d7c280a574dff09783b9b5af",
     "asl/arch/system-registers/timer.asl": "7f2078b0d6ae745c8ec7369695d5a5ec1225356e2f8e5548c2a179330bf9970d",
-    "asl/block/attributes/B.CATR.asl": "f89ef4263f43b573e73c193809457d609da297714abf0a005611eb71f1fc4e6f",
-    "asl/block/attributes/B.DATR.asl": "cd9ff31f8d5b04407286bda6ab13d204f1c710560f13f19b93d9920de23e13ed",
+    "asl/block/attributes/B.CATR.asl": "f555ef9bb21b9b2120c779d67c5a3ee55a8dbee60b7dd415de287417b6d42a38",
+    "asl/block/attributes/B.DATR.asl": "3451c5dbdb7400f60b89628dd738ebce7e40d3200de1e777616125cb8b452fc4",
     "asl/block/attributes/B.DIM.asl": "71167dba1d74b0108aaddccefd618a294f5f0f526ffd421987440bcd73573219",
     "asl/block/attributes/B.FPATR.asl": "e4abcfc0e95de8ce9f8a728c441b38faadb28a2a622b0a81001868f006ac6075",
     "asl/block/attributes/C.B.DIMI.asl": "e1c951c4e7f90f6fb1f7f23959decaac35a40ad39ad397342914672ebb16cd2f",
@@ -21158,7 +21300,7 @@
     "asl/block/execution/BSTART.TMATMULMX.asl": "bdd70d0b091b001f245ed9c0f15206a80c163baa4942704fd40e57f90cd1ee07",
     "asl/block/execution/BSTART.TMOV.asl": "348b0cf4f39e68ca30aa0450a1232f08b501d3b3f7049f50a6a4faa1cf110235",
     "asl/block/execution/BSTART.TPREFETCH.asl": "440aa503435e8008f1d9d945cd9851c7d44889c000b98d6b0eee1aa8b3e2a4e6",
-    "asl/block/execution/BSTART.TSTORE.asl": "f0302147b483fab8c0c1d29bf1f5ad2ca268fa139bd228cdcf69bb9f263616c1",
+    "asl/block/execution/BSTART.TSTORE.asl": "233267219a436b69800e532ebc19609457e3aa57d8e19d262b8fe79608116b53",
     "asl/block/execution/BSTART.VEC.asl": "f3783620f9b5f536dbdd4636d74b522e112c060690a122c4af1097ee261ede77",
     "asl/block/lifecycle/B.HINT.asl": "0cf0eef47f1d846b54436ce4786f87ad1e42b26d9fe0d32257b520e35cf7b76f",
     "asl/block/lifecycle/BSTART.asl": "410f357d18523b13c8889bd9554d3314ff33dbe58469a4bb818ec6a0a4371a55",
@@ -21177,16 +21319,16 @@
     "asl/block/lifecycle/MCOPY.asl": "d548723be6bda6d4bda08463d4edccaa39f44d70b4f8aadb7e5f5338da1740b2",
     "asl/block/lifecycle/MSET.asl": "04f922bbef50a90a97b874af7c266f7482be321d5a361d3839c2eb6e38b3e6ce",
     "asl/block/model/commit/effects.asl": "b72f134135b9c4ca680e8d6c4e38756646727280f9c06d90a95d34a3b024728d",
-    "asl/block/model/commit/validation.asl": "6d1a64ba6103916ac4afcbfb80572fb838e79c3586281cd6ca55afd64e9cef82",
+    "asl/block/model/commit/validation.asl": "b1cb9cbd3f263108a21cdf29f1e9b06363493e0543353e812dc3ec720057072f",
     "asl/block/model/dispatch/binary-operation-classification.asl": "e7ba0606cd504b488d3619026a732054dbb477faf6106ad1513c20177b520c65",
     "asl/block/model/dispatch/cell-rearrangement-schema.asl": "08f3760d99552382f4f8cbcfc5c5fba3ac7cb021efa6db24287e97cc84b40dbb",
-    "asl/block/model/dispatch/command-data-attributes.asl": "9339fc2e9585f9349a2fb401d08b45d1ebf5493ba71d7eca2ce751936f42b993",
-    "asl/block/model/dispatch/commands.asl": "7e316ef8154ccb570408dd8bfc60f3c8d772ef40989f34c0c9ce2fdc7a9f729a",
+    "asl/block/model/dispatch/command-data-attributes.asl": "0f56d4ae796d8f5d6637c649e9a26a719cc1229906d3afc4f958edeec41ac1f3",
+    "asl/block/model/dispatch/commands.asl": "19494dcc33f9165d3b78c467cae98d03c1e998cdee0dde874592fc8154032da2",
     "asl/block/model/dispatch/comparison-schema.asl": "9ddb67d83fb37bfc087dfb0b4fc2ba145438d54b5cebecfad53c59a67e8527c9",
     "asl/block/model/dispatch/cube-accumulator-routing.asl": "58316f54c458f0e164ccd4bcc7b92808494b84e303bfa5d6471586130a00ca3b",
     "asl/block/model/dispatch/cube-destination.asl": "c7666bac26ad518a4f81f3670ec6c71c1ad15973bf1f9014d7079e82adf954fa",
     "asl/block/model/dispatch/cube-tmatmul.asl": "9784c273f1f41a83c3a2de29c6245f97d985c2bdfb48c5c4345d058098497b05",
-    "asl/block/model/dispatch/decode.asl": "6b13e2b67468e5eb8e7e956c2e7f073ef4965598c55d8365b0f7c8cda0e01fd6",
+    "asl/block/model/dispatch/decode.asl": "11c69d5ad80b0a95cd3bb4f6fae88b0972a2c2ebd69e35a3abbe1fa1c4546f28",
     "asl/block/model/dispatch/descriptor-legality.asl": "0bc759593abf4b5af2309d2c53d080719c34c47384ea8b95a1cf3e2be64e90c0",
     "asl/block/model/dispatch/destination-auxiliary.asl": "2c5913076993c9206d95bacbe62443ebdbb2fb1a9e30bf537c5b33eb2782b16c",
     "asl/block/model/dispatch/destination-operation.asl": "0baa1872d57ee7ae4345ad5e48ac1dd32e9f06aa5e7428762b8c3f2138c89eae",
@@ -21195,7 +21337,7 @@
     "asl/block/model/dispatch/expansion-schema.asl": "e341b52a6d77c9977a8787980cfb6df5aa11b6eb0ebfd65ba9f3932bd7a7f8ed",
     "asl/block/model/dispatch/expdif-schema.asl": "de5b727b34a77015b22baaeb73bb71b085d8e8bf20dded77675c183ae57305ae",
     "asl/block/model/dispatch/generation-schema.asl": "76cfceccdce296468d71b0e4605eb4b0b2702c5ea6bdabec16826b9517f86653",
-    "asl/block/model/dispatch/gm-obligation-dispatch.asl": "5e3c44ef17111fffc114f457b13ee170d17a95171eb03abea09167fd973df7b1",
+    "asl/block/model/dispatch/gm-obligation-dispatch.asl": "53148f5773862a50ca067cab5c67039d4908408170ebe364047257f58ed9f8af",
     "asl/block/model/dispatch/lea-schema.asl": "913306d0fb506c01067f5b41bd3d8451c35ed8d1a68f6f2ae467ad18ac5c3eb0",
     "asl/block/model/dispatch/matrix-scale.asl": "829c5e871e5f4719fa65e7f642e757b7771b35e92f8f6102673ef1a55286c035",
     "asl/block/model/dispatch/numeric-control.asl": "8372aa20c99f953c426e489be3555430cc0fe240d4808fda34180a9a11f5a8f7",
@@ -21204,18 +21346,19 @@
     "asl/block/model/dispatch/scalar-schema.asl": "03939cf0b88b2e1677a6384790028a5e8f68dceded1b7bc880caef6da8161a6f",
     "asl/block/model/dispatch/shared-cube-matrix.asl": "070edfcfc15de9cc36bfbcf917ce145d74453aa09e65a5de059a27a2200b1444",
     "asl/block/model/dispatch/shared-tlsu.asl": "1a92f53fb1237ea1d2af9a037897b0568c1e62d8c6c498cbc6870c1d10d4fb68",
-    "asl/block/model/dispatch/start.asl": "5d9b10ae87d39befc98d966b6ca63a4c600879d2b2b3b131a101b48793f7a127",
+    "asl/block/model/dispatch/start.asl": "01913d5c08aba8f28d49ac287f81f1e134f28d9c4c108bb14b7c9221e8464227",
     "asl/block/model/dispatch/tcvt-destination.asl": "8ad3e52ffa7b62d772a54ef45378d8d8671859bec47b3cac8121b0373ecb143a",
     "asl/block/model/dispatch/tcvt-schema.asl": "2c9c7ec6214f8321416573735a0df6415e2374a97595a9b12f2cec834a50506c",
     "asl/block/model/dispatch/tgpr2t-schema.asl": "996eaeb7689d40a6acfb8c5c16bb5998a4a1e45ced5aabdb2eafb563a84a29b6",
-    "asl/block/model/dispatch/tile-execution.asl": "f01567bedc2a9088e9322f6fbdfa5bedec738bd248153eeb8d04f335088ac6ac",
+    "asl/block/model/dispatch/tile-execution.asl": "f08c907c75abd4723b987c9cbbdff8ed44f191a42d6cf9ee9ebbc6fad808b271",
     "asl/block/model/dispatch/tile-instruction-operands.asl": "42c8fc31e43b044ce8faef3c2cbdb45e38747b3bd77188e3b08ffe775581104d",
     "asl/block/model/dispatch/tile-scalar-schema.asl": "74ac7933905e6428c6851a7622168da21b31a381cfb7b768e4bd53e2f1602639",
     "asl/block/model/dispatch/tile-schema.asl": "1acf4889509a4a948cd83ffcff83c397d1a12474acc1723b232e9bed0e2135ad",
     "asl/block/model/dispatch/timg2col-execution.asl": "0c3059b3e4a06d2d9ef056d9c4e1ee499f528b7c1d8df4061335002ae60583f1",
     "asl/block/model/dispatch/timg2col-schema.asl": "5d41621d599fb58196b7f9c2debc41b8073b92cea90f219bd11f48a2c1bca4a5",
+    "asl/block/model/dispatch/tlsu-atomic-tstore.asl": "17631f86951ff5e2bd776c1c8ef464b7183008401999be8c6c0f13340b6860a0",
     "asl/block/model/dispatch/tlsu-gm-atom-red.asl": "fabf68909460be45ce1a81938e0e78f1132e9cc9a9a5bfbe85a2729228ca334b",
-    "asl/block/model/dispatch/tlsu-gmov.asl": "3e18f7c02712555be07f5b463d467b2df1924e55a18673ab5f24af16e3a8f155",
+    "asl/block/model/dispatch/tlsu-gmov.asl": "576ba3ad4e6fa643f9a3962d67b7b1e11b9b4089c515e40978a0b439ba24cc0a",
     "asl/block/model/dispatch/tlsu-layout-conversion.asl": "166898ac69d971fc62953c426f7d14494443caa86d701e7286dc485ed4753ad1",
     "asl/block/model/dispatch/tlsu-mgather-cas.asl": "315c14c7cee2688c674e31b49206c05a68bcd9ebc57e62bfdec0fd6ec4ffe1a7",
     "asl/block/model/dispatch/tlsu-mgather-mask.asl": "1c643c69acaac645ed24b33ed86a7adb47f5e67832b225285328b7408f79ae47",
@@ -21230,33 +21373,34 @@
     "asl/block/model/lifecycle/begin.asl": "34d7923f48b2635f5ba6373e0dd03b972d28b1f9c588c41baf5da875064c86e1",
     "asl/block/model/lifecycle/enter-stop.asl": "d5f977bb2248fb33078f42aae3e086375a562ed1e83c64dc49d53b82af2ac9f4",
     "asl/block/model/lifecycle/lifetime.asl": "5d8588b0a40cb70a08aef05a251eae50ebf6a177fd230b7fb9923ea171c54c9f",
-    "asl/block/model/lifecycle/reset.asl": "d5fb2f877e7013e0bf5924c95cfc6d91116692665666fb4137911d41349ba1f6",
+    "asl/block/model/lifecycle/reset.asl": "ca480899b3822c5625424df2297a82b8e307e1ff75da1ada3f73ad85ed3b129a",
     "asl/block/model/memory/timg2col-gm.asl": "6fba4b3cba79ea3a34d4ed8703cfad74240485651dabc24b10601227eb46e2c8",
     "asl/block/model/memory/weight-to-shared-gm.asl": "72e752ec70c4fb78d325f7001d5414321aac1f8f1a557b819dabfd604fa4bb10",
     "asl/block/model/operands/local-generation-cube.asl": "b45de5ddf7585e4912b90e113353e1d3d9c727d926e883d93ae20f4c533bb91b",
-    "asl/block/model/operands/local-generation-squash.asl": "58620859c589e13c4ab90ae63cda88329693cb11170665051c4767a4e64abf5a",
+    "asl/block/model/operands/local-generation-squash.asl": "3e7324b6f04964ab2fe5044d854793625ccde5b0816e967dfd0f93ff5b855ab5",
     "asl/block/model/operands/local-generation.asl": "b8991f4fa1726b0b5b60172cff68aeddb56ca846a0908e05223dc318ce8ab4c1",
-    "asl/block/model/operands/portable-carriers.asl": "6c3313aeab650f5306c0b960e4b03ac7ba9af38d4c60066481ccfb92d192bbd7",
+    "asl/block/model/operands/portable-carriers.asl": "ba39773fa8ebe8527eba8a9da6abc8f27006274e041d421f4469bfd3eddb65e4",
     "asl/block/model/operands/range-modifiers.asl": "f1f185eecdd40e0bdd0ee3e8a675cb9c5e2c5fc12c744dfb33c25b911c65e4d6",
     "asl/block/model/operands/scalar-bindings.asl": "ff1b17562272349583912a375ffed18ffde8a22637f94058c1548d266efa0f10",
-    "asl/block/model/operands/shared-bindings.asl": "18bbbab96463685d60f6c62edce145471428c5545a1664dad04c9baf650952a2",
+    "asl/block/model/operands/shared-bindings.asl": "2262942a4b12235864245d08448a4d375cf149b3848120f66d91bce024e86550",
     "asl/block/model/operands/shared-generation-pe-requests.asl": "8d8950a3c0c5998472f8ff9ed12b46f2f9e564baee7e45a25290338f1e762811",
-    "asl/block/model/operands/shared-generation.asl": "d0d179ac9521506411dc7e9a5dd0d58c6563cfeaa728018c1a0fa5b50932e3c0",
+    "asl/block/model/operands/shared-generation.asl": "ba43ff912551ad564f94e4ef774546e801e9c1dc8b80c1b82b073b3b7bc19ab6",
     "asl/block/model/operands/subview-descriptor.asl": "29c2556cfca00282c98418dd48a0903424a47ec7d820909fc6a3f4a4b6c6fc53",
-    "asl/block/model/operands/tile-bindings.asl": "98e368122ec50a9d4a221f9983945c1689b5879e7e17e0a0a7b1df0f1731b0f9",
+    "asl/block/model/operands/tile-bindings.asl": "b201ce15b327d4317cc7d4d05f965f263f5bd76b76c6b75547bff563101cc70d",
     "asl/block/model/operands/timg2col-parameters.asl": "cc2d3bd4c59aa87dc618b5eef32ec8606ee886d0be3eec5d0090903a9e605ea2",
     "asl/block/model/operands/weight-to-shared-parameters.asl": "c42be3478e831f484a67729ad28a152b04cc7a87e1dcf3c7456778cfdc1cbd81",
     "asl/block/model/schema/attributes.asl": "90dc72291f078c79f3bc5ebb44a2c18c757785ef8720d49adf552763292597a2",
     "asl/block/model/schema/bundle-encoding.asl": "9c8b21c0b27bfec7baacef656e3171cc0e4b5e10f3a095b3039ae372af14d022",
     "asl/block/model/schema/dimensions.asl": "290157030cc97e2456bbccd02282c07d41a18db2a90d47c355e41e78e21e369e",
     "asl/block/model/schema/header.asl": "b7b8e69337e5ef47b748f9f937c078e95efa7ab9727defad18d7cb2275be8da1",
+    "asl/block/model/state/atomic-tstore-source-lifetime.asl": "8818c224b56eb06c7da8ab00d9aa46b7ddfa62b763a341c4626f9accd0d399b6",
     "asl/block/model/state/barg.asl": "b4136ceee8d6874cb9a05497776dad35a5454e797b86c850050b5864f1bb902c",
     "asl/block/model/state/binding-state.asl": "46b650a4830ca540fa274c2ad3cdfd70910d71795761f16b92160fd2d7a96a3a",
     "asl/block/model/state/control-state.asl": "b231ec9445006ff6c2a42e6ce5855cc2cb97bcaef1c73c3746a31368bdb13a7c",
-    "asl/block/model/state/descriptor-state.asl": "b989f398e701566d9577ac26af7291660df319a7713eedcdc7d40ebff3099dec",
+    "asl/block/model/state/descriptor-state.asl": "d9782e8388ec78a62c231d186b40b521b1afb3f4286643dcd780c0610a40855c",
     "asl/block/model/state/shared-generation-state.asl": "ba5462366ad91545876540fd0724c77863b1f3cb5682d49a516a7a6a83ab82a4",
-    "asl/block/model/state/source-lifetime.asl": "84c5e913dc43a180a55f67cd4f3fa97c7b6a0b20065f877e8a7e0d63fbed4abd",
-    "asl/block/model/state/types.asl": "aa5e90c6515a1b5e153e116b0992011c4573d831351de82f9dbef2da742dc304",
+    "asl/block/model/state/source-lifetime.asl": "64e4f6dbb495e0622f0a07fbf6b65847474718bff8cdc24b7bc8ac605e2fc4a2",
+    "asl/block/model/state/types.asl": "752e5ada506287ce121c6551d0d92cf9dadbe3d44e1ac2e9451169e0c92fbca5",
     "asl/block/operands/B.ASSEMBLE.asl": "223631f3d15dbd9aad577f6e9cdcc12f83be8726acc3f29cfa8a59d36d206c92",
     "asl/block/operands/B.IOR.asl": "cc294ebdae4887552e54e7aa083c1d965dcd5eca898545431e13a91f788fead5",
     "asl/block/operands/B.IOS.asl": "82d7c60a485346d0bdd4912b12dd16949a93368f1c7d751e67ba9f4eb6c47da7",
@@ -21751,7 +21895,7 @@
     "asl/scalar/sys/SSRGET.asl": "a8ded2822340f6b7a11caf91a88a692adf59616e1db8253c2df6ef54a735746c",
     "asl/scalar/sys/SSRSET.asl": "a72f6c4ce6cf839d11b78ae5379920fdb7b7c3bab84d578d2da7a734fdf1a0e6",
     "asl/scalar/sys/SSRSWAP.asl": "6ae0b6069c1302eb2ca43e23b4c3ac7a1a73dafa5dc8da7962e35430a20502c8",
-    "asl/scalar/sys/SYNC.CORE.asl": "0b7f3fe524f7ea58b53ebd52468d715321a4545e08339175c17921296e2560d5",
+    "asl/scalar/sys/SYNC.CORE.asl": "6f0a3118d7915ed1f19a7c1b9e7dfe7a8c0ff50ea12e281668bb4a710be216e1",
     "asl/scalar/sys/TLB.IA.asl": "13a77fe9a21de17bca74a4dab5c717d541877b0a82f99b3efb23ee70edce41e3",
     "asl/scalar/sys/TLB.IALL.asl": "d2494dfaf0f9f09ed3e05f23fb1be5041c6928a881962b8be282afdf95573b22",
     "asl/scalar/sys/TLB.IAV.asl": "c32ae60a4693ea542e6e4f5a30367354b14b3cf27ecf2be3907c7b413f341e63",
@@ -21830,7 +21974,7 @@
     "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl": "7fa34ae4a96b3b5ea1c9c5bf242281a78d4c9296e921a62a7f53696d646bbe9a",
     "asl/tile/memory-and-data-movement/regular/TLOAD.asl": "d7896d6b0dee6b63de04ef7ce19b2a09d95424746732a211bc33fbe34f9a9cca",
     "asl/tile/memory-and-data-movement/regular/TPREFETCH.asl": "17dd4668691f90f1336195b7684499af3122ee5fa8ee295ebf8647929407a213",
-    "asl/tile/memory-and-data-movement/regular/TSTORE.asl": "4d66d254cdcfab079d81d59a108954870e5bfeb005ca4f04057a9583ff292967",
+    "asl/tile/memory-and-data-movement/regular/TSTORE.asl": "fe969910fc7d620629251dd47ed16862a067db71b61862f6ceec1322802bb349",
     "asl/tile/model/capacity/local.asl": "dd8738f3d04b7fd95311f17acde8bd6a575cb360c02aec5391fd6819f961832f",
     "asl/tile/model/capacity/shared.asl": "5b39ed396475d12d4ce981fe4d2611e4b3e531f534367da04d19ddf8c72392fc",
     "asl/tile/model/definedness/elements.asl": "b76b2595c4a259cfcbff1f248f8ce5291cf4562e6c1a5438b4da924ba35d09ce",
@@ -21886,11 +22030,13 @@
     "asl/tile/model/legality/predicate-carriers.asl": "8625ae51fe7b75fd44c6ac87a37eea6dd1653ffa5bd1a8122e4f0d6af7640ff9",
     "asl/tile/model/legality/reduction-and-expansion.asl": "ded5f41e95ed0d72124460bf445781fbedc1ed277a1e35f1142efa20285cfd59",
     "asl/tile/model/memory/addressing.asl": "398579f8b271c7213b1cdf9557aaae52f1951de29433588bbf0f5b498ccf7753",
+    "asl/tile/model/memory/atomic-tstore.asl": "dfdd4e0b3073dae5e48b675f0b66b79c37c6c52e6105312b908a86403f263dcf",
     "asl/tile/model/memory/atomics.asl": "34a183a32f3d4b9b423249d17bf9583dd5f6642997f6f9706813778d4144d190",
     "asl/tile/model/memory/gather-scatter.asl": "fa010aa4b823ff1cb4a5bd0cc7d902420736652f49a0b0ef0719a2a401de6ea2",
-    "asl/tile/model/memory/gm-atom-red-execution.asl": "af0f486684c30141a2be622dc55bb057401bbf4d2440457681e61828262d0f53",
-    "asl/tile/model/memory/gm-atom-red.asl": "70b79380d4a469a7e6b925877aaa34303385544a7f5457abd12619fe23187519",
-    "asl/tile/model/memory/load-store.asl": "106c6a296e37f230a5d090e3c6f92e731628380fbc017a5741c973c80232502a",
+    "asl/tile/model/memory/gm-atom-red-execution.asl": "785d9eb6e1bf7c18e0361fa974af57ba5d36e5c30062a32c6fd8a606ec4a4d72",
+    "asl/tile/model/memory/gm-atom-red.asl": "27c57477fc344d9b5722c7a8f6e5575e628c7d6c75ca6bda0acdada38440c374",
+    "asl/tile/model/memory/gm-obligation-progress.asl": "ef7ceca7316187202dcac4fa9c8d8616c84be3deb49806afc9bd0e1c9dc5f675",
+    "asl/tile/model/memory/load-store.asl": "932e799bc53f5dadb7b3f7e0b60029ad27a2fc49e7299f5471b6c9785dd0cefc",
     "asl/tile/model/memory/restart.asl": "952183301020042b382a7c7eb14adfc52b2d3c74b99cf130e8912e89b6205b2e",
     "asl/tile/model/memory/shared-movement.asl": "1d70613d120d04c747d475b9c6474e4a480eccfb2e592c07059d7cbf695bb36a",
     "asl/tile/model/memory/stride.asl": "92960da5561ea8d7b3869d028893279dbde4541b554097cef7eea067224eba46",
@@ -21989,7 +22135,7 @@
     "docs/arch/data-types/system-registers.md": "b93061c498254b397b7e9112481cba698bd9c4a7dea133691d1e54e58e73d0d6",
     "docs/arch/data-types/tile-data-types.md": "0e38052304ad8ff66d11bbab0747b80660b6cb17413fa4793733b93a74424484",
     "docs/arch/data-types/trap-context.md": "79fea8ba94f84a19c7911b43ec9076f552393c39829fbd1b28e1b926da7a006c",
-    "docs/arch/dispatch/top-level.md": "68c27a2700df50952dc5480d89fc09c79e00bbc6106d108a102633a10cf2e6ac",
+    "docs/arch/dispatch/top-level.md": "c6ed32437cbdaae81f095e27564ea3e1a5c641c6653b05a4389cd8c4dc81fd8c",
     "docs/arch/features/extension-first-use.md": "c1a5c4ee7a442c8c22a9afcc82a1202a11010055b8f5c71c5c5c1fa1ebcecfff",
     "docs/arch/features/minmax.md": "7ab233f63feea1b619b5a9b90c2afd3699128f169aa2b236339923d9132c6973",
     "docs/arch/features/mx-formats.md": "b4739ed0c6683798361b2763950abb56e6686da37c5eb4414e3483cdd24abe0e",
@@ -21997,16 +22143,17 @@
     "docs/arch/features/shared-tile-state.md": "2ff6ec6862fb8ec7b4ebbaae79a65cf00da0265b9a7da7c4b9f7a57f6ec26ece",
     "docs/arch/features/tile-allocation.md": "2d9ad34014cc5b18783525ba89d7a941145e078722ee44a81bf64612ff60a833",
     "docs/arch/memory-model/address-space.md": "ffcf8efa869f61c51c8d8d7c52729cacef21af5593f2b369c4c7309a297f303f",
-    "docs/arch/memory-model/atomicity.md": "3c841dfbc25e9bbc6df7dac8137e6e2f95b90a121ec0d5d193a3d0b5fdba4d67",
-    "docs/arch/memory-model/fault-precision.md": "e9f13cde946c623eb0a9cfef43a5513abfce44f6b266f2b11ac7349076013c1f",
-    "docs/arch/memory-model/global-memory-access.md": "8d73f4b551245f46e8fc1a4f939505d01e2fd7a8c4df6528e21e402175b87b67",
-    "docs/arch/memory-model/gm-obligations.md": "4672bdb4ab732a255036c09102f7f1bcb24ddb779a37a16a72e6cffa1fed0433",
+    "docs/arch/memory-model/atomic-tstore-obligations.md": "8ddddbf8206d70c556b103031f91907e884e19a2c59d634620230e8be6ea8282",
+    "docs/arch/memory-model/atomicity.md": "e5e2fae3b498b369c46636b3a08aa763f4865fa7f92c8db86f141a07f6ba4f71",
+    "docs/arch/memory-model/fault-precision.md": "d2e5fff4281ac3f8d48f95d3fb6a94d52aa8b973611588f44d9a2ce0f8c26a57",
+    "docs/arch/memory-model/global-memory-access.md": "934f7df2f9c674478f67797582695bc04e91972f9b272db34025b2ef7ea4a135",
+    "docs/arch/memory-model/gm-obligations.md": "c9821a05a681ae57102efdbe6dd3a254415b38d88f949062e4256e852062fbf8",
     "docs/arch/memory-model/instruction-fetch.md": "99e3d3942db1d54a1141bc39c89a398ca4100d0a7e29d17787bd6201eee9d6c2",
     "docs/arch/memory-model/memory-events.md": "09a2a882988cf8934942530f54bfa5c64d311a32fb74a49d8b6b73d9279fbec0",
     "docs/arch/memory-model/ordering.md": "a0df6ecb59e04efd99830bad013ad841e8eeaf675ca74f4571fa38e3906bbca6",
     "docs/arch/overview/architecture.md": "36eadc6152d9324850b4997e88381f5edae80d411b73d715b8d3ad66b288c34b",
     "docs/arch/overview/encoding-ownership.md": "c6de2c1719fe81c22f45fa483c6e853a3361f0e8df35e0104f81e870656c50e0",
-    "docs/arch/overview/instruction-classification.md": "cc660c12baa21220f93b90c41317c81fb68af6ba89bbd2ca5da037e5c4653f19",
+    "docs/arch/overview/instruction-classification.md": "dfebaacf8b5879fb25cef66204402420fd52de084ac1c47b0b784ed5237c028d",
     "docs/arch/programming-model/core-pe-topology.md": "b4328a739c9e78ce9794e724dbf9f60111d20c37308c04317004f577ad46cdb5",
     "docs/arch/programming-model/execution-context.md": "af969770a7b110bd27de4b1c09e1ea2506be57b6637f0504ad5be397c6db827f",
     "docs/arch/programming-model/general-queue-management.md": "513828a5b2e2cf1865ec6b8f47f8564f716325d908beb809da638c5f2a34065a",
@@ -22016,7 +22163,7 @@
     "docs/arch/programming-model/tile-registers.md": "93e2cffab8050b30e112d3371f37e950e9bff9e8373cb06172cf6cab51a501ef",
     "docs/arch/state/core-synchronization.md": "213103de8013ffa95f1f545ccacbf5d6659c1c4f482e3da0d982c74c8c01c390",
     "docs/arch/state/definedness.md": "0c592e7785591408293173237e5ae537b04d33f1c15de2a02985605e8a0b8892",
-    "docs/arch/state/kernel-lifecycle.md": "0878db470445c3e7c88aaf7915a7f3148d7b48eb9d4e584ae5d815824661cac0",
+    "docs/arch/state/kernel-lifecycle.md": "4bd5ee9553670d03affdab8691102b103001579948f7ed61270f14df2fc02aea",
     "docs/arch/state/local-payload-generation.md": "e2c7cf72c098774fb518d0f8168a651f9b60f2d220009281adf3b0a95418708d",
     "docs/arch/state/numeric-status.md": "2bc1485eab64147a553ddb269fb3e520dd0b63dc7c31614996dc32c53b57d06f",
     "docs/arch/state/pe-execution-context.md": "69586d85be83c5bec6067eb1a4e569636bf2d132d2becc4fff94a6cb6507b8a9",
@@ -22029,8 +22176,8 @@
     "docs/arch/system-registers/interrupt.md": "56719be1e34675dd43e3b7a19fa136c3fc1d80626afd2fcacf57579c8237b700",
     "docs/arch/system-registers/maintenance.md": "52b2ec4e6848f4842a4e5efbaaf8e951a65b0d9e7d379f3a2c54a38b0ec2e987",
     "docs/arch/system-registers/timer.md": "15facd0524702b0f06c36912b00b0a1137f6336fa67596b7d0966d32001ceb3e",
-    "docs/block/attributes/B.CATR.md": "c4664bd9a84f9da4e07416aaaf4a84e69aa6b2501a1f9ce236cd975bcbe88e16",
-    "docs/block/attributes/B.DATR.md": "b1f5b5c5a072199e3e2876d994174106e720ea753735839330afe996d08c866f",
+    "docs/block/attributes/B.CATR.md": "56bf795bf28d64b3a1a3912a1a61f386c7538c5e6201bd8f0ed62292f4e766cd",
+    "docs/block/attributes/B.DATR.md": "9ff36f1654f294f4db763ed88f2d580d4aedd699df9757ea807f5293dd9ec825",
     "docs/block/attributes/B.DIM.md": "f6fce6e6c061adc0d4c5484931834da47f24d67b3fcff2ddec4665eaf1b8f040",
     "docs/block/attributes/B.FPATR.md": "a783dfe141c740aaadd5251ab3fbe60f613f4cc388fb77a5797f87d2c6151df9",
     "docs/block/attributes/C.B.DIMI.md": "f6c21cd8607da5817b3fdcc70dc7dff22dcbe9744c528fcc1fff6cbedd13e19f",
@@ -22085,7 +22232,7 @@
     "docs/block/execution/BSTART.TMATMULMX.md": "388d6363b2ba0b8f91f8988e7b7962189546104d60a6b9ac4e4a15f2c37f8174",
     "docs/block/execution/BSTART.TMOV.md": "5b98f68a7cab0a5a5efcd3c938bd5bc2532265c2bbf25ee4573188d5869c86f4",
     "docs/block/execution/BSTART.TPREFETCH.md": "e464f1e4bf46189a838873b17003523df22be9f47f90560077920fee72c7d9b9",
-    "docs/block/execution/BSTART.TSTORE.md": "c9aee4a02e0c04c12f0dfec25a7c4edafc25245018ec37db9c1dc5c1fbee83c2",
+    "docs/block/execution/BSTART.TSTORE.md": "896b4fc209a349edf20b3fc7d70e7c8a5f5e639cf66aadbd2c79b3d06d24264a",
     "docs/block/execution/BSTART.VEC.md": "68245f1835ed8a4b29a55d16018e80f3146dfeea20dc37a92681a0b51050fd31",
     "docs/block/lifecycle/B.HINT.md": "31d121c833cfc3be7b93666ab7037de6f91095bd463c267f989137ddca9a880b",
     "docs/block/lifecycle/BSTART.md": "ff50575f68b7161f33c3ba228ede0b509cc0f5eaada886326c1e9eabc8d452bf",
@@ -22104,16 +22251,16 @@
     "docs/block/lifecycle/MCOPY.md": "57521b64eb1ba74ba7633000ea5975b081f7ad4a9ba7c667da39592c8fcbdcba",
     "docs/block/lifecycle/MSET.md": "9b530755fd8653fed116c5c79abb301d896e5fa5d0733bdf631af0bd853937f5",
     "docs/block/model/commit/effects.md": "d227ddd2df4b236c0639766769d7a0c3660d27fdf836926f2b6bbc6944db6901",
-    "docs/block/model/commit/validation.md": "f4364d883ba23a4eaa9e3b66d741558926a2eacb267f2f51228c400f94cfcc12",
+    "docs/block/model/commit/validation.md": "49ee0e58d11b04fcca22f1bb3bab775d8e7a7b5f037261a38e40e4e984eccc1c",
     "docs/block/model/dispatch/binary-operation-classification.md": "df0599d6b3d121862149a884f64996b56a7d801ef718172d1ec0b5602e566f53",
     "docs/block/model/dispatch/cell-rearrangement-schema.md": "4e59375ca84d1a6ee6bf5916a3d11d08a9a5f2efa931b06afa86ef64d02e10a7",
-    "docs/block/model/dispatch/command-data-attributes.md": "d45f6ef10e33ad32a9c3e6b819bea3307ad3205c00adaf561f3ba214227e0d44",
-    "docs/block/model/dispatch/commands.md": "483b0931dedfb179bd68924fb328b62ace5c007b400ef0bc72691107bb2a7894",
+    "docs/block/model/dispatch/command-data-attributes.md": "8615d5bb52dcf0ec2d14ebb6caba3bc18d605f84eca288436bdf6eb325bee274",
+    "docs/block/model/dispatch/commands.md": "4c855f02c9d1400732876c5042b739e3650ca9bc3adb47ea39602428a5bcaca4",
     "docs/block/model/dispatch/comparison-schema.md": "73164d58438612decf0762fb131fa02286a82ec053f000f24f4078caad0a0a90",
     "docs/block/model/dispatch/cube-accumulator-routing.md": "5d9b47919bc5dff5faf58162741a30e5d45b1a98b208fd3ccbabc656f8efeadc",
     "docs/block/model/dispatch/cube-destination.md": "7b9370a83fb6cc2cc775e1603e7d6c9d67e231431ef4f0d72a808359ef323955",
     "docs/block/model/dispatch/cube-tmatmul.md": "03e2ef9c6579215ed94ed6eb302cf0be984492f975ed7cc889b836ef24758e74",
-    "docs/block/model/dispatch/decode.md": "adb7dff139eb190dbe64d003b48758d624a8c733b3c7b6fbb444fa32fa1b1ab3",
+    "docs/block/model/dispatch/decode.md": "6c893d15f5a49d9413b95131d3a8abfc92ed29fe741e492da20a2de355ed1a6b",
     "docs/block/model/dispatch/descriptor-legality.md": "610841f62f7d149ba3bb418e841155bfdcdfe9ddc465473c60675ab5d9aacf6c",
     "docs/block/model/dispatch/destination-auxiliary.md": "51b689b09eeb182810afe39671af6578672f8d64fc0266997eb59c3757aef438",
     "docs/block/model/dispatch/destination-operation.md": "ce568d60542cafb16a4692eceb0608621690e37d68f49f8d786979e2cddceac2",
@@ -22122,7 +22269,7 @@
     "docs/block/model/dispatch/expansion-schema.md": "6710c6a738d7a88550b8b2ec03aa8a5d37ba8615a425de2c82ec4ba780668ae9",
     "docs/block/model/dispatch/expdif-schema.md": "ead0e79bb9672a9054380ed4990a64be25765ef6372d66a9d9d27ce626b74595",
     "docs/block/model/dispatch/generation-schema.md": "a03da15f04299c836cc635cf6c67b3561910edcbc43870667395aae28cd7026b",
-    "docs/block/model/dispatch/gm-obligation-dispatch.md": "92203a8c6c6a0445d34123cb7916c506288498daf5bf6d2be5c06b4785aaec2c",
+    "docs/block/model/dispatch/gm-obligation-dispatch.md": "1656cab92fe7c2a2226c52600ee0aaebd4adeafe798b406d7d1e12f0135ab086",
     "docs/block/model/dispatch/lea-schema.md": "38dd2b3562f26f47f7caeee510bb75a666646af3af6db40a8d211609f6ca4f0b",
     "docs/block/model/dispatch/matrix-scale.md": "ace0b903395ab0bc11f7fb6acd195f35885c50a8b42fb2deef64bb697fd03a17",
     "docs/block/model/dispatch/numeric-control.md": "249bba1dbaa9ccd2202580cd8d405022318f459c4f5ca453f3a4b10d25922490",
@@ -22131,18 +22278,19 @@
     "docs/block/model/dispatch/scalar-schema.md": "e42d4c9c069b6b49ab5c57c83a096f61e85588819b374eaadb6d25d20d90e25b",
     "docs/block/model/dispatch/shared-cube-matrix.md": "1a0c66e593e1bb2884f00e325863df43fbd1436e29eb7b2cf8c8d6e5ce39557a",
     "docs/block/model/dispatch/shared-tlsu.md": "71acf8321891ef2346337de017534e073b5ba0f34b352c9329f77af0f769414a",
-    "docs/block/model/dispatch/start.md": "44687ea326766b3acfacbc3b62424576cb1b7013a8552cebb055f7d83533e3d3",
+    "docs/block/model/dispatch/start.md": "d0c5ac75e5394ada1f3a8da078f80c82c072f64d562cbc760a34b620475bd2fd",
     "docs/block/model/dispatch/tcvt-destination.md": "711ed7d1b4f4f33e071c27730da46f46d2c17fc864d41f4b3821fefd63240ce2",
     "docs/block/model/dispatch/tcvt-schema.md": "5db2f9b708bfcbb35535e3101bf51de0effe5cb050b11264226ae5746472281a",
     "docs/block/model/dispatch/tgpr2t-schema.md": "a562972e608499c70b4560f5fa0b096e3f3021565b30086b16159700f4a56735",
-    "docs/block/model/dispatch/tile-execution.md": "f1662cd4e89b1f1d3f8bd506660369eebcbd8c8e4b8b7ef2222d0ac04a996fd4",
+    "docs/block/model/dispatch/tile-execution.md": "8a14dd145b225525c838a56f02e233b89672b8640d6358ed5ef1cbc838de00ec",
     "docs/block/model/dispatch/tile-instruction-operands.md": "2752497887527b4a7dfffd4748218dce0ca4b3ad6cc61b4a81a29648dae26154",
     "docs/block/model/dispatch/tile-scalar-schema.md": "80b16d61ba4bce716b9317159cf4e72d4dc956c55bb07c6f7d8a1577600a2b37",
     "docs/block/model/dispatch/tile-schema.md": "041eb69b63964ab41d362760058300a61c76007b7ed41055c32310da1651c88d",
     "docs/block/model/dispatch/timg2col-execution.md": "f1427a272a2ca311d8b614fc72a6f48b2dcf22fe9628ed012d6b61a0fc7499a8",
     "docs/block/model/dispatch/timg2col-schema.md": "51655c67b9ebf56c53e93164b840ae2d2e2739f37ef21fe3fd837d156474b8ac",
+    "docs/block/model/dispatch/tlsu-atomic-tstore.md": "d642f41b526b9cca4010cd6652163ab32ee4030cc1ced73895c15ecffa3d1678",
     "docs/block/model/dispatch/tlsu-gm-atom-red.md": "0d574e09da7ad677962640aceb545c2b582be7f7cf1b6e2a871a099eff8c26c0",
-    "docs/block/model/dispatch/tlsu-gmov.md": "fca5216f027068dda0ee3e52ec7cd6b07598b1ca06544a543284ebab6c72d14f",
+    "docs/block/model/dispatch/tlsu-gmov.md": "000975e6746c23d0f873b69db9b8615cce3960be9b15003e4fb11a66643b5745",
     "docs/block/model/dispatch/tlsu-layout-conversion.md": "d04e970735819cbf750be2391b8496f9e2fa631ff62ad5b813307048d73894db",
     "docs/block/model/dispatch/tlsu-mgather-cas.md": "4ba957d3710f85c3780138f155b4f6ff18e8da8ec199fe219bb1ebe7ddd54368",
     "docs/block/model/dispatch/tlsu-mgather-mask.md": "d5086cad7c83a1e626729d112deff2c212785c7cf5d8cb0c1807fe193f4a16ce",
@@ -22157,33 +22305,34 @@
     "docs/block/model/lifecycle/begin.md": "60aa71b7477697a26783dbb95dd7edf0a354264b419e7312ad4ec6117bfc10e1",
     "docs/block/model/lifecycle/enter-stop.md": "e86ca857c5c1ff8ca3359cc9e6294674f5bc9b7fcaf0e9c080ed7068a4018d21",
     "docs/block/model/lifecycle/lifetime.md": "0af27a4a168a4e3cc78436f68ccd5167c1379bd1934924d7e4ab068b2add50bf",
-    "docs/block/model/lifecycle/reset.md": "da2a12ca546273e57bb5f556fef872c80ddbf4d46c3a958fe4735ca711bbbfbe",
+    "docs/block/model/lifecycle/reset.md": "0d87f9e9548b089e01d62ea2b3e2c271564f2cf5e30fc938c9fe295e5e73b736",
     "docs/block/model/memory/timg2col-gm.md": "569cdece4d949659acdd37a8aba04a6311d78748633c0c4cac2b8de29ccb7c88",
     "docs/block/model/memory/weight-to-shared-gm.md": "9eec952da21d1fb7074d704935d5bcaf978a43b3b1d7006d9e9c0162bb7512d6",
     "docs/block/model/operands/local-generation-cube.md": "d1426984dea76f2f9fe56d11c329d2d4402a71f228910efbe9c8632fd970a7f0",
-    "docs/block/model/operands/local-generation-squash.md": "0e3233cd7d3825d043677f4d69ca7e28226cfaa0cf29bfb7c752ebb88acc0f90",
+    "docs/block/model/operands/local-generation-squash.md": "12f448a3c298fff85add0deb2b427581306758e8ec7be7fccdfca1100821226a",
     "docs/block/model/operands/local-generation.md": "be7e7e37f4ac1ebc9d8c2644caec2333d4c7b8354e9dd92df0c0ad938c7b3049",
-    "docs/block/model/operands/portable-carriers.md": "ccf0536199487d748160e0bb4a2c6c053f61e3ecbb4aeffcb7fc725bcbc01268",
+    "docs/block/model/operands/portable-carriers.md": "c7c1d8a897cf8a77b6380bf62a74d1d77371efc435ae5f3870fe12893d296e1b",
     "docs/block/model/operands/range-modifiers.md": "7cbdf94b560734247511366190dc73a6c9c6d4fc20071049a7515b3e5a03f4b3",
     "docs/block/model/operands/scalar-bindings.md": "39e5ccd0918e2b38a0311bd4281518d2af7a50bf8197b35571070a391db53d2b",
-    "docs/block/model/operands/shared-bindings.md": "65640c9e135111c5b8f0ec18c63c159eb411d38acb1078592b3a1066d14206a5",
+    "docs/block/model/operands/shared-bindings.md": "56d33b6e60ab0e927bbeaf4448b23d4fa46daafa7925dc6fec4eb637d60c6857",
     "docs/block/model/operands/shared-generation-pe-requests.md": "6a95b8dbd210d037ccc86cdca74d0060913f38693edf71b5aba8cf91e39d5219",
-    "docs/block/model/operands/shared-generation.md": "063c47df06c7f8b390131a531d8e0333fc337b66186ea581b29908bf4c50ac0b",
+    "docs/block/model/operands/shared-generation.md": "70d513e829dff7321d698f1f7d18893aa5a44315d5638e6660198d6dac6438de",
     "docs/block/model/operands/subview-descriptor.md": "18214b3a178ff56210f04611632facc0febdcc4cf905c3e21bd4c355ca9e5bfd",
-    "docs/block/model/operands/tile-bindings.md": "3548e109bbe469a419ed3d5f34ad92c998c67724a8031701a2ebdd78a1a2430d",
+    "docs/block/model/operands/tile-bindings.md": "63fbff7993b33fb7de505dc2bc707d8eee8405e42c6d3796a2cffa660f716bd9",
     "docs/block/model/operands/timg2col-parameters.md": "35e0fd79015300f237e58bc1f539c4dcbce26e4fe88ded9c98945af370da14ee",
     "docs/block/model/operands/weight-to-shared-parameters.md": "748d8fc0ddd8fa5c79fc8c6d472e659757baf3b846289b6f18ee8fcd2c301a0b",
     "docs/block/model/schema/attributes.md": "671d73c77d617cf517444607b4333c04761df24d757f671f82a4740f68f15874",
     "docs/block/model/schema/bundle-encoding.md": "76c5d8db69cb7f77dd0dbab01e1bf256f0a98d9494cbf439ff1c88945c5a369f",
     "docs/block/model/schema/dimensions.md": "37b17d846891d0bd45560f34364c1d4448c0725cf0b1daa211ac8a05cb943b78",
     "docs/block/model/schema/header.md": "9ba9a8d01af74565769d82b5cbf2c00f207fedfa9bf79964c8ab429f380e0caa",
+    "docs/block/model/state/atomic-tstore-source-lifetime.md": "94316b1def0f99d1c1ae3a34ff6ecd7adb098fecbe4f47d5898b0cf2c636358e",
     "docs/block/model/state/barg.md": "b184baccb2191d8b8d7ddd637cabd7cdf5fcd12a4bb9256b685ad1de3535987b",
     "docs/block/model/state/binding-state.md": "6ccbc8e18e3357afdd9890b88fdea711f78a17d6b1bb771248979f3f1406c22b",
     "docs/block/model/state/control-state.md": "8ecbdc659f02dbf2c18e60a152c7de28eb1fd3046070846f21c50b3b58d73252",
-    "docs/block/model/state/descriptor-state.md": "db0d04255c4e9c93f04d5dd66f4a6fc13449b5c44ed3013c7fbd1279e36663d8",
+    "docs/block/model/state/descriptor-state.md": "0b1da0713f74ae65411855e3ea8f1683e243638c18c3cd80211deb41425b12ed",
     "docs/block/model/state/shared-generation-state.md": "23bd3740f882ef531990fac2959e154db0f5ffe7d7c4b9a79e52bd5a5deb0244",
-    "docs/block/model/state/source-lifetime.md": "ce1699c8cea313817ab4f0cfa0735df713869bb0364d53771fc8aa5a6900bdff",
-    "docs/block/model/state/types.md": "9bf62feb3b7af6a1595cc0d1a3631e9dfc71ffc7936a68cb08811884a1fcf473",
+    "docs/block/model/state/source-lifetime.md": "72e57eb489b76c649a2f71cc4ac0464f71e37f0d1703f3bc04d5f9dc23656531",
+    "docs/block/model/state/types.md": "7c4d7a3720ac9a912ef392f130f8b05c161a23e8f20e05306e4b84e3dc3160ec",
     "docs/block/operands/B.ASSEMBLE.md": "bafc4a596cc59766cf39d80ac2267f53669229ddda77458e68a9afb1456fb43b",
     "docs/block/operands/B.IOR.md": "de5579e1b73c8db84c8e843f32d223030e97304bd5df0a4539257c024e81061c",
     "docs/block/operands/B.IOS.md": "929eb05d4eadefe93535e2f3adedae4ae39626e08c534f72d87157716360ab5c",
@@ -22757,7 +22906,7 @@
     "docs/tile/memory-and-data-movement/pe-movement/GMOV.md": "4289dacc64d97ce0b41f1a0ce54dbab9a0476b9e07274fd1a7c78e1389e6b925",
     "docs/tile/memory-and-data-movement/regular/TLOAD.md": "7430fda9044bbbbaf7dc17e85e82bc2d500a9b6940f4037b77a5197c47b4ce3c",
     "docs/tile/memory-and-data-movement/regular/TPREFETCH.md": "6acae821b439417cc9d83e2dd08e7afacd2ce4b03e046d5eca50e442044da5d1",
-    "docs/tile/memory-and-data-movement/regular/TSTORE.md": "773106cf25073f6dac366fa462bc301db3697d30cfa89fe8bda39dc6c86cc31c",
+    "docs/tile/memory-and-data-movement/regular/TSTORE.md": "31dbca2d372ecf7cb20c81f70866f452764378b2cc78f98cd9546aa41df7d002",
     "docs/tile/model/capacity/local.md": "9f5534de7bc460299e464fcc01a40281d745d8f454ab10daec34cffb32acb41b",
     "docs/tile/model/capacity/shared.md": "087f5075115c33df79395fa12892019e696890923713e422d0b7e10c0d0f36f8",
     "docs/tile/model/definedness/elements.md": "eb7a9bdd2c38bd23b67acb27d3d83ea0feb5ac1abaf167af49822e40c0910a0b",
@@ -22813,11 +22962,13 @@
     "docs/tile/model/legality/predicate-carriers.md": "0af1b3665c420be8d73042219a8ddff3559a52c7bf4d37d9ba92250aa88d4ac1",
     "docs/tile/model/legality/reduction-and-expansion.md": "6d20266f12e496a9e691d8a6852548ad4ba8337796164f73cfbb289a5a516330",
     "docs/tile/model/memory/addressing.md": "022285fd113812da1672a8bc9f9d8f7b0e55cc1e09eacaf61c6783c347a16cb7",
+    "docs/tile/model/memory/atomic-tstore.md": "e275cc269afd22dc814c0c6d96b1d88bd99bcbf58ce976b03c57ae5f1b24ddd9",
     "docs/tile/model/memory/atomics.md": "c1cdbee761ac37b75c5562a36ef1620b969c071e19635ef97f3ca4f95bbcdd89",
     "docs/tile/model/memory/gather-scatter.md": "7b2eef7342af4b0ee951f0e0062cc4072b613279c5a56030eb3fd77cf3119b7e",
-    "docs/tile/model/memory/gm-atom-red-execution.md": "11ba215eb846f385216a7fba1e632c72320689f3f96928fe0e858af44fe323d4",
-    "docs/tile/model/memory/gm-atom-red.md": "fbfa934de7f74f2b90857f2926e149d427f532ce60aa28f0ab769435154ab75f",
-    "docs/tile/model/memory/load-store.md": "69b1685c18e897e2c46717550441b3a7847e533744e7030722a9cf93e19f8880",
+    "docs/tile/model/memory/gm-atom-red-execution.md": "1a87f02efddbcb5f941b9abc7c2b598612fda1b6786fdaf5564ccf27795622bf",
+    "docs/tile/model/memory/gm-atom-red.md": "1b36b692fa68844b431b5f023b5b72166ec2778fab2abc171216d95897cdb368",
+    "docs/tile/model/memory/gm-obligation-progress.md": "42ad3b318a679b5ed468c749d8d4206eff2232e05e5290a78b266352e62aa86f",
+    "docs/tile/model/memory/load-store.md": "4146d4e40c26d01b3e45ee38a62fe0b9579be76fcd9f0dd8fb6adb207aad35f6",
     "docs/tile/model/memory/restart.md": "8ddcdc458251f6737b889092bc1aa225619f7fbfc9f530652e4a10f6f7433249",
     "docs/tile/model/memory/shared-movement.md": "fa5eb6249b91f78484d4a5628992848e9d5b820173e297226e6aad77a5ef626b",
     "docs/tile/model/memory/stride.md": "dd52e9eed1ffc21f51de2730affd980c1cb77cced945950e72ba2a66927f9d22",
@@ -22878,13 +23029,13 @@
     "docs/tile/tile-scalar-and-immediate/arithmetic/TSUBS.md": "7570fb10518f29f0b68d25e2ec198a18f4e7d5f0e1b28e6a2915291d96ef3607",
     "docs/tile/tile-scalar-and-immediate/initialization/TEXPANDS.md": "63ce1d641b6049fb36de75295259a9668a99c89c55494fdf7b9f0a0cd67f58d8",
     "docs/tile/tile-scalar-and-immediate/logical/TANDS.md": "5bbc6f8198e669ac4d4c00880c0517f28294d6409d3f5d47eca6e09485aa75dc",
-    "docs/tile/tile-scalar-and-immediate/logical/TCMPS.md": "7336ce7a043556f44fe6dbc3c7e5010908810e160d5e28d52651af669c9eb543",
+    "docs/tile/tile-scalar-and-immediate/logical/TCMPS.md": "7bb22ce5655a4d9ca76c2e436db241c02b1921c6b952013ac0bc4058fb14ae69",
     "docs/tile/tile-scalar-and-immediate/logical/TORS.md": "a2a509f9d69c4bd8820834f01943b1a84d890a93bdc3b2062d1bed8ac3e99007",
     "docs/tile/tile-scalar-and-immediate/logical/TSELS.md": "7791038f871695315d80c6d4041a2b2a97839087fa4890212b87abb43f367696",
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "c1332aa895d5a70170b6f193674ad97371cbdd4314f5336de4ce4eb703d4d484",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "4fdb0facff519fecde8ba33ed966ed54c04b04c3f5f344024b2ce1a859434d67",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "c2bba4aad8073962fc18443147a53b3492eee9629f7a5975591087d1d8834e67",
-    "spec/evidence/adr-index.json": "5ce03109b6fe321bbe7e8ca98c31118df30f5c7328465c85861ad5baf7d8d908",
+    "spec/evidence/adr-index.json": "26ceb44db4e2f4cd4cb791ad9f92b1994bcf935d0fb971f1e6b651d2427e3283",
     "spec/evidence/instruction-contract-closure.json": "29bda316fcdc437076a370db86d61e8ca766b79a73eaa8e685e01352095a8723",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6c18bfdff0279b6d4fbaf3cb3c8e1ee111b4d5e82e1688136b88be6fa7902ba3",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -22976,6 +23127,10 @@
     "tests/asl/arch/features/tile-allocation/arch-static-tile-allocation-contract-001.asl": "9cd1574eb3389e452d9adf3b4b55a3ea9db49646716c08b6e86ae9e70a91bbf1",
     "tests/asl/arch/memory-model/address-space/arch-state-address-space-physical-reset-002.asl": "3c21cdc09804a125ad5ae419780747e94a8509aa140a6cd5d3c005ecd1a31534",
     "tests/asl/arch/memory-model/address-space/arch-static-address-space-contract-001.asl": "35fc2bda62986d6c66eada47431b1ac63c2827cbbb9a8bcc7daf2bda69776c2f",
+    "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-identity-001.asl": "b71926837cdf936df5fafa9efefa604748eb9a2d7748a3a28e4a3795e0f0e38e",
+    "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-interleaved-001.asl": "6328e671b7f96c76ab8a470ca5018771f233016551a8759d5b2dbe2da35b2f06",
+    "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-translation-001.asl": "82ea1a42148e03f7fe0188535e29cd2aded35b889489f9812ea345fce5d4197c",
+    "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-static-atomic-tstore-obligations-contract-001.asl": "06981381bcedbea23e5b37eed4185c6d8e4041151b06fe51969450fbbb136f12",
     "tests/asl/arch/memory-model/atomicity/arch-static-atomicity-contract-001.asl": "ea0c6316331d9350df7677b683ca0fbb1534c6e4614b67ad45c4fcb36685ec49",
     "tests/asl/arch/memory-model/fault-precision/arch-static-fault-precision-contract-001.asl": "ff7c2ddfc79034d95a30f0e831ed60d3b2ffb6e7beda4d44919377ec4a8a0495",
     "tests/asl/arch/memory-model/global-memory-access/arch-bound-mask-001.asl": "1949403e8e837eb2aaeaf3edda5e39f66a7f7a3ce07b6c742580579c0743097c",
@@ -22984,6 +23139,7 @@
     "tests/asl/arch/memory-model/gm-obligations/arch-state-gm-obligation-dynamic-tstore-002.asl": "b1459b3e7d8c54bb1babc2369cd1a1297cfba144a236b48b711daa989195867b",
     "tests/asl/arch/memory-model/gm-obligations/arch-state-gm-obligation-first-capture-acr-003.asl": "0df642c3f9e63aad99632f57c35cf5346193d0996889d64e7a90935bf14291d3",
     "tests/asl/arch/memory-model/gm-obligations/arch-state-gm-obligation-scalar-fault-retry-001.asl": "5dabcd85bf021362922e7b9b61ec8926fdb3ef296af9b539608ebbb6ab71414a",
+    "tests/asl/arch/memory-model/gm-obligations/arch-state-tstore-atomic-admission-001.asl": "d59d843d35dfbc9d9bfa7854cff58f8d1fd167a9ca169effa901566376f30e30",
     "tests/asl/arch/memory-model/gm-obligations/arch-static-gm-obligations-contract-001.asl": "f516952871f4e457a0f8417f5daa85e3af0bb4288fd2fc152cf35550f97b6aa4",
     "tests/asl/arch/memory-model/instruction-fetch/arch-bound-instruction-fetch-length-16-001.asl": "defbe3ba6a89f5853049ed3be6419896a97d7bd673da03cd9b5dbd0b210fe445",
     "tests/asl/arch/memory-model/instruction-fetch/arch-bound-instruction-fetch-length-32-001.asl": "0b63784f94e0646720fa7d26df82320a13cce622a8d083edb91f18252a2d7732",
@@ -23046,6 +23202,13 @@
     "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-lifecycle-delayed-tstore-001.asl": "426c36b433a7bdbba86db992196fb93138cdadd3696aedef7c65e3baf6f09876",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-lifecycle-fresh-launch-retires-trap-frames-003.asl": "4f05de67468dec76b0c018f574cecaba23e07e02881a6fa536d51b4c87544f7d",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-lifecycle-tstore-quiescence-002.asl": "39e7364b068a4786adecbb8d71eb80ffc8f412a626bc56214967407a16cb0e24",
+    "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-bstart-predecessor-001.asl": "9606499280b9e25efb5612de07f20810988e57c639d84f413eef40ba9e8f63ac",
+    "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-cancel-001.asl": "7b6b6f3e2a357da09a1d5bee455de4503357ff71d71716c6d9eceedc5e983b90",
+    "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-completion-001.asl": "fded6a714fc50fd9ea514fd5a694b3582aebc53eee06e948e452d193ffde20d9",
+    "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-domain-squash-partial-003.asl": "85ae8d711bc8b8774e32efc5935a314b0eacb5ec178ba62aa655efa6408f298d",
+    "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-domain-squash-zero-002.asl": "8aaf1d2b9a26b49f7348efce10097c469fa6e1675a04fbd9b654509ecf5d99e3",
+    "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-drain-001.asl": "f111d8735a2b49d9d779c2dbe34679f4ad1381fe66daf41d98f131543e8a17c3",
+    "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-local-consumer-squash-004.asl": "2741b7690d104afacf4a146b2e84ab48ee7eac9e15181be2ff962c1f4a96efdd",
     "tests/asl/arch/state/kernel-lifecycle/arch-static-kernel-lifecycle-contract-001.asl": "5e1696d42da260d0b24a5a12e7aa73e29de92e09666d6117dd1627c9e1ac34cc",
     "tests/asl/arch/state/local-payload-generation/arch-static-local-payload-generation-contract-001.asl": "f78353c8219afea2f26c643663d71de8b3bbe1f15890d45aedd56e073d450db8",
     "tests/asl/arch/state/numeric-status/arch-state-numeric-status-001.asl": "73c82a0e416a7635964e18f0b52a0330df6edcb3292f9eb65937b9ace7d9948d",
@@ -23079,6 +23242,7 @@
     "tests/asl/block/attributes/B.CATR/block-fault-b-catr-duplicate-001.asl": "0c39e7916bbb1d2a1ea59edb33c13c7e32fc84c370d7963a21f0ad4d7ce576fd",
     "tests/asl/block/attributes/B.CATR/block-fault-b-catr-placement-001.asl": "a4b8e84bf0c70e3fa24bd3d4e615d73d703f99c55774dc864ebf6de241f6ad4d",
     "tests/asl/block/attributes/B.CATR/block-fault-b-catr-post-trap-001.asl": "36b44c529d1f7894dcd3b0816c743f5f4666db3c025624e6ae5f4e5c23bee95c",
+    "tests/asl/block/attributes/B.CATR/block-fault-b-catr-tstore-atomic-001.asl": "4432ad8e2d84a8c7df05abad00d6eed9d34ee6785f617305dc34fc083ae808c3",
     "tests/asl/block/attributes/B.CATR/block-state-b-catr-fields-001.asl": "199b4e3995ec10701429f2a0cb0e577a510bc2cb2602c6e5bbd2b93cdacfd61c",
     "tests/asl/block/attributes/B.DATR/block-bound-b-datr-cube-reserved-003.asl": "295c1a773fd35b891d162bd743ff3ef3d392832bcb96d0476c6b968c146c1a9a",
     "tests/asl/block/attributes/B.DATR/block-bound-b-datr-layout-map-001.asl": "a2add34671d2eda8276c27666047aece0e56a2cb87e32b6068d833aa1ec04ba4",
@@ -23329,6 +23493,8 @@
     "tests/asl/block/execution/BSTART.TSTORE/block-bound-bstart-tstore-shape-001.asl": "6b3475bfe6ee08a829e9039a5878c767c7a5faa41f965f98692f52a80c083ee3",
     "tests/asl/block/execution/BSTART.TSTORE/block-decode-bstart-tstore-canonical-001.asl": "5639387e4ef77e43998432976c8701818c670d12c38755ecd3f66ecf16780326",
     "tests/asl/block/execution/BSTART.TSTORE/block-decode-bstart-tstore-forms-001.asl": "56638b7d38beb48b5db37e2ca15de90b667aa2747d0e5a89545e3f5e5894d833",
+    "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-atomic-m32-slab-001.asl": "08ffed1c2c48dc020c213745d37db7920c5cb225cd8b63049991f74b5137e89f",
+    "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-atomic-modes-001.asl": "51a1922b872fad3fb31411dcb01c36cff886099d0e21af9525efe85dcaf06d27",
     "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-cube-002.asl": "8cc6d9df031b5d25debe75cef14463fc778a52f2dd26d2a37b0ab43649f524d2",
     "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-packed-001.asl": "fd64a200478dadd31d4ffb3bf492f2d7731d2c796d7fff762a1b31224a5a16af",
     "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-stride-001.asl": "d3a731df660d2858c25ead6461be9a8e3ef756356753087634e490ab60d1a9a1",
@@ -23410,6 +23576,7 @@
     "tests/asl/block/model/dispatch/cell-rearrangement-schema/block-fault-tunpack-partial-selected-byte-r4-001.asl": "54f8f6c5f269a358555be3accc19da30d75c7b30202aeb6072bb6bbcc80c1f8e",
     "tests/asl/block/model/dispatch/cell-rearrangement-schema/block-static-cell-rearrangement-schema-contract-001.asl": "0879005dd205d25e980c6e0e964c807f4ee1e100933b935d5d5d38207f4a89c2",
     "tests/asl/block/model/dispatch/command-data-attributes/block-bound-cube-transport-mask-layout-002.asl": "9ec772436bcef5e29e5f16daec9e40f2cdaf74123b3e6184ce3ea02933b4eab3",
+    "tests/asl/block/model/dispatch/command-data-attributes/block-fault-tstore-atomic-cmode-context-001.asl": "4bc6bbe76cc6ad82fc640d4b1b6ae745895da4c3fc8047a7c1379768f6833840",
     "tests/asl/block/model/dispatch/command-data-attributes/block-static-command-data-attributes-contract-001.asl": "75db5d0289f6e106a00aaf468578a5ee712884a94e2100db91443354f322ef32",
     "tests/asl/block/model/dispatch/commands/block-bound-command-totality-boundaries-001.asl": "45a6ce63e893f77b394567108afaabb41abc03ecf06af03dca7813186b15882c",
     "tests/asl/block/model/dispatch/commands/block-exec-command-001.asl": "5b911ac5a6050494e8ae89dce81c7d8ed147152c5e2c9fef0f13c530e867c00d",
@@ -23596,6 +23763,7 @@
     "tests/asl/block/model/dispatch/shared-tlsu/block-static-shared-tlsu-contract-001.asl": "c3a2dd790c901b04c97861fff2f41a07cf5816b66ce5994fc16c1f053bec868c",
     "tests/asl/block/model/dispatch/start/block-state-bstart-predecessor-sequential-002.asl": "ff0bbc6cd82a50557d1db5bff260e72743892d361063c20140ba7caa3ee0ab28",
     "tests/asl/block/model/dispatch/start/block-state-bstart-predecessor-taken-001.asl": "d33d93e453bfd8e19a8973b35c9b2e14fc4046ddd6d1a31e740bd0a5ebd10343",
+    "tests/asl/block/model/dispatch/start/block-state-shared-bstart-incomplete-predecessor-001.asl": "ee47d26eb6fe12b871922a8ea6d4cb8c9cf2d5c82f2e8dc3ccc4254b9e39607a",
     "tests/asl/block/model/dispatch/start/block-static-start-contract-001.asl": "0fba69020c3bdaecf853edb2a88a5683ef000bb21319a9f06accb636ed4852a1",
     "tests/asl/block/model/dispatch/tcvt-destination/block-static-tcvt-destination-contract-001.asl": "8f92edffbc780c38d03c3ba4d21574618c010311e31121c977c933d61cd1d08d",
     "tests/asl/block/model/dispatch/tcvt-schema/block-exec-tcvt-source-layout-mask-decoded-002.asl": "a86b80cd3a57723c036a92a9062dbeda510957318f032ad4d1a02ff5665ee254",
@@ -23617,6 +23785,8 @@
     "tests/asl/block/model/dispatch/timg2col-schema/block-bound-timg2col-shape-001.asl": "83182fb4f3bf71cdea1a67ee6ef7f3ea99b0dac3ef237cfb29df28d5decfd87d",
     "tests/asl/block/model/dispatch/timg2col-schema/block-state-timg2col-cooperative-001.asl": "7ec330ee53aa4e8b78346df0ccef552c23ef70e7c40a13133d99ee70614e918b",
     "tests/asl/block/model/dispatch/timg2col-schema/block-static-timg2col-schema-contract-001.asl": "3361d746115cae08f44ae8a205a9071312ee2eb01b20e5b5546a0eab75f9bd3d",
+    "tests/asl/block/model/dispatch/tlsu-atomic-tstore/block-exec-tstore-atomic-shared-fault-001.asl": "7b7e69bb6b4e84320a848dc5aeb82ef18375d2acff3ec02444192375f69ac4d6",
+    "tests/asl/block/model/dispatch/tlsu-atomic-tstore/block-static-tlsu-atomic-tstore-contract-001.asl": "4bdf2ad05f5e51266d3cc99d51d0e420710f2d4308f64abd3de561aa28d75387",
     "tests/asl/block/model/dispatch/tlsu-gm-atom-red/block-exec-masked-atom-red-decoded-002.asl": "b13b70b3dc7ff0295bc0a891d18dae12252bb97ee11b18438bb86c1110ffd188",
     "tests/asl/block/model/dispatch/tlsu-gm-atom-red/block-static-tlsu-gm-atom-red-contract-001.asl": "76c3e7af32b694d59a8e82e20cac3ea662e5addc4eb9c7e3d62d0907d070a051",
     "tests/asl/block/model/dispatch/tlsu-gmov/block-exec-gmov-private-fourstream-010.asl": "8e23e9e4e6113d58f38393e45bed8cf13776fb389db6d4b0fd2cc5bea69154cf",
@@ -24039,6 +24209,7 @@
     "tests/asl/block/model/schema/dimensions/block-state-dimension-default-one-001.asl": "ec1e8a0f2200ad2db268be364f6cda48a6309328ae0302e4dc5922be733b7dbe",
     "tests/asl/block/model/schema/dimensions/block-static-dimensions-contract-001.asl": "892406b35511f8a3cdcbc4039d26fe6a539f9497d8acf07a434e4c2b834f5907",
     "tests/asl/block/model/schema/header/block-static-header-contract-001.asl": "ab129b48c9f63f7208bd711f360d76b2b96fb081024facc9994356f08641f074",
+    "tests/asl/block/model/state/atomic-tstore-source-lifetime/block-static-atomic-tstore-source-lifetime-contract-001.asl": "89165472f2114854c566837d17eefa52b6d5d2fc3d8d43d219ef6fe66d2378e8",
     "tests/asl/block/model/state/barg/block-static-barg-contract-001.asl": "819dc004cd548c867fed11ae4c745f83e0fc29585f18e675bfe9401ead4395ca",
     "tests/asl/block/model/state/binding-state/block-static-binding-state-contract-001.asl": "823091ff865a95ee238f980119ca3480ae87ea6ab35e8e0830e48c2afcd49dbf",
     "tests/asl/block/model/state/control-state/block-state-configuration-001.asl": "19f982219f8d9c6c9aa43d82fc49841014ec677cb8e2de284cc1d7bf50250966",
@@ -26930,15 +27101,41 @@
     "tests/asl/tile/model/legality/reduction-and-expansion/tile-fault-reduction-cube-geometry-002.asl": "e1238a6697e244f782ff53e148827262516bcaccf3d776c1a09823503f28088d",
     "tests/asl/tile/model/legality/reduction-and-expansion/tile-static-reduction-and-expansion-contract-001.asl": "052e6e31624c9efc4bf2b3cfb89dbfc729709fce323e155ab5d854f2195f85ba",
     "tests/asl/tile/model/memory/addressing/tile-static-addressing-contract-001.asl": "a9f3abac12db4fecd3c9113cba2c7ed8f3ff83da01803292cee689cafb192250",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-boundary-001.asl": "a7730fa36d72f650c578b29a3712a452b7d0d37dff3f39acba05cba16cb2972c",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-cube-stride-001.asl": "3526add0f13c77437504ec22f76e8ebd81bb21f021d8d82dff8552e02cfdfdec",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-gradual-001.asl": "2f54359810274b6275074279aeb33c85478404d6885f932c3e08a387f867a960",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-mask-001.asl": "2960f45822b7d39476bf775d23df395582a8942bde2c5d049fbbb72c5be02775",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-numeric-001.asl": "7c2876e7548572575f2c8c87e656c268e06a1c78393c9a33db9cec6571de5943",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-overlap-001.asl": "688b0c63397bc3ed870826b00e10771d1d0302238b3d9ac45261b81e45c3cde3",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-preflight-001.asl": "58589fc177d4e16ad8fbca910aead50a5fe04120fb689b4a3b23aea4c332f040",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-shared-001.asl": "1e77cba6a8826a7b10db76c223e600736e3b4382a89e8f28d0088ea6ce17df0e",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-unequal-limits-001.asl": "6fcaf860c58ab8244ada3ff0b773cd937af75fbd7146eeb18e9aa92970594e69",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-virtual-alias-001.asl": "2039776e3f2aaffd6a031e9b03b06ece644687734f2519517e78a3170de79099",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-fault-tstore-atomic-dtype-001.asl": "98f924973c176792895fa4387c541fd4bc7daae7e5741997a00d1ecbbff7681a",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-fault-tstore-atomic-legality-001.asl": "997ad71ef698f15a8a3a9c7fa4f7f6b68b96b234d0d154741bc72ceae4efc66e",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-fault-tstore-atomic-translation-001.asl": "283beca9df4a8933d67c544b51db9fb91ec611e25938571cefbff2bc870570cc",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-state-tstore-atomic-lifetime-local-001.asl": "8bc296222ca3a5f1839605f039c4be01004e4c750d6ecb70464c0634b2daec5c",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-state-tstore-atomic-lifetime-local-cohort-002.asl": "910b1285f8afeaf7d43bd1de6af2a3a2661bfafab7c986e20109d16550a6cafb",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-state-tstore-atomic-lifetime-local-cohort-consume-003.asl": "2bf49329f8ba157e36caddba174af37c759b19dd282631c732179b9e3b56ea02",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-state-tstore-atomic-lifetime-local-cohort-overlap-004.asl": "279ce93ef629c7243316687e460bfb39115b33836864319548d944f0a21e826e",
+    "tests/asl/tile/model/memory/atomic-tstore/tile-static-atomic-tstore-contract-001.asl": "2f49a44a102dffb15b3661ea568ae47ad0ecf07a15671510cd6865149847bde0",
     "tests/asl/tile/model/memory/atomics/tile-atomic-shared-register-updates-001.asl": "8643963c3f5d804f5071c4b4f2d61a0fa1559fa17c628be65a2ece926d9bcaee",
     "tests/asl/tile/model/memory/atomics/tile-static-atomics-contract-001.asl": "e3f0b897d64c12bf23e613b3ab3e3dc15ea37cc37801a86af953ecb2fe9f0995",
     "tests/asl/tile/model/memory/gather-scatter/tile-exec-mask-mgather-mask-packed-003.asl": "a26544c4e3d805c3c4a141a2e37f7047c2d2f5bf45d0f9c127e1058437a810a4",
     "tests/asl/tile/model/memory/gather-scatter/tile-exec-mask-mgather-packed-002.asl": "f2756d76bb63006643e615e051022b617a1086bf0bff87906fec92438e9f97b7",
     "tests/asl/tile/model/memory/gather-scatter/tile-fault-exec-mask-mgather-no-probe-001.asl": "edf5ce0d98a30289805594cd7e363138bba7e5828f420f9f1a7e03bc1871b775",
     "tests/asl/tile/model/memory/gather-scatter/tile-static-gather-scatter-contract-001.asl": "d6cab96d0eebc246fb74ecdff0f75f334333306b431e54d11980faba4d944d02",
-    "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-atom-red-family-001.asl": "1b0d73d49df34ad9ec3ae5f93aa7c340a024731dbd2bfefb5255cf5f1c009a12",
+    "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-add-gradual-001.asl": "9f7be912e741b889948beba88de37b7be61a033c10df6b6e4eb78fa697a4963d",
+    "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-add-old-value-001.asl": "fad8b26ac2cbd91e22910af2b35164ca61a9994e28ee317e777e62cc146f5cbf",
+    "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-atom-red-family-001.asl": "d112f1c3643163e4213f26a93874544e246d4c79ca836c0d0e7fbc6a49dcf4b0",
     "tests/asl/tile/model/memory/gm-atom-red-execution/tile-static-gm-atom-red-execution-contract-001.asl": "8b90081cb2d2969c894634bc2c6f868bd52ad5668f851cd115108498a0a967f7",
-    "tests/asl/tile/model/memory/gm-atom-red/tile-static-gm-atom-red-contract-001.asl": "6dc7556ecd6590bde1aa7cad2cd5e182f4feb30b3d333bf643272af5f15ae16d",
+    "tests/asl/tile/model/memory/gm-atom-red/tile-exec-gm-add-bf16-001.asl": "1c3813ee77a1cb93cd283f60682c1dd70dd8e4b1e07c104296ed44b6c2ef099b",
+    "tests/asl/tile/model/memory/gm-atom-red/tile-exec-gm-add-fp16-001.asl": "b3c462c71d184a084ee42496a485aa1f5478b05eb04e061d04c474c4d039b270",
+    "tests/asl/tile/model/memory/gm-atom-red/tile-exec-gm-add-fp32-001.asl": "5eb01c6dd3e8627d7542054b72a29381bde33da0740aa7c39b87c71cfc25ead2",
+    "tests/asl/tile/model/memory/gm-atom-red/tile-exec-gm-add-fp64-001.asl": "90694db025b00d345c25c3ea0dc633728368d87f2c9346b869ef20a3ba0c0ee1",
+    "tests/asl/tile/model/memory/gm-atom-red/tile-static-gm-atom-red-contract-001.asl": "955ab041b1193df8664a437e09f0043b3e1833fd2024e0b77446c9984fd45325",
+    "tests/asl/tile/model/memory/gm-obligation-progress/tile-state-gm-obligation-progress-lifetime-001.asl": "50c8060718be14e1103b446158e7a0e79ea256d485292c150a2559f0d49808a9",
+    "tests/asl/tile/model/memory/gm-obligation-progress/tile-static-gm-obligation-progress-contract-001.asl": "70b4caa20dbc422fc92dc30229b62b0fdfb74f61aa9f0ccb99a048e3adc7cf30",
     "tests/asl/tile/model/memory/load-store/tile-bound-tload-cube-widths-003.asl": "f98cef0232d9a837f4cf935b9b42f7149710f80c8d18203a085aea6c52bb5623",
     "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-decode-004.asl": "7467581a803ae2dab23d693dceb2f2a352f643554c2731caeb335f8f29b81836",
     "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-faults-003.asl": "98cd217b0fa554a07a4f53aa67d148d62f44b71ccb83dec209deeed5f4958150",
@@ -27179,19 +27376,19 @@
     "tests/asl/tile/tile-scalar-and-immediate/logical/TXORS/tile-static-txors-contract-001.asl": "1307d5083cb3ef94263b450f98180653a80c0648f339b2ace7d13ad91b5f29c5"
   },
   "summary": {
-    "documentation_page_count": 927,
+    "documentation_page_count": 932,
     "executable_requirement_count": 677,
     "mnemonic_count": 671,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 1128,
+    "requirement_count": 1130,
     "status": "closed",
-    "test_count": 4291,
+    "test_count": 4337,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
     "uncovered_units": [],
-    "unit_count": 927
+    "unit_count": 932
   },
   "tests": [
     {
@@ -35584,6 +35781,14 @@
       "source": "asl/arch/memory-model/address-space.asl"
     },
     {
+      "id": "PTO-AVS-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-static-atomic-tstore-obligations-contract-001.asl",
+      "requirements": [],
+      "sha256": "06981381bcedbea23e5b37eed4185c6d8e4041151b06fe51969450fbbb136f12",
+      "source": "asl/arch/memory-model/atomic-tstore-obligations.asl"
+    },
+    {
       "id": "PTO-AVS-ARCH-MEMORY-MODEL-ATOMICITY-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/arch/memory-model/atomicity/arch-static-atomicity-contract-001.asl",
@@ -36596,6 +36801,151 @@
       "requirements": [],
       "sha256": "fa38a935c4d9aaca5cca5fe56fc0534825d762250e23f3c9b7f3622cfcf27a29",
       "source": "asl/arch/state/trap-context.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-TSTORE-ATOMIC-ADMISSION-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/memory-model/gm-obligations/arch-state-tstore-atomic-admission-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001"
+      ],
+      "sha256": "d59d843d35dfbc9d9bfa7854cff58f8d1fd167a9ca169effa901566376f30e30",
+      "source": "asl/arch/memory-model/gm-obligations.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-TSTORE-ATOMIC-BSTART-PREDECESSOR-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-bstart-predecessor-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001",
+        "PTO-ARCH-KERNEL-LIFECYCLE-001"
+      ],
+      "sha256": "9606499280b9e25efb5612de07f20810988e57c639d84f413eef40ba9e8f63ac",
+      "source": "asl/arch/state/kernel-lifecycle.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-TSTORE-ATOMIC-CANCEL-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-cancel-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001",
+        "PTO-ARCH-KERNEL-LIFECYCLE-001",
+        "PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001"
+      ],
+      "sha256": "7b6b6f3e2a357da09a1d5bee455de4503357ff71d71716c6d9eceedc5e983b90",
+      "source": "asl/arch/state/kernel-lifecycle.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-TSTORE-ATOMIC-COMPLETION-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-completion-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001",
+        "PTO-B-CATR-CONTROL-001",
+        "PTO-ARCH-KERNEL-LIFECYCLE-001"
+      ],
+      "sha256": "fded6a714fc50fd9ea514fd5a694b3582aebc53eee06e948e452d193ffde20d9",
+      "source": "asl/arch/state/kernel-lifecycle.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-PARTIAL-003",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-domain-squash-partial-003.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001",
+        "PTO-ARCH-KERNEL-LIFECYCLE-001",
+        "PTO-B-IOS-SHARED-STATE-001",
+        "PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001",
+        "PTO-B-ASSEMBLE-SPECULATION-001",
+        "PTO-ARCH-SHARED-VTAG-LIFETIME-001"
+      ],
+      "sha256": "85ae8d711bc8b8774e32efc5935a314b0eacb5ec178ba62aa655efa6408f298d",
+      "source": "asl/arch/state/kernel-lifecycle.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-ZERO-002",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-domain-squash-zero-002.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001",
+        "PTO-ARCH-KERNEL-LIFECYCLE-001",
+        "PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001",
+        "PTO-B-ASSEMBLE-SPECULATION-001"
+      ],
+      "sha256": "8aaf1d2b9a26b49f7348efce10097c469fa6e1675a04fbd9b654509ecf5d99e3",
+      "source": "asl/arch/state/kernel-lifecycle.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-drain-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001",
+        "PTO-ARCH-KERNEL-LIFECYCLE-001",
+        "PTO-B-IOS-SHARED-STATE-001",
+        "PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001",
+        "PTO-B-ASSEMBLE-SPECULATION-001",
+        "PTO-ARCH-SHARED-VTAG-LIFETIME-001"
+      ],
+      "sha256": "f111d8735a2b49d9d779c2dbe34679f4ad1381fe66daf41d98f131543e8a17c3",
+      "source": "asl/arch/state/kernel-lifecycle.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-TSTORE-ATOMIC-IDENTITY-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-identity-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001",
+        "PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001"
+      ],
+      "sha256": "b71926837cdf936df5fafa9efefa604748eb9a2d7748a3a28e4a3795e0f0e38e",
+      "source": "asl/arch/memory-model/atomic-tstore-obligations.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-TSTORE-ATOMIC-INTERLEAVED-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-interleaved-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001",
+        "PTO-ARCH-PE-EXECUTION-CONTEXT-001"
+      ],
+      "sha256": "6328e671b7f96c76ab8a470ca5018771f233016551a8759d5b2dbe2da35b2f06",
+      "source": "asl/arch/memory-model/atomic-tstore-obligations.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-TSTORE-ATOMIC-LOCAL-CONSUMER-SQUASH-004",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-local-consumer-squash-004.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001",
+        "PTO-B-ASSEMBLE-CONSUMER-READINESS-001",
+        "PTO-B-ASSEMBLE-SPECULATION-001",
+        "PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001"
+      ],
+      "sha256": "2741b7690d104afacf4a146b2e84ab48ee7eac9e15181be2ff962c1f4a96efdd",
+      "source": "asl/arch/state/kernel-lifecycle.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-TSTORE-ATOMIC-TRANSLATION-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/memory-model/atomic-tstore-obligations/arch-state-tstore-atomic-translation-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001"
+      ],
+      "sha256": "82ea1a42148e03f7fe0188535e29cd2aded35b889489f9812ea345fce5d4197c",
+      "source": "asl/arch/memory-model/atomic-tstore-obligations.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-ASSEMBLE-ALIAS-CONSUMER-001",
@@ -40567,6 +40917,14 @@
       "source": "asl/block/model/dispatch/timg2col-schema.asl"
     },
     {
+      "id": "PTO-AVS-BLOCK-MODEL-DISPATCH-TLSU-ATOMIC-TSTORE-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/block/model/dispatch/tlsu-atomic-tstore/block-static-tlsu-atomic-tstore-contract-001.asl",
+      "requirements": [],
+      "sha256": "4bdf2ad05f5e51266d3cc99d51d0e420710f2d4308f64abd3de561aa28d75387",
+      "source": "asl/block/model/dispatch/tlsu-atomic-tstore.asl"
+    },
+    {
       "id": "PTO-AVS-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/block/model/dispatch/tlsu-gm-atom-red/block-static-tlsu-gm-atom-red-contract-001.asl",
@@ -40891,6 +41249,14 @@
       "requirements": [],
       "sha256": "3c380f0901543572906e27b1afc2650f937a7de3dd29f8bf8de77177a45e6d70",
       "source": "asl/block/model/schema/bundle-encoding.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-MODEL-STATE-ATOMIC-TSTORE-LIFETIME-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/block/model/state/atomic-tstore-source-lifetime/block-static-atomic-tstore-source-lifetime-contract-001.asl",
+      "requirements": [],
+      "sha256": "89165472f2114854c566837d17eefa52b6d5d2fc3d8d43d219ef6fe66d2378e8",
+      "source": "asl/block/model/state/atomic-tstore-source-lifetime.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-MODEL-STATE-BARG-STATIC-001",
@@ -45172,6 +45538,19 @@
       "source": "asl/block/model/operands/shared-generation.asl"
     },
     {
+      "id": "PTO-AVS-BLOCK-SHARED-BSTART-INCOMPLETE-PREDECESSOR-001",
+      "kind": "state-transition",
+      "path": "tests/asl/block/model/dispatch/start/block-state-shared-bstart-incomplete-predecessor-001.asl",
+      "requirements": [
+        "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001",
+        "PTO-ARCH-PE-EXECUTION-CONTEXT-001",
+        "PTO-B-ASSEMBLE-SHARED-GENERATION-001",
+        "PTO-B-ASSEMBLE-SPECULATION-001"
+      ],
+      "sha256": "ee47d26eb6fe12b871922a8ea6d4cb8c9cf2d5c82f2e8dc3ccc4254b9e39607a",
+      "source": "asl/block/model/dispatch/start.asl"
+    },
+    {
       "id": "PTO-AVS-BLOCK-SHARED-COMPLETION-SOURCE-MUTATION-021",
       "kind": "state-transition",
       "path": "tests/asl/block/model/dispatch/shared-tlsu/block-state-shared-completion-source-mutation-021.asl",
@@ -47671,6 +48050,86 @@
       ],
       "sha256": "8af6b71e97a1bfa53e60c60e43ee88120743672f4d3d9b473fc3c7990da5b3d7",
       "source": "asl/block/model/dispatch/tile-scalar-schema.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-TSTORE-ATOMIC-CATR-001",
+      "kind": "fault",
+      "path": "tests/asl/block/attributes/B.CATR/block-fault-b-catr-tstore-atomic-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-B-CATR-CONTROL-001"
+      ],
+      "sha256": "4432ad8e2d84a8c7df05abad00d6eed9d34ee6785f617305dc34fc083ae808c3",
+      "source": "asl/block/attributes/B.CATR.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001",
+      "kind": "fault",
+      "path": "tests/asl/block/model/dispatch/command-data-attributes/block-fault-tstore-atomic-cmode-context-001.asl",
+      "requirements": [
+        "PTO-B-DATR-FIELDS-001",
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001"
+      ],
+      "sha256": "4bc6bbe76cc6ad82fc640d4b1b6ae745895da4c3fc8047a7c1379768f6833840",
+      "source": "asl/block/model/dispatch/command-data-attributes.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-TSTORE-ATOMIC-LIFETIME-001",
+      "kind": "state-transition",
+      "path": "tests/asl/tile/model/memory/gm-obligation-progress/tile-state-gm-obligation-progress-lifetime-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001",
+        "PTO-B-IOS-SHARED-STATE-001"
+      ],
+      "sha256": "50c8060718be14e1103b446158e7a0e79ea256d485292c150a2559f0d49808a9",
+      "source": "asl/tile/model/memory/gm-obligation-progress.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001",
+      "kind": "execution",
+      "path": "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-atomic-m32-slab-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ARCH-KERNEL-LIFECYCLE-001",
+        "PTO-CUBE-CELL-TRANSPORT-001"
+      ],
+      "sha256": "08ffed1c2c48dc020c213745d37db7920c5cb225cd8b63049991f74b5137e89f",
+      "source": "asl/block/execution/BSTART.TSTORE.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001",
+      "kind": "execution",
+      "path": "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-atomic-modes-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ATOM-RED-ORDERING-001"
+      ],
+      "sha256": "51a1922b872fad3fb31411dcb01c36cff886099d0e21af9525efe85dcaf06d27",
+      "source": "asl/block/execution/BSTART.TSTORE.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-shared-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-B-IOS-SHARED-STATE-001",
+        "PTO-B-SUBVIEW-RANGE-001"
+      ],
+      "sha256": "1e77cba6a8826a7b10db76c223e600736e3b4382a89e8f28d0088ea6ce17df0e",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-FAULT-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/tlsu-atomic-tstore/block-exec-tstore-atomic-shared-fault-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-B-IOS-SHARED-STATE-001"
+      ],
+      "sha256": "7b7e69bb6b4e84320a848dc5aeb82ef18375d2acff3ec02444192375f69ac4d6",
+      "source": "asl/block/model/dispatch/tlsu-atomic-tstore.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-TSTORE-CUBE-002",
@@ -63489,6 +63948,68 @@
       "source": "asl/tile/model/execution/generation.asl"
     },
     {
+      "id": "PTO-AVS-TILE-GM-ADD-GRADUAL-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-add-gradual-001.asl",
+      "requirements": [
+        "PTO-GM-FLOATING-ADD-NUMERIC-001",
+        "PTO-ATOM-RED-ORDERING-001"
+      ],
+      "sha256": "9f7be912e741b889948beba88de37b7be61a033c10df6b6e4eb78fa697a4963d",
+      "source": "asl/tile/model/memory/gm-atom-red-execution.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-GM-ADD-GRADUAL-002",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-add-old-value-001.asl",
+      "requirements": [
+        "PTO-GM-FLOATING-ADD-NUMERIC-001",
+        "PTO-ATOM-RED-ORDERING-001"
+      ],
+      "sha256": "fad8b26ac2cbd91e22910af2b35164ca61a9994e28ee317e777e62cc146f5cbf",
+      "source": "asl/tile/model/memory/gm-atom-red-execution.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-GM-ADD-NUMERIC-BF16-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/gm-atom-red/tile-exec-gm-add-bf16-001.asl",
+      "requirements": [
+        "PTO-GM-FLOATING-ADD-NUMERIC-001"
+      ],
+      "sha256": "1c3813ee77a1cb93cd283f60682c1dd70dd8e4b1e07c104296ed44b6c2ef099b",
+      "source": "asl/tile/model/memory/gm-atom-red.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-GM-ADD-NUMERIC-FP16-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/gm-atom-red/tile-exec-gm-add-fp16-001.asl",
+      "requirements": [
+        "PTO-GM-FLOATING-ADD-NUMERIC-001"
+      ],
+      "sha256": "b3c462c71d184a084ee42496a485aa1f5478b05eb04e061d04c474c4d039b270",
+      "source": "asl/tile/model/memory/gm-atom-red.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-GM-ADD-NUMERIC-FP32-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/gm-atom-red/tile-exec-gm-add-fp32-001.asl",
+      "requirements": [
+        "PTO-GM-FLOATING-ADD-NUMERIC-001"
+      ],
+      "sha256": "5eb01c6dd3e8627d7542054b72a29381bde33da0740aa7c39b87c71cfc25ead2",
+      "source": "asl/tile/model/memory/gm-atom-red.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-GM-ADD-NUMERIC-FP64-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/gm-atom-red/tile-exec-gm-add-fp64-001.asl",
+      "requirements": [
+        "PTO-GM-FLOATING-ADD-NUMERIC-001"
+      ],
+      "sha256": "90694db025b00d345c25c3ea0dc633728368d87f2c9346b869ef20a3ba0c0ee1",
+      "source": "asl/tile/model/memory/gm-atom-red.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-GM-ATOM-RED-FAMILY-001",
       "kind": "execution",
       "path": "tests/asl/tile/model/memory/gm-atom-red-execution/tile-exec-gm-atom-red-family-001.asl",
@@ -63539,7 +64060,7 @@
         "PTO-INST-TILE-MSCATTER-POPC",
         "PTO-INST-TILE-MSCATTER-XOR"
       ],
-      "sha256": "1b0d73d49df34ad9ec3ae5f93aa7c340a024731dbd2bfefb5255cf5f1c009a12",
+      "sha256": "d112f1c3643163e4213f26a93874544e246d4c79ca836c0d0e7fbc6a49dcf4b0",
       "source": "asl/tile/model/memory/gm-atom-red-execution.asl"
     },
     {
@@ -64507,6 +65028,14 @@
       "source": "asl/tile/model/memory/addressing.asl"
     },
     {
+      "id": "PTO-AVS-TILE-MODEL-MEMORY-ATOMIC-TSTORE-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-static-atomic-tstore-contract-001.asl",
+      "requirements": [],
+      "sha256": "2f49a44a102dffb15b3661ea568ae47ad0ecf07a15671510cd6865149847bde0",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-MODEL-MEMORY-ATOMICS-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/tile/model/memory/atomics/tile-static-atomics-contract-001.asl",
@@ -64543,10 +65072,19 @@
         "PTO-ATOM-RED-INC-DEC-SEMANTICS-001",
         "PTO-ATOM-RED-POPC-SEMANTICS-001",
         "PTO-ATOM-RED-ORDERING-001",
-        "PTO-ATOM-RED-FAULTS-001"
+        "PTO-ATOM-RED-FAULTS-001",
+        "PTO-GM-FLOATING-ADD-NUMERIC-001"
       ],
-      "sha256": "6dc7556ecd6590bde1aa7cad2cd5e182f4feb30b3d333bf643272af5f15ae16d",
+      "sha256": "955ab041b1193df8664a437e09f0043b3e1833fd2024e0b77446c9984fd45325",
       "source": "asl/tile/model/memory/gm-atom-red.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-MODEL-MEMORY-GM-OBLIGATION-PROGRESS-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/tile/model/memory/gm-obligation-progress/tile-static-gm-obligation-progress-contract-001.asl",
+      "requirements": [],
+      "sha256": "70b4caa20dbc422fc92dc30229b62b0fdfb74f61aa9f0ccb99a048e3adc7cf30",
+      "source": "asl/tile/model/memory/gm-obligation-progress.asl"
     },
     {
       "id": "PTO-AVS-TILE-MODEL-MEMORY-LOAD-STORE-STATIC-001",
@@ -70543,6 +71081,190 @@
       "source": "asl/tile/elementwise-tile-tile/transcendental/TSQRT.asl"
     },
     {
+      "id": "PTO-AVS-TILE-TSTORE-ATOMIC-BOUNDARY-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-boundary-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-CUBE-CELL-TRANSPORT-001",
+        "PTO-ARCH-MEMORY-MODEL-QUALIFIER-001"
+      ],
+      "sha256": "a7730fa36d72f650c578b29a3712a452b7d0d37dff3f39acba05cba16cb2972c",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TSTORE-ATOMIC-CUBE-STRIDE-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-cube-stride-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-CUBE-CELL-TRANSPORT-001"
+      ],
+      "sha256": "3526add0f13c77437504ec22f76e8ebd81bb21f021d8d82dff8552e02cfdfdec",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TSTORE-ATOMIC-DTYPE-001",
+      "kind": "fault",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-fault-tstore-atomic-dtype-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ATOM-RED-TYPE-LEGALITY-001"
+      ],
+      "sha256": "98f924973c176792895fa4387c541fd4bc7daae7e5741997a00d1ecbbff7681a",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TSTORE-ATOMIC-GRADUAL-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-gradual-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-GM-FLOATING-ADD-NUMERIC-001",
+        "PTO-ATOM-RED-ORDERING-001"
+      ],
+      "sha256": "2f54359810274b6275074279aeb33c85478404d6885f932c3e08a387f867a960",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TSTORE-ATOMIC-LEGALITY-001",
+      "kind": "fault",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-fault-tstore-atomic-legality-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-CUBE-CELL-TRANSPORT-001"
+      ],
+      "sha256": "997ad71ef698f15a8a3a9c7fa4f7f6b68b96b234d0d154741bc72ceae4efc66e",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-001",
+      "kind": "state-transition",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-state-tstore-atomic-lifetime-local-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001"
+      ],
+      "sha256": "8bc296222ca3a5f1839605f039c4be01004e4c750d6ecb70464c0634b2daec5c",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-002",
+      "kind": "state-transition",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-state-tstore-atomic-lifetime-local-cohort-002.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001"
+      ],
+      "sha256": "910b1285f8afeaf7d43bd1de6af2a3a2661bfafab7c986e20109d16550a6cafb",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-CONSUME-003",
+      "kind": "state-transition",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-state-tstore-atomic-lifetime-local-cohort-consume-003.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001"
+      ],
+      "sha256": "2bf49329f8ba157e36caddba174af37c759b19dd282631c732179b9e3b56ea02",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-OVERLAP-004",
+      "kind": "state-transition",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-state-tstore-atomic-lifetime-local-cohort-overlap-004.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001"
+      ],
+      "sha256": "279ce93ef629c7243316687e460bfb39115b33836864319548d944f0a21e826e",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TSTORE-ATOMIC-MASK-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-mask-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001"
+      ],
+      "sha256": "2960f45822b7d39476bf775d23df395582a8942bde2c5d049fbbb72c5be02775",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TSTORE-ATOMIC-NUMERIC-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-numeric-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-GM-FLOATING-ADD-NUMERIC-001",
+        "PTO-ATOM-RED-ORDERING-001"
+      ],
+      "sha256": "7c2876e7548572575f2c8c87e656c268e06a1c78393c9a33db9cec6571de5943",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TSTORE-ATOMIC-OVERLAP-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-overlap-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001"
+      ],
+      "sha256": "688b0c63397bc3ed870826b00e10771d1d0302238b3d9ac45261b81e45c3cde3",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TSTORE-ATOMIC-PREFLIGHT-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-preflight-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001"
+      ],
+      "sha256": "58589fc177d4e16ad8fbca910aead50a5fe04120fb689b4a3b23aea4c332f040",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TSTORE-ATOMIC-TRANSLATION-001",
+      "kind": "fault",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-fault-tstore-atomic-translation-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ATOM-RED-FAULTS-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001"
+      ],
+      "sha256": "283beca9df4a8933d67c544b51db9fb91ec611e25938571cefbff2bc870570cc",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TSTORE-ATOMIC-UNEQUAL-LIMITS-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-unequal-limits-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ATOM-RED-INC-DEC-SEMANTICS-001",
+        "PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001"
+      ],
+      "sha256": "6fcaf860c58ab8244ada3ff0b773cd937af75fbd7146eeb18e9aa92970594e69",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TSTORE-ATOMIC-VIRTUAL-ALIAS-001",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/atomic-tstore/tile-exec-tstore-atomic-virtual-alias-001.asl",
+      "requirements": [
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001"
+      ],
+      "sha256": "2039776e3f2aaffd6a031e9b03b06ece644687734f2519517e78a3170de79099",
+      "source": "asl/tile/model/memory/atomic-tstore.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-TSTORE-CUBE-002",
       "kind": "execution",
       "path": "tests/asl/tile/model/memory/load-store/tile-exec-tstore-cube-002.asl",
@@ -71845,6 +72567,29 @@
     {
       "classification": [
         "memory-model",
+        "atomic-tstore-obligations"
+      ],
+      "documentation": "docs/arch/memory-model/atomic-tstore-obligations.md",
+      "id": "PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS",
+      "mnemonic": null,
+      "readiness_subjects": [],
+      "semantic_tests": [
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-IDENTITY-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-INTERLEAVED-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-TRANSLATION-001"
+      ],
+      "source": "asl/arch/memory-model/atomic-tstore-obligations.asl",
+      "surface": "arch",
+      "tests": [
+        "PTO-AVS-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS-STATIC-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-IDENTITY-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-INTERLEAVED-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-TRANSLATION-001"
+      ]
+    },
+    {
+      "classification": [
+        "memory-model",
         "atomicity"
       ],
       "documentation": "docs/arch/memory-model/atomicity.md",
@@ -71923,7 +72668,8 @@
         "PTO-AVS-ARCH-GM-OBLIGATION-DYNAMIC-ACR-004",
         "PTO-AVS-ARCH-GM-OBLIGATION-DYNAMIC-TSTORE-002",
         "PTO-AVS-ARCH-GM-OBLIGATION-FIRST-VALIDATION-ACR-003",
-        "PTO-AVS-ARCH-GM-OBLIGATION-SCALAR-FAULT-RETRY-001"
+        "PTO-AVS-ARCH-GM-OBLIGATION-SCALAR-FAULT-RETRY-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-ADMISSION-001"
       ],
       "source": "asl/arch/memory-model/gm-obligations.asl",
       "surface": "arch",
@@ -71932,7 +72678,8 @@
         "PTO-AVS-ARCH-GM-OBLIGATION-DYNAMIC-TSTORE-002",
         "PTO-AVS-ARCH-GM-OBLIGATION-FIRST-VALIDATION-ACR-003",
         "PTO-AVS-ARCH-GM-OBLIGATION-SCALAR-FAULT-RETRY-001",
-        "PTO-AVS-ARCH-MEMORY-MODEL-GM-OBLIGATIONS-STATIC-001"
+        "PTO-AVS-ARCH-MEMORY-MODEL-GM-OBLIGATIONS-STATIC-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-ADMISSION-001"
       ]
     },
     {
@@ -72375,7 +73122,14 @@
       "semantic_tests": [
         "PTO-AVS-ARCH-GM-OBLIGATION-DELAYED-TSTORE-001",
         "PTO-AVS-ARCH-GM-OBLIGATION-TSTORE-QUIESCENCE-002",
-        "PTO-AVS-ARCH-KERNEL-LIFECYCLE-FRESH-LAUNCH-TRAP-003"
+        "PTO-AVS-ARCH-KERNEL-LIFECYCLE-FRESH-LAUNCH-TRAP-003",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-BSTART-PREDECESSOR-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-CANCEL-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-COMPLETION-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-PARTIAL-003",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-ZERO-002",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-LOCAL-CONSUMER-SQUASH-004"
       ],
       "source": "asl/arch/state/kernel-lifecycle.asl",
       "surface": "arch",
@@ -72383,7 +73137,14 @@
         "PTO-AVS-ARCH-GM-OBLIGATION-DELAYED-TSTORE-001",
         "PTO-AVS-ARCH-GM-OBLIGATION-TSTORE-QUIESCENCE-002",
         "PTO-AVS-ARCH-KERNEL-LIFECYCLE-FRESH-LAUNCH-TRAP-003",
-        "PTO-AVS-ARCH-STATE-KERNEL-LIFECYCLE-STATIC-001"
+        "PTO-AVS-ARCH-STATE-KERNEL-LIFECYCLE-STATIC-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-BSTART-PREDECESSOR-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-CANCEL-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-COMPLETION-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-PARTIAL-003",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-ZERO-002",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-LOCAL-CONSUMER-SQUASH-004"
       ]
     },
     {
@@ -72726,7 +73487,8 @@
         "PTO-AVS-BLOCK-B-CATR-DUPLICATE-001",
         "PTO-AVS-BLOCK-B-CATR-FIELDS-001",
         "PTO-AVS-BLOCK-B-CATR-PLACEMENT-001",
-        "PTO-AVS-BLOCK-B-CATR-POST-TRAP-001"
+        "PTO-AVS-BLOCK-B-CATR-POST-TRAP-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CATR-001"
       ],
       "source": "asl/block/attributes/B.CATR.asl",
       "surface": "block",
@@ -72736,7 +73498,8 @@
         "PTO-AVS-BLOCK-B-CATR-DUPLICATE-001",
         "PTO-AVS-BLOCK-B-CATR-FIELDS-001",
         "PTO-AVS-BLOCK-B-CATR-PLACEMENT-001",
-        "PTO-AVS-BLOCK-B-CATR-POST-TRAP-001"
+        "PTO-AVS-BLOCK-B-CATR-POST-TRAP-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CATR-001"
       ]
     },
     {
@@ -74736,6 +75499,8 @@
         "ADR-TILE-0004"
       ],
       "semantic_tests": [
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001",
         "PTO-AVS-BLOCK-TSTORE-CUBE-002",
         "PTO-AVS-BLOCK-TSTORE-CUBE-ACCESS-003",
         "PTO-AVS-BLOCK-TSTORE-CUBE-DESCRIPTOR-004",
@@ -74748,6 +75513,8 @@
       "surface": "block",
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TSTORE-DECODE-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001",
         "PTO-AVS-BLOCK-TSTORE-CUBE-002",
         "PTO-AVS-BLOCK-TSTORE-CUBE-ACCESS-003",
         "PTO-AVS-BLOCK-TSTORE-CUBE-DESCRIPTOR-004",
@@ -75451,13 +76218,15 @@
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
-        "PTO-AVS-BLOCK-CUBE-TRANSPORT-MASK-LAYOUT-002"
+        "PTO-AVS-BLOCK-CUBE-TRANSPORT-MASK-LAYOUT-002",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001"
       ],
       "source": "asl/block/model/dispatch/command-data-attributes.asl",
       "surface": "block",
       "tests": [
         "PTO-AVS-BLOCK-CUBE-TRANSPORT-MASK-LAYOUT-002",
-        "PTO-AVS-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES-STATIC-001"
+        "PTO-AVS-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES-STATIC-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001"
       ]
     },
     {
@@ -76387,6 +77156,7 @@
         "ADR-TILE-0004"
       ],
       "semantic_tests": [
+        "PTO-AVS-BLOCK-SHARED-BSTART-INCOMPLETE-PREDECESSOR-001",
         "PTO-AVS-BSTART-PREDECESSOR-SEQUENTIAL-002",
         "PTO-AVS-BSTART-PREDECESSOR-TAKEN-001"
       ],
@@ -76394,6 +77164,7 @@
       "surface": "block",
       "tests": [
         "PTO-AVS-BLOCK-MODEL-DISPATCH-START-STATIC-001",
+        "PTO-AVS-BLOCK-SHARED-BSTART-INCOMPLETE-PREDECESSOR-001",
         "PTO-AVS-BSTART-PREDECESSOR-SEQUENTIAL-002",
         "PTO-AVS-BSTART-PREDECESSOR-TAKEN-001"
       ]
@@ -76648,6 +77419,26 @@
         "PTO-AVS-BLOCK-MODEL-DISPATCH-TIMG2COL-SCHEMA-STATIC-001",
         "PTO-AVS-BLOCK-TIMG2COL-COOPERATIVE-001",
         "PTO-AVS-BLOCK-TIMG2COL-SHAPE-001"
+      ]
+    },
+    {
+      "classification": [
+        "model",
+        "dispatch",
+        "tlsu-atomic-tstore"
+      ],
+      "documentation": "docs/block/model/dispatch/tlsu-atomic-tstore.md",
+      "id": "PTO-BLOCK-MODEL-DISPATCH-TLSU-ATOMIC-TSTORE",
+      "mnemonic": null,
+      "readiness_subjects": [],
+      "semantic_tests": [
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-FAULT-001"
+      ],
+      "source": "asl/block/model/dispatch/tlsu-atomic-tstore.asl",
+      "surface": "block",
+      "tests": [
+        "PTO-AVS-BLOCK-MODEL-DISPATCH-TLSU-ATOMIC-TSTORE-STATIC-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-FAULT-001"
       ]
     },
     {
@@ -78288,6 +79079,23 @@
       "surface": "block",
       "tests": [
         "PTO-AVS-BLOCK-MODEL-SCHEMA-HEADER-STATIC-001"
+      ]
+    },
+    {
+      "classification": [
+        "model",
+        "state",
+        "atomic-tstore-source-lifetime"
+      ],
+      "documentation": "docs/block/model/state/atomic-tstore-source-lifetime.md",
+      "id": "PTO-BLOCK-MODEL-STATE-ATOMIC-TSTORE-SOURCE-LIFETIME",
+      "mnemonic": null,
+      "readiness_subjects": [],
+      "semantic_tests": [],
+      "source": "asl/block/model/state/atomic-tstore-source-lifetime.asl",
+      "surface": "block",
+      "tests": [
+        "PTO-AVS-BLOCK-MODEL-STATE-ATOMIC-TSTORE-LIFETIME-STATIC-001"
       ]
     },
     {
@@ -99414,6 +100222,58 @@
       "classification": [
         "model",
         "memory",
+        "atomic-tstore"
+      ],
+      "documentation": "docs/tile/model/memory/atomic-tstore.md",
+      "id": "PTO-TILE-MODEL-MEMORY-ATOMIC-TSTORE",
+      "mnemonic": null,
+      "readiness_subjects": [],
+      "semantic_tests": [
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-BOUNDARY-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-CUBE-STRIDE-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-DTYPE-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-GRADUAL-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LEGALITY-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-002",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-CONSUME-003",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-OVERLAP-004",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-MASK-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-NUMERIC-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-OVERLAP-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-PREFLIGHT-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-TRANSLATION-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-UNEQUAL-LIMITS-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-VIRTUAL-ALIAS-001"
+      ],
+      "source": "asl/tile/model/memory/atomic-tstore.asl",
+      "surface": "tile",
+      "tests": [
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-001",
+        "PTO-AVS-TILE-MODEL-MEMORY-ATOMIC-TSTORE-STATIC-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-BOUNDARY-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-CUBE-STRIDE-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-DTYPE-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-GRADUAL-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LEGALITY-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-002",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-CONSUME-003",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-OVERLAP-004",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-MASK-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-NUMERIC-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-OVERLAP-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-PREFLIGHT-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-TRANSLATION-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-UNEQUAL-LIMITS-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-VIRTUAL-ALIAS-001"
+      ]
+    },
+    {
+      "classification": [
+        "model",
+        "memory",
         "atomics"
       ],
       "documentation": "docs/tile/model/memory/atomics.md",
@@ -99480,11 +100340,15 @@
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-001",
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-002",
         "PTO-AVS-TILE-GM-ATOM-RED-FAMILY-001"
       ],
       "source": "asl/tile/model/memory/gm-atom-red-execution.asl",
       "surface": "tile",
       "tests": [
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-001",
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-002",
         "PTO-AVS-TILE-GM-ATOM-RED-FAMILY-001",
         "PTO-AVS-TILE-MODEL-MEMORY-GM-ATOM-RED-EXECUTION-STATIC-001"
       ]
@@ -99511,11 +100375,40 @@
         "ADR-TILE-0007",
         "ADR-TILE-0008"
       ],
-      "semantic_tests": [],
+      "semantic_tests": [
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-BF16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP32-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP64-001"
+      ],
       "source": "asl/tile/model/memory/gm-atom-red.asl",
       "surface": "tile",
       "tests": [
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-BF16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP32-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP64-001",
         "PTO-AVS-TILE-MODEL-MEMORY-GM-ATOM-RED-STATIC-001"
+      ]
+    },
+    {
+      "classification": [
+        "model",
+        "memory",
+        "gm-obligation-progress"
+      ],
+      "documentation": "docs/tile/model/memory/gm-obligation-progress.md",
+      "id": "PTO-TILE-MODEL-MEMORY-GM-OBLIGATION-PROGRESS",
+      "mnemonic": null,
+      "readiness_subjects": [],
+      "semantic_tests": [
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-LIFETIME-001"
+      ],
+      "source": "asl/tile/model/memory/gm-obligation-progress.asl",
+      "surface": "tile",
+      "tests": [
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-LIFETIME-001",
+        "PTO-AVS-TILE-MODEL-MEMORY-GM-OBLIGATION-PROGRESS-STATIC-001"
       ]
     },
     {

@@ -1,0 +1,223 @@
+#!/usr/bin/env python3
+"""Check the TSTORE.ATOMIC virtual macro spellings against generated expansion."""
+
+from __future__ import annotations
+
+import json
+import argparse
+import re
+import sys
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+CATALOG = ROOT / "spec/catalog/tile-macro-assembly.json"
+TILEOPS = ROOT / "spec/catalog/tile-operations.json"
+COMMAND_FORMS = ROOT / "spec/catalog/command-forms.json"
+MODES = {
+    "ADD": 0,
+    "MIN": 1,
+    "MAX": 2,
+    "AND": 3,
+    "OR": 4,
+    "XOR": 5,
+    "INC": 6,
+    "DEC": 7,
+}
+
+# Keep these values independent of the generated catalogs.  The command word
+# expectations below are the architectural fixed carriers plus the separately
+# assigned variable fields.  The executable ASL constructor is checked against
+# these words so a self-consistent catalog drift cannot pass this check.
+BSTART_TSTORE_MASK = 0x07FFFFFF
+BSTART_TSTORE_MATCH = 0x00111181
+BSTART_TEST_DATATYPE = 25
+BDATR_MASK = 0x000C107F
+BDATR_MATCH = 0x00001023
+BDATR_DTYPE_NONE = 31
+
+
+def fail(message: str) -> None:
+    print(f"error: {message}", file=sys.stderr)
+    raise SystemExit(1)
+
+
+def function_body(source: str, signature: str) -> str:
+    match = re.search(
+        rf"{re.escape(signature)}.*?\bbegin\b(.*?)\bend;",
+        source,
+        flags=re.DOTALL,
+    )
+    if match is None:
+        fail(f"could not find executable ASL constructor {signature}")
+    return match.group(1)
+
+
+def encoded_constructor_word(body: str, *, base_name: str, base_value: int,
+                             updates: list[tuple[str, int, str]]) -> int:
+    base = re.search(
+        r"var\s+instruction\s*:\s*bits\(64\)\s*=\s*Zeros\{64\}\s*\+\s*(0x[0-9a-fA-F]+)\s*;",
+        body,
+    )
+    if base is None or int(base.group(1), 16) != base_value:
+        fail(f"{base_name} constructor base does not match independent expected 0x{base_value:08x}")
+    word = base_value
+    for pattern, value, description in updates:
+        if not re.search(pattern, body):
+            fail(f"{base_name} constructor is missing the expected field assignment for {description}")
+        word |= value
+    return word
+
+
+def main(root: Path = ROOT) -> None:
+    macros = json.loads((root / "spec/catalog/tile-macro-assembly.json").read_text())
+    tileops = json.loads((root / "spec/catalog/tile-operations.json").read_text())
+    command_forms = json.loads(
+        (root / "spec/catalog/command-forms.json").read_text()
+    )["forms"]
+    tstore = [entry for entry in macros["operations"] if entry.get("mnemonic") == "TSTORE"]
+    if len(tstore) != 1:
+        fail(f"expected one TSTORE macro operation, found {len(tstore)}")
+    operation = tstore[0]
+    aliases = [form for form in operation["forms"] if ".ATOMIC_" in form["spelling"]]
+    expected_spellings = {f"TSTORE.ATOMIC_{mode}" for mode in MODES}
+    found_spellings = {form["spelling"] for form in aliases}
+    if found_spellings != expected_spellings:
+        fail(f"atomic aliases differ: expected {sorted(expected_spellings)}, found {sorted(found_spellings)}")
+    if len(aliases) != 3 * len(MODES):
+        fail(f"expected Local Row, Shared Row, and Local CUBE forms per mode; found {len(aliases)} aliases")
+
+    for mode in MODES:
+        forms = [form for form in aliases if form["spelling"] == f"TSTORE.ATOMIC_{mode}"]
+        if len(forms) != 3:
+            fail(f"{mode} must have exactly three source forms, found {len(forms)}")
+        for form in forms:
+            expansion = form["expansion"]
+            header = expansion["header"]
+            if header != {"command": "BSTART.TSTORE", "family": "TLSU", "function": 1, "mode": None, "selector": None}:
+                fail(f"{form['spelling']} changed the existing TLSU Function 1 header: {header}")
+            bindings = expansion["configuration_bindings"]
+            canonicalize = [binding for binding in bindings if binding["field"] == "Canonicalize"]
+            cmode = [binding for binding in bindings if binding["field"] == "CMode"]
+            if len(canonicalize) != 1 or canonicalize[0]["syntax"] != "Canonicalize=1" or canonicalize[0]["targets"] != [{"command": "B.DATR", "group": None, "slot": "Canonicalize"}]:
+                fail(f"{form['spelling']} does not bind Canonicalize=1 through B.DATR")
+            if len(cmode) != 1 or cmode[0]["syntax"] != f"CMode={mode}" or cmode[0]["targets"] != [{"command": "B.DATR", "group": None, "slot": "CMode"}]:
+                fail(f"{form['spelling']} does not bind its CMode through B.DATR")
+            if any(command.get("command") not in {"B.IOR", "B.IOT", "B.IOS"}
+                   for command in expansion.get("operand_commands", [])):
+                fail(f"{form['spelling']} introduces a command outside the existing TSTORE bundle")
+
+    tileop_names = {entry.get("name") for entry in tileops.get("operations", [])}
+    if "TSTORE" not in tileop_names:
+        fail("canonical TileOp catalog lost TSTORE")
+    if any(name in tileop_names for name in expected_spellings):
+        fail("a virtual atomic spelling was added as a TileOp")
+
+    # Independently pin the existing encoded carriers. These are the exact
+    # form words and DATR bit pieces used by the generated decoder AVS.
+    bstart = [form for form in command_forms if form.get("mnemonic") == "BSTART.TSTORE"]
+    if len(bstart) != 1:
+        fail(f"expected one BSTART.TSTORE encoded form, found {len(bstart)}")
+    bstart = bstart[0]
+    if bstart["semantic_handler"] != "ExecuteBundleStart" or bstart["encoding"] != [
+        {"index": 0, "mask": f"0x{BSTART_TSTORE_MASK:08x}", "match": f"0x{BSTART_TSTORE_MATCH:08x}", "width_bits": 32}
+    ]:
+        fail("BSTART.TSTORE changed its independently pinned handler/fixed-bit word")
+    datatype = [field for field in bstart["fields"] if field["name"] == "DataType"]
+    if len(datatype) != 1 or datatype[0]["pieces"] != [
+        {"instruction_lsb": 27, "value_lsb": 0, "width": 5}
+    ]:
+        fail("BSTART.TSTORE DataType no longer occupies its five assigned high bits")
+
+    modes_test = (
+        root
+        / "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-atomic-modes-001.asl"
+    ).read_text()
+    start_body = function_body(
+        modes_test, "pure func AtomicModeStart(data_type: TileDataType)"
+    )
+    start_word = encoded_constructor_word(
+        start_body,
+        base_name="BSTART.TSTORE",
+        base_value=BSTART_TSTORE_MATCH,
+        updates=[
+            (r"instruction\[31:27\]\s*=\s*TileDataTypeToEncoding\(data_type\)\s*;",
+             BSTART_TEST_DATATYPE << 27,
+             "DataType=TileDataTypeToEncoding(data_type)"),
+        ],
+    )
+    dtype_source = (root / "asl/arch/data-types/tile-data-types.asl").read_text()
+    dtype_body = function_body(
+        dtype_source,
+        "pure func TileDataTypeToEncoding(data_type: TileDataType)",
+    )
+    if not re.search(
+        r"when\s+TileDataType_U32\s*=>\s*return\s+Zeros\{5\}\s*\+\s*25\s*;",
+        dtype_body,
+    ):
+        fail("the architecture U32 DataType encoding no longer equals independently pinned 25")
+    run_body = function_body(modes_test, "func RunAtomicMode(")
+    if not re.search(
+        r"AtomicModeStart\(\s*TileDataType_U32\s*\)", run_body
+    ):
+        fail("the executable U32 Function 1 witness does not pass U32 to AtomicModeStart")
+    expected_start_word = BSTART_TSTORE_MATCH | (BSTART_TEST_DATATYPE << 27)
+    if start_word != expected_start_word or start_word & BSTART_TSTORE_MASK != BSTART_TSTORE_MATCH:
+        fail(f"resolved BSTART.TSTORE carrier word 0x{start_word:08x} does not preserve fixed bits and DataType")
+
+    datr = [form for form in command_forms if form.get("mnemonic") == "B.DATR"]
+    if len(datr) != 1 or datr[0]["encoding"] != [
+        {"index": 0, "mask": f"0x{BDATR_MASK:08x}", "match": f"0x{BDATR_MATCH:08x}", "width_bits": 32}
+    ]:
+        fail("B.DATR changed its independently pinned fixed-bit word")
+    fields = {field["name"]: field["pieces"] for field in datr[0]["fields"]}
+    if fields.get("Canonicalize") != [
+        {"instruction_lsb": 25, "value_lsb": 0, "width": 1}
+    ] or fields.get("CMode") != [
+        {"instruction_lsb": 29, "value_lsb": 0, "width": 3}
+    ]:
+        fail("B.DATR Canonicalize/CMode no longer occupy the existing assigned fields")
+
+    decoder_test = (
+        root
+        / "tests/asl/block/execution/BSTART.TSTORE/block-decode-bstart-tstore-canonical-001.asl"
+    ).read_text()
+    decoder_words = re.findall(r"DecodeCommandForm\('([01]{32,64})',\s*32\)", decoder_test)
+    if len(decoder_words) != 1 or int(decoder_words[0], 2) != 0x00111181 or "== 50" not in decoder_test:
+        fail("the executable BSTART.TSTORE decoder witness no longer checks the exact fixed-bit word")
+    datr_body = function_body(modes_test, "pure func AtomicModeDATR(mode: bits(3))")
+    mode_assignment = r"instruction\[31:29\]\s*=\s*mode\s*;"
+    if not re.search(mode_assignment, datr_body):
+        fail("the executable B.DATR constructor does not place CMode in bits [31:29]")
+    datr_word_base = encoded_constructor_word(
+        datr_body,
+        base_name="B.DATR",
+        base_value=BDATR_MATCH,
+        updates=[
+            (r"instruction\[25\]\s*=\s*'1'\s*;", 1 << 25, "Canonicalize=1"),
+            (r"instruction\[24:20\]\s*=\s*DTYPE_NONE\s*;",
+             BDATR_DTYPE_NONE << 20,
+             "DataType=DTYPE_NONE (31)"),
+        ],
+    )
+    for mode, mode_value in MODES.items():
+        actual_word = datr_word_base | (mode_value << 29)
+        expected_word = BDATR_MATCH | (mode_value << 29) | (1 << 25) | (BDATR_DTYPE_NONE << 20)
+        if actual_word != expected_word or actual_word & BDATR_MASK != BDATR_MATCH:
+            fail(f"resolved B.DATR carrier for {mode} is 0x{actual_word:08x}, expected 0x{expected_word:08x} with fixed bits intact")
+        forms = [form for form in aliases if form["spelling"] == f"TSTORE.ATOMIC_{mode}"]
+        for form in forms:
+            cmode = next(binding for binding in form["expansion"]["configuration_bindings"] if binding["field"] == "CMode")
+            canonicalize = next(binding for binding in form["expansion"]["configuration_bindings"] if binding["field"] == "Canonicalize")
+            if cmode["syntax"] != f"CMode={mode}" or canonicalize["syntax"] != "Canonicalize=1":
+                fail(f"{form['spelling']} does not resolve to expected B.DATR word 0x{expected_word:08x}")
+        if f"RunAtomicMode({mode_value}," not in modes_test:
+            fail(f"the executable Function 1 witness does not invoke CMode {mode_value}")
+    print("TSTORE.ATOMIC aliases: 8 spellings x 3 existing forms; resolved BSTART/B.DATR carriers preserve independently pinned fixed bits")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root", type=Path, default=ROOT)
+    arguments = parser.parse_args()
+    main(arguments.root.resolve())

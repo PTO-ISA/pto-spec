@@ -4261,7 +4261,9 @@
         "allowed_nonzero_fields": [
           "PadValueOrByteId",
           "Layout",
-          "DataType"
+          "DataType",
+          "Canonicalize",
+          "CMode"
         ],
         "pad_union": "pad-value"
       },

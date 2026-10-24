@@ -411,16 +411,26 @@ begin
                     size_code as integer {0..15}, offset);
             end;
         when CommandHandler_ExecuteBundleStart =>
-            ExecuteDecodedBundleStart(instruction, form, length_bits);
+            return ExecuteDecodedBundleStart(instruction, form, length_bits);
         when CommandHandler_ExecuteBundleStop =>
             let completed = CompleteBundleAt(ReadTPC() +
                 (Zeros{PTO_XLEN} + (length_bits DIV 8)));
+            if !completed then
+                if _LastFault != Fault_None then return CommandExecution_Rejected; end;
+                if CurrentAtomicTStoreDrainPending() then return CommandExecution_Blocked; end;
+            end;
         when CommandHandler_SetBundleHint =>
             if LinxTraceBoundaryHintApplies(hint_trace, instruction, form) then return ExecuteLinxTraceBoundaryHint(instruction, form); end;
             if hint_trace then
                 let instruction_pc = ReadTPC();
                 if _BundleActive then
                     if !CompleteBundleAt(instruction_pc) then
+                        if _LastFault != Fault_None then
+                            return CommandExecution_Rejected;
+                        end;
+                        if CurrentAtomicTStoreDrainPending() then
+                            return CommandExecution_Blocked;
+                        end;
                         return CommandExecution_Rejected;
                     end;
                     if ReadTPC() != instruction_pc then

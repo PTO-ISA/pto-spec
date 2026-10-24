@@ -1,0 +1,1 @@
+config PTO_MODEL_MEMORY_BYTES : integer {256..65536} = 65536;

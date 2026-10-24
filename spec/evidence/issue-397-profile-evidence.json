@@ -1,0 +1,388 @@
+{
+  "schema": "pto.issue-397-profile-evidence.v1",
+  "candidate_commit": "d6de62cd3b4fb7cef2fec3f437f64b0aff2974a0",
+  "candidate_asl_tree": "acb149890849187ec5113626eb5af5afcfa31c20",
+  "matrix_commit": "4302fe8565f5a2b72296dfd330d796e01164c9bc",
+  "assembled_model": {
+    "path": "build/asl-page-inputs/pto-spec.asl",
+    "sha256": "d6b76b027492c286b6fd1ff9000b2e2f4c769b3c97bcb6fc6d027d9c5b577463"
+  },
+  "baseline_profile": {
+    "launcher": "scripts/aslref",
+    "launcher_sha256": "2939fb60f0e4e574ff5a7b2743fb0486b035bc51f9db3feac584dafd6d1d2ef5",
+    "memory_bytes": 4096,
+    "event_capacity": 16,
+    "production_default_sources": {
+      "memory_config": "asl/arch/features/tile-allocation.asl",
+      "memory_config_sha256": "7a11b91b603905dfbeec05c0b0eeb1accd16b7127c81373b19077c242933520b",
+      "event_capacity": "asl/arch/programming-model/core-pe-topology.asl",
+      "event_capacity_sha256": "da295e6d0b163888ccc5fd813815c255453956125b9ac9ccced1b2f1227ffe7a"
+    }
+  },
+  "profiles": {
+    "default": {
+      "launcher": "./scripts/aslref",
+      "selected_ids": [
+        "PTO-AVS-ARCH-GM-OBLIGATION-DELAYED-TSTORE-001",
+        "PTO-AVS-ARCH-TILE-EVENTS-ORDER-003",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-ADMISSION-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-BSTART-PREDECESSOR-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-CANCEL-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-COMPLETION-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-PARTIAL-003",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DOMAIN-SQUASH-ZERO-002",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-DRAIN-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-IDENTITY-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-INTERLEAVED-001",
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-LOCAL-CONSUMER-SQUASH-004",
+        "PTO-AVS-BLOCK-B-DATR-PLACEMENT-001",
+        "PTO-AVS-BLOCK-B-IOS-LAST-USE-PUBLICATION-PIN-010",
+        "PTO-AVS-BLOCK-BSTART-TSTORE-DECODE-001",
+        "PTO-AVS-BLOCK-GMOV-DOMAIN-SQUASH-013",
+        "PTO-AVS-BLOCK-GMOV-GENERATION-ISOLATION-014",
+        "PTO-AVS-BLOCK-GMOV-LAST-USE-RETRY-012",
+        "PTO-AVS-BLOCK-LOCAL-GENERATION-RECOVERY-ISOLATION-001",
+        "PTO-AVS-BLOCK-MODEL-STATE-ATOMIC-TSTORE-SOURCE-LIFETIME-STATIC-001",
+        "PTO-AVS-BLOCK-SHARED-TLSU-ASSEMBLE-SQUASH-014",
+        "PTO-AVS-BLOCK-SHARED-TSTORE-FOURSTREAM-009",
+        "PTO-AVS-BLOCK-SOURCE-LIFETIME-FAULT-SQUASH-RETRY-002",
+        "PTO-AVS-BLOCK-SOURCE-LIFETIME-OCCURRENCE-ORDER-004",
+        "PTO-AVS-BLOCK-SUBVIEW-SHARED-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CATR-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-LIFETIME-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-001",
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-FAULT-001",
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-001",
+        "PTO-AVS-TILE-GM-ADD-GRADUAL-002",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-BF16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP16-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP32-001",
+        "PTO-AVS-TILE-GM-ADD-NUMERIC-FP64-001",
+        "PTO-AVS-TILE-GM-ATOM-RED-FAMILY-001",
+        "PTO-AVS-TILE-MSCATTER-MIN-SEMANTIC-001",
+        "PTO-AVS-TILE-TCMP-ORDER-001",
+        "PTO-AVS-TILE-TCMPS-CROSS-CARRIER-001",
+        "PTO-AVS-TILE-TCVT-INTEGRAL-DECODED-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-DTYPE-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-GRADUAL-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LEGALITY-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-002",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-CONSUME-003",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-OVERLAP-004",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-MASK-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-NUMERIC-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-OVERLAP-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-PREFLIGHT-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-UNEQUAL-LIMITS-001",
+        "PTO-AVS-TILE-TSTORE-CUBE-002",
+        "PTO-AVS-TILE-TSTORE-DIRECT-001"
+      ],
+      "count": 56,
+      "result": "PASS",
+      "passed": 56,
+      "failed": 0,
+      "elapsed_seconds": 803.596,
+      "elapsed_measure": "sum of per-point ASLRef duration_seconds; mixed page wall time recorded in focused_candidate_run",
+      "page_wall_elapsed_seconds": 311.82540488243103,
+      "matrix": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/matrix/page-0.json",
+      "matrix_command": "scripts/print-asl-test-matrix --ids-file build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/ids.txt --page-size 64 --output-dir build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/matrix",
+      "run_command": "env -u ASLREF PTO_ASL_TEST_TIMEOUT_SECONDS=600 scripts/run-asl-page --matrix build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/matrix/page-0.json -j4",
+      "profile_fingerprints": [
+        "4cf05eb0788c1e429c4167eb2638b925521a786cdf11b86c1c4ba97ef487fd63"
+      ],
+      "profile_model_sha256": "d6b76b027492c286b6fd1ff9000b2e2f4c769b3c97bcb6fc6d027d9c5b577463",
+      "profile_registry_sha256": "299b12528898d5d9c754b195fb57f4a9b0a857d280f685403f1280e26e295c57",
+      "archive_manifest": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/manifest.json",
+      "raw_results": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/raw-results",
+      "profile_inputs": [
+        [
+          "scripts/aslref",
+          "2939fb60f0e4e574ff5a7b2743fb0486b035bc51f9db3feac584dafd6d1d2ef5"
+        ]
+      ],
+      "launcher_sha256": "2939fb60f0e4e574ff5a7b2743fb0486b035bc51f9db3feac584dafd6d1d2ef5",
+      "archive_manifest_sha256": "c7d57f7855bb853d4b2f7745465806f339c5464ff570e93b1ad0e29978c32a1d",
+      "memory_bytes": 4096,
+      "event_capacity": 16
+    },
+    "memory_64k": {
+      "launcher": "./scripts/aslref-64k",
+      "selected_ids": [
+        "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-BOUNDARY-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-CUBE-STRIDE-001"
+      ],
+      "count": 3,
+      "result": "PASS",
+      "passed": 3,
+      "failed": 0,
+      "elapsed_seconds": 283.669,
+      "elapsed_measure": "sum of per-point ASLRef duration_seconds; mixed page wall time recorded in focused_candidate_run",
+      "page_wall_elapsed_seconds": 311.82540488243103,
+      "matrix": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/matrix/page-0.json",
+      "matrix_command": "scripts/print-asl-test-matrix --ids-file build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/ids.txt --page-size 64 --output-dir build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/matrix",
+      "run_command": "env -u ASLREF PTO_ASL_TEST_TIMEOUT_SECONDS=600 scripts/run-asl-page --matrix build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/matrix/page-0.json -j4",
+      "profile_fingerprints": [
+        "fef6181cc700c4f8f0c6dabecc29211860802b03db31869b885b2c4285593b1e"
+      ],
+      "profile_model_sha256": "d6b76b027492c286b6fd1ff9000b2e2f4c769b3c97bcb6fc6d027d9c5b577463",
+      "profile_registry_sha256": "299b12528898d5d9c754b195fb57f4a9b0a857d280f685403f1280e26e295c57",
+      "archive_manifest": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/manifest.json",
+      "raw_results": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/raw-results",
+      "profile_inputs": [
+        [
+          "scripts/aslref-64k",
+          "653f10dc61fab15416d4586c6c5ea171ab11f3b145bf88b21c07677bf493d300"
+        ],
+        [
+          "scripts/aslref",
+          "2939fb60f0e4e574ff5a7b2743fb0486b035bc51f9db3feac584dafd6d1d2ef5"
+        ],
+        [
+          "tests/config/asl/memory-64k.asl",
+          "291bce9fe2fc5bc08a0526ea61d3ae513067fb8d8995983600c1ee5794c4488c"
+        ]
+      ],
+      "launcher_sha256": "653f10dc61fab15416d4586c6c5ea171ab11f3b145bf88b21c07677bf493d300",
+      "archive_manifest_sha256": "c7d57f7855bb853d4b2f7745465806f339c5464ff570e93b1ad0e29978c32a1d",
+      "memory_bytes": 65536,
+      "event_capacity": 16,
+      "configuration": "tests/config/asl/memory-64k.asl"
+    },
+    "atomic_translation": {
+      "launcher": "./scripts/aslref-atomic-translation",
+      "selected_ids": [
+        "PTO-AVS-ARCH-TSTORE-ATOMIC-TRANSLATION-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-TRANSLATION-001",
+        "PTO-AVS-TILE-TSTORE-ATOMIC-VIRTUAL-ALIAS-001"
+      ],
+      "count": 3,
+      "result": "PASS",
+      "passed": 3,
+      "failed": 0,
+      "elapsed_seconds": 40.771,
+      "elapsed_measure": "sum of per-point ASLRef duration_seconds; mixed page wall time recorded in focused_candidate_run",
+      "page_wall_elapsed_seconds": 311.82540488243103,
+      "matrix": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/matrix/page-0.json",
+      "matrix_command": "scripts/print-asl-test-matrix --ids-file build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/ids.txt --page-size 64 --output-dir build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/matrix",
+      "run_command": "env -u ASLREF PTO_ASL_TEST_TIMEOUT_SECONDS=600 scripts/run-asl-page --matrix build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/matrix/page-0.json -j4",
+      "profile_fingerprints": [
+        "03b728db890a0eb19037feda578dccebd542241f7100cd04cf52edbe154d962f"
+      ],
+      "profile_model_sha256": "d6b76b027492c286b6fd1ff9000b2e2f4c769b3c97bcb6fc6d027d9c5b577463",
+      "profile_registry_sha256": "299b12528898d5d9c754b195fb57f4a9b0a857d280f685403f1280e26e295c57",
+      "archive_manifest": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/manifest.json",
+      "raw_results": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/raw-results",
+      "profile_inputs": [
+        [
+          "scripts/aslref-atomic-translation",
+          "e09b6917fe2e54b25e453c7815eb83836265695f324d0a9b441d4c863bb13f9f"
+        ],
+        [
+          "scripts/aslref",
+          "2939fb60f0e4e574ff5a7b2743fb0486b035bc51f9db3feac584dafd6d1d2ef5"
+        ],
+        [
+          "tests/config/asl/atomic-translation-test-profile.asl",
+          "4a549d0611b9a0374b217f8fd505cb8b6fbec2fe3b40208fcee3933e2de0b5df"
+        ]
+      ],
+      "launcher_sha256": "e09b6917fe2e54b25e453c7815eb83836265695f324d0a9b441d4c863bb13f9f",
+      "archive_manifest_sha256": "c7d57f7855bb853d4b2f7745465806f339c5464ff570e93b1ad0e29978c32a1d",
+      "configuration": "tests/config/asl/atomic-translation-test-profile.asl"
+    }
+  },
+  "scope_note": "Round-2 full focused archive remains 62/62 at its exact source input; round-3 adds a separate 13-point affected command-risk run on the corrected BSTART source input. Current metadata/topology closure is 4,337 points and is not an execution count. No numeric, full-matrix or release rerun was performed.",
+  "baseline_contrast": {
+    "purpose": "Demonstrate the corrected, reachable Atomic TSTORE dispatch witness and CMode 6/7 admission witness fail on the unchanged baseline and pass on the exact candidate using byte-identical current test inputs.",
+    "baseline_commit": "b4abf485128941fb41799e667868090368ab8307",
+    "baseline_asl_tree": "7c8e8042fa80ece965ca2d97513b6e49eab97e0a",
+    "baseline_checkout": "/private/tmp/issue397-baseline-round1-current-tests (detached; only two test inputs untracked)",
+    "baseline_matrix": "build/issue397-review-evidence/unchanged-baseline-current-inputs-r1/page-0.json",
+    "baseline_matrix_sha256": "2d3aa35f71e85be43ff88f70a7d3630b513144ff6927dcf5ca8b178e72dab092",
+    "baseline_archive": "build/issue397-review-evidence/unchanged-baseline-current-inputs-r1",
+    "baseline_archive_manifest_sha256": "4f4223789dbc7fbdbeb5c57c76766ea4b8e0c04a3a24ae45933a313b80c43904",
+    "baseline_command": "env -u ASLREF PTO_ASLREF_ROOT=/Users/chenkewei/Desktop/pto-spec/.cache/herdtools7 PTO_ASL_TEST_TIMEOUT_SECONDS=600 scripts/run-asl-page --matrix build/issue397-baseline-round1-current-matrix/page-0.json -j2",
+    "baseline_exit_code": 1,
+    "baseline_result": "Expected red: both tests failed at the reachable ASL dynamic assertions after successful model assembly and interpreter startup; no setup or parse failures.",
+    "candidate_commit": "4a1f3046f0477f4e990e7523b1cd162303b70603",
+    "candidate_asl_tree": "1c4f290cb23c11856dbf4b581ac91a54ed88fc17",
+    "candidate_matrix": "build/issue397-review-evidence/correction-final-candidate-50/page-0.json",
+    "candidate_matrix_sha256": "e5cea091f01dba263654e9df515229d698cd99320ffa9649aa79637031b59d31",
+    "candidate_archive": "build/issue397-review-evidence/correction-final-candidate-50",
+    "candidate_archive_manifest_sha256": "315cae22561deef26d62bee32e717d7ba3eafff5817851a642ee7d4411d41a73",
+    "points": [
+      {
+        "id": "PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001",
+        "source_sha256": "51a1922b872fad3fb31411dcb01c36cff886099d0e21af9525efe85dcaf06d27",
+        "baseline_command": [
+          "./scripts/aslref",
+          "--type-check-strict",
+          "/private/tmp/issue397-baseline-round1-current-tests/build/asl-test-results/PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001/test.asl"
+        ],
+        "baseline_result": "FAIL at reachable dynamic assertion; see raw archived ASLRef log.",
+        "baseline_result_sha256": "7543134465f91f4f15ac01bef0671d1accf4051cb82e8f8a7afcecc610293902",
+        "baseline_log": "build/issue397-review-evidence/unchanged-baseline-current-inputs-r1/raw-results/PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001/aslref.log",
+        "candidate_result": "PASS on candidate commit 4a1f3046f0477f4e990e7523b1cd162303b70603 in the 50-point mixed canonical-registry page.",
+        "candidate_result_sha256": "531e21ed052b81561c24cdd663cd368992ac8226eed02b20451445b2015e155d",
+        "candidate_log": "build/issue397-review-evidence/correction-final-candidate-50/raw-results/PTO-AVS-BLOCK-TSTORE-ATOMIC-MODES-001/aslref.log"
+      },
+      {
+        "id": "PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001",
+        "source_sha256": "4bc6bbe76cc6ad82fc640d4b1b6ae745895da4c3fc8047a7c1379768f6833840",
+        "baseline_command": [
+          "./scripts/aslref",
+          "--type-check-strict",
+          "/private/tmp/issue397-baseline-round1-current-tests/build/asl-test-results/PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001/test.asl"
+        ],
+        "baseline_result": "FAIL at reachable dynamic assertion; see raw archived ASLRef log.",
+        "baseline_result_sha256": "333a664cb06d88b8782c07aed8f179dc79fa29a311eb3656f5fcfd6b5ff00ce1",
+        "baseline_log": "build/issue397-review-evidence/unchanged-baseline-current-inputs-r1/raw-results/PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001/aslref.log",
+        "candidate_result": "PASS on candidate commit 4a1f3046f0477f4e990e7523b1cd162303b70603 in the 50-point mixed canonical-registry page.",
+        "candidate_result_sha256": "9c2b1505b094010c534f8404c769c0779807ead8d547b490a52f1928da45aade",
+        "candidate_log": "build/issue397-review-evidence/correction-final-candidate-50/raw-results/PTO-AVS-BLOCK-TSTORE-ATOMIC-CMODE-CONTEXT-001/aslref.log"
+      }
+    ],
+    "integrity": "For each point, SHA-256 matches across the final candidate source, archived test-source copy, and detached baseline checkout input. The production baseline model is b4abf485; no ASL/model owners were edited in that checkout.",
+    "classification": "historical preliminary baseline contrast on the 4a1f3046 candidate; retained for provenance and not used as the final C1-C6 closure evidence.",
+    "scope_note": "This comparison predates the correction-round-2 C1-C6 fixes. Its unchanged-baseline red control and two candidate green points remain useful history; final current-input evidence is focused_candidate_run below."
+  },
+  "canonical_profile_registry": {
+    "path": "tests/config/asl/execution-profiles.json",
+    "sha256": "299b12528898d5d9c754b195fb57f4a9b0a857d280f685403f1280e26e295c57",
+    "runtime_registry_sha256": "299b12528898d5d9c754b195fb57f4a9b0a857d280f685403f1280e26e295c57",
+    "routing": "one mixed exact-ID page, ASLREF unset; registry chooses profile per point",
+    "matrix": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/matrix/page-0.json"
+  },
+  "focused_candidate_run": {
+    "archive": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62",
+    "manifest": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/manifest.json",
+    "manifest_sha256": "c7d57f7855bb853d4b2f7745465806f339c5464ff570e93b1ad0e29978c32a1d",
+    "raw_results": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/raw-results",
+    "stdout": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/page.stdout.txt",
+    "point_count": 62,
+    "passed": 62,
+    "failed": 0,
+    "exit_code": 0,
+    "candidate_commit": "4302fe8565f5a2b72296dfd330d796e01164c9bc",
+    "candidate_asl_tree": "745c7a372f4e65313553d7c942540b4409685563",
+    "matrix_sha256": "5e5e995b5f295c941bd390403d1691c44e2408104442c3322f877750737c2f0a",
+    "ids_file_sha256": "3209b580651cbc6666fa4f0bb5c469e686c2da03c72dcae1f944afdaffd993ca",
+    "stdout_sha256": "09255ae7e7ece09068d9656942551c6ad140adefdbce1ecf31db84b942d153ed",
+    "page_wall_elapsed_seconds": 311.82540488243103,
+    "command": "env -u ASLREF PTO_ASL_TEST_TIMEOUT_SECONDS=600 scripts/run-asl-page --matrix build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/matrix/page-0.json -j4",
+    "runtime_registry_sha256": "299b12528898d5d9c754b195fb57f4a9b0a857d280f685403f1280e26e295c57",
+    "profile_counts": {
+      "default": 56,
+      "memory-64k": 3,
+      "atomic-translation": 3
+    },
+    "runner_and_model_inputs": {
+      ".aslref-version": "bdbc87fdf9bc8aa0571921027d404135b11de59178eab6ae0b0bb2b5b5e7d671",
+      "build/asl-page-inputs/asl-source-order.txt": "227c0b0118a1ef9b7a341c4c13397a2d9fb9c08349d892dd5088be5d77b9c2c7",
+      "build/asl-page-inputs/decoders.asl": "3bba5c2f3068f860dc2103a303b9594e2fb42e0773c12b3e8da675bf723a1041",
+      "build/asl-page-inputs/pto-spec.asl": "d6b76b027492c286b6fd1ff9000b2e2f4c769b3c97bcb6fc6d027d9c5b577463",
+      "build/asl-page-inputs/validation-0.asl": "5cda32864cc5360a66468f154b34633fcccf4392a949076ffd734cf558f4c7e9",
+      "scripts/asl_release_suite.py": "6e15b1465675fa636cb12709d7980b46ac29536442185539135b06d57ea2f62f",
+      "scripts/asl_tests.py": "b7341ac723616f59880967709ab58050c5cdb260bcb31d2519520f747bb0335a",
+      "scripts/aslref": "2939fb60f0e4e574ff5a7b2743fb0486b035bc51f9db3feac584dafd6d1d2ef5",
+      "scripts/aslref-64k": "653f10dc61fab15416d4586c6c5ea171ab11f3b145bf88b21c07677bf493d300",
+      "scripts/aslref-atomic-translation": "e09b6917fe2e54b25e453c7815eb83836265695f324d0a9b441d4c863bb13f9f",
+      "scripts/print-asl-test-matrix": "1e4b29cb97ba7524e252bb506cf0dd1b8f3d4e3d1108e345d6adf85540937a3d",
+      "scripts/run-asl-page": "64e7e3a7eaa7db6d264665325fcdf42b1b29cc7c4d7b7e1fd9fde30655c19e7f",
+      "tests/config/asl/atomic-translation-test-profile.asl": "4a549d0611b9a0374b217f8fd505cb8b6fbec2fe3b40208fcee3933e2de0b5df",
+      "tests/config/asl/execution-profiles.json": "299b12528898d5d9c754b195fb57f4a9b0a857d280f685403f1280e26e295c57",
+      "tests/config/asl/memory-64k.asl": "291bce9fe2fc5bc08a0526ea61d3ae513067fb8d8995983600c1ee5794c4488c"
+    },
+    "supporting_checks": {
+      "all_passed": true,
+      "macro_alias_checker": {
+        "command": "scripts/check-tstore-atomic-macro-aliases",
+        "exit_status": 0,
+        "log": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/macro-check.stdout.txt",
+        "stdout_sha256": "1acd5ceb7961a32330be47cc4f7bd4973b77295fb15a2f87c41c00f9d1029b06"
+      },
+      "unit_tests": [
+        {
+          "exit_status": 0,
+          "log": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/test_asl_tests.unittest.log",
+          "module": "tests.scripts.test_asl_tests",
+          "stdout_sha256": "3975a44b951ca506cc2c398be9c3c9b09e54603b498bd68d55a2fd83cb163c0e"
+        },
+        {
+          "exit_status": 0,
+          "log": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/test_run_asl_release_suite.unittest.log",
+          "module": "tests.scripts.test_run_asl_release_suite",
+          "stdout_sha256": "97ff3b6b0d04087ed3e05bc602776a9aaaa4bc3bd169437086a0d3ad3082e5c3"
+        },
+        {
+          "exit_status": 0,
+          "log": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/test_check_tstore_atomic_macro_aliases.unittest.log",
+          "module": "tests.scripts.test_check_tstore_atomic_macro_aliases",
+          "stdout_sha256": "11b24f62dbcf7b0df2af25a5cfef7474a528349aa1811f661f0460ab08244d7d"
+        }
+      ]
+    },
+    "validation_closure": {
+      "git_diff_check": {
+        "exit_status": 0
+      },
+      "layout_relation_census_refresh": {
+        "command": "python3 scripts/layout_relation_census.py --candidate HEAD --output spec/evidence/layout-relation-census.json",
+        "exit_status": 0,
+        "log": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/layout-census.stdout.txt",
+        "stdout_sha256": "1fc534b98002b23768041ea68f1456ae90a898a518218ef419819aecc605afd9"
+      },
+      "make_check_projections": {
+        "exit_status": 0,
+        "log": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/check-projections.stdout.txt",
+        "stdout_sha256": "b6795b42593a3c76aadc08dfa4e08ed876629005a23b20447b36c82058182241"
+      },
+      "scripts_check_asl_tests": {
+        "exit_status": 0,
+        "log": "build/issue397-review-evidence/correction-final-candidate-r2-c3-fixed-62/check-asl-tests.stdout.txt",
+        "point_count": 4336,
+        "stdout_sha256": "be91798b4436f096a09d45712faab8fcb5f7fed7779b92cfbaa3daae7b359fce"
+      }
+    },
+    "superseded_attempts": [
+      {
+        "candidate_commit": "10abc712567d75f420a43e3f28799800e486efba",
+        "candidate_asl_tree": "fdecfecf1db016cc426b69a38520e866787221df",
+        "archive": "build/issue397-review-evidence/correction-final-candidate-r2-62",
+        "point_count": 62,
+        "passed": 61,
+        "failed": 1,
+        "failure": "PTO-AVS-BLOCK-SHARED-TLSU-ASSEMBLE-SQUASH-014: BSTOP status compatibility changed for a no-fault, no-Atomic-drain Shared assembly cohort wait; fixed in current command path and rerun in the final 62-point page."
+      }
+    ]
+  },
+  "round3_affected_command_risk_run": {
+    "archive": "build/issue397-review-evidence/d1-affected-13-candidate-d6de62c",
+    "manifest_sha256": "ff03832cfae7f558f6ce4695cfdf2bb91996bfaa7ed7eb2dfab5749a88eaa315",
+    "candidate_commit": "d6de62cd3b4fb7cef2fec3f437f64b0aff2974a0",
+    "candidate_asl_tree": "acb149890849187ec5113626eb5af5afcfa31c20",
+    "matrix_sha256": "076bf0ad10481d1f3b0e26122425d9ce8f69ea9b5bb3f5a9d1d498dea713c0c2",
+    "ids_sha256": "1490e42d2594e98fc8ffa2c6ff6a64ed1cc1beeb03b86a8f398b8a236fd15748",
+    "model_sha256": "fbaee9b647743327d161a3dddbb571523ae9d753686cd6a78764f24590bf7683",
+    "registry_sha256": "299b12528898d5d9c754b195fb57f4a9b0a857d280f685403f1280e26e295c57",
+    "count": 13,
+    "passed": 13,
+    "failed": 0,
+    "exit_status": 0,
+    "profiles": {
+      "default": 13
+    },
+    "command": "env -u ASLREF PTO_ASL_TEST_TIMEOUT_SECONDS=600 scripts/run-asl-page --matrix build/issue397-review-evidence/d1-affected-matrix/page-0.json -j4",
+    "finite_caller_set": [
+      "BSTART predecessor",
+      "BSTOP",
+      "TRACE B.HINT",
+      "scalar ArchitectureEnterRequest"
+    ],
+    "reuse_note": "The existing 62-point archive is reused only for unchanged full input identities and retains source commit 4302fe8565f5a2b72296dfd330d796e01164c9bc/model d6b76b027492c286b6fd1ff9000b2e2f4c769b3c97bcb6fc6d027d9c5b577463. New BSTART source/test inputs are verified by this separate 13-point run on this object."
+  }
+}

@@ -59,23 +59,36 @@ PE0 through PE3 declare the last use of Shared Tile S14 generation 6. PE0 comple
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/state/source-lifetime.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","surface":"block","classification":["model","state","source-lifetime"],"depends_on":["PTO-ARCH-STATE-LOCAL-PAYLOAD-GENERATION","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","surface":"block","classification":["model","state","source-lifetime"],"depends_on":["PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-ARCH-STATE-LOCAL-PAYLOAD-GENERATION","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
 // PTO-STATE: {"id":"PTO-STATE-BLOCK-SOURCE-LIFETIME","classification":["block","source-lifetime"],"scope":"system","owner":"PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","members":["_BundleSourceLifetimes","_NextBundleSourceLifetimeOrdinal","_BundleGMOVSourceSelections","_NextBundleGMOVSourceSelectionOrdinal"],"depends_on":["PTO-STATE-BLOCK-CONTROL","PTO-STATE-TILE-LOCAL"]}
 // NDF-BEGIN: PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001
 // ndf: kind=contract level=L1 layer=block status=accepted
-// Each dynamic last-use occurrence captures one immutable source generation
-// and declared participant set. A successful participant returns immediately;
-// the payload is consumed exactly once only after every declared participant
-// completes successfully. Fault, retry, squash, and nonparticipation MUST NOT
-// falsely complete an occurrence. An unmatched occurrence may retain payload,
-// and an outstanding occurrence pins its captured generation against
-// replacement. The bounded reference table is a model bound, not a portable
-// rejection condition or conflicting-group restriction.
+// Each dynamic last-use occurrence records its declared participant set and
+// immutable source generation. A Shared source names one Shared payload
+// generation; a Local capture pins its exact PE, tile, and payload generation.
+// Atomic Local TSTORE groups those per-PE tuples in one collective occurrence,
+// even when participants resolve different physical tiles or epochs. A
+// successful participant returns immediately and completes only its own bit;
+// captured payload generations are consumed exactly once only after every
+// declared participant succeeds, and a Local tuple remains pinned while
+// another incomplete occurrence captures that same tuple. Fault, retry,
+// squash, and nonparticipation MUST NOT falsely complete an occurrence. An
+// unmatched occurrence may retain payload, and an outstanding occurrence
+// pins its captured generation against replacement. The bounded reference
+// table is a model bound, not a portable rejection condition or
+// conflicting-group restriction.
 // A domain squash cancels only the matching PE capture token; successful
 // completions from other PEs remain attached to the immutable occurrence.
 // NDF-END: PTO-B-SOURCE-LIFETIME-PE-COMPLETION-001
 // A bounded reference table represents arbitrarily many sequential dynamic
 // occurrences. Exhaustion waits without introducing a portable fault.
+type BundleSourceLifetimeLocalPEs of array [[PTO_MODEL_MEMORY_AGENTS]]
+    of MemoryAgentId;
+type BundleSourceLifetimeLocalTiles of array [[PTO_MODEL_MEMORY_AGENTS]]
+    of TileIndex;
+type BundleSourceLifetimeLocalEpochs of array [[PTO_MODEL_MEMORY_AGENTS]]
+    of integer;
+
 type BundleSourceLifetimeOccurrence of record {
     valid: boolean,
     ordinal: integer,
@@ -95,8 +108,28 @@ type BundleSourceLifetimeOccurrence of record {
     participant_mask: bits(4),
     captured_mask: bits(4),
     completed_mask: bits(4),
+    // Atomic Local TSTORE groups one dynamic cohort while retaining each
+    // PE's independently captured physical source tuple. Generic Shared and
+    // GMOV lifetimes continue to use the scalar source tuple above.
+    atomic_local_cohort: boolean,
+    source_selector_relative: boolean,
+    local_source_pes: BundleSourceLifetimeLocalPEs,
+    local_sources: BundleSourceLifetimeLocalTiles,
+    local_epochs: BundleSourceLifetimeLocalEpochs,
+    consumed_mask: bits(4),
+    retry_only_mask: bits(4),
     domain_tokens: array [[PTO_MODEL_MEMORY_AGENTS]] of integer
 };
+
+func ResetSourceLifetimeState()
+begin
+    for slot = 0 to 63 do
+        _BundleSourceLifetimes[[slot]].valid = FALSE;
+    end;
+    _NextBundleSourceLifetimeOrdinal = 1;
+    _NextBundleGMOVSourceSelectionOrdinal = 1;
+    ResetBundleGMOVSourceSelections();
+end;
 
 type BundleSourceLifetimeSnapshot of array [[64]]
     of BundleSourceLifetimeOccurrence;
@@ -154,6 +187,7 @@ begin
            occurrence.start_instruction == _BundleStartEncodedInstruction &&
            occurrence.operation_form == _BundleOperation.form_identity &&
            occurrence.operation_selector == _BundleOperation.selector &&
+           !occurrence.atomic_local_cohort &&
            occurrence.shared == shared && occurrence.resource == source &&
            occurrence.source_pe == source_pe &&
            occurrence.local_epoch == local_epoch &&
@@ -242,7 +276,15 @@ begin
             _BundleSourceLifetimes[[slot]].participant_mask = participant_mask;
             _BundleSourceLifetimes[[slot]].captured_mask = Zeros{4};
             _BundleSourceLifetimes[[slot]].completed_mask = Zeros{4};
+            _BundleSourceLifetimes[[slot]].atomic_local_cohort = FALSE;
+            _BundleSourceLifetimes[[slot]].source_selector_relative = FALSE;
+            _BundleSourceLifetimes[[slot]].consumed_mask = Zeros{4};
+            _BundleSourceLifetimes[[slot]].retry_only_mask = Zeros{4};
             for agent = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+                _BundleSourceLifetimes[[slot]].local_source_pes[[agent]] =
+                    agent as MemoryAgentId;
+                _BundleSourceLifetimes[[slot]].local_sources[[agent]] = 0;
+                _BundleSourceLifetimes[[slot]].local_epochs[[agent]] = 0;
                 _BundleSourceLifetimes[[slot]].domain_tokens[[agent]] = 0;
             end;
             _BundleSourceLifetimes[[slot]].captured_mask[mask_bit] = '1';
@@ -252,87 +294,6 @@ begin
         end;
     end;
     return 0;
-end;
-
-func CompleteBundleSourceLifetime(ordinal: integer)
-begin
-    let slot = FindBundleSourceLifetimeOrdinal(ordinal);
-    if slot < 0 then return; end;
-    let pe = _CurrentMemoryAgent as integer {0..3};
-    let mask_bit = PTOPEMaskBitOfPEIdentity(_CurrentMemoryAgent);
-    if _BundleSourceLifetimes[[slot]].core != _CurrentModelCore ||
-       _BundleSourceLifetimes[[slot]].invocation != _CurrentKernelInvocation ||
-       _BundleSourceLifetimes[[slot]].origin != _CurrentMemoryOrigin ||
-       _BundleSourceLifetimes[[slot]].source_acr != CurrentACR() ||
-       _BundleSourceLifetimes[[slot]].producer_site != ReadBPC() ||
-       _BundleSourceLifetimes[[slot]].start_instruction !=
-           _BundleStartEncodedInstruction ||
-       _BundleSourceLifetimes[[slot]].operation_form !=
-           _BundleOperation.form_identity ||
-       _BundleSourceLifetimes[[slot]].operation_selector !=
-           _BundleOperation.selector ||
-       _BundleSourceLifetimes[[slot]].captured_mask[mask_bit] != '1' ||
-       _BundleSourceLifetimes[[slot]].completed_mask[mask_bit] == '1' ||
-       _BundleSourceLifetimes[[slot]].domain_tokens[[pe]] !=
-           _BundleExecutionDomainToken then return; end;
-    _BundleSourceLifetimes[[slot]].completed_mask[mask_bit] = '1';
-    if _BundleSourceLifetimes[[slot]].completed_mask ==
-       _BundleSourceLifetimes[[slot]].participant_mask then
-        var another_incomplete = FALSE;
-        for other = 0 to 63 do
-            if other != slot && _BundleSourceLifetimes[[other]].valid &&
-               _BundleSourceLifetimes[[other]].core ==
-                   _BundleSourceLifetimes[[slot]].core &&
-               _BundleSourceLifetimes[[other]].shared ==
-                   _BundleSourceLifetimes[[slot]].shared &&
-               _BundleSourceLifetimes[[other]].resource ==
-                   _BundleSourceLifetimes[[slot]].resource &&
-               _BundleSourceLifetimes[[other]].source_pe ==
-                   _BundleSourceLifetimes[[slot]].source_pe &&
-               _BundleSourceLifetimes[[other]].local_epoch ==
-                   _BundleSourceLifetimes[[slot]].local_epoch &&
-               _BundleSourceLifetimes[[other]].shared_epoch ==
-                   _BundleSourceLifetimes[[slot]].shared_epoch &&
-               _BundleSourceLifetimes[[other]].completed_mask !=
-                   _BundleSourceLifetimes[[other]].participant_mask then
-                another_incomplete = TRUE;
-            end;
-        end;
-        if another_incomplete then return; end;
-        if _BundleSourceLifetimes[[slot]].shared then
-            let shared_id = (Zeros{6} +
-                _BundleSourceLifetimes[[slot]].resource) as SharedTileID;
-            let shared_record = SharedTileRecord(shared_id);
-            if shared_record.payload_generation ==
-               _BundleSourceLifetimes[[slot]].shared_epoch then
-                ConsumeSharedTilePayload(shared_id);
-            end;
-        else
-            ConsumeLocalTilePayloadGeneration(
-                _BundleSourceLifetimes[[slot]].source_pe,
-                _BundleSourceLifetimes[[slot]].resource,
-                _BundleSourceLifetimes[[slot]].local_epoch);
-        end;
-        for matching = 0 to 63 do
-            if _BundleSourceLifetimes[[matching]].valid &&
-               _BundleSourceLifetimes[[matching]].core ==
-                   _BundleSourceLifetimes[[slot]].core &&
-               _BundleSourceLifetimes[[matching]].shared ==
-                   _BundleSourceLifetimes[[slot]].shared &&
-               _BundleSourceLifetimes[[matching]].resource ==
-                   _BundleSourceLifetimes[[slot]].resource &&
-               _BundleSourceLifetimes[[matching]].source_pe ==
-                   _BundleSourceLifetimes[[slot]].source_pe &&
-               _BundleSourceLifetimes[[matching]].local_epoch ==
-                   _BundleSourceLifetimes[[slot]].local_epoch &&
-               _BundleSourceLifetimes[[matching]].shared_epoch ==
-                   _BundleSourceLifetimes[[slot]].shared_epoch &&
-               _BundleSourceLifetimes[[matching]].completed_mask ==
-                   _BundleSourceLifetimes[[matching]].participant_mask then
-                _BundleSourceLifetimes[[matching]].valid = FALSE;
-            end;
-        end;
-    end;
 end;
 
 readonly func SharedSourceLifetimePinned(shared_id: SharedTileID) => boolean
@@ -346,44 +307,6 @@ begin
                (UInt(shared_id) as TileIndex) &&
            _BundleSourceLifetimes[[slot]].shared_epoch ==
                shared.payload_generation then return TRUE; end;
-    end;
-    return FALSE;
-end;
-
-readonly func LocalSourceLifetimePinned(pe: MemoryAgentId,
-                                         source: TileIndex) => boolean
-begin
-    let epoch = LocalTilePayloadGeneration(pe, source);
-    for slot = 0 to 63 do
-        if _BundleSourceLifetimes[[slot]].valid &&
-           !_BundleSourceLifetimes[[slot]].shared &&
-           _BundleSourceLifetimes[[slot]].core == _CurrentModelCore &&
-           _BundleSourceLifetimes[[slot]].source_pe == pe &&
-           _BundleSourceLifetimes[[slot]].resource == source &&
-           _BundleSourceLifetimes[[slot]].local_epoch == epoch then
-            return TRUE;
-        end;
-    end;
-    for slot = 0 to 63 do
-        if _BundleGMOVSourceSelections[[slot]].valid &&
-           _BundleGMOVSourceSelections[[slot]].core == _CurrentModelCore then
-            for destination = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
-                let destination_pe = destination as MemoryAgentId;
-                let mask_bit = PTOPEMaskBitOfPEIdentity(destination_pe);
-                if _BundleGMOVSourceSelections[[slot]].participant_mask[
-                       mask_bit] == '1' &&
-                   _BundleGMOVSourceSelections[[slot]].completed_mask[
-                       mask_bit] == '0' &&
-                   _BundleGMOVSourceSelections[[slot]].
-                       source_pes[[destination]] == pe &&
-                   _BundleGMOVSourceSelections[[slot]].
-                       sources[[destination]] == source &&
-                   _BundleGMOVSourceSelections[[slot]].
-                       source_epochs[[destination]] == epoch then
-                    return TRUE;
-                end;
-            end;
-        end;
     end;
     return FALSE;
 end;
@@ -437,54 +360,6 @@ begin
             end;
         end;
     end;
-end;
-
-func ResetSourceLifetimeState()
-begin
-    for slot = 0 to 63 do
-        _BundleSourceLifetimes[[slot]].valid = FALSE;
-    end;
-    _NextBundleSourceLifetimeOrdinal = 1;
-    _NextBundleGMOVSourceSelectionOrdinal = 1;
-    ResetBundleGMOVSourceSelections();
-end;
-
-func RetireSourceLifetimes(core: PTOModelCoreIdentity, invocation: integer)
-begin
-    for slot = 0 to 63 do
-        if _BundleSourceLifetimes[[slot]].valid &&
-           _BundleSourceLifetimes[[slot]].core == core &&
-           _BundleSourceLifetimes[[slot]].invocation == invocation then
-            _BundleSourceLifetimes[[slot]].valid = FALSE;
-        end;
-    end;
-    RetireBundleGMOVSourceSelections(core, invocation);
-end;
-
-func SquashSourceLifetimes(core: PTOModelCoreIdentity, invocation: integer,
-                           domain: integer)
-begin
-    for slot = 0 to 63 do
-        if _BundleSourceLifetimes[[slot]].valid &&
-           _BundleSourceLifetimes[[slot]].core == core &&
-           _BundleSourceLifetimes[[slot]].invocation == invocation then
-            for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
-                if _BundleSourceLifetimes[[slot]].captured_mask[
-                       PTOPEMaskBitOfPEIdentity(pe)] == '1' &&
-                   _BundleSourceLifetimes[[slot]].domain_tokens[[pe]] ==
-                       domain then
-                    let mask_bit = PTOPEMaskBitOfPEIdentity(pe);
-                    _BundleSourceLifetimes[[slot]].captured_mask[mask_bit] = '0';
-                    _BundleSourceLifetimes[[slot]].completed_mask[mask_bit] = '0';
-                    _BundleSourceLifetimes[[slot]].domain_tokens[[pe]] = 0;
-                end;
-            end;
-            if _BundleSourceLifetimes[[slot]].captured_mask == Zeros{4} then
-                _BundleSourceLifetimes[[slot]].valid = FALSE;
-            end;
-        end;
-    end;
-    SquashBundleGMOVSourceSelections(core, invocation, domain);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

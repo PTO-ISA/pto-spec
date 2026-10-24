@@ -3,6 +3,7 @@
 
 type CommandExecutionStatus of enumeration {
     CommandExecution_Executed,
+    CommandExecution_Blocked,
     CommandExecution_Rejected
 };
 

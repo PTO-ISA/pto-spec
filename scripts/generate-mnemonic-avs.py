@@ -2114,6 +2114,10 @@ def render_concept_avs(root: Path, unit: AslUnit) -> tuple[Path, str]:
             "BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
             "BLOCK-SHARED-GENERATION-PE-REQUESTS",
         )
+        identity = identity.replace(
+            "BLOCK-MODEL-STATE-ATOMIC-TSTORE-SOURCE-LIFETIME",
+            "BLOCK-MODEL-STATE-ATOMIC-TSTORE-LIFETIME",
+        )
         identity = identity.replace("CELL-REARRANGEMENT", "CELL-REARR")
         identity = identity.replace("TILE-INSTRUCTION-OPERANDS", "TILE-INST-OPERANDS")
         identity = identity.replace("EXECUTION-MASK-SOURCE-SCHEMA", "EXEC-MASK-SRC-SCHEMA")

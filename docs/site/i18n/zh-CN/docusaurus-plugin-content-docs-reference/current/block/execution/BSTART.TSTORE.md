@@ -241,25 +241,26 @@ end;
 ## State effects
 
 - Reads one Local or published, whole-parent-ready Shared source without modifying its payload, descriptor, producer mask, readiness, or lifetime.
-- On success only GM and memory-event state change; the source binding is consumed by normal block completion.
+- Normal TSTORE consumes its source binding through ordinary successful block completion. Atomic TSTORE delays captured last-use consumption until all active occurrences complete and the existing required-participant generation is complete.
 - A Shared source that is pending or incomplete causes no payload read and no GM effect.
 
 ## Memory effects and ordering
 
 ### Memory effects
 
-- For every selected PE and every selected element in ValidRow x ValidCol, write GM at base + row * row_stride_bytes + column * element_size, with packed four-bit columns adding floor(column / 2) to the byte-strided row base and selecting low/high by column parity.
-- The selected-PE footprint is accessed element by element until the first fault; prior GM writes and memory events may remain visible. Individual store beats need not be atomic or ordered to observers.
+- Normal TSTORE writes every selected element at base + row * row_stride_bytes + column * element_size; packed four-bit columns add floor(column / 2) to each byte-strided row base and select low/high by column parity.
+- Normal TSTORE accesses selected elements until the first fault, and stores and memory events completed before that fault may remain visible. Atomic Function 1 TSTORE instead preflights the selected PE footprint before its first effect and drains all active occurrences exactly once after any effect.
 
 ### Ordering
 
-- Resolve and validate the complete schema, source descriptor or temporary descriptor, dimensions, masks, and per-PE GPR inputs before accessing each element until the first fault.
-- Selected Shared-store PEs have no architecture-defined relative issue or commit order; software avoids overlapping GM regions or establishes ordering separately.
+- Normal TSTORE resolves the complete schema, source descriptor or temporary descriptor, dimensions, masks, and per-PE GPR inputs, then accesses elements until the first fault.
+- Atomic Function 1 TSTORE performs per-PE complete target preflight, samples each old GM value at its RMW, and serializes overlapping exact ranges by the existing GM atomic order; different PEs remain independently serviceable.
 
 ## Exceptions
 
-- Reserved DataType, unsupported Layout, invalid dimensions, source descriptor mismatch, malformed bindings, illegal PE mask, or GM translation, permission, or alignment fault raises the applicable fault before the first GM write.
+- Reserved DataType, unsupported Layout, invalid dimensions, source descriptor mismatch, malformed bindings, or illegal PE mask raises the applicable fault before the first GM effect. Atomic Function 1 TSTORE preflights its selected PE footprint before the first GM write; Normal TSTORE preserves first-fault prefix effects.
 - A Shared source is hardware-waiting/no-effect until whole-parent readiness and publication are true; undefined Shared payload is not a legal source path.
+- Atomic Function 1 TSTORE uses the accepted per-PE preflight and irrevocable-drain contract in PTO-TSTORE-STRIDED-ATOMIC-RED-001; Normal TSTORE retains first-fault partial-store behavior.
 
 ## Examples
 

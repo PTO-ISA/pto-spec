@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+profile_path="$repo_root/tests/config/asl/atomic-translation-test-profile.asl"
+launcher_path="$repo_root/scripts/aslref"
+
+hash_file() {
+    shasum -a 256 "$1" | awk '{print $1}'
+}
+
+test_path=
+for ((index = 1; index <= $#; index++)); do
+    argument=${!index}
+    if [[ $argument == --type-check-strict ]]; then
+        next_index=$((index + 1))
+        if ((next_index <= $#)); then
+            test_path=${!next_index}
+        fi
+        break
+    fi
+done
+
+if [[ -z $test_path || ! -f $test_path ]]; then
+    echo "error: --type-check-strict must be followed by an existing assembled test" >&2
+    exit 2
+fi
+
+model_path="$repo_root/build/asl-page-inputs/pto-spec.asl"
+if [[ ! -f $model_path ]]; then
+    model_path="$(dirname "$test_path")/pto-spec.asl"
+fi
+if [[ ! -f $model_path ]]; then
+    echo "error: assembled test model is missing: $model_path" >&2
+    exit 2
+fi
+
+if [[ ! -f $profile_path || ! -x $launcher_path ]]; then
+    echo "error: atomic translation test profile inputs are missing" >&2
+    exit 2
+fi
+
+printf 'profile=pto-issue397-atomic-translation-test-v1 memory_bytes=4096 event_capacity=16 declarations=_Issue397TranslationMode,TranslateDataAddress fixture_sha256=%s launcher_sha256=%s model_sha256=%s\n' \
+    "$(hash_file "$profile_path")" \
+    "$(hash_file "$0")" \
+    "$(hash_file "$model_path")" >&2
+
+exec "$launcher_path" "$@" --patch "$profile_path"

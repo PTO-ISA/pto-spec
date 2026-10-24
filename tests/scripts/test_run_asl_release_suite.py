@@ -31,6 +31,11 @@ MATRIX = [
         "sha256": "a" * 64,
         "validation_entrypoint": None,
         "validation_sha256": "v" * 64,
+        "execution_profile": "default",
+        "profile_fingerprint": "p" * 64,
+        "profile_registry_sha256": "r" * 64,
+        "profile_inputs": [["scripts/aslref", "l" * 64]],
+        "aslref_command": ["scripts/aslref"],
     }
 ]
 
@@ -47,6 +52,11 @@ def result(
         "sha256": sha256 or MATRIX[0]["sha256"],
         "validation_entrypoint": MATRIX[0]["validation_entrypoint"],
         "validation_sha256": MATRIX[0]["validation_sha256"],
+        "execution_profile": MATRIX[0]["execution_profile"],
+        "profile_fingerprint": MATRIX[0]["profile_fingerprint"],
+        "profile_registry_sha256": MATRIX[0]["profile_registry_sha256"],
+        "profile_inputs": MATRIX[0]["profile_inputs"],
+        "aslref_command": MATRIX[0]["aslref_command"],
         "status": status,
         "returncode": 0 if status == "passed" else 1,
         "duration_seconds": 0.1,

@@ -81,6 +81,7 @@ A `BSTART.STD DIRECT, <label>` has a signed 17-bit `simm17` field. If `CommandDe
 
 type CommandExecutionStatus of enumeration {
     CommandExecution_Executed,
+    CommandExecution_Blocked,
     CommandExecution_Rejected
 };
 

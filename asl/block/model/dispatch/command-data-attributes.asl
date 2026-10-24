@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES","surface":"block","classification":["model","dispatch","command-data-attributes"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES","surface":"block","classification":["model","dispatch","command-data-attributes"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS"]}
 readonly func BundleExecutionMaskDataAttributesLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -130,6 +130,21 @@ end;
 func SetBundleDataAttributesFromCommand(
     instruction: bits(64), form: integer {0..PTO_COMMAND_FORM_COUNT-1})
 begin
+    let comparison_mode = DecodeCommandOperandRaw(instruction, form,
+        CommandField_CMode)[2:0];
+    let canonicalize = CommandDecodedBool(instruction, form,
+        CommandField_Canonicalize);
+    let atomic_tstore = _BundleActive && !_BundleBodyActive &&
+        _BundleOperation.valid &&
+        _BundleOperation.operation_class == BundleOperation_TileMemory &&
+        BundleTileDecodeFamily(_BundleOperation.operation_class) ==
+            TileDecode_TLSU &&
+        _BundleOperation.selector_valid &&
+        UInt(_BundleOperation.selector[4:0]) == 1 && canonicalize;
+    if UInt(comparison_mode) > 5 && !atomic_tstore then
+        SetFault(Fault_IllegalInstruction, ReadTPC());
+        return;
+    end;
     SetBundleDataAttributeState(
         DecodeCommandOperandRaw(instruction, form,
             CommandField_DataType)[4:0],
@@ -137,12 +152,11 @@ begin
             CommandField_Layout)[4:0],
         DecodeCommandOperandRaw(instruction, form,
             CommandField_PadValueOrByteId)[1:0],
-        DecodeCommandOperandRaw(instruction, form,
-            CommandField_CMode)[2:0],
+        comparison_mode,
         DecodeCommandOperandRaw(instruction, form,
             CommandField_RMode)[2:0],
         CommandDecodedBool(instruction, form, CommandField_Sat),
-        CommandDecodedBool(instruction, form, CommandField_Canonicalize));
+        canonicalize);
     if _LastFault == Fault_None then
         _BundleDataAttributes.execution_mask_invert =
             CommandDecodedBool(instruction, form, CommandField_PredInv);

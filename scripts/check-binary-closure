@@ -15,7 +15,7 @@ EXPECTED_FORM_COUNT = 578
 # Version-neutral fingerprint for the reviewed current draft; --release checks
 # the separately published manifest identity.
 EXPECTED_FINGERPRINT = (
-    "0558b78565a2f12a55cf9b8f3c9f2968cf2fd3810f90adcc6941d245a40070e2"
+    "2d97fcea26bfabbd32e9158136e2d3eadfea1903e79377348a264785fc903eb6"
 )
 EXPECTED_RELEASE = "0.59.0"
 EXPECTED_ENCODING_ABI = "pto-isa-0.59.0-mode-function-v1"

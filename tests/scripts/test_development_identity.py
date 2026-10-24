@@ -1,7 +1,8 @@
 import copy
 import json
-import unittest
 from collections import Counter
+from pathlib import Path
+import unittest
 from unittest.mock import patch
 
 from scripts.development_identity import ROOT, build, digest, generator
@@ -10,7 +11,8 @@ from scripts.development_identity import ROOT, build, digest, generator
 class DevelopmentIdentityTests(unittest.TestCase):
     def test_current_identity_matches_candidate_without_claiming_publication(self):
         current = build()
-        candidate = json.loads((ROOT / "spec/release-manifest.json").read_text())
+        tracked = json.loads((ROOT / "spec/development-manifest.json").read_text())
+        self.assertEqual(current, tracked)
         self.assertEqual(current["status"], "development-not-published")
         self.assertIsNone(current["publication"])
         self.assertEqual(current["identity"]["release"], "0.59.0")
@@ -18,14 +20,39 @@ class DevelopmentIdentityTests(unittest.TestCase):
             current["identity"]["encoding_abi"],
             "pto-isa-0.59.0-mode-function-v1",
         )
-        self.assertEqual(
-            current["identity"]["encoding_projection_sha256"],
-            candidate["encoding_projection_sha256"],
-        )
         self.assertEqual(current["catalog_counts"], {
             "scalar_forms": 473, "command_forms": 105,
             "tile_operations": 119, "reservations": 50,
         })
+
+    def test_historical_release_manifest_cannot_affect_development_identity(self):
+        expected = build()
+        historical = (ROOT / "spec/release-manifest.json").resolve()
+        original_read_text = Path.read_text
+
+        for value, unavailable in (
+            ('{"encoding_projection_sha256":"mutated historical value"}', False),
+            (None, True),
+        ):
+            reads = 0
+
+            def controlled_read(path, *args, **kwargs):
+                nonlocal reads
+                if path.resolve() == historical:
+                    reads += 1
+                    if unavailable:
+                        raise FileNotFoundError(path)
+                    return value
+                return original_read_text(path, *args, **kwargs)
+
+            with self.subTest(unavailable=unavailable):
+                with patch.object(
+                    Path, "read_text", autospec=True, side_effect=controlled_read
+                ):
+                    self.assertEqual(build(), expected)
+                self.assertEqual(
+                    reads, 0, "development identity must not read publication state"
+                )
 
     def test_release_guards_accept_only_the_reviewed_candidate_inventory(self):
         module = generator(ROOT)

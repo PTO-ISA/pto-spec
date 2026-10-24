@@ -50,6 +50,8 @@ begin
         _BundleTileBindings[[index]].gmov_selection_ordinal = 0;
         _BundleTileBindings[[index]].source0_relative = FALSE;
         _BundleTileBindings[[index]].source1_relative = FALSE;
+        _BundleTileBindings[[index]].source0_selector = 0;
+        _BundleTileBindings[[index]].source0_selector_relative = FALSE;
         _BundleTileBindings[[index]].parent_ref_valid = FALSE;
         _BundleTileBindings[[index]].parent_ref_relative = FALSE;
         _BundleTileBindings[[index]].parent_ref = 0;

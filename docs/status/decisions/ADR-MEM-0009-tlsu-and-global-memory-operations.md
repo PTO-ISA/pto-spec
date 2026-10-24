@@ -2,7 +2,7 @@
 {
   "id": "ADR-MEM-0009",
   "title": "TLSU and global-memory operations",
-  "title_zh": "TLSU 与全局内存操作",
+  "title_zh": "TLSU \u4e0e\u5168\u5c40\u5185\u5b58\u64cd\u4f5c",
   "status": "accepted",
   "authors": [
     "Kevin Zhou <zhoubot@gmail.com>",
@@ -52,6 +52,7 @@
     "PTO-BSTART-TSTORE-CUBE-001",
     "PTO-BSTART-TSTORE-MEMORY-001",
     "PTO-CUBE-CELL-TRANSPORT-001",
+    "PTO-GM-FLOATING-ADD-NUMERIC-001",
     "PTO-GMOV-CORE4-PEER-001",
     "PTO-INDEXED-TLSU-STRIDE-001",
     "PTO-INST-BLOCK-B-IOR",
@@ -113,7 +114,8 @@
     "PTO-TLOAD-MEMORY-001",
     "PTO-TPREFETCH-FOOTPRINT-001",
     "PTO-TSTORE-CUBE-001",
-    "PTO-TSTORE-MEMORY-001"
+    "PTO-TSTORE-MEMORY-001",
+    "PTO-TSTORE-STRIDED-ATOMIC-RED-001"
   ],
   "affected_units": [
     "PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING",
@@ -478,7 +480,8 @@
         "PTO-TILE-MSCATTER-MASK"
       ]
     }
-  ]
+  ],
+  "interface_change": true
 }
 ---
 # ADR-MEM-0009: TLSU and global-memory operations
@@ -803,3 +806,48 @@ atomic opcode/function assignments and datatype matrices are unchanged.
 AVS, coverage, ADR index, readiness, traceability, and `0.58.6.x` release-input
 projections must advance together; this amendment does not itself publish a
 release.
+
+## Accepted amendment: issue #397 strided atomic TSTORE and GM gradual ADD
+
+At baseline `b0165320a4b575b18d2f4d93faf40178f661ab49`, the accepted
+issue [#397](https://github.com/PTO-ISA/pto-spec/issues/397) decisions
+A1/B1/B2/C1/N1 extend Function 1 without an IndexTile or returning form.
+The normative owners are `PTO-TSTORE-STRIDED-ATOMIC-RED-001` and
+`PTO-GM-FLOATING-ADD-NUMERIC-001`; this rationale is not a second semantic
+specification. Eight reduction modes, Local/Shared source domains and
+existing strided addressing avoid synthesizing an architectural IndexTile.
+Immutable admission, per-PE preflight and irrevocable post-effect drain
+preserve exactly-once reduction without a whole-block transaction. Source
+lifetime stays tied to participant completion, not source capture.
+
+N1 deliberately supersedes the accepted #208 FP32 GM atomic FTZ policy:
+all four GM floating ADD types now preserve subnormal operands and gradual
+results with RN-even. This aligns with the no-FTZ hardware format policy
+owned by ADR-NUM-0010; it does not weaken that owner or alter scalar
+arithmetic. Indexed floating ADD results intentionally change; non-ADD
+indexed operations and Normal TSTORE are protected. ADR-MEM-0011 remains
+the general memory/replay owner; only this mode's accepted admission/drain
+exception is introduced. Reserved CMode 6/7 remain illegal elsewhere.
+
+Release impact is required. ASL/NDF, generated catalogs/docs, decoder and
+macro witnesses, AVS and traceability advance together. No release is
+published by this amendment. Compiler/assembler/disassembler, TileOP,
+gfrun/gfsim, RTL and FA-backward/performance integration remain downstream
+obligations tracked by #397; the specification work must not auto-close it.
+
+Atomic TSTORE completion is part of the same accepted occurrence contract. If
+its admitted request has zero or partial effects but still has active targets,
+the actual block-completion attempt remains pending without a fault, header
+clear, or continuation advance. A retry resumes the same captured dynamic
+request and never reissues committed occurrences. Once every active occurrence
+has drained, the existing completion path commits and performs any requested
+post-commit trap exactly once. Normal TSTORE retains its posted completion
+behavior. This preserves the one-level block model and adds no architectural
+cursor, queue, or body replay state.
+
+Atomic TSTORE 完成也属于同一已接受的 occurrence 契约。若已准入请求仅有零个或部分
+效果但仍有活动目标，实际 block-completion 尝试必须保持 pending，不得产生故障、清除
+header 或推进 continuation。重试必须恢复同一已捕获 dynamic request，且不得重放已提交
+的 occurrence。所有活动 occurrence 排空后，现有完成路径必须恰好提交一次，并执行任何
+请求的 post-commit trap。Normal TSTORE 保留其 posted completion 行为。该规则保持单层
+block 模型，不增加架构 cursor、queue 或 body replay 状态。

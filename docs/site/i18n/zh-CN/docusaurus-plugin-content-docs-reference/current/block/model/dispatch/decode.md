@@ -81,6 +81,7 @@ This page is a generated reference view of the normative ASL unit.
 
 type CommandExecutionStatus of enumeration {
     CommandExecution_Executed,
+    CommandExecution_Blocked,
     CommandExecution_Rejected
 };
 

@@ -340,6 +340,8 @@ type BundleTileBinding of record {
     gmov_selection_ordinal: integer,
     source0_relative: boolean,
     source1_relative: boolean,
+    source0_selector: TileIndex,
+    source0_selector_relative: boolean,
     source0: TileIndex,
     source1: TileIndex,
     parent_ref_valid: boolean,
