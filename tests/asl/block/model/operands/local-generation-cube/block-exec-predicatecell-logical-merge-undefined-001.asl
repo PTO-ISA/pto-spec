@@ -97,10 +97,10 @@ begin
 
     InstallRelativeTileFixture(17,parent);
     InstallRelativeTileFixture(16,17);
-    WritePEGPR(0,2,Zeros{PTO_XLEN} + 1);
-    WritePEGPR(1,2,Zeros{PTO_XLEN} + 1);
-    WritePEGPR(2,2,Zeros{PTO_XLEN} + 1);
-    WritePEGPR(3,2,Zeros{PTO_XLEN} + 1);
+    WritePEGPR(0,2,Zeros{PTO_XLEN});
+    WritePEGPR(1,2,Zeros{PTO_XLEN});
+    WritePEGPR(2,2,Zeros{PTO_XLEN});
+    WritePEGPR(3,2,Zeros{PTO_XLEN});
     LogicalAssemblyWriter(FALSE,TRUE,1,3);
     assert _Tiles[[17]].storage_kind == TileStorage_PredicateCell &&
            ReadTileElement(17,0,0) == Zeros{PTO_XLEN} + 1 &&
