@@ -177,10 +177,10 @@ begin
     assert active == Zeros{PTO_XLEN} + 3 && inactive == Zeros{PTO_XLEN} + 9;
 end;
 
-func RunZeroAndDuplicate(all_active: boolean)
+func RunZeroAndDuplicate(all_active: boolean, unmapped: boolean)
 begin
     ResetProfileState(); ConfigureMaskedAtomRedSources();
-    WriteTileElement(10,0,1,if all_active then Zeros{PTO_XLEN} else Zeros{PTO_XLEN} + 0x7fff);
+    WriteTileElement(10,0,1,if unmapped then Zeros{PTO_XLEN} + 4096 else if all_active then Zeros{PTO_XLEN} else Zeros{PTO_XLEN} + 0x7fff);
     WriteTileElement(11,0,0,Zeros{PTO_XLEN});
     WriteTileElement(11,0,1,Zeros{PTO_XLEN} + 3);
     if all_active then WriteTileElement(12,0,1,Zeros{PTO_XLEN} + 1); end;
@@ -189,11 +189,16 @@ begin
     BeginMaskedAtomRed('10101',FALSE); BindMaskedAtomRed(FALSE);
     StartMemoryEventCapture(0);
     let completed = ExecuteBundleTileOperation();
-    assert completed && _LastFault == Fault_None;
-    assert _MemoryEventCount == (if all_active then 2 else 1);
+    if unmapped && all_active then
+        assert !completed && _LastFault != Fault_None && _MemoryEventCount == 0;
+        ClearFault();
+    else
+        assert completed && _LastFault == Fault_None;
+        assert _MemoryEventCount == (if all_active then 2 else 1);
+    end;
     StopMemoryEventCapture();
     let value = LoadUnsigned(Zeros{PTO_XLEN} + 0x400,4);
-    assert value == (if all_active then Zeros{PTO_XLEN} + 8 else Zeros{PTO_XLEN} + 5);
+    assert value == (if all_active && !unmapped then Zeros{PTO_XLEN} + 8 else Zeros{PTO_XLEN} + 5);
 end;
 
 func RunWrongFinalBinding(atom: boolean)
@@ -216,7 +221,7 @@ begin
     RunMaskedMGATHERADD();
     RunMaskedMSCATTERADD();
     RunMaskedMSCATTERMAX();
-    RunZeroAndDuplicate(FALSE); RunZeroAndDuplicate(TRUE);
+    RunZeroAndDuplicate(FALSE,FALSE); RunZeroAndDuplicate(FALSE,TRUE); RunZeroAndDuplicate(TRUE,FALSE); RunZeroAndDuplicate(TRUE,TRUE);
     RunWrongFinalBinding(FALSE);
     RunWrongFinalBinding(TRUE);
     return 0;
