@@ -1621,7 +1621,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "75b6131861e34abb43b0c3e50133204b0eee3101c6d25a4e103ab205583fbc38",
+            "fold_signature_sha256": "c2c2ed4c8fb3e1f325560c0a4d95eef346d1162856a023dd4934e5f2cefde330",
             "form_id": "pto0590-gmov-7807ccd83106e873",
             "header": {
               "command": "BSTART.GMOV",
@@ -3491,7 +3491,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "df21920469e4e5a7719cb24a1e979545be4149adb8e56e3579d7ef98d20c69a6",
+            "fold_signature_sha256": "d735256b3dd08446eeb3c6317241a5f3d7159ee77d7eeb49642075171c4bd5fc",
             "form_id": "pto0590-mgather-39ecaf01823e4b75",
             "header": {
               "command": "BSTART.MGATHER",
@@ -5525,7 +5525,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "61ec104c8ace425f312ba327d8b14c54d68517a63958179a9e06afe877f8c2f5",
+            "fold_signature_sha256": "bcbb2f32aee33ba350b7c2e1bc74ce09b76b041b4e0128ba9eb151990080fe85",
             "form_id": "pto0590-mgather-add-1c71b40000958762",
             "header": {
               "command": "BSTART.MGATHER.ADD",
@@ -7647,7 +7647,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "11cd2f1536e7d759e939b2c8f9f082f12918acd445964e5014a41fc3c557c386",
+            "fold_signature_sha256": "eac303e99e644c67be6304cc34bd55d160df1506f7d49ece7e6f1a32f7ec77fa",
             "form_id": "pto0590-mgather-and-66d65366d0d9509d",
             "header": {
               "command": "BSTART.MGATHER.AND",
@@ -9947,7 +9947,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "2e711ef9e1fab57de5759b82de650a0605d00cdf2380950823a5fe5159a391b3",
+            "fold_signature_sha256": "f4e5eccbe5270c28de096614d53075295db1dbc5bd9da5d220e76f362954dadf",
             "form_id": "pto0590-mgather-cas-a6c84e4e26cdb926",
             "header": {
               "command": "BSTART.MGATHER.CAS",
@@ -12156,7 +12156,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "0c204665533bfe040486cae02316cc04673d78c1fa28231841fc0f2dd64f873b",
+            "fold_signature_sha256": "1ab4c0956e0b91b6e9be3e8b890aa2d000e2367b332f941f6968d1d48c63e248",
             "form_id": "pto0590-mgather-dec-efd8b5695090de7e",
             "header": {
               "command": "BSTART.MGATHER.DEC",
@@ -14278,7 +14278,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "3547de82d27599383537f0c0c172c928b8999f50878a28dae32f91ab9f501d03",
+            "fold_signature_sha256": "0138da000638485e8e20cdf1682b091ea53d11cefc04833889df0c6774d25f6d",
             "form_id": "pto0590-mgather-exch-ec9f74ade16f6c5c",
             "header": {
               "command": "BSTART.MGATHER.EXCH",
@@ -16400,7 +16400,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "a91b720c5d1ab792df5b102b48dda3b794a855b5167b3f3e7367bc51db367877",
+            "fold_signature_sha256": "e6bd3db9dd11f7b78eaf7c1a7d71622402a9b3716a3c296c00921340d132ab5d",
             "form_id": "pto0590-mgather-inc-c3d183220fc8819f",
             "header": {
               "command": "BSTART.MGATHER.INC",
@@ -18542,7 +18542,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "b03388e5d9fd9c8bb08996a4fb613adf9cf135cad3ad4cbc9e20db7e081bfc6a",
+            "fold_signature_sha256": "0b14b1a8a42312969f1d94ab5c3be54e1eaef8f00f52edb90b5fc2fb5489bc49",
             "form_id": "pto0590-mgather-mask-0c0c6d8e1765e4ba",
             "header": {
               "command": "BSTART.MGATHER.MASK",
@@ -20662,7 +20662,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "e276437208d272147cc557597ef47bc7538b2668304dec43fa9eb78cc05a4553",
+            "fold_signature_sha256": "c5e5d419e61f4dd02b254eb706c53ffc1ed0525f91c1d8738d87fbd91a3706e0",
             "form_id": "pto0590-mgather-max-b6070656e99c10e0",
             "header": {
               "command": "BSTART.MGATHER.MAX",
@@ -22784,7 +22784,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "f9ea95a557336067f8ca55a61e670c3760ab84d40f575c202db5d231424b4dda",
+            "fold_signature_sha256": "5ef6c39575cdb6f46b6d4d5e014abcb2857c13272600ed9fe07d65ba199041f3",
             "form_id": "pto0590-mgather-min-cb488f63d5d840ca",
             "header": {
               "command": "BSTART.MGATHER.MIN",
@@ -24906,7 +24906,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "0a8744b98fdda7e790cd56d75fe9f3983765fd22a41aebd909129db7fd063326",
+            "fold_signature_sha256": "27dd09cf3f529e88441bf222a22a0edb35a9fc48358ceacccf71ffdcb08c3601",
             "form_id": "pto0590-mgather-or-7f82ab611e7ca0b9",
             "header": {
               "command": "BSTART.MGATHER.OR",
@@ -27028,7 +27028,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "3b5bb098f807dd948a21228ee5c20b0185d857cf274094a76c895b9188750e4e",
+            "fold_signature_sha256": "8bf18f3714833697aed1449ead7bb9b117423e1c5380101060c886dbdc8e741e",
             "form_id": "pto0590-mgather-xor-c82bdfd533abd40f",
             "header": {
               "command": "BSTART.MGATHER.XOR",
@@ -27731,7 +27731,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "63b23bcf030a4d7fc82014ffa42db95d582d2060e7955caf46f4cbf9480a82b8",
+            "fold_signature_sha256": "fedc7c1b6f2b74624c8952ca84f68e8172ccbc47585003142866826ffdd22885",
             "form_id": "pto0590-mscatter-a2d3511172597583",
             "header": {
               "command": "BSTART.MSCATTER",
@@ -28377,7 +28377,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "dd70324f3a086920798a8a319ffac8c30e3e78c4e33310fcaa3d50044d1d2296",
+            "fold_signature_sha256": "8421826abbae2033abd5542da9fe0e604741cbf63560611af9b32337736bf3f6",
             "form_id": "pto0590-mscatter-add-ef853de48b7b53d0",
             "header": {
               "command": "BSTART.MSCATTER.ADD",
@@ -29029,7 +29029,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "fa9987eed7e1876c42c0438d930770d6132fdae11a5a420f996f1ac2aae1f833",
+            "fold_signature_sha256": "1ca731c28bd672ce765c73fb185fa315e29a490ff5bdc74a491242fb899efc53",
             "form_id": "pto0590-mscatter-and-96f174ebb37ac26e",
             "header": {
               "command": "BSTART.MSCATTER.AND",
@@ -29681,7 +29681,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "552eb2efd659eea51d3871541d7fc8c0def12f55586a1f4c2830a0adba2349ea",
+            "fold_signature_sha256": "98dfb101cbfe4438d75316627e6ba26a3be24659caaf03285aebf9d245517aaa",
             "form_id": "pto0590-mscatter-dec-28296b23bb333609",
             "header": {
               "command": "BSTART.MSCATTER.DEC",
@@ -30333,7 +30333,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "f54e4317017053ab1251d69210f0037320245ab23f6325735b9eb11ac1ee891d",
+            "fold_signature_sha256": "9051da745a22d33f18f8778f5904a0cb64b5cff60b0410c85ab76015683429a1",
             "form_id": "pto0590-mscatter-inc-33b6eb5a11855868",
             "header": {
               "command": "BSTART.MSCATTER.INC",
@@ -30995,7 +30995,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "ce6319daf9deec4c575c3a8879ed79e67711db7c6e611cfe582426ade577c442",
+            "fold_signature_sha256": "f593f5848e41fb7237a3b483432e9014ff74f4343dc24b2ea74600b2781de3f6",
             "form_id": "pto0590-mscatter-mask-c3be9bc05882a886",
             "header": {
               "command": "BSTART.MSCATTER.MASK",
@@ -31728,7 +31728,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "5c0cf59db2a6b5d6c7716e22affbaf256db72386b8aece60908c70eb1295bfb9",
+            "fold_signature_sha256": "36c3a858ac19b79c8903e772aac89249e41267043940245fb3348db5aa7e539d",
             "form_id": "pto0590-mscatter-max-f057334ec4405e5f",
             "header": {
               "command": "BSTART.MSCATTER.MAX",
@@ -32380,7 +32380,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "982858c7640d8845af3dc953a2f22c1ee0e3f5b78acb4d1c95ccc30101126c8e",
+            "fold_signature_sha256": "d8b4f4ad7f74e531fb82b72adfa0889f86802a0abacb9f4482769103076be4f7",
             "form_id": "pto0590-mscatter-min-79bf74fda479a005",
             "header": {
               "command": "BSTART.MSCATTER.MIN",
@@ -33032,7 +33032,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "ebfcf31853ed33d0e184113186cc566b46b6605ca098873f9fdf75db581e5bf5",
+            "fold_signature_sha256": "c9a3ce6ef443ff81a8e58c339860378ec437cfc7ff1eec458e882906724107b1",
             "form_id": "pto0590-mscatter-or-6a7b9eb464d7d8e9",
             "header": {
               "command": "BSTART.MSCATTER.OR",
@@ -33663,7 +33663,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "a4f8399d9db4c5b2d1303d595ab263bb08c7267a3252071300b6e6ed5581ab86",
+            "fold_signature_sha256": "47d867749de132e671e123f61951805936f536a4f1bbdc5f3edeb85dbd4ad7c3",
             "form_id": "pto0590-mscatter-popc-6c1e6da079ab467a",
             "header": {
               "command": "BSTART.MSCATTER.POPC",
@@ -34226,7 +34226,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "2819aa9b530607a0ea589056808cf659fdb9fa6c12f10003c6ccdf7080e58c8f",
+            "fold_signature_sha256": "82487aba2d62b6d5f9e1926f47054793daaa3a962390ce29325f988c519aa4c8",
             "form_id": "pto0590-mscatter-xor-f3053f8c987613b3",
             "header": {
               "command": "BSTART.MSCATTER.XOR",
@@ -35957,7 +35957,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "c51ec2600415dee6d7c9245644b2c92bb3c8be5ddaa448398dc62ae5be4dd82c",
+            "fold_signature_sha256": "170b279eb044d1bcc2d0e4c1482c7d7d9939c328167020b0b2053b9e611c5ac2",
             "form_id": "pto0590-tabs-b3dde8250313d29f",
             "header": {
               "command": "BSTART.VEC",
@@ -37751,7 +37751,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "da77b2de2d1e42c524ea6e969f3d27ff175331e2e333b1bc6644d62d082a85c8",
+            "fold_signature_sha256": "b3b65c9e7e648ac04534ea9c85ac856ccd632d60021959b79ebfcc2f6f95cdab",
             "form_id": "pto0590-tadd-d7fbf95e6a4db062",
             "header": {
               "command": "BSTART.VEC",
@@ -39626,7 +39626,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "92d349124db040fd012a5a06fee389dd33c08470dbbae9495131d8485f50a682",
+            "fold_signature_sha256": "11872e8876b7bb32e2ae8f76aa876dd88e7073a7c1d6bcdd2c5ecedce547067f",
             "form_id": "pto0590-tadds-6cc74189a8e93f87",
             "header": {
               "command": "BSTART.VEC",
@@ -41493,7 +41493,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "bae15cc1a98ea90980b5e62fc65d4ff17a061549821b5f82baa16ce499180493",
+            "fold_signature_sha256": "018c5405ffed624ddcd445923953c24b509ddeda06b8cf236dc4a536f6f1c184",
             "form_id": "pto0590-tand-a3aeba1729ba52b8",
             "header": {
               "command": "BSTART.VEC",
@@ -43368,7 +43368,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "19f75ccfc2d3e322a3d1f02483bf4cbc8c776df2a43c41c366b0f60a1683f000",
+            "fold_signature_sha256": "ee0c41a527a1743d2691cd4f2af04824624c8b848ee6a9bf72737edfd34a1fe9",
             "form_id": "pto0590-tands-cdda38cd4c724aec",
             "header": {
               "command": "BSTART.VEC",
@@ -45178,7 +45178,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "d8e769348c74ce3a38fba0ab85ad1d5038794cfcbf631f83dfa0a98e1cbac9d1",
+            "fold_signature_sha256": "464e72f629fdce4afaee97c247f4c1f1ba75c92c5bfa2a6c8c63f8dc771e3db5",
             "form_id": "pto0590-tci-0db0afe5f0ffb3ca",
             "header": {
               "command": "BSTART.SFU",
@@ -47083,7 +47083,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": false
             },
-            "fold_signature_sha256": "1b2f4666320e653b048aeebafe209b7bd4fd8f21eb444794f242b179bd25b63e",
+            "fold_signature_sha256": "7aefd957765bb2e413458e1f06d27dfe8fcd52be6f802b658b94ade0a34c505b",
             "form_id": "pto0590-tcmp-261b418f3741306b",
             "header": {
               "command": "BSTART.VEC",
@@ -48751,7 +48751,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": false
             },
-            "fold_signature_sha256": "1b2f4666320e653b048aeebafe209b7bd4fd8f21eb444794f242b179bd25b63e",
+            "fold_signature_sha256": "7aefd957765bb2e413458e1f06d27dfe8fcd52be6f802b658b94ade0a34c505b",
             "form_id": "pto0590-tcmp-551fe6a31133d345",
             "header": {
               "command": "BSTART.VEC",
@@ -49241,7 +49241,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "5bfd327e46adf51f0074513c034759131efedd86287414f50026a06994c7fb79",
+            "fold_signature_sha256": "24c34428627105a101637b8e1e4c62a707b87a15feed325cef0354791735a4d7",
             "form_id": "pto0590-tcmp-6b08648d50eac9a2",
             "header": {
               "command": "BSTART.VEC",
@@ -51172,7 +51172,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": false
             },
-            "fold_signature_sha256": "fea6ba3ac8d93c0569c5d13b7cb01d65fc0e01d36286c4c4748c36cc167bb01d",
+            "fold_signature_sha256": "3e43b4006943dbd6b4eda32a97395591c2290a581bc618cc406194fb1a6b84db",
             "form_id": "pto0590-tcmps-0185b29ff31bc3fe",
             "header": {
               "command": "BSTART.VEC",
@@ -52833,7 +52833,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": false
             },
-            "fold_signature_sha256": "fea6ba3ac8d93c0569c5d13b7cb01d65fc0e01d36286c4c4748c36cc167bb01d",
+            "fold_signature_sha256": "3e43b4006943dbd6b4eda32a97395591c2290a581bc618cc406194fb1a6b84db",
             "form_id": "pto0590-tcmps-7fb7c40df8cfb74f",
             "header": {
               "command": "BSTART.VEC",
@@ -53316,7 +53316,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "1ea63b083ee3e23c34b79e370cd207a0f6709a7f73ab066dd7fb12f949fab35f",
+            "fold_signature_sha256": "436c45184003b6861cdf3e00e71552d0e95a11e7affaa7ccab7083946c351da0",
             "form_id": "pto0590-tcmps-196f63202544102e",
             "header": {
               "command": "BSTART.VEC",
@@ -55067,7 +55067,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "56a233e1ba0445b58bcd90bd295195b4e9447c6eec61b17a050518f8c34bc994",
+            "fold_signature_sha256": "643b8898b29a12c3c65ae74af344ca4e1c2a7ff8fcb07b434eab7b40c439a413",
             "form_id": "pto0590-tcolargmax-01548b9cfc1f1061",
             "header": {
               "command": "BSTART.SFU",
@@ -56752,7 +56752,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "34f891fb5bab1e2256a5a5423799e1dad5b8c91def39239fee3653819010e0c8",
+            "fold_signature_sha256": "240a28bc1d275d929f6c4641cd67fbf4209c60dc6268c33e13cf43e9ad94f65a",
             "form_id": "pto0590-tcolargmin-c4e04c3c4cf52723",
             "header": {
               "command": "BSTART.SFU",
@@ -58498,7 +58498,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "97107300f5058ec41d2471fec41b058b0663342dbfbaa64420db2b26e9e03661",
+            "fold_signature_sha256": "83b330317e3b5e78b98207680301fb17d983aa43909a0b9d11bf5f713e67b926",
             "form_id": "pto0590-tcolexpand-0b544657440bbf13",
             "header": {
               "command": "BSTART.SFU",
@@ -60359,7 +60359,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "e411fd9fc831341ac4afd82eb8ef7458fae5596984790c701b2a2086efe6b7fe",
+            "fold_signature_sha256": "2c2afab9afbc037ea3cd4c9cfba9db48e4c1c708427f07a2e1bac262531c0e9f",
             "form_id": "pto0590-tcolexpandadd-cf34283277557424",
             "header": {
               "command": "BSTART.SFU",
@@ -62298,7 +62298,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "d45cc67186672278ed7d3b2113b9a4a4cf032bd27484baec161fa05581e66d5e",
+            "fold_signature_sha256": "eb7bcc483ae0bd01b805092d922b6e9a3399eaa5f25ae0950162eb9083484f87",
             "form_id": "pto0590-tcolexpanddiv-cc5becb8b7543a25",
             "header": {
               "command": "BSTART.SFU",
@@ -64234,7 +64234,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "93c5cf505c79d712e058d5c839ff52ed4bfe8386b88f3e7923236a195b4c1384",
+            "fold_signature_sha256": "9567121b73956caa1291fc1f3252f986c81d130bf8d58525d492a592d2f4ea54",
             "form_id": "pto0590-tcolexpandexpdif-106eb3a655a71f19",
             "header": {
               "command": "BSTART.SFU",
@@ -66173,7 +66173,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "aa4f3ea88a20989a409ecf8cd3b3e20886d71962e7df4a33eaa605b2ab228208",
+            "fold_signature_sha256": "ae5f6bcebb59312a394cbc0bc512bd90a20283f9ddae26d838c166c455914dad",
             "form_id": "pto0590-tcolexpandmax-7926690daa31fc52",
             "header": {
               "command": "BSTART.SFU",
@@ -68111,7 +68111,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "9707eb624fdafe55860a5eec65618b7e927b5f727a317fecca31a925aa09ba21",
+            "fold_signature_sha256": "d017453fdfae9a346d175493f0cb8f600d041224cd2633d7ab10fedab1702767",
             "form_id": "pto0590-tcolexpandmin-2ab345364850b77a",
             "header": {
               "command": "BSTART.SFU",
@@ -70049,7 +70049,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "d695444450880f3aae6f3f7fbefe1e9b61c4bb67ca7245987f319168f27f5402",
+            "fold_signature_sha256": "e6eb5e3137f26cbfcefcf7cc6d61f211495b6bcc76a9c740737cde7a6ae8f517",
             "form_id": "pto0590-tcolexpandmul-ffd10ad2a2606515",
             "header": {
               "command": "BSTART.SFU",
@@ -71987,7 +71987,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "77b40ec55cf9b3e6860a491646ba24a5b3c0d74f3ef9210356ffcc8bc4934581",
+            "fold_signature_sha256": "efbc1c057db6efdf6f5b644968b364bbe1dabfc721697d2cf7f626e5ded94d8c",
             "form_id": "pto0590-tcolexpandsub-8a6d3d09dc54ebca",
             "header": {
               "command": "BSTART.SFU",
@@ -73752,7 +73752,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "28044223fc296f693b3360ac2dd51caeff67dfad3531e6de6165964abbab66d7",
+            "fold_signature_sha256": "57ca8453f32e8af9e16f1ad74932d1f8ca02ac6378e8db95150bb7dba4beb425",
             "form_id": "pto0590-tcolmax-db2c6de0bec12934",
             "header": {
               "command": "BSTART.SFU",
@@ -75437,7 +75437,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "eab96a0abff603d0366c6581072dadb224bb98447e87c183f651c90070ada7c8",
+            "fold_signature_sha256": "35bb7f62176ca69412103cc3366a3ec3a613ef778e89f1797f19a096b89cad82",
             "form_id": "pto0590-tcolmin-614d6ef3a96ca78b",
             "header": {
               "command": "BSTART.SFU",
@@ -77122,7 +77122,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "b6e2796104da56381689874f92a1fea8358c99a5946771455f531cd1a2ddc877",
+            "fold_signature_sha256": "a193e9570ab3877f1f475c67667cc400e4674bc60e683907d0a2ef81ed7a7249",
             "form_id": "pto0590-tcolprod-56b8c109a69c728f",
             "header": {
               "command": "BSTART.SFU",
@@ -78807,7 +78807,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "395fa1ecf45cc71b2078a426e07d48c96ea4e9b2854f7000ae311f33a94f0758",
+            "fold_signature_sha256": "a94932eb8b21ebef99c623ce5d6a169d482dd0dfda5b06f7e7d88ed9a5b59b45",
             "form_id": "pto0590-tcolsum-9c271b5b5e47ff8b",
             "header": {
               "command": "BSTART.SFU",
@@ -80662,7 +80662,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "453581797049a958c1c55d2f1bcff1fcab72dc180cc27a93540b9992384158fe",
+            "fold_signature_sha256": "7427e0aeb1f5ca2c34075e963bf4ee1157597e142963d36662f863357981aeb4",
             "form_id": "pto0590-tcvt-e18dfe446a010868",
             "header": {
               "command": "BSTART.VEC",
@@ -82468,7 +82468,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "19a2720c9ccce4677000a085665b5effb13c030c668b9513ed7a76eff6d0853c",
+            "fold_signature_sha256": "6ed92242c61e345269dab06c733cd639c238d24a3c63aaa1d25b1c59e61af5a0",
             "form_id": "pto0590-tdiv-9a52db6f4de81aff",
             "header": {
               "command": "BSTART.SFU",
@@ -84343,7 +84343,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "5c68c138ff7c370dab4d1658b6a85f08fdb724471cd7822c060e5e6720c4e1cc",
+            "fold_signature_sha256": "1d26b4de3f3c882bd8f96e7615b8f8ee5a296c0fcfc582794b106d8cb958fcba",
             "form_id": "pto0590-tdivs-19fd6dadcefa861c",
             "header": {
               "command": "BSTART.SFU",
@@ -86038,7 +86038,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "c6edd73902e74da5b521edaab99889fa0f3f12a9df71029881f9f0f382fb52bb",
+            "fold_signature_sha256": "7d2d2d949d67044a5f7178fc8ab91db5a467f4df2bc983f7064910bbf62d6e0e",
             "form_id": "pto0590-texp-13d88a58dbf84c1d",
             "header": {
               "command": "BSTART.SFU",
@@ -87679,7 +87679,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "4a9446c5b4d7474040881d88c2c1ec0aab555921eb97f13fcc4420e79f0b45e9",
+            "fold_signature_sha256": "b35b2829d927cba29b3e9eaa9834b1c335799baf9726b82092963fd48f64b138",
             "form_id": "pto0590-texpands-45b24b82a79bdd4c",
             "header": {
               "command": "BSTART.VEC",
@@ -89521,7 +89521,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "43764e7cc057f193b722a7cb6b194c100d453853ea41083b84ffbd07eaec84fa",
+            "fold_signature_sha256": "f9d4156c53062869fa5743e8998c366be5d8bf8a1a065074190fee0fd0c7428e",
             "form_id": "pto0590-texpdif-8545b3b78fa13016",
             "header": {
               "command": "BSTART.SFU",
@@ -91550,7 +91550,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "665e357f0747deadd19fe372528c2ff48d3fd94bee209c5c41b0bc6522e206cb",
+            "fold_signature_sha256": "81c05230789deddcd884dafcb08825bbad4800abc893eec1f26973938f5ad678",
             "form_id": "pto0590-tfma-666c74a81ffe2ccf",
             "header": {
               "command": "BSTART.VEC",
@@ -93488,7 +93488,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "c7743f65ebea5af55b054ac1a431fac241532606980541365bf83fb1df216a71",
+            "fold_signature_sha256": "d69029a0b0e9692b25a75960a14c71e28ef54a59b60af75c8725422000bd05ec",
             "form_id": "pto0590-tgather-0ca57bbbf00cb2c4",
             "header": {
               "command": "BSTART.SFU",
@@ -96474,7 +96474,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "203d8795cb9791a6d1c3dda102cc1399bc94413513b68624a104396b2c160266",
+            "fold_signature_sha256": "5d2de8bf9d659cb94bc66cbd72fce8f20827111ed65b374415f895e6bbb51480",
             "form_id": "pto0590-tgemv-e4468f82d9ef0e8e",
             "header": {
               "command": "BSTART.TGEMV",
@@ -100009,7 +100009,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "8297b0d7c09f647338482763f4e0e056e48fe3b89c184b8ffe8fa2178d8eb4e4",
+            "fold_signature_sha256": "9d6480b902aef42396450b2f69936b66fb244062013887b27da432fb83e6800f",
             "form_id": "pto0590-tgemv-acc-d8dccc60db3c6d15",
             "header": {
               "command": "BSTART.TGEMV.ACC",
@@ -103629,7 +103629,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "526f8b8ddee7d1fe273a2052b42efc48fdf67e07d01269e906ce2ee353fbef8d",
+            "fold_signature_sha256": "e0a25bc73e66b6eab487f6082fa4ccfc6e9c7c3bff910fa02f6ba6718e248896",
             "form_id": "pto0590-tgemv-bias-a848680ea39ca39e",
             "header": {
               "command": "BSTART.TGEMV.BIAS",
@@ -107421,7 +107421,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "f83153b75468577b70672e7d91f7b428b5ffd70f684a172745dd8a1f4edbf19c",
+            "fold_signature_sha256": "9aca24c4116d27b8b7626038faadd71f01a995c56897ba641cf13bf99bca63bc",
             "form_id": "pto0590-tgemv-mx-54e0e7eb512a4d63",
             "header": {
               "command": "BSTART.TGEMVMX",
@@ -111471,7 +111471,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "2180344bbe12996c6ec74015dcc611cec6a269bf109a27c76fd7b1d8772c839f",
+            "fold_signature_sha256": "709a845b213ea6a3ca389f88d4ea3abb7c0bda21be4faec4263abd5a358fe4d0",
             "form_id": "pto0590-tgemv-mx-acc-4867de7555d3fb15",
             "header": {
               "command": "BSTART.TGEMVMX.ACC",
@@ -115606,7 +115606,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "b0c81a7b2170720ce1cbd4b526a278e66c5a1df84cf982f6cf042513131c6851",
+            "fold_signature_sha256": "3ca51419701278d03bf3eb5b385346f6b6758c881d4d434def8fafbb554e6e32",
             "form_id": "pto0590-tgemv-mx-bias-a6a11a44e65930b6",
             "header": {
               "command": "BSTART.TGEMVMX.BIAS",
@@ -118460,7 +118460,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "6cd8314cebf20ede14e0e33b9cdc84086c23148b52dd5485e70e0193713aeb40",
+            "fold_signature_sha256": "c614bfcc3489b9dd2d9e39120606b40246fdfa99cae44fc3992d15f741681c4f",
             "form_id": "pto0590-tgpr2t-fb18b3adc222b317",
             "header": {
               "command": "BSTART.SFU",
@@ -120426,7 +120426,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "ce790df7c10defda4020c26d0c1468b79f387d551a5a5b33ba0e679f776efe6c",
+            "fold_signature_sha256": "399eeb673934c50058349ed278594fcd890ab8a9908503d4421e0522222ed5be",
             "form_id": "pto0590-tlea-92c8ce663d943da1",
             "header": {
               "command": "BSTART.VEC",
@@ -122159,7 +122159,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "27f71225100b398c0780277732efdb607e5ff27380c2b36a2d145ef3e8fdb3b6",
+            "fold_signature_sha256": "80095c55b6622e3db4db2654732d19caedcd7a6d8deacfc0d0d174ebdab2e99f",
             "form_id": "pto0590-tload-61583f4e00012f28",
             "header": {
               "command": "BSTART.TLOAD",
@@ -123456,7 +123456,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "9c4a5f430e213cda0d5eaa54ea44adf6b819e7c7772759b483441fbecc33854a",
+            "fold_signature_sha256": "f2c78da38b9f845030d9e7dc274b6abe096a234bf58788365ed6dcbfba5132b6",
             "form_id": "pto0590-tload-073526a778a5ffcb",
             "header": {
               "command": "BSTART.TLOAD",
@@ -124956,7 +124956,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "7123d0c01f8a2b76d53db29c21143e254dc32072a8daf7b1f23788353bfd0038",
+            "fold_signature_sha256": "76d60891c6234e167e9ecbf9598f48e96e6d27c46600f5515c8f68512e9f068d",
             "form_id": "pto0590-tload-fdf739326d7fa318",
             "header": {
               "command": "BSTART.TLOAD",
@@ -126228,7 +126228,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "12d0ddb241e531b554c0bd616f2743840b93e9e9113e70f0be6b25c7b2bb18fd",
+            "fold_signature_sha256": "e2f72f650aa8d998e4be91de2d26df2fe36cbfad7d3f90ff177afc85296b9777",
             "form_id": "pto0590-tload-ca17a0ffbea0b2c5",
             "header": {
               "command": "BSTART.TLOAD",
@@ -127887,7 +127887,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "1838cc80d680ee35de69fecd0f99d33c01d440948c24e7eb377d5048b8674a91",
+            "fold_signature_sha256": "9e7d17f7db5d80f43ab2f06236765cdb65552abfe26dedc7c5c4b8dc21fe982b",
             "form_id": "pto0590-tlog-5dfd3f4bdb0b5a22",
             "header": {
               "command": "BSTART.SFU",
@@ -130797,7 +130797,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "a9db3c3409b05c12222e09ffac4512f0fb656bb49970c06586ad9a5986af0441",
+            "fold_signature_sha256": "19b92b28d5dea333d4c7af6d69a6bdfa4c6b4febbe3e31d5849a266dbc27335f",
             "form_id": "pto0590-tmatmul-7799465a358146f4",
             "header": {
               "command": "BSTART.TMATMUL",
@@ -133653,7 +133653,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "214be835632f2b8af4b8806f88cb32c7468a173ae5a1cc13c97a42c065d59531",
+            "fold_signature_sha256": "e280a1368bc662f87dd7d3ab528248295cca43d2e55f4f758dc6129d270910f6",
             "form_id": "pto0590-tmatmul-2f7ac19ebdf9baf7",
             "header": {
               "command": "BSTART.TMATMUL",
@@ -136502,7 +136502,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "b53ab9f5ce6a5e9943d59b9659707310fdc10017e3289a49ee5e6a67a00cccfd",
+            "fold_signature_sha256": "095b6bd8cbbdea4e8f213d24045668e0de9b3a6b1b02d36a1430b20fbf72fa50",
             "form_id": "pto0590-tmatmul-9dc865cf80193e64",
             "header": {
               "command": "BSTART.TMATMUL",
@@ -140135,7 +140135,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "53f14217c8c1285bddc2a5ff9d5aa890d339cfd3f9cb4bf545d3561c36a3cc74",
+            "fold_signature_sha256": "cb98298df8a6abfc2cece4d75451cccf6eb7507a0519618c3f4b1e1ba8719157",
             "form_id": "pto0590-tmatmul-acc-a2f24358505a7436",
             "header": {
               "command": "BSTART.TMATMUL.ACC",
@@ -143392,7 +143392,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "98cd466a560d1fdef8955bcb50de068d9ad0c58b0334c4488d7098991a1a985f",
+            "fold_signature_sha256": "8d768b7a6c70f20953b15fe6cc1ce39c3c1c8f2ebc187320b0a3952eea8a79ca",
             "form_id": "pto0590-tmatmul-acc-8a7d53f630d6199e",
             "header": {
               "command": "BSTART.TMATMUL.ACC",
@@ -146647,7 +146647,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "5231f5ca0ba425ff53da434fdc84d732d3035043824bc6b58b6c30c615889794",
+            "fold_signature_sha256": "ca05fcc1e4df8b798b9f478e835c668a04154a0aa1c4a249900e1953033aad9c",
             "form_id": "pto0590-tmatmul-acc-1f5f46430e1f5581",
             "header": {
               "command": "BSTART.TMATMUL.ACC",
@@ -150315,7 +150315,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "03356621de3c49681e853a6f97b885c2c0b7245657afcbc96ea861462af67e9f",
+            "fold_signature_sha256": "f0e33c5b1b28bb9528d7fa70e504d5fb74cd42165866eff323dd0de5e33e07bb",
             "form_id": "pto0590-tmatmul-bias-436e2d201284f912",
             "header": {
               "command": "BSTART.TMATMUL.BIAS",
@@ -153408,7 +153408,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "ebd928efadf24634f632f38090eee0e4618b455b925daeb85a19686c967f4dbd",
+            "fold_signature_sha256": "550dc8c45c39e1ab34fa1741510a13e39cb9e3ecf163ee2821eea9d7b079c05b",
             "form_id": "pto0590-tmatmul-bias-9fe0fc7b43df1dc9",
             "header": {
               "command": "BSTART.TMATMUL.BIAS",
@@ -156489,7 +156489,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "2876172ebbbe54552ecda5c58bb967dec40de2e9cd33c2248c63db60bdc31a7e",
+            "fold_signature_sha256": "4b13a580526228850cd794ad9368b6771fa065e35b266e46f19006d05b29e697",
             "form_id": "pto0590-tmatmul-bias-377bf7df6ea9de1d",
             "header": {
               "command": "BSTART.TMATMUL.BIAS",
@@ -160256,7 +160256,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "cac282afd0fa376ed67f82f6c5bb6b64b1d460b68749ed55725e2984d3dc825c",
+            "fold_signature_sha256": "fa08a7a9e07c5b5e18e1ed6627b53822f0cd72a53c81e1f7bc641b1b9dee4ccc",
             "form_id": "pto0590-tmatmul-mx-ab8b1d93be820639",
             "header": {
               "command": "BSTART.TMATMULMX",
@@ -163351,7 +163351,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "493b206849fd1769463b7b7ff445130bc6d7bdebbb44af16b7da5704f866d0d2",
+            "fold_signature_sha256": "ccfed95a82a03b00f4f87202386f3a17eb314c1ffd74d6590e57c9ef8445b7cc",
             "form_id": "pto0590-tmatmul-mx-99db59e39d1d8056",
             "header": {
               "command": "BSTART.TMATMULMX",
@@ -166380,7 +166380,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "bda314b2866300820abab71ef1b25508b6e4b99cdb31a4e403f0abe68e2d9e14",
+            "fold_signature_sha256": "cc3adddb5351b3a867da1797e4a5a020bdde597361514c95893b30336b8de229",
             "form_id": "pto0590-tmatmul-mx-17a12dc4c29512b6",
             "header": {
               "command": "BSTART.TMATMULMX",
@@ -170456,7 +170456,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "e8e708368154359c632828de0ba6b674ba564b4fcdd3314af00df5c399413186",
+            "fold_signature_sha256": "c37f853b76fcf2f226c76f3b1711980930fe6895960df125d48ff966e2516118",
             "form_id": "pto0590-tmatmul-mx-acc-f45d4ea38b2dc854",
             "header": {
               "command": "BSTART.TMATMULMX.ACC",
@@ -173957,7 +173957,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "f118a4cbd1a3f7b9e8fd044188cb5c66cbcddf04248276cdaeebc63336b1c391",
+            "fold_signature_sha256": "944f98a1c12dab46b528d1d01adb786b25acafbcd78cf65d46e9610e50c53fa7",
             "form_id": "pto0590-tmatmul-mx-acc-96804b5c3336bc52",
             "header": {
               "command": "BSTART.TMATMULMX.ACC",
@@ -177398,7 +177398,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "2ca25d0436ac58b68c6505d6dcbaa2708843318e0fa29dceb961c9488beeadcc",
+            "fold_signature_sha256": "f911489786e6526edc4d8dcce56a38200e190605e7fe8c42308b2a65584cffec",
             "form_id": "pto0590-tmatmul-mx-acc-32d8ebb2b52f7dbb",
             "header": {
               "command": "BSTART.TMATMULMX.ACC",
@@ -181509,7 +181509,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "9d9be0af8b301dd19707282f353bb252b8f5c8a76b70ec202cfc02b3ba18fa78",
+            "fold_signature_sha256": "83e6851e0a83ea78d07662e2b91b9854c9ecccdc80f2001e785b13aa591feaab",
             "form_id": "pto0590-tmatmul-mx-bias-cb20f1e9c5556c89",
             "header": {
               "command": "BSTART.TMATMULMX.BIAS",
@@ -184836,7 +184836,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "5edc02d3a909c0f90313f2ee130792c336a91dd2a35dd1d1404698e2fff0f9c1",
+            "fold_signature_sha256": "01f620d170e7feb85306719f341d5a274d6ea53d927e27a1a83ac897df47e6df",
             "form_id": "pto0590-tmatmul-mx-bias-aa71394f96d11cb5",
             "header": {
               "command": "BSTART.TMATMULMX.BIAS",
@@ -188091,7 +188091,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "6136fc1d27832d6726b4b7789edc5ef95f50a1a92dcdd6e85ec3949b099e9eb2",
+            "fold_signature_sha256": "0baa976bc6007165c0f7b276647816ec63d72d5aec0ceb4618547d5cc71c1199",
             "form_id": "pto0590-tmatmul-mx-bias-4ab05c7f40f407d0",
             "header": {
               "command": "BSTART.TMATMULMX.BIAS",
@@ -190487,7 +190487,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "c0b6bde6d5d4660e1c7b226229c3e715e0c2313d190881d5274cfe342187d59e",
+            "fold_signature_sha256": "9b85e2d05963bdbf468a23c548540edc015fdc8b1bfca5d9574bc897ce54dc6c",
             "form_id": "pto0590-tmax-54f89c332891f0e5",
             "header": {
               "command": "BSTART.VEC",
@@ -192362,7 +192362,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "bb33e191edc62c9abb4e24a1d55e4a737d768ce3f3471c77a15d1ad3f7c65c92",
+            "fold_signature_sha256": "75b0f0f6991fea3ebc0ce2c3b00a171daf2c3776ac653a0d88591d8c61a48111",
             "form_id": "pto0590-tmaxs-f7be9cda8c5cc10a",
             "header": {
               "command": "BSTART.VEC",
@@ -194229,7 +194229,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "5921e2f49b084c4260be7a3f14f955cfaabed3988daf1b7b5e0281560f784613",
+            "fold_signature_sha256": "6635cbe9c3b8c2c4bae2537284dcade85bbe9581ebbd7d7e2b9c919d877ac256",
             "form_id": "pto0590-tmin-dfe7e75828efefb5",
             "header": {
               "command": "BSTART.VEC",
@@ -196104,7 +196104,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "b3368b391a4cf4d8c2970b39a1ebf85b9027ad4ef3399aad168464bf3c212917",
+            "fold_signature_sha256": "5fc69563a2f7d36c5ef0c5eae05fea14663aa051919ff1cd8f276c53550c5083",
             "form_id": "pto0590-tmins-9e5d5799dfd5a68c",
             "header": {
               "command": "BSTART.VEC",
@@ -197627,7 +197627,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "b42069245e60642e1d324f3dea62e9bc609a37b9a3de331848ae805a25cd871b",
+            "fold_signature_sha256": "638071d01f6603493426a99bf12e1efff792bba4e9d294fcbfe66820b5c92cae",
             "form_id": "pto0590-tmov-b37159a431cc951e",
             "header": {
               "command": "BSTART.TMOV",
@@ -199420,7 +199420,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "b221fc08609c373b9b5ebafe0df1e785bd1adf659372a446eafbf321eb079713",
+            "fold_signature_sha256": "5e2226d1bd4f975a02c77d372e8bf3b0794f98449fb94269e4051b1060fa2ba1",
             "form_id": "pto0590-tmul-b742ea493a143b79",
             "header": {
               "command": "BSTART.VEC",
@@ -201295,7 +201295,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "48e915a7824c92c6c6ff3ca5b8c9bca36bf276ef0c879feb8de026b1c87a2df0",
+            "fold_signature_sha256": "3e09b2ba85f91f733f376ecd8ce7e6324a69aede587bd1835ea85981e0d8cba2",
             "form_id": "pto0590-tmuls-0679c952b2f0d3ca",
             "header": {
               "command": "BSTART.VEC",
@@ -202990,7 +202990,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "c3b2d56ddfe34d0e641a37894e6c100c41557ef37a08636256b32b070fd33e23",
+            "fold_signature_sha256": "6c91f47ceca051203ad50e01ff41c6df08db99b6c5523a5935811f8b05dc18c5",
             "form_id": "pto0590-tneg-d80847884b3e4079",
             "header": {
               "command": "BSTART.VEC",
@@ -204612,7 +204612,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "44b5c530029d8363073eaed466ceb72e780386b9ebaae27300416bf3087ad40a",
+            "fold_signature_sha256": "db2b297011194016e89e67a75490cddcf02d91ec60851a0f11f0fcb955d5249c",
             "form_id": "pto0590-tnot-faf25bbd6c187f5a",
             "header": {
               "command": "BSTART.VEC",
@@ -206406,7 +206406,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "76084eee747b04e1fd0696e484f16c2e5be7517f315e2909e9d38df6eee8646a",
+            "fold_signature_sha256": "e7c91f7da9b173e1fe095cd88610e78f77bf8bba83fc4ed2246cfa2170942b5a",
             "form_id": "pto0590-tor-93a1f09b83671bdc",
             "header": {
               "command": "BSTART.VEC",
@@ -208281,7 +208281,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "7177500c108c471375a4a26e2707c4eb24a51f7383d4d9ef1aa1af9a887a2c75",
+            "fold_signature_sha256": "f448e13defae35804a79f17aaebfa0a4df41094d02241d93bc352943267daa94",
             "form_id": "pto0590-tors-00d3e4cbae9a35eb",
             "header": {
               "command": "BSTART.VEC",
@@ -210142,7 +210142,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "be187732a0809c7fb36cf8e9b5d184a23c98ffac7a3a85a0f45fe352d77aa17b",
+            "fold_signature_sha256": "07b38ec19153bfa60fb650253c4c0e1938b70197e095165216ebf9a8a33b6427",
             "form_id": "pto0590-tpack-9602a6af8e31f49b",
             "header": {
               "command": "BSTART.SFU",
@@ -212083,7 +212083,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "00437d53c7c5c5bb4277ab36ab7f689ea0e0f5268ce3fec3da3378c33db0c63e",
+            "fold_signature_sha256": "fd29ff5b1a49cf2617a5fa6f857cc3ea457235905d75684ce4114495b758f915",
             "form_id": "pto0590-tpermute-77987bde47993fb4",
             "header": {
               "command": "BSTART.SFU",
@@ -212784,7 +212784,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "ea77d0a10bdc0f656fcf38d7bb576239d9e25176475befd6d4e7bdf0ef08fb62",
+            "fold_signature_sha256": "7f54817715c1c78e1cc4a3da045f5da9a4c919ef81d779471a8ec7768c22c33c",
             "form_id": "pto0590-tprefetch-e430d059f5ed74a1",
             "header": {
               "command": "BSTART.TPREFETCH",
@@ -214396,7 +214396,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "57931d6e9c63694d85eeb94639da1d23fff64f7ba15abe85f96eb64d0f6c2b94",
+            "fold_signature_sha256": "c3b5d2dec62c9828fe1be74b394e6c70f90c2276c5fde358a6fe670453b1afc8",
             "form_id": "pto0590-trecip-657f28d40ad9e9e1",
             "header": {
               "command": "BSTART.SFU",
@@ -216018,7 +216018,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "58796a6bdfd55df222756136fd2e882077daf660c67b416855c895af1e81c7dd",
+            "fold_signature_sha256": "78926358b0ede86c4a7f3d787fd18a691432bf72db77ad8b18d4f5ef4f45541b",
             "form_id": "pto0590-trelu-58f1e0c332e1723f",
             "header": {
               "command": "BSTART.VEC",
@@ -217812,7 +217812,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "c79b573756ef1b9ac2f57eca4d0652bbed009739207a1f404577473f00a7aedc",
+            "fold_signature_sha256": "e204c79e2350ad0e9172db8ec7684a3af17b7d9e4ac640d41df097f36970677d",
             "form_id": "pto0590-trem-d22a3041f79d71f1",
             "header": {
               "command": "BSTART.SFU",
@@ -219687,7 +219687,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "14a1a851fb9541d1b8f1b07fc0419cbfff771a55a77a1ca4ed97b947599ea0d5",
+            "fold_signature_sha256": "6196da212e66082144abc48814c6e79172c6c3931fde95c6797a23b4893bb441",
             "form_id": "pto0590-trems-05d5e76b28e3b528",
             "header": {
               "command": "BSTART.SFU",
@@ -221442,7 +221442,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "f63b1f6338ce9980e5d8cdcac4c9b6542511820ac511e2f2e8462e342f421f04",
+            "fold_signature_sha256": "3a5dff7fe806ecced967946857b347f4cd36de2a17186bc8567e523d96926827",
             "form_id": "pto0590-trowargmax-8a3a86474fe9f740",
             "header": {
               "command": "BSTART.SFU",
@@ -223127,7 +223127,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "1248f5b747b9eab7fa0a2f81de887d9d56ee8deef14bc281e60489b33202e8e9",
+            "fold_signature_sha256": "44ac9fbb5417bf121e75ec2f12572583707a6fd9ac858181ede6c8e602d59b70",
             "form_id": "pto0590-trowargmin-3ffe69634a401d50",
             "header": {
               "command": "BSTART.SFU",
@@ -224914,7 +224914,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "49cf0907ea11314f20acd353c98e955864734f5a2e16386bc5f7757de5183f93",
+            "fold_signature_sha256": "d931d34980ccb8da65d18c4e2531d173fcb3b0bc48a2541828ac26fb9a31ae1b",
             "form_id": "pto0590-trowexpand-0083872859a0f655",
             "header": {
               "command": "BSTART.SFU",
@@ -226829,7 +226829,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "ceca50ce47f8daadd4c4af01fd3893ea5afc87b1cb637e9abed56a9ba3ab16f6",
+            "fold_signature_sha256": "371d64d2c8cf251d4a050480ad3a3bfdbc624be1352356fa064877ba8c906b36",
             "form_id": "pto0590-trowexpandadd-92ea776a5e3a3ad3",
             "header": {
               "command": "BSTART.SFU",
@@ -228822,7 +228822,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "e2b501739105b7db0cc6062dbea87c5f806d60896a9af46901d82aa046d6108e",
+            "fold_signature_sha256": "401ce57e30ef93e33663dceecdb0f8d8883d7c05fd6ef4173184bdc770e5f9ed",
             "form_id": "pto0590-trowexpanddiv-b762394dd2d24e89",
             "header": {
               "command": "BSTART.SFU",
@@ -230812,7 +230812,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "4c57fcebea1972dd5d7300b480a80fade0811ba54e58a88a431a4071728b3026",
+            "fold_signature_sha256": "f08bdc8a6816a190ca26fc73e02f7f4fa0362cef85445a787c08d7099bb186f2",
             "form_id": "pto0590-trowexpandexpdif-c77ea1218ffdf421",
             "header": {
               "command": "BSTART.SFU",
@@ -232805,7 +232805,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "d529c4d8eb265e24dfb9fe25ba57e772e2022c901f4a963acda10a0f6abc8b30",
+            "fold_signature_sha256": "36d2a38480598cf3206d86e1ca7bc1571be3a836e6f8c0eadd322e741cbc5799",
             "form_id": "pto0590-trowexpandmax-d1946eb9b3887734",
             "header": {
               "command": "BSTART.SFU",
@@ -234797,7 +234797,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "9df24b5d50f54ee66ccdce46122ec6e0990b2eaf237aee16947ee8749e3ca132",
+            "fold_signature_sha256": "33fea542dd28fa7e94895269c0421c9cbd336c486c420a890ec6fcc1c4ddbe4a",
             "form_id": "pto0590-trowexpandmin-6f3e04b7cf432292",
             "header": {
               "command": "BSTART.SFU",
@@ -236789,7 +236789,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "ba56328492c0c898e25c54dae6774cf7bd39236f90891d8ee3c059524dffe94e",
+            "fold_signature_sha256": "86478eb0365af671f895c357f37262fde1633318c8b08fa82d9a938e38266a54",
             "form_id": "pto0590-trowexpandmul-951a6f9f66b504fc",
             "header": {
               "command": "BSTART.SFU",
@@ -238781,7 +238781,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "34e8ff46841faf6e21f846db89cfc4c44d0c570c5dffb532d6acba63e96c8d6b",
+            "fold_signature_sha256": "3d8b370fb0d2858b7d8d3a9ea89988705017144bfc2d883ae46cbd6471c0cfd7",
             "form_id": "pto0590-trowexpandsub-3dc13184359deaa1",
             "header": {
               "command": "BSTART.SFU",
@@ -240559,7 +240559,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "f9cb1b3e0657bcc0ccddabdc6303426a85ad9988375f11eaf56cdbeaa31606da",
+            "fold_signature_sha256": "478d9e78eaee57b5359d268eb8050af22318f45bd77a29e12c1330a5f1296ae4",
             "form_id": "pto0590-trowmax-b31301543fe8df93",
             "header": {
               "command": "BSTART.SFU",
@@ -242244,7 +242244,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "c4d7e1b538762da4ce9d296c8d614541ce48bcd5af15d59bc8e78a9b1c4ad786",
+            "fold_signature_sha256": "626b686f056d7de625f6e154c2585ca969216ee04e287cabc57d750c4acd927a",
             "form_id": "pto0590-trowmin-f2aa60e75ec41e03",
             "header": {
               "command": "BSTART.SFU",
@@ -243929,7 +243929,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "42a7f2448ffc2c542f6960a159805decf48811de4b9ef0d7526bf155fd6d9711",
+            "fold_signature_sha256": "c718762464f078f237877629331d9b843594ec1a80c07132c12204ba32887e5b",
             "form_id": "pto0590-trowprod-8389018859a87110",
             "header": {
               "command": "BSTART.SFU",
@@ -245614,7 +245614,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "1beed87b79a6c5144e25b231b1651ec6a515271a962dea658b89de8d7b74ed7f",
+            "fold_signature_sha256": "df7a89b998a8ccb1f362425dfdbf81083a125fc09bf3bf6cf9074c625ca95d22",
             "form_id": "pto0590-trowsum-c805a8ca1a4560b7",
             "header": {
               "command": "BSTART.SFU",
@@ -247239,7 +247239,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "931a42a5618d3ecfcb6576b4f61bfc64300b59bce1b436842bda9d4d10f0cae9",
+            "fold_signature_sha256": "5a97155f0933b57adfe00be86a38c1d0ee33af52a534124b76e85eecdf60420c",
             "form_id": "pto0590-trsqrt-8c4f8a86f9b23d2b",
             "header": {
               "command": "BSTART.SFU",
@@ -249013,7 +249013,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "727931cf798719af92e98c39d09d512ae3fb1e0469e82130af7eaaf9fb855344",
+            "fold_signature_sha256": "cbc017904aa8db34b66cc2539410aa572dc0575824097c1a9191d62459eb87c5",
             "form_id": "pto0590-tscatter-51fe83b0b7e0bfad",
             "header": {
               "command": "BSTART.SFU",
@@ -251040,7 +251040,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": false
             },
-            "fold_signature_sha256": "c2f73ea49836f553fac09bbde4201db408e25ebdcfe4f5caab7c810f574f93eb",
+            "fold_signature_sha256": "15b54210532fe7eb26cfa51f12b2d15b2601849a935e14148a834aeda81abf5a",
             "form_id": "pto0590-tsel-85556a2f81ebc2bb",
             "header": {
               "command": "BSTART.VEC",
@@ -252885,7 +252885,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": false
             },
-            "fold_signature_sha256": "c2f73ea49836f553fac09bbde4201db408e25ebdcfe4f5caab7c810f574f93eb",
+            "fold_signature_sha256": "15b54210532fe7eb26cfa51f12b2d15b2601849a935e14148a834aeda81abf5a",
             "form_id": "pto0590-tsel-3a3eb037bd37dd3e",
             "header": {
               "command": "BSTART.VEC",
@@ -254870,7 +254870,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "768b97bc3e983e4cc913cb27221528ebf2f535b9b128768e85de5b6be4779758",
+            "fold_signature_sha256": "693ec2e12615675c1b4bf782e8670e75518aa28b5c0762de6cf08f5d2b291cc9",
             "form_id": "pto0590-tsel-ba1ea46701821b9e",
             "header": {
               "command": "BSTART.VEC",
@@ -257014,7 +257014,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": false
             },
-            "fold_signature_sha256": "f24826ba72a6e76fe6349df55fab8831da734eeaefba83a04d52672c5fe6cf18",
+            "fold_signature_sha256": "bb2abb139512d82ebc9946124c80cfaf3c3796663ef6883380d403b68df2b5b5",
             "form_id": "pto0590-tsels-9cdbc2352b2b5869",
             "header": {
               "command": "BSTART.VEC",
@@ -258841,7 +258841,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": false
             },
-            "fold_signature_sha256": "f24826ba72a6e76fe6349df55fab8831da734eeaefba83a04d52672c5fe6cf18",
+            "fold_signature_sha256": "bb2abb139512d82ebc9946124c80cfaf3c3796663ef6883380d403b68df2b5b5",
             "form_id": "pto0590-tsels-4e0976590d46e3f4",
             "header": {
               "command": "BSTART.VEC",
@@ -260808,7 +260808,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "cd6fa40614aa6ea0141439298df55ee2eb2933d7c0f986eab95a3d8b62563975",
+            "fold_signature_sha256": "0f3ecc593ca419c93a960cab6e1c6195f7cff83f8dc2c12945123b42c09110e6",
             "form_id": "pto0590-tsels-7b89f42358135a9d",
             "header": {
               "command": "BSTART.VEC",
@@ -262779,7 +262779,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "b2fb6ab62d878739933535b9a9d7949882f33a03ee726cfefe2a476240812335",
+            "fold_signature_sha256": "1e07fcc1c34766ca8e2f521cc1e52bb6bda6060f863cbd5f14a1cad2a19efd6c",
             "form_id": "pto0590-tshl-57cd1af04c90ec0d",
             "header": {
               "command": "BSTART.VEC",
@@ -264654,7 +264654,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "c45c9e5b60b253d990532eeb96b9e9d520817882a70f19df48c48b425320b1d0",
+            "fold_signature_sha256": "44f4bb6efb66631d291ca34d7fe91b0bedfb3a550ff09c2e9aa28d5cf5816149",
             "form_id": "pto0590-tshls-e2d0a0211aaa3cea",
             "header": {
               "command": "BSTART.VEC",
@@ -266521,7 +266521,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "c0b837fb338fd8b42168598e4ba7e234e434866f3fd4cfe4b72e16fa88feb88c",
+            "fold_signature_sha256": "6d7e334b245e83e2424b3ad6ce7caf5fbfc03a789b6b360d14eaa1075515d74b",
             "form_id": "pto0590-tshr-2fbec9cf523a5793",
             "header": {
               "command": "BSTART.VEC",
@@ -268396,7 +268396,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "e4a89b6180eb513c5acecdeacdc691c9eabd6b0e3519a07bd84a72ed3936b6b5",
+            "fold_signature_sha256": "a14b1a8d1d632902be946459f97f1666b00045e71b87aa008a56d1beff0a016c",
             "form_id": "pto0590-tshrs-3227c9378991f423",
             "header": {
               "command": "BSTART.VEC",
@@ -270257,7 +270257,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "af98eab3dd6dab02e9a7d82728a470732948cc5488ba60fd6f5ecdd8f734d005",
+            "fold_signature_sha256": "4a217ca221d30ffe67fbbab4d82925bf986fba33244f0f4e9a20d6ee4cba0bb6",
             "form_id": "pto0590-tshuf-f29027f7e9bc360d",
             "header": {
               "command": "BSTART.SFU",
@@ -272026,7 +272026,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "c1b3e056436592a080518f9eb8e5c798e9689658a1c0aae9ce1627c55ff9386c",
+            "fold_signature_sha256": "aa88cc17368bc417efaa22ace85a91aa18df92ffd5d03bc3d3fd13d40564ee89",
             "form_id": "pto0590-tsqrt-49db14cc048e338e",
             "header": {
               "command": "BSTART.SFU",
@@ -272598,7 +272598,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "c01151bf206a305e752cde402dc5e073cd4c352b3a37e5d1d4f2cfef62dafc60",
+            "fold_signature_sha256": "a5161415f75125e45bdde9362af3011b71338389d249fd4a4a78fc71e39d0a81",
             "form_id": "pto0590-tstore-6f6d73ac177fb1bd",
             "header": {
               "command": "BSTART.TSTORE",
@@ -272987,7 +272987,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "de96572986eca123a331c26780cb0f6b0d774bb0149e47e77452155773492c37",
+            "fold_signature_sha256": "157d7edaaf53a9818b0d056d478aae01c8967caa0fe4d4143a2d5462f0a92e74",
             "form_id": "pto0590-tstore-666abd295a3dc6a2",
             "header": {
               "command": "BSTART.TSTORE",
@@ -273425,7 +273425,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "3deb8582b705b78c283865938410bd4ff0504a0f9011f619e152f38d6593d640",
+            "fold_signature_sha256": "713f4bba95e8e9eb5ba095b198cd620789a9aad3851728840536da1e5ca65b08",
             "form_id": "pto0590-tstore-bad7e93d482930bd",
             "header": {
               "command": "BSTART.TSTORE",
@@ -273862,9 +273862,9 @@
               "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "a9b409514e820cb0b4dc13f9f8e186578b3b901ff81f359189d83ad349ef1760",
+            "fold_signature_sha256": "5ac661e0fa81ec24ec3c055b6ef6e1a4be9c939290eeb23a8817d37effdcc1d2",
             "form_id": "pto0590-tstore-e24a626c60e7570a",
             "header": {
               "command": "BSTART.TSTORE",
@@ -274301,9 +274301,9 @@
               "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "63a89a9e34a29da612b32902e5071c46d6bda8eec1fd54b58443fca48335a07c",
+            "fold_signature_sha256": "684948d0c8dc941e34ce7d8d035a1e68d5710da995bbf54b2c5657f2e95cc823",
             "form_id": "pto0590-tstore-6d3ccd98e91d019b",
             "header": {
               "command": "BSTART.TSTORE",
@@ -274789,9 +274789,9 @@
               "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "b829597b9a561cf41c41bdeecc324c8744c487538be82b629db22cab3c66bf42",
+            "fold_signature_sha256": "43f5e9902ff217c95d39d4ebea704f22919d030e05f6eb7b7cfe0bc04f1e41ab",
             "form_id": "pto0590-tstore-24cca3cb3ca80c0c",
             "header": {
               "command": "BSTART.TSTORE",
@@ -275225,14 +275225,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-e24a626c60e7570a",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "a9b409514e820cb0b4dc13f9f8e186578b3b901ff81f359189d83ad349ef1760",
+            "fold_signature_sha256": "b56518a6fb2499ec923f22d05620611be8ca7342eaaf397614614863a046fa60",
             "form_id": "pto0590-tstore-b4174f44be274ea1",
             "header": {
               "command": "BSTART.TSTORE",
@@ -275666,14 +275664,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-6d3ccd98e91d019b",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "63a89a9e34a29da612b32902e5071c46d6bda8eec1fd54b58443fca48335a07c",
+            "fold_signature_sha256": "1aa5ccab9097e098b411d1ae7fc9091d6a9f63dfe142c66116cdb963e9bfeac5",
             "form_id": "pto0590-tstore-60231190eb2391cd",
             "header": {
               "command": "BSTART.TSTORE",
@@ -276156,14 +276152,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-24cca3cb3ca80c0c",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "b829597b9a561cf41c41bdeecc324c8744c487538be82b629db22cab3c66bf42",
+            "fold_signature_sha256": "f612da0c6cfed1b1ee640f6224d237ad0c557fa1abea616dfc2a29452619e2b9",
             "form_id": "pto0590-tstore-f7f28f89b72c61b6",
             "header": {
               "command": "BSTART.TSTORE",
@@ -276597,14 +276591,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-e24a626c60e7570a",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "a9b409514e820cb0b4dc13f9f8e186578b3b901ff81f359189d83ad349ef1760",
+            "fold_signature_sha256": "29f6917b38c0ee340b6450c29a7da9b3e362abcb584bb1489badb964d99f89be",
             "form_id": "pto0590-tstore-2bbc359f9596d6d5",
             "header": {
               "command": "BSTART.TSTORE",
@@ -277038,14 +277030,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-6d3ccd98e91d019b",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "63a89a9e34a29da612b32902e5071c46d6bda8eec1fd54b58443fca48335a07c",
+            "fold_signature_sha256": "107f83a0278e511dfbe58e97291dc1bfc23c6b4c21fcffb693a05649b25d953b",
             "form_id": "pto0590-tstore-3d4ea7941a803c47",
             "header": {
               "command": "BSTART.TSTORE",
@@ -277528,14 +277518,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-24cca3cb3ca80c0c",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "b829597b9a561cf41c41bdeecc324c8744c487538be82b629db22cab3c66bf42",
+            "fold_signature_sha256": "706d7221ec991013c9bffc22f8ffb9105327663eeeb9270434797366eb70afc8",
             "form_id": "pto0590-tstore-7ab1e34c7fcc004e",
             "header": {
               "command": "BSTART.TSTORE",
@@ -277969,14 +277957,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-e24a626c60e7570a",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "a9b409514e820cb0b4dc13f9f8e186578b3b901ff81f359189d83ad349ef1760",
+            "fold_signature_sha256": "fcde2f98648e35c097bfcc32ba07431190817af0b1494cdf18939c1d22865336",
             "form_id": "pto0590-tstore-5fc1f2c786e146d8",
             "header": {
               "command": "BSTART.TSTORE",
@@ -278410,14 +278396,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-6d3ccd98e91d019b",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "63a89a9e34a29da612b32902e5071c46d6bda8eec1fd54b58443fca48335a07c",
+            "fold_signature_sha256": "2db5ca98a5dbe0f6f1212accf13b96a67a81643b1d90a2aa8c2772af8ee25cc0",
             "form_id": "pto0590-tstore-6a21a7e300b3806c",
             "header": {
               "command": "BSTART.TSTORE",
@@ -278900,14 +278884,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-24cca3cb3ca80c0c",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "b829597b9a561cf41c41bdeecc324c8744c487538be82b629db22cab3c66bf42",
+            "fold_signature_sha256": "172d7b3e3efe9e49f85a49194f9ab06a6f5267dbd8e7244b23160b3b779ff5e7",
             "form_id": "pto0590-tstore-d22f23a5f9906b7c",
             "header": {
               "command": "BSTART.TSTORE",
@@ -279341,14 +279323,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-e24a626c60e7570a",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "a9b409514e820cb0b4dc13f9f8e186578b3b901ff81f359189d83ad349ef1760",
+            "fold_signature_sha256": "bc44b35b3ccf87bdc869769aec81ad67d7441ae92c2830d6979d07f304cfeece",
             "form_id": "pto0590-tstore-8cdfe6a8e3656958",
             "header": {
               "command": "BSTART.TSTORE",
@@ -279782,14 +279762,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-6d3ccd98e91d019b",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "63a89a9e34a29da612b32902e5071c46d6bda8eec1fd54b58443fca48335a07c",
+            "fold_signature_sha256": "4665f0d290d4a49d33ad04bc08d838584d0efd57044310436dac43eabb238d7a",
             "form_id": "pto0590-tstore-c7c1b1d184832196",
             "header": {
               "command": "BSTART.TSTORE",
@@ -280272,14 +280250,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-24cca3cb3ca80c0c",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "b829597b9a561cf41c41bdeecc324c8744c487538be82b629db22cab3c66bf42",
+            "fold_signature_sha256": "3c2c88105ee4748b6042aed91e80448d8bacac519e1a1f29a20e4c7f8534dd3a",
             "form_id": "pto0590-tstore-17c7bc3e6034b65d",
             "header": {
               "command": "BSTART.TSTORE",
@@ -280713,14 +280689,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-e24a626c60e7570a",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "a9b409514e820cb0b4dc13f9f8e186578b3b901ff81f359189d83ad349ef1760",
+            "fold_signature_sha256": "79d18cf1b9b3c22341c3baefb0bb2da37154effbfe1165e1f0ac0534a9a8f1cd",
             "form_id": "pto0590-tstore-8a58f8cc787f1987",
             "header": {
               "command": "BSTART.TSTORE",
@@ -281154,14 +281128,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-6d3ccd98e91d019b",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "63a89a9e34a29da612b32902e5071c46d6bda8eec1fd54b58443fca48335a07c",
+            "fold_signature_sha256": "32d46e8071906d355c67f2f393b566e737fd1f20eedbec36387d5ff8132083e2",
             "form_id": "pto0590-tstore-b2e7365ba93ba045",
             "header": {
               "command": "BSTART.TSTORE",
@@ -281644,14 +281616,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-24cca3cb3ca80c0c",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "b829597b9a561cf41c41bdeecc324c8744c487538be82b629db22cab3c66bf42",
+            "fold_signature_sha256": "5bff971e54668ce386e39706b0b427ba059703ad2ec77a4108b91085f98ae639",
             "form_id": "pto0590-tstore-1f5011d1dc0a3550",
             "header": {
               "command": "BSTART.TSTORE",
@@ -282085,14 +282055,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-e24a626c60e7570a",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "a9b409514e820cb0b4dc13f9f8e186578b3b901ff81f359189d83ad349ef1760",
+            "fold_signature_sha256": "ebcf98f0714a324ff349b2bb5bf5df60b0ad770aff11d2737141bd2d8cef09dc",
             "form_id": "pto0590-tstore-df19cac5a3f36f27",
             "header": {
               "command": "BSTART.TSTORE",
@@ -282526,14 +282494,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-6d3ccd98e91d019b",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "63a89a9e34a29da612b32902e5071c46d6bda8eec1fd54b58443fca48335a07c",
+            "fold_signature_sha256": "1b13f09134667f69c2920a9cf608f6c89746c2c60875ead9778154f9f59c5fb6",
             "form_id": "pto0590-tstore-b54a0412e8607d87",
             "header": {
               "command": "BSTART.TSTORE",
@@ -283016,14 +282982,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-24cca3cb3ca80c0c",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "b829597b9a561cf41c41bdeecc324c8744c487538be82b629db22cab3c66bf42",
+            "fold_signature_sha256": "52e6bff3da1bd7501da82f810798edcee5b128c928b2fc3d1f8db1abf15de7bf",
             "form_id": "pto0590-tstore-74c2d80b98af7e5e",
             "header": {
               "command": "BSTART.TSTORE",
@@ -283457,14 +283421,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-e24a626c60e7570a",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "a9b409514e820cb0b4dc13f9f8e186578b3b901ff81f359189d83ad349ef1760",
+            "fold_signature_sha256": "ff322a0bfa660a543d6786bfa1803652dc5f806b3abcec08f752a6c4feec9d58",
             "form_id": "pto0590-tstore-36eb6f53256d7657",
             "header": {
               "command": "BSTART.TSTORE",
@@ -283898,14 +283860,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-6d3ccd98e91d019b",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "63a89a9e34a29da612b32902e5071c46d6bda8eec1fd54b58443fca48335a07c",
+            "fold_signature_sha256": "6e97c5d2dfa33937762c1c43b2c8833b8089532984b0c5ba99810b405534e077",
             "form_id": "pto0590-tstore-ee7cfbd0ebc0f4ee",
             "header": {
               "command": "BSTART.TSTORE",
@@ -284388,14 +284348,12 @@
               }
             ],
             "fold": {
-              "canonical_form_id": "pto0590-tstore-24cca3cb3ca80c0c",
-              "canonical_without_runtime_state": false,
-              "on_alias": "use the first physically identical catalog form",
+              "canonical_without_runtime_state": true,
               "policy": "canonical-exact-match",
               "requires_complete_boundary": true,
-              "unique_without_runtime_state": false
+              "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "b829597b9a561cf41c41bdeecc324c8744c487538be82b629db22cab3c66bf42",
+            "fold_signature_sha256": "baf95fe3798f8eb5f20d408273a128445323e75a3767df883227549b76e1f03a",
             "form_id": "pto0590-tstore-e461ce968587b5af",
             "header": {
               "command": "BSTART.TSTORE",
@@ -286232,7 +286190,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "2a7492ccdbafdedd41a1e88c1ec4a85ea4c7f932efca9e57a87910a675a580d5",
+            "fold_signature_sha256": "e05dea7c2d4d0cb58af97e0ac3f5b44a784be46468b5452ae872cf2d2ad68262",
             "form_id": "pto0590-tsub-1c73a8ce1f9f7372",
             "header": {
               "command": "BSTART.VEC",
@@ -288107,7 +288065,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "480d94dde28e7db800d0dc962af159b4412cab21b1c731205a6a9414f900c51f",
+            "fold_signature_sha256": "2351935dd72dfb2dd8e8e38e65303ebcfab9bcde65a5933c65d60030bd2da372",
             "form_id": "pto0590-tsubs-1f70eded9aab194c",
             "header": {
               "command": "BSTART.VEC",
@@ -289916,7 +289874,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "06c622111aacaacd713f67ee7fcc4ae24d748b00a2ec324917c82a1783749153",
+            "fold_signature_sha256": "dd900745970950668c27aac19640cfdd89a69457e12b10839bb3784a06ca1d26",
             "form_id": "pto0590-ttri-9f7b5f0a2f886e62",
             "header": {
               "command": "BSTART.SFU",
@@ -291585,7 +291543,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "e9663096fe5bd32e89cb93e76b297ebf077365ce67eeed54ad2586fe97dea360",
+            "fold_signature_sha256": "f2bdd82a5e20a2c997eefca620312227c96b1ee2e482889ccf8f0596c316ee23",
             "form_id": "pto0590-tunpack-bf70ca46ae4adf18",
             "header": {
               "command": "BSTART.SFU",
@@ -293446,7 +293404,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "c9248242f0b49d287a7b5a0487a69badc815c0799a8146cd1dde250c9ea0235b",
+            "fold_signature_sha256": "01ee7012d2a47818c7b209ffe0066261118b58c9e90d6de7e245d9abdb63790d",
             "form_id": "pto0590-txor-27010b71b3eca84c",
             "header": {
               "command": "BSTART.VEC",
@@ -295321,7 +295279,7 @@
               "requires_complete_boundary": true,
               "unique_without_runtime_state": true
             },
-            "fold_signature_sha256": "a9fdd4f57e6be32bfd128f4efcff91b009ff83ab54ee817362be1e7f7ff15543",
+            "fold_signature_sha256": "c059958db5ebd2f9ca256bec756abadf2cbddde1c1b3b106e24103866289da99",
             "form_id": "pto0590-txors-702273733e1e5300",
             "header": {
               "command": "BSTART.VEC",
@@ -295600,6 +295558,1654 @@
       "spelling": "TXORS"
     }
   ],
+  "physical_attribute_contracts": {
+    "B.CATR": {
+      "assembly": [
+        "B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}"
+      ],
+      "contract": {
+        "block_composition": [
+          "Optional header command after BSTART and before the first body instruction. At most one B.CATR may appear in a block."
+        ],
+        "canonical_assembly": [
+          "B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}"
+        ],
+        "defaults": [
+          "Omitting B.CATR is equivalent to trap=0, atom=0, aq=0, rl=0, far=0, and DR=0. Every encoded bit is explicit; zero never means an omitted instruction."
+        ],
+        "encoding_class": "standalone-encoded",
+        "examples": [
+          "B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}"
+        ],
+        "exceptions": [
+          "A B.CATR outside an active header or a second B.CATR raises Illegal Block Exception before changing pending or architectural state.",
+          "DR=1 in CUBE or a non-tile block raises Illegal Block Exception before block effects; VEC, SFU, and TLSU blocks may consume dimension-reduction mode.",
+          "A failed or rejected block commit produces no post-commit trap and exposes no partial atomic-block result.",
+          "A participating TLSU Function 1 Atomic TSTORE with B.CATR.atom=1 raises Fault_TileLegality before memory effects; omitted B.CATR and atom=0 retain intrinsic Atomic TSTORE behavior."
+        ],
+        "field_contracts": {},
+        "field_zero_meanings": {
+          "DR": "Encoded zero selects the default multidimensional operation mode.",
+          "aq": "Encoded zero disables acquire ordering.",
+          "atom": "Encoded zero selects normal operation-specific commit visibility.",
+          "far": "Encoded zero executes the block on the initiating core.",
+          "rl": "Encoded zero disables release ordering.",
+          "trap": "Encoded zero disables the synchronous post-commit trap request."
+        },
+        "legality": [
+          "All six one-bit fields are independently assigned; aq and rl do not require atom=1.",
+          "B.CATR is header-only and unique per block.",
+          "DR=1 is assigned only for VEC, SFU, and TLSU blocks and rejects for CUBE and non-tile blocks before effects.",
+          "Atomic TSTORE rejects B.CATR.atom=1 before effects; this operation exception does not change atom semantics for other operations."
+        ],
+        "memory_effects": [
+          "aq prevents later-block memory effects from preceding this block; rl prevents earlier-block memory effects from following it; aq+rl applies both constraints.",
+          "atom=1 makes the complete block one non-interleavable all-or-nothing architectural transaction: memory and register-output effects become visible together or remain ineffective.",
+          "far=1 may transport inputs and returned results through a remote target selected by routing state, but only the initiating core's final commit is architecturally visible."
+        ],
+        "operands": [
+          {
+            "field": "DR",
+            "role": "dimension-reduction selector: zero multidimensional; one group-executed reduction mode"
+          },
+          {
+            "field": "trap",
+            "role": "synchronous post-commit trap request"
+          },
+          {
+            "field": "far",
+            "role": "remote execution request using existing routing state"
+          },
+          {
+            "field": "atom",
+            "role": "whole-block transaction selector"
+          },
+          {
+            "field": "aq",
+            "role": "acquire ordering bit"
+          },
+          {
+            "field": "rl",
+            "role": "release ordering bit"
+          }
+        ],
+        "ordering": [
+          "aq prevents later-block memory effects from preceding this block.",
+          "rl prevents earlier-block memory effects from following this block.",
+          "When both bits are one, both acquire and release constraints apply independently."
+        ],
+        "standalone_opcode": true,
+        "state_effects": [
+          "Defines one optional block control record for post-commit trap, transactional visibility, acquire/release ordering, remote execution, and dimension-reduction mode.",
+          "trap=1 first commits and clears the block, then saves the selected continuation in a clean trap context; trap return resumes that continuation.",
+          "far=1 captures the block inputs for the routing-selected remote target, waits for returned results, and commits those results only on the initiating core.",
+          "DR=1 selects operation-defined dimension-reduction behavior for VEC, SFU, or TLSU; it never means dynamic rounding or direct-register addressing."
+        ]
+      },
+      "field_domains": {},
+      "forms": [
+        {
+          "asm": "B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}",
+          "constraints": [],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0xfbf07fff",
+              "match": "0x00000023",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "DR",
+              "pieces": [
+                {
+                  "instruction_lsb": 26,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "trap",
+              "pieces": [
+                {
+                  "instruction_lsb": 19,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "far",
+              "pieces": [
+                {
+                  "instruction_lsb": 18,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "atom",
+              "pieces": [
+                {
+                  "instruction_lsb": 17,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "aq",
+              "pieces": [
+                {
+                  "instruction_lsb": 16,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "rl",
+              "pieces": [
+                {
+                  "instruction_lsb": 15,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            }
+          ],
+          "form_id": "b_catr_32_e90bd52fa480",
+          "length_bits": 32,
+          "mnemonic": "B.CATR",
+          "semantic_family": "CMD",
+          "semantic_group": "Bundle Control Attribute",
+          "semantic_handler": "SetBundleControlAttributes",
+          "semantic_summary": "Defines one optional block control record for post-commit trap, transactional visibility, acquire/release ordering, remote execution, and dimension-reduction mode.",
+          "status": "accepted"
+        }
+      ],
+      "source": "asl/block/attributes/B.CATR.asl"
+    },
+    "B.DATR": {
+      "assembly": [
+        "B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize, predinv, zero}"
+      ],
+      "contract": {
+        "block_composition": [
+          "Optional header command after BSTART and before B.IOR, B.IOT, B.IOS, or the first body instruction; at most one B.DATR is permitted."
+        ],
+        "canonical_assembly": [
+          "B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize, predinv, zero}"
+        ],
+        "defaults": [
+          "B.DATR is optional. When omitted, DataType inherits the typed BSTART DataType, PadValueOrByteId supplies Null padding to pad-valued operations, and Layout, CMode, RMode, Sat, Canonicalize, PredInv, and Zero retain their zero meanings. For direct Local tile operations, Layout 29 selects CUBE_M32 and Layout 31 selects CUBE_M16.",
+          "An explicit B.DATR encodes every field. Concrete DataType codes override the BSTART type; DTYPE_NONE preserves the BSTART type while latching the remaining controls. Encoded DataType zero selects FP64 and encoded PadValueOrByteId zero selects Zero padding or ByteId zero.",
+          "For matrix/CUBE schemas, omitted PadValueOrByteId selects CCTRL=00: final D output and no transparent-cache hint.",
+          "For an eligible Local CUBE_M16/CUBE_M32 operation with an explicit ExecutionMask, PredInv=0 selects normal mask polarity and Zero=0 selects MERGE for inactive destinations. Nonzero PredInv or Zero without an explicit eligible ExecutionMask is illegal.",
+          "For TROWEXPAND* with direct Local CUBE_M16 or CUBE_M32, RMode[2:0] defaults to zero and names BroadcastByteOffset; it is not numeric rounding in that operation context. Other operations retain their current RMode meaning."
+        ],
+        "encoding_class": "standalone-encoded",
+        "examples": [
+          "B.DATR {NORM, FP32, Zero, None, RNE, 0, 0, 0, 0}",
+          "B.DATR {ND2M16, DTYPE_NONE, Null, None, Default, 0, 0, 0, 0}"
+        ],
+        "exceptions": [
+          "A duplicate B.DATR or a B.DATR outside an active block header raises Illegal Block Exception before attribute state changes.",
+          "PredInv=1 or Zero=1 on a schema without an explicit eligible Local CUBE_M16/CUBE_M32 ExecutionMask raises Fault_TileLegality before effects.",
+          "CMode codes 6 and 7 pass raw command-form decoding but are accepted at execution only for an active BSTART.TSTORE TLSU Function 1 with Canonicalize=1; every other context raises Fault_IllegalInstruction before attributes latch."
+        ],
+        "field_contracts": {
+          "CMode": {
+            "ref": "PTO-FIELD-BLOCK-CMODE"
+          },
+          "DataType": {
+            "ref": "PTO-FIELD-BLOCK-DATATYPE"
+          },
+          "PadValueOrByteId": {
+            "ref": "PTO-FIELD-BLOCK-PADVALUE-OR-BYTEID"
+          }
+        },
+        "field_zero_meanings": {
+          "CMode": "EQ",
+          "Canonicalize": "disabled",
+          "DataType": "FP64; code 31, not code zero, is DTYPE_NONE",
+          "Layout": "NORM",
+          "PadValueOrByteId": "Zero padding, ByteId zero, or matrix CCTRL=00 as selected by the operation schema",
+          "PredInv": "Normal ExecutionMask polarity; zero means do not invert.",
+          "RMode": "Operation-defined default; row-expansion CUBE_M16/M32 uses zero BroadcastByteOffset, and other operations keep their existing zero meaning.",
+          "Sat": "disabled",
+          "Zero": "MERGE inactive-destination policy; zero preserves the prior destination coordinate."
+        },
+        "legality": [
+          "B.DATR may appear at most once, after BSTART and before the block body.",
+          "DataType accepts the 27 concrete TileDataType codes plus code 31 DTYPE_NONE; codes 22, 23, and 29..30 are reserved and reject before effects.",
+          "Layout codes 0, 1, 3, 4, 6, 8, 9, 10, 11, 17, 18, 20, 21 through 29, and 30 through 31 are assigned. Codes 10 and 11 are weight-mode TLOAD-only layouts; codes 21 through 26 select ND2M32, ND2M16, ND2N8, M322ND, M162ND, and N82ND respectively; code 29 selects direct Local CUBE_M32 and code 31 selects direct Local CUBE_M16.",
+          "CMode codes 0..5 select EQ, NE, LT, GT, LE, and GE; codes 6..7 are reserved except at the B.DATR command boundary of an active TLSU Function 1 TSTORE with Canonicalize=1, where they select ATOMIC_INC and ATOMIC_DEC.",
+          "All RMode codes 0..7 are assigned: operation default, RNE, RTZ, RTM, RTP, RNA, RTO, and RHB.",
+          "Canonicalize is legal only for TCVT and, for TLSU Function 1 TSTORE, selects Atomic reduction when enabled with CMode 0..7; other tile operations retain their existing Canonicalize applicability.",
+          "Matrix/CUBE schemas interpret PadValueOrByteId as CCTRL: bit 0 selects raw-partial D plus a cache-replacement hint, bit 1 is an ACC-only explicit-C cache-use or prefetch hint, and init=1 forms require bit 1 to be zero.",
+          "PredInv and Zero are legal only for eligible Local CUBE_M16/CUBE_M32 schemas that bind an explicit ExecutionMask; otherwise either nonzero control rejects before effects. Bit 12 remains fixed at one.",
+          "TROWEXPAND, TROWEXPANDADD, TROWEXPANDSUB, TROWEXPANDMUL, TROWEXPANDDIV, TROWEXPANDMAX, TROWEXPANDMIN, and TROWEXPANDEXPDIF interpret RMode[2:0] as BroadcastByteOffset only for CUBE_M16/CUBE_M32; RowMajor requires zero. Other operation-specific RMode rules are unchanged."
+        ],
+        "memory_effects": [
+          "none"
+        ],
+        "operands": [
+          {
+            "field": "Layout",
+            "role": "tile data layout, direct Local CUBE layout selector, or exact GM-to-CUBE/CUBE-to-GM conversion selector"
+          },
+          {
+            "field": "DataType",
+            "role": "concrete Tile element type or DTYPE_NONE inheritance sentinel"
+          },
+          {
+            "field": "PadValueOrByteId",
+            "role": "operation-selected padding value, byte identifier, or matrix CCTRL raw-partial/cache-hint control"
+          },
+          {
+            "field": "CMode",
+            "role": "TCMP/TCMPS comparison relation 0..5, or Atomic TSTORE operation 0..7 only with Canonicalize=1"
+          },
+          {
+            "field": "RMode",
+            "role": "operation-specific selector: numeric rounding where applicable; BroadcastByteOffset for TROWEXPAND* on CUBE_M16/CUBE_M32"
+          },
+          {
+            "field": "Sat",
+            "role": "saturation enable"
+          },
+          {
+            "field": "Canonicalize",
+            "role": "TCVT private-format canonicalization enable or Atomic TSTORE reduction-mode selector when CMode 0..7"
+          },
+          {
+            "field": "PredInv",
+            "role": "ExecutionMask polarity control: zero preserves, one inverts the logical predicate"
+          },
+          {
+            "field": "Zero",
+            "role": "inactive ExecutionMask destination policy: zero MERGE, one ZERO"
+          }
+        ],
+        "ordering": [
+          "none"
+        ],
+        "standalone_opcode": true,
+        "state_effects": [
+          "Latch the accepted bundle data attributes for the current block and mark B.DATR present without modifying tile or memory state."
+        ],
+        "summary": "Latch per-block tile attributes and carrier-independent ExecutionMask controls PredInv and Zero."
+      },
+      "field_domains": {
+        "CMode": {
+          "assigned": [
+            {
+              "meaning": "EQ",
+              "value": 0
+            },
+            {
+              "meaning": "NE",
+              "value": 1
+            },
+            {
+              "meaning": "LT",
+              "value": 2
+            },
+            {
+              "meaning": "GT",
+              "value": 3
+            },
+            {
+              "meaning": "LE",
+              "value": 4
+            },
+            {
+              "meaning": "GE",
+              "value": 5
+            }
+          ],
+          "id": "PTO-FIELD-BLOCK-CMODE",
+          "rejection": "Codes 6 and 7 are reserved at B.DATR execution except for active TLSU Function 1 TSTORE with Canonicalize=1; all other operation and command contexts raise Fault_IllegalInstruction before attributes latch.",
+          "reserved": [
+            6,
+            7
+          ],
+          "role": "Selects TCMP/TCMPS comparison relation or, only for Atomic TSTORE, a GM atomic reduction operator.",
+          "source": "asl/block/attributes/B.DATR.asl",
+          "width": 3,
+          "zero_meaning": "Code zero selects equality comparison."
+        },
+        "DataType": {
+          "assigned": [
+            {
+              "meaning": "FP64",
+              "value": 0
+            },
+            {
+              "meaning": "FP32",
+              "value": 1
+            },
+            {
+              "meaning": "TF32",
+              "value": 2
+            },
+            {
+              "meaning": "HF32",
+              "value": 3
+            },
+            {
+              "meaning": "FP16",
+              "value": 4
+            },
+            {
+              "meaning": "BF16",
+              "value": 5
+            },
+            {
+              "meaning": "HiF8",
+              "value": 6
+            },
+            {
+              "meaning": "E4M3",
+              "value": 7
+            },
+            {
+              "meaning": "E5M2",
+              "value": 8
+            },
+            {
+              "meaning": "E3M2",
+              "value": 9
+            },
+            {
+              "meaning": "E2M3",
+              "value": 10
+            },
+            {
+              "meaning": "E2M1X2",
+              "value": 11
+            },
+            {
+              "meaning": "E1M2X2",
+              "value": 12
+            },
+            {
+              "meaning": "E8M0",
+              "value": 13
+            },
+            {
+              "meaning": "HiF4X2",
+              "value": 14
+            },
+            {
+              "meaning": "E6M2",
+              "value": 15
+            },
+            {
+              "meaning": "S64",
+              "value": 16
+            },
+            {
+              "meaning": "S32",
+              "value": 17
+            },
+            {
+              "meaning": "S16",
+              "value": 18
+            },
+            {
+              "meaning": "S8",
+              "value": 19
+            },
+            {
+              "meaning": "S4X2",
+              "value": 20
+            },
+            {
+              "meaning": "RCPE6M2",
+              "value": 21
+            },
+            {
+              "meaning": "U64",
+              "value": 24
+            },
+            {
+              "meaning": "U32",
+              "value": 25
+            },
+            {
+              "meaning": "U16",
+              "value": 26
+            },
+            {
+              "meaning": "U8",
+              "value": 27
+            },
+            {
+              "meaning": "U4X2",
+              "value": 28
+            }
+          ],
+          "id": "PTO-FIELD-BLOCK-DATATYPE",
+          "rejection": "Reserved values are held for future extension and reject before architectural effects.",
+          "reserved": [
+            22,
+            23,
+            29,
+            30,
+            31
+          ],
+          "role": "Selects the Tile element data type carried by Block data attributes and typed Block starts.",
+          "source": "asl/arch/data-types/tile-data-types.asl",
+          "width": 5,
+          "zero_meaning": "Code zero selects FP64; zero never means absent, inherited, NONE, or NULL."
+        },
+        "PadValueOrByteId": {
+          "assigned": [
+            {
+              "meaning": "Zero-or-ByteId0",
+              "value": 0
+            },
+            {
+              "meaning": "Max-or-ByteId1",
+              "value": 1
+            },
+            {
+              "meaning": "Min-or-ByteId2",
+              "value": 2
+            },
+            {
+              "meaning": "Null-or-ByteId3",
+              "value": 3
+            }
+          ],
+          "id": "PTO-FIELD-BLOCK-PADVALUE-OR-BYTEID",
+          "rejection": "All four encodings are assigned; the selected operation separately validates whether the field is PadValue, ByteId, or inapplicable.",
+          "reserved": [],
+          "role": "Carries the operation-selected PadValue or ByteId union field.",
+          "source": "asl/block/attributes/B.DATR.asl",
+          "width": 2,
+          "zero_meaning": "For PadValue operations code zero selects Zero; for ByteId operations it selects ByteId zero."
+        }
+      },
+      "forms": [
+        {
+          "asm": "B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize, predinv, zero}",
+          "constraints": [
+            {
+              "field": "CMode",
+              "operator": "one-of",
+              "values": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            {
+              "field": "DataType",
+              "operator": "one-of",
+              "values": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                24,
+                25,
+                26,
+                27,
+                28,
+                31
+              ]
+            },
+            {
+              "field": "Layout",
+              "operator": "one-of",
+              "values": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                8,
+                9,
+                10,
+                11,
+                17,
+                18,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31
+              ]
+            }
+          ],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0x000c107f",
+              "match": "0x00001023",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "CMode",
+              "pieces": [
+                {
+                  "instruction_lsb": 29,
+                  "value_lsb": 0,
+                  "width": 3
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 3
+            },
+            {
+              "name": "PadValueOrByteId",
+              "pieces": [
+                {
+                  "instruction_lsb": 27,
+                  "value_lsb": 0,
+                  "width": 2
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 2
+            },
+            {
+              "name": "Sat",
+              "pieces": [
+                {
+                  "instruction_lsb": 26,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "Canonicalize",
+              "pieces": [
+                {
+                  "instruction_lsb": 25,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "DataType",
+              "pieces": [
+                {
+                  "instruction_lsb": 20,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "RMode",
+              "pieces": [
+                {
+                  "instruction_lsb": 15,
+                  "value_lsb": 0,
+                  "width": 3
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 3
+            },
+            {
+              "name": "Layout",
+              "pieces": [
+                {
+                  "instruction_lsb": 7,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "PredInv",
+              "pieces": [
+                {
+                  "instruction_lsb": 14,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "Zero",
+              "pieces": [
+                {
+                  "instruction_lsb": 13,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            }
+          ],
+          "form_id": "b_datr_32_c161a042ff38",
+          "length_bits": 32,
+          "mnemonic": "B.DATR",
+          "semantic_family": "CMD",
+          "semantic_group": "Bundle Data Attribute",
+          "semantic_handler": "SetBundleDataAttributes",
+          "semantic_summary": "Latch per-block tile attributes and carrier-independent ExecutionMask controls PredInv and Zero.",
+          "status": "accepted"
+        }
+      ],
+      "source": "asl/block/attributes/B.DATR.asl"
+    },
+    "B.DIM": {
+      "assembly": [
+        "B.DIM RegSrc, uimm, ->LB2",
+        "B.DIM RegSrc, uimm, ->LB0",
+        "B.DIM RegSrc, uimm, ->LB1"
+      ],
+      "contract": {
+        "block_composition": [
+          "Header command after BSTART and before the first body instruction. B.DIM and compressed dimension forms share one write-once presence bit for each of LB0, LB1, and LB2."
+        ],
+        "canonical_assembly": [
+          "B.DIM RegSrc, uimm17, ->LB0",
+          "B.DIM RegSrc, uimm17, ->LB1",
+          "B.DIM RegSrc, uimm17, ->LB2"
+        ],
+        "defaults": [
+          "The selected form fixes LB0, LB1, or LB2; RegSrc and uimm17 are both encoded and zero remains an explicit value."
+        ],
+        "encoding_class": "standalone-encoded",
+        "examples": [
+          "B.DIM a0, 16, ->LB0",
+          "B.DIM zero, 0, ->LB2"
+        ],
+        "exceptions": [
+          "RegSrc codes 24 through 31 raise Fault_IllegalInstruction before reading a queue or changing bundle state.",
+          "A write outside an active block header or a second write to the same LB raises Fault_BundleControl before changing the first value."
+        ],
+        "field_contracts": {},
+        "field_zero_meanings": {
+          "RegSrc": "Encoded zero names the architectural zero GPR.",
+          "uimm17": "Encoded zero supplies a zero displacement or zero immediate value."
+        },
+        "legality": [
+          "b_dim_32_1caa1aa2944a.RegSrc accepts only absolute GPR codes 0..23; 24..31 are reserved.",
+          "b_dim_32_27602ab68929.RegSrc accepts only absolute GPR codes 0..23; 24..31 are reserved.",
+          "b_dim_32_4191099a5f4d.RegSrc accepts only absolute GPR codes 0..23; 24..31 are reserved."
+        ],
+        "memory_effects": [
+          "none"
+        ],
+        "operands": [
+          {
+            "field": "RegSrc",
+            "role": "absolute GPR source 0 through 23"
+          },
+          {
+            "field": "uimm17",
+            "role": "unsigned addend before low-16-bit truncation"
+          }
+        ],
+        "ordering": [
+          "none"
+        ],
+        "standalone_opcode": true,
+        "state_effects": [
+          "Computes zero-extend((GPR[RegSrc] + zero-extend(uimm17))[15:0]) and writes the selected LB0, LB1, or LB2 register.",
+          "LB meanings are selected by the completed operation schema; B.DIM itself assigns no universal row, column, M, N, or K role.",
+          "Each LB may be written at most once per block across B.DIM and compressed dimension forms."
+        ]
+      },
+      "field_domains": {},
+      "forms": [
+        {
+          "asm": "B.DIM RegSrc, uimm, ->LB2",
+          "constraints": [
+            {
+              "field": "RegSrc",
+              "operator": "one-of",
+              "values": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23
+              ]
+            }
+          ],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0x0000707f",
+              "match": "0x00002043",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "RegSrc",
+              "pieces": [
+                {
+                  "instruction_lsb": 15,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "uimm17",
+              "pieces": [
+                {
+                  "instruction_lsb": 20,
+                  "value_lsb": 0,
+                  "width": 12
+                },
+                {
+                  "instruction_lsb": 7,
+                  "value_lsb": 12,
+                  "width": 5
+                }
+              ],
+              "signedness": "unsigned",
+              "width": 17
+            }
+          ],
+          "form_id": "b_dim_32_1caa1aa2944a",
+          "length_bits": 32,
+          "mnemonic": "B.DIM",
+          "semantic_family": "CMD",
+          "semantic_group": "Bundle Argument",
+          "semantic_handler": "SetBundleDimension",
+          "semantic_summary": "Writes zero-extend((GPR[RegSrc] + uimm17)[15:0]) to the selected bundle-local LB register exactly once.",
+          "status": "accepted"
+        },
+        {
+          "asm": "B.DIM RegSrc, uimm, ->LB0",
+          "constraints": [
+            {
+              "field": "RegSrc",
+              "operator": "one-of",
+              "values": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23
+              ]
+            }
+          ],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0x0000707f",
+              "match": "0x00000043",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "RegSrc",
+              "pieces": [
+                {
+                  "instruction_lsb": 15,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "uimm17",
+              "pieces": [
+                {
+                  "instruction_lsb": 20,
+                  "value_lsb": 0,
+                  "width": 12
+                },
+                {
+                  "instruction_lsb": 7,
+                  "value_lsb": 12,
+                  "width": 5
+                }
+              ],
+              "signedness": "unsigned",
+              "width": 17
+            }
+          ],
+          "form_id": "b_dim_32_27602ab68929",
+          "length_bits": 32,
+          "mnemonic": "B.DIM",
+          "semantic_family": "CMD",
+          "semantic_group": "Bundle Argument",
+          "semantic_handler": "SetBundleDimension",
+          "semantic_summary": "Writes zero-extend((GPR[RegSrc] + uimm17)[15:0]) to the selected bundle-local LB register exactly once.",
+          "status": "accepted"
+        },
+        {
+          "asm": "B.DIM RegSrc, uimm, ->LB1",
+          "constraints": [
+            {
+              "field": "RegSrc",
+              "operator": "one-of",
+              "values": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23
+              ]
+            }
+          ],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0x0000707f",
+              "match": "0x00001043",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "RegSrc",
+              "pieces": [
+                {
+                  "instruction_lsb": 15,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "uimm17",
+              "pieces": [
+                {
+                  "instruction_lsb": 20,
+                  "value_lsb": 0,
+                  "width": 12
+                },
+                {
+                  "instruction_lsb": 7,
+                  "value_lsb": 12,
+                  "width": 5
+                }
+              ],
+              "signedness": "unsigned",
+              "width": 17
+            }
+          ],
+          "form_id": "b_dim_32_4191099a5f4d",
+          "length_bits": 32,
+          "mnemonic": "B.DIM",
+          "semantic_family": "CMD",
+          "semantic_group": "Bundle Argument",
+          "semantic_handler": "SetBundleDimension",
+          "semantic_summary": "Writes zero-extend((GPR[RegSrc] + uimm17)[15:0]) to the selected bundle-local LB register exactly once.",
+          "status": "accepted"
+        }
+      ],
+      "source": "asl/block/attributes/B.DIM.asl"
+    },
+    "B.FPATR": {
+      "assembly": [
+        "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn"
+      ],
+      "contract": {
+        "block_composition": [
+          "Required exactly once in a CUBE Matrix block after BSTART and before scalar or tile bindings and the first body instruction.",
+          "The complete block schema places mathematical Local sources first, then optional RowMaxIn, vector pre-quantization, and vector PReLU sources; Local destinations are D, optional RowMaxOut, then optional GroupMaxOut.",
+          "Scalar pre-quantization and LReLU/PReLU parameters use the dense B.IOR schema; LReLU-only consumes RegSrc0."
+        ],
+        "canonical_assembly": [
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn"
+        ],
+        "defaults": [
+          "Encoded PreQuantMode=0 and ReluMode=0 disable pre-quantization and activation. GroupNCode=0 selects no group maximum. All four reduction enable bits default to disabled. TransA=0 and TransB=0 select no logical transpose; CScaleEn=0 disables accumulator scaling.",
+          "Omitting B.FPATR is not a default for a CUBE Matrix block: complete-bundle preflight rejects the missing command before allocation or effects.",
+          "CCTRL[0]=0 selects the final-output path. CCTRL[0]=1 requires final-output post-processing and auxiliary-output controls to remain zero except for legal accumulator-input CScale."
+        ],
+        "encoding_class": "standalone-encoded",
+        "examples": [
+          "B.FPATR None, None, 0, 0, 0, 0, 0, 0, 0, 0",
+          "B.FPATR S8Vector, LReLU, 2, 1, 1, 1, 1, 1, 1, 0"
+        ],
+        "exceptions": [
+          "Missing, duplicate, or non-CUBE-Matrix use raises Fault_BundleControl before operand consumption, allocation, payload, or destination effects.",
+          "Decode-reserved field values do not decode and raise Fault_IllegalInstruction. Accepted encodings with inconsistent reduction enables, invalid B.DATR conversion controls, invalid parameters, malformed operand streams, illegal aliases, or invalid derived shapes raise Fault_TileLegality before effects.",
+          "Fixed-bit mismatch does not decode as B.FPATR and is rejected by normal command decoding before this handler executes."
+        ],
+        "field_contracts": {},
+        "field_zero_meanings": {
+          "CScaleEn": "Do not scale the explicit FP32 accumulator C.",
+          "ElementWiseEn": "Fixed zero selects complete-bundle Matrix post-processing.",
+          "GroupMaxEn": "No GroupMax output.",
+          "GroupNCode": "No group maximum; GroupMaxEn must also be zero.",
+          "MaxAbsEn": "Use signed maximum rather than maximum absolute value for enabled reductions.",
+          "PreQuantMode": "No pre-quantization; D retains the FP32, S32, or U32 accumulator type.",
+          "ReluMode": "No activation.",
+          "Reserved": "Bit 10 is fixed zero; every nonzero encoding is reserved.",
+          "RowMaxEn": "No RowMax input or output.",
+          "RowMaxInit": "Do not initialize RowMax from RowMaxIn.",
+          "TransA": "Do not transpose Shared A.",
+          "TransB": "Do not transpose Shared B."
+        },
+        "legality": [
+          "PreQuantMode accepts exactly codes 0..5, 12..13, 16..20, 23..28, and 32..39; all other six-bit codes are reserved.",
+          "Each nonzero PreQuantMode accepts exactly its assigned S32 or FP32 accumulator class; code zero accepts FP32, S32, or U32 and preserves that type.",
+          "ReluMode codes 0..3 select None, ReLU, scalar LReLU/PReLU, and vector PReLU; codes 4..7 are reserved.",
+          "GroupNCode codes 0..9 select 0, 8, 16, 32, 48, 64, 80, 96, 112, and 128 columns; codes 10..15 are reserved.",
+          "RowMaxInit requires RowMaxEn. GroupMaxEn requires nonzero GroupNCode and nonzero GroupNCode requires GroupMaxEn. MaxAbsEn requires RowMaxEn or GroupMaxEn.",
+          "TransA and TransB are independent one-bit controls accepted only when the corresponding A or B primary is Shared. CScaleEn is accepted only by FP32 TMATMUL.ACC and TMATMULMX.ACC.",
+          "Func=2, ElementWiseEn=0, Reserved[10]=0, Opc1=2, Opcode=1, and W=1 are fixed encoding discriminators.",
+          "Matrix B.DATR supplies only destination conversion controls when B.FPATR is present: None requires RMode=NONE and Sat=0; fixed floating modes require RMode=NONE; fixed shift modes require RMode=NONE and Sat=0; programmable integer modes retain the complete rounding selector and final clamp/wrap control.",
+          "The derived scalar/vector parameter count, Local source count, and Local destination count must fit the complete-bundle schema without duplicate destinations or illegal source/destination aliases.",
+          "When matrix CCTRL[0]=1, PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, and MaxAbsEn must all be zero; legal CScale remains an accumulator-input transform and D publishes the raw accumulator type.",
+          "EffectiveDType is the accumulator type when PreQuantMode is zero and the assigned output type otherwise. If RowMaxEn or GroupMaxEn is enabled, EffectiveDType must be FP32, FP16, or BF16; RowMaxIn, RowMaxOut, and GroupMaxOut must all use that type."
+        ],
+        "memory_effects": [
+          "none"
+        ],
+        "operands": [
+          {
+            "field": "PreQuantMode",
+            "role": "closed Matrix destination pre-quantization and output-type selector"
+          },
+          {
+            "field": "ReluMode",
+            "role": "pre-conversion activation multiplier selector"
+          },
+          {
+            "field": "GroupNCode",
+            "role": "group maximum column-count selector"
+          },
+          {
+            "field": "RowMaxEn",
+            "role": "row maximum input/output enable"
+          },
+          {
+            "field": "GroupMaxEn",
+            "role": "group maximum output enable"
+          },
+          {
+            "field": "RowMaxInit",
+            "role": "row maximum initialization from RowMaxIn enable"
+          },
+          {
+            "field": "MaxAbsEn",
+            "role": "maximum-absolute-value reduction selector"
+          },
+          {
+            "field": "Func",
+            "role": "fixed B.FPATR function discriminator equal to 2"
+          },
+          {
+            "field": "ElementWiseEn",
+            "role": "fixed complete-bundle selector equal to zero"
+          },
+          {
+            "field": "TransA",
+            "role": "logical transpose enable for a Shared A primary"
+          },
+          {
+            "field": "TransB",
+            "role": "logical transpose enable for a Shared B primary"
+          },
+          {
+            "field": "CScaleEn",
+            "role": "per-row FP32 accumulator C scaling enable"
+          },
+          {
+            "field": "Reserved",
+            "role": "fixed-zero reserved field"
+          },
+          {
+            "field": "Opc1",
+            "role": "fixed command-class discriminator equal to 2"
+          },
+          {
+            "field": "Opcode",
+            "role": "fixed block-attribute opcode discriminator equal to 1"
+          },
+          {
+            "field": "W",
+            "role": "fixed 32-bit command-width discriminator equal to 1"
+          }
+        ],
+        "ordering": [
+          "Complete field, B.DATR, operand-schema, alias, shape, and allocation preflight precedes every source consumption and destination effect.",
+          "D, RowMaxOut, and GroupMaxOut are published as one atomic complete-block output group; rejection exposes none of them.",
+          "Raw-partial CCTRL validation is part of complete preflight; transparent-cache hints cannot change B.FPATR legality, D publication, auxiliary-output suppression, faults, or numeric status."
+        ],
+        "standalone_opcode": true,
+        "state_effects": [
+          "Latch the accepted fixed-point post-processing descriptor once for the active block; bundle reset clears its presence and every field, including TransA, TransB, and CScaleEn.",
+          "Trap save and recovery preserve the complete latched descriptor with the pending block.",
+          "Successful execution selects any activation-dependent multiplier before destination conversion, encodes each final D value, reduces those final D values in EffectiveDType, and atomically commits all enabled outputs through the numeric-profile hook.",
+          "CCTRL[0]=1 bypasses final-output post-processing and auxiliary publication while preserving legal CScale before raw accumulator-type D publication."
+        ]
+      },
+      "field_domains": {},
+      "forms": [
+        {
+          "asm": "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn",
+          "constraints": [
+            {
+              "field": "PreQuantMode",
+              "operator": "one-of",
+              "values": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                12,
+                13,
+                16,
+                17,
+                18,
+                19,
+                20,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                32,
+                33,
+                34,
+                35,
+                36,
+                37,
+                38,
+                39
+              ]
+            },
+            {
+              "field": "ReluMode",
+              "operator": "one-of",
+              "values": [
+                0,
+                1,
+                2,
+                3
+              ]
+            },
+            {
+              "field": "GroupNCode",
+              "operator": "one-of",
+              "values": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ]
+            },
+            {
+              "field": "RowMaxEn",
+              "operator": "one-of",
+              "values": [
+                0,
+                1
+              ]
+            },
+            {
+              "field": "GroupMaxEn",
+              "operator": "one-of",
+              "values": [
+                0,
+                1
+              ]
+            },
+            {
+              "field": "RowMaxInit",
+              "operator": "one-of",
+              "values": [
+                0,
+                1
+              ]
+            },
+            {
+              "field": "MaxAbsEn",
+              "operator": "one-of",
+              "values": [
+                0,
+                1
+              ]
+            },
+            {
+              "field": "Func",
+              "operator": "one-of",
+              "values": [
+                2
+              ]
+            },
+            {
+              "field": "ElementWiseEn",
+              "operator": "one-of",
+              "values": [
+                0
+              ]
+            },
+            {
+              "field": "TransA",
+              "operator": "one-of",
+              "values": [
+                0,
+                1
+              ]
+            },
+            {
+              "field": "TransB",
+              "operator": "one-of",
+              "values": [
+                0,
+                1
+              ]
+            },
+            {
+              "field": "CScaleEn",
+              "operator": "one-of",
+              "values": [
+                0,
+                1
+              ]
+            },
+            {
+              "field": "Reserved",
+              "operator": "one-of",
+              "values": [
+                0
+              ]
+            },
+            {
+              "field": "Opc1",
+              "operator": "one-of",
+              "values": [
+                2
+              ]
+            },
+            {
+              "field": "Opcode",
+              "operator": "one-of",
+              "values": [
+                1
+              ]
+            },
+            {
+              "field": "W",
+              "operator": "one-of",
+              "values": [
+                1
+              ]
+            }
+          ],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0x00007c7f",
+              "match": "0x00002023",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "PreQuantMode",
+              "pieces": [
+                {
+                  "instruction_lsb": 26,
+                  "value_lsb": 0,
+                  "width": 6
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 6
+            },
+            {
+              "name": "ReluMode",
+              "pieces": [
+                {
+                  "instruction_lsb": 23,
+                  "value_lsb": 0,
+                  "width": 3
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 3
+            },
+            {
+              "name": "GroupNCode",
+              "pieces": [
+                {
+                  "instruction_lsb": 19,
+                  "value_lsb": 0,
+                  "width": 4
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 4
+            },
+            {
+              "name": "RowMaxEn",
+              "pieces": [
+                {
+                  "instruction_lsb": 18,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "GroupMaxEn",
+              "pieces": [
+                {
+                  "instruction_lsb": 17,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "RowMaxInit",
+              "pieces": [
+                {
+                  "instruction_lsb": 16,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "MaxAbsEn",
+              "pieces": [
+                {
+                  "instruction_lsb": 15,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "Func",
+              "pieces": [
+                {
+                  "instruction_lsb": 12,
+                  "value_lsb": 0,
+                  "width": 3
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 3
+            },
+            {
+              "name": "ElementWiseEn",
+              "pieces": [
+                {
+                  "instruction_lsb": 11,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "TransA",
+              "pieces": [
+                {
+                  "instruction_lsb": 7,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "TransB",
+              "pieces": [
+                {
+                  "instruction_lsb": 8,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "CScaleEn",
+              "pieces": [
+                {
+                  "instruction_lsb": 9,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "Reserved",
+              "pieces": [
+                {
+                  "instruction_lsb": 10,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "Opc1",
+              "pieces": [
+                {
+                  "instruction_lsb": 4,
+                  "value_lsb": 0,
+                  "width": 3
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 3
+            },
+            {
+              "name": "Opcode",
+              "pieces": [
+                {
+                  "instruction_lsb": 1,
+                  "value_lsb": 0,
+                  "width": 3
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 3
+            },
+            {
+              "name": "W",
+              "pieces": [
+                {
+                  "instruction_lsb": 0,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            }
+          ],
+          "form_id": "b_fpatr_32_30c307e06d4a",
+          "length_bits": 32,
+          "mnemonic": "B.FPATR",
+          "semantic_family": "CMD",
+          "semantic_group": "Bundle Fixed-Point PostProcess Attribute",
+          "semantic_handler": "SetBundleFixedPointAttributes",
+          "semantic_summary": "Latches complete-bundle matrix post-processing mode, reduction enables, and fixed-point descriptor controls.",
+          "status": "accepted"
+        }
+      ],
+      "source": "asl/block/attributes/B.FPATR.asl"
+    },
+    "C.B.DIMI": {
+      "assembly": [
+        "C.B.DIMI imm8, ->LB0",
+        "C.B.DIMI imm8, ->LB1",
+        "C.B.DIMI imm8, ->LB2"
+      ],
+      "contract": {
+        "block_composition": [
+          "Header command after BSTART and before the first body instruction. C.B.DIMI and B.DIM share one write-once presence bit for each of LB0, LB1, and LB2."
+        ],
+        "canonical_assembly": [
+          "C.B.DIMI imm8, ->LB0",
+          "C.B.DIMI imm8, ->LB1",
+          "C.B.DIMI imm8, ->LB2"
+        ],
+        "defaults": [
+          "LoopNest 0, 1, and 2 select LB0, LB1, and LB2. imm8 is always present; encoded zero writes numeric zero and is not omission."
+        ],
+        "encoding_class": "standalone-encoded",
+        "examples": [
+          "C.B.DIMI 0, ->LB0",
+          "C.B.DIMI 255, ->LB2"
+        ],
+        "exceptions": [
+          "LoopNest code 3 raises Fault_IllegalInstruction before changing TPC or bundle state.",
+          "Execution outside an active block header or a second write to the same LB across C.B.DIMI and B.DIM raises Fault_BundleControl before changing the first value."
+        ],
+        "field_contracts": {},
+        "field_zero_meanings": {
+          "LoopNest": "Code zero selects LB0.",
+          "imm8": "Encoded zero writes numeric zero to the selected LB."
+        },
+        "legality": [
+          "LoopNest codes 0..2 are assigned to LB0..LB2; code 3 is reserved.",
+          "imm8 accepts every unsigned value 0..255 and is zero-extended to the bundle dimension word.",
+          "Each selected LB is write-once for one block across full and compressed dimension commands."
+        ],
+        "memory_effects": [
+          "none"
+        ],
+        "operands": [
+          {
+            "field": "LoopNest",
+            "role": "encoded LB0, LB1, or LB2 selector"
+          },
+          {
+            "field": "imm8",
+            "role": "unsigned eight-bit bundle-local dimension value"
+          }
+        ],
+        "ordering": [
+          "Placement and duplicate checks precede the LB update. A successful update sets the presence bit and value together, then command dispatch advances TPC by two bytes."
+        ],
+        "standalone_opcode": true,
+        "state_effects": [
+          "Write ZeroExtend(imm8) to the selected raw LB and set its presence bit.",
+          "LB meaning is selected by the completed operation schema; C.B.DIMI assigns no universal row, column, M, N, or K role."
+        ]
+      },
+      "field_domains": {},
+      "forms": [
+        {
+          "asm": "C.B.DIMI imm, ->{LB0, LB1, LB2}",
+          "constraints": [
+            {
+              "field": "LoopNest",
+              "operator": "not-equal",
+              "value": 3
+            }
+          ],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0x003f",
+              "match": "0x003c",
+              "width_bits": 16
+            }
+          ],
+          "encoding_kind": "C16",
+          "fields": [
+            {
+              "name": "LoopNest",
+              "pieces": [
+                {
+                  "instruction_lsb": 14,
+                  "value_lsb": 0,
+                  "width": 2
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 2
+            },
+            {
+              "name": "imm8",
+              "pieces": [
+                {
+                  "instruction_lsb": 6,
+                  "value_lsb": 0,
+                  "width": 8
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 8
+            }
+          ],
+          "form_id": "c_b_dimi_16_3f1b113c76ce",
+          "length_bits": 16,
+          "mnemonic": "C.B.DIMI",
+          "semantic_family": "CMD",
+          "semantic_group": "Bundle Dimension",
+          "semantic_handler": "SetBundleDimension",
+          "semantic_summary": "Zero-extends imm8 and writes one selected bundle-local LB exactly once.",
+          "status": "accepted"
+        }
+      ],
+      "source": "asl/block/attributes/C.B.DIMI.asl"
+    }
+  },
   "range_modifier_grammar": {
     "derived_fields": {
       "B.ASSEMBLE.INIT": 1,
@@ -295620,7 +297226,7 @@
     "descriptor_inherited": "TPACK and TUNPACK preserve the first source Tile descriptor shape. They have no independently encoded macro shape, so a static object disassembler cannot print concrete Row or Col values without runtime descriptor state",
     "dynamic_rule": "a Valid field remains explicit when equality with the full dimension cannot be proved statically",
     "irregular_memory": "Every MGATHER and MSCATTER form exposes mandatory Col, ValidRow, and optional ValidCol=Col; Col drives LB2 and ValidCol drives LB0, while physical Tile Row remains outside the macro interface",
-    "row": "Row has no independent physical encoding and uses the selected form's resolution record: an ordinary row-major numeric destination may derive Row from TSize, Col, and element type; a mixed RowMajor/CUBE form uses that rule only for RowMajor and encoded ValidRow for CUBE; predicate and descriptor-preserving forms require source descriptor state; CUBE-layout TLOAD and TSTORE forms plus TGPR2T use encoded ValidRow; an unrecoverable Row prevents stateless folding",
+    "row": "Row has no independent physical encoding and uses the selected form's resolution record: an ordinary row-major numeric destination may derive Row from TSize, Col, and element type; a mixed RowMajor/CUBE form uses that rule only for RowMajor and encoded ValidRow for CUBE; predicate and descriptor-preserving forms follow their selected resolution record; CUBE-layout TLOAD and TSTORE forms plus TGPR2T use encoded ValidRow; a runtime-derived Row is omitted without preventing stateless folding",
     "valid_defaults": {
       "common_rectangular": {
         "ValidCol": "Col",
@@ -295629,7 +297235,7 @@
       "rule": "the selected form's declared default is authoritative"
     }
   },
-  "source_lifetime": ".reuse is not canonical; current B.IOT never releases a source",
+  "source_lifetime": "Physical source last-use and .reuse are owned by asl/block/operands/B.IOT.asl and B.IOS.asl; the macro owner does not yet bind these lifetime variants. This catalog must not be used to erase physical lifetime bits.",
   "source_of_truth": "PTO-TILEOP-MACRO records and the unit-level PTO-TILEOP-MACRO-CONTRACT in asl/arch/overview/instruction-classification.asl, cross-checked with owning ASL PTO-INSTRUCTION metadata and spec/catalog/tile-operations.json",
   "status": "accepted-0.59.0",
   "summary": {
