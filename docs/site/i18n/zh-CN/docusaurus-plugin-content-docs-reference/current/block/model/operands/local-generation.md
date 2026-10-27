@@ -82,7 +82,7 @@ This page is a generated reference view of the normative ASL unit.
 // NDF-BEGIN: PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001
 // ndf: kind=contract level=L1 layer=block status=accepted
 // For Local CUBE_M16 and CUBE_M32 B.ASSEMBLE generations, the parent retains its complete capacity-derived physical descriptor while each writer records an exact WriterSizeCode fragment view. A successful LAST derives one common valid-column prefix from participating PEs' gap-free CELL coverage and atomically publishes it inside the unchanged full parent geometry. ParentRef selects the open generation by generation identity and does not require the aggregate valid descriptor to be finalized before LAST.
-// Generation structure is preflighted before destination resolution. The exact materialized writer descriptor is validated after destination shape/allocation or reuse and before producer effects, coverage registration, LAST closure, or parent finalization.
+// Predicate logical writers use U8 backing geometry and match full resolved sources against the writer, not the full parent. MERGE consumes the newest destination-hand PredicateCell in writer-local coordinates, independently of ParentRef, and requires a fully defined canonical compatible base. Generation structure is preflighted before destination resolution. The exact materialized writer descriptor is validated after destination shape/allocation or reuse and before producer effects, coverage registration, LAST closure, or parent finalization.
 // NDF-END: PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001
 pure func BundleLocalGenerationQueueSlot(hand: integer {0..3}, distance: integer {0..15}) => integer {0..63}
 begin

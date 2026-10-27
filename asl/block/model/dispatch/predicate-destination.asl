@@ -50,8 +50,9 @@ begin
         let descriptor_legal = if cube then
             TilePredicateCellDescriptorLegal(destination) &&
             destination_tile.predicate_basis_type == operation_type &&
-            destination_tile.valid_rows == source_tile.valid_rows &&
-            destination_tile.valid_columns == source_tile.valid_columns &&
+            (binding.destination_assemble.valid ||
+             (destination_tile.valid_rows == source_tile.valid_rows &&
+              destination_tile.valid_columns == source_tile.valid_columns)) &&
             destination_tile.layout == source_tile.layout
         else
             TileDescriptorLegal(destination) &&

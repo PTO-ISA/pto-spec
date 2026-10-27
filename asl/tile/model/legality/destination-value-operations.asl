@@ -165,7 +165,7 @@ begin
                TileCarrierWidthCompatible(true_tile.data_type, operation_type) &&
                TileCarrierWidthCompatible(false_tile.data_type, operation_type) &&
                TilePredicateCellOperationValuesLegal(mask) &&
-               TilePredicateCellShapeMatchesNumericAs(
+               TilePredicateCellSelectShapeMatchesNumericAs(
                    mask, source_true, operation_type) &&
                TileElementwiseCubeValueShapeMatches(output, true_tile);
     end;
@@ -207,7 +207,7 @@ begin
                TileCubeNumericContentsDefined(source_true) &&
                TileCarrierWidthCompatible(true_tile.data_type, operation_type) &&
                TilePredicateCellOperationValuesLegal(mask) &&
-               TilePredicateCellShapeMatchesNumericAs(
+               TilePredicateCellSelectShapeMatchesNumericAs(
                    mask, source_true, operation_type) &&
                TileElementwiseCubeValueShapeMatches(output, true_tile);
     end;

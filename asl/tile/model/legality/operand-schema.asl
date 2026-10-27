@@ -34,6 +34,40 @@ begin
            TileCarrierWidthCompatible(tile.data_type, operation_type);
 end;
 
+readonly func TilePredicateLogicalOperandsLegal(
+    op: TileBinaryOperation, output: TileInfo,
+    source_left: TileIndex, source_right: TileIndex,
+    operation_type: TileDataType) => boolean
+begin
+    let left = _Tiles[[source_left]];
+    let right = _Tiles[[source_right]];
+    let left_predicate = left.storage_kind == TileStorage_PredicateCell;
+    let right_predicate = right.storage_kind == TileStorage_PredicateCell;
+    if (!left_predicate && !right_predicate) ||
+       (op != TileBinary_AND && op != TileBinary_OR && op != TileBinary_XOR) ||
+       operation_type != TileDataType_U8 then return FALSE; end;
+    if !(if left_predicate then TilePredicateCellOperationValuesLegal(source_left)
+         else TileElementwiseSourceContentsDefined(source_left)) ||
+       !(if right_predicate then TilePredicateCellOperationValuesLegal(source_right)
+         else TileElementwiseSourceContentsDefined(source_right)) then return FALSE; end;
+    if (!left_predicate && left.storage_kind != TileStorage_Numeric) ||
+       (!right_predicate && right.storage_kind != TileStorage_Numeric) ||
+       !TileCarrierWidthCompatible(left.data_type, operation_type) ||
+       !TileCarrierWidthCompatible(right.data_type, operation_type) ||
+       (left.layout != TileLayout_CUBE_M16 && left.layout != TileLayout_CUBE_M32) ||
+       left.rows != right.rows || left.columns != right.columns ||
+       left.valid_rows != right.valid_rows || left.valid_columns != right.valid_columns ||
+       left.layout != right.layout || output.rows != left.rows ||
+       output.columns != left.columns || output.valid_rows != left.valid_rows ||
+       output.valid_columns != left.valid_columns || output.layout != left.layout ||
+       output.data_type != TileDataType_U8 then return FALSE; end;
+    if left_predicate && right_predicate then
+        return TilePredicateCellInfoDescriptorLegal(output) &&
+               output.predicate_basis_type == TileDataType_U8;
+    end;
+    return TileCubeDescriptorLegal(output);
+end;
+
 readonly func TileOperandsLegal_ExecuteTileBinary(
     op: TileBinaryOperation, destination: TileIndex,
     source_left: TileIndex, source_right: TileIndex) => boolean
@@ -43,6 +77,11 @@ begin
         _BundleOperation.data_type_valid then TileDataTypeFromEncoding(
             _BundleOperation.data_type as TileDataTypeEncoding)
         else _Tiles[[destination]].data_type;
+    if _Tiles[[source_left]].storage_kind == TileStorage_PredicateCell ||
+       _Tiles[[source_right]].storage_kind == TileStorage_PredicateCell then
+        return TilePredicateLogicalOperandsLegal(op, _Tiles[[destination]],
+            source_left, source_right, operation_type);
+    end;
     let raw_carrier = op == TileBinary_AND || op == TileBinary_OR ||
                       op == TileBinary_XOR || op == TileBinary_SHL ||
                       op == TileBinary_SHR;
@@ -230,7 +269,7 @@ begin
                TileCarrierWidthCompatible(
                    _Tiles[[source_false]].data_type, operation_type) &&
                TilePredicateCellOperationValuesLegal(mask) &&
-               TilePredicateCellShapeMatchesNumericAs(
+               TilePredicateCellSelectShapeMatchesNumericAs(
                    mask, source_true, operation_type) &&
                TileCubeDescriptorLegal(_Tiles[[destination]]) &&
                _Tiles[[destination]].storage_kind == TileStorage_Numeric &&
@@ -272,7 +311,7 @@ begin
                TileCarrierWidthCompatible(
                    _Tiles[[source_true]].data_type, operation_type) &&
                TilePredicateCellOperationValuesLegal(mask) &&
-               TilePredicateCellShapeMatchesNumericAs(
+               TilePredicateCellSelectShapeMatchesNumericAs(
                    mask, source_true, operation_type) &&
                TileCubeDescriptorLegal(_Tiles[[destination]]) &&
                _Tiles[[destination]].storage_kind == TileStorage_Numeric &&

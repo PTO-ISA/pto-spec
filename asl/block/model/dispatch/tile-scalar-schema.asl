@@ -313,7 +313,7 @@ begin
                    BundleComparisonBindingUsesOneSource(
                        _BundleScalarBindings[[0]]))))) &&
                TilePredicateCellOperationValuesLegal(first) &&
-               TilePredicateCellShapeMatchesNumericAs(
+               TilePredicateCellSelectShapeMatchesNumericAs(
                    first, source_true, data_type) &&
                _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&
                TileRowMajorOrCUBENumericCarrierLegal(source_true, data_type) &&

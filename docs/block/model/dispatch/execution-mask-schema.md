@@ -391,8 +391,7 @@ begin
     if _TileRelativeValid[[hand]][0] == '0' then return FALSE; end;
     let base = _TileRelativeOrder[[hand]][[0]];
     let tile = _Tiles[[base]];
-    if !tile.allocated || !tile.contents_defined ||
-       !TileCubeDescriptorLegal(tile) then return FALSE; end;
+    if !tile.allocated || !tile.contents_defined then return FALSE; end;
 
     let decoded = TileOperationOfIndex(operation);
     let coordinate_destination =
@@ -450,11 +449,19 @@ begin
        tile.valid_columns != expected_columns then
         return FALSE;
     end;
-    if decoded == TileOperation_TCMP || decoded == TileOperation_TCMPS then
+    let predicate_logical =
+        (decoded == TileOperation_TAND || decoded == TileOperation_TOR ||
+         decoded == TileOperation_TXOR) &&
+        _Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind == TileStorage_PredicateCell &&
+        _Tiles[[BundleTileSourceIndex(0, TRUE)]].storage_kind == TileStorage_PredicateCell;
+    if predicate_logical then
+        if !TilePredicateCellValuesLegal(base) then return FALSE; end;
+    elsif decoded == TileOperation_TCMP || decoded == TileOperation_TCMPS then
         if !TilePredicateCellDescriptorLegal(base) ||
            tile.predicate_basis_type != result_type then return FALSE; end;
     else
-        if tile.storage_kind != TileStorage_Numeric ||
+        if !TileCubeDescriptorLegal(tile) ||
+           tile.storage_kind != TileStorage_Numeric ||
            tile.data_type != result_type then
             return FALSE;
         end;

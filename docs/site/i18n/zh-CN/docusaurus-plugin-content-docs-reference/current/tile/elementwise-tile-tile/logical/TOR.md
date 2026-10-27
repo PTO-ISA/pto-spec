@@ -181,12 +181,14 @@ end;
 - B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.
 - The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.
 - A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
+- For U8 Local CUBE_M16/M32, PredicateCell operands are admitted; two PredicateCells select a U8-basis PredicateCell result and a mixed pair selects Numeric U8. Every active predicate byte must be defined and canonical.
 
 ## State effects
 
 - Apply element-width bitwise OR to corresponding valid source elements; signedness does not change the bit operation and carrier bits above the selected width are zero.
 - Either source may alias the destination with read-old/write-new behavior, and both sources may name the same Tile.
 - Publish the complete valid result and selected physical padding definedness as one destination commit; rejection leaves descriptors, payloads, and allocation state unchanged.
+- PredicateCell results use predicate padding and the existing ExecutionMask ZERO/MERGE behavior.
 
 ## Memory effects and ordering
 

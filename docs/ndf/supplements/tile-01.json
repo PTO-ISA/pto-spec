@@ -384,8 +384,8 @@
         "zh-CN": "TAND 逐元素按位与"
       },
       "summary": {
-        "en": "TAND uses VEC Mode 0 Function 6 to compute the bitwise AND of corresponding signed or unsigned integer elements. It follows the closed Local binary Tile schema, so shape, padding, source snapshots, and the destination update are handled as one preflighted operation.",
-        "zh-CN": "TAND 使用 VEC Mode 0 Function 6，对对应的有符号或无符号整数元素执行按位与。操作遵循封闭的 Local 二元 Tile 模式，因此形状、填充、源快照和目标更新作为一次经预检的整体操作处理。"
+        "en": "TAND computes bitwise AND and admits U8 PredicateCell composition in Local CUBE forms.",
+        "zh-CN": "TAND 执行按位与，并在 Local CUBE 的 U8 形式中支持 PredicateCell 组合。"
       }
     },
     {

@@ -300,8 +300,8 @@
         "zh-CN": "TOR 带类型逐元素按位或"
       },
       "summary": {
-        "en": "TOR is VEC Mode 0 Function 7 and ORs corresponding elements of two Local integer sources. Its operation type is one of the signed or unsigned 8-, 16-, 32-, or 64-bit Tile types; same-width non-packed backing carriers may be interpreted through that selected type. Shape and padding checks precede source snapshots, and the complete destination publishes atomically.",
-        "zh-CN": "TOR 是 VEC Mode 0 Function 7，对两个 Local 整数源的对应元素执行按位或。操作类型来自有符号或无符号的 8、16、32、64 位 Tile 类型；同位宽非打包 backing carrier 可以按所选类型解释。形状与填充检查先于源快照，完整目标一次性发布。"
+        "en": "TOR computes bitwise OR and admits U8 PredicateCell composition in Local CUBE forms.",
+        "zh-CN": "TOR 执行按位或，并在 Local CUBE 的 U8 形式中支持 PredicateCell 组合。"
       }
     },
     {
@@ -612,8 +612,8 @@
         "zh-CN": "TSEL 掩码 Tile 选择"
       },
       "summary": {
-        "en": "TSEL selects between two numeric Tile sources using exactly one mask representation. RowMajor data consumes low-index-first packed Predicate bits; CUBE data consumes either basis-matched PredicateCell bytes or one complete one- or two-word GPR mask. Matching geometry and numeric type, mask validity, and all source snapshots are settled before selected encodings, padding, and the destination descriptor become visible together.",
-        "zh-CN": "TSEL 使用且只使用一种掩码表示，在两个数值 Tile 源之间进行选择。RowMajor 数据按低索引优先读取打包 Predicate 位；CUBE 数据读取 basis 匹配的 PredicateCell 字节，或一个完整的一字/二字 GPR 掩码。几何与数值类型匹配、掩码合法性以及全部源快照确定后，选中编码、填充和目标描述符才会一起可见。"
+        "en": "TSEL selects source values using a predicate carrier, including a compatible Local CUBE PredicateCell regardless of its origin basis.",
+        "zh-CN": "TSEL 使用谓词载体选择源值，包括来源 basis 不受限制的兼容 Local CUBE PredicateCell。"
       }
     },
     {
@@ -624,8 +624,8 @@
         "zh-CN": "TSELS 掩码 Tile 与标量选择"
       },
       "summary": {
-        "en": "TSELS selects each result from one Local true source or an independently supplied false scalar using exactly one mask representation. RowMajor forms use packed Predicate bits; CUBE forms use basis-matched PredicateCell bytes or a complete GPR mask, and omitted B.IOR supplies an all-zero scalar for Tile-carrier forms. Predicate one copies the source encoding and zero copies the scalar encoding, with all checks and snapshots completed before atomic publication.",
-        "zh-CN": "TSELS 使用且只使用一种掩码表示，使每个结果在一个 Local true source 与独立提供的 false scalar 之间选择。RowMajor 形式使用打包 Predicate 位；CUBE 形式使用 basis 匹配的 PredicateCell 字节或完整 GPR 掩码；Tile-carrier 形式省略 B.IOR 时 false scalar 为全零。谓词为一时复制源编码，为零时复制标量编码，所有检查与快照完成后才一次性发布。"
+        "en": "TSELS selects a source or scalar using a predicate carrier, including a compatible Local CUBE PredicateCell regardless of its origin basis.",
+        "zh-CN": "TSELS 使用谓词载体选择源值或标量，包括来源 basis 不受限制的兼容 Local CUBE PredicateCell。"
       }
     },
     {
@@ -780,8 +780,8 @@
         "zh-CN": "TXOR 带类型逐元素按位异或"
       },
       "summary": {
-        "en": "TXOR is VEC Mode 0 Function 8 and XORs corresponding elements of two Local integer sources. Its operation type is one of the signed or unsigned 8-, 16-, 32-, or 64-bit Tile types; same-width non-packed backing carriers may be interpreted through that selected type. Shape and padding checks precede source snapshots, and the complete destination publishes atomically.",
-        "zh-CN": "TXOR 是 VEC Mode 0 Function 8，对两个 Local 整数源的对应元素执行按位异或。操作类型来自有符号或无符号的 8、16、32、64 位 Tile 类型；同位宽非打包 backing carrier 可以按所选类型解释。形状与填充检查先于源快照，完整目标一次性发布。"
+        "en": "TXOR computes bitwise XOR and admits U8 PredicateCell composition in Local CUBE forms.",
+        "zh-CN": "TXOR 执行按位异或，并在 Local CUBE 的 U8 形式中支持 PredicateCell 组合。"
       }
     },
     {
