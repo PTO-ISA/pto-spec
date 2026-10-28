@@ -138,7 +138,7 @@ begin
     _LocalGenerations[[slot]].writers[[0]].layout =
         _Tiles[[destination]].layout;
     _LocalGenerations[[slot]].writers[[0]].identity.instruction_instance =
-        Zeros{PTO_XLEN} + 0x5a1;
+        Zeros{PTO_XLEN} + 0x5a0;
     _LocalGenerations[[slot]].writers[[0]].identity.execution_domain_token = 77;
     _LocalGenerations[[slot]].covered_cells[0] = '1';
     for pe = 0 to 3 do
