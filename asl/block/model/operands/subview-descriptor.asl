@@ -390,11 +390,11 @@ begin
     end;
 end;
 
-// A merge-base wait suspends the current attempt while preserving its
-// architectural source bindings. Release derived view Tiles and invalidate
-// only their cached descriptors so the next attempt rechecks each original
-// parent before rematerializing the same encoded view.
-func DiscardBundleSubviewMaterializationsForWait()
+// A merge wait or rejection ends this execution attempt. Release derived view
+// Tiles and invalidate their cached descriptors so retry starts from the
+// original architectural parents and rematerializes the encoded views only
+// after the next attempt's source preflight.
+func DiscardBundleSubviewMaterializationsForRetry()
 begin
     DiscardBundleSubviewMaterializations();
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do

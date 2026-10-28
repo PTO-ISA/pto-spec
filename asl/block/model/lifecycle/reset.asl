@@ -274,6 +274,14 @@ begin
             _BundleFixedPointAttributes;
         _TrapContexts[[ring]].bundle_execution_domain_token =
             _BundleExecutionDomainToken;
+        _TrapContexts[[ring]].merge_base = 0;
+        _TrapContexts[[ring]].merge_base_generation_valid = FALSE;
+        _TrapContexts[[ring]].merge_base_generation_slot = 64;
+        _TrapContexts[[ring]].merge_base_generation_instance =
+            Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].merge_base_writer_instruction_instance =
+            Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].merge_base_writer_execution_domain_token = 0;
         _TrapContexts[[ring]].memory_copy_template = _MemoryCopyTemplate;
         _TrapContexts[[ring]].frame_template = _FrameTemplate;
         _TrapContexts[[ring]].t_queue = _TQueue;

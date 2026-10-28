@@ -1,4 +1,36 @@
 // PTO-UNIT: {"id":"PTO-ARCH-STATE-TRAP-CONTEXT","surface":"arch","classification":["state","trap-context"],"depends_on":["PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING"]}
+func SaveTrapContextMergeBasePin(target: AccessControlRing)
+begin
+    _TrapContexts[[target]].merge_base = _BundleExecutionMask.merge_base;
+    _TrapContexts[[target]].merge_base_generation_valid =
+        _BundleExecutionMask.merge_base_generation_valid;
+    _TrapContexts[[target]].merge_base_generation_slot =
+        _BundleExecutionMask.merge_base_generation_slot;
+    _TrapContexts[[target]].merge_base_generation_instance =
+        _BundleExecutionMask.merge_base_generation_instance;
+    _TrapContexts[[target]].merge_base_writer_instruction_instance =
+        _BundleExecutionMask.merge_base_writer_instruction_instance;
+    _TrapContexts[[target]].merge_base_writer_execution_domain_token =
+        _BundleExecutionMask.merge_base_writer_execution_domain_token;
+end;
+
+func RecoverTrapContextMergeBasePin(target: AccessControlRing)
+begin
+    _BundleExecutionMask.merge_base = _TrapContexts[[target]].merge_base;
+    _BundleExecutionMask.merge_base_generation_valid =
+        _TrapContexts[[target]].merge_base_generation_valid;
+    _BundleExecutionMask.merge_base_generation_slot =
+        _TrapContexts[[target]].merge_base_generation_slot;
+    _BundleExecutionMask.merge_base_generation_instance =
+        _TrapContexts[[target]].merge_base_generation_instance;
+    _BundleExecutionMask.merge_base_writer_instruction_instance =
+        _TrapContexts[[target]].merge_base_writer_instruction_instance;
+    _BundleExecutionMask.merge_base_writer_execution_domain_token =
+        _TrapContexts[[target]].merge_base_writer_execution_domain_token;
+    _BundleExecutionMask.merge_base_valid = FALSE;
+    _BundleExecutionMask.merge_base_waiting = FALSE;
+end;
+
 func SavePortableTrapContext(target: AccessControlRing,
                              source: AccessControlRing)
 begin
@@ -45,6 +77,7 @@ begin
         _BundleFixedPointAttributes;
     _TrapContexts[[target]].bundle_execution_domain_token =
         _BundleExecutionDomainToken;
+    SaveTrapContextMergeBasePin(target);
     _TrapContexts[[target]].memory_copy_template = _MemoryCopyTemplate;
     _TrapContexts[[target]].frame_template = _FrameTemplate;
     _TrapContexts[[target]].memory_replay_state = _MemoryReplayState;
@@ -100,6 +133,7 @@ begin
         _BundleFixedPointAttributes;
     _TrapContexts[[target]].bundle_execution_domain_token =
         _BundleExecutionDomainToken;
+    SaveTrapContextMergeBasePin(target);
     _TrapContexts[[target]].memory_copy_template = _MemoryCopyTemplate;
     _TrapContexts[[target]].frame_template = _FrameTemplate;
     _TrapContexts[[target]].memory_origin = _CurrentMemoryOrigin;
@@ -225,6 +259,7 @@ begin
         _TrapContexts[[target]].bundle_fixed_point_attributes;
     _BundleExecutionDomainToken =
         _TrapContexts[[target]].bundle_execution_domain_token;
+    RecoverTrapContextMergeBasePin(target);
     _MemoryCopyTemplate = _TrapContexts[[target]].memory_copy_template;
     _FrameTemplate = _TrapContexts[[target]].frame_template;
     _TQueue = _TrapContexts[[target]].t_queue;
@@ -293,6 +328,7 @@ begin
         _TrapContexts[[target]].bundle_fixed_point_attributes;
     _BundleExecutionDomainToken =
         _TrapContexts[[target]].bundle_execution_domain_token;
+    RecoverTrapContextMergeBasePin(target);
     _MemoryCopyTemplate = _TrapContexts[[target]].memory_copy_template;
     _FrameTemplate = _TrapContexts[[target]].frame_template;
     _MemoryReplayState = _TrapContexts[[target]].memory_replay_state;
