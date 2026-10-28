@@ -1235,6 +1235,9 @@ ISSUE360_GM_OBLIGATION_HELPERS = {
             ("BundleLocalGenerationQueueInsertionLegal", "asl/block/model/operands/local-generation.asl"),
             ("BundleLocalGenerationSlotForSource", "asl/block/model/operands/portable-carriers.asl"),
             ("CommitBundleLocalGenerationWithWriterEffects", "asl/block/model/operands/local-generation.asl"),
+            # Issue #349's implicit PredicateCell MERGE source uses the same
+            # exact Local generation identity lookup as encoded consumers.
+            ("PrepareSelectedBundleExecutionMaskMerge", "asl/block/model/dispatch/execution-mask-schema.asl"),
             ("ReuseBundleLocalGenerationDestination", "asl/block/model/operands/local-generation.asl"),
             ("ValidateBundleLocalGenerationStructure", "asl/block/model/operands/local-generation.asl"),
             ("ValidateBundleLocalGenerationWritersWithWriterEffects", "asl/block/model/operands/local-generation-cube.asl"),
@@ -1640,6 +1643,75 @@ EXECUTION_MASK_HELPER_CLASSIFICATION = (
     "Local CUBE ExecutionMask support (Issues #277/#349, ADR-TILE-0008, "
     "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001)"
 )
+# Issue #349 also admits U8 PredicateCell logical/select consumers and
+# Local-generation continuation masks. Keep those newly reachable helpers in
+# a separate exact owner/layout/caller inventory: their CUBE_M16/CUBE_M32
+# domain is deliberately limited to the existing Local contract.
+ISSUE349_PREDICATECELL_CLASSIFICATION = (
+    "Issue #349 U8 PredicateCell composition and Local-generation continuity "
+    "(ADR-TILE-0008; layout-neutral except the existing M16/M32 predicate domain)"
+)
+ISSUE349_PREDICATECELL_HELPER_DEFINITION_DELTAS = {
+    "BundleLocalGenerationMaskSubset": {
+        "before": [],
+        "after": [("asl/block/model/operands/local-generation-cube.asl", set())],
+        "before_callers": {
+            ("BundleLocalGenerationDescriptorMatches",
+             "asl/block/model/operands/local-generation.asl"),
+            ("ValidateBundleLocalGeneration",
+             "asl/block/model/operands/local-generation.asl"),
+        },
+        "after_callers": {
+            ("BundleLocalGenerationDescriptorMatches",
+             "asl/block/model/operands/local-generation.asl"),
+            ("ResolveBundlePredicateDestination",
+             "asl/block/model/dispatch/predicate-destination.asl"),
+            ("ValidateBundleLocalGenerationStructure",
+             "asl/block/model/operands/local-generation.asl"),
+        },
+    },
+    "TilePredicateCellInfoDescriptorLegal": {
+        "before": [],
+        "after": [("asl/tile/model/legality/predicate-carriers.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("TilePredicateCellDescriptorLegal",
+             "asl/tile/model/legality/predicate-carriers.asl"),
+            ("TilePredicateLogicalOperandsLegal",
+             "asl/tile/model/legality/operand-schema.asl"),
+        },
+    },
+    "TilePredicateCellSelectShapeMatchesNumericAs": {
+        "before": [],
+        "after": [("asl/tile/model/legality/predicate-carriers.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("SelectedBundleClosedTSELSSchemaLegal",
+             "asl/block/model/dispatch/tile-scalar-schema.asl"),
+            ("SelectedBundleClosedTSELSchemaLegal",
+             "asl/block/model/dispatch/comparison-schema.asl"),
+            ("TileOperandsLegal_ExecuteTileSelectAs",
+             "asl/tile/model/legality/operand-schema.asl"),
+            ("TileOperandsLegal_ExecuteTileSelectScalarAs",
+             "asl/tile/model/legality/operand-schema.asl"),
+            ("TileOperandsLegal_ExecuteTileSelectScalarToValue",
+             "asl/tile/model/legality/destination-value-operations.asl"),
+            ("TileOperandsLegal_ExecuteTileSelectToValue",
+             "asl/tile/model/legality/destination-value-operations.asl"),
+        },
+    },
+    "TilePredicateLogicalOperandsLegal": {
+        "before": [],
+        "after": [("asl/tile/model/legality/operand-schema.asl", LOCAL_CUBE_LAYOUTS)],
+        "before_callers": set(),
+        "after_callers": {
+            ("TileOperandsLegal_ExecuteTileBinary",
+             "asl/tile/model/legality/operand-schema.asl"),
+            ("TileOperandsLegal_ExecuteTileBinaryToValue",
+             "asl/tile/model/legality/destination-value.asl"),
+        },
+    },
+}
 # Issue #374 changes cooperative Shared Matrix execution views while preserving
 # the portable Local layout inventory. The private right-primary view may use
 # ColumnMajor only as an internal dense representation for packed four-bit
@@ -3666,6 +3738,49 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                     "owner_decision": helper_classification,
                 })
                 continue
+            if name in ISSUE349_PREDICATECELL_HELPER_DEFINITION_DELTAS:
+                spec = ISSUE349_PREDICATECELL_HELPER_DEFINITION_DELTAS[name]
+                old_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"])))
+                    for row in old_defs
+                )
+                new_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"])))
+                    for row in new_defs
+                )
+                expected_old_shape = sorted(
+                    (path, tuple(sorted(layouts)))
+                    for path, layouts in spec["before"]
+                )
+                expected_new_shape = sorted(
+                    (path, tuple(sorted(layouts)))
+                    for path, layouts in spec["after"]
+                )
+                before_callers = _direct_callers(before_defs, name)
+                after_callers = _direct_callers(after_defs, name)
+                valid = (
+                    old_shape == expected_old_shape and
+                    new_shape == expected_new_shape and
+                    before_callers == spec["before_callers"] and
+                    after_callers == spec["after_callers"]
+                )
+                if not valid:
+                    errors.append(
+                        f"Issue #349 PredicateCell helper owner/layout/caller closure mismatch: {name}"
+                    )
+                rows.append({
+                    "name": name,
+                    "classification": (
+                        ISSUE349_PREDICATECELL_CLASSIFICATION
+                        if valid else "UNCLASSIFIED"
+                    ),
+                    "before": old_defs,
+                    "after": new_defs,
+                    "before_callers": sorted(before_callers),
+                    "after_callers": sorted(after_callers),
+                    "owner_decision": ISSUE349_PREDICATECELL_CLASSIFICATION,
+                })
+                continue
             if name in EXECUTION_MASK_HELPER_DEFINITION_DELTAS:
                 spec = EXECUTION_MASK_HELPER_DEFINITION_DELTAS[name]
                 old_shape = sorted(
@@ -4799,6 +4914,69 @@ def _execution_mask_support_mutation_canaries() -> None:
         raise AssertionError("ExecutionMask PredicateCell layout expansion did not fail closed")
 
 
+def _issue349_predicatecell_helper_mutation_canaries() -> None:
+    """Keep Issue #349 PredicateCell helper owners, layouts, and callers exact."""
+    paths = source_paths(BASELINE_OBJECT, "working-tree")
+    baseline = _ref_texts(BASELINE_OBJECT, paths)
+    candidate = _ref_texts("working-tree", paths)
+    result = _census_texts(
+        baseline, candidate, BASELINE_OBJECT,
+        "real-issue349-predicatecell-helper-candidate", enforce_closure=True,
+    )
+    classified = {
+        row["name"] for row in result["common_helper_deltas"]
+        if row.get("classification") == ISSUE349_PREDICATECELL_CLASSIFICATION
+    }
+    expected = set(ISSUE349_PREDICATECELL_HELPER_DEFINITION_DELTAS)
+    if not result["pass"] or classified != expected:
+        raise AssertionError(
+            "Issue #349 PredicateCell helper owner/layout/caller inventory is incomplete: "
+            + "; ".join(result["errors"][:12])
+        )
+
+    logical_path = "asl/tile/model/legality/operand-schema.asl"
+    mutated = dict(candidate)
+    mutated[logical_path] += (
+        "\nreadonly func Issue349UnlistedPredicateLogicalCaller("
+        "op: TileBinaryOperation, output: TileInfo, source_left: TileIndex, "
+        "source_right: TileIndex, operation_type: TileDataType) => boolean\n"
+        "begin\n"
+        "    return TilePredicateLogicalOperandsLegal(op, output, source_left, "
+        "source_right, operation_type);\n"
+        "end;\n"
+    )
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-issue349-predicatecell-extra-caller", enforce_closure=False,
+    )
+    if not any(
+        "Issue #349 PredicateCell helper owner/layout/caller closure mismatch: "
+        "TilePredicateLogicalOperandsLegal" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("unlisted Issue #349 PredicateCell helper caller did not fail closed")
+
+    mutated = dict(candidate)
+    original = "    if (!left_predicate && !right_predicate) ||\n"
+    widened = (
+        "    if _Tiles[[source_left]].layout == TileLayout_CUBE_N8 then "
+        "return FALSE; end;\n" + original
+    )
+    if original not in candidate[logical_path]:
+        raise AssertionError("Issue #349 PredicateCell layout canary source is missing")
+    mutated[logical_path] = candidate[logical_path].replace(original, widened, 1)
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-issue349-predicatecell-layout", enforce_closure=False,
+    )
+    if not any(
+        "Issue #349 PredicateCell helper owner/layout/caller closure mismatch: "
+        "TilePredicateLogicalOperandsLegal" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #349 PredicateCell layout mutation did not fail closed")
+
+
 def _issue374_shared_matrix_mutation_canaries() -> None:
     """Keep Issue #374's packed ColumnMajor read view private and exact."""
     paths = source_paths(BASELINE_OBJECT, "working-tree")
@@ -5580,13 +5758,14 @@ def self_test() -> None:
         raise AssertionError("missing inventory owner canary failed closed")
     _real_relation_mutation_canaries()
     _execution_mask_support_mutation_canaries()
+    _issue349_predicatecell_helper_mutation_canaries()
     _issue374_shared_matrix_mutation_canaries()
     _issue395_shared_tmov_mutation_canaries()
     _issue395_writer_parent_mutation_canaries()
     _issue371_b64_mutation_canaries()
     _issue360_gm_obligation_helper_mutation_canaries()
     _issue356_reduction_source_mutation_canaries()
-    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, Issue #371 M32 b64 double-CELL, Issue #360/#341 GM and source-lifetime helper owner/caller/layout, Issue #374 packed private Shared view, Issue #395 TMOV DATR/helper callers, writer-parent preservation, and bounded reduction-source mutations rejected")
+    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, Issue #349 PredicateCell owner/layout/caller closure, Issue #371 M32 b64 double-CELL, Issue #360/#341 GM and source-lifetime helper owner/caller/layout, Issue #374 packed private Shared view, Issue #395 TMOV DATR/helper callers, writer-parent preservation, and bounded reduction-source mutations rejected")
 
 
 def main() -> int:
