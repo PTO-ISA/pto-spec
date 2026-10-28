@@ -165,6 +165,14 @@ begin
         _TrapContexts[[ring]].bundle_fixed_point_attributes.trans_b = FALSE;
         _TrapContexts[[ring]].bundle_fixed_point_attributes.c_scale_en = FALSE;
         _TrapContexts[[ring]].bundle_range_group = _BundleRangeGroup;
+        _TrapContexts[[ring]].merge_base = 0;
+        _TrapContexts[[ring]].merge_base_generation_valid = FALSE;
+        _TrapContexts[[ring]].merge_base_generation_slot = 64;
+        _TrapContexts[[ring]].merge_base_generation_instance =
+            Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].merge_base_writer_instruction_instance =
+            Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].merge_base_writer_execution_domain_token = 0;
         _TrapContexts[[ring]].memory_copy_template = _MemoryCopyTemplate;
         _TrapContexts[[ring]].frame_template = _FrameTemplate;
         _TrapContexts[[ring]].memory_replay_state.active = FALSE;

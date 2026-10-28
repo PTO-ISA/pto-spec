@@ -16,7 +16,8 @@
   "superseded": null,
   "baseline": "23ca8833fef3f97dbc65beef4924b0b4671cdfdf",
   "target_releases": [
-    "0.58.6"
+    "0.58.6",
+    "0.59.0"
   ],
   "affected_ndf": [
     "PTO-B-IOT-STREAM-001",
@@ -89,7 +90,13 @@
     "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
     "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
     "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
-    "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT"
+    "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+    "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS",
+    "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION",
+    "PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA"
   ],
   "resolves": [],
   "supersedes": [],
@@ -151,6 +158,29 @@
         "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
         "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
         "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "baseline": "a6d6b71e2659555bb3903b22c00e92e63dbf2779",
+      "approvers": [
+        "ckwllawliet <641433195@qq.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/349",
+      "affected_ndf": [
+        "PTO-B-SUBVIEW-DESCRIPTOR-001",
+        "PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS",
+        "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION",
+        "PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION"
       ]
     }
   ],
@@ -374,3 +404,13 @@ implementation, AVS, PR or release validation. Compatibility is breaking for
 formerly accepted M16/M32 allocation-slack inputs and changed producer/parent
 physical geometry. TMOV adds legal forms without a new opcode. Release
 impact is required after the review baseline; publication is not authorized.
+
+## Accepted amendment: issue #349 typed views and logical writers
+
+The architecture owner accepted typed PredicateCell SUBVIEW and Local CUBE
+logical assembly integration against baseline
+`a6d6b71e2659555bb3903b22c00e92e63dbf2779`. The existing descriptor and
+parent-geometry owners define the current behavior. This corrects prior
+implicit Numeric materialization of predicate views; Numeric views retain their
+existing behavior. Release impact is required; exact-commit evidence and
+downstream adoption remain separate obligations.

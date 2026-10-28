@@ -150,6 +150,51 @@ begin
     end;
     return count;
 end;
+readonly func SelectedBundlePredicateLogicalDimensionsLegal(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+begin
+    let decoded = TileOperationOfIndex(operation);
+    if decoded != TileOperation_TAND && decoded != TileOperation_TOR &&
+       decoded != TileOperation_TXOR then
+        return TRUE;
+    end;
+    if BundleTileBindingCount() == 0 ||
+       !_BundleTileBindings[[0]].source0_valid ||
+       !_BundleTileBindings[[0]].source1_valid then
+        return FALSE;
+    end;
+    let source0 = _Tiles[[BundleTileSourceIndex(0, FALSE)]];
+    let source1 = _Tiles[[BundleTileSourceIndex(0, TRUE)]];
+    if source0.storage_kind != TileStorage_PredicateCell ||
+       source1.storage_kind != TileStorage_PredicateCell then
+        return TRUE;
+    end;
+    let selected_layout = CurrentBundleTileLayout();
+    let selected_columns = UInt(_BundleDimensions[[0]]);
+    let selected_rows = UInt(_BundleDimensions[[1]]);
+    let selected_physical_columns = UInt(_BundleDimensions[[2]]);
+    let (type_valid, operation_type) = ResolveBundleEffectiveDataType();
+    if !type_valid || operation_type != TileDataType_U8 ||
+       selected_columns < 1 || selected_columns > 65535 ||
+       selected_rows < 1 || selected_rows > 65535 ||
+       selected_physical_columns < 1 ||
+       selected_physical_columns > 65535 ||
+       (selected_layout != TileLayout_CUBE_M16 &&
+        selected_layout != TileLayout_CUBE_M32) ||
+       source0.layout != selected_layout ||
+       source1.layout != selected_layout ||
+       selected_columns != source0.valid_columns ||
+       selected_columns != source1.valid_columns ||
+       selected_rows != source0.valid_rows ||
+       selected_rows != source1.valid_rows ||
+       source0.rows != source1.rows ||
+       source0.columns != source1.columns ||
+       (_BundleDimensionPresent[[2]] &&
+        selected_physical_columns != source0.columns) then
+        return FALSE;
+    end;
+    return TRUE;
+end;
 readonly func SelectedBundleClosedBinarySchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -205,6 +250,7 @@ begin
                    _BundleTileBindings[[0]].source0,
                    _BundleTileBindings[[0]].source1);
     end;
+    let decoded = TileOperationOfIndex(operation);
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     return TileVecArithmeticDataTypeSupported(data_type) &&

@@ -211,6 +211,10 @@ end;
 func ExecuteBundleTileOperationWithAcceptedApplicabilityRules(
     rules: NumericApplicabilityRuleSet) => boolean
 begin
+    // A wait marker belongs to one current execution attempt. Clear it before
+    // any retry preflight so only a newly registered implicit-base dependency
+    // can suppress normal fault recovery for this attempt.
+    _BundleExecutionMask.merge_base_waiting = FALSE;
     var obligation_slot: GMObligationIndex = 0;
     var obligation_identity : integer = 0;
     var obligation_invocation : integer = 0;
@@ -310,7 +314,7 @@ begin
                 obligation_invocation, obligation_identity);
         end;
     end;
-    if !completed then
+    if !completed && !_BundleExecutionMask.merge_base_waiting then
         AbortBundleLocalGenerationsForBundle();
         if _LastFault != Fault_None ||
            !BundleSharedGenerationRequestWaiting(0) then

@@ -8735,7 +8735,13 @@
         "PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES",
         "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
         "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS",
-        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT"
+        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS",
+        "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION",
+        "PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA"
       ],
       "amendments": [
         {
@@ -8793,6 +8799,29 @@
           "baseline": "b0165320a4b575b18d2f4d93faf40178f661ab49",
           "date": "2026-10-20",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/395"
+        },
+        {
+          "affected_ndf": [
+            "PTO-B-SUBVIEW-DESCRIPTOR-001",
+            "PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
+            "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE",
+            "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS",
+            "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION",
+            "PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+            "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION"
+          ],
+          "approvers": [
+            "ckwllawliet <641433195@qq.com>"
+          ],
+          "baseline": "a6d6b71e2659555bb3903b22c00e92e63dbf2779",
+          "date": "2026-10-27",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/349"
         }
       ],
       "approvers": [
@@ -8818,7 +8847,8 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "0.58.6"
+        "0.58.6",
+        "0.59.0"
       ],
       "title": "B.SUBVIEW and B.ASSEMBLE range-modifier association",
       "title_zh": "B.SUBVIEW \u548c B.ASSEMBLE \u8303\u56f4\u4fee\u9970\u7b26\u5173\u8054"
@@ -11192,7 +11222,10 @@
         "PTO-TILE-TSUB",
         "PTO-TILE-TSUBS",
         "PTO-TILE-TXOR",
-        "PTO-TILE-TXORS"
+        "PTO-TILE-TXORS",
+        "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
+        "PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE-OPERATIONS",
+        "PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE"
       ],
       "amendments": [
         {
@@ -11684,6 +11717,36 @@
           "baseline": "e182c9b70d54a3a264bac54af9b915a0e43bb519",
           "date": "2026-10-03",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/371"
+        },
+        {
+          "affected_ndf": [
+            "PTO-TAND-CONTRACT-001",
+            "PTO-TOR-CONTRACT-001",
+            "PTO-TXOR-CONTRACT-001",
+            "PTO-TSEL-CONTRACT-001",
+            "PTO-TSELS-CONTRACT-001",
+            "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001"
+          ],
+          "affected_units": [
+            "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+            "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+            "PTO-TILE-MODEL-EXECUTION-ELEMENTWISE",
+            "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION",
+            "PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+            "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+            "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
+            "PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE-OPERATIONS",
+            "PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE"
+          ],
+          "approvers": [
+            "ckwllawliet <641433195@qq.com>"
+          ],
+          "baseline": "a6d6b71e2659555bb3903b22c00e92e63dbf2779",
+          "date": "2026-10-27",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/349"
         }
       ],
       "approvers": [

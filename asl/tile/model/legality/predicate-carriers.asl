@@ -195,9 +195,8 @@ begin
                TileCubePredicateFieldCount(operation_type, tile.layout) * words;
 end;
 
-readonly func TilePredicateCellDescriptorLegal(index: TileIndex) => boolean
+readonly func TilePredicateCellInfoDescriptorLegal(tile: TileInfo) => boolean
 begin
-    let tile = _Tiles[[index]];
     return tile.allocated &&
            tile.storage_kind == TileStorage_PredicateCell &&
            tile.data_type == TileDataType_U8 &&
@@ -217,6 +216,11 @@ begin
            tile.cube_storage_bytes == TileCubePhysicalRequiredBytes(
                tile.layout, tile.rows, tile.columns, tile.data_type) &&
            tile.cube_storage_bytes <= tile.capacity_bytes;
+end;
+
+readonly func TilePredicateCellDescriptorLegal(index: TileIndex) => boolean
+begin
+    return TilePredicateCellInfoDescriptorLegal(_Tiles[[index]]);
 end;
 
 readonly func TilePredicateCellShapeMatchesNumeric(
@@ -242,6 +246,20 @@ begin
            TileCubeDescriptorLegal(source) &&
            TileCarrierWidthCompatible(source.data_type, operation_type) &&
            mask.predicate_basis_type == operation_type &&
+           mask.valid_rows == source.valid_rows &&
+           mask.valid_columns == source.valid_columns &&
+           mask.layout == source.layout;
+end;
+
+readonly func TilePredicateCellSelectShapeMatchesNumericAs(
+    predicate: TileIndex, numeric: TileIndex,
+    operation_type: TileDataType) => boolean
+begin
+    let mask = _Tiles[[predicate]];
+    let source = _Tiles[[numeric]];
+    return TilePredicateCellDescriptorLegal(predicate) &&
+           TileCubeDescriptorLegal(source) &&
+           TileCarrierWidthCompatible(source.data_type, operation_type) &&
            mask.valid_rows == source.valid_rows &&
            mask.valid_columns == source.valid_columns &&
            mask.layout == source.layout;

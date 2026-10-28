@@ -66,6 +66,18 @@ begin
             TRUE,
             destination_type);
     end;
+    if (decoded_operation == TileOperation_TAND ||
+        decoded_operation == TileOperation_TOR ||
+        decoded_operation == TileOperation_TXOR) &&
+       _Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind == TileStorage_PredicateCell &&
+       _Tiles[[BundleTileSourceIndex(0, TRUE)]].storage_kind == TileStorage_PredicateCell then
+        let (type_valid, operation_type) = ResolveBundleEffectiveDataType();
+        if !type_valid || operation_type != TileDataType_U8 then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return (FALSE, empty_effects);
+        end;
+        return ResolveBundlePredicateDestinationWithWriterEffects(TileDataType_U8);
+    end;
     if TileOperationUsesClosedTCMPSchema(operation) ||
        TileOperationUsesClosedTCMPSSchema(operation) then
         let (operation_type_valid, operation_type) =

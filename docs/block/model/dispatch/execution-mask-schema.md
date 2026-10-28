@@ -71,7 +71,7 @@ With `B.DATR` `Zero` clear, merge preparation needs the newest Tile on the desti
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/execution-mask-schema.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","surface":"block","classification":["model","dispatch","execution-mask-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-EXECUTION-MASK","PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","surface":"block","classification":["model","dispatch","execution-mask-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-EXECUTION-MASK","PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS","PTO-TILE-MODEL-STATE-DESCRIPTORS"]}
 readonly func BundleExecutionMaskLocalTileSourceCount() => integer {0..32}
 begin
     var count: integer {0..32} = 0;
@@ -369,7 +369,6 @@ begin
         columns as integer {1..65535});
     return TRUE;
 end;
-
 func PrepareSelectedBundleExecutionMaskMerge(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -388,13 +387,110 @@ begin
     if !destination_found then return TRUE; end;
     let hand = UInt(_BundleTileBindings[[destination_binding]].destination_hand)
         as integer {0..3};
-    if _TileRelativeValid[[hand]][0] == '0' then return FALSE; end;
-    let base = _TileRelativeOrder[[hand]][[0]];
-    let tile = _Tiles[[base]];
-    if !tile.allocated || !tile.contents_defined ||
-       !TileCubeDescriptorLegal(tile) then return FALSE; end;
-
     let decoded = TileOperationOfIndex(operation);
+    let predicate_logical =
+        (decoded == TileOperation_TAND || decoded == TileOperation_TOR ||
+         decoded == TileOperation_TXOR) &&
+        _Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind ==
+            TileStorage_PredicateCell &&
+        _Tiles[[BundleTileSourceIndex(0, TRUE)]].storage_kind ==
+            TileStorage_PredicateCell;
+    var base: TileIndex = 0;
+    var merge_generation_slot: integer {0..64} = 64;
+    var merge_participant_mask = Zeros{4};
+    if predicate_logical then
+        merge_participant_mask =
+            _BundleTileBindings[[destination_binding]].pe_mask;
+        if _BundleExecutionMask.merge_base_generation_valid then
+            base = _BundleExecutionMask.merge_base;
+            let pinned_slot = BundleLocalGenerationSlotForDestination(base);
+            if pinned_slot == 64 ||
+               !BundleExecutionMaskPredicateMergeGenerationPinMatches(
+                   pinned_slot as integer {0..63}, base, hand) then
+                return FALSE;
+            end;
+            merge_generation_slot = pinned_slot as integer {0..64};
+        else
+            if _TileRelativeValid[[hand]][0] == '0' then return FALSE; end;
+            base = _TileRelativeOrder[[hand]][[0]];
+            merge_generation_slot =
+                BundleLocalGenerationSlotForDestination(base);
+        end;
+        // Before readiness, inspect only generation structure and payload
+        // liveness. The descriptor's provisional shape, definedness, and
+        // canonical values belong to the post-readiness phase below.
+        if !_Tiles[[base]].allocated ||
+           !TilePayloadIntactForMask(base, merge_participant_mask) then
+            return FALSE;
+        end;
+        if merge_generation_slot < 64 then
+            let pinned_slot = merge_generation_slot as integer {0..63};
+            if !_BundleExecutionMask.merge_base_generation_valid then
+                if !_LocalGenerations[[pinned_slot]]
+                       .generation_identity_valid ||
+                   _LocalGenerations[[pinned_slot]]
+                       .working_destination != base ||
+                   _LocalGenerations[[pinned_slot]]
+                       .destination_hand != hand ||
+                   _LocalGenerations[[pinned_slot]].writer_count ==
+                       0 then
+                    return FALSE;
+                end;
+                let initiating_writer =
+                    _LocalGenerations[[pinned_slot]].writers[[0]];
+                if !initiating_writer.valid ||
+                   initiating_writer.destination != base ||
+                   initiating_writer.identity.instruction_instance !=
+                       _LocalGenerations[[pinned_slot]]
+                           .generation_instance then
+                    return FALSE;
+                end;
+                _BundleExecutionMask.merge_base = base;
+                _BundleExecutionMask.merge_base_generation_slot =
+                    pinned_slot;
+                _BundleExecutionMask.merge_base_generation_instance =
+                    _LocalGenerations[[pinned_slot]].generation_instance;
+                _BundleExecutionMask
+                    .merge_base_writer_instruction_instance =
+                        initiating_writer.identity.instruction_instance;
+                _BundleExecutionMask
+                    .merge_base_writer_execution_domain_token =
+                        initiating_writer.identity.execution_domain_token;
+                _BundleExecutionMask.merge_base_generation_valid = TRUE;
+            end;
+            if !BundleExecutionMaskPredicateMergeGenerationPinMatches(
+                   pinned_slot, base, hand) then
+                return FALSE;
+            end;
+            let dependency_ready = BundleConsumerDependencyRequiredRange(
+                pinned_slot, base,
+                Zeros{PTO_XLEN}, 0, TRUE, merge_participant_mask, ReadBPC());
+            if !dependency_ready then
+                if BundleExecutionMaskPredicateMergeDependencyWaiting(
+                       pinned_slot, base,
+                       _BundleExecutionMask.merge_base_generation_instance,
+                       merge_participant_mask, ReadBPC()) then
+                    _BundleExecutionMask.merge_base_waiting = TRUE;
+                end;
+                return FALSE;
+            end;
+            if !BundleExecutionMaskPredicateMergeGenerationPinMatches(
+                   pinned_slot, base, hand) ||
+               !TilePayloadIntactForMask(base, merge_participant_mask) then
+                return FALSE;
+            end;
+        elsif _BundleExecutionMask.merge_base_generation_valid then
+            // A saved Local generation may not be replaced by an ordinary
+            // Tile after abort, squash, or slot reuse.
+            return FALSE;
+        end;
+    else
+        if _TileRelativeValid[[hand]][0] == '0' then return FALSE; end;
+        base = _TileRelativeOrder[[hand]][[0]];
+    end;
+    let tile = _Tiles[[base]];
+    if !tile.allocated || !tile.contents_defined then return FALSE; end;
+
     let coordinate_destination =
         decoded == TileOperation_TCMP || decoded == TileOperation_TCMPS ||
         decoded == TileOperation_TSEL || decoded == TileOperation_TSELS;
@@ -450,11 +546,23 @@ begin
        tile.valid_columns != expected_columns then
         return FALSE;
     end;
-    if decoded == TileOperation_TCMP || decoded == TileOperation_TCMPS then
+    if predicate_logical then
+        if !TilePredicateCellValuesLegal(base) ||
+           !TilePayloadIntactForMask(base, merge_participant_mask) then
+            return FALSE;
+        end;
+        let generation_slot = BundleLocalGenerationSlotForDestination(base);
+        if generation_slot < 64 &&
+           !BundleExecutionMaskPredicateMergeGenerationPinMatches(
+               generation_slot as integer {0..63}, base, hand) then
+            return FALSE;
+        end;
+    elsif decoded == TileOperation_TCMP || decoded == TileOperation_TCMPS then
         if !TilePredicateCellDescriptorLegal(base) ||
            tile.predicate_basis_type != result_type then return FALSE; end;
     else
-        if tile.storage_kind != TileStorage_Numeric ||
+        if !TileCubeDescriptorLegal(tile) ||
+           tile.storage_kind != TileStorage_Numeric ||
            tile.data_type != result_type then
             return FALSE;
         end;

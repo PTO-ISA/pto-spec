@@ -129,11 +129,36 @@ begin
        binding.destination_reused_by_generation then
         let destination = binding.destination;
         let destination_tile = _Tiles[[destination]];
+        var logical_operation = FALSE;
+        if _BundleOperation.valid then
+            let decoded_code = DecodeTileOperation(
+                BundleTileDecodeFamily(_BundleOperation.operation_class),
+                BundleOperationDecodeCode(_BundleOperation));
+            if decoded_code != PTO_TILE_OPERATION_COUNT then
+                let decoded = TileOperationOfIndex(
+                    decoded_code as integer {0..PTO_TILE_OPERATION_COUNT-1});
+                logical_operation = decoded == TileOperation_TAND ||
+                    decoded == TileOperation_TOR ||
+                    decoded == TileOperation_TXOR;
+            end;
+        end;
+        let logical_assembly_continuation =
+            binding.destination_assemble.valid &&
+            !binding.destination_assemble.init && logical_operation &&
+            _Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind ==
+                TileStorage_PredicateCell &&
+            _Tiles[[BundleTileSourceIndex(0, TRUE)]].storage_kind ==
+                TileStorage_PredicateCell;
+        let allocation_mask_matches = if logical_assembly_continuation then
+            BundleLocalGenerationMaskSubset(binding.pe_mask,
+                _TileAllocationMasks[[destination]])
+            else _TileAllocationMasks[[destination]] == binding.pe_mask;
         let descriptor_legal = if cube then
             TilePredicateCellDescriptorLegal(destination) &&
             destination_tile.predicate_basis_type == operation_type &&
-            destination_tile.valid_rows == source_tile.valid_rows &&
-            destination_tile.valid_columns == source_tile.valid_columns &&
+            (binding.destination_assemble.valid ||
+             (destination_tile.valid_rows == source_tile.valid_rows &&
+              destination_tile.valid_columns == source_tile.valid_columns)) &&
             destination_tile.layout == source_tile.layout
         else
             TileDescriptorLegal(destination) &&
@@ -143,8 +168,7 @@ begin
             destination_tile.valid_rows == source_tile.valid_rows &&
             destination_tile.valid_columns == source_tile.valid_columns &&
             destination_tile.layout == TileLayout_RowMajor;
-        if !descriptor_legal ||
-           _TileAllocationMasks[[destination]] != binding.pe_mask then
+        if !descriptor_legal || !allocation_mask_matches then
             SetFault(Fault_TileLegality, ReadTPC());
             return FALSE;
         end;

@@ -74,12 +74,14 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/operands/subview-descriptor.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","surface":"block","classification":["model","operands","subview-descriptor"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS","PTO-TILE-MODEL-SHAPE-CUBE-CELL","PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","surface":"block","classification":["model","operands","subview-descriptor"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-PE-REQUESTS","PTO-TILE-MODEL-SHAPE-CUBE-CELL","PTO-TILE-MODEL-SHAPE-CUBE-DOUBLE-CELL","PTO-TILE-MODEL-STATE-ALLOCATION"]}
 
 // NDF-BEGIN: PTO-B-SUBVIEW-DESCRIPTOR-001
 // ndf: kind=contract level=L1 layer=block status=accepted
 // A legal Local CUBE B.SUBVIEW MUST derive a bounded descriptor from the
 // parent descriptor, XLEN offset, and encoded view capacity in CELL order.
+// PredicateCell views preserve their U8 storage kind and predicate basis;
+// selected values and definedness are copied without Numeric conversion.
 // Parent lifetime and payload remain unchanged; non-CUBE, zero-valid, and
 // out-of-range geometry is rejected with Fault_TileLegality before effects.
 // NDF-END: PTO-B-SUBVIEW-DESCRIPTOR-001
@@ -389,10 +391,16 @@ begin
     end;
     // SUBVIEW preserves the parent's physical Local layout.  No consumer
     // engine or operand role may request an implicit conversion.
-    if !ConfigureCubeTileForMask(materialized_index,
+    let configured = if _Tiles[[parent]].storage_kind == TileStorage_PredicateCell then
+        ConfigurePredicateCellForMask(materialized_index,
+            descriptor.capacity_bytes, descriptor.valid_rows,
+            descriptor.valid_columns, _Tiles[[parent]].predicate_basis_type,
+            _Tiles[[parent]].layout, mask)
+        else ConfigureCubeTileForMask(materialized_index,
             descriptor.capacity_bytes, descriptor.valid_rows,
             descriptor.valid_columns, _Tiles[[parent]].data_type,
-            _Tiles[[parent]].layout, mask) then
+            _Tiles[[parent]].layout, mask);
+    if !configured then
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;
     end;
@@ -453,6 +461,33 @@ begin
                     .materialized_index);
                 _BundleTileBindings[[binding]].source1_subview.materialized =
                     FALSE;
+            end;
+        end;
+    end;
+end;
+
+// A merge wait or rejection ends this execution attempt. Release derived view
+// Tiles and invalidate their cached descriptors so retry starts from the
+// original architectural parents and rematerializes the encoded views only
+// after the next attempt's source preflight.
+func DiscardBundleSubviewMaterializationsForRetry()
+begin
+    DiscardBundleSubviewMaterializations();
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            if _BundleTileBindings[[binding]].source0_subview.valid then
+                _BundleTileBindings[[binding]].source0_subview.derived =
+                    EmptyBundleSubviewDescriptor(
+                        _BundleTileBindings[[binding]].source0);
+                _BundleTileBindings[[binding]].source0_subview
+                    .materialized_index = 0;
+            end;
+            if _BundleTileBindings[[binding]].source1_subview.valid then
+                _BundleTileBindings[[binding]].source1_subview.derived =
+                    EmptyBundleSubviewDescriptor(
+                        _BundleTileBindings[[binding]].source1);
+                _BundleTileBindings[[binding]].source1_subview
+                    .materialized_index = 0;
             end;
         end;
     end;
