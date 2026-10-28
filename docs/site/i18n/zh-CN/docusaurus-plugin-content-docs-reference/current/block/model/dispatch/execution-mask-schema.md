@@ -88,28 +88,6 @@ begin
     return count;
 end;
 
-readonly func BundleExecutionMaskPredicateMergeDependencyWaiting(
-    slot: integer {0..63}, source: TileIndex,
-    generation_instance: Word, participant_mask: bits(4),
-    consumer_instance: Word) => boolean
-begin
-    for index = 0 to _LocalGenerations[[slot]].consumer_count - 1
-        looplimit 16 do
-        let dependency = _LocalGenerations[[slot]].consumers[[index]];
-        if dependency.valid &&
-           dependency.state == BundleConsumerDependency_Waiting &&
-           dependency.source == source &&
-           dependency.generation_instance == generation_instance &&
-           dependency.execution_domain_token ==
-               _BundleExecutionDomainToken &&
-           dependency.participant_mask == participant_mask &&
-           dependency.consumer_instruction_instance == consumer_instance then
-            return TRUE;
-        end;
-    end;
-    return FALSE;
-end;
-
 readonly func BundleExecutionMaskOrdinaryTileSourceCount(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => integer {0..9}
 begin
@@ -391,7 +369,6 @@ begin
         columns as integer {1..65535});
     return TRUE;
 end;
-
 func PrepareSelectedBundleExecutionMaskMerge(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -419,15 +396,92 @@ begin
         _Tiles[[BundleTileSourceIndex(0, TRUE)]].storage_kind ==
             TileStorage_PredicateCell;
     var base: TileIndex = 0;
-    if predicate_logical &&
-       _BundleExecutionMask.merge_base_generation_valid then
-        base = _BundleExecutionMask.merge_base;
-        let pinned_slot = BundleLocalGenerationSlotForDestination(base);
-        if pinned_slot == 64 ||
-           pinned_slot != _BundleExecutionMask.merge_base_generation_slot ||
-           !_LocalGenerations[[pinned_slot]].generation_identity_valid ||
-           _LocalGenerations[[pinned_slot]].generation_instance !=
-               _BundleExecutionMask.merge_base_generation_instance then
+    var merge_generation_slot: integer {0..64} = 64;
+    var merge_participant_mask = Zeros{4};
+    if predicate_logical then
+        merge_participant_mask =
+            _BundleTileBindings[[destination_binding]].pe_mask;
+        if _BundleExecutionMask.merge_base_generation_valid then
+            base = _BundleExecutionMask.merge_base;
+            let pinned_slot = BundleLocalGenerationSlotForDestination(base);
+            if pinned_slot == 64 ||
+               !BundleExecutionMaskPredicateMergeGenerationPinMatches(
+                   pinned_slot as integer {0..63}, base, hand) then
+                return FALSE;
+            end;
+            merge_generation_slot = pinned_slot as integer {0..64};
+        else
+            if _TileRelativeValid[[hand]][0] == '0' then return FALSE; end;
+            base = _TileRelativeOrder[[hand]][[0]];
+            merge_generation_slot =
+                BundleLocalGenerationSlotForDestination(base);
+        end;
+        // Before readiness, inspect only generation structure and payload
+        // liveness. The descriptor's provisional shape, definedness, and
+        // canonical values belong to the post-readiness phase below.
+        if !_Tiles[[base]].allocated ||
+           !TilePayloadIntactForMask(base, merge_participant_mask) then
+            return FALSE;
+        end;
+        if merge_generation_slot < 64 then
+            let pinned_slot = merge_generation_slot as integer {0..63};
+            if !_BundleExecutionMask.merge_base_generation_valid then
+                if !_LocalGenerations[[pinned_slot]]
+                       .generation_identity_valid ||
+                   _LocalGenerations[[pinned_slot]]
+                       .working_destination != base ||
+                   _LocalGenerations[[pinned_slot]]
+                       .destination_hand != hand ||
+                   _LocalGenerations[[pinned_slot]].writer_count ==
+                       0 then
+                    return FALSE;
+                end;
+                let initiating_writer =
+                    _LocalGenerations[[pinned_slot]].writers[[0]];
+                if !initiating_writer.valid ||
+                   initiating_writer.destination != base ||
+                   initiating_writer.identity.instruction_instance !=
+                       _LocalGenerations[[pinned_slot]]
+                           .generation_instance then
+                    return FALSE;
+                end;
+                _BundleExecutionMask.merge_base = base;
+                _BundleExecutionMask.merge_base_generation_slot =
+                    pinned_slot;
+                _BundleExecutionMask.merge_base_generation_instance =
+                    _LocalGenerations[[pinned_slot]].generation_instance;
+                _BundleExecutionMask
+                    .merge_base_writer_instruction_instance =
+                        initiating_writer.identity.instruction_instance;
+                _BundleExecutionMask
+                    .merge_base_writer_execution_domain_token =
+                        initiating_writer.identity.execution_domain_token;
+                _BundleExecutionMask.merge_base_generation_valid = TRUE;
+            end;
+            if !BundleExecutionMaskPredicateMergeGenerationPinMatches(
+                   pinned_slot, base, hand) then
+                return FALSE;
+            end;
+            let dependency_ready = BundleConsumerDependencyRequiredRange(
+                pinned_slot, base,
+                Zeros{PTO_XLEN}, 0, TRUE, merge_participant_mask, ReadBPC());
+            if !dependency_ready then
+                if BundleExecutionMaskPredicateMergeDependencyWaiting(
+                       pinned_slot, base,
+                       _BundleExecutionMask.merge_base_generation_instance,
+                       merge_participant_mask, ReadBPC()) then
+                    _BundleExecutionMask.merge_base_waiting = TRUE;
+                end;
+                return FALSE;
+            end;
+            if !BundleExecutionMaskPredicateMergeGenerationPinMatches(
+                   pinned_slot, base, hand) ||
+               !TilePayloadIntactForMask(base, merge_participant_mask) then
+                return FALSE;
+            end;
+        elsif _BundleExecutionMask.merge_base_generation_valid then
+            // A saved Local generation may not be replaced by an ordinary
+            // Tile after abort, squash, or slot reuse.
             return FALSE;
         end;
     else
@@ -493,45 +547,14 @@ begin
         return FALSE;
     end;
     if predicate_logical then
-        let participant_mask =
-            _BundleTileBindings[[destination_binding]].pe_mask;
         if !TilePredicateCellValuesLegal(base) ||
-           !TilePayloadIntactForMask(base, participant_mask) then
+           !TilePayloadIntactForMask(base, merge_participant_mask) then
             return FALSE;
         end;
         let generation_slot = BundleLocalGenerationSlotForDestination(base);
-        if generation_slot < 64 then
-            if !_LocalGenerations[[generation_slot]].generation_identity_valid then
-                return FALSE;
-            end;
-            if _BundleExecutionMask.merge_base_generation_valid then
-                if generation_slot !=
-                       _BundleExecutionMask.merge_base_generation_slot ||
-                   _LocalGenerations[[generation_slot]].generation_instance !=
-                       _BundleExecutionMask.merge_base_generation_instance then
-                    return FALSE;
-                end;
-            else
-                _BundleExecutionMask.merge_base = base;
-                _BundleExecutionMask.merge_base_generation_valid = TRUE;
-                _BundleExecutionMask.merge_base_generation_slot =
-                    generation_slot as integer {0..64};
-                _BundleExecutionMask.merge_base_generation_instance =
-                    _LocalGenerations[[generation_slot]].generation_instance;
-            end;
-            let dependency_ready = BundleConsumerDependencyRequiredRange(
-                generation_slot as integer {0..63}, base, Zeros{PTO_XLEN},
-                0, TRUE, participant_mask, ReadBPC());
-            if !dependency_ready then
-                if BundleExecutionMaskPredicateMergeDependencyWaiting(
-                       generation_slot as integer {0..63}, base,
-                       _BundleExecutionMask.merge_base_generation_instance,
-                       participant_mask, ReadBPC()) then
-                    _BundleExecutionMask.merge_base_waiting = TRUE;
-                end;
-                return FALSE;
-            end;
-        elsif _BundleExecutionMask.merge_base_generation_valid then
+        if generation_slot < 64 &&
+           !BundleExecutionMaskPredicateMergeGenerationPinMatches(
+               generation_slot as integer {0..63}, base, hand) then
             return FALSE;
         end;
     elsif decoded == TileOperation_TCMP || decoded == TileOperation_TCMPS then

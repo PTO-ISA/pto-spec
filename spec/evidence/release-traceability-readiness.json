@@ -932,6 +932,10 @@
         "PTO-AVS-BLOCK-ASSEMBLE-PORTABLE-CARRIERS-001",
         "PTO-AVS-BLOCK-ASSEMBLE-REQUIRED-CELL-COUNT-003",
         "PTO-AVS-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS-STATIC-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-FINALIZED-READINESS-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-GENERATION-IDENTITY-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-PROVISIONAL-BASE-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-SUBVIEW-WAIT-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-WAIT-001",
         "PTO-AVS-BLOCK-TMATMUL-INACTIVE-LOCAL-027"
       ]
@@ -970,8 +974,12 @@
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-INIT-LAST-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-EXPIRED-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-FINALIZED-READINESS-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-GENERATION-IDENTITY-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-INVALID-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-NONCANONICAL-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-PROVISIONAL-BASE-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-SUBVIEW-WAIT-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-UNDEFINED-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-WAIT-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-SUBSET-ASSEMBLY-001",
@@ -1468,6 +1476,7 @@
         "PTO-AVS-BLOCK-GMOV-DOMAIN-SQUASH-013",
         "PTO-AVS-BLOCK-LOCAL-GENERATION-RECOVERY-ISOLATION-001",
         "PTO-AVS-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS-STATIC-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-GENERATION-IDENTITY-001",
         "PTO-AVS-BLOCK-SHARED-BSTART-INCOMPLETE-PREDECESSOR-001",
         "PTO-AVS-BLOCK-SHARED-TLSU-ASSEMBLE-SQUASH-014"
       ]
@@ -1885,6 +1894,7 @@
         "PTO-AVS-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR-STATIC-001",
         "PTO-AVS-BLOCK-PREDICATE-SUBVIEW-DUAL-MASK-001",
         "PTO-AVS-BLOCK-PREDICATECELL-ASSEMBLY-VIEW-ALIAS-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-SUBVIEW-WAIT-001",
         "PTO-AVS-BLOCK-PREDICATECELL-SUBVIEW-LOGICAL-001",
         "PTO-AVS-BLOCK-PREDICATECELL-SUBVIEW-SELECT-001",
         "PTO-AVS-BLOCK-PREDICATECELL-SUBVIEW-UNARY-REJECT-001",
@@ -18723,8 +18733,12 @@
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-LAST-USE-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-EXPIRED-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-FINALIZED-READINESS-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-GENERATION-IDENTITY-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-INVALID-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-NONCANONICAL-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-PROVISIONAL-BASE-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-SUBVIEW-WAIT-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-UNDEFINED-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-WAIT-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MIXED-001",
@@ -21579,7 +21593,7 @@
     "asl/block/model/dispatch/destination-auxiliary.asl": "2c5913076993c9206d95bacbe62443ebdbb2fb1a9e30bf537c5b33eb2782b16c",
     "asl/block/model/dispatch/destination-operation.asl": "6390853b6a29bc10c09ca1fa30156b8a637e9d0102f085e683f83c25d123b82d",
     "asl/block/model/dispatch/destination-shape.asl": "cf3504c3dfc0e7f6d03165b2d88d7231607c780d06a62d04588db11a1f67259e",
-    "asl/block/model/dispatch/execution-mask-schema.asl": "81ce48f8e907f4682cac08e7bd35585b0a04755d5f0f61417077678e15589363",
+    "asl/block/model/dispatch/execution-mask-schema.asl": "bc375f9e7deb05b91ea53e21e1b4fee7e1f50121fae022737b6d2aaf775dac8b",
     "asl/block/model/dispatch/expansion-schema.asl": "e341b52a6d77c9977a8787980cfb6df5aa11b6eb0ebfd65ba9f3932bd7a7f8ed",
     "asl/block/model/dispatch/expdif-schema.asl": "de5b727b34a77015b22baaeb73bb71b085d8e8bf20dded77675c183ae57305ae",
     "asl/block/model/dispatch/generation-schema.asl": "76cfceccdce296468d71b0e4605eb4b0b2702c5ea6bdabec16826b9517f86653",
@@ -21598,7 +21612,7 @@
     "asl/block/model/dispatch/tcvt-destination.asl": "5c850880e87ed947ae0e50af72f11ad9d1b9c26cb716003516f0d26525e49420",
     "asl/block/model/dispatch/tcvt-schema.asl": "2c9c7ec6214f8321416573735a0df6415e2374a97595a9b12f2cec834a50506c",
     "asl/block/model/dispatch/tgpr2t-schema.asl": "996eaeb7689d40a6acfb8c5c16bb5998a4a1e45ced5aabdb2eafb563a84a29b6",
-    "asl/block/model/dispatch/tile-execution.asl": "ca528b1cf470c9bb1a1fba21584e73812ed126ac0519d29a8ea2927eaa962710",
+    "asl/block/model/dispatch/tile-execution.asl": "2ca5ca69b8678368dfbbce6056a370a8c7919a31f02954b77bbe11d02f6960ce",
     "asl/block/model/dispatch/tile-instruction-operands.asl": "42c8fc31e43b044ce8faef3c2cbdb45e38747b3bd77188e3b08ffe775581104d",
     "asl/block/model/dispatch/tile-scalar-schema.asl": "a327cc482f50043fc3122c8c0f303827ae789436547f495f64cfb0102dbcf029",
     "asl/block/model/dispatch/tile-schema.asl": "bf3a972f6ec9059788fd6027e76e19b447aea5b5c504aa787149c44005f306ff",
@@ -21622,12 +21636,12 @@
     "asl/block/model/lifecycle/begin.asl": "34d7923f48b2635f5ba6373e0dd03b972d28b1f9c588c41baf5da875064c86e1",
     "asl/block/model/lifecycle/enter-stop.asl": "d5f977bb2248fb33078f42aae3e086375a562ed1e83c64dc49d53b82af2ac9f4",
     "asl/block/model/lifecycle/lifetime.asl": "5d8588b0a40cb70a08aef05a251eae50ebf6a177fd230b7fb9923ea171c54c9f",
-    "asl/block/model/lifecycle/reset.asl": "eed1051b9522ce29a17db1e309c41ae249a87407430d1fccae5da7dc22825e7c",
+    "asl/block/model/lifecycle/reset.asl": "ae1a4051c5b1490619feae147ac0602e9997368cc5358bd1bd5e387ce10f3a88",
     "asl/block/model/memory/timg2col-gm.asl": "6fba4b3cba79ea3a34d4ed8703cfad74240485651dabc24b10601227eb46e2c8",
     "asl/block/model/memory/weight-to-shared-gm.asl": "72e752ec70c4fb78d325f7001d5414321aac1f8f1a557b819dabfd604fa4bb10",
     "asl/block/model/operands/local-generation-cube-validation.asl": "f298ecfdbff13ddfc5651b7110141590c362e0322e1f1e73a9ff9c680e390490",
     "asl/block/model/operands/local-generation-cube-writer-effects.asl": "fe0d52bbfa6774344f6139838b8ac774dbce21eae20234684791e091c0e27332",
-    "asl/block/model/operands/local-generation-cube.asl": "a1467374da3745fa13abd5bef3518ab32118c83bb6705ba2c22b4699a2f9a46e",
+    "asl/block/model/operands/local-generation-cube.asl": "cdb20653a21134559e2ab5ac4b30367b8086e606ae9a88237a26b9d17e7a8cbe",
     "asl/block/model/operands/local-generation-squash.asl": "3e7324b6f04964ab2fe5044d854793625ccde5b0816e967dfd0f93ff5b855ab5",
     "asl/block/model/operands/local-generation.asl": "360b006968e0b39dac7ab5d250683e80931fdb5457c9ca603c5ec25c7eee90ef",
     "asl/block/model/operands/portable-carriers.asl": "98b29d28769b08ac636859fa3c6d4c0fca05c5c42246275291e9358914f28229",
@@ -21636,7 +21650,7 @@
     "asl/block/model/operands/shared-bindings.asl": "2262942a4b12235864245d08448a4d375cf149b3848120f66d91bce024e86550",
     "asl/block/model/operands/shared-generation-pe-requests.asl": "0482796ea9ceca502f88f6adacac1acade055ffdc8fff49bcfb6c6be4e4b0435",
     "asl/block/model/operands/shared-generation.asl": "ba43ff912551ad564f94e4ef774546e801e9c1dc8b80c1b82b073b3b7bc19ab6",
-    "asl/block/model/operands/subview-descriptor.asl": "b136ec97d2ac7f27e0290cc16ca3b8080296245be6e7277d594b95d27a637364",
+    "asl/block/model/operands/subview-descriptor.asl": "f3d3e21c58d14768ae538ef485d76d3bf0bb314f7932c1bf4f8cf049c1bbe5d8",
     "asl/block/model/operands/tile-bindings.asl": "baed6891307795466e2334e964a5139eb9ca6316848444ab121c2a133d8b2e46",
     "asl/block/model/operands/timg2col-parameters.asl": "cc2d3bd4c59aa87dc618b5eef32ec8606ee886d0be3eec5d0090903a9e605ea2",
     "asl/block/model/operands/weight-to-shared-parameters.asl": "c42be3478e831f484a67729ad28a152b04cc7a87e1dcf3c7456778cfdc1cbd81",
@@ -21648,10 +21662,10 @@
     "asl/block/model/state/barg.asl": "b4136ceee8d6874cb9a05497776dad35a5454e797b86c850050b5864f1bb902c",
     "asl/block/model/state/binding-state.asl": "46b650a4830ca540fa274c2ad3cdfd70910d71795761f16b92160fd2d7a96a3a",
     "asl/block/model/state/control-state.asl": "4ab4863b9e331f8dae55214c444738dc4add525f2341f1e8773124dea4bb6efc",
-    "asl/block/model/state/descriptor-state.asl": "01ae99f48168e5c4a6c24739f0f2399127b5c389d7465b7c7013ef07ef8eaec1",
+    "asl/block/model/state/descriptor-state.asl": "5365f8683e54174680fb23fa181dc67f0ee6117e63cf285b6902810cba56a4c0",
     "asl/block/model/state/shared-generation-state.asl": "ba5462366ad91545876540fd0724c77863b1f3cb5682d49a516a7a6a83ab82a4",
     "asl/block/model/state/source-lifetime.asl": "64e4f6dbb495e0622f0a07fbf6b65847474718bff8cdc24b7bc8ac605e2fc4a2",
-    "asl/block/model/state/types.asl": "4a379d3913808dc17aef00ce0a595012efda5da5f88c6ca9d2995c2fb52f5301",
+    "asl/block/model/state/types.asl": "77f7577e174c49487b8a355fe7d3261ba6b24176e4add3462b14ee01d15b7f61",
     "asl/block/operands/B.ASSEMBLE.asl": "223631f3d15dbd9aad577f6e9cdcc12f83be8726acc3f29cfa8a59d36d206c92",
     "asl/block/operands/B.IOR.asl": "cc294ebdae4887552e54e7aa083c1d965dcd5eca898545431e13a91f788fead5",
     "asl/block/operands/B.IOS.asl": "82d7c60a485346d0bdd4912b12dd16949a93368f1c7d751e67ba9f4eb6c47da7",
@@ -22530,7 +22544,7 @@
     "docs/block/model/dispatch/destination-auxiliary.md": "51b689b09eeb182810afe39671af6578672f8d64fc0266997eb59c3757aef438",
     "docs/block/model/dispatch/destination-operation.md": "ed6e46257c45f36b0b1bb6a2132574db1ab45008170caac21b7cf74100b740b4",
     "docs/block/model/dispatch/destination-shape.md": "81f5838ef0083f7da2c41f74e43249b03559d826f01143a23c68b1464579ada1",
-    "docs/block/model/dispatch/execution-mask-schema.md": "0db0eee92c924285f2c6b8800884b5fa35685c256c6de6034b280856ed60ea3c",
+    "docs/block/model/dispatch/execution-mask-schema.md": "e2899fb95cebeab690df7104287c4a5431e9fad7f36053a9229ac9b46bbfddf0",
     "docs/block/model/dispatch/expansion-schema.md": "6710c6a738d7a88550b8b2ec03aa8a5d37ba8615a425de2c82ec4ba780668ae9",
     "docs/block/model/dispatch/expdif-schema.md": "ead0e79bb9672a9054380ed4990a64be25765ef6372d66a9d9d27ce626b74595",
     "docs/block/model/dispatch/generation-schema.md": "a03da15f04299c836cc635cf6c67b3561910edcbc43870667395aae28cd7026b",
@@ -22549,7 +22563,7 @@
     "docs/block/model/dispatch/tcvt-destination.md": "4155361c673146b20dfb6fdb31f3ce12a4930638224e3d8dc422513aa9675399",
     "docs/block/model/dispatch/tcvt-schema.md": "5db2f9b708bfcbb35535e3101bf51de0effe5cb050b11264226ae5746472281a",
     "docs/block/model/dispatch/tgpr2t-schema.md": "a562972e608499c70b4560f5fa0b096e3f3021565b30086b16159700f4a56735",
-    "docs/block/model/dispatch/tile-execution.md": "813bebda729fe53d87fe231c55fa333d7daffdfdeef0b652a9101db34bcd037f",
+    "docs/block/model/dispatch/tile-execution.md": "eec8b17667bc44e203af3537204e10f51565f8dc6d75c6bca8ce76fed8f97c25",
     "docs/block/model/dispatch/tile-instruction-operands.md": "2752497887527b4a7dfffd4748218dce0ca4b3ad6cc61b4a81a29648dae26154",
     "docs/block/model/dispatch/tile-scalar-schema.md": "330ea0e94cd5fc6fed0d840078232b89db97d7996a3458c97e868f5fb58b05ad",
     "docs/block/model/dispatch/tile-schema.md": "fba76792ce0d6ca54704f4e00611a2ffb6304717889cb90dfa5aeaf69ae55032",
@@ -22573,12 +22587,12 @@
     "docs/block/model/lifecycle/begin.md": "60aa71b7477697a26783dbb95dd7edf0a354264b419e7312ad4ec6117bfc10e1",
     "docs/block/model/lifecycle/enter-stop.md": "e86ca857c5c1ff8ca3359cc9e6294674f5bc9b7fcaf0e9c080ed7068a4018d21",
     "docs/block/model/lifecycle/lifetime.md": "0af27a4a168a4e3cc78436f68ccd5167c1379bd1934924d7e4ab068b2add50bf",
-    "docs/block/model/lifecycle/reset.md": "01ccda65d2f95e9f1cdd8b8e8bc92cf8ce6b3efab35c535c2a571fd28eacf9a4",
+    "docs/block/model/lifecycle/reset.md": "8c992d1674b949fab71bce4c570d280edbca389221069dde39214b88283180fc",
     "docs/block/model/memory/timg2col-gm.md": "569cdece4d949659acdd37a8aba04a6311d78748633c0c4cac2b8de29ccb7c88",
     "docs/block/model/memory/weight-to-shared-gm.md": "9eec952da21d1fb7074d704935d5bcaf978a43b3b1d7006d9e9c0162bb7512d6",
     "docs/block/model/operands/local-generation-cube-validation.md": "7c31a513127ade961b7a4df794baf86d62a7009a7fb82bf733e0ef2187054cf1",
     "docs/block/model/operands/local-generation-cube-writer-effects.md": "e73b24a447bcb4335f3db6dbadccda95967de05e6a1f3373d448dd3ff2e34863",
-    "docs/block/model/operands/local-generation-cube.md": "f51b7774de3d9e2cb518b9d7abbfa2677cb532e124a950f02787ddc9129adab5",
+    "docs/block/model/operands/local-generation-cube.md": "faf8b8e10c2e6d467890ca2d61694d833ad049df2f2fcacf441e44c4d82025f3",
     "docs/block/model/operands/local-generation-squash.md": "12f448a3c298fff85add0deb2b427581306758e8ec7be7fccdfca1100821226a",
     "docs/block/model/operands/local-generation.md": "e071ec65662c249bc970ac4a159e8fcfe3d7a834b9786b4eb337b2b52c9104a3",
     "docs/block/model/operands/portable-carriers.md": "6744ba298b460c61cb10077d367a6cd760447fcf5f8cbfd1e84fd53cab37bf11",
@@ -22587,7 +22601,7 @@
     "docs/block/model/operands/shared-bindings.md": "56d33b6e60ab0e927bbeaf4448b23d4fa46daafa7925dc6fec4eb637d60c6857",
     "docs/block/model/operands/shared-generation-pe-requests.md": "3e574c7ebf35ba3ddfbef38138df3b8f7198199c0c4b81d2c6300908e53fb4e3",
     "docs/block/model/operands/shared-generation.md": "70d513e829dff7321d698f1f7d18893aa5a44315d5638e6660198d6dac6438de",
-    "docs/block/model/operands/subview-descriptor.md": "1cf3483a050ced10b316996e99ee964ba318eb199bcdf2c839ad96a51d84dea5",
+    "docs/block/model/operands/subview-descriptor.md": "b1f0fd3eac14d18b3421ce46448b2f9d8aeabee009c11ad0e4d24294e0bb3bea",
     "docs/block/model/operands/tile-bindings.md": "cb37ad51730e5fe253c6128a8fa78e151f1bb00e969ff595f34bc2d17d55695e",
     "docs/block/model/operands/timg2col-parameters.md": "35e0fd79015300f237e58bc1f539c4dcbce26e4fe88ded9c98945af370da14ee",
     "docs/block/model/operands/weight-to-shared-parameters.md": "748d8fc0ddd8fa5c79fc8c6d472e659757baf3b846289b6f18ee8fcd2c301a0b",
@@ -22599,10 +22613,10 @@
     "docs/block/model/state/barg.md": "b184baccb2191d8b8d7ddd637cabd7cdf5fcd12a4bb9256b685ad1de3535987b",
     "docs/block/model/state/binding-state.md": "6ccbc8e18e3357afdd9890b88fdea711f78a17d6b1bb771248979f3f1406c22b",
     "docs/block/model/state/control-state.md": "5b83206d646a13247a70e0f84c503576a44d5fb1b38d8a1c97d96619b8600d28",
-    "docs/block/model/state/descriptor-state.md": "be87548a4b6c27e9d08fd60aed85df9476a837cc2ae348e9a36f20bb96adf08c",
+    "docs/block/model/state/descriptor-state.md": "8c054c9cfb122a391bd6965e6e514bb997630cc0f5c488265eeeda05e33c81fa",
     "docs/block/model/state/shared-generation-state.md": "23bd3740f882ef531990fac2959e154db0f5ffe7d7c4b9a79e52bd5a5deb0244",
     "docs/block/model/state/source-lifetime.md": "72e57eb489b76c649a2f71cc4ac0464f71e37f0d1703f3bc04d5f9dc23656531",
-    "docs/block/model/state/types.md": "82dd1f7d02e59f8459adc1813b01ac476195d432d18e4a479611d52c4a9e3848",
+    "docs/block/model/state/types.md": "53b3b1f0e0fed24439d24ec7874573595c2e67fee28abf9b820b8503a1282b77",
     "docs/block/operands/B.ASSEMBLE.md": "bafc4a596cc59766cf39d80ac2267f53669229ddda77458e68a9afb1456fb43b",
     "docs/block/operands/B.IOR.md": "de5579e1b73c8db84c8e843f32d223030e97304bd5df0a4539257c024e81061c",
     "docs/block/operands/B.IOS.md": "929eb05d4eadefe93535e2f3adedae4ae39626e08c534f72d87157716360ab5c",
@@ -23666,8 +23680,8 @@
     "tests/asl/block/execution/BSTART.MSCATTER.MASK/block-decode-bstart-mscatter-mask-canonical-001.asl": "2bba39b790ac01321ceb8e0e37697888de7db35cb8143765c52225f510123966",
     "tests/asl/block/execution/BSTART.MSCATTER.MASK/block-exec-bstart-mscatter-mask-dual-mask-bundle-001.asl": "e8f15ba1c37346e21d4095968a31444e8d860198a3b9677bcae551069381d570",
     "tests/asl/block/execution/BSTART.MSCATTER.MASK/block-exec-bstart-mscatter-mask-packed-001.asl": "12875be71185e431163a446af7307b12e17d87a0b8e7d3771630083f4b1f28e7",
-    "tests/asl/block/execution/BSTART.MSCATTER.MASK/block-exec-bstart-mscatter-mask-predicate-logical-001.asl": "0f2a1902ce2bbf293883f96358831706c0b9ef5297c6cd06ac637db71d03c46f",
-    "tests/asl/block/execution/BSTART.MSCATTER.MASK/block-exec-bstart-mscatter-mask-predicate-subview-001.asl": "075c7cc3ede8f607882b1078ee2e9b22c4f545d7ed65d65461f55054ffaed2ae",
+    "tests/asl/block/execution/BSTART.MSCATTER.MASK/block-exec-bstart-mscatter-mask-predicate-logical-001.asl": "67d841c8e1b8b44d7d72f5a3db5f0b389f003ddf1fb4b7a8e7b285430a856559",
+    "tests/asl/block/execution/BSTART.MSCATTER.MASK/block-exec-bstart-mscatter-mask-predicate-subview-001.asl": "04a7f4d9c830ec75d7af29f9084d289213d18b59606661dc33b91078fb66156a",
     "tests/asl/block/execution/BSTART.MSCATTER.MASK/block-exec-bstart-mscatter-mask-scatter-001.asl": "a7cd3c84ff019413b33ea382bb520f3ee7734f4e138d703a9ace7408ae75c710",
     "tests/asl/block/execution/BSTART.MSCATTER.MASK/block-fault-bstart-mscatter-mask-enabled-lane-preflight-001.asl": "fb4cc5ceaf392cd759c6c287b9dcec440d3e175a0f98587eed81dd4576c2360d",
     "tests/asl/block/execution/BSTART.MSCATTER.MASK/block-order-bstart-mscatter-mask-duplicate-001.asl": "a23a1b64dcc3127ec9343a3fcaca2440e31b236458c490f2af5849c6937f4111",
@@ -23990,13 +24004,13 @@
     "tests/asl/block/model/dispatch/execution-mask-schema/block-exec-mask-merge-hand-output-002.asl": "2701ee316db56e18198405263f6de95ce795633d50b3957a13aca795a18e883d",
     "tests/asl/block/model/dispatch/execution-mask-schema/block-exec-mask-predicatetile-binary-001.asl": "d865d0c87a15cef34fab581cdc8067c1a64fb77a1218d4eb8d4a948ca3ccb25f",
     "tests/asl/block/model/dispatch/execution-mask-schema/block-exec-mask-select-decoded-bundle-001.asl": "7b5acc90a3e017100134cddca84cdb66390ab6bedadb4f71ee192b778715f697",
-    "tests/asl/block/model/dispatch/execution-mask-schema/block-exec-predicatecell-logical-active-defined-001.asl": "0f19bb8c86dbbddc5ad2ccd9a0032e10d4afd1fe8fa2f64030b1c322715d43a0",
-    "tests/asl/block/model/dispatch/execution-mask-schema/block-exec-predicatecell-logical-decoded-001.asl": "7fb444ebc2b304ed4d6472d314c98d3b0a9b2b0c4138856285c5d7255409413a",
+    "tests/asl/block/model/dispatch/execution-mask-schema/block-exec-predicatecell-logical-active-defined-001.asl": "be6ec06abb15903fdd938e98f84bee24763866d61dbf7051f21983c2a1a8b97e",
+    "tests/asl/block/model/dispatch/execution-mask-schema/block-exec-predicatecell-logical-decoded-001.asl": "4ecaa361b7b075799dd5215c00d246ab08637c2ad85af1032e392b6a3a5784d5",
     "tests/asl/block/model/dispatch/execution-mask-schema/block-exec-predicatecell-logical-gpr-mask-001.asl": "55334da97aa566cd86c7073576852d4acdb1b1f9b6cd26c87a9c309cf7418782",
     "tests/asl/block/model/dispatch/execution-mask-schema/block-exec-predicatecell-logical-last-use-001.asl": "57ac014f3085c58ed6b95e368d63b5ac24bf1ac73613e54cd872272bbd43c257",
     "tests/asl/block/model/dispatch/execution-mask-schema/block-exec-predicatecell-logical-mixed-001.asl": "b5548ca22d9c28356cb143464ab98eadda60a2a9673cc56a5af55913fb6c96df",
     "tests/asl/block/model/dispatch/execution-mask-schema/block-exec-predicatecell-logical-mixed-reverse-001.asl": "a0d2a63eef88b0e065f076580562b7ad3f8c889378db7df13550c8c50a37658a",
-    "tests/asl/block/model/dispatch/execution-mask-schema/block-exec-predicatecell-logical-padding-001.asl": "3e33a8c98c39b01aadf26c4f899cd20906d2cfcbd30382fe2d735337ad8f0509",
+    "tests/asl/block/model/dispatch/execution-mask-schema/block-exec-predicatecell-logical-padding-001.asl": "b9fd3b08bb005489b60a1b1c2cad9bc992568d6b61f958c8eff3914c00e2744f",
     "tests/asl/block/model/dispatch/execution-mask-schema/block-exec-predicatecell-mixed-numeric-merge-001.asl": "944119b7dab8b620ffd6bafdbc82de888a28a671890a2238100cbabb04d6bbb4",
     "tests/asl/block/model/dispatch/execution-mask-schema/block-exec-predicatecell-mixed-numeric-padding-001.asl": "da3370f8610be2ef1f1e9291ebbb263bfaf9bd985b075a9cec32ddf5f81a20eb",
     "tests/asl/block/model/dispatch/execution-mask-schema/block-fault-exec-mask-gpr-type-004.asl": "9ab123466850e22a6346166c09cc43e1853f97ff3a0175d13b9224b1b3132015",
@@ -24115,7 +24129,7 @@
     "tests/asl/block/model/dispatch/tlsu-atomic-tstore/block-exec-tstore-atomic-shared-fault-001.asl": "7b7e69bb6b4e84320a848dc5aeb82ef18375d2acff3ec02444192375f69ac4d6",
     "tests/asl/block/model/dispatch/tlsu-atomic-tstore/block-static-tlsu-atomic-tstore-contract-001.asl": "4bdf2ad05f5e51266d3cc99d51d0e420710f2d4308f64abd3de561aa28d75387",
     "tests/asl/block/model/dispatch/tlsu-gm-atom-red/block-exec-masked-atom-red-decoded-002.asl": "b13b70b3dc7ff0295bc0a891d18dae12252bb97ee11b18438bb86c1110ffd188",
-    "tests/asl/block/model/dispatch/tlsu-gm-atom-red/block-exec-predicate-logical-atom-red-001.asl": "2672ba0a0afa36cfe8ac572b37080188264cce1c52b16412d26b8a5f50713405",
+    "tests/asl/block/model/dispatch/tlsu-gm-atom-red/block-exec-predicate-logical-atom-red-001.asl": "c60025c74236091fceda61f44e4318e66c215e7a3dde081b03473dab1922e0e8",
     "tests/asl/block/model/dispatch/tlsu-gm-atom-red/block-static-tlsu-gm-atom-red-contract-001.asl": "76c3e7af32b694d59a8e82e20cac3ea662e5addc4eb9c7e3d62d0907d070a051",
     "tests/asl/block/model/dispatch/tlsu-gmov-helpers/block-static-tlsu-gmov-helpers-contract-001.asl": "54d9c7cd2bab441c523dc19b766ea09efebca886e10cf02b2d679c8c1cc10525",
     "tests/asl/block/model/dispatch/tlsu-gmov/block-exec-gmov-private-fourstream-010.asl": "8e23e9e4e6113d58f38393e45bed8cf13776fb389db6d4b0fd2cc5bea69154cf",
@@ -24181,8 +24195,12 @@
     "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-init-last-001.asl": "f6dd2cd318977c02ad536450de8c3dbb6c91228d950f32e5ce28cf974db01727",
     "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-merge-001.asl": "88d0353e368f2e2b00e45f211ec80dd471f8e4b1f76ca14fe35e39482809254e",
     "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-merge-expired-001.asl": "44b9a76a8422b1a986c554aab65971cc47affc050d7bbdfaad6ad663cd9b1fe9",
+    "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-merge-finalized-readiness-001.asl": "fbfa6a43f9bb21e82d04d6cf4af617d18cd4b330de93113c90022748fd10f5fb",
+    "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-merge-generation-identity-001.asl": "65b996c0003f65920a86432c04cc4a39db987f212554abbc5a54e848d7f63c63",
     "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-merge-invalid-001.asl": "761dcf795aaddf00336877bb02ebc9efba9a4a016572956e213c050732ae9c90",
     "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-merge-noncanonical-001.asl": "ca054151a472504b8a32781c98579b9afc106bd2df8a61b2d96b9269e1698220",
+    "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-merge-provisional-base-001.asl": "6e5f9e7a4f87aa774b32222229eafa8e2e5042fe2e8e8e54bcf05a7cb7faed00",
+    "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-merge-subview-wait-001.asl": "50391806acb533e7993089fb495b5077afb63c5ddc1351bd5ba15497b96320fb",
     "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-merge-undefined-001.asl": "5b61fbd474810b4e939971fe5dc92d06829003363be4124c5ce3217e7bdf88bd",
     "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-merge-wait-001.asl": "a38e86b46dc132ae3b06645481c8cd29999dafdfcf9fd9301e1c7eea500dfc88",
     "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-subset-assembly-001.asl": "d223178cf599f9c35e445c4c31fc1a8f4d079917a635bd1d39052b7d12fe081f",
@@ -27752,7 +27770,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1131,
     "status": "closed",
-    "test_count": 4423,
+    "test_count": 4427,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -42179,7 +42197,7 @@
         "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001",
         "PTO-B-IOT-STREAM-001"
       ],
-      "sha256": "2672ba0a0afa36cfe8ac572b37080188264cce1c52b16412d26b8a5f50713405",
+      "sha256": "c60025c74236091fceda61f44e4318e66c215e7a3dde081b03473dab1922e0e8",
       "source": "asl/block/model/dispatch/tlsu-gm-atom-red.asl"
     },
     {
@@ -42194,7 +42212,7 @@
         "PTO-B-IOR-BINDING-001",
         "PTO-B-IOT-STREAM-001"
       ],
-      "sha256": "0f2a1902ce2bbf293883f96358831706c0b9ef5297c6cd06ac637db71d03c46f",
+      "sha256": "67d841c8e1b8b44d7d72f5a3db5f0b389f003ddf1fb4b7a8e7b285430a856559",
       "source": "asl/block/execution/BSTART.MSCATTER.MASK.asl"
     },
     {
@@ -42210,7 +42228,7 @@
         "PTO-B-IOR-BINDING-001",
         "PTO-B-IOT-STREAM-001"
       ],
-      "sha256": "075c7cc3ede8f607882b1078ee2e9b22c4f545d7ed65d65461f55054ffaed2ae",
+      "sha256": "04a7f4d9c830ec75d7af29f9084d289213d18b59606661dc33b91078fb66156a",
       "source": "asl/block/execution/BSTART.MSCATTER.MASK.asl"
     },
     {
@@ -42248,7 +42266,7 @@
         "PTO-TAND-CONTRACT-001",
         "PTO-B-IOT-STREAM-001"
       ],
-      "sha256": "0f19bb8c86dbbddc5ad2ccd9a0032e10d4afd1fe8fa2f64030b1c322715d43a0",
+      "sha256": "be6ec06abb15903fdd938e98f84bee24763866d61dbf7051f21983c2a1a8b97e",
       "source": "asl/block/model/dispatch/execution-mask-schema.asl"
     },
     {
@@ -42293,7 +42311,7 @@
         "PTO-TAND-CONTRACT-001",
         "PTO-B-IOT-STREAM-001"
       ],
-      "sha256": "7fb444ebc2b304ed4d6472d314c98d3b0a9b2b0c4138856285c5d7255409413a",
+      "sha256": "4ecaa361b7b075799dd5215c00d246ab08637c2ad85af1032e392b6a3a5784d5",
       "source": "asl/block/model/dispatch/execution-mask-schema.asl"
     },
     {
@@ -42380,6 +42398,31 @@
       "source": "asl/block/model/operands/local-generation-cube.asl"
     },
     {
+      "id": "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-FINALIZED-READINESS-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-merge-finalized-readiness-001.asl",
+      "requirements": [
+        "PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
+        "PTO-B-ASSEMBLE-CONSUMER-READINESS-001",
+        "PTO-TAND-CONTRACT-001"
+      ],
+      "sha256": "fbfa6a43f9bb21e82d04d6cf4af617d18cd4b330de93113c90022748fd10f5fb",
+      "source": "asl/block/model/operands/local-generation-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-GENERATION-IDENTITY-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-merge-generation-identity-001.asl",
+      "requirements": [
+        "PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
+        "PTO-B-ASSEMBLE-SPECULATION-001",
+        "PTO-B-ASSEMBLE-CONSUMER-READINESS-001",
+        "PTO-TAND-CONTRACT-001"
+      ],
+      "sha256": "65b996c0003f65920a86432c04cc4a39db987f212554abbc5a54e848d7f63c63",
+      "source": "asl/block/model/operands/local-generation-cube.asl"
+    },
+    {
       "id": "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-INVALID-001",
       "kind": "execution",
       "path": "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-merge-invalid-001.asl",
@@ -42399,6 +42442,31 @@
         "PTO-TAND-CONTRACT-001"
       ],
       "sha256": "ca054151a472504b8a32781c98579b9afc106bd2df8a61b2d96b9269e1698220",
+      "source": "asl/block/model/operands/local-generation-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-PROVISIONAL-BASE-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-merge-provisional-base-001.asl",
+      "requirements": [
+        "PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
+        "PTO-B-ASSEMBLE-CONSUMER-READINESS-001",
+        "PTO-TAND-CONTRACT-001"
+      ],
+      "sha256": "6e5f9e7a4f87aa774b32222229eafa8e2e5042fe2e8e8e54bcf05a7cb7faed00",
+      "source": "asl/block/model/operands/local-generation-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-SUBVIEW-WAIT-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/operands/local-generation-cube/block-exec-predicatecell-logical-merge-subview-wait-001.asl",
+      "requirements": [
+        "PTO-B-ASSEMBLE-CUBE-PARENT-GEOMETRY-001",
+        "PTO-B-ASSEMBLE-CONSUMER-READINESS-001",
+        "PTO-B-SUBVIEW-DESCRIPTOR-001",
+        "PTO-TAND-CONTRACT-001"
+      ],
+      "sha256": "50391806acb533e7993089fb495b5077afb63c5ddc1351bd5ba15497b96320fb",
       "source": "asl/block/model/operands/local-generation-cube.asl"
     },
     {
@@ -42457,7 +42525,7 @@
         "PTO-TAND-CONTRACT-001",
         "PTO-B-IOT-STREAM-001"
       ],
-      "sha256": "3e33a8c98c39b01aadf26c4f899cd20906d2cfcbd30382fe2d735337ad8f0509",
+      "sha256": "b9fd3b08bb005489b60a1b1c2cad9bc992568d6b61f958c8eff3914c00e2744f",
       "source": "asl/block/model/dispatch/execution-mask-schema.asl"
     },
     {
@@ -79554,8 +79622,12 @@
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-INIT-LAST-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-EXPIRED-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-FINALIZED-READINESS-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-GENERATION-IDENTITY-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-INVALID-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-NONCANONICAL-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-PROVISIONAL-BASE-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-SUBVIEW-WAIT-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-UNDEFINED-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-WAIT-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-SUBSET-ASSEMBLY-001",
@@ -79578,8 +79650,12 @@
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-INIT-LAST-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-EXPIRED-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-FINALIZED-READINESS-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-GENERATION-IDENTITY-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-INVALID-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-NONCANONICAL-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-PROVISIONAL-BASE-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-SUBVIEW-WAIT-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-UNDEFINED-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-WAIT-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-SUBSET-ASSEMBLY-001",

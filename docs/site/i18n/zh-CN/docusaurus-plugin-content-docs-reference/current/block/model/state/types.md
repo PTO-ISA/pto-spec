@@ -165,6 +165,8 @@ type BundleExecutionMaskBinding of record {
     merge_base_generation_valid: boolean,
     merge_base_generation_slot: integer {0..64},
     merge_base_generation_instance: Word,
+    merge_base_writer_instruction_instance: Word,
+    merge_base_writer_execution_domain_token: integer,
     predicate_tile_snapshot: bits(524288)
 };
 
