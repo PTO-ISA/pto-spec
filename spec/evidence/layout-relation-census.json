@@ -5097,7 +5097,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "60ea0e612499b263940f5369c93994149b218e5d",
+  "candidate_head": "6bfbe87beece40ed565ea02be001c4ffc5ac611d",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -19123,7 +19123,7 @@
         "CUBE_M16",
         "CUBE_M32"
       ],
-      "after_sha256": "1b414d1cd4c9a32e3b5ae2d7b023d8368958fde2d958d985413aa3fa5ed4f175",
+      "after_sha256": "c3869901b74d5462c4e2539ef805b6e04d552c28fc61e46eb60acbf5b17bdc88",
       "before_layouts": [],
       "before_sha256": "3269fa3785bfe7f8e4ef45fde7c8339f5063584c27642308c6001cbdbd178a1c",
       "classification": "operation-scoped accepted layout/relation owner",
@@ -56371,8 +56371,7 @@
               "DiscardBundleSubviewMaterializations",
               "DiscardBundleSubviewMaterializations",
               "DiscardBundleSubviewMaterializations",
-              "DiscardBundleSubviewMaterializations",
-              "DiscardBundleSubviewMaterializationsForWait",
+              "DiscardBundleSubviewMaterializationsForRetry",
               "EmptyBundleLocalGenerationCubeWriterEffects",
               "ExecuteBundleAtomicTSTOREOperation",
               "ExecuteBundleComparisonGPRCarrier",
@@ -56494,7 +56493,7 @@
               "CUBE_M32"
             ],
             "path": "asl/block/model/dispatch/tile-execution.asl",
-            "sha256": "1b414d1cd4c9a32e3b5ae2d7b023d8368958fde2d958d985413aa3fa5ed4f175"
+            "sha256": "c3869901b74d5462c4e2539ef805b6e04d552c28fc61e46eb60acbf5b17bdc88"
           }
         ],
         "ExecuteBundleTileOperationWithAcceptedApplicabilityRules": [
