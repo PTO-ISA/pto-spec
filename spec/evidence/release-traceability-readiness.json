@@ -1902,6 +1902,7 @@
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-SUBVIEW-WAIT-001",
         "PTO-AVS-BLOCK-PREDICATECELL-LOGICAL-MERGE-TRAP-SUBVIEW-001",
         "PTO-AVS-BLOCK-PREDICATECELL-SUBVIEW-LOGICAL-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-SUBVIEW-SCHEMA-FAULT-001",
         "PTO-AVS-BLOCK-PREDICATECELL-SUBVIEW-SELECT-001",
         "PTO-AVS-BLOCK-PREDICATECELL-SUBVIEW-UNARY-REJECT-001",
         "PTO-AVS-BLOCK-RANGE-APPLICABILITY-TOTALITY-001",
@@ -18758,7 +18759,8 @@
         "PTO-AVS-BLOCK-PREDICATECELL-MIXED-NUMERIC-MERGE-001",
         "PTO-AVS-BLOCK-PREDICATECELL-MIXED-NUMERIC-PADDING-001",
         "PTO-AVS-BLOCK-PREDICATECELL-PARENT-SELECT-001",
-        "PTO-AVS-BLOCK-PREDICATECELL-SUBVIEW-LOGICAL-001"
+        "PTO-AVS-BLOCK-PREDICATECELL-SUBVIEW-LOGICAL-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-SUBVIEW-SCHEMA-FAULT-001"
       ]
     },
     {
@@ -21621,7 +21623,7 @@
     "asl/block/model/dispatch/tcvt-destination.asl": "5c850880e87ed947ae0e50af72f11ad9d1b9c26cb716003516f0d26525e49420",
     "asl/block/model/dispatch/tcvt-schema.asl": "2c9c7ec6214f8321416573735a0df6415e2374a97595a9b12f2cec834a50506c",
     "asl/block/model/dispatch/tgpr2t-schema.asl": "996eaeb7689d40a6acfb8c5c16bb5998a4a1e45ced5aabdb2eafb563a84a29b6",
-    "asl/block/model/dispatch/tile-execution.asl": "da33cc467e8f47d94aa507ce911943f3e0cb56746e9181d5f343696688af4963",
+    "asl/block/model/dispatch/tile-execution.asl": "e139ad89857606477d14175509a0b19cf9ec5395a1cff8db640262515a77efea",
     "asl/block/model/dispatch/tile-instruction-operands.asl": "42c8fc31e43b044ce8faef3c2cbdb45e38747b3bd77188e3b08ffe775581104d",
     "asl/block/model/dispatch/tile-scalar-schema.asl": "a327cc482f50043fc3122c8c0f303827ae789436547f495f64cfb0102dbcf029",
     "asl/block/model/dispatch/tile-schema.asl": "bf3a972f6ec9059788fd6027e76e19b447aea5b5c504aa787149c44005f306ff",
@@ -22572,7 +22574,7 @@
     "docs/block/model/dispatch/tcvt-destination.md": "4155361c673146b20dfb6fdb31f3ce12a4930638224e3d8dc422513aa9675399",
     "docs/block/model/dispatch/tcvt-schema.md": "5db2f9b708bfcbb35535e3101bf51de0effe5cb050b11264226ae5746472281a",
     "docs/block/model/dispatch/tgpr2t-schema.md": "a562972e608499c70b4560f5fa0b096e3f3021565b30086b16159700f4a56735",
-    "docs/block/model/dispatch/tile-execution.md": "37f5be356eb036eb7abc2f3b49ccd116065e93f896c879b866f52b087694fdb3",
+    "docs/block/model/dispatch/tile-execution.md": "d1a5283d9d4e8b85b1caeafb41ac7b0a8a8f92c5f8cf6e5e6088d1c83ad7bd85",
     "docs/block/model/dispatch/tile-instruction-operands.md": "2752497887527b4a7dfffd4748218dce0ca4b3ad6cc61b4a81a29648dae26154",
     "docs/block/model/dispatch/tile-scalar-schema.md": "330ea0e94cd5fc6fed0d840078232b89db97d7996a3458c97e868f5fb58b05ad",
     "docs/block/model/dispatch/tile-schema.md": "fba76792ce0d6ca54704f4e00611a2ffb6304717889cb90dfa5aeaf69ae55032",
@@ -24119,6 +24121,7 @@
     "tests/asl/block/model/dispatch/tgpr2t-schema/block-static-tgpr2t-schema-contract-001.asl": "8458f9f26a2b057be4e3802a961c705e566d9d6ae12f0b5657dd0edf3561899e",
     "tests/asl/block/model/dispatch/tile-execution/block-exec-cube-writer-operation-routes-r3-001.asl": "a09160fcd320483798a95a94eb1532fd5d2d417cd05fee160c7014e39666fbd6",
     "tests/asl/block/model/dispatch/tile-execution/block-exec-cube-writer-value-routes-r3-001.asl": "2875110af585f3b13a6349f770181c687ca5f3d5376387f3774f80e7e9b9e625",
+    "tests/asl/block/model/dispatch/tile-execution/block-fault-predicatecell-subview-schema-001.asl": "a2cac5e345f2ca6e0246deee63e5a786c12dfe5a1f9e9b8b3072567780f1bf71",
     "tests/asl/block/model/dispatch/tile-execution/block-static-tile-execution-contract-001.asl": "57cbeac3431997ff17b93ec6254bd9dc0e18912963d32e7387a45315fb99a5d2",
     "tests/asl/block/model/dispatch/tile-instruction-operands/block-static-tile-instruction-operands-contract-001.asl": "a2c651d433518e7b60e315e8bc360e7b9b47d1589ad9737248f3567eb17f241b",
     "tests/asl/block/model/dispatch/tile-scalar-schema/block-exec-inactive-zero-divisor-decoded-002.asl": "801aa0884937652e8b6056777e43e58e027d87ad33d8f928694ab1651d567158",
@@ -27782,7 +27785,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1131,
     "status": "closed",
-    "test_count": 4430,
+    "test_count": 4431,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -42644,6 +42647,17 @@
       ],
       "sha256": "7c319e8ef5d713bc0ab61bcc289b84c525cdf9bbabb1697f076045bb363c4a4e",
       "source": "asl/block/model/operands/subview-descriptor.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-PREDICATECELL-SUBVIEW-SCHEMA-FAULT-001",
+      "kind": "fault",
+      "path": "tests/asl/block/model/dispatch/tile-execution/block-fault-predicatecell-subview-schema-001.asl",
+      "requirements": [
+        "PTO-B-SUBVIEW-DESCRIPTOR-001",
+        "PTO-TAND-CONTRACT-001"
+      ],
+      "sha256": "a2cac5e345f2ca6e0246deee63e5a786c12dfe5a1f9e9b8b3072567780f1bf71",
+      "source": "asl/block/model/dispatch/tile-execution.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-PREDICATECELL-SUBVIEW-SELECT-001",
@@ -78879,14 +78893,16 @@
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-CUBE-WRITER-OPERATION-ROUTES-R3-001",
-        "PTO-AVS-BLOCK-CUBE-WRITER-REARRANGEMENT-R3-001"
+        "PTO-AVS-BLOCK-CUBE-WRITER-REARRANGEMENT-R3-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-SUBVIEW-SCHEMA-FAULT-001"
       ],
       "source": "asl/block/model/dispatch/tile-execution.asl",
       "surface": "block",
       "tests": [
         "PTO-AVS-BLOCK-CUBE-WRITER-OPERATION-ROUTES-R3-001",
         "PTO-AVS-BLOCK-CUBE-WRITER-REARRANGEMENT-R3-001",
-        "PTO-AVS-BLOCK-MODEL-DISPATCH-TILE-EXECUTION-STATIC-001"
+        "PTO-AVS-BLOCK-MODEL-DISPATCH-TILE-EXECUTION-STATIC-001",
+        "PTO-AVS-BLOCK-PREDICATECELL-SUBVIEW-SCHEMA-FAULT-001"
       ]
     },
     {

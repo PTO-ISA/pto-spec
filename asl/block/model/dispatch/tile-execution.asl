@@ -355,6 +355,8 @@ begin
         return FALSE;
     end;
     if !SelectedBundleClosedSchemasLegal(operation) then
+        // Restore architectural parents before SetFault captures the bundle.
+        DiscardBundleSubviewMaterializationsForRetry();
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
