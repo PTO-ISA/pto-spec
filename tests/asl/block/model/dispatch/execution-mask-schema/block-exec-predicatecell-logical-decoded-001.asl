@@ -50,7 +50,7 @@ begin
     assert attributes == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
-    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 8);
     AddBundleTileBinding(
         FALSE, 0, 0, '1111', TRUE, TRUE, 1, 2, FALSE);
     AddBundleTileBinding(

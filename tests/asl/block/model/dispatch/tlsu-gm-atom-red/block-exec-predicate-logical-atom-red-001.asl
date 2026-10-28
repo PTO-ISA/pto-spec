@@ -79,7 +79,7 @@ begin
     let attributed = ExecuteCommandInstruction(attrs,32);
     SetBundleDimension(0,Zeros{PTO_XLEN} + 2);
     SetBundleDimension(1,Zeros{PTO_XLEN} + 1);
-    SetBundleDimension(2,Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2,Zeros{PTO_XLEN} + 8);
     AddBundleTileBinding(TRUE,1,1,'0001',TRUE,TRUE,12,13,TRUE);
     assert started == CommandExecution_Executed && attributed == CommandExecution_Executed;
     let completed = ExecuteBundleTileOperation();
