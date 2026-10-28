@@ -375,6 +375,9 @@ begin
     if !PrepareSelectedBundleExecutionMaskMerge(operation) then
         if !_BundleExecutionMask.merge_base_waiting then
             SetFault(Fault_TileLegality, ReadTPC());
+            DiscardBundleSubviewMaterializations();
+        else
+            DiscardBundleSubviewMaterializationsForWait();
         end;
         return FALSE;
     end;

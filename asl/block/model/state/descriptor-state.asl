@@ -148,6 +148,9 @@ begin
     _BundleExecutionMask.merge_base_generation_valid = FALSE;
     _BundleExecutionMask.merge_base_generation_slot = 64;
     _BundleExecutionMask.merge_base_generation_instance = Zeros{PTO_XLEN};
+    _BundleExecutionMask.merge_base_writer_instruction_instance =
+        Zeros{PTO_XLEN};
+    _BundleExecutionMask.merge_base_writer_execution_domain_token = 0;
     _BundleExecutionMask.predicate_tile_snapshot = Zeros{524288};
     _BundleHint.present = FALSE;
     _BundleHint.trace = FALSE;

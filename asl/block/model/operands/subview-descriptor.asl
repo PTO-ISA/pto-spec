@@ -389,3 +389,30 @@ begin
         end;
     end;
 end;
+
+// A merge-base wait suspends the current attempt while preserving its
+// architectural source bindings. Release derived view Tiles and invalidate
+// only their cached descriptors so the next attempt rechecks each original
+// parent before rematerializing the same encoded view.
+func DiscardBundleSubviewMaterializationsForWait()
+begin
+    DiscardBundleSubviewMaterializations();
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            if _BundleTileBindings[[binding]].source0_subview.valid then
+                _BundleTileBindings[[binding]].source0_subview.derived =
+                    EmptyBundleSubviewDescriptor(
+                        _BundleTileBindings[[binding]].source0);
+                _BundleTileBindings[[binding]].source0_subview
+                    .materialized_index = 0;
+            end;
+            if _BundleTileBindings[[binding]].source1_subview.valid then
+                _BundleTileBindings[[binding]].source1_subview.derived =
+                    EmptyBundleSubviewDescriptor(
+                        _BundleTileBindings[[binding]].source1);
+                _BundleTileBindings[[binding]].source1_subview
+                    .materialized_index = 0;
+            end;
+        end;
+    end;
+end;
