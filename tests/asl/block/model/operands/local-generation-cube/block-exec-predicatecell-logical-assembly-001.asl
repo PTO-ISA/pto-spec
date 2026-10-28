@@ -33,7 +33,7 @@ begin
     let attributes = ExecuteCommandInstruction(Zeros{64} + 0x01f01fa3, 32);
     SetBundleDimension(0, Zeros{PTO_XLEN} + columns);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
-    SetBundleDimension(2, Zeros{PTO_XLEN} + columns);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 8);
     let bound = ExecuteCommandInstruction(LogicalAssemblyInputs(init), 32);
     var parent = CommandExecution_Executed;
     if !init then

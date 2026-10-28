@@ -212,6 +212,10 @@ begin
     _BundleExecutionMask.zero_inactive = FALSE;
     _BundleExecutionMask.merge_base_valid = FALSE;
     _BundleExecutionMask.merge_base = 0;
+    _BundleExecutionMask.merge_base_waiting = FALSE;
+    _BundleExecutionMask.merge_base_generation_valid = FALSE;
+    _BundleExecutionMask.merge_base_generation_slot = 64;
+    _BundleExecutionMask.merge_base_generation_instance = Zeros{PTO_XLEN};
     _BundleExecutionMask.predicate_tile_snapshot = Zeros{524288};
     _BundleHint.present = FALSE;
     _BundleHint.trace = FALSE;

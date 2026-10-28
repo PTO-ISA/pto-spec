@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","surface":"block","classification":["model","dispatch","execution-mask-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-EXECUTION-MASK","PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA","surface":"block","classification":["model","dispatch","execution-mask-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-EXECUTION-MASK","PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS","PTO-TILE-MODEL-STATE-DESCRIPTORS"]}
 readonly func BundleExecutionMaskLocalTileSourceCount() => integer {0..32}
 begin
     var count: integer {0..32} = 0;
@@ -13,6 +13,28 @@ begin
         end;
     end;
     return count;
+end;
+
+readonly func BundleExecutionMaskPredicateMergeDependencyWaiting(
+    slot: integer {0..63}, source: TileIndex,
+    generation_instance: Word, participant_mask: bits(4),
+    consumer_instance: Word) => boolean
+begin
+    for index = 0 to _LocalGenerations[[slot]].consumer_count - 1
+        looplimit 16 do
+        let dependency = _LocalGenerations[[slot]].consumers[[index]];
+        if dependency.valid &&
+           dependency.state == BundleConsumerDependency_Waiting &&
+           dependency.source == source &&
+           dependency.generation_instance == generation_instance &&
+           dependency.execution_domain_token ==
+               _BundleExecutionDomainToken &&
+           dependency.participant_mask == participant_mask &&
+           dependency.consumer_instruction_instance == consumer_instance then
+            return TRUE;
+        end;
+    end;
+    return FALSE;
 end;
 
 readonly func BundleExecutionMaskOrdinaryTileSourceCount(
@@ -315,12 +337,33 @@ begin
     if !destination_found then return TRUE; end;
     let hand = UInt(_BundleTileBindings[[destination_binding]].destination_hand)
         as integer {0..3};
-    if _TileRelativeValid[[hand]][0] == '0' then return FALSE; end;
-    let base = _TileRelativeOrder[[hand]][[0]];
+    let decoded = TileOperationOfIndex(operation);
+    let predicate_logical =
+        (decoded == TileOperation_TAND || decoded == TileOperation_TOR ||
+         decoded == TileOperation_TXOR) &&
+        _Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind ==
+            TileStorage_PredicateCell &&
+        _Tiles[[BundleTileSourceIndex(0, TRUE)]].storage_kind ==
+            TileStorage_PredicateCell;
+    var base: TileIndex = 0;
+    if predicate_logical &&
+       _BundleExecutionMask.merge_base_generation_valid then
+        base = _BundleExecutionMask.merge_base;
+        let pinned_slot = BundleLocalGenerationSlotForDestination(base);
+        if pinned_slot == 64 ||
+           pinned_slot != _BundleExecutionMask.merge_base_generation_slot ||
+           !_LocalGenerations[[pinned_slot]].generation_identity_valid ||
+           _LocalGenerations[[pinned_slot]].generation_instance !=
+               _BundleExecutionMask.merge_base_generation_instance then
+            return FALSE;
+        end;
+    else
+        if _TileRelativeValid[[hand]][0] == '0' then return FALSE; end;
+        base = _TileRelativeOrder[[hand]][[0]];
+    end;
     let tile = _Tiles[[base]];
     if !tile.allocated || !tile.contents_defined then return FALSE; end;
 
-    let decoded = TileOperationOfIndex(operation);
     let coordinate_destination =
         decoded == TileOperation_TCMP || decoded == TileOperation_TCMPS ||
         decoded == TileOperation_TSEL || decoded == TileOperation_TSELS;
@@ -376,13 +419,48 @@ begin
        tile.valid_columns != expected_columns then
         return FALSE;
     end;
-    let predicate_logical =
-        (decoded == TileOperation_TAND || decoded == TileOperation_TOR ||
-         decoded == TileOperation_TXOR) &&
-        _Tiles[[BundleTileSourceIndex(0, FALSE)]].storage_kind == TileStorage_PredicateCell &&
-        _Tiles[[BundleTileSourceIndex(0, TRUE)]].storage_kind == TileStorage_PredicateCell;
     if predicate_logical then
-        if !TilePredicateCellValuesLegal(base) then return FALSE; end;
+        let participant_mask =
+            _BundleTileBindings[[destination_binding]].pe_mask;
+        if !TilePredicateCellValuesLegal(base) ||
+           !TilePayloadIntactForMask(base, participant_mask) then
+            return FALSE;
+        end;
+        let generation_slot = BundleLocalGenerationSlotForDestination(base);
+        if generation_slot < 64 then
+            if !_LocalGenerations[[generation_slot]].generation_identity_valid then
+                return FALSE;
+            end;
+            if _BundleExecutionMask.merge_base_generation_valid then
+                if generation_slot !=
+                       _BundleExecutionMask.merge_base_generation_slot ||
+                   _LocalGenerations[[generation_slot]].generation_instance !=
+                       _BundleExecutionMask.merge_base_generation_instance then
+                    return FALSE;
+                end;
+            else
+                _BundleExecutionMask.merge_base = base;
+                _BundleExecutionMask.merge_base_generation_valid = TRUE;
+                _BundleExecutionMask.merge_base_generation_slot =
+                    generation_slot as integer {0..64};
+                _BundleExecutionMask.merge_base_generation_instance =
+                    _LocalGenerations[[generation_slot]].generation_instance;
+            end;
+            let dependency_ready = BundleConsumerDependencyRequiredRange(
+                generation_slot as integer {0..63}, base, Zeros{PTO_XLEN},
+                0, TRUE, participant_mask, ReadBPC());
+            if !dependency_ready then
+                if BundleExecutionMaskPredicateMergeDependencyWaiting(
+                       generation_slot as integer {0..63}, base,
+                       _BundleExecutionMask.merge_base_generation_instance,
+                       participant_mask, ReadBPC()) then
+                    _BundleExecutionMask.merge_base_waiting = TRUE;
+                end;
+                return FALSE;
+            end;
+        elsif _BundleExecutionMask.merge_base_generation_valid then
+            return FALSE;
+        end;
     elsif decoded == TileOperation_TCMP || decoded == TileOperation_TCMPS then
         if !TilePredicateCellDescriptorLegal(base) ||
            tile.predicate_basis_type != result_type then return FALSE; end;

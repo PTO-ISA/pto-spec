@@ -88,6 +88,10 @@ type BundleExecutionMaskBinding of record {
     zero_inactive: boolean,
     merge_base_valid: boolean,
     merge_base: TileIndex,
+    merge_base_waiting: boolean,
+    merge_base_generation_valid: boolean,
+    merge_base_generation_slot: integer {0..64},
+    merge_base_generation_instance: Word,
     predicate_tile_snapshot: bits(524288)
 };
 

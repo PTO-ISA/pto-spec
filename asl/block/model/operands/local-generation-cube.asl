@@ -89,6 +89,28 @@ begin
         TileSizeCodeBytes(writer_size), layout, data_type);
 end;
 
+readonly func BundleLocalGenerationDestinationReuseMatches(
+    binding: BundleTileBindingIndex, slot: integer {0..63},
+    destination: TileIndex) => boolean
+begin
+    return _BundleTileBindings[[binding]].destination_valid &&
+           _BundleTileBindings[[binding]].destination_reused_by_generation &&
+           !_BundleTileBindings[[binding]].destination_allocated_by_bundle &&
+           _BundleTileBindings[[binding]].destination == destination &&
+           _BundleTileBindings[[binding]].destination_hand ==
+               Zeros{2} + _LocalGenerations[[slot]].destination_hand &&
+           _BundleTileBindings[[binding]].destination_size ==
+               _LocalGenerations[[slot]].parent_size_code;
+end;
+readonly func BundleLocalGenerationDestinationReuseStateLegal(
+    binding: BundleTileBindingIndex, slot: integer {0..63}) => boolean
+begin
+    return (!_BundleTileBindings[[binding]].destination_valid &&
+            !_BundleTileBindings[[binding]].destination_reused_by_generation) ||
+           BundleLocalGenerationDestinationReuseMatches(binding, slot,
+               _LocalGenerations[[slot]].working_destination);
+end;
+
 pure func BundleLocalGenerationCubeValidColumnsAt(
     offset_cells: integer {0..2047}, cell_columns: integer {0,1,2,4,8,16},
     cells_per_group: integer {1..2},

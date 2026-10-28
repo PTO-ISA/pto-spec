@@ -121,7 +121,8 @@ begin
         when TileOperation_TSELS =>
             return SelectedBundleClosedTSELSSchemaLegal(operation);
         otherwise =>
-            return SelectedBundleClosedBinarySchemaLegal(operation) &&
+            return SelectedBundlePredicateLogicalDimensionsLegal(operation) &&
+                   SelectedBundleClosedBinarySchemaLegal(operation) &&
                    SelectedBundleClosedUnarySchemaLegal(operation) &&
                    SelectedBundleClosedTFMASchemaLegal(operation) &&
                    SelectedBundleCellRearrangementSchemaLegal(operation) &&
@@ -455,7 +456,9 @@ begin
         return FALSE;
     end;
     if !PrepareSelectedBundleExecutionMaskMerge(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
+        if !_BundleExecutionMask.merge_base_waiting then
+            SetFault(Fault_TileLegality, ReadTPC());
+        end;
         return FALSE;
     end;
     let (destinations_resolved, resolved_writer_effects) =

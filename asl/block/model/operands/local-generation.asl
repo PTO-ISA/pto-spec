@@ -207,8 +207,7 @@ begin
                     SetBundleLocalGenerationInitFault(Fault_TileLegality); return FALSE;
                 end;
             else
-                if _BundleTileBindings[[binding]].destination_valid ||
-                   !_BundleTileBindings[[binding]].parent_ref_valid ||
+                if !_BundleTileBindings[[binding]].parent_ref_valid ||
                    _BundleTileBindings[[binding]].parent_ref_relative then
                     SetFault(Fault_BundleControl, ReadTPC()); return FALSE;
                 end;
@@ -218,6 +217,10 @@ begin
                     SetFault(Fault_TileLegality, ReadTPC()); return FALSE;
                 end;
                 let generation_slot = slot as integer {0..63};
+                if !BundleLocalGenerationDestinationReuseStateLegal(
+                       binding as BundleTileBindingIndex, generation_slot) then
+                    SetFault(Fault_BundleControl, ReadTPC()); return FALSE;
+                end;
                 if !_LocalGenerations[[generation_slot]].open ||
                    _LocalGenerations[[generation_slot]].closed then
                     SetBundleLocalGenerationFault(generation_slot,
@@ -470,29 +473,25 @@ begin
            _BundleTileBindings[[binding]].destination_assemble.valid then
             let assemble = _BundleTileBindings[[binding]].destination_assemble;
             if !assemble.init then
-                if _BundleTileBindings[[binding]].destination_valid ||
-                   !_BundleTileBindings[[binding]].parent_ref_valid then
-                    SetFault(Fault_BundleControl, ReadTPC()); return FALSE;
-                end;
+                if !_BundleTileBindings[[binding]].parent_ref_valid then SetFault(Fault_BundleControl, ReadTPC()); return FALSE; end;
                 let selected = _BundleTileBindings[[binding]].parent_ref;
                 let slot = BundleLocalGenerationSlotForDestination(selected);
-                if slot == 64 then
-                    SetFault(Fault_TileLegality, ReadTPC()); return FALSE;
-                end;
+                if slot == 64 then SetFault(Fault_TileLegality, ReadTPC()); return FALSE; end;
                 let generation_slot = slot as integer {0..63};
                 let destination = _LocalGenerations[[generation_slot]].working_destination;
-                if !_LocalGenerations[[generation_slot]].open ||
-                   _LocalGenerations[[generation_slot]].closed ||
+                let already_reused = BundleLocalGenerationDestinationReuseMatches(
+                    binding as BundleTileBindingIndex, generation_slot,
+                    destination);
+                if (_BundleTileBindings[[binding]].destination_valid && !already_reused) ||
+                   (!_BundleTileBindings[[binding]].destination_valid && _BundleTileBindings[[binding]].destination_reused_by_generation) then
+                    SetFault(Fault_BundleControl, ReadTPC()); return FALSE; end;
+                if !_LocalGenerations[[generation_slot]].open || _LocalGenerations[[generation_slot]].closed ||
                    !_Tiles[[destination]].allocated ||
-                   !BundleLocalGenerationDescriptorMatches(
-                       generation_slot, destination,
-                       _BundleTileBindings[[binding]].pe_mask) then
-                    SetBundleLocalGenerationFault(generation_slot,
-                        Fault_TileLegality); return FALSE;
+                   !BundleLocalGenerationDescriptorMatches(generation_slot, destination, _BundleTileBindings[[binding]].pe_mask) then
+                    SetBundleLocalGenerationFault(generation_slot, Fault_TileLegality); return FALSE; end;
+                if !already_reused then
+                    BindBundleLocalGenerationDestination(binding as BundleTileBindingIndex, generation_slot, selected);
                 end;
-                BindBundleLocalGenerationDestination(
-                    binding as BundleTileBindingIndex,
-                    generation_slot, selected);
             end;
         end;
     end;

@@ -21,6 +21,7 @@ begin
     _BundleExecutionMask.zero_inactive =
         _BundleDataAttributes.execution_mask_zero;
     _BundleExecutionMask.merge_base_valid = FALSE;
+    _BundleExecutionMask.merge_base_waiting = FALSE;
 end;
 func CaptureBundleExecutionMaskPredicateTile(
     predicate: TileIndex, layout: TileLayout,
@@ -56,5 +57,6 @@ begin
     _BundleExecutionMask.zero_inactive =
         _BundleDataAttributes.execution_mask_zero;
     _BundleExecutionMask.merge_base_valid = FALSE;
+    _BundleExecutionMask.merge_base_waiting = FALSE;
     _BundleExecutionMask.predicate_tile_snapshot = snapshot;
 end;
