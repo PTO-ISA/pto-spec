@@ -12,18 +12,22 @@ begin
     ResetProfileState();
     let source_2048 = ConfigureCubeTile(0, 2048, 16, 2,
         TileDataType_U32, TileLayout_CUBE_M16);
-    let destination_2048 = ConfigureCubeTile(1, 128, 16, 1,
+    let destination_2048 = ConfigureCubeTile(1, 2048, 16, 1,
         TileDataType_U32, TileLayout_CUBE_M16);
     let source_4096 = ConfigureCubeTile(2, 4096, 16, 2,
         TileDataType_U32, TileLayout_CUBE_M16);
-    let destination_4096 = ConfigureCubeTile(3, 128, 16, 1,
+    let destination_4096 = ConfigureCubeTile(3, 4096, 16, 1,
         TileDataType_U32, TileLayout_CUBE_M16);
     assert source_2048 && destination_2048 && source_4096 && destination_4096;
+    assert _Tiles[[0]].columns == 32 && _Tiles[[1]].columns == 32;
+    assert _Tiles[[2]].columns == 64 && _Tiles[[3]].columns == 64;
     FillSource(0);
     FillSource(2);
     ExecuteTileReduction(TileReduction_SUM, TileAxis_Row, 1, 0);
     ExecuteTileReduction(TileReduction_SUM, TileAxis_Row, 3, 2);
-    assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 7;
-    assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 7;
+    for row = 0 to 15 looplimit 16 do
+        assert ReadTileElement(1, row, 0) == Zeros{PTO_XLEN} + 7;
+        assert ReadTileElement(3, row, 0) == Zeros{PTO_XLEN} + 7;
+    end;
     return 0;
 end;

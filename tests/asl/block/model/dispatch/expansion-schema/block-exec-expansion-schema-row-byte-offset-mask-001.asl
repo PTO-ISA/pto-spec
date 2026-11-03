@@ -100,7 +100,7 @@ begin
            attributed == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
-    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 8);
     let binding = ExecuteCommandInstruction(
         RowExpandPredicateCopyBinding(Zeros{6} + 1, Zeros{6} + 12), 32);
     assert binding == CommandExecution_Executed;
@@ -156,7 +156,7 @@ begin
            attributed == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
-    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 8);
     let execution_mask_command = ExecuteCommandInstruction(
         RowExpandIOR(Zeros{5} + 2), 32);
     let binding = ExecuteCommandInstruction(

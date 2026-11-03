@@ -32,8 +32,8 @@ begin
     assert dim_400043 == CommandExecution_Executed;
     let dim_101043 = ExecuteCommandInstruction(Zeros{64} + 0x00101043, 32);
     assert dim_101043 == CommandExecution_Executed;
-    let dim_402043 = ExecuteCommandInstruction(Zeros{64} + 0x00402043, 32);
-    assert dim_402043 == CommandExecution_Executed;
+    let dim_802043 = ExecuteCommandInstruction(Zeros{64} + 0x00802043, 32);
+    assert dim_802043 == CommandExecution_Executed;
     let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x0018de13, 32);
     assert bind_0 == CommandExecution_Executed;
     let assemble_0 = ExecuteCommandInstruction(Zeros{64} + 0x800018d3, 32);
