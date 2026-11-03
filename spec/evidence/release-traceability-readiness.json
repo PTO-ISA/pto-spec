@@ -131,6 +131,8 @@
         "PTO-AVS-ARCH-GM-OBLIGATION-DELAYED-TSTORE-001",
         "PTO-AVS-ARCH-GM-OBLIGATION-SCALAR-FAULT-RETRY-001",
         "PTO-AVS-ARCH-GM-OBLIGATION-TSTORE-QUIESCENCE-002",
+        "PTO-AVS-ARCH-KERNEL-RUNTIME-STARTUP-ABORT-005",
+        "PTO-AVS-ARCH-KERNEL-RUNTIME-STARTUP-LEADER-004",
         "PTO-AVS-ARCH-RC-ATOMIC-FENCE-ORDER-002",
         "PTO-AVS-ARCH-STATE-CORE-SYNCHRONIZATION-STATIC-001",
         "PTO-AVS-ARCH-SYNC-ABORT-RECLAIMS-RING-002",
@@ -291,6 +293,8 @@
         "PTO-AVS-ARCH-GM-OBLIGATION-FIRST-VALIDATION-ACR-003",
         "PTO-AVS-ARCH-GM-OBLIGATION-TSTORE-QUIESCENCE-002",
         "PTO-AVS-ARCH-KERNEL-LIFECYCLE-FRESH-LAUNCH-TRAP-003",
+        "PTO-AVS-ARCH-KERNEL-RUNTIME-STARTUP-ABORT-005",
+        "PTO-AVS-ARCH-KERNEL-RUNTIME-STARTUP-LEADER-004",
         "PTO-AVS-ARCH-STATE-KERNEL-LIFECYCLE-STATIC-001",
         "PTO-AVS-ARCH-SYNC-ABORT-RECLAIMS-RING-002",
         "PTO-AVS-ARCH-SYNC-CORE-SITE-MISMATCH-001",
@@ -671,6 +675,48 @@
         "PTO-AVS-BLOCK-TMATMUL-SHARED-LOCAL-PRIVATE-FOURSTREAM-038",
         "PTO-AVS-SCALAR-SYNC-CORE-CORE-ISOLATION-001",
         "PTO-AVS-TILE-LOCAL-CAPACITY-PE-BANK-003"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-ARCH-RUNTIME-STARTUP-ABI-001",
+      "owners": [
+        "asl/arch/state/kernel-lifecycle.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-SCALAR-0007"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-KERNEL-RUNTIME-STARTUP-ABORT-005",
+        "PTO-AVS-ARCH-KERNEL-RUNTIME-STARTUP-LEADER-004",
+        "PTO-AVS-ARCH-STATE-KERNEL-LIFECYCLE-STATIC-001"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-ARCH-RUNTIME-STARTUP-ADAPTATION-001",
+      "owners": [
+        "asl/arch/state/kernel-lifecycle.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-SCALAR-0007"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-STATE-KERNEL-LIFECYCLE-STATIC-001"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-ARCH-RUNTIME-STARTUP-LIFETIME-001",
+      "owners": [
+        "asl/arch/state/kernel-lifecycle.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-SCALAR-0007"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-KERNEL-RUNTIME-STARTUP-ABORT-005",
+        "PTO-AVS-ARCH-STATE-KERNEL-LIFECYCLE-STATIC-001"
       ]
     },
     {
@@ -19576,6 +19622,8 @@
         "ADR-STATE-0008"
       ],
       "tests": [
+        "PTO-AVS-ARCH-KERNEL-RUNTIME-STARTUP-ABORT-005",
+        "PTO-AVS-ARCH-KERNEL-RUNTIME-STARTUP-LEADER-004",
         "PTO-AVS-SCALAR-MODEL-SYS-SEMANTICS-STATIC-001",
         "PTO-AVS-THREAD-ID-FOUR-PE-001",
         "PTO-AVS-THREAD-ID-LIFECYCLE-001",
@@ -21501,7 +21549,7 @@
     "asl/arch/programming-model/tile-registers.asl": "59452d3b3b708dc43f6ec4f930b1c7153d6d5247a93119669527bd29b26ec99e",
     "asl/arch/state/core-synchronization.asl": "a9f34342e9982ea84c4ebf797b32745807792a833c95a5d6e8d66157b66aeb53",
     "asl/arch/state/definedness.asl": "f68778534d67e736f701f8e24e03f27a018f3eabcec1421a6b33856030874ad1",
-    "asl/arch/state/kernel-lifecycle.asl": "d8497dba432be49a8f1fb441d62c4a69d8f7250b32be5cc80bff7fab7766412a",
+    "asl/arch/state/kernel-lifecycle.asl": "e10a4fb3b78c8cf88c06111c4e355190668c35b409b6530711f31bacee8cafe0",
     "asl/arch/state/local-payload-generation.asl": "9e8b044814d0542eee5d21bfc995fe8d570e1e8d4c3651c823e68831533cae62",
     "asl/arch/state/numeric-status.asl": "3d3fe1709c7e2903bca96d50e9671a6a484c442ff08ce4a8340168cdb38ac6d9",
     "asl/arch/state/pe-execution-context.asl": "76b8a22396b0441f511c9061c9037ce17d849245e26ea2044c89075d4926b40a",
@@ -22452,7 +22500,7 @@
     "docs/arch/programming-model/tile-registers.md": "93e2cffab8050b30e112d3371f37e950e9bff9e8373cb06172cf6cab51a501ef",
     "docs/arch/state/core-synchronization.md": "213103de8013ffa95f1f545ccacbf5d6659c1c4f482e3da0d982c74c8c01c390",
     "docs/arch/state/definedness.md": "0c592e7785591408293173237e5ae537b04d33f1c15de2a02985605e8a0b8892",
-    "docs/arch/state/kernel-lifecycle.md": "4bd5ee9553670d03affdab8691102b103001579948f7ed61270f14df2fc02aea",
+    "docs/arch/state/kernel-lifecycle.md": "1ba5683cf2986c0d8e837d13f1802b93cf688a71af5447cc314e79ef98c83057",
     "docs/arch/state/local-payload-generation.md": "e2c7cf72c098774fb518d0f8168a651f9b60f2d220009281adf3b0a95418708d",
     "docs/arch/state/numeric-status.md": "2bc1485eab64147a553ddb269fb3e520dd0b63dc7c31614996dc32c53b57d06f",
     "docs/arch/state/pe-execution-context.md": "69586d85be83c5bec6067eb1a4e569636bf2d132d2becc4fff94a6cb6507b8a9",
@@ -23343,7 +23391,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "c1332aa895d5a70170b6f193674ad97371cbdd4314f5336de4ce4eb703d4d484",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "4fdb0facff519fecde8ba33ed966ed54c04b04c3f5f344024b2ce1a859434d67",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "c2bba4aad8073962fc18443147a53b3492eee9629f7a5975591087d1d8834e67",
-    "spec/evidence/adr-index.json": "8f957a5d2a85e87ee0ea59eea592bc3a02f26d082bcf5ebda4a07f072fc83542",
+    "spec/evidence/adr-index.json": "4a70d831b1bfac36d1180aa455559a112efaf5166d4fc94f364c592bf229c768",
     "spec/evidence/instruction-contract-closure.json": "24a89e14787ed51068ac13564d70e7a9ba2601e11f6959c708405ebd6a5e1f6a",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6c18bfdff0279b6d4fbaf3cb3c8e1ee111b4d5e82e1688136b88be6fa7902ba3",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -23510,6 +23558,8 @@
     "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-lifecycle-delayed-tstore-001.asl": "426c36b433a7bdbba86db992196fb93138cdadd3696aedef7c65e3baf6f09876",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-lifecycle-fresh-launch-retires-trap-frames-003.asl": "4f05de67468dec76b0c018f574cecaba23e07e02881a6fa536d51b4c87544f7d",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-lifecycle-tstore-quiescence-002.asl": "39e7364b068a4786adecbb8d71eb80ffc8f412a626bc56214967407a16cb0e24",
+    "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-runtime-startup-abort-005.asl": "ea188f0069907e6a058ed5f9af0189132d0baf91953f47cf01f72aa19bb5c58f",
+    "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-runtime-startup-single-leader-004.asl": "4b5465c12c36dc9a16a8541fd3939f486d378dbe1b8b5bcee8f782dc59591bd7",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-bstart-predecessor-001.asl": "9606499280b9e25efb5612de07f20810988e57c639d84f413eef40ba9e8f63ac",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-cancel-001.asl": "7b6b6f3e2a357da09a1d5bee455de4503357ff71d71716c6d9eceedc5e983b90",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-completion-001.asl": "fded6a714fc50fd9ea514fd5a694b3582aebc53eee06e948e452d193ffde20d9",
@@ -23517,7 +23567,7 @@
     "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-domain-squash-zero-002.asl": "8aaf1d2b9a26b49f7348efce10097c469fa6e1675a04fbd9b654509ecf5d99e3",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-drain-001.asl": "f111d8735a2b49d9d779c2dbe34679f4ad1381fe66daf41d98f131543e8a17c3",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-local-consumer-squash-004.asl": "364741b856b119190c1ac750fe56d06133ae814a7c3e5d74b23907df50b279e8",
-    "tests/asl/arch/state/kernel-lifecycle/arch-static-kernel-lifecycle-contract-001.asl": "5e1696d42da260d0b24a5a12e7aa73e29de92e09666d6117dd1627c9e1ac34cc",
+    "tests/asl/arch/state/kernel-lifecycle/arch-static-kernel-lifecycle-contract-001.asl": "e01db11b73b1ce2cef5ef48437f6e8b50d1bda5f6045cdbd3f635e87a4661887",
     "tests/asl/arch/state/local-payload-generation/arch-static-local-payload-generation-contract-001.asl": "f78353c8219afea2f26c643663d71de8b3bbe1f15890d45aedd56e073d450db8",
     "tests/asl/arch/state/numeric-status/arch-state-numeric-status-001.asl": "73c82a0e416a7635964e18f0b52a0330df6edcb3292f9eb65937b9ace7d9948d",
     "tests/asl/arch/state/numeric-status/arch-static-numeric-status-contract-001.asl": "98f5b7e8fe831e27ddfd019b142755a3675e04ff9fe7224a881f3f5d28eca221",
@@ -27783,9 +27833,9 @@
     "mnemonic_count": 671,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 1131,
+    "requirement_count": 1134,
     "status": "closed",
-    "test_count": 4431,
+    "test_count": 4433,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -36133,6 +36183,33 @@
       "source": "asl/arch/state/kernel-lifecycle.asl"
     },
     {
+      "id": "PTO-AVS-ARCH-KERNEL-RUNTIME-STARTUP-ABORT-005",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-runtime-startup-abort-005.asl",
+      "requirements": [
+        "PTO-ARCH-KERNEL-LIFECYCLE-001",
+        "PTO-ARCH-RUNTIME-STARTUP-ABI-001",
+        "PTO-ARCH-RUNTIME-STARTUP-LIFETIME-001",
+        "PTO-ARCH-CORE-SYNCHRONIZATION-001",
+        "PTO-THREAD-ID-PE-IDENTITY-001"
+      ],
+      "sha256": "ea188f0069907e6a058ed5f9af0189132d0baf91953f47cf01f72aa19bb5c58f",
+      "source": "asl/arch/state/kernel-lifecycle.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-KERNEL-RUNTIME-STARTUP-LEADER-004",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-runtime-startup-single-leader-004.asl",
+      "requirements": [
+        "PTO-ARCH-KERNEL-LIFECYCLE-001",
+        "PTO-ARCH-RUNTIME-STARTUP-ABI-001",
+        "PTO-ARCH-CORE-SYNCHRONIZATION-001",
+        "PTO-THREAD-ID-PE-IDENTITY-001"
+      ],
+      "sha256": "4b5465c12c36dc9a16a8541fd3939f486d378dbe1b8b5bcee8f782dc59591bd7",
+      "source": "asl/arch/state/kernel-lifecycle.asl"
+    },
+    {
       "id": "PTO-AVS-ARCH-MATRIX-INTERMEDIATE-002",
       "kind": "execution",
       "path": "tests/asl/tile/model/execution/matrix-quantization/tile-exec-matrix-intermediate-002.asl",
@@ -36866,9 +36943,12 @@
       "kind": "static-invariant",
       "path": "tests/asl/arch/state/kernel-lifecycle/arch-static-kernel-lifecycle-contract-001.asl",
       "requirements": [
-        "PTO-ARCH-KERNEL-LIFECYCLE-001"
+        "PTO-ARCH-KERNEL-LIFECYCLE-001",
+        "PTO-ARCH-RUNTIME-STARTUP-ABI-001",
+        "PTO-ARCH-RUNTIME-STARTUP-LIFETIME-001",
+        "PTO-ARCH-RUNTIME-STARTUP-ADAPTATION-001"
       ],
-      "sha256": "5e1696d42da260d0b24a5a12e7aa73e29de92e09666d6117dd1627c9e1ac34cc",
+      "sha256": "e01db11b73b1ce2cef5ef48437f6e8b50d1bda5f6045cdbd3f635e87a4661887",
       "source": "asl/arch/state/kernel-lifecycle.asl"
     },
     {
@@ -74595,6 +74675,8 @@
         "PTO-AVS-ARCH-GM-OBLIGATION-DELAYED-TSTORE-001",
         "PTO-AVS-ARCH-GM-OBLIGATION-TSTORE-QUIESCENCE-002",
         "PTO-AVS-ARCH-KERNEL-LIFECYCLE-FRESH-LAUNCH-TRAP-003",
+        "PTO-AVS-ARCH-KERNEL-RUNTIME-STARTUP-ABORT-005",
+        "PTO-AVS-ARCH-KERNEL-RUNTIME-STARTUP-LEADER-004",
         "PTO-AVS-ARCH-TSTORE-ATOMIC-BSTART-PREDECESSOR-001",
         "PTO-AVS-ARCH-TSTORE-ATOMIC-CANCEL-001",
         "PTO-AVS-ARCH-TSTORE-ATOMIC-COMPLETION-001",
@@ -74609,6 +74691,8 @@
         "PTO-AVS-ARCH-GM-OBLIGATION-DELAYED-TSTORE-001",
         "PTO-AVS-ARCH-GM-OBLIGATION-TSTORE-QUIESCENCE-002",
         "PTO-AVS-ARCH-KERNEL-LIFECYCLE-FRESH-LAUNCH-TRAP-003",
+        "PTO-AVS-ARCH-KERNEL-RUNTIME-STARTUP-ABORT-005",
+        "PTO-AVS-ARCH-KERNEL-RUNTIME-STARTUP-LEADER-004",
         "PTO-AVS-ARCH-STATE-KERNEL-LIFECYCLE-STATIC-001",
         "PTO-AVS-ARCH-TSTORE-ATOMIC-BSTART-PREDECESSOR-001",
         "PTO-AVS-ARCH-TSTORE-ATOMIC-CANCEL-001",

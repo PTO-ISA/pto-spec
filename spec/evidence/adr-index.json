@@ -10182,7 +10182,10 @@
         "PTO-TLOAD-MEMORY-001",
         "PTO-TMOV-CONTRACT-001",
         "PTO-BSTART-TLOAD-WEIGHT-COOPERATIVE-001",
-        "PTO-BSTART-TIMG2COL-COOPERATIVE-001"
+        "PTO-BSTART-TIMG2COL-COOPERATIVE-001",
+        "PTO-ARCH-RUNTIME-STARTUP-ABI-001",
+        "PTO-ARCH-RUNTIME-STARTUP-LIFETIME-001",
+        "PTO-ARCH-RUNTIME-STARTUP-ADAPTATION-001"
       ],
       "affected_units": [
         "PTO-SCALAR-SYNC-CORE",
@@ -10234,6 +10237,24 @@
         "PTO-TILE-MODEL-STATE-SHARED-REGISTERS",
         "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS",
         "PTO-BLOCK-MODEL-DISPATCH-TIMG2COL-SCHEMA"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-ARCH-RUNTIME-STARTUP-ABI-001",
+            "PTO-ARCH-RUNTIME-STARTUP-LIFETIME-001",
+            "PTO-ARCH-RUNTIME-STARTUP-ADAPTATION-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-STATE-KERNEL-LIFECYCLE"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "149c3a56c130bb6a13cb9f91e1565f084103cb96",
+          "date": "2026-11-03",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/150#issuecomment-6592769941"
+        }
       ],
       "approvers": [
         "ckwllawliet <641433195@qq.com>"
