@@ -76,6 +76,89 @@ This page is a generated reference view of the normative ASL unit.
 // operation ordinals; aggregate records and another identity remain untouched.
 // NDF-END: PTO-ARCH-KERNEL-LIFECYCLE-001
 
+// NDF-BEGIN: PTO-ARCH-RUNTIME-STARTUP-ABI-001
+// ndf: kind=contract level=L1 layer=architecture status=accepted
+// The four-PE runtime startup ABI MUST preserve the common entry and invocation
+// identity of [[PTO-ARCH-KERNEL-LIFECYCLE-001]]. All four independently executing
+// contexts enter the same runtime entry; it MUST select PE0 as the sole shared
+// initialization leader using [[PTO-THREAD-ID-PE-IDENTITY-001]]. Separate initial
+// leader/worker PCs are not this ABI; branching after common entry is permitted.
+// Before using a stack, private storage, or launch arguments, each PE MUST have
+// valid bootstrap bindings supplied by the loader/platform or established by
+// private entry code. Worker bootstrap MUST NOT read unfinished leader-produced
+// state or overlap storage being initialized by PE0. Concrete bindings belong
+// to the platform ABI, not to LaunchKernelInvocation's state initialization.
+// PE0 MUST perform the invocation's shared initialization. PE1..PE3 MUST perform
+// only necessary private bootstrap, then wait at the startup SYNC.CORE. They
+// MUST NOT duplicate shared initialization or enter the kernel work phase early.
+// Every PE MUST execute the same static startup SYNC.CORE site at generation
+// zero of this invocation, in its legal Scalar SYS envelope. PE0 MUST arrive
+// only after its shared initialization has succeeded. That initialization MUST
+// NOT require a four-PE collective while workers wait at the startup barrier.
+// Each PE may enter the kernel work phase only after consuming its startup
+// release under [[PTO-ARCH-CORE-SYNCHRONIZATION-001]]. Its preceding GM effects
+// and following accesses retain the existing collective memory-order contract.
+// PE_MASK, local fences, a ready flag, elapsed time, or loader return MUST NOT
+// substitute for four actual arrivals and completion of earlier GM obligations.
+// SYNC.CORE is a rendezvous, not a mechanism for creating or waking unlaunched
+// PE contexts. Single-context hosted execution MUST NOT use this startup path.
+// NDF-END: PTO-ARCH-RUNTIME-STARTUP-ABI-001
+
+// NDF-BEGIN: PTO-ARCH-RUNTIME-STARTUP-LIFETIME-001
+// ndf: kind=contract level=L1 layer=architecture status=accepted
+// Shared startup initialization has one software owner, PE0. Process-lifetime
+// initialization, including libc/constructor and process-service setup when
+// present, MUST NOT be repeated by worker PEs or merely because another kernel
+// invocation begins. The hosted ABI owns process lifetime; each invocation
+// still performs its own shared preparation and startup rendezvous. Workers
+// MUST NOT use libc/TLS/host services during bootstrap unless their separate
+// ABI explicitly supplies valid PE-private state and permits that use.
+// A recoverable startup fault or interrupt MUST resume through the existing
+// precise instruction/request restart contract in the same invocation, preserving
+// committed effects. Normal request replay retains its existing semantics; this
+// ABI does not promise exactly-once memory beats. Trap return MUST NOT by itself
+// restart completed process constructors or manufacture an additional arrival.
+// On unrecoverable initialization failure or a missing participant, the runtime
+// MUST NOT report startup success or allow peers into the kernel work phase.
+// Missing arrivals remain blocked; a platform/runtime may request the existing
+// invocation abort, but MUST NOT fabricate a release or silently run fewer PEs.
+// Abort, committed-effect preservation and quiescence before relaunch follow
+// [[PTO-ARCH-KERNEL-LIFECYCLE-001]]. Relaunch MUST use a fresh invocation and a
+// fresh startup rendezvous; stale ready flags, arrivals or release tokens MUST
+// NOT authorize entry. The runtime owns repairing or reinitializing partially
+// prepared application data before a later successful startup; abort does not
+// roll back committed stores. External failure reporting and process exit are
+// platform/hosted ABI obligations, not new instruction fault or exit semantics.
+// NDF-END: PTO-ARCH-RUNTIME-STARTUP-LIFETIME-001
+
+// NDF-BEGIN: PTO-ARCH-RUNTIME-STARTUP-ADAPTATION-001
+// ndf: kind=contract level=L1 layer=architecture status=accepted
+// Consumers claiming four-PE runtime startup ABI support MUST implement
+// [[PTO-ARCH-RUNTIME-STARTUP-ABI-001]] and
+// [[PTO-ARCH-RUNTIME-STARTUP-LIFETIME-001]] together. Compiler/linker and startup
+// objects MUST preserve common entry, legal THREAD_ID/SYNC.CORE placement,
+// PE0-only shared initialization, and the startup memory-order boundary.
+// Runtime/libc integration MUST separate process/shared initialization from
+// PE-private bootstrap and invocation preparation. Platform loaders MUST bind
+// entry, arguments, isolated private stacks/storage, context creation, invocation
+// identity, and completion/failure/abort interfaces explicitly before use.
+// Functional/timing models MUST execute four real independent PE contexts and
+// preserve waiting, fault, abort and relaunch behavior. Creating host/OS threads
+// alone or repeatedly invoking one architectural context does not satisfy this
+// requirement; a simulator may use host threads to implement independent contexts.
+// Validation MUST include a common-entry runtime-only ELF that demonstrates
+// distinct PE identities and private stacks, exactly one shared initializer,
+// workers blocked before release, initialized-data visibility after release,
+// both leader-first and workers-first arrival, missing-participant blocking,
+// startup failure, and abort/relaunch isolation. Benchmark adoption additionally
+// requires the same ELF and launch bindings across compared models, independent
+// golden output, and declared toolchain/runtime/model revisions. Instruction
+// tests alone MUST NOT be reported as complete runtime or hardware validation.
+// Numeric entry/argument/stack/TLS layouts, ELF identification, launch transport,
+// syscall/fd/exit policy and platform status/reset interfaces remain separately
+// owned ABI decisions; this contract assigns no new values or fallback behavior.
+// NDF-END: PTO-ARCH-RUNTIME-STARTUP-ADAPTATION-001
+
 type KernelLifecycleResult of enumeration {
     KernelLifecycle_Started,
     KernelLifecycle_Waiting,
