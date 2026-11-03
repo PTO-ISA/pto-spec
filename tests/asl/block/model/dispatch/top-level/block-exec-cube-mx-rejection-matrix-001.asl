@@ -52,10 +52,8 @@ begin
         SetFault(Fault_IllegalInstruction, ReadTPC());
         return CommandExecution_Rejected;
     end;
-    ExecuteDecodedBundleStartWithAcceptedApplicabilityRules(
+    return ExecuteDecodedBundleStartWithAcceptedApplicabilityRules(
         rules, instruction, form, 32);
-    if _LastFault != Fault_None then return CommandExecution_Rejected; end;
-    return CommandExecution_Executed;
 end;
 
 pure func BundleTestMxFunction(index: integer {0..5}) => integer {4..22}

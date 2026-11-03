@@ -50,11 +50,11 @@ begin
     assert attributes == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
-    SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 8);
     AddBundleTileBinding(
         FALSE, 0, 0, '1111', TRUE, TRUE, 1, 2, FALSE);
     AddBundleTileBinding(
-        TRUE, 0, 1, '1111', TRUE, FALSE, 3, 0, TRUE);
+        TRUE, 0, 2, '1111', TRUE, FALSE, 3, 0, TRUE);
 
     let operation = DecodeTileOperation(
         TileDecode_TEPL, Zeros{12})

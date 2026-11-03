@@ -106,11 +106,16 @@ begin
     let operation = DecodeTileOperation(
         TileDecode_TEPL, Zeros{12} + 0x044)
         as integer {0..PTO_TILE_OPERATION_COUNT-1};
-    let completed = ExecuteBundleTileOperation();
-    assert !completed && _LastFault == Fault_TileLegality;
-    let descriptor = _BundleTileBindings[[0]].source0_subview.derived;
+    let descriptor = BundleCubeSubviewDescriptorOf(2, Zeros{PTO_XLEN} + 1, 1);
     assert descriptor.valid && descriptor.origin_column == 2 &&
            descriptor.valid_columns == 1;
+    let completed = ExecuteBundleTileOperation();
+    assert !completed && _LastFault == Fault_TileLegality;
+    // Schema faults restore the parent and discard derived temporary views.
+    assert _BundleTileBindings[[0]].source0 == 2;
+    assert _BundleTileBindings[[0]].source0_subview.valid;
+    assert !_BundleTileBindings[[0]].source0_subview.derived.valid;
+    assert !_BundleTileBindings[[0]].source0_subview.materialized;
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
 end;
 

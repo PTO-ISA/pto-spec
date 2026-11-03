@@ -220,6 +220,7 @@ def _full_jobs() -> dict[str, object]:
                 },
                 {
                     "name": "Aggregate exact health without release evidence mutation",
+                    "if": "always()",
                     "shell": "bash",
                     "env": {
                         "AUTHORITY": "${{ inputs.authority }}",
@@ -230,7 +231,7 @@ def _full_jobs() -> dict[str, object]:
                         "STRICT_MODEL_RESULT": "${{ needs.strict-model.result }}",
                         "ASL_PAGE_RESULT": "${{ needs.asl-page.result }}",
                     },
-                    "run-sha256": "b602dbf024463aae46d9d0878b5d03debd8a8fb0808125fedd899610bcd02f9b",
+                    "run-sha256": "4740128813d47fa94db3a5665c9ea7be3370976018db0beea9f180c36575f3e3",
                 },
                 {
                     "name": "Upload one health summary",
