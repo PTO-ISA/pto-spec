@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import os
 import shutil
 import subprocess
 import tempfile
@@ -11,6 +13,7 @@ from scripts.full_validation_workflow import (
     validate_nightly_workflow,
 )
 from scripts.release_workflow import validate_pr_workflow, validate_release_workflow
+from scripts.workflow_contract import parse_workflow
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -790,13 +793,141 @@ class HostedFullValidationContractTest(unittest.TestCase):
 
     def test_shared_health_aggregation_is_exact_and_fail_closed(self) -> None:
         self.assert_full_rejected(
-            '          test "$ASL_PAGE_RESULT" = success\n',
-            '          test -n "$ASL_PAGE_RESULT"\n',
+            '          test "$(python3 -c \'import json; print(json.load(open("build/full-validation-health.json"))["status"])\')" = passed\n',
+            '          test -f build/full-validation-health.json\n',
         )
         self.assert_full_rejected(
             "from scripts.asl_release_suite import aggregate_results, load_matrix_pages, load_results\n",
-            "coverage = {'status': 'passed'}\n",
+            "from scripts.asl_release_suite import load_matrix_pages, load_results\n",
         )
+
+    def test_failed_asl_page_still_writes_exact_failure_health(self) -> None:
+        workflow, errors = parse_workflow(self.full, label="full validation workflow")
+        self.assertEqual(errors, [])
+        assert workflow is not None
+        run = workflow["jobs"]["health"]["steps"][3]["run"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+            subprocess.run(
+                ["git", "-c", "user.name=test", "-c", "user.email=test@example.invalid",
+                 "commit", "--allow-empty", "-q", "-m", "fixture"],
+                cwd=root,
+                check=True,
+            )
+            commit = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=root, check=True,
+                capture_output=True, text=True,
+            ).stdout.strip()
+            plan = root / "build/planned-asl-test-pages"
+            results = root / "build/asl-test-results/PTO-TEST"
+            plan.mkdir(parents=True)
+            results.mkdir(parents=True)
+            exact = {
+                "id": "PTO-TEST", "path": "tests/example.asl", "sha256": "a" * 64,
+                "display_name": "example", "source": "asl/example.asl", "kind": "execution",
+                "validation_entrypoint": "main", "validation_sha256": "b" * 64,
+                "execution_profile": "default", "profile_fingerprint": "c" * 64,
+                "profile_registry_sha256": "d" * 64, "profile_inputs": [],
+                "aslref_command": ["aslref", "test.asl"],
+            }
+            (plan / "page-0.json").write_text(json.dumps({
+                "commit": commit, "page": 0, "page_count": 1,
+                "test_count": 1, "include": [exact],
+            }))
+            result_path = results / "result.json"
+            result_path.write_text(json.dumps({**exact, "status": "passed"}))
+            environment = {
+                **os.environ,
+                "PYTHONPATH": str(ROOT),
+                "AUTHORITY": "nightly",
+                "COMMIT": commit,
+                "IDENTITY_RESULT": "success",
+                "PR_CONTRACT_RESULT": "success",
+                "MATRIX_PLAN_RESULT": "success",
+                "STRICT_MODEL_RESULT": "success",
+                "ASL_PAGE_RESULT": "success",
+                "GITHUB_STEP_SUMMARY": str(root / "summary.md"),
+            }
+            passed = subprocess.run(
+                ["bash", "-e", "-o", "pipefail", "-c", run],
+                cwd=root, env=environment, capture_output=True, text=True,
+            )
+            self.assertEqual(passed.returncode, 0, passed.stderr)
+            healthy = json.loads((root / "build/full-validation-health.json").read_text())
+            self.assertEqual(healthy["status"], "passed")
+            self.assertEqual(healthy["asl_status"], "passed")
+
+            strict_failure = {**environment, "STRICT_MODEL_RESULT": "failure"}
+            strict = subprocess.run(
+                ["bash", "-e", "-o", "pipefail", "-c", run],
+                cwd=root, env=strict_failure, capture_output=True, text=True,
+            )
+            self.assertNotEqual(strict.returncode, 0)
+            unhealthy = json.loads((root / "build/full-validation-health.json").read_text())
+            self.assertEqual(unhealthy["status"], "failed")
+            self.assertEqual(unhealthy["asl_status"], "passed")
+            self.assertEqual(unhealthy["prerequisites"]["strict_model"], "failure")
+            self.assertIn("strict_model", unhealthy["diagnostic"])
+
+            wrong_commit = "f" * 40
+            (plan / "page-0.json").write_text(json.dumps({
+                "commit": wrong_commit, "page": 0, "page_count": 1,
+                "test_count": 1, "include": [exact],
+            }))
+            wrong_head = subprocess.run(
+                ["bash", "-e", "-o", "pipefail", "-c", run],
+                cwd=root, env={**environment, "COMMIT": wrong_commit},
+                capture_output=True, text=True,
+            )
+            self.assertNotEqual(wrong_head.returncode, 0)
+            invalid_head = json.loads(
+                (root / "build/full-validation-health.json").read_text()
+            )
+            self.assertEqual(invalid_head["status"], "invalid")
+            self.assertIn("checkout commit mismatch", invalid_head["diagnostic"])
+
+            (plan / "page-0.json").write_text(json.dumps({
+                "commit": commit, "page": 0, "page_count": 1,
+                "test_count": 1, "include": [exact],
+            }))
+            result_path.write_text(json.dumps({**exact, "status": "failed"}))
+            failed_environment = {**environment, "ASL_PAGE_RESULT": "failure"}
+            completed = subprocess.run(
+                ["bash", "-e", "-o", "pipefail", "-c", run],
+                cwd=root, env=failed_environment, capture_output=True, text=True,
+            )
+            self.assertNotEqual(completed.returncode, 0)
+            health = json.loads((root / "build/full-validation-health.json").read_text())
+            self.assertEqual(health["commit"], commit)
+            self.assertEqual(health["status"], "failed")
+            self.assertEqual(health["test_count"], 1)
+            self.assertEqual(health["passed_count"], 0)
+            self.assertEqual(health["failed_count"], 1)
+
+            result_path.unlink()
+            missing = subprocess.run(
+                ["bash", "-e", "-o", "pipefail", "-c", run],
+                cwd=root, env=failed_environment, capture_output=True, text=True,
+            )
+            self.assertNotEqual(missing.returncode, 0)
+            invalid = json.loads((root / "build/full-validation-health.json").read_text())
+            self.assertEqual(invalid["status"], "invalid")
+            self.assertIsNone(invalid["passed_count"])
+            self.assertIn("missing result for PTO-TEST", invalid["diagnostic"])
+
+            shutil.rmtree(root / "build")
+            missing_plan = subprocess.run(
+                ["bash", "-e", "-o", "pipefail", "-c", run],
+                cwd=root, env=failed_environment, capture_output=True, text=True,
+            )
+            self.assertNotEqual(missing_plan.returncode, 0)
+            missing_health = json.loads(
+                (root / "build/full-validation-health.json").read_text()
+            )
+            self.assertEqual(missing_health["status"], "invalid")
+            self.assertIsNone(missing_health["test_count"])
+            self.assertIn("no planned matrix pages", missing_health["diagnostic"])
 
     def test_shared_contract_rejects_extra_steps_and_jobs(self) -> None:
         self.assert_full_rejected(
