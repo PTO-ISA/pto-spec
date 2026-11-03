@@ -23559,7 +23559,7 @@
     "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-lifecycle-fresh-launch-retires-trap-frames-003.asl": "4f05de67468dec76b0c018f574cecaba23e07e02881a6fa536d51b4c87544f7d",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-lifecycle-tstore-quiescence-002.asl": "39e7364b068a4786adecbb8d71eb80ffc8f412a626bc56214967407a16cb0e24",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-runtime-startup-abort-005.asl": "ea188f0069907e6a058ed5f9af0189132d0baf91953f47cf01f72aa19bb5c58f",
-    "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-runtime-startup-single-leader-004.asl": "45c8486e58b2eb2121b24186e24656f59bed828345643f990967a34eddbd2e56",
+    "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-runtime-startup-single-leader-004.asl": "4b5465c12c36dc9a16a8541fd3939f486d378dbe1b8b5bcee8f782dc59591bd7",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-bstart-predecessor-001.asl": "9606499280b9e25efb5612de07f20810988e57c639d84f413eef40ba9e8f63ac",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-cancel-001.asl": "7b6b6f3e2a357da09a1d5bee455de4503357ff71d71716c6d9eceedc5e983b90",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-completion-001.asl": "fded6a714fc50fd9ea514fd5a694b3582aebc53eee06e948e452d193ffde20d9",
@@ -36206,7 +36206,7 @@
         "PTO-ARCH-CORE-SYNCHRONIZATION-001",
         "PTO-THREAD-ID-PE-IDENTITY-001"
       ],
-      "sha256": "45c8486e58b2eb2121b24186e24656f59bed828345643f990967a34eddbd2e56",
+      "sha256": "4b5465c12c36dc9a16a8541fd3939f486d378dbe1b8b5bcee8f782dc59591bd7",
       "source": "asl/arch/state/kernel-lifecycle.asl"
     },
     {

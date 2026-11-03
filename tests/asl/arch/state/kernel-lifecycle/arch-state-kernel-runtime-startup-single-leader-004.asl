@@ -104,4 +104,3 @@ begin
     StopMemoryEventCapture();
     return 0;
 end;
-
