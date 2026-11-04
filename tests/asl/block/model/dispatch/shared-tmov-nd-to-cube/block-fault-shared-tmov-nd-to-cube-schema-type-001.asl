@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SCHEMA-TYPE-001","source":"asl/block/model/dispatch/shared-tmov-nd-to-cube.asl","requirements":["PTO-TMOV-SHARED-ND-TO-CUBE-001","PTO-BSTART-TMOV-SHARED-001","PTO-CUBE-CELL-TRANSPORT-001","PTO-TILE-CARRIER-REINTERPRETATION-001"],"kind":"fault","summary":"reverse TMOV closes only the frozen Shared ND roles, CUBE selectors, and backing/carrier relation","pass_condition":"actual Function-2 Shared-to-Local bundles reject wrong-direction Layout 24, CUBE Shared source, RCPE6M2 backing, incompatible carrier width, M16 b64, unsupported Sat control, and B.ASSEMBLE on the Shared source before destination allocation or Shared mutation","related_sources":["asl/block/model/dispatch/shared-tlsu.asl","asl/block/model/dispatch/shared-tmov-nd-to-cube.asl","asl/block/model/dispatch/tile-schema.asl","asl/tile/model/legality/dtype-layout.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SCHEMA-TYPE-001","source":"asl/block/model/dispatch/shared-tmov-nd-to-cube.asl","requirements":["PTO-TMOV-SHARED-ND-TO-CUBE-001","PTO-BSTART-TMOV-SHARED-001","PTO-CUBE-CELL-TRANSPORT-001","PTO-TILE-CARRIER-REINTERPRETATION-001"],"kind":"fault","summary":"reverse TMOV closes the frozen Shared ND roles, CUBE selectors, type relation, and conversion mask guards","pass_condition":"decoded Function-2 Shared-to-Local bundles reject wrong-direction Layout 24, invalid selectors 23 and 26 with an ExecutionMask, CUBE Shared source, RCPE6M2 backing, incompatible carrier width, M16 b64, unsupported Sat control, and Shared-source B.ASSEMBLE before destination allocation; selector 23/26 mask faults also preserve the source descriptor state","related_sources":["asl/block/model/dispatch/shared-tlsu.asl","asl/block/model/dispatch/shared-tmov-nd-to-cube.asl","asl/block/model/dispatch/tile-schema.asl","asl/tile/model/legality/dtype-layout.asl"]}
 
 pure func SharedNDToCubeSchemaStart(carrier: TileDataType) => bits(64)
 begin
@@ -148,8 +148,15 @@ begin
         ior_status = ExecuteCommandInstruction(
             SharedNDToCubeSchemaExecMaskIOR(), 32);
         if ior_status != CommandExecution_Executed then
+            let source_after_mask_rejection = SharedTileRecord(shared_id);
             assert _LastFault != Fault_None &&
-                   !_BundleTileBindings[[0]].destination_allocated_by_bundle;
+                   !_BundleTileBindings[[0]].destination_allocated_by_bundle &&
+                   source_after_mask_rejection.payload_generation ==
+                       source_before.payload_generation &&
+                   source_after_mask_rejection.payload_live ==
+                       source_before.payload_live &&
+                   source_after_mask_rejection.published ==
+                       source_before.published;
             return TRUE;
         end;
     end;
@@ -235,6 +242,16 @@ begin
         TileDataType_U8, TileDataType_U8, 26, TileLayout_RowMajor,
         32, 128, 4096, Zeros{4} + 6, 0, FALSE, FALSE, FALSE);
     assert invalid_nd_to_n8;
+    // Unsupported conversion selectors with an ExecutionMask carrier fault
+    // before generic layout inference, destination allocation, or source mutation.
+    let invalid_nd2n8_mask = SharedNDToCubeSchemaRejects(
+        TileDataType_U8, TileDataType_U8, 23, TileLayout_RowMajor,
+        32, 128, 4096, Zeros{4} + 6, 0, FALSE, FALSE, TRUE);
+    assert invalid_nd2n8_mask;
+    let invalid_nd_to_n8_mask = SharedNDToCubeSchemaRejects(
+        TileDataType_U8, TileDataType_U8, 26, TileLayout_RowMajor,
+        32, 128, 4096, Zeros{4} + 6, 0, FALSE, FALSE, TRUE);
+    assert invalid_nd_to_n8_mask;
     // Function-2 conversion rejects matrix post-processing descriptors and
     // execution-mask carriers before destination allocation.
     let fpatr_rejected = SharedNDToCubeSchemaRejects(

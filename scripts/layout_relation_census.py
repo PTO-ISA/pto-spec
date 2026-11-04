@@ -841,12 +841,8 @@ ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS = {
         "after": [("asl/block/model/state/control-state.asl", set())],
         "before_callers": set(),
         "after_callers": {
-            ("BundleExecutionMaskDataAttributesLegal",
-             "asl/block/model/dispatch/command-data-attributes.asl"),
             ("BundleSharedTMOVCubeToNDSelected",
              "asl/block/model/dispatch/shared-tmov-cube-to-nd.asl"),
-            ("MarkSelectedBundleExecutionMaskCarrier",
-             "asl/block/model/dispatch/execution-mask-schema.asl"),
             ("SelectedBundleTileDataAttributesLegal",
              "asl/block/model/dispatch/tile-schema.asl"),
         },
@@ -983,10 +979,6 @@ ISSUE422_SHARED_ND_TO_CUBE_HELPER_DEFINITION_DELTAS = {
              "asl/block/model/dispatch/scalar-schema.asl"),
             ("BundleSharedTMOVSharedNDToCubeSelected",
              "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
-            ("BundleExecutionMaskDataAttributesLegal",
-             "asl/block/model/dispatch/command-data-attributes.asl"),
-            ("MarkSelectedBundleExecutionMaskCarrier",
-             "asl/block/model/dispatch/execution-mask-schema.asl"),
             ("ResolveBundleTileDestinationsWithShapeAndTypeAndWriterEffects",
              "asl/block/model/dispatch/destination-shape.asl"),
             ("SelectedBundleTileDataAttributesLegal",
@@ -3735,7 +3727,7 @@ def _issue422_shared_nd_to_cube_closure(
     after_reach: dict[str, Any],
     after_defs: dict[str, list[dict[str, Any]]],
 ) -> list[str]:
-    """Keep reverse Shared ND-to-CUBE selectors and mask dispatch exact."""
+    """Keep reverse acceptance and conversion-mask safety dispatch exact."""
     if "BundleSharedTMOVSharedNDToCubeSelected" not in after_defs:
         return []
     errors: list[str] = []
@@ -3771,6 +3763,18 @@ def _issue422_shared_nd_to_cube_closure(
             "Issue #422 reverse selector changed the existing forward DATR selector"
         )
 
+    conversion_selector = body(
+        "TileDataLayoutIsCubeConversion",
+        "asl/block/model/state/control-state.asl",
+    )
+    if not (
+        "let code = UInt(data_layout);" in conversion_selector
+        and "return 21 <= code && code <= 26;" in conversion_selector
+    ):
+        errors.append(
+            "Issue #422 conversion-mask safety domain must remain exactly codes 21 through 26"
+        )
+
     selected = body(
         "BundleSharedTMOVSharedNDToCubeSelected",
         "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl",
@@ -3782,20 +3786,30 @@ def _issue422_shared_nd_to_cube_closure(
     ):
         errors.append("Issue #422 reverse DATR selector is not scoped to Shared TMOV")
 
-    for name, path in (
-        ("BundleExecutionMaskDataAttributesLegal",
-         "asl/block/model/dispatch/command-data-attributes.asl"),
-        ("MarkSelectedBundleExecutionMaskCarrier",
-         "asl/block/model/dispatch/execution-mask-schema.asl"),
-    ):
+    exact_mask_guards = (
+        (
+            "BundleExecutionMaskDataAttributesLegal",
+            "asl/block/model/dispatch/command-data-attributes.asl",
+            "if BundleTMOVSelected() && _BundleDataAttributesPresent && "
+            "TileDataLayoutIsCubeConversion( _BundleDataAttributes.data_layout) "
+            "then return !mask_present; end;",
+        ),
+        (
+            "MarkSelectedBundleExecutionMaskCarrier",
+            "asl/block/model/dispatch/execution-mask-schema.asl",
+            "if BundleTMOVSelected() && _BundleDataAttributesPresent && "
+            "TileDataLayoutIsCubeConversion( _BundleDataAttributes.data_layout) && "
+            "(_BundleScalarBindings[[0]].execution_mask_present || "
+            "_BundleScalarBindings[[1]].execution_mask_present || "
+            "BundleExecutionMaskTileCarrierPresent(operation)) "
+            "then return FALSE; end;",
+        ),
+    )
+    for name, path, exact_guard in exact_mask_guards:
         mask_guard = body(name, path)
-        if not (
-            "TileDataLayoutIsCubeToSharedND(" in mask_guard and
-            "TileDataLayoutIsSharedNDToCube(" in mask_guard and
-            "TileDataLayoutIsCubeConversion(" not in mask_guard
-        ):
+        if exact_guard not in mask_guard:
             errors.append(
-                f"Issue #422 {name} must close both named TMOV selectors before layout inference"
+                f"Issue #422 {name} must reject masks across every TMOV conversion selector before layout inference"
             )
 
     # The full matrix is independently enumerated by AVS. This closure keeps
@@ -5452,6 +5466,57 @@ def _issue422_shared_nd_to_cube_mutation_canaries() -> None:
         in error for error in result["errors"]
     ):
         raise AssertionError("Issue #422 reverse DATR selector widening did not fail closed")
+
+    mask_guard_path = "asl/block/model/dispatch/execution-mask-schema.asl"
+    broad_mask_guard = (
+        "BundleTMOVSelected() && _BundleDataAttributesPresent &&\n"
+        "       TileDataLayoutIsCubeConversion(\n"
+        "           _BundleDataAttributes.data_layout) &&"
+    )
+    narrow_mask_guard = (
+        "BundleTMOVSelected() && _BundleDataAttributesPresent &&\n"
+        "       (TileDataLayoutIsCubeToSharedND(\n"
+        "            _BundleDataAttributes.data_layout) ||\n"
+        "        TileDataLayoutIsSharedNDToCube(\n"
+        "            _BundleDataAttributes.data_layout)) &&"
+    )
+    if broad_mask_guard not in candidate.get(mask_guard_path, ""):
+        raise AssertionError("Issue #422 broad conversion mask guard canary source is missing")
+    narrowed_guard = dict(candidate)
+    narrowed_guard[mask_guard_path] = narrowed_guard[mask_guard_path].replace(
+        broad_mask_guard, narrow_mask_guard, 1,
+    )
+    result = _census_texts(
+        baseline, narrowed_guard, BASELINE_OBJECT,
+        "real-mutated-issue422-narrowed-conversion-mask-guard",
+        enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #422 MarkSelectedBundleExecutionMaskCarrier must reject masks across every TMOV conversion selector"
+        in error for error in result["errors"]
+    ):
+        raise AssertionError(
+            "Issue #422 conversion-mask guard narrowing did not fail closed"
+        )
+
+    conversion_path = "asl/block/model/state/control-state.asl"
+    conversion_domain = "return 21 <= code && code <= 26;"
+    if conversion_domain not in candidate.get(conversion_path, ""):
+        raise AssertionError("Issue #422 conversion-mask domain canary source is missing")
+    narrowed_domain = dict(candidate)
+    narrowed_domain[conversion_path] = narrowed_domain[conversion_path].replace(
+        conversion_domain, "return 21 <= code && code <= 22;", 1,
+    )
+    result = _census_texts(
+        baseline, narrowed_domain, BASELINE_OBJECT,
+        "real-mutated-issue422-narrowed-conversion-mask-domain",
+        enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #422 conversion-mask safety domain must remain exactly codes 21 through 26"
+        in error for error in result["errors"]
+    ):
+        raise AssertionError("Issue #422 conversion-mask safety domain narrowing did not fail closed")
 
     helper_path = "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
     extra_caller = dict(candidate)

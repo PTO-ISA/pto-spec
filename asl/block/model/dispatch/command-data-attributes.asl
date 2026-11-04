@@ -12,10 +12,8 @@ begin
         return FALSE;
     end;
     if BundleTMOVSelected() && _BundleDataAttributesPresent &&
-       (TileDataLayoutIsCubeToSharedND(
-            _BundleDataAttributes.data_layout) ||
-        TileDataLayoutIsSharedNDToCube(
-            _BundleDataAttributes.data_layout)) then
+       TileDataLayoutIsCubeConversion(
+           _BundleDataAttributes.data_layout) then
         return !mask_present;
     end;
     var local_cube_layout = FALSE;
