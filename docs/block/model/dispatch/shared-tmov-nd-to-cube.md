@@ -47,6 +47,15 @@ begin
     return 16;
 end;
 
+readonly func BundleSharedTMOVSharedNDToCubeTypePairLegal(
+    layout: TileLayout, backing_type: TileDataType,
+    carrier_type: TileDataType) => boolean
+begin
+    return backing_type != TileDataType_RCPE6M2 &&
+           TileCubeLayoutDataTypeSupported(layout, backing_type) &&
+           TileCarrierWidthCompatible(backing_type, carrier_type);
+end;
+
 readonly func BundleSharedTMOVSharedNDToCubeFirstParticipatingPE()
     => MemoryAgentId
 begin
@@ -86,13 +95,12 @@ begin
            source_type) || source_parent.valid_rows == 0 ||
        source_parent.valid_columns == 0 ||
        source_parent.valid_columns > physical_columns ||
-       source_type == TileDataType_RCPE6M2 ||
        !TileCubeLayoutDataTypeSupported(layout, source_type) then
         return fragment;
     end;
     let (carrier_valid, carrier_type) = ResolveBundleEffectiveDataType();
-    if !carrier_valid ||
-       !TileCarrierWidthCompatible(source_type, carrier_type) then
+    if !carrier_valid || !BundleSharedTMOVSharedNDToCubeTypePairLegal(
+           layout, source_type, carrier_type) then
         return fragment;
     end;
     let derived_columns = TileCubePhysicalColumnsFromCapacity(
@@ -198,6 +206,7 @@ begin
        BundleSharedBindingIsReusedDestination(0) ||
        BundleSharedBindingSize(0) != 0 ||
        _BundleSharedBindings[[0]].destination_assemble.valid ||
+       _BundleTileBindings[[0]].destination_assemble.valid ||
        _BundleScalarBindings[[0]].valid ||
        _BundleScalarBindings[[1]].valid then
         return FALSE;

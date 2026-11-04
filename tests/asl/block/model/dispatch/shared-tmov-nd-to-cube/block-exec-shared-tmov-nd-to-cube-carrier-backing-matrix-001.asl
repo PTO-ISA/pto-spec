@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-CARRIER-BACKING-MATRIX-001","source":"asl/block/model/dispatch/shared-tmov-nd-to-cube.asl","requirements":["PTO-TMOV-SHARED-ND-TO-CUBE-001","PTO-CUBE-CELL-TRANSPORT-001","PTO-TILE-CARRIER-REINTERPRETATION-001"],"kind":"execution","summary":"reverse TMOV preserves legal source backing across compatible operation carriers","pass_condition":"decoded M16 S32 backing with FP32 carrier and M32 E6M2 backing with source-only RCPE6M2 carrier both commit exact CUBE descriptors retaining source dtype and all nonuniform raw values","related_sources":["asl/block/model/dispatch/shared-tlsu.asl","asl/block/model/dispatch/shared-tmov-nd-to-cube.asl","asl/tile/model/legality/dtype-layout.asl","asl/tile/model/memory/shared-nd-to-cube.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-CARRIER-BACKING-MATRIX-001","source":"asl/block/model/dispatch/shared-tmov-nd-to-cube.asl","requirements":["PTO-TMOV-SHARED-ND-TO-CUBE-001","PTO-CUBE-CELL-TRANSPORT-001","PTO-TILE-CARRIER-REINTERPRETATION-001"],"kind":"execution","summary":"reverse TMOV checks the complete backing/carrier/layout type relation and preserves legal backing","pass_condition":"an independent expected table checks every assigned TileDataType backing, carrier, and M16/M32 selector pair including explicit RCPE6M2-backing and M16-b64 rejection; decoded M16 S32 with FP32 carrier and M32 E6M2 with RCPE6M2 source-only carrier still commit exact CUBE descriptors retaining all nonuniform raw values","related_sources":["asl/block/model/dispatch/shared-tlsu.asl","asl/block/model/dispatch/shared-tmov-nd-to-cube.asl","asl/tile/model/legality/dtype-layout.asl","asl/tile/model/memory/shared-nd-to-cube.asl"]}
 
 pure func SharedNDToCubeCarrierStart(carrier: bits(5)) => bits(64)
 begin
@@ -46,6 +46,113 @@ begin
     return Zeros{PTO_XLEN} +
         ((0x81 + row * 47 + column * 19 +
             ((row * column) MOD 61)) MOD 256);
+end;
+
+pure func SharedNDToCubeExpectedBits(data_type: TileDataType)
+    => integer {4,8,16,32,64}
+begin
+    case data_type of
+        when TileDataType_E2M1X2, TileDataType_E1M2X2,
+             TileDataType_HiF4X2, TileDataType_S4X2,
+             TileDataType_U4X2 => return 4;
+        when TileDataType_HiF8, TileDataType_E4M3,
+             TileDataType_E5M2, TileDataType_E3M2,
+             TileDataType_E2M3, TileDataType_E8M0,
+             TileDataType_E6M2, TileDataType_RCPE6M2,
+             TileDataType_S8, TileDataType_U8 => return 8;
+        when TileDataType_FP16, TileDataType_BF16,
+             TileDataType_S16, TileDataType_U16 => return 16;
+        when TileDataType_FP32, TileDataType_TF32,
+             TileDataType_HF32, TileDataType_S32,
+             TileDataType_U32 => return 32;
+        when TileDataType_FP64, TileDataType_S64,
+             TileDataType_U64 => return 64;
+    end;
+end;
+
+pure func SharedNDToCubeExpectedFourBit(data_type: TileDataType)
+    => boolean
+begin
+    return data_type == TileDataType_E2M1X2 ||
+           data_type == TileDataType_E1M2X2 ||
+           data_type == TileDataType_HiF4X2 ||
+           data_type == TileDataType_S4X2 ||
+           data_type == TileDataType_U4X2;
+end;
+
+pure func SharedNDToCubeExpectedBackingLegal(layout: TileLayout,
+    backing_type: TileDataType) => boolean
+begin
+    if backing_type == TileDataType_RCPE6M2 then return FALSE; end;
+    let bit_width = SharedNDToCubeExpectedBits(backing_type);
+    return bit_width != 64 || layout == TileLayout_CUBE_M32;
+end;
+
+pure func SharedNDToCubeExpectedCarrierLegal(backing_type: TileDataType,
+    carrier_type: TileDataType) => boolean
+begin
+    if backing_type == TileDataType_RCPE6M2 then return FALSE; end;
+    if backing_type == carrier_type then return TRUE; end;
+    if carrier_type == TileDataType_RCPE6M2 then
+        return backing_type == TileDataType_E6M2;
+    end;
+    if SharedNDToCubeExpectedFourBit(backing_type) ||
+       SharedNDToCubeExpectedFourBit(carrier_type) then
+        return FALSE;
+    end;
+    return SharedNDToCubeExpectedBits(backing_type) ==
+           SharedNDToCubeExpectedBits(carrier_type);
+end;
+
+func CheckSharedNDToCubeTypePairMatrix() => integer {0..1458}
+begin
+    var legal_pairs: integer {0..1458} = 0;
+    for layout_index = 0 to 1 do
+        let layout = if layout_index == 0 then TileLayout_CUBE_M32
+            else TileLayout_CUBE_M16;
+        for backing_code = 0 to 31 do
+            let backing_encoding =
+                (Zeros{5} + backing_code) as TileDataTypeEncoding;
+            if TileDataTypeEncodingValid(backing_encoding) then
+                let backing_type =
+                    TileDataTypeFromEncoding(backing_encoding);
+                for carrier_code = 0 to 31 do
+                    let carrier_encoding =
+                        (Zeros{5} + carrier_code) as TileDataTypeEncoding;
+                    if TileDataTypeEncodingValid(carrier_encoding) then
+                        let carrier_type =
+                            TileDataTypeFromEncoding(carrier_encoding);
+                        let expected =
+                            SharedNDToCubeExpectedBackingLegal(layout,
+                                backing_type) &&
+                            SharedNDToCubeExpectedCarrierLegal(backing_type,
+                                carrier_type);
+                        let actual =
+                            BundleSharedTMOVSharedNDToCubeTypePairLegal(
+                                layout, backing_type, carrier_type);
+                        assert actual == expected;
+                        if expected then
+                            legal_pairs = (legal_pairs + 1)
+                                as integer {0..1458};
+                        end;
+                    end;
+                end;
+            end;
+        end;
+    end;
+    assert !BundleSharedTMOVSharedNDToCubeTypePairLegal(
+               TileLayout_CUBE_M32, TileDataType_RCPE6M2,
+               TileDataType_RCPE6M2) &&
+           !BundleSharedTMOVSharedNDToCubeTypePairLegal(
+               TileLayout_CUBE_M16, TileDataType_FP64,
+               TileDataType_FP64) &&
+           BundleSharedTMOVSharedNDToCubeTypePairLegal(
+               TileLayout_CUBE_M32, TileDataType_U4X2,
+               TileDataType_U4X2) &&
+           BundleSharedTMOVSharedNDToCubeTypePairLegal(
+               TileLayout_CUBE_M32, TileDataType_FP64,
+               TileDataType_FP64);
+    return legal_pairs;
 end;
 
 func RunSharedNDToCubeCarrierCase(selector: integer {21,22},
@@ -128,6 +235,8 @@ end;
 
 func main() => integer
 begin
+    let legal_pair_count = CheckSharedNDToCubeTypePairMatrix();
+    assert legal_pair_count > 0;
     let s32_output = RunSharedNDToCubeCarrierCase(22,
         TileDataType_S32, TileDataType_FP32, 16, 16, 1024,
         Zeros{4} + 4, (Zeros{6} + 46) as SharedTileID);
