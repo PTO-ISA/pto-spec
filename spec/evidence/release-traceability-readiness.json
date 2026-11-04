@@ -669,6 +669,7 @@
         "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-MIXED-GENERATION-007",
         "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-PERMUTED-ACTUAL-PE-002",
         "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-TAIL-PUBLICATION-008",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-FOUR-PE-GPR-RANGES-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-READY-COLUMN-022",
         "PTO-AVS-BLOCK-SHARED-TMOV-READY-ROWS-023",
         "PTO-AVS-BLOCK-SHARED-TSTORE-FOURSTREAM-009",
@@ -1636,6 +1637,7 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-EXECUTION-MASK-OVERSIZED-DIMENSIONS-007",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-DIMENSIONS-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-DECODED-001",
         "PTO-AVS-TILE-TCVT-INTEGRAL-MASK-001"
       ]
@@ -1786,6 +1788,9 @@
         "PTO-AVS-BLOCK-B-IOS-LAST-USE-PUBLICATION-PIN-010",
         "PTO-AVS-BLOCK-B-IOS-LAST-USE-STORE-005",
         "PTO-AVS-BLOCK-B-IOS-LAST-USE-VTAG-RETAINED-004",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-BINDING-ROLES-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-WAIT-LAST-USE-RETRY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ZERO-NONPARTICIPANT-001",
         "PTO-AVS-BLOCK-TSTORE-ATOMIC-LIFETIME-001",
         "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-001",
         "PTO-AVS-BLOCK-TSTORE-ATOMIC-SHARED-FAULT-001",
@@ -1883,6 +1888,9 @@
         "PTO-AVS-BLOCK-SHARED-LOCAL-SUBVIEW-FOURSTREAM-011",
         "PTO-AVS-BLOCK-SHARED-TLSU-PARTIAL-EXEC-004",
         "PTO-AVS-BLOCK-SHARED-TLSU-PE-OWNER-008",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ALLOCATION-RETRY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SOURCE-VALIDITY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-WAIT-LAST-USE-RETRY-001",
         "PTO-AVS-BLOCK-TMATMUL-INACTIVE-SHARED-029",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-LOCAL-PRIVATE-FOURSTREAM-038",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-PACKED-SUBVIEW-READINESS-053",
@@ -2312,6 +2320,9 @@
       "tests": [
         "PTO-AVS-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-STATIC-001",
         "PTO-AVS-BLOCK-SHARED-LOCAL-SUBVIEW-FOURSTREAM-011",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-FOUR-PE-GPR-RANGES-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ROW-GEOMETRY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ZERO-NONPARTICIPANT-001",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-PACKED-SUBVIEW-046",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-PACKED-SUBVIEW-ATOMICITY-052",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-PACKED-SUBVIEW-READINESS-053",
@@ -3629,7 +3640,13 @@
         "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-TAIL-PUBLICATION-008",
         "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-TYPE-MATRIX-005",
         "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-TYPE-SHAPE-006",
-        "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-ZERO-MASK-009"
+        "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-ZERO-MASK-009",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-BINDING-ROLES-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-EQUIVALENCE-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-M16-U16-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SCHEMA-TYPE-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SINGLETON-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-WRONG-FUNCTION-001"
       ]
     },
     {
@@ -3746,6 +3763,8 @@
       "tests": [
         "PTO-AVS-BLOCK-MODEL-SCHEMA-DIMENSIONS-DEFAULT-001",
         "PTO-AVS-BLOCK-MODEL-SCHEMA-DIMENSIONS-STATIC-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-DIMENSIONS-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-EQUIVALENCE-001",
         "PTO-AVS-BLOCK-TLOAD-TSTORE-CUBE-DIMENSIONS-001",
         "PTO-AVS-TILE-TCVT-CUBE-LB2-001",
         "PTO-AVS-TILE-TTRI-LB2-DEFAULT-001"
@@ -4189,6 +4208,16 @@
         "PTO-AVS-BLOCK-EXECUTION-MASK-CUBE-TRANSPORT-LAYOUT-005",
         "PTO-AVS-BLOCK-EXECUTION-MASK-OVERSIZED-DIMENSIONS-007",
         "PTO-AVS-BLOCK-LOCAL-CUBE-WIDE-TLOAD-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ALLOCATION-RETRY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-CARRIER-BACKING-MATRIX-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-M16-U16-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ROUNDTRIP-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ROW-GEOMETRY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SCHEMA-TYPE-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SINGLETON-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SOURCE-VALIDITY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-VALID-TAILS-PACKED-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-WRONG-FUNCTION-001",
         "PTO-AVS-BLOCK-TLOAD-CUBE-002",
         "PTO-AVS-BLOCK-TLOAD-CUBE-ACCESS-003",
         "PTO-AVS-BLOCK-TLOAD-CUBE-DTYPE-005",
@@ -19678,6 +19707,8 @@
       "tests": [
         "PTO-AVS-BLOCK-ROW-EXPAND-BROADCAST-BYTE-OFFSET-R2-POSITIVE-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-TYPE-MATRIX-005",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-CARRIER-BACKING-MATRIX-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SCHEMA-TYPE-001",
         "PTO-AVS-TILE-CARRIER-REINTERPRET-BOUND-002",
         "PTO-AVS-TILE-MODEL-LEGALITY-DTYPE-LAYOUT-STATIC-001",
         "PTO-AVS-TILE-TCMP-CARRIER-FAULT-002",
@@ -20357,7 +20388,36 @@
         "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-TYPE-MATRIX-005",
         "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-TYPE-SHAPE-006",
         "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-ZERO-MASK-009",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ROUNDTRIP-001",
         "PTO-AVS-TILE-SHARED-CUBE-TO-ND-MAPPING-001"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-TMOV-SHARED-ND-TO-CUBE-001",
+      "owners": [
+        "asl/tile/layout-and-rearrangement/layout/TMOV.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-CUBE-0005"
+      ],
+      "tests": [
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ALLOCATION-RETRY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-BINDING-ROLES-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-CARRIER-BACKING-MATRIX-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-DIMENSIONS-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-FOUR-PE-GPR-RANGES-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-EQUIVALENCE-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-M16-U16-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ROUNDTRIP-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ROW-GEOMETRY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SCHEMA-TYPE-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SINGLETON-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SOURCE-VALIDITY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-VALID-TAILS-PACKED-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-WAIT-LAST-USE-RETRY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-WRONG-FUNCTION-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ZERO-NONPARTICIPANT-001"
       ]
     },
     {
@@ -21563,7 +21623,7 @@
     "asl/arch/system-registers/maintenance.asl": "c69cc578f4021c416643dd2b5f608855ef9bfe89d7c280a574dff09783b9b5af",
     "asl/arch/system-registers/timer.asl": "7f2078b0d6ae745c8ec7369695d5a5ec1225356e2f8e5548c2a179330bf9970d",
     "asl/block/attributes/B.CATR.asl": "f555ef9bb21b9b2120c779d67c5a3ee55a8dbee60b7dd415de287417b6d42a38",
-    "asl/block/attributes/B.DATR.asl": "50dfdde9c6a8bb097d01033c4c182055adf950abe4847bd19090da8d5766b426",
+    "asl/block/attributes/B.DATR.asl": "0d3c10a819d0b2c988566be272ff98a18ff80ba70d18a6934f34342c902cb9cd",
     "asl/block/attributes/B.DIM.asl": "71167dba1d74b0108aaddccefd618a294f5f0f526ffd421987440bcd73573219",
     "asl/block/attributes/B.FPATR.asl": "e4abcfc0e95de8ce9f8a728c441b38faadb28a2a622b0a81001868f006ac6075",
     "asl/block/attributes/C.B.DIMI.asl": "e1c951c4e7f90f6fb1f7f23959decaac35a40ad39ad397342914672ebb16cd2f",
@@ -21616,7 +21676,7 @@
     "asl/block/execution/BSTART.TMATMULMX.ACC.asl": "aabd44f546313ca91a81c749cdf13ba31d2e5bed2778ca9bede69b8fc188ddfa",
     "asl/block/execution/BSTART.TMATMULMX.BIAS.asl": "e2fce2771206cabb580c16864607c29fb853ec8126009460827c51d618e36a84",
     "asl/block/execution/BSTART.TMATMULMX.asl": "bdd70d0b091b001f245ed9c0f15206a80c163baa4942704fd40e57f90cd1ee07",
-    "asl/block/execution/BSTART.TMOV.asl": "0811cece21594a8234429b9d55d4ec10e2ddac019a4ef0f69ec681837c727ac4",
+    "asl/block/execution/BSTART.TMOV.asl": "3d436c0d1aeb5c4ffe84935c882bcc4d39f254a9ac680310462ba20ef16466a9",
     "asl/block/execution/BSTART.TPREFETCH.asl": "440aa503435e8008f1d9d945cd9851c7d44889c000b98d6b0eee1aa8b3e2a4e6",
     "asl/block/execution/BSTART.TSTORE.asl": "233267219a436b69800e532ebc19609457e3aa57d8e19d262b8fe79608116b53",
     "asl/block/execution/BSTART.VEC.asl": "f3783620f9b5f536dbdd4636d74b522e112c060690a122c4af1097ee261ede77",
@@ -21640,7 +21700,7 @@
     "asl/block/model/commit/validation.asl": "b1cb9cbd3f263108a21cdf29f1e9b06363493e0543353e812dc3ec720057072f",
     "asl/block/model/dispatch/binary-operation-classification.asl": "e7ba0606cd504b488d3619026a732054dbb477faf6106ad1513c20177b520c65",
     "asl/block/model/dispatch/cell-rearrangement-schema.asl": "545249a64e49ad13840c0a829e92b95ab67f973ae2c6c64b0d54e2a01ee7cf9c",
-    "asl/block/model/dispatch/command-data-attributes.asl": "d9b8055b73a46d03c2bdc747887555d5195be73ed259bec64deeacaa1d8df62c",
+    "asl/block/model/dispatch/command-data-attributes.asl": "ec85dde904ee3a011bac41fd2d365d8ba0b76f8c07d43a85bcbac2c431908af9",
     "asl/block/model/dispatch/commands.asl": "19494dcc33f9165d3b78c467cae98d03c1e998cdee0dde874592fc8154032da2",
     "asl/block/model/dispatch/comparison-schema.asl": "c3f835e44311b7881deb7e4fd743df5dd04a149f2a31ba5cd4edaeb3f5807540",
     "asl/block/model/dispatch/cube-accumulator-routing.asl": "58316f54c458f0e164ccd4bcc7b92808494b84e303bfa5d6471586130a00ca3b",
@@ -21651,8 +21711,8 @@
     "asl/block/model/dispatch/descriptor-legality.asl": "0bc759593abf4b5af2309d2c53d080719c34c47384ea8b95a1cf3e2be64e90c0",
     "asl/block/model/dispatch/destination-auxiliary.asl": "2c5913076993c9206d95bacbe62443ebdbb2fb1a9e30bf537c5b33eb2782b16c",
     "asl/block/model/dispatch/destination-operation.asl": "6390853b6a29bc10c09ca1fa30156b8a637e9d0102f085e683f83c25d123b82d",
-    "asl/block/model/dispatch/destination-shape.asl": "cf3504c3dfc0e7f6d03165b2d88d7231607c780d06a62d04588db11a1f67259e",
-    "asl/block/model/dispatch/execution-mask-schema.asl": "bc375f9e7deb05b91ea53e21e1b4fee7e1f50121fae022737b6d2aaf775dac8b",
+    "asl/block/model/dispatch/destination-shape.asl": "e6c8f68ce41f6bc6bb52064ac879189e9e9cd1ffe8ae9bfae7cddb174c8fe36b",
+    "asl/block/model/dispatch/execution-mask-schema.asl": "3b212e68d06a056ce344400499c773f664f56c1540a11cdc3c576277c740e9bd",
     "asl/block/model/dispatch/expansion-schema.asl": "e341b52a6d77c9977a8787980cfb6df5aa11b6eb0ebfd65ba9f3932bd7a7f8ed",
     "asl/block/model/dispatch/expdif-schema.asl": "de5b727b34a77015b22baaeb73bb71b085d8e8bf20dded77675c183ae57305ae",
     "asl/block/model/dispatch/generation-schema.asl": "76cfceccdce296468d71b0e4605eb4b0b2702c5ea6bdabec16826b9517f86653",
@@ -21662,19 +21722,20 @@
     "asl/block/model/dispatch/numeric-control.asl": "8372aa20c99f953c426e489be3555430cc0fe240d4808fda34180a9a11f5a8f7",
     "asl/block/model/dispatch/predicate-destination.asl": "25652d4a6001a59c5959625902d9763e55dd9d9694a85b65afdef2448a6690fd",
     "asl/block/model/dispatch/reduction-schema.asl": "0abfc3f6391e5ff4907be7e0571314c80106a8760bb7af6cae8cae811a64f392",
-    "asl/block/model/dispatch/scalar-schema.asl": "03939cf0b88b2e1677a6384790028a5e8f68dceded1b7bc880caef6da8161a6f",
+    "asl/block/model/dispatch/scalar-schema.asl": "6fe2d73644e3b9f8dffb0ae81dda18b3ffa3cd33c820b659d0684d9aff7582e5",
     "asl/block/model/dispatch/shared-cube-matrix.asl": "070edfcfc15de9cc36bfbcf917ce145d74453aa09e65a5de059a27a2200b1444",
-    "asl/block/model/dispatch/shared-tlsu-helpers.asl": "b9a3d9d4b0dc601a0cf8b6aed58e26f225a21e6ffa6456cbc5cea08c5ef37290",
-    "asl/block/model/dispatch/shared-tlsu.asl": "debaa73578617dba58634a042a173bfbde852caf8528b46b6938bfe369300696",
+    "asl/block/model/dispatch/shared-tlsu-helpers.asl": "1d8dea9ce58a762c9c8d3910548b29d98ced7f4ba4849572096aa421b510c97c",
+    "asl/block/model/dispatch/shared-tlsu.asl": "1d877de07d9c553db9b9aaf824457268f1075ded1c1c39d12f1db05df70d5a58",
     "asl/block/model/dispatch/shared-tmov-cube-to-nd.asl": "8f299e7ea032fe6bbfb5dc77ba6e929dff2a56f86e7bd1e273fac1a2454710c6",
+    "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl": "50275b122c91365d5b1c34810d7c6a31bb6681ec74b379b6c9822ba514576950",
     "asl/block/model/dispatch/start.asl": "01913d5c08aba8f28d49ac287f81f1e134f28d9c4c108bb14b7c9221e8464227",
     "asl/block/model/dispatch/tcvt-destination.asl": "5c850880e87ed947ae0e50af72f11ad9d1b9c26cb716003516f0d26525e49420",
     "asl/block/model/dispatch/tcvt-schema.asl": "2c9c7ec6214f8321416573735a0df6415e2374a97595a9b12f2cec834a50506c",
     "asl/block/model/dispatch/tgpr2t-schema.asl": "996eaeb7689d40a6acfb8c5c16bb5998a4a1e45ced5aabdb2eafb563a84a29b6",
-    "asl/block/model/dispatch/tile-execution.asl": "e139ad89857606477d14175509a0b19cf9ec5395a1cff8db640262515a77efea",
+    "asl/block/model/dispatch/tile-execution.asl": "1f11b800d348afaab33db3988e4abb9dc19eead7d0bcf32e3678df441d17a8d8",
     "asl/block/model/dispatch/tile-instruction-operands.asl": "42c8fc31e43b044ce8faef3c2cbdb45e38747b3bd77188e3b08ffe775581104d",
     "asl/block/model/dispatch/tile-scalar-schema.asl": "a327cc482f50043fc3122c8c0f303827ae789436547f495f64cfb0102dbcf029",
-    "asl/block/model/dispatch/tile-schema.asl": "bf3a972f6ec9059788fd6027e76e19b447aea5b5c504aa787149c44005f306ff",
+    "asl/block/model/dispatch/tile-schema.asl": "e69d77c97f995d6fb0d72454c5e01fd51793dca3dddc5b435a1f712001eee678",
     "asl/block/model/dispatch/timg2col-execution.asl": "a7fe1c7fb3bcdf2b086711f153d36558df7429a8b5832aef5b98752d6c16ea9b",
     "asl/block/model/dispatch/timg2col-schema.asl": "5d41621d599fb58196b7f9c2debc41b8073b92cea90f219bd11f48a2c1bca4a5",
     "asl/block/model/dispatch/tlsu-atomic-tstore.asl": "17631f86951ff5e2bd776c1c8ef464b7183008401999be8c6c0f13340b6860a0",
@@ -21720,7 +21781,7 @@
     "asl/block/model/state/atomic-tstore-source-lifetime.asl": "8818c224b56eb06c7da8ab00d9aa46b7ddfa62b763a341c4626f9accd0d399b6",
     "asl/block/model/state/barg.asl": "b4136ceee8d6874cb9a05497776dad35a5454e797b86c850050b5864f1bb902c",
     "asl/block/model/state/binding-state.asl": "46b650a4830ca540fa274c2ad3cdfd70910d71795761f16b92160fd2d7a96a3a",
-    "asl/block/model/state/control-state.asl": "4ab4863b9e331f8dae55214c444738dc4add525f2341f1e8773124dea4bb6efc",
+    "asl/block/model/state/control-state.asl": "8b602e069766fc5e2304193cc09d39bec146305783a9c7f86c7cc8d6f254a2c4",
     "asl/block/model/state/descriptor-state.asl": "5365f8683e54174680fb23fa181dc67f0ee6117e63cf285b6902810cba56a4c0",
     "asl/block/model/state/shared-generation-state.asl": "ba5462366ad91545876540fd0724c77863b1f3cb5682d49a516a7a6a83ab82a4",
     "asl/block/model/state/source-lifetime.asl": "64e4f6dbb495e0622f0a07fbf6b65847474718bff8cdc24b7bc8ac605e2fc4a2",
@@ -22255,7 +22316,7 @@
     "asl/tile/irregular-and-complex/layout/TGATHER.asl": "3ab3e7013e1f1458f59d1d623730c5634beef4ee88c76c3fdec99d26866804d9",
     "asl/tile/irregular-and-complex/layout/TSCATTER.asl": "a60c7d1c133bf01c6408f9ae70e8e4ccf0ab5980e4e6768decc5c2e78e4680ba",
     "asl/tile/layout-and-rearrangement/layout/TGPR2T.asl": "54329067f97be831ed7e848f3b8477d8f2fe71518342a13e2fcd24094843bdc0",
-    "asl/tile/layout-and-rearrangement/layout/TMOV.asl": "53dd32b5c2c860fcaeec8adb0789353538e3c287e3e517c667750776e0dcdd9d",
+    "asl/tile/layout-and-rearrangement/layout/TMOV.asl": "b40f942dcdb7b0f032a5bf30ea8af1fa3f45fc960d93554e3482b3372209b259",
     "asl/tile/layout-and-rearrangement/layout/TPACK.asl": "5df5562a6e9837fa1432c94735da4e0962b4d4b1b58f8ebd06f22050ef5e7acd",
     "asl/tile/layout-and-rearrangement/layout/TPERMUTE.asl": "b08a5660b17869532091d2dc678d6d99ea7f9220a8cc98aa04d9332d2dd91373",
     "asl/tile/layout-and-rearrangement/layout/TSHUF.asl": "e844c0e4e0a2f9c43e304c83dcdb92ea4ba399cc0c3624834c0b4e0160e7360a",
@@ -22376,6 +22437,7 @@
     "asl/tile/model/memory/shared-movement-types.asl": "014217932c879c14b010690babf5c0510d3b08c21eba369873de1adf8b701367",
     "asl/tile/model/memory/shared-movement-values.asl": "27becfa9496daf9887d73143f52f2caaef2af87143a4832d6c4a7fd0f2a80405",
     "asl/tile/model/memory/shared-movement.asl": "e85ef706176ddede9ed10d9d114b8675b68a6dcccd59d22ef66adeb4ad40d9ee",
+    "asl/tile/model/memory/shared-nd-to-cube.asl": "98e025325bed50521a5eeee05cbd8ecea09c6bf3a1a888630055baf732ca2126",
     "asl/tile/model/memory/stride.asl": "92960da5561ea8d7b3869d028893279dbde4541b554097cef7eea067224eba46",
     "asl/tile/model/numeric/e8m0-conversion.asl": "f5154537ff355cf0b8754eef331f1ef89027c3b3885e1b29379629e224ddb776",
     "asl/tile/model/numeric/exceptions.asl": "7acbde42269981937c4b34454cde84242dd6e22c4daec4c57e8318b347f7adfa",
@@ -22514,7 +22576,7 @@
     "docs/arch/system-registers/maintenance.md": "52b2ec4e6848f4842a4e5efbaaf8e951a65b0d9e7d379f3a2c54a38b0ec2e987",
     "docs/arch/system-registers/timer.md": "15facd0524702b0f06c36912b00b0a1137f6336fa67596b7d0966d32001ceb3e",
     "docs/block/attributes/B.CATR.md": "56bf795bf28d64b3a1a3912a1a61f386c7538c5e6201bd8f0ed62292f4e766cd",
-    "docs/block/attributes/B.DATR.md": "9ff36f1654f294f4db763ed88f2d580d4aedd699df9757ea807f5293dd9ec825",
+    "docs/block/attributes/B.DATR.md": "02bc6b00235d180829dc5b91164cedfdbdcacd3b75e1629bdb50125848f503a0",
     "docs/block/attributes/B.DIM.md": "f6fce6e6c061adc0d4c5484931834da47f24d67b3fcff2ddec4665eaf1b8f040",
     "docs/block/attributes/B.FPATR.md": "a783dfe141c740aaadd5251ab3fbe60f613f4cc388fb77a5797f87d2c6151df9",
     "docs/block/attributes/C.B.DIMI.md": "f6c21cd8607da5817b3fdcc70dc7dff22dcbe9744c528fcc1fff6cbedd13e19f",
@@ -22567,7 +22629,7 @@
     "docs/block/execution/BSTART.TMATMULMX.ACC.md": "630b4514716f0f4f40005d4836b8254800a7ba5e94014e5291cbf927b9a8e59e",
     "docs/block/execution/BSTART.TMATMULMX.BIAS.md": "d5e322cd47fe1b8d9f478c1b0ee66331dff575cb87d52b490182311c950a86be",
     "docs/block/execution/BSTART.TMATMULMX.md": "388d6363b2ba0b8f91f8988e7b7962189546104d60a6b9ac4e4a15f2c37f8174",
-    "docs/block/execution/BSTART.TMOV.md": "441de1c301e6c8891165a8ec814fc02692cb6eaf560e308fe2b39ce0662c3e0c",
+    "docs/block/execution/BSTART.TMOV.md": "57fd24b975c84c390d1193bb99cf27a93c8fe027c307872d6400da567393cd12",
     "docs/block/execution/BSTART.TPREFETCH.md": "e464f1e4bf46189a838873b17003523df22be9f47f90560077920fee72c7d9b9",
     "docs/block/execution/BSTART.TSTORE.md": "896b4fc209a349edf20b3fc7d70e7c8a5f5e639cf66aadbd2c79b3d06d24264a",
     "docs/block/execution/BSTART.VEC.md": "68245f1835ed8a4b29a55d16018e80f3146dfeea20dc37a92681a0b51050fd31",
@@ -22591,7 +22653,7 @@
     "docs/block/model/commit/validation.md": "49ee0e58d11b04fcca22f1bb3bab775d8e7a7b5f037261a38e40e4e984eccc1c",
     "docs/block/model/dispatch/binary-operation-classification.md": "df0599d6b3d121862149a884f64996b56a7d801ef718172d1ec0b5602e566f53",
     "docs/block/model/dispatch/cell-rearrangement-schema.md": "c3c56a4e28e232233c7844a1545e455b6d339362be176dd0d35527ba3ebc4be9",
-    "docs/block/model/dispatch/command-data-attributes.md": "86563c4b1d412eca82a2a573b948fe232eae2f9af3c2da3d7a12d2b9c24e4cc3",
+    "docs/block/model/dispatch/command-data-attributes.md": "4e4ddb0f1e09fc35e006d70615416916af9a70305bc2e6906740c1558ed117e0",
     "docs/block/model/dispatch/commands.md": "4c855f02c9d1400732876c5042b739e3650ca9bc3adb47ea39602428a5bcaca4",
     "docs/block/model/dispatch/comparison-schema.md": "c954d4aa2075a78fc154d9beb923ad2b482054aab1f321757cde3358b7a1c2ea",
     "docs/block/model/dispatch/cube-accumulator-routing.md": "5d9b47919bc5dff5faf58162741a30e5d45b1a98b208fd3ccbabc656f8efeadc",
@@ -22602,8 +22664,8 @@
     "docs/block/model/dispatch/descriptor-legality.md": "610841f62f7d149ba3bb418e841155bfdcdfe9ddc465473c60675ab5d9aacf6c",
     "docs/block/model/dispatch/destination-auxiliary.md": "51b689b09eeb182810afe39671af6578672f8d64fc0266997eb59c3757aef438",
     "docs/block/model/dispatch/destination-operation.md": "ed6e46257c45f36b0b1bb6a2132574db1ab45008170caac21b7cf74100b740b4",
-    "docs/block/model/dispatch/destination-shape.md": "81f5838ef0083f7da2c41f74e43249b03559d826f01143a23c68b1464579ada1",
-    "docs/block/model/dispatch/execution-mask-schema.md": "e2899fb95cebeab690df7104287c4a5431e9fad7f36053a9229ac9b46bbfddf0",
+    "docs/block/model/dispatch/destination-shape.md": "cf4cc4ff86c5f964389fb1a9ba6c656e81588bf898c4155547e831a95e10926c",
+    "docs/block/model/dispatch/execution-mask-schema.md": "095585a4f407777ae75335659f7d969f8cba8d601b8deeff72a662e533d1fd20",
     "docs/block/model/dispatch/expansion-schema.md": "6710c6a738d7a88550b8b2ec03aa8a5d37ba8615a425de2c82ec4ba780668ae9",
     "docs/block/model/dispatch/expdif-schema.md": "ead0e79bb9672a9054380ed4990a64be25765ef6372d66a9d9d27ce626b74595",
     "docs/block/model/dispatch/generation-schema.md": "a03da15f04299c836cc635cf6c67b3561910edcbc43870667395aae28cd7026b",
@@ -22613,19 +22675,20 @@
     "docs/block/model/dispatch/numeric-control.md": "249bba1dbaa9ccd2202580cd8d405022318f459c4f5ca453f3a4b10d25922490",
     "docs/block/model/dispatch/predicate-destination.md": "b9ca4b92f91e908b7965edd7f1d7c31ce509fd61ec140d17f0dd9ebbd5b280d6",
     "docs/block/model/dispatch/reduction-schema.md": "635aaa4e769ee0178ec2f24fd29da206ecbda53ea0807dcc3076847990982d2a",
-    "docs/block/model/dispatch/scalar-schema.md": "e42d4c9c069b6b49ab5c57c83a096f61e85588819b374eaadb6d25d20d90e25b",
+    "docs/block/model/dispatch/scalar-schema.md": "db1660a8a77e19a34535cf82be1e46c821bf674023df471adee35b23488e736c",
     "docs/block/model/dispatch/shared-cube-matrix.md": "1a0c66e593e1bb2884f00e325863df43fbd1436e29eb7b2cf8c8d6e5ce39557a",
-    "docs/block/model/dispatch/shared-tlsu-helpers.md": "0374295af1ebdb1f25292536b0b575cd78c8bf9f889c554ab4b3a287bd9eff0d",
-    "docs/block/model/dispatch/shared-tlsu.md": "1105c2d3ce149717cefb89081083c72629baff05a31a1e0f1209ef5309c03d65",
+    "docs/block/model/dispatch/shared-tlsu-helpers.md": "bb5565f5d0a9931232a82f0029079c32a8ad2788b848160a84a28367ca3a7966",
+    "docs/block/model/dispatch/shared-tlsu.md": "0a081697d1d03b3d847f7187514831f80651ee099cc7c0b8596053a400e340f0",
     "docs/block/model/dispatch/shared-tmov-cube-to-nd.md": "03fac9e5297e49d589b04d573d8acea2416325f224d4e37b4799bd409ce02293",
+    "docs/block/model/dispatch/shared-tmov-nd-to-cube.md": "53bdd7393303953ee3bbce1620f99148baf06e36a8c8c31f67db9bc3c233343c",
     "docs/block/model/dispatch/start.md": "d0c5ac75e5394ada1f3a8da078f80c82c072f64d562cbc760a34b620475bd2fd",
     "docs/block/model/dispatch/tcvt-destination.md": "4155361c673146b20dfb6fdb31f3ce12a4930638224e3d8dc422513aa9675399",
     "docs/block/model/dispatch/tcvt-schema.md": "5db2f9b708bfcbb35535e3101bf51de0effe5cb050b11264226ae5746472281a",
     "docs/block/model/dispatch/tgpr2t-schema.md": "a562972e608499c70b4560f5fa0b096e3f3021565b30086b16159700f4a56735",
-    "docs/block/model/dispatch/tile-execution.md": "d1a5283d9d4e8b85b1caeafb41ac7b0a8a8f92c5f8cf6e5e6088d1c83ad7bd85",
+    "docs/block/model/dispatch/tile-execution.md": "18f97c8e041fc8bf51ff1aa2388d48d7f31de85b59fff3fc0d91790e40d032bf",
     "docs/block/model/dispatch/tile-instruction-operands.md": "2752497887527b4a7dfffd4748218dce0ca4b3ad6cc61b4a81a29648dae26154",
     "docs/block/model/dispatch/tile-scalar-schema.md": "330ea0e94cd5fc6fed0d840078232b89db97d7996a3458c97e868f5fb58b05ad",
-    "docs/block/model/dispatch/tile-schema.md": "fba76792ce0d6ca54704f4e00611a2ffb6304717889cb90dfa5aeaf69ae55032",
+    "docs/block/model/dispatch/tile-schema.md": "be431abb38a52689f0c53eba2f78c9d12b30c5a4e8a8b2d6a5d90c64232295d9",
     "docs/block/model/dispatch/timg2col-execution.md": "b9487da2ac753e2ceddaa2f076e1518d2c93510201993b3c7c193ffd3046b7eb",
     "docs/block/model/dispatch/timg2col-schema.md": "51655c67b9ebf56c53e93164b840ae2d2e2739f37ef21fe3fd837d156474b8ac",
     "docs/block/model/dispatch/tlsu-atomic-tstore.md": "d642f41b526b9cca4010cd6652163ab32ee4030cc1ced73895c15ecffa3d1678",
@@ -22671,7 +22734,7 @@
     "docs/block/model/state/atomic-tstore-source-lifetime.md": "94316b1def0f99d1c1ae3a34ff6ecd7adb098fecbe4f47d5898b0cf2c636358e",
     "docs/block/model/state/barg.md": "b184baccb2191d8b8d7ddd637cabd7cdf5fcd12a4bb9256b685ad1de3535987b",
     "docs/block/model/state/binding-state.md": "6ccbc8e18e3357afdd9890b88fdea711f78a17d6b1bb771248979f3f1406c22b",
-    "docs/block/model/state/control-state.md": "5b83206d646a13247a70e0f84c503576a44d5fb1b38d8a1c97d96619b8600d28",
+    "docs/block/model/state/control-state.md": "9fb516c99480204b1ae375f12cf5178e09fc13226ed62a3698deebad218e2835",
     "docs/block/model/state/descriptor-state.md": "8c054c9cfb122a391bd6965e6e514bb997630cc0f5c488265eeeda05e33c81fa",
     "docs/block/model/state/shared-generation-state.md": "23bd3740f882ef531990fac2959e154db0f5ffe7d7c4b9a79e52bd5a5deb0244",
     "docs/block/model/state/source-lifetime.md": "72e57eb489b76c649a2f71cc4ac0464f71e37f0d1703f3bc04d5f9dc23656531",
@@ -23206,7 +23269,7 @@
     "docs/tile/irregular-and-complex/layout/TGATHER.md": "db8272ff0f12a826d993f5e7e6941b138117a7ef80006008a110935ddd72d201",
     "docs/tile/irregular-and-complex/layout/TSCATTER.md": "3f263f08e1da135a9746da1e57cb7ad037e52c0b6acb70b2d16acfe12a398240",
     "docs/tile/layout-and-rearrangement/layout/TGPR2T.md": "ab2ae3d20f68555b69d8b7b85a837859d228635ddd40fde73642f097790981f8",
-    "docs/tile/layout-and-rearrangement/layout/TMOV.md": "ac88cd0a4510cec466cd075d087ee453623ccda759e748f40fe18e034dba2300",
+    "docs/tile/layout-and-rearrangement/layout/TMOV.md": "6d26708cb7b9534c096d28ea5b7838de975dfc7383c3f1ab75787592147f5ab2",
     "docs/tile/layout-and-rearrangement/layout/TPACK.md": "73c0239425a6c9eea04219f9d5e7b9a21ebe871ddf720b3ef56d3a2aa574b00a",
     "docs/tile/layout-and-rearrangement/layout/TPERMUTE.md": "062b6603eeff5dae5c525e9b9108dcefe486b6d4228f0f0a8a13dba71449f0b1",
     "docs/tile/layout-and-rearrangement/layout/TSHUF.md": "3a5447aa511f1ef003729d5b9f93b1b084077f8931c81113db7f150d20bf460d",
@@ -23327,6 +23390,7 @@
     "docs/tile/model/memory/shared-movement-types.md": "8a4d01547858cd091e5f342389c37cffee7ac64a1ed2963ac3380bc62f6a4227",
     "docs/tile/model/memory/shared-movement-values.md": "0db95694575f33d379410b819d174b3da83977f3e46beb830cf75676bc6a2fd0",
     "docs/tile/model/memory/shared-movement.md": "35392fde183b2fd035f972a2ad136568c98bc5e9d7f1f82c5a94817fb9105053",
+    "docs/tile/model/memory/shared-nd-to-cube.md": "581a74d46d7aa9c8baf56b0da1151e9f217d6b9c5b79f46cfa73ee582722ffed",
     "docs/tile/model/memory/stride.md": "dd52e9eed1ffc21f51de2730affd980c1cb77cced945950e72ba2a66927f9d22",
     "docs/tile/model/numeric/e8m0-conversion.md": "1109a7e9fc4782843e5878c51415ff1e274ef48b325fe8d4975aedeb92d1e148",
     "docs/tile/model/numeric/exceptions.md": "4c81558de0b463ff826edb5975aa98f46f6229e2500bb3d2341dc0cad0433a78",
@@ -23391,8 +23455,8 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "c1332aa895d5a70170b6f193674ad97371cbdd4314f5336de4ce4eb703d4d484",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "4fdb0facff519fecde8ba33ed966ed54c04b04c3f5f344024b2ce1a859434d67",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "c2bba4aad8073962fc18443147a53b3492eee9629f7a5975591087d1d8834e67",
-    "spec/evidence/adr-index.json": "4a70d831b1bfac36d1180aa455559a112efaf5166d4fc94f364c592bf229c768",
-    "spec/evidence/instruction-contract-closure.json": "24a89e14787ed51068ac13564d70e7a9ba2601e11f6959c708405ebd6a5e1f6a",
+    "spec/evidence/adr-index.json": "78d05d68aed724c91b1091756ad1212d44d05430e0695772b4b16e74a5f838f4",
+    "spec/evidence/instruction-contract-closure.json": "a0018a44c863c360b2746fb84a0f6f9752aa568aefeb89ba61a82e91ae6b2253",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6c18bfdff0279b6d4fbaf3cb3c8e1ee111b4d5e82e1688136b88be6fa7902ba3",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -24161,6 +24225,23 @@
     "tests/asl/block/model/dispatch/shared-tmov-cube-to-nd/block-exec-shared-tmov-cube-to-nd-zero-mask-009.asl": "217abf5ff66eb44c5d08841188157b66e2d76a579693973d22ac06345807ac48",
     "tests/asl/block/model/dispatch/shared-tmov-cube-to-nd/block-state-shared-tmov-cube-to-nd-tail-publication-008.asl": "523aedaa8e9b11e64f1fac6a5affc77d1713b010886a3bd266c02fecad37d534",
     "tests/asl/block/model/dispatch/shared-tmov-cube-to-nd/block-static-shared-tmov-cube-to-nd-contract-001.asl": "e5d7d2f052e9e55b7897bcbe2f2ebb12e17c937170ae81356090492376b4f81b",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-carrier-backing-matrix-001.asl": "99d4836a9d0382cfce97d8e47c9674116c0e16a09a436ca77e144d07901154df",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-four-pe-gpr-ranges-001.asl": "fa1944228adbc643e0cb0b56b387bb5aef2869410493fe5b1998856d93da4472",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-lb2-effective-equivalence-001.asl": "515268c92cde8a9dc7087b7b65975f003c8189bba7da8f606d2a5ee48577eba3",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-m16-u16-001.asl": "66da2a80ee980f4cd9002603c6402afa767dfc14d84e38cd73bb3dbb42c23dd2",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-roundtrip-001.asl": "e37ecf1be0dec26a3402263add4e33178572bec391326f189c379da73445de76",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-singleton-001.asl": "f8433f78bd81bd6043e42f1f87e34de566761340e9b9e6d7414fae019bf8ce9d",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-valid-tails-packed-001.asl": "374cd16df43741c1cf2db0127cf5dfb0b89fb1e6d5805af0a022db0fcef8c22f",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-zero-nonparticipant-001.asl": "7dd50ce1595d2e6d5a6ea2ef3af4c57dc9787f900086eefc4cf972ccada7ee92",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-fault-shared-tmov-nd-to-cube-allocation-retry-001.asl": "26a483b68d783f01de746e073add028ddf25f5bebcbccc5fcbef82736483dfb3",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-fault-shared-tmov-nd-to-cube-binding-roles-001.asl": "1669728b7e71e7c5483ab04a84249e848042503ebfaf86c7eb66be44f9970b32",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-fault-shared-tmov-nd-to-cube-dimensions-001.asl": "b68cafcac14451a7212b1e176fd5ccecffd52d4d54e7d987e5f4f30e4610f81e",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-fault-shared-tmov-nd-to-cube-row-geometry-001.asl": "ce67686ea66f0c025ce66bebdfb9331fac654fced2b00f4adfac67302f6ab09a",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-fault-shared-tmov-nd-to-cube-schema-type-001.asl": "4af1c0ab1a8695953a9fea96ff29c32a8d07e5bac03f827849c83513b64162d5",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-fault-shared-tmov-nd-to-cube-source-validity-001.asl": "c5f35a5a244aab56398fdc963ae1027ee45973d3e8cdd2cbf603b1da9c45f11f",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-fault-shared-tmov-nd-to-cube-wrong-function-001.asl": "bc9044c6f19fe7175ca7a424b8f33cba02ec5d8fe4f01b3191d890088849f87d",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-state-shared-tmov-nd-to-cube-wait-last-use-retry-001.asl": "e43b7a8d80e020d30962445dd4ac0b632a24d3eaa2186b85ce3ac22006477865",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-static-shared-tmov-nd-to-cube-contract-001.asl": "d22602a928907f79b487a4d78a2bb6d9279da9a13b4d2db380fab5a990ed9ce6",
     "tests/asl/block/model/dispatch/start/block-state-bstart-predecessor-sequential-002.asl": "ff0bbc6cd82a50557d1db5bff260e72743892d361063c20140ba7caa3ee0ab28",
     "tests/asl/block/model/dispatch/start/block-state-bstart-predecessor-taken-001.asl": "d33d93e453bfd8e19a8973b35c9b2e14fc4046ddd6d1a31e740bd0a5ebd10343",
     "tests/asl/block/model/dispatch/start/block-state-shared-bstart-incomplete-predecessor-001.asl": "ee47d26eb6fe12b871922a8ea6d4cb8c9cf2d5c82f2e8dc3ccc4254b9e39607a",
@@ -27604,6 +27685,7 @@
     "tests/asl/tile/model/memory/shared-movement-types/tile-static-shared-movement-types-contract-001.asl": "e46c91db2dc3376b850bdfeacfb8a62fda5456b9b38a0f977350bd90c163196e",
     "tests/asl/tile/model/memory/shared-movement-values/tile-static-shared-movement-values-contract-001.asl": "844aa528d115c61deeebdcf3d6e027f6c12db174c9089f19102345aa4c75c8f6",
     "tests/asl/tile/model/memory/shared-movement/tile-static-shared-movement-contract-001.asl": "f54001f2b86ea0dbd3cf9ff048155f0a058e7bce8de84d36de5741af891088dd",
+    "tests/asl/tile/model/memory/shared-nd-to-cube/tile-static-shared-nd-to-cube-contract-001.asl": "931939a73b3547ef439fa5a38d8e8168342ce3bd16ecba249dd65289aafaa509",
     "tests/asl/tile/model/memory/stride/tile-static-stride-contract-001.asl": "79b2d1cc67a26b8d27674fc40390b678364d6471baf28dbe36cf54bfc69b9807",
     "tests/asl/tile/model/numeric/e8m0-conversion/tile-static-e8m0-conversion-contract-001.asl": "af2e1f47f1eb68f559b324e52a6d11ca36df40cc8928aaaf122391802f8f74ff",
     "tests/asl/tile/model/numeric/exceptions/tile-static-exceptions-contract-001.asl": "32246a88dfcc0a3206a21a2156eb26961156f893a629bba3e7b5e95f1f779627",
@@ -27828,19 +27910,19 @@
     "tests/asl/tile/tile-scalar-and-immediate/logical/TXORS/tile-static-txors-contract-001.asl": "1307d5083cb3ef94263b450f98180653a80c0648f339b2ace7d13ad91b5f29c5"
   },
   "summary": {
-    "documentation_page_count": 951,
+    "documentation_page_count": 953,
     "executable_requirement_count": 677,
     "mnemonic_count": 671,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 1134,
+    "requirement_count": 1135,
     "status": "closed",
-    "test_count": 4433,
+    "test_count": 4451,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
     "uncovered_units": [],
-    "unit_count": 951
+    "unit_count": 953
   },
   "tests": [
     {
@@ -41489,6 +41571,14 @@
       "source": "asl/block/model/dispatch/shared-tmov-cube-to-nd.asl"
     },
     {
+      "id": "PTO-AVS-BLOCK-MODEL-DISPATCH-SHARED-TMOV-ND-TO-CUBE-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-static-shared-tmov-nd-to-cube-contract-001.asl",
+      "requirements": [],
+      "sha256": "d22602a928907f79b487a4d78a2bb6d9279da9a13b4d2db380fab5a990ed9ce6",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    },
+    {
       "id": "PTO-AVS-BLOCK-MODEL-DISPATCH-START-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/block/model/dispatch/start/block-static-start-contract-001.asl",
@@ -47360,6 +47450,198 @@
       ],
       "sha256": "90c16cb2bd79e0fac52acd780b3c3ed1e360f86a3e869e83650db77428838e22",
       "source": "asl/block/model/dispatch/shared-tlsu.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ALLOCATION-RETRY-001",
+      "kind": "fault",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-fault-shared-tmov-nd-to-cube-allocation-retry-001.asl",
+      "requirements": [
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001",
+        "PTO-B-SHARED-WHOLE-PARENT-READY-001",
+        "PTO-CUBE-CELL-TRANSPORT-001"
+      ],
+      "sha256": "26a483b68d783f01de746e073add028ddf25f5bebcbccc5fcbef82736483dfb3",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-BINDING-ROLES-001",
+      "kind": "fault",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-fault-shared-tmov-nd-to-cube-binding-roles-001.asl",
+      "requirements": [
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001",
+        "PTO-BSTART-TMOV-SHARED-001",
+        "PTO-B-IOS-SHARED-STATE-001"
+      ],
+      "sha256": "1669728b7e71e7c5483ab04a84249e848042503ebfaf86c7eb66be44f9970b32",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-CARRIER-BACKING-MATRIX-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-carrier-backing-matrix-001.asl",
+      "requirements": [
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001",
+        "PTO-CUBE-CELL-TRANSPORT-001",
+        "PTO-TILE-CARRIER-REINTERPRETATION-001"
+      ],
+      "sha256": "99d4836a9d0382cfce97d8e47c9674116c0e16a09a436ca77e144d07901154df",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-DIMENSIONS-001",
+      "kind": "fault",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-fault-shared-tmov-nd-to-cube-dimensions-001.asl",
+      "requirements": [
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001",
+        "PTO-B-DIM-WRITE-001",
+        "PTO-BUNDLE-DIMENSION-DEFAULT-001"
+      ],
+      "sha256": "b68cafcac14451a7212b1e176fd5ccecffd52d4d54e7d987e5f4f30e4610f81e",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-FOUR-PE-GPR-RANGES-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-four-pe-gpr-ranges-001.asl",
+      "requirements": [
+        "PTO-ARCH-PE-EXECUTION-CONTEXT-001",
+        "PTO-B-SUBVIEW-SHARED-PER-PE-001",
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001"
+      ],
+      "sha256": "fa1944228adbc643e0cb0b56b387bb5aef2869410493fe5b1998856d93da4472",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-EQUIVALENCE-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-lb2-effective-equivalence-001.asl",
+      "requirements": [
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001",
+        "PTO-BSTART-TMOV-SHARED-001",
+        "PTO-BUNDLE-DIMENSION-DEFAULT-001"
+      ],
+      "sha256": "515268c92cde8a9dc7087b7b65975f003c8189bba7da8f606d2a5ee48577eba3",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-M16-U16-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-m16-u16-001.asl",
+      "requirements": [
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001",
+        "PTO-BSTART-TMOV-SHARED-001",
+        "PTO-CUBE-CELL-TRANSPORT-001"
+      ],
+      "sha256": "66da2a80ee980f4cd9002603c6402afa767dfc14d84e38cd73bb3dbb42c23dd2",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ROUNDTRIP-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-roundtrip-001.asl",
+      "requirements": [
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001",
+        "PTO-TMOV-CUBE-TO-SHARED-ND-001",
+        "PTO-CUBE-CELL-TRANSPORT-001"
+      ],
+      "sha256": "e37ecf1be0dec26a3402263add4e33178572bec391326f189c379da73445de76",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ROW-GEOMETRY-001",
+      "kind": "fault",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-fault-shared-tmov-nd-to-cube-row-geometry-001.asl",
+      "requirements": [
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001",
+        "PTO-B-SUBVIEW-SHARED-PER-PE-001",
+        "PTO-CUBE-CELL-TRANSPORT-001"
+      ],
+      "sha256": "ce67686ea66f0c025ce66bebdfb9331fac654fced2b00f4adfac67302f6ab09a",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SCHEMA-TYPE-001",
+      "kind": "fault",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-fault-shared-tmov-nd-to-cube-schema-type-001.asl",
+      "requirements": [
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001",
+        "PTO-BSTART-TMOV-SHARED-001",
+        "PTO-CUBE-CELL-TRANSPORT-001",
+        "PTO-TILE-CARRIER-REINTERPRETATION-001"
+      ],
+      "sha256": "4af1c0ab1a8695953a9fea96ff29c32a8d07e5bac03f827849c83513b64162d5",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SINGLETON-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-singleton-001.asl",
+      "requirements": [
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001",
+        "PTO-BSTART-TMOV-SHARED-001",
+        "PTO-CUBE-CELL-TRANSPORT-001"
+      ],
+      "sha256": "f8433f78bd81bd6043e42f1f87e34de566761340e9b9e6d7414fae019bf8ce9d",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SOURCE-VALIDITY-001",
+      "kind": "fault",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-fault-shared-tmov-nd-to-cube-source-validity-001.asl",
+      "requirements": [
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001",
+        "PTO-B-SHARED-WHOLE-PARENT-READY-001",
+        "PTO-CUBE-CELL-TRANSPORT-001"
+      ],
+      "sha256": "c5f35a5a244aab56398fdc963ae1027ee45973d3e8cdd2cbf603b1da9c45f11f",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-VALID-TAILS-PACKED-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-valid-tails-packed-001.asl",
+      "requirements": [
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001",
+        "PTO-CUBE-CELL-TRANSPORT-001"
+      ],
+      "sha256": "374cd16df43741c1cf2db0127cf5dfb0b89fb1e6d5805af0a022db0fcef8c22f",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-WAIT-LAST-USE-RETRY-001",
+      "kind": "state-transition",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-state-shared-tmov-nd-to-cube-wait-last-use-retry-001.asl",
+      "requirements": [
+        "PTO-B-IOS-SHARED-STATE-001",
+        "PTO-B-SHARED-WHOLE-PARENT-READY-001",
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001"
+      ],
+      "sha256": "e43b7a8d80e020d30962445dd4ac0b632a24d3eaa2186b85ce3ac22006477865",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-WRONG-FUNCTION-001",
+      "kind": "fault",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-fault-shared-tmov-nd-to-cube-wrong-function-001.asl",
+      "requirements": [
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001",
+        "PTO-BSTART-TMOV-SHARED-001",
+        "PTO-CUBE-CELL-TRANSPORT-001"
+      ],
+      "sha256": "bc9044c6f19fe7175ca7a424b8f33cba02ec5d8fe4f01b3191d890088849f87d",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ZERO-NONPARTICIPANT-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-zero-nonparticipant-001.asl",
+      "requirements": [
+        "PTO-B-IOS-SHARED-STATE-001",
+        "PTO-B-SUBVIEW-SHARED-PER-PE-001",
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001"
+      ],
+      "sha256": "7dd50ce1595d2e6d5a6ea2ef3af4c57dc9787f900086eefc4cf972ccada7ee92",
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-SHARED-TMOV-NZ-026",
@@ -66630,6 +66912,14 @@
       "source": "asl/tile/model/memory/shared-movement-values.asl"
     },
     {
+      "id": "PTO-AVS-TILE-MODEL-MEMORY-SHARED-ND-TO-CUBE-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/tile/model/memory/shared-nd-to-cube/tile-static-shared-nd-to-cube-contract-001.asl",
+      "requirements": [],
+      "sha256": "931939a73b3547ef439fa5a38d8e8168342ce3bd16ecba249dd65289aafaa509",
+      "source": "asl/tile/model/memory/shared-nd-to-cube.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-MODEL-MEMORY-STRIDE-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/tile/model/memory/stride/tile-static-stride-contract-001.asl",
@@ -78285,6 +78575,7 @@
         "ADR-BLOCK-0015",
         "ADR-BLOCK-0016",
         "ADR-CUBE-0004",
+        "ADR-CUBE-0005",
         "ADR-CUBE-0010",
         "ADR-CUBE-0013",
         "ADR-CUBE-0017",
@@ -78636,6 +78927,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0005",
         "ADR-BLOCK-0019",
+        "ADR-CUBE-0005",
         "ADR-GOV-0013",
         "ADR-GOV-0014",
         "ADR-TILE-0004",
@@ -78708,7 +79000,9 @@
       "documentation": "docs/block/model/dispatch/shared-tlsu-helpers.md",
       "id": "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU-HELPERS",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-CUBE-0005"
+      ],
       "semantic_tests": [],
       "source": "asl/block/model/dispatch/shared-tlsu-helpers.asl",
       "surface": "block",
@@ -78845,6 +79139,58 @@
         "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-TYPE-MATRIX-005",
         "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-TYPE-SHAPE-006",
         "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-ZERO-MASK-009"
+      ]
+    },
+    {
+      "classification": [
+        "model",
+        "dispatch",
+        "shared-tmov-nd-to-cube"
+      ],
+      "documentation": "docs/block/model/dispatch/shared-tmov-nd-to-cube.md",
+      "id": "PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-ND-TO-CUBE",
+      "mnemonic": null,
+      "readiness_subjects": [
+        "ADR-CUBE-0005"
+      ],
+      "semantic_tests": [
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ALLOCATION-RETRY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-BINDING-ROLES-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-CARRIER-BACKING-MATRIX-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-DIMENSIONS-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-FOUR-PE-GPR-RANGES-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-EQUIVALENCE-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-M16-U16-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ROUNDTRIP-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ROW-GEOMETRY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SCHEMA-TYPE-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SINGLETON-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SOURCE-VALIDITY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-VALID-TAILS-PACKED-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-WAIT-LAST-USE-RETRY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-WRONG-FUNCTION-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ZERO-NONPARTICIPANT-001"
+      ],
+      "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl",
+      "surface": "block",
+      "tests": [
+        "PTO-AVS-BLOCK-MODEL-DISPATCH-SHARED-TMOV-ND-TO-CUBE-STATIC-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ALLOCATION-RETRY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-BINDING-ROLES-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-CARRIER-BACKING-MATRIX-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-DIMENSIONS-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-FOUR-PE-GPR-RANGES-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-EQUIVALENCE-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-M16-U16-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ROUNDTRIP-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ROW-GEOMETRY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SCHEMA-TYPE-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SINGLETON-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SOURCE-VALIDITY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-VALID-TAILS-PACKED-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-WAIT-LAST-USE-RETRY-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-WRONG-FUNCTION-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-ZERO-NONPARTICIPANT-001"
       ]
     },
     {
@@ -102596,6 +102942,25 @@
       "surface": "tile",
       "tests": [
         "PTO-AVS-TILE-MODEL-MEMORY-SHARED-MOVEMENT-STATIC-001"
+      ]
+    },
+    {
+      "classification": [
+        "model",
+        "memory",
+        "shared-nd-to-cube"
+      ],
+      "documentation": "docs/tile/model/memory/shared-nd-to-cube.md",
+      "id": "PTO-TILE-MODEL-MEMORY-SHARED-ND-TO-CUBE",
+      "mnemonic": null,
+      "readiness_subjects": [
+        "ADR-CUBE-0005"
+      ],
+      "semantic_tests": [],
+      "source": "asl/tile/model/memory/shared-nd-to-cube.asl",
+      "surface": "tile",
+      "tests": [
+        "PTO-AVS-TILE-MODEL-MEMORY-SHARED-ND-TO-CUBE-STATIC-001"
       ]
     },
     {

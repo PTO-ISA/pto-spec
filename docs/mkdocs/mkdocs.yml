@@ -215,6 +215,7 @@ nav:
               - Shared TLSU Helpers: block/model/dispatch/shared-tlsu-helpers.md
               - Shared TLSU: block/model/dispatch/shared-tlsu.md
               - Shared Tmov CUBE To Nd: block/model/dispatch/shared-tmov-cube-to-nd.md
+              - Shared Tmov Nd To CUBE: block/model/dispatch/shared-tmov-nd-to-cube.md
               - Start: block/model/dispatch/start.md
               - Tcvt Destination: block/model/dispatch/tcvt-destination.md
               - Tcvt Schema: block/model/dispatch/tcvt-schema.md
@@ -972,6 +973,7 @@ nav:
               - Shared Movement Types: tile/model/memory/shared-movement-types.md
               - Shared Movement Values: tile/model/memory/shared-movement-values.md
               - Shared Movement: tile/model/memory/shared-movement.md
+              - Shared Nd To CUBE: tile/model/memory/shared-nd-to-cube.md
               - Stride: tile/model/memory/stride.md
           - Numeric:
               - E8m0 Conversion: tile/model/numeric/e8m0-conversion.md
