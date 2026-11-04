@@ -3649,7 +3649,7 @@
         "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-TYPE-SHAPE-006",
         "PTO-AVS-BLOCK-SHARED-TMOV-CUBE-TO-ND-ZERO-MASK-009",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-BINDING-ROLES-001",
-        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-EQUIVALENCE-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LOCAL-ASSEMBLE-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-M16-U16-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-SCHEMA-TYPE-001",
@@ -3772,7 +3772,7 @@
         "PTO-AVS-BLOCK-MODEL-SCHEMA-DIMENSIONS-DEFAULT-001",
         "PTO-AVS-BLOCK-MODEL-SCHEMA-DIMENSIONS-STATIC-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-DIMENSIONS-001",
-        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-EQUIVALENCE-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-001",
         "PTO-AVS-BLOCK-TLOAD-TSTORE-CUBE-DIMENSIONS-001",
         "PTO-AVS-TILE-TCVT-CUBE-LB2-001",
         "PTO-AVS-TILE-TTRI-LB2-DEFAULT-001"
@@ -20415,7 +20415,7 @@
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-CARRIER-BACKING-MATRIX-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-DIMENSIONS-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-FOUR-PE-GPR-RANGES-001",
-        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-EQUIVALENCE-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LIFETIME-COHORT-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LOCAL-ASSEMBLE-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-M16-U16-001",
@@ -24238,7 +24238,7 @@
     "tests/asl/block/model/dispatch/shared-tmov-cube-to-nd/block-static-shared-tmov-cube-to-nd-contract-001.asl": "e5d7d2f052e9e55b7897bcbe2f2ebb12e17c937170ae81356090492376b4f81b",
     "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-carrier-backing-matrix-001.asl": "7965f6017f951ae5a4698b3515c44f558205084facff6d23def80d06ad74f27f",
     "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-four-pe-gpr-ranges-001.asl": "fa1944228adbc643e0cb0b56b387bb5aef2869410493fe5b1998856d93da4472",
-    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-lb2-effective-equivalence-001.asl": "515268c92cde8a9dc7087b7b65975f003c8189bba7da8f606d2a5ee48577eba3",
+    "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-lb2-effective-equivalence-001.asl": "bb4ed3e32d8b7929c0631ef398a37e018d311ffe660ba9f6a1350d74df5b7290",
     "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-m16-u16-001.asl": "f07c684f568f2177626b7d365170e88c66361c4a560c5b1bfc09f2f2fffa5cf7",
     "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-roundtrip-001.asl": "e37ecf1be0dec26a3402263add4e33178572bec391326f189c379da73445de76",
     "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-singleton-001.asl": "f8433f78bd81bd6043e42f1f87e34de566761340e9b9e6d7414fae019bf8ce9d",
@@ -47526,7 +47526,7 @@
       "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
     },
     {
-      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-EQUIVALENCE-001",
+      "id": "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-001",
       "kind": "execution",
       "path": "tests/asl/block/model/dispatch/shared-tmov-nd-to-cube/block-exec-shared-tmov-nd-to-cube-lb2-effective-equivalence-001.asl",
       "requirements": [
@@ -47534,7 +47534,7 @@
         "PTO-BSTART-TMOV-SHARED-001",
         "PTO-BUNDLE-DIMENSION-DEFAULT-001"
       ],
-      "sha256": "515268c92cde8a9dc7087b7b65975f003c8189bba7da8f606d2a5ee48577eba3",
+      "sha256": "bb4ed3e32d8b7929c0631ef398a37e018d311ffe660ba9f6a1350d74df5b7290",
       "source": "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
     },
     {
@@ -79211,7 +79211,7 @@
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-CARRIER-BACKING-MATRIX-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-DIMENSIONS-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-FOUR-PE-GPR-RANGES-001",
-        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-EQUIVALENCE-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LIFETIME-COHORT-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LOCAL-ASSEMBLE-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-M16-U16-001",
@@ -79235,7 +79235,7 @@
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-CARRIER-BACKING-MATRIX-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-DIMENSIONS-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-FOUR-PE-GPR-RANGES-001",
-        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-EQUIVALENCE-001",
+        "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LB2-EFFECTIVE-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LIFETIME-COHORT-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-LOCAL-ASSEMBLE-001",
         "PTO-AVS-BLOCK-SHARED-TMOV-ND-TO-CUBE-M16-U16-001",
