@@ -666,13 +666,13 @@
       "complete_bundle_schema": {
         "encoded_surplus_rule": "RegSrc2, RegDst, and all unconsumed source fields must be zero",
         "evidence": "spec/evidence/bundle-command-totality.json",
+        "execution_mask_order": "ExecutionMask GPR word(s) follow all operation-owned GPR inputs and ExecMaskPresent is set only on the final binding record.",
         "gpr_logical_order": [
           "scalar QuantParam",
           "scalar LReLUParam"
         ],
         "omission_default": "R0/zero for each consumed slot",
-        "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
-        "execution_mask_order": "ExecutionMask GPR word(s) follow all operation-owned GPR inputs and ExecMaskPresent is set only on the final binding record."
+        "owner": "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA"
       },
       "constraints": [
         {

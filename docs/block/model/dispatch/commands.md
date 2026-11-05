@@ -83,7 +83,7 @@ If the same `B.IOT` had `PEMode` `111`, mask `1111`, and appeared after `BSTOP` 
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/commands.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-COMMANDS","surface":"block","classification":["model","dispatch","commands"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES","PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-START","PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-COMMANDS","surface":"block","classification":["model","dispatch","commands"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-COMMAND-DATA-ATTRIBUTES","PTO-BLOCK-MODEL-DISPATCH-INDEXED-TLSU-RANGE-COMMAND-STREAM","PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-START","PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS"]}
 readonly func BundleFixedPointAttributesCanBePlaced() => boolean
 begin
     if !_BundleActive ||
@@ -110,6 +110,7 @@ begin
         SetFault(Fault_IllegalInstruction, ReadTPC());
         return CommandExecution_Rejected;
     end;
+    if !BundleIndexedTLSURangeMaskCommandAllowed(handler == CommandHandler_BindBundleScalarIO) then return CommandExecution_Rejected; end;
     if !DecodedBundleCommandKeepsTGPR2TStreamLegal(instruction, form) ||
        !DecodedBundleCommandKeepsTIMG2COLStreamLegal(form) then
         SetFault(Fault_BundleControl, ReadTPC());
@@ -278,7 +279,7 @@ begin
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc2),
                 if selected_tgpr2t && binding_index == 1 &&
                    !execution_mask_present then 1 else 3,
-                execution_mask_present);
+                execution_mask_present); BundleMarkIndexedTLSURangeMaskSecondPending(binding_index == 0 && !execution_mask_present);
         when CommandHandler_BindBundleTileIO =>
             let pe_mode = DecodeCommandOperandRaw(
                 instruction, form, CommandField_PEMode)[2:0];

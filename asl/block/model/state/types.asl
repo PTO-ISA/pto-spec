@@ -62,7 +62,8 @@ type BundleScalarBinding of record {
     source1: Reg5Selector,
     source2: Reg5Selector,
     source_count: integer {0..3},
-    execution_mask_present: boolean
+    execution_mask_present: boolean,
+    indexed_tlsu_mask_second_contiguous: boolean
 };
 
 type BundleExecutionMaskCarrier of enumeration {

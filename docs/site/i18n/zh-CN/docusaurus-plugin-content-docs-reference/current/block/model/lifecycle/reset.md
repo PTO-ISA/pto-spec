@@ -109,6 +109,7 @@ begin
         _BundleScalarBindings[[index]].source2 = 0;
         _BundleScalarBindings[[index]].source_count = 0;
         _BundleScalarBindings[[index]].execution_mask_present = FALSE;
+        _BundleScalarBindings[[index]].indexed_tlsu_mask_second_contiguous = FALSE;
     end;
     for index = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         _BundleTileBindings[[index]].valid = FALSE;

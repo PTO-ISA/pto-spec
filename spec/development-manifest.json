@@ -8,7 +8,7 @@
   "catalogs": {
     "command_forms": {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "c72925c7aca57ca2b81df6ee1fcb1d54aa80e4660652f1221c3c1128005d2f55"
+      "sha256": "d131aa62391c5e3afdfc4ab24c064d7c2daf27d27e200d8f000af26e16fde4f2"
     },
     "reservations": {
       "path": "spec/catalog/extension-encoding-reservations.json",
@@ -24,7 +24,7 @@
     },
     "tile_operations": {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "659b9da8bf6e598b37d40f6151b6ab2622fac3c250dfc18c2feb09fefc566c53"
+      "sha256": "29f1ffe575c701b416b9205ff9377f92f72b5d48a091c1aa3f9c9fc7e0d49033"
     }
   },
   "identity": {
@@ -32,8 +32,8 @@
     "encoding_projection_sha256": "4effea27acd51de4f637bddbee7d80e135c2d53775fa90e7d47c49041da8f693",
     "release": "0.59.0"
   },
-  "normative_source_count": 953,
-  "normative_sources_sha256": "4b4e695d890a1f6502c6dbfc7e17eb55ec6bda4bf62cc710477ab5b13b74abf2",
+  "normative_source_count": 956,
+  "normative_sources_sha256": "1d0069b4e241f4f92703b9aaf53fe435c246646429447655a6e0e52faf2ce85f",
   "publication": null,
   "schema": "pto.development-manifest.v1",
   "status": "development-not-published"
