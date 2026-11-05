@@ -93,7 +93,7 @@ begin
         return FALSE;
     end;
     if BundleTMOVSelected() && _BundleDataAttributesPresent &&
-       TileDataLayoutIsCubeToSharedND(
+       TileDataLayoutIsCubeConversion(
            _BundleDataAttributes.data_layout) then
         return !mask_present;
     end;
