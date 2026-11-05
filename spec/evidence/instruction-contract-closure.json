@@ -1264,7 +1264,7 @@
         "legality": [
           "B.DATR may appear at most once, after BSTART and before the block body.",
           "DataType accepts the 27 concrete TileDataType codes plus code 31 DTYPE_NONE; codes 22, 23, and 29..30 are reserved and reject before effects.",
-          "Layout codes 0, 1, 3, 4, 6, 8, 9, 10, 11, 17, 18, 20, 21 through 29, and 30 through 31 are assigned. Codes 10 and 11 are weight-mode TLOAD-only layouts; codes 21 through 26 select ND2M32, ND2M16, ND2N8, M322ND, M162ND, and N82ND respectively; code 29 selects direct Local CUBE_M32 and code 31 selects direct Local CUBE_M16.",
+          "Layout codes 0, 1, 3, 4, 6, 8, 9, 10, 11, 17, 18, 20, 21 through 29, and 30 through 31 are assigned. Codes 10 and 11 are weight-mode TLOAD-only layouts; codes 21 through 26 select ND2M32, ND2M16, ND2N8, M322ND, M162ND, and N82ND respectively; code 29 selects direct Local CUBE_M32 and code 31 selects direct Local CUBE_M16. Function-2 TMOV with DTYPE_NONE additionally accepts 21/22 for Shared ND-to-Local CUBE_M32/M16 and 24/25 for Local CUBE_M32/M16-to-Shared ND; 23/26 have no Shared form. GM TLOAD/TSTORE assignments remain unchanged.",
           "CMode codes 0..5 select EQ, NE, LT, GT, LE, and GE; codes 6..7 are reserved except at the B.DATR command boundary of an active TLSU Function 1 TSTORE with Canonicalize=1, where they select ATOMIC_INC and ATOMIC_DEC.",
           "All RMode codes 0..7 are assigned: operation default, RNE, RTZ, RTM, RTP, RNA, RTO, and RHB.",
           "Canonicalize is legal only for TCVT and, for TLSU Function 1 TSTORE, selects Atomic reduction when enabled with CMode 0..7; other tile operations retain their existing Canonicalize applicability.",
@@ -20376,7 +20376,7 @@
         ],
         "defaults": [
           "Concrete DataType codes explicitly select the transfer carrier interpretation. DTYPE_NONE infers the type from the bound source descriptor; failure to resolve a concrete source type rejects before destination effects. Optional B.DATR omission retains NORM layout.",
-          "Omitted LB0, LB1, and LB2 each have effective value one; omission does not inherit the source descriptor shape. An unallocated, pending, or incomplete Shared source remains waiting and produces no destination effect.",
+          "Omitted LB0, LB1, and LB2 each have effective value one; omission does not inherit the source descriptor shape. An unallocated, pending, or incomplete Shared source remains waiting without destination effects or binding consumption. For reverse ND2M32/ND2M16, effective LB2=1 derives physical columns whether omitted or explicit; other accepted values equal the derived count and presence is ignored.",
           "PE_MASK=0000 is a strict no-op before source reads, destination allocation, publication checks, faults, or binding consumption."
         ],
         "encoded_fields": [
@@ -20422,14 +20422,14 @@
           "BSTART.TMOV U8; B.IOS S7, mask=0011; B.SUBVIEW 0, a0, 0, 7; B.IOT mask=0011, ->T<7>, last; BSTOP"
         ],
         "exceptions": [
-          "Reserved DataType, unsupported Layout, malformed or unterminated binding schema, role/size/mask mismatch, incompatible descriptor, incomplete B.ASSEMBLE.LAST, unpublished Shared source, allocation failure, or shape mismatch rejects before destination effects.",
-          "A Shared source is hardware-waiting/no-effect until the complete parent is ready and published; no undefined Shared payload is consumed."
+          "Reserved DataType, unsupported Layout, malformed or unterminated binding schema, role/size/mask mismatch, incompatible descriptor, incomplete B.ASSEMBLE.LAST, allocation failure, or shape mismatch rejects before destination effects.",
+          "An unready or unpublished Shared source waits without destination effects or binding consumption; no undefined Shared payload is consumed."
         ],
         "field_domains": [],
         "legality": [
           "DataType accepts 27 concrete TileDataType codes and code 31 DTYPE_NONE for source-descriptor inference; codes 22..23 and 29..30 are reserved.",
-          "Function 2 accepts Local-to-Local and canonical Local/Shared or Shared/Local TMOV schemas. With DTYPE_NONE, Layout M322ND/M162ND converts a compatible Local CUBE_M32/M16 source into RowMajor ND Shared storage while preserving its backing type. A Shared destination with multiple participating PEs requires B.ASSEMBLE; a single-PE no-assemble writer transfers the complete parent.",
-          "B.SUBVIEW is the source-range modifier and B.ASSEMBLE is the destination-generation modifier. Shared source legality requires hardware-maintained whole-parent readiness and publication. Each Shared generation uses one normalized mode: NORM, M322ND, or M162ND.",
+          "Function 2 accepts Local-to-Local and canonical Local/Shared or Shared/Local TMOV schemas. With DTYPE_NONE, Layout M322ND/M162ND converts a compatible Local CUBE_M32/M16 source into RowMajor ND Shared storage while preserving its backing type. A Shared destination with multiple participating PEs requires B.ASSEMBLE; a single-PE no-assemble writer transfers the complete parent. With DTYPE_NONE, Layout ND2M32/ND2M16 converts one published RowMajor ND Shared source to one exact-capacity Local CUBE_M32/M16 destination per participating PE, preserving raw valid values and source backing type under the reverse conversion contract.",
+          "B.SUBVIEW is the explicit source-range modifier. B.ASSEMBLE is available for Shared destinations in the forward conversion and is forbidden in the reverse ND2M32/ND2M16 form. Shared sources require hardware-maintained whole-parent readiness and publication. Each Shared generation uses one normalized mode: NORM, M322ND, or M162ND.",
           "Function 13 GMOV remains accepted and unchanged. Other Shared movement function encodings are reserved and raise Fault_IllegalInstruction. Function-2 M322ND/M162ND adds no independent Shared movement selector.",
           "For Local-to-Local TMOV, source and destination descriptors agree on capacity, Layout, physical Col, and completed valid shape. A concrete non-packed DataType may differ from the source backing type only at the same element width, and the destination preserves the source backing DataType."
         ],
@@ -20465,7 +20465,7 @@
         "standalone_opcode": true,
         "state_effects": [
           "Function 2 Local-to-Local copies Local payload and definedness into one renamed Local destination while preserving the Local source.",
-          "A canonical Shared destination performs one whole-parent publication for a single-PE writer or an atomic B.ASSEMBLE generation at LAST. Shared source operations never modify Shared state.",
+          "A canonical Shared destination performs one whole-parent publication for a single-PE writer or an atomic B.ASSEMBLE generation at LAST. Shared source operations never modify Shared state. Reverse ND2M32/ND2M16 creates an independently committed Local CUBE destination for each participating PE and does not create a Shared generation.",
           "Shared source operations wait/no-op before payload access when whole-parent readiness or publication is absent."
         ]
       },
@@ -128845,7 +128845,8 @@
           "DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.",
           "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.",
-          "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage."
+          "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.",
+          "For U8 Local CUBE_M16/M32, PredicateCell operands are admitted; two PredicateCells select a U8-basis PredicateCell result and a mixed pair selects Numeric U8. Every active predicate byte must be defined and canonical."
         ],
         "memory_effects": [
           "none"
@@ -128871,7 +128872,8 @@
         "state_effects": [
           "Apply element-width bitwise AND to corresponding valid source elements; signedness does not change the bit operation and carrier bits above the selected width are zero.",
           "Either source may alias the destination with read-old/write-new behavior, and both sources may name the same Tile.",
-          "Publish the complete valid result and selected physical padding definedness as one destination commit; rejection leaves descriptors, payloads, and allocation state unchanged."
+          "Publish the complete valid result and selected physical padding definedness as one destination commit; rejection leaves descriptors, payloads, and allocation state unchanged.",
+          "PredicateCell results use predicate padding and the existing ExecutionMask ZERO/MERGE behavior."
         ]
       },
       "documentation": "docs/tile/elementwise-tile-tile/logical/TAND.md",
@@ -137855,7 +137857,7 @@
           "B.DATR applicability is exactly [{\"allowed_nonzero_fields\":[\"Layout\"],\"pad_union\":\"must-zero\"}].",
           "The selected DataType is a carrier interpretation. Each non-packed source backing DataType may differ only at the same element width, and the newly allocated destination preserves the source backing DataType; multi-source operations require one common backing DataType.",
           "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.",
-          "Function-2 Local CUBE_M32/M16 to Shared ND uses B.DATR Layout M322ND/M162ND with DTYPE_NONE; it copies raw valid coordinates into normalized ND fragments and retains source backing type under carrier-compatible preflight."
+          "Function-2 Local CUBE_M32/M16 to Shared ND uses B.DATR Layout M322ND/M162ND with DTYPE_NONE; it copies raw valid coordinates into normalized ND fragments and retains source backing type under carrier-compatible preflight. Function-2 Shared RowMajor ND to Local CUBE_M32/M16 uses ND2M32/ND2M16 under PTO-TMOV-SHARED-ND-TO-CUBE-001."
         ],
         "memory_effects": [
           "Perform only the global, Local, or Shared data movement named by the mnemonic after complete access, shape, stride, and descriptor validation; a fault produces no partial destination or memory effect."
@@ -137876,7 +137878,7 @@
         "standalone_opcode": false,
         "state_effects": [
           "Copy the source Tile payload and definedness into the destination.",
-          "After complete preflight, execute TMOV with the operand bindings listed above; destination definedness changes only as specified by that handler.",
+          "After complete preflight, execute TMOV with the operand bindings listed above; destination definedness changes only as specified by that handler. A reverse ND2M32/ND2M16 form reads valid Shared logical coordinates only, preserves raw bits and backing type, zero-initializes output padding, and commits one Local CUBE destination per participating PE without modifying Shared state.",
           "A Local CUBE-to-Shared ND form normalizes each valid raw source coordinate, then publishes a complete singleton parent or commits an explicit B.ASSEMBLE range through the existing atomic Shared generation."
         ]
       },
@@ -138662,7 +138664,8 @@
           "DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.",
           "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.",
-          "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage."
+          "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.",
+          "For U8 Local CUBE_M16/M32, PredicateCell operands are admitted; two PredicateCells select a U8-basis PredicateCell result and a mixed pair selects Numeric U8. Every active predicate byte must be defined and canonical."
         ],
         "memory_effects": [
           "none"
@@ -138688,7 +138691,8 @@
         "state_effects": [
           "Apply element-width bitwise OR to corresponding valid source elements; signedness does not change the bit operation and carrier bits above the selected width are zero.",
           "Either source may alias the destination with read-old/write-new behavior, and both sources may name the same Tile.",
-          "Publish the complete valid result and selected physical padding definedness as one destination commit; rejection leaves descriptors, payloads, and allocation state unchanged."
+          "Publish the complete valid result and selected physical padding definedness as one destination commit; rejection leaves descriptors, payloads, and allocation state unchanged.",
+          "PredicateCell results use predicate padding and the existing ExecutionMask ZERO/MERGE behavior."
         ]
       },
       "documentation": "docs/tile/elementwise-tile-tile/logical/TOR.md",
@@ -143181,17 +143185,18 @@
           "BSTART.VEC TSEL, U8; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT Predicate, SrcTrue, mask=PE_MASK; B.IOT SrcFalse, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed or mixed carrier schemas, missing dimensions, unsupported DataType, wrong operation-type PredicateCell basis, noncanonical or undefined ExecutionMask-active predicate bytes, undefined active source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.",
+          "Malformed or mixed carrier schemas, missing dimensions, unsupported DataType, noncanonical or undefined ExecutionMask-active predicate bytes, undefined active source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.",
           "TSEL is a raw-carrier select and does not raise floating invalid solely because a selected source payload encodes NaN."
         ],
         "field_domains": [],
         "legality": [
           "TSEL selects VEC Mode 0 Function 26. PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.",
           "Legacy RowMajor form uses two ordered B.IOT records: packed Predicate plus SrcTrue, then SrcFalse plus one new destination; B.IOR is absent, each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers, and selected bits are copied raw.",
-          "CUBE_M16/M32 PredicateCell form uses the same two-record Tile structure with a descriptor-valid PredicateCell whose basis equals the operation DataType and whose ExecutionMask-active bytes are defined and canonical, while valid shape/layout and physical geometry match the numeric sources. Each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; B.IOR is absent.",
+          "CUBE_M16/M32 PredicateCell form uses the same two-record Tile structure with a descriptor-valid PredicateCell whose ExecutionMask-active bytes are defined and canonical, independent of its basis, while valid shape and layout match the numeric sources. Each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; B.IOR is absent.",
           "CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue, SrcFalse, and one new CUBE destination plus one source-only B.IOR carrying the complete mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8, or FP64/S64/U64 for CUBE_M32; each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; U8 consumes two mask GPRs and other accepted types consume one.",
           "Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field.",
-          "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage."
+          "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.",
+          "A legal PredicateCell selector matches numeric operands in logical shape and layout independently of predicate basis."
         ],
         "memory_effects": [
           "none"
@@ -143329,7 +143334,7 @@
           "BSTART.VEC TSELS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT Predicate, SrcTrue, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarFalseGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
-          "Malformed or mixed carrier schemas, unsupported type, wrong operation-type PredicateCell basis, noncanonical or undefined ExecutionMask-active predicate bytes, undefined active source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.",
+          "Malformed or mixed carrier schemas, unsupported type, noncanonical or undefined ExecutionMask-active predicate bytes, undefined active source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.",
           "TSELS copies raw carrier encodings and does not itself raise floating invalid for a selected NaN payload."
         ],
         "field_domains": [
@@ -143482,10 +143487,11 @@
         "legality": [
           "TSELS selects TEPL Mode 1 Function 26 and executes on VEC. PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.",
           "Legacy RowMajor form uses one terminating B.IOT with packed Predicate, SrcTrue, and one new destination; one B.IOR source supplies scalar-false or omission selects the operation-type zero, and the source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.",
-          "CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with a descriptor-valid PredicateCell whose basis equals the operation DataType and whose ExecutionMask-active bytes are defined and canonical, SrcTrue, and one new CUBE destination plus an optional scalar-false B.IOR source; omission selects the operation-type zero. The true-source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.",
+          "CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with a descriptor-valid PredicateCell whose ExecutionMask-active bytes are defined and canonical, independent of its basis, SrcTrue, and one new CUBE destination plus an optional scalar-false B.IOR source; omission selects the operation-type zero. The true-source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.",
           "CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue and one new CUBE destination. One source-only B.IOR carries the complete predicate mask followed by the independent scalar-false source: two sources for one-word masks and three for U8's two-word mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8, or FP64/S64/U64 for CUBE_M32; the true-source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.",
           "Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field.",
-          "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage."
+          "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.",
+          "A legal PredicateCell selector matches numeric operands in logical shape and layout independently of predicate basis."
         ],
         "memory_effects": [
           "none"
@@ -146180,7 +146186,8 @@
           "DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.",
           "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.",
-          "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage."
+          "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.",
+          "For U8 Local CUBE_M16/M32, PredicateCell operands are admitted; two PredicateCells select a U8-basis PredicateCell result and a mixed pair selects Numeric U8. Every active predicate byte must be defined and canonical."
         ],
         "memory_effects": [
           "none"
@@ -146206,7 +146213,8 @@
         "state_effects": [
           "Apply element-width bitwise XOR to corresponding valid source elements; signedness does not change the bit operation and carrier bits above the selected width are zero.",
           "Either source may alias the destination with read-old/write-new behavior, and both sources may name the same Tile.",
-          "Publish the complete valid result and selected physical padding definedness as one destination commit; rejection leaves descriptors, payloads, and allocation state unchanged."
+          "Publish the complete valid result and selected physical padding definedness as one destination commit; rejection leaves descriptors, payloads, and allocation state unchanged.",
+          "PredicateCell results use predicate padding and the existing ExecutionMask ZERO/MERGE behavior."
         ]
       },
       "documentation": "docs/tile/elementwise-tile-tile/logical/TXOR.md",

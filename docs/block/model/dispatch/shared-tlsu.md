@@ -70,7 +70,7 @@ Suppose a `TSTORE` bundle binds Shared Tile `s2` with PE mask `1111`, sets `LB0`
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/shared-tlsu.asl -->
 ```asl
-// PTO-UNIT: {"classification":["model","dispatch","shared-tlsu"],"depends_on":["PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS","PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU-HELPERS","PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-CUBE-TO-ND","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-VALIDATION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT-TYPES","PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT-VALUES"],"id":"PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","surface":"block"}
+// PTO-UNIT: {"classification":["model","dispatch","shared-tlsu"],"depends_on":["PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS","PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU-HELPERS","PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-CUBE-TO-ND","PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-ND-TO-CUBE","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-VALIDATION","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION-CUBE-WRITER-EFFECTS","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-STATE-SOURCE-LIFETIME","PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT-TYPES","PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT-VALUES"],"id":"PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","surface":"block"}
 readonly func BundleSharedTLSUSelected() => boolean
 begin
     if !_BundleOperation.valid ||
@@ -81,6 +81,9 @@ begin
 end;
 readonly func BundleSharedTMOVLocalSchemaLegal() => boolean
 begin
+    if BundleSharedTMOVSharedNDToCubeSelected() then
+        return BundleSharedTMOVSharedNDToCubeSchemaLegal();
+    end;
     if BundleSharedTMOVCubeToNDSelected() then
         return BundleSharedTMOVCubeToNDSchemaLegal();
     end;
@@ -120,51 +123,6 @@ begin
         BundleSharedBindingId(0), candidate, shared_mask);
 end;
 
-readonly func BundleSharedTMOVDestinationSchemaLegal(
-    shared_tile_id: SharedTileID, function: integer {0..31}) => boolean
-begin
-    if BundleSharedBindingCount() != 1 ||
-       BundleTileBindingCount() != 1 then return FALSE; end;
-    let binding = _BundleTileBindings[[0]];
-    let shared_mask = BundleSharedBindingMask(0);
-    if !binding.valid || !binding.destination_valid ||
-       binding.source0_valid || binding.source1_valid || !binding.last ||
-       !LocalTileSizeCodeIsLegal(binding.destination_size) ||
-       BundleSharedBindingIsDestination(0) ||
-       binding.pe_mask != shared_mask then return FALSE; end;
-    if shared_mask == Zeros{4} then return TRUE; end;
-    let capacity_bytes = TileSizeCodeBytes(
-        binding.destination_size as integer {1..12});
-    let valid_rows = BundleDestinationValidRows(FALSE, 0);
-    let valid_columns = BundleDestinationValidColumns(FALSE, 0);
-    let columns = BundleDestinationPhysicalColumns(FALSE, 0);
-    if valid_rows < 1 || valid_columns < 1 || columns < 1 ||
-       valid_columns > columns then return FALSE; end;
-    let (data_type_valid, operation_type) = ResolveBundleEffectiveDataType();
-    if !data_type_valid then return FALSE; end;
-    var data_type = operation_type;
-    let source_interpretation = operation_type == TileDataType_E6M2 || operation_type == TileDataType_RCPE6M2;
-    let layout = CurrentBundleTileLayout();
-    if _BundleSharedBindings[[0]].source0_subview.valid then
-        if !BundleSharedSubviewLegal(0) then return FALSE; end;
-        let view = MaterializeBundleSharedSubview(0);
-        if !BundleSharedTMOVNormalCarrierCompatible(view.data_type) then return FALSE; end;
-        if source_interpretation then data_type = view.data_type; end;
-        if view.capacity_bytes != capacity_bytes ||
-           view.valid_rows != valid_rows ||
-           view.valid_columns != valid_columns ||
-           view.columns != columns || view.data_type != data_type ||
-           view.layout != layout then
-            return FALSE;
-        end;
-        return function == 2;
-    end;
-    let source_type = SharedTileRecord(shared_tile_id).tile.data_type;
-    if !BundleSharedTMOVNormalCarrierCompatible(source_type) then return FALSE; end;
-    if source_interpretation then data_type = source_type; end;
-    if !SharedTileReadSchemaLegalAtCapacity(shared_tile_id, valid_rows, valid_columns, columns, data_type, layout, capacity_bytes) then return FALSE; end;
-    return function == 2;
-end;
 func ExecuteBundleSharedTLSUOperation() => (boolean, BundleLocalGenerationCubeWriterEffects)
 begin
     var result_writer_effects = EmptyBundleLocalGenerationCubeWriterEffects();
@@ -206,7 +164,8 @@ begin
     // Shared CUBE-to-ND TMOV has no ExecutionMask carrier. Reject its GPR
     // form here, before the generic mask-schema path derives a layout from a
     // conversion-only DATR selector.
-    if BundleSharedTMOVCubeToNDSelected() &&
+    if (BundleSharedTMOVCubeToNDSelected() ||
+        BundleSharedTMOVSharedNDToCubeSelected()) &&
        (_BundleScalarBindings[[0]].execution_mask_present ||
         _BundleScalarBindings[[1]].execution_mask_present) then
         SetFault(Fault_TileLegality, ReadTPC());
@@ -449,100 +408,125 @@ begin
             if !SharedTilePublished(shared_tile_id) then
                 return (FALSE, result_writer_effects);
             end;
-            if !BundleSharedTMOVDestinationSchemaLegal(shared_tile_id, function) ||
+            let reverse_nd_to_cube =
+                BundleSharedTMOVSharedNDToCubeSelected();
+            if (if reverse_nd_to_cube then
+                    !BundleSharedTMOVSharedNDToCubeSchemaLegal()
+                else !BundleSharedTMOVDestinationSchemaLegal(
+                    shared_tile_id, function)) ||
                !SelectedBundleTileMasksLegal() then
                 if _LastFault == Fault_None then
                     SetFault(Fault_TileLegality, ReadTPC());
                 end;
                 return (FALSE, result_writer_effects);
             end;
-            let binding = _BundleTileBindings[[0]];
-            let capacity_bytes = TileSizeCodeBytes(
-                binding.destination_size as integer {1..12});
-            let valid_rows = BundleDestinationValidRows(FALSE, 0);
-            let valid_columns = BundleDestinationValidColumns(FALSE, 0);
-            let columns = BundleDestinationPhysicalColumns(FALSE, 0);
-            let (data_type_valid, operation_type) =
-                ResolveBundleEffectiveDataType();
-            if !data_type_valid then
-                SetFault(Fault_TileLegality, ReadTPC());
+            if reverse_nd_to_cube &&
+               !CaptureBundleSharedSourceLifetimes() then
                 return (FALSE, result_writer_effects);
             end;
-            let has_subview =
-                _BundleSharedBindings[[0]].source0_subview.valid;
-            let source_type = if has_subview then MaterializeBundleSharedSubview(0).data_type else SharedTileRecord(shared_tile_id).tile.data_type;
-            let source_interpretation = operation_type == TileDataType_E6M2 || operation_type == TileDataType_RCPE6M2;
-            let data_type = if source_interpretation then source_type
-                else operation_type;
-            let shared_tile = if has_subview then
-                MaterializeBundleSharedSubview(0)
-            else MaterializeSharedTileForReadSchemaAtCapacity(
-                shared_tile_id, valid_rows, valid_columns, columns, data_type,
-                CurrentBundleTileLayout(), capacity_bytes);
-            let (destinations_resolved, resolved_writer_effects) =
-                ResolveBundleTileDestinationsWithShapeAndTypeAndWriterEffects(
-                    TRUE,
-                    shared_tile.valid_rows as integer {1..65535},
-                    shared_tile.valid_columns as integer {1..65535},
-                    shared_tile.columns as integer {1..65535},
-                    TRUE, data_type);
-            if !destinations_resolved then return (FALSE, result_writer_effects); end;
-            var writer_effects = resolved_writer_effects;
-            if !ValidateBundleLocalGenerationWritersWithWriterEffects(
-                   writer_effects) then
-                RollBackBundleTileDestinations(); return (FALSE, result_writer_effects);
-            end;
-            let destination = _BundleTileBindings[[0]].destination;
-            let (writer_found, writer_value) =
-                BundleLocalGenerationCubeWriterValueForDestination(
-                    writer_effects, destination, _Tiles[[destination]]);
-            let destination_value = if writer_found then writer_value
-                else _Tiles[[destination]];
-            if destination_value.rows != shared_tile.rows ||
-               destination_value.columns != shared_tile.columns ||
-               destination_value.valid_rows != shared_tile.valid_rows ||
-               destination_value.valid_columns != shared_tile.valid_columns ||
-               destination_value.data_type != shared_tile.data_type ||
-               destination_value.layout != shared_tile.layout then
-                RollBackBundleTileDestinations();
-                SetFault(Fault_TileLegality, ReadTPC());
-                return (FALSE, result_writer_effects);
-            end;
-            if writer_found then
-                let target = TileOutputValueTarget {
-                    destination = destination,
-                    value = writer_value
-                };
-                var result = target.value;
-                if has_subview then
-                    var per_pe_shared_tiles: CorePETileInfos;
-                    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
-                        let agent = pe as MemoryAgentId;
-                        per_pe_shared_tiles[[agent]] =
-                            MaterializeBundleSharedSubviewForPE(0, agent);
-                    end;
-                    result = TMOVSharedToLocalPerPEToValue(
-                        target, per_pe_shared_tiles, shared_mask);
-                else
-                    result = TMOVSharedToLocalToValue(
-                        target, shared_tile_id, shared_tile, shared_mask);
+            var writer_effects = EmptyBundleLocalGenerationCubeWriterEffects();
+            if reverse_nd_to_cube then
+                let (conversion_completed, conversion_effects) =
+                    ExecuteBundleSharedTMOVSharedNDToCube(shared_tile_id);
+                if !conversion_completed then
+                    return (FALSE, result_writer_effects);
                 end;
-                writer_effects =
-                    BundleLocalGenerationCubeWriterEffectWithOutput(
-                        writer_effects, destination, result);
+                writer_effects = conversion_effects;
             else
-                if has_subview then
-                    var per_pe_shared_tiles: CorePETileInfos;
-                    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
-                        let agent = pe as MemoryAgentId;
-                        per_pe_shared_tiles[[agent]] =
-                            MaterializeBundleSharedSubviewForPE(0, agent);
+                let binding = _BundleTileBindings[[0]];
+                let capacity_bytes = TileSizeCodeBytes(
+                    binding.destination_size as integer {1..12});
+                let valid_rows = BundleDestinationValidRows(FALSE, 0);
+                let valid_columns = BundleDestinationValidColumns(FALSE, 0);
+                let columns = BundleDestinationPhysicalColumns(FALSE, 0);
+                let (data_type_valid, operation_type) =
+                    ResolveBundleEffectiveDataType();
+                if !data_type_valid then
+                    SetFault(Fault_TileLegality, ReadTPC());
+                    return (FALSE, result_writer_effects);
+                end;
+                let has_subview =
+                    _BundleSharedBindings[[0]].source0_subview.valid;
+                let source_type = if has_subview then
+                    MaterializeBundleSharedSubview(0).data_type
+                    else SharedTileRecord(shared_tile_id).tile.data_type;
+                let source_interpretation = operation_type == TileDataType_E6M2 ||
+                    operation_type == TileDataType_RCPE6M2;
+                let data_type = if source_interpretation then source_type
+                    else operation_type;
+                let shared_tile = if has_subview then
+                    MaterializeBundleSharedSubview(0)
+                else MaterializeSharedTileForReadSchemaAtCapacity(
+                    shared_tile_id, valid_rows, valid_columns, columns,
+                    data_type, CurrentBundleTileLayout(), capacity_bytes);
+                let (destinations_resolved, resolved_writer_effects) =
+                    ResolveBundleTileDestinationsWithShapeAndTypeAndWriterEffects(
+                        TRUE,
+                        shared_tile.valid_rows as integer {1..65535},
+                        shared_tile.valid_columns as integer {1..65535},
+                        shared_tile.columns as integer {1..65535},
+                        TRUE, data_type);
+                if !destinations_resolved then
+                    return (FALSE, result_writer_effects);
+                end;
+                writer_effects = resolved_writer_effects;
+                if !ValidateBundleLocalGenerationWritersWithWriterEffects(
+                       writer_effects) then
+                    RollBackBundleTileDestinations();
+                    return (FALSE, result_writer_effects);
+                end;
+                let destination = _BundleTileBindings[[0]].destination;
+                let (writer_found, writer_value) =
+                    BundleLocalGenerationCubeWriterValueForDestination(
+                        writer_effects, destination, _Tiles[[destination]]);
+                let destination_value = if writer_found then writer_value
+                    else _Tiles[[destination]];
+                if destination_value.rows != shared_tile.rows ||
+                   destination_value.columns != shared_tile.columns ||
+                   destination_value.valid_rows != shared_tile.valid_rows ||
+                   destination_value.valid_columns != shared_tile.valid_columns ||
+                   destination_value.data_type != shared_tile.data_type ||
+                   destination_value.layout != shared_tile.layout then
+                    RollBackBundleTileDestinations();
+                    SetFault(Fault_TileLegality, ReadTPC());
+                    return (FALSE, result_writer_effects);
+                end;
+                if writer_found then
+                    let target = TileOutputValueTarget {
+                        destination = destination,
+                        value = writer_value
+                    };
+                    var result = target.value;
+                    if has_subview then
+                        var per_pe_shared_tiles: CorePETileInfos;
+                        for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+                            let agent = pe as MemoryAgentId;
+                            per_pe_shared_tiles[[agent]] =
+                                MaterializeBundleSharedSubviewForPE(0, agent);
+                        end;
+                        result = TMOVSharedToLocalPerPEToValue(
+                            target, per_pe_shared_tiles, shared_mask);
+                    else
+                        result = TMOVSharedToLocalToValue(
+                            target, shared_tile_id, shared_tile, shared_mask);
                     end;
-                    TMOVSharedToLocalPerPE(destination, per_pe_shared_tiles,
-                        shared_mask);
+                    writer_effects =
+                        BundleLocalGenerationCubeWriterEffectWithOutput(
+                            writer_effects, destination, result);
                 else
-                    TMOVSharedToLocal(destination, shared_tile_id,
-                        shared_tile, shared_mask);
+                    if has_subview then
+                        var per_pe_shared_tiles: CorePETileInfos;
+                        for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+                            let agent = pe as MemoryAgentId;
+                            per_pe_shared_tiles[[agent]] =
+                                MaterializeBundleSharedSubviewForPE(0, agent);
+                        end;
+                        TMOVSharedToLocalPerPE(destination,
+                            per_pe_shared_tiles, shared_mask);
+                    else
+                        TMOVSharedToLocal(destination, shared_tile_id,
+                            shared_tile, shared_mask);
+                    end;
                 end;
             end;
             result_writer_effects = writer_effects;
