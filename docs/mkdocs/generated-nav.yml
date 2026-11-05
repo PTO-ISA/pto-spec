@@ -177,6 +177,7 @@ nav:
               - Validation: block/model/commit/validation.md
           - Dispatch:
               - Binary Operation Classification: block/model/dispatch/binary-operation-classification.md
+              - Bundle GPR Input Count: block/model/dispatch/bundle-gpr-input-count.md
               - Cell Rearrangement Schema: block/model/dispatch/cell-rearrangement-schema.md
               - Command Data Attributes: block/model/dispatch/command-data-attributes.md
               - Commands: block/model/dispatch/commands.md
@@ -195,6 +196,8 @@ nav:
               - Expdif Schema: block/model/dispatch/expdif-schema.md
               - Generation Schema: block/model/dispatch/generation-schema.md
               - Gm Obligation Dispatch: block/model/dispatch/gm-obligation-dispatch.md
+              - Indexed TLSU Range Command Stream: block/model/dispatch/indexed-tlsu-range-command-stream.md
+              - Indexed TLSU Range Schema: block/model/dispatch/indexed-tlsu-range-schema.md
               - Lea Schema: block/model/dispatch/lea-schema.md
               - Matrix Scale: block/model/dispatch/matrix-scale.md
               - Numeric Control: block/model/dispatch/numeric-control.md

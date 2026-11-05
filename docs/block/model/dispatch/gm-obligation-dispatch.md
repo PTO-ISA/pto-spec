@@ -59,7 +59,7 @@ A TSTORE stop names a Shared source whose next generation has not published. Dis
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/gm-obligation-dispatch.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-GM-OBLIGATION","surface":"block","classification":["model","dispatch","gm-obligation-dispatch"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-ARCH-STATE-PROGRAM-COUNTER","PTO-ARCH-PROGRAMMING-MODEL-SCALAR-REGISTERS"]}
+// PTO-UNIT: {"classification":["model","dispatch","gm-obligation-dispatch"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-BLOCK-MODEL-DISPATCH-INDEXED-TLSU-RANGE-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-ARCH-STATE-PROGRAM-COUNTER","PTO-ARCH-PROGRAMMING-MODEL-SCALAR-REGISTERS"],"id":"PTO-BLOCK-MODEL-DISPATCH-GM-OBLIGATION","surface":"block"}
 func BundleTileOperationHasGMEffect() => boolean
 begin
     if !_BundleOperation.valid ||
@@ -331,8 +331,15 @@ begin
                 ReadScalarRegisterOperand(
                     _BundleScalarBindings[[0]].source0)
             else Zeros{PTO_XLEN};
+        let tracked_operation = DecodeTileOperation(
+            BundleTileDecodeFamily(_BundleOperation.operation_class),
+            BundleOperationDecodeCode(_BundleOperation));
+        let indexed_tlsu = tracked_operation != PTO_TILE_OPERATION_COUNT &&
+            BundleOperationUsesIndexedTLSU(tracked_operation as
+                integer {0..PTO_TILE_OPERATION_COUNT-1});
         let row_stride = if _BundleScalarBindings[[0]].valid &&
-            _BundleScalarBindings[[0]].source_count > 1 then
+            _BundleScalarBindings[[0]].source_count > 1 &&
+            !indexed_tlsu then
                 ReadScalarRegisterOperand(
                     _BundleScalarBindings[[0]].source1)
             else Zeros{PTO_XLEN};

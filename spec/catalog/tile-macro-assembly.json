@@ -2011,7 +2011,8 @@
       "defaults": [
         "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
+        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [
         {
@@ -3675,8 +3676,9 @@
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
         "B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -3873,7 +3875,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [
         {
@@ -5768,8 +5771,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -5995,7 +5999,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [
         {
@@ -7890,8 +7895,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -8118,7 +8124,8 @@
       "defaults": [
         "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
+        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [
         {
@@ -10251,8 +10258,9 @@
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ExpectedTile, mask=PE_MASK",
         "B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -10504,7 +10512,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [
         {
@@ -12399,8 +12408,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -12626,7 +12636,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [
         {
@@ -14521,8 +14532,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -14748,7 +14760,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [
         {
@@ -16643,8 +16656,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -16885,7 +16899,8 @@
       "defaults": [
         "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
+        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [
         {
@@ -18786,8 +18801,9 @@
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
         "B.IOT IndexTile, MaskTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -19010,7 +19026,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [
         {
@@ -20905,8 +20922,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -21132,7 +21150,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [
         {
@@ -23027,8 +23046,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -23254,7 +23274,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [
         {
@@ -25149,8 +25170,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -25376,7 +25398,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [
         {
@@ -27271,8 +27294,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>, ->DstTile<TSize>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -27499,7 +27523,8 @@
       "defaults": [
         "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
+        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -27929,8 +27954,9 @@
         "B.DIM LB1=ValidRow (optional)",
         "B.DIM LB2=Col (optional)",
         "B.IOT DataTile, IndexTile, mask=PE_MASK, <last>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -28137,7 +28163,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -28574,8 +28601,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -28789,7 +28817,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -29226,8 +29255,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -29441,7 +29471,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -29878,8 +29909,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -30093,7 +30125,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -30530,8 +30563,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -30746,7 +30780,8 @@
       "defaults": [
         "B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.",
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed."
+        "IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -31254,8 +31289,9 @@
         "B.DIM LB2=Col (optional)",
         "B.IOT DataTile, IndexTile, mask=PE_MASK",
         "B.IOT MaskTile, mask=PE_MASK, <last>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -31488,7 +31524,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -31925,8 +31962,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -32140,7 +32178,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -32577,8 +32616,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -32792,7 +32832,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -33229,8 +33270,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -33444,7 +33486,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -33800,8 +33843,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, mask=PE_MASK, <last>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
@@ -33986,7 +34030,8 @@
       ],
       "defaults": [
         "LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies the independent physical Col; canonical macros require Col and default ValidCol to Col. Physical B.DIM omission defaults remain owned by the B.DIM contract.",
-        "GM indexed operation uses byte-displacement addresses and complete preflight."
+        "GM indexed operation uses byte-displacement addresses and complete preflight.",
+        "For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1."
       ],
       "destinations": [],
       "engine": "TLSU",
@@ -34423,8 +34468,9 @@
         "B.DIM LB1=ValidRow (optional, default 1)",
         "B.DIM LB2=Col",
         "B.IOT IndexTile, ValueTile, mask=PE_MASK, <last>",
-        "B.IOR BaseGPR, zero, zero, ->zero",
-        "BSTOP"
+        "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+        "BSTOP",
+        "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)"
       ],
       "physical_schema": {
         "arguments": [
