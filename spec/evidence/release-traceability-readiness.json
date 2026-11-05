@@ -15329,12 +15329,9 @@
         "ADR-TILE-0013"
       ],
       "tests": [
-<<<<<<< HEAD
         "PTO-AVS-ARCH-SCOPED-SCALAR-CROSS-PATH-001",
-=======
         "PTO-AVS-BLOCK-I414-MSCATTER-RANGE-001",
         "PTO-AVS-BLOCK-I414-PE-LOCAL-FAULT-PROGRESS-001",
->>>>>>> ae3bfa190 (feat(isa): add indexed TLSU signed range descriptors)
         "PTO-AVS-BLOCK-MSCATTER-FAULT-001",
         "PTO-AVS-BLOCK-MSCATTER-PACKED-001",
         "PTO-AVS-BLOCK-MSCATTER-SCATTER-001",
@@ -21958,13 +21955,8 @@
     "asl/arch/memory-model/global-memory-access.asl": "9d7deccaa7dd916f16c580e75ddc633d8476be88cf4f8213654540b1cda44a49",
     "asl/arch/memory-model/gm-obligations.asl": "99b60b12bdd6e1d0165aa083e209fbfc88d24c6f480a8e81e4afa61df3b4ba97",
     "asl/arch/memory-model/instruction-fetch.asl": "f9bf16659406ddc7cc4ae8ca050612d2c5fd6878d5dbc11ec9434467a9def162",
-<<<<<<< HEAD
     "asl/arch/memory-model/memory-events.asl": "84f8182cb41e90ec0a273ccc77f3a577f9496fc901f6da253c38d25cc3b1d123",
-    "asl/arch/memory-model/ordering.asl": "f1254c0893bede31de36d6ddcf3feaf5bb3ab9d8171ae001cd91bf646adb175f",
-=======
-    "asl/arch/memory-model/memory-events.asl": "23d3194c48d44f8aea4db93194bfff6133dcafeb7c39ac814611024af24e2392",
-    "asl/arch/memory-model/ordering.asl": "b55d6ff39bf535fd19f01a203b290f05d74b2f57e04a2ab30354549bb6940a92",
->>>>>>> ae3bfa190 (feat(isa): add indexed TLSU signed range descriptors)
+    "asl/arch/memory-model/ordering.asl": "e4ec62845bce2162cb5b18d7170f2194b2b0f93f442cce40c0bf6cab273d18c5",
     "asl/arch/overview/architecture.asl": "e1cfad2c51711b1c9f434e57a3da8e68c184ccb6876de5ec02309ef20e52d3ee",
     "asl/arch/overview/encoding-ownership.asl": "4f3bb7cb7732227005046c42c1c3bbdb5a5e39782495d49a49bf489808e66024",
     "asl/arch/overview/instruction-classification.asl": "e87535306adbd18629ee38dd80f84eb4c4a07c7371bff80ebd26b6b386330c9c",
@@ -22126,13 +22118,8 @@
     "asl/block/model/faults/rollback.asl": "fde8e43f184cf5aac3c0b8d8ad0559d54e7f1f113dda93485a8b341eb3b9b1d3",
     "asl/block/model/lifecycle/begin.asl": "34d7923f48b2635f5ba6373e0dd03b972d28b1f9c588c41baf5da875064c86e1",
     "asl/block/model/lifecycle/enter-stop.asl": "d5f977bb2248fb33078f42aae3e086375a562ed1e83c64dc49d53b82af2ac9f4",
-<<<<<<< HEAD
     "asl/block/model/lifecycle/lifetime.asl": "91932a6b580468009e798b0599416dc48028bd94cd942b033c2e37c7213e1ebb",
-    "asl/block/model/lifecycle/reset.asl": "493ee609c66ca2a212a4949f4f02d5cd932f4b90f0950757545a067d51f76049",
-=======
-    "asl/block/model/lifecycle/lifetime.asl": "5d8588b0a40cb70a08aef05a251eae50ebf6a177fd230b7fb9923ea171c54c9f",
     "asl/block/model/lifecycle/reset.asl": "9ae5b53401b221ee668ee01a9f08311087da8dd6cc2c54163a93cfc3dd420510",
->>>>>>> ae3bfa190 (feat(isa): add indexed TLSU signed range descriptors)
     "asl/block/model/memory/timg2col-gm.asl": "6fba4b3cba79ea3a34d4ed8703cfad74240485651dabc24b10601227eb46e2c8",
     "asl/block/model/memory/weight-to-shared-gm.asl": "72e752ec70c4fb78d325f7001d5414321aac1f8f1a557b819dabfd604fa4bb10",
     "asl/block/model/operands/local-generation-cube-validation.asl": "f298ecfdbff13ddfc5651b7110141590c362e0322e1f1e73a9ff9c680e390490",
@@ -22798,21 +22785,12 @@
     "asl/tile/model/legality/predicate-carriers.asl": "0fec74c5d394a21af42df0d67985b11eb70bb99df87046ab6b40c99eda9033a1",
     "asl/tile/model/legality/reduction-and-expansion.asl": "37f8f6bb40bf821f4309ce8c79d6d2a5873f4bb1d9e5e481652423982dc39835",
     "asl/tile/model/legality/tcvt-value-operands.asl": "8f02bdfbd91f5c54ffd100b31eb9fbaf1a35165aee3a95644c56ae95efd90cbb",
-<<<<<<< HEAD
-    "asl/tile/model/memory/addressing.asl": "398579f8b271c7213b1cdf9557aaae52f1951de29433588bbf0f5b498ccf7753",
+    "asl/tile/model/memory/addressing.asl": "df2dcd1a48ded233f315c2d2e8926e85ffa956174f60e4359b4bee9f3f125bf7",
     "asl/tile/model/memory/atomic-tstore.asl": "595e92b8f21a388490b80c6ace6400a2c433dab8a2a84dc350e0bebe458d8008",
     "asl/tile/model/memory/atomics.asl": "2f70a1f483af4c5bd724fd20feab862efc15ba8a19b93adb7ca84c89169d4cea",
     "asl/tile/model/memory/gather-scatter-values.asl": "274f28e59374fc7671faa18f1248b09e026cd09ba0c50b8104815c2b4d3a3151",
     "asl/tile/model/memory/gather-scatter.asl": "dec5c885b65f642eefa6d5f4680ed5fb6b1c06a49acd568336a673171e3ffe57",
     "asl/tile/model/memory/gm-atom-red-execution.asl": "eeb614d5bd7de04560df186e5f5b6002aa977c6c0ef6273f2269ec1476b21494",
-=======
-    "asl/tile/model/memory/addressing.asl": "df2dcd1a48ded233f315c2d2e8926e85ffa956174f60e4359b4bee9f3f125bf7",
-    "asl/tile/model/memory/atomic-tstore.asl": "dfdd4e0b3073dae5e48b675f0b66b79c37c6c52e6105312b908a86403f263dcf",
-    "asl/tile/model/memory/atomics.asl": "a6cd16d6be1a0fef77b9608f710492b7fec46ee082f53e2041a130ea71f1078d",
-    "asl/tile/model/memory/gather-scatter-values.asl": "dc18c465d9be1328fd391aa02810928ea3eab38e9b23e6a63ae8278399243369",
-    "asl/tile/model/memory/gather-scatter.asl": "0b5d5c492a3fd0918efa9965a4cae2280e2f622184969314ec41a6499b7931a1",
-    "asl/tile/model/memory/gm-atom-red-execution.asl": "64cf01ef62a15a02f2c70e89d0bb6e971ff50cb4a3e109169bb70cbb4688d3dd",
->>>>>>> ae3bfa190 (feat(isa): add indexed TLSU signed range descriptors)
     "asl/tile/model/memory/gm-atom-red-values.asl": "0e70dda9d6cb000d1209d1ea7fb32cd4d8319d97847d4a810b31903f18715864",
     "asl/tile/model/memory/gm-atom-red.asl": "27c57477fc344d9b5722c7a8f6e5575e628c7d6c75ca6bda0acdada38440c374",
     "asl/tile/model/memory/gm-obligation-progress.asl": "ef7ceca7316187202dcac4fa9c8d8616c84be3deb49806afc9bd0e1c9dc5f675",
@@ -22933,13 +22911,8 @@
     "docs/arch/memory-model/global-memory-access.md": "934f7df2f9c674478f67797582695bc04e91972f9b272db34025b2ef7ea4a135",
     "docs/arch/memory-model/gm-obligations.md": "f19333c8dda415ed1d9516b9a3d591228c052731c3693a467c5547573b45eb76",
     "docs/arch/memory-model/instruction-fetch.md": "99e3d3942db1d54a1141bc39c89a398ca4100d0a7e29d17787bd6201eee9d6c2",
-<<<<<<< HEAD
     "docs/arch/memory-model/memory-events.md": "9c19174ce9b1b8a2fde7639faea6e4dbebcae1f973eab8a4615b812152f28025",
-    "docs/arch/memory-model/ordering.md": "23306e558ae60c92771bd7f1eb753da30a2d40b797896c35d3efa19a7b1a2553",
-=======
-    "docs/arch/memory-model/memory-events.md": "09a2a882988cf8934942530f54bfa5c64d311a32fb74a49d8b6b73d9279fbec0",
-    "docs/arch/memory-model/ordering.md": "49586f59a575f21dc9bf2b0f0e30e20a098a0e6cb206b5dbbb262d9fc8bdda74",
->>>>>>> ae3bfa190 (feat(isa): add indexed TLSU signed range descriptors)
+    "docs/arch/memory-model/ordering.md": "2f5147c920a423dd47749d04a95e58cbb0acf381185f0be06006c8e133ae5d0a",
     "docs/arch/overview/architecture.md": "36eadc6152d9324850b4997e88381f5edae80d411b73d715b8d3ad66b288c34b",
     "docs/arch/overview/encoding-ownership.md": "c6de2c1719fe81c22f45fa483c6e853a3361f0e8df35e0104f81e870656c50e0",
     "docs/arch/overview/instruction-classification.md": "dfebaacf8b5879fb25cef66204402420fd52de084ac1c47b0b784ed5237c028d",
@@ -23101,13 +23074,8 @@
     "docs/block/model/faults/rollback.md": "d174565313cfcc915e898fe4ec40051983e747e881aa65d12e0e9621812bf54a",
     "docs/block/model/lifecycle/begin.md": "60aa71b7477697a26783dbb95dd7edf0a354264b419e7312ad4ec6117bfc10e1",
     "docs/block/model/lifecycle/enter-stop.md": "e86ca857c5c1ff8ca3359cc9e6294674f5bc9b7fcaf0e9c080ed7068a4018d21",
-<<<<<<< HEAD
     "docs/block/model/lifecycle/lifetime.md": "012a3c9f3cd21ebb49a60fb4908cc2ef8380f135ebbee56a9719911886d7c4e8",
-    "docs/block/model/lifecycle/reset.md": "0416bec7540afaff97754fe41354389bc2eb358abb317ff3c8705f3097a87cce",
-=======
-    "docs/block/model/lifecycle/lifetime.md": "0af27a4a168a4e3cc78436f68ccd5167c1379bd1934924d7e4ab068b2add50bf",
     "docs/block/model/lifecycle/reset.md": "56924bf8ac879b3f5ea0e41d8ebe587895e752977c0ef4bdb8901ae65b686f7a",
->>>>>>> ae3bfa190 (feat(isa): add indexed TLSU signed range descriptors)
     "docs/block/model/memory/timg2col-gm.md": "569cdece4d949659acdd37a8aba04a6311d78748633c0c4cac2b8de29ccb7c88",
     "docs/block/model/memory/weight-to-shared-gm.md": "9eec952da21d1fb7074d704935d5bcaf978a43b3b1d7006d9e9c0162bb7512d6",
     "docs/block/model/operands/local-generation-cube-validation.md": "7c31a513127ade961b7a4df794baf86d62a7009a7fb82bf733e0ef2187054cf1",
@@ -23773,21 +23741,12 @@
     "docs/tile/model/legality/predicate-carriers.md": "be1f62f240607e0e2f7bae2585b14c0644cede756a5a364be39ccb8d32d2c0a8",
     "docs/tile/model/legality/reduction-and-expansion.md": "feabe75f7875459d49024cf097b874f3ba9f5999ee282d1bc43f64e555115614",
     "docs/tile/model/legality/tcvt-value-operands.md": "58474d51e44a3cb8c6c4f16f2cdb69d61fd3cfbd989803a10b139c919844a2f0",
-<<<<<<< HEAD
-    "docs/tile/model/memory/addressing.md": "022285fd113812da1672a8bc9f9d8f7b0e55cc1e09eacaf61c6783c347a16cb7",
+    "docs/tile/model/memory/addressing.md": "ff423a3f5ea6bc9ded3a2021d75ba452703ad26b798c6abac22459585ed396d3",
     "docs/tile/model/memory/atomic-tstore.md": "b889a152d610a16dc3825f820af90b0af44d7180d5159443375e2d271d5c91dc",
     "docs/tile/model/memory/atomics.md": "5e0e07d2c694319e64261b39e1eac5b056937e39486bea2559d9232afeac7196",
     "docs/tile/model/memory/gather-scatter-values.md": "3d1cfedbaf439ab3d4f6777f8dbce21edfbce7778b3a7798fa1657445ccb8b9a",
     "docs/tile/model/memory/gather-scatter.md": "32223af5e601bc26614da192696d9abe94acfaf04e00a407c0dbfe54fe15a473",
     "docs/tile/model/memory/gm-atom-red-execution.md": "7ae62473fe7846072cefb5dca1fd42fc0039e5bfcc16e8a4aa1cbda3a3d931c9",
-=======
-    "docs/tile/model/memory/addressing.md": "ff423a3f5ea6bc9ded3a2021d75ba452703ad26b798c6abac22459585ed396d3",
-    "docs/tile/model/memory/atomic-tstore.md": "e275cc269afd22dc814c0c6d96b1d88bd99bcbf58ce976b03c57ae5f1b24ddd9",
-    "docs/tile/model/memory/atomics.md": "6af95bd15bf4132bddcd95f8d52d0ed39aed4ad8df7c30ca9503dd616c56a8db",
-    "docs/tile/model/memory/gather-scatter-values.md": "360781fba08e270d25f5b48c2f03c0d498c1592acb03ec7e53e2626603a053f0",
-    "docs/tile/model/memory/gather-scatter.md": "cbeef5d7c023964f650e5e92f4a528a86983a9dc13cc9cbc61408d29b2f974f6",
-    "docs/tile/model/memory/gm-atom-red-execution.md": "42bc7bc794cbef44641b5371b9d81c214d68c243984037662ffeb42af02b359d",
->>>>>>> ae3bfa190 (feat(isa): add indexed TLSU signed range descriptors)
     "docs/tile/model/memory/gm-atom-red-values.md": "60a887e132bb51d6d98800ab4b6fedd2c61205bc14980cbb1e10151eb462e76d",
     "docs/tile/model/memory/gm-atom-red.md": "1b36b692fa68844b431b5f023b5b72166ec2778fab2abc171216d95897cdb368",
     "docs/tile/model/memory/gm-obligation-progress.md": "42ad3b318a679b5ed468c749d8d4206eff2232e05e5290a78b266352e62aa86f",
@@ -23862,13 +23821,8 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "c1332aa895d5a70170b6f193674ad97371cbdd4314f5336de4ce4eb703d4d484",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "4fdb0facff519fecde8ba33ed966ed54c04b04c3f5f344024b2ce1a859434d67",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "c2bba4aad8073962fc18443147a53b3492eee9629f7a5975591087d1d8834e67",
-<<<<<<< HEAD
-    "spec/evidence/adr-index.json": "4e5cdceffcd17a607d22a17235a0d20102d924fe696bf595412eef67a9ac0f47",
-    "spec/evidence/instruction-contract-closure.json": "a0018a44c863c360b2746fb84a0f6f9752aa568aefeb89ba61a82e91ae6b2253",
-=======
-    "spec/evidence/adr-index.json": "a41495ae5e5233875a1524e0e1d77a13740df630c880771c01b6543cb42f881a",
+    "spec/evidence/adr-index.json": "05fe47ce45b82c07bcb8bcf8286ac7010c3abea0c0e93752aa693984f105876d",
     "spec/evidence/instruction-contract-closure.json": "b8f58508ea8878e77d353a9e66adf3d010d83fc8edb3885a95e7d3946bbc4ba3",
->>>>>>> ae3bfa190 (feat(isa): add indexed TLSU signed range descriptors)
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6c18bfdff0279b6d4fbaf3cb3c8e1ee111b4d5e82e1688136b88be6fa7902ba3",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -28380,13 +28334,9 @@
     "mnemonic_count": 671,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 1136,
+    "requirement_count": 1137,
     "status": "closed",
-<<<<<<< HEAD
-    "test_count": 4462,
-=======
-    "test_count": 4496,
->>>>>>> ae3bfa190 (feat(isa): add indexed TLSU signed range descriptors)
+    "test_count": 4504,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
