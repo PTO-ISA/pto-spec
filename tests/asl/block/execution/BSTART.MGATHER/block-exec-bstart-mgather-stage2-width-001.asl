@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-STAGE2-WIDTH-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-BSTART-MGATHER-SCHEMA-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"decoded MGATHER preserves full-width byte displacements and signed integer IndexTiles","pass_condition":"U64 and S32 byte displacements execute at their encoded widths, an upper-half U64 displacement is not scaled or truncated, and an invalid raw TF32 memory encoding is published unchanged","related_sources":["asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl","asl/tile/model/memory/addressing.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-STAGE2-WIDTH-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-BSTART-MGATHER-SCHEMA-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"decoded MGATHER preserves full-width byte displacements and signed integer IndexTiles","pass_condition":"U64 and S32 byte displacements execute at their encoded widths, an upper-half U64 displacement is not scaled or truncated, an absent-descriptor U64 high-bit index plus base wraps to the existing low address and loads there, and an invalid raw TF32 memory encoding is published unchanged","related_sources":["asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl","asl/tile/model/memory/addressing.asl"]}
 
 pure func MgatherStage2Start(data_type: bits(5)) => bits(64)
 begin
@@ -69,6 +69,30 @@ begin
     assert ReadTileElement(wide_destination, 0, 0) == expected_u64;
     assert _MemoryEventCount == 1;
     assert _MemoryEvents[[0]].address == wide_address;
+    assert _MemoryEvents[[0]].size_bytes == 8;
+    StopMemoryEventCapture();
+
+    // With no range descriptor, U64 remains an unsigned byte displacement.
+    // Base plus this high-bit index wraps to the existing low GM address.
+    let wrapped_payload = Zeros{PTO_XLEN} + 0x8877665544332211;
+    PrepareMgatherStage2(
+        TileDataType_U64,
+        Zeros{PTO_XLEN} + 0x8000000000000100,
+        Zeros{5} + 24);
+    WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x8000000000000000);
+    Store(Zeros{PTO_XLEN} + 0x100, 8, wrapped_payload);
+    let decoded_wrapped = DecodeTileOperation(TileDecode_TLSU,
+        BundleOperationDecodeCode(_BundleOperation));
+    let wrapped_operation = decoded_wrapped as integer
+        {0..PTO_TILE_OPERATION_COUNT-1};
+    assert !BundleIndexedTLSURangeDescriptorPresent(wrapped_operation);
+    StartMemoryEventCapture(0);
+    let wrapped_completed = ExecuteBundleTileOperation();
+    assert wrapped_completed && _LastFault == Fault_None;
+    let wrapped_destination = _BundleTileBindings[[0]].destination;
+    assert ReadTileElement(wrapped_destination, 0, 0) == wrapped_payload;
+    assert _MemoryEventCount == 1;
+    assert _MemoryEvents[[0]].address == Zeros{PTO_XLEN} + 0x100;
     assert _MemoryEvents[[0]].size_bytes == 8;
     StopMemoryEventCapture();
 

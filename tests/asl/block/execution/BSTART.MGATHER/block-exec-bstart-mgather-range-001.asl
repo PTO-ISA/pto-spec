@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-I414-MGATHER-RANGE-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-INDEXED-TLSU-RANGE-BINDING-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-BSTART-MGATHER-SCHEMA-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"Decoded MGATHER binds a conservative signed range without changing indexed loads or padding.","pass_condition":"S32 byte displacements -4, 0, and 3 produce [0xfc,0x104), exact loads and Max padding; the deferred GM-obligation snapshot does not reuse Min as a row stride; absence preserves the results; an index outside a present certificate still executes its architectural access without a new range fault.","related_sources":["asl/block/model/dispatch/indexed-tlsu-range-schema.asl","asl/block/model/dispatch/gm-obligation-dispatch.asl","asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/addressing.asl","asl/tile/model/memory/gather-scatter.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-I414-MGATHER-RANGE-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-INDEXED-TLSU-RANGE-BINDING-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-BSTART-MGATHER-SCHEMA-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"Decoded MGATHER binds a conservative signed range without changing indexed loads or padding.","pass_condition":"S32 byte displacements -4, 0, and 3 produce [0xfc,0x104), exact loads and Max padding; the deferred GM-obligation snapshot does not reuse Min as a row stride; absence preserves the results; an index outside a present certificate still executes its architectural access without a new range fault; a decoded Min value with nonzero upper 32 bits orders above Max=1 and faults before effects, while Min=0 executes.","related_sources":["asl/block/model/dispatch/indexed-tlsu-range-schema.asl","asl/block/model/dispatch/gm-obligation-dispatch.asl","asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/addressing.asl","asl/tile/model/memory/gather-scatter.asl"]}
 pure func RangeGatherStart(data_type: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00411181;
@@ -152,10 +152,67 @@ begin
     StopMemoryEventCapture();
 end;
 
+func RunDecodedBoundWidthCase(minimum: Word, expect_fault: boolean)
+begin
+    ResetProfileState();
+    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_S32,
+        TileLayout_RowMajor);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN});
+    Store(Zeros{PTO_XLEN} + 0x100, 1, Zeros{PTO_XLEN} + 0x5a);
+    WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x100);
+    WritePEGPR(0, 3, minimum);
+    WritePEGPR(0, 4, Zeros{PTO_XLEN} + 1);
+    let started = ExecuteCommandInstruction(
+        RangeGatherStart(TileDataTypeToEncoding(TileDataType_U8)), 32);
+    let padded = ExecuteCommandInstruction(RangeGatherMaxPad(), 32);
+    assert started == CommandExecution_Executed;
+    assert padded == CommandExecution_Executed;
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
+    let binding = ExecuteCommandInstruction(RangeGatherBinding(), 32);
+    let scalar = ExecuteCommandInstruction(RangeGatherIOR(
+        Zeros{5} + 2, Zeros{5} + 3, Zeros{5} + 4), 32);
+    assert binding == CommandExecution_Executed;
+    assert scalar == CommandExecution_Executed;
+    let decoded = DecodeTileOperation(TileDecode_TLSU,
+        BundleOperationDecodeCode(_BundleOperation));
+    let operation = decoded as integer
+        {0..PTO_TILE_OPERATION_COUNT-1};
+    assert BundleIndexedTLSURangeDescriptorPresent(operation);
+    assert ReadPEAbsoluteGPROperand(_CurrentMemoryAgent,
+        _BundleScalarBindings[[0]].source1) == minimum;
+    assert ReadPEAbsoluteGPROperand(_CurrentMemoryAgent,
+        _BundleScalarBindings[[0]].source2) == Zeros{PTO_XLEN} + 1;
+    if expect_fault then
+        assert !BundleIndexedTLSUCurrentPEBoundsOrdered(operation);
+    else
+        assert BundleIndexedTLSUCurrentPEBoundsOrdered(operation);
+    end;
+    StartMemoryEventCapture(0);
+    let completed = ExecuteBundleTileOperation();
+    if expect_fault then
+        assert !completed && _LastFault == Fault_TileLegality;
+        assert _MemoryEventCount == 0;
+        assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
+    else
+        assert completed && _LastFault == Fault_None;
+        assert _MemoryEventCount == 1;
+        assert _MemoryEvents[[0]].address == Zeros{PTO_XLEN} + 0x100;
+        let destination = _BundleTileBindings[[0]].destination;
+        assert ReadTileElement(destination, 0, 0) ==
+            Zeros{PTO_XLEN} + 0x5a;
+    end;
+    StopMemoryEventCapture();
+end;
+
 func main() => integer
 begin
     RunRangeGather(TRUE);
     RunRangeGather(FALSE);
     RunUncertifiedAccess();
+    // Changing only Min's upper 32 bits distinguishes full-width comparison.
+    RunDecodedBoundWidthCase(Zeros{PTO_XLEN}, FALSE);
+    RunDecodedBoundWidthCase(Zeros{PTO_XLEN} + 0x0000000100000000, TRUE);
     return 0;
 end;
