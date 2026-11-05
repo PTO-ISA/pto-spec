@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-I414-RANGE-INTERVAL-001","source":"asl/tile/model/memory/addressing.asl","requirements":["PTO-ARCH-MEMORY-MODEL-RANGE-001","PTO-INDEXED-TLSU-STRIDE-001","PTO-INDEXED-TLSU-RANGE-BINDING-001"],"kind":"execution","summary":"Mathematical indexed TLSU intervals preserve signed bounds, half-open overlap, and fail-closed alias comparison.","pass_condition":"The canonical negative/positive example, widths 1/2/4/8, adjacent and overlapping intervals, 2^64 endpoint, S64 extrema, absent high-U64 certificate, and incomparable alias all produce conservative results.","related_sources":["asl/arch/memory-model/ordering.asl","asl/block/model/dispatch/indexed-tlsu-range-schema.asl","asl/tile/model/memory/addressing.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-I414-RANGE-INTERVAL-001","source":"asl/tile/model/memory/addressing.asl","requirements":["PTO-ARCH-MEMORY-MODEL-RANGE-001","PTO-INDEXED-TLSU-STRIDE-001","PTO-INDEXED-TLSU-RANGE-BINDING-001"],"kind":"execution","summary":"Helper-domain indexed TLSU interval arithmetic preserves signed bounds, half-open overlap, and fail-closed alias comparison.","pass_condition":"Literal helper widths 1/2/4/8, adjacent and overlapping intervals, the 2^64 endpoint, S64 extrema, absent high-U64 certificate arithmetic, and incomparable alias produce conservative results. Literal W=1 and W=4 cases are arithmetic witnesses only; they do not claim packed4 or POPC execution or datatype-derived width selection.","related_sources":["asl/arch/memory-model/ordering.asl","asl/block/model/dispatch/indexed-tlsu-range-schema.asl","asl/tile/model/memory/addressing.asl"]}
 func main() => integer
 begin
     let example = TileIndexedTLSUByteIntervalFromDescriptor(TRUE,
@@ -38,13 +38,14 @@ begin
     assert width2.valid && width2.end_byte_exclusive == 0x2002;
     assert width4.valid && width4.end_byte_exclusive == 0x2004;
     assert width8.valid && width8.end_byte_exclusive == 0x2008;
-    // Packed four-bit ordinary transactions use W=1; MSCATTER.POPC uses W=4.
-    let packed = TileIndexedTLSUByteIntervalFromDescriptor(TRUE,
+    // These are helper-domain literal widths, not operation/type-derived widths.
+    // Actual packed4 and MSCATTER.POPC execution has separate operation tests.
+    let packed_width1_helper = TileIndexedTLSUByteIntervalFromDescriptor(TRUE,
         Zeros{64} + 0x3000, Zeros{64}, Zeros{64}, 1);
-    let popc = TileIndexedTLSUByteIntervalFromDescriptor(TRUE,
+    let popc_width4_helper = TileIndexedTLSUByteIntervalFromDescriptor(TRUE,
         Zeros{64} + 0x3000, Zeros{64}, Zeros{64}, 4);
-    assert packed.end_byte_exclusive == 0x3001;
-    assert popc.end_byte_exclusive == 0x3004;
+    assert packed_width1_helper.end_byte_exclusive == 0x3001;
+    assert popc_width4_helper.end_byte_exclusive == 0x3004;
 
     let address_space_end = UInt(Ones{PTO_XLEN}) + 1;
     let final_byte = TileIndexedTLSUByteIntervalFromDescriptor(TRUE,
