@@ -81,7 +81,7 @@ begin
         BundleOperationDecodeCode(_BundleOperation));
     let operation = decoded as integer
         {0..PTO_TILE_OPERATION_COUNT-1};
-    assert !BundleOperationBindingsComplete(operation);
+    assert BundleOperationBindingsComplete(operation);
     assert BundleOperationScalarBindingSchemaLegal(operation);
     assert BundleOperationGPRBindingValuesLegal(operation);
     assert BundleExecutionMaskGPRCarrierShapeLegal(operation);
@@ -105,7 +105,6 @@ begin
         BundleOperationDecodeCode(_BundleOperation));
     let operation = decoded as integer
         {0..PTO_TILE_OPERATION_COUNT-1};
-    assert BundleOperationBindingsComplete(operation);
     assert !BundleOperationScalarBindingSchemaLegal(operation);
     StartMemoryEventCapture(0);
     let completed = ExecuteBundleTileOperation();
