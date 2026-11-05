@@ -215,6 +215,14 @@ begin
            data_layout == Zeros{5} + 25;
 end;
 
+// Function-2 Shared-source TMOV owns the two ND-to-CUBE selectors. Keep this
+// predicate distinct from the existing CUBE-to-Shared selector set above.
+pure func TileDataLayoutIsSharedNDToCube(data_layout: bits(5)) => boolean
+begin
+    return data_layout == Zeros{5} + 21 ||
+           data_layout == Zeros{5} + 22;
+end;
+
 pure func TileDataLayoutConversionIsLoad(data_layout: bits(5)) => boolean
 begin
     let code = UInt(data_layout);

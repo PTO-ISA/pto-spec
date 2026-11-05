@@ -13192,7 +13192,8 @@
         "PTO-BSTART-TMOV-SHARED-001",
         "PTO-TMOV-CONTRACT-001",
         "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
-        "PTO-TMOV-CUBE-TO-SHARED-ND-001"
+        "PTO-TMOV-CUBE-TO-SHARED-ND-001",
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001"
       ],
       "affected_units": [
         "PTO-BLOCK-B-DATR",
@@ -13216,7 +13217,12 @@
         "PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-CUBE-TO-ND",
         "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
         "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
-        "PTO-TILE-MODEL-MEMORY-SHARED-CUBE-TO-ND"
+        "PTO-TILE-MODEL-MEMORY-SHARED-CUBE-TO-ND",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU-HELPERS",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-ND-TO-CUBE",
+        "PTO-TILE-MODEL-MEMORY-SHARED-ND-TO-CUBE"
       ],
       "amendments": [
         {
@@ -13288,6 +13294,33 @@
           "baseline": "b0165320a4b575b18d2f4d93faf40178f661ab49",
           "date": "2026-10-20",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/395"
+        },
+        {
+          "affected_ndf": [
+            "PTO-CUBE-CELL-TRANSPORT-001",
+            "PTO-BSTART-TMOV-SHARED-001",
+            "PTO-TMOV-CONTRACT-001",
+            "PTO-TMOV-SHARED-ND-TO-CUBE-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-B-DATR",
+            "PTO-BLOCK-BSTART-TMOV",
+            "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+            "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU-HELPERS",
+            "PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-ND-TO-CUBE",
+            "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+            "PTO-TILE-MODEL-MEMORY-SHARED-ND-TO-CUBE",
+            "PTO-TILE-TMOV"
+          ],
+          "approvers": [
+            "ckwllawliet <641433195@qq.com>"
+          ],
+          "baseline": "2209562859a89be80b73ea926f5d60b9d018faae",
+          "date": "2026-11-04",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/422"
         }
       ],
       "approvers": [
