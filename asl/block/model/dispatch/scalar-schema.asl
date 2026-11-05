@@ -457,6 +457,7 @@ readonly func BundleOperationScalarBindingSchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
     let decoded = TileOperationOfIndex(operation);
+    if BundleTMOVSelected() && _BundleDataAttributesPresent && TileDataLayoutIsSharedNDToCube(_BundleDataAttributes.data_layout) then return decoded == TileOperation_TMOV && !_BundleScalarBindings[[0]].valid && !_BundleScalarBindings[[1]].valid; end;
     if decoded == TileOperation_TEXPDIF &&
        !_BundleScalarBindings[[0]].execution_mask_present &&
        !_BundleScalarBindings[[1]].execution_mask_present then
