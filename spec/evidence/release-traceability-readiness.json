@@ -24493,8 +24493,8 @@
     "tests/asl/block/model/dispatch/generation-schema/block-static-generation-schema-contract-001.asl": "dc4c4bbd0230a33e8e4bc4936d0993b31aab1e5b037793f40f7c9fa6230ce885",
     "tests/asl/block/model/dispatch/gm-obligation-dispatch/block-state-gm-obligation-dispatch-unready-tstore-001.asl": "10872429ffc2d98fd3bdde04a8a6bf37d20f04fb3b577d8337d5530bcbb5d37e",
     "tests/asl/block/model/dispatch/gm-obligation-dispatch/block-static-gm-obligation-dispatch-contract-001.asl": "8a03b24f67c6ad7e105d2de9bf3349af4e8eaa606499a319cd2cb531dbc12cb4",
-    "tests/asl/block/model/dispatch/indexed-tlsu-range-command-stream/block-static-indexed-tlsu-range-command-stream-contract-001.asl": "0653b06814c7bda29c805af34cf1a8eb038e116aa0efe751c0463e940663b57f",
-    "tests/asl/block/model/dispatch/indexed-tlsu-range-schema/block-static-indexed-tlsu-range-schema-contract-001.asl": "31779c06f6917cab0a81562ed5b04f7d198e73ad577d200de6340560cba1ed6c",
+    "tests/asl/block/model/dispatch/indexed-tlsu-range-command-stream/block-static-indexed-tlsu-range-command-stream-contract-001.asl": "8a21db0c6ebf747ea5bb935abe0526ab49c5994338680f2a8d9593414dd11791",
+    "tests/asl/block/model/dispatch/indexed-tlsu-range-schema/block-static-indexed-tlsu-range-schema-contract-001.asl": "f18c556602c4a0aa62427038cf24250ca2f6304d152f97fa78fbbe5ed59e4fd8",
     "tests/asl/block/model/dispatch/lea-schema/block-static-lea-schema-contract-001.asl": "6e680f416b34f076c1b525c455a511536251603dd5763fe66c06ad0903549ff4",
     "tests/asl/block/model/dispatch/matrix-scale/block-static-matrix-scale-contract-001.asl": "f489a801420c1c353d1c4650cbfe83017f5e64b4e7ecf254445894b5ec4740d2",
     "tests/asl/block/model/dispatch/numeric-control/block-static-numeric-control-contract-001.asl": "5f017d6a1efbc475a7a3e96de780a5fde46df5f17913c27834fa16b9e2ff495c",
@@ -41221,6 +41221,22 @@
       "source": "asl/block/execution/BSTART.MGATHER.asl"
     },
     {
+      "id": "PTO-AVS-BLOCK-I414-INDEXED-RANGE-CMD-STREAM-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/block/model/dispatch/indexed-tlsu-range-command-stream/block-static-indexed-tlsu-range-command-stream-contract-001.asl",
+      "requirements": [],
+      "sha256": "8a21db0c6ebf747ea5bb935abe0526ab49c5994338680f2a8d9593414dd11791",
+      "source": "asl/block/model/dispatch/indexed-tlsu-range-command-stream.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-I414-INDEXED-RANGE-SCHEMA-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/block/model/dispatch/indexed-tlsu-range-schema/block-static-indexed-tlsu-range-schema-contract-001.asl",
+      "requirements": [],
+      "sha256": "f18c556602c4a0aa62427038cf24250ca2f6304d152f97fa78fbbe5ed59e4fd8",
+      "source": "asl/block/model/dispatch/indexed-tlsu-range-schema.asl"
+    },
+    {
       "id": "PTO-AVS-BLOCK-I414-MALFORMED-ABSENT-COMBINED-001",
       "kind": "fault",
       "path": "tests/asl/block/execution/BSTART.MGATHER/block-fault-bstart-mgather-range-absent-combined-001.asl",
@@ -42403,22 +42419,6 @@
       "requirements": [],
       "sha256": "8a03b24f67c6ad7e105d2de9bf3349af4e8eaa606499a319cd2cb531dbc12cb4",
       "source": "asl/block/model/dispatch/gm-obligation-dispatch.asl"
-    },
-    {
-      "id": "PTO-AVS-BLOCK-MODEL-DISPATCH-INDEXED-TLSU-RANGE-COMMAND-STREAM-STATIC-001",
-      "kind": "static-invariant",
-      "path": "tests/asl/block/model/dispatch/indexed-tlsu-range-command-stream/block-static-indexed-tlsu-range-command-stream-contract-001.asl",
-      "requirements": [],
-      "sha256": "0653b06814c7bda29c805af34cf1a8eb038e116aa0efe751c0463e940663b57f",
-      "source": "asl/block/model/dispatch/indexed-tlsu-range-command-stream.asl"
-    },
-    {
-      "id": "PTO-AVS-BLOCK-MODEL-DISPATCH-INDEXED-TLSU-RANGE-SCHEMA-STATIC-001",
-      "kind": "static-invariant",
-      "path": "tests/asl/block/model/dispatch/indexed-tlsu-range-schema/block-static-indexed-tlsu-range-schema-contract-001.asl",
-      "requirements": [],
-      "sha256": "31779c06f6917cab0a81562ed5b04f7d198e73ad577d200de6340560cba1ed6c",
-      "source": "asl/block/model/dispatch/indexed-tlsu-range-schema.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-MODEL-DISPATCH-LEA-SCHEMA-STATIC-001",
@@ -79939,7 +79939,7 @@
       "source": "asl/block/model/dispatch/indexed-tlsu-range-command-stream.asl",
       "surface": "block",
       "tests": [
-        "PTO-AVS-BLOCK-MODEL-DISPATCH-INDEXED-TLSU-RANGE-COMMAND-STREAM-STATIC-001"
+        "PTO-AVS-BLOCK-I414-INDEXED-RANGE-CMD-STREAM-STATIC-001"
       ]
     },
     {
@@ -79959,7 +79959,7 @@
       "source": "asl/block/model/dispatch/indexed-tlsu-range-schema.asl",
       "surface": "block",
       "tests": [
-        "PTO-AVS-BLOCK-MODEL-DISPATCH-INDEXED-TLSU-RANGE-SCHEMA-STATIC-001"
+        "PTO-AVS-BLOCK-I414-INDEXED-RANGE-SCHEMA-STATIC-001"
       ]
     },
     {

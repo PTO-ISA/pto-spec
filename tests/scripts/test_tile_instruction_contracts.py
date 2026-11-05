@@ -83,7 +83,7 @@ class TileInstructionContractsTest(unittest.TestCase):
         self.assertEqual(tfma.metadata["engine"], "VEC")
         self.assertEqual(tfma.metadata["catalog_records"][0]["function"], 28)
 
-    def test_mscatter_popc_uses_the_index_only_body_schema(self) -> None:
+    def test_mscatter_popc_keeps_index_only_body_with_range_contract(self) -> None:
         by_mnemonic = {
             unit.mnemonic: unit
             for unit in load_units(ROOT / "asl")
@@ -100,14 +100,26 @@ class TileInstructionContractsTest(unittest.TestCase):
             "B.IOR BaseGPR, zero, zero, ->zero",
             "BSTOP",
         )
+        expected_composition = (
+            "BSTART.MSCATTER.POPC DataType",
+            "B.DIM LB0=ValidCol",
+            "B.DIM LB1=ValidRow (optional, default 1)",
+            "B.DIM LB2=Col",
+            "B.IOT IndexTile, mask=PE_MASK, <last>",
+            "B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)",
+            "BSTOP",
+            "When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)",
+        )
 
         self.assertEqual(tuple(start.metadata["block"]), expected_body)
         self.assertEqual(
-            tuple(start.metadata["contract"]["block_composition"]), expected_body
+            tuple(start.metadata["contract"]["block_composition"]),
+            expected_composition,
         )
         self.assertEqual(tuple(tile.metadata["block"]), expected_body)
         self.assertEqual(
-            tuple(tile.metadata["contract"]["block_composition"]), expected_body
+            tuple(tile.metadata["contract"]["block_composition"]),
+            expected_composition,
         )
         self.assertEqual(
             tile.metadata["operands"],
