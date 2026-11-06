@@ -58,7 +58,7 @@ jobs:
 
       - name: Upload immutable preflight candidate
         id: preflight-artifact
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: pto-release-preflight-${{ inputs.commit }}
           path: build/release-preflight/candidate.json
@@ -67,7 +67,7 @@ jobs:
 
       - name: Upload preflight diagnostics
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: pto-release-preflight-diagnostics-${{ inputs.commit }}
           path: build/release-preflight/diagnostics.json
@@ -126,7 +126,7 @@ jobs:
           git diff --exit-code
 
       - name: Upload release evidence
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: pto-release-evidence-${{ inputs.commit }}
           path: |
@@ -187,7 +187,7 @@ jobs:
 
       - name: Upload release artifact certification
         id: certification-artifact
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: pto-release-artifact-certification-${{ inputs.commit }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: build/release-artifact-certification/report.json
@@ -196,7 +196,7 @@ jobs:
 
       - name: Upload artifact certification diagnostics
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: pto-release-artifact-certification-diagnostics-${{ inputs.commit }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: build/release-artifact-certification/diagnostics.json
