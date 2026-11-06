@@ -254,6 +254,12 @@ begin
     if BundleAtomicTStoreCurrentPENonparticipant() then return TRUE; end;
     if BundleAtomicTStoreSelected() then
         if !RequireBundleSharedSourcePayloadReadiness() then return FALSE; end;
+    elsif BundleSharedTMOVSharedNDToCubeSelected() then
+        // Delay reverse last-use capture until this Shared source is published.
+        if !BundleSharedSourcePayloadsAvailable() then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
     elsif !RequireBundleSharedSourcePayloads() then
         return FALSE;
     end;

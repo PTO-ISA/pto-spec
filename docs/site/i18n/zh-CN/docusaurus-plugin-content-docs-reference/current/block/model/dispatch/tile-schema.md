@@ -103,10 +103,56 @@ begin
         _BundleDataAttributes.rounding_mode else Zeros{3};
     let explicit_layout = if _BundleDataAttributesPresent then
         _BundleDataAttributes.data_layout else Zeros{5};
+    // Function-2 Shared TMOV defines only Shared ND-to-M32/M16 and Local
+    // M32/M16-to-Shared ND forms. Reject the other assigned CUBE transport
+    // selectors here, before generic layout helpers interpret their
+    // direction-specific source or destination layout.
+    if BundleTMOVSelected() &&
+       TileDataLayoutIsCubeConversion(explicit_layout) &&
+       !TileDataLayoutIsSharedNDToCube(explicit_layout) &&
+       !TileDataLayoutIsCubeToSharedND(explicit_layout) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if BundleTMOVSelected() &&
+       TileDataLayoutIsCubeConversion(explicit_layout) &&
+       BundleSharedBindingPhysicalCount() != 0 then
+        let shared_is_destination =
+            BundleSharedBindingIsDestination(0) ||
+            BundleSharedBindingIsReusedDestination(0);
+        if (TileDataLayoutIsSharedNDToCube(explicit_layout) &&
+            shared_is_destination) ||
+           (TileDataLayoutIsCubeToSharedND(explicit_layout) &&
+            !shared_is_destination) then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+    end;
     if BundleTMOVSelected() &&
        TileDataLayoutIsCubeToSharedND(explicit_layout) then
         if (BundleSharedBindingCount() != 1 &&
             BundleSharedReusedDestinationCount() != 1) ||
+           !_BundleDataAttributesPresent ||
+           _BundleDataAttributes.data_type != DTYPE_NONE ||
+           _BundleDataAttributes.pad_value != Zeros{2} ||
+           _BundleDataAttributes.comparison_mode != Zeros{3} ||
+           _BundleDataAttributes.rounding_mode != Zeros{3} ||
+           _BundleDataAttributes.saturating ||
+           _BundleDataAttributes.canonicalize ||
+           _BundleDataAttributes.execution_mask_invert ||
+           _BundleDataAttributes.execution_mask_zero ||
+           _BundleFixedPointAttributes.valid ||
+           !TileOperationDATRFieldsLegal(operation, explicit_c_mode,
+               explicit_pad, explicit_saturating, explicit_canonicalize,
+               explicit_data_type, explicit_rounding, explicit_layout) then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        return TRUE;
+    end;
+    if BundleTMOVSelected() &&
+       TileDataLayoutIsSharedNDToCube(explicit_layout) then
+        if BundleSharedBindingCount() != 1 ||
            !_BundleDataAttributesPresent ||
            _BundleDataAttributes.data_type != DTYPE_NONE ||
            _BundleDataAttributes.pad_value != Zeros{2} ||

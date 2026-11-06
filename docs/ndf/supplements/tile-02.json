@@ -245,6 +245,18 @@
       }
     },
     {
+      "id": "PTO-TMOV-SHARED-ND-TO-CUBE-001",
+      "source_path": "asl/tile/layout-and-rearrangement/layout/TMOV.asl",
+      "title": {
+        "en": "Shared ND-to-Local CUBE TMOV",
+        "zh-CN": "Shared ND 到 Local CUBE 反向 TMOV 传输"
+      },
+      "summary": {
+        "en": "This entry links the reverse Shared ND-to-Local CUBE direction to the existing TMOV transport family. The NDF clause and owning ASL define the architecture contract; this summary provides navigation context only.",
+        "zh-CN": "本条目将 Shared ND 到 Local CUBE 的反向传输链接到现有 TMOV 传输族。架构契约由 NDF 条款及其 ASL 所有者定义；本摘要仅提供导航说明。"
+      }
+    },
+    {
       "id": "PTO-TMUL-CONTRACT-001",
       "source_path": "asl/tile/elementwise-tile-tile/arithmetic/TMUL.asl",
       "title": {
