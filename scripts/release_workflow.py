@@ -225,7 +225,7 @@ def validate_release_workflow(workflow: str) -> list[str]:
 
     import hashlib
 
-    expected_sha256 = "11233792721ca420898f90372ec2e06c4832efd499cf438aa0acdb78b8e0bda7"
+    expected_sha256 = "21a27b79a4ed81f2902f270169baf35c8f54369fc75074cb3c05881a3c9cadb5"
     actual_sha256 = hashlib.sha256(workflow.encode("utf-8")).hexdigest()
     errors: list[str] = []
     if actual_sha256 != expected_sha256:

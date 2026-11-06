@@ -99,13 +99,13 @@ jobs:
           submodules: recursive
 
       - name: Download exact ASL test plan
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: full-validation-plan-release-${{ inputs.commit }}
           path: build/planned-asl-test-pages
 
       - name: Download every per-ID result
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: full-validation-results-release-${{ inputs.commit }}-*
           path: build/asl-test-results
@@ -155,13 +155,13 @@ jobs:
           submodules: recursive
 
       - name: Download exact release evidence artifact
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: pto-release-evidence-${{ inputs.commit }}
           path: build/release-artifacts/release-evidence
 
       - name: Download exact preflight artifact
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: pto-release-preflight-${{ inputs.commit }}
           path: build/release-artifacts/preflight
