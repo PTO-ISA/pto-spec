@@ -42,9 +42,9 @@
   "pnpm": {
     "overrides": {
       "brace-expansion": "1.1.21",
-      "fast-uri": "3.1.8",
+      "fast-uri": "3.1.9",
       "image-size": "2.0.3",
-      "joi": "17.13.8",
+      "joi": "17.13.9",
       "js-yaml": "4.3.2",
       "serialize-javascript": "7.1.0"
     }
