@@ -11,7 +11,7 @@ TileOp <bundle configuration>, ordered sources, ->ordered destinations
 
 - One TileOp macro instruction MUST occupy exactly one source line. A newline terminates the instruction; continuation syntax is not accepted and canonical disassembly never wraps the instruction.
 - Rectangular shapes use programmer-facing assignments such as `Row=8` and `Col=64`; matrix shapes use `M`, `N`, and `K`. TileOp source never exposes physical `LB0`, `LB1`, or `LB2` names.
-- `Row` resolution: Row has no independent physical encoding and uses the selected form's resolution record: an ordinary row-major numeric destination may derive Row from TSize, Col, and element type; a mixed RowMajor/CUBE form uses that rule only for RowMajor and encoded ValidRow for CUBE; predicate and descriptor-preserving forms require source descriptor state; CUBE-layout TLOAD and TSTORE forms plus TGPR2T use encoded ValidRow; an unrecoverable Row prevents stateless folding.
+- `Row` resolution: Row has no independent physical encoding and uses the selected form's resolution record: an ordinary row-major numeric destination may derive Row from TSize, Col, and element type; a mixed RowMajor/CUBE form uses that rule only for RowMajor and encoded ValidRow for CUBE; predicate and descriptor-preserving forms follow their selected resolution record; CUBE-layout TLOAD and TSTORE forms plus TGPR2T use encoded ValidRow; a runtime-derived Row is omitted without preventing stateless folding.
 - Valid-dimension defaults: the selected form's declared default is authoritative. The common rectangular defaults are `ValidRow=Row` and `ValidCol=Col`. canonical assembly omits a Valid field only when it equals the selected form's declared default.
 - Irregular memory shape: Every MGATHER and MSCATTER form exposes mandatory Col, ValidRow, and optional ValidCol=Col; Col drives LB2 and ValidCol drives LB0, while physical Tile Row remains outside the macro interface.
 - Descriptor-inherited shape: TPACK and TUNPACK preserve the first source Tile descriptor shape. They have no independently encoded macro shape, so a static object disassembler cannot print concrete Row or Col values without runtime descriptor state.
@@ -19,7 +19,7 @@ TileOp <bundle configuration>, ordered sources, ->ordered destinations
 - Canonical disassembly omits every exact selected-form attribute default, including fixed `DTYPE_NONE`, `PadValue=Null`, `PEMask=AllPE`, and zero-valued B.FPATR fields; omission leaves no empty slot or placeholder.
 - The assembler binds each bare attribute token through the selected TileOp schema value domain. An unresolved or multiply matching token is rejected rather than assigned by guesswork.
 - `?` marks an optional configuration field whose exact default is recorded by the owning instruction contract.
-- `.reuse` is not canonical: current `B.IOT` never releases a source.
+- Source lifetime integration: Physical source last-use and .reuse are owned by asl/block/operands/B.IOT.asl and B.IOS.asl; the macro owner does not yet bind these lifetime variants. This catalog must not be used to erase physical lifetime bits.
 - A source range keeps the canonical `[base=GPR, offset=uimm11]` spelling. Assemble variants additionally identify INIT, INIT_LAST, MIDDLE, or LAST because the phase changes allocation and parent-selection semantics.
 - An assemble continuation folds only the exact owner-derived phase contract: Local uses a final source-form B.IOT SizeCode=0 `AssembleParent` with physical role `assemble-parent-ref`; Shared retains its owning destination B.IOS SharedTileID with SizeCode=0 and physical role `shared-assemble-destination-reuse`. Each carrier is absent from ordinary semantic sources and handler source arguments; Local capacity is seven ordinary sources plus its carrier, Shared capacity is three plus its reused destination.
 - Canonical assemble suffixes are `->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]`, `->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]`, `->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]`, `->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]`, and the analogous `->Sx` forms; ambiguous matches retain physical assembly.
@@ -275,3 +275,15 @@ A TileOp assembler expands through that generated schema. A bundle-aware disasse
 
 This catalog specifies the PTO 0.59.0 textual contract and deterministic physical expansion. LLVM MC and PTO-AS integration are downstream work tracked from issue 261; they must consume this schema rather than copy its operation table.
 Every folded instruction remains one output line. A decode failure, stale mnemonic, non-canonical command order, or unmatched encoded value remains physical assembly. Runtime descriptor state is not required for canonical folding.
+
+## Physical attribute owner projection
+
+The JSON `physical_attribute_contracts` section projects the existing attribute owners for shared use by macro and physical-instruction tools. It includes every encoded field and bit piece, fixed-bit masks, constraints, operand roles, encoded-zero meanings, omission defaults, legality, and resolved field-domain references. It does not define new assembly tokens or authorize unconditional interpretation of contextual fields. An absent field domain is an unresolved symbolic-table obligation, not an empty legal value set.
+
+| Instruction | Owner | Encoded fields (fixed fields included) | Resolved domains |
+| --- | --- | --- | --- |
+| `B.CATR` | `asl/block/attributes/B.CATR.asl` | `DR`, `trap`, `far`, `atom`, `aq`, `rl` | none |
+| `B.DATR` | `asl/block/attributes/B.DATR.asl` | `CMode`, `PadValueOrByteId`, `Sat`, `Canonicalize`, `DataType`, `RMode`, `Layout`, `PredInv`, `Zero` | `CMode`, `DataType`, `PadValueOrByteId` |
+| `B.DIM` | `asl/block/attributes/B.DIM.asl` | `RegSrc`, `uimm17` | none |
+| `B.FPATR` | `asl/block/attributes/B.FPATR.asl` | `PreQuantMode`, `ReluMode`, `GroupNCode`, `RowMaxEn`, `GroupMaxEn`, `RowMaxInit`, `MaxAbsEn`, `Func`, `ElementWiseEn`, `TransA`, `TransB`, `CScaleEn`, `Reserved`, `Opc1`, `Opcode`, `W` | none |
+| `C.B.DIMI` | `asl/block/attributes/C.B.DIMI.asl` | `LoopNest`, `imm8` | none |

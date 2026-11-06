@@ -824,6 +824,91 @@ class TileMacroAssemblyTest(unittest.TestCase):
             ],
         )
 
+    def test_fold_signature_preserves_configuration_value_contracts(self) -> None:
+        signature = self.generator["physical_fold_signature"]
+        original = self.by_name["TADD"]["forms"][0]["expansion"]
+        # The target field alone cannot establish physical equivalence. A
+        # changed value/default/constraint can produce different bytes.
+        for syntax in ("Col=1", "Col=2", "Col{must be 1}", "Col{must be 2}"):
+            changed = copy.deepcopy(original)
+            binding = next(item for item in changed["configuration_bindings"]
+                           if item["field"] == "Col")
+            binding["syntax"] = syntax
+            self.assertNotEqual(signature(original), signature(changed), syntax)
+        changed = copy.deepcopy(original)
+        next(item for item in changed["configuration_bindings"]
+             if item["field"] == "Col")["syntax"] = "Col=1"
+        other = copy.deepcopy(changed)
+        next(item for item in other["configuration_bindings"]
+             if item["field"] == "Col")["syntax"] = "Col=2"
+        self.assertNotEqual(signature(changed), signature(other))
+
+    def test_atomic_store_modes_are_not_physical_aliases(self) -> None:
+        # Independent accepted TSTORE selector order, not a round trip through
+        # the generator's own alias table.
+        names = ("ADD", "MIN", "MAX", "AND", "OR", "XOR", "INC", "DEC")
+        forms = self.by_name["TSTORE"]["forms"]
+        for carrier in range(3):
+            selected = [[form for form in forms
+                         if form["spelling"] == "TSTORE.ATOMIC_" + name][carrier]
+                        for name in names]
+            self.assertEqual(len({form["expansion"]["fold_signature_sha256"]
+                                  for form in selected}), 8)
+            self.assertTrue(all(form["expansion"]["fold"]
+                                ["canonical_without_runtime_state"]
+                                for form in selected))
+
+    def test_runtime_shape_summary_does_not_prevent_folding(self) -> None:
+        self.assertNotIn("prevents stateless folding",
+                         self.catalog["shape_resolution"]["row"])
+
+    def test_projection_does_not_deny_physical_source_last_use(self) -> None:
+        self.assertNotIn("never releases", self.catalog["source_lifetime"])
+        self.assertNotIn("never releases", REFERENCE.read_text())
+
+    def test_attribute_projection_covers_owner_fields_without_inventing_symbols(self) -> None:
+        attributes = self.catalog["physical_attribute_contracts"]
+        self.assertEqual(set(attributes),
+                         {"B.CATR", "B.DATR", "B.FPATR", "B.DIM", "C.B.DIMI"})
+        for name, attribute in attributes.items():
+            owner = json.loads((ROOT / attribute["source"]).read_text()
+                               .splitlines()[0].split(": ", 1)[1])
+            self.assertEqual(attribute["forms"], owner["catalog_records"], name)
+            self.assertEqual(attribute["contract"], owner["contract"], name)
+            self.assertEqual(attribute["assembly"], owner["assembly"], name)
+        domains = attributes["B.DATR"]["field_domains"]
+        self.assertEqual(domains["CMode"]["assigned"][0],
+                         {"value": 0, "meaning": "EQ"})
+        self.assertEqual(domains["CMode"]["reserved"], [6, 7])
+        self.assertIn("TSTORE with Canonicalize=1", domains["CMode"]["rejection"])
+        self.assertEqual(domains["DataType"]["source"],
+                         "asl/arch/data-types/tile-data-types.asl")
+        # Keep the unresolved owner/domain conflict visible: a consumer must
+        # apply the instruction contract, not blindly treat this as a lexer.
+        self.assertIn(31, domains["DataType"]["reserved"])
+        dtype = next(item for item in attributes["B.DATR"]["forms"][0]
+                     ["constraints"] if item["field"] == "DataType")
+        self.assertIn(31, dtype["values"])
+        # No accepted closed textual symbol table exists for FPATR here.
+        # Do not silently turn profile labels into assembly tokens.
+        self.assertEqual(attributes["B.FPATR"]["field_domains"], {})
+
+    def test_attribute_projection_preserves_fixed_bits_and_omission_distinction(self) -> None:
+        attributes = self.catalog["physical_attribute_contracts"]
+        fpatr = attributes["B.FPATR"]["forms"][0]
+        fields = {field["name"]: field for field in fpatr["fields"]}
+        # Independently specified instruction bits, not encoder/decoder
+        # agreement using a shared mapping table.
+        self.assertEqual(fields["MaxAbsEn"]["pieces"],
+                         [{"instruction_lsb": 15, "value_lsb": 0, "width": 1}])
+        self.assertEqual(fpatr["encoding"][0]["mask"], "0x00007c7f")
+        self.assertEqual(fpatr["encoding"][0]["match"], "0x00002023")
+        constraints = {item["field"]: item for item in fpatr["constraints"]}
+        self.assertEqual(constraints["Reserved"]["values"], [0])
+        datr = attributes["B.DATR"]["contract"]
+        self.assertIn("FP64", datr["field_zero_meanings"]["DataType"])
+        self.assertIn("inherits", " ".join(datr["defaults"]))
+
     def test_row_resolution_and_valid_defaults_are_form_specific(self) -> None:
         runtime_forms = []
         input_only_forms = []
@@ -1401,7 +1486,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
         self.assertIn("all 119 current direct Tile operations", reference)
         self.assertIn("exactly one source line", reference)
         self.assertIn(
-            "predicate and descriptor-preserving forms require source descriptor state",
+            "predicate and descriptor-preserving forms follow their selected resolution record",
             reference,
         )
         self.assertIn("selected form's declared default is authoritative", reference)
