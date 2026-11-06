@@ -468,7 +468,7 @@ class SiteContractTests(unittest.TestCase):
             workflow,
         )
         self.assertIn(
-            "actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903",
+            "actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
             workflow,
         )
         self.assertIn("pnpm@10.30.0", workflow)
