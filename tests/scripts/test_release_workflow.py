@@ -988,7 +988,7 @@ class HostedFullValidationContractTest(unittest.TestCase):
         self.assertIn("            --preflight-root build/release-artifacts/preflight \\\n", self.release)
         certification = self.release.split("  certify-artifacts:\n", 1)[1].split("\n  validate:\n", 1)[0]
         self.assertEqual(
-            certification.count("actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"),
+            certification.count("actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333"),
             2,
         )
         self.assertNotIn("actions/download-artifact@v", certification)
