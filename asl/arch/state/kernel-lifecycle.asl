@@ -1,9 +1,12 @@
-// PTO-UNIT: {"id":"PTO-ARCH-STATE-KERNEL-LIFECYCLE","surface":"arch","classification":["state","kernel-lifecycle"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-ARCH-STATE-PE-EXECUTION-CONTEXT","PTO-BLOCK-MODEL-STATE-ATOMIC-TSTORE-SOURCE-LIFETIME","PTO-BLOCK-MODEL-STATE-SHARED-GENERATION"]}
+// PTO-UNIT: {"id":"PTO-ARCH-STATE-KERNEL-LIFECYCLE","surface":"arch","classification":["state","kernel-lifecycle"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-ARCH-STATE-PE-EXECUTION-CONTEXT","PTO-BLOCK-MODEL-STATE-ATOMIC-TSTORE-SOURCE-LIFETIME","PTO-BLOCK-MODEL-STATE-SHARED-GENERATION","PTO-ARCH-STATE-MESSAGE-BUFFER"]}
 // NDF-BEGIN: PTO-ARCH-KERNEL-LIFECYCLE-001
 // ndf: kind=contract level=L1 layer=state status=accepted
 // A Core has at most one active kernel invocation. Launch establishes one
 // common entry PC and new invocation identity for PE0..PE3, invalidating all
-// target-Core prelaunch recovery frames. Successful End and
+// target-Core prelaunch recovery frames. Opt-in MSGB End/Abort first close
+// message admission and MUST wait for mailbox quiescence before destructive
+// retirement; existing RX reads, ACK and RELEASE remain available to drain.
+// Successful End and
 // Abort retire invocation-owned active-PE Shared candidate/release metadata
 // while preserving any published Shared parent and committed effects. Abort
 // discards incomplete collective state and cancels reversible work, but
@@ -166,6 +169,9 @@ begin
     if _KernelInvocationActiveByCore[[core]] then
         return KernelLifecycle_Waiting;
     end;
+    if !MessageBufferCoreQuiescent(core) then
+        return KernelLifecycle_Waiting;
+    end;
     let retired = _RetiredKernelInvocationByCore[[core]];
     if retired != 0 && !KernelGMObligationsQuiescent(core, retired) then
         return KernelLifecycle_Waiting;
@@ -180,6 +186,7 @@ begin
     _KernelInvocationActiveByCore[[core]] = TRUE;
     _RetiredKernelInvocationByCore[[core]] = 0;
     _VerificationGMProgressDeferred = FALSE;
+    BeginMessageBufferInvocation(core, invocation);
     BeginCoreSynchronizationInvocation(core, invocation);
     for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
         InitializePEForKernelEntry(core, pe as MemoryAgentId, entry);
@@ -195,6 +202,10 @@ begin
         return KernelLifecycle_Rejected;
     end;
     let invocation = _KernelInvocationByCore[[core]];
+    BeginMessageBufferDrain(core);
+    if !MessageBufferCoreQuiescent(core) then
+        return KernelLifecycle_Waiting;
+    end;
     if !KernelGMObligationsQuiescent(core, invocation) then
         return KernelLifecycle_Waiting;
     end;
@@ -202,6 +213,7 @@ begin
     if !KernelHasIrrevocableAtomicTStore(core, invocation) then
         RetireSourceLifetimes(core, invocation);
     end;
+    RetireMessageBufferInvocation(core, invocation);
     _RetiredKernelInvocationByCore[[core]] = invocation;
     RetireCoreSynchronizationInvocation(core, invocation);
     _KernelInvocationByCore[[core]] = 0;
@@ -216,12 +228,17 @@ begin
         return KernelLifecycle_Rejected;
     end;
     let invocation = _KernelInvocationByCore[[core]];
+    BeginMessageBufferDrain(core);
+    if !MessageBufferCoreQuiescent(core) then
+        return KernelLifecycle_Waiting;
+    end;
     AbortKernelGMObligations(core, invocation);
     AbortCoreSynchronizationInvocation(core, invocation);
     RetirePEOwnedSharedGenerationsForInvocation(core, invocation);
     if !KernelHasIrrevocableAtomicTStore(core, invocation) then
         RetireSourceLifetimes(core, invocation);
     end;
+    RetireMessageBufferInvocation(core, invocation);
     _RetiredKernelInvocationByCore[[core]] = invocation;
     _KernelInvocationByCore[[core]] = 0;
     _KernelInvocationActiveByCore[[core]] = FALSE;

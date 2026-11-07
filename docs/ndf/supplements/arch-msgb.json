@@ -1,0 +1,92 @@
+{
+  "schema": "pto.ndf-supplements.v1",
+  "non_normative": true,
+  "surface": "arch",
+  "chunk": 2,
+  "entries": [
+    {
+      "id": "PTO-ARCH-MSGB-IDENTITY-001",
+      "source_path": "asl/arch/state/message-buffer-state.asl",
+      "title": {
+        "en": "Message and receive claim identities",
+        "zh-CN": "消息及接收快照身份"
+      },
+      "summary": {
+        "en": "Admitted sends and receive claims have independent stable identities and never wrap their epochs or sequences.",
+        "zh-CN": "接纳消息与接收快照分别维护身份，代次及序号不回绕。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-MSGB-STATE-001",
+      "source_path": "asl/arch/state/message-buffer-state.asl",
+      "title": {
+        "en": "Isolated persistent message buffer state",
+        "zh-CN": "隔离且持久的消息缓冲状态"
+      },
+      "summary": {
+        "en": "Message state belongs to explicit context banks outside trap snapshots, with disabled legacy behavior preserved.",
+        "zh-CN": "消息状态按上下文分组，位于陷阱快照之外，未启用时保持旧行为。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-MSGB-SSR-001",
+      "source_path": "asl/arch/state/message-buffer.asl",
+      "title": {
+        "en": "Message system register access",
+        "zh-CN": "消息系统寄存器访问"
+      },
+      "summary": {
+        "en": "Current kernel contexts access their own message registers while privileged configuration and precise rejection protect isolation.",
+        "zh-CN": "当前 kernel 访问自己的消息寄存器，特权配置和精确拒绝保证隔离。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-MSGB-ACK-001",
+      "source_path": "asl/arch/state/message-buffer.asl",
+      "title": {
+        "en": "Exact receive snapshot acknowledgement",
+        "zh-CN": "精确接收快照确认"
+      },
+      "summary": {
+        "en": "Acknowledgement validates a fully read exact token and retains independent replay state without consuming a later claim.",
+        "zh-CN": "确认检查完整读取及精确 token，独立保留重放状态，不消费后续快照。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-MSGB-SEND-001",
+      "source_path": "asl/arch/state/message-buffer.asl",
+      "title": {
+        "en": "Atomic BSE message admission",
+        "zh-CN": "BSE 消息原子接纳"
+      },
+      "summary": {
+        "en": "Enabled BSE validates control and endpoint state before atomically capturing payload and allocating a transport identity.",
+        "zh-CN": "启用后的 BSE 先检查控制字与端点，再原子捕获载荷并分配传输身份。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-MSGB-LIFECYCLE-001",
+      "source_path": "asl/arch/state/message-buffer.asl",
+      "title": {
+        "en": "Message invocation drain boundary",
+        "zh-CN": "消息调用生命周期排空边界"
+      },
+      "summary": {
+        "en": "Lifecycle drain closes new admission while preserving receive progress and committed identities until quiescence.",
+        "zh-CN": "生命周期排空关闭新接纳，同时保留接收进展及已提交身份直到静止。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-MSGB-REGISTER-FIELDS-001",
+      "source_path": "asl/arch/data-types/system-registers.asl",
+      "title": {
+        "en": "Message register fields and addresses",
+        "zh-CN": "消息寄存器字段与地址"
+      },
+      "summary": {
+        "en": "The assigned register family defines split staging and snapshot access, precise ACK fields, and privileged context configuration.",
+        "zh-CN": "新分配寄存器族定义暂存与快照的分离访问、精确 ACK 字段及特权上下文配置。"
+      }
+    }
+  ]
+}
