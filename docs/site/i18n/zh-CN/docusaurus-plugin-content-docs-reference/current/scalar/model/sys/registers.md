@@ -29,7 +29,7 @@ SSR 地址是 24 位的 `SystemRegisterAddress`。分派器识别三条路由：
 
 访问类别为只读、只写、读写或未知。生成的 `SystemRegisterAccessOf` 为每个地址返回其类别。
 
-对普通寄存器，位 11:0 小于 0x0F00 的地址对每个访问环开放；其他地址需要 ACR0。MSGB 配置寄存器是低于 0x0F00 的明确例外：`MSGBCFGSEL`、`MSGBCFG` 和 `MSGBDOMAIN` 需要 ACR0，而 MSGB 操作寄存器使用当前已绑定的 kernel ACR。
+对普通寄存器，位 11:0 小于 0x0F00 的地址对每个访问环开放；其他地址需要 ACR0。MSGB 配置寄存器是低于 0x0F00 的明确例外：`MSGBCFGSEL`、`MSGBCFG` 和 `MSGBDOMAIN` 需要 ACR0。其他 MSGB 地址选择当前 ACR 的 bank；具有副作用的载荷和命令访问还要求该 bank 已启用并绑定 kernel，而状态和端点查询在 bank 未启用时也可读取。
 
 <!-- PTO-READER-BLOCK: scalar-model-sys-registers-rules role=rules-interactions -->
 ## 规则与交互
