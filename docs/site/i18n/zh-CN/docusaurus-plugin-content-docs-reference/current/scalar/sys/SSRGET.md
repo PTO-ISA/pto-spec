@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `InstructionContractHandler_SSRGET` 选择 `ScalarHandler_ExecuteSystemRegisterGet`（`asl/scalar/sys/SSRGET.asl:18`），`InstructionContractSystemAddressWidth_SSRGET` 把地址宽度固定为 12（`asl/scalar/sys/SSRGET.asl:36`）。派发器把 `RegDst` 解码为 Reg5 选择器、把 `SSR_ID` 解码为系统寄存器地址，然后按该顺序调用读取辅助函数（`asl/scalar/model/dispatch/sys.asl:106`）。
 
-该辅助函数先读后写：`ExecuteSystemRegisterGet` 先读取被寻址的寄存器，只有在未引发故障时才写目的地（`asl/scalar/model/sys/registers.asl:144`）。
+该辅助函数先读后写：`ExecuteSystemRegisterGet` 先读取被寻址的寄存器，只有未引发故障且读取未被更早的可故障工作阻塞时才写目的地（`asl/scalar/model/sys/registers.asl`）。
 
 <!-- PTO-READER-BLOCK: scalar-ssrget-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
@@ -42,14 +42,14 @@ L32 形式长 32 位，因此 `SSR_ID` 可寻址 4096 个寄存器位置。`SSR_
 
 设计要点：目的地写入以读取成功为前提。因此被拒绝的读取会让目的地寄存器、临时队列和系统寄存器都保持不变，失败的 `SSRGET` 无法破坏后续代码所依赖的值。
 
-`SSRGET` 不修改系统寄存器堆，也不执行普通标量内存访问。
+普通寄存器读取不修改已存寄存器状态。MSGBD 读取不同：它读取稳定接收快照，并把该有效 word 标记为已读，供后续精确 token ACK 使用。`SSRGET` 不执行普通标量内存访问。
 
 <!-- PTO-READER-BLOCK: scalar-ssrget-constraints role=constraints -->
 ## 位置与拒绝边界
 
 第一道门是位置必须在活动 SYS 块体内；在其他位置，该次尝试在地址被检查之前引发 `Fault_BundleControl`。第二道门是地址检查：当环缺少权限，或地址类别为 `SystemRegisterAccess_Unknown` 或 `SystemRegisterAccess_WriteOnly` 时，读取以 `Fault_IllegalInstruction` 被拒绝（`asl/scalar/model/sys/registers.asl:66`）。
 
-设计要点：访问环权限由地址而不是由指令决定。低于 0x0F00 的地址在每个环都可到达，而上下文、地址转换和调试系列需要 ACR0，因此同一条 `SSRGET` 编码会因执行它的环而成功或失败。
+设计要点：访问环权限由地址而不是由指令决定。普通地址低于 0x0F00 时每个环都可到达，而上下文、地址转换和调试系列需要 ACR0。MSGB 族增加明确例外：配置寄存器需要 ACR0；状态和端点寄存器无需启用 bank 就能读取当前 ACR bank，而接收 payload 和受保护快照元数据需要已启用的 kernel 绑定，并可能在写目的地或 read mask 之前阻塞。
 
 <!-- PTO-READER-BLOCK: scalar-ssrget-example role=example -->
 ## 非规范示例

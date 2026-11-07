@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `InstructionContractHandler_SSRSWAP` 选择 `ScalarHandler_ExecuteSystemRegisterSwap`（`asl/scalar/sys/SSRSWAP.asl:18`），派发器解码全部三个操作数：`RegDst`、`SrcL` 以及 12 位 `SSR_ID` 地址（`asl/scalar/model/dispatch/sys.asl:116`）。`InstructionContractSystemTransferKind_SSRSWAP` 返回 `'10'`，即把交换与读取或写入区分开的传送种类（`asl/scalar/sys/SSRSWAP.asl:30`）。
 
-该辅助函数在读取任何内容之前先对两个方向做预检：`ExecuteSystemRegisterSwap` 要求 `SystemRegisterSwapPermitted`，而它要求读权限、写权限以及读写访问类别（`asl/scalar/model/sys/registers.asl:168`）。
+该辅助函数在读取任何内容之前先做预检。所有 MSGB 地址都会先被拒绝，因为它们的读写两侧具有不同的快照、暂存或命令语义。其他地址要求 `SystemRegisterSwapPermitted`，即读权限、写权限和读写访问类别。
 
 <!-- PTO-READER-BLOCK: scalar-ssrswap-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
@@ -47,9 +47,9 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ssrswap-constraints role=constraints -->
 ## 位置与拒绝边界
 
-在活动 SYS 块体之外，该次尝试在操作数处理开始之前引发 `Fault_BundleControl`。随后交换预检在任一方向缺少环权限，或访问类别为未知、只读或只写时以 `Fault_IllegalInstruction` 拒绝。除读写之外的任何访问类别都不能被交换。
+在活动 SYS 块体之外，该次尝试在操作数处理开始之前引发 `Fault_BundleControl`。随后交换预检在读取源或产生读侧效果之前拒绝每个 MSGB 地址。对普通寄存器，它在任一方向缺少环权限，或访问类别为未知、只读或只写时拒绝。
 
-设计要点：地址 0x1F02 是一个读写上下文寄存器，但它的低位索引处于或高于 0x0F00，因此即使同一地址模式在别的库中是开放的，它也需要 ACR0。因此在 ACR1 交换该地址会出错，而不是返回 ring 1 的值。
+设计要点：目录类别为 `RW` 并不足以允许交换。地址 0x0831（`MSGBD1`）是 `RW`，但写入暂存 TX 数据，读取观察 RX 快照，因此 `SSRSWAP` 拒绝它。地址 0x1F02 是普通对照：它在 ACR0 可交换，在 ACR1 因环权限被拒绝。
 
 <!-- PTO-READER-BLOCK: scalar-ssrswap-example role=example -->
 ## 非规范示例

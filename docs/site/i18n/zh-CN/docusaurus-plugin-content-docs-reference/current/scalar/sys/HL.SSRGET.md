@@ -38,18 +38,18 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-effects role=effects -->
 ## 架构效果
 
-成功时完整的寄存器值通过 Reg5 目的地映射发布，`TPC` 按指令长度前进。只有在读取未报告故障时才写目的地（`asl/scalar/model/sys/registers.asl:148`），因此被拒绝的宽读取会让目的地与临时队列都不被触碰。
+成功时完整的寄存器值通过 Reg5 目的地映射发布，`TPC` 按指令长度前进。只有在读取未报告故障且没有阻塞时才写目的地，因此被拒绝或阻塞的宽读取不会触碰目的地与临时队列。
 
 设计要点：读取路径对存入扩展寄存器堆的地址只接受第 23:16 位为零者，`SystemRegisterFileIndexOf` 对该条件做断言（`asl/scalar/model/sys/registers.asl:56`）。因此该空间这一部分的地址在索引形成之前就由访问类别表决定接受或拒绝。
 
-该指令不修改系统寄存器堆，也不执行普通标量内存访问。
+普通寄存器读取不修改已存寄存器状态。MSGBD 读取会把对应接收快照 word 标记为已读，供精确 token ACK 使用。该指令不执行普通标量内存访问。
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-constraints role=constraints -->
 ## 位置与拒绝边界
 
 先检查位置是否在活动 SYS 块体内，在其他位置的尝试引发 `Fault_BundleControl`。随后读取路径在当前环对该地址缺少权限，或访问类别为未知或只写时以 `Fault_IllegalInstruction` 拒绝（`asl/scalar/model/sys/registers.asl:66`）。
 
-设计要点：更宽的地址字段并不放宽权限规则。低 12 位低于 0x0F00 的地址在每个环都可到达，而上下文、地址转换和调试系列需要 ACR0，与 12 位形式完全一致。
+设计要点：更宽的地址字段不会产生第二套权限规则。普通地址的低 12 位低于 0x0F00 时每个环都可到达，而上下文、地址转换和调试系列需要 ACR0。MSGB 配置是明确的低地址例外，需要 ACR0；状态和端点读取无需启用 bank 就能观察当前 ACR bank，而接收 payload 和受保护快照元数据需要已启用的 kernel 绑定。
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-example role=example -->
 ## 非规范示例

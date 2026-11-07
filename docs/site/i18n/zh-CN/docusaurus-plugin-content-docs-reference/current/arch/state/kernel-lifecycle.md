@@ -31,7 +31,7 @@ This page is a generated reference view of the normative ASL unit.
 
 当 Core 已有活跃调用，或已退役调用仍有未静止的 GM obligation 时，`LaunchKernelInvocation` 会等待。奇数入口地址会被拒绝。获准后，它初始化所有 PE 并返回 `KernelLifecycle_Started`。
 
-`EndKernelInvocation` 和 `AbortKernelInvocation` 首先关闭进出该 Core 的新消息接纳。只要该 Core 仍拥有排队消息或接收快照，它们就返回 `KernelLifecycle_Waiting`，但已有读取、ACK 和 RELEASE 可以继续排空。待本地消息状态和所需 GM 工作静止后，它们执行现有的按身份退役；abort 随后按各所有者定义取消可逆 GM 和未完成同步。
+`EndKernelInvocation` 和 `AbortKernelInvocation` 首先关闭进出该 Core 的新消息接纳。只要该 Core 仍拥有排队消息或接收快照，它们就返回 `KernelLifecycle_Waiting`，但已有读取、ACK 和 RELEASE 可以继续排空。本地消息状态静止后，End 还会等待 GM obligation，再按身份退役。Abort 则取消可逆 GM 和未完成同步，执行按身份退役，随后可能在不可逆 GM 排空期间返回 `KernelLifecycle_Waiting`；后续 launch 会保持阻塞，直到已退役工作静止。
 
 <!-- PTO-READER-BLOCK: arch-kernel-lifecycle-boundaries role=boundaries -->
 ## 边界
@@ -43,7 +43,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-kernel-lifecycle-example role=example-usage -->
 ## 阅读示例
 
-假设 Core 0 启动调用 7，拥有一个本地接收快照，并已经向 Core 1 接纳一条消息。结束或中止先关闭新接纳，并等待 Core 0 的快照被 ACK 或 RELEASE。Core 1 中的 packet 已归目标所有，Core 0 退役后仍可读取；退役不等待 Core 1 的应用 ACK。
+假设 Core 0 启动调用 7，拥有一个本地接收快照，并已经向 Core 1 接纳一条消息。结束或中止先关闭新接纳。Core 0 必须读完全部有效 word、ACK 消息，再 RELEASE 保留的 ACKED 快照，本地 bank 才静止；ACK 前执行 RELEASE 只会取消 claim，排队 packet 仍保留。Core 1 中的 packet 已归目标所有，Core 0 退役后仍可读取；退役不等待 Core 1 的应用 ACK。
 
 <!-- PTO-READER-BLOCK: arch-kernel-lifecycle-related role=related-owners-navigation -->
 ## 相关所有者

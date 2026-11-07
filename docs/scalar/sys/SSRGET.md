@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `InstructionContractHandler_SSRGET` selects `ScalarHandler_ExecuteSystemRegisterGet` (`asl/scalar/sys/SSRGET.asl:18`), and `InstructionContractSystemAddressWidth_SSRGET` fixes the address width at 12 (`asl/scalar/sys/SSRGET.asl:36`). The dispatcher decodes `RegDst` as a Reg5 selector and `SSR_ID` as a system-register address, then calls the get helper in that order (`asl/scalar/model/dispatch/sys.asl:106`).
 
-The helper reads first and writes second: `ExecuteSystemRegisterGet` reads the addressed register, then writes the destination only if no fault was raised (`asl/scalar/model/sys/registers.asl:144`).
+The helper reads first and writes second: `ExecuteSystemRegisterGet` reads the addressed register, then writes the destination only if no fault was raised and the read did not block behind older fault-capable work (`asl/scalar/model/sys/registers.asl`).
 
 <!-- PTO-READER-BLOCK: scalar-ssrget-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
@@ -42,14 +42,14 @@ A successful read publishes the complete register value through the Reg5 destina
 
 Design point: the destination write is conditional on the read having succeeded. A rejected read therefore leaves the destination register, the temporary queues, and the system register unchanged, so a failed `SSRGET` cannot clobber a value that later code depends on.
 
-`SSRGET` does not modify the system-register file, and it performs no ordinary scalar memory access.
+An ordinary register read does not modify stored register state. An MSGBD read is different: it reads the stable receive snapshot and marks that valid word as read for the later exact-token ACK. `SSRGET` performs no ordinary scalar memory access.
 
 <!-- PTO-READER-BLOCK: scalar-ssrget-constraints role=constraints -->
 ## Placement and rejection
 
 The first gate is placement in an active SYS block body; outside one the attempt raises `Fault_BundleControl` before the address is examined. The second gate is the address check: a read is rejected with `Fault_IllegalInstruction` when the ring lacks permission, or when the address class is `SystemRegisterAccess_Unknown` or `SystemRegisterAccess_WriteOnly` (`asl/scalar/model/sys/registers.asl:66`).
 
-Design point: access-ring permission is decided by the address, not by the instruction. Addresses below 0x0F00 are reachable from every ring, while the context, translation, and debug families need ACR0, so the same `SSRGET` encoding succeeds or fails depending on the ring that executes it.
+Design point: access-ring permission is decided by the address, not by the instruction. Ordinary addresses below 0x0F00 are reachable from every ring, while the context, translation, and debug families need ACR0. The MSGB family adds a deliberate exception: configuration registers need ACR0. Status and endpoint registers read the current ACR bank without enabling it; receive payload and protected snapshot metadata require the enabled kernel binding and may block before any destination or read-mask effect.
 
 <!-- PTO-READER-BLOCK: scalar-ssrget-example role=example -->
 ## Non-normative example

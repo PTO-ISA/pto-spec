@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `InstructionContractHandler_HL_SSRSET` selects `ScalarHandler_ExecuteSystemRegisterSet` (`asl/scalar/sys/HL.SSRSET.asl:18`), and `InstructionContractSystemAddressWidth_HL_SSRSET` fixes the address width at 24 (`asl/scalar/sys/HL.SSRSET.asl:36`). The 48-bit assembly carries the address as two 12-bit pieces, which the dispatcher recombines before the call (`asl/scalar/model/dispatch/sys.asl:96`).
 
-The helper preflights write permission and only then reads the source, so the source is not consumed by an attempt that cannot store (`asl/scalar/model/sys/registers.asl:160`).
+The helper preflights ordinary write permission and, for MSGB, the kernel context, Block attributes, and older fault-capable work before it reads the source. A rejected or blocked attempt therefore does not read the Reg5 value.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
@@ -40,7 +40,7 @@ The helper preflights write permission and only then reads the source, so the so
 
 A successful attempt stores the source value into the addressed register and advances `TPC` by the length of the 48-bit form. When the address is a base pointer register such as 0x0000, the store lands in that register; when it is `CORE_STATE`, the store also updates the current access ring from bits 3:0 (`asl/scalar/model/sys/semantics.asl:63`).
 
-Design point: a store to a read-only or unknown address faults before the source read, so a rejected wide write leaves both the source register and the target register exactly as they were. Nothing about the wider address field changes that ordering.
+Design point: a store to a read-only, unknown, or disallowed MSGB address fails before the source read. A blocked MSGB configuration write also leaves its source and persistent selector unchanged. Nothing about the wider address field changes that ordering.
 
 The instruction performs no ordinary scalar memory access.
 
@@ -49,7 +49,7 @@ The instruction performs no ordinary scalar memory access.
 
 The attempt must sit in an active SYS block body; otherwise it raises `Fault_BundleControl` before any address work. The write path then rejects with `Fault_IllegalInstruction` when the current ring lacks permission for the address, or when the access class is unknown or read-only (`asl/scalar/model/sys/registers.asl:105`).
 
-Design point: the permission rule keys on the low 12 bits of the address, so a 24-bit address whose low index is below 0x0F00 remains open to every ring, while the context and debug families stay ACR0-only. The extra address bits do not create a second privilege rule.
+Design point: ordinary permission keys on the low 12 bits, but the MSGB family adds an explicit exception below 0x0F00. `MSGBCFGSEL`, `MSGBCFG`, and `MSGBDOMAIN` require ACR0; operational writes require the current bound kernel ACR. The extra address bits do not bypass either rule.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-example role=example -->
 ## Non-normative example

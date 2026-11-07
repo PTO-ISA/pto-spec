@@ -29,7 +29,7 @@ An SSR address is a `SystemRegisterAddress` of 24 bits. The dispatcher recognize
 
 An access class is read-only, write-only, read-write, or unknown. The generated `SystemRegisterAccessOf` returns it for each address.
 
-For ordinary registers, an address whose bits 11:0 are below 0x0F00 is open to every ring; any other address needs ACR0. MSGB configuration registers are the deliberate exception below 0x0F00: `MSGBCFGSEL`, `MSGBCFG`, and `MSGBDOMAIN` require ACR0, while operational MSGB registers use the currently bound kernel ACR.
+For ordinary registers, an address whose bits 11:0 are below 0x0F00 is open to every ring; any other address needs ACR0. MSGB configuration registers are the deliberate exception below 0x0F00: `MSGBCFGSEL`, `MSGBCFG`, and `MSGBDOMAIN` require ACR0. Other MSGB addresses select the current ACR bank; effectful payload and command access additionally requires its enabled kernel binding, while status and endpoint discovery remain readable without enabling the bank.
 
 <!-- PTO-READER-BLOCK: scalar-model-sys-registers-rules role=rules-interactions -->
 ## Rules and interactions
