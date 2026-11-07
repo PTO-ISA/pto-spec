@@ -27,7 +27,7 @@ Design point: the enumeration member and the address are stored separately, the 
 - `SystemRegister` has fourteen members: `SystemRegister_THREAD_PTR`, `SystemRegister_GLOBAL_PTR`, `SystemRegister_TIME`, `SystemRegister_CORE_STATE`, `SystemRegister_CORE_ID`, `SystemRegister_THREAD_ID`, `SystemRegister_VENDOR`, `SystemRegister_VERSION`, `SystemRegister_CORE_FEATURE`, `SystemRegister_CORE_FEATURE_ENABLE`, `SystemRegister_TILE_CAPACITY`, `SystemRegister_BLOCKNUM`, `SystemRegister_BLOCKID` and `SystemRegister_CYCLE`.
 - `SystemRegisterAccess` has four members: `SystemRegisterAccess_Unknown`, `SystemRegisterAccess_ReadOnly`, `SystemRegisterAccess_WriteOnly`, and `SystemRegisterAccess_ReadWrite`.
 - `MaintenanceOperation` has sixteen members: data-cache, instruction-cache, bundle-cache and TLB forms, among them `Maintenance_DC_IALL`, `Maintenance_DC_ZVA`, `Maintenance_IC_IALL`, `Maintenance_IC_IVA`, `Maintenance_BC_IALL`, `Maintenance_BC_IVA` and `Maintenance_TLB_IALL`.
-- The projection declares `system_register_address_bits` as `24` and `system_register_file_index_bits` as `16`, and it assigns addresses from `0x0000` for `THREAD_PTR` through `0x0C00` for `CYCLE`.
+- The projection declares `system_register_address_bits` as `24` and `system_register_file_index_bits` as `16`. It includes the ordinary base members, the MSGB family at `0x0830` through `0x084B`, and the context-family registers.
 
 Design point: `SystemRegisterAccess` contains `SystemRegisterAccess_Unknown` next to the three real classes. A resolver therefore has a distinct answer for an address that is not a register, and the read path in `asl/scalar/model/sys/registers.asl` reports `Fault_IllegalInstruction` for `SystemRegisterAccess_Unknown` and for `SystemRegisterAccess_WriteOnly` before any register value is produced.
 
@@ -38,7 +38,7 @@ Every base member appears in the projection with one address, one access class a
 
 The projection separates registers that store a value from registers that report one: `THREAD_PTR`, `GLOBAL_PTR`, `CORE_STATE` and `CORE_FEATURE_ENABLE` read the stored value and accept a store, while `CORE_ID`, `VENDOR`, `VERSION`, `CORE_FEATURE`, `BLOCKNUM`, `BLOCKID` and `TILE_CAPACITY` are read as `fixed-value` and reject a write. `THREAD_ID` uses the `executing-pe-index` behavior class; its current meaning is defined by the [Scalar SYS owner](../../scalar/model/sys/semantics.md).
 
-Both `SystemRegister_TIME` and `SystemRegister_CYCLE` have read behavior `architectural-time`, the recorded side effect `advances-on-every-execution-attempt` and write behavior `reject-read-only`. A `CORE_STATE` write is the one base write with a recorded side effect, `write-selects-current-acr`.
+Both `SystemRegister_TIME` and `SystemRegister_CYCLE` have read behavior `architectural-time`, the recorded side effect `advances-on-every-execution-attempt` and write behavior `reject-read-only`. Among the ordinary `SystemRegister` members, `CORE_STATE` is the stored base register whose write selects the current ACR. The MSGB behavior classes add side-effecting staging, claim, ACK, release, and configuration operations; their meaning is owned by [message-buffer state](../state/message-buffer-state.md) and [message-buffer operations](../state/message-buffer.md).
 
 Design point: `SystemRegister_TIME` and `SystemRegister_THREAD_ID` have no backing fields in `BaseSystemRegisterState`. The Scalar SYS owner derives these read results from architectural time and the execution context. The remaining twelve members have backing fields.
 
@@ -49,7 +49,7 @@ This unit does not create the system-register file and does not define address d
 
 A declared maintenance identity does not by itself guarantee that an instruction can invoke it and does not define an epoch change. The executing instruction owns its own legality, and the maintenance owner owns the effect.
 
-Design point: the enumeration and the projection do not cover the same set, and a reader must not treat `SystemRegister` as the complete list of system registers. The projection also lists `context-family` registers such as `ECSTATE_ACRn` at low index `0xF00` and `TTBR0_ACR1` at low index `0xF10`, none of which is a `SystemRegister` member, while all fourteen members do appear in the projection.
+Design point: the enumeration and the projection do not cover the same set, and a reader must not treat `SystemRegister` as the complete list of system registers. The projection also lists the MSGB base-address family and `context-family` registers such as `ECSTATE_ACRn` at low index `0xF00` and `TTBR0_ACR1` at low index `0xF10`; none of these is a `SystemRegister` member, while all fourteen members do appear in the projection.
 
 <!-- PTO-READER-BLOCK: arch-system-register-types-example-usage role=example-usage -->
 ## Non-normative reading example
@@ -61,7 +61,7 @@ Design point: the enumeration and the projection do not cover the same set, and 
 <!-- PTO-READER-BLOCK: arch-system-register-types-related-owners role=related-owners-navigation -->
 ## Related owners
 
-- [System-register addressing](../system-registers/addressing.md)
+- [System-register addressing](../system-registers/addressing.md) and [message-buffer state](../state/message-buffer-state.md)
 - [System-register access control](../system-registers/access-control.md)
 - [Maintenance behavior](../system-registers/maintenance.md)
 <!-- SUPPLEMENTARY-END -->

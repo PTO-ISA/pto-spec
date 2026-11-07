@@ -46,7 +46,7 @@ This page is a generated reference view of the normative ASL unit.
 
 `ResetProfileState` 显式写入本记录的每个字段。它复位每一个 ACR 存储体，而不只是当前存储体，然后把 `_CurrentACR` 设为 ACR0 并为该环调用 `ClearFault`，因此一次复位执行不会从先前的当前环继承归档状态。
 
-该函数还承担参考复位的其余部分，包括通用寄存器、临时队列、谓词寄存器、模型内存、瓦片与共享瓦片描述符、描述符有效位与已定义性字段、预留状态、指令束控制状态、内存执行状态，以及每个 ACR 的陷阱上下文。
+该函数还承担参考复位的其余部分，包括通用寄存器、临时队列、谓词寄存器、模型内存、瓦片与共享瓦片描述符、描述符有效位与已定义性字段、预留状态、指令束控制状态、内存执行状态、每个 ACR 的陷阱上下文，以及分 bank 的消息缓冲状态。
 
 设计要点：即使复位取值为零，每个字段也会被写入，因此复位后 `version` 的取值是一、`tile_capacity` 的取值是 `PTO_MODEL_MAX_TILE_CAPACITY_BYTES`，而不依赖某个未被说明的初始状态。读者可以把一个正在运行的核心与这份清单对照，而无需追问某个配置档恰好初始化了哪些字段。
 
@@ -57,7 +57,7 @@ This page is a generated reference view of the normative ASL unit.
 
 对 `core_state` 的写入还会选择当前 ACR，而读取待处理位图或最高优先待处理中断会运行定时器所有者定义的定时器刷新。
 
-设计要点：复位函数体清除全部 16 个环中上下文寄存器的低位索引范围，然后存入中断配置取值，因此复位前处于活动状态的存储体无法把待处理位、陷阱参数或使能位带入下一次执行。
+设计要点：复位函数体清除全部 16 个环中上下文寄存器的低位索引范围，然后存入中断配置取值。它还把消息 bank 复位为未启用，并清空暂存、队列、快照、身份和结果，因此两类上下文状态都不会把旧操作带入下一次执行。
 
 <!-- PTO-READER-BLOCK: arch-system-addressing-example-usage role=example-usage -->
 ## 非规范复位阅读示例
@@ -70,7 +70,7 @@ This page is a generated reference view of the normative ASL unit.
 ## 相关所有者
 
 - [陷阱上下文记录](../data-types/trap-context.md)是声明的依赖项；复位函数体为每个 ACR 初始化一个上下文。
-- [上下文寄存器](context.md)把环号与低位索引映射到扩展寄存器文件。
+- [上下文寄存器](context.md)把环号与低位索引映射到扩展寄存器文件；[消息缓冲状态](../state/message-buffer-state.md)拥有单独分 bank 的 MSGB 复位。
 - [数值状态](../state/numeric-status.md)读取本页拥有的 `core_state` 字段。
 <!-- SUPPLEMENTARY-END -->
 

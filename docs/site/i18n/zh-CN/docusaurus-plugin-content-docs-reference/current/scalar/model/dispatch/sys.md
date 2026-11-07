@@ -22,7 +22,7 @@ This page is a generated reference view of the normative ASL unit.
 - 访问环请求：`ACRC` 和 `ACRE`；
 - 检查与断点：`ASSERT`、`EBREAK` 和 `C.EBREAK`；
 - 缓存与 TLB 维护：`BC.*`、`DC.*`、`IC.*` 和 `TLB.*`；
-- 执行控制请求：`BSE`、`BWE`、`BWI` 和 `BWT`；
+- 消息接纳或执行控制：模式相关的 `BSE`，以及 `BWE`、`BWI` 和 `BWT` 请求；
 - 栅栏：`FENCE.D` 和 `FENCE.I`；
 - 寄存器转移与提交目标：`SSRGET`、`SSRSET`、`SSRSWAP`、`HL.SSRGET`、`HL.SSRSET`、`C.SSRGET`、`LSRGET`，以及提交目标设置指令 `SETC.TGT`。
 
@@ -54,7 +54,7 @@ This page is a generated reference view of the normative ASL unit.
 
 设计要点：断点和失败的断言都是普通的同步故障。顶层分派看到 `_LastFault` 已设置，返回拒绝且不推进 TPC；陷阱上下文记录断点指令的 TPC。
 
-维护和控制请求更新纪元并记录其操作数。它们不访问内存。
+维护操作和未启用模式的控制请求更新纪元并记录操作数。启用的 `BSE` 改为分派到消息发送所有者；它记录接纳结果和传输身份，但不为无关的 GM payload 建立可见性。
 
 <!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-boundaries role=boundaries -->
 ## 架构边界
@@ -80,7 +80,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-related role=related-owners-navigation -->
 ## 相关所有者
 
-- [SYS 语义](../sys/semantics.md)拥有栅栏、维护、请求和适用性。
+- [SYS 语义](../sys/semantics.md)拥有栅栏、维护、旧请求和适用性；[消息发送](../../../arch/state/message-buffer-send.md)拥有启用后的 BSE 接纳。
 - [系统寄存器](../sys/registers.md)拥有 SSR 权限、访问类别和转移。
 - [标量译码辅助函数](decode.md)拥有 `ScalarDecodedSystemRegisterAddress`。
 - [执行上下文](../../../arch/programming-model/execution-context.md)声明维护纪元和记录。

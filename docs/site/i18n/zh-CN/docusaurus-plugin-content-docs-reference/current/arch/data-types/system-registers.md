@@ -27,7 +27,7 @@ This page is a generated reference view of the normative ASL unit.
 - `SystemRegister` 有 14 个成员：`SystemRegister_THREAD_PTR`、`SystemRegister_GLOBAL_PTR`、`SystemRegister_TIME`、`SystemRegister_CORE_STATE`、`SystemRegister_CORE_ID`、`SystemRegister_THREAD_ID`、`SystemRegister_VENDOR`、`SystemRegister_VERSION`、`SystemRegister_CORE_FEATURE`、`SystemRegister_CORE_FEATURE_ENABLE`、`SystemRegister_TILE_CAPACITY`、`SystemRegister_BLOCKNUM`、`SystemRegister_BLOCKID` 和 `SystemRegister_CYCLE`。
 - `SystemRegisterAccess` 有 4 个成员：`SystemRegisterAccess_Unknown`、`SystemRegisterAccess_ReadOnly`、`SystemRegisterAccess_WriteOnly` 和 `SystemRegisterAccess_ReadWrite`。
 - `MaintenanceOperation` 有 16 个成员：数据缓存、指令缓存、指令束缓存与 TLB 形式，其中包括 `Maintenance_DC_IALL`、`Maintenance_DC_ZVA`、`Maintenance_IC_IALL`、`Maintenance_IC_IVA`、`Maintenance_BC_IALL`、`Maintenance_BC_IVA` 和 `Maintenance_TLB_IALL`。
-- 投影声明 `system_register_address_bits` 为 `24`、`system_register_file_index_bits` 为 `16`，地址分配范围从 `THREAD_PTR` 的 `0x0000` 到 `CYCLE` 的 `0x0C00`。
+- 投影声明 `system_register_address_bits` 为 `24`、`system_register_file_index_bits` 为 `16`。它包含普通基础成员、`0x0830` 到 `0x084B` 的 MSGB 寄存器族，以及上下文寄存器族。
 
 设计要点：`SystemRegisterAccess` 在三个真实类别之外还包含 `SystemRegisterAccess_Unknown`。因此解析器对“该地址不是寄存器”有一个独立答案，而 `asl/scalar/model/sys/registers.asl` 中的读路径在产生任何寄存器值之前，对 `SystemRegisterAccess_Unknown` 和 `SystemRegisterAccess_WriteOnly` 报告 `Fault_IllegalInstruction`。
 
@@ -38,7 +38,7 @@ This page is a generated reference view of the normative ASL unit.
 
 该投影区分保存值和报告值的寄存器：`THREAD_PTR`、`GLOBAL_PTR`、`CORE_STATE` 和 `CORE_FEATURE_ENABLE` 读取已保存值并接受写入；`CORE_ID`、`VENDOR`、`VERSION`、`CORE_FEATURE`、`BLOCKNUM`、`BLOCKID` 和 `TILE_CAPACITY` 属于 `fixed-value` 类并拒绝写入。`THREAD_ID` 属于 `executing-pe-index` 类；当前含义见 [标量 SYS 归属单元](../../scalar/model/sys/semantics.md)。
 
-`SystemRegister_TIME` 与 `SystemRegister_CYCLE` 两者的读行为都是 `architectural-time`，记录在案的副作用是 `advances-on-every-execution-attempt`，写行为是 `reject-read-only`。`CORE_STATE` 的写是唯一带记录副作用 `write-selects-current-acr` 的基础写。
+`SystemRegister_TIME` 与 `SystemRegister_CYCLE` 两者的读行为都是 `architectural-time`，记录在案的副作用是 `advances-on-every-execution-attempt`，写行为是 `reject-read-only`。在普通 `SystemRegister` 成员中，`CORE_STATE` 是写入时选择当前 ACR 的已存基础寄存器。MSGB 行为类还增加暂存、claim、ACK、release 和配置副作用；其含义由[消息缓冲状态](../state/message-buffer-state.md)和[消息缓冲操作](../state/message-buffer.md)拥有。
 
 设计要点：`SystemRegister_TIME` 和 `SystemRegister_THREAD_ID` 在 `BaseSystemRegisterState` 中没有存储字段。标量 SYS 归属单元 根据架构时间和执行上下文派生读取结果；其余十二个成员具有存储字段。
 
@@ -49,7 +49,7 @@ This page is a generated reference view of the normative ASL unit.
 
 声明了某个维护身份，本身并不保证指令可以调用它，也不定义纪元变化。执行该操作的指令拥有自己的合法性，维护归属单元拥有其效果。
 
-设计要点：枚举与投影覆盖的集合并不相同，读者不得把 `SystemRegister` 当作系统寄存器的完整清单。投影还列出 `context-family` 寄存器，例如低索引 `0xF00` 的 `ECSTATE_ACRn` 和低索引 `0xF10` 的 `TTBR0_ACR1`，这些名字都不是 `SystemRegister` 成员，而全部 14 个成员都出现在投影中。
+设计要点：枚举与投影覆盖的集合并不相同，读者不得把 `SystemRegister` 当作系统寄存器的完整清单。投影还列出 MSGB 基础地址族和 `context-family` 寄存器，例如低索引 `0xF00` 的 `ECSTATE_ACRn` 和低索引 `0xF10` 的 `TTBR0_ACR1`；这些名字都不是 `SystemRegister` 成员，而全部 14 个成员都出现在投影中。
 
 <!-- PTO-READER-BLOCK: arch-system-register-types-example-usage role=example-usage -->
 ## 非规范阅读示例
@@ -61,7 +61,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-system-register-types-related-owners role=related-owners-navigation -->
 ## 相关归属单元
 
-- [系统寄存器寻址](../system-registers/addressing.md)
+- [系统寄存器寻址](../system-registers/addressing.md)与[消息缓冲状态](../state/message-buffer-state.md)
 - [系统寄存器访问控制](../system-registers/access-control.md)
 - [维护行为](../system-registers/maintenance.md)
 <!-- SUPPLEMENTARY-END -->

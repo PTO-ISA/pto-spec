@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/sys/BSE.asl`
 
-BSE publishes a legacy SendEvent request when MSGB is disabled; enabled contexts use atomic message admission. The reader guide describes only the disabled path.
+BSE publishes a legacy SendEvent request when MSGB is disabled; enabled contexts use atomic message admission.
 
 ## Normative identity {#PTO-INST-SCALAR-BSE}
 
@@ -19,9 +19,9 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-bse-purpose role=purpose -->
 ## BSE 的作用
 
-`BSE` 向架构发布一次执行控制请求，并把它的源值作为请求操作数一并携带。该请求是 `ExecutionControl_SendEvent`。
+`BSE` 有两种由当前上下文选择的模式。MSGB 未启用时，它发布旧有的 `ExecutionControl_SendEvent` 请求，并把源值作为请求操作数。MSGB 启用后，源值是消息控制字，BSE 尝试原子接纳消息。
 
-它是非阻塞请求：指令发布请求后就退休。它不挂起线程，也不在下一个指令之前等待唤醒。
+两种模式都不等待远端消费者。未启用模式在发布请求后退休；启用模式在记录本地接纳结果后退休。队列背压或更早的可故障 GM obligation 可能阻止立即接纳。
 
 <!-- PTO-READER-BLOCK: scalar-bse-mechanism role=mechanism -->
 ## 指令如何放置与执行
@@ -30,38 +30,38 @@ The current instruction contract is owned by the ASL source linked above.
 
 随后检查编码合法性与源可用性，之后处理程序才运行。
 
-处理程序读取 `SrcL`，然后通过共享的执行控制规则发布该请求。该规则保存请求类型、保存精确的 XLEN 操作数，并把架构请求纪元推进一。它不查询任何权限表，因此在放置检查与操作数检查通过之后，请求会被无条件发布。
+通用检查完成后，分派器检查当前 MSGB 绑定。未启用模式调用旧有执行控制辅助函数；启用模式调用[消息发送所有者](../../arch/state/message-buffer-send.md)，在接纳前检查 kernel 上下文、Block 属性、更早的可故障工作、目标绑定、队列容量和控制字段。
 
-设计要点：只记录请求类型及其操作数，模型不为该请求定义任何睡眠、邮箱、超时计数器或待唤醒状态。这正是该请求在可测试意义下非阻塞的原因：不存在后续指令可以观察到的额外架构状态，因此立即退休就是完整的行为。
+设计要点：显式启用让现有软件继续使用旧的仅请求契约。启用模式在不改变 BSE 编码的前提下增加可观察消息状态。控制字的位 31:0 是目标端点，位 35:32 是 0 到 10 个有效暂存 word，位 63:36 保留为零。
 
 <!-- PTO-READER-BLOCK: scalar-bse-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-- `SrcL` 是源选择器，提供完整的 XLEN 请求操作数。
+- `SrcL` 提供完整的 XLEN 旧请求操作数或启用模式消息控制字。
 - 源选择器 `0`..`23` 读取 GPR，`24`..`27` 读取 `T#1`..`T#4`，`28`..`31` 读取 `U#1`..`U#4`。读取临时队列不会消费或重排它。
-- 源选择器 `0` 始终读到 XLEN 零，而零是合法的操作数值：它被记录为操作数，而不是被当作省略。
+- 源选择器 `0` 读取 XLEN 零。未启用模式记录该操作数；启用模式把它解释为发往端点零的零 word 消息。
 - 没有目的字段，因此该指令绝不写 GPR，也绝不压入 `T` 或 `U`。
 
 <!-- PTO-READER-BLOCK: scalar-bse-effects role=effects -->
 ## 架构效果
 
-发布的效果是记录下来的请求类型、记录下来的操作数，以及架构请求纪元加一。源寄存器以及它指名的队列表项（如果有）保持不变，因为该指令只读取它们。
+未启用模式记录请求类型和操作数，并把架构请求纪元推进一。启用后的接纳把选中的暂存 word 复制到目标拥有的队列，只分配一次传输消息身份，并记录发送结果。精确重放返回保留的身份，不再次入队。
 
-`TPC` 前进 `4` 字节。该指令不进行内存访问，也不留下保留状态，因此它本身不可能是后续原子操作或链接加载操作失败的原因。
+执行成功后，`TPC` 前进 `4` 字节。接纳会复制消息 word，但不会为无关的 GM payload 建立可见性。源寄存器及其引用的临时队列表项保持不变。
 
 <!-- PTO-READER-BLOCK: scalar-bse-constraints role=constraints -->
 ## 放置与拒绝
 
 无效的块放置首先被拒绝，以 `Fault_BundleControl` 报出，此时连编码字段都还没有被考虑。
 
-每个已分配的 Reg5 源选择器都遵循通用标量源可用性规则：`0`..`23` 始终可用，而 `T` 或 `U` 选择器只有在对应队列槽保存了值时才可用。不可用的选择器会在请求发布之前引发 `Fault_IllegalInstruction`，因此被拒绝的 `BSE` 不记录任何内容，也不推进请求纪元。
+每个已分配的 Reg5 源选择器都遵循通用标量源可用性规则：`0`..`23` 始终可用，而 `T` 或 `U` 选择器只有在对应队列槽保存了值时才可用。不可用的选择器会在任一模式产生效果前引发 `Fault_IllegalInstruction`。
 
-处理程序中没有逐请求的权限测试，因此操作数取值本身绝不会导致拒绝。
+未启用模式没有额外的逐请求权限测试。启用模式要求当前已绑定的 kernel 上下文，拒绝 `atomic` 或 `far` SYS envelope、保留控制字段和无效目标；目标队列或重放回执表已满时返回 `BUSY`，不分配身份。
 
 <!-- PTO-READER-BLOCK: scalar-bse-example role=example -->
 ## 非规范示例
 
-`bse a0` 从 `a0` 读取操作数，把 `ExecutionControl_SendEvent` 与该操作数一起发布，把架构请求纪元推进一，并让 `TPC` 前进 `4` 字节。执行不等待，直接继续下一条指令。
+MSGB 未启用时，`bse a0` 用 `a0` 的值发布 `ExecutionControl_SendEvent`。MSGB 启用后，`a0 = 0x0000000200000010` 选择端点 16 和两个暂存 word；接纳复制这些 word，后续接收 claim 和 ACK 仍是独立操作。
 <!-- SUPPLEMENTARY-END -->
 
 ## Assembly

@@ -22,23 +22,23 @@ The helpers are `ReadSystemRegisterAddress`, `WriteSystemRegisterAddress`, `Swap
 <!-- PTO-READER-BLOCK: scalar-model-sys-registers-concepts role=concepts-state -->
 ## Concepts and visible state
 
-An SSR address is a `SystemRegisterAddress` of 24 bits. Two kinds of address exist:
+An SSR address is a `SystemRegisterAddress` of 24 bits. The dispatcher recognizes three routes:
 
-- Base registers are 14 fixed addresses, such as 0x0000 `THREAD_PTR`, 0x0020 `CORE_STATE`, 0x0027 `TILE_CAPACITY`, and 0x0C00 `CYCLE`. `BaseSystemRegisterOfAddress` maps them to the `SystemRegister` enumeration.
+- Ordinary base registers are the 14 addresses mapped by `BaseSystemRegisterOfAddress`, such as 0x0000 `THREAD_PTR`, 0x0020 `CORE_STATE`, 0x0027 `TILE_CAPACITY`, and 0x0C00 `CYCLE`. The MSGB base-address family at 0x0830 through 0x084B bypasses that enumeration and routes to the message-buffer owner.
 - Extended registers are the other addresses. Bits 15:12 name an access-ring bank, and bits 11:0 name the register within it. Most are stored in `_ExtendedSystemRegisters`, indexed by bits 15:0.
 
 An access class is read-only, write-only, read-write, or unknown. The generated `SystemRegisterAccessOf` returns it for each address.
 
-Access-ring (ACR) permission is simple in this model: an address whose bits 11:0 are below 0x0F00 is open to every ring; any other address needs ACR0.
+For ordinary registers, an address whose bits 11:0 are below 0x0F00 is open to every ring; any other address needs ACR0. MSGB configuration registers are the deliberate exception below 0x0F00: `MSGBCFGSEL`, `MSGBCFG`, and `MSGBDOMAIN` require ACR0, while operational MSGB registers use the currently bound kernel ACR.
 
 <!-- PTO-READER-BLOCK: scalar-model-sys-registers-rules role=rules-interactions -->
 ## Rules and interactions
 
-`ReadSystemRegisterAddress` rejects a read when the ring lacks permission or the class is unknown or write-only. The rejection raises `Fault_IllegalInstruction` and returns 0. Otherwise it reads the base register, or one of five extended registers with special read behavior (0x0F02 trap status, 0x0F03 trap argument, 0x0F08 interrupt pending, 0x0F09 top pending interrupt, 0x0F20 time), or the stored extended value.
+`ReadSystemRegisterAddress` rejects a read when the ring lacks permission or the class is unknown or write-only. The rejection raises `Fault_IllegalInstruction` and returns 0. An admitted MSGB address routes to `ReadMessageBufferRegister`; other addresses read the ordinary base register, one of the five special extended registers, or the stored extended value.
 
-`WriteSystemRegisterAddress` rejects a write when the ring lacks permission or the class is unknown or read-only. Writes to 0x0F02, 0x0F03, and 0x0F0A (end of interrupt) have special effects, and a write to 0x0F21 also refreshes the ring's timer-pending state.
+`WriteSystemRegisterAddress` rejects a write when the ring lacks permission or the class is unknown or read-only. An admitted MSGB address routes to `WriteMessageBufferRegister`; writes to 0x0F02, 0x0F03, and 0x0F0A (end of interrupt) have their existing special effects, and a write to 0x0F21 refreshes timer-pending state.
 
-`ExecuteSystemRegisterSet` and `ExecuteSystemRegisterSwap` check permission before they read their Reg5 source.
+`ExecuteSystemRegisterSet` runs the MSGB write preflight before it reads a Reg5 source. `ExecuteSystemRegisterSwap` rejects every MSGB address and otherwise checks ordinary read/write permission before reading its source.
 
 Design point: a check that fails comes before any source read or register access. A rejected transfer therefore reads no source, writes no destination, and changes no register.
 
@@ -46,14 +46,14 @@ Design point: a check that fails comes before any source read or register access
 
 Design point: the swap preflight exists because some reads have effects. The ASL comment names timer-pending refresh on a read-only register. Checking both directions first means a rejected swap cannot perform a read-side effect and then fail on the write.
 
-The get helpers write the destination only if `_LastFault` is `Fault_None`.
+The get helpers write the destination only if `_LastFault` is `Fault_None` and the access did not block behind an older fault-capable operation.
 
 <!-- PTO-READER-BLOCK: scalar-model-sys-registers-boundaries role=boundaries -->
 ## Architectural boundaries
 
 `SystemRegisterFileIndexOf` asserts that bits 23:16 are zero. A nonzero high byte reaches that assertion only if the class lookup has admitted the address; the generated table admits only addresses with bits 23:16 clear.
 
-Writes to base registers go to `WriteSystemRegister` in [SYS semantics](semantics.md). Only `THREAD_PTR`, `GLOBAL_PTR`, `CORE_STATE`, and `CORE_FEATURE_ENABLE` are writable there, and writing `CORE_STATE` also updates the current access ring from bits 3:0.
+Writes to ordinary base registers go to `WriteSystemRegister` in [SYS semantics](semantics.md). Only `THREAD_PTR`, `GLOBAL_PTR`, `CORE_STATE`, and `CORE_FEATURE_ENABLE` are writable there, and writing `CORE_STATE` also updates the current access ring from bits 3:0. MSGB base-address writes instead follow the context, snapshot, and side-effect rules in [message-buffer operations](../../../arch/state/message-buffer.md).
 
 Trap, interrupt, and timer registers are owned by their architecture units; this unit only routes to them.
 
@@ -72,7 +72,7 @@ In the second case the ring bank is 1, taken from bits 15:12, so the swap touche
 <!-- PTO-READER-BLOCK: scalar-model-sys-registers-related role=related-owners-navigation -->
 ## Related owners
 
-- [SYS semantics](semantics.md) owns base-register read and write and `CORE_STATE` side effects.
+- [SYS semantics](semantics.md) owns ordinary base-register read and write; [message-buffer operations](../../../arch/state/message-buffer.md) own the MSGB route and effects.
 - [SYS dispatch](../dispatch/sys.md) decodes the SSR address and destination.
 - [Access control](../../../arch/system-registers/access-control.md) owns `CurrentACR`.
 - [Interrupts](../../../arch/system-registers/interrupt.md) and [timer](../../../arch/system-registers/timer.md) own the special extended registers.

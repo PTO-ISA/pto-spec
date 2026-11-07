@@ -17,40 +17,40 @@ This page is a generated reference view of the normative ASL unit.
 
 本单元控制一个建模 Core 上一次内核调用的生命周期：启动、正常结束和中止。它确保一次调用遗留的工作不会被误认为属于后续调用，同时已经提交的效果仍然可见。
 
-生命周期所有者协调 PE 初始化、Core 同步、GM obligation、Shared generation 元数据和 source lifetime。这些机制的详细行为仍由各自的所有者定义。
+生命周期所有者协调 PE 初始化、Core 同步、GM obligation、Shared generation 元数据、source lifetime 和本地消息缓冲排空。这些机制的详细行为仍由各自的所有者定义。
 
 <!-- PTO-READER-BLOCK: arch-kernel-lifecycle-concepts role=concepts-state -->
 ## 调用状态
 
 每个 Core 记录调用是否活跃、当前标识、下一个待分配标识和最近退役的标识。启动为 PE0 到 PE3 设置相同的入口 PC 和新的调用标识，初始化 `InitializePEForKernelEntry` 所列的 entry、Block-header、queue、predicate、fault、origin 和 ordering 字段，并开始同步 generation 0。
 
-调用标识是隔离的关键。同步记录、GM obligation、Shared generation 请求和 source-lifetime occurrence 都携带该标识，因此旧调用的完成不能更新当前调用。
+调用标识是隔离的关键。同步记录、GM obligation、Shared generation 请求、source-lifetime occurrence 和已启用消息 bank 都携带该标识，因此旧调用的完成不能更新当前调用。
 
 <!-- PTO-READER-BLOCK: arch-kernel-lifecycle-rules role=rules-interactions -->
 ## 生命周期交互
 
 当 Core 已有活跃调用，或已退役调用仍有未静止的 GM obligation 时，`LaunchKernelInvocation` 会等待。奇数入口地址会被拒绝。获准后，它初始化所有 PE 并返回 `KernelLifecycle_Started`。
 
-`EndKernelInvocation` 等待活跃标识的全部 GM obligation 静止，然后在关闭同步状态前退役调用拥有的 Shared generation 元数据和 source-lifetime 记录。`AbortKernelInvocation` 先取消可逆 GM 工作和未完成同步，执行同样按标识限定的退役；如果不可逆的旧工作仍需完成，则报告等待。
+`EndKernelInvocation` 和 `AbortKernelInvocation` 首先关闭进出该 Core 的新消息接纳。只要该 Core 仍拥有排队消息或接收快照，它们就返回 `KernelLifecycle_Waiting`，但已有读取、ACK 和 RELEASE 可以继续排空。待本地消息状态和所需 GM 工作静止后，它们执行现有的按身份退役；abort 随后按各所有者定义取消可逆 GM 和未完成同步。
 
 <!-- PTO-READER-BLOCK: arch-kernel-lifecycle-boundaries role=boundaries -->
 ## 边界
 
-结束和中止不会清除已提交的内存效果或已经发布的 Shared parent。它们清除与退役 Core 和调用匹配的活跃元数据；其他标识的记录保持不变。中止也不会假装不可逆工作已经取消：在该工作静止前，后续启动保持阻塞。
+结束和中止不会清除已提交的内存效果、已经发布的 Shared parent，也不会清除已经接纳到其他 Core 目标队列的消息。它们清除活跃元数据，并禁用属于退役 Core 和调用的消息 bank；其他标识的记录保持不变。中止也不会假装不可逆工作已经取消：在退役 Core 的 obligation 静止前，后续启动保持阻塞。
 
 建模 Core、PE 和有界记录的固定数量是模型容量。本页不会在所有者 ASL 所述行为之外增加软件可见的可移植限制。
 
 <!-- PTO-READER-BLOCK: arch-kernel-lifecycle-example role=example-usage -->
 ## 阅读示例
 
-假设 Core 0 启动调用 7，PE0 有一个未完成的可逆 store，而调用 7 的 Shared parent 已经发布。中止会取消该可逆 store，并移除调用 7 的 candidate 和 release 元数据，但保留已发布 parent。若另一个 store 已经不可逆，中止可以返回 `KernelLifecycle_Waiting`；在该 obligation 完成前，Core 0 不能启动调用 8。
+假设 Core 0 启动调用 7，拥有一个本地接收快照，并已经向 Core 1 接纳一条消息。结束或中止先关闭新接纳，并等待 Core 0 的快照被 ACK 或 RELEASE。Core 1 中的 packet 已归目标所有，Core 0 退役后仍可读取；退役不等待 Core 1 的应用 ACK。
 
 <!-- PTO-READER-BLOCK: arch-kernel-lifecycle-related role=related-owners-navigation -->
 ## 相关所有者
 
 - [PE execution context](pe-execution-context.md) 定义启动时为每个 PE 初始化的私有状态。
 - [Core synchronization](core-synchronization.md) 拥有按调用限定的 rendezvous 和 release token。
-- [GM obligations](../memory-model/gm-obligations.md) 决定结束、中止和后续启动何时可以继续。
+- [GM obligations](../memory-model/gm-obligations.md)和[消息缓冲状态](message-buffer-state.md)决定结束、中止和后续启动何时可以继续。
 - [Shared-generation PE requests](../../block/model/operands/shared-generation-pe-requests.md) 拥有此处退役的 candidate 和 release 元数据。
 - [Source lifetime](../../block/model/state/source-lifetime.md) 拥有此处退役的捕获 occurrence。
 <!-- SUPPLEMENTARY-END -->
