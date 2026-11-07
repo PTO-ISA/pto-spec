@@ -28321,7 +28321,7 @@
           "semantic_family": "SYS",
           "semantic_group": "SYS",
           "semantic_handler": "ExecuteControlRequest",
-          "semantic_summary": "BSE publishes a legacy SendEvent request when MSGB is disabled; enabled contexts use atomic message admission. The reader guide describes only the disabled path.",
+          "semantic_summary": "BSE publishes a legacy SendEvent request when MSGB is disabled; enabled contexts use atomic message admission.",
           "status": "accepted"
         }
       ],
@@ -28399,7 +28399,7 @@
       "mnemonic": "BSE",
       "ndf_clause": "PTO-INST-SCALAR-BSE",
       "source": "asl/scalar/sys/BSE.asl",
-      "summary": "BSE publishes a legacy SendEvent request when MSGB is disabled; enabled contexts use atomic message admission. The reader guide describes only the disabled path.",
+      "summary": "BSE publishes a legacy SendEvent request when MSGB is disabled; enabled contexts use atomic message admission.",
       "surface": "scalar"
     },
     {

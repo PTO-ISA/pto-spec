@@ -16,7 +16,7 @@
     },
     "scalar_forms": {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "d529bdd24c4f22204774cf986769ebe991838455aeae3dba0ea9aae219e1f5b4"
+      "sha256": "f109d28127ee3bec0237d6f7e54c914df4e69b5cba186be32bd3559ca62ab0ad"
     },
     "system_registers": {
       "path": "spec/catalog/system-registers.json",
@@ -33,7 +33,7 @@
     "release": "0.59.0"
   },
   "normative_source_count": 956,
-  "normative_sources_sha256": "99aac771ad57ca62c5415050588e5258071fff52a956ef8bdc0a9b98d1d8ee90",
+  "normative_sources_sha256": "c6c304f645a5537f26b6e53269c1421c7bbf4da7c89eee9d49ba350e607a409c",
   "publication": null,
   "schema": "pto.development-manifest.v1",
   "status": "development-not-published"
