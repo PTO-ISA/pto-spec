@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BSE-MSGB-ZERO-PAYLOAD-001","source":"asl/scalar/sys/BSE.asl","requirements":["PTO-BSE-DECISION-BINDING-001","PTO-ARCH-MSGB-SEND-001","PTO-ARCH-MSGB-ACK-001"],"kind":"execution","summary":"encoded BSE admits a zero-word message under an enabled MSGB context","pass_condition":"the decoded BSE advances once, assigns one message identity, and the receiver can ACK the empty snapshot without reading payload words","related_sources":["asl/arch/state/message-buffer.asl","asl/scalar/model/dispatch/sys.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BSE-MSGB-ZERO-PAYLOAD-001","source":"asl/scalar/sys/BSE.asl","requirements":["PTO-BSE-DECISION-BINDING-001","PTO-ARCH-MSGB-SEND-001","PTO-ARCH-MSGB-ACK-001"],"kind":"execution","summary":"encoded BSE admits a zero-word message under an enabled MSGB context","pass_condition":"the decoded BSE advances once, assigns one message identity, and the receiver can ACK the empty snapshot without reading payload words","related_sources":["asl/arch/state/message-buffer-send.asl","asl/scalar/model/dispatch/sys.asl"]}
 func ConfigureMessageContext(pe: MemoryAgentId)
 begin
     SelectExecutionContext(0, pe); SetCurrentACR(0);

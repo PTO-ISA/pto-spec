@@ -54,7 +54,7 @@
     },
     {
       "id": "PTO-ARCH-MSGB-SEND-001",
-      "source_path": "asl/arch/state/message-buffer.asl",
+      "source_path": "asl/arch/state/message-buffer-send.asl",
       "title": {
         "en": "Atomic BSE message admission",
         "zh-CN": "BSE 消息原子接纳"

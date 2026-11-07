@@ -2,7 +2,8 @@
 // NDF-BEGIN: PTO-ARCH-MSGB-SSR-001
 // ndf: kind=contract level=L1 layer=state status=accepted
 // The base-register MSGB family at 0x0830..0x084b MUST expose one current-
-// context operational bank.  The executing kernel ACR MAY access its enabled operational registers; only ACR0 MAY select and configure a bank.  MSGBD
+// context operational bank.  The executing kernel ACR MAY access its enabled
+// operational registers; only ACR0 MAY select and configure a bank.  MSGBD
 // writes stage transmit words while MSGBD reads access only the current stable
 // receive snapshot.  A rejected or blocked read MUST NOT write its destination,
 // mark a word read, dequeue a message, or mutate another context.  SSRSWAP of
@@ -14,25 +15,19 @@
 // receive epoch, invocation owner, and the successful-read mask before popping
 // exactly the claimed message.  Every successful claim, including reclaim of
 // the same message after RELEASE, MUST use a fresh token.  The latest successful
-// token MUST remain separate from ACKSTAT/ACKID so a failed attempt cannot erase duplicate recognition.  An ACKED snapshot MUST remain immutable and readable
+// token MUST remain separate from ACKSTAT/ACKID so a failed attempt cannot erase
+// duplicate recognition.  An ACKED snapshot MUST remain immutable and readable
 // until exact-token RELEASE; a duplicate old ACK MUST NOT affect a newer claim.
 // NDF-END: PTO-ARCH-MSGB-ACK-001
-// NDF-BEGIN: PTO-ARCH-MSGB-SEND-001
-// ndf: kind=contract level=L1 layer=state status=accepted
-// When the current bank is enabled, BSE MUST interpret bits [31:0] as the
-// destination endpoint, bits [35:32] as 0..10 valid staged words, and bits [63:36] as reserved zero.  Admission MUST atomically snapshot those words,
-// allocate one nonzero transport identity, and publish one message, or publish
-// none and report BUSY, BAD_COMMAND, or EXHAUSTED.  Retry of one dynamic BSE
-// occurrence MUST reuse its retained result and identity without republishing. Enabled BSE MUST reject atomic/far SYS envelopes and MUST wait before effects
-// while an older fault-capable kernel GM obligation can still require recovery.
-// NDF-END: PTO-ARCH-MSGB-SEND-001
 // NDF-BEGIN: PTO-ARCH-MSGB-LIFECYCLE-001
 // ndf: kind=contract level=L1 layer=state status=accepted
 // An enabled bank MUST bind a nonzero kernel invocation.  End or abort drain
 // MUST freeze new admission to and from the Core while preserving receive read,
-// ACK, and RELEASE needed to reach quiescence.  Lifecycle retirement MUST wait
-// for every queued message and snapshot, then disable banks belonging to the
-// retired invocation without rewinding epochs, sequences, or committed effects. Configuration MAY rebind only a quiescent bank; domain is immutable after its
+// ACK, and RELEASE needed to reach quiescence. Retirement MUST drain only
+// queues and snapshots owned by the retiring Core, then disable its banks.
+// Already admitted remote packets MUST survive source retirement. Epochs,
+// sequences, and committed effects MUST NOT rewind.
+// Configuration MAY rebind only a quiescent bank; domain is immutable after its
 // first binding, and simultaneous epoch advancement MUST be exact and nonwrapping.
 // NDF-END: PTO-ARCH-MSGB-LIFECYCLE-001
 pure func IsMessageBufferAddress(address: SystemRegisterAddress) => boolean
@@ -73,9 +68,12 @@ begin
            _CurrentKernelInvocation != 0 &&
            bank.bound_invocation == _CurrentKernelInvocation;
 end;
-func MessageBufferOperationalAccessPermitted() => boolean
+func MessageBufferEffectPermitted(require_enabled: boolean) => boolean
 begin
-    if !MessageBufferEnabledForCurrentContext() then
+    if _CurrentMemoryOrigin != MemoryEventOrigin_Kernel ||
+       !_KernelInvocationActiveByCore[[_CurrentModelCore]] ||
+       _CurrentKernelInvocation == 0 ||
+       (require_enabled && !MessageBufferEnabledForCurrentContext()) then
         SetFault(Fault_IllegalInstruction, ReadPC());
         return FALSE;
     end;
@@ -90,6 +88,19 @@ begin
         return FALSE;
     end;
     return TRUE;
+end;
+func MessageBufferOperationalAccessPermitted() => boolean
+begin
+    return MessageBufferEffectPermitted(TRUE);
+end;
+func MessageBufferWritePreflight(address: SystemRegisterAddress) => boolean
+begin
+    if !IsMessageBufferAddress(address) then return TRUE; end;
+    if IsMessageBufferConfigAddress(address) && CurrentACR() != 0 then
+        SetFault(Fault_IllegalInstruction, ReadPC());
+        return FALSE;
+    end;
+    return MessageBufferEffectPermitted(!IsMessageBufferConfigAddress(address));
 end;
 readonly func MessageBufferSnapshotOwnerMatches(index: MessageBufferEndpointIndex)
     => boolean
@@ -312,7 +323,8 @@ begin
     end;
     let old_rx = _MessageBufferBanks[[index]].rx_epoch;
     let old_source = _MessageBufferBanks[[index]].source_epoch;
-    let invocation_changed = _MessageBufferBanks[[index]].bound_invocation != _CurrentKernelInvocation;
+    let invocation_changed =
+        _MessageBufferBanks[[index]].bound_invocation != _CurrentKernelInvocation;
     let first_enable = old_rx == Zeros{16} && old_source == Zeros{32};
     let same_epochs = value[31:16] == old_rx && value[63:32] == old_source;
     let advancing = old_rx != Ones{16} && old_source != Ones{32} &&
@@ -328,15 +340,23 @@ begin
         _MessageBufferBanks[[index]].transmit_sequence = Zeros{PTO_XLEN};
         _MessageBufferBanks[[index]].claim_sequence = Zeros{48};
     end;
-    _MessageBufferBanks[[index]].last_success_valid = FALSE;
-    _MessageBufferBanks[[index]].last_success_token = Zeros{PTO_XLEN};
-    _MessageBufferBanks[[index]].receipt.valid = FALSE;
-    _MessageBufferBanks[[index]].ack_result_valid = FALSE;
-    _MessageBufferBanks[[index]].rx_result = MessageBufferResult_None;
+    if advancing then
+        _MessageBufferBanks[[index]].last_success_valid = FALSE;
+        _MessageBufferBanks[[index]].last_success_token = Zeros{PTO_XLEN};
+        _MessageBufferBanks[[index]].ack_result_valid = FALSE;
+        _MessageBufferBanks[[index]].rx_result = MessageBufferResult_None;
+    end;
     if invocation_changed then
-        _MessageBufferBanks[[index]].last_accepted_control = Zeros{PTO_XLEN}; _MessageBufferBanks[[index]].tx_result = MessageBufferResult_None;
+        ClearMessageBufferReplayReceipts(index);
+        _MessageBufferBanks[[index]].last_success_valid = FALSE;
+        _MessageBufferBanks[[index]].last_success_token = Zeros{PTO_XLEN};
+        _MessageBufferBanks[[index]].ack_result_valid = FALSE;
+        _MessageBufferBanks[[index]].rx_result = MessageBufferResult_None;
+        _MessageBufferBanks[[index]].last_accepted_control = Zeros{PTO_XLEN};
+        _MessageBufferBanks[[index]].tx_result = MessageBufferResult_None;
         _MessageBufferBanks[[index]].tx_result_valid = FALSE;
-        _MessageBufferBanks[[index]].tx_message_id_hi = Zeros{PTO_XLEN}; _MessageBufferBanks[[index]].tx_message_id_lo = Zeros{PTO_XLEN};
+        _MessageBufferBanks[[index]].tx_message_id_hi = Zeros{PTO_XLEN};
+        _MessageBufferBanks[[index]].tx_message_id_lo = Zeros{PTO_XLEN};
     end;
     _MessageBufferBanks[[index]].bound_invocation = _CurrentKernelInvocation;
     _MessageBufferBanks[[index]].enabled = TRUE;
@@ -344,15 +364,8 @@ end;
 func WriteMessageBufferRegister(address: SystemRegisterAddress, value: Word)
 begin
     let raw = UInt(address[15:0]);
+    if !MessageBufferWritePreflight(address) then return; end;
     if IsMessageBufferConfigAddress(address) then
-        if CurrentACR() != 0 then
-            SetFault(Fault_IllegalInstruction, ReadPC());
-            return;
-        end;
-        if _BundleControlAttributes.atomic || _BundleControlAttributes.far then
-            SetFault(Fault_BundleControl, ReadTPC());
-            return;
-        end;
         if address == Zeros{24} + PTO_MSGB_CFGSEL_ADDRESS then
             if value[63:4] != Zeros{60} then
                 SetFault(Fault_IllegalInstruction, ReadPC());
@@ -379,7 +392,6 @@ begin
         end;
         return;
     end;
-    if !MessageBufferOperationalAccessPermitted() then return; end;
     let index = CurrentMessageBufferIndex();
     if IsMessageBufferDataAddress(address) then
         _MessageBufferBanks[[index]].staging_words[[
@@ -393,103 +405,4 @@ begin
     else
         SetFault(Fault_IllegalInstruction, ReadPC());
     end;
-end;
-readonly func MessageBufferReplayOccurrenceMatches(
-    index: MessageBufferEndpointIndex) => boolean
-begin
-    let receipt = _MessageBufferBanks[[index]].receipt;
-    return receipt.valid && receipt.invocation == _CurrentKernelInvocation &&
-           receipt.acr == CurrentACR() &&
-           receipt.execution_domain_token == _BundleExecutionDomainToken &&
-           receipt.instruction_pc == ReadTPC();
-end;
-func ExecuteMessageBufferSend(control: Word)
-begin
-    var message_id_hi = Zeros{PTO_XLEN};
-    if !MessageBufferOperationalAccessPermitted() then return; end;
-    let source_index = CurrentMessageBufferIndex();
-    if MessageBufferReplayOccurrenceMatches(source_index) then
-        _MessageBufferBanks[[source_index]].tx_result = if
-            _MessageBufferBanks[[source_index]].receipt.control == control then
-                MessageBufferResult_Duplicate
-            else MessageBufferResult_BadCommand;
-        _MessageBufferBanks[[source_index]].tx_result_valid = TRUE;
-        _MessageBufferBanks[[source_index]].tx_message_id_hi =
-            _MessageBufferBanks[[source_index]].receipt.message_id_hi;
-        _MessageBufferBanks[[source_index]].tx_message_id_lo =
-            _MessageBufferBanks[[source_index]].receipt.message_id_lo;
-        return;
-    end;
-    let destination = UInt(control[31:0]);
-    let word_count = UInt(control[35:32]);
-    if control[63:36] != Zeros{28} || word_count > 10 ||
-       destination >= PTO_MODEL_MESSAGE_BUFFER_ENDPOINTS then
-        _MessageBufferBanks[[source_index]].tx_result =
-            MessageBufferResult_BadCommand;
-        _MessageBufferBanks[[source_index]].tx_result_valid = TRUE;
-        return;
-    end;
-    let target_index = destination as MessageBufferEndpointIndex;
-    if _MessageBufferCoreDraining[[_CurrentModelCore]] ||
-       _MessageBufferCoreDraining[[(destination DIVRM
-           (PTO_MODEL_MEMORY_AGENTS * PTO_ACR_COUNT)) as PTOModelCoreIdentity]] ||
-       !_MessageBufferBanks[[target_index]].enabled ||
-       _MessageBufferBanks[[target_index]].bound_invocation == 0 ||
-       !_KernelInvocationActiveByCore[[(destination DIVRM
-           (PTO_MODEL_MEMORY_AGENTS * PTO_ACR_COUNT)) as PTOModelCoreIdentity]] ||
-       _MessageBufferBanks[[target_index]].bound_invocation !=
-           _KernelInvocationByCore[[(destination DIVRM
-           (PTO_MODEL_MEMORY_AGENTS * PTO_ACR_COUNT)) as PTOModelCoreIdentity]] ||
-       _MessageBufferBanks[[target_index]].domain !=
-           _MessageBufferBanks[[source_index]].domain then
-        _MessageBufferBanks[[source_index]].tx_result =
-            MessageBufferResult_BadCommand;
-        _MessageBufferBanks[[source_index]].tx_result_valid = TRUE;
-        return;
-    end;
-    if _MessageBufferBanks[[target_index]].queued.valid then
-        _MessageBufferBanks[[source_index]].tx_result = MessageBufferResult_Busy;
-        _MessageBufferBanks[[source_index]].tx_result_valid = TRUE;
-        return;
-    end;
-    if _MessageBufferBanks[[source_index]].transmit_sequence == Ones{PTO_XLEN} then
-        _MessageBufferBanks[[source_index]].tx_result =
-            MessageBufferResult_Exhausted;
-        _MessageBufferBanks[[source_index]].tx_result_valid = TRUE;
-        return;
-    end;
-    _MessageBufferBanks[[source_index]].transmit_sequence =
-        _MessageBufferBanks[[source_index]].transmit_sequence + 1;
-    message_id_hi[63:32] = MessageBufferEndpointWord(source_index)[31:0];
-    message_id_hi[31:0] = _MessageBufferBanks[[source_index]].source_epoch;
-    let message_id_lo = _MessageBufferBanks[[source_index]].transmit_sequence;
-    _MessageBufferBanks[[target_index]].queued.valid = TRUE;
-    _MessageBufferBanks[[target_index]].queued.destination_invocation =
-        _MessageBufferBanks[[target_index]].bound_invocation;
-    _MessageBufferBanks[[target_index]].queued.control = control;
-    _MessageBufferBanks[[target_index]].queued.word_count =
-        word_count as MessageBufferWordCount;
-    _MessageBufferBanks[[target_index]].queued.message_id_hi = message_id_hi;
-    _MessageBufferBanks[[target_index]].queued.message_id_lo = message_id_lo;
-    for word = 0 to PTO_MODEL_MESSAGE_BUFFER_WORDS - 1 do
-        _MessageBufferBanks[[target_index]].queued.words[[word]] =
-            if word < word_count then
-                _MessageBufferBanks[[source_index]].staging_words[[word]]
-            else Zeros{PTO_XLEN};
-    end;
-    _MessageBufferBanks[[source_index]].last_accepted_control = control;
-    _MessageBufferBanks[[source_index]].tx_result = MessageBufferResult_OK;
-    _MessageBufferBanks[[source_index]].tx_result_valid = TRUE;
-    _MessageBufferBanks[[source_index]].tx_message_id_hi = message_id_hi;
-    _MessageBufferBanks[[source_index]].tx_message_id_lo = message_id_lo;
-    _MessageBufferBanks[[source_index]].receipt.valid = TRUE;
-    _MessageBufferBanks[[source_index]].receipt.invocation =
-        _CurrentKernelInvocation;
-    _MessageBufferBanks[[source_index]].receipt.acr = CurrentACR();
-    _MessageBufferBanks[[source_index]].receipt.execution_domain_token =
-        _BundleExecutionDomainToken;
-    _MessageBufferBanks[[source_index]].receipt.instruction_pc = ReadTPC();
-    _MessageBufferBanks[[source_index]].receipt.control = control;
-    _MessageBufferBanks[[source_index]].receipt.message_id_hi = message_id_hi;
-    _MessageBufferBanks[[source_index]].receipt.message_id_lo = message_id_lo;
 end;

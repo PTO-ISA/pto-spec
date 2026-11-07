@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BSE-MSGB-REJECT-BACKPRESSURE-001","source":"asl/scalar/sys/BSE.asl","requirements":["PTO-BSE-DECISION-BINDING-001","PTO-ARCH-MSGB-SEND-001"],"kind":"state-transition","summary":"reserved control bits and a full destination reject BSE admission without allocating another message identity","pass_condition":"BAD_COMMAND and BUSY retain the previous transmit sequence and destination message","related_sources":["asl/arch/state/message-buffer.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BSE-MSGB-REJECT-BACKPRESSURE-001","source":"asl/scalar/sys/BSE.asl","requirements":["PTO-BSE-DECISION-BINDING-001","PTO-ARCH-MSGB-SEND-001"],"kind":"state-transition","summary":"reserved control bits and a full destination reject BSE admission without allocating another message identity","pass_condition":"BAD_COMMAND and BUSY retain the previous transmit sequence and destination message","related_sources":["asl/arch/state/message-buffer-send.asl"]}
 func ConfigureMessageContext(pe: MemoryAgentId)
 begin
     SelectExecutionContext(0, pe); SetCurrentACR(0);
