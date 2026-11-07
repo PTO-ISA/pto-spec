@@ -5504,6 +5504,53 @@
       "title_zh": "\u6807\u91cf SYS \u5168\u57df\u8bed\u4e49\u4e0e PTO v0 Profile \u8fb9\u754c"
     },
     {
+      "accepted": "2026-11-07",
+      "affected_ndf": [
+        "PTO-ARCH-MSGB-IDENTITY-001",
+        "PTO-ARCH-MSGB-STATE-001",
+        "PTO-ARCH-MSGB-SSR-001",
+        "PTO-ARCH-MSGB-ACK-001",
+        "PTO-ARCH-MSGB-SEND-001",
+        "PTO-ARCH-MSGB-LIFECYCLE-001",
+        "PTO-BSE-DECISION-BINDING-001",
+        "PTO-ARCH-MSGB-REGISTER-FIELDS-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-STATE-MESSAGE-BUFFER-STATE",
+        "PTO-ARCH-STATE-MESSAGE-BUFFER",
+        "PTO-ARCH-DATA-TYPES-SYSTEM-REGISTERS",
+        "PTO-SCALAR-MODEL-SYS-REGISTERS",
+        "PTO-SCALAR-MODEL-DISPATCH-SYS",
+        "PTO-ARCH-STATE-KERNEL-LIFECYCLE",
+        "PTO-SCALAR-BSE"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "zhoubot"
+      ],
+      "baseline": "42067d0f2890b8c013a868bd1247ebc6437b3179",
+      "created": "2026-11-07",
+      "id": "ADR-STATE-0014",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/425",
+      "interface_change": true,
+      "legacy_ids": [],
+      "path": "docs/status/decisions/ADR-STATE-0014-msgb-registers-and-ack.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "unassigned"
+      ],
+      "title": "Opt-in MSGB registers, BSE admission and exact SSRSET ACK",
+      "title_zh": "\u663e\u5f0f\u542f\u7528\u7684 MSGB \u5bc4\u5b58\u5668\u3001BSE \u63a5\u7eb3\u4e0e\u7cbe\u786e SSRSET ACK"
+    },
+    {
       "accepted": "2026-07-28",
       "affected_ndf": [
         "PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001"
@@ -15759,7 +15806,7 @@
   "summary": {
     "draft_count": 9,
     "legacy_id_count": 304,
-    "record_count": 117,
+    "record_count": 118,
     "type_counts": {
       "BLOCK": 19,
       "CUBE": 18,
@@ -15767,7 +15814,7 @@
       "MEM": 11,
       "NUM": 22,
       "SCALAR": 7,
-      "STATE": 13,
+      "STATE": 14,
       "TILE": 13
     }
   },

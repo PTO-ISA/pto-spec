@@ -80,6 +80,8 @@ nav:
           - Definedness: arch/state/definedness.md
           - Kernel Lifecycle: arch/state/kernel-lifecycle.md
           - Local Payload Generation: arch/state/local-payload-generation.md
+          - Message Buffer State: arch/state/message-buffer-state.md
+          - Message Buffer: arch/state/message-buffer.md
           - Numeric Status: arch/state/numeric-status.md
           - PE Execution Context: arch/state/pe-execution-context.md
           - Program Counter: arch/state/program-counter.md
@@ -1072,6 +1074,7 @@ nav:
               - "ADR-STATE-0011: Bundle operation descriptor and transactional commit": status/decisions/ADR-STATE-0011-bundle-operation-descriptor-and-commit.md
               - "ADR-STATE-0012: Uniform instruction-attempt status and fault isolation": status/decisions/ADR-STATE-0012-uniform-instruction-attempt-status.md
               - "ADR-STATE-0013: Scalar SYS totality and PTO-v0 profile boundaries": status/decisions/ADR-STATE-0013-scalar-sys-totality-and-profile-boundaries.md
+              - "ADR-STATE-0014: MSGB register and ACK interface": status/decisions/ADR-STATE-0014-msgb-registers-and-ack.md
           - MEM:
               - "ADR-MEM-0001: PTO total store order candidate model": status/decisions/ADR-MEM-0001-pto-total-store-order.md
               - "ADR-MEM-0002: Production memory events and atomic corners": status/decisions/ADR-MEM-0002-production-memory-events-and-atomic-corners.md

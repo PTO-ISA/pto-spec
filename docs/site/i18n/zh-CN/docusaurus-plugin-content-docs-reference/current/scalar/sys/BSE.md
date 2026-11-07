@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/sys/BSE.asl`
 
-BSE publishes the SendEvent nonblocking execution-control request.
+BSE publishes a legacy SendEvent request or atomically admits a message for an enabled MSGB context.
 
 ## Normative identity {#PTO-INST-SCALAR-BSE}
 
@@ -141,10 +141,10 @@ begin
     return ExecutionControl_SendEvent;
 end;
 
-pure func InstructionContractControlRequestIsNonblocking_BSE()
+readonly func InstructionContractControlRequestIsNonblocking_BSE()
     => boolean
 begin
-    return TRUE;
+    return !MessageBufferEnabledForCurrentContext();
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->
@@ -152,27 +152,32 @@ end;
 ## Defaults and encoded zero
 
 - Every displayed operand is encoded explicitly. Encoded zero is an assigned value and never denotes omission.
+- MSGB contexts reset disabled; disabled BSE retains the legacy nonblocking SendEvent request.
 
 ## Legality
 
 - Every fixed bit and explicit field constraint is checked before operation semantics.
 - Every assigned Reg5 source selector follows the common scalar-source availability rule.
+- Enabled MSGB uses PTO-ARCH-MSGB-SEND-001: control bits 31:0 select the destination endpoint, bits 35:32 give 0..10 valid words, and bits 63:36 are reserved zero.
+- Enabled MSGB requires the current bound kernel context and rejects atomic/far envelopes before effects.
 
 ## State effects
 
-- Snapshot SrcL, publish ExecutionControl_SendEvent and the exact XLEN operand, increment the architecture-request epoch, then advance TPC.
-- PTO defines no additional asleep, mailbox, timeout-counter, or pending-wake state for this nonblocking request.
+- When MSGB is disabled, snapshot SrcL, publish ExecutionControl_SendEvent and the exact XLEN operand, increment the architecture-request epoch, then advance TPC.
+- When MSGB is enabled, the message-buffer owner preflights and atomically captures staging data, allocates a transport message identity, and publishes the exact admission result.
+- Retries of an admitted dynamic occurrence preserve the captured message identity without another enqueue; queue backpressure and invalid controls do not allocate an identity.
 
 ## Memory effects and ordering
 
 ### Memory effects
 
-- none
+- No direct GM payload access. Message admission alone does not make unrelated data visible to a consumer.
 
 ### Ordering
 
 - Check block placement and encoded legality before source reads or architectural effects.
 - Snapshot every scalar source before the selected system effect, then advance TPC only after success.
+- Enabled irreversible admission waits while earlier same-PE GM obligations may fault; this is not a payload visibility fence.
 
 ## Exceptions
 

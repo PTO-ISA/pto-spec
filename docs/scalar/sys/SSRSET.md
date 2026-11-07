@@ -161,6 +161,7 @@ end;
 
 - Every fixed bit and explicit field constraint is checked before operation semantics.
 - The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects.
+- MSGB addresses additionally obey the context, privilege, snapshot and side-effect rules of PTO-ARCH-MSGB-SSR-001.
 
 ## State effects
 
@@ -177,6 +178,7 @@ end;
 
 - Preflight the complete address, current-ACR permission, and writable access class before reading SrcL.
 - Snapshot SrcL, perform the register write, and then advance TPC.
+- A blocked MSGB access performs no destination or TPC update; its state owner supplies the exact retry boundary.
 
 ## Exceptions
 

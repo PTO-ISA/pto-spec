@@ -164,6 +164,7 @@ end;
 
 - Every fixed bit and explicit field constraint is checked before operation semantics.
 - The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects.
+- MSGB registers reject SSRSWAP before any read-side effect, even when their access class is RW.
 
 ## State effects
 

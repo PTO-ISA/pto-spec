@@ -194,6 +194,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-STATE-0010](docs/status/decisions/ADR-STATE-0010-scalar-pc-relative-and-return-address.md): Scalar PC-relative and return-address state
 - [ADR-STATE-0012](docs/status/decisions/ADR-STATE-0012-uniform-instruction-attempt-status.md): Uniform instruction-attempt status and fault isolation
 - [ADR-STATE-0013](docs/status/decisions/ADR-STATE-0013-scalar-sys-totality-and-profile-boundaries.md): Scalar SYS totality and PTO-v0 profile boundaries
+- [ADR-STATE-0014](docs/status/decisions/ADR-STATE-0014-msgb-registers-and-ack.md): Opt-in MSGB registers, BSE admission and exact SSRSET ACK
 - [ADR-TILE-0001](docs/status/decisions/ADR-TILE-0001-tile-capacity-and-packed-storage.md): Define tile capacity and packed storage
 - [ADR-TILE-0002](docs/status/decisions/ADR-TILE-0002-element-level-tile-definedness.md): Track tile definedness per element
 - [ADR-TILE-0003](docs/status/decisions/ADR-TILE-0003-explicit-tile-handoff-slots.md): Define explicit tile handoff slots
