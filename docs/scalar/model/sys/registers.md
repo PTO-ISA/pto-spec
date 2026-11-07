@@ -258,6 +258,7 @@ begin
         SetFault(Fault_IllegalInstruction, ReadPC());
         return;
     end;
+    if !MessageBufferWritePreflight(address) then return; end;
     let value = ReadScalarRegisterOperand(source);
     WriteSystemRegisterAddress(address, value);
 end;

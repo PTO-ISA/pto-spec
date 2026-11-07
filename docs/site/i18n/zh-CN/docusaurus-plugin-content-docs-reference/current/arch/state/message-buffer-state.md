@@ -37,14 +37,18 @@ This page is a generated reference view of the normative ASL unit.
 // MSGB state MUST be isolated by Core, PE, and ACR, MUST remain outside PE and
 // trap save images, and MUST preserve admitted sends, receive claims, ACK
 // results, and sequence progress across precise recovery.  The fixed endpoint,
-// payload, and queue bounds in this executable reference are model bounds, not
-// implementation capacity claims.  A disabled bank MUST preserve the legacy
+// payload, queue, and replay-receipt bounds in this executable reference are
+// model bounds, not implementation capacity claims.  Source retirement MUST
+// preserve packets already copied atomically into remote destination banks;
+// this reference has no residual source payload after admission.  A disabled
+// bank MUST preserve the legacy
 // BSE scheduling-request behavior and MUST NOT expose operational payload state.
 // NDF-END: PTO-ARCH-MSGB-STATE-001
 
 constant PTO_MODEL_MESSAGE_BUFFER_ENDPOINTS =
     PTO_MODEL_CORE_INSTANCES * PTO_MODEL_MEMORY_AGENTS * PTO_ACR_COUNT;
 constant PTO_MODEL_MESSAGE_BUFFER_WORDS = 10;
+constant PTO_MODEL_MESSAGE_BUFFER_RECEIPTS = 16;
 constant PTO_MSGBCR_ADDRESS = 0x0830;
 constant PTO_MSGBD1_ADDRESS = 0x0831;
 constant PTO_MSGBD10_ADDRESS = 0x083a;
@@ -70,6 +74,7 @@ type MessageBufferEndpointIndex of integer
     {0..PTO_MODEL_MESSAGE_BUFFER_ENDPOINTS-1};
 type MessageBufferWordIndex of integer {0..PTO_MODEL_MESSAGE_BUFFER_WORDS-1};
 type MessageBufferWordCount of integer {0..PTO_MODEL_MESSAGE_BUFFER_WORDS};
+type MessageBufferReceiptIndex of integer {0..PTO_MODEL_MESSAGE_BUFFER_RECEIPTS-1};
 type MessageBufferResult of integer {0..13};
 type MessageBufferWords of array [[PTO_MODEL_MESSAGE_BUFFER_WORDS]] of Word;
 
@@ -117,6 +122,8 @@ type MessageBufferReplayReceipt of record {
     message_id_hi: Word,
     message_id_lo: Word
 };
+type MessageBufferReplayReceipts of array [[PTO_MODEL_MESSAGE_BUFFER_RECEIPTS]]
+    of MessageBufferReplayReceipt;
 
 type MessageBufferBank of record {
     enabled: boolean,
@@ -141,7 +148,7 @@ type MessageBufferBank of record {
     ack_id: Word,
     last_success_valid: boolean,
     last_success_token: Word,
-    receipt: MessageBufferReplayReceipt
+    receipts: MessageBufferReplayReceipts
 };
 
 type MessageBufferBanks of array [[PTO_MODEL_MESSAGE_BUFFER_ENDPOINTS]]
@@ -153,6 +160,23 @@ type MessageBufferCoreDrainBank of array [[PTO_MODEL_CORE_INSTANCES]] of boolean
 var _MessageBufferBanks : MessageBufferBanks;
 var _MessageBufferConfigSelectors : MessageBufferConfigSelectorBank;
 var _MessageBufferCoreDraining : MessageBufferCoreDrainBank;
+
+func ClearMessageBufferReplayReceipts(index: MessageBufferEndpointIndex)
+begin
+    for slot = 0 to PTO_MODEL_MESSAGE_BUFFER_RECEIPTS - 1 do
+        _MessageBufferBanks[[index]].receipts[[slot]].valid = FALSE;
+        _MessageBufferBanks[[index]].receipts[[slot]].invocation = 0;
+        _MessageBufferBanks[[index]].receipts[[slot]].acr = 0;
+        _MessageBufferBanks[[index]].receipts[[slot]].execution_domain_token = 0;
+        _MessageBufferBanks[[index]].receipts[[slot]].instruction_pc =
+            Zeros{PTO_XLEN};
+        _MessageBufferBanks[[index]].receipts[[slot]].control = Zeros{PTO_XLEN};
+        _MessageBufferBanks[[index]].receipts[[slot]].message_id_hi =
+            Zeros{PTO_XLEN};
+        _MessageBufferBanks[[index]].receipts[[slot]].message_id_lo =
+            Zeros{PTO_XLEN};
+    end;
+end;
 
 pure func MessageBufferEndpointIndexOf(core: PTOModelCoreIdentity,
                                        pe: MemoryAgentId,
@@ -275,14 +299,7 @@ begin
         _MessageBufferBanks[[index]].ack_id = Zeros{PTO_XLEN};
         _MessageBufferBanks[[index]].last_success_valid = FALSE;
         _MessageBufferBanks[[index]].last_success_token = Zeros{PTO_XLEN};
-        _MessageBufferBanks[[index]].receipt.valid = FALSE;
-        _MessageBufferBanks[[index]].receipt.invocation = 0;
-        _MessageBufferBanks[[index]].receipt.acr = 0;
-        _MessageBufferBanks[[index]].receipt.execution_domain_token = 0;
-        _MessageBufferBanks[[index]].receipt.instruction_pc = Zeros{PTO_XLEN};
-        _MessageBufferBanks[[index]].receipt.control = Zeros{PTO_XLEN};
-        _MessageBufferBanks[[index]].receipt.message_id_hi = Zeros{PTO_XLEN};
-        _MessageBufferBanks[[index]].receipt.message_id_lo = Zeros{PTO_XLEN};
+        ClearMessageBufferReplayReceipts(index);
         for word = 0 to PTO_MODEL_MESSAGE_BUFFER_WORDS - 1 do
             _MessageBufferBanks[[index]].staging_words[[word]] = Zeros{PTO_XLEN};
         end;
@@ -317,8 +334,11 @@ begin
            bank.rx_result != MessageBufferResult_None ||
            bank.ack_result != MessageBufferResult_None || bank.ack_result_valid ||
            bank.ack_id != Zeros{PTO_XLEN} || bank.last_success_valid ||
-           bank.last_success_token != Zeros{PTO_XLEN} || bank.receipt.valid then
+           bank.last_success_token != Zeros{PTO_XLEN} then
             return FALSE;
+        end;
+        for slot = 0 to PTO_MODEL_MESSAGE_BUFFER_RECEIPTS - 1 do
+            if bank.receipts[[slot]].valid then return FALSE; end;
         end;
         for word = 0 to PTO_MODEL_MESSAGE_BUFFER_WORDS - 1 do
             if bank.staging_words[[word]] != Zeros{PTO_XLEN} then
@@ -352,7 +372,7 @@ begin
             if _MessageBufferBanks[[index]].bound_invocation == invocation then
                 _MessageBufferBanks[[index]].enabled = FALSE;
                 _MessageBufferBanks[[index]].bound_invocation = 0;
-                _MessageBufferBanks[[index]].receipt.valid = FALSE;
+                ClearMessageBufferReplayReceipts(index);
                 _MessageBufferBanks[[index]].last_success_valid = FALSE;
             end;
         end;

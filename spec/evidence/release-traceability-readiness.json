@@ -269,6 +269,8 @@
         "PTO-AVS-ARCH-TSTORE-ATOMIC-TRANSLATION-001",
         "PTO-AVS-BLOCK-TSTORE-MASK-001",
         "PTO-AVS-BLOCK-TSTORE-UNDEF-001",
+        "PTO-AVS-MSGB-SSRGET-BLOCKED-001",
+        "PTO-AVS-MSGB-SSRSET-CONFIG-BLOCKED-001",
         "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-001",
         "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-002",
         "PTO-AVS-TILE-TSTORE-ATOMIC-LIFETIME-LOCAL-COHORT-CONSUME-003",
@@ -312,6 +314,8 @@
         "PTO-AVS-BLOCK-SOURCE-LIFETIME-CORE-LIFECYCLE-003",
         "PTO-AVS-BLOCK-TSTORE-ATOMIC-M32-SLAB-001",
         "PTO-AVS-BLOCK-TSTORE-UNDEF-001",
+        "PTO-AVS-MSGB-CROSS-CORE-SOURCE-END-001",
+        "PTO-AVS-MSGB-LIFECYCLE-DRAIN-001",
         "PTO-AVS-SCALAR-SYNC-CORE-FAST-REUSE-001",
         "PTO-AVS-SCALAR-SYNC-CORE-RENDEZVOUS-001"
       ]
@@ -618,6 +622,7 @@
         "PTO-AVS-BLOCK-SHARED-COMPLETION-SOURCE-MUTATION-021",
         "PTO-AVS-BLOCK-SHARED-COMPLETION-TLOAD-017",
         "PTO-AVS-BLOCK-SHARED-COMPLETION-TMOV-016",
+        "PTO-AVS-MSGB-TRAP-ACK-RETENTION-001",
         "PTO-AVS-SCALAR-SYNC-CORE-FAST-REUSE-001"
       ]
     },
@@ -633,6 +638,135 @@
       ],
       "tests": [
         "PTO-AVS-ARCH-MEMORY-MODEL-MEMORY-EVENTS-STATIC-001"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-ARCH-MSGB-ACK-001",
+      "owners": [
+        "asl/arch/state/message-buffer.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-STATE-0014"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-STATIC-001",
+        "PTO-AVS-BSE-MSGB-ZERO-PAYLOAD-001",
+        "PTO-AVS-MSGB-CANCEL-RECLAIM-TOKEN-001",
+        "PTO-AVS-MSGB-CLAIM-SEQUENCE-EXHAUSTION-001",
+        "PTO-AVS-MSGB-DUPLICATE-ACK-NEW-CLAIM-001",
+        "PTO-AVS-MSGB-PARTIAL-READ-ACK-001",
+        "PTO-AVS-MSGB-TRAP-ACK-RETENTION-001"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-ARCH-MSGB-IDENTITY-001",
+      "owners": [
+        "asl/arch/state/message-buffer-state.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-STATE-0014"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-STATE-STATIC-001",
+        "PTO-AVS-BSE-MSGB-REPLAY-IDENTITY-001",
+        "PTO-AVS-MSGB-CANCEL-RECLAIM-TOKEN-001",
+        "PTO-AVS-MSGB-CLAIM-SEQUENCE-EXHAUSTION-001",
+        "PTO-AVS-MSGB-CROSS-CORE-SOURCE-END-001",
+        "PTO-AVS-MSGB-DUPLICATE-ACK-NEW-CLAIM-001",
+        "PTO-AVS-MSGB-MAX-PAYLOAD-IDENTITY-001",
+        "PTO-AVS-MSGB-SEND-HISTORY-REPLAY-001",
+        "PTO-AVS-MSGB-SEND-RECEIPT-CAPACITY-001",
+        "PTO-AVS-MSGB-SEND-SEQUENCE-EXHAUSTION-001"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-ARCH-MSGB-LIFECYCLE-001",
+      "owners": [
+        "asl/arch/state/message-buffer.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-STATE-0014"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-STATIC-001",
+        "PTO-AVS-MSGB-CROSS-CORE-SOURCE-END-001",
+        "PTO-AVS-MSGB-LIFECYCLE-DRAIN-001"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-ARCH-MSGB-REGISTER-FIELDS-001",
+      "owners": [
+        "asl/arch/data-types/system-registers.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-STATE-0014"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-DATA-TYPES-SYSTEM-REGISTERS-STATIC-001"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-ARCH-MSGB-SEND-001",
+      "owners": [
+        "asl/arch/state/message-buffer-send.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-STATE-0014"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-SEND-STATIC-001",
+        "PTO-AVS-BSE-MSGB-REJECT-BACKPRESSURE-001",
+        "PTO-AVS-BSE-MSGB-REPLAY-IDENTITY-001",
+        "PTO-AVS-BSE-MSGB-ZERO-PAYLOAD-001",
+        "PTO-AVS-MSGB-LIFECYCLE-DRAIN-001",
+        "PTO-AVS-MSGB-MAX-PAYLOAD-IDENTITY-001",
+        "PTO-AVS-MSGB-SEND-HISTORY-REPLAY-001",
+        "PTO-AVS-MSGB-SEND-RECEIPT-CAPACITY-001",
+        "PTO-AVS-MSGB-SEND-SEQUENCE-EXHAUSTION-001",
+        "PTO-AVS-MSGB-SSRGET-BLOCKED-001",
+        "PTO-AVS-MSGB-SSRSET-CONFIG-BLOCKED-001"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-ARCH-MSGB-SSR-001",
+      "owners": [
+        "asl/arch/state/message-buffer.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-STATE-0014"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-STATIC-001",
+        "PTO-AVS-MSGB-CONFIG-001",
+        "PTO-AVS-MSGB-CONTEXT-ISOLATION-001",
+        "PTO-AVS-MSGB-MAX-PAYLOAD-IDENTITY-001",
+        "PTO-AVS-MSGB-PARTIAL-READ-ACK-001",
+        "PTO-AVS-MSGB-SSRGET-BLOCKED-001",
+        "PTO-AVS-MSGB-SSRGET-PRECISE-001",
+        "PTO-AVS-MSGB-SSRSET-CONFIG-BLOCKED-001"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-ARCH-MSGB-STATE-001",
+      "owners": [
+        "asl/arch/state/message-buffer-state.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-STATE-0014"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-STATE-STATIC-001",
+        "PTO-AVS-MSGB-CONTEXT-ISOLATION-001",
+        "PTO-AVS-MSGB-RESET-001",
+        "PTO-AVS-MSGB-SSRGET-PRECISE-001",
+        "PTO-AVS-MSGB-TRAP-ACK-RETENTION-001"
       ]
     },
     {
@@ -2828,9 +2962,14 @@
         "ADR-GOV-0005",
         "ADR-SCALAR-0006",
         "ADR-STATE-0009",
-        "ADR-STATE-0013"
+        "ADR-STATE-0013",
+        "ADR-STATE-0014"
       ],
-      "tests": []
+      "tests": [
+        "PTO-AVS-BSE-MSGB-REJECT-BACKPRESSURE-001",
+        "PTO-AVS-BSE-MSGB-REPLAY-IDENTITY-001",
+        "PTO-AVS-BSE-MSGB-ZERO-PAYLOAD-001"
+      ]
     },
     {
       "executable": false,
@@ -21589,7 +21728,7 @@
     "asl/arch/data-types/numeric-formats.asl": "8ee9de4f827345dc26721d216327705c976f361411430f543807960a9c73ad1a",
     "asl/arch/data-types/packed.asl": "4ec9fb1eb2d1b14dcba562a5dc1462724c407fa67e5887ac99eb919887777d42",
     "asl/arch/data-types/rounding.asl": "0050120f15047421e9da2836731c9ac5acd525e17f502117ef01290d09895daa",
-    "asl/arch/data-types/system-registers.asl": "ca6e241606145b7fb26ebfbca7a6e735eaaff24952ddb8e2580491130dc0bf6d",
+    "asl/arch/data-types/system-registers.asl": "44b4524199f0ee753cd0a2befb7f08f4b6aeaba838652500c401ef5416dec571",
     "asl/arch/data-types/tile-data-types.asl": "70ed87af56adda4d346a76eced16dbb5d80dd53e04b1212d11aeb9d6448f94e0",
     "asl/arch/data-types/trap-context.asl": "4c28fd97eab7daa90f4e75f7dbca8cc097d460c6c12b1c14efc4202416e58229",
     "asl/arch/dispatch/top-level.asl": "3a8ea3d3c121d5c01db07ed61d619a8250f0b6ee888f051c1235130940b94695",
@@ -21620,15 +21759,18 @@
     "asl/arch/programming-model/tile-registers.asl": "59452d3b3b708dc43f6ec4f930b1c7153d6d5247a93119669527bd29b26ec99e",
     "asl/arch/state/core-synchronization.asl": "a9f34342e9982ea84c4ebf797b32745807792a833c95a5d6e8d66157b66aeb53",
     "asl/arch/state/definedness.asl": "f68778534d67e736f701f8e24e03f27a018f3eabcec1421a6b33856030874ad1",
-    "asl/arch/state/kernel-lifecycle.asl": "e10a4fb3b78c8cf88c06111c4e355190668c35b409b6530711f31bacee8cafe0",
+    "asl/arch/state/kernel-lifecycle.asl": "d7109ef8b6b9b48cf5f96fe639a396f81c16bb2a1bfdc36dcc6a3b421059fddc",
     "asl/arch/state/local-payload-generation.asl": "9e8b044814d0542eee5d21bfc995fe8d570e1e8d4c3651c823e68831533cae62",
+    "asl/arch/state/message-buffer-send.asl": "7344b6bc7c1a3755b3a315708070da1d038fbe6bee3f76c69448f15a90960686",
+    "asl/arch/state/message-buffer-state.asl": "0d1f6a32e9b58c41251b6b7d7cbaaa62e867a6382a485d9932393784141c95e3",
+    "asl/arch/state/message-buffer.asl": "8a1f9667d20a10927b9a9eb057c8cb8560947a451468bb2fbee3ffc2f27cbdfc",
     "asl/arch/state/numeric-status.asl": "3d3fe1709c7e2903bca96d50e9671a6a484c442ff08ce4a8340168cdb38ac6d9",
     "asl/arch/state/pe-execution-context.asl": "76b8a22396b0441f511c9061c9037ce17d849245e26ea2044c89075d4926b40a",
     "asl/arch/state/program-counter.asl": "3b5f7bad14ca62af5d776ae551ddf32b4b9f43fe25d96ce0fd31a59b44e1e845",
     "asl/arch/state/tile-descriptor.asl": "52604c09f7171f5f530755929970b499296d3ce84a5ee337d7bc8c63eb8d7913",
     "asl/arch/state/trap-context.asl": "29908d31c2d2ef467982a463ba79828f0933001a84850cca31cda1b1f9e69f4e",
     "asl/arch/system-registers/access-control.asl": "b902ec666fffe515cb48ef7f54c144d19b514561537489a670349369eee3a819",
-    "asl/arch/system-registers/addressing.asl": "588a92c5c458686e68cfe93a468af3060c55d6b568d791e0f52df5ccaadc99b0",
+    "asl/arch/system-registers/addressing.asl": "6d9147f93e1dc4883b47e1fd1f983ac418833c0be586083ef26f774c4db6da30",
     "asl/arch/system-registers/context.asl": "ddac5a98c9b3cbc4029dd0ab5f42ea079a8a7a651b6eee2cf06d02dd2fa44e4e",
     "asl/arch/system-registers/interrupt.asl": "2341ac0204294c8619bbfc70f514e70f535ff7bc1ddb3d799639378d5071af34",
     "asl/arch/system-registers/maintenance.asl": "c69cc578f4021c416643dd2b5f608855ef9bfe89d7c280a574dff09783b9b5af",
@@ -22250,13 +22392,13 @@
     "asl/scalar/model/dispatch/bru.asl": "ff1616fb96e8fa5f6add13f2ce39c54f985d38b558510370dee134cb09d845ee",
     "asl/scalar/model/dispatch/decode.asl": "4a8ebb42308e5fcf27d70c4fbbe97a3544ed3d4f3fc0044dc294fc9d27c495e2",
     "asl/scalar/model/dispatch/fsu.asl": "68ce7c4ba391f84e581110ab55358004586a9d54e43b1a06eef1fe30455ec8c5",
-    "asl/scalar/model/dispatch/sys.asl": "d5bee4a6d78af882b6ad9a8d7ca6200d3df3f9495061a617f5b3532f45d8ad20",
+    "asl/scalar/model/dispatch/sys.asl": "96dca803a1ca4fbc2b37bc4b253b3d6f32bc67b784123d9f1a0d101e27fd941a",
     "asl/scalar/model/dispatch/top-level.asl": "595e7805a9b0a5cb3c0691373b161ea906a8044339ed3dcadec08065d4f118a7",
     "asl/scalar/model/fsu/arithmetic.asl": "caf8abe955be90b30655112166b5844e02e575cbbc9e447a2ce84c0284b56f96",
     "asl/scalar/model/fsu/reference-quantization.asl": "4362fd87078b965d2e1730608497f0711da18a819a918e349c60952ce5c4fe5b",
     "asl/scalar/model/fsu/reference-scalar-fp-specials.asl": "f4005e8d87791a0479196b656d98c339e7fa66b839a50aeb7d35b39108a8c6a8",
     "asl/scalar/model/fsu/scalar-fp.asl": "28baac177cc1a57c5e5be667329ae061265a558b0c4332cb4a219dcd56b38e23",
-    "asl/scalar/model/sys/registers.asl": "58ae7d723a370e9df17541ffcc60f46dbfa7a17d05cceae6eb6b4445dcecf126",
+    "asl/scalar/model/sys/registers.asl": "8c95f51f6140ce3c074d3bb52695d0c4614a1998a10f8e6f7269bce8bbba4760",
     "asl/scalar/model/sys/semantics.asl": "3fcf8eb96dbd23e683b05a4f5dcf7eacb028c17641f658fc692f7cde88a05306",
     "asl/scalar/model/types/operands.asl": "f1bfb9a3ea9012c6895705aa0ce14c20eb17976bf0a98b1f31290786bd0c5fcb",
     "asl/scalar/model/types/operations.asl": "ace26d2dd88298716d8dafaacb18b3858639c87dc2caa0326327e703b3adcf88",
@@ -22265,7 +22407,7 @@
     "asl/scalar/sys/ASSERT.asl": "2b1dd07101ba102642dd47ce0e34a3a06c0d019ed1d0f6648544315c00fa9b62",
     "asl/scalar/sys/BC.IALL.asl": "1d9bdcf4c0e2cc39704f60412bde80f12ffe65e17bbdc204fc1da61b0b767410",
     "asl/scalar/sys/BC.IVA.asl": "f7c971a3bfca3ebc598c2a383a72f74f62eb948cfab91b9c671bdeaf34c6939c",
-    "asl/scalar/sys/BSE.asl": "a5be309ba41dd82d8054f5b7b4b99d18ebf09147cdc52ab05d92d04c8817c98e",
+    "asl/scalar/sys/BSE.asl": "e77264aea54c4b9ccc45a273d35aaf073bdf0416b4d6fab021f0be251a0cc90f",
     "asl/scalar/sys/BWE.asl": "47c5159731617cef430639ae3c53c5a56097560cba59ed1f00072f5a46f6d754",
     "asl/scalar/sys/BWI.asl": "36622c80f9a1c4918a5f0abb3a8cb1e7d5df9bf7740e5c90e95111cbcd4a08c8",
     "asl/scalar/sys/BWT.asl": "8af80d48cbe92daeb5a274cc87f7ffbe31690bf27e5aeeb117c3c170af150d02",
@@ -22282,15 +22424,15 @@
     "asl/scalar/sys/EBREAK.asl": "3cada19c42685eceb9762afcd01de414c13effcfbb7dc6b27c62beb5d6d2e3d2",
     "asl/scalar/sys/FENCE.D.asl": "465a2dcce31deb1a8cef196dea8478d913b76076555a3e13677761e426bd095c",
     "asl/scalar/sys/FENCE.I.asl": "75ac20f46dd8080e4b6886e28be85e5f3950a733a82837ba55ce206f61d8086b",
-    "asl/scalar/sys/HL.SSRGET.asl": "132de06a47fc94316eaecf73b8aaad961e4806175a72e9dcc68bb7351703a46d",
-    "asl/scalar/sys/HL.SSRSET.asl": "7d527b6e8f96cfb5c7879713b563d3fd584673ad044ac8ffeb4ed2734c540cf8",
+    "asl/scalar/sys/HL.SSRGET.asl": "4d8c8444c18109790afee76230e24dc477135d67519ff995f7606f1ade104fb5",
+    "asl/scalar/sys/HL.SSRSET.asl": "7ee9751e80ca1a29a8c2b5ad29b77bd316dfb0382dc67076d88038af19c84d58",
     "asl/scalar/sys/IC.IALL.asl": "f541e27e6d2e2839f1533642eaaa97f5dbf1e354591bf2af23cbb59e120cb668",
     "asl/scalar/sys/IC.IVA.asl": "c3636db753f8a1410597c26bdf24cda599c5a852ed04c820f92c87112f1cfeed",
     "asl/scalar/sys/LSRGET.asl": "65a273c22dac0d11987a0b444e99d4f2ffa2639ec43509039c625402a560476f",
     "asl/scalar/sys/SETC.TGT.asl": "2f5d4d79d1c6feae968340552cc6cb48cda6b853188eb94a6ce0f4918b8b14af",
-    "asl/scalar/sys/SSRGET.asl": "a8ded2822340f6b7a11caf91a88a692adf59616e1db8253c2df6ef54a735746c",
-    "asl/scalar/sys/SSRSET.asl": "a72f6c4ce6cf839d11b78ae5379920fdb7b7c3bab84d578d2da7a734fdf1a0e6",
-    "asl/scalar/sys/SSRSWAP.asl": "6ae0b6069c1302eb2ca43e23b4c3ac7a1a73dafa5dc8da7962e35430a20502c8",
+    "asl/scalar/sys/SSRGET.asl": "606c44df131a8615867c1b450566ad62e3991cb80a4e05bb04a94b4c9c429265",
+    "asl/scalar/sys/SSRSET.asl": "6f508ee9f29603fcb8e40e1c540bc82d6a8c05305bab2d45bf4a91705ba3d5ed",
+    "asl/scalar/sys/SSRSWAP.asl": "430f78d9910b61c15e9586d4ecdeccf0fa72d18f3fa855aad724d530802e7f03",
     "asl/scalar/sys/SYNC.CORE.asl": "6f0a3118d7915ed1f19a7c1b9e7dfe7a8c0ff50ea12e281668bb4a710be216e1",
     "asl/scalar/sys/TLB.IA.asl": "13a77fe9a21de17bca74a4dab5c717d541877b0a82f99b3efb23ee70edce41e3",
     "asl/scalar/sys/TLB.IALL.asl": "d2494dfaf0f9f09ed3e05f23fb1be5041c6928a881962b8be282afdf95573b22",
@@ -22542,7 +22684,7 @@
     "docs/arch/data-types/numeric-formats.md": "407eb50ba29a2dda2818ac30f1af400da3d90c946d4745e0a15f5f843b125f62",
     "docs/arch/data-types/packed.md": "dab4770d3bfec6a78640e4e4fbfff019701f2cc5ea38e42ddc24b533003b4a25",
     "docs/arch/data-types/rounding.md": "cd6c2e1f4b836f2d1e50618d34f5fbca00d901e3d63964fe3eb6318294c6cd79",
-    "docs/arch/data-types/system-registers.md": "b93061c498254b397b7e9112481cba698bd9c4a7dea133691d1e54e58e73d0d6",
+    "docs/arch/data-types/system-registers.md": "024dc5322ebd3add93e3785e89b57934a1b9e88787b064ed716d4e9a964c6ba2",
     "docs/arch/data-types/tile-data-types.md": "0e38052304ad8ff66d11bbab0747b80660b6cb17413fa4793733b93a74424484",
     "docs/arch/data-types/trap-context.md": "367b3e6f1e2851cd0e87a5c5eb8ed4043826c88629344b9e9e919daacb198899",
     "docs/arch/dispatch/top-level.md": "c6ed32437cbdaae81f095e27564ea3e1a5c641c6653b05a4389cd8c4dc81fd8c",
@@ -22573,15 +22715,18 @@
     "docs/arch/programming-model/tile-registers.md": "93e2cffab8050b30e112d3371f37e950e9bff9e8373cb06172cf6cab51a501ef",
     "docs/arch/state/core-synchronization.md": "213103de8013ffa95f1f545ccacbf5d6659c1c4f482e3da0d982c74c8c01c390",
     "docs/arch/state/definedness.md": "0c592e7785591408293173237e5ae537b04d33f1c15de2a02985605e8a0b8892",
-    "docs/arch/state/kernel-lifecycle.md": "1ba5683cf2986c0d8e837d13f1802b93cf688a71af5447cc314e79ef98c83057",
+    "docs/arch/state/kernel-lifecycle.md": "62da2e9d80d19e66609f7a6c986d7d1a9cca1a6c961efa054c67bf7f8246f98f",
     "docs/arch/state/local-payload-generation.md": "e2c7cf72c098774fb518d0f8168a651f9b60f2d220009281adf3b0a95418708d",
+    "docs/arch/state/message-buffer-send.md": "6a4ec55c25c5a9ca48302d22c6080f86370ce9c411aca1bf21c419b5755f5f79",
+    "docs/arch/state/message-buffer-state.md": "2b76e8cb2b66f9c71096ba4c84f877029b340c3c93fa0dd7ce6e8e5b9efbd633",
+    "docs/arch/state/message-buffer.md": "60af02f7314897fb20b814593a1496ecd701f307cfb402e0cf17654c23df8aa1",
     "docs/arch/state/numeric-status.md": "2bc1485eab64147a553ddb269fb3e520dd0b63dc7c31614996dc32c53b57d06f",
     "docs/arch/state/pe-execution-context.md": "69586d85be83c5bec6067eb1a4e569636bf2d132d2becc4fff94a6cb6507b8a9",
     "docs/arch/state/program-counter.md": "4a404e9aef444c6e1ea3a1cbb273eeafaee3d2f00197613718dcd3b305375140",
     "docs/arch/state/tile-descriptor.md": "553189c10a9b6ff1ca07f4f54865f6dabeccb7d05a48b6cae72ecd107bc15fc0",
     "docs/arch/state/trap-context.md": "ec76e3f2091751733fd102317949f4035b24648d9a39803b6937ec4716aa53e4",
     "docs/arch/system-registers/access-control.md": "bd3b2b5ac66ca689da27eada9638e88fd8982c878128721d9f55bbd8737a3e28",
-    "docs/arch/system-registers/addressing.md": "af7697089fbd2cd11de4499c64eb6821d0788b50ba30507c48b95c851bcbc0fe",
+    "docs/arch/system-registers/addressing.md": "4df329295ab9d2431bdf2bd522e36d026cb53f892fd0b1bf900aff9079cc710c",
     "docs/arch/system-registers/context.md": "5083ce8cef4389fb7e812fdaa48877e523f1024a24a3160f798d9a2cec5c2d27",
     "docs/arch/system-registers/interrupt.md": "56719be1e34675dd43e3b7a19fa136c3fc1d80626afd2fcacf57579c8237b700",
     "docs/arch/system-registers/maintenance.md": "52b2ec4e6848f4842a4e5efbaaf8e951a65b0d9e7d379f3a2c54a38b0ec2e987",
@@ -23203,13 +23348,13 @@
     "docs/scalar/model/dispatch/bru.md": "d459fa63e14ff3cf03b3b3d8a848162996a285e5a3191924ca976e9f2103466d",
     "docs/scalar/model/dispatch/decode.md": "fcbf1f4da3cf9b5e802ed363573a50dbdb54230d30bee5229f3cf36c1bcefe4f",
     "docs/scalar/model/dispatch/fsu.md": "059e606c33ccd0ad46ff7eee765e9efa33b5c435b9b9eb073b3fcd86769d4e65",
-    "docs/scalar/model/dispatch/sys.md": "aaf5226438c77df2d2931105f59cb2651b52819cd2fa41d2b5dcdef14d3adc3b",
+    "docs/scalar/model/dispatch/sys.md": "63ba55295e7a194daeb37cc0ccd89b6d620fb8a2a9b087f59e4bcb443edfa0e7",
     "docs/scalar/model/dispatch/top-level.md": "3b172745dcf4a978f919d3fb412cfae3cfe8a1caede2dd71d2997dd1078a4a7b",
     "docs/scalar/model/fsu/arithmetic.md": "743fdd2546ae42bf8df0ea277e20faf0312e519189bbbbf95559be92871059ec",
     "docs/scalar/model/fsu/reference-quantization.md": "331f1b3b97ceb5f26a4807bb6226afeabae9091e8a5ad794b990d9d2c442df6d",
     "docs/scalar/model/fsu/reference-scalar-fp-specials.md": "867e0125622d804007a11416e5728f4961cb12f04d4fa5fc0e98b20ef7bc6879",
     "docs/scalar/model/fsu/scalar-fp.md": "101d87091ae84913a4b93bbc35f3e103f9e23e9c8ad126eee86133c5ad1e00d5",
-    "docs/scalar/model/sys/registers.md": "0136bd7cd5ee90a68f4952d70fe296d76c1f89ecbb719abbe20a150a75105ea9",
+    "docs/scalar/model/sys/registers.md": "af9623fdd4432b47251bb26ae0f63212992f562c0979d4397934e3314df3d3d2",
     "docs/scalar/model/sys/semantics.md": "9cbf4adfd6aaa35cc50cad35c30cfed383f7ba0fbb7412980e3c57dcc3c9f247",
     "docs/scalar/model/types/operands.md": "57bb2b0fd62e69416ccfc4c8a33c870afeaec3283e8dfa3bb86b2dea96645bac",
     "docs/scalar/model/types/operations.md": "618a0221d148a85e6f5315042d54d426febec84ef2d904a49acbecbdd5c66428",
@@ -23218,7 +23363,7 @@
     "docs/scalar/sys/ASSERT.md": "d25fc4e16161aca763252e388306f5fe6f3c0bad1337782ea299c5cd3bb60e5b",
     "docs/scalar/sys/BC.IALL.md": "baf2aa645cdfac67863a7fcc9a088727f7fa6e1c95a68208a27b172f0b6c0789",
     "docs/scalar/sys/BC.IVA.md": "782d2ec6e30f392565540b2060e011b258a08515b362ebff5aac436db25a67d4",
-    "docs/scalar/sys/BSE.md": "e8e3ce3107f368e217c56fa48c789b864b122173873a7a39dcef5b643767087b",
+    "docs/scalar/sys/BSE.md": "04164b2d390a21e1e7f388947825bd870085778523a5034d303b7834c2209f73",
     "docs/scalar/sys/BWE.md": "ecb734a3e0011e56101a865dc5e4a5e02c84624dcd49514705778843a2ee4079",
     "docs/scalar/sys/BWI.md": "9dabfb2a757c69da38673b69c1ffe4567b9a7cc08c977d0f73ac649119b8608e",
     "docs/scalar/sys/BWT.md": "d3a4e59414bdc77c8e9f9ed2eb5d14721a9bc1b9f425c3989a88b8edba4d7e1f",
@@ -23235,15 +23380,15 @@
     "docs/scalar/sys/EBREAK.md": "59d00476bc7df717e80bb77592738076e176b212860269a2f1c45b7a049b7702",
     "docs/scalar/sys/FENCE.D.md": "c5ae568e1c71fa0d358dfa07a78a16108729c79a1e5f0278f79a4862bd10ca50",
     "docs/scalar/sys/FENCE.I.md": "db0c250f88b66a9f1625cbf15d6403bfb935a350f1f6c325b92181f746815bbb",
-    "docs/scalar/sys/HL.SSRGET.md": "89947bc3037f6432ca4d5241f4f01cb9623ff2ba2e30c87bbe35ee6d2ebb6c94",
-    "docs/scalar/sys/HL.SSRSET.md": "da941284f4bbf120e0bac44148665a14a0eb97c665b8e3733b6085dff6219c52",
+    "docs/scalar/sys/HL.SSRGET.md": "56751ed93dbddef1ef17400336caaa2eb9b2e980a1f95f8bb282d88cff0087cb",
+    "docs/scalar/sys/HL.SSRSET.md": "b3cca165f985b92a577ba38786d2252995ae9a4bd66339dd38cee226d7a5e5af",
     "docs/scalar/sys/IC.IALL.md": "d542da28230e4f359018384cad6c1f2f8f79e3a993f8adc92239f253da8955f9",
     "docs/scalar/sys/IC.IVA.md": "a022825a98226743b93e16606007cba1dd338b856fee39589c35b8b6a7b940c6",
     "docs/scalar/sys/LSRGET.md": "7cd5e55bd184a261e8a20648cdb8c79ff35416b4b586a65ea1e0f4ea07c55bae",
     "docs/scalar/sys/SETC.TGT.md": "b26f980ad54e23761fbe41800715daedca907387721701d408c83bff630d882f",
-    "docs/scalar/sys/SSRGET.md": "5ffbd95f175df2b8c2ad66e9b486cfd1caa84bf7263f93e591b9e82808d8f779",
-    "docs/scalar/sys/SSRSET.md": "15ee45df964cb44491acdf595460bc46e5cdd6a072be26e75b5d1f61ba0ec1f3",
-    "docs/scalar/sys/SSRSWAP.md": "c7502826d6d132ad69f37849155f9394949d5bc53f898be43b457b9e5b945753",
+    "docs/scalar/sys/SSRGET.md": "128ce6342bf3485f48104ecdfa322675663f5c7cef3fa735c9acfdbfd2dc57eb",
+    "docs/scalar/sys/SSRSET.md": "f86fcde9acf86f012e64c0400199d0a15ac71de1decc61d3c22ec29aec631238",
+    "docs/scalar/sys/SSRSWAP.md": "39d3b32b50de81df6a20aac25234d23a4953d6d902b2bcfd27babea02860a772",
     "docs/scalar/sys/SYNC.CORE.md": "57b886991bf4b89b79d4b55b43b66232f4ecdbcb5f47dede42854f6f04f15e2a",
     "docs/scalar/sys/TLB.IA.md": "446c258c8767c445f3e637663cd0619fe01e4a5a0a809cf991459eeeba0ddb6e",
     "docs/scalar/sys/TLB.IALL.md": "4370748498e7ce8594a0a5d08ab1aec3cf2517e2677fae7e3777e699f8a398a1",
@@ -23466,8 +23611,8 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "c1332aa895d5a70170b6f193674ad97371cbdd4314f5336de4ce4eb703d4d484",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "4fdb0facff519fecde8ba33ed966ed54c04b04c3f5f344024b2ce1a859434d67",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "c2bba4aad8073962fc18443147a53b3492eee9629f7a5975591087d1d8834e67",
-    "spec/evidence/adr-index.json": "78d05d68aed724c91b1091756ad1212d44d05430e0695772b4b16e74a5f838f4",
-    "spec/evidence/instruction-contract-closure.json": "a0018a44c863c360b2746fb84a0f6f9752aa568aefeb89ba61a82e91ae6b2253",
+    "spec/evidence/adr-index.json": "48605ded24607c99fd2a18c978aa2ede4428ecc5f30a57a67b06ee9c304934a2",
+    "spec/evidence/instruction-contract-closure.json": "5ed1ea5db8d5aa99466bb7564cf4d63ac5175df08d67e5ad4f657bf4e25a7697",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6c18bfdff0279b6d4fbaf3cb3c8e1ee111b4d5e82e1688136b88be6fa7902ba3",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -23521,7 +23666,7 @@
     "tests/asl/arch/data-types/packed/arch-static-packed-contract-001.asl": "831ed265302066cb917e49fb855527781b1ec7517fcf5b7ab37384520e0d3932",
     "tests/asl/arch/data-types/rounding/arch-static-rounding-contract-001.asl": "2d208aa3ae8d04bd6b620be5c5d72d9ea5f5799ea27f0fd8f288d6755dd96d29",
     "tests/asl/arch/data-types/system-registers/arch-state-register-reset-and-access-001.asl": "046651bc0c9c22947339f8cbf2f8cd529277ad1c694f0bbd8e4042125b1369c5",
-    "tests/asl/arch/data-types/system-registers/arch-static-system-registers-contract-001.asl": "38595ee185c2a60f53c1891789873305fa99d6f671b799d52730da905a2074b6",
+    "tests/asl/arch/data-types/system-registers/arch-static-system-registers-contract-001.asl": "3fd34884e7a2fef1ecc837b4264b5e6e465b221ac17ecc4692261a8fdcf4d8e5",
     "tests/asl/arch/data-types/tile-data-types/arch-bound-tiledatatype-reserved-001.asl": "49d63c568d8bba7f7ad9868780322c34cf30f67250557c18ef071e5e6306f080",
     "tests/asl/arch/data-types/tile-data-types/arch-static-tile-data-types-contract-001.asl": "d2aa8456cd110c21da0482089100b4a36875d8b2934f4dba025673e2ca2504e1",
     "tests/asl/arch/data-types/trap-context/arch-fault-visible-registers-001.asl": "e18b49d4f3437f3d5906b1b1f24a24a38c353c3ab169354c796952d5c5b93b9c",
@@ -23644,6 +23789,25 @@
     "tests/asl/arch/state/kernel-lifecycle/arch-state-tstore-atomic-local-consumer-squash-004.asl": "364741b856b119190c1ac750fe56d06133ae814a7c3e5d74b23907df50b279e8",
     "tests/asl/arch/state/kernel-lifecycle/arch-static-kernel-lifecycle-contract-001.asl": "e01db11b73b1ce2cef5ef48437f6e8b50d1bda5f6045cdbd3f635e87a4661887",
     "tests/asl/arch/state/local-payload-generation/arch-static-local-payload-generation-contract-001.asl": "f78353c8219afea2f26c643663d71de8b3bbe1f15890d45aedd56e073d450db8",
+    "tests/asl/arch/state/message-buffer-send/arch-bound-msgb-send-receipt-capacity-001.asl": "70258d3c4936f4a26995d12b7bd4d9662bb85b10cf89d175c51f731c74718e03",
+    "tests/asl/arch/state/message-buffer-send/arch-bound-msgb-send-sequence-exhaustion-001.asl": "f689891dd3967ca70398b70f1ae74e71f8aa2e6e0abf9d430f26f744456d7612",
+    "tests/asl/arch/state/message-buffer-send/arch-state-msgb-send-history-replay-001.asl": "13c15c7d42a2b1a23f72867e58f4ce57ae6012ce50249d805ddc5cf69ce1f708",
+    "tests/asl/arch/state/message-buffer-send/arch-static-message-buffer-send-contract-001.asl": "c1293a39594794942c1fb8cf05773b3622275c9e763ddf6e7b3b9551b42926bc",
+    "tests/asl/arch/state/message-buffer-state/arch-state-msgb-reset-001.asl": "8b93744feb85a5ab71dbc42e6e5e765a854bd29bc5488b7902e34ccc47df0d1f",
+    "tests/asl/arch/state/message-buffer-state/arch-static-message-buffer-state-contract-001.asl": "d2ba0929b2b86a1e33c3a779666696a3c1262827e47e803cb462580ee8b108f8",
+    "tests/asl/arch/state/message-buffer/arch-bound-msgb-claim-sequence-exhaustion-001.asl": "e31c0a76e4792d0ba12dd6d5bb2e6b75b3bacbe9e346702bced9021a8624fe17",
+    "tests/asl/arch/state/message-buffer/arch-fault-msgb-ssrget-precise-001.asl": "8a714a18869061ce7782e0319cdd00f483f5c9faed0a145a972b84c34c1dd9eb",
+    "tests/asl/arch/state/message-buffer/arch-state-msgb-cancel-reclaim-token-001.asl": "d571756f39e33f06d8942566d4013717295f792bf3156a9450d6164d57cef3b8",
+    "tests/asl/arch/state/message-buffer/arch-state-msgb-context-isolation-001.asl": "fd57ddada9a0762f39b8aebc77672fc797ac01a19156e545995a6b1cf9b51d20",
+    "tests/asl/arch/state/message-buffer/arch-state-msgb-cross-core-source-end-001.asl": "f4b76f86130433aae4bb4565c0c58b040e95584dc79886f0edd513cfd5876477",
+    "tests/asl/arch/state/message-buffer/arch-state-msgb-duplicate-ack-new-claim-001.asl": "eca6e6a7611b1ca2c1d9b208612b42f5a0d5ff8c02654d2051a2e21aa790cd17",
+    "tests/asl/arch/state/message-buffer/arch-state-msgb-lifecycle-drain-001.asl": "3113894707bb969033d79c83f9503803be52dc8c10469ee09f52d57bb9e483f1",
+    "tests/asl/arch/state/message-buffer/arch-state-msgb-max-payload-identity-001.asl": "75f894c9eac3a1991711792dec28ebf87bcb5fd095ca27bb8549a00c1dce9f11",
+    "tests/asl/arch/state/message-buffer/arch-state-msgb-partial-read-ack-001.asl": "4fe4c612af94749be04c9c11e878b9bc8cf3a68a9dee979cc9d8d42e91bde2dd",
+    "tests/asl/arch/state/message-buffer/arch-state-msgb-ssrget-blocked-001.asl": "efdb165aa6fa5319e19d69805f3ccfe51a44c6c4da661d3694f3e1517d594fd4",
+    "tests/asl/arch/state/message-buffer/arch-state-msgb-ssrset-config-blocked-001.asl": "0e7e386f4a62c8870b305e4a72ed73f7811368e9c44b52b4eb95aebdef584422",
+    "tests/asl/arch/state/message-buffer/arch-state-msgb-trap-ack-retention-001.asl": "e35a6baf388904dc69283331715fabf87fa9b1082393330e27fcc9b280250d51",
+    "tests/asl/arch/state/message-buffer/arch-static-message-buffer-contract-001.asl": "0d424bb9badf77fec3d9494070a6a6ca4a23e05164fb29a97ba4d438ad477edd",
     "tests/asl/arch/state/numeric-status/arch-state-numeric-status-001.asl": "73c82a0e416a7635964e18f0b52a0330df6edcb3292f9eb65937b9ace7d9948d",
     "tests/asl/arch/state/numeric-status/arch-static-numeric-status-contract-001.asl": "98f5b7e8fe831e27ddfd019b142755a3675e04ff9fe7224a881f3f5d28eca221",
     "tests/asl/arch/state/pe-execution-context/arch-state-pe-execution-context-core-isolation-001.asl": "12c111747e8cd0b7453b5331de28d9f56a589257e5acf5868266eb446dba6399",
@@ -26810,7 +26974,7 @@
     "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-1024-to-1279-001.asl": "5a685cb90c7b8fbfaf45be70d18bd6fcae0cb11712149bb74a602ff4e8251480",
     "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-1280-to-1535-001.asl": "69ea988ca7d2a77d7cb4829b77a83879adc08c198f2e2c861981e257b0508a79",
     "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-1536-to-1791-001.asl": "d0b4783e90afcc65ee30c54e8fd5743fa2a13fe76c97fe6c70cf1c76bf45da0d",
-    "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-1792-to-1871-001.asl": "7f33fc99d7e9e6dc0eb78d1019abc0bd792b24acf708f5937fb0988bbe360405",
+    "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-1792-to-1871-001.asl": "d15c2cbc5680fc8c04bf8c5393f44d1f017435a0c668e54a2108c77223340898",
     "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-256-to-511-001.asl": "d5541d2e8fca94104b17c6e9f3b5346d48061cbdc83f608a4e6a09680c572bd6",
     "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-512-to-767-001.asl": "87ed95319520d5debc9e7c622f16788fe0e3b1069b9ed3eb6276730069fd8c93",
     "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-768-to-1023-001.asl": "70c85e1e9296db35de40a9cfbb71a540c5d31404c0f41578e32c55d0aecd955c",
@@ -26849,6 +27013,7 @@
     "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-reference-fp32-010.asl": "c3eaf19ea6485d6ac6fa245c8acb53c739207b4b5642998905898d77c2c5a709",
     "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-reference-fp64-011.asl": "907afb52d53988ece18450a1be7286a196fc94f07eefa2666bc1e1cc2fb48e79",
     "tests/asl/scalar/model/fsu/scalar-fp/scalar-static-scalar-fp-contract-001.asl": "a331b8ae7bd4e3ee2b881ac22a80600332b47f656eec5dd2d39cb17919de2a6c",
+    "tests/asl/scalar/model/sys/registers/scalar-state-msgb-config-001.asl": "b0226c3c97abe9c615cdbaf53f9619b11e80e6adf31e0f051747d6412db08c34",
     "tests/asl/scalar/model/sys/registers/scalar-static-registers-contract-001.asl": "1e6ccc57aa4299b7e1b4bd480761016bfbbac7bfc31f860849926d3514fa56e0",
     "tests/asl/scalar/model/sys/semantics/scalar-exec-service-request-control-001.asl": "8b881d9ae8cd32714b66fbce1d06e2074aa2bd99f86fd39240ad43475b43d0c1",
     "tests/asl/scalar/model/sys/semantics/scalar-exec-system-001.asl": "1ea1ec712a97c4e81a9d5d5432b5360233f5ac1326709c393b39148aea5b6179",
@@ -26891,10 +27056,13 @@
     "tests/asl/scalar/sys/BC.IVA/scalar-exec-bc-iva-usrc-001.asl": "7f64e9755a182ce70b20f0930e41eccda1d07f7daaa9f8b6335b946270bf4a2e",
     "tests/asl/scalar/sys/BC.IVA/scalar-fault-bc-iva-place-001.asl": "5bd3b33641fb01cf5cf1e1779b199409fefd4a2e9b83e63a6f76222902b72691",
     "tests/asl/scalar/sys/BSE/scalar-decode-bse-canonical-001.asl": "6f4deba7140f5bd32855142d91952e817c8fd539859d9d2895280e2188a4ed82",
-    "tests/asl/scalar/sys/BSE/scalar-exec-bse-direct-001.asl": "b6026aef94ebf12faab68630f2193aa4a13c259a10299884a2a29829b70fc285",
-    "tests/asl/scalar/sys/BSE/scalar-exec-bse-tsrc-001.asl": "fea546ef5791d8f2194abd507f36c00dcefeaf563dc846ba2a47ef23321e2aae",
-    "tests/asl/scalar/sys/BSE/scalar-exec-bse-usrc-001.asl": "ce17ff56b9f2f86a1d14af2c1fb7bb73c55421c2d47af0e1b9b3b6db9dbe0255",
+    "tests/asl/scalar/sys/BSE/scalar-exec-bse-direct-001.asl": "cc7aab87d4d61a3ce4a0716bb2d8ce4737fe8f194497dd5771e75ccfc8189bb1",
+    "tests/asl/scalar/sys/BSE/scalar-exec-bse-msgb-zero-payload-001.asl": "bf4d93d16fb355ed298e1184f85be2e5680c1d1b285eb8f23cb8901abdc630c3",
+    "tests/asl/scalar/sys/BSE/scalar-exec-bse-tsrc-001.asl": "f4d29c89bbcffcb95c1bc18dae04e06e6a0006a9ffe2b84e142c96947bbb9729",
+    "tests/asl/scalar/sys/BSE/scalar-exec-bse-usrc-001.asl": "6569383a4f758fd1f695f8154c580f4e188f7450526c50b27588681461fc528a",
     "tests/asl/scalar/sys/BSE/scalar-fault-bse-place-001.asl": "1dbc1cd5b4256048b890016227c70654931b247457e60669e6e944e975357cf0",
+    "tests/asl/scalar/sys/BSE/scalar-state-bse-msgb-reject-and-backpressure-001.asl": "70df9feecc992c77e3a41b19986a5361b81826ce0e56436e55872f8aa4de4dac",
+    "tests/asl/scalar/sys/BSE/scalar-state-bse-msgb-replay-identity-001.asl": "56a5495c354ddd769e2c7ddd41f91add335ab425b45015aa7db65bbcc0a1a10f",
     "tests/asl/scalar/sys/BWE/scalar-decode-bwe-canonical-001.asl": "3be6814899f4b52b2f6e855453e8999f14defd4a9961d8f7db1ee10eedbe0e84",
     "tests/asl/scalar/sys/BWE/scalar-exec-bwe-direct-001.asl": "4a988bbb021e807ba96e55514e4dd79f8f01bc0fd5c095340cd5f76531528d5d",
     "tests/asl/scalar/sys/BWE/scalar-exec-bwe-tsrc-001.asl": "1737db9204ab3279efa84b5a2618522a848ed9b8036f7c9e0daf14ecc6d4122a",
@@ -27924,19 +28092,19 @@
     "tests/asl/tile/tile-scalar-and-immediate/logical/TXORS/tile-static-txors-contract-001.asl": "1307d5083cb3ef94263b450f98180653a80c0648f339b2ace7d13ad91b5f29c5"
   },
   "summary": {
-    "documentation_page_count": 953,
+    "documentation_page_count": 956,
     "executable_requirement_count": 677,
     "mnemonic_count": 671,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 1135,
+    "requirement_count": 1142,
     "status": "closed",
-    "test_count": 4454,
+    "test_count": 4477,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
     "uncovered_units": [],
-    "unit_count": 953
+    "unit_count": 956
   },
   "tests": [
     {
@@ -35616,8 +35784,10 @@
       "id": "PTO-AVS-ARCH-DATA-TYPES-SYSTEM-REGISTERS-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/arch/data-types/system-registers/arch-static-system-registers-contract-001.asl",
-      "requirements": [],
-      "sha256": "38595ee185c2a60f53c1891789873305fa99d6f671b799d52730da905a2074b6",
+      "requirements": [
+        "PTO-ARCH-MSGB-REGISTER-FIELDS-001"
+      ],
+      "sha256": "3fd34884e7a2fef1ecc837b4264b5e6e465b221ac17ecc4692261a8fdcf4d8e5",
       "source": "asl/arch/data-types/system-registers.asl"
     },
     {
@@ -37054,6 +37224,39 @@
       "requirements": [],
       "sha256": "f78353c8219afea2f26c643663d71de8b3bbe1f15890d45aedd56e073d450db8",
       "source": "asl/arch/state/local-payload-generation.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-SEND-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/arch/state/message-buffer-send/arch-static-message-buffer-send-contract-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-SEND-001"
+      ],
+      "sha256": "c1293a39594794942c1fb8cf05773b3622275c9e763ddf6e7b3b9551b42926bc",
+      "source": "asl/arch/state/message-buffer-send.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-STATE-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/arch/state/message-buffer-state/arch-static-message-buffer-state-contract-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-IDENTITY-001",
+        "PTO-ARCH-MSGB-STATE-001"
+      ],
+      "sha256": "d2ba0929b2b86a1e33c3a779666696a3c1262827e47e803cb462580ee8b108f8",
+      "source": "asl/arch/state/message-buffer-state.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/arch/state/message-buffer/arch-static-message-buffer-contract-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-SSR-001",
+        "PTO-ARCH-MSGB-ACK-001",
+        "PTO-ARCH-MSGB-LIFECYCLE-001"
+      ],
+      "sha256": "0d424bb9badf77fec3d9494070a6a6ca4a23e05164fb29a97ba4d438ad477edd",
+      "source": "asl/arch/state/message-buffer.asl"
     },
     {
       "id": "PTO-AVS-ARCH-STATE-NUMERIC-STATUS-STATIC-001",
@@ -51264,6 +51467,41 @@
       "source": "asl/scalar/bru/SETRET.asl"
     },
     {
+      "id": "PTO-AVS-BSE-MSGB-REJECT-BACKPRESSURE-001",
+      "kind": "state-transition",
+      "path": "tests/asl/scalar/sys/BSE/scalar-state-bse-msgb-reject-and-backpressure-001.asl",
+      "requirements": [
+        "PTO-BSE-DECISION-BINDING-001",
+        "PTO-ARCH-MSGB-SEND-001"
+      ],
+      "sha256": "70df9feecc992c77e3a41b19986a5361b81826ce0e56436e55872f8aa4de4dac",
+      "source": "asl/scalar/sys/BSE.asl"
+    },
+    {
+      "id": "PTO-AVS-BSE-MSGB-REPLAY-IDENTITY-001",
+      "kind": "state-transition",
+      "path": "tests/asl/scalar/sys/BSE/scalar-state-bse-msgb-replay-identity-001.asl",
+      "requirements": [
+        "PTO-BSE-DECISION-BINDING-001",
+        "PTO-ARCH-MSGB-IDENTITY-001",
+        "PTO-ARCH-MSGB-SEND-001"
+      ],
+      "sha256": "56a5495c354ddd769e2c7ddd41f91add335ab425b45015aa7db65bbcc0a1a10f",
+      "source": "asl/scalar/sys/BSE.asl"
+    },
+    {
+      "id": "PTO-AVS-BSE-MSGB-ZERO-PAYLOAD-001",
+      "kind": "execution",
+      "path": "tests/asl/scalar/sys/BSE/scalar-exec-bse-msgb-zero-payload-001.asl",
+      "requirements": [
+        "PTO-BSE-DECISION-BINDING-001",
+        "PTO-ARCH-MSGB-SEND-001",
+        "PTO-ARCH-MSGB-ACK-001"
+      ],
+      "sha256": "bf4d93d16fb355ed298e1184f85be2e5680c1d1b285eb8f23cb8901abdc630c3",
+      "source": "asl/scalar/sys/BSE.asl"
+    },
+    {
       "id": "PTO-AVS-BSTART-PREDECESSOR-SEQUENTIAL-002",
       "kind": "state-transition",
       "path": "tests/asl/block/model/dispatch/start/block-state-bstart-predecessor-sequential-002.asl",
@@ -53872,6 +54110,197 @@
       ],
       "sha256": "2329096467f8602c9aff7f8c09578437b8c0265b64fdb9d4c85754bda04d0116",
       "source": "asl/scalar/fsu/UCVTF.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-CANCEL-RECLAIM-TOKEN-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/message-buffer/arch-state-msgb-cancel-reclaim-token-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-IDENTITY-001",
+        "PTO-ARCH-MSGB-ACK-001"
+      ],
+      "sha256": "d571756f39e33f06d8942566d4013717295f792bf3156a9450d6164d57cef3b8",
+      "source": "asl/arch/state/message-buffer.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-CLAIM-SEQUENCE-EXHAUSTION-001",
+      "kind": "boundary",
+      "path": "tests/asl/arch/state/message-buffer/arch-bound-msgb-claim-sequence-exhaustion-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-IDENTITY-001",
+        "PTO-ARCH-MSGB-ACK-001"
+      ],
+      "sha256": "e31c0a76e4792d0ba12dd6d5bb2e6b75b3bacbe9e346702bced9021a8624fe17",
+      "source": "asl/arch/state/message-buffer.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-CONFIG-001",
+      "kind": "state-transition",
+      "path": "tests/asl/scalar/model/sys/registers/scalar-state-msgb-config-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-SSR-001"
+      ],
+      "sha256": "b0226c3c97abe9c615cdbaf53f9619b11e80e6adf31e0f051747d6412db08c34",
+      "source": "asl/scalar/model/sys/registers.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-CONTEXT-ISOLATION-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/message-buffer/arch-state-msgb-context-isolation-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-STATE-001",
+        "PTO-ARCH-MSGB-SSR-001"
+      ],
+      "sha256": "fd57ddada9a0762f39b8aebc77672fc797ac01a19156e545995a6b1cf9b51d20",
+      "source": "asl/arch/state/message-buffer.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-CROSS-CORE-SOURCE-END-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/message-buffer/arch-state-msgb-cross-core-source-end-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-LIFECYCLE-001",
+        "PTO-ARCH-MSGB-IDENTITY-001",
+        "PTO-ARCH-KERNEL-LIFECYCLE-001"
+      ],
+      "sha256": "f4b76f86130433aae4bb4565c0c58b040e95584dc79886f0edd513cfd5876477",
+      "source": "asl/arch/state/message-buffer.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-DUPLICATE-ACK-NEW-CLAIM-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/message-buffer/arch-state-msgb-duplicate-ack-new-claim-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-ACK-001",
+        "PTO-ARCH-MSGB-IDENTITY-001"
+      ],
+      "sha256": "eca6e6a7611b1ca2c1d9b208612b42f5a0d5ff8c02654d2051a2e21aa790cd17",
+      "source": "asl/arch/state/message-buffer.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-LIFECYCLE-DRAIN-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/message-buffer/arch-state-msgb-lifecycle-drain-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-LIFECYCLE-001",
+        "PTO-ARCH-MSGB-SEND-001",
+        "PTO-ARCH-KERNEL-LIFECYCLE-001"
+      ],
+      "sha256": "3113894707bb969033d79c83f9503803be52dc8c10469ee09f52d57bb9e483f1",
+      "source": "asl/arch/state/message-buffer.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-MAX-PAYLOAD-IDENTITY-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/message-buffer/arch-state-msgb-max-payload-identity-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-IDENTITY-001",
+        "PTO-ARCH-MSGB-SSR-001",
+        "PTO-ARCH-MSGB-SEND-001"
+      ],
+      "sha256": "75f894c9eac3a1991711792dec28ebf87bcb5fd095ca27bb8549a00c1dce9f11",
+      "source": "asl/arch/state/message-buffer.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-PARTIAL-READ-ACK-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/message-buffer/arch-state-msgb-partial-read-ack-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-ACK-001",
+        "PTO-ARCH-MSGB-SSR-001"
+      ],
+      "sha256": "4fe4c612af94749be04c9c11e878b9bc8cf3a68a9dee979cc9d8d42e91bde2dd",
+      "source": "asl/arch/state/message-buffer.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-RESET-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/message-buffer-state/arch-state-msgb-reset-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-STATE-001"
+      ],
+      "sha256": "8b93744feb85a5ab71dbc42e6e5e765a854bd29bc5488b7902e34ccc47df0d1f",
+      "source": "asl/arch/state/message-buffer-state.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-SEND-HISTORY-REPLAY-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/message-buffer-send/arch-state-msgb-send-history-replay-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-SEND-001",
+        "PTO-ARCH-MSGB-IDENTITY-001"
+      ],
+      "sha256": "13c15c7d42a2b1a23f72867e58f4ce57ae6012ce50249d805ddc5cf69ce1f708",
+      "source": "asl/arch/state/message-buffer-send.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-SEND-RECEIPT-CAPACITY-001",
+      "kind": "boundary",
+      "path": "tests/asl/arch/state/message-buffer-send/arch-bound-msgb-send-receipt-capacity-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-SEND-001",
+        "PTO-ARCH-MSGB-IDENTITY-001"
+      ],
+      "sha256": "70258d3c4936f4a26995d12b7bd4d9662bb85b10cf89d175c51f731c74718e03",
+      "source": "asl/arch/state/message-buffer-send.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-SEND-SEQUENCE-EXHAUSTION-001",
+      "kind": "boundary",
+      "path": "tests/asl/arch/state/message-buffer-send/arch-bound-msgb-send-sequence-exhaustion-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-IDENTITY-001",
+        "PTO-ARCH-MSGB-SEND-001"
+      ],
+      "sha256": "f689891dd3967ca70398b70f1ae74e71f8aa2e6e0abf9d430f26f744456d7612",
+      "source": "asl/arch/state/message-buffer-send.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-SSRGET-BLOCKED-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/message-buffer/arch-state-msgb-ssrget-blocked-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-SSR-001",
+        "PTO-ARCH-MSGB-SEND-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001"
+      ],
+      "sha256": "efdb165aa6fa5319e19d69805f3ccfe51a44c6c4da661d3694f3e1517d594fd4",
+      "source": "asl/arch/state/message-buffer.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-SSRGET-PRECISE-001",
+      "kind": "fault",
+      "path": "tests/asl/arch/state/message-buffer/arch-fault-msgb-ssrget-precise-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-SSR-001",
+        "PTO-ARCH-MSGB-STATE-001"
+      ],
+      "sha256": "8a714a18869061ce7782e0319cdd00f483f5c9faed0a145a972b84c34c1dd9eb",
+      "source": "asl/arch/state/message-buffer.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-SSRSET-CONFIG-BLOCKED-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/message-buffer/arch-state-msgb-ssrset-config-blocked-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-SSR-001",
+        "PTO-ARCH-MSGB-SEND-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001"
+      ],
+      "sha256": "0e7e386f4a62c8870b305e4a72ed73f7811368e9c44b52b4eb95aebdef584422",
+      "source": "asl/arch/state/message-buffer.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-TRAP-ACK-RETENTION-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/message-buffer/arch-state-msgb-trap-ack-retention-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-STATE-001",
+        "PTO-ARCH-MSGB-ACK-001",
+        "PTO-ARCH-MEMORY-MODEL-TRAP-RESTORE-001"
+      ],
+      "sha256": "e35a6baf388904dc69283331715fabf87fa9b1082393330e27fcc9b280250d51",
+      "source": "asl/arch/state/message-buffer.asl"
     },
     {
       "id": "PTO-AVS-SCALAR-ACRC-DECODE-001",
@@ -63014,7 +63443,7 @@
       "kind": "state-transition",
       "path": "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-1792-to-1871-001.asl",
       "requirements": [],
-      "sha256": "7f33fc99d7e9e6dc0eb78d1019abc0bd792b24acf708f5937fb0988bbe360405",
+      "sha256": "d15c2cbc5680fc8c04bf8c5393f44d1f017435a0c668e54a2108c77223340898",
       "source": "asl/scalar/model/dispatch/sys.asl"
     },
     {
@@ -63646,7 +64075,7 @@
       "requirements": [
         "PTO-INST-SCALAR-BSE"
       ],
-      "sha256": "b6026aef94ebf12faab68630f2193aa4a13c259a10299884a2a29829b70fc285",
+      "sha256": "cc7aab87d4d61a3ce4a0716bb2d8ce4737fe8f194497dd5771e75ccfc8189bb1",
       "source": "asl/scalar/sys/BSE.asl"
     },
     {
@@ -63666,7 +64095,7 @@
       "requirements": [
         "PTO-INST-SCALAR-BSE"
       ],
-      "sha256": "fea546ef5791d8f2194abd507f36c00dcefeaf563dc846ba2a47ef23321e2aae",
+      "sha256": "f4d29c89bbcffcb95c1bc18dae04e06e6a0006a9ffe2b84e142c96947bbb9729",
       "source": "asl/scalar/sys/BSE.asl"
     },
     {
@@ -63676,7 +64105,7 @@
       "requirements": [
         "PTO-INST-SCALAR-BSE"
       ],
-      "sha256": "ce17ff56b9f2f86a1d14af2c1fb7bb73c55421c2d47af0e1b9b3b6db9dbe0255",
+      "sha256": "6569383a4f758fd1f695f8154c580f4e188f7450526c50b27588681461fc528a",
       "source": "asl/scalar/sys/BSE.asl"
     },
     {
@@ -74181,7 +74610,8 @@
       "readiness_subjects": [
         "ADR-GOV-0013",
         "ADR-GOV-0014",
-        "ADR-STATE-0008"
+        "ADR-STATE-0008",
+        "ADR-STATE-0014"
       ],
       "semantic_tests": [
         "PTO-AVS-ARCH-SYSREG-RESET-ACCESS-001"
@@ -75011,7 +75441,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0014",
-        "ADR-SCALAR-0007"
+        "ADR-SCALAR-0007",
+        "ADR-STATE-0014"
       ],
       "semantic_tests": [
         "PTO-AVS-ARCH-GM-OBLIGATION-DELAYED-TSTORE-001",
@@ -75063,6 +75494,95 @@
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-STATE-LOCAL-PAYLOAD-GENERATION-STATIC-001"
+      ]
+    },
+    {
+      "classification": [
+        "state",
+        "message-buffer-send"
+      ],
+      "documentation": "docs/arch/state/message-buffer-send.md",
+      "id": "PTO-ARCH-STATE-MESSAGE-BUFFER-SEND",
+      "mnemonic": null,
+      "readiness_subjects": [
+        "ADR-STATE-0014"
+      ],
+      "semantic_tests": [
+        "PTO-AVS-MSGB-SEND-HISTORY-REPLAY-001",
+        "PTO-AVS-MSGB-SEND-RECEIPT-CAPACITY-001",
+        "PTO-AVS-MSGB-SEND-SEQUENCE-EXHAUSTION-001"
+      ],
+      "source": "asl/arch/state/message-buffer-send.asl",
+      "surface": "arch",
+      "tests": [
+        "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-SEND-STATIC-001",
+        "PTO-AVS-MSGB-SEND-HISTORY-REPLAY-001",
+        "PTO-AVS-MSGB-SEND-RECEIPT-CAPACITY-001",
+        "PTO-AVS-MSGB-SEND-SEQUENCE-EXHAUSTION-001"
+      ]
+    },
+    {
+      "classification": [
+        "state",
+        "message-buffer-state"
+      ],
+      "documentation": "docs/arch/state/message-buffer-state.md",
+      "id": "PTO-ARCH-STATE-MESSAGE-BUFFER-STATE",
+      "mnemonic": null,
+      "readiness_subjects": [
+        "ADR-STATE-0014"
+      ],
+      "semantic_tests": [
+        "PTO-AVS-MSGB-RESET-001"
+      ],
+      "source": "asl/arch/state/message-buffer-state.asl",
+      "surface": "arch",
+      "tests": [
+        "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-STATE-STATIC-001",
+        "PTO-AVS-MSGB-RESET-001"
+      ]
+    },
+    {
+      "classification": [
+        "state",
+        "message-buffer"
+      ],
+      "documentation": "docs/arch/state/message-buffer.md",
+      "id": "PTO-ARCH-STATE-MESSAGE-BUFFER",
+      "mnemonic": null,
+      "readiness_subjects": [
+        "ADR-STATE-0014"
+      ],
+      "semantic_tests": [
+        "PTO-AVS-MSGB-CANCEL-RECLAIM-TOKEN-001",
+        "PTO-AVS-MSGB-CLAIM-SEQUENCE-EXHAUSTION-001",
+        "PTO-AVS-MSGB-CONTEXT-ISOLATION-001",
+        "PTO-AVS-MSGB-CROSS-CORE-SOURCE-END-001",
+        "PTO-AVS-MSGB-DUPLICATE-ACK-NEW-CLAIM-001",
+        "PTO-AVS-MSGB-LIFECYCLE-DRAIN-001",
+        "PTO-AVS-MSGB-MAX-PAYLOAD-IDENTITY-001",
+        "PTO-AVS-MSGB-PARTIAL-READ-ACK-001",
+        "PTO-AVS-MSGB-SSRGET-BLOCKED-001",
+        "PTO-AVS-MSGB-SSRGET-PRECISE-001",
+        "PTO-AVS-MSGB-SSRSET-CONFIG-BLOCKED-001",
+        "PTO-AVS-MSGB-TRAP-ACK-RETENTION-001"
+      ],
+      "source": "asl/arch/state/message-buffer.asl",
+      "surface": "arch",
+      "tests": [
+        "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-STATIC-001",
+        "PTO-AVS-MSGB-CANCEL-RECLAIM-TOKEN-001",
+        "PTO-AVS-MSGB-CLAIM-SEQUENCE-EXHAUSTION-001",
+        "PTO-AVS-MSGB-CONTEXT-ISOLATION-001",
+        "PTO-AVS-MSGB-CROSS-CORE-SOURCE-END-001",
+        "PTO-AVS-MSGB-DUPLICATE-ACK-NEW-CLAIM-001",
+        "PTO-AVS-MSGB-LIFECYCLE-DRAIN-001",
+        "PTO-AVS-MSGB-MAX-PAYLOAD-IDENTITY-001",
+        "PTO-AVS-MSGB-PARTIAL-READ-ACK-001",
+        "PTO-AVS-MSGB-SSRGET-BLOCKED-001",
+        "PTO-AVS-MSGB-SSRGET-PRECISE-001",
+        "PTO-AVS-MSGB-SSRSET-CONFIG-BLOCKED-001",
+        "PTO-AVS-MSGB-TRAP-ACK-RETENTION-001"
       ]
     },
     {
@@ -96399,7 +96919,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-GOV-0014",
-        "ADR-SCALAR-0007"
+        "ADR-SCALAR-0007",
+        "ADR-STATE-0014"
       ],
       "semantic_tests": [
         "PTO-AVS-SCALAR-SYS-EFFECTS-001",
@@ -96646,12 +97167,16 @@
         "ADR-GOV-0013",
         "ADR-NUM-0001",
         "ADR-NUM-0005",
-        "ADR-NUM-0010"
+        "ADR-NUM-0010",
+        "ADR-STATE-0014"
       ],
-      "semantic_tests": [],
+      "semantic_tests": [
+        "PTO-AVS-MSGB-CONFIG-001"
+      ],
       "source": "asl/scalar/model/sys/registers.asl",
       "surface": "scalar",
       "tests": [
+        "PTO-AVS-MSGB-CONFIG-001",
         "PTO-AVS-SCALAR-MODEL-SYS-REGISTERS-STATIC-001"
       ]
     },
@@ -96927,9 +97452,13 @@
         "ADR-GOV-0005",
         "ADR-SCALAR-0006",
         "ADR-STATE-0009",
-        "ADR-STATE-0013"
+        "ADR-STATE-0013",
+        "ADR-STATE-0014"
       ],
       "semantic_tests": [
+        "PTO-AVS-BSE-MSGB-REJECT-BACKPRESSURE-001",
+        "PTO-AVS-BSE-MSGB-REPLAY-IDENTITY-001",
+        "PTO-AVS-BSE-MSGB-ZERO-PAYLOAD-001",
         "PTO-AVS-SYS-BSE-EXEC-001",
         "PTO-AVS-SYS-BSE-PLACE-001",
         "PTO-AVS-SYS-BSE-TSRC-001",
@@ -96938,6 +97467,9 @@
       "source": "asl/scalar/sys/BSE.asl",
       "surface": "scalar",
       "tests": [
+        "PTO-AVS-BSE-MSGB-REJECT-BACKPRESSURE-001",
+        "PTO-AVS-BSE-MSGB-REPLAY-IDENTITY-001",
+        "PTO-AVS-BSE-MSGB-ZERO-PAYLOAD-001",
         "PTO-AVS-SCALAR-BSE-DECODE-001",
         "PTO-AVS-SYS-BSE-EXEC-001",
         "PTO-AVS-SYS-BSE-PLACE-001",

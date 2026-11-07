@@ -5522,7 +5522,8 @@
         "PTO-SCALAR-MODEL-SYS-REGISTERS",
         "PTO-SCALAR-MODEL-DISPATCH-SYS",
         "PTO-ARCH-STATE-KERNEL-LIFECYCLE",
-        "PTO-SCALAR-BSE"
+        "PTO-SCALAR-BSE",
+        "PTO-ARCH-STATE-MESSAGE-BUFFER-SEND"
       ],
       "approvers": [
         "zhoubot"

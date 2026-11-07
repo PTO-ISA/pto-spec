@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/sys/BSE.asl`
 
-BSE publishes a legacy SendEvent request or atomically admits a message for an enabled MSGB context.
+BSE publishes a legacy SendEvent request when MSGB is disabled; enabled contexts use atomic message admission. The reader guide describes only the disabled path.
 
 ## Normative identity {#PTO-INST-SCALAR-BSE}
 
