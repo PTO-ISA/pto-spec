@@ -23797,11 +23797,11 @@
     "tests/asl/arch/state/local-payload-generation/arch-static-local-payload-generation-contract-001.asl": "f78353c8219afea2f26c643663d71de8b3bbe1f15890d45aedd56e073d450db8",
     "tests/asl/arch/state/message-buffer-send/arch-bound-msgb-send-receipt-capacity-001.asl": "70258d3c4936f4a26995d12b7bd4d9662bb85b10cf89d175c51f731c74718e03",
     "tests/asl/arch/state/message-buffer-send/arch-bound-msgb-send-sequence-exhaustion-001.asl": "f689891dd3967ca70398b70f1ae74e71f8aa2e6e0abf9d430f26f744456d7612",
-    "tests/asl/arch/state/message-buffer-send/arch-state-msgb-send-disable-reenable-replay-001.asl": "73d1f67d2062d75057356d64cd60310a152f8aa2c222d6fe3e41f81c9c076e99",
+    "tests/asl/arch/state/message-buffer-send/arch-state-msgb-send-disable-reenable-replay-001.asl": "e02c1b54eb83e165733c86129061ca15860b45552cdd3dda969782263e1a7b1d",
     "tests/asl/arch/state/message-buffer-send/arch-state-msgb-send-history-replay-001.asl": "13c15c7d42a2b1a23f72867e58f4ce57ae6012ce50249d805ddc5cf69ce1f708",
     "tests/asl/arch/state/message-buffer-send/arch-static-message-buffer-send-contract-001.asl": "c1293a39594794942c1fb8cf05773b3622275c9e763ddf6e7b3b9551b42926bc",
     "tests/asl/arch/state/message-buffer-state/arch-state-msgb-reset-001.asl": "8b93744feb85a5ab71dbc42e6e5e765a854bd29bc5488b7902e34ccc47df0d1f",
-    "tests/asl/arch/state/message-buffer-state/arch-state-msgb-retire-relaunch-scrub-001.asl": "c2877c5d40b4814140064191efcf626094bfeee7ebde6e03b561a0c0eaa2a475",
+    "tests/asl/arch/state/message-buffer-state/arch-state-msgb-retire-relaunch-scrub-001.asl": "8ca4b1f5fbe374d46fdd544ca451e14e2a503de85101d425421ee002e7027df1",
     "tests/asl/arch/state/message-buffer-state/arch-static-message-buffer-state-contract-001.asl": "d2ba0929b2b86a1e33c3a779666696a3c1262827e47e803cb462580ee8b108f8",
     "tests/asl/arch/state/message-buffer/arch-bound-msgb-claim-sequence-exhaustion-001.asl": "e31c0a76e4792d0ba12dd6d5bb2e6b75b3bacbe9e346702bced9021a8624fe17",
     "tests/asl/arch/state/message-buffer/arch-fault-msgb-ssrget-precise-001.asl": "8a714a18869061ce7782e0319cdd00f483f5c9faed0a145a972b84c34c1dd9eb",
@@ -54239,7 +54239,7 @@
         "PTO-ARCH-MSGB-LIFECYCLE-001",
         "PTO-ARCH-MSGB-IDENTITY-001"
       ],
-      "sha256": "c2877c5d40b4814140064191efcf626094bfeee7ebde6e03b561a0c0eaa2a475",
+      "sha256": "8ca4b1f5fbe374d46fdd544ca451e14e2a503de85101d425421ee002e7027df1",
       "source": "asl/arch/state/message-buffer-state.asl"
     },
     {
@@ -54251,7 +54251,7 @@
         "PTO-ARCH-MSGB-IDENTITY-001",
         "PTO-ARCH-MSGB-STATE-001"
       ],
-      "sha256": "73d1f67d2062d75057356d64cd60310a152f8aa2c222d6fe3e41f81c9c076e99",
+      "sha256": "e02c1b54eb83e165733c86129061ca15860b45552cdd3dda969782263e1a7b1d",
       "source": "asl/arch/state/message-buffer-send.asl"
     },
     {
