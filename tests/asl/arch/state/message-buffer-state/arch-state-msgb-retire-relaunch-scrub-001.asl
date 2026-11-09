@@ -20,9 +20,11 @@ begin
     let payload = ReadSystemRegisterAddress(Zeros{24} + 0x0831);
     assert payload == expected;
     WriteSystemRegisterAddress(Zeros{24} + 0x0842, token);
-    assert ReadSystemRegisterAddress(Zeros{24} + 0x0843) ==
+    let read_observed_1 = ReadSystemRegisterAddress(Zeros{24} + 0x0843);
+    assert read_observed_1 ==
         Zeros{PTO_XLEN} + 0x101;
-    assert ReadSystemRegisterAddress(Zeros{24} + 0x0844) == token;
+    let read_observed_2 = ReadSystemRegisterAddress(Zeros{24} + 0x0844);
+    assert read_observed_2 == token;
     WriteSystemRegisterAddress(Zeros{24} + 0x0841, token);
 end;
 
@@ -64,8 +66,10 @@ begin
     ConfigureRelaunchContext(1);
     SelectExecutionContext(0, 0);
     SetCurrentACR(0);
-    assert ReadSystemRegisterAddress(Zeros{24} + 0x0843) == Zeros{PTO_XLEN};
-    assert ReadSystemRegisterAddress(Zeros{24} + 0x0844) == Zeros{PTO_XLEN};
+    let read_observed_3 = ReadSystemRegisterAddress(Zeros{24} + 0x0843);
+    assert read_observed_3 == Zeros{PTO_XLEN};
+    let read_observed_4 = ReadSystemRegisterAddress(Zeros{24} + 0x0844);
+    assert read_observed_4 == Zeros{PTO_XLEN};
     ExecuteMessageBufferSend(Zeros{PTO_XLEN} + 16 + (1 << 32));
     assert _MessageBufferBanks[[source_index]].transmit_sequence ==
         Zeros{PTO_XLEN} + 2;

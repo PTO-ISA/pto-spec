@@ -58,10 +58,13 @@ begin
     _BundleExecutionDomainToken = occurrence;
     WriteTPC(occurrence_pc);
     ExecuteMessageBufferSend(control);
-    assert ReadSystemRegisterAddress(Zeros{24} + 0x0847) ==
+    let read_observed_1 = ReadSystemRegisterAddress(Zeros{24} + 0x0847);
+    assert read_observed_1 ==
         Zeros{PTO_XLEN} + 0x102;
-    assert ReadSystemRegisterAddress(Zeros{24} + 0x0845) == original_hi;
-    assert ReadSystemRegisterAddress(Zeros{24} + 0x0846) == original_lo;
+    let read_observed_2 = ReadSystemRegisterAddress(Zeros{24} + 0x0845);
+    assert read_observed_2 == original_hi;
+    let read_observed_3 = ReadSystemRegisterAddress(Zeros{24} + 0x0846);
+    assert read_observed_3 == original_lo;
     let destination = MessageBufferEndpointIndexOf(0, 1, 0);
     assert !_MessageBufferBanks[[destination]].queued.valid;
     return 0;
