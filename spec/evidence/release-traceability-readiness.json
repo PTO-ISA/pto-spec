@@ -676,6 +676,8 @@
         "PTO-AVS-MSGB-CROSS-CORE-SOURCE-END-001",
         "PTO-AVS-MSGB-DUPLICATE-ACK-NEW-CLAIM-001",
         "PTO-AVS-MSGB-MAX-PAYLOAD-IDENTITY-001",
+        "PTO-AVS-MSGB-RETIRE-RELAUNCH-SCRUB-001",
+        "PTO-AVS-MSGB-SEND-DISABLE-REENABLE-REPLAY-001",
         "PTO-AVS-MSGB-SEND-HISTORY-REPLAY-001",
         "PTO-AVS-MSGB-SEND-RECEIPT-CAPACITY-001",
         "PTO-AVS-MSGB-SEND-SEQUENCE-EXHAUSTION-001"
@@ -693,7 +695,8 @@
       "tests": [
         "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-STATIC-001",
         "PTO-AVS-MSGB-CROSS-CORE-SOURCE-END-001",
-        "PTO-AVS-MSGB-LIFECYCLE-DRAIN-001"
+        "PTO-AVS-MSGB-LIFECYCLE-DRAIN-001",
+        "PTO-AVS-MSGB-RETIRE-RELAUNCH-SCRUB-001"
       ]
     },
     {
@@ -725,6 +728,7 @@
         "PTO-AVS-BSE-MSGB-ZERO-PAYLOAD-001",
         "PTO-AVS-MSGB-LIFECYCLE-DRAIN-001",
         "PTO-AVS-MSGB-MAX-PAYLOAD-IDENTITY-001",
+        "PTO-AVS-MSGB-SEND-DISABLE-REENABLE-REPLAY-001",
         "PTO-AVS-MSGB-SEND-HISTORY-REPLAY-001",
         "PTO-AVS-MSGB-SEND-RECEIPT-CAPACITY-001",
         "PTO-AVS-MSGB-SEND-SEQUENCE-EXHAUSTION-001",
@@ -765,6 +769,8 @@
         "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-STATE-STATIC-001",
         "PTO-AVS-MSGB-CONTEXT-ISOLATION-001",
         "PTO-AVS-MSGB-RESET-001",
+        "PTO-AVS-MSGB-RETIRE-RELAUNCH-SCRUB-001",
+        "PTO-AVS-MSGB-SEND-DISABLE-REENABLE-REPLAY-001",
         "PTO-AVS-MSGB-SSRGET-PRECISE-001",
         "PTO-AVS-MSGB-TRAP-ACK-RETENTION-001"
       ]
@@ -21762,8 +21768,8 @@
     "asl/arch/state/kernel-lifecycle.asl": "d7109ef8b6b9b48cf5f96fe639a396f81c16bb2a1bfdc36dcc6a3b421059fddc",
     "asl/arch/state/local-payload-generation.asl": "9e8b044814d0542eee5d21bfc995fe8d570e1e8d4c3651c823e68831533cae62",
     "asl/arch/state/message-buffer-send.asl": "7344b6bc7c1a3755b3a315708070da1d038fbe6bee3f76c69448f15a90960686",
-    "asl/arch/state/message-buffer-state.asl": "0d1f6a32e9b58c41251b6b7d7cbaaa62e867a6382a485d9932393784141c95e3",
-    "asl/arch/state/message-buffer.asl": "8a1f9667d20a10927b9a9eb057c8cb8560947a451468bb2fbee3ffc2f27cbdfc",
+    "asl/arch/state/message-buffer-state.asl": "94aa35170943df2ee5db987462164747f5055b5051f2986b8623b525e927c073",
+    "asl/arch/state/message-buffer.asl": "1192f5532cd9007925b07b6e03c3b8b1fe33db22c18dc443622c5fac2f5d37ac",
     "asl/arch/state/numeric-status.asl": "3d3fe1709c7e2903bca96d50e9671a6a484c442ff08ce4a8340168cdb38ac6d9",
     "asl/arch/state/pe-execution-context.asl": "76b8a22396b0441f511c9061c9037ce17d849245e26ea2044c89075d4926b40a",
     "asl/arch/state/program-counter.asl": "3b5f7bad14ca62af5d776ae551ddf32b4b9f43fe25d96ce0fd31a59b44e1e845",
@@ -22718,8 +22724,8 @@
     "docs/arch/state/kernel-lifecycle.md": "c20340d654296419f171c69ad66f6cc52b6e1aa6d013fc8a640fd35285fd8d8c",
     "docs/arch/state/local-payload-generation.md": "e2c7cf72c098774fb518d0f8168a651f9b60f2d220009281adf3b0a95418708d",
     "docs/arch/state/message-buffer-send.md": "6a4ec55c25c5a9ca48302d22c6080f86370ce9c411aca1bf21c419b5755f5f79",
-    "docs/arch/state/message-buffer-state.md": "2b76e8cb2b66f9c71096ba4c84f877029b340c3c93fa0dd7ce6e8e5b9efbd633",
-    "docs/arch/state/message-buffer.md": "60af02f7314897fb20b814593a1496ecd701f307cfb402e0cf17654c23df8aa1",
+    "docs/arch/state/message-buffer-state.md": "7e457072ce123b9f922d5a720593f60b92170e47fb024a643460f2ba4a026cea",
+    "docs/arch/state/message-buffer.md": "26fe09310ebdfd016532d8cb5f9f678364b74d678ee3d96071437508e4c6a7f8",
     "docs/arch/state/numeric-status.md": "2bc1485eab64147a553ddb269fb3e520dd0b63dc7c31614996dc32c53b57d06f",
     "docs/arch/state/pe-execution-context.md": "69586d85be83c5bec6067eb1a4e569636bf2d132d2becc4fff94a6cb6507b8a9",
     "docs/arch/state/program-counter.md": "4a404e9aef444c6e1ea3a1cbb273eeafaee3d2f00197613718dcd3b305375140",
@@ -23791,9 +23797,11 @@
     "tests/asl/arch/state/local-payload-generation/arch-static-local-payload-generation-contract-001.asl": "f78353c8219afea2f26c643663d71de8b3bbe1f15890d45aedd56e073d450db8",
     "tests/asl/arch/state/message-buffer-send/arch-bound-msgb-send-receipt-capacity-001.asl": "70258d3c4936f4a26995d12b7bd4d9662bb85b10cf89d175c51f731c74718e03",
     "tests/asl/arch/state/message-buffer-send/arch-bound-msgb-send-sequence-exhaustion-001.asl": "f689891dd3967ca70398b70f1ae74e71f8aa2e6e0abf9d430f26f744456d7612",
+    "tests/asl/arch/state/message-buffer-send/arch-state-msgb-send-disable-reenable-replay-001.asl": "73d1f67d2062d75057356d64cd60310a152f8aa2c222d6fe3e41f81c9c076e99",
     "tests/asl/arch/state/message-buffer-send/arch-state-msgb-send-history-replay-001.asl": "13c15c7d42a2b1a23f72867e58f4ce57ae6012ce50249d805ddc5cf69ce1f708",
     "tests/asl/arch/state/message-buffer-send/arch-static-message-buffer-send-contract-001.asl": "c1293a39594794942c1fb8cf05773b3622275c9e763ddf6e7b3b9551b42926bc",
     "tests/asl/arch/state/message-buffer-state/arch-state-msgb-reset-001.asl": "8b93744feb85a5ab71dbc42e6e5e765a854bd29bc5488b7902e34ccc47df0d1f",
+    "tests/asl/arch/state/message-buffer-state/arch-state-msgb-retire-relaunch-scrub-001.asl": "c2877c5d40b4814140064191efcf626094bfeee7ebde6e03b561a0c0eaa2a475",
     "tests/asl/arch/state/message-buffer-state/arch-static-message-buffer-state-contract-001.asl": "d2ba0929b2b86a1e33c3a779666696a3c1262827e47e803cb462580ee8b108f8",
     "tests/asl/arch/state/message-buffer/arch-bound-msgb-claim-sequence-exhaustion-001.asl": "e31c0a76e4792d0ba12dd6d5bb2e6b75b3bacbe9e346702bced9021a8624fe17",
     "tests/asl/arch/state/message-buffer/arch-fault-msgb-ssrget-precise-001.asl": "8a714a18869061ce7782e0319cdd00f483f5c9faed0a145a972b84c34c1dd9eb",
@@ -28099,7 +28107,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1142,
     "status": "closed",
-    "test_count": 4477,
+    "test_count": 4479,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -54223,6 +54231,30 @@
       "source": "asl/arch/state/message-buffer-state.asl"
     },
     {
+      "id": "PTO-AVS-MSGB-RETIRE-RELAUNCH-SCRUB-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/message-buffer-state/arch-state-msgb-retire-relaunch-scrub-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-STATE-001",
+        "PTO-ARCH-MSGB-LIFECYCLE-001",
+        "PTO-ARCH-MSGB-IDENTITY-001"
+      ],
+      "sha256": "c2877c5d40b4814140064191efcf626094bfeee7ebde6e03b561a0c0eaa2a475",
+      "source": "asl/arch/state/message-buffer-state.asl"
+    },
+    {
+      "id": "PTO-AVS-MSGB-SEND-DISABLE-REENABLE-REPLAY-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/message-buffer-send/arch-state-msgb-send-disable-reenable-replay-001.asl",
+      "requirements": [
+        "PTO-ARCH-MSGB-SEND-001",
+        "PTO-ARCH-MSGB-IDENTITY-001",
+        "PTO-ARCH-MSGB-STATE-001"
+      ],
+      "sha256": "73d1f67d2062d75057356d64cd60310a152f8aa2c222d6fe3e41f81c9c076e99",
+      "source": "asl/arch/state/message-buffer-send.asl"
+    },
+    {
       "id": "PTO-AVS-MSGB-SEND-HISTORY-REPLAY-001",
       "kind": "state-transition",
       "path": "tests/asl/arch/state/message-buffer-send/arch-state-msgb-send-history-replay-001.asl",
@@ -75508,6 +75540,7 @@
         "ADR-STATE-0014"
       ],
       "semantic_tests": [
+        "PTO-AVS-MSGB-SEND-DISABLE-REENABLE-REPLAY-001",
         "PTO-AVS-MSGB-SEND-HISTORY-REPLAY-001",
         "PTO-AVS-MSGB-SEND-RECEIPT-CAPACITY-001",
         "PTO-AVS-MSGB-SEND-SEQUENCE-EXHAUSTION-001"
@@ -75516,6 +75549,7 @@
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-SEND-STATIC-001",
+        "PTO-AVS-MSGB-SEND-DISABLE-REENABLE-REPLAY-001",
         "PTO-AVS-MSGB-SEND-HISTORY-REPLAY-001",
         "PTO-AVS-MSGB-SEND-RECEIPT-CAPACITY-001",
         "PTO-AVS-MSGB-SEND-SEQUENCE-EXHAUSTION-001"
@@ -75533,13 +75567,15 @@
         "ADR-STATE-0014"
       ],
       "semantic_tests": [
-        "PTO-AVS-MSGB-RESET-001"
+        "PTO-AVS-MSGB-RESET-001",
+        "PTO-AVS-MSGB-RETIRE-RELAUNCH-SCRUB-001"
       ],
       "source": "asl/arch/state/message-buffer-state.asl",
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-STATE-STATIC-001",
-        "PTO-AVS-MSGB-RESET-001"
+        "PTO-AVS-MSGB-RESET-001",
+        "PTO-AVS-MSGB-RETIRE-RELAUNCH-SCRUB-001"
       ]
     },
     {
