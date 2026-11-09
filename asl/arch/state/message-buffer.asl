@@ -310,7 +310,6 @@ begin
             return;
         end;
         _MessageBufferBanks[[index]].enabled = FALSE;
-        _MessageBufferBanks[[index]].bound_invocation = 0;
         return;
     end;
     if !_KernelInvocationActiveByCore[[_CurrentModelCore]] ||
@@ -347,16 +346,7 @@ begin
         _MessageBufferBanks[[index]].rx_result = MessageBufferResult_None;
     end;
     if invocation_changed then
-        ClearMessageBufferReplayReceipts(index);
-        _MessageBufferBanks[[index]].last_success_valid = FALSE;
-        _MessageBufferBanks[[index]].last_success_token = Zeros{PTO_XLEN};
-        _MessageBufferBanks[[index]].ack_result_valid = FALSE;
-        _MessageBufferBanks[[index]].rx_result = MessageBufferResult_None;
-        _MessageBufferBanks[[index]].last_accepted_control = Zeros{PTO_XLEN};
-        _MessageBufferBanks[[index]].tx_result = MessageBufferResult_None;
-        _MessageBufferBanks[[index]].tx_result_valid = FALSE;
-        _MessageBufferBanks[[index]].tx_message_id_hi = Zeros{PTO_XLEN};
-        _MessageBufferBanks[[index]].tx_message_id_lo = Zeros{PTO_XLEN};
+        ClearMessageBufferInvocationState(index);
     end;
     _MessageBufferBanks[[index]].bound_invocation = _CurrentKernelInvocation;
     _MessageBufferBanks[[index]].enabled = TRUE;

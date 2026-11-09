@@ -20,8 +20,13 @@
 // model bounds, not implementation capacity claims.  Source retirement MUST
 // preserve packets already copied atomically into remote destination banks;
 // this reference has no residual source payload after admission.  A disabled
-// bank MUST preserve the legacy
-// BSE scheduling-request behavior and MUST NOT expose operational payload state.
+// bank MUST preserve its invocation binding and admitted replay receipts so a
+// same-invocation re-enable cannot republish an old BSE occurrence.  Actual
+// invocation retirement or rebind MUST scrub private staging, diagnostic,
+// ACK, and replay state while preserving domains, epochs, sequence progress,
+// and packets already committed to another destination bank.  A disabled bank
+// MUST preserve the legacy BSE scheduling-request behavior and MUST NOT expose
+// operational payload state.
 // NDF-END: PTO-ARCH-MSGB-STATE-001
 
 constant PTO_MODEL_MESSAGE_BUFFER_ENDPOINTS =
@@ -249,6 +254,30 @@ begin
     end;
 end;
 
+func ClearMessageBufferInvocationState(index: MessageBufferEndpointIndex)
+begin
+    assert MessageBufferBankQuiescent(index);
+    _MessageBufferBanks[[index]].enabled = FALSE;
+    _MessageBufferBanks[[index]].bound_invocation = 0;
+    _MessageBufferBanks[[index]].last_accepted_control = Zeros{PTO_XLEN};
+    _MessageBufferBanks[[index]].tx_result = MessageBufferResult_None;
+    _MessageBufferBanks[[index]].tx_result_valid = FALSE;
+    _MessageBufferBanks[[index]].tx_message_id_hi = Zeros{PTO_XLEN};
+    _MessageBufferBanks[[index]].tx_message_id_lo = Zeros{PTO_XLEN};
+    _MessageBufferBanks[[index]].rx_result = MessageBufferResult_None;
+    _MessageBufferBanks[[index]].ack_result = MessageBufferResult_None;
+    _MessageBufferBanks[[index]].ack_result_valid = FALSE;
+    _MessageBufferBanks[[index]].ack_id = Zeros{PTO_XLEN};
+    _MessageBufferBanks[[index]].last_success_valid = FALSE;
+    _MessageBufferBanks[[index]].last_success_token = Zeros{PTO_XLEN};
+    for word = 0 to PTO_MODEL_MESSAGE_BUFFER_WORDS - 1 do
+        _MessageBufferBanks[[index]].staging_words[[word]] = Zeros{PTO_XLEN};
+    end;
+    ClearMessageBufferReplayReceipts(index);
+    ClearMessageBufferQueuedMessage(index);
+    ClearMessageBufferSnapshot(index);
+end;
+
 func ResetMessageBufferState()
 begin
     for core = 0 to PTO_MODEL_CORE_INSTANCES - 1 do
@@ -349,10 +378,7 @@ begin
             let index = MessageBufferEndpointIndexOf(
                 core, pe as MemoryAgentId, acr as AccessControlRing);
             if _MessageBufferBanks[[index]].bound_invocation == invocation then
-                _MessageBufferBanks[[index]].enabled = FALSE;
-                _MessageBufferBanks[[index]].bound_invocation = 0;
-                ClearMessageBufferReplayReceipts(index);
-                _MessageBufferBanks[[index]].last_success_valid = FALSE;
+                ClearMessageBufferInvocationState(index);
             end;
         end;
     end;
