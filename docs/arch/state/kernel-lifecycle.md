@@ -31,7 +31,7 @@ The invocation identity is the key separation mechanism. Synchronization records
 
 `LaunchKernelInvocation` waits if the Core already has an active invocation or if the retired invocation still has non-quiescent GM obligations. It rejects an odd entry address. Once admitted, it initializes every PE and returns `KernelLifecycle_Started`.
 
-`EndKernelInvocation` and `AbortKernelInvocation` first close new message admission to and from the Core. They return `KernelLifecycle_Waiting` while that Core still owns a queued message or receive snapshot, but existing reads, ACK, and RELEASE may continue the drain. After local message state is quiescent, End additionally waits for GM obligations before identity retirement. Abort instead cancels reversible GM and incomplete synchronization, performs identity-scoped retirement, and may then return `KernelLifecycle_Waiting` while irrevocable GM drains; a later launch remains blocked until that retired work is quiescent.
+End and abort start by draining the Core's message banks. Ordinary new sends are rejected; receive reads, ACK and RELEASE can continue. A worker with a running HSCB dispatch can still send its matching DONE to the scheduler. End waits for local queues and snapshots to clear, for HSCB to process outstanding completions, and for GM obligations to become quiescent before retiring the invocation. Abort waits for the local queues and snapshots, cancels reversible GM work and incomplete synchronization, then retires the invocation. It may return `KernelLifecycle_Waiting` while irrevocable GM work drains; a later launch waits for that work.
 
 <!-- PTO-READER-BLOCK: arch-kernel-lifecycle-boundaries role=boundaries -->
 ## Boundaries
@@ -43,7 +43,7 @@ The fixed number of modeled Cores, PEs, and bounded records is a model capacity.
 <!-- PTO-READER-BLOCK: arch-kernel-lifecycle-example role=example-usage -->
 ## Reading example
 
-Suppose Core 0 launches invocation 7, has one local receive snapshot, and has already admitted a message into Core 1. End or abort first closes new admission. Core 0 must read all valid words, ACK the message, and RELEASE the retained ACKED snapshot before its local bank is quiescent; RELEASE before ACK cancels the claim but leaves the queued packet. The packet in Core 1 is already target-owned and remains available after Core 0 retires; retirement does not wait for Core 1's application ACK.
+Suppose Core 0 launches invocation 7, has one local receive snapshot, and has already admitted a message into Core 1. End or abort first closes ordinary new admissions. Core 0 must read all valid words, ACK the message, and RELEASE the retained ACKED snapshot before its local bank is quiescent; RELEASE before ACK cancels the claim but leaves the queued packet. The packet in Core 1 is already target-owned and remains available after Core 0 retires; retirement does not wait for Core 1's application ACK.
 
 <!-- PTO-READER-BLOCK: arch-kernel-lifecycle-related role=related-owners-navigation -->
 ## Related owners
@@ -264,7 +264,7 @@ begin
     end;
     let invocation = _KernelInvocationByCore[[core]];
     BeginMessageBufferDrain(core);
-    if !MessageBufferCoreQuiescent(core) then
+    if !MessageBufferCoreQuiescent(core) || !HSCBDispatchesComplete(core) then
         return KernelLifecycle_Waiting;
     end;
     if !KernelGMObligationsQuiescent(core, invocation) then

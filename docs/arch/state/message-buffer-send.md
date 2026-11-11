@@ -95,87 +95,100 @@ begin
     _MessageBufferBanks[[index]].receipts[[slot]].message_id_lo = message_id_lo;
 end;
 
-func ExecuteMessageBufferSend(control: Word)
+// NDF-BEGIN: PTO-ARCH-HSCB-TRANSPORT-001
+// ndf: kind=contract level=L1 layer=state status=accepted
+// HSCB (High Speed Config Bus) MUST carry complete MSGB messages from a
+// trusted source endpoint to the addressed destination. A worker BSE to
+// 0xffffffff and a service submission to a worker MUST share the same atomic
+// queue admission, domain checks, identity allocation and backpressure. The
+// payload is opaque to transport. Only a service transaction can originate
+// a message with source endpoint 0xffffffff. No transport ACK implies kernel
+// completion or ordering of separate memory transactions.
+// NDF-END: PTO-ARCH-HSCB-TRANSPORT-001
+func AdmitMessageBufferPacket(source_index: MessageBufferEndpointIndex,
+                              control: Word, capacity_available: boolean) => MessageBufferResult
 begin
-    var message_id_hi = Zeros{PTO_XLEN};
-    if !MessageBufferOperationalAccessPermitted() then return; end;
-    let source_index = CurrentMessageBufferIndex();
-    let replay_slot = FindMessageBufferReplayReceipt(source_index);
-    if replay_slot != PTO_MODEL_MESSAGE_BUFFER_RECEIPTS then
-        ReportMessageBufferReplay(source_index,
-            replay_slot as MessageBufferReceiptIndex, control);
-        return;
-    end;
     let destination = UInt(control[31:0]);
-    let word_count = UInt(control[35:32]);
-    if control[63:36] != Zeros{28} || word_count > 10 ||
-       destination >= PTO_MODEL_MESSAGE_BUFFER_ENDPOINTS then
-        _MessageBufferBanks[[source_index]].tx_result =
-            MessageBufferResult_BadCommand;
-        _MessageBufferBanks[[source_index]].tx_result_valid = TRUE;
-        return;
+    let count = UInt(control[35:32]);
+    if control[63:36] != Zeros{28} || count > PTO_MODEL_MESSAGE_BUFFER_WORDS ||
+       (destination >= PTO_MODEL_MESSAGE_BUFFER_ENDPOINTS &&
+        destination != PTO_HSCB_ENDPOINT) then
+        return MessageBufferResult_BadCommand;
     end;
-    let target_index = destination as MessageBufferEndpointIndex;
-    let target_core = (destination DIVRM
-        (PTO_MODEL_MEMORY_AGENTS * PTO_ACR_COUNT)) as PTOModelCoreIdentity;
-    if _MessageBufferCoreDraining[[_CurrentModelCore]] ||
-       _MessageBufferCoreDraining[[target_core]] ||
-       !_MessageBufferBanks[[target_index]].enabled ||
-       _MessageBufferBanks[[target_index]].bound_invocation == 0 ||
-       !_KernelInvocationActiveByCore[[target_core]] ||
-       _MessageBufferBanks[[target_index]].bound_invocation !=
-           _KernelInvocationByCore[[target_core]] ||
-       _MessageBufferBanks[[target_index]].domain !=
-           _MessageBufferBanks[[source_index]].domain then
-        _MessageBufferBanks[[source_index]].tx_result =
-            MessageBufferResult_BadCommand;
-        _MessageBufferBanks[[source_index]].tx_result_valid = TRUE;
-        return;
+    let target_index = (if destination == PTO_HSCB_ENDPOINT then PTO_HSCB_BANK
+                        else destination) as MessageBufferEndpointIndex;
+    if !_MessageBufferBanks[[target_index]].enabled ||
+       !_MessageBufferBanks[[source_index]].enabled ||
+       _MessageBufferBanks[[target_index]].domain != _MessageBufferBanks[[source_index]].domain then
+        return MessageBufferResult_BadCommand;
     end;
-    if _MessageBufferBanks[[target_index]].queued.valid then
-        _MessageBufferBanks[[source_index]].tx_result = MessageBufferResult_Busy;
-        _MessageBufferBanks[[source_index]].tx_result_valid = TRUE;
-        return;
+    if target_index != PTO_HSCB_BANK then
+        let target_core = (destination DIVRM (PTO_MSGB_WORKERS_PER_CORE * PTO_ACR_COUNT))
+                          as PTOModelCoreIdentity;
+        if _MessageBufferCoreDraining[[target_core]] ||
+           !_KernelInvocationActiveByCore[[target_core]] ||
+           _MessageBufferBanks[[target_index]].bound_invocation !=
+               _KernelInvocationByCore[[target_core]] then
+            return MessageBufferResult_BadCommand;
+        end;
     end;
-    let free_receipt = FindFreeMessageBufferReplayReceipt(source_index);
-    if free_receipt == PTO_MODEL_MESSAGE_BUFFER_RECEIPTS then
-        _MessageBufferBanks[[source_index]].tx_result = MessageBufferResult_Busy;
-        _MessageBufferBanks[[source_index]].tx_result_valid = TRUE;
-        return;
+    if _MessageBufferBanks[[target_index]].queued.valid || !capacity_available then
+        return MessageBufferResult_Busy;
     end;
     if _MessageBufferBanks[[source_index]].transmit_sequence == Ones{PTO_XLEN} then
-        _MessageBufferBanks[[source_index]].tx_result =
-            MessageBufferResult_Exhausted;
-        _MessageBufferBanks[[source_index]].tx_result_valid = TRUE;
-        return;
+        return MessageBufferResult_Exhausted;
     end;
-    _MessageBufferBanks[[source_index]].transmit_sequence =
-        _MessageBufferBanks[[source_index]].transmit_sequence + 1;
-    message_id_hi[63:32] = MessageBufferEndpointWord(source_index)[31:0];
-    message_id_hi[31:0] = _MessageBufferBanks[[source_index]].source_epoch;
-    let message_id_lo = _MessageBufferBanks[[source_index]].transmit_sequence;
+    let id_hi = MessageBufferEndpointWord(source_index)[31:0] ::
+                _MessageBufferBanks[[source_index]].source_epoch;
+    let id_lo = _MessageBufferBanks[[source_index]].transmit_sequence + 1;
+    _MessageBufferBanks[[source_index]].transmit_sequence = id_lo;
+    _MessageBufferBanks[[target_index]].hscb_waiting = FALSE;
     _MessageBufferBanks[[target_index]].queued.valid = TRUE;
+    _MessageBufferBanks[[target_index]].queued.source_invocation =
+        _MessageBufferBanks[[source_index]].bound_invocation;
     _MessageBufferBanks[[target_index]].queued.destination_invocation =
         _MessageBufferBanks[[target_index]].bound_invocation;
     _MessageBufferBanks[[target_index]].queued.control = control;
-    _MessageBufferBanks[[target_index]].queued.word_count =
-        word_count as MessageBufferWordCount;
-    _MessageBufferBanks[[target_index]].queued.message_id_hi = message_id_hi;
-    _MessageBufferBanks[[target_index]].queued.message_id_lo = message_id_lo;
+    _MessageBufferBanks[[target_index]].queued.word_count = count as MessageBufferWordCount;
+    _MessageBufferBanks[[target_index]].queued.message_id_hi = id_hi;
+    _MessageBufferBanks[[target_index]].queued.message_id_lo = id_lo;
     for word = 0 to PTO_MODEL_MESSAGE_BUFFER_WORDS - 1 do
         _MessageBufferBanks[[target_index]].queued.words[[word]] =
-            if word < word_count then
-                _MessageBufferBanks[[source_index]].staging_words[[word]]
+            if word < count then _MessageBufferBanks[[source_index]].staging_words[[word]]
             else Zeros{PTO_XLEN};
     end;
-    CaptureMessageBufferReplayReceipt(source_index,
-        free_receipt as MessageBufferReceiptIndex,
-        control, message_id_hi, message_id_lo);
     _MessageBufferBanks[[source_index]].last_accepted_control = control;
-    _MessageBufferBanks[[source_index]].tx_result = MessageBufferResult_OK;
-    _MessageBufferBanks[[source_index]].tx_result_valid = TRUE;
-    _MessageBufferBanks[[source_index]].tx_message_id_hi = message_id_hi;
-    _MessageBufferBanks[[source_index]].tx_message_id_lo = message_id_lo;
+    _MessageBufferBanks[[source_index]].tx_message_id_hi = id_hi;
+    _MessageBufferBanks[[source_index]].tx_message_id_lo = id_lo;
+    return MessageBufferResult_OK;
+end;
+
+func ExecuteMessageBufferSend(control: Word)
+begin
+    if !MessageBufferOperationalAccessPermitted() then return; end;
+    let source = CurrentMessageBufferIndex();
+    let replay = FindMessageBufferReplayReceipt(source);
+    if replay != PTO_MODEL_MESSAGE_BUFFER_RECEIPTS then
+        ReportMessageBufferReplay(source, replay as MessageBufferReceiptIndex, control);
+        return;
+    end;
+    let free = FindFreeMessageBufferReplayReceipt(source);
+    var result: MessageBufferResult = MessageBufferResult_BadCommand;
+    let draining_done = control == Zeros{64} + (3 << 32) + PTO_HSCB_ENDPOINT &&
+        _MessageBufferBanks[[source]].hscb_running &&
+        _MessageBufferBanks[[source]].staging_words[[0]] == Zeros{64} + 3 &&
+        _MessageBufferBanks[[source]].staging_words[[1]] ==
+            _MessageBufferBanks[[source]].hscb_dispatch_id;
+    if !_MessageBufferCoreDraining[[_CurrentModelCore]] || draining_done then
+        result = AdmitMessageBufferPacket(source, control, free != PTO_MODEL_MESSAGE_BUFFER_RECEIPTS);
+    end;
+    if result == MessageBufferResult_OK then
+        CaptureMessageBufferReplayReceipt(source, free as MessageBufferReceiptIndex, control,
+            _MessageBufferBanks[[source]].tx_message_id_hi,
+            _MessageBufferBanks[[source]].tx_message_id_lo);
+    end;
+    _MessageBufferBanks[[source]].tx_result = result;
+    _MessageBufferBanks[[source]].tx_result_valid = TRUE;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

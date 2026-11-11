@@ -280,6 +280,59 @@
     },
     {
       "executable": false,
+      "id": "PTO-ARCH-HSCB-DISPATCH-001",
+      "owners": [
+        "asl/arch/state/hscb-dispatch.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-STATE-0015"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-STATE-HSCB-DISPATCH-STATIC-001",
+        "PTO-AVS-HSCB-ABORT-LATE-DONE-001",
+        "PTO-AVS-HSCB-DRAIN-DONE-001",
+        "PTO-AVS-HSCB-EIGHT-DISPATCH-001",
+        "PTO-AVS-HSCB-WAIT-EVENT-RACE-001",
+        "PTO-AVS-HSCB-WRONG-DONE-ID-001"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-ARCH-HSCB-ENDPOINT-001",
+      "owners": [
+        "asl/arch/state/message-buffer-state.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-STATE-0015"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-STATE-STATIC-001",
+        "PTO-AVS-HSCB-EIGHT-DISPATCH-001",
+        "PTO-AVS-HSCB-EIGHT-WORKER-ENDPOINTS-001",
+        "PTO-AVS-HSCB-SIBLING-CLAIM-ISOLATION-001",
+        "PTO-AVS-HSCB-WAIT-EVENT-RACE-001"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-ARCH-HSCB-TRANSPORT-001",
+      "owners": [
+        "asl/arch/state/message-buffer-send.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-STATE-0015"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-SEND-STATIC-001",
+        "PTO-AVS-HSCB-ABORT-LATE-DONE-001",
+        "PTO-AVS-HSCB-DRAIN-DONE-001",
+        "PTO-AVS-HSCB-EIGHT-DISPATCH-001",
+        "PTO-AVS-HSCB-SIBLING-CLAIM-ISOLATION-001",
+        "PTO-AVS-HSCB-WRONG-DONE-ID-001"
+      ]
+    },
+    {
+      "executable": false,
       "id": "PTO-ARCH-KERNEL-LIFECYCLE-001",
       "owners": [
         "asl/arch/state/kernel-lifecycle.asl"
@@ -21765,11 +21818,12 @@
     "asl/arch/programming-model/tile-registers.asl": "59452d3b3b708dc43f6ec4f930b1c7153d6d5247a93119669527bd29b26ec99e",
     "asl/arch/state/core-synchronization.asl": "a9f34342e9982ea84c4ebf797b32745807792a833c95a5d6e8d66157b66aeb53",
     "asl/arch/state/definedness.asl": "f68778534d67e736f701f8e24e03f27a018f3eabcec1421a6b33856030874ad1",
-    "asl/arch/state/kernel-lifecycle.asl": "d7109ef8b6b9b48cf5f96fe639a396f81c16bb2a1bfdc36dcc6a3b421059fddc",
+    "asl/arch/state/hscb-dispatch.asl": "c039213224347af12de92e69f4b2844898d3ce66ba2fe87da6dc6d256177a5c1",
+    "asl/arch/state/kernel-lifecycle.asl": "5b8a0296092b575168c9e99ae0211775746339636498c1cd99e4287889b00143",
     "asl/arch/state/local-payload-generation.asl": "9e8b044814d0542eee5d21bfc995fe8d570e1e8d4c3651c823e68831533cae62",
-    "asl/arch/state/message-buffer-send.asl": "7344b6bc7c1a3755b3a315708070da1d038fbe6bee3f76c69448f15a90960686",
-    "asl/arch/state/message-buffer-state.asl": "94aa35170943df2ee5db987462164747f5055b5051f2986b8623b525e927c073",
-    "asl/arch/state/message-buffer.asl": "1192f5532cd9007925b07b6e03c3b8b1fe33db22c18dc443622c5fac2f5d37ac",
+    "asl/arch/state/message-buffer-send.asl": "7e70feede397b5e4890ccba1e3880b7360e098421ba26d371354d2e461a1bd6e",
+    "asl/arch/state/message-buffer-state.asl": "b3aa256f3e47579bd6121ce6677e1c7a1e478009c020d143137eb0a6ba353def",
+    "asl/arch/state/message-buffer.asl": "4b07751b7aa17aeaa86f5727aa149d67cebbfc1e3b47a21bbeaabaaa067fbc8d",
     "asl/arch/state/numeric-status.asl": "3d3fe1709c7e2903bca96d50e9671a6a484c442ff08ce4a8340168cdb38ac6d9",
     "asl/arch/state/pe-execution-context.asl": "76b8a22396b0441f511c9061c9037ce17d849245e26ea2044c89075d4926b40a",
     "asl/arch/state/program-counter.asl": "3b5f7bad14ca62af5d776ae551ddf32b4b9f43fe25d96ce0fd31a59b44e1e845",
@@ -22398,7 +22452,7 @@
     "asl/scalar/model/dispatch/bru.asl": "ff1616fb96e8fa5f6add13f2ce39c54f985d38b558510370dee134cb09d845ee",
     "asl/scalar/model/dispatch/decode.asl": "4a8ebb42308e5fcf27d70c4fbbe97a3544ed3d4f3fc0044dc294fc9d27c495e2",
     "asl/scalar/model/dispatch/fsu.asl": "68ce7c4ba391f84e581110ab55358004586a9d54e43b1a06eef1fe30455ec8c5",
-    "asl/scalar/model/dispatch/sys.asl": "96dca803a1ca4fbc2b37bc4b253b3d6f32bc67b784123d9f1a0d101e27fd941a",
+    "asl/scalar/model/dispatch/sys.asl": "03cbb4d84f10fd3a780c4c70d9b417a6c768790d3e1cb598d78ac86dfd0d274f",
     "asl/scalar/model/dispatch/top-level.asl": "595e7805a9b0a5cb3c0691373b161ea906a8044339ed3dcadec08065d4f118a7",
     "asl/scalar/model/fsu/arithmetic.asl": "caf8abe955be90b30655112166b5844e02e575cbbc9e447a2ce84c0284b56f96",
     "asl/scalar/model/fsu/reference-quantization.asl": "4362fd87078b965d2e1730608497f0711da18a819a918e349c60952ce5c4fe5b",
@@ -22721,11 +22775,12 @@
     "docs/arch/programming-model/tile-registers.md": "93e2cffab8050b30e112d3371f37e950e9bff9e8373cb06172cf6cab51a501ef",
     "docs/arch/state/core-synchronization.md": "213103de8013ffa95f1f545ccacbf5d6659c1c4f482e3da0d982c74c8c01c390",
     "docs/arch/state/definedness.md": "0c592e7785591408293173237e5ae537b04d33f1c15de2a02985605e8a0b8892",
-    "docs/arch/state/kernel-lifecycle.md": "c20340d654296419f171c69ad66f6cc52b6e1aa6d013fc8a640fd35285fd8d8c",
+    "docs/arch/state/hscb-dispatch.md": "6afbed4d1e03b907060e3a88e86962ae43ce49e1dc3ba81184a8a501d3ad6436",
+    "docs/arch/state/kernel-lifecycle.md": "e3aa7002a0c6a5047e8c7308c047c3a7345ae979fe86b7c9d624a22ed03867b3",
     "docs/arch/state/local-payload-generation.md": "e2c7cf72c098774fb518d0f8168a651f9b60f2d220009281adf3b0a95418708d",
-    "docs/arch/state/message-buffer-send.md": "6a4ec55c25c5a9ca48302d22c6080f86370ce9c411aca1bf21c419b5755f5f79",
-    "docs/arch/state/message-buffer-state.md": "7e457072ce123b9f922d5a720593f60b92170e47fb024a643460f2ba4a026cea",
-    "docs/arch/state/message-buffer.md": "26fe09310ebdfd016532d8cb5f9f678364b74d678ee3d96071437508e4c6a7f8",
+    "docs/arch/state/message-buffer-send.md": "6016f160e1c7a1f0ae7a1ffea4386c3f9c4e49dec91c07a851f1931fe6b826a6",
+    "docs/arch/state/message-buffer-state.md": "5cc72e4072d4bf76b319f07a5853ed7c6996e55cf68ec3eeed6e02f0c5164626",
+    "docs/arch/state/message-buffer.md": "c08f8cdbe723c751b3babe06f8baf5c9bec123e01661f67c96dcbffdedae26cd",
     "docs/arch/state/numeric-status.md": "2bc1485eab64147a553ddb269fb3e520dd0b63dc7c31614996dc32c53b57d06f",
     "docs/arch/state/pe-execution-context.md": "69586d85be83c5bec6067eb1a4e569636bf2d132d2becc4fff94a6cb6507b8a9",
     "docs/arch/state/program-counter.md": "4a404e9aef444c6e1ea3a1cbb273eeafaee3d2f00197613718dcd3b305375140",
@@ -23354,7 +23409,7 @@
     "docs/scalar/model/dispatch/bru.md": "d459fa63e14ff3cf03b3b3d8a848162996a285e5a3191924ca976e9f2103466d",
     "docs/scalar/model/dispatch/decode.md": "fcbf1f4da3cf9b5e802ed363573a50dbdb54230d30bee5229f3cf36c1bcefe4f",
     "docs/scalar/model/dispatch/fsu.md": "059e606c33ccd0ad46ff7eee765e9efa33b5c435b9b9eb073b3fcd86769d4e65",
-    "docs/scalar/model/dispatch/sys.md": "d13bec7016fb48894a58d06807c867e736d65d3cfd02dbba7bbc84a407e44099",
+    "docs/scalar/model/dispatch/sys.md": "fb5c65863ffd13bce7091c6589fae61a39d4fe575070d66e00c654ead3d580d3",
     "docs/scalar/model/dispatch/top-level.md": "3b172745dcf4a978f919d3fb412cfae3cfe8a1caede2dd71d2997dd1078a4a7b",
     "docs/scalar/model/fsu/arithmetic.md": "743fdd2546ae42bf8df0ea277e20faf0312e519189bbbbf95559be92871059ec",
     "docs/scalar/model/fsu/reference-quantization.md": "331f1b3b97ceb5f26a4807bb6226afeabae9091e8a5ad794b990d9d2c442df6d",
@@ -23617,7 +23672,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "c1332aa895d5a70170b6f193674ad97371cbdd4314f5336de4ce4eb703d4d484",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "4fdb0facff519fecde8ba33ed966ed54c04b04c3f5f344024b2ce1a859434d67",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "c2bba4aad8073962fc18443147a53b3492eee9629f7a5975591087d1d8834e67",
-    "spec/evidence/adr-index.json": "48605ded24607c99fd2a18c978aa2ede4428ecc5f30a57a67b06ee9c304934a2",
+    "spec/evidence/adr-index.json": "aad5d7bb2b9ed1d6c4bb8fd39df9b7866ec9977b2de4281b99f0d03b724b3b50",
     "spec/evidence/instruction-contract-closure.json": "6d9d1c551f0ce9feeb3d55a4b908aeb936fa56a313491871e9f7136d065a9402",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6c18bfdff0279b6d4fbaf3cb3c8e1ee111b4d5e82e1688136b88be6fa7902ba3",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -23781,6 +23836,14 @@
     "tests/asl/arch/state/core-synchronization/arch-state-sync-core-site-mismatch-001.asl": "78404d5a519eacfcf95c45e6339b04c616e88a31610f6694bf0aa2a18c700c8b",
     "tests/asl/arch/state/core-synchronization/arch-static-core-synchronization-contract-001.asl": "b2ccbb64d209b65c1442191cc4b968b27c395b851f5456a6cd7ba83272e3e72f",
     "tests/asl/arch/state/definedness/arch-static-definedness-contract-001.asl": "5389abfd59ea0e176acc50273c7920ead6512702a2188556c41a1c8384a9216d",
+    "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-abort-late-done-001.asl": "217df8d61432897658051e79ac991d1823a59394999f1a203d12792da07c7e68",
+    "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-drain-done-001.asl": "113101c8f0db5a99d9658416adf7872352329bff9df17513047157e1e493625c",
+    "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-eight-dispatch-001.asl": "ca448eaff41d88647fe2a11130a972a0a999a092d591a36f98e912fafeb615fa",
+    "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-eight-worker-endpoints-001.asl": "0a9e65474c8472068b18ce91b4b29567aae104b00b7d6351b05301bae316720c",
+    "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-sibling-claim-isolation-001.asl": "69b5e373692222f4361734e4ca9803fcb3a1b2714ba2e6b5063b6e3a6eca5180",
+    "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-wait-event-race-001.asl": "74910c928f038e90d91d9e3b47042aceac44459f67a93acb7793362aa490bdd3",
+    "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-wrong-done-id-001.asl": "cd11bd9914a2d3165accb0b1d3374dc47e4ef027c86b94d6db99163a79d94df9",
+    "tests/asl/arch/state/hscb-dispatch/arch-static-hscb-dispatch-contract-001.asl": "fc737766f32567adbe271e7af22b3dc43a5bca287e0f45ad25a51bde23386c7f",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-lifecycle-delayed-tstore-001.asl": "426c36b433a7bdbba86db992196fb93138cdadd3696aedef7c65e3baf6f09876",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-lifecycle-fresh-launch-retires-trap-frames-003.asl": "4f05de67468dec76b0c018f574cecaba23e07e02881a6fa536d51b4c87544f7d",
     "tests/asl/arch/state/kernel-lifecycle/arch-state-kernel-lifecycle-tstore-quiescence-002.asl": "39e7364b068a4786adecbb8d71eb80ffc8f412a626bc56214967407a16cb0e24",
@@ -23799,21 +23862,21 @@
     "tests/asl/arch/state/message-buffer-send/arch-bound-msgb-send-sequence-exhaustion-001.asl": "f689891dd3967ca70398b70f1ae74e71f8aa2e6e0abf9d430f26f744456d7612",
     "tests/asl/arch/state/message-buffer-send/arch-state-msgb-send-disable-reenable-replay-001.asl": "e02c1b54eb83e165733c86129061ca15860b45552cdd3dda969782263e1a7b1d",
     "tests/asl/arch/state/message-buffer-send/arch-state-msgb-send-history-replay-001.asl": "13c15c7d42a2b1a23f72867e58f4ce57ae6012ce50249d805ddc5cf69ce1f708",
-    "tests/asl/arch/state/message-buffer-send/arch-static-message-buffer-send-contract-001.asl": "c1293a39594794942c1fb8cf05773b3622275c9e763ddf6e7b3b9551b42926bc",
+    "tests/asl/arch/state/message-buffer-send/arch-static-message-buffer-send-contract-001.asl": "2aeba5df4b5e162299defcfa5ec3f7f058381cf8971424d6a524a9c5d866da38",
     "tests/asl/arch/state/message-buffer-state/arch-state-msgb-reset-001.asl": "8b93744feb85a5ab71dbc42e6e5e765a854bd29bc5488b7902e34ccc47df0d1f",
     "tests/asl/arch/state/message-buffer-state/arch-state-msgb-retire-relaunch-scrub-001.asl": "8ca4b1f5fbe374d46fdd544ca451e14e2a503de85101d425421ee002e7027df1",
-    "tests/asl/arch/state/message-buffer-state/arch-static-message-buffer-state-contract-001.asl": "d2ba0929b2b86a1e33c3a779666696a3c1262827e47e803cb462580ee8b108f8",
+    "tests/asl/arch/state/message-buffer-state/arch-static-message-buffer-state-contract-001.asl": "432ee3e460ba8b9201e7602d01e208b4c554920329345f159964e83bf2ca1483",
     "tests/asl/arch/state/message-buffer/arch-bound-msgb-claim-sequence-exhaustion-001.asl": "e31c0a76e4792d0ba12dd6d5bb2e6b75b3bacbe9e346702bced9021a8624fe17",
     "tests/asl/arch/state/message-buffer/arch-fault-msgb-ssrget-precise-001.asl": "8a714a18869061ce7782e0319cdd00f483f5c9faed0a145a972b84c34c1dd9eb",
     "tests/asl/arch/state/message-buffer/arch-state-msgb-cancel-reclaim-token-001.asl": "d571756f39e33f06d8942566d4013717295f792bf3156a9450d6164d57cef3b8",
     "tests/asl/arch/state/message-buffer/arch-state-msgb-context-isolation-001.asl": "fd57ddada9a0762f39b8aebc77672fc797ac01a19156e545995a6b1cf9b51d20",
-    "tests/asl/arch/state/message-buffer/arch-state-msgb-cross-core-source-end-001.asl": "f4b76f86130433aae4bb4565c0c58b040e95584dc79886f0edd513cfd5876477",
+    "tests/asl/arch/state/message-buffer/arch-state-msgb-cross-core-source-end-001.asl": "f0d9b1f4e6f77a06bba983ba778e8ce0898c4b0fe95f695c3dc7c0e40dec2b68",
     "tests/asl/arch/state/message-buffer/arch-state-msgb-duplicate-ack-new-claim-001.asl": "eca6e6a7611b1ca2c1d9b208612b42f5a0d5ff8c02654d2051a2e21aa790cd17",
     "tests/asl/arch/state/message-buffer/arch-state-msgb-lifecycle-drain-001.asl": "3113894707bb969033d79c83f9503803be52dc8c10469ee09f52d57bb9e483f1",
     "tests/asl/arch/state/message-buffer/arch-state-msgb-max-payload-identity-001.asl": "75f894c9eac3a1991711792dec28ebf87bcb5fd095ca27bb8549a00c1dce9f11",
     "tests/asl/arch/state/message-buffer/arch-state-msgb-partial-read-ack-001.asl": "4fe4c612af94749be04c9c11e878b9bc8cf3a68a9dee979cc9d8d42e91bde2dd",
     "tests/asl/arch/state/message-buffer/arch-state-msgb-ssrget-blocked-001.asl": "efdb165aa6fa5319e19d69805f3ccfe51a44c6c4da661d3694f3e1517d594fd4",
-    "tests/asl/arch/state/message-buffer/arch-state-msgb-ssrset-config-blocked-001.asl": "0e7e386f4a62c8870b305e4a72ed73f7811368e9c44b52b4eb95aebdef584422",
+    "tests/asl/arch/state/message-buffer/arch-state-msgb-ssrset-config-blocked-001.asl": "dade8323ff6128be4ec337f270b4caf7914f6a55b451471161f07bcbf97ed21d",
     "tests/asl/arch/state/message-buffer/arch-state-msgb-trap-ack-retention-001.asl": "e35a6baf388904dc69283331715fabf87fa9b1082393330e27fcc9b280250d51",
     "tests/asl/arch/state/message-buffer/arch-static-message-buffer-contract-001.asl": "0d424bb9badf77fec3d9494070a6a6ca4a23e05164fb29a97ba4d438ad477edd",
     "tests/asl/arch/state/numeric-status/arch-state-numeric-status-001.asl": "73c82a0e416a7635964e18f0b52a0330df6edcb3292f9eb65937b9ace7d9948d",
@@ -28100,19 +28163,19 @@
     "tests/asl/tile/tile-scalar-and-immediate/logical/TXORS/tile-static-txors-contract-001.asl": "1307d5083cb3ef94263b450f98180653a80c0648f339b2ace7d13ad91b5f29c5"
   },
   "summary": {
-    "documentation_page_count": 956,
+    "documentation_page_count": 957,
     "executable_requirement_count": 677,
     "mnemonic_count": 671,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 1142,
+    "requirement_count": 1145,
     "status": "closed",
-    "test_count": 4479,
+    "test_count": 4487,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
     "uncovered_units": [],
-    "unit_count": 956
+    "unit_count": 957
   },
   "tests": [
     {
@@ -37213,6 +37276,16 @@
       "source": "asl/arch/state/definedness.asl"
     },
     {
+      "id": "PTO-AVS-ARCH-STATE-HSCB-DISPATCH-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/arch/state/hscb-dispatch/arch-static-hscb-dispatch-contract-001.asl",
+      "requirements": [
+        "PTO-ARCH-HSCB-DISPATCH-001"
+      ],
+      "sha256": "fc737766f32567adbe271e7af22b3dc43a5bca287e0f45ad25a51bde23386c7f",
+      "source": "asl/arch/state/hscb-dispatch.asl"
+    },
+    {
       "id": "PTO-AVS-ARCH-STATE-KERNEL-LIFECYCLE-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/arch/state/kernel-lifecycle/arch-static-kernel-lifecycle-contract-001.asl",
@@ -37238,9 +37311,10 @@
       "kind": "static-invariant",
       "path": "tests/asl/arch/state/message-buffer-send/arch-static-message-buffer-send-contract-001.asl",
       "requirements": [
-        "PTO-ARCH-MSGB-SEND-001"
+        "PTO-ARCH-MSGB-SEND-001",
+        "PTO-ARCH-HSCB-TRANSPORT-001"
       ],
-      "sha256": "c1293a39594794942c1fb8cf05773b3622275c9e763ddf6e7b3b9551b42926bc",
+      "sha256": "2aeba5df4b5e162299defcfa5ec3f7f058381cf8971424d6a524a9c5d866da38",
       "source": "asl/arch/state/message-buffer-send.asl"
     },
     {
@@ -37249,9 +37323,10 @@
       "path": "tests/asl/arch/state/message-buffer-state/arch-static-message-buffer-state-contract-001.asl",
       "requirements": [
         "PTO-ARCH-MSGB-IDENTITY-001",
-        "PTO-ARCH-MSGB-STATE-001"
+        "PTO-ARCH-MSGB-STATE-001",
+        "PTO-ARCH-HSCB-ENDPOINT-001"
       ],
-      "sha256": "d2ba0929b2b86a1e33c3a779666696a3c1262827e47e803cb462580ee8b108f8",
+      "sha256": "432ee3e460ba8b9201e7602d01e208b4c554920329345f159964e83bf2ca1483",
       "source": "asl/arch/state/message-buffer-state.asl"
     },
     {
@@ -54120,6 +54195,83 @@
       "source": "asl/scalar/fsu/UCVTF.asl"
     },
     {
+      "id": "PTO-AVS-HSCB-ABORT-LATE-DONE-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-abort-late-done-001.asl",
+      "requirements": [
+        "PTO-ARCH-HSCB-DISPATCH-001",
+        "PTO-ARCH-HSCB-TRANSPORT-001"
+      ],
+      "sha256": "217df8d61432897658051e79ac991d1823a59394999f1a203d12792da07c7e68",
+      "source": "asl/arch/state/hscb-dispatch.asl"
+    },
+    {
+      "id": "PTO-AVS-HSCB-DRAIN-DONE-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-drain-done-001.asl",
+      "requirements": [
+        "PTO-ARCH-HSCB-DISPATCH-001",
+        "PTO-ARCH-HSCB-TRANSPORT-001"
+      ],
+      "sha256": "113101c8f0db5a99d9658416adf7872352329bff9df17513047157e1e493625c",
+      "source": "asl/arch/state/hscb-dispatch.asl"
+    },
+    {
+      "id": "PTO-AVS-HSCB-EIGHT-DISPATCH-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-eight-dispatch-001.asl",
+      "requirements": [
+        "PTO-ARCH-HSCB-ENDPOINT-001",
+        "PTO-ARCH-HSCB-TRANSPORT-001",
+        "PTO-ARCH-HSCB-DISPATCH-001"
+      ],
+      "sha256": "ca448eaff41d88647fe2a11130a972a0a999a092d591a36f98e912fafeb615fa",
+      "source": "asl/arch/state/hscb-dispatch.asl"
+    },
+    {
+      "id": "PTO-AVS-HSCB-EIGHT-WORKER-ENDPOINTS-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-eight-worker-endpoints-001.asl",
+      "requirements": [
+        "PTO-ARCH-HSCB-ENDPOINT-001"
+      ],
+      "sha256": "0a9e65474c8472068b18ce91b4b29567aae104b00b7d6351b05301bae316720c",
+      "source": "asl/arch/state/hscb-dispatch.asl"
+    },
+    {
+      "id": "PTO-AVS-HSCB-SIBLING-CLAIM-ISOLATION-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-sibling-claim-isolation-001.asl",
+      "requirements": [
+        "PTO-ARCH-HSCB-ENDPOINT-001",
+        "PTO-ARCH-HSCB-TRANSPORT-001"
+      ],
+      "sha256": "69b5e373692222f4361734e4ca9803fcb3a1b2714ba2e6b5063b6e3a6eca5180",
+      "source": "asl/arch/state/hscb-dispatch.asl"
+    },
+    {
+      "id": "PTO-AVS-HSCB-WAIT-EVENT-RACE-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-wait-event-race-001.asl",
+      "requirements": [
+        "PTO-ARCH-HSCB-DISPATCH-001",
+        "PTO-ARCH-HSCB-ENDPOINT-001"
+      ],
+      "sha256": "74910c928f038e90d91d9e3b47042aceac44459f67a93acb7793362aa490bdd3",
+      "source": "asl/arch/state/hscb-dispatch.asl"
+    },
+    {
+      "id": "PTO-AVS-HSCB-WRONG-DONE-ID-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-wrong-done-id-001.asl",
+      "requirements": [
+        "PTO-ARCH-HSCB-DISPATCH-001",
+        "PTO-ARCH-HSCB-TRANSPORT-001"
+      ],
+      "sha256": "cd11bd9914a2d3165accb0b1d3374dc47e4ef027c86b94d6db99163a79d94df9",
+      "source": "asl/arch/state/hscb-dispatch.asl"
+    },
+    {
       "id": "PTO-AVS-MSGB-CANCEL-RECLAIM-TOKEN-001",
       "kind": "state-transition",
       "path": "tests/asl/arch/state/message-buffer/arch-state-msgb-cancel-reclaim-token-001.asl",
@@ -54171,7 +54323,7 @@
         "PTO-ARCH-MSGB-IDENTITY-001",
         "PTO-ARCH-KERNEL-LIFECYCLE-001"
       ],
-      "sha256": "f4b76f86130433aae4bb4565c0c58b040e95584dc79886f0edd513cfd5876477",
+      "sha256": "f0d9b1f4e6f77a06bba983ba778e8ce0898c4b0fe95f695c3dc7c0e40dec2b68",
       "source": "asl/arch/state/message-buffer.asl"
     },
     {
@@ -54319,7 +54471,7 @@
         "PTO-ARCH-MSGB-SEND-001",
         "PTO-ARCH-GM-OBLIGATIONS-001"
       ],
-      "sha256": "0e7e386f4a62c8870b305e4a72ed73f7811368e9c44b52b4eb95aebdef584422",
+      "sha256": "dade8323ff6128be4ec337f270b4caf7914f6a55b451471161f07bcbf97ed21d",
       "source": "asl/arch/state/message-buffer.asl"
     },
     {
@@ -75466,6 +75618,39 @@
     {
       "classification": [
         "state",
+        "hscb-dispatch"
+      ],
+      "documentation": "docs/arch/state/hscb-dispatch.md",
+      "id": "PTO-ARCH-STATE-HSCB-DISPATCH",
+      "mnemonic": null,
+      "readiness_subjects": [
+        "ADR-STATE-0015"
+      ],
+      "semantic_tests": [
+        "PTO-AVS-HSCB-ABORT-LATE-DONE-001",
+        "PTO-AVS-HSCB-DRAIN-DONE-001",
+        "PTO-AVS-HSCB-EIGHT-DISPATCH-001",
+        "PTO-AVS-HSCB-EIGHT-WORKER-ENDPOINTS-001",
+        "PTO-AVS-HSCB-SIBLING-CLAIM-ISOLATION-001",
+        "PTO-AVS-HSCB-WAIT-EVENT-RACE-001",
+        "PTO-AVS-HSCB-WRONG-DONE-ID-001"
+      ],
+      "source": "asl/arch/state/hscb-dispatch.asl",
+      "surface": "arch",
+      "tests": [
+        "PTO-AVS-ARCH-STATE-HSCB-DISPATCH-STATIC-001",
+        "PTO-AVS-HSCB-ABORT-LATE-DONE-001",
+        "PTO-AVS-HSCB-DRAIN-DONE-001",
+        "PTO-AVS-HSCB-EIGHT-DISPATCH-001",
+        "PTO-AVS-HSCB-EIGHT-WORKER-ENDPOINTS-001",
+        "PTO-AVS-HSCB-SIBLING-CLAIM-ISOLATION-001",
+        "PTO-AVS-HSCB-WAIT-EVENT-RACE-001",
+        "PTO-AVS-HSCB-WRONG-DONE-ID-001"
+      ]
+    },
+    {
+      "classification": [
+        "state",
         "kernel-lifecycle"
       ],
       "documentation": "docs/arch/state/kernel-lifecycle.md",
@@ -75537,7 +75722,8 @@
       "id": "PTO-ARCH-STATE-MESSAGE-BUFFER-SEND",
       "mnemonic": null,
       "readiness_subjects": [
-        "ADR-STATE-0014"
+        "ADR-STATE-0014",
+        "ADR-STATE-0015"
       ],
       "semantic_tests": [
         "PTO-AVS-MSGB-SEND-DISABLE-REENABLE-REPLAY-001",
@@ -75564,7 +75750,8 @@
       "id": "PTO-ARCH-STATE-MESSAGE-BUFFER-STATE",
       "mnemonic": null,
       "readiness_subjects": [
-        "ADR-STATE-0014"
+        "ADR-STATE-0014",
+        "ADR-STATE-0015"
       ],
       "semantic_tests": [
         "PTO-AVS-MSGB-RESET-001",

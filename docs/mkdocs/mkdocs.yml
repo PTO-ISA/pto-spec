@@ -88,6 +88,7 @@ nav:
       - State:
           - Core Synchronization: arch/state/core-synchronization.md
           - Definedness: arch/state/definedness.md
+          - HSCB Dispatch: arch/state/hscb-dispatch.md
           - Kernel Lifecycle: arch/state/kernel-lifecycle.md
           - Local Payload Generation: arch/state/local-payload-generation.md
           - Message Buffer Send: arch/state/message-buffer-send.md
@@ -1086,6 +1087,7 @@ nav:
               - "ADR-STATE-0012: Uniform instruction-attempt status and fault isolation": status/decisions/ADR-STATE-0012-uniform-instruction-attempt-status.md
               - "ADR-STATE-0013: Scalar SYS totality and PTO-v0 profile boundaries": status/decisions/ADR-STATE-0013-scalar-sys-totality-and-profile-boundaries.md
               - "ADR-STATE-0014: MSGB register and ACK interface": status/decisions/ADR-STATE-0014-msgb-registers-and-ack.md
+              - "ADR-STATE-0015: High Speed Config Bus and Message Buffer dispatch": status/decisions/ADR-STATE-0015-hscb-message-dispatch.md
           - MEM:
               - "ADR-MEM-0001: PTO total store order candidate model": status/decisions/ADR-MEM-0001-pto-total-store-order.md
               - "ADR-MEM-0002: Production memory events and atomic corners": status/decisions/ADR-MEM-0002-production-memory-events-and-atomic-corners.md
