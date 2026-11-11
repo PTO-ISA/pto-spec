@@ -292,6 +292,7 @@ class NdfTest(unittest.TestCase):
                 "_MessageBufferBanks",
                 "_MessageBufferConfigSelectors",
                 "_MessageBufferCoreDraining",
+                "_MessageBufferThreads",
             ),
             "PTO-STATE-ARCH-TRAP-CONTEXT": (
                 "_ACRTrapAsynchronous",

@@ -87,6 +87,42 @@
         "en": "The assigned register family defines split staging and snapshot access, precise ACK fields, and privileged context configuration.",
         "zh-CN": "新分配寄存器族定义暂存与快照的分离访问、精确 ACK 字段及特权上下文配置。"
       }
+    },
+    {
+      "id": "PTO-ARCH-HSCB-ENDPOINT-001",
+      "source_path": "asl/arch/state/message-buffer-state.asl",
+      "title": {
+        "en": "SMT worker endpoints",
+        "zh-CN": "SMT 工作线程端点"
+      },
+      "summary": {
+        "en": "The four-PE reference core distinguishes both hardware threads and their ACR-qualified mailbox banks.",
+        "zh-CN": "四 PE 参考核心区分每个 PE 上的两个硬件线程及其按 ACR 隔离的邮箱。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-HSCB-TRANSPORT-001",
+      "source_path": "asl/arch/state/message-buffer-send.asl",
+      "title": {
+        "en": "High Speed Config Bus message delivery",
+        "zh-CN": "高速配置总线消息投递"
+      },
+      "summary": {
+        "en": "The reserved scheduler service endpoint participates in atomic delivery with an authenticated transport source identity.",
+        "zh-CN": "调度服务端点参与消息的原子接纳，接收方从传输记录中读取来源身份。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-HSCB-DISPATCH-001",
+      "source_path": "asl/arch/state/hscb-dispatch.asl",
+      "title": {
+        "en": "Resident worker dispatch and completion",
+        "zh-CN": "常驻工作线程调度与完成"
+      },
+      "summary": {
+        "en": "The scheduler associates READY, LAUNCH and DONE with the individual worker and outstanding dispatch.",
+        "zh-CN": "调度器按工作线程和当前调度任务关联 READY、LAUNCH 和 DONE。"
+      }
     }
   ]
 }
