@@ -257,6 +257,7 @@
         "PTO-AVS-ARCH-GM-OBLIGATION-TSTORE-QUIESCENCE-002",
         "PTO-AVS-ARCH-GM-PROGRESS-LIVE-HANDLER-CONTEXT-003",
         "PTO-AVS-ARCH-MEMORY-MODEL-GM-OBLIGATIONS-STATIC-001",
+        "PTO-AVS-ARCH-SCOPED-SCALAR-OBLIGATION-RETRY-001",
         "PTO-AVS-ARCH-TSTORE-ATOMIC-ADMISSION-001",
         "PTO-AVS-ARCH-TSTORE-ATOMIC-BSTART-PREDECESSOR-001",
         "PTO-AVS-ARCH-TSTORE-ATOMIC-CANCEL-001",
@@ -369,6 +370,7 @@
         "PTO-AVS-ARCH-MEMORY-MODEL-MEMORY-EVENTS-STATIC-001",
         "PTO-AVS-ARCH-ORDER-SHAREABILITY-DOMAINS-001",
         "PTO-AVS-ARCH-RC-ATOMIC-FENCE-ORDER-002",
+        "PTO-AVS-ARCH-SCOPED-SCALAR-CROSS-PATH-001",
         "PTO-AVS-ARCH-SCOPED-SCALAR-LRSC-FAULT-001",
         "PTO-AVS-ARCH-TSTORE-ATOMIC-INTERLEAVED-001",
         "PTO-AVS-TILE-TSTORE-ATOMIC-OVERLAP-001",
@@ -610,6 +612,7 @@
         "PTO-AVS-ARCH-SCOPED-SCALAR-CARRIER-EXECUTION-001",
         "PTO-AVS-ARCH-SCOPED-SCALAR-CARRIER-REJECT-001",
         "PTO-AVS-ARCH-SCOPED-SCALAR-CATALOG-WITNESSES-001",
+        "PTO-AVS-ARCH-SCOPED-SCALAR-CROSS-PATH-001",
         "PTO-AVS-ARCH-TILE-EVENTS-ORDER-003"
       ]
     },
@@ -630,6 +633,7 @@
         "PTO-AVS-ARCH-GM-PROGRESS-LIVE-HANDLER-CONTEXT-003",
         "PTO-AVS-ARCH-KERNEL-LIFECYCLE-FRESH-LAUNCH-TRAP-003",
         "PTO-AVS-ARCH-MEMORY-MODEL-FAULT-PRECISION-STATIC-001",
+        "PTO-AVS-ARCH-SCOPED-SCALAR-OBLIGATION-RETRY-001",
         "PTO-AVS-BLOCK-LOCAL-GENERATION-RECOVERY-ISOLATION-001",
         "PTO-AVS-BLOCK-SHARED-COMPLETION-SOURCE-MUTATION-021",
         "PTO-AVS-BLOCK-SHARED-COMPLETION-TLOAD-017",
@@ -9744,6 +9748,7 @@
         "PTO-AVS-AGU-HL-LDIP-EXEC-001",
         "PTO-AVS-AGU-HL-LDIP-FAULT-001",
         "PTO-AVS-ARCH-SCOPED-SCALAR-AMO-PAIR-EXECUTION-001",
+        "PTO-AVS-ARCH-SCOPED-SCALAR-OBLIGATION-RETRY-001",
         "PTO-AVS-SCALAR-HL-LDIP-DECODE-001"
       ]
     },
@@ -12690,6 +12695,7 @@
         "PTO-AVS-AGU-LW-BOUND-001",
         "PTO-AVS-AGU-LW-EXEC-001",
         "PTO-AVS-AGU-LW-FAULT-001",
+        "PTO-AVS-ARCH-SCOPED-SCALAR-OBLIGATION-RETRY-001",
         "PTO-AVS-SCALAR-LW-DECODE-001"
       ]
     },
@@ -15089,6 +15095,7 @@
         "ADR-TILE-0013"
       ],
       "tests": [
+        "PTO-AVS-ARCH-SCOPED-SCALAR-CROSS-PATH-001",
         "PTO-AVS-BLOCK-MSCATTER-FAULT-001",
         "PTO-AVS-BLOCK-MSCATTER-PACKED-001",
         "PTO-AVS-BLOCK-MSCATTER-SCATTER-001",
@@ -15961,6 +15968,7 @@
         "ADR-TILE-0013"
       ],
       "tests": [
+        "PTO-AVS-ARCH-SCOPED-SCALAR-CROSS-PATH-001",
         "PTO-AVS-BLOCK-B-IOS-CAPACITY-003",
         "PTO-AVS-BLOCK-B-IOS-CONSUMER-001",
         "PTO-AVS-BLOCK-B-IOT-CAPACITY-003",
@@ -16849,6 +16857,7 @@
         "ADR-TILE-0013"
       ],
       "tests": [
+        "PTO-AVS-ARCH-SCOPED-SCALAR-CROSS-PATH-001",
         "PTO-AVS-BLOCK-SHARED-TLSU-BYTE-STRIDE-EXECUTION-007",
         "PTO-AVS-BLOCK-SHARED-TSTORE-FOURSTREAM-009",
         "PTO-AVS-BLOCK-SHARED-TSTORE-MASK-LEGALITY-001",
@@ -17669,6 +17678,7 @@
         "PTO-AVS-ARCH-SCOPED-SCALAR-AMO-PAIR-EXECUTION-001",
         "PTO-AVS-ARCH-SCOPED-SCALAR-CARRIER-EXECUTION-001",
         "PTO-AVS-ARCH-SCOPED-SCALAR-LRSC-FAULT-001",
+        "PTO-AVS-ARCH-SCOPED-SCALAR-OBLIGATION-RETRY-001",
         "PTO-AVS-SCALAR-SYNC-CORE-ENVELOPE-REJECT-001"
       ]
     },
@@ -17724,7 +17734,9 @@
         "PTO-AVS-ARCH-SCOPED-SCALAR-CARRIER-EXECUTION-001",
         "PTO-AVS-ARCH-SCOPED-SCALAR-CARRIER-REJECT-001",
         "PTO-AVS-ARCH-SCOPED-SCALAR-CATALOG-WITNESSES-001",
+        "PTO-AVS-ARCH-SCOPED-SCALAR-CROSS-PATH-001",
         "PTO-AVS-ARCH-SCOPED-SCALAR-LRSC-FAULT-001",
+        "PTO-AVS-ARCH-SCOPED-SCALAR-OBLIGATION-RETRY-001",
         "PTO-AVS-SCALAR-MODEL-DISPATCH-TOP-LEVEL-STATIC-001"
       ]
     },
@@ -21675,7 +21687,7 @@
     "asl/arch/overview/encoding-ownership.asl": "4f3bb7cb7732227005046c42c1c3bbdb5a5e39782495d49a49bf489808e66024",
     "asl/arch/overview/instruction-classification.asl": "e87535306adbd18629ee38dd80f84eb4c4a07c7371bff80ebd26b6b386330c9c",
     "asl/arch/programming-model/core-pe-topology.asl": "da295e6d0b163888ccc5fd813815c255453956125b9ac9ccced1b2f1227ffe7a",
-    "asl/arch/programming-model/execution-context.asl": "b4d6e396e745c4b66a96ea0bb02bd4e2982012af0a1cb5f24922e15b1a939a06",
+    "asl/arch/programming-model/execution-context.asl": "55818442096f0152e16b0ace1d93f30f6a682818ad6810da253ccce876439626",
     "asl/arch/programming-model/general-queue-management.asl": "cfabc9f02f3aa0e42e290059bf383640e3f0f5dc007423d2dec4e100138a1b20",
     "asl/arch/programming-model/predicate-registers.asl": "10cfd70a5e5caf277c5abbb3976574946b01be2cbe0cd08ce141cf4bde716968",
     "asl/arch/programming-model/scalar-registers.asl": "a81ea306707189f48f4edc593de20881afacedaf4bde23b287ad7d571f655e0f",
@@ -22628,7 +22640,7 @@
     "docs/arch/overview/encoding-ownership.md": "c6de2c1719fe81c22f45fa483c6e853a3361f0e8df35e0104f81e870656c50e0",
     "docs/arch/overview/instruction-classification.md": "dfebaacf8b5879fb25cef66204402420fd52de084ac1c47b0b784ed5237c028d",
     "docs/arch/programming-model/core-pe-topology.md": "b4328a739c9e78ce9794e724dbf9f60111d20c37308c04317004f577ad46cdb5",
-    "docs/arch/programming-model/execution-context.md": "cbe2918d65b3ed91b3d1f4793b76098bf9b542d3a1c787329f2cf6a6f0a9a573",
+    "docs/arch/programming-model/execution-context.md": "369345062d41e82287ecb7952853155121249b04701953baab05d28688d073c6",
     "docs/arch/programming-model/general-queue-management.md": "513828a5b2e2cf1865ec6b8f47f8564f716325d908beb809da638c5f2a34065a",
     "docs/arch/programming-model/predicate-registers.md": "6c7c7551818d467a27946ec995dc241fefeac5da4e6841d0c54f881fc05cc50a",
     "docs/arch/programming-model/scalar-registers.md": "39c408f98c3c3726776ece030012bfa8a14d9b7273412d807ffb945b59f45fd9",
@@ -23589,7 +23601,7 @@
     "tests/asl/arch/data-types/tile-data-types/arch-static-tile-data-types-contract-001.asl": "d2aa8456cd110c21da0482089100b4a36875d8b2934f4dba025673e2ca2504e1",
     "tests/asl/arch/data-types/trap-context/arch-fault-visible-registers-001.asl": "e18b49d4f3437f3d5906b1b1f24a24a38c353c3ab169354c796952d5c5b93b9c",
     "tests/asl/arch/data-types/trap-context/arch-static-trap-context-contract-001.asl": "8f81b3527f9f020f731c28ce663ba3a8a7a62f8e7275a0050e2b665d81f018aa",
-    "tests/asl/arch/dispatch/top-level/arch-decode-scoped-scalar-catalog-witnesses-001.asl": "91a55d83df8e38e1dd362d850ffd01a0bfe50955a46b144584f8e70ee7e93622",
+    "tests/asl/arch/dispatch/top-level/arch-decode-scoped-scalar-catalog-witnesses-001.asl": "46726b396c8fffbd832bee041544dce3f27398e158401e983b33c1c6be7d7e3b",
     "tests/asl/arch/dispatch/top-level/arch-exec-cross-dispatch-contract-001.asl": "0305fe16db87983d7c21cae4800f68eaade067559ed330165b8ee261aec1a757",
     "tests/asl/arch/dispatch/top-level/arch-exec-decoders-001.asl": "8bc90a14061253e64b4fdfcae7a2797235f43213e563a4189ae8c9927410e079",
     "tests/asl/arch/dispatch/top-level/arch-exec-next-instruction-command-64-004.asl": "09564934fc3150d36c60455b1ad288dae194eebf199ea493a86554bd21d30f81",
@@ -23599,6 +23611,7 @@
     "tests/asl/arch/dispatch/top-level/arch-exec-next-instruction-scalar-body-entry-005.asl": "375ab364d22945cbbfaf785b73534bb1ab5eaa5ea7ac4a9b10ccaa7e993edc3f",
     "tests/asl/arch/dispatch/top-level/arch-exec-scoped-scalar-amo-pair-carrier-001.asl": "6963c41724936b1104fbe6b8b50dd0fa42d7976de29a513c14a00edeb362a3b3",
     "tests/asl/arch/dispatch/top-level/arch-exec-scoped-scalar-carrier-001.asl": "ef7db5c47ae0df2c7fb9932f4f2a88478297c6def0fb4f71d40e9e3421b0ab2e",
+    "tests/asl/arch/dispatch/top-level/arch-exec-scoped-scalar-cross-path-001.asl": "3a129ac669d57e9ce91dbe36c89e719b4403f3376cdc8b6d4dd3f8b64e9f0523",
     "tests/asl/arch/dispatch/top-level/arch-exec-unified-instruction-dispatch-001.asl": "24b8cbc802a9ca45ec70b97947810c0edb0eb0c87efff1cad5b776958a2010f2",
     "tests/asl/arch/dispatch/top-level/arch-fault-next-instruction-illegal-encoding-005.asl": "945aa5d1e8292ecf91069daecdcce648b93a93f5844b6c3a4a2e49c37826d810",
     "tests/asl/arch/dispatch/top-level/arch-fault-next-instruction-odd-pc-001.asl": "2b3211b4f33bbf11869d7b99cd1e0f5df7cd86a8d093ff3368db79c6bb2a8b7f",
@@ -23606,6 +23619,7 @@
     "tests/asl/arch/dispatch/top-level/arch-fault-next-instruction-unmapped-fetch-001.asl": "367eb4aebfb3aa3bd0513dd95888b2af521be4a41281d453922b9fa256b59c85",
     "tests/asl/arch/dispatch/top-level/arch-fault-scoped-scalar-carrier-001.asl": "f06b9f3e5c99d914a60912db6de17a80430bd1e4409208f062db788d3e3569a1",
     "tests/asl/arch/dispatch/top-level/arch-fault-scoped-scalar-lrsc-001.asl": "15ee360897650ac0a6d1cf39f8011ec0239c22d705816d486ed4efe3418ba807",
+    "tests/asl/arch/dispatch/top-level/arch-state-scoped-scalar-obligation-retry-001.asl": "1afeeb629901eba9244b0a7bbbd12a21628818851a6088796eef5747bae48a0f",
     "tests/asl/arch/dispatch/top-level/arch-static-top-level-contract-001.asl": "3424a2732cafb2f0d89498d83419938c285465f52449fc3fb27a8aca4281617b",
     "tests/asl/arch/features/extension-first-use/arch-exec-extension-first-use-default-001.asl": "ce276b348f79b9a12f2e97683153cf8280bb35c3226a0cf8afd84f3cd578070d",
     "tests/asl/arch/features/extension-first-use/arch-static-extension-first-use-contract-001.asl": "22630911dbedf12f4fce3145b982612fcdaf7cb3ed149ad0c54736bc55ca3dc6",
@@ -28000,7 +28014,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1136,
     "status": "closed",
-    "test_count": 4460,
+    "test_count": 4462,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -37167,7 +37181,22 @@
         "PTO-REQ-SCALAR-SHAREABILITY-CARRIER-001",
         "PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001"
       ],
-      "sha256": "91a55d83df8e38e1dd362d850ffd01a0bfe50955a46b144584f8e70ee7e93622",
+      "sha256": "46726b396c8fffbd832bee041544dce3f27398e158401e983b33c1c6be7d7e3b",
+      "source": "asl/arch/dispatch/top-level.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-SCOPED-SCALAR-CROSS-PATH-001",
+      "kind": "execution",
+      "path": "tests/asl/arch/dispatch/top-level/arch-exec-scoped-scalar-cross-path-001.asl",
+      "requirements": [
+        "PTO-REQ-SCALAR-SHAREABILITY-CARRIER-001",
+        "PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001",
+        "PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001",
+        "PTO-INST-TILE-TLOAD",
+        "PTO-INST-TILE-TSTORE",
+        "PTO-INST-TILE-MSCATTER"
+      ],
+      "sha256": "3a129ac669d57e9ce91dbe36c89e719b4403f3376cdc8b6d4dd3f8b64e9f0523",
       "source": "asl/arch/dispatch/top-level.asl"
     },
     {
@@ -37184,6 +37213,21 @@
         "PTO-INST-SCALAR-SC-D"
       ],
       "sha256": "15ee360897650ac0a6d1cf39f8011ec0239c22d705816d486ed4efe3418ba807",
+      "source": "asl/arch/dispatch/top-level.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-SCOPED-SCALAR-OBLIGATION-RETRY-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/dispatch/top-level/arch-state-scoped-scalar-obligation-retry-001.asl",
+      "requirements": [
+        "PTO-REQ-INSTRUCTION-FETCH-001",
+        "PTO-REQ-SCALAR-SHAREABILITY-CARRIER-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001",
+        "PTO-ARCH-MEMORY-MODEL-TRAP-RESTORE-001",
+        "PTO-INST-SCALAR-LW",
+        "PTO-INST-SCALAR-HL-LDIP"
+      ],
+      "sha256": "1afeeb629901eba9244b0a7bbbd12a21628818851a6088796eef5747bae48a0f",
       "source": "asl/arch/dispatch/top-level.asl"
     },
     {
@@ -74448,7 +74492,9 @@
         "PTO-AVS-ARCH-SCOPED-SCALAR-AMO-PAIR-EXECUTION-001",
         "PTO-AVS-ARCH-SCOPED-SCALAR-CARRIER-EXECUTION-001",
         "PTO-AVS-ARCH-SCOPED-SCALAR-CARRIER-REJECT-001",
+        "PTO-AVS-ARCH-SCOPED-SCALAR-CROSS-PATH-001",
         "PTO-AVS-ARCH-SCOPED-SCALAR-LRSC-FAULT-001",
+        "PTO-AVS-ARCH-SCOPED-SCALAR-OBLIGATION-RETRY-001",
         "PTO-AVS-ARCH-TESTCROSSDISPATCHEXECUTIONCONTRACT-EXECUTION-001",
         "PTO-AVS-ARCH-TESTUNIFIEDINSTRUCTIONDISPATCH-EXECUTION-001"
       ],
@@ -74470,7 +74516,9 @@
         "PTO-AVS-ARCH-SCOPED-SCALAR-CARRIER-EXECUTION-001",
         "PTO-AVS-ARCH-SCOPED-SCALAR-CARRIER-REJECT-001",
         "PTO-AVS-ARCH-SCOPED-SCALAR-CATALOG-WITNESSES-001",
+        "PTO-AVS-ARCH-SCOPED-SCALAR-CROSS-PATH-001",
         "PTO-AVS-ARCH-SCOPED-SCALAR-LRSC-FAULT-001",
+        "PTO-AVS-ARCH-SCOPED-SCALAR-OBLIGATION-RETRY-001",
         "PTO-AVS-ARCH-TESTCROSSDISPATCHEXECUTIONCONTRACT-EXECUTION-001",
         "PTO-AVS-ARCH-TESTUNIFIEDINSTRUCTIONDISPATCH-EXECUTION-001"
       ]
