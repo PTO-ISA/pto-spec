@@ -34,7 +34,7 @@ BWE 发布架构级 WaitEvent 请求后退休。启用 HSCB 的平台可以观�
 // PTO-UNIT: {"id":"PTO-ARCH-STATE-HSCB-DISPATCH","surface":"arch","classification":["state","hscb-dispatch"],"depends_on":["PTO-ARCH-STATE-MESSAGE-BUFFER-SEND"]}
 
 // NDF-BEGIN: PTO-ARCH-HSCB-DISPATCH-001
-// ndf: kind=contract level=L1 layer=state status=accepted
+// ndf: kind=contract level=L1 layer=state status=open
 // The resident-worker service MUST use [1] for READY, [2, ID, PC, argument]
 // for LAUNCH and [3, ID, return_value] for DONE. Each entry is one XLEN word.
 // READY identifies its worker by trusted transport source. LAUNCH is valid

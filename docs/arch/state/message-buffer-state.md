@@ -51,7 +51,7 @@ This page is a generated reference view of the normative ASL unit.
 // NDF-END: PTO-ARCH-MSGB-STATE-001
 
 // NDF-BEGIN: PTO-ARCH-HSCB-ENDPOINT-001
-// ndf: kind=contract level=L1 layer=state status=accepted
+// ndf: kind=contract level=L1 layer=state status=open
 // The resident-worker profile MUST isolate a bank and its privileged selector
 // by Core, physical PE, hardware-thread slot and ACR. Its reference Core has
 // four PEs and two slots per PE: worker = 4 * slot + PE. Its endpoint address
