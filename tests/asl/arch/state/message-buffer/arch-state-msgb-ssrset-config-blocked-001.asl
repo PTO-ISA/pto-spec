@@ -30,6 +30,7 @@ begin
     assert status == ScalarExecution_Blocked;
     assert ReadTPC() == before_tpc;
     assert ReadGPR(5) == Zeros{PTO_XLEN} + 1;
-    assert _MessageBufferConfigSelectors[[0]][[0]] == 0;
+    assert _MessageBufferConfigSelectors[[0]][[0]][[0]] == 0;
+    assert _MessageBufferConfigSelectors[[0]][[0]][[1]] == 0;
     return 0;
 end;

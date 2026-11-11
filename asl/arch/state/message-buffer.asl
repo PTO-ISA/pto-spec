@@ -22,7 +22,8 @@
 // NDF-BEGIN: PTO-ARCH-MSGB-LIFECYCLE-001
 // ndf: kind=contract level=L1 layer=state status=accepted
 // An enabled bank MUST bind a nonzero kernel invocation.  End or abort drain
-// MUST freeze new admission to and from the Core while preserving receive read,
+// MUST freeze new work admission to and from the Core while preserving a
+// matching DONE for an outstanding HSCB call, as well as receive read,
 // ACK, and RELEASE needed to reach quiescence. Retirement MUST drain only
 // queues and snapshots owned by the retiring Core, then disable its banks.
 // Already admitted remote packets MUST survive source retirement. Epochs,
@@ -48,16 +49,27 @@ begin
            UInt(address[15:0]) >= PTO_MSGBD1_ADDRESS &&
            UInt(address[15:0]) <= PTO_MSGBD10_ADDRESS;
 end;
+readonly func CurrentMessageBufferThread() => MessageBufferThread
+begin
+    return _MessageBufferThreads[[_CurrentModelCore]][[_CurrentMemoryAgent]];
+end;
+
+func SelectMessageBufferThread(slot: MessageBufferThread)
+begin
+    _MessageBufferThreads[[_CurrentModelCore]][[_CurrentMemoryAgent]] = slot;
+end;
+
 readonly func CurrentMessageBufferIndex() => MessageBufferEndpointIndex
 begin
-    return MessageBufferEndpointIndexOf(
-        _CurrentModelCore, _CurrentMemoryAgent, CurrentACR());
+    return MessageBufferWorkerEndpoint(_CurrentModelCore, _CurrentMemoryAgent,
+                                       CurrentMessageBufferThread(), CurrentACR());
 end;
+
 readonly func SelectedMessageBufferIndex() => MessageBufferEndpointIndex
 begin
-    return MessageBufferEndpointIndexOf(
-        _CurrentModelCore, _CurrentMemoryAgent,
-        _MessageBufferConfigSelectors[[_CurrentModelCore]][[_CurrentMemoryAgent]]);
+    let slot = CurrentMessageBufferThread();
+    return MessageBufferWorkerEndpoint(_CurrentModelCore, _CurrentMemoryAgent, slot,
+        _MessageBufferConfigSelectors[[_CurrentModelCore]][[_CurrentMemoryAgent]][[slot]]);
 end;
 readonly func MessageBufferEnabledForCurrentContext() => boolean
 begin
@@ -102,12 +114,18 @@ begin
     end;
     return MessageBufferEffectPermitted(!IsMessageBufferConfigAddress(address));
 end;
+readonly func MessageBufferActorInvocation(index: MessageBufferEndpointIndex) => integer
+begin
+    return if index == PTO_HSCB_BANK then _MessageBufferBanks[[index]].bound_invocation
+           else _CurrentKernelInvocation;
+end;
+
 readonly func MessageBufferSnapshotOwnerMatches(index: MessageBufferEndpointIndex)
     => boolean
 begin
     return _MessageBufferBanks[[index]].snapshot.valid &&
            _MessageBufferBanks[[index]].snapshot.owner_invocation ==
-               _CurrentKernelInvocation;
+               MessageBufferActorInvocation(index);
 end;
 func SetMessageBufferACKResult(index: MessageBufferEndpointIndex,
                                result: MessageBufferResult,
@@ -142,7 +160,7 @@ begin
     _MessageBufferBanks[[index]].snapshot.valid = TRUE;
     _MessageBufferBanks[[index]].snapshot.acked = FALSE;
     _MessageBufferBanks[[index]].snapshot.owner_invocation =
-        _CurrentKernelInvocation;
+        MessageBufferActorInvocation(index);
     _MessageBufferBanks[[index]].snapshot.token = Zeros{PTO_XLEN};
     _MessageBufferBanks[[index]].snapshot.token[63:48] =
         _MessageBufferBanks[[index]].rx_epoch;
@@ -226,7 +244,7 @@ begin
             return Zeros{PTO_XLEN};
         end;
         return Zeros{PTO_XLEN} +
-            _MessageBufferConfigSelectors[[_CurrentModelCore]][[_CurrentMemoryAgent]];
+            _MessageBufferConfigSelectors[[_CurrentModelCore]][[_CurrentMemoryAgent]][[CurrentMessageBufferThread()]];
     end;
     let index = if IsMessageBufferConfigAddress(address) then
         SelectedMessageBufferIndex() else CurrentMessageBufferIndex();
@@ -309,6 +327,11 @@ begin
             SetFault(Fault_IllegalInstruction, ReadPC());
             return;
         end;
+        if _MessageBufferBanks[[index]].hscb_running then
+            SetFault(Fault_IllegalInstruction, ReadPC());
+            return;
+        end;
+        _MessageBufferBanks[[index]].hscb_waiting = FALSE;
         _MessageBufferBanks[[index]].enabled = FALSE;
         return;
     end;
@@ -361,7 +384,7 @@ begin
                 SetFault(Fault_IllegalInstruction, ReadPC());
             else
                 _MessageBufferConfigSelectors[[_CurrentModelCore]]
-                    [[_CurrentMemoryAgent]] =
+                    [[_CurrentMemoryAgent]][[CurrentMessageBufferThread()]] =
                     UInt(value[3:0]) as AccessControlRing;
             end;
             return;

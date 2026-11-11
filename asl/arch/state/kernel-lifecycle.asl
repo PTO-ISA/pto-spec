@@ -203,7 +203,7 @@ begin
     end;
     let invocation = _KernelInvocationByCore[[core]];
     BeginMessageBufferDrain(core);
-    if !MessageBufferCoreQuiescent(core) then
+    if !MessageBufferCoreQuiescent(core) || !HSCBDispatchesComplete(core) then
         return KernelLifecycle_Waiting;
     end;
     if !KernelGMObligationsQuiescent(core, invocation) then

@@ -29,7 +29,7 @@ begin
 
     SelectExecutionContext(0, 0); SetCurrentACR(0);
     WriteSystemRegisterAddress(Zeros{24} + 0x0831, Zeros{PTO_XLEN} + 0x77);
-    ExecuteMessageBufferSend(Zeros{PTO_XLEN} + 64 + (1 << 32));
+    ExecuteMessageBufferSend(Zeros{PTO_XLEN} + 128 + (1 << 32));
     let sent_hi = ReadSystemRegisterAddress(Zeros{24} + 0x0845);
     let sent_lo = ReadSystemRegisterAddress(Zeros{24} + 0x0846);
     let ended = EndKernelInvocation(0);
