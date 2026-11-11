@@ -1,8 +1,10 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-CORE-SYNC-HISTORY-PERSISTENCE-001","source":"asl/arch/state/core-synchronization.asl","requirements":["PTO-ARCH-CORE-SYNCHRONIZATION-001","PTO-ARCH-MEMORY-MODEL-REPLAY-001"],"kind":"ordering","summary":"completed Core collective ordering remains in memory-event provenance after generation-ring reuse, Core selection, and a later invocation","pass_condition":"the evicted generation's original publication-to-read relation remains observable while different Core, invocation, and handler events do not acquire that relation","related_sources":["asl/arch/memory-model/memory-events.asl","asl/arch/memory-model/ordering.asl","asl/arch/state/kernel-lifecycle.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-CORE-SYNC-HISTORY-PERSISTENCE-001","source":"asl/arch/state/core-synchronization.asl","requirements":["PTO-ARCH-CORE-SYNCHRONIZATION-001","PTO-ARCH-MEMORY-MODEL-REPLAY-001","PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001"],"kind":"ordering","summary":"completed Core collective ordering remains in memory-event provenance after generation-ring reuse, Core selection, and a later invocation","pass_condition":"the evicted generation's original publication-to-read relation remains observable while different Core, invocation, and handler events do not acquire that relation","related_sources":["asl/arch/memory-model/memory-events.asl","asl/arch/memory-model/ordering.asl","asl/arch/state/kernel-lifecycle.asl"]}
 func TestCompletedCollectiveHistorySurvivesActiveRecordReuse()
 begin
     ResetProfileState();
     ResetMemoryExecution();
+    _CurrentMemoryShareability = MemoryShareability_IntraCore;
+    _CurrentMemoryRequestClass = MemoryRequestClass_Scalar;
     let entry = Zeros{PTO_XLEN} + 0x440;
     let launch = LaunchKernelInvocation(0, entry);
     assert launch == KernelLifecycle_Started;

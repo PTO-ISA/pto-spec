@@ -64,7 +64,8 @@ begin
     var committed_this_call: integer {0..32768} = 0;
     var budget_reached = FALSE;
     var logical_element: integer {0..32768} = 0;
-    BeginMemoryReplay(obligation.instruction_pc);
+    BeginMemoryReplay(obligation.instruction_pc,
+        MemoryShareability_IntraCore, MemoryRequestClass_Tile);
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLogicalLinearIndex(tile,
@@ -94,7 +95,7 @@ begin
                         original_address, translated_address, data_type,
                         FALSE, new_value);
                     MarkGMObligationIrrevocable(core, pe, obligation_slot);
-                    RecordAtomicEventForAgent(pe, translated_address,
+                    RecordTileAtomicEventForAgent(pe, translated_address,
                         element_bytes, old_raw,
                         NormalizeMemoryAccessValue(stored_value,
                             element_bytes),
@@ -140,7 +141,8 @@ begin
     let operation = GMReductionOperationForTStoreMode(
         data_attributes.comparison_mode);
     let element_bytes = TileMemoryElementBytes(data_type);
-    BeginMemoryReplay(ReadBPC());
+    BeginMemoryReplay(ReadBPC(), MemoryShareability_IntraCore,
+        MemoryRequestClass_Tile);
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             if (!execution_mask.valid ||
@@ -164,7 +166,7 @@ begin
                     old_value, input_value);
                 let stored_value = StoreTileMemoryElement(original_address,
                     translated_address, data_type, FALSE, new_value);
-                RecordAtomicEvent(translated_address, element_bytes, old_raw,
+                RecordTileAtomicEvent(translated_address, element_bytes, old_raw,
                     NormalizeMemoryAccessValue(stored_value, element_bytes),
                     memory_order, TRUE);
                 CommitMemoryReplayEffect();

@@ -114,6 +114,17 @@ end;
 // memmove semantics and any fault leaves memory unchanged.
 func ExecuteScalarDMACopy64(source_address: Word, destination_address: Word)
 begin
+    let old_scope = _CurrentMemoryShareability;
+    let old_class = _CurrentMemoryRequestClass;
+    _CurrentMemoryShareability = MemoryShareability_Private;
+    _CurrentMemoryRequestClass = MemoryRequestClass_LegacyExcluded;
+    ExecuteScalarDMACopy64Core(source_address, destination_address);
+    _CurrentMemoryShareability = old_scope;
+    _CurrentMemoryRequestClass = old_class;
+end;
+
+func ExecuteScalarDMACopy64Core(source_address: Word, destination_address: Word)
+begin
     let source_probe = ProbeDataAccess(source_address, 64, 1, FALSE);
     if RaiseDataAccessFault(source_probe, source_address) then
         return;
@@ -166,6 +177,7 @@ begin
         _ReservationValid = TRUE;
         _ReservationAddress = address;
         _ReservationSize = size_bytes;
+        _ReservationShareability = _CurrentMemoryShareability;
     end;
     return result;
 end;
@@ -179,7 +191,11 @@ begin
             integer {0..262144});
     // PTO's local exclusive monitor is cache-line based: SC width and exact
     // byte address do not narrow the reservation once the 64-byte line matches.
-    let succeeds = _ReservationValid && reservation_granule == requested_granule;
+    let succeeds = _ReservationValid &&
+        ReservationDomainsMatch(_CurrentMemoryShareability,
+            _CurrentModelCore, _CurrentMemoryAgent,
+            _ReservationShareability, _CurrentModelCore, _CurrentMemoryAgent) &&
+        reservation_granule == requested_granule;
     if succeeds then
         // Every SC attempt clears the local monitor, including a successful
         // reservation check followed by an access fault.

@@ -121,12 +121,17 @@ var _Memory : array [[PTO_MODEL_MEMORY_BYTES]] of Byte;
 var _ReservationValid : boolean;
 var _ReservationAddress : Word;
 var _ReservationSize : integer {1,2,4,8};
+var _ReservationShareability : MemoryShareability;
 var _LastFencePredecessor : bits(4);
 var _LastFenceSuccessor : bits(4);
 var _MemoryEvents : array [[PTO_MODEL_MEMORY_EVENTS]] of MemoryEvent;
 var _MemoryEventCount : integer {0..PTO_MODEL_MEMORY_EVENTS};
 var _MemoryEventCaptureEnabled : boolean;
 var _CurrentMemoryAgent : MemoryAgentId;
+// Transient request provenance. These values are set around one request and
+// reset before dispatch returns; only the captured MemoryEvent retains them.
+var _CurrentMemoryShareability : MemoryShareability;
+var _CurrentMemoryRequestClass : MemoryRequestClass;
 var _MemoryReplayState : MemoryReplayState;
 var _CurrentModelCore : PTOModelCoreIdentity;
 var _CurrentMemoryOrigin : MemoryEventOrigin;

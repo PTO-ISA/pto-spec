@@ -108,10 +108,14 @@ This page is a generated reference view of the normative ASL unit.
 // abort or squash before saving its restart point.
 // NDF-END: PTO-ARCH-MEMORY-MODEL-TRAP-RESTORE-001
 
-func BeginMemoryReplay(request: Word)
+func BeginMemoryReplay(request: Word,
+                       shareability: MemoryShareability,
+                       request_class: MemoryRequestClass)
 begin
     _MemoryReplayState.active = TRUE;
     _MemoryReplayState.request = request;
+    _MemoryReplayState.shareability = shareability;
+    _MemoryReplayState.request_class = request_class;
     _MemoryReplayState.committed_event_count = _MemoryEventCount;
     _MemoryReplayState.epoch = _MemoryReplayState.epoch + 1;
     _MemoryReplayState.owner_core = _CurrentModelCore;

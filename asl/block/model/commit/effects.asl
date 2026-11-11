@@ -180,17 +180,19 @@ begin
     let value = LoadTranslatedUnsigned(
         source_probe.translated_address,
         step_size);
-    RecordLoadEvent(
+    RecordLegacyExcludedLoadEvent(
         source_probe.translated_address,
         step_size,
         value,
         MemoryOrder_Relaxed);
-    StoreTranslated(
+    StoreTranslatedForMemoryRequest(
         destination_address,
         destination_probe.translated_address,
         step_size,
-        value);
-    RecordStoreEvent(
+        value,
+        MemoryShareability_Private,
+        MemoryRequestClass_LegacyExcluded);
+    RecordLegacyExcludedStoreEvent(
         destination_probe.translated_address,
         step_size,
         value,
@@ -253,11 +255,13 @@ begin
         if RaiseDataAccessFault(write_probe, destination) then
             return;
         else
-            StoreTranslatedFillModelBounded(
+            StoreTranslatedFillModelBoundedForMemoryRequest(
                 destination,
                 write_probe.translated_address,
                 byte_count as integer {1..262144},
-                value[7:0]);
+                value[7:0],
+                MemoryShareability_Private,
+                MemoryRequestClass_LegacyExcluded);
         end;
     end;
     if _LastFault == Fault_None then

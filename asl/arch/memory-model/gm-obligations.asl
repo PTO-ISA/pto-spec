@@ -11,8 +11,8 @@
 // instruction occurrence, and program-order provenance. Wrapper/producer
 // registration and retry of one occurrence retain its identity, while a new
 // occurrence at the same PC receives a distinct identity. The first
-// executable capture binds the ACR and operands of its successful admission
-// and remains immutable.
+// executable capture binds the ACR, operands, and effective Shareability of
+// its successful admission and remains immutable.
 // NDF-END: PTO-ARCH-GM-OBLIGATIONS-001
 
 type GMRequestClass of enumeration {
@@ -46,6 +46,7 @@ type GMObligationSlot of record {
     collective_epoch: integer,
     collective_history_sequence: integer,
     request_class: GMRequestClass,
+    shareability: MemoryShareability,
     encoded_request: bits(64),
     descriptor: BundleOperationDescriptor,
     bundle_argument: Word,
@@ -221,6 +222,10 @@ begin
         else _NextGMObligationIdentity[[core]][[pe]];
     let preserve_capture = reuse_incomplete &&
         old.executable_capture_valid;
+    let request_shareability = if request_class == GMRequest_Tile ||
+        request_class == GMRequest_TLSU then
+            MemoryShareability_IntraCore
+        else _CurrentMemoryShareability;
     if !reuse_incomplete then
         _NextGMObligationIdentity[[core]][[pe]] = identity + 1;
     end;
@@ -240,6 +245,8 @@ begin
             else _CoreCollectiveHistorySequence[[core]],
         request_class = if preserve_capture then old.request_class
             else request_class,
+        shareability = if preserve_capture then old.shareability
+            else request_shareability,
         encoded_request = if preserve_capture then old.encoded_request
             else encoded_request,
         descriptor = if preserve_capture then old.descriptor else descriptor,

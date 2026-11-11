@@ -114,11 +114,16 @@ begin
     _ReservationValid = FALSE;
     _ReservationAddress = Zeros{PTO_XLEN};
     _ReservationSize = 1;
+    _ReservationShareability = MemoryShareability_Private;
     ResetMemoryExecution();
     _MemoryEventCaptureEnabled = FALSE;
     _CurrentMemoryAgent = 0;
+    _CurrentMemoryShareability = MemoryShareability_Private;
+    _CurrentMemoryRequestClass = MemoryRequestClass_Scalar;
     _MemoryReplayState.active = FALSE;
     _MemoryReplayState.request = Zeros{PTO_XLEN};
+    _MemoryReplayState.shareability = MemoryShareability_Private;
+    _MemoryReplayState.request_class = MemoryRequestClass_Scalar;
     _MemoryReplayState.committed_event_count = 0;
     _MemoryReplayState.epoch = 0;
     _LastFencePredecessor = Zeros{4};
@@ -209,6 +214,8 @@ begin
     _ScalarExecutionBlocked = FALSE;
     _MemoryReplayState.active = FALSE;
     _MemoryReplayState.request = Zeros{PTO_XLEN};
+    _MemoryReplayState.shareability = MemoryShareability_Private;
+    _MemoryReplayState.request_class = MemoryRequestClass_Scalar;
     _MemoryReplayState.committed_event_count = 0;
     _MemoryReplayState.epoch = 0;
     _CurrentEncodedInstruction = Zeros{64};

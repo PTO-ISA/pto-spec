@@ -37,6 +37,9 @@
     "PTO-ARCH-MEMORY-MODEL-FLUSH-001",
     "PTO-ARCH-MEMORY-MODEL-ATOMIC-001",
     "PTO-ARCH-MEMORY-MODEL-OPEN-001",
+    "PTO-ARCH-GM-OBLIGATIONS-001",
+    "PTO-ARCH-PE-EXECUTION-CONTEXT-001",
+    "PTO-REQ-SCALAR-SHAREABILITY-CARRIER-001",
     "PTO-TLOAD-MEMORY-001",
     "PTO-TSTORE-MEMORY-001",
     "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
@@ -46,15 +49,22 @@
     "PTO-ARCH-DATA-TYPES-MEMORY-MODEL",
     "PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS",
     "PTO-ARCH-MEMORY-MODEL-ORDERING",
+    "PTO-ARCH-MEMORY-MODEL-ATOMICITY",
+    "PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS",
     "PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION",
     "PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT",
     "PTO-ARCH-DATA-TYPES-TRAP-CONTEXT",
     "PTO-TILE-MODEL-MEMORY-LOAD-STORE",
     "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+    "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER",
+    "PTO-TILE-MODEL-MEMORY-ATOMICS",
+    "PTO-TILE-MODEL-MEMORY-ATOMIC-TSTORE",
     "PTO-TILE-TLOAD",
     "PTO-TILE-TSTORE",
     "PTO-ARCH-DISPATCH-TOP-LEVEL",
     "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
+    "PTO-SCALAR-MODEL-AGU-MEMORY",
+    "PTO-SCALAR-MODEL-AMO-SEMANTICS",
     "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT"
   ],
   "resolves": [],
@@ -75,15 +85,36 @@
       ],
       "issue": "https://github.com/PTO-ISA/pto-spec/issues/416",
       "affected_ndf": [
+        "PTO-ARCH-MEMORY-MODEL-SCOPE-001",
+        "PTO-ARCH-MEMORY-MODEL-REQUEST-CLASS-001",
         "PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001",
         "PTO-ARCH-MEMORY-MODEL-CONFLICT-001",
         "PTO-ARCH-MEMORY-MODEL-VISIBILITY-001",
         "PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001",
-        "PTO-REQ-INSTRUCTION-DISPATCH-001"
+        "PTO-ARCH-MEMORY-MODEL-MIXED-SIZE-001",
+        "PTO-ARCH-MEMORY-MODEL-RC-001",
+        "PTO-ARCH-MEMORY-MODEL-REPLAY-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001",
+        "PTO-ARCH-PE-EXECUTION-CONTEXT-001",
+        "PTO-REQ-INSTRUCTION-DISPATCH-001",
+        "PTO-REQ-SCALAR-SHAREABILITY-CARRIER-001"
       ],
       "affected_units": [
+        "PTO-ARCH-DATA-TYPES-MEMORY-MODEL",
+        "PTO-ARCH-MEMORY-MODEL-ATOMICITY",
+        "PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION",
+        "PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS",
+        "PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS",
+        "PTO-ARCH-MEMORY-MODEL-ORDERING",
         "PTO-ARCH-DISPATCH-TOP-LEVEL",
         "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
+        "PTO-SCALAR-MODEL-AGU-MEMORY",
+        "PTO-SCALAR-MODEL-AMO-SEMANTICS",
+        "PTO-TILE-MODEL-MEMORY-LOAD-STORE",
+        "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER",
+        "PTO-TILE-MODEL-MEMORY-ATOMICS",
+        "PTO-TILE-MODEL-MEMORY-ATOMIC-TSTORE",
+        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
         "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT"
       ]
     }
@@ -272,3 +303,22 @@ added. Target release is unassigned; release evidence refresh and downstream
 assembler/compiler/ASL-model integration remain release obligations. Issue #416
 remains open until implementation/evidence acceptance. ADR-MEM-0010 remains
 superseded historical rationale; this accepted topic owns the amendment.
+
+### Software aliasing obligation and example / 软件别名义务与示例
+
+When Scalar and fixed-IntraCore Tile or IndexedGenerated requests may access
+the same bytes, software assigns compatible IntraCore scope to each covered
+Scalar access. If software cannot prove the accessed ranges disjoint, it treats
+them as potentially aliasing. For example, a Top-K pipeline may use Scalar
+stores to prepare candidate records, Tile or IndexedGenerated requests to
+select or rank them, and Scalar loads to consume the selected records. Any
+shared or potentially overlapping record range in that pipeline uses
+IntraCore Scalar forms; Private is suitable only for ranges proved disjoint
+from the fixed-IntraCore requests.
+
+当 Scalar 与固定为 IntraCore 的 Tile 或 IndexedGenerated 请求可能访问相同
+字节时，软件应为每个受支持的 Scalar 访问选择兼容的 IntraCore scope。如果无法
+证明访问范围互不重叠，软件必须按可能别名处理。例如，Top-K 流程可能由 Scalar
+写入候选记录，再由 Tile 或 IndexedGenerated 请求进行筛选或排序，最后由 Scalar
+读取所选记录。该流程中共享或可能重叠的记录范围应使用 IntraCore Scalar 形式；
+只有在已证明与固定 IntraCore 请求互不重叠时，才适合使用 Private。

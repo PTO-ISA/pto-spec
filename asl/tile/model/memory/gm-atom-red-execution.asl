@@ -105,11 +105,11 @@ begin
         let (new_value, write_performed) = GMAtomicResult(operation, data_type,
             old, values[[element]], expecteds[[element]], replacements[[element]]);
         if write_performed then
-            - = StoreTileMemoryElement(original_addresses[[element]],
+            - = StoreIndexedMemoryElement(original_addresses[[element]],
                 write_translated_addresses[[element]], data_type, FALSE, new_value);
         end;
         result[[element]] = old;
-        RecordAtomicEvent(write_translated_addresses[[element]],
+        RecordIndexedAtomicEvent(write_translated_addresses[[element]],
             TileMemoryElementBytes(data_type), old_raw,
             NormalizeMemoryAccessValue(new_value, TileMemoryElementBytes(data_type)),
             CurrentBundleMemoryOrder(), write_performed);
@@ -233,9 +233,9 @@ begin
         let old = DecodeTileMemoryElementRaw(old_raw, data_type, FALSE);
         let new_value = GMReductionResult(operation, data_type, old,
             values[[element]]);
-        - = StoreTileMemoryElement(original_addresses[[element]],
+        - = StoreIndexedMemoryElement(original_addresses[[element]],
             write_translated_addresses[[element]], data_type, FALSE, new_value);
-        RecordAtomicEvent(write_translated_addresses[[element]],
+        RecordIndexedAtomicEvent(write_translated_addresses[[element]],
             TileMemoryElementBytes(data_type), old_raw,
             NormalizeMemoryAccessValue(new_value, TileMemoryElementBytes(data_type)),
             CurrentBundleMemoryOrder(), TRUE);
@@ -297,9 +297,9 @@ begin
             TileMemoryElementBytes(data_type));
         let old = DecodeTileMemoryElementRaw(old_raw, data_type, FALSE);
         let new_value = old + Zeros{PTO_XLEN} + 1;
-        - = StoreTileMemoryElement(original_addresses[[element]],
+        - = StoreIndexedMemoryElement(original_addresses[[element]],
             write_translated_addresses[[element]], data_type, FALSE, new_value);
-        RecordAtomicEvent(write_translated_addresses[[element]],
+        RecordIndexedAtomicEvent(write_translated_addresses[[element]],
             TileMemoryElementBytes(data_type), old_raw,
             NormalizeMemoryAccessValue(new_value, TileMemoryElementBytes(data_type)),
             CurrentBundleMemoryOrder(), TRUE);

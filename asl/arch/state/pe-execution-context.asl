@@ -1,7 +1,6 @@
 // PTO-UNIT: {"id":"PTO-ARCH-STATE-PE-EXECUTION-CONTEXT","surface":"arch","classification":["state","pe-execution-context"],"depends_on":["PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING","PTO-ARCH-STATE-TRAP-CONTEXT","PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-TILE-MODEL-STATE-LOCAL-REGISTERS","PTO-TILE-MODEL-STATE-FEATURE-MAP-DESCRIPTORS"]}
 // PTO-STATE: {"id":"PTO-STATE-ARCH-PE-EXECUTION-CONTEXT","classification":["architecture","pe-execution-context"],"scope":"pe","owner":"PTO-ARCH-STATE-PE-EXECUTION-CONTEXT","members":["_PEExecutionContexts","_CurrentPEContextValid","_PEContextBankValid","_DefaultPEExecutionContext"],"depends_on":[]}
 // PTO-STATE: {"id":"PTO-STATE-ARCH-CORE-LOCAL-CONTEXT","classification":["architecture","core-local-context"],"scope":"core","owner":"PTO-ARCH-STATE-PE-EXECUTION-CONTEXT","members":["_CoreExecutionContexts","_CurrentCoreContextValid","_CoreContextBankValid","_DefaultCoreExecutionContext"],"depends_on":[]}
-
 // NDF-BEGIN: PTO-ARCH-PE-EXECUTION-CONTEXT-001
 // ndf: kind=contract level=L1 layer=state status=accepted
 // Each modeled Core MUST keep independent PE0..PE3 contexts. PE selection
@@ -81,6 +80,7 @@ type PEExecutionContext of record {
     reservation_valid: boolean,
     reservation_address: Word,
     reservation_size: integer {1,2,4,8},
+    reservation_shareability: MemoryShareability,
     last_fence_predecessor: bits(4),
     last_fence_successor: bits(4),
     memory_replay_state: MemoryReplayState,
@@ -96,7 +96,6 @@ type PEExecutionContext of record {
     program_order: integer,
     scalar_execution_blocked: boolean
 };
-
 type CoreExecutionContext of record {
     system_registers: BaseSystemRegisterState,
     shared_tiles: SharedTileSnapshot,
@@ -200,6 +199,7 @@ begin
         reservation_valid = _ReservationValid,
         reservation_address = _ReservationAddress,
         reservation_size = _ReservationSize,
+        reservation_shareability = _ReservationShareability,
         last_fence_predecessor = _LastFencePredecessor,
         last_fence_successor = _LastFenceSuccessor,
         memory_replay_state = _MemoryReplayState,
@@ -218,7 +218,6 @@ begin
     _PEContextBankValid[[core]][pe] = '1';
     _CurrentPEContextValid = TRUE;
 end;
-
 func LoadPEExecutionContext(context: PEExecutionContext)
 begin
     _PC = context.pc;
@@ -286,6 +285,7 @@ begin
     _ReservationValid = context.reservation_valid;
     _ReservationAddress = context.reservation_address;
     _ReservationSize = context.reservation_size;
+    _ReservationShareability = context.reservation_shareability;
     _LastFencePredecessor = context.last_fence_predecessor;
     _LastFenceSuccessor = context.last_fence_successor;
     _MemoryReplayState = context.memory_replay_state;
@@ -304,7 +304,6 @@ begin
     _CurrentProgramOrder = context.program_order;
     _ScalarExecutionBlocked = context.scalar_execution_blocked;
 end;
-
 func SaveSelectedCoreExecutionContext()
 begin
     let core = _CurrentModelCore;
@@ -328,7 +327,6 @@ begin
     _CoreContextBankValid[core] = '1';
     _CurrentCoreContextValid = TRUE;
 end;
-
 func LoadCoreExecutionContext(context: CoreExecutionContext)
 begin
     _SystemRegisters = context.system_registers;
@@ -432,6 +430,7 @@ begin
             reservation_valid = _ReservationValid,
             reservation_address = _ReservationAddress,
             reservation_size = _ReservationSize,
+            reservation_shareability = _ReservationShareability,
             last_fence_predecessor = _LastFencePredecessor,
             last_fence_successor = _LastFenceSuccessor,
             memory_replay_state = _MemoryReplayState,
