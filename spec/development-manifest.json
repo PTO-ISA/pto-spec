@@ -32,8 +32,8 @@
     "encoding_projection_sha256": "7e934f592516b6356c65c661e52ec3d09a1c23e7c05880d61a0d043ee22a5028",
     "release": "0.59.0"
   },
-  "normative_source_count": 956,
-  "normative_sources_sha256": "913f6bfcdee49cdbe4dce8641e663b85a6c8e52a0ea5afd1b9df9467565df2c6",
+  "normative_source_count": 957,
+  "normative_sources_sha256": "bdcc8368bb697cabefe04c731a95e704cabd6387a742794fbb396c772bc3d6bc",
   "publication": null,
   "schema": "pto.development-manifest.v1",
   "status": "development-not-published"
