@@ -101,6 +101,18 @@
       }
     },
     {
+      "id": "PTO-REQ-SCALAR-SHAREABILITY-CARRIER-001",
+      "source_path": "asl/scalar/model/dispatch/top-level.asl",
+      "title": {
+        "en": "Scalar Shareability carrier envelope",
+        "zh-CN": "Scalar Shareability 外层载体"
+      },
+      "summary": {
+        "en": "An eight-byte Scalar envelope carries Shareability and inner instruction length around an existing accepted Scalar memory form. The source clause owns selection, padding, exclusion, execution, and fault details.",
+        "zh-CN": "8 字节 Scalar 外层载体为现有受支持的 Scalar 内存形式携带 Shareability 与内部指令长度。具体选择、填充、排除项、执行效果和故障规则见源条款。"
+      }
+    },
+    {
       "id": "PTO-REV-DECISION-BINDING-001",
       "source_path": "asl/scalar/alu/REV.asl",
       "title": {
