@@ -97,7 +97,7 @@ begin
 end;
 
 // NDF-BEGIN: PTO-ARCH-HSCB-TRANSPORT-001
-// ndf: kind=contract level=L1 layer=state status=accepted
+// ndf: kind=contract level=L1 layer=state status=open
 // HSCB (High Speed Config Bus) MUST carry complete MSGB messages from a
 // trusted source endpoint to the addressed destination. A worker BSE to
 // 0xffffffff and a service submission to a worker MUST share the same atomic
