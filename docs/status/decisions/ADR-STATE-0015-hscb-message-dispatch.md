@@ -60,6 +60,15 @@ events. A successful mailbox ACK makes queue space available before the kernel
 returns. The scheduler associates completion with the sending worker and its
 outstanding ID. The worker can then wait for a subsequent dispatch.
 
+Two boundary cases determine the admission rule. A DONE already waiting at
+the service must be processed before an ID can be assigned to a new job,
+otherwise that earlier packet could complete a later dispatch. A worker can
+also exhaust the replay receipts or sequence numbers needed for its return.
+The reference service checks the return path at LAUNCH and preserves capacity
+for its matching DONE. Competing traffic can still encounter backpressure.
+The worker accepts a kernel entry from a complete claimed scheduler LAUNCH;
+a peer can send the same bytes as data.
+
 ## Defaults, compatibility and evidence
 
 The MSGB profile resets disabled. Enabled workers use BWE's existing WaitEvent
@@ -88,7 +97,7 @@ number alone cannot identify the owner of a configuration command or its reply.
 A successful send captures a bounded payload and identifies its source.
 The scheduler tracks READY, LAUNCH and DONE per worker and invocation.
 
-**中文。** HSCB（High Speed Config Bus，高速配置总线）承载调度控制消息。MSGB 是端点上的收发状态，发送成功时固定载荷并赋予来源身份。调度器按工作线程和调用跟踪就绪、任务下发及完成回报。
+**中文。** HSCB（High Speed Config Bus，高速配置总线）承载调度控制消息。MSGB 是端点上的收发状态，发送成功时固定载荷并赋予来源身份。调度器按工作线程和调用跟踪就绪、任务下发及完成回报。分配新任务前先处理调度端点已收到的报文，避免旧 DONE 完成后来的同 ID 任务。接纳 LAUNCH 时须给这项任务的 DONE 留出事务身份和回执容量。
 
 ### What changed / 改动内容
 
