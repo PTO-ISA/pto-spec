@@ -9118,6 +9118,7 @@ def _emit_monolithic() -> None:
     print()
     print("func ValidateScopedScalarCarrierPriorityDecode()")
     print("begin")
+    print("    ValidateScopedScalarCatalogDecode();")
     for index, row in enumerate(scoped_scalar):
         witness = bit_literal(scoped_scalar_witnesses[index], 64)
         print(

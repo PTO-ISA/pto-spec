@@ -31,7 +31,7 @@ class TileMemorySingleSnapshotTests(unittest.TestCase):
                 "TLOADToValue",
                 "raw",
                 1,
-                "RecordLoadEvent(",
+                "RecordTileLoadEvent(",
             ),
             (
                 "MGATHER",
@@ -40,7 +40,7 @@ class TileMemorySingleSnapshotTests(unittest.TestCase):
                 "MGATHERToValue",
                 "raw",
                 2,
-                "RecordLoadEvent(",
+                "RecordIndexedLoadEvent(",
             ),
             (
                 "MGATHER_MASK",
@@ -49,7 +49,7 @@ class TileMemorySingleSnapshotTests(unittest.TestCase):
                 "MGATHER_MASKToValue",
                 "raw",
                 2,
-                "RecordLoadEvent(",
+                "RecordIndexedLoadEvent(",
             ),
             (
                 "MGATHER_CAS",
@@ -58,7 +58,7 @@ class TileMemorySingleSnapshotTests(unittest.TestCase):
                 "MGATHER_CASToValue",
                 "old_raw",
                 1,
-                "RecordAtomicEvent(",
+                "RecordIndexedAtomicEvent(",
             ),
         )
 
@@ -78,7 +78,13 @@ class TileMemorySingleSnapshotTests(unittest.TestCase):
                 self.assertNotIn("LoadTileMemoryElement(", wrapper)
                 self.assertNotIn("LoadTileMemoryElement(", helper)
                 self.assertIn(f"let {raw_name} = LoadTranslatedUnsigned(", helper)
+                self.assertEqual(
+                    helper.count(f"let {raw_name} = LoadTranslatedUnsigned("), 1
+                )
                 self.assertIn(event, helper)
+                event_start = helper.index(event)
+                event_end = helper.index(");", event_start)
+                self.assertIn(raw_name, helper[event_start:event_end])
                 self.assertEqual(
                     helper.count("DecodeTileMemoryElementRaw("), decode_count
                 )
