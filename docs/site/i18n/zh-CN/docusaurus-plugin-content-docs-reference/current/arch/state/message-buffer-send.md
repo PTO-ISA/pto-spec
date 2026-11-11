@@ -52,16 +52,38 @@ begin
     return PTO_MODEL_MESSAGE_BUFFER_RECEIPTS;
 end;
 
-readonly func FindFreeMessageBufferReplayReceipt(
-    index: MessageBufferEndpointIndex)
+readonly func FindFreeMessageBufferReplayReceipt(index: MessageBufferEndpointIndex,
+                                                  reserve_one: boolean)
     => integer {0..PTO_MODEL_MESSAGE_BUFFER_RECEIPTS}
 begin
+    var skip = reserve_one;
     for slot = 0 to PTO_MODEL_MESSAGE_BUFFER_RECEIPTS - 1 do
         if !_MessageBufferBanks[[index]].receipts[[slot]].valid then
-            return slot as integer {0..PTO_MODEL_MESSAGE_BUFFER_RECEIPTS};
+            if !skip then return slot as integer {0..PTO_MODEL_MESSAGE_BUFFER_RECEIPTS}; end;
+            skip = FALSE;
         end;
     end;
     return PTO_MODEL_MESSAGE_BUFFER_RECEIPTS;
+end;
+
+readonly func HSCBOutstandingDispatchCount() => integer
+begin
+    var count: integer = 0;
+    for worker = 0 to PTO_MODEL_CORE_INSTANCES * PTO_MSGB_WORKERS_PER_CORE - 1 do
+        if _MessageBufferBanks[[worker * PTO_ACR_COUNT]].hscb_running then
+            count = count + 1;
+        end;
+    end;
+    return count;
+end;
+
+readonly func HSCBMatchingDone(source: MessageBufferEndpointIndex, control: Word) => boolean
+begin
+    return _MessageBufferBanks[[source]].hscb_running &&
+           control == Zeros{64} + (3 << 32) + PTO_HSCB_ENDPOINT &&
+           _MessageBufferBanks[[source]].staging_words[[0]] == Zeros{64} + 3 &&
+           _MessageBufferBanks[[source]].staging_words[[1]] ==
+               _MessageBufferBanks[[source]].hscb_dispatch_id;
 end;
 
 func ReportMessageBufferReplay(index: MessageBufferEndpointIndex,
@@ -135,7 +157,16 @@ begin
     if _MessageBufferBanks[[target_index]].queued.valid || !capacity_available then
         return MessageBufferResult_Busy;
     end;
-    if _MessageBufferBanks[[source_index]].transmit_sequence == Ones{PTO_XLEN} then
+    let done = HSCBMatchingDone(source_index, control);
+    let sequence = _MessageBufferBanks[[source_index]].transmit_sequence;
+    if target_index == PTO_HSCB_BANK then
+        let remaining = UInt(Ones{48}) - UInt(_MessageBufferBanks[[PTO_HSCB_BANK]].claim_sequence);
+        if remaining == 0 || (!done && remaining <= HSCBOutstandingDispatchCount()) then
+            return MessageBufferResult_Exhausted;
+        end;
+    end;
+    if sequence == Ones{PTO_XLEN} ||
+       (!done && _MessageBufferBanks[[source_index]].hscb_running && sequence == Ones{PTO_XLEN} - 1) then
         return MessageBufferResult_Exhausted;
     end;
     let id_hi = MessageBufferEndpointWord(source_index)[31:0] ::
@@ -172,14 +203,10 @@ begin
         ReportMessageBufferReplay(source, replay as MessageBufferReceiptIndex, control);
         return;
     end;
-    let free = FindFreeMessageBufferReplayReceipt(source);
+    let done = HSCBMatchingDone(source, control);
+    let free = FindFreeMessageBufferReplayReceipt(source, _MessageBufferBanks[[source]].hscb_running && !done);
     var result: MessageBufferResult = MessageBufferResult_BadCommand;
-    let draining_done = control == Zeros{64} + (3 << 32) + PTO_HSCB_ENDPOINT &&
-        _MessageBufferBanks[[source]].hscb_running &&
-        _MessageBufferBanks[[source]].staging_words[[0]] == Zeros{64} + 3 &&
-        _MessageBufferBanks[[source]].staging_words[[1]] ==
-            _MessageBufferBanks[[source]].hscb_dispatch_id;
-    if !_MessageBufferCoreDraining[[_CurrentModelCore]] || draining_done then
+    if !_MessageBufferCoreDraining[[_CurrentModelCore]] || done then
         result = AdmitMessageBufferPacket(source, control, free != PTO_MODEL_MESSAGE_BUFFER_RECEIPTS);
     end;
     if result == MessageBufferResult_OK then

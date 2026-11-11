@@ -57,6 +57,13 @@ uses the [message-buffer send](message-buffer-send.md) and
 // this functional profile. The reference bounds issued-ID history without
 // eviction during the invocation; a full table returns EXHAUSTED. Normal end
 // waits for an outstanding DONE; abort invalidates the old service binding.
+// LAUNCH MUST serialize against pending service ingress and MUST reserve the
+// worker replay receipt, worker transmit identity, and service receive claim
+// needed by its matching DONE. Other sends MUST preserve those reservations.
+// The worker MUST accept a kernel entry only from the read-complete claimed
+// four-word LAUNCH sent by HSCB with a nonzero halfword-aligned PC. It
+// acknowledges and releases that exact claim before calling the entry. Peers
+// may use identical payload bytes as ordinary data.
 // NDF-END: PTO-ARCH-HSCB-DISPATCH-001
 
 func EnableHSCBService()
@@ -86,6 +93,19 @@ begin
     end;
 end;
 
+readonly func HSCBWorkerAcceptsLaunch() => boolean
+begin
+    let worker = CurrentMessageBufferIndex();
+    let snap = _MessageBufferBanks[[worker]].snapshot;
+    if !MessageBufferEnabledForCurrentContext() || !MessageBufferSnapshotOwnerMatches(worker) ||
+       snap.acked || snap.message.word_count != 4 || !MessageBufferReadComplete(worker) then
+        return FALSE;
+    end;
+    let pc = snap.message.words[[2]];
+    return snap.message.message_id_hi[63:32] == Ones{32} &&
+           snap.message.words[[0]] == Zeros{64} + 2 && pc != Zeros{64} && pc[0] == '0';
+end;
+
 func HSCBIssueLaunch(worker: MessageBufferEndpointIndex, dispatch_id: Word,
                      kernel_pc: Word, argument: Word) => MessageBufferResult
 begin
@@ -94,14 +114,23 @@ begin
        !_MessageBufferBanks[[worker]].hscb_ready then
         return MessageBufferResult_BadCommand;
     end;
-    if _MessageBufferBanks[[worker]].hscb_running then return MessageBufferResult_Busy; end;
+    if _MessageBufferBanks[[worker]].hscb_running || !MessageBufferBankQuiescent(PTO_HSCB_BANK) then
+        return MessageBufferResult_Busy;
+    end;
     let used = _MessageBufferBanks[[worker]].hscb_issued_count;
     for i = 0 to PTO_MODEL_MESSAGE_BUFFER_RECEIPTS - 1 do
         if i < used && _MessageBufferBanks[[worker]].hscb_issued_ids[[i]] == dispatch_id then
             return MessageBufferResult_BadCommand;
         end;
     end;
-    if used == PTO_MODEL_MESSAGE_BUFFER_RECEIPTS then return MessageBufferResult_Exhausted; end;
+    let host_claims_left = UInt(Ones{48}) - UInt(_MessageBufferBanks[[PTO_HSCB_BANK]].claim_sequence);
+    if used == PTO_MODEL_MESSAGE_BUFFER_RECEIPTS ||
+       FindFreeMessageBufferReplayReceipt(worker, FALSE) == PTO_MODEL_MESSAGE_BUFFER_RECEIPTS ||
+       _MessageBufferBanks[[worker]].transmit_sequence == Ones{64} ||
+       _MessageBufferBanks[[worker]].claim_sequence == Ones{48} ||
+       host_claims_left <= HSCBOutstandingDispatchCount() then
+        return MessageBufferResult_Exhausted;
+    end;
     _MessageBufferBanks[[PTO_HSCB_BANK]].staging_words[[0]] = Zeros{64} + 2;
     _MessageBufferBanks[[PTO_HSCB_BANK]].staging_words[[1]] = dispatch_id;
     _MessageBufferBanks[[PTO_HSCB_BANK]].staging_words[[2]] = kernel_pc;

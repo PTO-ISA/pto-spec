@@ -290,8 +290,12 @@
       "tests": [
         "PTO-AVS-ARCH-STATE-HSCB-DISPATCH-STATIC-001",
         "PTO-AVS-HSCB-ABORT-LATE-DONE-001",
+        "PTO-AVS-HSCB-DONE-BEFORE-LAUNCH-001",
+        "PTO-AVS-HSCB-DONE-COUNTER-LIMITS-001",
+        "PTO-AVS-HSCB-DONE-RESERVATION-001",
         "PTO-AVS-HSCB-DRAIN-DONE-001",
         "PTO-AVS-HSCB-EIGHT-DISPATCH-001",
+        "PTO-AVS-HSCB-PEER-LAUNCH-SPOOF-001",
         "PTO-AVS-HSCB-WAIT-EVENT-RACE-001",
         "PTO-AVS-HSCB-WRONG-DONE-ID-001"
       ]
@@ -325,8 +329,12 @@
       "tests": [
         "PTO-AVS-ARCH-STATE-MESSAGE-BUFFER-SEND-STATIC-001",
         "PTO-AVS-HSCB-ABORT-LATE-DONE-001",
+        "PTO-AVS-HSCB-DONE-BEFORE-LAUNCH-001",
+        "PTO-AVS-HSCB-DONE-COUNTER-LIMITS-001",
+        "PTO-AVS-HSCB-DONE-RESERVATION-001",
         "PTO-AVS-HSCB-DRAIN-DONE-001",
         "PTO-AVS-HSCB-EIGHT-DISPATCH-001",
+        "PTO-AVS-HSCB-PEER-LAUNCH-SPOOF-001",
         "PTO-AVS-HSCB-SIBLING-CLAIM-ISOLATION-001",
         "PTO-AVS-HSCB-WRONG-DONE-ID-001"
       ]
@@ -21818,10 +21826,10 @@
     "asl/arch/programming-model/tile-registers.asl": "59452d3b3b708dc43f6ec4f930b1c7153d6d5247a93119669527bd29b26ec99e",
     "asl/arch/state/core-synchronization.asl": "a9f34342e9982ea84c4ebf797b32745807792a833c95a5d6e8d66157b66aeb53",
     "asl/arch/state/definedness.asl": "f68778534d67e736f701f8e24e03f27a018f3eabcec1421a6b33856030874ad1",
-    "asl/arch/state/hscb-dispatch.asl": "c039213224347af12de92e69f4b2844898d3ce66ba2fe87da6dc6d256177a5c1",
+    "asl/arch/state/hscb-dispatch.asl": "93627a69feeab6a3ece91926c474b6eb5990725f483244410d0f616fe04683fc",
     "asl/arch/state/kernel-lifecycle.asl": "5b8a0296092b575168c9e99ae0211775746339636498c1cd99e4287889b00143",
     "asl/arch/state/local-payload-generation.asl": "9e8b044814d0542eee5d21bfc995fe8d570e1e8d4c3651c823e68831533cae62",
-    "asl/arch/state/message-buffer-send.asl": "7e70feede397b5e4890ccba1e3880b7360e098421ba26d371354d2e461a1bd6e",
+    "asl/arch/state/message-buffer-send.asl": "60347128f2a4b82a0e747f414ad65ce4a94501e843f40a73c1244179cf0f95e3",
     "asl/arch/state/message-buffer-state.asl": "b3aa256f3e47579bd6121ce6677e1c7a1e478009c020d143137eb0a6ba353def",
     "asl/arch/state/message-buffer.asl": "4b07751b7aa17aeaa86f5727aa149d67cebbfc1e3b47a21bbeaabaaa067fbc8d",
     "asl/arch/state/numeric-status.asl": "3d3fe1709c7e2903bca96d50e9671a6a484c442ff08ce4a8340168cdb38ac6d9",
@@ -22775,10 +22783,10 @@
     "docs/arch/programming-model/tile-registers.md": "93e2cffab8050b30e112d3371f37e950e9bff9e8373cb06172cf6cab51a501ef",
     "docs/arch/state/core-synchronization.md": "213103de8013ffa95f1f545ccacbf5d6659c1c4f482e3da0d982c74c8c01c390",
     "docs/arch/state/definedness.md": "0c592e7785591408293173237e5ae537b04d33f1c15de2a02985605e8a0b8892",
-    "docs/arch/state/hscb-dispatch.md": "6afbed4d1e03b907060e3a88e86962ae43ce49e1dc3ba81184a8a501d3ad6436",
+    "docs/arch/state/hscb-dispatch.md": "cea0b9c032e28ad17ee4ea23dec5c894d5cb7b25fe70a9d0c70b706622445086",
     "docs/arch/state/kernel-lifecycle.md": "e3aa7002a0c6a5047e8c7308c047c3a7345ae979fe86b7c9d624a22ed03867b3",
     "docs/arch/state/local-payload-generation.md": "e2c7cf72c098774fb518d0f8168a651f9b60f2d220009281adf3b0a95418708d",
-    "docs/arch/state/message-buffer-send.md": "6016f160e1c7a1f0ae7a1ffea4386c3f9c4e49dec91c07a851f1931fe6b826a6",
+    "docs/arch/state/message-buffer-send.md": "556e42ec3914a408a91d68a71675eeaf6a73f8a5efa656d808324907bf42b4b5",
     "docs/arch/state/message-buffer-state.md": "5cc72e4072d4bf76b319f07a5853ed7c6996e55cf68ec3eeed6e02f0c5164626",
     "docs/arch/state/message-buffer.md": "c08f8cdbe723c751b3babe06f8baf5c9bec123e01661f67c96dcbffdedae26cd",
     "docs/arch/state/numeric-status.md": "2bc1485eab64147a553ddb269fb3e520dd0b63dc7c31614996dc32c53b57d06f",
@@ -23836,10 +23844,14 @@
     "tests/asl/arch/state/core-synchronization/arch-state-sync-core-site-mismatch-001.asl": "78404d5a519eacfcf95c45e6339b04c616e88a31610f6694bf0aa2a18c700c8b",
     "tests/asl/arch/state/core-synchronization/arch-static-core-synchronization-contract-001.asl": "b2ccbb64d209b65c1442191cc4b968b27c395b851f5456a6cd7ba83272e3e72f",
     "tests/asl/arch/state/definedness/arch-static-definedness-contract-001.asl": "5389abfd59ea0e176acc50273c7920ead6512702a2188556c41a1c8384a9216d",
+    "tests/asl/arch/state/hscb-dispatch/arch-bound-hscb-done-before-launch-001.asl": "c36b58e7a8e06a2ab318422e7f140e4e2b6583dfca2799e18c7c5deb0204dd1f",
+    "tests/asl/arch/state/hscb-dispatch/arch-bound-hscb-done-counter-limits-001.asl": "1bb16a89f34e2ad94894dd8eb37deb2b5abeefeeab4d38738b645db50f88c644",
+    "tests/asl/arch/state/hscb-dispatch/arch-bound-hscb-done-reservation-001.asl": "6c679b08df44ac0427550a1651e5b6bc8d6605aeb480287a00d018332bdf2103",
     "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-abort-late-done-001.asl": "217df8d61432897658051e79ac991d1823a59394999f1a203d12792da07c7e68",
     "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-drain-done-001.asl": "113101c8f0db5a99d9658416adf7872352329bff9df17513047157e1e493625c",
-    "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-eight-dispatch-001.asl": "ca448eaff41d88647fe2a11130a972a0a999a092d591a36f98e912fafeb615fa",
+    "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-eight-dispatch-001.asl": "4d834d724e5763d7b38b7708d8e0ae1fcb3979dcbf4b8af5b477311bea0d102e",
     "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-eight-worker-endpoints-001.asl": "0a9e65474c8472068b18ce91b4b29567aae104b00b7d6351b05301bae316720c",
+    "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-peer-launch-spoof-001.asl": "c6a910f7271af5f041934d5c3004c27f3e41c723f24ee721fdf296a4e21357b2",
     "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-sibling-claim-isolation-001.asl": "69b5e373692222f4361734e4ca9803fcb3a1b2714ba2e6b5063b6e3a6eca5180",
     "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-wait-event-race-001.asl": "74910c928f038e90d91d9e3b47042aceac44459f67a93acb7793362aa490bdd3",
     "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-wrong-done-id-001.asl": "cd11bd9914a2d3165accb0b1d3374dc47e4ef027c86b94d6db99163a79d94df9",
@@ -28170,7 +28182,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1145,
     "status": "closed",
-    "test_count": 4487,
+    "test_count": 4491,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -54206,6 +54218,39 @@
       "source": "asl/arch/state/hscb-dispatch.asl"
     },
     {
+      "id": "PTO-AVS-HSCB-DONE-BEFORE-LAUNCH-001",
+      "kind": "boundary",
+      "path": "tests/asl/arch/state/hscb-dispatch/arch-bound-hscb-done-before-launch-001.asl",
+      "requirements": [
+        "PTO-ARCH-HSCB-DISPATCH-001",
+        "PTO-ARCH-HSCB-TRANSPORT-001"
+      ],
+      "sha256": "c36b58e7a8e06a2ab318422e7f140e4e2b6583dfca2799e18c7c5deb0204dd1f",
+      "source": "asl/arch/state/hscb-dispatch.asl"
+    },
+    {
+      "id": "PTO-AVS-HSCB-DONE-COUNTER-LIMITS-001",
+      "kind": "boundary",
+      "path": "tests/asl/arch/state/hscb-dispatch/arch-bound-hscb-done-counter-limits-001.asl",
+      "requirements": [
+        "PTO-ARCH-HSCB-DISPATCH-001",
+        "PTO-ARCH-HSCB-TRANSPORT-001"
+      ],
+      "sha256": "1bb16a89f34e2ad94894dd8eb37deb2b5abeefeeab4d38738b645db50f88c644",
+      "source": "asl/arch/state/hscb-dispatch.asl"
+    },
+    {
+      "id": "PTO-AVS-HSCB-DONE-RESERVATION-001",
+      "kind": "boundary",
+      "path": "tests/asl/arch/state/hscb-dispatch/arch-bound-hscb-done-reservation-001.asl",
+      "requirements": [
+        "PTO-ARCH-HSCB-DISPATCH-001",
+        "PTO-ARCH-HSCB-TRANSPORT-001"
+      ],
+      "sha256": "6c679b08df44ac0427550a1651e5b6bc8d6605aeb480287a00d018332bdf2103",
+      "source": "asl/arch/state/hscb-dispatch.asl"
+    },
+    {
       "id": "PTO-AVS-HSCB-DRAIN-DONE-001",
       "kind": "state-transition",
       "path": "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-drain-done-001.asl",
@@ -54225,7 +54270,7 @@
         "PTO-ARCH-HSCB-TRANSPORT-001",
         "PTO-ARCH-HSCB-DISPATCH-001"
       ],
-      "sha256": "ca448eaff41d88647fe2a11130a972a0a999a092d591a36f98e912fafeb615fa",
+      "sha256": "4d834d724e5763d7b38b7708d8e0ae1fcb3979dcbf4b8af5b477311bea0d102e",
       "source": "asl/arch/state/hscb-dispatch.asl"
     },
     {
@@ -54236,6 +54281,17 @@
         "PTO-ARCH-HSCB-ENDPOINT-001"
       ],
       "sha256": "0a9e65474c8472068b18ce91b4b29567aae104b00b7d6351b05301bae316720c",
+      "source": "asl/arch/state/hscb-dispatch.asl"
+    },
+    {
+      "id": "PTO-AVS-HSCB-PEER-LAUNCH-SPOOF-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/state/hscb-dispatch/arch-state-hscb-peer-launch-spoof-001.asl",
+      "requirements": [
+        "PTO-ARCH-HSCB-DISPATCH-001",
+        "PTO-ARCH-HSCB-TRANSPORT-001"
+      ],
+      "sha256": "c6a910f7271af5f041934d5c3004c27f3e41c723f24ee721fdf296a4e21357b2",
       "source": "asl/arch/state/hscb-dispatch.asl"
     },
     {
@@ -75628,9 +75684,13 @@
       ],
       "semantic_tests": [
         "PTO-AVS-HSCB-ABORT-LATE-DONE-001",
+        "PTO-AVS-HSCB-DONE-BEFORE-LAUNCH-001",
+        "PTO-AVS-HSCB-DONE-COUNTER-LIMITS-001",
+        "PTO-AVS-HSCB-DONE-RESERVATION-001",
         "PTO-AVS-HSCB-DRAIN-DONE-001",
         "PTO-AVS-HSCB-EIGHT-DISPATCH-001",
         "PTO-AVS-HSCB-EIGHT-WORKER-ENDPOINTS-001",
+        "PTO-AVS-HSCB-PEER-LAUNCH-SPOOF-001",
         "PTO-AVS-HSCB-SIBLING-CLAIM-ISOLATION-001",
         "PTO-AVS-HSCB-WAIT-EVENT-RACE-001",
         "PTO-AVS-HSCB-WRONG-DONE-ID-001"
@@ -75640,9 +75700,13 @@
       "tests": [
         "PTO-AVS-ARCH-STATE-HSCB-DISPATCH-STATIC-001",
         "PTO-AVS-HSCB-ABORT-LATE-DONE-001",
+        "PTO-AVS-HSCB-DONE-BEFORE-LAUNCH-001",
+        "PTO-AVS-HSCB-DONE-COUNTER-LIMITS-001",
+        "PTO-AVS-HSCB-DONE-RESERVATION-001",
         "PTO-AVS-HSCB-DRAIN-DONE-001",
         "PTO-AVS-HSCB-EIGHT-DISPATCH-001",
         "PTO-AVS-HSCB-EIGHT-WORKER-ENDPOINTS-001",
+        "PTO-AVS-HSCB-PEER-LAUNCH-SPOOF-001",
         "PTO-AVS-HSCB-SIBLING-CLAIM-ISOLATION-001",
         "PTO-AVS-HSCB-WAIT-EVENT-RACE-001",
         "PTO-AVS-HSCB-WRONG-DONE-ID-001"
