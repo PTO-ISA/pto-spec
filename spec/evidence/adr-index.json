@@ -7109,7 +7109,8 @@
         "PTO-ARCH-MEMORY-MODEL-OPEN-001",
         "PTO-TLOAD-MEMORY-001",
         "PTO-TSTORE-MEMORY-001",
-        "PTO-TSTORE-STRIDED-ATOMIC-RED-001"
+        "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+        "PTO-REQ-INSTRUCTION-DISPATCH-001"
       ],
       "affected_units": [
         "PTO-ARCH-DATA-TYPES-MEMORY-MODEL",
@@ -7121,7 +7122,32 @@
         "PTO-TILE-MODEL-MEMORY-LOAD-STORE",
         "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
         "PTO-TILE-TLOAD",
-        "PTO-TILE-TSTORE"
+        "PTO-TILE-TSTORE",
+        "PTO-ARCH-DISPATCH-TOP-LEVEL",
+        "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
+        "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001",
+            "PTO-ARCH-MEMORY-MODEL-CONFLICT-001",
+            "PTO-ARCH-MEMORY-MODEL-VISIBILITY-001",
+            "PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001",
+            "PTO-REQ-INSTRUCTION-DISPATCH-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-DISPATCH-TOP-LEVEL",
+            "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
+            "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT"
+          ],
+          "approvers": [
+            "ckwllawliet"
+          ],
+          "baseline": "42067d0f2890b8c013a868bd1247ebc6437b3179",
+          "date": "2026-11-11",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/416"
+        }
       ],
       "approvers": [
         "Kevin Zhou <zhoubot@gmail.com>"

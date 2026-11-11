@@ -2,7 +2,7 @@
 {
   "id": "ADR-MEM-0011",
   "title": "Cross-agent visibility, fence transport, atomic ordering, and precise replay",
-  "title_zh": "跨 agent 可见性、fence 传输、atomic 顺序与精确重放",
+  "title_zh": "\u8de8 agent \u53ef\u89c1\u6027\u3001fence \u4f20\u8f93\u3001atomic \u987a\u5e8f\u4e0e\u7cbe\u786e\u91cd\u653e",
   "status": "accepted",
   "authors": [
     "Kevin Zhou <zhoubot@gmail.com>",
@@ -39,7 +39,8 @@
     "PTO-ARCH-MEMORY-MODEL-OPEN-001",
     "PTO-TLOAD-MEMORY-001",
     "PTO-TSTORE-MEMORY-001",
-    "PTO-TSTORE-STRIDED-ATOMIC-RED-001"
+    "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+    "PTO-REQ-INSTRUCTION-DISPATCH-001"
   ],
   "affected_units": [
     "PTO-ARCH-DATA-TYPES-MEMORY-MODEL",
@@ -51,7 +52,10 @@
     "PTO-TILE-MODEL-MEMORY-LOAD-STORE",
     "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
     "PTO-TILE-TLOAD",
-    "PTO-TILE-TSTORE"
+    "PTO-TILE-TSTORE",
+    "PTO-ARCH-DISPATCH-TOP-LEVEL",
+    "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
+    "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT"
   ],
   "resolves": [],
   "supersedes": [
@@ -62,7 +66,28 @@
   "release_impact": "required",
   "interface_change": true,
   "legacy_ids": [],
-  "amendments": []
+  "amendments": [
+    {
+      "date": "2026-11-11",
+      "baseline": "42067d0f2890b8c013a868bd1247ebc6437b3179",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/416",
+      "affected_ndf": [
+        "PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001",
+        "PTO-ARCH-MEMORY-MODEL-CONFLICT-001",
+        "PTO-ARCH-MEMORY-MODEL-VISIBILITY-001",
+        "PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001",
+        "PTO-REQ-INSTRUCTION-DISPATCH-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DISPATCH-TOP-LEVEL",
+        "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
+        "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT"
+      ]
+    }
+  ]
 }
 ---
 # ADR-MEM-0011: Cross-agent visibility, fence transport, atomic ordering, and precise replay
@@ -207,3 +232,43 @@ Evidence covers multi-copy release/acquire visibility, relaxed negative cases,
 mask transport and strength, partial-overlap rejection, exact-range atomic RMW,
 and replay/flush retention of prior effects. `make pr-check`, `make repo-check`,
 and `git diff --check` are required for the candidate.
+
+
+## Issue #416 accepted architecture amendment (2026-11-11)
+
+At baseline `42067d0f2890b8c013a868bd1247ebc6437b3179`, the delegated
+architecture owner accepted Scalar ordinary and atomic/LR-SC request scope with
+Private default; Tile/IndexedGenerated retain IntraCore. Strict equality of
+scope and issuing domain is required, including same-PE cross-scope interactions.
+Private identifies one PE; InterCore covers one PTO device. Scope selects portable
+participation, not a cache tier, ordering mode, host coherence, or handoff.
+
+The carrier is an independent 64-bit form preserving an original 16/32/48-bit
+payload in bits[63:16]. Low-halfword mask/match is 0xf0ff/0x001f, scope[9:8]
+is Private/IntraCore/InterCore/reserved, and inner-length[11:10] is
+16/32/48/reserved. Padding is zero. Assembly uses .private/.intra/.inter.
+Existing binaries retain their decode/default. One envelope retires once at TPC+8;
+full fetch and recovery use the envelope. DMA/Prefetch and .brg are excluded.
+This decision avoids stealing existing operand bits or losing compressed/HL
+addressing behavior; current normative meaning belongs to the ASL/NDF owners.
+
+Keep one physical memory. Scope-conformance checks reject portable proof claims
+for overlapping, differently keyed access pairs involving a write, not hardware
+execution. Initial writes are neutral. DMA retains explicit legacy provenance.
+General program-order/fence/collective ordering remains independent. LR scope
+is saved with PE context; actual matching-domain writes invalidate overlapping
+64B reservations across active/inactive PE/Core contexts even without event capture.
+Mismatched-scope SC deterministically takes the existing no-access miss path in
+the reference model. Existing faults, CAS nonwrite, SC reporting and granule
+rules remain; no additional progress promise is introduced.
+
+Affected owners include memory events/relations, scalar request and decoder
+transport, architecture dispatch, GM obligations/replay and PE reservation
+contexts. Focused evidence must include real encoded ordinary/atomic effects,
+Scalar/Tile/IndexedGenerated interaction, cross-Core InterCore communication,
+capture-disabled reservation safety, malformed envelopes and legacy exclusions.
+No Tile.InterCore, domain conversion, cache maintenance or host coherence is
+added. Target release is unassigned; release evidence refresh and downstream
+assembler/compiler/ASL-model integration remain release obligations. Issue #416
+remains open until implementation/evidence acceptance. ADR-MEM-0010 remains
+superseded historical rationale; this accepted topic owns the amendment.
