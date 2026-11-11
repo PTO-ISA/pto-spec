@@ -414,6 +414,7 @@
     "PRD-183": "ADR-NUM-0012"
   },
   "open": [
+    "ADR-STATE-0015",
     "ADR-NUM-0013",
     "ADR-NUM-0014",
     "ADR-NUM-0015",
@@ -5550,6 +5551,42 @@
       ],
       "title": "Opt-in MSGB registers, BSE admission and exact SSRSET ACK",
       "title_zh": "\u663e\u5f0f\u542f\u7528\u7684 MSGB \u5bc4\u5b58\u5668\u3001BSE \u63a5\u7eb3\u4e0e\u7cbe\u786e SSRSET ACK"
+    },
+    {
+      "accepted": null,
+      "affected_ndf": [
+        "PTO-ARCH-HSCB-ENDPOINT-001",
+        "PTO-ARCH-HSCB-TRANSPORT-001",
+        "PTO-ARCH-HSCB-DISPATCH-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-STATE-MESSAGE-BUFFER-STATE",
+        "PTO-ARCH-STATE-MESSAGE-BUFFER-SEND",
+        "PTO-ARCH-STATE-HSCB-DISPATCH"
+      ],
+      "approvers": [],
+      "authors": [
+        "zhoubot"
+      ],
+      "baseline": "42067d0f2890b8c013a868bd1247ebc6437b3179",
+      "created": "2026-11-11",
+      "id": "ADR-STATE-0015",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/425",
+      "interface_change": true,
+      "legacy_ids": [],
+      "path": "docs/status/decisions/ADR-STATE-0015-hscb-message-dispatch.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "draft",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "unassigned"
+      ],
+      "title": "High Speed Config Bus delivery and Message Buffer worker dispatch",
+      "title_zh": "High Speed Config Bus \u6295\u9012\u4e0e Message Buffer \u5de5\u4f5c\u7ebf\u7a0b\u8c03\u5ea6"
     },
     {
       "accepted": "2026-07-28",
@@ -15805,9 +15842,9 @@
   ],
   "schema": "pto.adr-index",
   "summary": {
-    "draft_count": 9,
+    "draft_count": 10,
     "legacy_id_count": 304,
-    "record_count": 118,
+    "record_count": 119,
     "type_counts": {
       "BLOCK": 19,
       "CUBE": 18,
@@ -15815,7 +15852,7 @@
       "MEM": 11,
       "NUM": 22,
       "SCALAR": 7,
-      "STATE": 14,
+      "STATE": 15,
       "TILE": 13
     }
   },

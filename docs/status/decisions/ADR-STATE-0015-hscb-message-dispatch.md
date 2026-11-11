@@ -112,3 +112,6 @@ timing consistent with those observations. Dispatch completion alone gives no
 additional visibility guarantee for unrelated memory operations.
 
 **中文。** 本决策规定可观察的投递结果、邮箱归属和调度状态。实现自行确定总线宽度、物理连线、缓冲容量及耗时。与任务无关的内存访问仍遵循其原有可见性规则。
+
+This draft decision does not authorize implementation or release.
+本 ADR 草案不授权实现或发布，提请评审的 ASL 给出候选契约的可执行形式。
