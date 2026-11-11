@@ -45,6 +45,7 @@ begin
     let arg = ReadSystemRegisterAddress(Zeros{24} + 0x0834);
     assert hi[63:32] == Ones{32};
     assert tag == Zeros{64} + 2 && id == expected_id && target == expected_pc && arg == expected_arg;
+    assert HSCBWorkerAcceptsLaunch();
     WriteSystemRegisterAddress(Zeros{24} + 0x0842, tok);
     let result = ReadSystemRegisterAddress(Zeros{24} + 0x0843);
     assert result == Zeros{64} + 0x101;
