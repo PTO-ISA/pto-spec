@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-REGISTERS","surface":"scalar","classification":["model","sys","registers"],"depends_on":["PTO-SCALAR-MODEL-SYS-SEMANTICS","PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-REGISTERS","surface":"scalar","classification":["model","sys","registers"],"depends_on":["PTO-SCALAR-MODEL-SYS-SEMANTICS","PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE","PTO-ARCH-STATE-MESSAGE-BUFFER"]}
 // PTO-REQ-SCALAR-SSR-001, PTO-REQ-RESET-001: canonical 24-bit
 // system-register addressing with explicit Access Control Ring checks.
 
@@ -6,6 +6,7 @@ readonly func SystemRegisterAccessPermitted(
     address: SystemRegisterAddress, write: boolean,
     ring: AccessControlRing) => boolean
 begin
+    if IsMessageBufferConfigAddress(address) then return ring == 0; end;
     // Base registers are available at every level. Context, translation, and
     // debug register families are ACR0-only in the PTO v0 profile.
     return UInt(address[11:0]) < 0x0f00 || ring == 0;
@@ -69,6 +70,9 @@ begin
         SetFault(Fault_IllegalInstruction, ReadPC());
         return Zeros{PTO_XLEN};
     end;
+    if IsMessageBufferAddress(address) then
+        return ReadMessageBufferRegister(address);
+    end;
     if IsBaseSystemRegisterAddress(address) then
         return ReadSystemRegister(BaseSystemRegisterOfAddress(address));
     end;
@@ -95,7 +99,8 @@ end;
 readonly func SystemRegisterSwapPermitted(address: SystemRegisterAddress)
     => boolean
 begin
-    return SystemRegisterAccessPermitted(address, FALSE, CurrentACR()) &&
+    return !IsMessageBufferAddress(address) &&
+           SystemRegisterAccessPermitted(address, FALSE, CurrentACR()) &&
            SystemRegisterAccessPermitted(address, TRUE, CurrentACR()) &&
            SystemRegisterAccessOf(address) == SystemRegisterAccess_ReadWrite;
 end;
@@ -104,6 +109,10 @@ func WriteSystemRegisterAddress(address: SystemRegisterAddress, value: Word)
 begin
     if !SystemRegisterWritePermitted(address) then
         SetFault(Fault_IllegalInstruction, ReadPC());
+        return;
+    end;
+    if IsMessageBufferAddress(address) then
+        WriteMessageBufferRegister(address, value);
         return;
     end;
     if IsBaseSystemRegisterAddress(address) then
@@ -145,13 +154,17 @@ func ExecuteSystemRegisterGet(destination: Reg5Selector,
                               address: SystemRegisterAddress)
 begin
     let value = ReadSystemRegisterAddress(address);
-    if _LastFault == Fault_None then WriteScalarDestination(destination, value); end;
+    if _LastFault == Fault_None && !_ScalarExecutionBlocked then
+        WriteScalarDestination(destination, value);
+    end;
 end;
 
 func ExecuteCompressedSystemRegisterGet(address: SystemRegisterAddress)
 begin
     let value = ReadSystemRegisterAddress(address);
-    if _LastFault == Fault_None then WriteCompressedTResult(value); end;
+    if _LastFault == Fault_None && !_ScalarExecutionBlocked then
+        WriteCompressedTResult(value);
+    end;
 end;
 
 func ExecuteSystemRegisterSet(source: Reg5Selector,
@@ -161,6 +174,7 @@ begin
         SetFault(Fault_IllegalInstruction, ReadPC());
         return;
     end;
+    if !MessageBufferWritePreflight(address) then return; end;
     let value = ReadScalarRegisterOperand(source);
     WriteSystemRegisterAddress(address, value);
 end;

@@ -337,6 +337,37 @@ SCALAR_AGU_SRC_R_TYPE_RESERVED_VALUES = (3,)
 SCALAR_AGU_SHAMT_BOUNDARY_VALUES = (0, 31)
 SCALAR_AGU_PREFETCH_MODEL_ASSIGNED_VALUES = (0, 1, 2)
 SCALAR_AGU_PREFETCH_MODEL_RESERVED_VALUES = tuple(range(3, 32))
+MSGB_REGISTER_NAMES = {
+    "MSGBCR",
+    *(f"MSGBD{index}" for index in range(1, 11)),
+    "MSGBRXCLAIM",
+    "MSGBRXSTATE",
+    "MSGBRXTOKEN",
+    "MSGBRXMSGID_HI",
+    "MSGBRXMSGID_LO",
+    "MSGBRXCONTROL",
+    "MSGBRXRELEASE",
+    "MSGBACK",
+    "MSGBACKSTAT",
+    "MSGBACKID",
+    "MSGBTXID_HI",
+    "MSGBTXID_LO",
+    "MSGBTXSTAT",
+    "MSGBENDPOINT",
+    "MSGBCFGSEL",
+    "MSGBCFG",
+    "MSGBDOMAIN",
+}
+MSGB_DATA_NAMES = {f"MSGBD{index}" for index in range(1, 11)}
+MSGB_SNAPSHOT_READ_NAMES = {
+    *MSGB_DATA_NAMES,
+    "MSGBRXTOKEN",
+    "MSGBRXMSGID_HI",
+    "MSGBRXMSGID_LO",
+    "MSGBRXCONTROL",
+}
+MSGB_COMMAND_NAMES = {"MSGBRXCLAIM", "MSGBRXRELEASE", "MSGBACK"}
+MSGB_CONFIG_NAMES = {"MSGBCFGSEL", "MSGBCFG", "MSGBDOMAIN"}
 MASK32 = (1 << 32) - 1
 MASK64 = (1 << 64) - 1
 MASK128 = (1 << 128) - 1
@@ -387,6 +418,102 @@ def system_register_reset_expression(behavior: dict) -> str:
     if reset == "external-and-timer-enabled":
         return "Zeros{PTO_XLEN} + 3"
     raise ValueError(f"unsupported system-register reset: {reset}")
+
+
+def is_msgb_register(row: dict) -> bool:
+    """Return whether one register belongs to the reviewed MSGB base family."""
+
+    return row["name"] in MSGB_REGISTER_NAMES
+
+
+def emit_msgb_witness_setup(*, tag: str, snapshot: bool = False) -> None:
+    """Emit one legal current-kernel message-bank setup for generated witnesses."""
+
+    print(
+        f"    let msgb_launch_{tag} = "
+        "LaunchKernelInvocation(0, Zeros{PTO_XLEN} + 0x100);"
+    )
+    print(f"    assert msgb_launch_{tag} == KernelLifecycle_Started;")
+    print("    SelectExecutionContext(0, 0);")
+    print("    SetCurrentACR(0);")
+    print("    WriteSystemRegisterAddress(Zeros{24} + 0x0849, Zeros{PTO_XLEN});")
+    print("    WriteSystemRegisterAddress(Zeros{24} + 0x084b, Zeros{PTO_XLEN});")
+    print(
+        "    WriteSystemRegisterAddress(Zeros{24} + 0x084a, "
+        "Zeros{PTO_XLEN} + 0x0000000100010001);"
+    )
+    print("    assert _LastFault == Fault_None;")
+    if snapshot:
+        for word in range(10):
+            print(
+                f"    WriteSystemRegisterAddress(Zeros{{24}} + 0x{0x0831 + word:04x}, "
+                f"Zeros{{PTO_XLEN}} + {word + 1});"
+            )
+        print("    ExecuteMessageBufferSend(Zeros{PTO_XLEN} + 0x0000000a00000000);")
+        print("    assert _LastFault == Fault_None;")
+        print("    WriteSystemRegisterAddress(Zeros{24} + 0x083b, Zeros{PTO_XLEN} + 1);")
+        print("    assert _LastFault == Fault_None;")
+
+
+def emit_msgb_launch_only(tag: str) -> None:
+    print(
+        f"    let msgb_launch_{tag} = "
+        "LaunchKernelInvocation(0, Zeros{PTO_XLEN} + 0x100);"
+    )
+    print(f"    assert msgb_launch_{tag} == KernelLifecycle_Started;")
+    print("    SelectExecutionContext(0, 0);")
+    print("    SetCurrentACR(0);")
+
+
+def msgb_write_witness(name: str, fallback: int) -> int | None:
+    if name == "MSGBRXCLAIM":
+        return 1
+    if name == "MSGBCFGSEL":
+        return 0
+    if name == "MSGBCFG":
+        return 0x0000000100010001
+    if name == "MSGBDOMAIN":
+        return 0x55
+    if name in {"MSGBRXRELEASE", "MSGBACK"}:
+        return None
+    return fallback
+
+
+def emit_msgb_transfer_setup(name: str, class_id: str, tag: str) -> None:
+    if class_id == "scalar-system-register-swap":
+        return
+    if class_id == "scalar-system-register-read":
+        if name in MSGB_SNAPSHOT_READ_NAMES:
+            emit_msgb_witness_setup(tag=tag, snapshot=True)
+        elif name in MSGB_CONFIG_NAMES:
+            emit_msgb_witness_setup(tag=tag)
+        return
+    if name in MSGB_CONFIG_NAMES:
+        emit_msgb_launch_only(tag)
+        if name == "MSGBCFG":
+            print(
+                "    WriteSystemRegisterAddress(Zeros{24} + 0x084b, "
+                "Zeros{PTO_XLEN});"
+            )
+    elif name == "MSGBRXCLAIM":
+        emit_msgb_witness_setup(tag=tag)
+        for word in range(10):
+            print(
+                f"    WriteSystemRegisterAddress(Zeros{{24}} + 0x{0x0831 + word:04x}, "
+                f"Zeros{{PTO_XLEN}} + {word + 1});"
+            )
+        print("    ExecuteMessageBufferSend(Zeros{PTO_XLEN} + 0x0000000a00000000);")
+    elif name in {"MSGBRXRELEASE", "MSGBACK"}:
+        emit_msgb_witness_setup(tag=tag, snapshot=True)
+        if name == "MSGBACK":
+            for word in range(10):
+                print(
+                    f"    - = ReadSystemRegisterAddress(Zeros{{24}} + 0x{0x0831 + word:04x});"
+                )
+    elif name in MSGB_SNAPSHOT_READ_NAMES:
+        emit_msgb_witness_setup(tag=tag, snapshot=True)
+    else:
+        emit_msgb_witness_setup(tag=tag)
 
 
 def family_constraint_applies(row: dict, constraint: dict) -> bool:
@@ -8556,10 +8683,19 @@ def _emit_monolithic() -> None:
                     scalar_sys_register_transfer_cases.append(
                         (row, register, behavior, address, address_field["name"])
                     )
-    if len(scalar_sys_register_transfer_cases) != 1872:
+    msgb_register_count = sum(is_msgb_register(row) for row in system_registers)
+    msgb_addressable_transfer_rows = sum(
+        0x084B < (1 << scalar_sys_register_address_field(row)["width"])
+        for row in scalar_sys_register_transfer_rows
+    )
+    expected_sys_register_transfer_cases = (
+        1872 + msgb_register_count * msgb_addressable_transfer_rows
+    )
+    if len(scalar_sys_register_transfer_cases) != expected_sys_register_transfer_cases:
         raise ValueError(
             "reviewed bank-expanded SYS register-transfer inventory drift: "
-            f"expected 1872, got {len(scalar_sys_register_transfer_cases)}"
+            f"expected {expected_sys_register_transfer_cases}, "
+            f"got {len(scalar_sys_register_transfer_cases)}"
         )
     scalar_sys_selector_read_rows = [
         row
@@ -8634,8 +8770,15 @@ def _emit_monolithic() -> None:
         + scalar_sys_selector_case_count
         + scalar_sys_control_totality_case_count
     )
-    if scalar_sys_stage4_case_count != 4336:
-        raise ValueError("reviewed SYS Stage 4 case inventory drift")
+    expected_scalar_sys_stage4_case_count = (
+        4336 + msgb_register_count * msgb_addressable_transfer_rows
+    )
+    if scalar_sys_stage4_case_count != expected_scalar_sys_stage4_case_count:
+        raise ValueError(
+            "reviewed SYS Stage 4 case inventory drift: "
+            f"expected {expected_scalar_sys_stage4_case_count}, "
+            f"got {scalar_sys_stage4_case_count}"
+        )
     scalar_agu_effect_rows = [
         row for row in scalar if scalar_agu_effect_class(row) is not None
     ]
@@ -11153,6 +11296,8 @@ def _emit_monolithic() -> None:
         marker = f"transfer/{row['form_id']}/{register['name']}/0x{address:06x}"
         print(f"    // SYS-S4 {marker}")
         print("    ResetProfileState();")
+        if is_msgb_register(register):
+            emit_msgb_transfer_setup(register["name"], class_id, str(case_index))
         print("    SetCurrentACR(0);")
         print("    ClearFault();")
         print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
@@ -11204,13 +11349,28 @@ def _emit_monolithic() -> None:
                 print(f"    assert {destination} == {expected};")
 
         elif class_id == "scalar-system-register-write":
-            if behavior["write"] == "unpack-trap-status":
+            if is_msgb_register(register):
+                special_write_value = msgb_write_witness(
+                    register["name"], 0x100000 + case_index
+                )
+                if special_write_value is None:
+                    print(
+                        f"    let msgb_transfer_token_{case_index} = "
+                        "ReadSystemRegisterAddress(Zeros{24} + 0x083d);"
+                    )
+                    write_value = f"msgb_transfer_token_{case_index}"
+                else:
+                    write_value = f"Zeros{{PTO_XLEN}} + {special_write_value}"
+            elif behavior["write"] == "unpack-trap-status":
                 write_value = 4
             elif register["name"] == "CORE_STATE":
                 write_value = 0x100
             else:
                 write_value = 0x100000 + case_index
-            print(f"    WriteGPR(5, Zeros{{PTO_XLEN}} + {write_value});")
+            if is_msgb_register(register):
+                print(f"    WriteGPR(5, {write_value});")
+            else:
+                print(f"    WriteGPR(5, Zeros{{PTO_XLEN}} + {write_value});")
             if access == "RO" and behavior["read"] != "architectural-time":
                 print(
                     f"    let scalar_sys_transfer_before_{case_index} = "
@@ -11227,9 +11387,13 @@ def _emit_monolithic() -> None:
                     "ScalarExecution_Rejected;"
                 )
                 print("    assert _LastFault == Fault_IllegalInstruction;")
-                print(f"    assert ReadGPR(5) == Zeros{{PTO_XLEN}} + {write_value};")
+                if is_msgb_register(register):
+                    print(f"    assert ReadGPR(5) == {write_value};")
+                else:
+                    print(f"    assert ReadGPR(5) == Zeros{{PTO_XLEN}} + {write_value};")
                 print("    ClearFault();")
-                if behavior["read"] != "architectural-time":
+                if (behavior["read"] != "architectural-time" and
+                        not is_msgb_register(register)):
                     print(
                         f"    let scalar_sys_transfer_after_{case_index} = "
                         f"ReadSystemRegisterAddress({bit_literal(address, 24)});"
@@ -11244,8 +11408,49 @@ def _emit_monolithic() -> None:
                     "ScalarExecution_Executed;"
                 )
                 print("    assert _LastFault == Fault_None;")
-                print(f"    assert ReadGPR(5) == Zeros{{PTO_XLEN}} + {write_value};")
-                if access == "RW":
+                if is_msgb_register(register):
+                    print(f"    assert ReadGPR(5) == {write_value};")
+                    name = register["name"]
+                    if name in MSGB_DATA_NAMES:
+                        payload_index = int(register["address"], 0) - 0x0831
+                        print(
+                            "    assert _MessageBufferBanks[[MessageBufferEndpointIndexOf(0, 0, 0)]]"
+                            f".staging_words[[{payload_index}]] == {write_value};"
+                        )
+                    elif name == "MSGBRXCLAIM":
+                        print(
+                            f"    let msgb_claim_state_{case_index} = "
+                            "ReadSystemRegisterAddress(Zeros{24} + 0x083c);"
+                        )
+                        print(f"    assert msgb_claim_state_{case_index}[8] == '1';")
+                    elif name == "MSGBRXRELEASE":
+                        print(
+                            f"    let msgb_release_state_{case_index} = "
+                            "ReadSystemRegisterAddress(Zeros{24} + 0x083d);"
+                        )
+                        print(
+                            f"    assert msgb_release_state_{case_index} == Zeros{{PTO_XLEN}};"
+                        )
+                    elif name == "MSGBACK":
+                        print(
+                            f"    let msgb_ack_state_{case_index} = "
+                            "ReadSystemRegisterAddress(Zeros{24} + 0x0843);"
+                        )
+                        print(
+                            f"    assert msgb_ack_state_{case_index} == "
+                            "Zeros{PTO_XLEN} + 0x101;"
+                        )
+                    elif name in MSGB_CONFIG_NAMES:
+                        print(
+                            f"    let msgb_config_state_{case_index} = "
+                            f"ReadSystemRegisterAddress({bit_literal(address, 24)});"
+                        )
+                        print(
+                            f"    assert msgb_config_state_{case_index} == {write_value};"
+                        )
+                else:
+                    print(f"    assert ReadGPR(5) == Zeros{{PTO_XLEN}} + {write_value};")
+                if access == "RW" and not is_msgb_register(register):
                     print(
                         f"    let scalar_sys_transfer_after_{case_index} = "
                         f"ReadSystemRegisterAddress({bit_literal(address, 24)});"
@@ -11264,7 +11469,7 @@ def _emit_monolithic() -> None:
                 write_value = 0x200000 + case_index
             print(f"    WriteGPR(5, Zeros{{PTO_XLEN}} + {write_value});")
             print(f"    WriteGPR(3, {bit_literal(destination_sentinel, 64)});")
-            if access != "WO":
+            if access != "WO" and not is_msgb_register(register):
                 print(
                     f"    let scalar_sys_transfer_before_{case_index} = "
                     f"ReadSystemRegisterAddress({bit_literal(address, 24)});"
@@ -11274,7 +11479,7 @@ def _emit_monolithic() -> None:
                 f"ExecuteScalarInstruction({bit_literal(witness, 48)}, "
                 f"{row['length_bits']});"
             )
-            if access == "RW":
+            if access == "RW" and not is_msgb_register(register):
                 print(
                     f"    assert scalar_sys_transfer_status_{case_index} == "
                     "ScalarExecution_Executed;"
@@ -11302,7 +11507,9 @@ def _emit_monolithic() -> None:
                 )
                 print(f"    assert ReadGPR(5) == Zeros{{PTO_XLEN}} + {write_value};")
                 print("    ClearFault();")
-                if access == "RO" and behavior["read"] != "architectural-time":
+                if (access == "RO" and
+                        behavior["read"] != "architectural-time" and
+                        not is_msgb_register(register)):
                     print(
                         f"    let scalar_sys_transfer_after_{case_index} = "
                         f"ReadSystemRegisterAddress({bit_literal(address, 24)});"
@@ -12231,6 +12438,12 @@ def _emit_monolithic() -> None:
         behavior = system_register_behaviors[row["name"]]
         expected = system_register_reset_expression(behavior)
         addresses = system_register_addresses(row)
+        if is_msgb_register(row):
+            if behavior["id"] not in reset_witnessed_behaviors:
+                print(f"    // SYSREG-WITNESS class/{behavior['id']}/reset")
+                print("    assert MessageBufferStateIsReset();")
+                reset_witnessed_behaviors.add(behavior["id"])
+            continue
         if behavior["read"] == "reject-write-only":
             for address in addresses:
                 if row["scope"] == "base":
@@ -12261,6 +12474,68 @@ def _emit_monolithic() -> None:
         addresses = system_register_addresses(row)
         canonical_address = addresses[0]
         first_behavior_access = behavior["id"] not in access_witnessed_behaviors
+        if is_msgb_register(row):
+            print("    ResetProfileState();")
+            print("    SetCurrentACR(0);")
+            print("    ClearFault();")
+            if first_behavior_access:
+                print(f"    // SYSREG-WITNESS class/{behavior['id']}/access")
+                for effect in behavior["side_effects"]:
+                    print(
+                        f"    // SYSREG-WITNESS effect/{behavior['id']}/"
+                        f"{re.sub(r'[^a-z0-9]+', '-', effect.lower()).strip('-')}"
+                    )
+            if row["access"] == "WO":
+                print(
+                    f"    - = ReadSystemRegisterAddress({bit_literal(canonical_address, 24)});"
+                )
+                print("    assert _LastFault == Fault_IllegalInstruction;")
+                print("    ClearFault();")
+            elif row["access"] == "RO":
+                print(
+                    f"    WriteSystemRegisterAddress({bit_literal(canonical_address, 24)}, "
+                    "Ones{PTO_XLEN});"
+                )
+                print("    assert _LastFault == Fault_IllegalInstruction;")
+                print("    ClearFault();")
+            elif row["name"] in MSGB_CONFIG_NAMES:
+                emit_msgb_launch_only(f"access_{row_index}")
+                if row["name"] == "MSGBCFG":
+                    print(
+                        "    WriteSystemRegisterAddress(Zeros{24} + 0x084b, "
+                        "Zeros{PTO_XLEN});"
+                    )
+                write_value = msgb_write_witness(row["name"], 0)
+                assert write_value is not None
+                print(
+                    f"    WriteSystemRegisterAddress({bit_literal(canonical_address, 24)}, "
+                    f"Zeros{{PTO_XLEN}} + {write_value});"
+                )
+                print("    assert _LastFault == Fault_None;")
+                print(
+                    f"    let msgb_config_read_{row_index} = "
+                    f"ReadSystemRegisterAddress({bit_literal(canonical_address, 24)});"
+                )
+                print(
+                    f"    assert msgb_config_read_{row_index} == "
+                    f"Zeros{{PTO_XLEN}} + {write_value};"
+                )
+            else:
+                emit_msgb_witness_setup(tag=f"access_{row_index}")
+                write_value = 0x100 + row_index
+                print(
+                    f"    WriteSystemRegisterAddress({bit_literal(canonical_address, 24)}, "
+                    f"Zeros{{PTO_XLEN}} + {write_value});"
+                )
+                print("    assert _LastFault == Fault_None;")
+                payload_index = int(row["address"], 0) - 0x0831
+                print(
+                    "    assert _MessageBufferBanks[[MessageBufferEndpointIndexOf(0, 0, 0)]]"
+                    f".staging_words[[{payload_index}]] == "
+                    f"Zeros{{PTO_XLEN}} + {write_value};"
+                )
+            access_witnessed_behaviors.add(behavior["id"])
+            continue
         if behavior["read"] == "reject-write-only":
             print(
                 f"    - = ReadSystemRegisterAddress({bit_literal(canonical_address, 24)});"

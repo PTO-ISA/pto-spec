@@ -22,23 +22,23 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: scalar-model-sys-registers-concepts role=concepts-state -->
 ## 概念与可见状态
 
-SSR 地址是 24 位的 `SystemRegisterAddress`。地址分为两类：
+SSR 地址是 24 位的 `SystemRegisterAddress`。分派器识别三条路由：
 
-- 基本寄存器是 14 个固定地址，例如 0x0000 `THREAD_PTR`、0x0020 `CORE_STATE`、0x0027 `TILE_CAPACITY` 和 0x0C00 `CYCLE`。`BaseSystemRegisterOfAddress` 把它们映射到 `SystemRegister` 枚举。
+- 普通基础寄存器是 `BaseSystemRegisterOfAddress` 映射的 14 个地址，例如 0x0000 `THREAD_PTR`、0x0020 `CORE_STATE`、0x0027 `TILE_CAPACITY` 和 0x0C00 `CYCLE`。0x0830 到 0x084B 的 MSGB 基础地址族绕过该枚举，路由到消息缓冲所有者。
 - 扩展寄存器是其他地址。位 15:12 表示访问环存储体，位 11:0 表示其中的寄存器。大多数存放在按位 15:0 索引的 `_ExtendedSystemRegisters` 中。
 
 访问类别为只读、只写、读写或未知。生成的 `SystemRegisterAccessOf` 为每个地址返回其类别。
 
-本模型中的访问环（ACR）权限很简单：位 11:0 小于 0x0F00 的地址对每个访问环开放；其他地址需要 ACR0。
+对普通寄存器，位 11:0 小于 0x0F00 的地址对每个访问环开放；其他地址需要 ACR0。MSGB 配置寄存器是低于 0x0F00 的明确例外：`MSGBCFGSEL`、`MSGBCFG` 和 `MSGBDOMAIN` 需要 ACR0。其他 MSGB 地址选择当前 ACR 的 bank；具有副作用的载荷和命令访问还要求该 bank 已启用并绑定 kernel，而状态和端点查询在 bank 未启用时也可读取。
 
 <!-- PTO-READER-BLOCK: scalar-model-sys-registers-rules role=rules-interactions -->
 ## 规则与交互
 
-当访问环缺少权限，或类别为未知或只写时，`ReadSystemRegisterAddress` 拒绝读取。拒绝会引发 `Fault_IllegalInstruction` 并返回 0。否则它读取基本寄存器，或五个具有特殊读取行为的扩展寄存器之一（0x0F02 陷阱状态、0x0F03 陷阱参数、0x0F08 中断挂起、0x0F09 最高挂起中断、0x0F20 时间），或所存储的扩展值。
+当访问环缺少权限，或类别为未知或只写时，`ReadSystemRegisterAddress` 拒绝读取。拒绝会引发 `Fault_IllegalInstruction` 并返回 0。获准的 MSGB 地址路由到 `ReadMessageBufferRegister`；其他地址读取普通基础寄存器、五个特殊扩展寄存器之一，或已存扩展值。
 
-当访问环缺少权限，或类别为未知或只读时，`WriteSystemRegisterAddress` 拒绝写入。对 0x0F02、0x0F03 和 0x0F0A（中断结束）的写入有特殊效果，对 0x0F21 的写入还会刷新该访问环的定时器挂起状态。
+当访问环缺少权限，或类别为未知或只读时，`WriteSystemRegisterAddress` 拒绝写入。获准的 MSGB 地址路由到 `WriteMessageBufferRegister`；对 0x0F02、0x0F03 和 0x0F0A（中断结束）的写入保留原有特殊效果，对 0x0F21 的写入会刷新定时器挂起状态。
 
-`ExecuteSystemRegisterSet` 和 `ExecuteSystemRegisterSwap` 在读取其 Reg5 源之前检查权限。
+`ExecuteSystemRegisterSet` 在读取 Reg5 源之前执行 MSGB 写入预检。`ExecuteSystemRegisterSwap` 拒绝所有 MSGB 地址，对其他地址则在读取源之前检查普通读写权限。
 
 设计要点：失败的检查先于任何源读取或寄存器访问。因此被拒绝的转移不读取源、不写目标，也不改变寄存器。
 
@@ -46,14 +46,14 @@ SSR 地址是 24 位的 `SystemRegisterAddress`。地址分为两类：
 
 设计要点：交换预检之所以存在，是因为某些读取带有效果。ASL 注释指出了只读寄存器上的定时器挂起刷新。先检查两个方向，意味着被拒绝的交换不会先执行读侧效果、再在写入时失败。
 
-读取类辅助函数仅当 `_LastFault` 为 `Fault_None` 时才写入目标。
+读取类辅助函数仅当 `_LastFault` 为 `Fault_None` 且访问未被更早的可故障操作阻塞时才写入目标。
 
 <!-- PTO-READER-BLOCK: scalar-model-sys-registers-boundaries role=boundaries -->
 ## 架构边界
 
 `SystemRegisterFileIndexOf` 断言位 23:16 为零。只有类别查找接受了该地址时，非零高字节才会到达这一断言；生成的表只接受位 23:16 为零的地址。
 
-对基本寄存器的写入交给[SYS 语义](semantics.md)中的 `WriteSystemRegister`。在那里只有 `THREAD_PTR`、`GLOBAL_PTR`、`CORE_STATE` 和 `CORE_FEATURE_ENABLE` 可写，写入 `CORE_STATE` 还会根据位 3:0 更新当前访问环。
+对普通基础寄存器的写入交给[SYS 语义](semantics.md)中的 `WriteSystemRegister`。在那里只有 `THREAD_PTR`、`GLOBAL_PTR`、`CORE_STATE` 和 `CORE_FEATURE_ENABLE` 可写，写入 `CORE_STATE` 还会根据位 3:0 更新当前访问环。MSGB 基础地址写入改为遵循[消息缓冲操作](../../../arch/state/message-buffer.md)的上下文、快照和副作用规则。
 
 陷阱、中断和定时器寄存器由各自的架构单元拥有；本单元只负责路由到它们。
 
@@ -72,7 +72,7 @@ SSR 地址是 24 位的 `SystemRegisterAddress`。地址分为两类：
 <!-- PTO-READER-BLOCK: scalar-model-sys-registers-related role=related-owners-navigation -->
 ## 相关所有者
 
-- [SYS 语义](semantics.md)拥有基本寄存器的读写以及 `CORE_STATE` 的附带效果。
+- [SYS 语义](semantics.md)拥有普通基础寄存器的读写；[消息缓冲操作](../../../arch/state/message-buffer.md)拥有 MSGB 路由和效果。
 - [SYS 分派](../dispatch/sys.md)译码 SSR 地址和目标。
 - [访问控制](../../../arch/system-registers/access-control.md)拥有 `CurrentACR`。
 - [中断](../../../arch/system-registers/interrupt.md)和[定时器](../../../arch/system-registers/timer.md)拥有特殊的扩展寄存器。
@@ -82,7 +82,7 @@ SSR 地址是 24 位的 `SystemRegisterAddress`。地址分为两类：
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/sys/registers.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-REGISTERS","surface":"scalar","classification":["model","sys","registers"],"depends_on":["PTO-SCALAR-MODEL-SYS-SEMANTICS","PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-REGISTERS","surface":"scalar","classification":["model","sys","registers"],"depends_on":["PTO-SCALAR-MODEL-SYS-SEMANTICS","PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE","PTO-ARCH-STATE-MESSAGE-BUFFER"]}
 // PTO-REQ-SCALAR-SSR-001, PTO-REQ-RESET-001: canonical 24-bit
 // system-register addressing with explicit Access Control Ring checks.
 
@@ -90,6 +90,7 @@ readonly func SystemRegisterAccessPermitted(
     address: SystemRegisterAddress, write: boolean,
     ring: AccessControlRing) => boolean
 begin
+    if IsMessageBufferConfigAddress(address) then return ring == 0; end;
     // Base registers are available at every level. Context, translation, and
     // debug register families are ACR0-only in the PTO v0 profile.
     return UInt(address[11:0]) < 0x0f00 || ring == 0;
@@ -153,6 +154,9 @@ begin
         SetFault(Fault_IllegalInstruction, ReadPC());
         return Zeros{PTO_XLEN};
     end;
+    if IsMessageBufferAddress(address) then
+        return ReadMessageBufferRegister(address);
+    end;
     if IsBaseSystemRegisterAddress(address) then
         return ReadSystemRegister(BaseSystemRegisterOfAddress(address));
     end;
@@ -179,7 +183,8 @@ end;
 readonly func SystemRegisterSwapPermitted(address: SystemRegisterAddress)
     => boolean
 begin
-    return SystemRegisterAccessPermitted(address, FALSE, CurrentACR()) &&
+    return !IsMessageBufferAddress(address) &&
+           SystemRegisterAccessPermitted(address, FALSE, CurrentACR()) &&
            SystemRegisterAccessPermitted(address, TRUE, CurrentACR()) &&
            SystemRegisterAccessOf(address) == SystemRegisterAccess_ReadWrite;
 end;
@@ -188,6 +193,10 @@ func WriteSystemRegisterAddress(address: SystemRegisterAddress, value: Word)
 begin
     if !SystemRegisterWritePermitted(address) then
         SetFault(Fault_IllegalInstruction, ReadPC());
+        return;
+    end;
+    if IsMessageBufferAddress(address) then
+        WriteMessageBufferRegister(address, value);
         return;
     end;
     if IsBaseSystemRegisterAddress(address) then
@@ -229,13 +238,17 @@ func ExecuteSystemRegisterGet(destination: Reg5Selector,
                               address: SystemRegisterAddress)
 begin
     let value = ReadSystemRegisterAddress(address);
-    if _LastFault == Fault_None then WriteScalarDestination(destination, value); end;
+    if _LastFault == Fault_None && !_ScalarExecutionBlocked then
+        WriteScalarDestination(destination, value);
+    end;
 end;
 
 func ExecuteCompressedSystemRegisterGet(address: SystemRegisterAddress)
 begin
     let value = ReadSystemRegisterAddress(address);
-    if _LastFault == Fault_None then WriteCompressedTResult(value); end;
+    if _LastFault == Fault_None && !_ScalarExecutionBlocked then
+        WriteCompressedTResult(value);
+    end;
 end;
 
 func ExecuteSystemRegisterSet(source: Reg5Selector,
@@ -245,6 +258,7 @@ begin
         SetFault(Fault_IllegalInstruction, ReadPC());
         return;
     end;
+    if !MessageBufferWritePreflight(address) then return; end;
     let value = ReadScalarRegisterOperand(source);
     WriteSystemRegisterAddress(address, value);
 end;

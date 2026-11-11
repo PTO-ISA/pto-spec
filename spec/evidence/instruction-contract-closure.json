@@ -28321,7 +28321,7 @@
           "semantic_family": "SYS",
           "semantic_group": "SYS",
           "semantic_handler": "ExecuteControlRequest",
-          "semantic_summary": "BSE publishes the SendEvent nonblocking execution-control request.",
+          "semantic_summary": "BSE publishes a legacy SendEvent request when MSGB is disabled; enabled contexts use atomic message admission.",
           "status": "accepted"
         }
       ],
@@ -28336,7 +28336,8 @@
           "bse SrcL"
         ],
         "defaults": [
-          "Every displayed operand is encoded explicitly. Encoded zero is an assigned value and never denotes omission."
+          "Every displayed operand is encoded explicitly. Encoded zero is an assigned value and never denotes omission.",
+          "MSGB contexts reset disabled; disabled BSE retains the legacy nonblocking SendEvent request."
         ],
         "encoded_fields": [
           {
@@ -28368,10 +28369,12 @@
         "field_domains": [],
         "legality": [
           "Every fixed bit and explicit field constraint is checked before operation semantics.",
-          "Every assigned Reg5 source selector follows the common scalar-source availability rule."
+          "Every assigned Reg5 source selector follows the common scalar-source availability rule.",
+          "Enabled MSGB uses PTO-ARCH-MSGB-SEND-001: control bits 31:0 select the destination endpoint, bits 35:32 give 0..10 valid words, and bits 63:36 are reserved zero.",
+          "Enabled MSGB requires the current bound kernel context and rejects atomic/far envelopes before effects."
         ],
         "memory_effects": [
-          "none"
+          "No direct GM payload access. Message admission alone does not make unrelated data visible to a consumer."
         ],
         "operands": [
           {
@@ -28381,12 +28384,14 @@
         ],
         "ordering": [
           "Check block placement and encoded legality before source reads or architectural effects.",
-          "Snapshot every scalar source before the selected system effect, then advance TPC only after success."
+          "Snapshot every scalar source before the selected system effect, then advance TPC only after success.",
+          "Enabled irreversible admission waits while earlier same-PE GM obligations may fault; this is not a payload visibility fence."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Snapshot SrcL, publish ExecutionControl_SendEvent and the exact XLEN operand, increment the architecture-request epoch, then advance TPC.",
-          "PTO defines no additional asleep, mailbox, timeout-counter, or pending-wake state for this nonblocking request."
+          "When MSGB is disabled, snapshot SrcL, publish ExecutionControl_SendEvent and the exact XLEN operand, increment the architecture-request epoch, then advance TPC.",
+          "When MSGB is enabled, the message-buffer owner preflights and atomically captures staging data, allocates a transport message identity, and publishes the exact admission result.",
+          "Retries of an admitted dynamic occurrence preserve the captured message identity without another enqueue; queue backpressure and invalid controls do not allocate an identity."
         ]
       },
       "documentation": "docs/scalar/sys/BSE.md",
@@ -28394,7 +28399,7 @@
       "mnemonic": "BSE",
       "ndf_clause": "PTO-INST-SCALAR-BSE",
       "source": "asl/scalar/sys/BSE.asl",
-      "summary": "BSE publishes the SendEvent nonblocking execution-control request.",
+      "summary": "BSE publishes a legacy SendEvent request when MSGB is disabled; enabled contexts use atomic message admission.",
       "surface": "scalar"
     },
     {
@@ -84903,7 +84908,8 @@
         "field_domains": [],
         "legality": [
           "Every fixed bit and explicit field constraint is checked before operation semantics.",
-          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects."
+          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects.",
+          "MSGB addresses additionally obey the context, privilege, snapshot and side-effect rules of PTO-ARCH-MSGB-SSR-001."
         ],
         "memory_effects": [
           "none"
@@ -84920,7 +84926,8 @@
         ],
         "ordering": [
           "Check block placement and encoded legality before source reads or architectural effects.",
-          "Snapshot every scalar source before the selected system effect, then advance TPC only after success."
+          "Snapshot every scalar source before the selected system effect, then advance TPC only after success.",
+          "A blocked MSGB access performs no destination or TPC update; its state owner supplies the exact retry boundary."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -85053,7 +85060,8 @@
         "field_domains": [],
         "legality": [
           "Every fixed bit and explicit field constraint is checked before operation semantics.",
-          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects."
+          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects.",
+          "MSGB addresses additionally obey the context, privilege, snapshot and side-effect rules of PTO-ARCH-MSGB-SSR-001."
         ],
         "memory_effects": [
           "none"
@@ -85070,7 +85078,8 @@
         ],
         "ordering": [
           "Preflight the complete address, current-ACR permission, and writable access class before reading SrcL.",
-          "Snapshot SrcL, perform the register write, and then advance TPC."
+          "Snapshot SrcL, perform the register write, and then advance TPC.",
+          "A blocked MSGB access performs no destination or TPC update; its state owner supplies the exact retry boundary."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -117562,7 +117571,8 @@
         "field_domains": [],
         "legality": [
           "Every fixed bit and explicit field constraint is checked before operation semantics.",
-          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects."
+          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects.",
+          "MSGB addresses additionally obey the context, privilege, snapshot and side-effect rules of PTO-ARCH-MSGB-SSR-001."
         ],
         "memory_effects": [
           "none"
@@ -117579,7 +117589,8 @@
         ],
         "ordering": [
           "Check block placement and encoded legality before source reads or architectural effects.",
-          "Snapshot every scalar source before the selected system effect, then advance TPC only after success."
+          "Snapshot every scalar source before the selected system effect, then advance TPC only after success.",
+          "A blocked MSGB access performs no destination or TPC update; its state owner supplies the exact retry boundary."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -117707,7 +117718,8 @@
         "field_domains": [],
         "legality": [
           "Every fixed bit and explicit field constraint is checked before operation semantics.",
-          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects."
+          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects.",
+          "MSGB addresses additionally obey the context, privilege, snapshot and side-effect rules of PTO-ARCH-MSGB-SSR-001."
         ],
         "memory_effects": [
           "none"
@@ -117724,7 +117736,8 @@
         ],
         "ordering": [
           "Preflight the complete address, current-ACR permission, and writable access class before reading SrcL.",
-          "Snapshot SrcL, perform the register write, and then advance TPC."
+          "Snapshot SrcL, perform the register write, and then advance TPC.",
+          "A blocked MSGB access performs no destination or TPC update; its state owner supplies the exact retry boundary."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -117881,7 +117894,8 @@
         "field_domains": [],
         "legality": [
           "Every fixed bit and explicit field constraint is checked before operation semantics.",
-          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects."
+          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects.",
+          "MSGB registers reject SSRSWAP before any read-side effect, even when their access class is RW."
         ],
         "memory_effects": [
           "none"

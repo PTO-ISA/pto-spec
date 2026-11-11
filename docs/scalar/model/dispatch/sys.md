@@ -22,7 +22,7 @@ The forms fall into six groups:
 - access-ring requests: `ACRC` and `ACRE`;
 - checks and breakpoints: `ASSERT`, `EBREAK`, and `C.EBREAK`;
 - cache and TLB maintenance: `BC.*`, `DC.*`, `IC.*`, and `TLB.*`;
-- execution-control requests: `BSE`, `BWE`, `BWI`, and `BWT`;
+- message admission or execution control: mode-dependent `BSE`, plus `BWE`, `BWI`, and `BWT` requests;
 - fences: `FENCE.D` and `FENCE.I`;
 - register transfers and the commit target: `SSRGET`, `SSRSET`, `SSRSWAP`, `HL.SSRGET`, `HL.SSRSET`, `C.SSRGET`, `LSRGET`, and the commit-target setter `SETC.TGT`.
 
@@ -54,7 +54,7 @@ Design point: each transfer helper checks permission and access class before rea
 
 Design point: breakpoints and failed assertions are ordinary synchronous faults. Top-level dispatch sees `_LastFault` set, returns rejected, and does not advance TPC; the trap context records the TPC of the breakpoint instruction.
 
-Maintenance and control requests update epochs and record their operand. They do not access memory.
+Maintenance operations and the disabled forms of the control requests update epochs and record their operand. Enabled `BSE` instead dispatches to the message-send owner; it records an admission result and transport identity, but does not establish unrelated GM payload visibility.
 
 <!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-boundaries role=boundaries -->
 ## Architectural boundaries
@@ -80,7 +80,7 @@ Inside a System bundle body, the handler calls `ExecuteSystemRegisterGet`. Addre
 <!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-related role=related-owners-navigation -->
 ## Related owners
 
-- [SYS semantics](../sys/semantics.md) owns fences, maintenance, requests, and applicability.
+- [SYS semantics](../sys/semantics.md) owns fences, maintenance, legacy requests, and applicability; [message send](../../../arch/state/message-buffer-send.md) owns enabled BSE admission.
 - [System registers](../sys/registers.md) owns SSR permission, access class, and transfers.
 - [Scalar decode helpers](decode.md) own `ScalarDecodedSystemRegisterAddress`.
 - [Execution context](../../../arch/programming-model/execution-context.md) declares the maintenance epochs and records.
@@ -90,7 +90,7 @@ Inside a System bundle body, the handler calls `ExecuteSystemRegisterGet`. Addre
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/dispatch/sys.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-DISPATCH-SYS","surface":"scalar","classification":["model","dispatch","sys"],"depends_on":["PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-SCALAR-ACRC","PTO-SCALAR-ACRE","PTO-SCALAR-ASSERT","PTO-SCALAR-BC-IALL","PTO-SCALAR-BC-IVA","PTO-SCALAR-BSE","PTO-SCALAR-BWE","PTO-SCALAR-BWI","PTO-SCALAR-BWT","PTO-SCALAR-C-EBREAK","PTO-SCALAR-C-SSRGET","PTO-SCALAR-DC-CISW","PTO-SCALAR-DC-CIVA","PTO-SCALAR-DC-CSW","PTO-SCALAR-DC-CVA","PTO-SCALAR-DC-IALL","PTO-SCALAR-DC-ISW","PTO-SCALAR-DC-IVA","PTO-SCALAR-DC-ZVA","PTO-SCALAR-EBREAK","PTO-SCALAR-FENCE-D","PTO-SCALAR-FENCE-I","PTO-SCALAR-HL-SSRGET","PTO-SCALAR-HL-SSRSET","PTO-SCALAR-IC-IALL","PTO-SCALAR-IC-IVA","PTO-SCALAR-LSRGET","PTO-SCALAR-MODEL-DISPATCH-DECODE","PTO-SCALAR-MODEL-SYS-REGISTERS","PTO-SCALAR-SETC-TGT","PTO-SCALAR-SSRGET","PTO-SCALAR-SSRSET","PTO-SCALAR-SSRSWAP","PTO-SCALAR-SYNC-CORE","PTO-SCALAR-TLB-IA","PTO-SCALAR-TLB-IALL","PTO-SCALAR-TLB-IAV","PTO-SCALAR-TLB-IV"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-DISPATCH-SYS","surface":"scalar","classification":["model","dispatch","sys"],"depends_on":["PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-SCALAR-ACRC","PTO-SCALAR-ACRE","PTO-SCALAR-ASSERT","PTO-SCALAR-BC-IALL","PTO-SCALAR-BC-IVA","PTO-SCALAR-BSE","PTO-SCALAR-BWE","PTO-SCALAR-BWI","PTO-SCALAR-BWT","PTO-SCALAR-C-EBREAK","PTO-SCALAR-C-SSRGET","PTO-SCALAR-DC-CISW","PTO-SCALAR-DC-CIVA","PTO-SCALAR-DC-CSW","PTO-SCALAR-DC-CVA","PTO-SCALAR-DC-IALL","PTO-SCALAR-DC-ISW","PTO-SCALAR-DC-IVA","PTO-SCALAR-DC-ZVA","PTO-SCALAR-EBREAK","PTO-SCALAR-FENCE-D","PTO-SCALAR-FENCE-I","PTO-SCALAR-HL-SSRGET","PTO-SCALAR-HL-SSRSET","PTO-SCALAR-IC-IALL","PTO-SCALAR-IC-IVA","PTO-SCALAR-LSRGET","PTO-SCALAR-MODEL-DISPATCH-DECODE","PTO-SCALAR-MODEL-SYS-REGISTERS","PTO-SCALAR-SETC-TGT","PTO-SCALAR-SSRGET","PTO-SCALAR-SSRSET","PTO-SCALAR-SSRSWAP","PTO-SCALAR-SYNC-CORE","PTO-SCALAR-TLB-IA","PTO-SCALAR-TLB-IALL","PTO-SCALAR-TLB-IAV","PTO-SCALAR-TLB-IV","PTO-ARCH-STATE-MESSAGE-BUFFER","PTO-ARCH-STATE-HSCB-DISPATCH","PTO-ARCH-STATE-MESSAGE-BUFFER-SEND"]}
 func ExecuteDecodedSYSForm(instruction: bits(48),
                            form: integer {0..PTO_SCALAR_FORM_COUNT-1})
 begin
@@ -152,11 +152,19 @@ begin
             ExecuteMaintenance(Maintenance_TLB_IALL, Zeros{PTO_XLEN});
 
         when ScalarOperation_BSE =>
-            ExecuteControlRequest(ExecutionControl_SendEvent,
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+            if MessageBufferEnabledForCurrentContext() then
+                ExecuteMessageBufferSend(ReadDecodedScalarRegister(
+                    instruction, form, ScalarField_SrcL));
+            else
+                ExecuteControlRequest(ExecutionControl_SendEvent,
+                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+            end;
         when ScalarOperation_BWE =>
             ExecuteControlRequest(ExecutionControl_WaitEvent,
                 ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+            // The enabled platform observes the issuing worker at publication;
+            // its eligibility never delays architectural BWE retirement.
+            HSCBObserveWaitEvent();
         when ScalarOperation_BWI =>
             ExecuteControlRequest(ExecutionControl_WaitInterrupt,
                 ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));

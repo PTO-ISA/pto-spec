@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-DISPATCH-SYS","surface":"scalar","classification":["model","dispatch","sys"],"depends_on":["PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-SCALAR-ACRC","PTO-SCALAR-ACRE","PTO-SCALAR-ASSERT","PTO-SCALAR-BC-IALL","PTO-SCALAR-BC-IVA","PTO-SCALAR-BSE","PTO-SCALAR-BWE","PTO-SCALAR-BWI","PTO-SCALAR-BWT","PTO-SCALAR-C-EBREAK","PTO-SCALAR-C-SSRGET","PTO-SCALAR-DC-CISW","PTO-SCALAR-DC-CIVA","PTO-SCALAR-DC-CSW","PTO-SCALAR-DC-CVA","PTO-SCALAR-DC-IALL","PTO-SCALAR-DC-ISW","PTO-SCALAR-DC-IVA","PTO-SCALAR-DC-ZVA","PTO-SCALAR-EBREAK","PTO-SCALAR-FENCE-D","PTO-SCALAR-FENCE-I","PTO-SCALAR-HL-SSRGET","PTO-SCALAR-HL-SSRSET","PTO-SCALAR-IC-IALL","PTO-SCALAR-IC-IVA","PTO-SCALAR-LSRGET","PTO-SCALAR-MODEL-DISPATCH-DECODE","PTO-SCALAR-MODEL-SYS-REGISTERS","PTO-SCALAR-SETC-TGT","PTO-SCALAR-SSRGET","PTO-SCALAR-SSRSET","PTO-SCALAR-SSRSWAP","PTO-SCALAR-SYNC-CORE","PTO-SCALAR-TLB-IA","PTO-SCALAR-TLB-IALL","PTO-SCALAR-TLB-IAV","PTO-SCALAR-TLB-IV"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-DISPATCH-SYS","surface":"scalar","classification":["model","dispatch","sys"],"depends_on":["PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-SCALAR-ACRC","PTO-SCALAR-ACRE","PTO-SCALAR-ASSERT","PTO-SCALAR-BC-IALL","PTO-SCALAR-BC-IVA","PTO-SCALAR-BSE","PTO-SCALAR-BWE","PTO-SCALAR-BWI","PTO-SCALAR-BWT","PTO-SCALAR-C-EBREAK","PTO-SCALAR-C-SSRGET","PTO-SCALAR-DC-CISW","PTO-SCALAR-DC-CIVA","PTO-SCALAR-DC-CSW","PTO-SCALAR-DC-CVA","PTO-SCALAR-DC-IALL","PTO-SCALAR-DC-ISW","PTO-SCALAR-DC-IVA","PTO-SCALAR-DC-ZVA","PTO-SCALAR-EBREAK","PTO-SCALAR-FENCE-D","PTO-SCALAR-FENCE-I","PTO-SCALAR-HL-SSRGET","PTO-SCALAR-HL-SSRSET","PTO-SCALAR-IC-IALL","PTO-SCALAR-IC-IVA","PTO-SCALAR-LSRGET","PTO-SCALAR-MODEL-DISPATCH-DECODE","PTO-SCALAR-MODEL-SYS-REGISTERS","PTO-SCALAR-SETC-TGT","PTO-SCALAR-SSRGET","PTO-SCALAR-SSRSET","PTO-SCALAR-SSRSWAP","PTO-SCALAR-SYNC-CORE","PTO-SCALAR-TLB-IA","PTO-SCALAR-TLB-IALL","PTO-SCALAR-TLB-IAV","PTO-SCALAR-TLB-IV","PTO-ARCH-STATE-MESSAGE-BUFFER","PTO-ARCH-STATE-HSCB-DISPATCH","PTO-ARCH-STATE-MESSAGE-BUFFER-SEND"]}
 func ExecuteDecodedSYSForm(instruction: bits(48),
                            form: integer {0..PTO_SCALAR_FORM_COUNT-1})
 begin
@@ -60,11 +60,19 @@ begin
             ExecuteMaintenance(Maintenance_TLB_IALL, Zeros{PTO_XLEN});
 
         when ScalarOperation_BSE =>
-            ExecuteControlRequest(ExecutionControl_SendEvent,
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+            if MessageBufferEnabledForCurrentContext() then
+                ExecuteMessageBufferSend(ReadDecodedScalarRegister(
+                    instruction, form, ScalarField_SrcL));
+            else
+                ExecuteControlRequest(ExecutionControl_SendEvent,
+                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+            end;
         when ScalarOperation_BWE =>
             ExecuteControlRequest(ExecutionControl_WaitEvent,
                 ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+            // The enabled platform observes the issuing worker at publication;
+            // its eligibility never delays architectural BWE retirement.
+            HSCBObserveWaitEvent();
         when ScalarOperation_BWI =>
             ExecuteControlRequest(ExecutionControl_WaitInterrupt,
                 ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));

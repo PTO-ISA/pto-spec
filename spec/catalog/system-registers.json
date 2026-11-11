@@ -2,7 +2,7 @@
   "system_register_address_bits": 24,
   "system_register_file_index_bits": 16,
   "isa": "PTO Instruction Set Architecture",
-  "register_definition_count": 72,
+  "register_definition_count": 100,
   "registers": [
     {
       "access": "RW",
@@ -442,6 +442,174 @@
       "low_index": "0xFB7",
       "name": "DWVR3_ACRn",
       "scope": "context-family"
+    },
+    {
+      "access": "RO",
+      "address": "0x0830",
+      "name": "MSGBCR",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "address": "0x0831",
+      "name": "MSGBD1",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "address": "0x0832",
+      "name": "MSGBD2",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "address": "0x0833",
+      "name": "MSGBD3",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "address": "0x0834",
+      "name": "MSGBD4",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "address": "0x0835",
+      "name": "MSGBD5",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "address": "0x0836",
+      "name": "MSGBD6",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "address": "0x0837",
+      "name": "MSGBD7",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "address": "0x0838",
+      "name": "MSGBD8",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "address": "0x0839",
+      "name": "MSGBD9",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "address": "0x083A",
+      "name": "MSGBD10",
+      "scope": "base"
+    },
+    {
+      "access": "WO",
+      "address": "0x083B",
+      "name": "MSGBRXCLAIM",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x083C",
+      "name": "MSGBRXSTATE",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x083D",
+      "name": "MSGBRXTOKEN",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x083E",
+      "name": "MSGBRXMSGID_HI",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x083F",
+      "name": "MSGBRXMSGID_LO",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0840",
+      "name": "MSGBRXCONTROL",
+      "scope": "base"
+    },
+    {
+      "access": "WO",
+      "address": "0x0841",
+      "name": "MSGBRXRELEASE",
+      "scope": "base"
+    },
+    {
+      "access": "WO",
+      "address": "0x0842",
+      "name": "MSGBACK",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0843",
+      "name": "MSGBACKSTAT",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0844",
+      "name": "MSGBACKID",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0845",
+      "name": "MSGBTXID_HI",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0846",
+      "name": "MSGBTXID_LO",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0847",
+      "name": "MSGBTXSTAT",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0848",
+      "name": "MSGBENDPOINT",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "address": "0x0849",
+      "name": "MSGBCFGSEL",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "address": "0x084A",
+      "name": "MSGBCFG",
+      "scope": "base"
+    },
+    {
+      "access": "RW",
+      "address": "0x084B",
+      "name": "MSGBDOMAIN",
+      "scope": "base"
     }
   ],
   "behavior_classes": [
@@ -819,6 +987,91 @@
       "reset": "zero",
       "side_effects": [],
       "write": "reject-read-only"
+    },
+    {
+      "id": "msgb-status",
+      "behavior_status": "architectural-active",
+      "read": "message-status",
+      "registers": [
+        "MSGBCR",
+        "MSGBRXSTATE",
+        "MSGBRXTOKEN",
+        "MSGBACKSTAT",
+        "MSGBACKID",
+        "MSGBTXID_HI",
+        "MSGBTXID_LO",
+        "MSGBTXSTAT",
+        "MSGBENDPOINT"
+      ],
+      "reset": "zero",
+      "side_effects": [],
+      "write": "reject-read-only"
+    },
+    {
+      "id": "msgb-payload",
+      "behavior_status": "architectural-active",
+      "read": "message-snapshot",
+      "registers": [
+        "MSGBD1",
+        "MSGBD2",
+        "MSGBD3",
+        "MSGBD4",
+        "MSGBD5",
+        "MSGBD6",
+        "MSGBD7",
+        "MSGBD8",
+        "MSGBD9",
+        "MSGBD10"
+      ],
+      "reset": "zero",
+      "side_effects": [
+        "marks-valid-snapshot-read",
+        "writes-private-tx-staging"
+      ],
+      "write": "message-staging"
+    },
+    {
+      "id": "msgb-snapshot",
+      "behavior_status": "architectural-active",
+      "read": "message-snapshot",
+      "registers": [
+        "MSGBRXMSGID_HI",
+        "MSGBRXMSGID_LO",
+        "MSGBRXCONTROL"
+      ],
+      "reset": "zero",
+      "side_effects": [],
+      "write": "reject-read-only"
+    },
+    {
+      "id": "msgb-command",
+      "behavior_status": "architectural-active",
+      "read": "reject-write-only",
+      "registers": [
+        "MSGBRXCLAIM",
+        "MSGBRXRELEASE",
+        "MSGBACK"
+      ],
+      "reset": "zero",
+      "side_effects": [
+        "updates-claim-or-ack"
+      ],
+      "write": "message-command"
+    },
+    {
+      "id": "msgb-config",
+      "behavior_status": "architectural-active",
+      "read": "message-config",
+      "registers": [
+        "MSGBCFGSEL",
+        "MSGBCFG",
+        "MSGBDOMAIN"
+      ],
+      "reset": "zero",
+      "side_effects": [
+        "selects-and-binds-message-context"
+      ],
+      "write": "message-config"
     }
   ],
   "schema_version": 1,

@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `InstructionContractHandler_SSRSET` selects `ScalarHandler_ExecuteSystemRegisterSet` (`asl/scalar/sys/SSRSET.asl:18`), and `InstructionContractSystemAddressWidth_SSRSET` fixes the address width at 12 (`asl/scalar/sys/SSRSET.asl:36`). The dispatcher decodes `SrcL` as a Reg5 selector and `SSR_ID` as a system-register address (`asl/scalar/model/dispatch/sys.asl:111`).
 
-The helper checks before it reads: `ExecuteSystemRegisterSet` rejects the attempt when `SystemRegisterWritePermitted` is false, and only then reads the source register (`asl/scalar/model/sys/registers.asl:157`).
+The helper checks before it reads. It first rejects an address that is not writable; for MSGB it then runs the kernel-context, Block-attribute, and older-faultable-work preflight. Only an admitted attempt reads the source register (`asl/scalar/model/sys/registers.asl`).
 
 <!-- PTO-READER-BLOCK: scalar-ssrset-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
@@ -40,7 +40,7 @@ The helper checks before it reads: `ExecuteSystemRegisterSet` rejects the attemp
 
 A successful attempt writes the complete source value into the addressed register and then advances `TPC` by 4 bytes. Some addresses have side effects inside the write path, and address 0x0020 is the clearest example: storing into `CORE_STATE` also sets the current access ring from bits 3:0 of the stored value (`asl/scalar/model/sys/semantics.asl:63`).
 
-Design point: the write permission check runs before the source read, so an attempt that will be rejected consumes no source value and changes no system register. A rejected `SSRSET` therefore leaves its source operand and the target register unchanged; a Reg5 source read never consumes a temporary-queue entry.
+Design point: every write preflight runs before the source read, so a rejected or blocked attempt consumes no source value and changes no system register. A Reg5 source read never consumes a temporary-queue entry.
 
 The instruction performs no ordinary scalar memory access.
 
@@ -49,7 +49,7 @@ The instruction performs no ordinary scalar memory access.
 
 Placement is checked first: outside an active SYS block body the attempt raises `Fault_BundleControl` before any address or operand work. The write path then rejects with `Fault_IllegalInstruction` when the current ring lacks permission for the address, or when the access class is unknown or read-only (`asl/scalar/model/sys/registers.asl:105`).
 
-Design point: an address such as 0x0021 is readable from every ring but never writable, because its access class is read-only. The same address therefore succeeds for `ssrget` and faults for `ssrset`, which is why the access class and not the ring alone decides a write.
+Design point: an address such as 0x0021 is readable from every ring but never writable because its class is read-only. MSGB adds context-sensitive writes: configuration addresses require ACR0, while staging, claim, ACK, and release require the currently bound kernel ACR. The access class alone is therefore not sufficient for an MSGB write.
 
 <!-- PTO-READER-BLOCK: scalar-ssrset-example role=example -->
 ## Non-normative example
@@ -161,6 +161,7 @@ end;
 
 - Every fixed bit and explicit field constraint is checked before operation semantics.
 - The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects.
+- MSGB addresses additionally obey the context, privilege, snapshot and side-effect rules of PTO-ARCH-MSGB-SSR-001.
 
 ## State effects
 
@@ -177,6 +178,7 @@ end;
 
 - Preflight the complete address, current-ACR permission, and writable access class before reading SrcL.
 - Snapshot SrcL, perform the register write, and then advance TPC.
+- A blocked MSGB access performs no destination or TPC update; its state owner supplies the exact retry boundary.
 
 ## Exceptions
 

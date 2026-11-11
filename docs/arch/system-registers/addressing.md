@@ -46,7 +46,7 @@ The architecture-visible owner is the variable `_SystemRegisters`, declared as `
 
 `ResetProfileState` writes every field of this record explicitly. It resets every ACR bank rather than only the current one, then sets `_CurrentACR` to ACR0 and calls `ClearFault` for that ring, so a reset execution cannot inherit archived state from a ring that was formerly current.
 
-The function also carries the rest of the reference reset, including general-purpose registers, temporary queues, predicate registers, model memory, tile and shared-tile descriptors, descriptor-valid and definedness fields, reservation state, bundle-control state, memory-execution state, and the trap contexts of every ACR.
+The function also carries the rest of the reference reset, including general-purpose registers, temporary queues, predicate registers, model memory, tile and shared-tile descriptors, descriptor-valid and definedness fields, reservation state, bundle-control state, memory-execution state, the trap contexts of every ACR, and the banked message-buffer state.
 
 Design point: each field is written even when its reset value is zero, so the post-reset value of `version` is one and of `tile_capacity` is `PTO_MODEL_MAX_TILE_CAPACITY_BYTES` instead of depending on an unstated initial state. A reader can compare a running core against this list without asking which fields a particular profile happened to initialize.
 
@@ -57,7 +57,7 @@ Design point: each field is written even when its reset value is zero, so the po
 
 A write to `core_state` also selects the current ACR, and a read of the interrupt pending bitmap or of the top pending interrupt runs the timer refresh that the timer owner defines.
 
-Design point: the reset body clears the context-register low-index range in all sixteen rings and then stores the interrupt configuration value, so a bank that was active before reset cannot carry pending bits, trap arguments, or enable bits into the next execution.
+Design point: the reset body clears the context-register low-index range in all sixteen rings and then stores the interrupt configuration value. It also resets message banks disabled with empty staging, queues, snapshots, identities, and results, so neither kind of context state carries an old operation into the next execution.
 
 <!-- PTO-READER-BLOCK: arch-system-addressing-example-usage role=example-usage -->
 ## Non-normative reset reading example
@@ -70,7 +70,7 @@ Reading low index `0x0f07` of ACR1 gives 3, and reading `0x0f08` and `0x0f09` of
 ## Related owners
 
 - [Trap-context record](../data-types/trap-context.md) is the declared dependency; the reset body initializes one context per ACR.
-- [Context registers](context.md) maps a ring number and a low index into the extended register file.
+- [Context registers](context.md) maps a ring number and a low index into the extended register file; [message-buffer state](../state/message-buffer-state.md) owns the separately banked MSGB reset.
 - [Numeric status](../state/numeric-status.md) reads the `core_state` field owned here.
 <!-- SUPPLEMENTARY-END -->
 
@@ -78,7 +78,7 @@ Reading low index `0x0f07` of ACR1 gives 3, and reading `0x0f08` and `0x0f09` of
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/system-registers/addressing.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING","surface":"arch","classification":["system-registers","addressing"],"depends_on":["PTO-ARCH-DATA-TYPES-TRAP-CONTEXT"]}
+// PTO-UNIT: {"id":"PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING","surface":"arch","classification":["system-registers","addressing"],"depends_on":["PTO-ARCH-DATA-TYPES-TRAP-CONTEXT","PTO-ARCH-STATE-MESSAGE-BUFFER-STATE"]}
 // PTO-STATE: {"id":"PTO-STATE-ARCH-SYSTEM-REGISTERS","classification":["architecture","system-registers"],"scope":"system","owner":"PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING","members":["_SystemRegisters"],"depends_on":[]}
 type BaseSystemRegisterState of record {
     thread_ptr: Word,
@@ -304,6 +304,7 @@ begin
     ResetCoreSynchronizationState();
     ResetSourceLifetimeState();
     ResetKernelLifecycleState();
+    ResetMessageBufferState();
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

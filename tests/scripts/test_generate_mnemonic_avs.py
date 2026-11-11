@@ -387,6 +387,11 @@ class GenerateMnemonicAvsTest(unittest.TestCase):
         document = dict(self.module["render_scalar_sys_avs"](unit))[
             Path("tests/asl/scalar/sys/BSE/scalar-exec-bse-direct-001.asl")
         ]
+        self.assertIn("!MessageBufferEnabledForCurrentContext()", document)
+
+        document = dict(self.module["render_scalar_sys_avs"](unit))[
+            Path("tests/asl/scalar/sys/BSE/scalar-exec-bse-direct-001.asl")
+        ]
         self.assertIn("_LastControlRequest == ExecutionControl_SendEvent", document)
         self.assertIn("_ControlRequestOperand == Zeros{PTO_XLEN} + 0x1000", document)
         self.assertIn("ReadTPC() == Zeros{PTO_XLEN} + 0x184", document)

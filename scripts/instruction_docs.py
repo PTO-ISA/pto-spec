@@ -814,6 +814,7 @@ def _unit_title(record: DocRecord) -> str:
         "dtype": "Data Type",
         "fsu": "FSU",
         "gpr": "GPR",
+        "hscb": "HSCB",
         "io": "IO",
         "mx": "MX",
         "ndf": "NDF",

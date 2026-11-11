@@ -288,6 +288,12 @@ class NdfTest(unittest.TestCase):
                 "_CurrentACR",
             ),
             "PTO-STATE-ARCH-SYSTEM-REGISTERS": ("_SystemRegisters",),
+            "PTO-STATE-ARCH-MESSAGE-BUFFER": (
+                "_MessageBufferBanks",
+                "_MessageBufferConfigSelectors",
+                "_MessageBufferCoreDraining",
+                "_MessageBufferThreads",
+            ),
             "PTO-STATE-ARCH-TRAP-CONTEXT": (
                 "_ACRTrapAsynchronous",
                 "_ACRTrapArgumentValid",
@@ -410,6 +416,7 @@ class NdfTest(unittest.TestCase):
         )
         expected_scopes = {
             "PTO-STATE-ARCH-KERNEL-LIFECYCLE": "core",
+            "PTO-STATE-ARCH-MESSAGE-BUFFER": "system",
             "PTO-STATE-ARCH-GPR": "pe",
             "PTO-STATE-ARCH-TRAP-CONTEXT": "acr",
             "PTO-STATE-ARCH-CORE-SYNCHRONIZATION": "core",
