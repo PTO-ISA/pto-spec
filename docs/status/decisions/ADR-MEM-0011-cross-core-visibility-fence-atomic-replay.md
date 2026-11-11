@@ -309,16 +309,25 @@ superseded historical rationale; this accepted topic owns the amendment.
 When Scalar and fixed-IntraCore Tile or IndexedGenerated requests may access
 the same bytes, software assigns compatible IntraCore scope to each covered
 Scalar access. If software cannot prove the accessed ranges disjoint, it treats
-them as potentially aliasing. For example, a Top-K pipeline may use Scalar
-stores to prepare candidate records, Tile or IndexedGenerated requests to
-select or rank them, and Scalar loads to consume the selected records. Any
-shared or potentially overlapping record range in that pipeline uses
-IntraCore Scalar forms; Private is suitable only for ranges proved disjoint
-from the fixed-IntraCore requests.
+them as potentially aliasing. In a Top-K pipeline, the named `output`, `lane`,
+`num`, and `hist` ranges may be prepared, selected, ranked, or consumed through
+combinations of Scalar, Tile, and IndexedGenerated accesses. A compiler or
+runtime that cannot prove which of those ranges are disjoint treats the
+uncertain pair as potentially aliasing and uses IntraCore for the participating
+Scalar access, matching the fixed-IntraCore Tile or IndexedGenerated request.
+This applies independently to each range: a Scalar range proved disjoint from
+those requests need not use IntraCore for this reason, while `InterCore` alone
+does not match Tile or IndexedGenerated. This example illustrates the software
+aliasing obligation; the normative compatibility rule remains in
+`SHAREABILITY-001`.
 
 当 Scalar 与固定为 IntraCore 的 Tile 或 IndexedGenerated 请求可能访问相同
 字节时，软件应为每个受支持的 Scalar 访问选择兼容的 IntraCore scope。如果无法
-证明访问范围互不重叠，软件必须按可能别名处理。例如，Top-K 流程可能由 Scalar
-写入候选记录，再由 Tile 或 IndexedGenerated 请求进行筛选或排序，最后由 Scalar
-读取所选记录。该流程中共享或可能重叠的记录范围应使用 IntraCore Scalar 形式；
-只有在已证明与固定 IntraCore 请求互不重叠时，才适合使用 Private。
+证明访问范围互不重叠，软件必须按可能别名处理。在 Top-K 流程中，命名的
+`output`、`lane`、`num` 和 `hist` 范围可能通过 Scalar、Tile 和 IndexedGenerated
+访问的不同组合进行准备、筛选、排序或读取。如果编译器或运行时无法证明这些
+范围中哪些互不重叠，就应将不确定的范围对视为可能别名，并为参与访问的 Scalar
+选择 IntraCore，以匹配固定为 IntraCore 的 Tile 或 IndexedGenerated 请求。此规则
+分别适用于每个范围：已证明与这些请求互不重叠的 Scalar 范围无需因此选择
+IntraCore，而单独选择 `InterCore` 不能与 Tile 或 IndexedGenerated 匹配。此例说明
+软件别名义务；规范性的兼容规则仍由 `SHAREABILITY-001` 定义。

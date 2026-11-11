@@ -21,7 +21,8 @@ class DevelopmentIdentityTests(unittest.TestCase):
             "pto-isa-0.59.0-mode-function-v1",
         )
         self.assertEqual(current["catalog_counts"], {
-            "scalar_forms": 473, "command_forms": 105,
+            "scalar_forms": 473, "scoped_scalar_forms": 705,
+            "command_forms": 105,
             "tile_operations": 119, "reservations": 50,
         })
 
@@ -76,6 +77,26 @@ class DevelopmentIdentityTests(unittest.TestCase):
         with patch.object(module, "load_json", side_effect=lambda path: modified if path.endswith("scalar-forms.json") else original(path)):
             after = digest(module.encoding_projection(tiles, **arguments))
         self.assertNotEqual(before, after)
+
+    def test_scoped_encoding_mutation_changes_development_identity(self):
+        expected = build()
+        scalar = json.loads((ROOT / "spec/catalog/scalar-forms.json").read_text())
+        scalar["scoped_forms"][0]["encoding"][0]["mask"] = "0xffffffff"
+        scalar_path = (ROOT / "spec/catalog/scalar-forms.json").resolve()
+        original_read_text = Path.read_text
+
+        def controlled_read(path, *args, **kwargs):
+            if path.resolve() == scalar_path:
+                return json.dumps(scalar)
+            return original_read_text(path, *args, **kwargs)
+
+        with patch.object(Path, "read_text", autospec=True, side_effect=controlled_read):
+            changed = build()
+        self.assertEqual(changed["catalog_counts"], expected["catalog_counts"])
+        self.assertNotEqual(
+            changed["identity"]["encoding_projection_sha256"],
+            expected["identity"]["encoding_projection_sha256"],
+        )
 
 
 if __name__ == "__main__":
