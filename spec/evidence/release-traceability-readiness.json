@@ -23821,7 +23821,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "c1332aa895d5a70170b6f193674ad97371cbdd4314f5336de4ce4eb703d4d484",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "4fdb0facff519fecde8ba33ed966ed54c04b04c3f5f344024b2ce1a859434d67",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "c2bba4aad8073962fc18443147a53b3492eee9629f7a5975591087d1d8834e67",
-    "spec/evidence/adr-index.json": "05fe47ce45b82c07bcb8bcf8286ac7010c3abea0c0e93752aa693984f105876d",
+    "spec/evidence/adr-index.json": "ac55dab35d77366545f1744f5b41631356db84c7aefa88a19a3e6c9cb047fcbb",
     "spec/evidence/instruction-contract-closure.json": "b8f58508ea8878e77d353a9e66adf3d010d83fc8edb3885a95e7d3946bbc4ba3",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6c18bfdff0279b6d4fbaf3cb3c8e1ee111b4d5e82e1688136b88be6fa7902ba3",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -80167,7 +80167,10 @@
       "documentation": "docs/block/model/dispatch/indexed-tlsu-range-command-stream.md",
       "id": "PTO-BLOCK-MODEL-DISPATCH-INDEXED-TLSU-RANGE-COMMAND-STREAM",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-BLOCK-0005",
+        "ADR-MEM-0011"
+      ],
       "semantic_tests": [],
       "source": "asl/block/model/dispatch/indexed-tlsu-range-command-stream.asl",
       "surface": "block",
@@ -81405,6 +81408,7 @@
         "ADR-GOV-0013",
         "ADR-GOV-0014",
         "ADR-MEM-0009",
+        "ADR-MEM-0011",
         "ADR-SCALAR-0007",
         "ADR-TILE-0004",
         "ADR-TILE-0008"
@@ -81716,6 +81720,7 @@
       "readiness_subjects": [
         "ADR-BLOCK-0005",
         "ADR-GOV-0014",
+        "ADR-MEM-0011",
         "ADR-STATE-0011",
         "ADR-TILE-0004",
         "ADR-TILE-0008"
@@ -82800,6 +82805,7 @@
         "ADR-GOV-0013",
         "ADR-GOV-0014",
         "ADR-MEM-0009",
+        "ADR-MEM-0011",
         "ADR-SCALAR-0007",
         "ADR-STATE-0002",
         "ADR-STATE-0011",
@@ -82892,6 +82898,7 @@
         "ADR-GOV-0013",
         "ADR-GOV-0014",
         "ADR-MEM-0009",
+        "ADR-MEM-0011",
         "ADR-SCALAR-0007",
         "ADR-STATE-0002",
         "ADR-STATE-0011",
