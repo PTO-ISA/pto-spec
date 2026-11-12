@@ -17,12 +17,15 @@ class SiteContractTests(unittest.TestCase):
             package["dependencies"]["@docusaurus/plugin-client-redirects"],
             "3.10.2",
         )
-        self.assertEqual(package["dependencies"]["react"], "19.2.8")
+        self.assertEqual(package["dependencies"]["react"], "19.3.1")
+        self.assertEqual(package["dependencies"]["react-dom"], "19.3.1")
         self.assertEqual(
             package["dependencies"]["plotly.js"],
             "npm:plotly.js-gl2d-dist-min@4.0.0",
         )
         self.assertEqual(package["devDependencies"]["@playwright/test"], "1.64.1")
+        self.assertEqual(package["devDependencies"]["@types/react"], "19.3.0")
+        self.assertEqual(package["devDependencies"]["@types/react-dom"], "19.3.0")
         self.assertEqual(package["devDependencies"]["@axe-core/playwright"], "4.13.0")
         self.assertEqual(package["devDependencies"]["lighthouse"], "13.4.1")
         self.assertEqual(
