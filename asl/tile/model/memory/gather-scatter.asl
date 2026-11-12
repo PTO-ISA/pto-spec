@@ -63,15 +63,18 @@ begin
                 ModelTileElementIndex;
             var stored_value = values[[element]];
             if TileDataTypeIsFourBit(data_type) then
-                StoreTranslated(original_addresses[[element]],
-                    translated_addresses[[element]], 1, stored_value);
+                StoreTranslatedForMemoryRequest(
+                    original_addresses[[element]],
+                    translated_addresses[[element]], 1, stored_value,
+                    MemoryShareability_IntraCore,
+                    MemoryRequestClass_IndexedGenerated);
             else
-                stored_value = StoreTileMemoryElement(
+                stored_value = StoreIndexedMemoryElement(
                     original_addresses[[element]],
                     translated_addresses[[element]], data_type, FALSE,
                     values[[element]]);
             end;
-            RecordStoreEvent(translated_addresses[[element]],
+            RecordIndexedStoreEvent(translated_addresses[[element]],
                 TileMemoryElementBytes(data_type), stored_value,
                 CurrentBundleMemoryOrder());
         end;
@@ -179,7 +182,7 @@ begin
                     translated_addresses[[agent]][[element]];
                 let value = LoadTranslatedUnsigned(translated_address,
                     TileMemoryElementBytes(data_type));
-                RecordLoadEventForAgent(agent, translated_address,
+                RecordPrefetchLoadEventForAgent(agent, translated_address,
                     TileMemoryElementBytes(data_type), value,
                     CurrentBundleMemoryOrder());
             end;

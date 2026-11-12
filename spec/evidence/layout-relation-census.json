@@ -5097,7 +5097,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "0285d49a91caff482b649ef7d58b549062d135a5",
+  "candidate_head": "0a73913a53b1528ae8151216adda4a9754d9d0b5",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -18823,7 +18823,7 @@
         "CUBE_M32",
         "RowMajor"
       ],
-      "after_sha256": "fbf8d58b5dcc5ccf27a40a9a06790731a9df77bcc3a963fd7415f95826bf4330",
+      "after_sha256": "8371f88b57741bfd6e04cd02b83f8b322c097e56d0638bda8713a97565ce4abb",
       "before_layouts": [
         "CUBE_M16",
         "CUBE_M32",
@@ -19078,7 +19078,7 @@
       "after_layouts": [
         "RowMajor"
       ],
-      "after_sha256": "8721e71b4c7ea466f0c4995514a3013cb302ec99f7aa4ae8d9a5b2c9b109c55f",
+      "after_sha256": "f7f0e6aa24777330ef99186911d749f31b811706d2346a657960bd6f5f754ef6",
       "before_layouts": [
         "RowMajor"
       ],
@@ -20886,7 +20886,7 @@
             "MarkGMObligationIrrevocable",
             "ProbeTileMemoryAccess",
             "RaiseDataAccessFault",
-            "RecordStoreEvent",
+            "RecordTileStoreEvent",
             "StoreTileMemoryElement",
             "TileLogicalLinearIndex",
             "TileMemoryElementBytes",
@@ -20896,7 +20896,7 @@
           ],
           "layouts": [],
           "path": "asl/tile/model/memory/load-store.asl",
-          "sha256": "e41f129948ac7f4a0e8fe15aa0b8b35853b1cdcf005ba1e682231c6755081919"
+          "sha256": "33bf5f9fe235f2dfd5afcd367bd8d8f4d77c7d59dd8f3b16058670a531626774"
         }
       ],
       "after_callers": [
@@ -22286,7 +22286,7 @@
             "RaiseDataAccessFault",
             "RaiseDataAccessFault",
             "ReadBPC",
-            "RecordLoadEvent",
+            "RecordTileLoadEvent",
             "TileCubeDescriptorLegal",
             "TileInfoWithLogicalElement",
             "TileInfoWithLogicalElementAndDefined",
@@ -22306,7 +22306,7 @@
           ],
           "layouts": [],
           "path": "asl/tile/model/memory/load-store.asl",
-          "sha256": "6f44d646d99cb6fd021019ab21153de16226ca4617be789fb5a5e5bb94df9869"
+          "sha256": "7f0469acdb1e8677624c0593c101f7ddd7e2e043b795008ff3cd12e38fd79b8d"
         }
       ],
       "after_callers": [
@@ -54467,7 +54467,7 @@
               "ReadTPC",
               "ReadTPC",
               "ReadTPC",
-              "RecordLoadEvent",
+              "RecordTileLoadEvent",
               "SetFault",
               "SetFault",
               "SetFault",
@@ -54500,7 +54500,7 @@
               "RowMajor"
             ],
             "path": "asl/block/model/dispatch/timg2col-execution.asl",
-            "sha256": "fbf8d58b5dcc5ccf27a40a9a06790731a9df77bcc3a963fd7415f95826bf4330"
+            "sha256": "8371f88b57741bfd6e04cd02b83f8b322c097e56d0638bda8713a97565ce4abb"
           }
         ],
         "BundleTIMG2COLC0Elements": [
@@ -55374,7 +55374,7 @@
               "ReadScalarRegisterOperand",
               "ReadTPC",
               "ReadTPC",
-              "RecordLoadEvent",
+              "RecordTileLoadEvent",
               "SetFault",
               "SetFault",
               "SetFault",
@@ -55398,7 +55398,7 @@
               "RowMajor"
             ],
             "path": "asl/block/model/dispatch/weight-to-shared-execution.asl",
-            "sha256": "8721e71b4c7ea466f0c4995514a3013cb302ec99f7aa4ae8d9a5b2c9b109c55f"
+            "sha256": "f7f0e6aa24777330ef99186911d749f31b811706d2346a657960bd6f5f754ef6"
           }
         ],
         "BundleWeightTLOADC0Elements": [
@@ -58093,7 +58093,7 @@
               "MarkGMObligationIrrevocable",
               "ProbeTileMemoryAccess",
               "RaiseDataAccessFault",
-              "RecordStoreEvent",
+              "RecordTileStoreEvent",
               "StoreTileMemoryElement",
               "TileLogicalLinearIndex",
               "TileMemoryElementBytes",
@@ -58103,7 +58103,7 @@
             ],
             "layouts": [],
             "path": "asl/tile/model/memory/load-store.asl",
-            "sha256": "e41f129948ac7f4a0e8fe15aa0b8b35853b1cdcf005ba1e682231c6755081919"
+            "sha256": "33bf5f9fe235f2dfd5afcd367bd8d8f4d77c7d59dd8f3b16058670a531626774"
           }
         ],
         "ExecuteTileUnary": [
@@ -59115,7 +59115,7 @@
               "RaiseDataAccessFault",
               "RaiseDataAccessFault",
               "ReadBPC",
-              "RecordLoadEvent",
+              "RecordTileLoadEvent",
               "TileCubeDescriptorLegal",
               "TileInfoWithLogicalElement",
               "TileInfoWithLogicalElementAndDefined",
@@ -59135,7 +59135,7 @@
             ],
             "layouts": [],
             "path": "asl/tile/model/memory/load-store.asl",
-            "sha256": "6f44d646d99cb6fd021019ab21153de16226ca4617be789fb5a5e5bb94df9869"
+            "sha256": "7f0469acdb1e8677624c0593c101f7ddd7e2e043b795008ff3cd12e38fd79b8d"
           }
         ],
         "TPACKToValue": [

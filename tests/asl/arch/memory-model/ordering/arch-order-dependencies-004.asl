@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-DEPENDENCIES-ORDER-004","source":"asl/arch/memory-model/ordering.asl","requirements":[],"kind":"ordering","summary":"tile ordering and dependency metadata remain distinct from fences","pass_condition":"tile ordering and dependency assertions hold","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-DEPENDENCIES-ORDER-004","source":"asl/arch/memory-model/ordering.asl","requirements":["PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001"],"kind":"ordering","summary":"tile ordering and dependency metadata remain distinct from fences","pass_condition":"tile ordering and dependency assertions hold","related_sources":[]}
 func TestTileMemoryEventOrdering()
 begin
     ResetProfileState();
@@ -63,6 +63,8 @@ func TestDependencyMetadataIsNotFence()
 begin
     StopMemoryEventCapture();
     ResetMemoryExecution();
+    _CurrentMemoryShareability = MemoryShareability_IntraCore;
+    _CurrentMemoryRequestClass = MemoryRequestClass_Scalar;
     let initial_x = AddInitialWriteEvent(Zeros{PTO_XLEN}, 8,
         Zeros{PTO_XLEN});
     let initial_y = AddInitialWriteEvent(Zeros{PTO_XLEN} + 8, 8,

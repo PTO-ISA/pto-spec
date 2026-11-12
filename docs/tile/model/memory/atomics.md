@@ -219,12 +219,12 @@ begin
                 replacement_values[[element]],
                 TileMemoryElementBytes(destination_tile.data_type));
             if succeeds then
-                - = StoreTileMemoryElement(original_addresses[[element]],
+                - = StoreIndexedMemoryElement(original_addresses[[element]],
                     write_translated_addresses[[element]],
                     destination_tile.data_type, FALSE,
                     replacement_values[[element]]);
             end;
-            RecordAtomicEvent(write_translated_addresses[[element]],
+            RecordIndexedAtomicEvent(write_translated_addresses[[element]],
                 TileMemoryElementBytes(destination_tile.data_type), old_raw,
                 write_value, CurrentBundleMemoryOrder(), succeeds);
     end;

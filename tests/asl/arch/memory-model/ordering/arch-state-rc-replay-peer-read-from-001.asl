@@ -5,11 +5,14 @@ begin
     ResetMemoryExecution();
     SelectExecutionContext(0, 0);
     _CurrentMemoryOrigin = MemoryEventOrigin_Kernel;
+    _CurrentMemoryShareability = MemoryShareability_IntraCore;
+    _CurrentMemoryRequestClass = MemoryRequestClass_Scalar;
     _CurrentKernelInvocation = 9;
     _CurrentProgramOrder = 1;
     let address = Zeros{PTO_XLEN} + 0x980;
     - = AddInitialWriteEvent(address, 8, Zeros{PTO_XLEN});
-    BeginMemoryReplay(address);
+    BeginMemoryReplay(address, MemoryShareability_IntraCore,
+        MemoryRequestClass_Scalar);
     let earlier_write = AddStoreEvent(0, address, 8,
         Zeros{PTO_XLEN} + 7, MemoryOrder_Relaxed, 1);
     CommitMemoryReplayEffect();
@@ -18,6 +21,8 @@ begin
     // Recovery must preserve the stable read_from index and both live events.
     SelectExecutionContext(0, 1);
     _CurrentMemoryOrigin = MemoryEventOrigin_Kernel;
+    _CurrentMemoryShareability = MemoryShareability_IntraCore;
+    _CurrentMemoryRequestClass = MemoryRequestClass_Scalar;
     _CurrentKernelInvocation = 9;
     _CurrentProgramOrder = 1;
     let peer_read = AddLoadEvent(1, address, 8, Zeros{PTO_XLEN} + 7,
@@ -25,8 +30,11 @@ begin
     SetMemoryReadFrom(peer_read, earlier_write);
 
     SelectExecutionContext(0, 0);
+    _CurrentMemoryShareability = MemoryShareability_IntraCore;
+    _CurrentMemoryRequestClass = MemoryRequestClass_Scalar;
     _CurrentProgramOrder = 2;
-    BeginMemoryReplay(address + Zeros{PTO_XLEN} + 8);
+    BeginMemoryReplay(address + Zeros{PTO_XLEN} + 8,
+        MemoryShareability_IntraCore, MemoryRequestClass_Scalar);
     let speculative = AddStoreEvent(0, address, 8,
         Zeros{PTO_XLEN} + 8, MemoryOrder_Relaxed, 2);
     assert _MemoryEventCount == speculative + 1;
@@ -35,7 +43,15 @@ begin
     assert _MemoryEvents[[earlier_write]].active;
     assert _MemoryEvents[[peer_read]].active;
     assert _MemoryEvents[[peer_read]].read_from == earlier_write;
+    assert _MemoryEvents[[earlier_write]].shareability ==
+        MemoryShareability_IntraCore;
+    assert _MemoryEvents[[peer_read]].shareability ==
+        MemoryShareability_IntraCore;
     assert !_MemoryEvents[[speculative]].active;
+    assert _MemoryReplayState.shareability == MemoryShareability_IntraCore;
+    assert _MemoryReplayState.request_class == MemoryRequestClass_Scalar;
     assert MemoryCandidateExecutionValid();
+    assert MemoryScopeConforming();
+    assert MemoryExecutionAllowedRC();
     return 0;
 end;

@@ -2,7 +2,7 @@
 {
   "id": "ADR-MEM-0011",
   "title": "Cross-agent visibility, fence transport, atomic ordering, and precise replay",
-  "title_zh": "跨 agent 可见性、fence 传输、atomic 顺序与精确重放",
+  "title_zh": "\u8de8 agent \u53ef\u89c1\u6027\u3001fence \u4f20\u8f93\u3001atomic \u987a\u5e8f\u4e0e\u7cbe\u786e\u91cd\u653e",
   "status": "accepted",
   "authors": [
     "Kevin Zhou <zhoubot@gmail.com>",
@@ -37,21 +37,35 @@
     "PTO-ARCH-MEMORY-MODEL-FLUSH-001",
     "PTO-ARCH-MEMORY-MODEL-ATOMIC-001",
     "PTO-ARCH-MEMORY-MODEL-OPEN-001",
+    "PTO-ARCH-GM-OBLIGATIONS-001",
+    "PTO-ARCH-PE-EXECUTION-CONTEXT-001",
+    "PTO-REQ-SCALAR-SHAREABILITY-CARRIER-001",
     "PTO-TLOAD-MEMORY-001",
     "PTO-TSTORE-MEMORY-001",
-    "PTO-TSTORE-STRIDED-ATOMIC-RED-001"
+    "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+    "PTO-REQ-INSTRUCTION-DISPATCH-001"
   ],
   "affected_units": [
     "PTO-ARCH-DATA-TYPES-MEMORY-MODEL",
     "PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS",
     "PTO-ARCH-MEMORY-MODEL-ORDERING",
+    "PTO-ARCH-MEMORY-MODEL-ATOMICITY",
+    "PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS",
     "PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION",
     "PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT",
     "PTO-ARCH-DATA-TYPES-TRAP-CONTEXT",
     "PTO-TILE-MODEL-MEMORY-LOAD-STORE",
     "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+    "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER",
+    "PTO-TILE-MODEL-MEMORY-ATOMICS",
+    "PTO-TILE-MODEL-MEMORY-ATOMIC-TSTORE",
     "PTO-TILE-TLOAD",
-    "PTO-TILE-TSTORE"
+    "PTO-TILE-TSTORE",
+    "PTO-ARCH-DISPATCH-TOP-LEVEL",
+    "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
+    "PTO-SCALAR-MODEL-AGU-MEMORY",
+    "PTO-SCALAR-MODEL-AMO-SEMANTICS",
+    "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT"
   ],
   "resolves": [],
   "supersedes": [
@@ -62,7 +76,49 @@
   "release_impact": "required",
   "interface_change": true,
   "legacy_ids": [],
-  "amendments": []
+  "amendments": [
+    {
+      "date": "2026-11-11",
+      "baseline": "42067d0f2890b8c013a868bd1247ebc6437b3179",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/416",
+      "affected_ndf": [
+        "PTO-ARCH-MEMORY-MODEL-SCOPE-001",
+        "PTO-ARCH-MEMORY-MODEL-REQUEST-CLASS-001",
+        "PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001",
+        "PTO-ARCH-MEMORY-MODEL-CONFLICT-001",
+        "PTO-ARCH-MEMORY-MODEL-VISIBILITY-001",
+        "PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001",
+        "PTO-ARCH-MEMORY-MODEL-MIXED-SIZE-001",
+        "PTO-ARCH-MEMORY-MODEL-RC-001",
+        "PTO-ARCH-MEMORY-MODEL-REPLAY-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001",
+        "PTO-ARCH-PE-EXECUTION-CONTEXT-001",
+        "PTO-REQ-INSTRUCTION-DISPATCH-001",
+        "PTO-REQ-SCALAR-SHAREABILITY-CARRIER-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DATA-TYPES-MEMORY-MODEL",
+        "PTO-ARCH-MEMORY-MODEL-ATOMICITY",
+        "PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION",
+        "PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS",
+        "PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS",
+        "PTO-ARCH-MEMORY-MODEL-ORDERING",
+        "PTO-ARCH-DISPATCH-TOP-LEVEL",
+        "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
+        "PTO-SCALAR-MODEL-AGU-MEMORY",
+        "PTO-SCALAR-MODEL-AMO-SEMANTICS",
+        "PTO-TILE-MODEL-MEMORY-LOAD-STORE",
+        "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER",
+        "PTO-TILE-MODEL-MEMORY-ATOMICS",
+        "PTO-TILE-MODEL-MEMORY-ATOMIC-TSTORE",
+        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+        "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT"
+      ]
+    }
+  ]
 }
 ---
 # ADR-MEM-0011: Cross-agent visibility, fence transport, atomic ordering, and precise replay
@@ -207,3 +263,71 @@ Evidence covers multi-copy release/acquire visibility, relaxed negative cases,
 mask transport and strength, partial-overlap rejection, exact-range atomic RMW,
 and replay/flush retention of prior effects. `make pr-check`, `make repo-check`,
 and `git diff --check` are required for the candidate.
+
+
+## Issue #416 accepted architecture amendment (2026-11-11)
+
+At baseline `42067d0f2890b8c013a868bd1247ebc6437b3179`, the delegated
+architecture owner accepted Scalar ordinary and atomic/LR-SC request scope with
+Private default; Tile/IndexedGenerated retain IntraCore. Strict equality of
+scope and issuing domain is required, including same-PE cross-scope interactions.
+Private identifies one PE; InterCore covers one PTO device. Scope selects portable
+participation, not a cache tier, ordering mode, host coherence, or handoff.
+
+The carrier is an independent 64-bit form preserving an original 16/32/48-bit
+payload in bits[63:16]. Low-halfword mask/match is 0xf0ff/0x001f, scope[9:8]
+is Private/IntraCore/InterCore/reserved, and inner-length[11:10] is
+16/32/48/reserved. Padding is zero. Assembly uses .private/.intra/.inter.
+Existing binaries retain their decode/default. One envelope retires once at TPC+8;
+full fetch and recovery use the envelope. DMA/Prefetch and .brg are excluded.
+This decision avoids stealing existing operand bits or losing compressed/HL
+addressing behavior; current normative meaning belongs to the ASL/NDF owners.
+
+Keep one physical memory. Scope-conformance checks reject portable proof claims
+for overlapping, differently keyed access pairs involving a write, not hardware
+execution. Initial writes are neutral. DMA retains explicit legacy provenance.
+General program-order/fence/collective ordering remains independent. LR scope
+is saved with PE context; actual matching-domain writes invalidate overlapping
+64B reservations across active/inactive PE/Core contexts even without event capture.
+Mismatched-scope SC deterministically takes the existing no-access miss path in
+the reference model. Existing faults, CAS nonwrite, SC reporting and granule
+rules remain; no additional progress promise is introduced.
+
+Affected owners include memory events/relations, scalar request and decoder
+transport, architecture dispatch, GM obligations/replay and PE reservation
+contexts. Focused evidence must include real encoded ordinary/atomic effects,
+Scalar/Tile/IndexedGenerated interaction, cross-Core InterCore communication,
+capture-disabled reservation safety, malformed envelopes and legacy exclusions.
+No Tile.InterCore, domain conversion, cache maintenance or host coherence is
+added. Target release is unassigned; release evidence refresh and downstream
+assembler/compiler/ASL-model integration remain release obligations. Issue #416
+remains open until implementation/evidence acceptance. ADR-MEM-0010 remains
+superseded historical rationale; this accepted topic owns the amendment.
+
+### Software aliasing obligation and example / 软件别名义务与示例
+
+When Scalar and fixed-IntraCore Tile or IndexedGenerated requests may access
+the same bytes, software assigns compatible IntraCore scope to each covered
+Scalar access. If software cannot prove the accessed ranges disjoint, it treats
+them as potentially aliasing. In a Top-K pipeline, the named `output`, `lane`,
+`num`, and `hist` ranges may be prepared, selected, ranked, or consumed through
+combinations of Scalar, Tile, and IndexedGenerated accesses. A compiler or
+runtime that cannot prove which of those ranges are disjoint treats the
+uncertain pair as potentially aliasing and uses IntraCore for the participating
+Scalar access, matching the fixed-IntraCore Tile or IndexedGenerated request.
+This applies independently to each range: a Scalar range proved disjoint from
+those requests need not use IntraCore for this reason, while `InterCore` alone
+does not match Tile or IndexedGenerated. This example illustrates the software
+aliasing obligation; the normative compatibility rule remains in
+`SHAREABILITY-001`.
+
+当 Scalar 与固定为 IntraCore 的 Tile 或 IndexedGenerated 请求可能访问相同
+字节时，软件应为每个受支持的 Scalar 访问选择兼容的 IntraCore scope。如果无法
+证明访问范围互不重叠，软件必须按可能别名处理。在 Top-K 流程中，命名的
+`output`、`lane`、`num` 和 `hist` 范围可能通过 Scalar、Tile 和 IndexedGenerated
+访问的不同组合进行准备、筛选、排序或读取。如果编译器或运行时无法证明这些
+范围中哪些互不重叠，就应将不确定的范围对视为可能别名，并为参与访问的 Scalar
+选择 IntraCore，以匹配固定为 IntraCore 的 Tile 或 IndexedGenerated 请求。此规则
+分别适用于每个范围：已证明与这些请求互不重叠的 Scalar 范围无需因此选择
+IntraCore，而单独选择 `InterCore` 不能与 Tile 或 IndexedGenerated 匹配。此例说明
+软件别名义务；规范性的兼容规则仍由 `SHAREABILITY-001` 定义。

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-RC-CONCURRENCY-ORDER-001","source":"asl/arch/memory-model/ordering.asl","requirements":["PTO-ARCH-MEMORY-MODEL-RC-001"],"kind":"ordering","summary":"RC concurrency outcomes obey Store->Store, fence, and atomic ordering","pass_condition":"RC concurrency assertions hold","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-RC-CONCURRENCY-ORDER-001","source":"asl/arch/memory-model/ordering.asl","requirements":["PTO-ARCH-MEMORY-MODEL-RC-001","PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001"],"kind":"ordering","summary":"RC concurrency outcomes obey Store->Store, fence, and atomic ordering","pass_condition":"RC concurrency assertions hold","related_sources":[]}
 func TestRCStoreBufferingAllowed()
 begin
     ResetMemoryExecution();
@@ -282,6 +282,8 @@ end;
 func main() => integer
 begin
     ResetProfileState();
+    _CurrentMemoryShareability = MemoryShareability_IntraCore;
+    _CurrentMemoryRequestClass = MemoryRequestClass_Scalar;
     TestRCStoreBufferingAllowed();
     TestRCStoreBufferingFenceForbidden();
     TestRCMessagePassing();

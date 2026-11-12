@@ -75,10 +75,13 @@ This page is a generated reference view of the normative ASL unit.
 // PTO-UNIT: {"id":"PTO-ARCH-MEMORY-MODEL-ORDERING","surface":"arch","classification":["memory-model","ordering"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMICITY","PTO-ARCH-STATE-CORE-SYNCHRONIZATION"]}
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-SCOPE-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
-// PTO defines one architecture-visible GM domain for scalar, Tile,
-// indexed/generated, atomic/RMW, and prefetch-like requests. Backend queues,
-// caches, coalescers, replay buffers, splitting, and merging are not
-// architectural state and MUST preserve the result required by PTO-RC.
+// PTO uses one GM backing address space; each request carries an effective
+// Shareability and issuing-domain identity. Portable coherence and
+// communication apply only to requests with matching scope and domain keys.
+// Backend queues, caches, coalescers, replay buffers, splitting, and merging
+// are not architectural state and MUST preserve results required for
+// scope-conforming programs. Shareability does not prescribe a physical cache
+// tier or remove independent program-order, fence, or collective edges.
 // NDF-END: PTO-ARCH-MEMORY-MODEL-SCOPE-001
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-COLLECTIVE-SYNC-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
@@ -92,16 +95,38 @@ This page is a generated reference view of the normative ASL unit.
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-REQUEST-CLASS-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
 // Every request belongs to Scalar, Tile, IndexedGenerated, or Prefetch.
-// TNDDMA remains provisional and this classification assigns no opcode or
-// final instruction-specific behavior. Tile values are data dependencies, not
+// Scalar DMA and explicitly enumerated pre-existing block/lifecycle writers
+// retain a LegacyExcluded provenance class and do not receive selectable
+// Shareability. This class has no default path and is entered only by the
+// excluded-operation wrappers. Tile and IndexedGenerated GM requests have
+// fixed IntraCore Shareability; Prefetch remains a nonbinding hint. TNDDMA
+// remains provisional and this classification assigns no opcode or final
+// instruction-specific behavior. Tile values are data dependencies, not
 // memory locations.
 // NDF-END: PTO-ARCH-MEMORY-MODEL-REQUEST-CLASS-001
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
-// Scalar accesses use Private, IntraCore, or InterCore shareability. Tile and
-// IndexedGenerated requests are IntraCore-shareable. A scalar access that may
-// alias either class MUST NOT be marked Private; such a mismatch has no
-// portable guarantee and need not be diagnosed by hardware.
+// Every supported Scalar ordinary load/store, load/store pair, and atomic/RMW
+// request has effective Shareability Private, IntraCore, or InterCore; an
+// unqualified form defaults Private. Tile and IndexedGenerated GM requests
+// have fixed IntraCore Shareability. Private domains identify one device/Core/
+// PE; IntraCore domains identify one device/Core; InterCore domains identify
+// one PTO device. Requests are compatible only when both the Shareability and
+// resulting domain identity match. Thus equal Private scopes from different
+// PEs, equal IntraCore scopes from different Cores, and any cross-scope pair
+// are incompatible, including requests from the same PE. Overlapping
+// incompatible requests have no portable reads-from, coherence, atomic
+// communication, or cross-agent synchronization guarantee; no mismatch fault
+// is required. This rule does not remove independent program-order, fence, or
+// collective edges, and does not make disjoint byte footprints conflict merely
+// because they occupy one physical cacheline. Initial memory values are neutral
+// sources compatible with every Scope. Software that relies on shared-data
+// interaction MUST assign compatible scope and domain keys to every pair of
+// requests that may overlap; when disjointness cannot be proven, software MUST
+// treat the pair as potentially aliasing. A Scalar request that may alias a
+// Tile/IndexedGenerated request for shared-data interaction MUST use matching
+// IntraCore; InterCore alone is insufficient. Shareability is per request and
+// does not imply ordering, cache placement, handoff, or host coherence.
 // NDF-END: PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-RANGE-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
@@ -113,9 +138,14 @@ This page is a generated reference view of the normative ASL unit.
 // NDF-END: PTO-ARCH-MEMORY-MODEL-RANGE-001
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-CONFLICT-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
-// Requests conflict when their access sets overlap in an applicable
-// shareability domain and at least one writes or atomically updates. Read-read
-// overlap is not a conflict. Mixed-size partial overlap remains fail-closed.
+// Requests have portable conflict/coherence only when their actual access sets
+// overlap and their domain keys match; at least one must write or atomically
+// update. Read-read overlap is not a scope-conformance violation. An
+// overlapping incompatible pair with a write is nonportable and is excluded
+// from scope-conforming candidate executions; this is not a required runtime
+// trap or a claim of any particular incoherent value. Disjoint byte footprints
+// remain independent even within one physical cacheline. Mixed-size partial
+// overlap remains fail-closed.
 // NDF-END: PTO-ARCH-MEMORY-MODEL-CONFLICT-001
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-DEPENDENCY-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
@@ -164,6 +194,7 @@ begin
     return left.active && right.active &&
            MemoryEventIsWrite(left) && MemoryEventIsWrite(right) &&
            MemoryEventsShareLocation(left, right) &&
+           MemoryEventsShareabilityCompatible(left, right) &&
            left.coherence_rank < right.coherence_rank;
 end;
 
@@ -174,6 +205,7 @@ begin
     let read = _MemoryEvents[[read_index]];
     return write.active && read.active &&
            MemoryEventIsWrite(write) && MemoryEventIsRead(read) &&
+           MemoryEventsShareabilityCompatible(write, read) &&
            read.read_from == write_index;
 end;
 
@@ -225,6 +257,7 @@ begin
            left.kind != MemoryEvent_InitialWrite &&
            right.kind != MemoryEvent_InitialWrite &&
            MemoryEventIsAccess(left) && MemoryEventIsAccess(right) &&
+           MemoryEventsShareabilityCompatible(left, right) &&
            MemoryEventsShareLocation(left, right);
 end;
 
@@ -389,6 +422,7 @@ end;
 readonly func MemoryExecutionAllowedRC() => boolean
 begin
     return MemoryCandidateExecutionValid() &&
+           MemoryScopeConforming() &&
            MemoryRelationAcyclic(TRUE) && MemoryRelationAcyclic(FALSE);
 end;
 ```

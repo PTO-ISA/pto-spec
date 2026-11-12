@@ -19,11 +19,32 @@ begin
             integer {0..262144});
 end;
 
+pure func ReservationDomainsMatch(
+    write_scope: MemoryShareability, write_core: PTOModelCoreIdentity,
+    write_pe: MemoryAgentId, reservation_scope: MemoryShareability,
+    reservation_core: PTOModelCoreIdentity,
+    reservation_pe: MemoryAgentId) => boolean
+begin
+    if write_scope != reservation_scope then return FALSE; end;
+    case write_scope of
+        when MemoryShareability_Private =>
+            return write_core == reservation_core && write_pe == reservation_pe;
+        when MemoryShareability_IntraCore =>
+            return write_core == reservation_core;
+        when MemoryShareability_InterCore => return TRUE;
+    end;
+end;
+
 func InvalidateReservationsForGMWrite(address: Word,
                                      size_bytes: integer {0..262144})
 begin
     if size_bytes == 0 then return; end;
+    let legacy_write =
+        _CurrentMemoryRequestClass == MemoryRequestClass_LegacyExcluded;
     if _ReservationValid &&
+       (legacy_write || ReservationDomainsMatch(
+           _CurrentMemoryShareability, _CurrentModelCore, _CurrentMemoryAgent,
+           _ReservationShareability, _CurrentModelCore, _CurrentMemoryAgent)) &&
        RangesOverlap(address, size_bytes,
            ReservationGranuleAddressFor(_ReservationAddress),
            PTO_RESERVATION_GRANULE_BYTES) then
@@ -33,6 +54,10 @@ begin
         for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
             let saved = _PEExecutionContexts[[core]][[pe]];
             if saved.reservation_valid &&
+               (legacy_write || ReservationDomainsMatch(
+                   _CurrentMemoryShareability, _CurrentModelCore,
+                   _CurrentMemoryAgent, saved.reservation_shareability,
+                   core as PTOModelCoreIdentity, pe as MemoryAgentId)) &&
                RangesOverlap(address, size_bytes,
                    ReservationGranuleAddressFor(saved.reservation_address),
                    PTO_RESERVATION_GRANULE_BYTES) then
@@ -42,6 +67,9 @@ begin
     end;
     let default_context = _DefaultPEExecutionContext;
     if default_context.reservation_valid &&
+       (legacy_write || ReservationDomainsMatch(
+           _CurrentMemoryShareability, _CurrentModelCore, _CurrentMemoryAgent,
+           default_context.reservation_shareability, 0, 0)) &&
        RangesOverlap(address, size_bytes,
            ReservationGranuleAddressFor(default_context.reservation_address),
            PTO_RESERVATION_GRANULE_BYTES) then
@@ -229,6 +257,24 @@ begin
     InvalidateReservationsForGMWrite(original_address, byte_count);
 end;
 
+func StoreTranslatedFillModelBoundedForMemoryRequest(
+    original_address: Word,
+    translated_address: Word,
+    byte_count: integer {1..262144},
+    value: Byte,
+    shareability: MemoryShareability,
+    request_class: MemoryRequestClass)
+begin
+    let old_scope = _CurrentMemoryShareability;
+    let old_class = _CurrentMemoryRequestClass;
+    _CurrentMemoryShareability = shareability;
+    _CurrentMemoryRequestClass = request_class;
+    StoreTranslatedFillModelBounded(original_address, translated_address,
+        byte_count, value);
+    _CurrentMemoryShareability = old_scope;
+    _CurrentMemoryRequestClass = old_class;
+end;
+
 func StoreTranslated(original_address: Word, translated_address: Word,
                      size_bytes: integer {1,2,4,8}, value: Word)
 begin
@@ -238,6 +284,20 @@ begin
         WriteMemoryByte(byte_address, value[(byte_index * 8) +: 8]);
     end;
     InvalidateReservationsForGMWrite(original_address, size_bytes);
+end;
+
+func StoreTranslatedForMemoryRequest(
+    original_address: Word, translated_address: Word,
+    size_bytes: integer {1,2,4,8}, value: Word,
+    shareability: MemoryShareability, request_class: MemoryRequestClass)
+begin
+    let old_scope = _CurrentMemoryShareability;
+    let old_class = _CurrentMemoryRequestClass;
+    _CurrentMemoryShareability = shareability;
+    _CurrentMemoryRequestClass = request_class;
+    StoreTranslated(original_address, translated_address, size_bytes, value);
+    _CurrentMemoryShareability = old_scope;
+    _CurrentMemoryRequestClass = old_class;
 end;
 
 func LoadWithOrder(address: Word, size_bytes: integer {1,2,4,8},

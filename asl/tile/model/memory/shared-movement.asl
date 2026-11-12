@@ -240,7 +240,7 @@ begin
                 let translated = probe.translated_address;
                 let raw = LoadTranslatedUnsigned(translated,
                     TileMemoryElementBytes(tile.data_type));
-                RecordLoadEventForAgent(agent, translated,
+                RecordTileLoadEventForAgent(agent, translated,
                     TileMemoryElementBytes(tile.data_type), raw,
                     CurrentBundleMemoryOrder());
                 let destination_element = if actual_pe_assembly then
@@ -302,7 +302,7 @@ begin
                         TileMemoryStridedByteHighNibble(
                             column as integer {0..65535}, tile.data_type),
                         TileReadLogicalElement(tile, element));
-                    RecordStoreEventForAgent(agent, translated,
+                    RecordTileStoreEventForAgent(agent, translated,
                         TileMemoryElementBytes(tile.data_type), stored_value,
                         CurrentBundleMemoryOrder());
                 end;
@@ -388,7 +388,7 @@ begin
                             TileLogicalLinearIndex(tile,
                                 row as integer {0..65535},
                                 column as integer {0..65535})));
-                    RecordStoreEventForAgent(agent, translated,
+                    RecordTileStoreEventForAgent(agent, translated,
                         TileMemoryElementBytes(tile.data_type), stored_value,
                         CurrentBundleMemoryOrder());
                 end;

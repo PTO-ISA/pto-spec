@@ -9,7 +9,7 @@
 // PTO-STATE: {"id":"PTO-STATE-ARCH-EXTENDED-SYSTEM-REGISTERS","classification":["architecture","extended-system-registers"],"scope":"pe","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_ExtendedSystemRegisters","_CurrentACR"],"depends_on":["PTO-STATE-ARCH-PE-EXECUTION-CONTEXT"]}
 // PTO-STATE: {"id":"PTO-STATE-ARCH-TRAP-CONTEXT","classification":["architecture","trap-context"],"scope":"acr","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_ACRTrapAsynchronous","_ACRTrapArgumentValid","_ACRTrapCause","_ACRTrapNumber","_ACRTrapArgument0","_TrapContexts"],"depends_on":["PTO-STATE-ARCH-PE-EXECUTION-CONTEXT"]}
 // PTO-STATE: {"id":"PTO-STATE-ARCH-CORE-CONTEXT-SELECTION","classification":["architecture","core-context-selection"],"scope":"system","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_CurrentModelCore"],"depends_on":["PTO-STATE-ARCH-CORE-LOCAL-CONTEXT"]}
-// PTO-STATE: {"id":"PTO-STATE-ARCH-PE-EXECUTION-PROGRESS","classification":["architecture","pe-execution-progress"],"scope":"pe","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_CurrentCollectiveEpoch","_CurrentEncodedInstruction","_CurrentMemoryOrigin","_CurrentProgramOrder","_LastFencePredecessor","_LastFenceSuccessor","_MemoryReplayState","_ReservationAddress","_ReservationSize","_ReservationValid","_ScalarExecutionBlocked"],"depends_on":["PTO-STATE-ARCH-PE-EXECUTION-CONTEXT"]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-PE-EXECUTION-PROGRESS","classification":["architecture","pe-execution-progress"],"scope":"pe","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_CurrentCollectiveEpoch","_CurrentEncodedInstruction","_CurrentMemoryOrigin","_CurrentMemoryShareability","_CurrentMemoryRequestClass","_CurrentProgramOrder","_LastFencePredecessor","_LastFenceSuccessor","_MemoryReplayState","_ReservationAddress","_ReservationSize","_ReservationShareability","_ReservationValid","_ScalarExecutionBlocked"],"depends_on":["PTO-STATE-ARCH-PE-EXECUTION-CONTEXT"]}
 // PTO-STATE: {"id":"PTO-STATE-ARCH-MEMORY-EVENT-OVERRIDE","classification":["architecture","memory-event-override"],"scope":"system","owner":"PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","members":["_MemoryEventCollectiveHistoryOverrideValid","_MemoryEventCollectiveHistoryOverride"],"depends_on":["PTO-STATE-ARCH-MEMORY"]}
 
 // NDF-BEGIN: PTO-REQ-STATE-001
@@ -48,12 +48,17 @@ var _Memory : array [[PTO_MODEL_MEMORY_BYTES]] of Byte;
 var _ReservationValid : boolean;
 var _ReservationAddress : Word;
 var _ReservationSize : integer {1,2,4,8};
+var _ReservationShareability : MemoryShareability;
 var _LastFencePredecessor : bits(4);
 var _LastFenceSuccessor : bits(4);
 var _MemoryEvents : array [[PTO_MODEL_MEMORY_EVENTS]] of MemoryEvent;
 var _MemoryEventCount : integer {0..PTO_MODEL_MEMORY_EVENTS};
 var _MemoryEventCaptureEnabled : boolean;
 var _CurrentMemoryAgent : MemoryAgentId;
+// Transient request provenance. These values are set around one request and
+// reset before dispatch returns; only the captured MemoryEvent retains them.
+var _CurrentMemoryShareability : MemoryShareability;
+var _CurrentMemoryRequestClass : MemoryRequestClass;
 var _MemoryReplayState : MemoryReplayState;
 var _CurrentModelCore : PTOModelCoreIdentity;
 var _CurrentMemoryOrigin : MemoryEventOrigin;
