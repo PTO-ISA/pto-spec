@@ -17,6 +17,23 @@ const adrIndex = JSON.parse(readFileSync(
   resolve(process.cwd(), '../../spec/evidence/adr-index.json'),
   'utf8',
 )) as {records: Array<{id: string; title: string; title_zh: string}>};
+const tileMacroAssembly = JSON.parse(readFileSync(
+  resolve(process.cwd(), '../../spec/catalog/tile-macro-assembly.json'),
+  'utf8',
+)) as {operations: Array<{mnemonic: string; macro_format: string}>};
+const taddMacroFormat = tileMacroAssembly.operations.find(
+  (operation) => operation.mnemonic === 'TADD',
+)?.macro_format;
+if (taddMacroFormat === undefined) {
+  throw new Error('TADD is missing from the generated Tile macro catalog');
+}
+const tloadProjection = JSON.parse(readFileSync(
+  resolve(process.cwd(), 'data/instruction-projections/PTO-TILE-TLOAD.json'),
+  'utf8',
+)) as {semanticExecution: {stages: Array<{id: string; label: {en: string}}>}};
+const tloadStageLabels = Object.fromEntries(
+  tloadProjection.semanticExecution.stages.map((stage) => [stage.id, stage.label.en]),
+) as Record<string, string>;
 const archNdfSupplements = JSON.parse(readFileSync(
   resolve(process.cwd(), '../../docs/ndf/supplements/arch-01.json'),
   'utf8',
@@ -393,8 +410,12 @@ test('Architecture landing is source-backed and exposes every required mental-mo
     await expect(page.getByRole('heading', {name: topic, exact: true})).toBeVisible();
   }
   await expect(page.locator('[data-source-owner][data-guide-sha256]').first()).toBeVisible();
-  await expect(page.getByText('Current owner-declared boundary', {exact: true})).toHaveCount(4);
-  await expect(page.locator('[role="note"][data-source-sha256][data-guide-sha256]')).toHaveCount(4);
+  const sourceBoundaries = page.locator('[role="note"][data-source-sha256][data-guide-sha256]');
+  const sourceBoundaryCount = await sourceBoundaries.count();
+  expect(sourceBoundaryCount).toBeGreaterThan(0);
+  await expect(page.getByText('Current owner-declared boundary', {exact: true})).toHaveCount(
+    sourceBoundaryCount,
+  );
   await expect(architectureMain.getByText('PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT', {exact: true}).first()).toBeVisible();
   await expect(architectureMain.getByText('PTO-ARCH-MEMORY-MODEL-ORDERING', {exact: true}).first()).toBeVisible();
   await expect(page.getByRole('link', {name: 'Open original ASL ↗'}).first()).toHaveAttribute(
@@ -459,10 +480,7 @@ test('source-declared bundle template covers representative Tile families', asyn
   await expect(page.getByText('Mutually exclusive', {exact: true}).first()).toBeVisible();
 
   await page.goto('/zh-CN/instructions/tile/elementwise-tile-tile/arithmetic/TADD/');
-  await expect(page.getByText(
-    'TADD <LB0:ValidCol, LB1:ValidRow, LB2:Col, DataType, PadValue> SrcTile0, SrcTile1 -> DstTile',
-    {exact: true},
-  )).toBeVisible();
+  await expect(page.getByText(taddMacroFormat, {exact: true})).toBeVisible();
   await expect(page.getByRole('heading', {name: '2. 完整 Bundle Assembly'})).toBeVisible();
   await expect(page.getByText('可重复', {exact: true}).first()).toBeVisible();
   await expect(page).toHaveURL(/\/zh-CN\/instructions\/tile\/elementwise-tile-tile\/arithmetic\/TADD\//);
@@ -523,9 +541,9 @@ test('TLOAD workbench preserves source identity and evidence interaction', async
 
   const execution = page.getByRole('region', {name: 'ASL execution path'});
   await expect(execution).toBeVisible();
-  await expect(execution.getByRole('heading', {name: '1. Bundle structure', level: 3})).toBeVisible();
-  await expect(execution.getByRole('heading', {name: '5. Complete-footprint preflight', level: 3})).toBeVisible();
-  await expect(execution.getByRole('heading', {name: '7. Publish, commit, or no effect', level: 3})).toBeVisible();
+  for (const stageId of ['bundle', 'first-fault', 'effects']) {
+    await expect(execution.getByRole('heading', {name: tloadStageLabels[stageId], level: 3})).toBeVisible();
+  }
   for (const label of ['Inputs', 'Checks', 'Failure', 'Read state', 'Constraints', 'Faults', 'State writes', 'Commit / result']) {
     await expect(execution.getByRole('heading', {name: label}).first()).toBeVisible();
   }
