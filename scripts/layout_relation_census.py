@@ -1972,6 +1972,88 @@ INDEXED_TLSU_CLASSIFICATION = (
     "indexed TLSU byte-displacement and Local layout closure "
     "(ADR-MEM-0009 2026-09-16 amendment, Issue #301)"
 )
+INDEXED_TLSU_RANGE_HELPER_CLASSIFICATION = (
+    "indexed TLSU range descriptor and complete-bundle schema "
+    "(ADR-MEM-0011 / ADR-BLOCK-0005, Issue #414)"
+)
+INDEXED_TLSU_RANGE_HELPER_DEFINITION_DELTAS = {
+    "BundleIndexedTLSUCurrentPEBoundsOrdered": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/indexed-tlsu-range-schema.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleOperationGPRBindingValuesLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+        },
+    },
+    "BundleIndexedTLSUCurrentPEParticipates": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/indexed-tlsu-range-schema.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleIndexedTLSUCurrentPEBoundsOrdered",
+             "asl/block/model/dispatch/indexed-tlsu-range-schema.asl"),
+        },
+    },
+    "BundleIndexedTLSURangeDescriptorPresent": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/indexed-tlsu-range-schema.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleIndexedTLSUCurrentPEBoundsOrdered",
+             "asl/block/model/dispatch/indexed-tlsu-range-schema.asl"),
+            ("BundleIndexedTLSURangeMaskCommandAllowed",
+             "asl/block/model/dispatch/indexed-tlsu-range-command-stream.asl"),
+            ("BundleIndexedTLSURangeMaskSecondPending",
+             "asl/block/model/dispatch/indexed-tlsu-range-schema.asl"),
+            ("BundleMarkIndexedTLSURangeMaskSecondPending",
+             "asl/block/model/dispatch/indexed-tlsu-range-command-stream.asl"),
+            ("BundleOperationGPRInputCount",
+             "asl/block/model/dispatch/bundle-gpr-input-count.asl"),
+            ("BundleOperationScalarBindingSchemaLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+        },
+    },
+    "BundleOperationGPRInputCount": {
+        "before": [("asl/block/model/dispatch/scalar-schema.asl", set())],
+        "after": [("asl/block/model/dispatch/bundle-gpr-input-count.asl", set())],
+        "before_callers": {
+            ("BundleOperationGPRBindingValuesLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+            ("BundleOperationScalarBindingSchemaLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+        },
+        "after_callers": {
+            ("BundleExecutionMaskOperationGPRSourceCount",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+            ("BundleOperationGPRBindingValuesLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+            ("BundleOperationScalarBindingSchemaLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+        },
+    },
+    "BundleOperationUsesIndexedTLSU": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/indexed-tlsu-range-schema.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleIndexedTLSURangeDescriptorPresent",
+             "asl/block/model/dispatch/indexed-tlsu-range-schema.asl"),
+            ("BundleIndexedTLSURangeMaskCommandAllowed",
+             "asl/block/model/dispatch/indexed-tlsu-range-command-stream.asl"),
+            ("BundleIndexedTLSURangeMaskSecondPending",
+             "asl/block/model/dispatch/indexed-tlsu-range-schema.asl"),
+            ("BundleMarkIndexedTLSURangeMaskSecondPending",
+             "asl/block/model/dispatch/indexed-tlsu-range-command-stream.asl"),
+            ("BundleOperationGPRBindingValuesLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+            ("BundleOperationScalarBindingSchemaLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+            ("ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/gm-obligation-dispatch.asl"),
+        },
+    },
+}
 
 # ADR-GOV-0012 (Issue #282) removes the reference/target profile concept and
 # folds every selected ``implementation func`` body into its owning ASL unit.
@@ -4179,6 +4261,49 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                                   else CUBE_AUX_CELLREG_CLASSIFICATION)
                 rows.append({"name": name, "classification": classification,
                              "before": old_defs, "after": new_defs})
+                continue
+            if name in INDEXED_TLSU_RANGE_HELPER_DEFINITION_DELTAS:
+                spec = INDEXED_TLSU_RANGE_HELPER_DEFINITION_DELTAS[name]
+                old_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"])))
+                    for row in old_defs
+                )
+                new_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"])))
+                    for row in new_defs
+                )
+                expected_old_shape = sorted(
+                    (path, tuple(sorted(layouts)))
+                    for path, layouts in spec["before"]
+                )
+                expected_new_shape = sorted(
+                    (path, tuple(sorted(layouts)))
+                    for path, layouts in spec["after"]
+                )
+                before_callers = _direct_callers(before_defs, name)
+                after_callers = _direct_callers(after_defs, name)
+                valid = (
+                    old_shape == expected_old_shape and
+                    new_shape == expected_new_shape and
+                    before_callers == spec["before_callers"] and
+                    after_callers == spec["after_callers"]
+                )
+                if not valid:
+                    errors.append(
+                        f"Issue #414 indexed TLSU range helper owner/layout/caller closure mismatch: {name}"
+                    )
+                rows.append({
+                    "name": name,
+                    "classification": (
+                        INDEXED_TLSU_RANGE_HELPER_CLASSIFICATION
+                        if valid else "UNCLASSIFIED"
+                    ),
+                    "before": old_defs,
+                    "after": new_defs,
+                    "before_callers": sorted(before_callers),
+                    "after_callers": sorted(after_callers),
+                    "owner_decision": INDEXED_TLSU_RANGE_HELPER_CLASSIFICATION,
+                })
                 continue
             errors.append(f"common-helper definition set changed: {name}")
             rows.append({"name": name, "classification": "UNCLASSIFIED", "before": old_defs, "after": new_defs})

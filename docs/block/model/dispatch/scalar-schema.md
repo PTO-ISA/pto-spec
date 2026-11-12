@@ -78,7 +78,19 @@ This example illustrates the current ASL owner and does not replace the normativ
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/scalar-schema.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","surface":"block","classification":["model","dispatch","scalar-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-TO-SHARED-SCHEMA","PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS","PTO-TILE-MODEL-NUMERIC-FORMATS"]}
+// NDF-BEGIN: PTO-INDEXED-TLSU-RANGE-BINDING-001
+// ndf: kind=contract level=L1 layer=block status=accepted
+// Indexed TLSU uses B.IOR.RegSrc0 as per-PE GM base. Without a first-record
+// GPR mask, zero RegSrc1/2 means absent; otherwise they select full-width S64
+// MinIndexGPR/MaxIndexGPR. The legacy one-record mask form keeps Base+mask;
+// combined form uses consecutive first unflagged Base/Min/Max and final
+// flagged mask B.IOR commands.
+// Only a participating current PE reads bounds. Min > Max faults before its
+// request's memory or destination effects; committed peer effects remain.
+// PE_MASK=0000 reads no bounds. Software certifies active starts and a
+// nonwrapping relative byte envelope; individual indices are not checked.
+// NDF-END: PTO-INDEXED-TLSU-RANGE-BINDING-001
+// PTO-UNIT: {"classification":["model","dispatch","scalar-schema"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ORDERING","PTO-BLOCK-MODEL-DISPATCH-BUNDLE-GPR-INPUT-COUNT","PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-BLOCK-MODEL-DISPATCH-INDEXED-TLSU-RANGE-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-WEIGHT-TO-SHARED-SCHEMA","PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS","PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS","PTO-TILE-MODEL-NUMERIC-FORMATS"],"id":"PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","surface":"block"}
 readonly func DecodedBundleCommandKeepsTGPR2TStreamLegal(
     instruction: bits(64), form: integer {0..PTO_COMMAND_FORM_COUNT-1})
     => boolean
@@ -218,38 +230,6 @@ pure func BundleOperationConsumesScalarSource1(
 begin
     return TileOperandPresent(operation, TileOperand_address) &&
            TileOperandPresent(operation, TileOperand_scalar0);
-end;
-
-// Complete-bundle GPR inputs pack present address, scalar0, diagonal, and flag0 operands densely.
-readonly func BundleOperationGPRInputCount(
-    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => integer {0..7}
-begin
-    var count: integer {0..7} = 0;
-    if TileOperandPresent(operation, TileOperand_address) then
-        count = (count + 1) as integer {0..7};
-    end;
-    if TileOperandPresent(operation, TileOperand_scalar0) then
-        count = (count + 1) as integer {0..7};
-    end;
-    if TileOperandPresent(operation, TileOperand_diagonal) then
-        count = (count + 1) as integer {0..7};
-    end;
-    if TileOperandPresent(operation, TileOperand_flag0) then
-        count = (count + 1) as integer {0..7};
-    end;
-    if _BundleOperation.valid &&
-       _BundleOperation.operation_class == BundleOperation_TileMatrix &&
-       _BundleFixedPointAttributes.valid then
-        if BundleFPATRModeUsesScalarParameter(
-               _BundleFixedPointAttributes.pre_quant_mode) then
-            count = (count + 1) as integer {0..7};
-        end;
-        if BundleFPATRReluModeUsesScalarParameter(
-               _BundleFixedPointAttributes.relu_mode) then
-            count = (count + 1) as integer {0..7};
-        end;
-    end;
-    return count;
 end;
 
 readonly func BundleExecutionMaskGPRWordCount(
@@ -400,6 +380,8 @@ begin
             return FALSE;
         end;
     end;
+    if BundleOperationUsesIndexedTLSU(operation) &&
+       !BundleIndexedTLSUCurrentPEBoundsOrdered(operation) then return FALSE; end;
     if decoded == TileOperation_TCMP ||
        decoded == TileOperation_TCMPS ||
        decoded == TileOperation_TSEL ||
@@ -559,6 +541,24 @@ begin
                _BundleScalarBindings[[0]].source0 < PTO_ABSOLUTE_GPR_COUNT &&
                _BundleScalarBindings[[0]].source1 < PTO_ABSOLUTE_GPR_COUNT &&
                _BundleScalarBindings[[0]].source2 == 0;
+    end;
+    if BundleOperationUsesIndexedTLSU(operation) then
+        let range_present = BundleIndexedTLSURangeDescriptorPresent(operation);
+        return _BundleScalarBindings[[0]].valid &&
+               !_BundleScalarBindings[[1]].valid &&
+               (if range_present then
+                    _BundleScalarBindings[[0]].source_count == 3
+                else
+                    _BundleScalarBindings[[0]].source_count >= 1 &&
+                    _BundleScalarBindings[[0]].source_count <= 3) &&
+               _BundleScalarBindings[[0]].destination == 0 &&
+               _BundleScalarBindings[[0]].source0 < PTO_ABSOLUTE_GPR_COUNT &&
+               (if range_present then
+                    _BundleScalarBindings[[0]].source1 < PTO_ABSOLUTE_GPR_COUNT &&
+                    _BundleScalarBindings[[0]].source2 < PTO_ABSOLUTE_GPR_COUNT
+                else
+                    _BundleScalarBindings[[0]].source1 == 0 &&
+                    _BundleScalarBindings[[0]].source2 == 0);
     end;
     if !_BundleScalarBindings[[0]].valid then return TRUE; end;
     if BundleWeightTLOADSelected() then

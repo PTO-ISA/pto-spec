@@ -147,6 +147,92 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 **Reserved-value behavior:** Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.
 
+### B.IOR.RegSrc1 (`PTO-FIELD-BLOCK-GPR-SELECTOR`)
+
+Selects one absolute architectural GPR for B.IOR input or output binding.
+
+**Encoded zero:** Code zero names the architectural zero GPR; it never means an omitted B.IOR field.
+
+| Code | Disposition | Meaning |
+| ---: | --- | --- |
+| 0 | assigned | zero |
+| 1 | assigned | sp |
+| 2 | assigned | a0 |
+| 3 | assigned | a1 |
+| 4 | assigned | a2 |
+| 5 | assigned | a3 |
+| 6 | assigned | a4 |
+| 7 | assigned | a5 |
+| 8 | assigned | a6 |
+| 9 | assigned | a7 |
+| 10 | assigned | ra |
+| 11 | assigned | s0 |
+| 12 | assigned | s1 |
+| 13 | assigned | s2 |
+| 14 | assigned | s3 |
+| 15 | assigned | s4 |
+| 16 | assigned | s5 |
+| 17 | assigned | s6 |
+| 18 | assigned | s7 |
+| 19 | assigned | s8 |
+| 20 | assigned | x0 |
+| 21 | assigned | x1 |
+| 22 | assigned | x2 |
+| 23 | assigned | x3 |
+| 24 | reserved | future extension |
+| 25 | reserved | future extension |
+| 26 | reserved | future extension |
+| 27 | reserved | future extension |
+| 28 | reserved | future extension |
+| 29 | reserved | future extension |
+| 30 | reserved | future extension |
+| 31 | reserved | future extension |
+
+**Reserved-value behavior:** Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.
+
+### B.IOR.RegSrc2 (`PTO-FIELD-BLOCK-GPR-SELECTOR`)
+
+Selects one absolute architectural GPR for B.IOR input or output binding.
+
+**Encoded zero:** Code zero names the architectural zero GPR; it never means an omitted B.IOR field.
+
+| Code | Disposition | Meaning |
+| ---: | --- | --- |
+| 0 | assigned | zero |
+| 1 | assigned | sp |
+| 2 | assigned | a0 |
+| 3 | assigned | a1 |
+| 4 | assigned | a2 |
+| 5 | assigned | a3 |
+| 6 | assigned | a4 |
+| 7 | assigned | a5 |
+| 8 | assigned | a6 |
+| 9 | assigned | a7 |
+| 10 | assigned | ra |
+| 11 | assigned | s0 |
+| 12 | assigned | s1 |
+| 13 | assigned | s2 |
+| 14 | assigned | s3 |
+| 15 | assigned | s4 |
+| 16 | assigned | s5 |
+| 17 | assigned | s6 |
+| 18 | assigned | s7 |
+| 19 | assigned | s8 |
+| 20 | assigned | x0 |
+| 21 | assigned | x1 |
+| 22 | assigned | x2 |
+| 23 | assigned | x3 |
+| 24 | reserved | future extension |
+| 25 | reserved | future extension |
+| 26 | reserved | future extension |
+| 27 | reserved | future extension |
+| 28 | reserved | future extension |
+| 29 | reserved | future extension |
+| 30 | reserved | future extension |
+| 31 | reserved | future extension |
+
+**Reserved-value behavior:** Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.
+
 ## Encoded field closure
 
 Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
@@ -164,6 +250,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | DataType | tile element data type selector |
 | B.IOR.RegSrc0 | per-PE private-GPR GM base address |
 | B.IOR.RegSrc1 | per-PE private-GPR zero selector |
+| B.IOR.RegSrc2 | full-width signed range bound selector when the descriptor is present |
 
 ## Decode
 
@@ -185,8 +272,9 @@ B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
 B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>
-B.IOR BaseGPR, zero, zero, ->zero
+B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)
 BSTOP
+When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (final record only; one/two mask words as required)
 ```
 
 ## Operation
@@ -217,6 +305,7 @@ end;
 - B.IOR is required: RegSrc0 selects the per-PE BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
 - LB0 supplies DataTile ValidCol, LB1 supplies ValidRow, and LB2 supplies DataTile or destination physical Col; omitted LB1 and LB2 default to one and LB0 respectively.
 - IndexTile entries are S32, U32, S64, or U64 byte displacements and are not scaled or decomposed.
+- For indexed TLSU, RegSrc0 is the unsigned per-PE GM base. When the first B.IOR is not a legacy GPR ExecutionMask record, the selector pair (RegSrc1, RegSrc2)=(0,0) means no range descriptor; any other pair selects full-width S64 MinIndexGPR and MaxIndexGPR relative byte displacements. The one-record ExecMaskPresent form keeps its legacy Base-plus-mask meaning. A descriptor with a GPR ExecutionMask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1.
 
 ## Legality
 
@@ -224,6 +313,7 @@ end;
 - ROWMAJOR, CUBE_M16, and CUBE_M32 are accepted; CUBE_N8 is rejected.
 - Participating Local Tiles share the layout class and logical coordinates while retaining independent DataType, TSize, LB2, physical columns, and capacity.
 - B.IOR RegSrc0 supplies BaseGPR; RegSrc1, RegSrc2, and RegDst must encode zero.
+- A present range descriptor supplies signed 64-bit relative byte-displacement bounds, read from the current participating PE. The current request faults with Fault_TileLegality when MinIndex > MaxIndex, before its indexed memory or Tile destination effects; committed peer effects remain. Software certifies that every participating active indexed access start byte is within the inclusive bounds and that [Base+Min, Base+Max+AccessBytes) is nonwrapping in the 64-bit GM address domain; hardware does not validate each IndexTile value against the certificate.
 
 ## State effects
 
@@ -240,6 +330,7 @@ end;
 ### Ordering
 
 - Existing PTO memory ordering and implementation-defined duplicate-address serialization are unchanged.
+- The optional descriptor is a conservative indexed access-set summary only. Absence or incomparable/possibly aliased translated ranges retain conservative dependence handling; interval disjointness may remove only conflict edges permitted by the existing PTO memory model and never weakens independent ordering constraints.
 
 ## Exceptions
 
@@ -248,3 +339,4 @@ end;
 ## Examples
 
 - BSTART.MGATHER DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP
+- B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero (optional indexed range descriptor; RegSrc1=RegSrc2=zero preserves the legacy absent form)

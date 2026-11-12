@@ -66,7 +66,7 @@ This example illustrates the current ASL owner and does not replace the normativ
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/state/descriptor-state.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE","surface":"block","classification":["model","state","descriptor-state"],"depends_on":["PTO-BLOCK-MODEL-STATE-CONTROL-STATE"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE","surface":"block","classification":["model","state","descriptor-state"],"depends_on":["PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-BLOCK-MODEL-STATE-TYPES"]}
 func InstallBundleOperationDescriptor(descriptor: BundleOperationDescriptor)
 begin
     _BundleOperation = descriptor;
@@ -102,6 +102,7 @@ begin
         _BundleScalarBindings[[index]].valid = FALSE;
         _BundleScalarBindings[[index]].source_count = 0;
         _BundleScalarBindings[[index]].execution_mask_present = FALSE;
+        _BundleScalarBindings[[index]].indexed_tlsu_mask_second_contiguous = FALSE;
     end;
     for index = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         _BundleTileBindings[[index]].valid = FALSE;

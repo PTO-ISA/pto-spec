@@ -1085,6 +1085,18 @@
       }
     },
     {
+      "id": "PTO-INDEXED-TLSU-RANGE-BINDING-001",
+      "source_path": "asl/block/model/dispatch/scalar-schema.asl",
+      "title": {
+        "en": "Indexed TLSU range descriptor binding",
+        "zh-CN": "索引式 TLSU 范围描述符绑定"
+      },
+      "summary": {
+        "en": "This supplement describes how combined B.IOR records attach a signed index interval to an indexed TLSU base while preserving the legacy mask forms. Participating PEs validate the selected bounds before their request has memory or destination effects; other PEs retain independent progress. Software certifies a nonwrapping byte envelope for active starts, while individual index values are not checked.",
+        "zh-CN": "本补充说明组合 B.IOR 记录如何为索引式 TLSU 基址附加有符号索引区间，同时保留旧的掩码形式。参与的 PE 会在自身请求产生内存或目标效果前校验所选边界；其他 PE 仍可独立推进。软件为有效起点提供不回绕的字节范围证明，但不会逐项检查索引值。"
+      }
+    },
+    {
       "id": "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
       "source_path": "asl/block/execution/BSTART.TMOV.asl",
       "title": {

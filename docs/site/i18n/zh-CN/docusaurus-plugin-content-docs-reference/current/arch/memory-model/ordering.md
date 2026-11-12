@@ -131,10 +131,23 @@ This page is a generated reference view of the normative ASL unit.
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-RANGE-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
 // A location is one GM byte. Access sets may be contiguous, multi-range, or
-// generated. A conservative base plus signed index_limit descriptor MUST cover
-// every location whose ordering matters; an omitted location receives no
-// range-based guarantee. Coarser implementation comparisons MUST be
-// conservative.
+// generated. An IndexedGenerated request MAY carry a conservative range
+// descriptor consisting of an unsigned 64-bit base and signed 64-bit minimum
+// and maximum byte displacements relative to that base. For transaction width
+// W, the described half-open interval is
+// [UInt64(base)+SInt64(minimum), UInt64(base)+SInt64(maximum)+W), computed in
+// mathematical integer arithmetic. The descriptor certifies that every
+// participating active access start displacement lies inclusively between
+// the bounds and that all transaction bytes lie in the interval; software
+// MUST omit it when the 64-bit address envelope can wrap or cannot be proved.
+// Width is the existing transaction byte width, including one containing
+// byte for packed four-bit ordinary transfer and the existing four-byte POPC
+// atomic operation. The descriptor does not change effective-address
+// generation or create a memory effect. An absent descriptor supplies no
+// range-based disjointness information. Comparisons MUST be mathematical and
+// conservative: incomplete ranges or address-translation/alias ambiguity
+// fail closed, and only a proven disjoint interval may remove an otherwise
+// permitted conflict edge. All independent ordering requirements remain.
 // NDF-END: PTO-ARCH-MEMORY-MODEL-RANGE-001
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-CONFLICT-001
 // ndf: kind=contract level=L1 layer=memory status=accepted

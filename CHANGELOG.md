@@ -5,10 +5,8 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ## Release 0.59.0
 
-### Block
-- [ADR-BLOCK-0005](docs/status/decisions/ADR-BLOCK-0005-complete-bundle-bior-schema-and-defaults.md): Complete-Bundle B.IOR Schema and Defaults
-
 ### Cross-cutting
+- [ADR-BLOCK-0005](docs/status/decisions/ADR-BLOCK-0005-complete-bundle-bior-schema-and-defaults.md): Complete-Bundle B.IOR Schema and Defaults
 - [ADR-BLOCK-0012](docs/status/decisions/ADR-BLOCK-0012-block-attributes-and-lifecycle.md): Block attributes and lifecycle
 - [ADR-BLOCK-0013](docs/status/decisions/ADR-BLOCK-0013-block-scalar-and-tile-bindings.md): Block scalar and tile bindings
 - [ADR-BLOCK-0016](docs/status/decisions/ADR-BLOCK-0016-b-range-modifiers.md): B.SUBVIEW and B.ASSEMBLE range-modifier association
@@ -164,6 +162,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-STATE-0011](docs/status/decisions/ADR-STATE-0011-bundle-operation-descriptor-and-commit.md): Bundle operation descriptor and transactional commit
 
 ### Cross-cutting
+- [ADR-BLOCK-0005](docs/status/decisions/ADR-BLOCK-0005-complete-bundle-bior-schema-and-defaults.md): Complete-Bundle B.IOR Schema and Defaults
 - [ADR-BLOCK-0006](docs/status/decisions/ADR-BLOCK-0006-tile-classification-and-engine-aliases.md): Tile Classification and Execution-Engine Aliases
 - [ADR-BLOCK-0007](docs/status/decisions/ADR-BLOCK-0007-complete-bundle-gpr-operand-resolution.md): Complete-Bundle GPR Operand Resolution
 - [ADR-BLOCK-0019](docs/status/decisions/ADR-BLOCK-0019-bstart-tload-convolution-weight-to-shared.md): BSTART.TLOAD convolution weights to Shared NK
