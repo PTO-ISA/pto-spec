@@ -9,9 +9,16 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import sys
 
 
 ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.asl_units import load_units  # noqa: E402
+from scripts.instruction_contracts import load_field_domains  # noqa: E402
+
 JSON_OUTPUT = ROOT / "spec/catalog/tile-macro-assembly.json"
 MARKDOWN_OUTPUT = ROOT / "docs/virtual-isa/tileop-macro-assembly.md"
 
@@ -37,6 +44,46 @@ def update_runtime_row_owner_policy() -> None:
 MACRO_OWNER = ROOT / "asl/arch/overview/instruction-classification.asl"
 MACRO_RECORD_PREFIX = "// PTO-TILEOP-MACRO: "
 MACRO_CONTRACT_PREFIX = "// PTO-TILEOP-MACRO-CONTRACT: "
+
+
+def physical_attribute_contracts() -> dict[str, object]:
+    """Expose existing owners to both macro and physical-instruction tools.
+
+    These are semantic/encoding records, not a new assembly grammar. In
+    particular, a contextual domain's meanings are not unconditional tokens.
+    Missing domains remain missing rather than being guessed from field names.
+    """
+    units = load_units(ROOT / "asl")
+    domains = load_field_domains(units)
+    result = {}
+    for unit in units:
+        if (unit.surface != "block" or unit.mnemonic is None or
+                "attributes" not in unit.classification):
+            continue
+        record = unit.metadata
+        contract = record["contract"]
+        resolved_domains = {}
+        for field, reference in contract["field_contracts"].items():
+            domain = domains[reference["ref"]]
+            resolved_domains[field] = {
+                "id": domain.contract_id,
+                "source": domain.source_path.as_posix(),
+                "width": domain.width,
+                "role": domain.role,
+                "zero_meaning": domain.zero_meaning,
+                "assigned": [{"value": value, "meaning": meaning}
+                             for value, meaning in domain.assigned],
+                "reserved": list(domain.reserved),
+                "rejection": domain.rejection,
+            }
+        result[str(record["mnemonic"])] = {
+            "source": unit.source_path.as_posix(),
+            "assembly": copy.deepcopy(record["assembly"]),
+            "forms": copy.deepcopy(record["catalog_records"]),
+            "contract": copy.deepcopy(contract),
+            "field_domains": resolved_domains,
+        }
+    return result
 
 
 def load_macro_form_definitions() -> dict[str, dict[str, object]]:
@@ -1759,7 +1806,10 @@ def assemble_variants(
 
 def physical_fold_signature(expansion: dict[str, object]) -> str:
     configuration = [
-        {"targets": item["targets"]}
+        # A shared carrier does not imply a shared value. Preserve the owner
+        # syntax, which includes defaults and mandatory value constraints.
+        # This is conservative: only proven identical forms may be aliases.
+        {"targets": item["targets"], "syntax": item["syntax"]}
         for item in expansion["configuration_bindings"]
     ]
     operand_commands = [
@@ -2032,10 +2082,10 @@ def build_catalog() -> dict[str, object]:
             },
             "placement": "immediately after the owning B.IOT or B.IOS group in source0, source1, destination role order",
         },
-        "source_lifetime": ".reuse is not canonical; current B.IOT never releases a source",
+        "source_lifetime": "Physical source last-use and .reuse are owned by asl/block/operands/B.IOT.asl and B.IOS.asl; the macro owner does not yet bind these lifetime variants. This catalog must not be used to erase physical lifetime bits.",
         "dimension_syntax": "dimensions use programmer-facing named assignments such as Row=8, Col=64, or M=32; physical LB0/LB1/LB2 names are forbidden in TileOp assembly",
         "shape_resolution": {
-            "row": "Row has no independent physical encoding and uses the selected form's resolution record: an ordinary row-major numeric destination may derive Row from TSize, Col, and element type; a mixed RowMajor/CUBE form uses that rule only for RowMajor and encoded ValidRow for CUBE; predicate and descriptor-preserving forms require source descriptor state; CUBE-layout TLOAD and TSTORE forms plus TGPR2T use encoded ValidRow; an unrecoverable Row prevents stateless folding",
+            "row": "Row has no independent physical encoding and uses the selected form's resolution record: an ordinary row-major numeric destination may derive Row from TSize, Col, and element type; a mixed RowMajor/CUBE form uses that rule only for RowMajor and encoded ValidRow for CUBE; predicate and descriptor-preserving forms follow their selected resolution record; CUBE-layout TLOAD and TSTORE forms plus TGPR2T use encoded ValidRow; a runtime-derived Row is omitted without preventing stateless folding",
             "valid_defaults": {
                 "rule": "the selected form's declared default is authoritative",
                 "common_rectangular": {"ValidRow": "Row", "ValidCol": "Col"},
@@ -2058,6 +2108,7 @@ def build_catalog() -> dict[str, object]:
             },
         ],
         "attribute_syntax": "attributes use symbolic enum or string values; numeric carrier encodings are forbidden; a defaulted or inferable field is omitted without a placeholder",
+        "physical_attribute_contracts": physical_attribute_contracts(),
         "gpr_operand_syntax": {
             "address": "[base=GPR]",
             "row_stride": "stride=GPR",
@@ -2153,7 +2204,7 @@ def build_markdown(catalog: dict[str, object]) -> str:
         "- Canonical disassembly omits every exact selected-form attribute default, including fixed `DTYPE_NONE`, `PadValue=Null`, `PEMask=AllPE`, and zero-valued B.FPATR fields; omission leaves no empty slot or placeholder.",
         "- The assembler binds each bare attribute token through the selected TileOp schema value domain. An unresolved or multiply matching token is rejected rather than assigned by guesswork.",
         "- `?` marks an optional configuration field whose exact default is recorded by the owning instruction contract.",
-        "- `.reuse` is not canonical: current `B.IOT` never releases a source.",
+        f"- Source lifetime integration: {catalog['source_lifetime']}",
         "- A source range keeps the canonical `[base=GPR, offset=uimm11]` spelling. Assemble variants additionally identify INIT, INIT_LAST, MIDDLE, or LAST because the phase changes allocation and parent-selection semantics.",
         "- An assemble continuation folds only the exact owner-derived phase contract: Local uses a final source-form B.IOT SizeCode=0 `AssembleParent` with physical role `assemble-parent-ref`; Shared retains its owning destination B.IOS SharedTileID with SizeCode=0 and physical role `shared-assemble-destination-reuse`. Each carrier is absent from ordinary semantic sources and handler source arguments; Local capacity is seven ordinary sources plus its carrier, Shared capacity is three plus its reused destination.",
         "- Canonical assemble suffixes are `->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]`, `->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]`, `->T#n[assemble=MIDDLE,RegSrc+uimm11:WriterSize]`, `->T#n[assemble=LAST,RegSrc+uimm11:WriterSize]`, and the analogous `->Sx` forms; ambiguous matches retain physical assembly.",
@@ -2223,6 +2274,23 @@ def build_markdown(catalog: dict[str, object]) -> str:
             "",
         ]
     )
+    lines.extend([
+        "## Physical attribute owner projection",
+        "",
+        "The JSON `physical_attribute_contracts` section projects the existing attribute owners for shared use by macro and physical-instruction tools. It includes every encoded field and bit piece, fixed-bit masks, constraints, operand roles, encoded-zero meanings, omission defaults, legality, and resolved field-domain references. It does not define new assembly tokens or authorize unconditional interpretation of contextual fields. An absent field domain is an unresolved symbolic-table obligation, not an empty legal value set.",
+        "",
+        "| Instruction | Owner | Encoded fields (fixed fields included) | Resolved domains |",
+        "| --- | --- | --- | --- |",
+    ])
+    for mnemonic, attribute in sorted(catalog["physical_attribute_contracts"].items()):
+        fields = dict.fromkeys(field["name"] for form in attribute["forms"]
+                               for field in form["fields"])
+        lines.append("| " + " | ".join((
+            f"`{mnemonic}`", f"`{attribute['source']}`",
+            ", ".join(f"`{name}`" for name in fields),
+            ", ".join(f"`{name}`" for name in attribute["field_domains"]) or "none",
+        )) + " |")
+    lines.append("")
     return "\n".join(lines)
 
 
