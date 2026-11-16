@@ -655,6 +655,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
         self.assertEqual(
             variant["expansion"]["fold"]["key_fields"],
             [
+                "base_fold_signature_sha256",
                 "assemble_phase",
                 "writer_range",
                 "parent_identity",
@@ -842,6 +843,25 @@ class TileMacroAssemblyTest(unittest.TestCase):
         next(item for item in other["configuration_bindings"]
              if item["field"] == "Col")["syntax"] = "Col=2"
         self.assertNotEqual(signature(changed), signature(other))
+
+    def test_assemble_fold_signatures_preserve_base_forms_and_aliases(self) -> None:
+        def signatures(form):
+            return {variant["assemble_phase"]: variant["expansion"]["fold_signature_sha256"]
+                    for variant in form["assemble_variants"]}
+
+        # Local, Shared, and CUBE TLOADs have distinct physical bindings.
+        load_forms = self.by_name["TLOAD"]["forms"][:3]
+        load_signatures = [signatures(form) for form in load_forms]
+        for phase in ("INIT", "INIT_LAST", "MIDDLE", "LAST"):
+            self.assertEqual(len({digests[phase] for digests in load_signatures}), 3, phase)
+            self.assertNotEqual(signatures(self.by_name["TADD"]["forms"][0])[phase],
+                                signatures(self.by_name["TAND"]["forms"][0])[phase])
+
+        # PredicateTile and PredicateCell spellings bind the same physical source.
+        for mnemonic in ("TSEL", "TSELS"):
+            tile, cell, gpr = self.by_name[mnemonic]["forms"]
+            self.assertEqual(signatures(tile), signatures(cell))
+            self.assertNotEqual(signatures(tile), signatures(gpr))
 
     def test_atomic_store_modes_are_not_physical_aliases(self) -> None:
         # Independent accepted TSTORE selector order, not a round trip through

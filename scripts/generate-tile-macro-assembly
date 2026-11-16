@@ -1722,6 +1722,7 @@ def assemble_variants(
             "policy": "unique-exact-match-or-physical",
             "requires_complete_boundary": True,
             "key_fields": [
+                "base_fold_signature_sha256",
                 "assemble_phase",
                 "writer_range",
                 "parent_identity",
@@ -1784,10 +1785,15 @@ def assemble_variants(
                 ],
             }
         payload = {
+            "base_fold_signature_sha256": expansion["fold_signature_sha256"],
             "assemble_phase": str(phase),
             "writer_range": assemble_contract["writer_range"],
             "parent_identity": parent_contract["parent_identity"],
-            "semantic_source_list": variant["sources"],
+            "semantic_source_list": [
+                [source_member["physical_role"] for source_member in binding["members"]]
+                for binding in expansion["operand_bindings"]
+                if binding["role_kind"] == "source"
+            ],
             "no_allocation": continuation,
             "physical_parent_binding": parent_binding
             if parent_kind == "Local" else None,
@@ -1901,6 +1907,7 @@ def build_operation(
     owner_forms = macro_definition["forms"]
     assert isinstance(owner_forms, list)
     forms: list[dict[str, object]] = []
+    signature_counts: dict[str, int] = {}
     for owner_form in owner_forms:
         assert isinstance(owner_form, dict)
         variant_format = str(owner_form["macro_format"])
@@ -1921,23 +1928,19 @@ def build_operation(
         form["expansion"] = expansion_plan(
             mnemonic, form, owner_form, record, catalog_record, evidence_rows
         )
+        signature = physical_fold_signature(form["expansion"])
+        form["expansion"]["fold_signature_sha256"] = signature
+        signature_counts[signature] = signature_counts.get(signature, 0) + 1
         form["assemble_variants"] = assemble_variants(
             form, form["expansion"], assemble_contract, capacity_audit
         )
         forms.append(form)
 
-    signature_counts: dict[str, int] = {}
-    for form in forms:
-        expansion = form["expansion"]
-        assert isinstance(expansion, dict)
-        signature = physical_fold_signature(expansion)
-        expansion["fold_signature_sha256"] = signature
-        signature_counts[signature] = signature_counts.get(signature, 0) + 1
     canonical_form_by_signature: dict[str, str] = {}
     for form in forms:
         expansion = form["expansion"]
         assert isinstance(expansion, dict)
-        signature = physical_fold_signature(expansion)
+        signature = expansion["fold_signature_sha256"]
         fold = expansion["fold"]
         assert isinstance(fold, dict)
         unique = signature_counts[signature] == 1
