@@ -5097,7 +5097,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "d6fc5b69588f295037cca5660179cea22e79f464",
+  "candidate_head": "1357ab219ea3d4171446695becd473066b1c783a",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -19760,6 +19760,7 @@
             "ConsumeBundleSharedGenerationCompletionForCurrentPE",
             "CurrentBundleMemoryOrder",
             "DecodeTileOperation",
+            "DiscardBundleSubviewMaterializationsForRetry",
             "ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
             "ExecuteFarBundleTileOperationWithAcceptedApplicabilityRules",
             "FaultGMObligation",
@@ -19779,7 +19780,7 @@
           ],
           "layouts": [],
           "path": "asl/block/model/dispatch/gm-obligation-dispatch.asl",
-          "sha256": "587a2258881d9951fd55e148e42c4a6d6137ddb34f272b4656494cc07322d28a"
+          "sha256": "f264f1de9afcf7315c2ecb758a8e31caecd8c01cb0012bc39f8c1f5893914153"
         }
       ],
       "after_callers": [
@@ -57395,6 +57396,7 @@
               "ConsumeBundleSharedGenerationCompletionForCurrentPE",
               "CurrentBundleMemoryOrder",
               "DecodeTileOperation",
+              "DiscardBundleSubviewMaterializationsForRetry",
               "ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
               "ExecuteFarBundleTileOperationWithAcceptedApplicabilityRules",
               "FaultGMObligation",
@@ -57414,7 +57416,7 @@
             ],
             "layouts": [],
             "path": "asl/block/model/dispatch/gm-obligation-dispatch.asl",
-            "sha256": "587a2258881d9951fd55e148e42c4a6d6137ddb34f272b4656494cc07322d28a"
+            "sha256": "f264f1de9afcf7315c2ecb758a8e31caecd8c01cb0012bc39f8c1f5893914153"
           }
         ],
         "ExecuteBundleWeightTLOADOperation": [
