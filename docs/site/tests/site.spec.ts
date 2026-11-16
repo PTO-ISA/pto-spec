@@ -17,6 +17,29 @@ const adrIndex = JSON.parse(readFileSync(
   resolve(process.cwd(), '../../spec/evidence/adr-index.json'),
   'utf8',
 )) as {records: Array<{id: string; title: string; title_zh: string}>};
+const tloadProjection = JSON.parse(readFileSync(
+  resolve(process.cwd(), 'data/instruction-projections/PTO-TILE-TLOAD.json'),
+  'utf8',
+)) as {semanticExecution: {stages: Array<{
+  id: string;
+  label: {en: string};
+  sharedRegions: Array<{sourcePath: string; label: {en: string}; symbols: string[]}>;
+}>}};
+const tloadStageLabels = Object.fromEntries(
+  tloadProjection.semanticExecution.stages.map((stage) => [stage.id, stage.label.en]),
+) as Record<string, string>;
+const tloadFirstFaultStage = tloadProjection.semanticExecution.stages.find(
+  (stage) => stage.id === 'first-fault',
+);
+if (tloadFirstFaultStage === undefined) {
+  throw new Error('TLOAD first-fault stage is missing from the generated projection');
+}
+const tloadFirstFaultSharedLabels = Object.fromEntries(
+  tloadFirstFaultStage.sharedRegions.map((region) => [region.sourcePath, region.label.en]),
+) as Record<string, string>;
+const tloadFirstFaultSharedSymbols = Object.fromEntries(
+  tloadFirstFaultStage.sharedRegions.map((region) => [region.sourcePath, region.symbols[0]]),
+) as Record<string, string>;
 const archNdfSupplements = JSON.parse(readFileSync(
   resolve(process.cwd(), '../../docs/ndf/supplements/arch-01.json'),
   'utf8',
@@ -393,8 +416,20 @@ test('Architecture landing is source-backed and exposes every required mental-mo
     await expect(page.getByRole('heading', {name: topic, exact: true})).toBeVisible();
   }
   await expect(page.locator('[data-source-owner][data-guide-sha256]').first()).toBeVisible();
-  await expect(page.getByText('Current owner-declared boundary', {exact: true})).toHaveCount(4);
-  await expect(page.locator('[role="note"][data-source-sha256][data-guide-sha256]')).toHaveCount(4);
+  const sourceBoundaries = page.locator('[role="note"][data-source-sha256][data-guide-sha256]');
+  const expectedBoundaryOwners = [
+    'PTO-ARCH-DISPATCH-TOP-LEVEL',
+    'PTO-ARCH-PROGRAMMING-MODEL-TILE-REGISTERS',
+    'PTO-ARCH-DATA-TYPES-FAULT',
+  ];
+  await expect(sourceBoundaries).toHaveCount(expectedBoundaryOwners.length);
+  for (const ownerId of expectedBoundaryOwners) {
+    const boundary = page.locator(
+      `[role="note"][data-source-sha256][data-guide-sha256][data-source-owner="${ownerId}"]`,
+    );
+    await expect(boundary).toHaveCount(1);
+    await expect(boundary.getByText('Current owner-declared boundary', {exact: true})).toHaveCount(1);
+  }
   await expect(architectureMain.getByText('PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT', {exact: true}).first()).toBeVisible();
   await expect(architectureMain.getByText('PTO-ARCH-MEMORY-MODEL-ORDERING', {exact: true}).first()).toBeVisible();
   await expect(page.getByRole('link', {name: 'Open original ASL ↗'}).first()).toHaveAttribute(
@@ -460,7 +495,7 @@ test('source-declared bundle template covers representative Tile families', asyn
 
   await page.goto('/zh-CN/instructions/tile/elementwise-tile-tile/arithmetic/TADD/');
   await expect(page.getByText(
-    'TADD <LB0:ValidCol, LB1:ValidRow, LB2:Col, DataType, PadValue> SrcTile0, SrcTile1 -> DstTile',
+    'TADD <LB0:ValidCol, LB1:ValidRow, LB2:Col, DataType, Layout, PadValue> SrcTile0, SrcTile1 -> DstTile',
     {exact: true},
   )).toBeVisible();
   await expect(page.getByRole('heading', {name: '2. 完整 Bundle Assembly'})).toBeVisible();
@@ -523,21 +558,29 @@ test('TLOAD workbench preserves source identity and evidence interaction', async
 
   const execution = page.getByRole('region', {name: 'ASL execution path'});
   await expect(execution).toBeVisible();
-  await expect(execution.getByRole('heading', {name: '1. Bundle structure', level: 3})).toBeVisible();
-  await expect(execution.getByRole('heading', {name: '5. Complete-footprint preflight', level: 3})).toBeVisible();
-  await expect(execution.getByRole('heading', {name: '7. Publish, commit, or no effect', level: 3})).toBeVisible();
+  for (const stageId of ['bundle', 'first-fault', 'effects']) {
+    await expect(execution.getByRole('heading', {name: tloadStageLabels[stageId], level: 3})).toBeVisible();
+  }
   for (const label of ['Inputs', 'Checks', 'Failure', 'Read state', 'Constraints', 'Faults', 'State writes', 'Commit / result']) {
     await expect(execution.getByRole('heading', {name: label}).first()).toBeVisible();
   }
   await expect(execution.getByText(/current owner exposes instruction selection/i)).toBeVisible();
   await expect(execution.getByText(/current owner binds the generic Tile handler/i)).toBeVisible();
   await expect(execution.getByLabel(/TLOAD\.asl lines/).filter({hasText: 'InstructionContractGMAddress_TLOAD'})).toBeVisible();
-  const localMemorySource = execution.getByText(/Show shared ASL: Local preflight and load/);
+  const localMemorySource = execution.getByText(new RegExp(
+    `Show shared ASL: ${tloadFirstFaultSharedLabels['asl/tile/model/memory/load-store.asl']}`,
+  ));
   await localMemorySource.click();
-  await expect(execution.getByLabel(/load-store\.asl lines/)).toContainText('ProbeTileMemoryAccess');
-  const sharedMemorySource = execution.getByText(/Show shared ASL: Shared preflight and atomic update/);
+  await expect(execution.getByLabel(/load-store\.asl lines/)).toContainText(
+    `func ${tloadFirstFaultSharedSymbols['asl/tile/model/memory/load-store.asl']}(`,
+  );
+  const sharedMemorySource = execution.getByText(new RegExp(
+    `Show shared ASL: ${tloadFirstFaultSharedLabels['asl/tile/model/memory/shared-movement.asl']}`,
+  ));
   await sharedMemorySource.click();
-  await expect(execution.getByLabel(/shared-movement\.asl lines/)).toContainText('AtomicUpdateSharedTile');
+  await expect(execution.getByLabel(/shared-movement\.asl lines/)).toContainText(
+    `func ${tloadFirstFaultSharedSymbols['asl/tile/model/memory/shared-movement.asl']}(`,
+  );
   await expect(execution.getByRole('link', {name: /Exact source/}).first()).toHaveAttribute('href', /#L\d+-L\d+$/);
 
   const memoryClause = page.locator('#ndf-pto-tload-memory-001');

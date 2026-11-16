@@ -120,7 +120,7 @@ jobs:
           PY
 
       - name: Upload exact ASL test plan
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: full-validation-plan-${{ inputs.authority }}-${{ inputs.commit }}
           path: build/planned-asl-test-pages
@@ -148,7 +148,7 @@ jobs:
         run: test "$(git rev-parse HEAD)" = "$COMMIT"
 
       - name: Set up pinned OCaml
-        uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
+        uses: ocaml/setup-ocaml@ff66428f72b64472e749b22e0ad4dded4b2ddca6 # v3
         with:
           ocaml-compiler: "5.2.1"
           dune-cache: true
@@ -185,7 +185,7 @@ jobs:
           submodules: recursive
 
       - name: Download exact ASL test plan
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: full-validation-plan-${{ inputs.authority }}-${{ inputs.commit }}
           path: build/planned-asl-test-pages
@@ -197,7 +197,7 @@ jobs:
         run: test "$(git rev-parse HEAD)" = "$COMMIT"
 
       - name: Set up pinned OCaml
-        uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
+        uses: ocaml/setup-ocaml@ff66428f72b64472e749b22e0ad4dded4b2ddca6 # v3
         with:
           ocaml-compiler: "5.2.1"
           dune-cache: true
@@ -233,7 +233,7 @@ jobs:
 
       - name: Upload per-ID ASL results
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: full-validation-results-${{ inputs.authority }}-${{ inputs.commit }}-${{ matrix.page }}
           path: build/asl-test-results/*/result.json
@@ -256,19 +256,20 @@ jobs:
           submodules: recursive
 
       - name: Download exact ASL test plan
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: full-validation-plan-${{ inputs.authority }}-${{ inputs.commit }}
           path: build/planned-asl-test-pages
 
       - name: Download every per-ID result
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: full-validation-results-${{ inputs.authority }}-${{ inputs.commit }}-*
           path: build/asl-test-results
           merge-multiple: true
 
       - name: Aggregate exact health without release evidence mutation
+        if: always()
         shell: bash
         env:
           AUTHORITY: ${{ inputs.authority }}
@@ -279,34 +280,73 @@ jobs:
           STRICT_MODEL_RESULT: ${{ needs.strict-model.result }}
           ASL_PAGE_RESULT: ${{ needs.asl-page.result }}
         run: |
-          test "$(git rev-parse HEAD)" = "$COMMIT"
-          test "$IDENTITY_RESULT" = success
-          test "$PR_CONTRACT_RESULT" = success
-          test "$MATRIX_PLAN_RESULT" = success
-          test "$STRICT_MODEL_RESULT" = success
-          test "$ASL_PAGE_RESULT" = success
           python3 - <<'PY'
           import json
           import os
+          import subprocess
           from pathlib import Path
 
           from scripts.asl_release_suite import aggregate_results, load_matrix_pages, load_results
 
           commit = os.environ["COMMIT"]
-          coverage = aggregate_results(
-              commit,
-              load_matrix_pages(Path("build/planned-asl-test-pages"), commit),
-              load_results(Path("build/asl-test-results")),
-          )
+          prerequisites = {
+              "identity": os.environ["IDENTITY_RESULT"],
+              "pr_contract": os.environ["PR_CONTRACT_RESULT"],
+              "matrix_plan": os.environ["MATRIX_PLAN_RESULT"],
+              "strict_model": os.environ["STRICT_MODEL_RESULT"],
+              "asl_pages": os.environ["ASL_PAGE_RESULT"],
+          }
           health = {
               "schema": "pto.full-validation-health.v1",
               "authority": os.environ["AUTHORITY"],
-              "commit": coverage["commit"],
-              "status": coverage["status"],
-              "test_count": coverage["test_count"],
-              "passed_count": coverage["passed_count"],
+              "commit": commit,
+              "status": "invalid",
+              "asl_status": "invalid",
+              "test_count": None,
+              "passed_count": None,
+              "failed_count": None,
+              "diagnostic": None,
+              "prerequisites": prerequisites,
           }
-          Path("build/full-validation-health.json").write_text(
+          try:
+              entries = load_matrix_pages(Path("build/planned-asl-test-pages"), commit)
+              results = load_results(Path("build/asl-test-results"))
+              exact_results = [{**result, "status": "passed"} for result in results]
+              coverage = aggregate_results(commit, entries, exact_results)
+              passed = sum(result.get("status") == "passed" for result in results)
+              health.update(
+                  asl_status="passed" if passed == coverage["test_count"] else "failed",
+                  test_count=coverage["test_count"],
+                  passed_count=passed,
+                  failed_count=coverage["test_count"] - passed,
+              )
+              actual = subprocess.run(
+                  ["git", "rev-parse", "HEAD"], check=True, capture_output=True,
+                  text=True,
+              ).stdout.strip()
+              if actual != commit:
+                  health["diagnostic"] = (
+                      f"checkout commit mismatch: expected {commit}, observed {actual}"
+                  )
+              elif any(result != "success" for result in prerequisites.values()):
+                  failed = sorted(
+                      name for name, result in prerequisites.items()
+                      if result != "success"
+                  )
+                  health["status"] = "failed"
+                  health["diagnostic"] = "failed prerequisites: " + ", ".join(failed)
+              elif health["asl_status"] != "passed":
+                  health["status"] = "failed"
+              else:
+                  health["status"] = "passed"
+          except (
+              KeyError, OSError, subprocess.CalledProcessError, ValueError,
+              json.JSONDecodeError,
+          ) as error:
+              health["diagnostic"] = str(error)
+          health_path = Path("build/full-validation-health.json")
+          health_path.parent.mkdir(parents=True, exist_ok=True)
+          health_path.write_text(
               json.dumps(health, indent=2, sort_keys=True) + "\n",
               encoding="utf-8",
           )
@@ -315,13 +355,22 @@ jobs:
                   "### Full validation health\n\n"
                   f"- Authority `{health['authority']}`\n"
                   f"- Commit `{health['commit']}`\n"
+                  f"- Status `{health['status']}`\n"
                   f"- **{health['passed_count']} / {health['test_count']}** points passed\n"
+                  f"- Diagnostic `{health['diagnostic'] or 'none'}`\n"
               )
           PY
+          test "$(git rev-parse HEAD)" = "$COMMIT"
+          test "$IDENTITY_RESULT" = success
+          test "$PR_CONTRACT_RESULT" = success
+          test "$MATRIX_PLAN_RESULT" = success
+          test "$STRICT_MODEL_RESULT" = success
+          test "$ASL_PAGE_RESULT" = success
+          test "$(python3 -c 'import json; print(json.load(open("build/full-validation-health.json"))["status"])')" = passed
 
       - name: Upload one health summary
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: full-validation-health-${{ inputs.authority }}-${{ inputs.commit }}
           path: build/full-validation-health.json

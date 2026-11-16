@@ -242,7 +242,7 @@ begin
                 if RaiseDataAccessFault(probe, address) then return FALSE; end;
                 let raw = LoadTranslatedUnsigned(
                     probe.translated_address, element_bytes);
-                RecordLoadEvent(probe.translated_address, element_bytes, raw,
+                RecordTileLoadEvent(probe.translated_address, element_bytes, raw,
                     CurrentBundleMemoryOrder());
                 value = DecodeTileMemoryElementRaw(raw, data_type, FALSE);
             end;

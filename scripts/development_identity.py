@@ -7,9 +7,19 @@ import importlib.machinery
 import importlib.util
 import json
 from pathlib import Path
+import sys
 import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.current_source_form_inventory import (  # noqa: E402
+    CURRENT_SOURCE_PROJECTION_KEYS,
+    load_form_inventories,
+    project_forms,
+)
+
 OUTPUT = Path("spec/development-manifest.json")
 CATALOGS = {
     "scalar_forms": "spec/catalog/scalar-forms.json",
@@ -35,8 +45,17 @@ def generator(root):
 def build(root=ROOT):
     metadata = tomllib.loads((root / "specification.toml").read_text())
     catalogs = {name: json.loads((root / path).read_text()) for name, path in CATALOGS.items()}
-    counts = {name: len(catalogs[name]["forms"]) for name in ("scalar_forms", "command_forms")}
-    for name, count in counts.items():
+    scalar_forms = catalogs["scalar_forms"]["forms"]
+    scoped_scalar_forms = catalogs["scalar_forms"]["scoped_forms"]
+    command_forms = catalogs["command_forms"]["forms"]
+    current_forms, _ = load_form_inventories(root)
+    counts = {
+        "scalar_forms": len(scalar_forms),
+        "scoped_scalar_forms": len(scoped_scalar_forms),
+        "command_forms": len(command_forms),
+    }
+    for name in ("scalar_forms", "command_forms"):
+        count = counts[name]
         if count != metadata["architecture"][name] or count != catalogs[name]["form_count"]:
             raise ValueError(f"current source inventory disagrees: {name}")
     tiles = catalogs["tile_operations"]
@@ -44,8 +63,15 @@ def build(root=ROOT):
         raise ValueError("current source Tile inventory disagrees")
     release = generator(root)
     projection = release.encoding_projection(
-        tiles, form_counts=counts,
-        command_family_counts=dict(Counter(row["semantic_family"] for row in catalogs["command_forms"]["forms"])),
+        tiles,
+        form_counts={
+            "scalar_forms": counts["scalar_forms"],
+            "command_forms": counts["command_forms"],
+        },
+        command_family_counts=dict(Counter(row["semantic_family"] for row in command_forms)),
+    )
+    projection["scalar_and_command_forms"] = project_forms(
+        current_forms, CURRENT_SOURCE_PROJECTION_KEYS
     )
     sources = {
         path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()

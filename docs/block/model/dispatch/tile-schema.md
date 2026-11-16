@@ -103,10 +103,56 @@ begin
         _BundleDataAttributes.rounding_mode else Zeros{3};
     let explicit_layout = if _BundleDataAttributesPresent then
         _BundleDataAttributes.data_layout else Zeros{5};
+    // Function-2 Shared TMOV defines only Shared ND-to-M32/M16 and Local
+    // M32/M16-to-Shared ND forms. Reject the other assigned CUBE transport
+    // selectors here, before generic layout helpers interpret their
+    // direction-specific source or destination layout.
+    if BundleTMOVSelected() &&
+       TileDataLayoutIsCubeConversion(explicit_layout) &&
+       !TileDataLayoutIsSharedNDToCube(explicit_layout) &&
+       !TileDataLayoutIsCubeToSharedND(explicit_layout) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if BundleTMOVSelected() &&
+       TileDataLayoutIsCubeConversion(explicit_layout) &&
+       BundleSharedBindingPhysicalCount() != 0 then
+        let shared_is_destination =
+            BundleSharedBindingIsDestination(0) ||
+            BundleSharedBindingIsReusedDestination(0);
+        if (TileDataLayoutIsSharedNDToCube(explicit_layout) &&
+            shared_is_destination) ||
+           (TileDataLayoutIsCubeToSharedND(explicit_layout) &&
+            !shared_is_destination) then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+    end;
     if BundleTMOVSelected() &&
        TileDataLayoutIsCubeToSharedND(explicit_layout) then
         if (BundleSharedBindingCount() != 1 &&
             BundleSharedReusedDestinationCount() != 1) ||
+           !_BundleDataAttributesPresent ||
+           _BundleDataAttributes.data_type != DTYPE_NONE ||
+           _BundleDataAttributes.pad_value != Zeros{2} ||
+           _BundleDataAttributes.comparison_mode != Zeros{3} ||
+           _BundleDataAttributes.rounding_mode != Zeros{3} ||
+           _BundleDataAttributes.saturating ||
+           _BundleDataAttributes.canonicalize ||
+           _BundleDataAttributes.execution_mask_invert ||
+           _BundleDataAttributes.execution_mask_zero ||
+           _BundleFixedPointAttributes.valid ||
+           !TileOperationDATRFieldsLegal(operation, explicit_c_mode,
+               explicit_pad, explicit_saturating, explicit_canonicalize,
+               explicit_data_type, explicit_rounding, explicit_layout) then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        return TRUE;
+    end;
+    if BundleTMOVSelected() &&
+       TileDataLayoutIsSharedNDToCube(explicit_layout) then
+        if BundleSharedBindingCount() != 1 ||
            !_BundleDataAttributesPresent ||
            _BundleDataAttributes.data_type != DTYPE_NONE ||
            _BundleDataAttributes.pad_value != Zeros{2} ||
@@ -231,6 +277,51 @@ begin
     end;
     return count;
 end;
+readonly func SelectedBundlePredicateLogicalDimensionsLegal(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+begin
+    let decoded = TileOperationOfIndex(operation);
+    if decoded != TileOperation_TAND && decoded != TileOperation_TOR &&
+       decoded != TileOperation_TXOR then
+        return TRUE;
+    end;
+    if BundleTileBindingCount() == 0 ||
+       !_BundleTileBindings[[0]].source0_valid ||
+       !_BundleTileBindings[[0]].source1_valid then
+        return FALSE;
+    end;
+    let source0 = _Tiles[[BundleTileSourceIndex(0, FALSE)]];
+    let source1 = _Tiles[[BundleTileSourceIndex(0, TRUE)]];
+    if source0.storage_kind != TileStorage_PredicateCell ||
+       source1.storage_kind != TileStorage_PredicateCell then
+        return TRUE;
+    end;
+    let selected_layout = CurrentBundleTileLayout();
+    let selected_columns = UInt(_BundleDimensions[[0]]);
+    let selected_rows = UInt(_BundleDimensions[[1]]);
+    let selected_physical_columns = UInt(_BundleDimensions[[2]]);
+    let (type_valid, operation_type) = ResolveBundleEffectiveDataType();
+    if !type_valid || operation_type != TileDataType_U8 ||
+       selected_columns < 1 || selected_columns > 65535 ||
+       selected_rows < 1 || selected_rows > 65535 ||
+       selected_physical_columns < 1 ||
+       selected_physical_columns > 65535 ||
+       (selected_layout != TileLayout_CUBE_M16 &&
+        selected_layout != TileLayout_CUBE_M32) ||
+       source0.layout != selected_layout ||
+       source1.layout != selected_layout ||
+       selected_columns != source0.valid_columns ||
+       selected_columns != source1.valid_columns ||
+       selected_rows != source0.valid_rows ||
+       selected_rows != source1.valid_rows ||
+       source0.rows != source1.rows ||
+       source0.columns != source1.columns ||
+       (_BundleDimensionPresent[[2]] &&
+        selected_physical_columns != source0.columns) then
+        return FALSE;
+    end;
+    return TRUE;
+end;
 readonly func SelectedBundleClosedBinarySchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -286,6 +377,7 @@ begin
                    _BundleTileBindings[[0]].source0,
                    _BundleTileBindings[[0]].source1);
     end;
+    let decoded = TileOperationOfIndex(operation);
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     return TileVecArithmeticDataTypeSupported(data_type) &&

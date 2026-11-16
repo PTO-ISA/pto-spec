@@ -22,6 +22,8 @@ begin
     _BundleTileBindings[[0]].destination_allocated_by_bundle = TRUE;
     _BundleTileBindings[[0]].destination_reused_by_generation = TRUE;
     _BundleTileBindings[[0]].destination_assemble.valid = TRUE;
+    _BundleTileBindings[[0]].destination_assemble.size_code = 1;
+    _BundleTileBindings[[0]].destination_assemble.offset = Zeros{PTO_XLEN};
     let predicate_count = AllocatedTileCountForPredicateReuse();
     let predicate_resolved = ResolveBundlePredicateDestination(TileDataType_FP32);
     assert predicate_resolved && _LastFault == Fault_None;
@@ -49,6 +51,8 @@ begin
     _BundleTileBindings[[0]].destination_allocated_by_bundle = TRUE;
     _BundleTileBindings[[0]].destination_reused_by_generation = TRUE;
     _BundleTileBindings[[0]].destination_assemble.valid = TRUE;
+    _BundleTileBindings[[0]].destination_assemble.size_code = 1;
+    _BundleTileBindings[[0]].destination_assemble.offset = Zeros{PTO_XLEN};
     let select_count = AllocatedTileCountForPredicateReuse();
     let select_resolved = ResolveBundleCUBESelectDestination(22);
     assert select_resolved && _LastFault == Fault_None;

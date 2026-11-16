@@ -288,7 +288,7 @@ end;
 
 - B.DATR may appear at most once, after BSTART and before the block body.
 - DataType accepts the 27 concrete TileDataType codes plus code 31 DTYPE_NONE; codes 22, 23, and 29..30 are reserved and reject before effects.
-- Layout codes 0, 1, 3, 4, 6, 8, 9, 10, 11, 17, 18, 20, 21 through 29, and 30 through 31 are assigned. Codes 10 and 11 are weight-mode TLOAD-only layouts; codes 21 through 26 select ND2M32, ND2M16, ND2N8, M322ND, M162ND, and N82ND respectively; code 29 selects direct Local CUBE_M32 and code 31 selects direct Local CUBE_M16.
+- Layout codes 0, 1, 3, 4, 6, 8, 9, 10, 11, 17, 18, 20, 21 through 29, and 30 through 31 are assigned. Codes 10 and 11 are weight-mode TLOAD-only layouts; codes 21 through 26 select ND2M32, ND2M16, ND2N8, M322ND, M162ND, and N82ND respectively; code 29 selects direct Local CUBE_M32 and code 31 selects direct Local CUBE_M16. Function-2 TMOV with DTYPE_NONE additionally accepts 21/22 for Shared ND-to-Local CUBE_M32/M16 and 24/25 for Local CUBE_M32/M16-to-Shared ND; 23/26 have no Shared form. GM TLOAD/TSTORE assignments remain unchanged.
 - CMode codes 0..5 select EQ, NE, LT, GT, LE, and GE; codes 6..7 are reserved except at the B.DATR command boundary of an active TLSU Function 1 TSTORE with Canonicalize=1, where they select ATOMIC_INC and ATOMIC_DEC.
 - All RMode codes 0..7 are assigned: operation default, RNE, RTZ, RTM, RTP, RNA, RTO, and RHB.
 - Canonicalize is legal only for TCVT and, for TLSU Function 1 TSTORE, selects Atomic reduction when enabled with CMode 0..7; other tile operations retain their existing Canonicalize applicability.

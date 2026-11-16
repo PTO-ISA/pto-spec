@@ -17,12 +17,15 @@ class SiteContractTests(unittest.TestCase):
             package["dependencies"]["@docusaurus/plugin-client-redirects"],
             "3.10.2",
         )
-        self.assertEqual(package["dependencies"]["react"], "19.2.8")
+        self.assertEqual(package["dependencies"]["react"], "19.3.1")
+        self.assertEqual(package["dependencies"]["react-dom"], "19.3.1")
         self.assertEqual(
             package["dependencies"]["plotly.js"],
             "npm:plotly.js-gl2d-dist-min@4.0.0",
         )
-        self.assertEqual(package["devDependencies"]["@playwright/test"], "1.62.1")
+        self.assertEqual(package["devDependencies"]["@playwright/test"], "1.64.1")
+        self.assertEqual(package["devDependencies"]["@types/react"], "19.3.0")
+        self.assertEqual(package["devDependencies"]["@types/react-dom"], "19.3.0")
         self.assertEqual(package["devDependencies"]["@axe-core/playwright"], "4.13.0")
         self.assertEqual(package["devDependencies"]["lighthouse"], "13.4.1")
         self.assertEqual(
@@ -32,6 +35,24 @@ class SiteContractTests(unittest.TestCase):
             for name, version in package[group].items():
                 self.assertNotIn("latest", version, name)
                 self.assertNotIn("*", version, name)
+
+    def test_site_lockfile_preserves_reviewed_overrides(self) -> None:
+        package = json.loads((SITE / "package.json").read_text(encoding="utf-8"))
+        lines = (SITE / "pnpm-lock.yaml").read_text(encoding="utf-8").splitlines()
+        self.assertEqual(lines.count("overrides:"), 1)
+        entries = []
+        for line in lines[lines.index("overrides:") + 1 :]:
+            if not line.strip():
+                continue
+            if not line.startswith(" "):
+                break
+            entries.append(line)
+        # pnpm 10.30 emits this canonical block; no Node install is needed here.
+        expected = [
+            f"  {name}: {version}"
+            for name, version in package["pnpm"]["overrides"].items()
+        ]
+        self.assertEqual(sorted(entries), sorted(expected))
 
     def test_site_configuration_preserves_release_and_locale_contracts(self) -> None:
         config = (SITE / "docusaurus.config.ts").read_text(encoding="utf-8")
@@ -450,7 +471,7 @@ class SiteContractTests(unittest.TestCase):
             workflow,
         )
         self.assertIn(
-            "actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903",
+            "actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
             workflow,
         )
         self.assertIn("pnpm@10.30.0", workflow)

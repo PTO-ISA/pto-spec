@@ -62,6 +62,9 @@ DATA_TYPE_NAMES = {
     27: "TileDataType_U8",
 }
 
+FIXTURE_CAPACITY_BYTES = 128
+FIXTURE_CUBE_M16_ROWS = 16
+
 
 def load(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
@@ -419,8 +422,10 @@ def assemble_word(size_code: int = CELL_SIZE_CODE) -> int:
 
 
 def dimension_words(row: dict) -> list[int]:
-    # One FP16 M16 CELL is a 1x4 logical view. Matrix handlers retain their
-    # compact one-value defaults; ordinary Local handlers use the view shape.
+    # Exact-34 Local fixtures use one 128-byte CUBE_M16 parent. Their logical
+    # view remains 1x4, while LB2 must describe the complete capacity-backed
+    # physical parent: four columns for FP16 and eight for U8. Matrix handlers
+    # retain their compact one-value defaults.
     name = row.get("name", row.get("operation"))
     if name == "TGPR2T":
         return [0x43 | (4 << 20), 0x1043 | (32 << 20)]
@@ -439,7 +444,14 @@ def dimension_words(row: dict) -> list[int]:
         return [0x43 | (source_valid_columns(row, "source0") << 20),
                 0x1043 | (source_valid_rows(row, "source0") << 20),
                 0x2043 | (1 << 20)]
-    values = (1, 1, 1) if row["family"] == "CUBE" else (4, 1, 4)
+    physical_columns = (
+        cube_m16_fixture_physical_columns(fixture_data_type(row))
+        if name in EXACT34_OPERATIONS else 4
+    )
+    values = (
+        (1, 1, 1) if row["family"] == "CUBE"
+        else (4, 1, physical_columns)
+    )
     return [0x43 | (values[0] << 20),
             0x1043 | (values[1] << 20),
             0x2043 | (values[2] << 20)]
@@ -607,6 +619,22 @@ def source_fixture_data_type(row: dict, source: str) -> int:
     return fixture_data_type(row)
 
 
+def fixture_element_bits(data_type: int) -> int:
+    if data_type in {1, 17, 25}:
+        return 32
+    if data_type in {4, 26}:
+        return 16
+    return 8
+
+
+def cube_m16_fixture_physical_columns(data_type: int) -> int:
+    return (
+        FIXTURE_CAPACITY_BYTES * 8
+        // FIXTURE_CUBE_M16_ROWS
+        // fixture_element_bits(data_type)
+    )
+
+
 def source_physical_columns(row: dict, source: str) -> int:
     name = row.get("name", row.get("operation"))
     if name == "TROWEXPAND":
@@ -621,12 +649,9 @@ def source_physical_columns(row: dict, source: str) -> int:
 
 
 def row_major_rows(data_type: int, columns: int = 4) -> int:
-    element_bits = (
-        32 if data_type in {1, 17, 25}
-        else 16 if data_type in {4, 26}
-        else 8
-    )
-    return (128 * 8) // element_bits // columns
+    return (FIXTURE_CAPACITY_BYTES * 8) // fixture_element_bits(
+        data_type
+    ) // columns
 
 
 def setup_lines(row: dict, role_kind: str) -> list[str]:

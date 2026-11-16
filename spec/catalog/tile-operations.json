@@ -4455,13 +4455,13 @@
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "semantic_handler": "MGATHER",
+      "semantic_summary": "gather using explicit byte displacements.",
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
         "operand:source0:byte-displacement-indices",
         "runtime:CurrentBundlePadValue:physical-padding"
       ],
-      "semantic_summary": "gather using explicit byte displacements.",
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -4508,12 +4508,12 @@
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "semantic_handler": "MSCATTER",
+      "semantic_summary": "scatter using explicit byte displacements.",
       "state_effects": [
         "operand:address:base-address",
         "operand:source0:source",
         "operand:source1:byte-displacement-indices"
       ],
-      "semantic_summary": "scatter using explicit byte displacements.",
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -4571,6 +4571,7 @@
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "semantic_handler": "MGATHER_MASK",
+      "semantic_summary": "Masked gather using explicit byte displacements.",
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
@@ -4578,7 +4579,6 @@
         "operand:source1:exact-predicate-mask",
         "runtime:CurrentBundlePadValue:inactive-and-physical-padding"
       ],
-      "semantic_summary": "Masked gather using explicit byte displacements.",
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -4632,13 +4632,13 @@
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "semantic_handler": "MSCATTER_MASK",
+      "semantic_summary": "Masked scatter using explicit byte displacements.",
       "state_effects": [
         "operand:address:base-address",
         "operand:source0:source",
         "operand:source1:byte-displacement-indices",
         "operand:source2:exact-predicate-mask"
       ],
-      "semantic_summary": "Masked scatter using explicit byte displacements.",
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -4665,6 +4665,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        81
       ],
       "command_mnemonic": "BSTART.MGATHER.CAS",
       "contract_status": "reviewed-complete",
@@ -4706,6 +4709,7 @@
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "semantic_handler": "GM_ATOM_CAS",
+      "semantic_summary": "atomic compare-and-swap gather using explicit byte displacements.",
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
@@ -4713,10 +4717,6 @@
         "operand:source1:expected",
         "operand:source2:replacement"
       ],
-      "catalog_indices": [
-        81
-      ],
-      "semantic_summary": "atomic compare-and-swap gather using explicit byte displacements.",
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -5918,6 +5918,9 @@
           "runtime": "CurrentBundlePadValue"
         }
       ],
+      "catalog_indices": [
+        100
+      ],
       "command_mnemonic": "BSTART.MGATHER.EXCH",
       "contract_status": "reviewed-complete",
       "datr_contract": {
@@ -5960,9 +5963,6 @@
         "operand:source0:indices",
         "operand:source1:replacement"
       ],
-      "catalog_indices": [
-        100
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -5986,6 +5986,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        101
       ],
       "command_mnemonic": "BSTART.MGATHER.MAX",
       "contract_status": "reviewed-complete",
@@ -6029,9 +6032,6 @@
         "operand:source0:indices",
         "operand:source1:value"
       ],
-      "catalog_indices": [
-        101
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -6055,6 +6055,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        102
       ],
       "command_mnemonic": "BSTART.MGATHER.MIN",
       "contract_status": "reviewed-complete",
@@ -6098,9 +6101,6 @@
         "operand:source0:indices",
         "operand:source1:value"
       ],
-      "catalog_indices": [
-        102
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -6124,6 +6124,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        103
       ],
       "command_mnemonic": "BSTART.MGATHER.ADD",
       "contract_status": "reviewed-complete",
@@ -6167,9 +6170,6 @@
         "operand:source0:indices",
         "operand:source1:value"
       ],
-      "catalog_indices": [
-        103
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -6193,6 +6193,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        104
       ],
       "command_mnemonic": "BSTART.MGATHER.INC",
       "contract_status": "reviewed-complete",
@@ -6236,9 +6239,6 @@
         "operand:source0:indices",
         "operand:source1:limit"
       ],
-      "catalog_indices": [
-        104
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -6262,6 +6262,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        105
       ],
       "command_mnemonic": "BSTART.MGATHER.DEC",
       "contract_status": "reviewed-complete",
@@ -6305,9 +6308,6 @@
         "operand:source0:indices",
         "operand:source1:limit"
       ],
-      "catalog_indices": [
-        105
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -6331,6 +6331,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        106
       ],
       "command_mnemonic": "BSTART.MGATHER.AND",
       "contract_status": "reviewed-complete",
@@ -6374,9 +6377,6 @@
         "operand:source0:indices",
         "operand:source1:value"
       ],
-      "catalog_indices": [
-        106
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -6400,6 +6400,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        107
       ],
       "command_mnemonic": "BSTART.MGATHER.OR",
       "contract_status": "reviewed-complete",
@@ -6443,9 +6446,6 @@
         "operand:source0:indices",
         "operand:source1:value"
       ],
-      "catalog_indices": [
-        107
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -6469,6 +6469,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        108
       ],
       "command_mnemonic": "BSTART.MGATHER.XOR",
       "contract_status": "reviewed-complete",
@@ -6512,9 +6515,6 @@
         "operand:source0:indices",
         "operand:source1:value"
       ],
-      "catalog_indices": [
-        108
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -6535,6 +6535,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        109
       ],
       "command_mnemonic": "BSTART.MSCATTER.MAX",
       "contract_status": "reviewed-complete",
@@ -6573,9 +6576,6 @@
         "operand:source0:indices",
         "operand:source1:value"
       ],
-      "catalog_indices": [
-        109
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -6596,6 +6596,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        110
       ],
       "command_mnemonic": "BSTART.MSCATTER.MIN",
       "contract_status": "reviewed-complete",
@@ -6634,9 +6637,6 @@
         "operand:source0:indices",
         "operand:source1:value"
       ],
-      "catalog_indices": [
-        110
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -6657,6 +6657,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        111
       ],
       "command_mnemonic": "BSTART.MSCATTER.ADD",
       "contract_status": "reviewed-complete",
@@ -6695,9 +6698,6 @@
         "operand:source0:indices",
         "operand:source1:value"
       ],
-      "catalog_indices": [
-        111
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -6718,6 +6718,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        112
       ],
       "command_mnemonic": "BSTART.MSCATTER.INC",
       "contract_status": "reviewed-complete",
@@ -6756,9 +6759,6 @@
         "operand:source0:indices",
         "operand:source1:limit"
       ],
-      "catalog_indices": [
-        112
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -6779,6 +6779,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        113
       ],
       "command_mnemonic": "BSTART.MSCATTER.DEC",
       "contract_status": "reviewed-complete",
@@ -6817,9 +6820,6 @@
         "operand:source0:indices",
         "operand:source1:limit"
       ],
-      "catalog_indices": [
-        113
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -6840,6 +6840,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        114
       ],
       "command_mnemonic": "BSTART.MSCATTER.AND",
       "contract_status": "reviewed-complete",
@@ -6878,9 +6881,6 @@
         "operand:source0:indices",
         "operand:source1:value"
       ],
-      "catalog_indices": [
-        114
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -6901,6 +6901,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        115
       ],
       "command_mnemonic": "BSTART.MSCATTER.OR",
       "contract_status": "reviewed-complete",
@@ -6939,9 +6942,6 @@
         "operand:source0:indices",
         "operand:source1:value"
       ],
-      "catalog_indices": [
-        115
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -6962,6 +6962,9 @@
         {
           "runtime": "CurrentBundlePadValue"
         }
+      ],
+      "catalog_indices": [
+        116
       ],
       "command_mnemonic": "BSTART.MSCATTER.XOR",
       "contract_status": "reviewed-complete",
@@ -7000,9 +7003,6 @@
         "operand:source0:indices",
         "operand:source1:value"
       ],
-      "catalog_indices": [
-        116
-      ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
     },
@@ -7017,6 +7017,9 @@
         {
           "operand": "source0"
         }
+      ],
+      "catalog_indices": [
+        117
       ],
       "command_mnemonic": "BSTART.MSCATTER.POPC",
       "contract_status": "reviewed-complete",
@@ -7049,9 +7052,6 @@
       "state_effects": [
         "operand:address:base-address",
         "operand:source0:indices"
-      ],
-      "catalog_indices": [
-        117
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"

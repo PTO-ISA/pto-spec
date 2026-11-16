@@ -85,10 +85,14 @@ Use this example block only as a reading aid: apply the rules above, then confir
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-VISIBILITY-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
 // The portable GM domain is multi-copy atomic: one location has one global
-// coherence order and a completed write may be observed by every applicable
-// agent. Release/acquire pairs add a cross-agent synchronizes-with relation;
-// relaxed operations retain atomicity/coherence only and do not publish a
-// cross-agent ordering guarantee.
+// coherence order within each compatible Shareability domain and a completed
+// write may be observed by every applicable agent in that domain. Requests
+// with different scope/domain keys have no portable reads-from, coherence, or
+// cross-agent synchronization guarantee. Release/acquire pairs add a
+// cross-agent synchronizes-with relation only for compatible requests;
+// relaxed operations retain matching-domain atomicity/coherence only and do
+// not publish a cross-agent ordering guarantee. Initial memory values are a
+// neutral source compatible with every request scope.
 // NDF-END: PTO-ARCH-MEMORY-MODEL-VISIBILITY-001
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-FENCE-TRANSPORT-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
@@ -107,9 +111,10 @@ Use this example block only as a reading aid: apply the rules above, then confir
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
 // An atomic/RMW access to one exact byte range is one indivisible read/write
-// event in the global coherence order. Acquire/release atomic pairs may
-// synchronize across agents; relaxed atomics do not imply a global SC order for
-// different locations.
+// event in the matching-domain coherence order. Acquire/release atomic pairs
+// may synchronize across agents when their domain keys match; relaxed atomics
+// do not imply a global SC order for different locations. Atomic communication
+// across incompatible domain keys has no portable guarantee.
 // NDF-END: PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001
 
 pure func MemoryEventIsRead(event: MemoryEvent) => boolean
@@ -135,6 +140,53 @@ pure func MemoryEventsSameAgent(left: MemoryEvent,
 begin
     return left.core_identity == right.core_identity &&
            left.agent == right.agent;
+end;
+
+pure func MemoryEventsShareabilityCompatible(left: MemoryEvent,
+                                             right: MemoryEvent) => boolean
+begin
+    if left.kind == MemoryEvent_InitialWrite ||
+       right.kind == MemoryEvent_InitialWrite then return TRUE; end;
+    // Only explicitly excluded pre-existing operations retain legacy
+    // communication behavior. Covered Scalar/Tile/IndexedGenerated pairs
+    // never enter LegacyExcluded and never use this exception transitively.
+    if left.request_class == MemoryRequestClass_LegacyExcluded ||
+       right.request_class == MemoryRequestClass_LegacyExcluded then return TRUE; end;
+    if left.request_class == MemoryRequestClass_Prefetch ||
+       right.request_class == MemoryRequestClass_Prefetch then return TRUE; end;
+    if left.device_identity != right.device_identity ||
+       left.shareability != right.shareability then return FALSE; end;
+    case left.shareability of
+        when MemoryShareability_Private =>
+            return left.core_identity == right.core_identity &&
+                   left.agent == right.agent;
+        when MemoryShareability_IntraCore =>
+            return left.core_identity == right.core_identity;
+        when MemoryShareability_InterCore => return TRUE;
+    end;
+end;
+
+readonly func MemoryScopeConforming() => boolean
+begin
+    if _MemoryEventCount == 0 then return TRUE; end;
+    for left_number = 0 to _MemoryEventCount - 1 do
+        let left = _MemoryEvents[[left_number as MemoryEventIndex]];
+        if left.active && MemoryEventIsAccess(left) then
+            for right_number = left_number + 1 to _MemoryEventCount - 1 do
+                let right = _MemoryEvents[[right_number as MemoryEventIndex]];
+                if right.active && MemoryEventIsAccess(right) &&
+                   MemoryEventRangesOverlap(left, right) &&
+                   (MemoryEventIsWrite(left) || MemoryEventIsWrite(right)) &&
+                   !MemoryEventsShareabilityCompatible(left, right) then
+                    // This rejects a portable-proof claim for a candidate
+                    // execution. It does not require hardware to detect the
+                    // mismatch or return an incoherent value.
+                    return FALSE;
+                end;
+            end;
+        end;
+    end;
+    return TRUE;
 end;
 
 pure func MemoryEventRangesOverlap(left: MemoryEvent,
@@ -257,6 +309,9 @@ begin
         committed = TRUE,
         replay_epoch = 0,
         kind = MemoryEvent_InitialWrite,
+        request_class = MemoryRequestClass_Initial,
+        shareability = MemoryShareability_Private,
+        device_identity = 0,
         core_identity = 0,
         agent = 0,
         origin = MemoryEventOrigin_NonKernel,
@@ -286,6 +341,9 @@ begin
         committed = TRUE,
         replay_epoch = 0,
         kind = MemoryEvent_Load,
+        request_class = _CurrentMemoryRequestClass,
+        shareability = _CurrentMemoryShareability,
+        device_identity = 0,
         core_identity = _CurrentModelCore,
         agent = agent,
         origin = _CurrentMemoryOrigin,
@@ -317,6 +375,9 @@ begin
         committed = TRUE,
         replay_epoch = 0,
         kind = MemoryEvent_Store,
+        request_class = _CurrentMemoryRequestClass,
+        shareability = _CurrentMemoryShareability,
+        device_identity = 0,
         core_identity = _CurrentModelCore,
         agent = agent,
         origin = _CurrentMemoryOrigin,
@@ -358,6 +419,9 @@ begin
         committed = TRUE,
         replay_epoch = 0,
         kind = MemoryEvent_Atomic,
+        request_class = _CurrentMemoryRequestClass,
+        shareability = _CurrentMemoryShareability,
+        device_identity = 0,
         core_identity = _CurrentModelCore,
         agent = agent,
         origin = _CurrentMemoryOrigin,
@@ -387,6 +451,9 @@ begin
         committed = TRUE,
         replay_epoch = 0,
         kind = MemoryEvent_Fence,
+        request_class = _CurrentMemoryRequestClass,
+        shareability = _CurrentMemoryShareability,
+        device_identity = 0,
         core_identity = _CurrentModelCore,
         agent = agent,
         origin = _CurrentMemoryOrigin,

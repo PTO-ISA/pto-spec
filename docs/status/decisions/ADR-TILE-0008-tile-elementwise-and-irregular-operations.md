@@ -2,7 +2,7 @@
 {
   "id": "ADR-TILE-0008",
   "title": "Tile elementwise and irregular operations",
-  "title_zh": "Tile \u9010\u5143\u7d20\u4e0e\u975e\u89c4\u5219\u64cd\u4f5c",
+  "title_zh": "Tile 逐元素与非规则操作",
   "status": "accepted",
   "authors": [
     "Kevin Zhou <zhoubot@gmail.com>",
@@ -322,7 +322,10 @@
     "PTO-TILE-TSUB",
     "PTO-TILE-TSUBS",
     "PTO-TILE-TXOR",
-    "PTO-TILE-TXORS"
+    "PTO-TILE-TXORS",
+    "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
+    "PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE-OPERATIONS",
+    "PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE"
   ],
   "resolves": [],
   "supersedes": [
@@ -853,6 +856,36 @@
         "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
         "PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS",
         "PTO-TILE-MODEL-EXECUTION-REARRANGEMENT"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "baseline": "a6d6b71e2659555bb3903b22c00e92e63dbf2779",
+      "approvers": [
+        "ckwllawliet <641433195@qq.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/349",
+      "affected_ndf": [
+        "PTO-TAND-CONTRACT-001",
+        "PTO-TOR-CONTRACT-001",
+        "PTO-TXOR-CONTRACT-001",
+        "PTO-TSEL-CONTRACT-001",
+        "PTO-TSELS-CONTRACT-001",
+        "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+        "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+        "PTO-TILE-MODEL-EXECUTION-ELEMENTWISE",
+        "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-OPERATION",
+        "PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+        "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
+        "PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE-OPERATIONS",
+        "PTO-TILE-MODEL-LEGALITY-DESTINATION-VALUE"
       ]
     }
   ],
@@ -2090,3 +2123,13 @@ Issue [#371](https://github.com/PTO-ISA/pto-spec/issues/371) closes the Local in
 The reference implementation repairs admitted FP64 finite operations and exact conversion paths. This does not accept the still-open elementary-function accuracy proposal, introduce a target latency, or claim a new ULP bound. Compatibility includes newly executable M32 b64 tuples, 64-bit generation counterparts and paired raw-word rearrangement; release impact requires fresh commit-scoped AVS and downstream adoption.
 
 议题 #371 使 Local 指令族与 M32 双 CELL 的 64 位存储合同闭合，按浮点、整数和原始载体分别接入对应类型。每个助记符保留其类型对和效果坐标 owner；参考实现修复已声明的 FP64 路径，不由此接受新的目标精度或时序保证。
+
+## Accepted amendment: issue #349 PredicateCell composition
+
+The architecture owner accepted the issue #349 logical composition and select
+consumer decisions against baseline `a6d6b71e2659555bb3903b22c00e92e63dbf2779`.
+The affected TAND, TOR, TXOR, TSEL, TSELS and ExecutionMask owners carry the
+current contract. This extends U8 Local CUBE logical composition, preserves
+Numeric and memory mask behavior, and requires commit-scoped evidence and
+downstream adoption. Release impact is required; this amendment does not
+publish a release.

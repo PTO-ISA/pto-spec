@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SCALAR-BINDINGS","surface":"block","classification":["model","operands","scalar-bindings"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SCALAR-BINDINGS","surface":"block","classification":["model","operands","scalar-bindings"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS","PTO-BLOCK-MODEL-STATE-TYPES"]}
 func SetBundleArgument(value: Word)
 begin
     _BundleArgument = value;
@@ -31,6 +31,7 @@ begin
     _BundleScalarBindings[[index]].source2 = source2;
     _BundleScalarBindings[[index]].source_count = source_count;
     _BundleScalarBindings[[index]].execution_mask_present = FALSE;
+    _BundleScalarBindings[[index]].indexed_tlsu_mask_second_contiguous = FALSE;
 end;
 
 func SetBundleScalarBindingWithExecutionMask(

@@ -61,7 +61,7 @@ begin
         LastUseExecutionMaskAttributes(), 32);
     SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
-    SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 4);
     let inputs = ExecuteCommandInstruction(
         TwoLastUseSources(Zeros{6} + 1, Zeros{6} + 2), 32);
     let result = ExecuteCommandInstruction(

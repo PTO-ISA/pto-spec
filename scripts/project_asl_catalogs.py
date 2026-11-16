@@ -164,6 +164,195 @@ def _handler_count(forms: list[dict[str, object]]) -> int:
     return len({form["semantic_handler"] for form in forms})
 
 
+_SCALAR_SHAREABILITY_CODES = {
+    "Private": 0,
+    "IntraCore": 1,
+    "InterCore": 2,
+}
+_SCALAR_SHAREABILITY_SUFFIXES = {
+    "Private": "private",
+    "IntraCore": "intra",
+    "InterCore": "inter",
+}
+
+
+def _scoped_scalar_forms(forms: list[dict[str, object]]) -> list[dict[str, object]]:
+    """Derive the fixed 64-bit Scalar shareability envelope from source forms.
+
+    The mnemonic metadata remains the authority for each inner operation.  This
+    projection shifts its exact encoding and operand pieces into bits[63:16],
+    fixes the r2 carrier/length fields, and records the original catalog row as
+    the sole semantic binding.
+    """
+
+    scoped: list[dict[str, object]] = []
+    for base_index, base in enumerate(forms):
+        family = base.get("semantic_family")
+        agu_action = base.get("agu", {}).get("action") if isinstance(base.get("agu"), dict) else None
+        covered = (
+            family == "AGU" and agu_action in {"Load", "LoadPair", "Store", "StorePair"}
+        ) or (family == "AMO" and base.get("mnemonic") != "DMA")
+        if not covered:
+            continue
+
+        inner_length = base.get("length_bits")
+        if inner_length not in {16, 32, 48}:
+            raise ValueError(
+                f"covered Scalar form has unsupported length: {base.get('form_id')}"
+            )
+        source_encoding = base.get("encoding")
+        if not isinstance(source_encoding, list) or not source_encoding:
+            raise ValueError(f"covered Scalar form has no encoding: {base.get('form_id')}")
+        source_mask = 0
+        source_match = 0
+        for part in source_encoding:
+            if not isinstance(part, dict):
+                raise ValueError(f"invalid encoding part in {base.get('form_id')}")
+            part_index = part.get("index")
+            part_width = part.get("width_bits")
+            if not isinstance(part_index, int) or part_index not in {0, 1}:
+                raise ValueError(f"invalid encoding index in {base.get('form_id')}")
+            if part_width not in {16, 32, 48}:
+                raise ValueError(f"invalid encoding width in {base.get('form_id')}")
+            source_mask |= int(part["mask"], 16) << (part_index * 32)
+            source_match |= int(part["match"], 16) << (part_index * 32)
+
+        if source_mask >> inner_length or source_match >> inner_length:
+            raise ValueError(
+                f"inner encoding exceeds declared length in {base.get('form_id')}"
+            )
+        shifted_mask = source_mask << 16
+        shifted_match = source_match << 16
+        padding_mask = ((1 << (48 - inner_length)) - 1) << (16 + inner_length)
+        length_code = {16: 0, 32: 1, 48: 2}[inner_length]
+        fields: list[dict[str, object]] = [
+            {
+                "name": "Shareability",
+                "pieces": [{"instruction_lsb": 8, "value_lsb": 0, "width": 2}],
+                "signedness": "unsigned",
+                "width": 2,
+            },
+            {
+                "name": "InnerLength",
+                "pieces": [{"instruction_lsb": 10, "value_lsb": 0, "width": 2}],
+                "signedness": "unsigned",
+                "width": 2,
+            },
+        ]
+        for field in base.get("fields", []):
+            shifted_field = dict(field)
+            shifted_field["pieces"] = [
+                {**piece, "instruction_lsb": piece["instruction_lsb"] + 16}
+                for piece in field["pieces"]
+            ]
+            fields.append(shifted_field)
+
+        scoped_mask = 0xF0FF | padding_mask | shifted_mask
+        # Scope and inner-length values are fixed per generated form while the
+        # carrier family mask remains 0xf0ff / 0x001f in the NDF owner.
+        scoped_mask |= 0x0F00
+        scoped_forms_for_base: list[dict[str, object]] = []
+        for scope_name, scope_code in _SCALAR_SHAREABILITY_CODES.items():
+            scoped_match = (
+                0x001F
+                | (scope_code << 8)
+                | (length_code << 10)
+                | shifted_match
+            )
+            encoding = [
+                {
+                    "index": index,
+                    "mask": f"0x{(scoped_mask >> (index * 32)) & 0xFFFFFFFF:08x}",
+                    "match": f"0x{(scoped_match >> (index * 32)) & 0xFFFFFFFF:08x}",
+                    "width_bits": 32,
+                }
+                for index in (0, 1)
+            ]
+            shifted_constraints = [dict(item) for item in base.get("constraints", [])]
+            asm = str(base.get("asm", base["mnemonic"].lower()))
+            head, separator, tail = asm.partition(" ")
+            scoped_asm = (
+                f"{head}.{_SCALAR_SHAREABILITY_SUFFIXES[scope_name]}"
+                f"{separator}{tail}"
+            )
+            scoped_fields = [
+                dict(field)
+                for field in fields
+            ]
+            form = {
+                "base_form_id": base["form_id"],
+                "base_form_index": base_index,
+                "constraints": shifted_constraints,
+                "encoding": encoding,
+                "encoding_kind": "SCOPED64",
+                "fields": scoped_fields,
+                "form_id": f"{base['form_id']}_scoped_{_SCALAR_SHAREABILITY_SUFFIXES[scope_name]}",
+                "inner_length_bits": inner_length,
+                "length_bits": 64,
+                "mnemonic": base["mnemonic"],
+                "scope": scope_name,
+                "scope_code": scope_code,
+                "semantic_family": family,
+                "semantic_group": base.get("semantic_group"),
+                "semantic_handler": base["semantic_handler"],
+                "semantic_summary": base.get("semantic_summary", base.get("summary", "")),
+                "status": "accepted",
+                "asm": scoped_asm,
+                "assembly": [scoped_asm],
+                "operands": [
+                    {"field": "Shareability", "role": "effective GM shareability"},
+                    {"field": "InnerLength", "role": "wrapped instruction length"},
+                    *[dict(operand) for operand in base.get("operands", [])],
+                ],
+            }
+            # Keep the generator's exact mask/match witness math reviewable.
+            if len(encoding) != 2 or any(
+                int(part["mask"], 16) & int(part["match"], 16)
+                != int(part["match"], 16)
+                for part in encoding
+            ):
+                raise ValueError(f"invalid scoped encoding projection for {form['form_id']}")
+            scoped_forms_for_base.append(form)
+        scoped.extend(scoped_forms_for_base)
+    return scoped
+
+
+def _encoding_alternatives(row: dict[str, object]) -> list[list[dict[str, object]]]:
+    return [
+        row["encoding"],
+        *[
+            variant["encoding"]
+            for variant in row.get("encoding_variants", [])
+            if isinstance(variant, dict)
+        ],
+    ]
+
+
+def _forms_encoding_overlap(
+    left: dict[str, object], right: dict[str, object]
+) -> bool:
+    if left.get("length_bits") != right.get("length_bits"):
+        return False
+    for left_encoding in _encoding_alternatives(left):
+        for right_encoding in _encoding_alternatives(right):
+            left_parts = {part["index"]: part for part in left_encoding}
+            right_parts = {part["index"]: part for part in right_encoding}
+            compatible = True
+            for index in left_parts.keys() | right_parts.keys():
+                left_part = left_parts.get(index)
+                right_part = right_parts.get(index)
+                left_mask = int(left_part["mask"], 16) if left_part else 0
+                right_mask = int(right_part["mask"], 16) if right_part else 0
+                left_match = int(left_part["match"], 16) if left_part else 0
+                right_match = int(right_part["match"], 16) if right_part else 0
+                if (left_match ^ right_match) & left_mask & right_mask:
+                    compatible = False
+                    break
+            if compatible:
+                return True
+    return False
+
+
 def project_catalogs(
     units: Sequence[AslUnit], release: str | None = None
 ) -> dict[Path, bytes]:
@@ -173,6 +362,19 @@ def project_catalogs(
     records = _indexed_records(units)
 
     scalar_forms = records["scalar-forms"]
+    scoped_scalar_forms = _scoped_scalar_forms(scalar_forms)
+    command_forms = records["command-forms"]
+    reservation_rows = envelopes["extension-encoding-reservations"].get(
+        "reservations", []
+    )
+    for scoped_form in scoped_scalar_forms:
+        for occupied in [*command_forms, *reservation_rows]:
+            if _forms_encoding_overlap(scoped_form, occupied):
+                raise ValueError(
+                    "scoped Scalar encoding overlaps an allocated command or "
+                    f"reservation: {scoped_form['form_id']} / "
+                    f"{occupied.get('form_id', occupied.get('mnemonic', '<unknown>'))}"
+                )
     scalar_envelope = envelopes["scalar-forms"]
     family_constraints = scalar_envelope.get("family_constraints", [])
     if not isinstance(family_constraints, list):
@@ -195,9 +397,10 @@ def project_catalogs(
         "reviewed_encoding_overlaps": scalar_envelope["reviewed_encoding_overlaps"],
         "schema_version": scalar_envelope["schema_version"],
         "semantic_handler_count": _handler_count(scalar_forms),
+        "scoped_form_count": len(scoped_scalar_forms),
+        "scoped_forms": scoped_scalar_forms,
     }
 
-    command_forms = records["command-forms"]
     command_envelope = envelopes["command-forms"]
     command_fields, command_pieces = _field_counts(command_forms)
     command = {

@@ -13,6 +13,8 @@ begin
         SelectExecutionContext(0, 0);
         _PC = entry + 4;
         _CurrentMemoryOrigin = MemoryEventOrigin_Kernel;
+        _CurrentMemoryShareability = MemoryShareability_IntraCore;
+        _CurrentMemoryRequestClass = MemoryRequestClass_Scalar;
         _CurrentProgramOrder = 1;
         if round == 0 then
             first_store = AddStoreEvent(0, Zeros{PTO_XLEN} + 0xb00,
@@ -23,12 +25,16 @@ begin
             SelectExecutionContext(0, pe);
             _PC = entry + 4;
             _CurrentMemoryOrigin = MemoryEventOrigin_Kernel;
+            _CurrentMemoryShareability = MemoryShareability_IntraCore;
+            _CurrentMemoryRequestClass = MemoryRequestClass_Scalar;
             _ScalarExecutionBlocked = FALSE;
             SyncCore();
         end;
         assert _CoreSyncRecords[[0]][[0]].released;
         if round == 0 then
             SelectExecutionContext(0, 1);
+            _CurrentMemoryShareability = MemoryShareability_IntraCore;
+            _CurrentMemoryRequestClass = MemoryRequestClass_Scalar;
             _CurrentProgramOrder = 2;
             first_post_barrier_read = AddLoadEvent(1,
                 Zeros{PTO_XLEN} + 0xb00, 8, Zeros{PTO_XLEN},

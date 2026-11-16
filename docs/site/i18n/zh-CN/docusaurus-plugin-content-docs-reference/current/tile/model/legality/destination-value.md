@@ -160,6 +160,15 @@ readonly func TileOperandsLegal_ExecuteTileBinaryToValue(
 begin
     let left_tile = TileOutputValueSourceTile(destination, source_left);
     let right_tile = TileOutputValueSourceTile(destination, source_right);
+    if left_tile.storage_kind == TileStorage_PredicateCell ||
+       right_tile.storage_kind == TileStorage_PredicateCell then
+        let selected_type = if BundleTileOperationSelected() &&
+            _BundleOperation.data_type_valid then TileDataTypeFromEncoding(
+                _BundleOperation.data_type as TileDataTypeEncoding)
+            else destination.value.data_type;
+        return TilePredicateLogicalOperandsLegal(op, destination.value,
+            source_left, source_right, selected_type);
+    end;
     if op == TileBinary_EXPDIF ||
        !TileElementwiseCubeValueShapeMatches(destination.value, left_tile) ||
        !TileElementwiseCubeValueShapeMatches(left_tile, right_tile) then

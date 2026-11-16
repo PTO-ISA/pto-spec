@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-MASK-EXECUTION-MASK-BUNDLE-001","source":"asl/block/execution/BSTART.MGATHER.MASK.asl","requirements":["PTO-MGATHER-MASK-PREDICATE-001","PTO-BSTART-MGATHER-MASK-SCHEMA-001","PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001","PTO-B-IOR-BINDING-001","PTO-B-IOT-STREAM-001"],"kind":"execution","summary":"Decoded MGATHER.MASK keeps its operation predicate separate from a final PredicateCell ExecutionMask source","pass_condition":"different masks suppress complementary invalid-index lanes, malformed ExecutionMask rolls back before memory events, and the repaired bundle loads only their active intersection","related_sources":["asl/block/model/dispatch/tlsu-mgather-mask.asl","asl/block/model/dispatch/execution-mask-schema.asl","asl/tile/model/memory/gather-scatter.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-MASK-EXECUTION-MASK-BUNDLE-001","source":"asl/block/execution/BSTART.MGATHER.MASK.asl","requirements":["PTO-MGATHER-MASK-PREDICATE-001","PTO-BSTART-MGATHER-MASK-SCHEMA-001","PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001","PTO-B-IOR-BINDING-001","PTO-B-IOT-STREAM-001","PTO-INDEXED-TLSU-RANGE-BINDING-001"],"kind":"execution","summary":"Decoded MGATHER.MASK binds a range descriptor with separate operation and PredicateCell ExecutionMask carriers.","pass_condition":"A single unflagged Base/Min/Max B.IOR and no second B.IOR preserve the active intersection of the operation predicate and PredicateCell ExecutionMask; malformed ExecutionMask faults before events.","related_sources":["asl/block/model/dispatch/indexed-tlsu-range-schema.asl","asl/block/model/dispatch/tlsu-mgather-mask.asl","asl/block/model/dispatch/execution-mask-schema.asl","asl/tile/model/memory/gather-scatter.asl"]}
 pure func DecodedMaskedGatherStart(data_type: bits(5)) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00011181;
@@ -36,10 +36,13 @@ begin
     return instruction;
 end;
 
-pure func DecodedMaskedGatherIOR(base: bits(5)) => bits(64)
+pure func DecodedMaskedGatherIOR(base: bits(5), minimum: bits(5),
+    maximum: bits(5)) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00000013;
     instruction[19:15] = base;
+    instruction[24:20] = minimum;
+    instruction[31:27] = maximum;
     return instruction;
 end;
 
@@ -80,6 +83,8 @@ begin
     Store(Zeros{PTO_XLEN} + 0x108, 4, Zeros{PTO_XLEN} + 33);
     Store(Zeros{PTO_XLEN} + 0x10c, 4, Zeros{PTO_XLEN} + 44);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x100);
+    WritePEGPR(0, 3, Zeros{64});
+    WritePEGPR(0, 4, Zeros{64} + 12);
 end;
 
 func BindDecodedMaskedGather()
@@ -99,7 +104,8 @@ begin
     let last = ExecuteCommandInstruction(
         DecodedMaskedGatherResult(Zeros{6} + 12), 32);
     let base = ExecuteCommandInstruction(
-        DecodedMaskedGatherIOR(Zeros{5} + 2), 32);
+        DecodedMaskedGatherIOR(Zeros{5} + 2,
+            Zeros{5} + 3, Zeros{5} + 4), 32);
     assert first == CommandExecution_Executed;
     assert last == CommandExecution_Executed;
     assert base == CommandExecution_Executed;

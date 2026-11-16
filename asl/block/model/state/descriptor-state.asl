@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE","surface":"block","classification":["model","state","descriptor-state"],"depends_on":["PTO-BLOCK-MODEL-STATE-CONTROL-STATE"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE","surface":"block","classification":["model","state","descriptor-state"],"depends_on":["PTO-BLOCK-MODEL-STATE-CONTROL-STATE","PTO-BLOCK-MODEL-STATE-TYPES"]}
 func InstallBundleOperationDescriptor(descriptor: BundleOperationDescriptor)
 begin
     _BundleOperation = descriptor;
@@ -34,6 +34,7 @@ begin
         _BundleScalarBindings[[index]].valid = FALSE;
         _BundleScalarBindings[[index]].source_count = 0;
         _BundleScalarBindings[[index]].execution_mask_present = FALSE;
+        _BundleScalarBindings[[index]].indexed_tlsu_mask_second_contiguous = FALSE;
     end;
     for index = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         _BundleTileBindings[[index]].valid = FALSE;
@@ -144,6 +145,13 @@ begin
     _BundleExecutionMask.zero_inactive = FALSE;
     _BundleExecutionMask.merge_base_valid = FALSE;
     _BundleExecutionMask.merge_base = 0;
+    _BundleExecutionMask.merge_base_waiting = FALSE;
+    _BundleExecutionMask.merge_base_generation_valid = FALSE;
+    _BundleExecutionMask.merge_base_generation_slot = 64;
+    _BundleExecutionMask.merge_base_generation_instance = Zeros{PTO_XLEN};
+    _BundleExecutionMask.merge_base_writer_instruction_instance =
+        Zeros{PTO_XLEN};
+    _BundleExecutionMask.merge_base_writer_execution_domain_token = 0;
     _BundleExecutionMask.predicate_tile_snapshot = Zeros{524288};
     _BundleHint.present = FALSE;
     _BundleHint.trace = FALSE;

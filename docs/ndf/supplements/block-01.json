@@ -24,8 +24,8 @@
         "zh-CN": "Local CUBE 组装父几何"
       },
       "summary": {
-        "en": "ParentCapacity is allocation metadata for Local CUBE_M16 and CUBE_M32 assembly. Each writer retains its fragment descriptor; successful LAST derives and atomically publishes one common physical/valid parent descriptor from gap-free per-PE CELL-prefix coverage, while generation identity remains usable before descriptor finalization and unused capacity does not create geometry.",
-        "zh-CN": "对于 Local CUBE_M16 和 CUBE_M32 组装，ParentCapacity 仅是分配元数据。每个写入者保留其片段描述符；成功的 LAST 根据各 PE 无间隙的 CELL 前缀覆盖范围派生并原子发布一个共同的物理/有效父描述符，同时在描述符最终确定前代次身份仍可使用，未使用容量不会生成几何。"
+        "en": "Local CUBE assembly retains the full parent geometry while each producer operates on a bounded writer; predicate writers retain their typed metadata.",
+        "zh-CN": "Local CUBE 组装保留完整父几何，每个生产者操作有界写入视图；谓词写入保留类型元数据。"
       }
     },
     {
@@ -228,8 +228,8 @@
         "zh-CN": "有界 Local CUBE 子视图描述符"
       },
       "summary": {
-        "en": "This clause derives a Local CUBE subview descriptor from its parent, offset, and CELL-ordered capacity without changing the parent lifetime or payload. Unsupported operation families, empty valid geometry, and out-of-range views fault before effects.",
-        "zh-CN": "本条款从父描述符、偏移和按 CELL 排列的容量派生 Local CUBE 子视图描述符，而不改变父对象的生命周期或载荷。不支持的操作族、空有效几何及越界视图都会在产生效果前报错。"
+        "en": "B.SUBVIEW derives a bounded Local CUBE view and retains a PredicateCell parent’s kind and basis.",
+        "zh-CN": "B.SUBVIEW 派生有界 Local CUBE 视图，并保留 PredicateCell 父对象的种类和 basis。"
       }
     },
     {
@@ -1082,6 +1082,18 @@
       "summary": {
         "en": "This clause treats HL.QPUSH as one atomic insertion at the selected end with optional post-success notification. Normal operation provides release ordering unless relaxed; full, suspended, absent, or corrupt queues report status without inserting data.",
         "zh-CN": "本条款将 HL.QPUSH 视为在所选端的一次原子插入，并可在成功后发送通知。除显式放宽外，正常操作提供 release 顺序；满、挂起、缺失或损坏的队列只报告状态而不插入数据。"
+      }
+    },
+    {
+      "id": "PTO-INDEXED-TLSU-RANGE-BINDING-001",
+      "source_path": "asl/block/model/dispatch/scalar-schema.asl",
+      "title": {
+        "en": "Indexed TLSU range descriptor binding",
+        "zh-CN": "索引式 TLSU 范围描述符绑定"
+      },
+      "summary": {
+        "en": "This supplement describes how combined B.IOR records attach a signed index interval to an indexed TLSU base while preserving the legacy mask forms. Participating PEs validate the selected bounds before their request has memory or destination effects; other PEs retain independent progress. Software certifies a nonwrapping byte envelope for active starts, while individual index values are not checked.",
+        "zh-CN": "本补充说明组合 B.IOR 记录如何为索引式 TLSU 基址附加有符号索引区间，同时保留旧的掩码形式。参与的 PE 会在自身请求产生内存或目标效果前校验所选边界；其他 PE 仍可独立推进。软件为有效起点提供不回绕的字节范围证明，但不会逐项检查索引值。"
       }
     },
     {

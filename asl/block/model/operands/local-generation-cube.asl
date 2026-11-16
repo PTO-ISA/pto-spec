@@ -3,6 +3,7 @@
 // instruction path. It keeps the allocated parent descriptor and the exact
 // operation-specific writer descriptor together without installing a view in
 // architectural tile state.
+
 type BundleLocalGenerationCubeWriterEffectEntry of record {
     active: boolean,
     destination: TileIndex,
@@ -19,6 +20,53 @@ type BundleLocalGenerationCubeWriterEffects of record {
     entries: array [[PTO_BUNDLE_TILE_BINDING_COUNT]]
         of BundleLocalGenerationCubeWriterEffectEntry
 };
+
+readonly func BundleExecutionMaskPredicateMergeDependencyWaiting(
+    slot: integer {0..63}, source: TileIndex,
+    generation_instance: Word, participant_mask: bits(4),
+    consumer_instance: Word) => boolean
+begin
+    for index = 0 to _LocalGenerations[[slot]].consumer_count - 1
+        looplimit 16 do
+        let dependency = _LocalGenerations[[slot]].consumers[[index]];
+        if dependency.valid &&
+           dependency.state == BundleConsumerDependency_Waiting &&
+           dependency.source == source &&
+           dependency.generation_instance == generation_instance &&
+           dependency.execution_domain_token ==
+               _BundleExecutionDomainToken &&
+           dependency.participant_mask == participant_mask &&
+           dependency.consumer_instruction_instance == consumer_instance then
+            return TRUE;
+        end;
+    end;
+    return FALSE;
+end;
+
+readonly func BundleExecutionMaskPredicateMergeGenerationPinMatches(
+    slot: integer {0..63}, base: TileIndex,
+    hand: integer {0..3}) => boolean
+begin
+    if slot != _BundleExecutionMask.merge_base_generation_slot ||
+       !_LocalGenerations[[slot]].generation_identity_valid ||
+       _LocalGenerations[[slot]].working_destination != base ||
+       _LocalGenerations[[slot]].destination_hand != hand ||
+       _LocalGenerations[[slot]].generation_instance !=
+           _BundleExecutionMask.merge_base_generation_instance ||
+       _LocalGenerations[[slot]].writer_count == 0 then
+        return FALSE;
+    end;
+    let initiating_writer = _LocalGenerations[[slot]].writers[[0]];
+    return initiating_writer.valid &&
+           initiating_writer.destination == base &&
+           initiating_writer.identity.instruction_instance ==
+               _BundleExecutionMask.merge_base_writer_instruction_instance &&
+           initiating_writer.identity.instruction_instance ==
+               _LocalGenerations[[slot]].generation_instance &&
+           initiating_writer.identity.execution_domain_token ==
+               _BundleExecutionMask
+                   .merge_base_writer_execution_domain_token;
+end;
 
 func EmptyBundleLocalGenerationCubeWriterEffects()
     => BundleLocalGenerationCubeWriterEffects
@@ -87,6 +135,28 @@ readonly func BundleLocalGenerationCubeWriterColumns(writer_size: integer {1..12
 begin
     return TileCubePhysicalColumnsFromCapacity(
         TileSizeCodeBytes(writer_size), layout, data_type);
+end;
+
+readonly func BundleLocalGenerationDestinationReuseMatches(
+    binding: BundleTileBindingIndex, slot: integer {0..63},
+    destination: TileIndex) => boolean
+begin
+    return _BundleTileBindings[[binding]].destination_valid &&
+           _BundleTileBindings[[binding]].destination_reused_by_generation &&
+           !_BundleTileBindings[[binding]].destination_allocated_by_bundle &&
+           _BundleTileBindings[[binding]].destination == destination &&
+           _BundleTileBindings[[binding]].destination_hand ==
+               Zeros{2} + _LocalGenerations[[slot]].destination_hand &&
+           _BundleTileBindings[[binding]].destination_size ==
+               _LocalGenerations[[slot]].parent_size_code;
+end;
+readonly func BundleLocalGenerationDestinationReuseStateLegal(
+    binding: BundleTileBindingIndex, slot: integer {0..63}) => boolean
+begin
+    return (!_BundleTileBindings[[binding]].destination_valid &&
+            !_BundleTileBindings[[binding]].destination_reused_by_generation) ||
+           BundleLocalGenerationDestinationReuseMatches(binding, slot,
+               _LocalGenerations[[slot]].working_destination);
 end;
 
 pure func BundleLocalGenerationCubeValidColumnsAt(

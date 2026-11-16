@@ -236,6 +236,9 @@ ISSUE395_WRITER_EFFECT_CLASSIFICATION = (
     "Issue #395 explicit by-value Local CUBE writer effects "
     "(ADR-CUBE-0005/0016 amendments)"
 )
+ISSUE422_SHARED_ND_TO_CUBE_CLASSIFICATION = (
+    "Issue #422 reverse Shared ND-to-CUBE TMOV legality and execution closure"
+)
 ISSUE395_GENERATED_WRITER_DISPATCH_PATH = (
     "generated/scripts/generate-asl-decoders:decoder"
 )
@@ -305,6 +308,7 @@ ISSUE395_WRITER_EFFECT_HELPER_DEFINITION_DELTAS = {
             ("ExecuteBundleMGATHERMASKOperation", "asl/block/model/dispatch/tlsu-mgather-mask.asl"),
             ("ExecuteBundleMGATHEROperation", "asl/block/model/dispatch/tlsu-mgather.asl"),
             ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+            ("ExecuteBundleSharedTMOVSharedNDToCube", "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
             ("ExecuteBundleTMATMULWriterValues", "asl/block/model/dispatch/cube-tmatmul-writer-values.asl"),
             ("ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules", "asl/block/model/dispatch/tile-execution.asl"),
         },
@@ -320,6 +324,7 @@ ISSUE395_WRITER_EFFECT_HELPER_DEFINITION_DELTAS = {
             ("ExecuteBundleMGATHERMASKOperation", "asl/block/model/dispatch/tlsu-mgather-mask.asl"),
             ("ExecuteBundleMGATHEROperation", "asl/block/model/dispatch/tlsu-mgather.asl"),
             ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+            ("ExecuteBundleSharedTMOVSharedNDToCube", "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
             ("ExecuteBundleTMATMULWriterValues", "asl/block/model/dispatch/cube-tmatmul-writer-values.asl"),
         },
     ),
@@ -454,6 +459,8 @@ ISSUE395_WRITER_EFFECT_HELPER_DEFINITION_DELTAS = {
             ("ExecuteBundleMGATHERMASKOperation", "asl/block/model/dispatch/tlsu-mgather-mask.asl"),
             ("ExecuteBundleMGATHEROperation", "asl/block/model/dispatch/tlsu-mgather.asl"),
             ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+            ("ExecuteBundleSharedTMOVSharedNDToCube",
+             "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
             ("ResolveBundleTileDestinationsForOperationAndWriterEffects", "asl/block/model/dispatch/destination-operation.asl"),
             ("ResolveBundleTileDestinationsWithShapeAndType", "asl/block/model/dispatch/destination-shape.asl"),
         },
@@ -773,7 +780,7 @@ ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS = {
         "before_callers": set(),
         "after_callers": {
             ("BundleSharedTMOVDestinationSchemaLegal",
-             "asl/block/model/dispatch/shared-tlsu.asl"),
+             "asl/block/model/dispatch/shared-tlsu-helpers.asl"),
             ("BundleSharedTMOVLocalSchemaLegal",
              "asl/block/model/dispatch/shared-tlsu.asl"),
         },
@@ -797,6 +804,8 @@ ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS = {
              "asl/block/model/dispatch/destination-shape.asl"),
             ("BundleSharedTMOVCubeToNDSchemaLegal",
              "asl/block/model/dispatch/shared-tmov-cube-to-nd.asl"),
+            ("BundleSharedTMOVSharedNDToCubeFragmentForPE",
+             "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
             ("ConfigureCubeTileForMask", "asl/tile/model/state/allocation.asl"),
             ("FinalizeBundleLocalGenerationCube",
              "asl/block/model/operands/local-generation-cube-writer-effects.asl"),
@@ -832,12 +841,146 @@ ISSUE395_SHARED_TMOV_HELPER_DEFINITION_DELTAS = {
         "after": [("asl/block/model/state/control-state.asl", set())],
         "before_callers": set(),
         "after_callers": {
-            ("BundleExecutionMaskDataAttributesLegal",
-             "asl/block/model/dispatch/command-data-attributes.asl"),
             ("BundleSharedTMOVCubeToNDSelected",
              "asl/block/model/dispatch/shared-tmov-cube-to-nd.asl"),
-            ("MarkSelectedBundleExecutionMaskCarrier",
-             "asl/block/model/dispatch/execution-mask-schema.asl"),
+            ("SelectedBundleTileDataAttributesLegal",
+             "asl/block/model/dispatch/tile-schema.asl"),
+        },
+    },
+}
+
+# Issue #422's reverse Shared ND-to-CUBE path is intentionally confined to
+# this helper inventory. These exact owners, lexical layout mentions, and
+# callers prevent a new semantic path from becoming an unreviewed helper
+# whitelist. The source-payload predicate is called by existing Tile execution
+# dispatch; conversion helpers are called only by the shared TLSU path.
+ISSUE422_SHARED_ND_TO_CUBE_HELPER_DEFINITION_DELTAS = {
+    "BundleSharedSourcePayloadsAvailable": {
+        "before": [],
+        "after": [("asl/block/model/operands/shared-bindings.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/tile-execution.asl"),
+            ("RequireBundleSharedSourcePayloadReadiness",
+             "asl/block/model/operands/shared-bindings.asl"),
+            ("RequireBundleSharedSourcePayloads",
+             "asl/block/model/operands/shared-bindings.asl"),
+        },
+    },
+    "BundleSharedTMOVDestinationSchemaLegal": {
+        "before": [("asl/block/model/dispatch/shared-tlsu.asl", set())],
+        "after": [("asl/block/model/dispatch/shared-tlsu-helpers.asl", set())],
+        "before_callers": {
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+        },
+        "after_callers": {
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+        },
+    },
+    "BundleSharedTMOVSharedNDToCubeFirstParticipatingPE": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/shared-tmov-nd-to-cube.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleSharedTMOVSharedNDToCube",
+             "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
+        },
+    },
+    "BundleSharedTMOVSharedNDToCubeFragmentForPE": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/shared-tmov-nd-to-cube.asl", {"RowMajor"})],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleSharedTMOVSharedNDToCubeSchemaLegal",
+             "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
+            ("BundleSharedTMOVSharedNDToCubeValue",
+             "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
+            ("ExecuteBundleSharedTMOVSharedNDToCube",
+             "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
+        },
+    },
+    "BundleSharedTMOVSharedNDToCubeLayout": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/shared-tmov-nd-to-cube.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleSharedTMOVSharedNDToCubeFragmentForPE",
+             "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
+        },
+    },
+    "BundleSharedTMOVSharedNDToCubeRows": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/shared-tmov-nd-to-cube.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleSharedTMOVSharedNDToCubeFragmentForPE",
+             "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
+        },
+    },
+    "BundleSharedTMOVSharedNDToCubeSchemaLegal": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/shared-tmov-nd-to-cube.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleSharedTMOVLocalSchemaLegal", "asl/block/model/dispatch/shared-tlsu.asl"),
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+        },
+    },
+    "BundleSharedTMOVSharedNDToCubeSelected": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/shared-tmov-nd-to-cube.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleSharedTMOVLocalSchemaLegal", "asl/block/model/dispatch/shared-tlsu.asl"),
+            ("BundleSharedTMOVSharedNDToCubeFragmentForPE",
+             "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
+            ("BundleSharedTMOVSharedNDToCubeLayout",
+             "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
+            ("BundleSharedTMOVSharedNDToCubeRows",
+             "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+            ("ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/tile-execution.asl"),
+        },
+    },
+    "BundleSharedTMOVSharedNDToCubeTypePairLegal": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/shared-tmov-nd-to-cube.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleSharedTMOVSharedNDToCubeFragmentForPE",
+             "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
+        },
+    },
+    "BundleSharedTMOVSharedNDToCubeValue": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/shared-tmov-nd-to-cube.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleSharedTMOVSharedNDToCube",
+             "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
+        },
+    },
+    "ExecuteBundleSharedTMOVSharedNDToCube": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/shared-tmov-nd-to-cube.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("ExecuteBundleSharedTLSUOperation", "asl/block/model/dispatch/shared-tlsu.asl"),
+        },
+    },
+    "TileDataLayoutIsSharedNDToCube": {
+        "before": [],
+        "after": [("asl/block/model/state/control-state.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleOperationScalarBindingSchemaLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+            ("BundleSharedTMOVSharedNDToCubeSelected",
+             "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
+            ("ResolveBundleTileDestinationsWithShapeAndTypeAndWriterEffects",
+             "asl/block/model/dispatch/destination-shape.asl"),
             ("SelectedBundleTileDataAttributesLegal",
              "asl/block/model/dispatch/tile-schema.asl"),
         },
@@ -1235,6 +1378,9 @@ ISSUE360_GM_OBLIGATION_HELPERS = {
             ("BundleLocalGenerationQueueInsertionLegal", "asl/block/model/operands/local-generation.asl"),
             ("BundleLocalGenerationSlotForSource", "asl/block/model/operands/portable-carriers.asl"),
             ("CommitBundleLocalGenerationWithWriterEffects", "asl/block/model/operands/local-generation.asl"),
+            # Issue #349's implicit PredicateCell MERGE source uses the same
+            # exact Local generation identity lookup as encoded consumers.
+            ("PrepareSelectedBundleExecutionMaskMerge", "asl/block/model/dispatch/execution-mask-schema.asl"),
             ("ReuseBundleLocalGenerationDestination", "asl/block/model/operands/local-generation.asl"),
             ("ValidateBundleLocalGenerationStructure", "asl/block/model/operands/local-generation.asl"),
             ("ValidateBundleLocalGenerationWritersWithWriterEffects", "asl/block/model/operands/local-generation-cube.asl"),
@@ -1317,6 +1463,8 @@ ISSUE360_GM_OBLIGATION_HELPERS = {
              "asl/block/model/dispatch/shared-cube-matrix.asl"),
             ("BundleSharedSubviewOffsetCellsForPE",
              "asl/block/model/operands/shared-bindings.asl"),
+            ("BundleSharedTMOVSharedNDToCubeFragmentForPE",
+             "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"),
         },
     },
     "ExecuteBundleAtomicTSTOREOperation": {
@@ -1640,6 +1788,75 @@ EXECUTION_MASK_HELPER_CLASSIFICATION = (
     "Local CUBE ExecutionMask support (Issues #277/#349, ADR-TILE-0008, "
     "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001)"
 )
+# Issue #349 also admits U8 PredicateCell logical/select consumers and
+# Local-generation continuation masks. Keep those newly reachable helpers in
+# a separate exact owner/layout/caller inventory: their CUBE_M16/CUBE_M32
+# domain is deliberately limited to the existing Local contract.
+ISSUE349_PREDICATECELL_CLASSIFICATION = (
+    "Issue #349 U8 PredicateCell composition and Local-generation continuity "
+    "(ADR-TILE-0008; layout-neutral except the existing M16/M32 predicate domain)"
+)
+ISSUE349_PREDICATECELL_HELPER_DEFINITION_DELTAS = {
+    "BundleLocalGenerationMaskSubset": {
+        "before": [],
+        "after": [("asl/block/model/operands/local-generation-cube.asl", set())],
+        "before_callers": {
+            ("BundleLocalGenerationDescriptorMatches",
+             "asl/block/model/operands/local-generation.asl"),
+            ("ValidateBundleLocalGeneration",
+             "asl/block/model/operands/local-generation.asl"),
+        },
+        "after_callers": {
+            ("BundleLocalGenerationDescriptorMatches",
+             "asl/block/model/operands/local-generation.asl"),
+            ("ResolveBundlePredicateDestination",
+             "asl/block/model/dispatch/predicate-destination.asl"),
+            ("ValidateBundleLocalGenerationStructure",
+             "asl/block/model/operands/local-generation.asl"),
+        },
+    },
+    "TilePredicateCellInfoDescriptorLegal": {
+        "before": [],
+        "after": [("asl/tile/model/legality/predicate-carriers.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("TilePredicateCellDescriptorLegal",
+             "asl/tile/model/legality/predicate-carriers.asl"),
+            ("TilePredicateLogicalOperandsLegal",
+             "asl/tile/model/legality/operand-schema.asl"),
+        },
+    },
+    "TilePredicateCellSelectShapeMatchesNumericAs": {
+        "before": [],
+        "after": [("asl/tile/model/legality/predicate-carriers.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("SelectedBundleClosedTSELSSchemaLegal",
+             "asl/block/model/dispatch/tile-scalar-schema.asl"),
+            ("SelectedBundleClosedTSELSchemaLegal",
+             "asl/block/model/dispatch/comparison-schema.asl"),
+            ("TileOperandsLegal_ExecuteTileSelectAs",
+             "asl/tile/model/legality/operand-schema.asl"),
+            ("TileOperandsLegal_ExecuteTileSelectScalarAs",
+             "asl/tile/model/legality/operand-schema.asl"),
+            ("TileOperandsLegal_ExecuteTileSelectScalarToValue",
+             "asl/tile/model/legality/destination-value-operations.asl"),
+            ("TileOperandsLegal_ExecuteTileSelectToValue",
+             "asl/tile/model/legality/destination-value-operations.asl"),
+        },
+    },
+    "TilePredicateLogicalOperandsLegal": {
+        "before": [],
+        "after": [("asl/tile/model/legality/operand-schema.asl", LOCAL_CUBE_LAYOUTS)],
+        "before_callers": set(),
+        "after_callers": {
+            ("TileOperandsLegal_ExecuteTileBinary",
+             "asl/tile/model/legality/operand-schema.asl"),
+            ("TileOperandsLegal_ExecuteTileBinaryToValue",
+             "asl/tile/model/legality/destination-value.asl"),
+        },
+    },
+}
 # Issue #374 changes cooperative Shared Matrix execution views while preserving
 # the portable Local layout inventory. The private right-primary view may use
 # ColumnMajor only as an internal dense representation for packed four-bit
@@ -1755,6 +1972,88 @@ INDEXED_TLSU_CLASSIFICATION = (
     "indexed TLSU byte-displacement and Local layout closure "
     "(ADR-MEM-0009 2026-09-16 amendment, Issue #301)"
 )
+INDEXED_TLSU_RANGE_HELPER_CLASSIFICATION = (
+    "indexed TLSU range descriptor and complete-bundle schema "
+    "(ADR-MEM-0011 / ADR-BLOCK-0005, Issue #414)"
+)
+INDEXED_TLSU_RANGE_HELPER_DEFINITION_DELTAS = {
+    "BundleIndexedTLSUCurrentPEBoundsOrdered": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/indexed-tlsu-range-schema.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleOperationGPRBindingValuesLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+        },
+    },
+    "BundleIndexedTLSUCurrentPEParticipates": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/indexed-tlsu-range-schema.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleIndexedTLSUCurrentPEBoundsOrdered",
+             "asl/block/model/dispatch/indexed-tlsu-range-schema.asl"),
+        },
+    },
+    "BundleIndexedTLSURangeDescriptorPresent": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/indexed-tlsu-range-schema.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleIndexedTLSUCurrentPEBoundsOrdered",
+             "asl/block/model/dispatch/indexed-tlsu-range-schema.asl"),
+            ("BundleIndexedTLSURangeMaskCommandAllowed",
+             "asl/block/model/dispatch/indexed-tlsu-range-command-stream.asl"),
+            ("BundleIndexedTLSURangeMaskSecondPending",
+             "asl/block/model/dispatch/indexed-tlsu-range-schema.asl"),
+            ("BundleMarkIndexedTLSURangeMaskSecondPending",
+             "asl/block/model/dispatch/indexed-tlsu-range-command-stream.asl"),
+            ("BundleOperationGPRInputCount",
+             "asl/block/model/dispatch/bundle-gpr-input-count.asl"),
+            ("BundleOperationScalarBindingSchemaLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+        },
+    },
+    "BundleOperationGPRInputCount": {
+        "before": [("asl/block/model/dispatch/scalar-schema.asl", set())],
+        "after": [("asl/block/model/dispatch/bundle-gpr-input-count.asl", set())],
+        "before_callers": {
+            ("BundleOperationGPRBindingValuesLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+            ("BundleOperationScalarBindingSchemaLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+        },
+        "after_callers": {
+            ("BundleExecutionMaskOperationGPRSourceCount",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+            ("BundleOperationGPRBindingValuesLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+            ("BundleOperationScalarBindingSchemaLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+        },
+    },
+    "BundleOperationUsesIndexedTLSU": {
+        "before": [],
+        "after": [("asl/block/model/dispatch/indexed-tlsu-range-schema.asl", set())],
+        "before_callers": set(),
+        "after_callers": {
+            ("BundleIndexedTLSURangeDescriptorPresent",
+             "asl/block/model/dispatch/indexed-tlsu-range-schema.asl"),
+            ("BundleIndexedTLSURangeMaskCommandAllowed",
+             "asl/block/model/dispatch/indexed-tlsu-range-command-stream.asl"),
+            ("BundleIndexedTLSURangeMaskSecondPending",
+             "asl/block/model/dispatch/indexed-tlsu-range-schema.asl"),
+            ("BundleMarkIndexedTLSURangeMaskSecondPending",
+             "asl/block/model/dispatch/indexed-tlsu-range-command-stream.asl"),
+            ("BundleOperationGPRBindingValuesLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+            ("BundleOperationScalarBindingSchemaLegal",
+             "asl/block/model/dispatch/scalar-schema.asl"),
+            ("ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
+             "asl/block/model/dispatch/gm-obligation-dispatch.asl"),
+        },
+    },
+}
 
 # ADR-GOV-0012 (Issue #282) removes the reference/target profile concept and
 # folds every selected ``implementation func`` body into its owning ASL unit.
@@ -3505,6 +3804,106 @@ def _issue395_shared_tmov_closure(
     return errors
 
 
+def _issue422_shared_nd_to_cube_closure(
+    after_map: dict[str, str],
+    after_reach: dict[str, Any],
+    after_defs: dict[str, list[dict[str, Any]]],
+) -> list[str]:
+    """Keep reverse acceptance and conversion-mask safety dispatch exact."""
+    if "BundleSharedTMOVSharedNDToCubeSelected" not in after_defs:
+        return []
+    errors: list[str] = []
+
+    def body(name: str, path: str) -> str:
+        rows = after_defs.get(name, [])
+        if len(rows) != 1 or rows[0].get("path") != path:
+            errors.append(f"Issue #422 helper owner mismatch: {name}")
+            return ""
+        return re.sub(r"\s+", " ", rows[0].get("body", ""))
+
+    selector = body(
+        "TileDataLayoutIsSharedNDToCube",
+        "asl/block/model/state/control-state.asl",
+    )
+    if not (
+        "return data_layout == Zeros{5} + 21 || data_layout == Zeros{5} + 22;"
+        in selector
+    ):
+        errors.append(
+            "Issue #422 Shared ND-to-CUBE DATR selector must be exactly codes 21 and 22"
+        )
+
+    forward_selector = body(
+        "TileDataLayoutIsCubeToSharedND",
+        "asl/block/model/state/control-state.asl",
+    )
+    if not (
+        "return data_layout == Zeros{5} + 24 || data_layout == Zeros{5} + 25;"
+        in forward_selector
+    ):
+        errors.append(
+            "Issue #422 reverse selector changed the existing forward DATR selector"
+        )
+
+    conversion_selector = body(
+        "TileDataLayoutIsCubeConversion",
+        "asl/block/model/state/control-state.asl",
+    )
+    if not (
+        "let code = UInt(data_layout);" in conversion_selector
+        and "return 21 <= code && code <= 26;" in conversion_selector
+    ):
+        errors.append(
+            "Issue #422 conversion-mask safety domain must remain exactly codes 21 through 26"
+        )
+
+    selected = body(
+        "BundleSharedTMOVSharedNDToCubeSelected",
+        "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl",
+    )
+    if not (
+        "BundleTMOVSelected()" in selected and
+        "TileDataLayoutIsSharedNDToCube(" in selected and
+        "BundleSharedBindingPhysicalCount()" in selected
+    ):
+        errors.append("Issue #422 reverse DATR selector is not scoped to Shared TMOV")
+
+    exact_mask_guards = (
+        (
+            "BundleExecutionMaskDataAttributesLegal",
+            "asl/block/model/dispatch/command-data-attributes.asl",
+            "if BundleTMOVSelected() && _BundleDataAttributesPresent && "
+            "TileDataLayoutIsCubeConversion( _BundleDataAttributes.data_layout) "
+            "then return !mask_present; end;",
+        ),
+        (
+            "MarkSelectedBundleExecutionMaskCarrier",
+            "asl/block/model/dispatch/execution-mask-schema.asl",
+            "if BundleTMOVSelected() && _BundleDataAttributesPresent && "
+            "TileDataLayoutIsCubeConversion( _BundleDataAttributes.data_layout) && "
+            "(_BundleScalarBindings[[0]].execution_mask_present || "
+            "_BundleScalarBindings[[1]].execution_mask_present || "
+            "BundleExecutionMaskTileCarrierPresent(operation)) "
+            "then return FALSE; end;",
+        ),
+    )
+    for name, path, exact_guard in exact_mask_guards:
+        mask_guard = body(name, path)
+        if exact_guard not in mask_guard:
+            errors.append(
+                f"Issue #422 {name} must reject masks across every TMOV conversion selector before layout inference"
+            )
+
+    # The full matrix is independently enumerated by AVS. This closure keeps
+    # the implementation predicate on the reverse path and rejects a missing
+    # or duplicate semantic handler.
+    for name in ISSUE422_SHARED_ND_TO_CUBE_HELPER_DEFINITION_DELTAS:
+        rows = after_reach.get("helpers", {}).get(name, [])
+        if len(rows) != 1:
+            errors.append(f"Issue #422 helper is not uniquely reachable: {name}")
+    return errors
+
+
 def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: dict[str, list[dict[str, Any]]], after_defs: dict[str, list[dict[str, Any]]], authorized_helper_names: set[str], allow_texpdif_changes: bool = False, allow_tlea_changes: bool = False) -> tuple[list[dict[str, Any]], list[str]]:
     rows: list[dict[str, Any]] = []
     errors: list[str] = []
@@ -3625,6 +4024,10 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 helper_spec = ISSUE395_WRITER_EFFECT_HELPER_DEFINITION_DELTAS[name]
                 helper_classification = ISSUE395_WRITER_EFFECT_CLASSIFICATION
                 helper_issue = "Issue #395 writer effect"
+            elif name in ISSUE422_SHARED_ND_TO_CUBE_HELPER_DEFINITION_DELTAS:
+                helper_spec = ISSUE422_SHARED_ND_TO_CUBE_HELPER_DEFINITION_DELTAS[name]
+                helper_classification = ISSUE422_SHARED_ND_TO_CUBE_CLASSIFICATION
+                helper_issue = "Issue #422 reverse Shared ND-to-CUBE TMOV"
             if helper_spec is not None:
                 old_shape = sorted(
                     (row["path"], tuple(sorted(row["layouts"])))
@@ -3664,6 +4067,49 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                     "before_callers": sorted(before_callers),
                     "after_callers": sorted(after_callers),
                     "owner_decision": helper_classification,
+                })
+                continue
+            if name in ISSUE349_PREDICATECELL_HELPER_DEFINITION_DELTAS:
+                spec = ISSUE349_PREDICATECELL_HELPER_DEFINITION_DELTAS[name]
+                old_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"])))
+                    for row in old_defs
+                )
+                new_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"])))
+                    for row in new_defs
+                )
+                expected_old_shape = sorted(
+                    (path, tuple(sorted(layouts)))
+                    for path, layouts in spec["before"]
+                )
+                expected_new_shape = sorted(
+                    (path, tuple(sorted(layouts)))
+                    for path, layouts in spec["after"]
+                )
+                before_callers = _direct_callers(before_defs, name)
+                after_callers = _direct_callers(after_defs, name)
+                valid = (
+                    old_shape == expected_old_shape and
+                    new_shape == expected_new_shape and
+                    before_callers == spec["before_callers"] and
+                    after_callers == spec["after_callers"]
+                )
+                if not valid:
+                    errors.append(
+                        f"Issue #349 PredicateCell helper owner/layout/caller closure mismatch: {name}"
+                    )
+                rows.append({
+                    "name": name,
+                    "classification": (
+                        ISSUE349_PREDICATECELL_CLASSIFICATION
+                        if valid else "UNCLASSIFIED"
+                    ),
+                    "before": old_defs,
+                    "after": new_defs,
+                    "before_callers": sorted(before_callers),
+                    "after_callers": sorted(after_callers),
+                    "owner_decision": ISSUE349_PREDICATECELL_CLASSIFICATION,
                 })
                 continue
             if name in EXECUTION_MASK_HELPER_DEFINITION_DELTAS:
@@ -3815,6 +4261,49 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                                   else CUBE_AUX_CELLREG_CLASSIFICATION)
                 rows.append({"name": name, "classification": classification,
                              "before": old_defs, "after": new_defs})
+                continue
+            if name in INDEXED_TLSU_RANGE_HELPER_DEFINITION_DELTAS:
+                spec = INDEXED_TLSU_RANGE_HELPER_DEFINITION_DELTAS[name]
+                old_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"])))
+                    for row in old_defs
+                )
+                new_shape = sorted(
+                    (row["path"], tuple(sorted(row["layouts"])))
+                    for row in new_defs
+                )
+                expected_old_shape = sorted(
+                    (path, tuple(sorted(layouts)))
+                    for path, layouts in spec["before"]
+                )
+                expected_new_shape = sorted(
+                    (path, tuple(sorted(layouts)))
+                    for path, layouts in spec["after"]
+                )
+                before_callers = _direct_callers(before_defs, name)
+                after_callers = _direct_callers(after_defs, name)
+                valid = (
+                    old_shape == expected_old_shape and
+                    new_shape == expected_new_shape and
+                    before_callers == spec["before_callers"] and
+                    after_callers == spec["after_callers"]
+                )
+                if not valid:
+                    errors.append(
+                        f"Issue #414 indexed TLSU range helper owner/layout/caller closure mismatch: {name}"
+                    )
+                rows.append({
+                    "name": name,
+                    "classification": (
+                        INDEXED_TLSU_RANGE_HELPER_CLASSIFICATION
+                        if valid else "UNCLASSIFIED"
+                    ),
+                    "before": old_defs,
+                    "after": new_defs,
+                    "before_callers": sorted(before_callers),
+                    "after_callers": sorted(after_callers),
+                    "owner_decision": INDEXED_TLSU_RANGE_HELPER_CLASSIFICATION,
+                })
                 continue
             errors.append(f"common-helper definition set changed: {name}")
             rows.append({"name": name, "classification": "UNCLASSIFIED", "before": old_defs, "after": new_defs})
@@ -4159,6 +4648,9 @@ def _census_texts(before_map: dict[str, str], after_map: dict[str, str], baselin
     )
     errors.extend(issue395_errors)
     issue395_contract_valid = not issue395_errors
+    errors.extend(_issue422_shared_nd_to_cube_closure(
+        after_map, after_reach, after_defs,
+    ))
 
     for key, new_model in operation_models_after.items():
         old_model = operation_models_before[key]
@@ -4799,6 +5291,69 @@ def _execution_mask_support_mutation_canaries() -> None:
         raise AssertionError("ExecutionMask PredicateCell layout expansion did not fail closed")
 
 
+def _issue349_predicatecell_helper_mutation_canaries() -> None:
+    """Keep Issue #349 PredicateCell helper owners, layouts, and callers exact."""
+    paths = source_paths(BASELINE_OBJECT, "working-tree")
+    baseline = _ref_texts(BASELINE_OBJECT, paths)
+    candidate = _ref_texts("working-tree", paths)
+    result = _census_texts(
+        baseline, candidate, BASELINE_OBJECT,
+        "real-issue349-predicatecell-helper-candidate", enforce_closure=True,
+    )
+    classified = {
+        row["name"] for row in result["common_helper_deltas"]
+        if row.get("classification") == ISSUE349_PREDICATECELL_CLASSIFICATION
+    }
+    expected = set(ISSUE349_PREDICATECELL_HELPER_DEFINITION_DELTAS)
+    if not result["pass"] or classified != expected:
+        raise AssertionError(
+            "Issue #349 PredicateCell helper owner/layout/caller inventory is incomplete: "
+            + "; ".join(result["errors"][:12])
+        )
+
+    logical_path = "asl/tile/model/legality/operand-schema.asl"
+    mutated = dict(candidate)
+    mutated[logical_path] += (
+        "\nreadonly func Issue349UnlistedPredicateLogicalCaller("
+        "op: TileBinaryOperation, output: TileInfo, source_left: TileIndex, "
+        "source_right: TileIndex, operation_type: TileDataType) => boolean\n"
+        "begin\n"
+        "    return TilePredicateLogicalOperandsLegal(op, output, source_left, "
+        "source_right, operation_type);\n"
+        "end;\n"
+    )
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-issue349-predicatecell-extra-caller", enforce_closure=False,
+    )
+    if not any(
+        "Issue #349 PredicateCell helper owner/layout/caller closure mismatch: "
+        "TilePredicateLogicalOperandsLegal" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("unlisted Issue #349 PredicateCell helper caller did not fail closed")
+
+    mutated = dict(candidate)
+    original = "    if (!left_predicate && !right_predicate) ||\n"
+    widened = (
+        "    if _Tiles[[source_left]].layout == TileLayout_CUBE_N8 then "
+        "return FALSE; end;\n" + original
+    )
+    if original not in candidate[logical_path]:
+        raise AssertionError("Issue #349 PredicateCell layout canary source is missing")
+    mutated[logical_path] = candidate[logical_path].replace(original, widened, 1)
+    result = _census_texts(
+        baseline, mutated, BASELINE_OBJECT,
+        "real-mutated-issue349-predicatecell-layout", enforce_closure=False,
+    )
+    if not any(
+        "Issue #349 PredicateCell helper owner/layout/caller closure mismatch: "
+        "TilePredicateLogicalOperandsLegal" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #349 PredicateCell layout mutation did not fail closed")
+
+
 def _issue374_shared_matrix_mutation_canaries() -> None:
     """Keep Issue #374's packed ColumnMajor read view private and exact."""
     paths = source_paths(BASELINE_OBJECT, "working-tree")
@@ -4994,6 +5549,120 @@ def _issue395_shared_tmov_mutation_canaries() -> None:
         for error in result["errors"]
     ):
         raise AssertionError("Issue #395 carrier helper extra caller did not fail closed")
+
+
+def _issue422_shared_nd_to_cube_mutation_canaries() -> None:
+    """Keep the reverse TMOV helper graph and selector codes finite."""
+    paths = source_paths(BASELINE_OBJECT, "working-tree")
+    baseline = _ref_texts(BASELINE_OBJECT, paths)
+    candidate = _ref_texts("working-tree", paths)
+    result = _census_texts(
+        baseline, candidate, BASELINE_OBJECT,
+        "real-issue422-shared-nd-to-cube-candidate", enforce_closure=True,
+    )
+    classified = {
+        row["name"] for row in result["common_helper_deltas"]
+        if row.get("classification") == ISSUE422_SHARED_ND_TO_CUBE_CLASSIFICATION
+    }
+    expected = set(ISSUE422_SHARED_ND_TO_CUBE_HELPER_DEFINITION_DELTAS)
+    if not result["pass"] or classified != expected:
+        raise AssertionError(
+            "Issue #422 reverse Shared ND-to-CUBE owner/layout/caller closure is incomplete: "
+            + "; ".join(result["errors"][:16])
+        )
+
+    selector_path = "asl/block/model/state/control-state.asl"
+    selector = (
+        "return data_layout == Zeros{5} + 21 ||\n"
+        "           data_layout == Zeros{5} + 22;"
+    )
+    if selector not in candidate.get(selector_path, ""):
+        raise AssertionError("Issue #422 reverse selector canary source is missing")
+    wrong_selector = dict(candidate)
+    wrong_selector[selector_path] = wrong_selector[selector_path].replace(
+        selector, selector.replace("+ 22", "+ 26"), 1,
+    )
+    result = _census_texts(
+        baseline, wrong_selector, BASELINE_OBJECT,
+        "real-mutated-issue422-shared-nd-to-cube-selector", enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #422 Shared ND-to-CUBE DATR selector must be exactly codes 21 and 22"
+        in error for error in result["errors"]
+    ):
+        raise AssertionError("Issue #422 reverse DATR selector widening did not fail closed")
+
+    mask_guard_path = "asl/block/model/dispatch/execution-mask-schema.asl"
+    broad_mask_guard = (
+        "BundleTMOVSelected() && _BundleDataAttributesPresent &&\n"
+        "       TileDataLayoutIsCubeConversion(\n"
+        "           _BundleDataAttributes.data_layout) &&"
+    )
+    narrow_mask_guard = (
+        "BundleTMOVSelected() && _BundleDataAttributesPresent &&\n"
+        "       (TileDataLayoutIsCubeToSharedND(\n"
+        "            _BundleDataAttributes.data_layout) ||\n"
+        "        TileDataLayoutIsSharedNDToCube(\n"
+        "            _BundleDataAttributes.data_layout)) &&"
+    )
+    if broad_mask_guard not in candidate.get(mask_guard_path, ""):
+        raise AssertionError("Issue #422 broad conversion mask guard canary source is missing")
+    narrowed_guard = dict(candidate)
+    narrowed_guard[mask_guard_path] = narrowed_guard[mask_guard_path].replace(
+        broad_mask_guard, narrow_mask_guard, 1,
+    )
+    result = _census_texts(
+        baseline, narrowed_guard, BASELINE_OBJECT,
+        "real-mutated-issue422-narrowed-conversion-mask-guard",
+        enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #422 MarkSelectedBundleExecutionMaskCarrier must reject masks across every TMOV conversion selector"
+        in error for error in result["errors"]
+    ):
+        raise AssertionError(
+            "Issue #422 conversion-mask guard narrowing did not fail closed"
+        )
+
+    conversion_path = "asl/block/model/state/control-state.asl"
+    conversion_domain = "return 21 <= code && code <= 26;"
+    if conversion_domain not in candidate.get(conversion_path, ""):
+        raise AssertionError("Issue #422 conversion-mask domain canary source is missing")
+    narrowed_domain = dict(candidate)
+    narrowed_domain[conversion_path] = narrowed_domain[conversion_path].replace(
+        conversion_domain, "return 21 <= code && code <= 22;", 1,
+    )
+    result = _census_texts(
+        baseline, narrowed_domain, BASELINE_OBJECT,
+        "real-mutated-issue422-narrowed-conversion-mask-domain",
+        enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #422 conversion-mask safety domain must remain exactly codes 21 through 26"
+        in error for error in result["errors"]
+    ):
+        raise AssertionError("Issue #422 conversion-mask safety domain narrowing did not fail closed")
+
+    helper_path = "asl/block/model/dispatch/shared-tmov-nd-to-cube.asl"
+    extra_caller = dict(candidate)
+    extra_caller[helper_path] += (
+        "\nreadonly func UnauthorizedIssue422TypePairCaller() => boolean\n"
+        "begin\n"
+        "    return BundleSharedTMOVSharedNDToCubeTypePairLegal(\n"
+        "        TileLayout_CUBE_M32, TileDataType_U8, TileDataType_U8);\n"
+        "end;\n"
+    )
+    result = _census_texts(
+        baseline, extra_caller, BASELINE_OBJECT,
+        "real-mutated-issue422-shared-nd-to-cube-extra-caller",
+        enforce_closure=False,
+    )
+    if result["pass"] or not any(
+        "Issue #422 reverse Shared ND-to-CUBE TMOV helper owner/layout/caller closure mismatch: "
+        "BundleSharedTMOVSharedNDToCubeTypePairLegal" in error
+        for error in result["errors"]
+    ):
+        raise AssertionError("Issue #422 type-pair helper extra caller did not fail closed")
 
 
 def _issue395_writer_parent_mutation_canaries() -> None:
@@ -5580,13 +6249,15 @@ def self_test() -> None:
         raise AssertionError("missing inventory owner canary failed closed")
     _real_relation_mutation_canaries()
     _execution_mask_support_mutation_canaries()
+    _issue349_predicatecell_helper_mutation_canaries()
     _issue374_shared_matrix_mutation_canaries()
     _issue395_shared_tmov_mutation_canaries()
+    _issue422_shared_nd_to_cube_mutation_canaries()
     _issue395_writer_parent_mutation_canaries()
     _issue371_b64_mutation_canaries()
     _issue360_gm_obligation_helper_mutation_canaries()
     _issue356_reduction_source_mutation_canaries()
-    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, Issue #371 M32 b64 double-CELL, Issue #360/#341 GM and source-lifetime helper owner/caller/layout, Issue #374 packed private Shared view, Issue #395 TMOV DATR/helper callers, writer-parent preservation, and bounded reduction-source mutations rejected")
+    print("layout-relation census end-to-end canaries passed: same-layout/Bias/helper/inventory/real-relation/indexed-domain/r4 owner, ExecutionMask, Issue #207 selector, Issue #349 PredicateCell owner/layout/caller closure, Issue #371 M32 b64 double-CELL, Issue #360/#341 GM and source-lifetime helper owner/caller/layout, Issue #374 packed private Shared view, Issue #395 TMOV DATR/helper callers, Issue #422 reverse TMOV selector and helper closure, writer-parent preservation, and bounded reduction-source mutations rejected")
 
 
 def main() -> int:

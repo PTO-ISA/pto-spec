@@ -124,12 +124,42 @@ begin
         else stored_byte[3:0] = value[3:0];
         end;
         let stored_value = ZeroExtend{PTO_XLEN}(stored_byte);
-        StoreTranslated(original_address, translated_address, 1, stored_value);
+        StoreTranslatedForMemoryRequest(original_address, translated_address,
+            1, stored_value, MemoryShareability_IntraCore,
+            MemoryRequestClass_Tile);
         return stored_value;
     else
         let stored_value = NormalizeMemoryAccessValue(value, element_bytes);
-        StoreTranslated(original_address, translated_address, element_bytes,
-            stored_value);
+        StoreTranslatedForMemoryRequest(original_address, translated_address,
+            element_bytes, stored_value, MemoryShareability_IntraCore,
+            MemoryRequestClass_Tile);
+        return stored_value;
+    end;
+end;
+
+func StoreIndexedMemoryElement(original_address: Word,
+                               translated_address: Word,
+                               data_type: TileDataType,
+                               high_nibble: boolean,
+                               value: Word) => Word
+begin
+    let element_bytes = TileMemoryElementBytes(data_type);
+    if TileDataTypeIsFourBit(data_type) then
+        let old_byte = LoadTranslatedUnsigned(translated_address, 1);
+        var stored_byte: Byte = old_byte[7:0];
+        if high_nibble then stored_byte[7:4] = value[3:0];
+        else stored_byte[3:0] = value[3:0];
+        end;
+        let stored_value = ZeroExtend{PTO_XLEN}(stored_byte);
+        StoreTranslatedForMemoryRequest(original_address, translated_address,
+            1, stored_value, MemoryShareability_IntraCore,
+            MemoryRequestClass_IndexedGenerated);
+        return stored_value;
+    else
+        let stored_value = NormalizeMemoryAccessValue(value, element_bytes);
+        StoreTranslatedForMemoryRequest(original_address, translated_address,
+            element_bytes, stored_value, MemoryShareability_IntraCore,
+            MemoryRequestClass_IndexedGenerated);
         return stored_value;
     end;
 end;
@@ -207,7 +237,8 @@ begin
         return TileWithPackedZeroValidRegionDefined(tile);
     end;
     var result = tile;
-    BeginMemoryReplay(ReadBPC());
+    BeginMemoryReplay(ReadBPC(), MemoryShareability_IntraCore,
+        MemoryRequestClass_Tile);
     // First-fault-only execution retains effects completed before the first
     // failing access. The destination is not marked complete until success.
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
@@ -236,7 +267,7 @@ begin
                 column as integer {0..65535}, tile.data_type);
             let raw = LoadTranslatedUnsigned(translated,
                 TileMemoryElementBytes(tile.data_type));
-            RecordLoadEvent(translated,
+            RecordTileLoadEvent(translated,
                 TileMemoryElementBytes(tile.data_type), raw,
                 CurrentBundleMemoryOrder());
             CommitMemoryReplayEffect();
@@ -321,7 +352,8 @@ func ExecuteTileStoreSnapshotProgress(tile: TileInfo, base_address: Word,
     tracked: boolean, core: PTOModelCoreIdentity, pe: MemoryAgentId,
     obligation_slot: GMObligationIndex) => TileStoreProgressResult
 begin
-    BeginMemoryReplay(request_pc);
+    BeginMemoryReplay(request_pc, MemoryShareability_IntraCore,
+        MemoryRequestClass_Tile);
     var committed_beats : integer {0..32768} = 0;
     var next_element = start_element;
     var progress_budget_reached = FALSE;
@@ -355,7 +387,7 @@ begin
                         TileMemoryStridedByteHighNibble(
                             column as integer {0..65535}, tile.data_type),
                         TileReadLogicalElement(tile, element));
-                    RecordStoreEvent(translated,
+                    RecordTileStoreEvent(translated,
                         TileMemoryElementBytes(tile.data_type), stored_value,
                         memory_order);
                     CommitMemoryReplayEffect();

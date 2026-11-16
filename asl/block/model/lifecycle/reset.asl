@@ -37,6 +37,7 @@ begin
         _BundleScalarBindings[[index]].source2 = 0;
         _BundleScalarBindings[[index]].source_count = 0;
         _BundleScalarBindings[[index]].execution_mask_present = FALSE;
+        _BundleScalarBindings[[index]].indexed_tlsu_mask_second_contiguous = FALSE;
     end;
     for index = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         _BundleTileBindings[[index]].valid = FALSE;
@@ -187,6 +188,13 @@ begin
     _BundleExecutionMask.zero_inactive = FALSE;
     _BundleExecutionMask.merge_base_valid = FALSE;
     _BundleExecutionMask.merge_base = 0;
+    _BundleExecutionMask.merge_base_waiting = FALSE;
+    _BundleExecutionMask.merge_base_generation_valid = FALSE;
+    _BundleExecutionMask.merge_base_generation_slot = 64;
+    _BundleExecutionMask.merge_base_generation_instance = Zeros{PTO_XLEN};
+    _BundleExecutionMask.merge_base_writer_instruction_instance =
+        Zeros{PTO_XLEN};
+    _BundleExecutionMask.merge_base_writer_execution_domain_token = 0;
     _BundleExecutionMask.predicate_tile_snapshot = Zeros{524288};
     _BundleHint.present = FALSE;
     _BundleHint.trace = FALSE;
@@ -267,6 +275,14 @@ begin
             _BundleFixedPointAttributes;
         _TrapContexts[[ring]].bundle_execution_domain_token =
             _BundleExecutionDomainToken;
+        _TrapContexts[[ring]].merge_base = 0;
+        _TrapContexts[[ring]].merge_base_generation_valid = FALSE;
+        _TrapContexts[[ring]].merge_base_generation_slot = 64;
+        _TrapContexts[[ring]].merge_base_generation_instance =
+            Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].merge_base_writer_instruction_instance =
+            Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].merge_base_writer_execution_domain_token = 0;
         _TrapContexts[[ring]].memory_copy_template = _MemoryCopyTemplate;
         _TrapContexts[[ring]].frame_template = _FrameTemplate;
         _TrapContexts[[ring]].t_queue = _TQueue;

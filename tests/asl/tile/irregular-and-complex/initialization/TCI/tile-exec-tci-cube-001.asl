@@ -144,13 +144,13 @@ begin
         TileLayout_CUBE_M32, 32, 2, 2, TRUE, 2, 256, 2, 31, 1,
         Zeros{PTO_XLEN} + 0x1000);
     RunTCICube(Zeros{5} + 26, Zeros{5} + 29, TileDataType_U16,
-        TileLayout_CUBE_M32, 32, 1, 2, TRUE, 1, 128, 2, 31, 0,
+        TileLayout_CUBE_M32, 32, 1, 2, TRUE, 1, 128, 1, 31, 0,
         Zeros{PTO_XLEN} + 0x1000);
     RunTCICube(Zeros{5} + 17, Zeros{5} + 29, TileDataType_S32,
         TileLayout_CUBE_M32, 32, 2, 2, TRUE, 2, 256, 2, 31, 1,
         Zeros{PTO_XLEN} + 0x1000);
     RunTCICube(Zeros{5} + 18, Zeros{5} + 29, TileDataType_S16,
-        TileLayout_CUBE_M32, 32, 1, 2, TRUE, 1, 128, 2, 31, 0,
+        TileLayout_CUBE_M32, 32, 1, 2, TRUE, 1, 128, 1, 31, 0,
         Zeros{PTO_XLEN} + 0x1000);
     RunTCICube(Zeros{5} + 16, Zeros{5} + 29, TileDataType_S64,
         TileLayout_CUBE_M32, 32, 1, 1, TRUE, 2, 256, 2, 31, 0,
@@ -189,10 +189,10 @@ begin
         2, 2, Zeros{PTO_XLEN} + 0xffffffff, Zeros{PTO_XLEN},
         Zeros{64} + 0x0000000100000000, 1, 0);
     RunTCICubeWrap(Zeros{5} + 24, Zeros{5} + 29, TileLayout_CUBE_M32,
-        2, 4, Ones{PTO_XLEN}, Zeros{PTO_XLEN},
+        2, 3, Ones{PTO_XLEN}, Zeros{PTO_XLEN},
         Zeros{64} + 1, 0, 1);
     RunTCICubeWrap(Zeros{5} + 16, Zeros{5} + 29, TileLayout_CUBE_M32,
-        2, 4, Zeros{PTO_XLEN} + 0x7fffffffffffffff,
+        2, 3, Zeros{PTO_XLEN} + 0x7fffffffffffffff,
         Zeros{PTO_XLEN} + 0x8000000000000000,
         Zeros{64} + 1, 0, 1);
     return 0;

@@ -17,6 +17,7 @@ PYTHON_LAUNCHED = frozenset(
         "architecture_readiness.py",
         "asl_tests.py",
         "asl_validation_shards.py",
+        "current_source_form_inventory.py",
         "encoding_witness.py",
         "evidence_sources.py",
         "full_validation_workflow.py",

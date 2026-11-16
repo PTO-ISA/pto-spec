@@ -162,8 +162,9 @@ begin
     end;
 
     let value = _FrameTemplate.source_values[[ordinal]];
-    StoreTranslated(address, write_probe.translated_address, 8, value);
-    RecordStoreEvent(
+    StoreTranslatedForMemoryRequest(address, write_probe.translated_address,
+        8, value, MemoryShareability_Private, MemoryRequestClass_LegacyExcluded);
+    RecordLegacyExcludedStoreEvent(
         write_probe.translated_address,
         8,
         value,
@@ -193,7 +194,7 @@ begin
         _FrameTemplate.return_target_valid = TRUE;
     end;
 
-    RecordLoadEvent(
+    RecordLegacyExcludedLoadEvent(
         read_probe.translated_address,
         8,
         value,

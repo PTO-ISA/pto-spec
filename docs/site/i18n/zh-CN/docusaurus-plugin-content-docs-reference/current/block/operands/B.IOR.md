@@ -280,8 +280,8 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | --- | --- | ---: | --- | --- | --- | --- | --- |
 | b_ior_32_c3ea71404eb3 | RegDst | 5 | 0–23 | none | 24–31 | absolute GPR destination | Encoded zero names the architectural zero GPR. |
 | b_ior_32_c3ea71404eb3 | RegSrc0 | 5 | 0–23 | none | 24–31 | first absolute GPR source | Encoded zero names the architectural zero GPR. |
-| b_ior_32_c3ea71404eb3 | RegSrc1 | 5 | 0–23 | none | 24–31 | second absolute GPR source | Encoded zero names the architectural zero GPR. |
-| b_ior_32_c3ea71404eb3 | RegSrc2 | 5 | 0–23 | none | 24–31 | third absolute GPR source | Encoded zero names the architectural zero GPR. |
+| b_ior_32_c3ea71404eb3 | RegSrc1 | 5 | 0–23 | none | 24–31 | second absolute GPR source | Encoded zero names the architectural zero GPR; on indexed TLSU the RegSrc1/RegSrc2 pair denotes descriptor absence only when no GPR ExecutionMask is carried by this first record. |
+| b_ior_32_c3ea71404eb3 | RegSrc2 | 5 | 0–23 | none | 24–31 | third absolute GPR source | Encoded zero names the architectural zero GPR; on indexed TLSU the RegSrc1/RegSrc2 pair denotes descriptor absence only when no GPR ExecutionMask is carried by this first record. |
 | b_ior_32_c3ea71404eb3 | ExecMaskPresent | 1 | 0–1 | none | none | marks that the final B.IOR record supplies the GPR ExecutionMask word(s) declared by the selected complete schema | No GPR ExecutionMask carrier is bound by this record. |
 
 - `b_ior_32_c3ea71404eb3.RegDst` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
@@ -314,6 +314,7 @@ end;
 
 ```asm
 One B.IOR may appear after BSTART and before the block body when the complete schema declares GPR operands. Eligible Local CUBE ExecutionMask forms may use one or two immediately contiguous records; TGPR2T and TIMG2COL retain their separately owned two-record forms.
+Indexed TLSU range descriptor (optional): first B.IOR is BaseGPR, MinIndexGPR, MaxIndexGPR; when combined with a GPR ExecutionMask, a second contiguous B.IOR supplies the mask word(s) and alone sets ExecMaskPresent.
 ```
 
 ## Operation
@@ -368,8 +369,14 @@ end;
 // In TLOAD/TSTORE schemas source zero supplies the GM base and source one
 // supplies row stride in bytes.  Omission is distinct from an
 // encoded selector whose current value is zero.
-// Indexed TLSU schemas require an explicit B.IOR: source zero supplies the GM
-// base and source one, source two, and the destination supply zero.
+// Indexed TLSU schemas require an explicit B.IOR: source zero supplies the
+// unsigned GM base. In a first record with ExecMaskPresent=0, the (source1,
+// source2) zero pair means descriptor absent; any other pair binds full-width
+// signed S64 relative byte bounds. ExecMaskPresent=1 on the first record keeps
+// the legacy Base-plus-mask interpretation. A descriptor plus GPR mask uses
+// exactly two contiguous records, with the flag only on the final mask record.
+// RegDst remains zero. Current-participating-PE bound ordering faults occur
+// before that request's indexed effects and preserve peer commits.
 pure func InstructionContractTLSUBaseSource_B_IOR() => integer
 begin
     return 0;
@@ -378,6 +385,15 @@ end;
 pure func InstructionContractTLSURowStrideSource_B_IOR() => integer
 begin
     return 1;
+end;
+pure func InstructionContractTLSUMinimumDisplacementSource_B_IOR() => integer
+begin
+    return 1;
+end;
+
+pure func InstructionContractTLSUMaximumDisplacementSource_B_IOR() => integer
+begin
+    return 2;
 end;
 
 readonly func InstructionContractHandler_B_IOR() => CommandSemanticHandler
@@ -392,7 +408,7 @@ end;
 - The complete BSTART operation schema determines whether B.IOR is consumed and the number and roles of its GPR inputs and output.
 - When B.IOR is omitted, every consumed input or output uses its operation-defined default. An explicitly encoded selector zero names the architectural zero GPR and is not omission.
 - For TLOAD and TSTORE, omission supplies GM base zero and a dense byte row stride derived from the resolved column count and DataType; explicit RegSrc1=zero supplies a zero stride.
-- All indexed TLSU forms require explicit B.IOR with RegSrc0 as the GM base address; RegSrc1, RegSrc2, and RegDst encode zero.
+- All indexed TLSU forms require explicit B.IOR with RegSrc0 as the unsigned GM base. In a first record without ExecMaskPresent, RegSrc1=RegSrc2=zero selects the legacy descriptor-absent form; otherwise they select full-width S64 MinIndexGPR and MaxIndexGPR values. If the first record has ExecMaskPresent=1, preserve its legacy Base-plus-GPR-mask interpretation. A present descriptor combined with a GPR mask uses an unflagged Base/Min/Max first record and one final contiguous mask record with ExecMaskPresent=1.
 - Matrix postprocess B.IOR slots follow the complete B.FPATR schema: scalar QuantParam then scalar LReLUParam, with omitted consumed slots reading the zero GPR.
 
 ## Legality
@@ -400,7 +416,7 @@ end;
 - B.IOR is legal only after BSTART and before the block body when the complete selected schema declares GPR operands; an explicitly encoded zero selector names GPR0 and is not omission.
 - RegDst and RegSrc0..RegSrc2 accept only absolute GPR selectors 0..23; selectors 24..31 are reserved and reject before effects.
 - Sources may repeat and may alias RegDst where the selected complete schema permits a destination. Any nonzero unconsumed field rejects before block effects.
-- Indexed TLSU consumes RegSrc0 as BaseGPR. RegSrc1, RegSrc2, and RegDst must be zero before memory or destination effects.
+- Indexed TLSU consumes RegSrc0 as BaseGPR. Without a first-record GPR ExecutionMask, (RegSrc1, RegSrc2)=(0,0) means no range descriptor, and every other legal selector pair consumes both full 64-bit GPR values as signed relative byte bounds. The pair rule never reinterprets a first record carrying the legacy ExecMaskPresent flag. A descriptor plus GPR ExecutionMask uses exactly two contiguous records with the flag only on the final mask record; PredicateTile ExecutionMask stays in the one-record form.
 - Every ordinary block accepts at most one B.IOR. TGPR2T and TIMG2COL retain their exact two-record exceptions. An eligible Local CUBE ExecutionMask GPR form appends one or two words after all operation-owned GPR inputs and may use one or two contiguous records, in dense source order, for up to six GPR inputs. Any GPR destination is allowed only in the first record; the second record is source-only.
 - ExecMaskPresent is one only on the final contiguous B.IOR record when a GPR ExecutionMask is bound. Earlier records, unpredicated forms, and Predicate-Tile forms require it to be zero. Selector GPR0 is legal and is distinguished from an unused zero selector by the final-record flag and exact schema arity.
 
@@ -423,8 +439,10 @@ end;
 
 - A nonzero unused field or other operation-schema mismatch raises a block/tile legality fault before operation effects.
 - An out-of-range selector raises Fault_IllegalInstruction before binding state changes. Standalone or body-phase B.IOR raises Illegal Block Exception before binding state changes. Duplicate, noncontiguous, third, misplaced, or schema-inapplicable records and a non-final or inapplicable ExecMaskPresent flag raise Fault_BundleControl or Fault_TileLegality before effects.
+- For a participating PE with a present indexed TLSU descriptor, S64 MinIndexGPR > MaxIndexGPR raises Fault_TileLegality before that request's indexed memory and Tile destination effects; committed peer effects remain.
 
 ## Examples
 
 - B.IOR a0, a1, zero, ->zero
 - B.IOR zero, ExecMaskPresent
+- B.IOR BaseGPR, MinIndexGPR, MaxIndexGPR, ->zero; B.IOR MaskLoGPR, MaskHiGPR, zero, ->zero, ExecMaskPresent (combined descriptor and GPR mask)

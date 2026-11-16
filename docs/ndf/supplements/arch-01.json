@@ -615,6 +615,42 @@
         "en": "Reserves the four DMA.FREE and MCOPY.DS/DL encodings without implementing execution semantics. The model rejects them before operand reads or architectural effects.",
         "zh-CN": "保留四条 DMA.FREE 和 MCOPY.DS/DL 指令的编码，不实现执行语义。模型在读取操作数或产生架构效果前拒绝执行。"
       }
+    },
+    {
+      "id": "PTO-ARCH-RUNTIME-STARTUP-ABI-001",
+      "source_path": "asl/arch/state/kernel-lifecycle.asl",
+      "title": {
+        "en": "Single-leader common-entry runtime startup",
+        "zh-CN": "共同入口的单 leader runtime 启动"
+      },
+      "summary": {
+        "en": "The runtime composes common entry, canonical PE identity and a four-way startup barrier; PE0 owns shared initialization while workers perform private bootstrap and wait.",
+        "zh-CN": "Runtime 组合共同入口、标准 PE 身份与四方启动屏障；PE0 负责共享初始化，其余 PE 做私有准备后等待。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-RUNTIME-STARTUP-LIFETIME-001",
+      "source_path": "asl/arch/state/kernel-lifecycle.asl",
+      "title": {
+        "en": "Startup failure and invocation lifetime",
+        "zh-CN": "启动失败与 invocation 生命周期"
+      },
+      "summary": {
+        "en": "Process construction and per-invocation preparation have distinct lifetimes. Recovery preserves committed effects; failure cannot release workers, and relaunch needs a fresh startup rendezvous.",
+        "zh-CN": "进程构造与每次 invocation 准备具有不同生命周期。恢复保留已提交效果，失败不得放行 worker，重新 launch 必须重新完成启动会合。"
+      }
+    },
+    {
+      "id": "PTO-ARCH-RUNTIME-STARTUP-ADAPTATION-001",
+      "source_path": "asl/arch/state/kernel-lifecycle.asl",
+      "title": {
+        "en": "Runtime startup consumer adaptation obligations",
+        "zh-CN": "Runtime 启动的下游适配义务"
+      },
+      "summary": {
+        "en": "Compilers, runtimes, platforms, models and workloads need a common-entry ELF and explicit startup evidence; platform bindings remain separate decisions.",
+        "zh-CN": "编译器、runtime、平台、模型和工作负载需提供共同入口 ELF 及明确的启动证据；平台绑定仍由独立决策负责。"
+      }
     }
   ]
 }

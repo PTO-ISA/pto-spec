@@ -19,14 +19,14 @@ end;
 
 pure func MaskedRearrangementIOT(
     source0: bits(6), source1: bits(6), source1_valid: boolean,
-    destination_valid: boolean, last: boolean) => bits(64)
+    destination_valid: boolean, last: boolean, size_code: bits(4)) => bits(64)
 begin
     var instruction = if source1_valid then
         Zeros{64} + 0x00004013 else Zeros{64} + 0x00005013;
     instruction[31:26] = source1;
     instruction[25:20] = source0;
     instruction[19] = if last then '1' else '0';
-    instruction[18:15] = if destination_valid then '0010' else '0000';
+    instruction[18:15] = if destination_valid then size_code else '0000';
     instruction[11:9] = '001';
     instruction[8:7] = Zeros{2};
     return instruction;
@@ -53,10 +53,10 @@ func BindMaskedTPERMUTE()
 begin
     let sources = ExecuteCommandInstruction(
         MaskedRearrangementIOT(
-            Zeros{6}, Zeros{6} + 1, TRUE, FALSE, FALSE), 32);
+            Zeros{6}, Zeros{6} + 1, TRUE, FALSE, FALSE, '0000'), 32);
     let indices_mask = ExecuteCommandInstruction(
         MaskedRearrangementIOT(
-            Zeros{6} + 2, Zeros{6} + 3, TRUE, TRUE, TRUE), 32);
+            Zeros{6} + 2, Zeros{6} + 3, TRUE, TRUE, TRUE, '0110'), 32);
     assert sources == CommandExecution_Executed;
     assert indices_mask == CommandExecution_Executed;
 end;
@@ -135,10 +135,10 @@ func BindMaskedTSHUF()
 begin
     let sources = ExecuteCommandInstruction(
         MaskedRearrangementIOT(
-            Zeros{6}, Zeros{6} + 1, TRUE, FALSE, FALSE), 32);
+            Zeros{6}, Zeros{6} + 1, TRUE, FALSE, FALSE, '0000'), 32);
     let mask = ExecuteCommandInstruction(
         MaskedRearrangementIOT(
-            Zeros{6} + 2, Zeros{6}, FALSE, TRUE, TRUE), 32);
+            Zeros{6} + 2, Zeros{6}, FALSE, TRUE, TRUE, '0001'), 32);
     let control = ExecuteCommandInstruction(
         MaskedRearrangementIOR(Zeros{5} + 2), 32);
     assert sources == CommandExecution_Executed;

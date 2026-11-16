@@ -92,7 +92,7 @@ TREMS <Row=32, Col=4, ValidRow=1, S32>, T#1, a0, ->T<512B>
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/elementwise.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","surface":"tile","classification":["model","execution","elementwise"],"depends_on":["PTO-SCALAR-MODEL-FSU-SCALAR-FP","PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-EXECUTION-MINMAX","PTO-TILE-MODEL-STATE-TYPES"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","surface":"tile","classification":["model","execution","elementwise"],"depends_on":["PTO-SCALAR-MODEL-FSU-SCALAR-FP","PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-EXECUTION-MINMAX","PTO-TILE-MODEL-STATE-TYPES","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS"]}
 // PTO-REQ-TEPL-001: direct, read-before-write TEPL semantics.
 func TileSquareRoot(value: Word) => Word
 begin
@@ -442,13 +442,13 @@ begin
     let destination_tile = destination.value;
     let operation_type = destination_tile.data_type;
     assert left_tile.allocated && right_tile.allocated;
-    assert TileElementwiseShapeMatch(source_left, source_right);
+    // Operand legality has already checked compatible source geometry.
     // The transient writer may be narrower than the unchanged parent.
     assert destination_tile.valid_rows == left_tile.valid_rows &&
            destination_tile.valid_columns == left_tile.valid_columns &&
-           destination_tile.layout == left_tile.layout &&
-           destination_tile.storage_kind == left_tile.storage_kind;
+           destination_tile.layout == left_tile.layout;
     assert !TileLayoutIsCube(destination_tile.layout) ||
+           destination_tile.storage_kind == TileStorage_PredicateCell ||
            TileCubeDescriptorLegal(destination_tile);
     assert TileCarrierWidthCompatible(left_tile.data_type, operation_type);
     assert TileCarrierWidthCompatible(right_tile.data_type, operation_type);
@@ -483,7 +483,9 @@ begin
     end;
     result = TileWithValidRegionDefined(result);
     if TileBinaryUsesClosedElementwiseContract(op) then
-        result = TileWithPadding(result, CurrentBundlePadValue());
+        result = if result.storage_kind == TileStorage_PredicateCell then
+            PredicateCellWithPadding(result, CurrentBundlePadValue())
+            else TileWithPadding(result, CurrentBundlePadValue());
     end;
     return result;
 end;

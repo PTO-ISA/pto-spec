@@ -37,7 +37,8 @@
     "PTO-BSTART-TMOV-SHARED-001",
     "PTO-TMOV-CONTRACT-001",
     "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
-    "PTO-TMOV-CUBE-TO-SHARED-ND-001"
+    "PTO-TMOV-CUBE-TO-SHARED-ND-001",
+    "PTO-TMOV-SHARED-ND-TO-CUBE-001"
   ],
   "affected_units": [
     "PTO-BLOCK-B-DATR",
@@ -61,7 +62,12 @@
     "PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-CUBE-TO-ND",
     "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
     "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
-    "PTO-TILE-MODEL-MEMORY-SHARED-CUBE-TO-ND"
+    "PTO-TILE-MODEL-MEMORY-SHARED-CUBE-TO-ND",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+    "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU-HELPERS",
+    "PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-ND-TO-CUBE",
+    "PTO-TILE-MODEL-MEMORY-SHARED-ND-TO-CUBE"
   ],
   "resolves": [],
   "supersedes": [],
@@ -140,6 +146,33 @@
         "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
         "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
         "PTO-TILE-MODEL-MEMORY-SHARED-CUBE-TO-ND"
+      ]
+    },
+    {
+      "date": "2026-11-04",
+      "baseline": "2209562859a89be80b73ea926f5d60b9d018faae",
+      "approvers": [
+        "ckwllawliet <641433195@qq.com>"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/422",
+      "affected_ndf": [
+        "PTO-CUBE-CELL-TRANSPORT-001",
+        "PTO-BSTART-TMOV-SHARED-001",
+        "PTO-TMOV-CONTRACT-001",
+        "PTO-TMOV-SHARED-ND-TO-CUBE-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-DATR",
+        "PTO-BLOCK-BSTART-TMOV",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU-HELPERS",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TMOV-ND-TO-CUBE",
+        "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+        "PTO-TILE-MODEL-MEMORY-SHARED-ND-TO-CUBE",
+        "PTO-TILE-TMOV"
       ]
     }
   ],
@@ -348,3 +381,39 @@ RCPE6M2=21，沿用既有 carrier-compatible/source-only 约束，并包含其�
 集合，不改变固定编码字段或其他 BSTART。新 Local CUBE 到 Shared 形态的
 DATR DataType 仍为 DTYPE_NONE，保留源 backing；RCPE6M2 不作为持久 descriptor
 backing。实现须更新 owner 白名单及派生 decoder/镜像/正反例。
+
+## Accepted amendment: issue #422 — Shared ND to Local CUBE
+
+Accepted on 2026-11-04 by ISA owner `ckwllawliet` against baseline
+`2209562859a89be80b73ea926f5d60b9d018faae`. Linked requirements:
+`PTO-CUBE-CELL-TRANSPORT-001`, `PTO-BSTART-TMOV-SHARED-001`,
+`PTO-TMOV-CONTRACT-001`, and `PTO-TMOV-SHARED-ND-TO-CUBE-001`.
+
+**English — rationale and scope.** This amendment adds Function-2 TMOV Shared
+source forms for the existing `ND2M32` and `ND2M16` selectors. A published
+RowMajor Shared parent, or an explicit contiguous subview of complete physical
+rows, supplies valid raw logical values to a newly allocated Local CUBE_M32 or
+CUBE_M16 tile per participating PE. The backing type is retained, invalid source
+padding is not read, and existing GM TLOAD/TSTORE and forward CUBE-to-Shared
+forms retain their meanings. Whole-row extraction is restricted by the accepted
+contract; it does not enable arbitrary two-dimensional subviews or implicit PE
+partitioning. LB2 effective value one derives physical columns whether omitted
+or explicitly written, following the accepted issue #422 decision.
+
+This is an additive acceptance of previously illegal Function-2 Shared-source
+forms. The behavior is owned by the cited ASL/NDF clauses; this ADR amendment
+records the interface choice and links implementation evidence. Release impact
+is required, with V1 validation; publication does not authorize release
+preparation, tagging, or issue closure.
+
+**中文 — 原因与范围。** 本 amendment 为既有 `ND2M32` 和 `ND2M16` selector
+增加 Function-2 TMOV Shared source 形式。已发布的 RowMajor Shared parent，或
+显式选取完整物理行的连续子视图，为每个参与 PE 提供有效 raw 逻辑值，并创建
+新的 Local CUBE_M32 或 CUBE_M16 tile。目标保留源 backing type，不读取无效源
+padding；现有 GM TLOAD/TSTORE 与正向 CUBE-to-Shared 形式保持原义。整行提取受
+已接受 contract 限定，不支持任意二维子视图或隐式 PE 分片。按 issue #422 决定，
+有效 LB2 为 1 时推导物理列数，省略与显式写入 1 等价。
+
+该 amendment 仅新增此前非法的 Function-2 Shared-source 形式。具体语义由所列
+ASL/NDF 条款拥有；本 ADR 记录接口决定并链接实现证据。需执行 V1 验证，但不
+授权 release preparation、打标签或关闭 issue。

@@ -4,36 +4,23 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 import subprocess
+import sys
 
 
 ROOT = Path(__file__).resolve().parent.parent
-EXPECTED_FORM_COUNT = 578
-# Version-neutral fingerprint for the reviewed current draft; --release checks
-# the separately published manifest identity.
-EXPECTED_FINGERPRINT = (
-    "b36951095971458987ae8de8c918279cfbbefc44a5618c855624bc4d3d03809d"
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.current_source_form_inventory import (  # noqa: E402
+    check_current_source_binary,
+    check_release_binary,
 )
+
 EXPECTED_RELEASE = "0.59.0"
 EXPECTED_ENCODING_ABI = "pto-isa-0.59.0-mode-function-v1"
-PROJECTION_KEYS = (
-    "form_id",
-    "mnemonic",
-    "asm",
-    "length_bits",
-    "encoding_kind",
-    "encoding",
-    "fields",
-    "constraints",
-)
-
-
-def load_forms(relative: str) -> list[dict]:
-    catalog = json.loads((ROOT / relative).read_text(encoding="utf-8"))
-    return catalog["forms"]
 
 
 def parse_args() -> argparse.Namespace:
@@ -44,32 +31,6 @@ def parse_args() -> argparse.Namespace:
         help="also require the published release manifest to match current encodings",
     )
     return parser.parse_args()
-
-
-def check_architecture_binary() -> str:
-    forms = load_forms("spec/catalog/scalar-forms.json")
-    forms += load_forms("spec/catalog/command-forms.json")
-    if len(forms) != EXPECTED_FORM_COUNT:
-        raise SystemExit(
-            f"encoded-form count drift: expected {EXPECTED_FORM_COUNT}, got {len(forms)}"
-        )
-    ids = [row["form_id"] for row in forms]
-    if len(ids) != len(set(ids)):
-        raise SystemExit("encoded-form IDs are not globally unique")
-    projection = [
-        {key: row[key] for key in PROJECTION_KEYS}
-        for row in sorted(forms, key=lambda row: row["form_id"])
-    ]
-    payload = json.dumps(projection, sort_keys=True, separators=(",", ":")).encode(
-        "utf-8"
-    )
-    fingerprint = hashlib.sha256(payload).hexdigest()
-    if fingerprint != EXPECTED_FINGERPRINT:
-        raise SystemExit(
-            "encoded-form fingerprint drift: update the normative review before "
-            f"changing {EXPECTED_FINGERPRINT} to {fingerprint}"
-        )
-    return fingerprint
 
 
 def check_release_linkage() -> str:
@@ -122,17 +83,25 @@ def check_release_linkage() -> str:
 
 def main() -> int:
     args = parse_args()
-    fingerprint = check_architecture_binary()
+    try:
+        current_count, current_fingerprint = check_current_source_binary(ROOT)
+    except ValueError as error:
+        raise SystemExit(str(error)) from error
     if args.release:
+        try:
+            release_count, release_fingerprint = check_release_binary(ROOT)
+        except ValueError as error:
+            raise SystemExit(str(error)) from error
         release_encoding = check_release_linkage()
         print(
-            f"release binary closure passed: {EXPECTED_FORM_COUNT} encoded forms, "
-            f"fingerprint {fingerprint}, release encoding {release_encoding}"
+            f"release binary closure passed: {current_count} current accepted forms, "
+            f"published identity {release_count} forms ({release_fingerprint}), "
+            f"release encoding {release_encoding}"
         )
     else:
         print(
-            f"architecture binary closure passed: {EXPECTED_FORM_COUNT} encoded forms, "
-            f"fingerprint {fingerprint}"
+            f"architecture binary closure passed: {current_count} current accepted forms, "
+            f"fingerprint {current_fingerprint}"
         )
     return 0
 

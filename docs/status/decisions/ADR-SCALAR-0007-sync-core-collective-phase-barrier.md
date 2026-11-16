@@ -36,7 +36,10 @@
     "PTO-TLOAD-MEMORY-001",
     "PTO-TMOV-CONTRACT-001",
     "PTO-BSTART-TLOAD-WEIGHT-COOPERATIVE-001",
-    "PTO-BSTART-TIMG2COL-COOPERATIVE-001"
+    "PTO-BSTART-TIMG2COL-COOPERATIVE-001",
+    "PTO-ARCH-RUNTIME-STARTUP-ABI-001",
+    "PTO-ARCH-RUNTIME-STARTUP-LIFETIME-001",
+    "PTO-ARCH-RUNTIME-STARTUP-ADAPTATION-001"
   ],
   "affected_units": [
     "PTO-SCALAR-SYNC-CORE",
@@ -96,7 +99,24 @@
   "release_impact": "required",
   "release_boundary": false,
   "interface_change": true,
-  "amendments": [],
+  "amendments": [
+    {
+      "date": "2026-11-03",
+      "baseline": "149c3a56c130bb6a13cb9f91e1565f084103cb96",
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/150#issuecomment-6592769941",
+      "approvers": [
+        "zhoubot"
+      ],
+      "affected_ndf": [
+        "PTO-ARCH-RUNTIME-STARTUP-ABI-001",
+        "PTO-ARCH-RUNTIME-STARTUP-LIFETIME-001",
+        "PTO-ARCH-RUNTIME-STARTUP-ADAPTATION-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-STATE-KERNEL-LIFECYCLE"
+      ]
+    }
+  ],
   "legacy_ids": []
 }
 ---
@@ -175,3 +195,102 @@ LLVM, SuperScalarModel, benchmark adoption, and ASL-MODEL compile/link integrati
 **English.** V1 covers the specification, its tests and projections. Preserve existing local fences, memory/recovery contracts, and Tile collectives. External compiler/simulator changes and exact-commit release validation remain separate.
 
 **中文。** V1 范围为规范、测试和直接投影。保留既有本地 fence、内存和恢复契约及 Tile collective。外部编译器或模拟器修改以及精确提交的发布验证另行处理。
+
+
+## 2026-11-03 amendment: single-leader runtime startup ABI
+
+The maintainer requested retaining single-leader shared initialization as an
+explicit software ABI over the already accepted common-entry architecture.
+[The scoped architecture request](https://github.com/PTO-ISA/pto-spec/issues/150#issuecomment-6592769941)
+records baseline `149c3a56c130bb6a13cb9f91e1565f084103cb96`, defaults,
+compatibility, remaining decisions and evidence. This amends the existing
+lifecycle decision; it does not create a second launch or synchronization owner.
+Acceptance records the maintainer's instruction, not a GitHub review receipt.
+
+### Decision and normative owners
+
+The three `PTO-ARCH-RUNTIME-STARTUP-{ABI,LIFETIME,ADAPTATION}-001` clauses in
+[`kernel-lifecycle.asl`](../../../asl/arch/state/kernel-lifecycle.asl) own the
+startup sequence, initialization lifetime/failure rules, and consumer obligations.
+Their generated [reference](../../arch/state/kernel-lifecycle.md) is the readable
+projection. PE identity and instruction legality remain owned by the existing
+THREAD_ID and SYNC.CORE contracts.
+
+The choice composes a common entry, a PE0-only shared initializer and the existing
+four-way barrier. It permits PE-private preparation and post-entry role branches.
+It deliberately separates process construction from invocation preparation, so
+relaunch does not repeat process constructors. A missing participant remains a
+wait, and failure uses existing recovery/abort rules rather than introducing a
+new architectural startup fault or hidden ready state.
+
+### Alternatives and compatibility
+
+- Separate initial leader and worker PCs retain historical implementation
+  convenience but do not satisfy the current common-entry contract. Existing
+  worker routines can be called after role selection inside the common entry.
+- Running hosted `_start` / libc initialization independently on every PE can
+  duplicate process-wide state and services. A common runtime trampoline with
+  explicit ownership is the selected direction.
+- A local fence or ready-flag polling alone does not provide the required
+  four-participant startup rendezvous. No timeout or reduced PE mask may claim
+  the missing participant has arrived.
+- Implicit hardware leader mode would invent target behavior. Startup remains a
+  software protocol using existing instruction semantics.
+
+This is a software startup ABI requirement with release impact. It changes no
+instruction encoding, SSR address, launch instruction, or architectural barrier
+membership. Consumers using separate initial PCs or duplicated shared
+initialization need adaptation before claiming conformance. The existing
+encoding ABI identity is not a claim that their runtime startup already conforms.
+
+### Required downstream adaptation and acceptance
+
+The following is the integration work breakdown for the normative adaptation
+clause, not evidence that these repositories have already changed. Each owner
+must record its own implementation PR, exact revision and test results against
+this PTO baseline and decision; downstream NDF identifiers stay in their owners.
+
+| Owner | Required adaptation | Acceptance evidence |
+| --- | --- | --- |
+| LLVM / linker / compiler-rt | Preserve common runtime entry and role branches; emit legal canonical THREAD_ID and SYS SYNC.CORE; preserve initialization memory ordering. | Disassembly of the common-entry runtime-only ELF, retained startup symbols and exact compiler/linker revisions. |
+| musl / runtime | Put shared and process initialization under PE0 ownership; supply safe private bootstrap and separate process lifetime from per-invocation preparation. | Exactly-one initializer count, isolated live stacks, valid declared TLS use, repeated-launch and failure tests. |
+| TileOP API | Route four-PE invocation through the startup contract; preserve single-context guards and remove separate-entry or implicit-launch assumptions. | API sample and negative single-context case; source-to-ELF correspondence. |
+| Platform / firmware / loader | Bind entry, parameter locations, stacks, context creation, invocation identity and status/abort/reset transport under #386. | Four actual contexts with one entry and four IDs, missing-participant wait, startup failure and relaunch on the named platform or simulator. |
+| ASL-Model / gfrun / QEMU / timing models | Execute independent PE contexts from common entry without synthesized arrivals or repeated single-context calls; preserve fault and invocation isolation. | Same runtime-only ELF and declared launch bindings; workers-first and leader-first schedules, memory visibility, abort/relaunch checks. |
+| SuperNPUBench | Adopt the common startup before parallel work and keep shared preparation single-owner. | Same four-PE ELF across compared models, independent golden output, declared runtime/toolchain/model revisions, completion and failure records. |
+
+Conformance evidence must distinguish specification tests, compiled runtime
+execution, model comparison and hardware validation. A model result cannot stand
+in for a hardware launcher result, and compilation cannot prove startup behavior.
+
+### Remaining decisions and release consequences
+
+[#386](https://github.com/PTO-ISA/pto-spec/issues/386) still owns concrete launch
+transport, symbols/ELF identification, register/argument layout, stack geometry,
+TLS binding and status/abort/reset interfaces.
+[#150](https://github.com/PTO-ISA/pto-spec/issues/150) still owns the complete
+hosted fd/syscall/exit and process-lifetime ABI and cross-repository closure.
+Neither issue is closed by this amendment. These fields are intentionally
+unassigned here; no simulator default becomes a portable requirement.
+
+Focused ASL tests exercise encoded waiting/publication and abort/relaunch
+boundaries using existing semantics. They do not execute a full startup object,
+prove compiler role selection or validate ELF/TLS/libc bindings. The downstream
+runtime-only ELF and independent-golden workload remain release obligations.
+No release number, tag or published manifest is changed by this amendment.
+
+### Bilingual amendment detail / 双语修订详述
+
+**English.** The accepted direction keeps one initialization owner without
+reviving separate initial PCs. PE0's shared preparation and the workers' private
+bootstrap meet at the existing startup barrier. The current contract is the three
+named ASL/NDF clauses. Compiler, runtime, launcher, model and workload owners must
+adapt and provide evidence; undecided platform bindings remain explicit gaps.
+
+**中文。** 本修订把“保留单 leader 初始化”落实为软件启动 ABI，并沿用四 PE 共同入口。
+PE0 负责共享准备，PE1～PE3 完成必要私有准备后在共同启动屏障等待；初始化完成并满足
+四方同步条件后才进入 kernel 工作阶段。进程级 libc/构造器初始化与每次 invocation 的
+准备分开，启动失败不得伪造到达或提前放行，重新 launch 不得复用旧同步状态。
+当前规范仅由上述三个 ASL/NDF 条款定义。编译器、runtime、平台 launcher、模型和
+benchmark 必须完成各自适配并提供可追溯证据；具体平台绑定及完整 hosted ABI 继续
+由 #386、#150 跟踪，不能把本次规范变更当作下游或真实硬件已经完成。

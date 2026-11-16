@@ -96,7 +96,7 @@ begin
             let raw = LoadTranslatedUnsigned(
                 translated_addresses[[index_element]],
                 TileMemoryElementBytes(destination_tile.data_type));
-            RecordLoadEvent(translated_addresses[[index_element]],
+            RecordIndexedLoadEvent(translated_addresses[[index_element]],
                 TileMemoryElementBytes(destination_tile.data_type), raw,
                 CurrentBundleMemoryOrder());
             let first_column = if TileDataTypeIsFourBit(
@@ -200,7 +200,7 @@ begin
                 let raw = LoadTranslatedUnsigned(
                     translated_addresses[[index_element]],
                     TileMemoryElementBytes(destination_tile.data_type));
-                RecordLoadEvent(translated_addresses[[index_element]],
+                RecordIndexedLoadEvent(translated_addresses[[index_element]],
                     TileMemoryElementBytes(destination_tile.data_type), raw,
                     CurrentBundleMemoryOrder());
                 let first_column = if TileDataTypeIsFourBit(

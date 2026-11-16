@@ -456,7 +456,7 @@ begin
                (if cell_select then
                    TileCubePredicateDataTypeSupported(data_type) &&
                    TilePredicateCellOperationValuesLegal(mask) &&
-                   TilePredicateCellShapeMatchesNumericAs(
+                   TilePredicateCellSelectShapeMatchesNumericAs(
                        mask, source_true, data_type)
                 else
                    !SelectedBundleComparisonCUBE(source_true) &&

@@ -86,8 +86,9 @@ This page is a generated reference view of the normative ASL unit.
 // NDF-BEGIN: PTO-REQ-INSTRUCTION-DISPATCH-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted
 // ExecutePTOInstruction is the unique encoded-instruction entry point. It MUST
-// prefer an accepted 64-bit command form, dispatch non-64-bit input to scalar
-// decoding, and reject an otherwise unmatched 64-bit value with
+// prefer an accepted 64-bit command form, then accept an authorized standalone
+// 64-bit Scalar Shareability Carrier, dispatch non-64-bit input to ordinary
+// scalar decoding, and reject an otherwise unmatched 64-bit value with
 // Fault_IllegalInstruction after beginning exactly one architectural attempt.
 // ExecuteNextPTOInstruction MUST fetch through PTO-REQ-INSTRUCTION-FETCH-001
 // and then invoke this encoded entry point without adding another decoder.
@@ -116,6 +117,22 @@ begin
     elsif length_bits != 64 then
         let scalar_status = ExecuteScalarInstruction(
             instruction[47:0], length_bits as integer {16,32,48});
+        if scalar_status == ScalarExecution_Executed then
+            return PTOInstruction_Executed;
+        elsif scalar_status == ScalarExecution_Blocked then
+            return PTOInstruction_Blocked;
+        else
+            return PTOInstruction_Rejected;
+        end;
+    elsif DecodeScopedScalarForm(instruction, 64) !=
+          PTO_SCOPEDSCALAR_FORM_COUNT then
+        let scoped_form = DecodeScopedScalarForm(instruction, 64) as
+            integer {0..PTO_SCOPEDSCALAR_FORM_COUNT-1};
+        let scalar_status = ExecuteScalarInstructionWithShareability(
+            instruction[63:16],
+            ScopedScalarInnerLengthOfForm(scoped_form),
+            ScopedScalarShareabilityOfForm(scoped_form),
+            64);
         if scalar_status == ScalarExecution_Executed then
             return PTOInstruction_Executed;
         elsif scalar_status == ScalarExecution_Blocked then

@@ -21,8 +21,8 @@
     "clsx": "2.1.1",
     "plotly.js": "npm:plotly.js-gl2d-dist-min@4.0.0",
     "prism-react-renderer": "2.4.1",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "wavedrom": "3.6.1"
   },
   "devDependencies": {
@@ -30,9 +30,9 @@
     "@docusaurus/tsconfig": "3.10.2",
     "@docusaurus/types": "3.10.2",
     "@axe-core/playwright": "4.13.0",
-    "@playwright/test": "1.62.1",
-    "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.7",
+    "@playwright/test": "1.64.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "lighthouse": "13.4.1",
     "typescript": "5.9.3"
   },
@@ -42,9 +42,9 @@
   "pnpm": {
     "overrides": {
       "brace-expansion": "1.1.21",
-      "fast-uri": "3.1.8",
+      "fast-uri": "3.1.9",
       "image-size": "2.0.3",
-      "joi": "17.13.8",
+      "joi": "17.13.9",
       "js-yaml": "4.3.2",
       "serialize-javascript": "7.1.0"
     }

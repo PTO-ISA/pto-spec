@@ -181,7 +181,7 @@ begin
     SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
     let tsels_iot = ExecuteCommandInstruction(
         DecodedSelectTSELSResult(Zeros{6} + 8, Zeros{6} + 10,
-            Zeros{2}, Zeros{4} + 2), 32);
+            Zeros{2}, Zeros{4} + 1), 32);
     let tsels_ior = ExecuteCommandInstruction(
         DecodedSelectIOR(Zeros{5}, Zeros{5} + 2, Zeros{5} + 3, TRUE), 32);
     assert tsels_iot == CommandExecution_Executed;

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-RC-ATOMIC-FENCE-ORDER-002","source":"asl/arch/memory-model/ordering.asl","requirements":["PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001","PTO-ARCH-MEMORY-MODEL-FENCE-TRANSPORT-001","PTO-ARCH-MEMORY-MODEL-REPLAY-001","PTO-ARCH-MEMORY-MODEL-FLUSH-001","PTO-ARCH-CORE-SYNCHRONIZATION-001"],"kind":"ordering","summary":"Cross-agent atomics synchronize only through reads-from release/acquire pairs, fences order only matching class masks, replay flush keeps committed effects, and Core synchronization rejects a stale post-barrier read.","pass_condition":"Fence masks, cross-agent atomic reads-from, relaxed atomic negatives, replay flush retention, and the encoded Core barrier memory relation all hold.","related_sources":["asl/arch/memory-model/fault-precision.asl","asl/arch/memory-model/memory-events.asl","asl/arch/state/core-synchronization.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-RC-ATOMIC-FENCE-ORDER-002","source":"asl/arch/memory-model/ordering.asl","requirements":["PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001","PTO-ARCH-MEMORY-MODEL-FENCE-TRANSPORT-001","PTO-ARCH-MEMORY-MODEL-REPLAY-001","PTO-ARCH-MEMORY-MODEL-FLUSH-001","PTO-ARCH-CORE-SYNCHRONIZATION-001","PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001"],"kind":"ordering","summary":"Cross-agent atomics synchronize only through reads-from release/acquire pairs, fences order only matching class masks, replay flush keeps committed effects, and Core synchronization rejects a stale post-barrier read.","pass_condition":"Fence masks, cross-agent atomic reads-from, relaxed atomic negatives, replay flush retention, and the encoded Core barrier memory relation all hold.","related_sources":["asl/arch/memory-model/fault-precision.asl","asl/arch/memory-model/memory-events.asl","asl/arch/state/core-synchronization.asl"]}
 func TestRCFenceOrdersMatchingClassPair()
 begin
     ResetMemoryExecution();
@@ -115,13 +115,20 @@ end;
 func TestRCMemoryReplayFlushRetainsCommitted()
 begin
     ResetProfileState();
+    _CurrentMemoryShareability = MemoryShareability_IntraCore;
+    _CurrentMemoryRequestClass = MemoryRequestClass_Scalar;
     ResetMemoryExecution();
     let request = Zeros{PTO_XLEN} + 0x900;
-    BeginMemoryReplay(request);
+    BeginMemoryReplay(request, MemoryShareability_IntraCore,
+        MemoryRequestClass_Scalar);
     assert !MemoryReplayCanRetryWholeRequest(request);
+    assert _MemoryReplayState.shareability == MemoryShareability_IntraCore;
+    assert _MemoryReplayState.request_class == MemoryRequestClass_Scalar;
     - = AddInitialWriteEvent(Zeros{PTO_XLEN}, 8, Zeros{PTO_XLEN});
     - = AddStoreEvent(0, Zeros{PTO_XLEN}, 8, Zeros{PTO_XLEN} + 1,
         MemoryOrder_Relaxed, 1);
+    assert _MemoryEvents[[1]].shareability == MemoryShareability_IntraCore;
+    assert _MemoryEvents[[1]].request_class == MemoryRequestClass_Scalar;
     CommitMemoryReplayEffect();
     assert _MemoryReplayState.committed_event_count == 2;
     - = AddStoreEvent(0, Zeros{PTO_XLEN}, 8, Zeros{PTO_XLEN} + 2,
@@ -140,6 +147,8 @@ end;
 func TestRCInactiveReplayFencesAndWritesAreIgnored()
 begin
     ResetProfileState();
+    _CurrentMemoryShareability = MemoryShareability_IntraCore;
+    _CurrentMemoryRequestClass = MemoryRequestClass_Scalar;
     ResetMemoryExecution();
     let launch = LaunchKernelInvocation(0, Zeros{PTO_XLEN} + 0x180);
     assert launch == KernelLifecycle_Started;
@@ -153,7 +162,8 @@ begin
     let store_x = AddStoreEvent(0, Zeros{PTO_XLEN}, 8,
         Zeros{PTO_XLEN} + 1, MemoryOrder_Relaxed, 1);
     _CurrentProgramOrder = 2;
-    BeginMemoryReplay(Zeros{PTO_XLEN} + 0x188);
+    BeginMemoryReplay(Zeros{PTO_XLEN} + 0x188,
+        MemoryShareability_IntraCore, MemoryRequestClass_Scalar);
     let fence_x = AddDataFenceEvent(0, '0010', '0001');
     assert !_MemoryEvents[[fence_x]].committed;
     FlushMemoryReplay();
@@ -165,7 +175,8 @@ begin
     let store_y = AddStoreEvent(1, Zeros{PTO_XLEN} + 8, 8,
         Zeros{PTO_XLEN} + 1, MemoryOrder_Relaxed, 1);
     _CurrentProgramOrder = 2;
-    BeginMemoryReplay(Zeros{PTO_XLEN} + 0x198);
+    BeginMemoryReplay(Zeros{PTO_XLEN} + 0x198,
+        MemoryShareability_IntraCore, MemoryRequestClass_Scalar);
     let fence_y = AddDataFenceEvent(1, '0010', '0001');
     assert !_MemoryEvents[[fence_y]].committed;
     FlushMemoryReplay();
@@ -202,9 +213,12 @@ end;
 func TestRCMemoryReplayCompleteKeepsWholeRequest()
 begin
     ResetProfileState();
+    _CurrentMemoryShareability = MemoryShareability_IntraCore;
+    _CurrentMemoryRequestClass = MemoryRequestClass_Scalar;
     ResetMemoryExecution();
     let request = Zeros{PTO_XLEN} + 0x908;
-    BeginMemoryReplay(request);
+    BeginMemoryReplay(request, MemoryShareability_IntraCore,
+        MemoryRequestClass_Scalar);
     - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 8, 8, Zeros{PTO_XLEN});
     - = AddStoreEvent(0, Zeros{PTO_XLEN} + 8, 8, Zeros{PTO_XLEN} + 3,
         MemoryOrder_AcquireRelease, 1);
@@ -219,6 +233,8 @@ end;
 func TestRCCoreSynchronizationRejectsStaleRead()
 begin
     ResetProfileState();
+    _CurrentMemoryShareability = MemoryShareability_IntraCore;
+    _CurrentMemoryRequestClass = MemoryRequestClass_Scalar;
     ResetMemoryExecution();
     let entry = Zeros{PTO_XLEN} + 0x400;
     let launch = LaunchKernelInvocation(0, entry);
@@ -268,6 +284,8 @@ end;
 func main() => integer
 begin
     ResetProfileState();
+    _CurrentMemoryShareability = MemoryShareability_IntraCore;
+    _CurrentMemoryRequestClass = MemoryRequestClass_Scalar;
     TestRCFenceOrdersMatchingClassPair();
     TestRCFenceClassMismatchDoesNotOrder();
     TestRCFenceOnAnotherAgentDoesNotOrder();

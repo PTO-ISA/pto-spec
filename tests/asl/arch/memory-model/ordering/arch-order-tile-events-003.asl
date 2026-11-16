@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-TILE-EVENTS-ORDER-003","source":"asl/arch/memory-model/ordering.asl","requirements":[],"kind":"ordering","summary":"tile and mixed-size memory operations emit ordered events","pass_condition":"tile and mixed-size event assertions hold","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-TILE-EVENTS-ORDER-003","source":"asl/arch/memory-model/ordering.asl","requirements":["PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001"],"kind":"ordering","summary":"tile and mixed-size memory operations emit ordered events","pass_condition":"tile and mixed-size event assertions hold","related_sources":[]}
 func ConfigureOneElementMemoryTile(index: TileIndex)
 begin
     ConfigureTile(index, 256, 1, 1, 1, 1, TileDataType_U64,
@@ -45,6 +45,10 @@ begin
     assert _MemoryEvents[[0]].kind == MemoryEvent_Store;
     StopMemoryEventCapture();
 
+    // This direct helper fixture names its scalar request scope explicitly;
+    // production unqualified Scalar instructions remain Private by default.
+    _CurrentMemoryShareability = MemoryShareability_IntraCore;
+    _CurrentMemoryRequestClass = MemoryRequestClass_Scalar;
     // Scalar and tile accesses occupy one event domain and one same-agent
     // program order; the tile load reads from the preceding scalar store.
     Store(source_address, 8, Zeros{PTO_XLEN} + 7);

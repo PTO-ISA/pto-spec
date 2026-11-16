@@ -177,6 +177,7 @@ nav:
               - Validation: block/model/commit/validation.md
           - Dispatch:
               - Binary Operation Classification: block/model/dispatch/binary-operation-classification.md
+              - Bundle GPR Input Count: block/model/dispatch/bundle-gpr-input-count.md
               - Cell Rearrangement Schema: block/model/dispatch/cell-rearrangement-schema.md
               - Command Data Attributes: block/model/dispatch/command-data-attributes.md
               - Commands: block/model/dispatch/commands.md
@@ -195,6 +196,8 @@ nav:
               - Expdif Schema: block/model/dispatch/expdif-schema.md
               - Generation Schema: block/model/dispatch/generation-schema.md
               - Gm Obligation Dispatch: block/model/dispatch/gm-obligation-dispatch.md
+              - Indexed TLSU Range Command Stream: block/model/dispatch/indexed-tlsu-range-command-stream.md
+              - Indexed TLSU Range Schema: block/model/dispatch/indexed-tlsu-range-schema.md
               - Lea Schema: block/model/dispatch/lea-schema.md
               - Matrix Scale: block/model/dispatch/matrix-scale.md
               - Numeric Control: block/model/dispatch/numeric-control.md
@@ -205,6 +208,7 @@ nav:
               - Shared TLSU Helpers: block/model/dispatch/shared-tlsu-helpers.md
               - Shared TLSU: block/model/dispatch/shared-tlsu.md
               - Shared Tmov CUBE To Nd: block/model/dispatch/shared-tmov-cube-to-nd.md
+              - Shared Tmov Nd To CUBE: block/model/dispatch/shared-tmov-nd-to-cube.md
               - Start: block/model/dispatch/start.md
               - Tcvt Destination: block/model/dispatch/tcvt-destination.md
               - Tcvt Schema: block/model/dispatch/tcvt-schema.md
@@ -962,6 +966,7 @@ nav:
               - Shared Movement Types: tile/model/memory/shared-movement-types.md
               - Shared Movement Values: tile/model/memory/shared-movement-values.md
               - Shared Movement: tile/model/memory/shared-movement.md
+              - Shared Nd To CUBE: tile/model/memory/shared-nd-to-cube.md
               - Stride: tile/model/memory/stride.md
           - Numeric:
               - E8m0 Conversion: tile/model/numeric/e8m0-conversion.md

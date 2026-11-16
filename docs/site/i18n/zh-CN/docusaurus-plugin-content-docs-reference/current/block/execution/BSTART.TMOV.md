@@ -173,21 +173,21 @@ end;
 ## Defaults and encoded zero
 
 - Concrete DataType codes explicitly select the transfer carrier interpretation. DTYPE_NONE infers the type from the bound source descriptor; failure to resolve a concrete source type rejects before destination effects. Optional B.DATR omission retains NORM layout.
-- Omitted LB0, LB1, and LB2 each have effective value one; omission does not inherit the source descriptor shape. An unallocated, pending, or incomplete Shared source remains waiting and produces no destination effect.
+- Omitted LB0, LB1, and LB2 each have effective value one; omission does not inherit the source descriptor shape. An unallocated, pending, or incomplete Shared source remains waiting without destination effects or binding consumption. For reverse ND2M32/ND2M16, effective LB2=1 derives physical columns whether omitted or explicit; other accepted values equal the derived count and presence is ignored.
 - PE_MASK=0000 is a strict no-op before source reads, destination allocation, publication checks, faults, or binding consumption.
 
 ## Legality
 
 - DataType accepts 27 concrete TileDataType codes and code 31 DTYPE_NONE for source-descriptor inference; codes 22..23 and 29..30 are reserved.
-- Function 2 accepts Local-to-Local and canonical Local/Shared or Shared/Local TMOV schemas. With DTYPE_NONE, Layout M322ND/M162ND converts a compatible Local CUBE_M32/M16 source into RowMajor ND Shared storage while preserving its backing type. A Shared destination with multiple participating PEs requires B.ASSEMBLE; a single-PE no-assemble writer transfers the complete parent.
-- B.SUBVIEW is the source-range modifier and B.ASSEMBLE is the destination-generation modifier. Shared source legality requires hardware-maintained whole-parent readiness and publication. Each Shared generation uses one normalized mode: NORM, M322ND, or M162ND.
+- Function 2 accepts Local-to-Local and canonical Local/Shared or Shared/Local TMOV schemas. With DTYPE_NONE, Layout M322ND/M162ND converts a compatible Local CUBE_M32/M16 source into RowMajor ND Shared storage while preserving its backing type. A Shared destination with multiple participating PEs requires B.ASSEMBLE; a single-PE no-assemble writer transfers the complete parent. With DTYPE_NONE, Layout ND2M32/ND2M16 converts one published RowMajor ND Shared source to one exact-capacity Local CUBE_M32/M16 destination per participating PE, preserving raw valid values and source backing type under the reverse conversion contract.
+- B.SUBVIEW is the explicit source-range modifier. B.ASSEMBLE is available for Shared destinations in the forward conversion and is forbidden in the reverse ND2M32/ND2M16 form. Shared sources require hardware-maintained whole-parent readiness and publication. Each Shared generation uses one normalized mode: NORM, M322ND, or M162ND.
 - Function 13 GMOV remains accepted and unchanged. Other Shared movement function encodings are reserved and raise Fault_IllegalInstruction. Function-2 M322ND/M162ND adds no independent Shared movement selector.
 - For Local-to-Local TMOV, source and destination descriptors agree on capacity, Layout, physical Col, and completed valid shape. A concrete non-packed DataType may differ from the source backing type only at the same element width, and the destination preserves the source backing DataType.
 
 ## State effects
 
 - Function 2 Local-to-Local copies Local payload and definedness into one renamed Local destination while preserving the Local source.
-- A canonical Shared destination performs one whole-parent publication for a single-PE writer or an atomic B.ASSEMBLE generation at LAST. Shared source operations never modify Shared state.
+- A canonical Shared destination performs one whole-parent publication for a single-PE writer or an atomic B.ASSEMBLE generation at LAST. Shared source operations never modify Shared state. Reverse ND2M32/ND2M16 creates an independently committed Local CUBE destination for each participating PE and does not create a Shared generation.
 - Shared source operations wait/no-op before payload access when whole-parent readiness or publication is absent.
 
 ## Memory effects and ordering
@@ -203,8 +203,8 @@ end;
 
 ## Exceptions
 
-- Reserved DataType, unsupported Layout, malformed or unterminated binding schema, role/size/mask mismatch, incompatible descriptor, incomplete B.ASSEMBLE.LAST, unpublished Shared source, allocation failure, or shape mismatch rejects before destination effects.
-- A Shared source is hardware-waiting/no-effect until the complete parent is ready and published; no undefined Shared payload is consumed.
+- Reserved DataType, unsupported Layout, malformed or unterminated binding schema, role/size/mask mismatch, incompatible descriptor, incomplete B.ASSEMBLE.LAST, allocation failure, or shape mismatch rejects before destination effects.
+- An unready or unpublished Shared source waits without destination effects or binding consumption; no undefined Shared payload is consumed.
 
 ## Examples
 

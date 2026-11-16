@@ -37,21 +37,115 @@
     "PTO-ARCH-MEMORY-MODEL-FLUSH-001",
     "PTO-ARCH-MEMORY-MODEL-ATOMIC-001",
     "PTO-ARCH-MEMORY-MODEL-OPEN-001",
+    "PTO-ARCH-GM-OBLIGATIONS-001",
+    "PTO-ARCH-PE-EXECUTION-CONTEXT-001",
+    "PTO-REQ-SCALAR-SHAREABILITY-CARRIER-001",
     "PTO-TLOAD-MEMORY-001",
     "PTO-TSTORE-MEMORY-001",
-    "PTO-TSTORE-STRIDED-ATOMIC-RED-001"
+    "PTO-TSTORE-STRIDED-ATOMIC-RED-001",
+    "PTO-REQ-INSTRUCTION-DISPATCH-001",
+    "PTO-B-IOR-BINDING-001",
+    "PTO-INDEXED-TLSU-STRIDE-001",
+    "PTO-INDEXED-TLSU-RANGE-BINDING-001",
+    "PTO-ATOM-RED-BODY-SCHEMA-001",
+    "PTO-ATOM-RED-ENCODING-001",
+    "PTO-ATOM-RED-TYPE-LEGALITY-001",
+    "PTO-ATOM-RED-ORDERING-001",
+    "PTO-ATOM-RED-FAULTS-001",
+    "PTO-ATOM-RED-POPC-SEMANTICS-001",
+    "PTO-MGATHER-CAS-ATOMIC-001",
+    "PTO-MGATHER-CAS-PUBLICATION-001",
+    "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001"
   ],
   "affected_units": [
     "PTO-ARCH-DATA-TYPES-MEMORY-MODEL",
     "PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS",
     "PTO-ARCH-MEMORY-MODEL-ORDERING",
+    "PTO-ARCH-MEMORY-MODEL-ATOMICITY",
+    "PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS",
     "PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION",
     "PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT",
     "PTO-ARCH-DATA-TYPES-TRAP-CONTEXT",
     "PTO-TILE-MODEL-MEMORY-LOAD-STORE",
     "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+    "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER",
+    "PTO-TILE-MODEL-MEMORY-ATOMICS",
+    "PTO-TILE-MODEL-MEMORY-ATOMIC-TSTORE",
     "PTO-TILE-TLOAD",
-    "PTO-TILE-TSTORE"
+    "PTO-TILE-TSTORE",
+    "PTO-ARCH-DISPATCH-TOP-LEVEL",
+    "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
+    "PTO-SCALAR-MODEL-AGU-MEMORY",
+    "PTO-SCALAR-MODEL-AMO-SEMANTICS",
+    "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT",
+    "PTO-TILE-MODEL-MEMORY-ADDRESSING",
+    "PTO-BLOCK-B-IOR",
+    "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+    "PTO-BLOCK-MODEL-DISPATCH-GM-OBLIGATION",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED",
+    "PTO-BLOCK-BSTART-MGATHER-ADD",
+    "PTO-BLOCK-BSTART-MGATHER-AND",
+    "PTO-BLOCK-BSTART-MGATHER-CAS",
+    "PTO-BLOCK-BSTART-MGATHER-DEC",
+    "PTO-BLOCK-BSTART-MGATHER-EXCH",
+    "PTO-BLOCK-BSTART-MGATHER-INC",
+    "PTO-BLOCK-BSTART-MGATHER-MASK",
+    "PTO-BLOCK-BSTART-MGATHER-MAX",
+    "PTO-BLOCK-BSTART-MGATHER-MIN",
+    "PTO-BLOCK-BSTART-MGATHER-OR",
+    "PTO-BLOCK-BSTART-MGATHER-XOR",
+    "PTO-BLOCK-BSTART-MGATHER",
+    "PTO-BLOCK-BSTART-MSCATTER-ADD",
+    "PTO-BLOCK-BSTART-MSCATTER-AND",
+    "PTO-BLOCK-BSTART-MSCATTER-DEC",
+    "PTO-BLOCK-BSTART-MSCATTER-INC",
+    "PTO-BLOCK-BSTART-MSCATTER-MASK",
+    "PTO-BLOCK-BSTART-MSCATTER-MAX",
+    "PTO-BLOCK-BSTART-MSCATTER-MIN",
+    "PTO-BLOCK-BSTART-MSCATTER-OR",
+    "PTO-BLOCK-BSTART-MSCATTER-POPC",
+    "PTO-BLOCK-BSTART-MSCATTER-XOR",
+    "PTO-BLOCK-BSTART-MSCATTER",
+    "PTO-TILE-MGATHER",
+    "PTO-TILE-MGATHER-ADD",
+    "PTO-TILE-MGATHER-AND",
+    "PTO-TILE-MGATHER-CAS",
+    "PTO-TILE-MGATHER-DEC",
+    "PTO-TILE-MGATHER-EXCH",
+    "PTO-TILE-MGATHER-INC",
+    "PTO-TILE-MGATHER-MASK",
+    "PTO-TILE-MGATHER-MAX",
+    "PTO-TILE-MGATHER-MIN",
+    "PTO-TILE-MGATHER-OR",
+    "PTO-TILE-MGATHER-XOR",
+    "PTO-TILE-MSCATTER",
+    "PTO-TILE-MSCATTER-ADD",
+    "PTO-TILE-MSCATTER-AND",
+    "PTO-TILE-MSCATTER-DEC",
+    "PTO-TILE-MSCATTER-INC",
+    "PTO-TILE-MSCATTER-MASK",
+    "PTO-TILE-MSCATTER-MAX",
+    "PTO-TILE-MSCATTER-MIN",
+    "PTO-TILE-MSCATTER-OR",
+    "PTO-TILE-MSCATTER-POPC",
+    "PTO-TILE-MSCATTER-XOR",
+    "PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA",
+    "PTO-TILE-MODEL-MEMORY-GM-ATOM-RED",
+    "PTO-BLOCK-MODEL-DISPATCH-INDEXED-TLSU-RANGE-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-BUNDLE-GPR-INPUT-COUNT",
+    "PTO-BLOCK-MODEL-OPERANDS-SCALAR-BINDINGS",
+    "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
+    "PTO-BLOCK-MODEL-STATE-TYPES",
+    "PTO-BLOCK-MODEL-DISPATCH-INDEXED-TLSU-RANGE-COMMAND-STREAM",
+    "PTO-BLOCK-MODEL-LIFECYCLE-RESET"
   ],
   "resolves": [],
   "supersedes": [
@@ -62,7 +156,155 @@
   "release_impact": "required",
   "interface_change": true,
   "legacy_ids": [],
-  "amendments": []
+  "amendments": [
+    {
+      "date": "2026-11-11",
+      "baseline": "42067d0f2890b8c013a868bd1247ebc6437b3179",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/416",
+      "affected_ndf": [
+        "PTO-ARCH-MEMORY-MODEL-SCOPE-001",
+        "PTO-ARCH-MEMORY-MODEL-REQUEST-CLASS-001",
+        "PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001",
+        "PTO-ARCH-MEMORY-MODEL-CONFLICT-001",
+        "PTO-ARCH-MEMORY-MODEL-VISIBILITY-001",
+        "PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001",
+        "PTO-ARCH-MEMORY-MODEL-MIXED-SIZE-001",
+        "PTO-ARCH-MEMORY-MODEL-RC-001",
+        "PTO-ARCH-MEMORY-MODEL-REPLAY-001",
+        "PTO-ARCH-GM-OBLIGATIONS-001",
+        "PTO-ARCH-PE-EXECUTION-CONTEXT-001",
+        "PTO-REQ-INSTRUCTION-DISPATCH-001",
+        "PTO-REQ-SCALAR-SHAREABILITY-CARRIER-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DATA-TYPES-MEMORY-MODEL",
+        "PTO-ARCH-MEMORY-MODEL-ATOMICITY",
+        "PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION",
+        "PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS",
+        "PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS",
+        "PTO-ARCH-MEMORY-MODEL-ORDERING",
+        "PTO-ARCH-DISPATCH-TOP-LEVEL",
+        "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
+        "PTO-SCALAR-MODEL-AGU-MEMORY",
+        "PTO-SCALAR-MODEL-AMO-SEMANTICS",
+        "PTO-TILE-MODEL-MEMORY-LOAD-STORE",
+        "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER",
+        "PTO-TILE-MODEL-MEMORY-ATOMICS",
+        "PTO-TILE-MODEL-MEMORY-ATOMIC-TSTORE",
+        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+        "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT"
+      ]
+    },
+    {
+      "date": "2026-11-05",
+      "baseline": "274d095260527a9a6a8991b26f8308f7713c253b",
+      "approvers": [
+        "ckwllawliet"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/414#issuecomment-6659291521",
+      "affected_ndf": [
+        "PTO-ARCH-MEMORY-MODEL-RANGE-001",
+        "PTO-ARCH-MEMORY-MODEL-CONFLICT-001",
+        "PTO-ARCH-MEMORY-MODEL-RC-001",
+        "PTO-ARCH-MEMORY-MODEL-ATOMIC-001",
+        "PTO-ARCH-MEMORY-MODEL-ATOMIC-CROSS-AGENT-001",
+        "PTO-ARCH-MEMORY-MODEL-SHAREABILITY-001",
+        "PTO-ARCH-MEMORY-MODEL-REPLAY-001",
+        "PTO-ARCH-MEMORY-MODEL-FLUSH-001",
+        "PTO-B-IOR-BINDING-001",
+        "PTO-INDEXED-TLSU-STRIDE-001",
+        "PTO-INDEXED-TLSU-RANGE-BINDING-001",
+        "PTO-ATOM-RED-BODY-SCHEMA-001",
+        "PTO-ATOM-RED-ENCODING-001",
+        "PTO-ATOM-RED-TYPE-LEGALITY-001",
+        "PTO-ATOM-RED-ORDERING-001",
+        "PTO-ATOM-RED-FAULTS-001",
+        "PTO-ATOM-RED-POPC-SEMANTICS-001",
+        "PTO-MGATHER-CAS-ATOMIC-001",
+        "PTO-MGATHER-CAS-PUBLICATION-001",
+        "PTO-TILE-MODEL-EXECUTION-MASK-APPLICABILITY-001",
+        "PTO-ARCH-PE-EXECUTION-CONTEXT-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-MEMORY-MODEL-ORDERING",
+        "PTO-TILE-MODEL-MEMORY-ADDRESSING",
+        "PTO-BLOCK-B-IOR",
+        "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-EXECUTION-MASK-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+        "PTO-BLOCK-MODEL-DISPATCH-GM-OBLIGATION",
+        "PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-GM-ATOM-RED",
+        "PTO-BLOCK-BSTART-MGATHER-ADD",
+        "PTO-BLOCK-BSTART-MGATHER-AND",
+        "PTO-BLOCK-BSTART-MGATHER-CAS",
+        "PTO-BLOCK-BSTART-MGATHER-DEC",
+        "PTO-BLOCK-BSTART-MGATHER-EXCH",
+        "PTO-BLOCK-BSTART-MGATHER-INC",
+        "PTO-BLOCK-BSTART-MGATHER-MASK",
+        "PTO-BLOCK-BSTART-MGATHER-MAX",
+        "PTO-BLOCK-BSTART-MGATHER-MIN",
+        "PTO-BLOCK-BSTART-MGATHER-OR",
+        "PTO-BLOCK-BSTART-MGATHER-XOR",
+        "PTO-BLOCK-BSTART-MGATHER",
+        "PTO-BLOCK-BSTART-MSCATTER-ADD",
+        "PTO-BLOCK-BSTART-MSCATTER-AND",
+        "PTO-BLOCK-BSTART-MSCATTER-DEC",
+        "PTO-BLOCK-BSTART-MSCATTER-INC",
+        "PTO-BLOCK-BSTART-MSCATTER-MASK",
+        "PTO-BLOCK-BSTART-MSCATTER-MAX",
+        "PTO-BLOCK-BSTART-MSCATTER-MIN",
+        "PTO-BLOCK-BSTART-MSCATTER-OR",
+        "PTO-BLOCK-BSTART-MSCATTER-POPC",
+        "PTO-BLOCK-BSTART-MSCATTER-XOR",
+        "PTO-BLOCK-BSTART-MSCATTER",
+        "PTO-TILE-MGATHER",
+        "PTO-TILE-MGATHER-ADD",
+        "PTO-TILE-MGATHER-AND",
+        "PTO-TILE-MGATHER-CAS",
+        "PTO-TILE-MGATHER-DEC",
+        "PTO-TILE-MGATHER-EXCH",
+        "PTO-TILE-MGATHER-INC",
+        "PTO-TILE-MGATHER-MASK",
+        "PTO-TILE-MGATHER-MAX",
+        "PTO-TILE-MGATHER-MIN",
+        "PTO-TILE-MGATHER-OR",
+        "PTO-TILE-MGATHER-XOR",
+        "PTO-TILE-MSCATTER",
+        "PTO-TILE-MSCATTER-ADD",
+        "PTO-TILE-MSCATTER-AND",
+        "PTO-TILE-MSCATTER-DEC",
+        "PTO-TILE-MSCATTER-INC",
+        "PTO-TILE-MSCATTER-MASK",
+        "PTO-TILE-MSCATTER-MAX",
+        "PTO-TILE-MSCATTER-MIN",
+        "PTO-TILE-MSCATTER-OR",
+        "PTO-TILE-MSCATTER-POPC",
+        "PTO-TILE-MSCATTER-XOR",
+        "PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION",
+        "PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS",
+        "PTO-ARCH-STATE-PE-EXECUTION-CONTEXT",
+        "PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA",
+        "PTO-TILE-MODEL-MEMORY-GM-ATOM-RED",
+        "PTO-BLOCK-MODEL-DISPATCH-INDEXED-TLSU-RANGE-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-BUNDLE-GPR-INPUT-COUNT",
+        "PTO-BLOCK-MODEL-OPERANDS-SCALAR-BINDINGS",
+        "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
+        "PTO-BLOCK-MODEL-STATE-TYPES",
+        "PTO-BLOCK-MODEL-DISPATCH-INDEXED-TLSU-RANGE-COMMAND-STREAM",
+        "PTO-BLOCK-MODEL-LIFECYCLE-RESET"
+      ]
+    }
+  ]
 }
 ---
 # ADR-MEM-0011: Cross-agent visibility, fence transport, atomic ordering, and precise replay
@@ -207,3 +449,83 @@ Evidence covers multi-copy release/acquire visibility, relaxed negative cases,
 mask transport and strength, partial-overlap rejection, exact-range atomic RMW,
 and replay/flush retention of prior effects. `make pr-check`, `make repo-check`,
 and `git diff --check` are required for the candidate.
+
+
+## Issue #416 accepted architecture amendment (2026-11-11)
+
+At baseline `42067d0f2890b8c013a868bd1247ebc6437b3179`, the delegated
+architecture owner accepted Scalar ordinary and atomic/LR-SC request scope with
+Private default; Tile/IndexedGenerated retain IntraCore. Strict equality of
+scope and issuing domain is required, including same-PE cross-scope interactions.
+Private identifies one PE; InterCore covers one PTO device. Scope selects portable
+participation, not a cache tier, ordering mode, host coherence, or handoff.
+
+The carrier is an independent 64-bit form preserving an original 16/32/48-bit
+payload in bits[63:16]. Low-halfword mask/match is 0xf0ff/0x001f, scope[9:8]
+is Private/IntraCore/InterCore/reserved, and inner-length[11:10] is
+16/32/48/reserved. Padding is zero. Assembly uses .private/.intra/.inter.
+Existing binaries retain their decode/default. One envelope retires once at TPC+8;
+full fetch and recovery use the envelope. DMA/Prefetch and .brg are excluded.
+This decision avoids stealing existing operand bits or losing compressed/HL
+addressing behavior; current normative meaning belongs to the ASL/NDF owners.
+
+Keep one physical memory. Scope-conformance checks reject portable proof claims
+for overlapping, differently keyed access pairs involving a write, not hardware
+execution. Initial writes are neutral. DMA retains explicit legacy provenance.
+General program-order/fence/collective ordering remains independent. LR scope
+is saved with PE context; actual matching-domain writes invalidate overlapping
+64B reservations across active/inactive PE/Core contexts even without event capture.
+Mismatched-scope SC deterministically takes the existing no-access miss path in
+the reference model. Existing faults, CAS nonwrite, SC reporting and granule
+rules remain; no additional progress promise is introduced.
+
+Affected owners include memory events/relations, scalar request and decoder
+transport, architecture dispatch, GM obligations/replay and PE reservation
+contexts. Focused evidence must include real encoded ordinary/atomic effects,
+Scalar/Tile/IndexedGenerated interaction, cross-Core InterCore communication,
+capture-disabled reservation safety, malformed envelopes and legacy exclusions.
+No Tile.InterCore, domain conversion, cache maintenance or host coherence is
+added. Target release is unassigned; release evidence refresh and downstream
+assembler/compiler/ASL-model integration remain release obligations. Issue #416
+remains open until implementation/evidence acceptance. ADR-MEM-0010 remains
+superseded historical rationale; this accepted topic owns the amendment.
+
+### Software aliasing obligation and example / 软件别名义务与示例
+
+When Scalar and fixed-IntraCore Tile or IndexedGenerated requests may access
+the same bytes, software assigns compatible IntraCore scope to each covered
+Scalar access. If software cannot prove the accessed ranges disjoint, it treats
+them as potentially aliasing. In a Top-K pipeline, the named `output`, `lane`,
+`num`, and `hist` ranges may be prepared, selected, ranked, or consumed through
+combinations of Scalar, Tile, and IndexedGenerated accesses. A compiler or
+runtime that cannot prove which of those ranges are disjoint treats the
+uncertain pair as potentially aliasing and uses IntraCore for the participating
+Scalar access, matching the fixed-IntraCore Tile or IndexedGenerated request.
+This applies independently to each range: a Scalar range proved disjoint from
+those requests need not use IntraCore for this reason, while `InterCore` alone
+does not match Tile or IndexedGenerated. This example illustrates the software
+aliasing obligation; the normative compatibility rule remains in
+`SHAREABILITY-001`.
+
+当 Scalar 与固定为 IntraCore 的 Tile 或 IndexedGenerated 请求可能访问相同
+字节时，软件应为每个受支持的 Scalar 访问选择兼容的 IntraCore scope。如果无法
+证明访问范围互不重叠，软件必须按可能别名处理。在 Top-K 流程中，命名的
+`output`、`lane`、`num` 和 `hist` 范围可能通过 Scalar、Tile 和 IndexedGenerated
+访问的不同组合进行准备、筛选、排序或读取。如果编译器或运行时无法证明这些
+范围中哪些互不重叠，就应将不确定的范围对视为可能别名，并为参与访问的 Scalar
+选择 IntraCore，以匹配固定为 IntraCore 的 Tile 或 IndexedGenerated 请求。此规则
+分别适用于每个范围：已证明与这些请求互不重叠的 Scalar 范围无需因此选择
+IntraCore，而单独选择 `InterCore` 不能与 Tile 或 IndexedGenerated 匹配。此例说明
+软件别名义务；规范性的兼容规则仍由 `SHAREABILITY-001` 定义。
+
+## 2026-11-05 accepted amendment — indexed TLSU range descriptor (Issue #414)
+
+This amendment records the Issue #414 decision at the immutable 2026-11-05 baseline `274d095260527a9a6a8991b26f8308f7713c253b` ([accepted decision comment](https://github.com/PTO-ISA/pto-spec/issues/414#issuecomment-6659291521)). It replaces the prior one-sided signed 32-bit `index_limit` wording under `PTO-ARCH-MEMORY-MODEL-RANGE-001` with an optional pair of full-width S64 relative byte-displacement bounds for every indexed TLSU request, including ordinary, masked, CAS, atomic gather/reduction, and POPC forms.
+
+A present descriptor describes the half-open mathematical byte interval `[UInt64(BaseGPR)+SInt64(MinIndexGPR), UInt64(BaseGPR)+SInt64(MaxIndexGPR)+AccessBytes)`. `AccessBytes` is the existing transaction width (1, 2, 4, or 8 bytes); packed four-bit ordinary transfer uses one containing byte and `MSCATTER.POPC` uses its existing four-byte U32 operation. Software certifies coverage of every participating active access start and every byte of each transaction, signed-bound representability, and nonwrapping endpoints. Hardware need not compare every IndexTile value against the declaration. Absence preserves conservative dependence handling. Comparisons are mathematical and may rule out only conflict edges already permitted by PTO-RC; uncertain translation aliases fail closed and never change exact memory-event addresses.
+
+A present `MinIndex > MaxIndex` faults with `Fault_TileLegality` only for the current participating PE request, before that request's indexed memory or destination effects. Existing peer commits and progress remain. Each PE reads its own bounds when its request reaches the established operand boundary; the contract adds no rendezvous, peer sampling, rollback, or architectural range state. Atomic/RMW, Store-to-Store, fence, acquire/release, dependency, coherence, replay, shareability, and visibility rules remain unchanged.
+
+The rejected alternatives were a one-sided limit, absolute rather than Base-relative bounds, hardware per-index certification checks, a new opcode/immediate encoding, treating the range as an ordering qualifier, and group-wide preflight or rollback. Compatibility retains all indexed instruction encodings, Base-only B.IOR, the legacy single-record GPR ExecutionMask form, existing IndexTile byte-displacement behavior, and exact MemoryEvent identity. The BLOCK schema and all affected BSTART/Tile operation owners carry the field interpretation; this MEM amendment owns range arithmetic, software certification, conservative alias fallback, and the local fault/order constraints.
+
+Release impact is `required`; the target for this delta remains `unassigned`. The downstream SSM/compiler carrier work and the separate `order_after_prior` / `order_before_later` encoding gap remain tracked follow-ups and are not claimed complete by this PTO-Spec change.

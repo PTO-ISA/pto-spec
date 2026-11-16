@@ -90,6 +90,19 @@ type MemoryShareability of enumeration {
     MemoryShareability_InterCore
 };
 
+// Request class is retained with verification provenance. Only explicitly
+// excluded legacy operations use LegacyExcluded. Covered Scalar, Tile, and
+// IndexedGenerated requests always retain their own strict matching class.
+type MemoryRequestClass of enumeration {
+    MemoryRequestClass_Scalar,
+    MemoryRequestClass_Tile,
+    MemoryRequestClass_IndexedGenerated,
+    MemoryRequestClass_Prefetch,
+    MemoryRequestClass_LegacyExcluded,
+    MemoryRequestClass_Initial
+};
+type MemoryDeviceIdentity of integer {0..0};
+
 // Fences carry their predecessor/successor class masks as the portable
 // transport contract.  Strength is derived from the pair of masks rather than
 // from an implementation-specific opcode encoding.
@@ -122,6 +135,9 @@ type MemoryEvent of record {
     committed: boolean,
     replay_epoch: integer,
     kind: MemoryEventKind,
+    request_class: MemoryRequestClass,
+    shareability: MemoryShareability,
+    device_identity: MemoryDeviceIdentity,
     core_identity: PTOModelCoreIdentity,
     agent: MemoryAgentId,
     origin: MemoryEventOrigin,
@@ -147,6 +163,8 @@ type MemoryRelationMatrix of array [[PTO_MODEL_MEMORY_EVENTS]]
 type MemoryReplayState of record {
     active: boolean,
     request: Word,
+    shareability: MemoryShareability,
+    request_class: MemoryRequestClass,
     committed_event_count: integer {0..PTO_MODEL_MEMORY_EVENTS},
     epoch: integer,
     owner_core: PTOModelCoreIdentity,

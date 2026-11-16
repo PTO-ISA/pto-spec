@@ -8252,6 +8252,13 @@ def _emit_monolithic() -> None:
         projected_catalogs[Path("spec/catalog/scalar-forms.json")]
     )
     scalar = scalar_catalog["forms"]
+    scoped_scalar = scalar_catalog["scoped_forms"]
+    if len(scoped_scalar) != 705:
+        raise ValueError(
+            "frozen Scalar shareability carrier inventory drift: "
+            f"expected 705 forms, got {len(scoped_scalar)}"
+        )
+    scoped_scalar_witnesses = encoded_catalog_witnesses(scoped_scalar)
     for index, row in enumerate(scalar):
         row["_form_index"] = index
     family_constraints = scalar_catalog["family_constraints"]
@@ -9062,6 +9069,94 @@ def _emit_monolithic() -> None:
     }
     command_witnesses = encoded_catalog_witnesses(command)
     emit_encoded_catalog("Command", command, tile_selectors, command_witnesses)
+    emit_encoded_catalog(
+        "ScopedScalar", scoped_scalar, witnesses=scoped_scalar_witnesses
+    )
+    print(
+        "constant PTO_SCALAR_SCOPED_FORM_COUNT = "
+        "PTO_SCOPEDSCALAR_FORM_COUNT;"
+    )
+    print()
+    print(
+        "pure func ScopedScalarBaseFormIndex("
+        "form: integer {0..PTO_SCOPEDSCALAR_FORM_COUNT-1}) => ScalarFormIndex"
+    )
+    print("begin")
+    for index, row in enumerate(scoped_scalar):
+        print(
+            f"    if form == {index} then return {row['base_form_index']}; end;"
+        )
+    print("    unreachable;")
+    print("end;")
+    print()
+    print(
+        "pure func ScopedScalarShareabilityOfForm("
+        "form: integer {0..PTO_SCOPEDSCALAR_FORM_COUNT-1}) "
+        "=> MemoryShareability"
+    )
+    print("begin")
+    for index, row in enumerate(scoped_scalar):
+        print(
+            f"    if form == {index} then return "
+            f"MemoryShareability_{row['scope']}; end;"
+        )
+    print("    unreachable;")
+    print("end;")
+    print()
+    print(
+        "pure func ScopedScalarInnerLengthOfForm("
+        "form: integer {0..PTO_SCOPEDSCALAR_FORM_COUNT-1}) "
+        "=> integer {16,32,48}"
+    )
+    print("begin")
+    for index, row in enumerate(scoped_scalar):
+        print(
+            f"    if form == {index} then return {row['inner_length_bits']}; end;"
+        )
+    print("    unreachable;")
+    print("end;")
+    print()
+    print("func ValidateScopedScalarCarrierPriorityDecode()")
+    print("begin")
+    print("    ValidateScopedScalarCatalogDecode();")
+    for index, row in enumerate(scoped_scalar):
+        witness = bit_literal(scoped_scalar_witnesses[index], 64)
+        print(
+            f"    assert DecodeScopedScalarForm({witness}, 64) == {index};"
+        )
+        print(
+            f"    assert ScopedScalarBaseFormIndex({index}) == "
+            f"{row['base_form_index']};"
+        )
+        print(
+            f"    assert ScopedScalarOperationOfForm({index}) == "
+            f"ScopedScalarOperation_{row['form_id']};"
+        )
+        print(
+            f"    assert ScopedScalarHandlerOfForm({index}) == "
+            f"ScopedScalarHandler_{row['semantic_handler']};"
+        )
+        print(
+            f"    assert ScopedScalarShareabilityOfForm({index}) == "
+            f"MemoryShareability_{row['scope']};"
+        )
+        print(
+            f"    assert ScopedScalarInnerLengthOfForm({index}) == "
+            f"{row['inner_length_bits']};"
+        )
+        print(
+            f"    assert DecodeScalarForm({witness}[63:16], "
+            f"{row['inner_length_bits']}) == {row['base_form_index']};"
+        )
+        print(
+            f"    assert ScalarFormOperandsLegal({witness}[63:16], "
+            f"{row['base_form_index']});"
+        )
+        print(
+            f"    assert ScopedScalarFormOperandsLegal({witness}, {index});"
+        )
+    print("end;")
+    print()
     print("pure func DecodeScalarForm(instruction: bits(48),")
     print(
         "                           length_bits: integer {16,32,48}) => ScalarFormIndex"
