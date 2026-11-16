@@ -104,6 +104,50 @@ begin
     _BundleExecutionMask.merge_base_waiting = FALSE;
 end;
 
+// Materialized SUBVIEW Tiles are execution-attempt temporaries.  A trap
+// snapshot retains the encoded view and its architectural parent, then
+// invalidates every derived cache so recovery rematerializes against the
+// recovered source state.
+func CanonicalizeTrapContextSubviewBindings(target: AccessControlRing)
+begin
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _TrapContexts[[target]].bundle_tile_bindings[[binding]].valid then
+            if _TrapContexts[[target]].bundle_tile_bindings[[binding]]
+                    .source0_subview.valid then
+                if _TrapContexts[[target]].bundle_tile_bindings[[binding]]
+                        .source0_subview.materialized then
+                    _TrapContexts[[target]].bundle_tile_bindings[[binding]]
+                        .source0 = _TrapContexts[[target]]
+                            .bundle_tile_bindings[[binding]]
+                            .source0_subview.derived.parent;
+                end;
+                _TrapContexts[[target]].bundle_tile_bindings[[binding]]
+                    .source0_subview.materialized = FALSE;
+                _TrapContexts[[target]].bundle_tile_bindings[[binding]]
+                    .source0_subview.materialized_index = 0;
+                _TrapContexts[[target]].bundle_tile_bindings[[binding]]
+                    .source0_subview.derived.valid = FALSE;
+            end;
+            if _TrapContexts[[target]].bundle_tile_bindings[[binding]]
+                    .source1_subview.valid then
+                if _TrapContexts[[target]].bundle_tile_bindings[[binding]]
+                        .source1_subview.materialized then
+                    _TrapContexts[[target]].bundle_tile_bindings[[binding]]
+                        .source1 = _TrapContexts[[target]]
+                            .bundle_tile_bindings[[binding]]
+                            .source1_subview.derived.parent;
+                end;
+                _TrapContexts[[target]].bundle_tile_bindings[[binding]]
+                    .source1_subview.materialized = FALSE;
+                _TrapContexts[[target]].bundle_tile_bindings[[binding]]
+                    .source1_subview.materialized_index = 0;
+                _TrapContexts[[target]].bundle_tile_bindings[[binding]]
+                    .source1_subview.derived.valid = FALSE;
+            end;
+        end;
+    end;
+end;
+
 func SavePortableTrapContext(target: AccessControlRing,
                              source: AccessControlRing)
 begin
@@ -136,6 +180,7 @@ begin
         _BundleDimensionPresent;
     _TrapContexts[[target]].bundle_scalar_bindings = _BundleScalarBindings;
     _TrapContexts[[target]].bundle_tile_bindings = _BundleTileBindings;
+    CanonicalizeTrapContextSubviewBindings(target);
     _TrapContexts[[target]].bundle_shared_bindings = _BundleSharedBindings;
     _TrapContexts[[target]].bundle_range_group = _BundleRangeGroup;
     _TrapContexts[[target]].bundle_zero_participation_seen =
@@ -192,6 +237,7 @@ begin
         _BundleDimensionPresent;
     _TrapContexts[[target]].bundle_scalar_bindings = _BundleScalarBindings;
     _TrapContexts[[target]].bundle_tile_bindings = _BundleTileBindings;
+    CanonicalizeTrapContextSubviewBindings(target);
     _TrapContexts[[target]].bundle_shared_bindings = _BundleSharedBindings;
     _TrapContexts[[target]].bundle_range_group = _BundleRangeGroup;
     _TrapContexts[[target]].bundle_zero_participation_seen =
