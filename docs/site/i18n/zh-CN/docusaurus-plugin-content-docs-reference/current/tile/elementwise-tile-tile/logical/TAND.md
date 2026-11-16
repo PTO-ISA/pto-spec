@@ -19,27 +19,27 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tand-purpose role=purpose -->
 ## TAND 的作用
 
-`TAND` 对两个 Local 整数 Tile 的对应元素计算按位与（AND），并把结果写入一个新分配的 Local 目标 Tile。按位与的规则是：仅当两个源的某一位都为 1 时结果该位才为 1。
+`TAND` 对两个 Local Tile 的对应元素计算按位与（AND），并把结果写入 Local 目标。按位与的规则是：仅当两个源的某一位都为 1 时结果该位才为 1。
 
-设计要点：`TAND` 没有独立 opcode。它由 `BSTART.VEC` Mode 0 Function 6（TEPL 选择器 `0x006`）选中。其操作数合法性与执行遵循与 `TADD` 相同的封闭 Local 二元 Tile 契约，与 `TOR` 与 `TXOR` 只在位运算上不同。
+设计要点：`TAND` 没有独立 opcode。它由 `BSTART.VEC` Mode 0 Function 6（TEPL 选择器 `0x006`）选中。数值输入遵循 Local 二元 Tile 契约，与 `TOR` 与 `TXOR` 只在位运算上不同。
 
 <!-- PTO-READER-BLOCK: tile-tand-mechanism role=mechanism -->
 ## 元素与 Tile 机制
 
-预检阶段先检查完整指令束：操作数模式、维度、`DataType`、布局、源已定义性以及目标容量。只有全部通过后，`ExecuteTileBinary` 才读取两个源，并对有效矩形 `ValidRow x ValidCol` 内的每个坐标计算 `left AND right`。
+预检阶段先检查完整指令束：操作数模式、维度、`DataType`、布局、源已定义性以及目标容量。只有全部通过后，`ExecuteTileBinary` 才读取两个源，并对有效矩形 `ValidRow x ValidCol` 内的每个活动坐标计算 `left AND right`。
 
 对于 8、16、32 或 64 位的元素位宽 `W`，结果为 AND 结果的低 `W` 位，`W` 以上的载体位为零。符号性不改变运算：`S8` 与 `U8` 产生相同的位。
 
-设计要点：`TAND` 是原始载体操作。`TADD` 等算术操作要求每个源元素都是所选 `DataType` 的合法编码；`TAND` 跳过这种数值校验，按原样使用存储的位。位运算没有需要校验的数值含义，也不产生舍入、饱和或数值状态。
+设计要点：`TAND` 是原始载体操作。`TADD` 等算术操作要求每个源元素都是所选 `DataType` 的合法编码；`TAND` 直接读取数值载体中的位。位运算没有需要校验的数值含义，也不产生舍入、饱和或数值状态。
 
 <!-- PTO-READER-BLOCK: tile-tand-inputs role=inputs-outputs -->
 ## 操作数角色与描述符
 
 - `source0` 是左操作数，必须是已分配的现有 Local Tile。
 - `source1` 是右操作数，其物理形状、有效形状和布局必须与 `source0` 相同。
-- `destination0` 是新分配的 Local Tile，其后备 `DataType` 为所选操作 `DataType`，形状与源一致。
+- `destination0` 在普通形式中是新分配的 Local Tile。组装续写将结果写入已有父 Tile 的指定范围。在 Local CUBE_M16 或 CUBE_M32 下，U8 运算允许 PredicateCell 输入。两个 PredicateCell 产出 U8 基准的 PredicateCell；一个 PredicateCell 与一个数值输入产出数值 U8 Tile。
 
-一条终止 `B.IOT` 在同一个 `PE_MASK` 下绑定全部三个 Tile；不接受 `B.IOR` 与 `B.IOS`。`PE_MASK=0000` 是严格无操作，发生在读取、分配或故障之前。
+普通无掩码形式用一条终止 `B.IOT` 在同一个 `PE_MASK` 下绑定三个 Tile。带执行掩码的形式还需要绑定 ExecutionMask 载体。固定命令检查通过后，`PE_MASK=0000` 跳过操作数读取和分配。
 
 设计要点：每个源都可以使用位宽相同、非打包的其他后备类型存储，其位按原样使用。例如，把 `FP32` 数据按 `U32` 读取并与 `0x7FFFFFFF` 相与，会清除每个符号位，得到绝对值的 `U32` 编码。
 
@@ -50,7 +50,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 目标描述符、有效区域结果、填充以及每个元素的已定义性作为一次提交发布。被拒绝的 `TAND` 不改变描述符、载荷与分配状态。
 
-`ValidRow x ValidCol` 之外的元素接收所选 `PadValue`。`Zero` 写入零，`Max` 与 `Min` 写入该整数 `DataType` 的数值最大值与最小值；`Null`（省略 `B.DATR` 时的选择）使其保持未定义。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值。`TAND` 没有全局内存效果。
+`ValidRow x ValidCol` 之外的元素接收所选 `PadValue`。`Zero` 写入零，`Max` 与 `Min` 在数值目标中写入该整数类型的最大值与最小值。对于 PredicateCell 目标，`Max` 写入 1，`Min` 写入 0。`Null`（省略 `B.DATR` 时的选择）使其保持未定义。存在 ExecutionMask 时，非活动坐标接收该掩码规定的零值或合并值。`TAND` 没有全局内存效果。
 
 <!-- PTO-READER-BLOCK: tile-tand-constraints role=constraints -->
 ## 类型、布局与故障边界
@@ -59,7 +59,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 默认布局为 `RowMajor`，显式 `Layout` 可选择 `CUBE_M16` 或 `CUBE_M32`。`CUBE_N8`、Shared Tile 以及混合布局均非法。 在 CUBE 布局中，64 位操作类型只在 `CUBE_M32` 中合法；`CUBE_M16` 会拒绝。
 
-有效矩形内的每个源元素（存在 ExecutionMask 时为每个活动元素）都必须已定义，即使其编码不被校验。绑定格式错误、维度缺失或为零、源未定义或不匹配、布局不受支持、`DataType` 不受支持或目标容量无效时，会在效果之前引发 `Fault_TileLegality`。非默认的 `CMode`、`Sat`、`Canonicalize`、第二 `DataType` 或 `RMode` 均非法。
+有效矩形内的每个源元素（存在 ExecutionMask 时为每个活动元素）都必须已定义。每个活动 PredicateCell 字节必须为 `0x00` 或 `0x01`。绑定格式错误、维度缺失或为零、源未定义或不匹配、布局不受支持、`DataType` 不受支持或目标容量无效时，会在结果发布前被拒绝。非默认的 `CMode`、`Sat`、`Canonicalize`、第二 `DataType` 或 `RMode` 均非法。
 
 <!-- PTO-READER-BLOCK: tile-tand-example role=example -->
 ## 非规范演算示例
@@ -99,7 +99,7 @@ This operation has no standalone opcode.
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | new Local destination |
+| destination0 | Local result destination |
 | source0 | ordered left Local source |
 | source1 | ordered right Local source |
 
@@ -176,9 +176,9 @@ end;
 ## Legality
 
 - TAND is selected by TEPL carrier Mode 0 Function 6 and has no standalone opcode.
-- Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination; B.IOR and B.IOS are not accepted.
+- In the ordinary unmasked form one terminating Local B.IOT binds two ordered sources and the destination, with no B.IOR or B.IOS. Masked forms also bind the selected ExecutionMask carrier under the execution-mask schema.
 - DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.
-- B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.
+- B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; After fixed command checks, PE_MASK=0000 skips operand reads and allocation.
 - The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.
 - A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 - For U8 Local CUBE_M16/M32, PredicateCell operands are admitted; two PredicateCells select a U8-basis PredicateCell result and a mixed pair selects Numeric U8. Every active predicate byte must be defined and canonical.
@@ -202,7 +202,7 @@ end;
 
 ## Exceptions
 
-- Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.
+- Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity rejects before publication.
 - Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation.
 
 ## Examples

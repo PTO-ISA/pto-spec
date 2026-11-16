@@ -19,18 +19,18 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tsel-purpose role=purpose -->
 ## TSEL 的作用
 
-`TSEL` 在谓词控制下从两个源 Tile 之一选取每个元素，构造一个新的 Local Tile。谓词为 1 处取 `SrcTrue` 的元素，为 0 处取 `SrcFalse` 的元素。谓词通常由 `TCMP` 产生。
+`TSEL` 在谓词控制下从两个源 Tile 之一选取每个元素，生成 Local 结果。谓词为 1 处取 `SrcTrue` 的元素，为 0 处取 `SrcFalse` 的元素。谓词通常由 `TCMP` 产生。
 
-设计要点：`TSEL` 没有独立 opcode。它由 `BSTART.VEC` Mode 0 Function 26（TEPL 选择器 `0x01A`）选中。`PadValueOrByteId` 是唯一适用的 `B.DATR` 字段。
+设计要点：`TSEL` 没有独立 opcode。它由 `BSTART.VEC` Mode 0 Function 26（TEPL 选择器 `0x01A`）选中。`PadValueOrByteId` 选择填充值。带执行掩码时也使用公共控制字段 `PredInv` 和 `Zero`。
 
 <!-- PTO-READER-BLOCK: tile-c-tsel-mechanism role=mechanism -->
 ## 操作机制
 
-完整预检通过后，`TSEL` 快照谓词与两个数据源。对有效矩形 `ValidRow x ValidCol` 内的每个坐标，它读取谓词，并把所选源元素的精确位拷贝到目标。
+完整预检通过后，`TSEL` 快照谓词与两个数据源。对有效矩形 `ValidRow x ValidCol` 内的每个活动坐标，它读取谓词，并把所选源元素的精确位拷贝到目标。
 
 设计要点：`TSEL` 是原始载体操作。它不要求被选载荷是操作 `DataType` 的合法编码，也不做转换、舍入、饱和、规范化或数值状态更新。被选中的 NaN 保留其载荷，信号 NaN 也不会引发无效。在两个值之间做选择不需要算术，因此目标保存的正是被选中的位。
 
-设计要点：所选操作 `DataType` 仍然有作用。它是目标后备类型，并决定每个源后备类型必须匹配的元素位宽。在 PredicateCell 形式中它必须等于 PredicateCell 基准，在 GPR 形式中它决定掩码字几何。数值编码校验留给之后解释这些值的操作。
+设计要点：所选操作 `DataType` 仍然有作用。它是目标后备类型，并决定每个数值源后备类型必须匹配的元素位宽。在 GPR 形式中，它还决定掩码字的几何形状。数值编码校验留给之后解释这些值的操作。
 
 <!-- PTO-READER-BLOCK: tile-c-tsel-inputs-outputs role=inputs-outputs -->
 ## 操作数、形状与类型
@@ -38,7 +38,7 @@ The current instruction contract is owned by the ASL source linked above.
 - `source0` 是谓词：打包 Predicate Tile、CUBE PredicateCell Tile，或第一个掩码 GPR。
 - `source1` 是 `SrcTrue`，即谓词为 1 处选中的 Tile。
 - `source2` 是 `SrcFalse`，即谓词为 0 处选中的 Tile。
-- `destination0` 是新分配的 `RowMajor` 或 CUBE 数值 Tile，其 `DataType` 为所选操作 `DataType`。
+- `destination0` 在普通形式中是新分配的 `RowMajor` 或 CUBE 数值 Tile，使用所选操作 `DataType`。组装续写将结果写入已有父 Tile 的指定范围。
 
 `TSEL` 恰好使用三种互斥谓词载体之一。
 
@@ -50,7 +50,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 64 位 CUBE 操作数要求 `CUBE_M32` double-CELL 映射；`CUBE_M16` 会拒绝。该布局规则同时适用于 PredicateCell 与 GPR 载体形式。
 
-传统谓词是每个元素一位的打包 Tile，其有效区域内的每个谓词位都必须已定义。PredicateCell 每个元素占一个字节，其基准类型必须等于操作 `DataType`。PredicateCell 字节在每个有效坐标处被检查和读取（存在 ExecutionMask 时仅在活动坐标处），每个这样的字节都必须已定义且为规范值：`0x00` 或 `0x01`。在 GPR 形式中，8 位操作类型使用两个掩码 GPR，16 位与 32 位类型使用一个。
+传统谓词是每个元素一位的打包 Tile，其有效区域内的每个谓词位都必须已定义。PredicateCell 每个元素占一个字节，其基准类型可以与操作 `DataType` 不同。PredicateCell 字节在每个有效坐标处被检查和读取（存在 ExecutionMask 时仅在活动坐标处），每个这样的字节都必须已定义且为规范值：`0x00` 或 `0x01`。在 GPR 形式中，8 位操作类型使用两个掩码 GPR，16 位与 32 位类型使用一个。
 
 每个数据源都可以使用位宽相同、非打包的其他后备类型。其位按原样拷贝到以操作 `DataType` 标记的目标中。
 
@@ -59,7 +59,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 谓词与两个数据载荷都在第一次写目标之前被快照。两个数据源可以指向同一个 Tile，任一数据源也可以与目标互为别名；每次读取都看到旧值。
 
-被选载荷、填充已定义性与目标描述符同时发布。被拒绝的 `TSEL` 不产生任何架构效果，且无论成败三个源都保留。
+被选载荷、填充已定义性与目标描述符同时发布。拒绝执行时源载荷保持不变。执行成功后，每个 Local 源绑定的最后使用或复用设置决定该载荷在参与 PE 上的生命周期。
 
 `ValidRow x ValidCol` 之外的元素接收所选 `PadValue`。`Zero`、`Max` 与 `Min` 为已定义值，而 `Null`（省略 `B.DATR` 时的选择）使其保持未定义。
 
@@ -72,7 +72,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 源数据必须已定义（在 CUBE 形式中为每个活动坐标处），即使其编码不被校验。`PE_MASK=0000` 是严格无操作，发生在 GPR、谓词、源、分配或载荷检查之前。
 
-载体模式格式错误或混用、维度缺失、`DataType` 不受支持、PredicateCell 基准与操作 `DataType` 不同、活动谓词字节非规范或未定义、活动源数据未定义、形状或布局不匹配、目标容量不足或分配失败时，会在任何效果之前被拒绝。
+载体模式格式错误或混用、维度缺失、`DataType` 不受支持、活动谓词字节非规范或未定义、活动源数据未定义、形状或布局不匹配、目标容量不足或分配失败时，会在任何效果之前被拒绝。
 
 <!-- PTO-READER-BLOCK: tile-c-tsel-example role=example -->
 ## 非规范示例
@@ -112,10 +112,10 @@ This operation has no standalone opcode.
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | new RowMajor or CUBE numeric destination |
+| destination0 | RowMajor or CUBE numeric result destination |
 | source0 | legacy packed Predicate, CUBE PredicateCell, or first GPR-mask role |
-| source1 | persistent source selected by predicate one |
-| source2 | persistent source selected by predicate zero |
+| source1 | source selected by predicate one |
+| source2 | source selected by predicate zero |
 
 ## Decode
 
@@ -202,7 +202,7 @@ end;
 - Legacy RowMajor form uses two ordered B.IOT records: packed Predicate plus SrcTrue, then SrcFalse plus one new destination; B.IOR is absent, each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers, and selected bits are copied raw.
 - CUBE_M16/M32 PredicateCell form uses the same two-record Tile structure with a descriptor-valid PredicateCell whose ExecutionMask-active bytes are defined and canonical, independent of its basis, while valid shape and layout match the numeric sources. Each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; B.IOR is absent.
 - CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue, SrcFalse, and one new CUBE destination plus one source-only B.IOR carrying the complete mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8, or FP64/S64/U64 for CUBE_M32; each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; U8 consumes two mask GPRs and other accepted types consume one.
-- Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field.
+- Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId selects padding; masked forms also use the common PredInv and Zero controls.
 - A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 - A legal PredicateCell selector matches numeric operands in logical shape and layout independently of predicate basis.
 

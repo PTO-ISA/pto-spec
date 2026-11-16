@@ -40075,7 +40075,7 @@
           "field": "DstTile",
           "optional": false,
           "ordinal": 0,
-          "role": "new Local destination",
+          "role": "Local result destination",
           "size": "Size",
           "syntax": "->DstTile<Size>",
           "value_style": null
@@ -40083,7 +40083,7 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
+        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity rejects before publication.",
         "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
@@ -40104,7 +40104,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local destination",
+                  "role": "Local result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -40377,7 +40377,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local destination",
+                  "role": "Local result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -41389,7 +41389,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new Local destination",
+              "role": "Local result destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -41780,7 +41780,7 @@
       "semantic_operands": [
         {
           "field": "destination0",
-          "role": "new Local destination"
+          "role": "Local result destination"
         },
         {
           "field": "source0",
@@ -204988,7 +204988,7 @@
           "field": "DstTile",
           "optional": false,
           "ordinal": 0,
-          "role": "new Local destination",
+          "role": "Local result destination",
           "size": "Size",
           "syntax": "->DstTile<Size>",
           "value_style": null
@@ -204996,7 +204996,7 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
+        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity rejects before publication.",
         "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
@@ -205017,7 +205017,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local destination",
+                  "role": "Local result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -205290,7 +205290,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local destination",
+                  "role": "Local result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -206302,7 +206302,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new Local destination",
+              "role": "Local result destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -206693,7 +206693,7 @@
       "semantic_operands": [
         {
           "field": "destination0",
-          "role": "new Local destination"
+          "role": "Local result destination"
         },
         {
           "field": "source0",
@@ -249465,7 +249465,7 @@
           "field": "DstTile",
           "optional": false,
           "ordinal": 0,
-          "role": "new RowMajor or CUBE numeric destination",
+          "role": "RowMajor or CUBE numeric result destination",
           "size": "Size",
           "syntax": "->DstTile<Size>",
           "value_style": null
@@ -249494,7 +249494,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new RowMajor or CUBE numeric destination",
+                  "role": "RowMajor or CUBE numeric result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -249640,7 +249640,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "74b35e54efed910b2be84afc906c8566dcae58bbdb7ae21cf0544bec2a972cea",
+                "fold_signature_sha256": "9e357de9d575374926db3cedde21c932ea9e01a956d06dc1f03f5e83b9717d4f",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -249718,7 +249718,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -249732,7 +249732,7 @@
                     "field": "SrcTile2",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "persistent source selected by predicate zero",
+                    "role": "source selected by predicate zero",
                     "size": null,
                     "syntax": "SrcTile2",
                     "value_style": null
@@ -249767,7 +249767,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -249781,7 +249781,7 @@
                   "field": "SrcTile2",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "persistent source selected by predicate zero",
+                  "role": "source selected by predicate zero",
                   "size": null,
                   "syntax": "SrcTile2",
                   "value_style": null
@@ -249803,7 +249803,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new RowMajor or CUBE numeric destination",
+                  "role": "RowMajor or CUBE numeric result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -249949,7 +249949,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "948a40a8f4c54f1a06da0ea67b345ec79b109b51c79b7a1db8481f80321ba476",
+                "fold_signature_sha256": "a6958422a204f4a73056ebe8aecedddbe702b7da9bcf32de476d6405cfd2abd2",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -250027,7 +250027,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -250041,7 +250041,7 @@
                     "field": "SrcTile2",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "persistent source selected by predicate zero",
+                    "role": "source selected by predicate zero",
                     "size": null,
                     "syntax": "SrcTile2",
                     "value_style": null
@@ -250076,7 +250076,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -250090,7 +250090,7 @@
                   "field": "SrcTile2",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "persistent source selected by predicate zero",
+                  "role": "source selected by predicate zero",
                   "size": null,
                   "syntax": "SrcTile2",
                   "value_style": null
@@ -250306,7 +250306,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "16ecb4903959736f0ca86e6390942a45374f092c89950751d73b217ebd7bd6b5",
+                "fold_signature_sha256": "bada76f510b0c46ef078f17d803c15b2781bcbd15c003d501a4daff860e637a8",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -250384,7 +250384,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -250398,7 +250398,7 @@
                     "field": "SrcTile2",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "persistent source selected by predicate zero",
+                    "role": "source selected by predicate zero",
                     "size": null,
                     "syntax": "SrcTile2",
                     "value_style": null
@@ -250433,7 +250433,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -250447,7 +250447,7 @@
                   "field": "SrcTile2",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "persistent source selected by predicate zero",
+                  "role": "source selected by predicate zero",
                   "size": null,
                   "syntax": "SrcTile2",
                   "value_style": null
@@ -250663,7 +250663,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "b8a896ba853dc62a48d9e364da13ed6a5e0d173514542d734daac797670ab05b",
+                "fold_signature_sha256": "972335f1a0e5c3da458266bda78beaeb553e3a10ad17e88994177cc871dc84a1",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -250741,7 +250741,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -250755,7 +250755,7 @@
                     "field": "SrcTile2",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "persistent source selected by predicate zero",
+                    "role": "source selected by predicate zero",
                     "size": null,
                     "syntax": "SrcTile2",
                     "value_style": null
@@ -250790,7 +250790,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -250804,7 +250804,7 @@
                   "field": "SrcTile2",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "persistent source selected by predicate zero",
+                  "role": "source selected by predicate zero",
                   "size": null,
                   "syntax": "SrcTile2",
                   "value_style": null
@@ -250923,7 +250923,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new RowMajor or CUBE numeric destination",
+              "role": "RowMajor or CUBE numeric result destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -251299,7 +251299,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent source selected by predicate one",
+              "role": "source selected by predicate one",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -251313,7 +251313,7 @@
               "field": "SrcTile2",
               "optional": false,
               "ordinal": 2,
-              "role": "persistent source selected by predicate zero",
+              "role": "source selected by predicate zero",
               "size": null,
               "syntax": "SrcTile2",
               "value_style": null
@@ -251337,7 +251337,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new RowMajor or CUBE numeric destination",
+                  "role": "RowMajor or CUBE numeric result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -251483,7 +251483,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "431d4b1d011a4e68f8de54a04265c156328ce3b607774876fbe056ed11a0e19c",
+                "fold_signature_sha256": "b0d1f632476c08e3c4a36aeaa0c0dcd53bcf6a8f04a2e385938f3af35c954e60",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -251561,7 +251561,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -251575,7 +251575,7 @@
                     "field": "SrcTile2",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "persistent source selected by predicate zero",
+                    "role": "source selected by predicate zero",
                     "size": null,
                     "syntax": "SrcTile2",
                     "value_style": null
@@ -251610,7 +251610,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -251624,7 +251624,7 @@
                   "field": "SrcTile2",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "persistent source selected by predicate zero",
+                  "role": "source selected by predicate zero",
                   "size": null,
                   "syntax": "SrcTile2",
                   "value_style": null
@@ -251646,7 +251646,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new RowMajor or CUBE numeric destination",
+                  "role": "RowMajor or CUBE numeric result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -251792,7 +251792,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "90b0e4dd6d034ab9b655bae067f2fd464dde62ea6504c4d5b0d9ef900621084f",
+                "fold_signature_sha256": "c2d96e536429d536608e75944e91487b0e106cced1761e193575b40d3048147e",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -251870,7 +251870,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -251884,7 +251884,7 @@
                     "field": "SrcTile2",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "persistent source selected by predicate zero",
+                    "role": "source selected by predicate zero",
                     "size": null,
                     "syntax": "SrcTile2",
                     "value_style": null
@@ -251919,7 +251919,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -251933,7 +251933,7 @@
                   "field": "SrcTile2",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "persistent source selected by predicate zero",
+                  "role": "source selected by predicate zero",
                   "size": null,
                   "syntax": "SrcTile2",
                   "value_style": null
@@ -252149,7 +252149,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "5cfb8ccc7323415ef62fc5e0755b26ed1495af258a4445645129a93fbc66e2b1",
+                "fold_signature_sha256": "db23ebdec14cb261133fa7429c901812b6fe11d5510b0c59f2197dcd9a9db3d3",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -252227,7 +252227,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -252241,7 +252241,7 @@
                     "field": "SrcTile2",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "persistent source selected by predicate zero",
+                    "role": "source selected by predicate zero",
                     "size": null,
                     "syntax": "SrcTile2",
                     "value_style": null
@@ -252276,7 +252276,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -252290,7 +252290,7 @@
                   "field": "SrcTile2",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "persistent source selected by predicate zero",
+                  "role": "source selected by predicate zero",
                   "size": null,
                   "syntax": "SrcTile2",
                   "value_style": null
@@ -252506,7 +252506,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "fdb2e5ad6cd610c2ed1131910ad23fba2103153087adfa7d2f186d683f8f9dc7",
+                "fold_signature_sha256": "3ceb0a29e3c826510e1308e8d92f039087009a52dc1971e04dd35b44885fe44b",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -252584,7 +252584,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -252598,7 +252598,7 @@
                     "field": "SrcTile2",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "persistent source selected by predicate zero",
+                    "role": "source selected by predicate zero",
                     "size": null,
                     "syntax": "SrcTile2",
                     "value_style": null
@@ -252633,7 +252633,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -252647,7 +252647,7 @@
                   "field": "SrcTile2",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "persistent source selected by predicate zero",
+                  "role": "source selected by predicate zero",
                   "size": null,
                   "syntax": "SrcTile2",
                   "value_style": null
@@ -252766,7 +252766,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new RowMajor or CUBE numeric destination",
+              "role": "RowMajor or CUBE numeric result destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -253144,7 +253144,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent source selected by predicate one",
+              "role": "source selected by predicate one",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -253158,7 +253158,7 @@
               "field": "SrcTile2",
               "optional": false,
               "ordinal": 2,
-              "role": "persistent source selected by predicate zero",
+              "role": "source selected by predicate zero",
               "size": null,
               "syntax": "SrcTile2",
               "value_style": null
@@ -253182,7 +253182,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new RowMajor or CUBE numeric destination",
+                  "role": "RowMajor or CUBE numeric result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -253328,7 +253328,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "ce6cc6e7c88660dd328df643db7badaad9074014f83121674f905b234fb240d1",
+                "fold_signature_sha256": "03fc3d4c818b96277065cf4f99a8fb9a3cb8f31dc913b9e2a058205e504b607a",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -253426,7 +253426,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -253440,7 +253440,7 @@
                     "field": "SrcTile2",
                     "optional": false,
                     "ordinal": 3,
-                    "role": "persistent source selected by predicate zero",
+                    "role": "source selected by predicate zero",
                     "size": null,
                     "syntax": "SrcTile2",
                     "value_style": null
@@ -253489,7 +253489,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -253503,7 +253503,7 @@
                   "field": "SrcTile2",
                   "optional": false,
                   "ordinal": 3,
-                  "role": "persistent source selected by predicate zero",
+                  "role": "source selected by predicate zero",
                   "size": null,
                   "syntax": "SrcTile2",
                   "value_style": null
@@ -253525,7 +253525,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new RowMajor or CUBE numeric destination",
+                  "role": "RowMajor or CUBE numeric result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -253671,7 +253671,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "b4e470806c81c889c87e0210a53002ca4ab2608eac9b05d5ff64b1b678318fd1",
+                "fold_signature_sha256": "fc4270e536ea044bb33dd0b68dc1c06293a09a44ea6bf7d2a41ea6334d70a4f6",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -253769,7 +253769,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -253783,7 +253783,7 @@
                     "field": "SrcTile2",
                     "optional": false,
                     "ordinal": 3,
-                    "role": "persistent source selected by predicate zero",
+                    "role": "source selected by predicate zero",
                     "size": null,
                     "syntax": "SrcTile2",
                     "value_style": null
@@ -253832,7 +253832,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -253846,7 +253846,7 @@
                   "field": "SrcTile2",
                   "optional": false,
                   "ordinal": 3,
-                  "role": "persistent source selected by predicate zero",
+                  "role": "source selected by predicate zero",
                   "size": null,
                   "syntax": "SrcTile2",
                   "value_style": null
@@ -254062,7 +254062,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "d2ce890d41a4c82a796c66a3d2e6d76422348baeb04d41bb9b0de71555b796a9",
+                "fold_signature_sha256": "a3cd112c46068c9c62f26cf535b9a1c722d992eac2472cddab0f017b10d98e85",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -254160,7 +254160,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -254174,7 +254174,7 @@
                     "field": "SrcTile2",
                     "optional": false,
                     "ordinal": 3,
-                    "role": "persistent source selected by predicate zero",
+                    "role": "source selected by predicate zero",
                     "size": null,
                     "syntax": "SrcTile2",
                     "value_style": null
@@ -254223,7 +254223,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -254237,7 +254237,7 @@
                   "field": "SrcTile2",
                   "optional": false,
                   "ordinal": 3,
-                  "role": "persistent source selected by predicate zero",
+                  "role": "source selected by predicate zero",
                   "size": null,
                   "syntax": "SrcTile2",
                   "value_style": null
@@ -254453,7 +254453,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "6de8fff130c86609ccfa8433c97d90c12bc74472d7eb904097c072db4757ea3a",
+                "fold_signature_sha256": "22e88eb2e7acfcadeac73210d298847aa1c678ab917804a9c63f4b1d0acc95c0",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -254551,7 +254551,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -254565,7 +254565,7 @@
                     "field": "SrcTile2",
                     "optional": false,
                     "ordinal": 3,
-                    "role": "persistent source selected by predicate zero",
+                    "role": "source selected by predicate zero",
                     "size": null,
                     "syntax": "SrcTile2",
                     "value_style": null
@@ -254614,7 +254614,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -254628,7 +254628,7 @@
                   "field": "SrcTile2",
                   "optional": false,
                   "ordinal": 3,
-                  "role": "persistent source selected by predicate zero",
+                  "role": "source selected by predicate zero",
                   "size": null,
                   "syntax": "SrcTile2",
                   "value_style": null
@@ -254747,7 +254747,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new RowMajor or CUBE numeric destination",
+              "role": "RowMajor or CUBE numeric result destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -255163,7 +255163,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 2,
-              "role": "persistent source selected by predicate one",
+              "role": "source selected by predicate one",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -255177,7 +255177,7 @@
               "field": "SrcTile2",
               "optional": false,
               "ordinal": 3,
-              "role": "persistent source selected by predicate zero",
+              "role": "source selected by predicate zero",
               "size": null,
               "syntax": "SrcTile2",
               "value_style": null
@@ -255257,7 +255257,7 @@
       "semantic_operands": [
         {
           "field": "destination0",
-          "role": "new RowMajor or CUBE numeric destination"
+          "role": "RowMajor or CUBE numeric result destination"
         },
         {
           "field": "source0",
@@ -255265,11 +255265,11 @@
         },
         {
           "field": "source1",
-          "role": "persistent source selected by predicate one"
+          "role": "source selected by predicate one"
         },
         {
           "field": "source2",
-          "role": "persistent source selected by predicate zero"
+          "role": "source selected by predicate zero"
         }
       ],
       "source": "asl/tile/elementwise-tile-tile/logical/TSEL.asl",
@@ -255297,7 +255297,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent source selected by predicate one",
+          "role": "source selected by predicate one",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -255311,7 +255311,7 @@
           "field": "SrcTile2",
           "optional": false,
           "ordinal": 2,
-          "role": "persistent source selected by predicate zero",
+          "role": "source selected by predicate zero",
           "size": null,
           "syntax": "SrcTile2",
           "value_style": null
@@ -255444,7 +255444,7 @@
           "field": "DstTile",
           "optional": false,
           "ordinal": 0,
-          "role": "new RowMajor or CUBE numeric destination",
+          "role": "RowMajor or CUBE numeric result destination",
           "size": "Size",
           "syntax": "->DstTile<Size>",
           "value_style": null
@@ -255473,7 +255473,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new RowMajor or CUBE numeric destination",
+                  "role": "RowMajor or CUBE numeric result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -255619,7 +255619,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "17364104d02f3769ab412cb91ad814803807978b3a58b95cbc39b442f06e313e",
+                "fold_signature_sha256": "b2fd977c02c77658a6dd92e4f661bd1c6f9e2749ac28e37eb3906daffd5c5556",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -255697,7 +255697,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -255746,7 +255746,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -255782,7 +255782,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new RowMajor or CUBE numeric destination",
+                  "role": "RowMajor or CUBE numeric result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -255928,7 +255928,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "e464c3b6707baa04df12d5aaac6610f5be113d20819b8fcfa2e3957275078900",
+                "fold_signature_sha256": "313f21bf788930aa1a37564fbff7f6f4e4823ebc99f5859acf84b809eeb594b9",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -256006,7 +256006,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -256055,7 +256055,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -256285,7 +256285,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "6f9c53686ff1ad9269a7376c990c6165fb90d26454e315c432381fad2b6187a3",
+                "fold_signature_sha256": "75f72537e2d1d95eecf2cffc414af87c6cfd2796154616eb3787f5e98403b027",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -256363,7 +256363,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -256412,7 +256412,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -256642,7 +256642,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "999d35b3f1125426611ef0678f3e3f85370a3bb2bd3bd7da05186aa4351b8bc5",
+                "fold_signature_sha256": "5c771145d7b4ee347daee6c2302f1f89022dccd82e41f9138c285d62e6645c8b",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -256720,7 +256720,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -256769,7 +256769,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -256902,7 +256902,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new RowMajor or CUBE numeric destination",
+              "role": "RowMajor or CUBE numeric result destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -257260,7 +257260,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent source selected by predicate one",
+              "role": "source selected by predicate one",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -257298,7 +257298,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new RowMajor or CUBE numeric destination",
+                  "role": "RowMajor or CUBE numeric result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -257444,7 +257444,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "98ae0c002a893eb143c2bcdef2dab98eab35e225a1de1593e762979947214fbe",
+                "fold_signature_sha256": "3acd89b53b8a7134b958bbd34133de1e2fb5ae678c0c3c7a7a82218e4e7b6e46",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -257522,7 +257522,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -257571,7 +257571,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -257607,7 +257607,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new RowMajor or CUBE numeric destination",
+                  "role": "RowMajor or CUBE numeric result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -257753,7 +257753,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "26d83473cb8838fd606cb63e4d776189435a49f1c9d630bfadde48a233b0627f",
+                "fold_signature_sha256": "b434d2d5e62e1596b4fc8ab0aa4f95c7810ad39f6a4e181874f9fa1d0204959c",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -257831,7 +257831,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -257880,7 +257880,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -258110,7 +258110,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "c306bea4e626fb282e9ee5186cc8338c2ab028fd383b355c0e7238e12305b47d",
+                "fold_signature_sha256": "42eaaa32088ec4a23b9b4d6ac1cdada65cd2cb7587a2b4738a59b3fa05e1301d",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -258188,7 +258188,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -258237,7 +258237,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -258467,7 +258467,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "b0a40fe403962365d2760b0bff2d3493638a70360a8afff071ea119acd30d920",
+                "fold_signature_sha256": "2c519dad3cc4effc5a0e54f08b3d02acc3401caf6730644cd78ad7f5cd82b66f",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -258545,7 +258545,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 1,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -258594,7 +258594,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 1,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -258727,7 +258727,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new RowMajor or CUBE numeric destination",
+              "role": "RowMajor or CUBE numeric result destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -259087,7 +259087,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 1,
-              "role": "persistent source selected by predicate one",
+              "role": "source selected by predicate one",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -259125,7 +259125,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new RowMajor or CUBE numeric destination",
+                  "role": "RowMajor or CUBE numeric result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -259271,7 +259271,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "d87d802e11457ddb734bb8881186b63e12646daf9ed5be36e376219f91d0066c",
+                "fold_signature_sha256": "851b7f59a0ea928a230a0e2f75a432b2d5bb6fb1bb153df36d67aa4b39cb272e",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -259369,7 +259369,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -259383,7 +259383,7 @@
                     "field": "ScalarFalseGPR",
                     "optional": true,
                     "ordinal": 3,
-                    "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; persistent source selected by predicate one; independent scalar selected by predicate zero",
+                    "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; source selected by predicate one; independent scalar selected by predicate zero",
                     "size": null,
                     "syntax": "ScalarFalseGPR=zero",
                     "value_style": null
@@ -259432,7 +259432,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -259446,7 +259446,7 @@
                   "field": "ScalarFalseGPR",
                   "optional": true,
                   "ordinal": 3,
-                  "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; persistent source selected by predicate one; independent scalar selected by predicate zero",
+                  "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; source selected by predicate one; independent scalar selected by predicate zero",
                   "size": null,
                   "syntax": "ScalarFalseGPR=zero",
                   "value_style": null
@@ -259468,7 +259468,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new RowMajor or CUBE numeric destination",
+                  "role": "RowMajor or CUBE numeric result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -259614,7 +259614,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "a198dc5739661f7e1d0a6cc580520e732a0d9912f09f429df27a0f022e15a87e",
+                "fold_signature_sha256": "6a030939bf10a7a364f35f7bb38425f2d87b4c8ab0bcae4e9d2406d0d0aecfa1",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -259712,7 +259712,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -259726,7 +259726,7 @@
                     "field": "ScalarFalseGPR",
                     "optional": true,
                     "ordinal": 3,
-                    "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; persistent source selected by predicate one; independent scalar selected by predicate zero",
+                    "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; source selected by predicate one; independent scalar selected by predicate zero",
                     "size": null,
                     "syntax": "ScalarFalseGPR=zero",
                     "value_style": null
@@ -259775,7 +259775,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -259789,7 +259789,7 @@
                   "field": "ScalarFalseGPR",
                   "optional": true,
                   "ordinal": 3,
-                  "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; persistent source selected by predicate one; independent scalar selected by predicate zero",
+                  "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; source selected by predicate one; independent scalar selected by predicate zero",
                   "size": null,
                   "syntax": "ScalarFalseGPR=zero",
                   "value_style": null
@@ -260005,7 +260005,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "448f42885d6b1260e31bcd1a945220395f4bb56ef0e0e528143ea74ee5fa8348",
+                "fold_signature_sha256": "03a2696c84b4ade6a144b8a02a728cbe988a55c4c3535ca9d7f4d5570925b015",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -260103,7 +260103,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -260117,7 +260117,7 @@
                     "field": "ScalarFalseGPR",
                     "optional": true,
                     "ordinal": 3,
-                    "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; persistent source selected by predicate one; independent scalar selected by predicate zero",
+                    "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; source selected by predicate one; independent scalar selected by predicate zero",
                     "size": null,
                     "syntax": "ScalarFalseGPR=zero",
                     "value_style": null
@@ -260166,7 +260166,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -260180,7 +260180,7 @@
                   "field": "ScalarFalseGPR",
                   "optional": true,
                   "ordinal": 3,
-                  "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; persistent source selected by predicate one; independent scalar selected by predicate zero",
+                  "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; source selected by predicate one; independent scalar selected by predicate zero",
                   "size": null,
                   "syntax": "ScalarFalseGPR=zero",
                   "value_style": null
@@ -260396,7 +260396,7 @@
                   "policy": "unique-exact-match-or-physical",
                   "requires_complete_boundary": true
                 },
-                "fold_signature_sha256": "fda6552ebe06485f59450922b465b2f241a2dc40613348e5e4729b8ecb9f0501",
+                "fold_signature_sha256": "d4a83c9e8491736ba671cf23dfac8974263535b7800688361e5a9666b7d596e7",
                 "handler_source_arguments": [
                   {
                     "kind": "operand-member",
@@ -260494,7 +260494,7 @@
                     "field": "SrcTile1",
                     "optional": false,
                     "ordinal": 2,
-                    "role": "persistent source selected by predicate one",
+                    "role": "source selected by predicate one",
                     "size": null,
                     "syntax": "SrcTile1",
                     "value_style": null
@@ -260508,7 +260508,7 @@
                     "field": "ScalarFalseGPR",
                     "optional": true,
                     "ordinal": 3,
-                    "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; persistent source selected by predicate one; independent scalar selected by predicate zero",
+                    "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; source selected by predicate one; independent scalar selected by predicate zero",
                     "size": null,
                     "syntax": "ScalarFalseGPR=zero",
                     "value_style": null
@@ -260557,7 +260557,7 @@
                   "field": "SrcTile1",
                   "optional": false,
                   "ordinal": 2,
-                  "role": "persistent source selected by predicate one",
+                  "role": "source selected by predicate one",
                   "size": null,
                   "syntax": "SrcTile1",
                   "value_style": null
@@ -260571,7 +260571,7 @@
                   "field": "ScalarFalseGPR",
                   "optional": true,
                   "ordinal": 3,
-                  "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; persistent source selected by predicate one; independent scalar selected by predicate zero",
+                  "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; source selected by predicate one; independent scalar selected by predicate zero",
                   "size": null,
                   "syntax": "ScalarFalseGPR=zero",
                   "value_style": null
@@ -260690,7 +260690,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new RowMajor or CUBE numeric destination",
+              "role": "RowMajor or CUBE numeric result destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -261082,7 +261082,7 @@
               "field": "SrcTile1",
               "optional": false,
               "ordinal": 2,
-              "role": "persistent source selected by predicate one",
+              "role": "source selected by predicate one",
               "size": null,
               "syntax": "SrcTile1",
               "value_style": null
@@ -261096,7 +261096,7 @@
               "field": "ScalarFalseGPR",
               "optional": true,
               "ordinal": 3,
-              "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; persistent source selected by predicate one; independent scalar selected by predicate zero",
+              "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role; source selected by predicate one; independent scalar selected by predicate zero",
               "size": null,
               "syntax": "ScalarFalseGPR=zero",
               "value_style": null
@@ -261174,7 +261174,7 @@
       "semantic_operands": [
         {
           "field": "destination0",
-          "role": "new RowMajor or CUBE numeric destination"
+          "role": "RowMajor or CUBE numeric result destination"
         },
         {
           "field": "source0",
@@ -261182,7 +261182,7 @@
         },
         {
           "field": "source1",
-          "role": "persistent source selected by predicate one"
+          "role": "source selected by predicate one"
         },
         {
           "field": "scalar0",
@@ -261214,7 +261214,7 @@
           "field": "SrcTile1",
           "optional": false,
           "ordinal": 1,
-          "role": "persistent source selected by predicate one",
+          "role": "source selected by predicate one",
           "size": null,
           "syntax": "SrcTile1",
           "value_style": null
@@ -292028,7 +292028,7 @@
           "field": "DstTile",
           "optional": false,
           "ordinal": 0,
-          "role": "new Local destination",
+          "role": "Local result destination",
           "size": "Size",
           "syntax": "->DstTile<Size>",
           "value_style": null
@@ -292036,7 +292036,7 @@
       ],
       "engine": "VEC",
       "exceptions": [
-        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
+        "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity rejects before publication.",
         "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation."
       ],
       "format_source": "PTO-TILEOP-MACRO owner record in PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
@@ -292057,7 +292057,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local destination",
+                  "role": "Local result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -292330,7 +292330,7 @@
                   "optional": false,
                   "ordinal": 0,
                   "parent_capacity": "ParentCapacity",
-                  "role": "new Local destination",
+                  "role": "Local result destination",
                   "size": "ParentCapacity",
                   "syntax": "->T<ParentCapacity>[assemble=INIT_LAST,RegSrc+uimm11:WriterSize]",
                   "value_style": null,
@@ -293342,7 +293342,7 @@
               "field": "DstTile",
               "optional": false,
               "ordinal": 0,
-              "role": "new Local destination",
+              "role": "Local result destination",
               "size": "Size",
               "syntax": "->DstTile<Size>",
               "value_style": null
@@ -293733,7 +293733,7 @@
       "semantic_operands": [
         {
           "field": "destination0",
-          "role": "new Local destination"
+          "role": "Local result destination"
         },
         {
           "field": "source0",
