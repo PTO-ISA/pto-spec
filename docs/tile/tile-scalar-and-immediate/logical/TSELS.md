@@ -19,7 +19,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tsels-purpose role=purpose -->
 ## What TSELS does
 
-`TSELS` builds a new Local Tile by choosing, for each element in the valid rectangle, either the element of a true-source Tile or one scalar. A predicate of one selects the Tile element and zero selects the scalar. It is selected by TEPL Mode 1 Function 26 (selector `0x03A`), written canonically as `BSTART.VEC TSELS, DataType`, and has no standalone opcode.
+`TSELS` produces a Local result by choosing, for each active element in the valid rectangle, either the element of a true-source Tile or one scalar. A predicate of one selects the Tile element and zero selects the scalar. It is selected by TEPL Mode 1 Function 26 (selector `0x03A`), written canonically as `BSTART.VEC TSELS, DataType`, and has no standalone opcode.
 
 Design point: the false alternative is a scalar, not a Tile. The Tile-Tile form `TSEL` needs a second source Tile, so replacing rejected elements with one constant that way first requires a Tile filled with it. `TSELS` takes the constant directly from a GPR.
 
@@ -38,14 +38,14 @@ Complete preflight finishes before the predicate, true source, and scalar are sn
 ## Operand roles and mask carriers
 
 - `source0` is the mask. Its carrier depends on the form described below.
-- `source1` is the true source, an existing Local numeric Tile that persists unchanged.
+- `source1` is the true source, an existing Local numeric Tile whose payload lifetime follows its source binding.
 - `scalar0` is the per-PE false scalar.
-- `destination0` is a newly allocated Local Tile whose `DataType` is the selected `DataType`.
+- `destination0` uses the selected `DataType`. The ordinary form allocates a Local destination. An assembly continuation writes its selected range in an existing parent.
 
 Three mutually exclusive forms are described by the contract:
 
-- RowMajor: a legacy packed predicate Tile in `B.IOT`, one bit per element. The false scalar is `B.IOR.RegSrc0`. This remains the intended legacy form, but the current executable schema cannot reach it: the same first Tile is required to pass both Predicate and Numeric carrier checks. Treat this branch as an executable-model gap tracked in issue #367, not as a runnable form.
-- `CUBE_M16` or `CUBE_M32` with a PredicateCell: a `U8` PredicateCell in `B.IOT` whose basis equals the operation `DataType`. The false scalar is `B.IOR.RegSrc0`.
+- RowMajor: a legacy packed predicate Tile in `B.IOT`, one bit per element. The false scalar is `B.IOR.RegSrc0`. The second Tile source supplies the numeric true value.
+- `CUBE_M16` or `CUBE_M32` with a PredicateCell: a `U8` PredicateCell in `B.IOT` with the same valid shape and layout as the numeric source. The false scalar is `B.IOR.RegSrc0`.
 - `CUBE_M16` or `CUBE_M32` with a GPR mask: one source-only `B.IOR` carries the mask words first and then the false scalar, so the scalar is the second source for a one-word mask and the third source for the two-word mask of an 8-bit type. A 64-bit CUBE operand requires the `CUBE_M32` double-CELL mapping; `CUBE_M16` rejects it.
 
 Design point: fixed `B.IOT` decoding and SizeCode legality still apply when `PE_MASK=0000`. After those checks, the zero-mask command returns before placement and schema checks. At commit, zero participation makes Tile dispatch return before the TSELS operation handler is called, so no GPR or descriptor is read and no Tile is allocated.
@@ -62,18 +62,18 @@ With an ExecutionMask on a CUBE form, inactive coordinates receive the mask's ze
 <!-- PTO-READER-BLOCK: tile-c-tsels-constraints role=constraints -->
 ## Type, layout, and fault boundary
 
-The operation `DataType` set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. PredicateCell and GPR CUBE forms admit `FP64`, `S64`, and `U64` with `CUBE_M32` double-CELL numeric operands; `CUBE_M16` rejects those 64-bit basis types. PredicateCell basis must equal the operation type, and the GPR form remains bounded by its type-derived predicate geometry.
+The operation `DataType` set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`. PredicateCell and GPR CUBE forms admit `FP64`, `S64`, and `U64` with `CUBE_M32` double-CELL numeric operands; `CUBE_M16` rejects those 64-bit operation types. The PredicateCell basis may differ from the operation type. The operation type determines GPR mask geometry.
 
-The true source may use a different same-width, non-packed backing type; the destination always uses the operation `DataType`. `PadValueOrByteId` is the only applicable `B.DATR` field, and the layout comes from the source descriptor.
+The true source may use a different same-width, non-packed backing type; the destination always uses the operation `DataType`. `PadValueOrByteId` selects padding. Masked forms also use the common `PredInv` and `Zero` controls, and the layout comes from the source descriptor.
 
-Mask bytes and true-source elements must be defined at every active coordinate, and PredicateCell bytes must be canonical `0x00` or `0x01`. A malformed or mixed carrier schema, a wrong PredicateCell basis, a shape or layout mismatch, insufficient capacity, or an allocation failure rejects the bundle before any effect.
+Mask bytes and true-source elements must be defined at every active coordinate, and PredicateCell bytes must be canonical `0x00` or `0x01`. A malformed or mixed carrier schema, a shape or layout mismatch, insufficient capacity, or an allocation failure rejects the bundle before any effect.
 
 <!-- PTO-READER-BLOCK: tile-c-tsels-example role=example -->
 ## Non-normative example
 
 This example illustrates the current ASL-bound contract and is not a second instruction definition.
 
-Consider a `CUBE_M16` `FP32` true-source row `[-1.5, 2.0]`, a matching PredicateCell row `[0, 1]`, and an omitted false scalar. Conceptually, CUBE selection produces `[+0.0, 2.0]`: the first element takes the all-zero scalar and the second copies the source encoding. This is only a non-normative data-flow example; it does not claim a particular macro expansion or make the unreachable RowMajor branch runnable.
+Consider a `CUBE_M16` `FP32` true-source row `[-1.5, 2.0]`, a matching U8-basis PredicateCell row `[0, 1]`, and an omitted false scalar. Conceptually, CUBE selection produces `[+0.0, 2.0]`: the first element takes the all-zero scalar and the second copies the source encoding.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine
@@ -164,9 +164,9 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | new RowMajor or CUBE numeric destination |
+| destination0 | RowMajor or CUBE numeric result destination |
 | source0 | legacy packed Predicate, CUBE PredicateCell, or GPR mask role |
-| source1 | persistent source selected by predicate one |
+| source1 | source selected by predicate one |
 | scalar0 | independent scalar selected by predicate zero |
 
 ## Decode
@@ -253,7 +253,7 @@ end;
 - Legacy RowMajor form uses one terminating B.IOT with packed Predicate, SrcTrue, and one new destination; one B.IOR source supplies scalar-false or omission selects the operation-type zero, and the source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.
 - CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with a descriptor-valid PredicateCell whose ExecutionMask-active bytes are defined and canonical, independent of its basis, SrcTrue, and one new CUBE destination plus an optional scalar-false B.IOR source; omission selects the operation-type zero. The true-source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.
 - CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue and one new CUBE destination. One source-only B.IOR carries the complete predicate mask followed by the independent scalar-false source: two sources for one-word masks and three for U8's two-word mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8, or FP64/S64/U64 for CUBE_M32; the true-source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.
-- Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field.
+- Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId selects padding; masked forms also use the common PredInv and Zero controls.
 - A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.
 - A legal PredicateCell selector matches numeric operands in logical shape and layout independently of predicate basis.
 

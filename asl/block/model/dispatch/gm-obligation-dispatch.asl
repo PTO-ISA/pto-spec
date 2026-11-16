@@ -321,11 +321,18 @@ begin
                 obligation_invocation, obligation_identity);
         end;
     end;
-    if !completed && !_BundleExecutionMask.merge_base_waiting then
-        AbortBundleLocalGenerationsForBundle();
-        if _LastFault != Fault_None ||
-           !BundleSharedGenerationRequestWaiting(0) then
-            AbortBundleSharedGenerationsForBundle();
+    if !completed then
+        // A failed or waiting attempt cannot retain derived SUBVIEW Tiles or
+        // their cached descriptors. Trap capture has already canonicalized
+        // its saved copy; now restore the live architectural parents before
+        // recovery or retry can observe the abandoned attempt.
+        DiscardBundleSubviewMaterializationsForRetry();
+        if !_BundleExecutionMask.merge_base_waiting then
+            AbortBundleLocalGenerationsForBundle();
+            if _LastFault != Fault_None ||
+               !BundleSharedGenerationRequestWaiting(0) then
+                AbortBundleSharedGenerationsForBundle();
+            end;
         end;
     end;
     return completed;
