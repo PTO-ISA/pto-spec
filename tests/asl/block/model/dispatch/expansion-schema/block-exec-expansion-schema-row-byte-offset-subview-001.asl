@@ -170,7 +170,9 @@ begin
         as integer {0..PTO_TILE_OPERATION_COUNT-1};
     let completed = ExecuteBundleTileOperation();
     assert !completed && _LastFault == Fault_TileAllocation;
-    assert _BundleTileBindings[[0]].source0_subview.derived.valid;
+    assert _BundleTileBindings[[0]].source0 == 2;
+    assert _BundleTileBindings[[0]].source0_subview.valid;
+    assert !_BundleTileBindings[[0]].source0_subview.derived.valid;
     assert !_BundleTileBindings[[0]].source0_subview.materialized;
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
 end;
