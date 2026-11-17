@@ -483,10 +483,8 @@ def emit_msgb_transfer_setup(name: str, class_id: str, tag: str) -> None:
     if class_id == "scalar-system-register-swap":
         return
     if class_id == "scalar-system-register-read":
-        if name in MSGB_SNAPSHOT_READ_NAMES:
-            emit_msgb_witness_setup(tag=tag, snapshot=True)
-        elif name in MSGB_CONFIG_NAMES:
-            emit_msgb_witness_setup(tag=tag)
+        if name not in MSGB_COMMAND_NAMES:
+            emit_msgb_witness_setup(tag=tag, snapshot=name in MSGB_SNAPSHOT_READ_NAMES)
         return
     if name in MSGB_CONFIG_NAMES:
         emit_msgb_launch_only(tag)

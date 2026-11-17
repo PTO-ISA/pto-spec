@@ -38,6 +38,14 @@ class MessageBufferGeneratorTest(unittest.TestCase):
         self.assertIn("msgb_ack_state_", self.generated)
         self.assertIn("Zeros{PTO_XLEN} + 0x101", self.generated)
 
+    def test_diagnostic_read_witness_enables_the_bank(self) -> None:
+        marker = re.search(r"transfer/ssrget_32_[a-z0-9]+/MSGBTXSTAT/0x000847", self.generated)
+        self.assertIsNotNone(marker)
+        case = self.generated[marker.end():].split("// SYSREG-WITNESS", 1)[0]
+        self.assertIn("LaunchKernelInvocation", case)
+        self.assertIn("WriteSystemRegisterAddress(Zeros{24} + 0x084a", case)
+        self.assertIn("ScalarExecution_Executed", case)
+
     def test_swap_witness_rejects_message_registers(self) -> None:
         marker = re.search(
             r"transfer/ssrswap_32_[a-z0-9]+/MSGBD1/0x000831",
