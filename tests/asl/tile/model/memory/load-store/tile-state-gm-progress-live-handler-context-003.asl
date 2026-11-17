@@ -107,6 +107,7 @@ begin
     _ReservationValid = TRUE;
     _ReservationAddress = Zeros{PTO_XLEN} + 0x900;
     _ReservationSize = 8;
+    _ReservationShareability = MemoryShareability_IntraCore;
     SaveSelectedPEExecutionContext();
     RaiseInterrupt(0 as InterruptID, Zeros{24} + 10);
     assert _TrapContexts[[0]].valid &&
@@ -132,8 +133,10 @@ begin
     assert _CurrentEncodedInstruction == Zeros{64} + 0x4567 &&
            _BundleStartEncodedInstruction == Zeros{64} + 0x89ab;
     assert _TrapContexts[[0]].valid && _LastFault == Fault_None;
-    assert !_ReservationValid &&
-           !_PEExecutionContexts[[0]][[0]].reservation_valid;
+    // The completing Tile request belongs to Core 1's IntraCore domain, so it
+    // cannot invalidate Core 0's same-address reservation.
+    assert _ReservationValid &&
+           _PEExecutionContexts[[0]][[0]].reservation_valid;
     assert _GMObligations[[request_core as PTOModelCoreIdentity]]
                [[request_pe as MemoryAgentId]]
                [[request_slot as GMObligationIndex]].state ==
@@ -225,6 +228,7 @@ begin
     _ReservationValid = TRUE;
     _ReservationAddress = Zeros{PTO_XLEN} + 0x700;
     _ReservationSize = 8;
+    _ReservationShareability = MemoryShareability_IntraCore;
     SaveSelectedPEExecutionContext();
     let nested_entered = RaiseServiceRequest('0000');
     assert nested_entered && CurrentACR() == 0 &&
