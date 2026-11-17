@@ -22195,7 +22195,7 @@
     "asl/arch/state/local-payload-generation.asl": "9e8b044814d0542eee5d21bfc995fe8d570e1e8d4c3651c823e68831533cae62",
     "asl/arch/state/message-buffer-send.asl": "18015764f2fd8f92855889720b0f5a66cab617de4e6c204b49f84891023cf664",
     "asl/arch/state/message-buffer-state.asl": "13b7ad9183860ea6172209dc3f025d25a72c66b3e2a9445838ffd9864ab7ec80",
-    "asl/arch/state/message-buffer.asl": "4dc15f011127e7f4b4c1b07080addd74e955d8e5543ec54512f4aadccc8aa1f1",
+    "asl/arch/state/message-buffer.asl": "588687d5ff3bfad982b82c3867fc9e02c9a318bb1e2c16251d706366b8265192",
     "asl/arch/state/numeric-status.asl": "3d3fe1709c7e2903bca96d50e9671a6a484c442ff08ce4a8340168cdb38ac6d9",
     "asl/arch/state/pe-execution-context.asl": "ea53fcfed57c3173dc1cb2a04f99a7d73fc99fb7bff894dba7d8064378df7b22",
     "asl/arch/state/program-counter.asl": "3b5f7bad14ca62af5d776ae551ddf32b4b9f43fe25d96ce0fd31a59b44e1e845",
@@ -23155,7 +23155,7 @@
     "docs/arch/state/local-payload-generation.md": "e2c7cf72c098774fb518d0f8168a651f9b60f2d220009281adf3b0a95418708d",
     "docs/arch/state/message-buffer-send.md": "99242b8d8b48498bc2886271c2317035371e741357a7cbf754564112fbf5c29b",
     "docs/arch/state/message-buffer-state.md": "1f6dd99b7818a537dc2f17fa7956126983f52cf2c3f53c50a56091f3a5dbefec",
-    "docs/arch/state/message-buffer.md": "42f6352d46b871a5747f982914dc7dfea01a4de86798d622d7ba9549be15c0fc",
+    "docs/arch/state/message-buffer.md": "35502936c573b9f6f4f5c932db547b571af7d994c2fb8f3c96990ce1fd124a79",
     "docs/arch/state/numeric-status.md": "2bc1485eab64147a553ddb269fb3e520dd0b63dc7c31614996dc32c53b57d06f",
     "docs/arch/state/pe-execution-context.md": "5d47e02462f4fed987646557e57b2e1dbd080a466338dfe048a5eb1cf4050446",
     "docs/arch/state/program-counter.md": "4a404e9aef444c6e1ea3a1cbb273eeafaee3d2f00197613718dcd3b305375140",
@@ -24269,7 +24269,7 @@
     "tests/asl/arch/state/message-buffer/arch-state-msgb-lifecycle-drain-001.asl": "3113894707bb969033d79c83f9503803be52dc8c10469ee09f52d57bb9e483f1",
     "tests/asl/arch/state/message-buffer/arch-state-msgb-max-payload-identity-001.asl": "75f894c9eac3a1991711792dec28ebf87bcb5fd095ca27bb8549a00c1dce9f11",
     "tests/asl/arch/state/message-buffer/arch-state-msgb-partial-read-ack-001.asl": "4fe4c612af94749be04c9c11e878b9bc8cf3a68a9dee979cc9d8d42e91bde2dd",
-    "tests/asl/arch/state/message-buffer/arch-state-msgb-ssrget-blocked-001.asl": "efdb165aa6fa5319e19d69805f3ccfe51a44c6c4da661d3694f3e1517d594fd4",
+    "tests/asl/arch/state/message-buffer/arch-state-msgb-ssrget-blocked-001.asl": "99e4e5626c4c65e5d338105be0e429f37f0702b017227f3e9f2b61fd5fa8a2ad",
     "tests/asl/arch/state/message-buffer/arch-state-msgb-ssrset-config-blocked-001.asl": "dade8323ff6128be4ec337f270b4caf7914f6a55b451471161f07bcbf97ed21d",
     "tests/asl/arch/state/message-buffer/arch-state-msgb-trap-ack-retention-001.asl": "e35a6baf388904dc69283331715fabf87fa9b1082393330e27fcc9b280250d51",
     "tests/asl/arch/state/message-buffer/arch-static-message-buffer-contract-001.asl": "0d424bb9badf77fec3d9494070a6a6ca4a23e05164fb29a97ba4d438ad477edd",
@@ -55727,7 +55727,7 @@
         "PTO-ARCH-MSGB-SEND-001",
         "PTO-ARCH-GM-OBLIGATIONS-001"
       ],
-      "sha256": "efdb165aa6fa5319e19d69805f3ccfe51a44c6c4da661d3694f3e1517d594fd4",
+      "sha256": "99e4e5626c4c65e5d338105be0e429f37f0702b017227f3e9f2b61fd5fa8a2ad",
       "source": "asl/arch/state/message-buffer.asl"
     },
     {
