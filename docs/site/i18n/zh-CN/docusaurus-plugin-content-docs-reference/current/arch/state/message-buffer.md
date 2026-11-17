@@ -264,8 +264,7 @@ begin
     var config_value = Zeros{PTO_XLEN};
     var state = Zeros{PTO_XLEN};
     let raw = UInt(address[15:0]);
-    if !IsMessageBufferConfigAddress(address) && !MessageBufferEnabledForCurrentContext() then
-        SetFault(Fault_IllegalInstruction, ReadPC());
+    if !IsMessageBufferConfigAddress(address) && !MessageBufferOperationalAccessPermitted() then
         return Zeros{PTO_XLEN};
     end;
     if address == Zeros{24} + PTO_MSGB_CFGSEL_ADDRESS then
@@ -298,7 +297,6 @@ begin
     elsif address == Zeros{24} + PTO_MSGBCR_ADDRESS then
         return _MessageBufferBanks[[index]].last_accepted_control;
     elsif IsMessageBufferDataAddress(address) then
-        if !MessageBufferOperationalAccessPermitted() then return Zeros{PTO_XLEN}; end;
         return ReadMessageBufferData(index,
             (raw - PTO_MSGBD1_ADDRESS) as MessageBufferWordIndex);
     elsif address == Zeros{24} + PTO_MSGBRXSTATE_ADDRESS then
@@ -316,9 +314,6 @@ begin
     elsif address == Zeros{24} + PTO_MSGBRXMSGID_HI_ADDRESS ||
           address == Zeros{24} + PTO_MSGBRXMSGID_LO_ADDRESS ||
           address == Zeros{24} + PTO_MSGBRXCONTROL_ADDRESS then
-        if !MessageBufferOperationalAccessPermitted() then
-            return Zeros{PTO_XLEN};
-        end;
         if !MessageBufferSnapshotOwnerMatches(index) then
             SetFault(Fault_IllegalInstruction, ReadPC());
             return Zeros{PTO_XLEN};
