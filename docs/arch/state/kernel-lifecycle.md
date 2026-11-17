@@ -17,40 +17,40 @@ This page is a generated reference view of the normative ASL unit.
 
 This unit controls the lifetime of one kernel invocation on a modeled Core: launch, successful end, and abort. It exists so work left by one invocation cannot be mistaken for work belonging to a later invocation, while effects that have already committed remain visible.
 
-The lifecycle owner coordinates PE initialization, Core synchronization, GM obligations, Shared-generation metadata, and source lifetimes. The owners of those mechanisms still define their detailed behavior.
+The lifecycle owner coordinates PE initialization, Core synchronization, GM obligations, Shared-generation metadata, source lifetimes, and local message-buffer drain. The owners of those mechanisms still define their detailed behavior.
 
 <!-- PTO-READER-BLOCK: arch-kernel-lifecycle-concepts role=concepts-state -->
 ## Invocation state
 
 Each Core records whether an invocation is active, its current identity, the next identity to allocate, and the most recently retired identity. Launch assigns the same entry PC and fresh invocation identity to PE0 through PE3, initializes the entry, Block-header, queue, predicate, fault, origin, and ordering fields named by `InitializePEForKernelEntry`, and starts synchronization generation zero.
 
-The invocation identity is the key separation mechanism. Synchronization records, GM obligations, Shared-generation requests, and source-lifetime occurrences carry it, so a completion from an older invocation cannot update the current one.
+The invocation identity is the key separation mechanism. Synchronization records, GM obligations, Shared-generation requests, source-lifetime occurrences, and enabled message banks carry it, so a completion from an older invocation cannot update the current one.
 
 <!-- PTO-READER-BLOCK: arch-kernel-lifecycle-rules role=rules-interactions -->
 ## Lifecycle interactions
 
 `LaunchKernelInvocation` waits if the Core already has an active invocation or if the retired invocation still has non-quiescent GM obligations. It rejects an odd entry address. Once admitted, it initializes every PE and returns `KernelLifecycle_Started`.
 
-`EndKernelInvocation` waits for all GM obligations of the active identity to become quiescent, then retires invocation-owned Shared-generation metadata and source-lifetime records before closing synchronization state. `AbortKernelInvocation` first cancels reversible GM work and incomplete synchronization, performs the same identity-scoped retirement, and reports waiting when irrevocable older work still has to finish.
+End and abort start by draining the Core's message banks. Ordinary new sends are rejected; receive reads, ACK and RELEASE can continue. A worker with a running HSCB dispatch can still send its matching DONE to the scheduler. End waits for local queues and snapshots to clear, for HSCB to process outstanding completions, and for GM obligations to become quiescent before retiring the invocation. Abort waits for the local queues and snapshots, cancels reversible GM work and incomplete synchronization, then retires the invocation. It may return `KernelLifecycle_Waiting` while irrevocable GM work drains; a later launch waits for that work.
 
 <!-- PTO-READER-BLOCK: arch-kernel-lifecycle-boundaries role=boundaries -->
 ## Boundaries
 
-End and abort do not erase committed memory effects or a published Shared parent. They clear active metadata that matches the retiring Core and invocation; records for another identity remain intact. Abort also does not pretend that irrevocable work was cancelled: a later launch stays blocked until that work is quiescent.
+End and abort do not erase committed memory effects, a published Shared parent, or a message already admitted into another Core's destination queue. They clear active metadata and disable message banks belonging to the retiring Core and invocation; records for another identity remain intact. Abort also does not pretend that irrevocable work was cancelled: a later launch stays blocked until the retiring Core's obligations are quiescent.
 
 The fixed number of modeled Cores, PEs, and bounded records is a model capacity. This page does not add a portable software-visible limit beyond the behavior stated by the owning ASL.
 
 <!-- PTO-READER-BLOCK: arch-kernel-lifecycle-example role=example-usage -->
 ## Reading example
 
-Suppose Core 0 launches invocation 7 and PE0 has an incomplete reversible store while a Shared parent from invocation 7 has already published. An abort cancels the reversible store and removes invocation-7 candidate and release metadata, but preserves the published parent. If another store has already become irrevocable, the abort can return `KernelLifecycle_Waiting`; Core 0 cannot launch invocation 8 until that obligation completes.
+Suppose Core 0 launches invocation 7, has one local receive snapshot, and has already admitted a message into Core 1. End or abort first closes ordinary new admissions. Core 0 must read all valid words, ACK the message, and RELEASE the retained ACKED snapshot before its local bank is quiescent; RELEASE before ACK cancels the claim but leaves the queued packet. The packet in Core 1 is already target-owned and remains available after Core 0 retires; retirement does not wait for Core 1's application ACK.
 
 <!-- PTO-READER-BLOCK: arch-kernel-lifecycle-related role=related-owners-navigation -->
 ## Related owners
 
 - [PE execution context](pe-execution-context.md) defines the private state initialized for each PE.
 - [Core synchronization](core-synchronization.md) owns invocation-scoped rendezvous and release tokens.
-- [GM obligations](../memory-model/gm-obligations.md) decide when end, abort, and a later launch may proceed.
+- [GM obligations](../memory-model/gm-obligations.md) and [message-buffer state](message-buffer-state.md) decide when end, abort, and a later launch may proceed.
 - [Shared-generation PE requests](../../block/model/operands/shared-generation-pe-requests.md) owns the candidate and release metadata retired here.
 - [Source lifetime](../../block/model/state/source-lifetime.md) owns the captured occurrences retired here.
 <!-- SUPPLEMENTARY-END -->
@@ -59,12 +59,15 @@ Suppose Core 0 launches invocation 7 and PE0 has an incomplete reversible store 
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/state/kernel-lifecycle.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-STATE-KERNEL-LIFECYCLE","surface":"arch","classification":["state","kernel-lifecycle"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-ARCH-STATE-PE-EXECUTION-CONTEXT","PTO-BLOCK-MODEL-STATE-ATOMIC-TSTORE-SOURCE-LIFETIME","PTO-BLOCK-MODEL-STATE-SHARED-GENERATION"]}
+// PTO-UNIT: {"id":"PTO-ARCH-STATE-KERNEL-LIFECYCLE","surface":"arch","classification":["state","kernel-lifecycle"],"depends_on":["PTO-ARCH-MEMORY-MODEL-ATOMIC-TSTORE-OBLIGATIONS","PTO-ARCH-MEMORY-MODEL-GM-OBLIGATIONS","PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-ARCH-STATE-PE-EXECUTION-CONTEXT","PTO-BLOCK-MODEL-STATE-ATOMIC-TSTORE-SOURCE-LIFETIME","PTO-BLOCK-MODEL-STATE-SHARED-GENERATION","PTO-ARCH-STATE-MESSAGE-BUFFER"]}
 // NDF-BEGIN: PTO-ARCH-KERNEL-LIFECYCLE-001
 // ndf: kind=contract level=L1 layer=state status=accepted
 // A Core has at most one active kernel invocation. Launch establishes one
 // common entry PC and new invocation identity for PE0..PE3, invalidating all
-// target-Core prelaunch recovery frames. Successful End and
+// target-Core prelaunch recovery frames. Opt-in MSGB End/Abort first close
+// message admission and MUST wait for mailbox quiescence before destructive
+// retirement; existing RX reads, ACK and RELEASE remain available to drain.
+// Successful End and
 // Abort retire invocation-owned active-PE Shared candidate/release metadata
 // while preserving any published Shared parent and committed effects. Abort
 // discards incomplete collective state and cancels reversible work, but
@@ -227,6 +230,9 @@ begin
     if _KernelInvocationActiveByCore[[core]] then
         return KernelLifecycle_Waiting;
     end;
+    if !MessageBufferCoreQuiescent(core) then
+        return KernelLifecycle_Waiting;
+    end;
     let retired = _RetiredKernelInvocationByCore[[core]];
     if retired != 0 && !KernelGMObligationsQuiescent(core, retired) then
         return KernelLifecycle_Waiting;
@@ -241,6 +247,7 @@ begin
     _KernelInvocationActiveByCore[[core]] = TRUE;
     _RetiredKernelInvocationByCore[[core]] = 0;
     _VerificationGMProgressDeferred = FALSE;
+    BeginMessageBufferInvocation(core, invocation);
     BeginCoreSynchronizationInvocation(core, invocation);
     for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
         InitializePEForKernelEntry(core, pe as MemoryAgentId, entry);
@@ -256,6 +263,10 @@ begin
         return KernelLifecycle_Rejected;
     end;
     let invocation = _KernelInvocationByCore[[core]];
+    BeginMessageBufferDrain(core);
+    if !MessageBufferCoreQuiescent(core) || !HSCBDispatchesComplete(core) then
+        return KernelLifecycle_Waiting;
+    end;
     if !KernelGMObligationsQuiescent(core, invocation) then
         return KernelLifecycle_Waiting;
     end;
@@ -263,6 +274,7 @@ begin
     if !KernelHasIrrevocableAtomicTStore(core, invocation) then
         RetireSourceLifetimes(core, invocation);
     end;
+    RetireMessageBufferInvocation(core, invocation);
     _RetiredKernelInvocationByCore[[core]] = invocation;
     RetireCoreSynchronizationInvocation(core, invocation);
     _KernelInvocationByCore[[core]] = 0;
@@ -277,12 +289,17 @@ begin
         return KernelLifecycle_Rejected;
     end;
     let invocation = _KernelInvocationByCore[[core]];
+    BeginMessageBufferDrain(core);
+    if !MessageBufferCoreQuiescent(core) then
+        return KernelLifecycle_Waiting;
+    end;
     AbortKernelGMObligations(core, invocation);
     AbortCoreSynchronizationInvocation(core, invocation);
     RetirePEOwnedSharedGenerationsForInvocation(core, invocation);
     if !KernelHasIrrevocableAtomicTStore(core, invocation) then
         RetireSourceLifetimes(core, invocation);
     end;
+    RetireMessageBufferInvocation(core, invocation);
     _RetiredKernelInvocationByCore[[core]] = invocation;
     _KernelInvocationByCore[[core]] = 0;
     _KernelInvocationActiveByCore[[core]] = FALSE;

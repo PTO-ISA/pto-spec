@@ -33985,7 +33985,7 @@
           "semantic_family": "SYS",
           "semantic_group": "SYS",
           "semantic_handler": "ExecuteControlRequest",
-          "semantic_summary": "BSE publishes the SendEvent nonblocking execution-control request.",
+          "semantic_summary": "BSE publishes a legacy SendEvent request when MSGB is disabled; enabled contexts use atomic message admission.",
           "status": "accepted"
         }
       ],
@@ -34000,7 +34000,8 @@
           "bse SrcL"
         ],
         "defaults": [
-          "Every displayed operand is encoded explicitly. Encoded zero is an assigned value and never denotes omission."
+          "Every displayed operand is encoded explicitly. Encoded zero is an assigned value and never denotes omission.",
+          "MSGB contexts reset disabled; disabled BSE retains the legacy nonblocking SendEvent request."
         ],
         "encoded_fields": [
           {
@@ -34032,10 +34033,12 @@
         "field_domains": [],
         "legality": [
           "Every fixed bit and explicit field constraint is checked before operation semantics.",
-          "Every assigned Reg5 source selector follows the common scalar-source availability rule."
+          "Every assigned Reg5 source selector follows the common scalar-source availability rule.",
+          "Enabled MSGB uses PTO-ARCH-MSGB-SEND-001: control bits 31:0 select the destination endpoint, bits 35:32 give 0..10 valid words, and bits 63:36 are reserved zero.",
+          "Enabled MSGB requires the current bound kernel context and rejects atomic/far envelopes before effects."
         ],
         "memory_effects": [
-          "none"
+          "No direct GM payload access. Message admission alone does not make unrelated data visible to a consumer."
         ],
         "operands": [
           {
@@ -34045,12 +34048,14 @@
         ],
         "ordering": [
           "Check block placement and encoded legality before source reads or architectural effects.",
-          "Snapshot every scalar source before the selected system effect, then advance TPC only after success."
+          "Snapshot every scalar source before the selected system effect, then advance TPC only after success.",
+          "Enabled irreversible admission waits while earlier same-PE GM obligations may fault; this is not a payload visibility fence."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Snapshot SrcL, publish ExecutionControl_SendEvent and the exact XLEN operand, increment the architecture-request epoch, then advance TPC.",
-          "PTO defines no additional asleep, mailbox, timeout-counter, or pending-wake state for this nonblocking request."
+          "When MSGB is disabled, snapshot SrcL, publish ExecutionControl_SendEvent and the exact XLEN operand, increment the architecture-request epoch, then advance TPC.",
+          "When MSGB is enabled, the message-buffer owner preflights and atomically captures staging data, allocates a transport message identity, and publishes the exact admission result.",
+          "Retries of an admitted dynamic occurrence preserve the captured message identity without another enqueue; queue backpressure and invalid controls do not allocate an identity."
         ]
       },
       "documentation": "docs/scalar/sys/BSE.md",
@@ -34058,7 +34063,7 @@
       "mnemonic": "BSE",
       "ndf_clause": "PTO-INST-SCALAR-BSE",
       "source": "asl/scalar/sys/BSE.asl",
-      "summary": "BSE publishes the SendEvent nonblocking execution-control request.",
+      "summary": "BSE publishes a legacy SendEvent request when MSGB is disabled; enabled contexts use atomic message admission.",
       "surface": "scalar"
     },
     {
@@ -90567,7 +90572,8 @@
         "field_domains": [],
         "legality": [
           "Every fixed bit and explicit field constraint is checked before operation semantics.",
-          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects."
+          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects.",
+          "MSGB addresses additionally obey the context, privilege, snapshot and side-effect rules of PTO-ARCH-MSGB-SSR-001."
         ],
         "memory_effects": [
           "none"
@@ -90584,7 +90590,8 @@
         ],
         "ordering": [
           "Check block placement and encoded legality before source reads or architectural effects.",
-          "Snapshot every scalar source before the selected system effect, then advance TPC only after success."
+          "Snapshot every scalar source before the selected system effect, then advance TPC only after success.",
+          "A blocked MSGB access performs no destination or TPC update; its state owner supplies the exact retry boundary."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -90717,7 +90724,8 @@
         "field_domains": [],
         "legality": [
           "Every fixed bit and explicit field constraint is checked before operation semantics.",
-          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects."
+          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects.",
+          "MSGB addresses additionally obey the context, privilege, snapshot and side-effect rules of PTO-ARCH-MSGB-SSR-001."
         ],
         "memory_effects": [
           "none"
@@ -90734,7 +90742,8 @@
         ],
         "ordering": [
           "Preflight the complete address, current-ACR permission, and writable access class before reading SrcL.",
-          "Snapshot SrcL, perform the register write, and then advance TPC."
+          "Snapshot SrcL, perform the register write, and then advance TPC.",
+          "A blocked MSGB access performs no destination or TPC update; its state owner supplies the exact retry boundary."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -123226,7 +123235,8 @@
         "field_domains": [],
         "legality": [
           "Every fixed bit and explicit field constraint is checked before operation semantics.",
-          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects."
+          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects.",
+          "MSGB addresses additionally obey the context, privilege, snapshot and side-effect rules of PTO-ARCH-MSGB-SSR-001."
         ],
         "memory_effects": [
           "none"
@@ -123243,7 +123253,8 @@
         ],
         "ordering": [
           "Check block placement and encoded legality before source reads or architectural effects.",
-          "Snapshot every scalar source before the selected system effect, then advance TPC only after success."
+          "Snapshot every scalar source before the selected system effect, then advance TPC only after success.",
+          "A blocked MSGB access performs no destination or TPC update; its state owner supplies the exact retry boundary."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -123371,7 +123382,8 @@
         "field_domains": [],
         "legality": [
           "Every fixed bit and explicit field constraint is checked before operation semantics.",
-          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects."
+          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects.",
+          "MSGB addresses additionally obey the context, privilege, snapshot and side-effect rules of PTO-ARCH-MSGB-SSR-001."
         ],
         "memory_effects": [
           "none"
@@ -123388,7 +123400,8 @@
         ],
         "ordering": [
           "Preflight the complete address, current-ACR permission, and writable access class before reading SrcL.",
-          "Snapshot SrcL, perform the register write, and then advance TPC."
+          "Snapshot SrcL, perform the register write, and then advance TPC.",
+          "A blocked MSGB access performs no destination or TPC update; its state owner supplies the exact retry boundary."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -123545,7 +123558,8 @@
         "field_domains": [],
         "legality": [
           "Every fixed bit and explicit field constraint is checked before operation semantics.",
-          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects."
+          "The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects.",
+          "MSGB registers reject SSRSWAP before any read-side effect, even when their access class is RW."
         ],
         "memory_effects": [
           "none"
@@ -134614,15 +134628,15 @@
           "BSTART.VEC TAND, U8; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
+          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity rejects before publication.",
           "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation."
         ],
         "field_domains": [],
         "legality": [
           "TAND is selected by TEPL carrier Mode 0 Function 6 and has no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination; B.IOR and B.IOS are not accepted.",
+          "In the ordinary unmasked form one terminating Local B.IOT binds two ordered sources and the destination, with no B.IOR or B.IOS. Masked forms also bind the selected ExecutionMask carrier under the execution-mask schema.",
           "DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.",
-          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; After fixed command checks, PE_MASK=0000 skips operand reads and allocation.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.",
           "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.",
           "For U8 Local CUBE_M16/M32, PredicateCell operands are admitted; two PredicateCells select a U8-basis PredicateCell result and a mixed pair selects Numeric U8. Every active predicate byte must be defined and canonical."
@@ -134633,7 +134647,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local destination"
+            "role": "Local result destination"
           },
           {
             "field": "source0",
@@ -144433,15 +144447,15 @@
           "BSTART.VEC TOR, U8; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
+          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity rejects before publication.",
           "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation."
         ],
         "field_domains": [],
         "legality": [
           "TOR is selected by TEPL carrier Mode 0 Function 7 and has no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination; B.IOR and B.IOS are not accepted.",
+          "In the ordinary unmasked form one terminating Local B.IOT binds two ordered sources and the destination, with no B.IOR or B.IOS. Masked forms also bind the selected ExecutionMask carrier under the execution-mask schema.",
           "DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.",
-          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; After fixed command checks, PE_MASK=0000 skips operand reads and allocation.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.",
           "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.",
           "For U8 Local CUBE_M16/M32, PredicateCell operands are admitted; two PredicateCells select a U8-basis PredicateCell result and a mixed pair selects Numeric U8. Every active predicate byte must be defined and canonical."
@@ -144452,7 +144466,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local destination"
+            "role": "Local result destination"
           },
           {
             "field": "source0",
@@ -148973,7 +148987,7 @@
           "Legacy RowMajor form uses two ordered B.IOT records: packed Predicate plus SrcTrue, then SrcFalse plus one new destination; B.IOR is absent, each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers, and selected bits are copied raw.",
           "CUBE_M16/M32 PredicateCell form uses the same two-record Tile structure with a descriptor-valid PredicateCell whose ExecutionMask-active bytes are defined and canonical, independent of its basis, while valid shape and layout match the numeric sources. Each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; B.IOR is absent.",
           "CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue, SrcFalse, and one new CUBE destination plus one source-only B.IOR carrying the complete mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8, or FP64/S64/U64 for CUBE_M32; each source backing is checked independently; exact backing/operation type identity is legal, while cross-type source/backing pairs require equal width and non-four-bit carriers; U8 consumes two mask GPRs and other accepted types consume one.",
-          "Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field.",
+          "Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId selects padding; masked forms also use the common PredInv and Zero controls.",
           "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.",
           "A legal PredicateCell selector matches numeric operands in logical shape and layout independently of predicate basis."
         ],
@@ -148983,7 +148997,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new RowMajor or CUBE numeric destination"
+            "role": "RowMajor or CUBE numeric result destination"
           },
           {
             "field": "source0",
@@ -148991,11 +149005,11 @@
           },
           {
             "field": "source1",
-            "role": "persistent source selected by predicate one"
+            "role": "source selected by predicate one"
           },
           {
             "field": "source2",
-            "role": "persistent source selected by predicate zero"
+            "role": "source selected by predicate zero"
           }
         ],
         "ordering": [
@@ -149268,7 +149282,7 @@
           "Legacy RowMajor form uses one terminating B.IOT with packed Predicate, SrcTrue, and one new destination; one B.IOR source supplies scalar-false or omission selects the operation-type zero, and the source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.",
           "CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with a descriptor-valid PredicateCell whose ExecutionMask-active bytes are defined and canonical, independent of its basis, SrcTrue, and one new CUBE destination plus an optional scalar-false B.IOR source; omission selects the operation-type zero. The true-source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.",
           "CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue and one new CUBE destination. One source-only B.IOR carries the complete predicate mask followed by the independent scalar-false source: two sources for one-word masks and three for U8's two-word mask. The operation type is a 32-bit or 16-bit type from the closed CUBE domain, plus U8, or FP64/S64/U64 for CUBE_M32; the true-source backing is checked independently; exact backing/operation type identity is legal, while a cross-type source/backing pair requires equal width and a non-four-bit carrier.",
-          "Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field.",
+          "Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId selects padding; masked forms also use the common PredInv and Zero controls.",
           "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.",
           "A legal PredicateCell selector matches numeric operands in logical shape and layout independently of predicate basis."
         ],
@@ -149278,7 +149292,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new RowMajor or CUBE numeric destination"
+            "role": "RowMajor or CUBE numeric result destination"
           },
           {
             "field": "source0",
@@ -149286,7 +149300,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent source selected by predicate one"
+            "role": "source selected by predicate one"
           },
           {
             "field": "scalar0",
@@ -151955,15 +151969,15 @@
           "BSTART.VEC TXOR, U8; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity raises Fault_TileLegality before effects.",
+          "Malformed bindings, missing or zero dimensions, undefined or mismatched sources, an unsupported layout, an unsupported DataType, or invalid destination capacity rejects before publication.",
           "Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, is illegal before source snapshots or destination allocation."
         ],
         "field_domains": [],
         "legality": [
           "TXOR is selected by TEPL carrier Mode 0 Function 8 and has no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination; B.IOR and B.IOS are not accepted.",
+          "In the ordinary unmasked form one terminating Local B.IOT binds two ordered sources and the destination, with no B.IOR or B.IOS. Masked forms also bind the selected ExecutionMask carrier under the execution-mask schema.",
           "DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.",
-          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
+          "B.DATR permits PadValueOrByteId and Layout; omitted Layout selects RowMajor, while an explicit Layout selects the operation Local layout; After fixed command checks, PE_MASK=0000 skips operand reads and allocation.",
           "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.",
           "A Local CUBE_M32 operand backed by FP64, S64 or U64 uses the issue #371 two-CELL-per-column mapping and logical effect coordinates when its operation type is otherwise legal; CUBE_M16 does not admit b64 backing storage.",
           "For U8 Local CUBE_M16/M32, PredicateCell operands are admitted; two PredicateCells select a U8-basis PredicateCell result and a mixed pair selects Numeric U8. Every active predicate byte must be defined and canonical."
@@ -151974,7 +151988,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local destination"
+            "role": "Local result destination"
           },
           {
             "field": "source0",

@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `InstructionContractHandler_SSRSET` 选择 `ScalarHandler_ExecuteSystemRegisterSet`（`asl/scalar/sys/SSRSET.asl:18`），`InstructionContractSystemAddressWidth_SSRSET` 把地址宽度固定为 12（`asl/scalar/sys/SSRSET.asl:36`）。派发器把 `SrcL` 解码为 Reg5 选择器、把 `SSR_ID` 解码为系统寄存器地址（`asl/scalar/model/dispatch/sys.asl:111`）。
 
-该辅助函数先检查后读取：当 `SystemRegisterWritePermitted` 为假时 `ExecuteSystemRegisterSet` 拒绝该次尝试，之后才读取源寄存器（`asl/scalar/model/sys/registers.asl:157`）。
+该辅助函数先检查后读取。它先拒绝不可写地址；对于 MSGB，还会预检 kernel 上下文、Block 属性和更早的可故障工作。只有获准的尝试才读取源寄存器（`asl/scalar/model/sys/registers.asl`）。
 
 <!-- PTO-READER-BLOCK: scalar-ssrset-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
@@ -40,7 +40,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 成功的尝试把完整的源值写入被寻址寄存器，随后把 `TPC` 推进 4 字节。某些地址在写入路径内部还有副作用，地址 0x0020 是最清楚的例子：存入 `CORE_STATE` 还会用所存值的第 3:0 位设置当前访问环（`asl/scalar/model/sys/semantics.asl:63`）。
 
-设计要点：写权限检查在读取源之前运行，因此将被拒绝的尝试既不消耗源值，也不改变系统寄存器。被拒绝的 `SSRSET` 因此让其源操作数与目标寄存器都保持不变；读取 Reg5 源从不消耗临时队列项。
+设计要点：每项写入预检都先于源读取，因此被拒绝或阻塞的尝试既不消耗源值，也不改变系统寄存器。读取 Reg5 源从不消耗临时队列项。
 
 该指令不执行普通标量内存访问。
 
@@ -49,7 +49,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 位置最先检查：在活动 SYS 块体之外，该次尝试在任何地址或操作数处理之前引发 `Fault_BundleControl`。随后写入路径在当前环对该地址缺少权限，或访问类别为未知或只读时以 `Fault_IllegalInstruction` 拒绝（`asl/scalar/model/sys/registers.asl:105`）。
 
-设计要点：像 0x0021 这样的地址在每个环都可读，但永远不可写，因为它的访问类别是只读。因此同一地址对 `ssrget` 成功而对 `ssrset` 出错，这就是为什么决定一次写入的是访问类别而不只是环。
+设计要点：像 0x0021 这样的地址在每个环都可读，但由于类别为只读而永远不可写。MSGB 还增加上下文相关的写入：配置地址需要 ACR0，暂存、claim、ACK 和 release 需要当前已绑定的 kernel ACR。因此访问类别本身不足以决定一次 MSGB 写入。
 
 <!-- PTO-READER-BLOCK: scalar-ssrset-example role=example -->
 ## 非规范示例
@@ -161,6 +161,7 @@ end;
 
 - Every fixed bit and explicit field constraint is checked before operation semantics.
 - The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects.
+- MSGB addresses additionally obey the context, privilege, snapshot and side-effect rules of PTO-ARCH-MSGB-SSR-001.
 
 ## State effects
 
@@ -177,6 +178,7 @@ end;
 
 - Preflight the complete address, current-ACR permission, and writable access class before reading SrcL.
 - Snapshot SrcL, perform the register write, and then advance TPC.
+- A blocked MSGB access performs no destination or TPC update; its state owner supplies the exact retry boundary.
 
 ## Exceptions
 

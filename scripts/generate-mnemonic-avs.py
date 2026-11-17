@@ -1184,6 +1184,8 @@ def _scalar_sys_execution_body(
                 "    assert _ControlRequestOperand == Zeros{PTO_XLEN} + 0x1000;",
                 "    assert _ArchitectureRequestEpoch == 1;",
             ]
+            if name == "BSE":
+                lines.append("    assert !MessageBufferEnabledForCurrentContext();")
         elif name == "FENCE.D":
             lines += [
                 "    assert _LastFencePredecessor == Ones{4};",
