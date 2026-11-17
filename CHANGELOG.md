@@ -157,6 +157,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-STATE-0004](docs/status/decisions/ADR-STATE-0004-acr-routing-and-context-reset.md): PTO v0 ACR routing and context reset
 - [ADR-STATE-0005](docs/status/decisions/ADR-STATE-0005-visible-ebarg-snapshot.md): Make EBARG the visible PTO v0 trap snapshot
 - [ADR-STATE-0007](docs/status/decisions/ADR-STATE-0007-interrupt-pending-and-timer-state.md): Define interrupt pending and timer state
+- [ADR-STATE-0015](docs/status/decisions/ADR-STATE-0015-hscb-message-dispatch.md): High Speed Config Bus delivery and Message Buffer worker dispatch
 
 ### Block
 - [ADR-STATE-0011](docs/status/decisions/ADR-STATE-0011-bundle-operation-descriptor-and-commit.md): Bundle operation descriptor and transactional commit
