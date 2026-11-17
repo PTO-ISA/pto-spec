@@ -41,7 +41,8 @@ class MessageBufferGeneratorTest(unittest.TestCase):
     def test_diagnostic_read_witness_enables_the_bank(self) -> None:
         marker = re.search(r"transfer/ssrget_32_[a-z0-9]+/MSGBTXSTAT/0x000847", self.generated)
         self.assertIsNotNone(marker)
-        case = self.generated[marker.end():].split("// SYSREG-WITNESS", 1)[0]
+        assert marker is not None
+        case = self.generated[marker.end():].split("// SYS-S4", 1)[0]
         self.assertIn("LaunchKernelInvocation", case)
         self.assertIn("WriteSystemRegisterAddress(Zeros{24} + 0x084a", case)
         self.assertIn("ScalarExecution_Executed", case)
