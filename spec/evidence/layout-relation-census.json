@@ -5097,7 +5097,7 @@
     "TGEMV_MX_BIAS"
   ],
   "candidate": "HEAD",
-  "candidate_head": "1357ab219ea3d4171446695becd473066b1c783a",
+  "candidate_head": "144d23c76d474000f042060e69540fec388d1de9",
   "candidate_identity": "immutable-asl-tree",
   "candidate_only_authorized_against": "577e7b06422d87ec09c925401b477b4e524eded3",
   "changed_records": [
@@ -255043,6 +255043,6 @@
   },
   "refreshed_dispatch_baseline": "cbd64442b0585271fed2db633578b9fb1541e1d9",
   "schema": "pto.layout-relation-census.v3",
-  "source_path_count": 972,
+  "source_path_count": 976,
   "tile_location_normative_refs": []
 }

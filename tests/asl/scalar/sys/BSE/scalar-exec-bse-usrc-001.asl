@@ -17,6 +17,7 @@ begin
     assert _LastControlRequest == ExecutionControl_SendEvent;
     assert _ControlRequestOperand == Zeros{PTO_XLEN} + 0x1000;
     assert _ArchitectureRequestEpoch == 1;
+    assert !MessageBufferEnabledForCurrentContext();
     assert ReadTemporaryQueue(FALSE, 0) == Zeros{PTO_XLEN} + 0x1000;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
     assert InstructionContractOperation_BSE() == ScalarOperation_BSE;

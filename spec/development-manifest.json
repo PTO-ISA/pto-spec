@@ -17,11 +17,11 @@
     },
     "scalar_forms": {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "6df058b257b04dd3e06c8cc695414a74b354ed91f21f74989038ad7c53980b44"
+      "sha256": "26be88e12235b31e13ab7206645fe419e708475476113835df90b9d0f2ad12ba"
     },
     "system_registers": {
       "path": "spec/catalog/system-registers.json",
-      "sha256": "2a5d6669b95c28f80651f5917558781de25b8465655399063790e50549e1e2a9"
+      "sha256": "e755136f853cd996665f750433fbd6e216eb79935b41be15d4b8ac16dcf91386"
     },
     "tile_operations": {
       "path": "spec/catalog/tile-operations.json",
@@ -30,11 +30,11 @@
   },
   "identity": {
     "encoding_abi": "pto-isa-0.59.0-mode-function-v1",
-    "encoding_projection_sha256": "be4917f50049e486b532751145ae49420bd6019880b48695bbcc553cfb0c9347",
+    "encoding_projection_sha256": "8b5d8bf219706971776024ff09629063df14a023ad11f4e7f101f4cc405995df",
     "release": "0.59.0"
   },
-  "normative_source_count": 956,
-  "normative_sources_sha256": "1af9397cf250750eca9986de5b899f3cf8d21c058a95e798521d98a38d7c81e4",
+  "normative_source_count": 960,
+  "normative_sources_sha256": "d2230118fd7d356eb7dbf836a41b02f8884d0059f84369083902f0bd3b6b08d4",
   "publication": null,
   "schema": "pto.development-manifest.v1",
   "status": "development-not-published"

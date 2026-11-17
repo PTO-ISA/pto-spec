@@ -22,7 +22,7 @@ This page is a generated reference view of the normative ASL unit.
 - 访问环请求：`ACRC` 和 `ACRE`；
 - 检查与断点：`ASSERT`、`EBREAK` 和 `C.EBREAK`；
 - 缓存与 TLB 维护：`BC.*`、`DC.*`、`IC.*` 和 `TLB.*`；
-- 执行控制请求：`BSE`、`BWE`、`BWI` 和 `BWT`；
+- 消息接纳或执行控制：模式相关的 `BSE`，以及 `BWE`、`BWI` 和 `BWT` 请求；
 - 栅栏：`FENCE.D` 和 `FENCE.I`；
 - 寄存器转移与提交目标：`SSRGET`、`SSRSET`、`SSRSWAP`、`HL.SSRGET`、`HL.SSRSET`、`C.SSRGET`、`LSRGET`，以及提交目标设置指令 `SETC.TGT`。
 
@@ -54,7 +54,7 @@ This page is a generated reference view of the normative ASL unit.
 
 设计要点：断点和失败的断言都是普通的同步故障。顶层分派看到 `_LastFault` 已设置，返回拒绝且不推进 TPC；陷阱上下文记录断点指令的 TPC。
 
-维护和控制请求更新纪元并记录其操作数。它们不访问内存。
+维护操作和未启用模式的控制请求更新纪元并记录操作数。启用的 `BSE` 改为分派到消息发送所有者；它记录接纳结果和传输身份，但不为无关的 GM payload 建立可见性。
 
 <!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-boundaries role=boundaries -->
 ## 架构边界
@@ -80,7 +80,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: scalar-model-dispatch-sys-related role=related-owners-navigation -->
 ## 相关所有者
 
-- [SYS 语义](../sys/semantics.md)拥有栅栏、维护、请求和适用性。
+- [SYS 语义](../sys/semantics.md)拥有栅栏、维护、旧请求和适用性；[消息发送](../../../arch/state/message-buffer-send.md)拥有启用后的 BSE 接纳。
 - [系统寄存器](../sys/registers.md)拥有 SSR 权限、访问类别和转移。
 - [标量译码辅助函数](decode.md)拥有 `ScalarDecodedSystemRegisterAddress`。
 - [执行上下文](../../../arch/programming-model/execution-context.md)声明维护纪元和记录。
@@ -90,7 +90,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/dispatch/sys.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-DISPATCH-SYS","surface":"scalar","classification":["model","dispatch","sys"],"depends_on":["PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-SCALAR-ACRC","PTO-SCALAR-ACRE","PTO-SCALAR-ASSERT","PTO-SCALAR-BC-IALL","PTO-SCALAR-BC-IVA","PTO-SCALAR-BSE","PTO-SCALAR-BWE","PTO-SCALAR-BWI","PTO-SCALAR-BWT","PTO-SCALAR-C-EBREAK","PTO-SCALAR-C-SSRGET","PTO-SCALAR-DC-CISW","PTO-SCALAR-DC-CIVA","PTO-SCALAR-DC-CSW","PTO-SCALAR-DC-CVA","PTO-SCALAR-DC-IALL","PTO-SCALAR-DC-ISW","PTO-SCALAR-DC-IVA","PTO-SCALAR-DC-ZVA","PTO-SCALAR-EBREAK","PTO-SCALAR-FENCE-D","PTO-SCALAR-FENCE-I","PTO-SCALAR-HL-SSRGET","PTO-SCALAR-HL-SSRSET","PTO-SCALAR-IC-IALL","PTO-SCALAR-IC-IVA","PTO-SCALAR-LSRGET","PTO-SCALAR-MODEL-DISPATCH-DECODE","PTO-SCALAR-MODEL-SYS-REGISTERS","PTO-SCALAR-SETC-TGT","PTO-SCALAR-SSRGET","PTO-SCALAR-SSRSET","PTO-SCALAR-SSRSWAP","PTO-SCALAR-SYNC-CORE","PTO-SCALAR-TLB-IA","PTO-SCALAR-TLB-IALL","PTO-SCALAR-TLB-IAV","PTO-SCALAR-TLB-IV"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-DISPATCH-SYS","surface":"scalar","classification":["model","dispatch","sys"],"depends_on":["PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-SCALAR-ACRC","PTO-SCALAR-ACRE","PTO-SCALAR-ASSERT","PTO-SCALAR-BC-IALL","PTO-SCALAR-BC-IVA","PTO-SCALAR-BSE","PTO-SCALAR-BWE","PTO-SCALAR-BWI","PTO-SCALAR-BWT","PTO-SCALAR-C-EBREAK","PTO-SCALAR-C-SSRGET","PTO-SCALAR-DC-CISW","PTO-SCALAR-DC-CIVA","PTO-SCALAR-DC-CSW","PTO-SCALAR-DC-CVA","PTO-SCALAR-DC-IALL","PTO-SCALAR-DC-ISW","PTO-SCALAR-DC-IVA","PTO-SCALAR-DC-ZVA","PTO-SCALAR-EBREAK","PTO-SCALAR-FENCE-D","PTO-SCALAR-FENCE-I","PTO-SCALAR-HL-SSRGET","PTO-SCALAR-HL-SSRSET","PTO-SCALAR-IC-IALL","PTO-SCALAR-IC-IVA","PTO-SCALAR-LSRGET","PTO-SCALAR-MODEL-DISPATCH-DECODE","PTO-SCALAR-MODEL-SYS-REGISTERS","PTO-SCALAR-SETC-TGT","PTO-SCALAR-SSRGET","PTO-SCALAR-SSRSET","PTO-SCALAR-SSRSWAP","PTO-SCALAR-SYNC-CORE","PTO-SCALAR-TLB-IA","PTO-SCALAR-TLB-IALL","PTO-SCALAR-TLB-IAV","PTO-SCALAR-TLB-IV","PTO-ARCH-STATE-MESSAGE-BUFFER","PTO-ARCH-STATE-HSCB-DISPATCH","PTO-ARCH-STATE-MESSAGE-BUFFER-SEND"]}
 func ExecuteDecodedSYSForm(instruction: bits(48),
                            form: integer {0..PTO_SCALAR_FORM_COUNT-1})
 begin
@@ -152,11 +152,19 @@ begin
             ExecuteMaintenance(Maintenance_TLB_IALL, Zeros{PTO_XLEN});
 
         when ScalarOperation_BSE =>
-            ExecuteControlRequest(ExecutionControl_SendEvent,
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+            if MessageBufferEnabledForCurrentContext() then
+                ExecuteMessageBufferSend(ReadDecodedScalarRegister(
+                    instruction, form, ScalarField_SrcL));
+            else
+                ExecuteControlRequest(ExecutionControl_SendEvent,
+                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+            end;
         when ScalarOperation_BWE =>
             ExecuteControlRequest(ExecutionControl_WaitEvent,
                 ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+            // The enabled platform observes the issuing worker at publication;
+            // its eligibility never delays architectural BWE retirement.
+            HSCBObserveWaitEvent();
         when ScalarOperation_BWI =>
             ExecuteControlRequest(ExecutionControl_WaitInterrupt,
                 ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));

@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `InstructionContractHandler_SSRSWAP` selects `ScalarHandler_ExecuteSystemRegisterSwap` (`asl/scalar/sys/SSRSWAP.asl:18`), and the dispatcher decodes all three operands: `RegDst`, `SrcL`, and the 12-bit `SSR_ID` address (`asl/scalar/model/dispatch/sys.asl:116`). `InstructionContractSystemTransferKind_SSRSWAP` returns `'10'`, the transfer kind that distinguishes a swap from a get or a set (`asl/scalar/sys/SSRSWAP.asl:30`).
 
-The helper preflights both directions before it reads anything: `ExecuteSystemRegisterSwap` requires `SystemRegisterSwapPermitted`, which demands read permission, write permission, and the read-write access class (`asl/scalar/model/sys/registers.asl:168`).
+The helper preflights before it reads anything. Every MSGB address is rejected first because its read and write sides have different snapshot, staging, or command semantics. Other addresses require `SystemRegisterSwapPermitted`, which demands read permission, write permission, and the read-write access class.
 
 <!-- PTO-READER-BLOCK: scalar-ssrswap-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
@@ -47,9 +47,9 @@ No ordinary scalar memory access is performed.
 <!-- PTO-READER-BLOCK: scalar-ssrswap-constraints role=constraints -->
 ## Placement and rejection
 
-Outside an active SYS block body the attempt raises `Fault_BundleControl` before operand work begins. The swap preflight then rejects with `Fault_IllegalInstruction` when either direction lacks ring permission, or when the access class is unknown, read-only, or write-only. No access class other than read-write can be swapped.
+Outside an active SYS block body the attempt raises `Fault_BundleControl` before operand work begins. The swap preflight then rejects every MSGB address before a source read or read-side effect. For ordinary registers it rejects when either direction lacks ring permission, or when the access class is unknown, read-only, or write-only.
 
-Design point: address 0x1F02 is a read-write context register, but its low index is at or above 0x0F00, so it needs ACR0 even though the same address pattern in another bank would be open. A swap of that address at ACR1 therefore faults instead of returning the ring-1 value.
+Design point: a register being catalogued `RW` is not sufficient for swapping. Address 0x0831 (`MSGBD1`) is `RW`, but a write stages TX data while a read observes an RX snapshot, so `SSRSWAP` rejects it. Address 0x1F02 remains the ordinary contrasting case: it is swappable at ACR0 and rejected at ACR1 by its ring permission.
 
 <!-- PTO-READER-BLOCK: scalar-ssrswap-example role=example -->
 ## Non-normative example
@@ -164,6 +164,7 @@ end;
 
 - Every fixed bit and explicit field constraint is checked before operation semantics.
 - The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects.
+- MSGB registers reject SSRSWAP before any read-side effect, even when their access class is RW.
 
 ## State effects
 

@@ -38,18 +38,18 @@ Encoded zero in `SSR_ID` is the base register at address 0, and encoded zero in 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-effects role=effects -->
 ## Architectural effects
 
-On success the complete register value is published through the Reg5 destination mapping and `TPC` advances by the instruction length. The destination is written only when the read reported no fault (`asl/scalar/model/sys/registers.asl:148`), so a rejected wide read leaves the destination and the temporary queues untouched.
+On success the complete register value is published through the Reg5 destination mapping and `TPC` advances by the instruction length. The destination is written only when the read reported no fault and did not block, so a rejected or blocked wide read leaves the destination and temporary queues untouched.
 
 Design point: the read path accepts only addresses whose bits 23:16 are zero for the stored extended file, and `SystemRegisterFileIndexOf` asserts that condition (`asl/scalar/model/sys/registers.asl:56`). An address in that part of the space is therefore admitted or rejected by the access-class table before the index is formed.
 
-The instruction does not modify the system-register file and performs no ordinary scalar memory access.
+An ordinary register read does not modify stored register state. An MSGBD read marks the corresponding receive-snapshot word as read for exact-token ACK. The instruction performs no ordinary scalar memory access.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-constraints role=constraints -->
 ## Placement and rejection
 
 Placement in an active SYS block body is checked first, and an attempt elsewhere raises `Fault_BundleControl`. The read path then rejects with `Fault_IllegalInstruction` when the ring lacks permission for the address or when the access class is unknown or write-only (`asl/scalar/model/sys/registers.asl:66`).
 
-Design point: the wider address field does not widen the permission rule. Addresses whose low 12 bits are below 0x0F00 stay reachable from every ring, while the context, translation, and debug families need ACR0, exactly as for the 12-bit form.
+Design point: the wider address field does not create a second permission rule. Ordinary addresses whose low 12 bits are below 0x0F00 stay reachable from every ring, while the context, translation, and debug families need ACR0. MSGB configuration is an explicit low-address exception that needs ACR0. Status and endpoint reads observe the current ACR bank without enabling it; receive payload and protected snapshot metadata require the enabled kernel binding.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-example role=example -->
 ## Non-normative example
@@ -161,6 +161,7 @@ end;
 
 - Every fixed bit and explicit field constraint is checked before operation semantics.
 - The complete encoded address is checked against its RO, WO, RW, unknown-address, and current-ACR access rules before effects.
+- MSGB addresses additionally obey the context, privilege, snapshot and side-effect rules of PTO-ARCH-MSGB-SSR-001.
 
 ## State effects
 
@@ -177,6 +178,7 @@ end;
 
 - Check block placement and encoded legality before source reads or architectural effects.
 - Snapshot every scalar source before the selected system effect, then advance TPC only after success.
+- A blocked MSGB access performs no destination or TPC update; its state owner supplies the exact retry boundary.
 
 ## Exceptions
 
