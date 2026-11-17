@@ -10,7 +10,9 @@
 // occurrence MUST retain a separate replay receipt in the bounded executable
 // model.  Exact retry MUST reuse its identity without republishing; a changed
 // control for that occurrence MUST reject.  Receipt exhaustion MUST block new
-// admission without overwriting any live receipt.  Same-invocation configuration,
+// admission without overwriting any live receipt.  A destination whose receive
+// claim identity is exhausted MUST reject new admission before publication.
+// Same-invocation configuration,
 // including epoch advancement, MUST preserve all admitted occurrence receipts.
 // Enabled BSE MUST reject atomic/far SYS envelopes and MUST wait before effects
 // while an older fault-capable kernel GM obligation can still require recovery.
@@ -73,6 +75,7 @@ begin
     _MessageBufferBanks[[index]].tx_result = if receipt.control == control then
         MessageBufferResult_Duplicate else MessageBufferResult_BadCommand;
     _MessageBufferBanks[[index]].tx_result_valid = TRUE;
+    if receipt.control != control then return; end;
     _MessageBufferBanks[[index]].last_accepted_control = receipt.control;
     _MessageBufferBanks[[index]].tx_message_id_hi = receipt.message_id_hi;
     _MessageBufferBanks[[index]].tx_message_id_lo = receipt.message_id_lo;
@@ -97,7 +100,7 @@ begin
 end;
 
 // NDF-BEGIN: PTO-ARCH-HSCB-TRANSPORT-001
-// ndf: kind=contract level=L1 layer=state status=open
+// ndf: kind=contract level=L1 layer=state status=accepted
 // HSCB (High Speed Config Bus) MUST carry complete MSGB messages from a
 // trusted source endpoint to the addressed destination. A worker BSE to
 // 0xffffffff and a service submission to a worker MUST share the same atomic
@@ -135,6 +138,9 @@ begin
     end;
     if _MessageBufferBanks[[target_index]].queued.valid || !capacity_available then
         return MessageBufferResult_Busy;
+    end;
+    if _MessageBufferBanks[[target_index]].claim_sequence == Ones{48} then
+        return MessageBufferResult_Exhausted;
     end;
     let done = HSCBMatchingDone(source_index, control);
     let sequence = _MessageBufferBanks[[source_index]].transmit_sequence;

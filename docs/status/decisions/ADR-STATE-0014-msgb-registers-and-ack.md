@@ -67,6 +67,8 @@ Current meaning is defined by the NDF clauses in the message-buffer state/operat
 
 Committed messaging state is separate from PE/trap snapshots. Side effects cannot bypass atomic/far Block semantics or older fault-capable GM obligations. End/abort requests freeze new message admission while allowing existing snapshots to drain; a pending mailbox prevents destructive lifecycle retirement. The bounded model maps endpoint identities to its modeled contexts and delivers messages atomically without specifying physical HSCB timing or queue topology.
 
+On 2026-11-17 the owner resolved the final receive-token boundary. A destination with no remaining claim identity rejects new packets. Cancelling the final unacknowledged claim would strand an admitted packet, so that RELEASE reports exhaustion and retains the readable snapshot. A successful ACK permits RELEASE and quiescent epoch advancement.
+
 ## Defaults, compatibility and release impact
 
 Disabled contexts preserve legacy BSE behavior. Enabling the profile opts into new register, control-word, permission, precision and lifecycle rules. New SSR addresses previously rejected as unknown become assigned; compatibility is additive for clients that never opt in, and profile-dependent for enabled clients. Configuration/domain binding and incarnation changes are explicit and cannot silently reset counters. Publication requires full exact-commit evidence; this development PR only supplies focused evidence.

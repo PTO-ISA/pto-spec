@@ -290,10 +290,10 @@ begin
     end;
     let invocation = _KernelInvocationByCore[[core]];
     BeginMessageBufferDrain(core);
+    AbortKernelGMObligations(core, invocation);
     if !MessageBufferCoreQuiescent(core) then
         return KernelLifecycle_Waiting;
     end;
-    AbortKernelGMObligations(core, invocation);
     AbortCoreSynchronizationInvocation(core, invocation);
     RetirePEOwnedSharedGenerationsForInvocation(core, invocation);
     if !KernelHasIrrevocableAtomicTStore(core, invocation) then

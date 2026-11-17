@@ -63,7 +63,7 @@ begin
     let changed_lo = ReadSystemRegisterAddress(Zeros{24} + 0x0846);
     assert changed_status == Zeros{PTO_XLEN} + 0x10c;
     assert changed_hi == id_a_hi;
-    assert changed_lo == id_a_lo;
+    assert changed_lo == id_b_lo;
     ExecuteMessageBufferSend(control);
     let replay_status = ReadSystemRegisterAddress(Zeros{24} + 0x0847);
     let replay_hi = ReadSystemRegisterAddress(Zeros{24} + 0x0845);

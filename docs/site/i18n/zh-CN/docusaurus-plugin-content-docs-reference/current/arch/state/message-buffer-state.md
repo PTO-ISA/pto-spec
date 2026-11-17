@@ -51,7 +51,7 @@ This page is a generated reference view of the normative ASL unit.
 // NDF-END: PTO-ARCH-MSGB-STATE-001
 
 // NDF-BEGIN: PTO-ARCH-HSCB-ENDPOINT-001
-// ndf: kind=contract level=L1 layer=state status=open
+// ndf: kind=contract level=L1 layer=state status=accepted
 // The resident-worker profile MUST isolate a bank and its privileged selector
 // by Core, physical PE, hardware-thread slot and ACR. Its reference Core has
 // four PEs and two slots per PE: worker = 4 * slot + PE. Its endpoint address
@@ -176,6 +176,8 @@ type MessageBufferBank of record {
     hscb_issued_ids: HSCBIssuedIDs,
     hscb_issued_count: integer {0..PTO_MODEL_MESSAGE_BUFFER_RECEIPTS},
     hscb_dispatch_id: Word,
+    hscb_launch_message_id_hi: Word,
+    hscb_launch_message_id_lo: Word,
     hscb_return_value: Word,
     receipts: MessageBufferReplayReceipts
 };
@@ -330,6 +332,8 @@ begin
     _MessageBufferBanks[[index]].hscb_waiting = FALSE;
     _MessageBufferBanks[[index]].hscb_issued_count = 0;
     _MessageBufferBanks[[index]].hscb_dispatch_id = Zeros{64};
+    _MessageBufferBanks[[index]].hscb_launch_message_id_hi = Zeros{64};
+    _MessageBufferBanks[[index]].hscb_launch_message_id_lo = Zeros{64};
     _MessageBufferBanks[[index]].hscb_return_value = Zeros{64};
     _MessageBufferBanks[[index]].last_accepted_control = Zeros{PTO_XLEN};
     _MessageBufferBanks[[index]].tx_result = MessageBufferResult_None;
@@ -372,6 +376,8 @@ begin
         _MessageBufferBanks[[index]].hscb_waiting = FALSE;
         _MessageBufferBanks[[index]].hscb_issued_count = 0;
         _MessageBufferBanks[[index]].hscb_dispatch_id = Zeros{64};
+        _MessageBufferBanks[[index]].hscb_launch_message_id_hi = Zeros{64};
+        _MessageBufferBanks[[index]].hscb_launch_message_id_lo = Zeros{64};
         _MessageBufferBanks[[index]].hscb_return_value = Zeros{64};
         _MessageBufferBanks[[index]].rx_epoch = Zeros{16};
         _MessageBufferBanks[[index]].source_epoch = Zeros{32};
@@ -412,7 +418,10 @@ begin
         let index = endpoint as MessageBufferEndpointIndex;
         let bank = _MessageBufferBanks[[index]];
         if bank.hscb_ready || bank.hscb_running || bank.hscb_waiting || bank.hscb_issued_count != 0 ||
-           bank.hscb_dispatch_id != Zeros{64} || bank.hscb_return_value != Zeros{64} || bank.enabled || bank.domain_bound ||
+           bank.hscb_dispatch_id != Zeros{64} ||
+           bank.hscb_launch_message_id_hi != Zeros{64} ||
+           bank.hscb_launch_message_id_lo != Zeros{64} ||
+           bank.hscb_return_value != Zeros{64} || bank.enabled || bank.domain_bound ||
            bank.domain != Zeros{PTO_XLEN} || bank.bound_invocation != 0 ||
            bank.rx_epoch != Zeros{16} || bank.source_epoch != Zeros{32} ||
            bank.transmit_sequence != Zeros{PTO_XLEN} ||

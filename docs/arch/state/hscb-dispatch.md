@@ -40,7 +40,7 @@ uses the [message-buffer send](message-buffer-send.md) and
 // PTO-UNIT: {"id":"PTO-ARCH-STATE-HSCB-DISPATCH","surface":"arch","classification":["state","hscb-dispatch"],"depends_on":["PTO-ARCH-STATE-MESSAGE-BUFFER-SEND"]}
 
 // NDF-BEGIN: PTO-ARCH-HSCB-DISPATCH-001
-// ndf: kind=contract level=L1 layer=state status=open
+// ndf: kind=contract level=L1 layer=state status=accepted
 // The resident-worker service MUST use [1] for READY, [2, ID, PC, argument]
 // for LAUNCH and [3, ID, return_value] for DONE. Each entry is one XLEN word.
 // READY identifies its worker by trusted transport source. LAUNCH is valid
@@ -62,7 +62,9 @@ uses the [message-buffer send](message-buffer-send.md) and
 // needed by its matching DONE. Other sends MUST preserve those reservations.
 // The worker MUST accept a kernel entry only from the read-complete claimed
 // four-word LAUNCH sent by HSCB with a nonzero halfword-aligned PC. It
-// acknowledges and releases that exact claim before calling the entry. Peers
+// MUST match the worker's one outstanding dispatch ID and exact transport
+// identity allocated by HSCBIssueLaunch. It acknowledges and releases that
+// exact claim before calling the entry. Peers and other HSCB-origin packets
 // may use identical payload bytes as ordinary data.
 // NDF-END: PTO-ARCH-HSCB-DISPATCH-001
 
@@ -98,12 +100,19 @@ begin
     let worker = CurrentMessageBufferIndex();
     let snap = _MessageBufferBanks[[worker]].snapshot;
     if !MessageBufferEnabledForCurrentContext() || !MessageBufferSnapshotOwnerMatches(worker) ||
-       snap.acked || snap.message.word_count != 4 || !MessageBufferReadComplete(worker) then
+       !_MessageBufferBanks[[worker]].hscb_running || snap.acked ||
+       snap.message.word_count != 4 || !MessageBufferReadComplete(worker) then
         return FALSE;
     end;
     let pc = snap.message.words[[2]];
     return snap.message.message_id_hi[63:32] == Ones{32} &&
-           snap.message.words[[0]] == Zeros{64} + 2 && pc != Zeros{64} && pc[0] == '0';
+           snap.message.message_id_hi ==
+               _MessageBufferBanks[[worker]].hscb_launch_message_id_hi &&
+           snap.message.message_id_lo ==
+               _MessageBufferBanks[[worker]].hscb_launch_message_id_lo &&
+           snap.message.words[[0]] == Zeros{64} + 2 &&
+           snap.message.words[[1]] == _MessageBufferBanks[[worker]].hscb_dispatch_id &&
+           pc != Zeros{64} && pc[0] == '0';
 end;
 
 func HSCBIssueLaunch(worker: MessageBufferEndpointIndex, dispatch_id: Word,
@@ -142,6 +151,10 @@ begin
             (used + 1) as integer {0..PTO_MODEL_MESSAGE_BUFFER_RECEIPTS};
         _MessageBufferBanks[[worker]].hscb_running = TRUE;
         _MessageBufferBanks[[worker]].hscb_dispatch_id = dispatch_id;
+        _MessageBufferBanks[[worker]].hscb_launch_message_id_hi =
+            _MessageBufferBanks[[worker]].queued.message_id_hi;
+        _MessageBufferBanks[[worker]].hscb_launch_message_id_lo =
+            _MessageBufferBanks[[worker]].queued.message_id_lo;
     end;
     return status;
 end;
@@ -183,6 +196,8 @@ begin
           _MessageBufferBanks[[worker]].hscb_running &&
           _MessageBufferBanks[[worker]].hscb_dispatch_id == payload[[1]] then
         _MessageBufferBanks[[worker]].hscb_running = FALSE;
+        _MessageBufferBanks[[worker]].hscb_launch_message_id_hi = Zeros{64};
+        _MessageBufferBanks[[worker]].hscb_launch_message_id_lo = Zeros{64};
         _MessageBufferBanks[[worker]].hscb_return_value = payload[[2]];
     else
         return MessageBufferResult_BadCommand;

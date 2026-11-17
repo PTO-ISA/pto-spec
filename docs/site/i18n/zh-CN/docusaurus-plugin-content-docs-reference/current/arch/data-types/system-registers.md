@@ -74,7 +74,7 @@ This page is a generated reference view of the normative ASL unit.
 // NDF-BEGIN: PTO-ARCH-MSGB-REGISTER-FIELDS-001
 // ndf: kind=contract level=L1 layer=state status=accepted
 // The base-address family 0x0830..0x084b MUST use the access classes in this
-// owning catalog. MSGBCR (0x0830) reads the last accepted control; MSGBD1..10
+// owning catalog. MSGBCR (0x0830) reads the control of the latest successful admission or exact replay; MSGBD1..10
 // (0x0831..0x083a) write private TX staging and read the claimed RX snapshot.
 // MSGBRXCLAIM (0x083b) assigns only bit 0: zero is a no-op, one claims;
 // nonzero reserved bits MUST return BAD_COMMAND without a claim effect.
@@ -87,7 +87,8 @@ This page is a generated reference view of the normative ASL unit.
 // and MSGBACK (0x0842) consume the complete 64-bit RX token, not a current-head
 // selector. MSGBACKSTAT (0x0843) reports result[7:0] and VALID[8] with upper
 // bits zero; MSGBACKID (0x0844) echoes the same attempt's complete token.
-// MSGBTXID_HI/LO (0x0845/0x0846) expose the latest admitted transport ID.
+// MSGBTXID_HI/LO (0x0845/0x0846) expose the transport ID of the latest successful admission or exact replay.
+// A rejected send or changed-control retry preserves this ID and MSGBCR.
 // MSGBTXSTAT (0x0847) reports result[7:0] and VALID[8]. MSGBENDPOINT (0x0848)
 // reads the current context's endpoint binding; reference index geometry
 // MUST NOT impose a physical topology on implementations.

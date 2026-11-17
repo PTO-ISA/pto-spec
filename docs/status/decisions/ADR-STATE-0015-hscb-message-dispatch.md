@@ -3,11 +3,11 @@
   "id": "ADR-STATE-0015",
   "title": "High Speed Config Bus delivery and Message Buffer worker dispatch",
   "title_zh": "High Speed Config Bus 投递与 Message Buffer 工作线程调度",
-  "status": "draft",
+  "status": "accepted",
   "authors": ["zhoubot"],
-  "approvers": [],
+  "approvers": ["zhoubot"],
   "created": "2026-11-11",
-  "accepted": null,
+  "accepted": "2026-11-17",
   "rejected": null,
   "superseded": null,
   "baseline": "42067d0f2890b8c013a868bd1247ebc6437b3179",
@@ -41,7 +41,7 @@ The High Speed Config Bus (HSCB) carries control messages between the scheduler
 and execution contexts. A Message Buffer (MSGB) is the endpoint state through
 which a context stages a send or claims a stable incoming message. ADR-STATE-0014
 owns the register interface and the exact-token acknowledgement. This decision
-proposes the delivery contract and the resident-worker protocol that uses it.
+defines the delivery contract and the resident-worker protocol that uses it.
 
 ## Decision and rationale
 
@@ -122,5 +122,5 @@ additional visibility guarantee for unrelated memory operations.
 
 **中文。** 本决策规定可观察的投递结果、邮箱归属和调度状态。实现自行确定总线宽度、物理连线、缓冲容量及耗时。与任务无关的内存访问仍遵循其原有可见性规则。
 
-This draft decision does not authorize implementation or release.
-本 ADR 草案不授权实现或发布，提请评审的 ASL 给出候选契约的可执行形式。
+The repository owner accepted the endpoint mapping and READY/LAUNCH/DONE protocol on 2026-11-17. Release adoption requires separate exact-commit evidence.
+仓库所有者于 2026-11-17 确认端点映射与 READY/LAUNCH/DONE 协议。发布采用仍需对应提交的完整验证。

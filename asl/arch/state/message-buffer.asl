@@ -18,6 +18,8 @@
 // token MUST remain separate from ACKSTAT/ACKID so a failed attempt cannot erase
 // duplicate recognition.  An ACKED snapshot MUST remain immutable and readable
 // until exact-token RELEASE; a duplicate old ACK MUST NOT affect a newer claim.
+// RELEASE MUST preserve an unacknowledged snapshot that consumed the final claim
+// identity so software can finish reading and acknowledge the queued message.
 // NDF-END: PTO-ARCH-MSGB-ACK-001
 // NDF-BEGIN: PTO-ARCH-MSGB-LIFECYCLE-001
 // ndf: kind=contract level=L1 layer=state status=accepted
@@ -217,6 +219,9 @@ begin
         _MessageBufferBanks[[index]].rx_result = MessageBufferResult_NotOwner;
     elsif token != _MessageBufferBanks[[index]].snapshot.token then
         _MessageBufferBanks[[index]].rx_result = MessageBufferResult_TokenMismatch;
+    elsif !_MessageBufferBanks[[index]].snapshot.acked &&
+          _MessageBufferBanks[[index]].claim_sequence == Ones{48} then
+        _MessageBufferBanks[[index]].rx_result = MessageBufferResult_Exhausted;
     else
         ClearMessageBufferSnapshot(index);
         _MessageBufferBanks[[index]].rx_result = MessageBufferResult_OK;
@@ -238,6 +243,10 @@ begin
     var config_value = Zeros{PTO_XLEN};
     var state = Zeros{PTO_XLEN};
     let raw = UInt(address[15:0]);
+    if !IsMessageBufferConfigAddress(address) && !MessageBufferEnabledForCurrentContext() then
+        SetFault(Fault_IllegalInstruction, ReadPC());
+        return Zeros{PTO_XLEN};
+    end;
     if address == Zeros{24} + PTO_MSGB_CFGSEL_ADDRESS then
         if CurrentACR() != 0 then
             SetFault(Fault_IllegalInstruction, ReadPC());

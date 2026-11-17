@@ -414,7 +414,6 @@
     "PRD-183": "ADR-NUM-0012"
   },
   "open": [
-    "ADR-STATE-0015",
     "ADR-NUM-0013",
     "ADR-NUM-0014",
     "ADR-NUM-0015",
@@ -5553,7 +5552,7 @@
       "title_zh": "\u663e\u5f0f\u542f\u7528\u7684 MSGB \u5bc4\u5b58\u5668\u3001BSE \u63a5\u7eb3\u4e0e\u7cbe\u786e SSRSET ACK"
     },
     {
-      "accepted": null,
+      "accepted": "2026-11-17",
       "affected_ndf": [
         "PTO-ARCH-HSCB-ENDPOINT-001",
         "PTO-ARCH-HSCB-TRANSPORT-001",
@@ -5564,7 +5563,9 @@
         "PTO-ARCH-STATE-MESSAGE-BUFFER-SEND",
         "PTO-ARCH-STATE-HSCB-DISPATCH"
       ],
-      "approvers": [],
+      "approvers": [
+        "zhoubot"
+      ],
       "authors": [
         "zhoubot"
       ],
@@ -5578,7 +5579,7 @@
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
-      "status": "draft",
+      "status": "accepted",
       "superseded": null,
       "superseded_by": [],
       "supersedes": [],
@@ -16267,7 +16268,7 @@
   ],
   "schema": "pto.adr-index",
   "summary": {
-    "draft_count": 10,
+    "draft_count": 9,
     "legacy_id_count": 304,
     "record_count": 119,
     "type_counts": {
