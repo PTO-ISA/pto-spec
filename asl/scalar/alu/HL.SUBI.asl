@@ -12,13 +12,13 @@
 // memory, Tile, block, reservation, privilege, numeric-status, or fault state.
 // NDF-END: PTO-HL-SUBI-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectHLSUBIOperation() => ScalarOperation
+readonly func HLSUBIOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_SUBI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLSUBIHandler() => ScalarSemanticHandler
+readonly func HLSUBIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
@@ -41,7 +41,7 @@ begin
     return FALSE;
 end;
 
-pure func ComputeHLSUBIResult(
+pure func HLSUBIResult(
     left: Word,
     immediate: bits(24))
     => Word

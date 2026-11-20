@@ -23,7 +23,7 @@
 // defined but MUST NOT publish complete readiness.
 // NDF-END: PTO-TLOAD-CUBE-001
 // DOC-BEGIN: decode
-readonly func SelectTLOADOperation() => TileOperation
+readonly func TLOADOperation() => TileOperation
 begin
     return TileOperation_TLOAD;
 end;
@@ -48,24 +48,24 @@ begin
         valid_rows, valid_columns, data_type);
 end;
 
-readonly func SelectTLOADHandler() => TileSemanticHandler
+readonly func TLOADHandler() => TileSemanticHandler
 begin
     return TileHandler_TLOAD;
 end;
 
-readonly func ResolveTLOADGlobalAddress(
+readonly func TLOADGMAddress(
     base_address: Word, row: integer {0..65535},
     column: integer {0..65535}, row_stride_bytes: Word,
     data_type: TileDataType) => Word
 begin
-    return TileMemoryStridedByteAddress(
+    return TileElementAddress(
         base_address, row, column, row_stride_bytes, data_type);
 end;
 
-readonly func ComputeTLOADDenseStride(
+readonly func TLOADDenseStride(
     columns: integer {0..65535}, data_type: TileDataType) => Word
 begin
-    return TileDenseRowStrideBytes(columns, data_type);
+    return TileDenseRowBytes(columns, data_type);
 end;
 
 pure func TLOADZeroMaskNoEffect(

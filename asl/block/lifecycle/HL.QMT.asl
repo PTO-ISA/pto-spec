@@ -12,7 +12,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLQMTHandler() => CommandSemanticHandler
+readonly func HLQMTHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteQueueMove;
 end;

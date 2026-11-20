@@ -328,7 +328,7 @@ begin
                 else Zeros{PTO_XLEN};
         let base_address = if _BundleScalarBindings[[0]].valid &&
             _BundleScalarBindings[[0]].source_count > 0 then
-                ReadScalarRegisterOperand(
+                ReadReg5(
                     _BundleScalarBindings[[0]].source0)
             else Zeros{PTO_XLEN};
         let tracked_operation = DecodeTileOperation(
@@ -340,7 +340,7 @@ begin
         let row_stride = if _BundleScalarBindings[[0]].valid &&
             _BundleScalarBindings[[0]].source_count > 1 &&
             !indexed_tlsu then
-                ReadScalarRegisterOperand(
+                ReadReg5(
                     _BundleScalarBindings[[0]].source1)
             else Zeros{PTO_XLEN};
         obligation_slot = RegisterKernelGMObligation(

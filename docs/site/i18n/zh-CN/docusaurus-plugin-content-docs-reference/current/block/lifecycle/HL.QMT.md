@@ -159,7 +159,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/HL.QMT.asl -->
 ```asl
-readonly func SelectHLQMTHandler() => CommandSemanticHandler
+readonly func HLQMTHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteQueueMove;
 end;

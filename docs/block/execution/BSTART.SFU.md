@@ -26,7 +26,7 @@ Canonical assembly and disassembly use `BSTART.SFU` for every SFU operation, and
 <!-- PTO-READER-BLOCK: block-bstart-sfu-mechanism role=mechanism -->
 ## Placement and mechanism
 
-The alias owner maps each piece to `BSTART.TEPL`: `BSTARTSFUEncodingMatches` matches the TEPL form, and `SelectBSTARTSFUHandler` returns the TEPL handler, `CommandHandler_ExecuteBundleStart`. Execution is therefore exactly the TEPL path.
+The alias owner maps each piece to `BSTART.TEPL`: `BSTARTSFUEncodingMatches` matches the TEPL form, and `BSTARTSFUHandler` returns the TEPL handler, `CommandHandler_ExecuteBundleStart`. Execution is therefore exactly the TEPL path.
 
 1. [Bundle start dispatch](../model/dispatch/start.md) checks the decoded descriptor before it commits any predecessor.
 2. It commits the predecessor, opens a Tile-element block, and installs the descriptor.
@@ -181,9 +181,9 @@ The resulting block uses the same descriptor, header composition, commit, and ro
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.SFU.asl -->
 ```asl
-readonly func SelectBSTARTSFUHandler() => CommandSemanticHandler
+readonly func BSTARTSFUHandler() => CommandSemanticHandler
 begin
-    return SelectBSTARTTEPLHandler();
+    return BSTARTTEPLHandler();
 end;
 
 pure func BSTARTSFUAliasEngine() => TileExecutionEngine

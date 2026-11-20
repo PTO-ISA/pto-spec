@@ -8,18 +8,18 @@
 // selected width, ordering, memory update, event, and result atomically.
 // NDF-END: PTO-SWAPW-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectSWAPWOperation() => ScalarOperation
+readonly func SWAPWOperation() => ScalarOperation
 begin
     return ScalarOperation_SWAPW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSWAPWHandler() => ScalarSemanticHandler
+readonly func SWAPWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func SelectSWAPWAtomicOperation()
+pure func SWAPWAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_SWAP;

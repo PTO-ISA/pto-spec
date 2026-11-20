@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(81) == TileHandler_GMOV;
     assert TileClassOfIndex(81) == TileClass_MemoryAndDataMovement;
     assert TileEngineOfIndex(81) == TileEngine_TLSU;
-    assert SelectGMOVOperation() == TileOperation_GMOV;
-    assert SelectGMOVHandler() == TileHandler_GMOV;
+    assert GMOVOperation() == TileOperation_GMOV;
+    assert GMOVHandler() == TileHandler_GMOV;
     return 0;
 end;

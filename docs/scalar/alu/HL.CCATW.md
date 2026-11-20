@@ -130,7 +130,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.CCATW.asl -->
 ```asl
-readonly func SelectHLCCATWOperation() => ScalarOperation
+readonly func HLCCATWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_CCATW;
 end;
@@ -141,12 +141,12 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.CCATW.asl -->
 ```asl
-readonly func SelectHLCCATWHandler() => ScalarSemanticHandler
+readonly func HLCCATWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteConcatenatePairW;
 end;
 
-pure func ComputeHLCCATWLowResult(
+pure func HLCCATWLowResult(
     left: Word,
     right: Word,
     shift_amount: integer {0..127})
@@ -163,7 +163,7 @@ begin
     end;
 end;
 
-pure func ComputeHLCCATWHighResult(
+pure func HLCCATWHighResult(
     left: Word,
     right: Word,
     shift_amount: integer {0..127})

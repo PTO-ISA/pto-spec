@@ -16,6 +16,6 @@ begin
     assert !_TQueueValid[[0]];
     assert !_UQueueValid[[0]];
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert SelectSSRGETOperation() == ScalarOperation_SSRGET;
+    assert SSRGETOperation() == ScalarOperation_SSRGET;
     return 0;
 end;

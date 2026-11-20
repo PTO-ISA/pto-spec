@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000000000001011001', 32) == 379;
     assert ScalarOperationOfForm(379) == ScalarOperation_SBI;
     assert ScalarHandlerOfForm(379) == ScalarHandler_ExecuteScalarStore;
-    assert SelectSBIOperation() == ScalarOperation_SBI;
-    assert SelectSBIHandler() == ScalarHandler_ExecuteScalarStore;
+    assert SBIOperation() == ScalarOperation_SBI;
+    assert SBIHandler() == ScalarHandler_ExecuteScalarStore;
     assert SBIAGUAction() == ScalarAGU_Store;
     assert SBIAGUAddressKind() == ScalarAGU_Immediate;
     assert SBIAGUSizeBytes() == 1;

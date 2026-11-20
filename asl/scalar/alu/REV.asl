@@ -8,7 +8,7 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-REV-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectREVOperation()
+readonly func REVOperation()
     => ScalarOperation
 begin
     return ScalarOperation_REV;
@@ -27,13 +27,13 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectREVHandler()
+readonly func REVHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ReverseBitfieldBytes;
 end;
 
-pure func ComputeREVResult(
+pure func REVResult(
     value: Word,
     width: integer {1..64},
     offset: integer {0..63})

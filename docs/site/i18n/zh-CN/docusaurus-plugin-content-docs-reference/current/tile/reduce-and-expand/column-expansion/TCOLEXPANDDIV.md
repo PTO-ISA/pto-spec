@@ -132,7 +132,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV.asl -->
 ```asl
-readonly func SelectTCOLEXPANDDIVOperation() => TileOperation
+readonly func TCOLEXPANDDIVOperation() => TileOperation
 begin
     return TileOperation_TCOLEXPANDDIV;
 end;
@@ -174,7 +174,7 @@ begin
         broadcast);
 end;
 
-readonly func SelectTCOLEXPANDDIVHandler() => TileSemanticHandler
+readonly func TCOLEXPANDDIVHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;

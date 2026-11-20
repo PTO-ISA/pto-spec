@@ -175,7 +175,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-and-immediate/logical/TSHLS.asl -->
 ```asl
-readonly func SelectTSHLSOperation() => TileOperation
+readonly func TSHLSOperation() => TileOperation
 begin
     return TileOperation_TSHLS;
 end;
@@ -219,7 +219,7 @@ begin
         scalar);
 end;
 
-readonly func SelectTSHLSHandler() => TileSemanticHandler
+readonly func TSHLSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileScalar;
 end;

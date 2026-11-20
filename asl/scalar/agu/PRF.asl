@@ -7,13 +7,13 @@
 // MUST perform no translation, memory event, ordering edge, or destination effect.
 // NDF-END: PTO-PRF-NONFAULTING-HINT-001
 // DOC-BEGIN: decode
-readonly func SelectPRFOperation() => ScalarOperation
+readonly func PRFOperation() => ScalarOperation
 begin
     return ScalarOperation_PRF;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectPRFHandler()
+readonly func PRFHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarPrefetch;

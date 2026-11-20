@@ -8,14 +8,14 @@
 // assigned destination or commit effect in alias-safe order.
 // NDF-END: PTO-XORIW-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectXORIWOperation()
+readonly func XORIWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_XORIW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectXORIWHandler()
+readonly func XORIWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;

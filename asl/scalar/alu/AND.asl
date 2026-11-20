@@ -8,14 +8,14 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-AND-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectANDOperation()
+readonly func ANDOperation()
     => ScalarOperation
 begin
     return ScalarOperation_AND;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectANDHandler()
+readonly func ANDHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
@@ -32,26 +32,26 @@ begin
     end;
 end;
 
-pure func PrepareANDRightOperand(
+pure func ANDRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
     let modifier = DecodeANDRightModifier(encoded_modifier);
-    let transformed = ApplyScalarRightModifier(right, modifier, TRUE);
+    let transformed = ModifyScalarOperand(right, modifier, TRUE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func ComputeANDResult(
+pure func ANDResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = PrepareANDRightOperand(
+    let prepared_right = ANDRightOperand(
         right,
         encoded_modifier,
         shift_amount);

@@ -8,7 +8,7 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-BXS-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectBXSOperation()
+readonly func BXSOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BXS;
@@ -27,13 +27,13 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBXSHandler()
+readonly func BXSHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExtractBitfield;
 end;
 
-pure func ComputeBXSResult(
+pure func BXSResult(
     value: Word,
     width: integer {1..64},
     offset: integer {0..63})

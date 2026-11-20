@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000000000000001001', 32) == 308;
     assert ScalarOperationOfForm(308) == ScalarOperation_LB;
     assert ScalarHandlerOfForm(308) == ScalarHandler_ExecuteScalarLoad;
-    assert SelectLBOperation() == ScalarOperation_LB;
-    assert SelectLBHandler() == ScalarHandler_ExecuteScalarLoad;
+    assert LBOperation() == ScalarOperation_LB;
+    assert LBHandler() == ScalarHandler_ExecuteScalarLoad;
     assert LBAGUAction() == ScalarAGU_Load;
     assert LBAGUAddressKind() == ScalarAGU_Register;
     assert LBAGUSizeBytes() == 1;

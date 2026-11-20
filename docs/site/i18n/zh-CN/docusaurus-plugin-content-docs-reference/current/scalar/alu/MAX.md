@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-max-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `ComputeMAXResult`：当 `SInt(left) > SInt(right)` 时返回 `left`，否则返回 `right`；并提供返回真的 `MAXUsesSignedComparison`。分派路径通过 `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MAX, FALSE)` 到达同一个辅助函数，它读取 `SrcL` 与 `SrcR` 并写入被选中的操作数。
+所属 ASL 提供 `MAXResult`：当 `SInt(left) > SInt(right)` 时返回 `left`，否则返回 `right`；并提供返回真的 `MAXUsesSignedComparison`。分派路径通过 `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MAX, FALSE)` 到达同一个辅助函数，它读取 `SrcL` 与 `SrcR` 并写入被选中的操作数。
 
 ```asm
 max SrcL, SrcR, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MAX.asl -->
 ```asl
-readonly func SelectMAXOperation()
+readonly func MAXOperation()
     => ScalarOperation
 begin
     return ScalarOperation_MAX;
@@ -128,13 +128,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MAX.asl -->
 ```asl
-readonly func SelectMAXHandler()
+readonly func MAXHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func ComputeMAXResult(left: Word, right: Word)
+pure func MAXResult(left: Word, right: Word)
     => Word
 begin
     if SInt(left) > SInt(right) then

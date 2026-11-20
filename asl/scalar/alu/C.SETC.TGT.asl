@@ -7,18 +7,18 @@
 // block; applicability and duplicate checks MUST precede source readiness.
 // NDF-END: PTO-C-SETC-TGT-SNAPSHOT-001
 // DOC-BEGIN: decode
-readonly func SelectCSETCTGTOperation() => ScalarOperation
+readonly func CSETCTGTOperation() => ScalarOperation
 begin
     return ScalarOperation_C_SETC_TGT;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectCSETCTGTHandler() => ScalarSemanticHandler
+readonly func CSETCTGTHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_SetCommitTarget;
 end;
 
-readonly func ResolveCSETCTGTTarget(
+readonly func CSETCTGTTarget(
     source_value: Word)
     => Word
 begin

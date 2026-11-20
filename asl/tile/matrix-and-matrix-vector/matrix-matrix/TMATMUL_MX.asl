@@ -52,7 +52,7 @@
 // Cache behavior MUST NOT alter results, faults, source lifetime, or ordering.
 // NDF-END: PTO-TMATMUL-MX-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTMATMULMXOperation()
+readonly func TMATMULMXOperation()
     => TileOperation
 begin
     return TileOperation_TMATMUL_MX;
@@ -86,7 +86,7 @@ begin
         column_scale);
 end;
 
-readonly func SelectTMATMULMXHandler()
+readonly func TMATMULMXHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TMATMUL_MX;

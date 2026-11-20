@@ -38,7 +38,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBSTARTTGEMVMXACCTileOperation()
+readonly func BSTARTTGEMVMXACCTileOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV_MX_ACC;
@@ -56,7 +56,7 @@ begin
     return FALSE;
 end;
 
-readonly func SelectBSTARTTGEMVMXACCHandler()
+readonly func BSTARTTGEMVMXACCHandler()
     => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;

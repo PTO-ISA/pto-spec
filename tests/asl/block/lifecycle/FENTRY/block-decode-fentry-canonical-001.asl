@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(62) == CommandOperation_fentry_32_a47584ec13b6;
     assert CommandHandlerOfForm(62) == CommandHandler_ExecuteFrameEntry;
     assert FENTRYEncodingMatches(CommandOperationOfForm(62));
-    assert SelectFENTRYHandler() == CommandHandler_ExecuteFrameEntry;
+    assert FENTRYHandler() == CommandHandler_ExecuteFrameEntry;
     return 0;
 end;

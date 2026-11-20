@@ -8,13 +8,13 @@
 // the store event and any base update at the defined restart boundary.
 // NDF-END: PTO-SDI-U-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectSDIUOperation() => ScalarOperation
+readonly func SDIUOperation() => ScalarOperation
 begin
     return ScalarOperation_SDI_U;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSDIUHandler()
+readonly func SDIUHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStore;

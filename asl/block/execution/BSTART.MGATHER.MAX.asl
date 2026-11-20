@@ -7,7 +7,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBSTARTMGATHERMAXHandler() => CommandSemanticHandler
+readonly func BSTARTMGATHERMAXHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

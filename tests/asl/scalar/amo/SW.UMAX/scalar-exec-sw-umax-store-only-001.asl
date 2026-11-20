@@ -48,7 +48,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_Release;
 
-    assert SelectSWUMAXAtomicOperation() == Atomic_UMAX;
+    assert SWUMAXAtomicOperation() == Atomic_UMAX;
     assert SWUMAXAtomicSizeBytes() == 4;
     assert !SWUMAXPublishesOldValue();
 end;

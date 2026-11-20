@@ -62,7 +62,7 @@
 // MUST follow PTO-GM-FLOATING-ADD-NUMERIC-001 for indexed and strided forms.
 // NDF-END: PTO-TSTORE-STRIDED-ATOMIC-RED-001
 // DOC-BEGIN: decode
-readonly func SelectTSTOREOperation() => TileOperation
+readonly func TSTOREOperation() => TileOperation
 begin
     return TileOperation_TSTORE;
 end;
@@ -77,26 +77,26 @@ begin
     return TileRegularTLSUDataTypeSupported(data_type);
 end;
 
-readonly func SelectTSTOREHandler() => TileSemanticHandler
+readonly func TSTOREHandler() => TileSemanticHandler
 begin
     return TileHandler_TSTORE;
 end;
 
-readonly func ResolveTSTOREGlobalAddress(
+readonly func TSTOREGMAddress(
     base_address: Word,
     row: integer {0..65535},
     column: integer {0..65535},
     row_stride_bytes: Word,
     data_type: TileDataType) => Word
 begin
-    return TileMemoryStridedByteAddress(
+    return TileElementAddress(
         base_address, row, column, row_stride_bytes, data_type);
 end;
 
-readonly func ComputeTSTOREDenseStride(
+readonly func TSTOREDenseStride(
     columns: integer {0..65535}, data_type: TileDataType) => Word
 begin
-    return TileDenseRowStrideBytes(columns, data_type);
+    return TileDenseRowBytes(columns, data_type);
 end;
 
 pure func TSTORESharedMaskLegal(

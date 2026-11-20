@@ -2,7 +2,7 @@
   "schema": "pto.site-instruction-projection.v1",
   "unitId": "PTO-TILE-TLOAD",
   "ownerSource": "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
-  "ownerSourceSha256": "cef9571e2571c04866dd49cb622824fe671cba301c2f20f608a5998a36d081c9",
+  "ownerSourceSha256": "c64e62e3266aeda7631fb1bf05bf8569f106f3eca5a779a0ae083991f9d74679",
   "composition": {
     "owner": "PTO-TILE-TLOAD",
     "variants": [
@@ -1081,7 +1081,7 @@
           "zh-CN": "当前 owner 仅暴露指令选择，没有操作数绑定 Decode 过程。"
         },
         "ownerSymbols": [
-          "SelectTLOADOperation"
+          "TLOADOperation"
         ],
         "facts": [
           {
@@ -1121,8 +1121,8 @@
               "zh-CN": "计算紧密字节跨度，以及 base + row * row_stride_bytes + column 字节偏移。"
             },
             "symbols": [
-              "TileDenseRowStrideBytes",
-              "TileMemoryStridedByteAddress",
+              "TileDenseRowBytes",
+              "TileElementAddress",
               "TileMemoryStridedByteHighNibble"
             ]
           },
@@ -1144,8 +1144,8 @@
         "status": "complete",
         "gap": null,
         "ownerSymbols": [
-          "ResolveTLOADGlobalAddress",
-          "ComputeTLOADDenseStride"
+          "TLOADGMAddress",
+          "TLOADDenseStride"
         ],
         "facts": [
           {
@@ -1354,7 +1354,7 @@
           "zh-CN": "当前 owner 绑定通用 Tile handler；可执行效果位于下方引用的共享模块。"
         },
         "ownerSymbols": [
-          "SelectTLOADHandler"
+          "TLOADHandler"
         ],
         "facts": [
           {

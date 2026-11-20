@@ -29,7 +29,7 @@ begin
     return code <= 12;
 end;
 
-readonly func SelectBASSEMBLEHandler() => CommandSemanticHandler
+readonly func BASSEMBLEHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ApplyBundleAssemble;
 end;

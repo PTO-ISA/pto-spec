@@ -7,13 +7,13 @@
 // alias, with no translation, memory event, ordering edge, or destination effect.
 // NDF-END: PTO-PRFI-U-NONFAULTING-HINT-001
 // DOC-BEGIN: decode
-readonly func SelectPRFIUOperation() => ScalarOperation
+readonly func PRFIUOperation() => ScalarOperation
 begin
     return ScalarOperation_PRFI_U;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectPRFIUHandler()
+readonly func PRFIUHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarPrefetch;

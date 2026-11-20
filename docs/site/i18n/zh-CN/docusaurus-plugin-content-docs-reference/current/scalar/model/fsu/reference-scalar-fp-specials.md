@@ -17,7 +17,7 @@ This page is a generated reference view of the normative ASL unit.
 
 本单元处理参考标量浮点配置档中的特殊值：NaN、无穷大和零。每个运算先询问特殊情形函数，输入是否强制产生固定结果。只有在不强制时，运算才计算有限值结果：`ABS` 清除符号位，其他运算求出实数值，并通过[参考量化](reference-quantization.md)编码，BF16 则通过 `ReferenceBinary16Encoding` 编码。
 
-它定义一元与融合运算的特殊情形和配置档：`ReferenceScalarFPUnarySpecial`、`ReferenceScalarFPUnaryProfile`、`ReferenceScalarFPFusedSpecial` 和 `ReferenceScalarFPFusedProfile`。二元特殊情形以 `ReferenceScalarFPBinarySpecial` 的形式位于参考量化中。
+它定义一元与融合运算的特殊情形和配置档：`ReferenceScalarFPUnarySpecial`、`ReferenceScalarFPUnaryProfile`、`ReferenceScalarFPFusedSpecial` 和 `ReferenceFPMulAdd`。二元特殊情形以 `ReferenceScalarFPBinarySpecial` 的形式位于参考量化中。
 
 <!-- PTO-READER-BLOCK: scalar-model-fsu-reference-scalar-fp-specials-concepts role=concepts-state -->
 ## 概念与可见状态
@@ -59,7 +59,7 @@ NaN 行同样适用于 `ABS`。对于其他任何 `ABS` 输入，特殊函数报
 
 对于零乘积加有限加数，`ReferenceScalarFPFusedSpecial` 不返回特殊结果。该情形进入有限值路径。对于 FP32 和 FP64，只要精确结果为零，有限值编码器就返回 +0.0，而不管操作数的符号。
 
-这些函数经由 `ScalarFPUnaryProfile` 和 `ScalarFPFusedProfile` 到达。这些钩子断言所支持的类型码：一元为 FP64、FP32、FP16 和 BF16，融合为 FP64、FP32 和 FP16。
+这些函数经由 `ScalarFPUnaryProfile` 和 `FPMulAdd` 到达。这些钩子断言所支持的类型码：一元为 FP64、FP32、FP16 和 BF16，融合为 FP64、FP32 和 FP16。
 
 已译码分派中的 `FABS` 自行清除符号位，不调用一元配置档。
 
@@ -238,7 +238,7 @@ begin
     return (FALSE, Zeros{PTO_XLEN}, Zeros{5});
 end;
 
-func ReferenceScalarFPFusedProfile(
+func ReferenceFPMulAdd(
     operation: FloatingFusedOperation, rounding_mode: NumericRoundingMode,
     source_type: bits(5), addend: Word, left: Word, right: Word)
     => (Word, bits(5))

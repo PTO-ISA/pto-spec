@@ -28,6 +28,6 @@ begin
     assert ReadGPR(7) == Zeros{PTO_XLEN} + 0x777;
     assert _DataCacheEpoch == 9;
     assert _ArchitectureRequestEpoch == 11;
-    assert SelectCEBREAKOperation() == ScalarOperation_C_EBREAK;
+    assert CEBREAKOperation() == ScalarOperation_C_EBREAK;
     return 0;
 end;

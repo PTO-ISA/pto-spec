@@ -219,7 +219,7 @@ class ScalarInstructionContractsTest(unittest.TestCase):
         ).read_text(encoding="utf-8")
         implicit_legality = source.split(
             "readonly func ScalarImplicitSourceOperandsLegal", 1
-        )[1].split("readonly func ReadScalarRegisterOperand", 1)[0]
+        )[1].split("readonly func ReadReg5", 1)[0]
 
         for operation in ("ScalarOperation_C_SDI", "ScalarOperation_C_SWI"):
             self.assertIn(operation, implicit_legality)

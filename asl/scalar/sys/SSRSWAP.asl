@@ -8,14 +8,14 @@
 // on rejection except for the ordinary instruction-attempt trap envelope.
 // NDF-END: PTO-SSRSWAP-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectSSRSWAPOperation()
+readonly func SSRSWAPOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SSRSWAP;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSSRSWAPHandler()
+readonly func SSRSWAPHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterSwap;

@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000010000010110010000000000001110', 48) == 273;
     assert ScalarOperationOfForm(273) == ScalarOperation_HL_SHI;
     assert ScalarHandlerOfForm(273) == ScalarHandler_ExecuteScalarStore;
-    assert SelectHLSHIOperation() == ScalarOperation_HL_SHI;
-    assert SelectHLSHIHandler() == ScalarHandler_ExecuteScalarStore;
+    assert HLSHIOperation() == ScalarOperation_HL_SHI;
+    assert HLSHIHandler() == ScalarHandler_ExecuteScalarStore;
     assert HLSHIAGUAction() == ScalarAGU_Store;
     assert HLSHIAGUAddressKind() == ScalarAGU_Immediate;
     assert HLSHIAGUSizeBytes() == 2;

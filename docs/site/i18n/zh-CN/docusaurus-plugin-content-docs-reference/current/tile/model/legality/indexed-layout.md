@@ -46,7 +46,7 @@ This page is a generated reference view of the normative ASL unit.
 
 `TileOperandsLegal_TFMA` 要求目标与三个源（左、右、加数）具有相同的形状、布局、存储种类与数据类型；布局必须是 RowMajor、CUBE_M16 或 CUBE_M32；源在每个有效坐标（存在 ExecutionMask 时为每个活动坐标）上必须已定义，对浮点类型还必须编码有效。
 
-`TileOperandsLegal_TFMA` 使用 `TileFusedMultiplyAddDataTypeSupported`，恰好接受 `FP64`、`S64`、`U64`、`FP16`、`FP32` 与 `BF16`。定宽整数形式以及 `FP64`、`FP32`、`FP16` 融合浮点路径可执行。`ScalarFPFusedProfile` 不接受 BF16，因此既有已接受 BF16 的有限 FMA 缺口保持不变。其他向量算术类型不会进入 TFMA 执行。
+`TileOperandsLegal_TFMA` 使用 `TileFusedMultiplyAddDataTypeSupported`，恰好接受 `FP64`、`S64`、`U64`、`FP16`、`FP32` 与 `BF16`。定宽整数形式以及 `FP64`、`FP32`、`FP16` 融合浮点路径可执行。`FPMulAdd` 不接受 BF16，因此既有已接受 BF16 的有限 FMA 缺口保持不变。其他向量算术类型不会进入 TFMA 执行。
 
 `TileOperandsLegal_GMOV` 要求 `peer_tid` 小于 4、源已定义、形状匹配、类型与布局相同、布局为受支持的逐元素布局，且数据类型属于 `TileCarrierOrPackedBaselineDataTypeSupported`（最高 64 位的非打包类型，或既有打包基线）。
 

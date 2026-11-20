@@ -26,7 +26,7 @@
 // For CUBE_M16/M32, destination Columns MUST equal source Columns and destination Rows MUST be the minimum legal physical Rows covering destination ValidRows (16 for M16, 32 for M32).
 // NDF-END: PTO-TROWMIN-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTROWMINOperation() => TileOperation
+readonly func TROWMINOperation() => TileOperation
 begin
     return TileOperation_TROWMIN;
 end;
@@ -49,7 +49,7 @@ begin
         source);
 end;
 
-readonly func SelectTROWMINHandler() => TileSemanticHandler
+readonly func TROWMINHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileReduction;
 end;

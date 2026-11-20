@@ -141,7 +141,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/FEXIT.asl -->
 ```asl
-readonly func SelectFEXITHandler() => CommandSemanticHandler
+readonly func FEXITHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteFrameExit;
 end;

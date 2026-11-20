@@ -110,7 +110,7 @@ begin
     return 2;
 end;
 
-readonly func SelectBIORHandler() => CommandSemanticHandler
+readonly func BIORHandler() => CommandSemanticHandler
 begin
     return CommandHandler_BindBundleScalarIO;
 end;

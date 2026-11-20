@@ -8,14 +8,14 @@
 // on rejection except for the ordinary instruction-attempt trap envelope.
 // NDF-END: PTO-TLB-IV-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTLBIVOperation()
+readonly func TLBIVOperation()
     => ScalarOperation
 begin
     return ScalarOperation_TLB_IV;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectTLBIVHandler()
+readonly func TLBIVHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
@@ -27,7 +27,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectTLBIVMaintenanceOperation()
+pure func TLBIVMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_TLB_IV;

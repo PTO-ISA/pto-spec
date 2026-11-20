@@ -24,14 +24,14 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-cisw-mechanism role=mechanism -->
 ## System mechanism
 
-`SelectDCCISWHandler` selects `ScalarHandler_ExecuteMaintenance` (`asl/scalar/sys/DC.CISW.asl:11`), and `SelectDCCISWMaintenanceOperation` fixes the operation to `Maintenance_DC_CISW` (`asl/scalar/sys/DC.CISW.asl:23`). That handler is shared with every other cache, bundle-cache, and TLB maintenance instruction, so the difference between them is only the operation token and the operand rule.
+`DCCISWHandler` selects `ScalarHandler_ExecuteMaintenance` (`asl/scalar/sys/DC.CISW.asl:11`), and `DCCISWMaintenanceOperation` fixes the operation to `Maintenance_DC_CISW` (`asl/scalar/sys/DC.CISW.asl:23`). That handler is shared with every other cache, bundle-cache, and TLB maintenance instruction, so the difference between them is only the operation token and the operand rule.
 
 The instruction occupies one scalar operation position in the body of an active SYS block (`asl/scalar/model/sys/semantics.asl:322`). Every fixed bit and operand constraint is checked during the legality pass, before the handler runs.
 
 <!-- PTO-READER-BLOCK: scalar-dc-cisw-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SrcL` is a Reg5 source: R0..R23, T#1..T#4, or U#1..U#4. The dispatcher reads it through `ReadDecodedScalarRegister` and passes the value to the executor as the operand (`asl/scalar/model/dispatch/sys.asl:42`). Encoded zero names the architectural zero GPR, so it is an assigned value and never an omitted operand.
+`SrcL` is a Reg5 source: R0..R23, T#1..T#4, or U#1..U#4. The dispatcher reads it through `ReadDecodedReg5` and passes the value to the executor as the operand (`asl/scalar/model/dispatch/sys.asl:42`). Encoded zero names the architectural zero GPR, so it is an assigned value and never an omitted operand.
 
 `DC.CISW` produces no scalar destination. The only output is the maintenance record.
 
@@ -102,7 +102,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.CISW.asl -->
 ```asl
-readonly func SelectDCCISWOperation()
+readonly func DCCISWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DC_CISW;
@@ -120,7 +120,7 @@ DC.CISW executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.CISW.asl -->
 ```asl
-readonly func SelectDCCISWHandler()
+readonly func DCCISWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
@@ -132,7 +132,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectDCCISWMaintenanceOperation()
+pure func DCCISWMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_DC_CISW;

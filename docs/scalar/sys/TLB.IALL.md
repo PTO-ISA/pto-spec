@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-tlb-iall-mechanism role=mechanism -->
 ## System mechanism
 
-`SelectTLBIALLHandler` selects the shared maintenance handler (`asl/scalar/sys/TLB.IALL.asl:18`), and the token `Maintenance_TLB_IALL` has the last case in the executor, advancing the TLB epoch with no operand test at all (`asl/scalar/model/sys/semantics.asl:154`).
+`TLBIALLHandler` selects the shared maintenance handler (`asl/scalar/sys/TLB.IALL.asl:18`), and the token `Maintenance_TLB_IALL` has the last case in the executor, advancing the TLB epoch with no operand test at all (`asl/scalar/model/sys/semantics.asl:154`).
 
 `TLBIALLMaintenanceUsesOperand` is `FALSE` (`asl/scalar/sys/TLB.IALL.asl:36`), so the dispatcher passes `Zeros{PTO_XLEN}` and reads no scalar register (`asl/scalar/model/dispatch/sys.asl:59`).
 
@@ -86,7 +86,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/TLB.IALL.asl -->
 ```asl
-readonly func SelectTLBIALLOperation()
+readonly func TLBIALLOperation()
     => ScalarOperation
 begin
     return ScalarOperation_TLB_IALL;
@@ -104,7 +104,7 @@ TLB.IALL executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/TLB.IALL.asl -->
 ```asl
-readonly func SelectTLBIALLHandler()
+readonly func TLBIALLHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
@@ -116,7 +116,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectTLBIALLMaintenanceOperation()
+pure func TLBIALLMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_TLB_IALL;

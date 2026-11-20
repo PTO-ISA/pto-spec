@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(60) == CommandOperation_ercov_32_dc0be14a2d8b;
     assert CommandHandlerOfForm(60) == CommandHandler_RecoverExecutionContext;
     assert ERCOVEncodingMatches(CommandOperationOfForm(60));
-    assert SelectERCOVHandler() == CommandHandler_RecoverExecutionContext;
+    assert ERCOVHandler() == CommandHandler_RecoverExecutionContext;
     return 0;
 end;

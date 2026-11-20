@@ -36,7 +36,7 @@ begin
         NormalizeMemoryAccessValue(old_value, 1);
     assert _MemoryEvents[[0]].write_value == Zeros{PTO_XLEN} + 0x88;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
-    assert SelectSWAPBAtomicOperation() == Atomic_SWAP;
+    assert SWAPBAtomicOperation() == Atomic_SWAP;
     assert SWAPBAtomicSizeBytes() == 1;
 end;
 

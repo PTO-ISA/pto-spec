@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000000000000010111', 32) == 339;
     assert ScalarOperationOfForm(339) == ScalarOperation_LUI;
     assert ScalarHandlerOfForm(339) == ScalarHandler_MaterializeLUI;
-    assert SelectLUIOperation() == ScalarOperation_LUI;
-    assert SelectLUIHandler() == ScalarHandler_MaterializeLUI;
+    assert LUIOperation() == ScalarOperation_LUI;
+    assert LUIHandler() == ScalarHandler_MaterializeLUI;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000010111', 339, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000010111', 339, ScalarField_imm20) == '000000000000000000000000000000000000000000000000';
     return 0;

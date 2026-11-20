@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(71) == CommandOperation_xb_32_40ad190a0a7f;
     assert CommandHandlerOfForm(71) == CommandHandler_ExecuteCrossBlockTransfer;
     assert XBEncodingMatches(CommandOperationOfForm(71));
-    assert SelectXBHandler() == CommandHandler_ExecuteCrossBlockTransfer;
+    assert XBHandler() == CommandHandler_ExecuteCrossBlockTransfer;
     return 0;
 end;

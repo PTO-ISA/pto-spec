@@ -20,7 +20,7 @@
 // inactive ZERO writes zero. Inactive compares contribute no numeric status.
 // NDF-END: PTO-TCMP-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTCMPOperation() => TileOperation
+readonly func TCMPOperation() => TileOperation
 begin
     return TileOperation_TCMP;
 end;
@@ -51,7 +51,7 @@ begin
         comparison);
 end;
 
-readonly func SelectTCMPHandler() => TileSemanticHandler
+readonly func TCMPHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileCompare;
 end;

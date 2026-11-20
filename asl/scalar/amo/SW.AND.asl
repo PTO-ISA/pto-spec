@@ -8,19 +8,19 @@
 // selected width, ordering, memory update, event, and result atomically.
 // NDF-END: PTO-SW-AND-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectSWANDOperation() => ScalarOperation
+readonly func SWANDOperation() => ScalarOperation
 begin
     return ScalarOperation_SW_AND;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSWANDHandler()
+readonly func SWANDHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func SelectSWANDAtomicOperation()
+pure func SWANDAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_AND;

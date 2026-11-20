@@ -117,7 +117,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/CMP.GEUI.asl -->
 ```asl
-readonly func SelectCMPGEUIOperation() => ScalarOperation
+readonly func CMPGEUIOperation() => ScalarOperation
 begin
     return ScalarOperation_CMP_GEUI;
 end;
@@ -128,24 +128,24 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/CMP.GEUI.asl -->
 ```asl
-readonly func SelectCMPGEUIHandler() => ScalarSemanticHandler
+readonly func CMPGEUIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteCompare;
 end;
 
-pure func DecodeCMPGEUICondition()
+pure func CMPGEUICondition()
     => ScalarCondition
 begin
     return ScalarCondition_GEU;
 end;
 
-pure func ComputeCMPGEUIComparisonResult(
+pure func CMPGEUIResult(
     left: Word,
     right: Word)
     => boolean
 begin
     return ConditionHolds(
-        DecodeCMPGEUICondition(),
+        CMPGEUICondition(),
         left,
         right);
 end;

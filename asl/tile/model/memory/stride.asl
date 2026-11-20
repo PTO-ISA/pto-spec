@@ -8,7 +8,7 @@ begin
            NaturalToWord(column as integer {0..262144});
 end;
 
-pure func TileDenseRowStrideBytes(columns: integer {0..65535},
+pure func TileDenseRowBytes(columns: integer {0..65535},
                                   data_type: TileDataType) => Word
 begin
     if TileDataTypeIsFourBit(data_type) then
@@ -22,7 +22,7 @@ begin
     end;
 end;
 
-readonly func TileMemoryStridedByteAddress(
+readonly func TileElementAddress(
     base_address: Word, row: integer {0..65535},
     column: integer {0..65535}, row_stride_bytes: Word,
     data_type: TileDataType) => Word

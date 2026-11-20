@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(75) == TileHandler_TPREFETCH;
     assert TileClassOfIndex(75) == TileClass_MemoryAndDataMovement;
     assert TileEngineOfIndex(75) == TileEngine_TLSU;
-    assert SelectTPREFETCHOperation() == TileOperation_TPREFETCH;
-    assert SelectTPREFETCHHandler() == TileHandler_TPREFETCH;
+    assert TPREFETCHOperation() == TileOperation_TPREFETCH;
+    assert TPREFETCHHandler() == TileHandler_TPREFETCH;
     return 0;
 end;

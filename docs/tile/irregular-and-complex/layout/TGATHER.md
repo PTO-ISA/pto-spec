@@ -111,7 +111,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/irregular-and-complex/layout/TGATHER.asl -->
 ```asl
-readonly func SelectTGATHEROperation() => TileOperation
+readonly func TGATHEROperation() => TileOperation
 begin
     return TileOperation_TGATHER;
 end;
@@ -142,7 +142,7 @@ begin
     return TileOperandsLegal_TGATHER(destination, source, indices);
 end;
 
-readonly func SelectTGATHERHandler() => TileSemanticHandler
+readonly func TGATHERHandler() => TileSemanticHandler
 begin
     return TileHandler_TGATHER;
 end;

@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.ISW.asl -->
 ```asl
-readonly func SelectDCISWOperation()
+readonly func DCISWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DC_ISW;
@@ -118,7 +118,7 @@ DC.ISW executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.ISW.asl -->
 ```asl
-readonly func SelectDCISWHandler()
+readonly func DCISWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
@@ -130,7 +130,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectDCISWMaintenanceOperation()
+pure func DCISWMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_DC_ISW;

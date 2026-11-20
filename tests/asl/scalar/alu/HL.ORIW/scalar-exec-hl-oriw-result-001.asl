@@ -17,6 +17,6 @@ begin
     assert HLORIWImmediateWidth() == 24;
     assert HLORIWImmediateIsSigned();
     assert HLORIWIsWordOperation();
-    assert ComputeHLORIWResult(Zeros{PTO_XLEN}, immediate) == Zeros{PTO_XLEN} + 0xffffffffff800000;
+    assert HLORIWResult(Zeros{PTO_XLEN}, immediate) == Zeros{PTO_XLEN} + 0xffffffffff800000;
     return 0;
 end;

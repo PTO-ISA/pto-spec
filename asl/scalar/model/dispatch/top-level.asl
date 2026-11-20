@@ -118,7 +118,7 @@ begin
         gm_order = ScalarDecodedMemoryOrder(instruction, form);
         if operation == ScalarOperation_DMA then
             _CurrentMemoryRequestClass = MemoryRequestClass_LegacyExcluded;
-            gm_address = ReadDecodedScalarRegister(instruction, form,
+            gm_address = ReadDecodedReg5(instruction, form,
                 ScalarField_SrcL);
         else
             gm_address = ScalarDecodedAtomicAddress(instruction, form,

@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(63) == CommandOperation_fexit_32_37b663f2a34d;
     assert CommandHandlerOfForm(63) == CommandHandler_ExecuteFrameExit;
     assert FEXITEncodingMatches(CommandOperationOfForm(63));
-    assert SelectFEXITHandler() == CommandHandler_ExecuteFrameExit;
+    assert FEXITHandler() == CommandHandler_ExecuteFrameExit;
     return 0;
 end;

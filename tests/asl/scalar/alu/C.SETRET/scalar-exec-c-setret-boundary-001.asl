@@ -12,7 +12,7 @@ begin
     assert ReadGPR(10) == Zeros{PTO_XLEN} + 0x13e;
     assert _ReturnAddress == Zeros{PTO_XLEN} + 0x13e;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x102;
-    assert ResolveCSETRETTarget(
+    assert CSETRETTarget(
         Zeros{PTO_XLEN} + 0x100,
         Zeros{5} + 31) == Zeros{PTO_XLEN} + 0x13e;
 

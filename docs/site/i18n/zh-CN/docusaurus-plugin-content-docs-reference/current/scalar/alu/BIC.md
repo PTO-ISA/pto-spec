@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/BIC.asl -->
 ```asl
-readonly func SelectBICOperation()
+readonly func BICOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BIC;
@@ -144,13 +144,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/BIC.asl -->
 ```asl
-readonly func SelectBICHandler()
+readonly func BICHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ModifyBitfield;
 end;
 
-pure func ComputeBICResult(
+pure func BICResult(
     value: Word,
     width: integer {1..64},
     offset: integer {0..63})

@@ -112,7 +112,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TRELU.asl -->
 ```asl
-readonly func SelectTRELUOperation() => TileOperation
+readonly func TRELUOperation() => TileOperation
 begin
     return TileOperation_TRELU;
 end;
@@ -151,7 +151,7 @@ begin
         source);
 end;
 
-pure func ComputeTRELUValue(
+pure func TRELUValue(
     data_type: TileDataType,
     source: Word) => (Word, boolean)
 begin
@@ -161,7 +161,7 @@ begin
         source);
 end;
 
-readonly func SelectTRELUHandler() => TileSemanticHandler
+readonly func TRELUHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;

@@ -10,14 +10,14 @@
 // message-buffer admission contract without changing the BSE encoding.
 // NDF-END: PTO-BSE-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectBSEOperation()
+readonly func BSEOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BSE;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBSEHandler()
+readonly func BSEHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteControlRequest;

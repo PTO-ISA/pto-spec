@@ -48,7 +48,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_Release;
 
-    assert SelectSDADDAtomicOperation() == Atomic_ADD;
+    assert SDADDAtomicOperation() == Atomic_ADD;
     assert SDADDAtomicSizeBytes() == 8;
     assert !SDADDPublishesOldValue();
 end;

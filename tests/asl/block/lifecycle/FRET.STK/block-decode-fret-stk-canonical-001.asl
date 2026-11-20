@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(65) == CommandOperation_fret_stk_32_4fe246bd8241;
     assert CommandHandlerOfForm(65) == CommandHandler_ExecuteFrameReturnStack;
     assert FRETSTKEncodingMatches(CommandOperationOfForm(65));
-    assert SelectFRETSTKHandler() == CommandHandler_ExecuteFrameReturnStack;
+    assert FRETSTKHandler() == CommandHandler_ExecuteFrameReturnStack;
     return 0;
 end;

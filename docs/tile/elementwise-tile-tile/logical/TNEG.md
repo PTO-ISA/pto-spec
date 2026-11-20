@@ -102,7 +102,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TNEG.asl -->
 ```asl
-readonly func SelectTNEGOperation() => TileOperation
+readonly func TNEGOperation() => TileOperation
 begin
     return TileOperation_TNEG;
 end;
@@ -141,7 +141,7 @@ begin
         source);
 end;
 
-pure func ComputeTNEGValue(
+pure func TNEGValue(
     data_type: TileDataType,
     source: Word) => Word
 begin
@@ -152,7 +152,7 @@ begin
     return result;
 end;
 
-readonly func SelectTNEGHandler() => TileSemanticHandler
+readonly func TNEGHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;

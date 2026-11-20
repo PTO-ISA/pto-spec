@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(23) == CommandOperation_bstart_mgather_cas_32_fd8c8a3b720a;
     assert CommandHandlerOfForm(23) == CommandHandler_ExecuteBundleStart;
     assert BSTARTMGATHERCASEncodingMatches(CommandOperationOfForm(23));
-    assert SelectBSTARTMGATHERCASHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTMGATHERCASHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

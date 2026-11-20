@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-minu-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `ComputeMINUResult`：当 `UInt(left) < UInt(right)` 时返回 `left`，否则返回 `right`；并提供返回假的 `MINUUsesSignedComparison`。分派路径通过 `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MINU, FALSE)` 到达同一个辅助函数。
+所属 ASL 提供 `MINUResult`：当 `UInt(left) < UInt(right)` 时返回 `left`，否则返回 `right`；并提供返回假的 `MINUUsesSignedComparison`。分派路径通过 `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MINU, FALSE)` 到达同一个辅助函数。
 
 ```asm
 minu SrcL, SrcR, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MINU.asl -->
 ```asl
-readonly func SelectMINUOperation()
+readonly func MINUOperation()
     => ScalarOperation
 begin
     return ScalarOperation_MINU;
@@ -128,13 +128,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MINU.asl -->
 ```asl
-readonly func SelectMINUHandler()
+readonly func MINUHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func ComputeMINUResult(left: Word, right: Word)
+pure func MINUResult(left: Word, right: Word)
     => Word
 begin
     if UInt(left) < UInt(right) then

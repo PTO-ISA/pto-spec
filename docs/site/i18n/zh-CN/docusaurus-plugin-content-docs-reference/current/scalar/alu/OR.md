@@ -28,7 +28,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-or-mechanism role=mechanism -->
 ## 操作数形成方式
 
-分派路径读取 `SrcL`、未修改的 `SrcR`、`SrcRType` 与 `shamt`，然后在 `asl/scalar/model/dispatch/alu.asl:80-83` 处调用 `PrepareScalarRight(unmodified_right, modifier, shift_amount, TRUE)`。该辅助函数先应用修饰再对结果逻辑左移 `shamt`；这个被修饰并移位后的值就是最终 `ScalarBinary_OR` 的右操作数。
+分派路径读取 `SrcL`、未修改的 `SrcR`、`SrcRType` 与 `shamt`，然后在 `asl/scalar/model/dispatch/alu.asl:80-83` 处调用 `ShiftModifiedScalar(unmodified_right, modifier, shift_amount, TRUE)`。该辅助函数先应用修饰再对结果逻辑左移 `shamt`；这个被修饰并移位后的值就是最终 `ScalarBinary_OR` 的右操作数。
 
 ```asm
 or SrcL, SrcR<{.sw,.uw,.not}><<<shamt>, ->{t, u, Rd}
@@ -137,7 +137,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/OR.asl -->
 ```asl
-readonly func SelectOROperation()
+readonly func OROperation()
     => ScalarOperation
 begin
     return ScalarOperation_OR;
@@ -149,7 +149,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/OR.asl -->
 ```asl
-readonly func SelectORHandler()
+readonly func ORHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
@@ -166,26 +166,26 @@ begin
     end;
 end;
 
-pure func PrepareORRightOperand(
+pure func ORRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
     let modifier = DecodeORRightModifier(encoded_modifier);
-    let transformed = ApplyScalarRightModifier(right, modifier, TRUE);
+    let transformed = ModifyScalarOperand(right, modifier, TRUE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func ComputeORResult(
+pure func ORResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = PrepareORRightOperand(
+    let prepared_right = ORRightOperand(
         right,
         encoded_modifier,
         shift_amount);

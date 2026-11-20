@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-lsrget-mechanism role=mechanism -->
 ## System mechanism
 
-`SelectLSRGETHandler` selects `ScalarHandler_ExecuteLocalStateRegisterGet` (`asl/scalar/sys/LSRGET.asl:17`), and `LSRGETRequiresSystemBlock` returns `FALSE` (`asl/scalar/sys/LSRGET.asl:23`), so this is not a SYS-block instruction: it needs any active block body. The dispatcher decodes `RegDst` and passes the low 12 bits of the identifier to the helper (`asl/scalar/model/dispatch/sys.asl:101`).
+`LSRGETHandler` selects `ScalarHandler_ExecuteLocalStateRegisterGet` (`asl/scalar/sys/LSRGET.asl:17`), and `LSRGETRequiresSystemBlock` returns `FALSE` (`asl/scalar/sys/LSRGET.asl:23`), so this is not a SYS-block instruction: it needs any active block body. The dispatcher decodes `RegDst` and passes the low 12 bits of the identifier to the helper (`asl/scalar/model/dispatch/sys.asl:101`).
 
 The helper asks `CurrentBARGWordApplicable` first and raises `Fault_BundleControl` when the answer is no (`asl/scalar/model/sys/semantics.asl:172`).
 
@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/LSRGET.asl -->
 ```asl
-readonly func SelectLSRGETOperation()
+readonly func LSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_LSRGET;
@@ -121,7 +121,7 @@ LSRGET is legal in any active block body for which the selected BARG word exists
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/LSRGET.asl -->
 ```asl
-readonly func SelectLSRGETHandler()
+readonly func LSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteLocalStateRegisterGet;

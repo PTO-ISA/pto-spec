@@ -9,13 +9,13 @@
 // The effective address MUST be published through RegDst after source snapshot.
 // NDF-END: PTO-HL-PRF-A-CACHE-MODEL-001
 // DOC-BEGIN: decode
-readonly func SelectHLPRFAOperation() => ScalarOperation
+readonly func HLPRFAOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_PRF_A;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLPRFAHandler()
+readonly func HLPRFAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarPrefetch;

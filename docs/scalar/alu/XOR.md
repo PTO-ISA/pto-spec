@@ -133,7 +133,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/XOR.asl -->
 ```asl
-readonly func SelectXOROperation()
+readonly func XOROperation()
     => ScalarOperation
 begin
     return ScalarOperation_XOR;
@@ -145,7 +145,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/XOR.asl -->
 ```asl
-readonly func SelectXORHandler()
+readonly func XORHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
@@ -162,26 +162,26 @@ begin
     end;
 end;
 
-pure func PrepareXORRightOperand(
+pure func XORRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
     let modifier = DecodeXORRightModifier(encoded_modifier);
-    let transformed = ApplyScalarRightModifier(right, modifier, TRUE);
+    let transformed = ModifyScalarOperand(right, modifier, TRUE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func ComputeXORResult(
+pure func XORResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = PrepareXORRightOperand(
+    let prepared_right = XORRightOperand(
         right,
         encoded_modifier,
         shift_amount);

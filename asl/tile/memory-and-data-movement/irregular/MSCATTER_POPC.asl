@@ -7,11 +7,11 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectMSCATTERPOPCHandler() => TileSemanticHandler
+readonly func MSCATTERPOPCHandler() => TileSemanticHandler
 begin
     return TileHandler_GM_RED_POPC;
 end;
-readonly func SelectMSCATTERPOPCOperation() => TileOperation
+readonly func MSCATTERPOPCOperation() => TileOperation
 begin
     return TileOperation_MSCATTER_POPC;
 end;

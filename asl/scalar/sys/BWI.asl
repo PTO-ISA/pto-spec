@@ -8,14 +8,14 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-BWI-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectBWIOperation()
+readonly func BWIOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BWI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBWIHandler()
+readonly func BWIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteControlRequest;

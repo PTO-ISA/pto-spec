@@ -17,6 +17,6 @@ begin
     assert HLXORIImmediateWidth() == 24;
     assert HLXORIImmediateIsSigned();
     assert !HLXORIIsWordOperation();
-    assert ComputeHLXORIResult(Zeros{PTO_XLEN}, immediate) == Zeros{PTO_XLEN} + 0xffffffffff800000;
+    assert HLXORIResult(Zeros{PTO_XLEN}, immediate) == Zeros{PTO_XLEN} + 0xffffffffff800000;
     return 0;
 end;

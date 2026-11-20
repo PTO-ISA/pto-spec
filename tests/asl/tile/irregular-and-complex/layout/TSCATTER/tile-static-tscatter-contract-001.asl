@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(71) == TileHandler_TSCATTER;
     assert TileClassOfIndex(71) == TileClass_IrregularAndComplex;
     assert TileEngineOfIndex(71) == TileEngine_SFU;
-    assert SelectTSCATTEROperation() == TileOperation_TSCATTER;
-    assert SelectTSCATTERHandler() == TileHandler_TSCATTER;
+    assert TSCATTEROperation() == TileOperation_TSCATTER;
+    assert TSCATTERHandler() == TileHandler_TSCATTER;
     return 0;
 end;

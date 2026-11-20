@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(73) == CommandOperation_b_fpatr_32_30c307e06d4a;
     assert CommandHandlerOfForm(73) == CommandHandler_SetBundleFixedPointAttributes;
     assert BFPATREncodingMatches(CommandOperationOfForm(73));
-    assert SelectBFPATRHandler() == CommandHandler_SetBundleFixedPointAttributes;
+    assert BFPATRHandler() == CommandHandler_SetBundleFixedPointAttributes;
     return 0;
 end;

@@ -28,7 +28,7 @@ Design point: the copy length belongs to the mnemonic, not to the encoding. `DMA
 <!-- PTO-READER-BLOCK: scalar-dma-mechanism role=mechanism -->
 ## How the copy is ordered
 
-Dispatch routes the form to `ExecuteScalarDMACopy64` in `asl/scalar/model/amo/semantics.asl`. Both `ReadDecodedScalarRegister` arguments are evaluated before that call, so the two addresses are snapshotted before the first probe.
+Dispatch routes the form to `ExecuteScalarDMACopy64` in `asl/scalar/model/amo/semantics.asl`. Both `ReadDecodedReg5` arguments are evaluated before that call, so the two addresses are snapshotted before the first probe.
 
 The steps then run in a fixed order:
 
@@ -122,7 +122,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/DMA.asl -->
 ```asl
-readonly func SelectDMAOperation()
+readonly func DMAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DMA;
@@ -134,7 +134,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/DMA.asl -->
 ```asl
-readonly func SelectDMAHandler()
+readonly func DMAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarDMACopy64;

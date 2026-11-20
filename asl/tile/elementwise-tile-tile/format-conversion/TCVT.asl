@@ -63,7 +63,7 @@
 // while 0xFF produces the target canonical quiet NaN without NV.
 // NDF-END: PTO-TCVT-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTCVTOperation() => TileOperation
+readonly func TCVTOperation() => TileOperation
 begin
     return TileOperation_TCVT;
 end;
@@ -108,7 +108,7 @@ begin
     TCVT(destination, source, control);
 end;
 
-readonly func SelectTCVTHandler() => TileSemanticHandler
+readonly func TCVTHandler() => TileSemanticHandler
 begin
     return TileHandler_TCVT;
 end;

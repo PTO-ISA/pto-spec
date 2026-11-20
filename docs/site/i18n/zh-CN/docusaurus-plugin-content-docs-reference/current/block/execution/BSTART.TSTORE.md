@@ -198,7 +198,7 @@ Local CUBE source: Function 1 encodes B.DATR Layout M322ND, M162ND, or N82ND wit
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.TSTORE.asl -->
 ```asl
-readonly func SelectBSTARTTSTOREHandler() => CommandSemanticHandler
+readonly func BSTARTTSTOREHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

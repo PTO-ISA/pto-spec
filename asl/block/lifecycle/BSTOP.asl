@@ -14,7 +14,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBSTOPHandler() => CommandSemanticHandler
+readonly func BSTOPHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStop;
 end;

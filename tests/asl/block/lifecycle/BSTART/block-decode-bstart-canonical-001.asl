@@ -6,11 +6,11 @@ begin
     assert CommandOperationOfForm(13) == CommandOperation_bstart_32_7eb93b649748;
     assert CommandHandlerOfForm(13) == CommandHandler_ExecuteBundleStart;
     assert BSTARTEncodingMatches(CommandOperationOfForm(13));
-    assert SelectBSTARTHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTHandler() == CommandHandler_ExecuteBundleStart;
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000000000000100001', 32) == 14;
     assert CommandOperationOfForm(14) == CommandOperation_bstart_32_e11e678a32ac;
     assert CommandHandlerOfForm(14) == CommandHandler_ExecuteBundleStart;
     assert BSTARTEncodingMatches(CommandOperationOfForm(14));
-    assert SelectBSTARTHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

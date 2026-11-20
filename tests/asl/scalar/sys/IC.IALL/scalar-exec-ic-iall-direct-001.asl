@@ -16,6 +16,6 @@ begin
     assert _LastMaintenanceOperation == Maintenance_IC_IALL;
     assert _LastMaintenanceOperand == Zeros{PTO_XLEN} + 0x0;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert SelectICIALLOperation() == ScalarOperation_IC_IALL;
+    assert ICIALLOperation() == ScalarOperation_IC_IALL;
     return 0;
 end;

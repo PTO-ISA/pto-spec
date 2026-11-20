@@ -86,7 +86,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.IALL.asl -->
 ```asl
-readonly func SelectDCIALLOperation()
+readonly func DCIALLOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DC_IALL;
@@ -104,7 +104,7 @@ DC.IALL executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.IALL.asl -->
 ```asl
-readonly func SelectDCIALLHandler()
+readonly func DCIALLHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
@@ -116,7 +116,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectDCIALLMaintenanceOperation()
+pure func DCIALLMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_DC_IALL;

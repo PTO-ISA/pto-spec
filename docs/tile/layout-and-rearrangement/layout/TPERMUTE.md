@@ -108,7 +108,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/layout-and-rearrangement/layout/TPERMUTE.asl -->
 ```asl
-readonly func SelectTPERMUTEOperation() => TileOperation
+readonly func TPERMUTEOperation() => TileOperation
 begin
     return TileOperation_TPERMUTE;
 end;
@@ -130,7 +130,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/layout-and-rearrangement/layout/TPERMUTE.asl -->
 ```asl
-readonly func SelectTPERMUTEHandler() => TileSemanticHandler
+readonly func TPERMUTEHandler() => TileSemanticHandler
 begin
     return TileHandler_TPERMUTE;
 end;

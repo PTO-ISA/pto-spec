@@ -8,19 +8,19 @@
 // selected width, ordering, memory update, event, and result atomically.
 // NDF-END: PTO-SW-UMIN-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectSWUMINOperation() => ScalarOperation
+readonly func SWUMINOperation() => ScalarOperation
 begin
     return ScalarOperation_SW_UMIN;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSWUMINHandler()
+readonly func SWUMINHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func SelectSWUMINAtomicOperation()
+pure func SWUMINAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_UMIN;

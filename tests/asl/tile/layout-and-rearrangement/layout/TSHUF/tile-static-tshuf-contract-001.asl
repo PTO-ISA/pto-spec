@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(95) == TileHandler_TSHUF;
     assert TileClassOfIndex(95) == TileClass_LayoutAndRearrangement;
     assert TileEngineOfIndex(95) == TileEngine_SFU;
-    assert SelectTSHUFOperation() == TileOperation_TSHUF;
-    assert SelectTSHUFHandler() == TileHandler_TSHUF;
+    assert TSHUFOperation() == TileOperation_TSHUF;
+    assert TSHUFHandler() == TileHandler_TSHUF;
     return 0;
 end;

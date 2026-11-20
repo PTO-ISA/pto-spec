@@ -8,17 +8,17 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-HL-DIV-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectHLDIVOperation() => ScalarOperation
+readonly func HLDIVOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_DIV;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLDIVHandler() => ScalarSemanticHandler
+readonly func HLDIVHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarDividePair;
 end;
-pure func ComputeHLDIVQuotient(
+pure func HLDIVQuotient(
     dividend: Word,
     divisor: Word)
     => Word
@@ -28,7 +28,7 @@ begin
         divisor);
 end;
 
-pure func ComputeHLDIVRemainder(
+pure func HLDIVRemainder(
     dividend: Word,
     divisor: Word)
     => Word

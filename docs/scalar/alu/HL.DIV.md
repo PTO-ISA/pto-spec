@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.DIV.asl -->
 ```asl
-readonly func SelectHLDIVOperation() => ScalarOperation
+readonly func HLDIVOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_DIV;
 end;
@@ -131,11 +131,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.DIV.asl -->
 ```asl
-readonly func SelectHLDIVHandler() => ScalarSemanticHandler
+readonly func HLDIVHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarDividePair;
 end;
-pure func ComputeHLDIVQuotient(
+pure func HLDIVQuotient(
     dividend: Word,
     divisor: Word)
     => Word
@@ -145,7 +145,7 @@ begin
         divisor);
 end;
 
-pure func ComputeHLDIVRemainder(
+pure func HLDIVRemainder(
     dividend: Word,
     divisor: Word)
     => Word

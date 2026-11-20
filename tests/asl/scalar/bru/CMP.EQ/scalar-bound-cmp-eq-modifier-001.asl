@@ -5,13 +5,13 @@ func main() => integer
 begin
     let value: Word = Ones{PTO_XLEN};
 
-    assert DecodeScalarComparisonRightModifier('00') == ScalarRight_None;
-    assert DecodeScalarComparisonRightModifier('01') == ScalarRight_SignedWord;
-    assert DecodeScalarComparisonRightModifier('10') == ScalarRight_UnsignedWord;
-    assert DecodeScalarComparisonRightModifier('11') == ScalarRight_NegateOrNot;
+    assert DecodeCompareModifier('00') == ScalarRight_None;
+    assert DecodeCompareModifier('01') == ScalarRight_SignedWord;
+    assert DecodeCompareModifier('10') == ScalarRight_UnsignedWord;
+    assert DecodeCompareModifier('11') == ScalarRight_NegateOrNot;
 
     assert ApplyRestrictedCompareModifier(
         value,
-        DecodeScalarComparisonRightModifier('11')) == value;
+        DecodeCompareModifier('11')) == value;
     return 0;
 end;

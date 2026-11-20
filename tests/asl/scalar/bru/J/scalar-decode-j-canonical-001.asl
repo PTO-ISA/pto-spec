@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000000000000110111', 32) == 306;
     assert ScalarOperationOfForm(306) == ScalarOperation_J;
     assert ScalarHandlerOfForm(306) == ScalarHandler_JumpRelative;
-    assert SelectJOperation() == ScalarOperation_J;
-    assert SelectJHandler() == ScalarHandler_JumpRelative;
+    assert JOperation() == ScalarOperation_J;
+    assert JHandler() == ScalarHandler_JumpRelative;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000110111', 306, ScalarField_simm22) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

@@ -16,6 +16,6 @@ begin
     assert _LastMaintenanceOperation == Maintenance_TLB_IALL;
     assert _LastMaintenanceOperand == Zeros{PTO_XLEN} + 0x0;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert SelectTLBIALLOperation() == ScalarOperation_TLB_IALL;
+    assert TLBIALLOperation() == ScalarOperation_TLB_IALL;
     return 0;
 end;

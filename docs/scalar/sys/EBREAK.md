@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ebreak-mechanism role=mechanism -->
 ## System mechanism
 
-`SelectEBREAKHandler` selects `ScalarHandler_SoftwareBreakpoint` (`asl/scalar/sys/EBREAK.asl:11`). The dispatcher decodes the 4-bit `imm4` field, zero-extends it to 5 bits, and calls `SoftwareBreakpoint` (`asl/scalar/model/dispatch/sys.asl:78`). That helper raises `Fault_SoftwareBreakpoint` with the current instruction address and the zero-extended cause (`asl/scalar/model/sys/semantics.asl:91`).
+`EBREAKHandler` selects `ScalarHandler_SoftwareBreakpoint` (`asl/scalar/sys/EBREAK.asl:11`). The dispatcher decodes the 4-bit `imm4` field, zero-extends it to 5 bits, and calls `SoftwareBreakpoint` (`asl/scalar/model/dispatch/sys.asl:78`). That helper raises `Fault_SoftwareBreakpoint` with the current instruction address and the zero-extended cause (`asl/scalar/model/sys/semantics.asl:91`).
 
 The fault class fixes the trap identity: `Fault_SoftwareBreakpoint` maps to trap number 50 (`asl/arch/memory-model/fault-precision.asl:80`). `EBREAKBreakpointPublishesTrapCause` returns `TRUE` (`asl/scalar/sys/EBREAK.asl:36`), so the immediate is published as the cause rather than kept in a separate breakpoint register.
 
@@ -102,7 +102,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/EBREAK.asl -->
 ```asl
-readonly func SelectEBREAKOperation()
+readonly func EBREAKOperation()
     => ScalarOperation
 begin
     return ScalarOperation_EBREAK;
@@ -120,7 +120,7 @@ EBREAK executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/EBREAK.asl -->
 ```asl
-readonly func SelectEBREAKHandler()
+readonly func EBREAKHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_SoftwareBreakpoint;

@@ -17,7 +17,7 @@ begin
         Zeros{PTO_XLEN} + 0xffffffff80000001;
     assert ReadTemporaryQueue(FALSE, 1) == Zeros{PTO_XLEN} + 32;
     assert DecodeSLLWShiftAmount(Zeros{PTO_XLEN} + 32) == 0;
-    assert ComputeSLLWResult(
+    assert SLLWResult(
         Zeros{PTO_XLEN} + 0x80000001,
         Zeros{PTO_XLEN} + 32) ==
         Zeros{PTO_XLEN} + 0xffffffff80000001;

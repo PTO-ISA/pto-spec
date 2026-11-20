@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000010000001001001', 32) == 440;
     assert ScalarOperationOfForm(440) == ScalarOperation_SW;
     assert ScalarHandlerOfForm(440) == ScalarHandler_ExecuteScalarStore;
-    assert SelectSWOperation() == ScalarOperation_SW;
-    assert SelectSWHandler() == ScalarHandler_ExecuteScalarStore;
+    assert SWOperation() == ScalarOperation_SW;
+    assert SWHandler() == ScalarHandler_ExecuteScalarStore;
     assert SWAGUAction() == ScalarAGU_Store;
     assert SWAGUAddressKind() == ScalarAGU_Register;
     assert SWAGUSizeBytes() == 4;

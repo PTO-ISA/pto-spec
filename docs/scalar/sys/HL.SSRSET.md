@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-mechanism role=mechanism -->
 ## System mechanism
 
-`SelectHLSSRSETHandler` selects `ScalarHandler_ExecuteSystemRegisterSet` (`asl/scalar/sys/HL.SSRSET.asl:18`), and `HLSSRSETSystemAddressWidth` fixes the address width at 24 (`asl/scalar/sys/HL.SSRSET.asl:36`). The 48-bit assembly carries the address as two 12-bit pieces, which the dispatcher recombines before the call (`asl/scalar/model/dispatch/sys.asl:96`).
+`HLSSRSETHandler` selects `ScalarHandler_ExecuteSystemRegisterSet` (`asl/scalar/sys/HL.SSRSET.asl:18`), and `HLSSRSETSystemAddressWidth` fixes the address width at 24 (`asl/scalar/sys/HL.SSRSET.asl:36`). The 48-bit assembly carries the address as two 12-bit pieces, which the dispatcher recombines before the call (`asl/scalar/model/dispatch/sys.asl:96`).
 
 The helper preflights ordinary write permission and, for MSGB, the kernel context, Block attributes, and older fault-capable work before it reads the source. A rejected or blocked attempt therefore does not read the Reg5 value.
 
@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/HL.SSRSET.asl -->
 ```asl
-readonly func SelectHLSSRSETOperation()
+readonly func HLSSRSETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_HL_SSRSET;
@@ -121,7 +121,7 @@ HL.SSRSET executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/HL.SSRSET.asl -->
 ```asl
-readonly func SelectHLSSRSETHandler()
+readonly func HLSSRSETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterSet;

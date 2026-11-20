@@ -19,9 +19,9 @@ This page is a generated reference view of the normative ASL unit.
 
 它定义四个辅助函数：
 
-- `TileMemoryStridedByteAddress` 根据字节行步长计算 `(row, column)` 的字节地址。
+- `TileElementAddress` 根据字节行步长计算 `(row, column)` 的字节地址。
 - `TileMemoryStridedByteHighNibble` 为四位类型选择半字节。
-- `TileDenseRowStrideBytes` 计算以字节计的密集行宽。
+- `TileDenseRowBytes` 计算以字节计的密集行宽。
 - `TileMemoryStridedIndex` 根据以元素计的行步长计算元素索引。
 
 <!-- PTO-READER-BLOCK: tile-model-memory-stride-concepts role=concepts-state -->
@@ -37,11 +37,11 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: tile-model-memory-stride-rules role=rules-interactions -->
 ## 规则与交互
 
-对非四位类型，`TileMemoryStridedByteAddress` 返回 `base + row * row_stride_bytes + column * TileElementBytes(data_type)`。
+对非四位类型，`TileElementAddress` 返回 `base + row * row_stride_bytes + column * TileElementBytes(data_type)`。
 
 对四位类型，它返回 `base + row * row_stride_bytes + column / 2`（向下取整）。对四位类型的奇数列，`TileMemoryStridedByteHighNibble` 为 TRUE，否则为 FALSE。
 
-`TileDenseRowStrideBytes` 对非四位类型返回 `columns * TileElementBytes(data_type)`，对四位类型返回向下取整的 `(columns + 1) / 2`。当 `B.IOR` 被省略时，块操作数解析器以解析后的物理列数调用它，作为 `TLOAD` 与 `TSTORE` 的行步长。
+`TileDenseRowBytes` 对非四位类型返回 `columns * TileElementBytes(data_type)`，对四位类型返回向下取整的 `(columns + 1) / 2`。当 `B.IOR` 被省略时，块操作数解析器以解析后的物理列数调用它，作为 `TLOAD` 与 `TSTORE` 的行步长。
 
 `TileMemoryStridedIndex` 返回 `row * row_stride_elements + column`。所有乘积与求和都使用 `Word` 运算，按模 2^64 回绕。
 
@@ -91,7 +91,7 @@ begin
            NaturalToWord(column as integer {0..262144});
 end;
 
-pure func TileDenseRowStrideBytes(columns: integer {0..65535},
+pure func TileDenseRowBytes(columns: integer {0..65535},
                                   data_type: TileDataType) => Word
 begin
     if TileDataTypeIsFourBit(data_type) then
@@ -105,7 +105,7 @@ begin
     end;
 end;
 
-readonly func TileMemoryStridedByteAddress(
+readonly func TileElementAddress(
     base_address: Word, row: integer {0..65535},
     column: integer {0..65535}, row_stride_bytes: Word,
     data_type: TileDataType) => Word

@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(24) == TileHandler_TFMA;
     assert TileClassOfIndex(24) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(24) == TileEngine_VEC;
-    assert SelectTFMAOperation() == TileOperation_TFMA;
-    assert SelectTFMAHandler() == TileHandler_TFMA;
+    assert TFMAOperation() == TileOperation_TFMA;
+    assert TFMAHandler() == TileHandler_TFMA;
     return 0;
 end;

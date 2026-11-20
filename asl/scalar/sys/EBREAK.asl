@@ -8,14 +8,14 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-EBREAK-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectEBREAKOperation()
+readonly func EBREAKOperation()
     => ScalarOperation
 begin
     return ScalarOperation_EBREAK;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectEBREAKHandler()
+readonly func EBREAKHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_SoftwareBreakpoint;

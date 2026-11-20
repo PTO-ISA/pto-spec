@@ -6,8 +6,8 @@ begin
     assert CommandOperationOfForm(41) == CommandOperation_bstart_tmatmul_32_f9da70e4e0ad;
     assert CommandHandlerOfForm(41) == CommandHandler_ExecuteBundleStart;
     assert BSTARTTMATMULEncodingMatches(CommandOperationOfForm(41));
-    assert SelectBSTARTTMATMULHandler() == CommandHandler_ExecuteBundleStart;
-    assert SelectBSTARTTMATMULTileOperation() == TileOperation_TMATMUL;
+    assert BSTARTTMATMULHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTTMATMULTileOperation() == TileOperation_TMATMUL;
     assert BSTARTTMATMULCubeFunction() == 0;
     assert BSTARTTMATMULSharedOperandsAllowed() == TRUE;
     return 0;

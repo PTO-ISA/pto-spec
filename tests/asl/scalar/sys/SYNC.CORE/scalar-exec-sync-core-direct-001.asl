@@ -29,7 +29,7 @@ begin
     assert _LastFault == Fault_None;
     assert ReadTPC() == entry + 4;
     assert _CoreSyncRecords[[0]][[0]].arrived == '1000';
-    assert SelectSYNCCOREOperation() == ScalarOperation_SYNC_CORE;
+    assert SYNCCOREOperation() == ScalarOperation_SYNC_CORE;
     let aborted = AbortKernelInvocation(0);
     assert aborted == KernelLifecycle_Started;
     return 0;

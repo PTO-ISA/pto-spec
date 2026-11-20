@@ -20,7 +20,7 @@
 // ExecutionMask carrier MUST remain fully defined and canonical before capture.
 // NDF-END: PTO-TSELS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTSELSOperation() => TileOperation
+readonly func TSELSOperation() => TileOperation
 begin
     return TileOperation_TSELS;
 end;
@@ -45,7 +45,7 @@ begin
         scalar_false);
 end;
 
-readonly func SelectTSELSHandler() => TileSemanticHandler
+readonly func TSELSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileSelectScalar;
 end;

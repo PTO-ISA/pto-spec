@@ -48,7 +48,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_Release;
 
-    assert SelectSDUMAXAtomicOperation() == Atomic_UMAX;
+    assert SDUMAXAtomicOperation() == Atomic_UMAX;
     assert SDUMAXAtomicSizeBytes() == 8;
     assert !SDUMAXPublishesOldValue();
 end;

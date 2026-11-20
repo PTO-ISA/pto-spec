@@ -8,18 +8,18 @@
 // BARG.TAKEN. A rejected occurrence MUST NOT consume the shared marker.
 // NDF-END: PTO-SETC-LTU-CONDITIONAL-SETTER-001
 // DOC-BEGIN: decode
-readonly func SelectSETCLTUOperation() => ScalarOperation
+readonly func SETCLTUOperation() => ScalarOperation
 begin
     return ScalarOperation_SETC_LTU;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSETCLTUHandler() => ScalarSemanticHandler
+readonly func SETCLTUHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommit;
 end;
 
-pure func DecodeSETCLTUCondition()
+pure func SETCLTUCondition()
     => ScalarCondition
 begin
     return ScalarCondition_LTU;
@@ -31,7 +31,7 @@ pure func CommitSETCLTUResult(
     => boolean
 begin
     return ConditionHolds(
-        DecodeSETCLTUCondition(),
+        SETCLTUCondition(),
         left,
         right);
 end;

@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(0) == CommandOperation_b_catr_32_e90bd52fa480;
     assert CommandHandlerOfForm(0) == CommandHandler_SetBundleControlAttributes;
     assert BCATREncodingMatches(CommandOperationOfForm(0));
-    assert SelectBCATRHandler() == CommandHandler_SetBundleControlAttributes;
+    assert BCATRHandler() == CommandHandler_SetBundleControlAttributes;
     return 0;
 end;

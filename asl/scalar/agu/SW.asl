@@ -8,13 +8,13 @@
 // the store event and any base update at the defined restart boundary.
 // NDF-END: PTO-SW-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectSWOperation() => ScalarOperation
+readonly func SWOperation() => ScalarOperation
 begin
     return ScalarOperation_SW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSWHandler()
+readonly func SWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStore;

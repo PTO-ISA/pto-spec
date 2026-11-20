@@ -12,18 +12,18 @@
 // memory, Tile, block, reservation, privilege, numeric-status, and fault state.
 // NDF-END: PTO-HL-CCAT-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectHLCCATOperation() => ScalarOperation
+readonly func HLCCATOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_CCAT;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLCCATHandler() => ScalarSemanticHandler
+readonly func HLCCATHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteConcatenatePair;
 end;
 
-pure func ComputeHLCCATLowResult(
+pure func HLCCATLowResult(
     left: Word,
     right: Word,
     shift_amount: integer {0..127})
@@ -39,7 +39,7 @@ begin
     end;
 end;
 
-pure func ComputeHLCCATHighResult(
+pure func HLCCATHighResult(
     left: Word,
     right: Word,
     shift_amount: integer {0..127})

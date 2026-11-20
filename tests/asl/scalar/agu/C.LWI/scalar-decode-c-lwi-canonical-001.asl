@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000000000000001010', 16) == 30;
     assert ScalarOperationOfForm(30) == ScalarOperation_C_LWI;
     assert ScalarHandlerOfForm(30) == ScalarHandler_ExecuteScalarLoad;
-    assert SelectCLWIOperation() == ScalarOperation_C_LWI;
-    assert SelectCLWIHandler() == ScalarHandler_ExecuteScalarLoad;
+    assert CLWIOperation() == ScalarOperation_C_LWI;
+    assert CLWIHandler() == ScalarHandler_ExecuteScalarLoad;
     assert CLWIAGUAction() == ScalarAGU_Load;
     assert CLWIAGUAddressKind() == ScalarAGU_Compressed;
     assert CLWIAGUSizeBytes() == 4;

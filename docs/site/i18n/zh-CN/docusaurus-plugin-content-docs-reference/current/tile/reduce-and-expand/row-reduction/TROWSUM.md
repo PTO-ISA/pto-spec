@@ -129,7 +129,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduce-and-expand/row-reduction/TROWSUM.asl -->
 ```asl
-readonly func SelectTROWSUMOperation() => TileOperation
+readonly func TROWSUMOperation() => TileOperation
 begin
     return TileOperation_TROWSUM;
 end;
@@ -169,7 +169,7 @@ begin
         source);
 end;
 
-readonly func SelectTROWSUMHandler() => TileSemanticHandler
+readonly func TROWSUMHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileReduction;
 end;

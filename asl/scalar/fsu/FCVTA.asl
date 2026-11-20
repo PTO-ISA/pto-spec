@@ -8,14 +8,14 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-FCVTA-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectFCVTAOperation()
+readonly func FCVTAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FCVTA;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectFCVTAHandler()
+readonly func FCVTAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ConvertFloatingEncoding;

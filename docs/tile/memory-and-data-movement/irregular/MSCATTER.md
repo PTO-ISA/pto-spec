@@ -161,7 +161,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/irregular/MSCATTER.asl -->
 ```asl
-readonly func SelectMSCATTEROperation() => TileOperation
+readonly func MSCATTEROperation() => TileOperation
 begin
     return TileOperation_MSCATTER;
 end;
@@ -186,7 +186,7 @@ When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiG
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/irregular/MSCATTER.asl -->
 ```asl
-readonly func SelectMSCATTERHandler() => TileSemanticHandler
+readonly func MSCATTERHandler() => TileSemanticHandler
 begin
     return TileHandler_MSCATTER;
 end;

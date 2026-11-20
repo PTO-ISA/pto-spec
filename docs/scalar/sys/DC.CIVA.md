@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-civa-mechanism role=mechanism -->
 ## System mechanism
 
-`SelectDCCIVAHandler` returns `ScalarHandler_ExecuteMaintenance` (`asl/scalar/sys/DC.CIVA.asl:11`), and `SelectDCCIVAMaintenanceOperation` fixes the token recorded for a successful attempt to `Maintenance_DC_CIVA` (`asl/scalar/sys/DC.CIVA.asl:23`). The executor itself is shared: `ExecuteMaintenance` dispatches on the operation token, and `Maintenance_DC_CIVA` sits in the data-cache group that advances `_DataCacheEpoch` (`asl/scalar/model/sys/semantics.asl:134`).
+`DCCIVAHandler` returns `ScalarHandler_ExecuteMaintenance` (`asl/scalar/sys/DC.CIVA.asl:11`), and `DCCIVAMaintenanceOperation` fixes the token recorded for a successful attempt to `Maintenance_DC_CIVA` (`asl/scalar/sys/DC.CIVA.asl:23`). The executor itself is shared: `ExecuteMaintenance` dispatches on the operation token, and `Maintenance_DC_CIVA` sits in the data-cache group that advances `_DataCacheEpoch` (`asl/scalar/model/sys/semantics.asl:134`).
 
 Like the other fifteen instructions that share this handler, `DC.CIVA` is applicable only inside an active SYS block body (`asl/scalar/model/sys/semantics.asl:322`).
 
@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.CIVA.asl -->
 ```asl
-readonly func SelectDCCIVAOperation()
+readonly func DCCIVAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DC_CIVA;
@@ -118,7 +118,7 @@ DC.CIVA executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.CIVA.asl -->
 ```asl
-readonly func SelectDCCIVAHandler()
+readonly func DCCIVAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
@@ -130,7 +130,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectDCCIVAMaintenanceOperation()
+pure func DCCIVAMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_DC_CIVA;

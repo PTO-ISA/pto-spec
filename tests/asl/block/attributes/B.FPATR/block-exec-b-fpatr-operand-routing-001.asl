@@ -13,7 +13,7 @@ begin
     _BundleFixedPointAttributes.relu_mode = '010';
     SetBundleScalarBinding(0, 0, 7, 8, 0, 1);
     WriteGPR(7, Zeros{PTO_XLEN} + 17);
-    assert ReadScalarRegisterOperand(7) == Zeros{PTO_XLEN} + 17;
+    assert ReadReg5(7) == Zeros{PTO_XLEN} + 17;
     assert BundleOperationGPRInputSelector(0) == 7;
     let lrelu = BundleTileInstructionOperands(operation);
     assert lrelu.post_lrelu_param == Zeros{PTO_XLEN} + 17;

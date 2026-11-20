@@ -239,7 +239,7 @@ func ExecuteSystemRegisterGet(destination: Reg5Selector,
 begin
     let value = ReadSystemRegisterAddress(address);
     if _LastFault == Fault_None && !_ScalarExecutionBlocked then
-        WriteScalarDestination(destination, value);
+        WriteReg5(destination, value);
     end;
 end;
 
@@ -259,7 +259,7 @@ begin
         return;
     end;
     if !MessageBufferWritePreflight(address) then return; end;
-    let value = ReadScalarRegisterOperand(source);
+    let value = ReadReg5(source);
     WriteSystemRegisterAddress(address, value);
 end;
 
@@ -270,9 +270,9 @@ begin
         SetFault(Fault_IllegalInstruction, ReadPC());
         return;
     end;
-    let value = ReadScalarRegisterOperand(source);
+    let value = ReadReg5(source);
     let old_value = SwapSystemRegisterAddress(address, value);
-    if _LastFault == Fault_None then WriteScalarDestination(destination, old_value); end;
+    if _LastFault == Fault_None then WriteReg5(destination, old_value); end;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

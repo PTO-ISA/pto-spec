@@ -8,18 +8,18 @@
 // BARG.TAKEN. A rejected occurrence MUST NOT consume the shared marker.
 // NDF-END: PTO-HL-SETC-LTI-CONDITIONAL-SETTER-001
 // DOC-BEGIN: decode
-readonly func SelectHLSETCLTIOperation() => ScalarOperation
+readonly func HLSETCLTIOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_SETC_LTI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLSETCLTIHandler() => ScalarSemanticHandler
+readonly func HLSETCLTIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommit;
 end;
 
-pure func DecodeHLSETCLTICondition()
+pure func HLSETCLTICondition()
     => ScalarCondition
 begin
     return ScalarCondition_LT;
@@ -31,7 +31,7 @@ pure func CommitHLSETCLTIResult(
     => boolean
 begin
     return ConditionHolds(
-        DecodeHLSETCLTICondition(),
+        HLSETCLTICondition(),
         left,
         right);
 end;

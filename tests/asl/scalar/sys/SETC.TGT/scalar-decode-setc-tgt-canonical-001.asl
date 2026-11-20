@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000100000000111011', 32) == 414;
     assert ScalarOperationOfForm(414) == ScalarOperation_SETC_TGT;
     assert ScalarHandlerOfForm(414) == ScalarHandler_SetCommitTarget;
-    assert SelectSETCTGTOperation() == ScalarOperation_SETC_TGT;
-    assert SelectSETCTGTHandler() == ScalarHandler_SetCommitTarget;
+    assert SETCTGTOperation() == ScalarOperation_SETC_TGT;
+    assert SETCTGTHandler() == ScalarHandler_SetCommitTarget;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000100000000111011', 414, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

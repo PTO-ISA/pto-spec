@@ -19,6 +19,6 @@ begin
     assert _LastMaintenanceOperation == Maintenance_DC_CSW;
     assert _LastMaintenanceOperand == Zeros{PTO_XLEN} + 0x1000;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert SelectDCCSWOperation() == ScalarOperation_DC_CSW;
+    assert DCCSWOperation() == ScalarOperation_DC_CSW;
     return 0;
 end;

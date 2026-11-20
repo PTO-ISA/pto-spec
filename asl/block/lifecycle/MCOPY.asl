@@ -12,7 +12,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectMCOPYHandler() => CommandSemanticHandler
+readonly func MCOPYHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteMemoryCopy;
 end;

@@ -11,13 +11,13 @@
 // logical nibbles, with the low nibble first.
 // NDF-END: PTO-MGATHER-BYTE-DISPLACEMENT-001
 // DOC-BEGIN: decode
-readonly func SelectMGATHEROperation() => TileOperation
+readonly func MGATHEROperation() => TileOperation
 begin
     return TileOperation_MGATHER;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectMGATHERHandler() => TileSemanticHandler
+readonly func MGATHERHandler() => TileSemanticHandler
 begin
     return TileHandler_MGATHER;
 end;

@@ -152,7 +152,7 @@ Optional header command after BSTART and before the first body instruction. At m
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/attributes/B.CATR.asl -->
 ```asl
-readonly func SelectBCATRHandler() => CommandSemanticHandler
+readonly func BCATRHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleControlAttributes;
 end;

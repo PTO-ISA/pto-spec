@@ -123,7 +123,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/irregular-and-complex/initialization/TCI.asl -->
 ```asl
-readonly func SelectTCIOperation() => TileOperation
+readonly func TCIOperation() => TileOperation
 begin
     return TileOperation_TCI;
 end;
@@ -175,7 +175,7 @@ begin
         descending);
 end;
 
-readonly func SelectTCIHandler() => TileSemanticHandler
+readonly func TCIHandler() => TileSemanticHandler
 begin
     return TileHandler_TCI;
 end;

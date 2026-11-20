@@ -42,7 +42,7 @@ begin
     assert _MemoryEvents[[0]].write_value == expected;
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
-    assert SelectLDUMINAtomicOperation() == Atomic_UMIN;
+    assert LDUMINAtomicOperation() == Atomic_UMIN;
     assert LDUMINAtomicSizeBytes() == 8;
     assert LDUMINPublishesOldValue();
     assert !LDUMINSignExtendsOldValue();

@@ -173,7 +173,7 @@ begin
     return BIOSSharedCapacity(size_code);
 end;
 
-readonly func SelectBIOSHandler() => CommandSemanticHandler
+readonly func BIOSHandler() => CommandSemanticHandler
 begin
     return CommandHandler_BindBundleSharedIO;
 end;

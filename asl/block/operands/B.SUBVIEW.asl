@@ -21,7 +21,7 @@ begin
     return 1 <= code && code <= 12;
 end;
 
-readonly func SelectBSUBVIEWHandler() => CommandSemanticHandler
+readonly func BSUBVIEWHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ApplyBundleSubview;
 end;

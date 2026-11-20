@@ -26,9 +26,9 @@ The bundle schema selects one of four destination domains: an ordinary Local Til
 <!-- PTO-READER-BLOCK: tile-tload-mechanism role=mechanism -->
 ## Addressing and access order
 
-Each selected PE and valid coordinate uses the address `base + row * row_stride_bytes + column * element_size` built by `TileMemoryStridedByteAddress`. For the packed four-bit types the column contributes `floor(column / 2)` bytes and the nibble is chosen by column parity.
+Each selected PE and valid coordinate uses the address `base + row * row_stride_bytes + column * element_size` built by `TileElementAddress`. For the packed four-bit types the column contributes `floor(column / 2)` bytes and the nibble is chosen by column parity.
 
-`B.IOR.RegSrc0` supplies the per-PE GM base and `B.IOR.RegSrc1` the byte row stride. An omitted `B.IOR` gives base zero and the dense stride `TileDenseRowStrideBytes(physical Col, data_type)`, that is `ceil(columns * element_bits / 8)`.
+`B.IOR.RegSrc0` supplies the per-PE GM base and `B.IOR.RegSrc1` the byte row stride. An omitted `B.IOR` gives base zero and the dense stride `TileDenseRowBytes(physical Col, data_type)`, that is `ceil(columns * element_bits / 8)`.
 
 Design point: the dense default is omission-only. An explicitly encoded zero selector reads the zero GPR, so it is a real stride of zero and every row aliases row 0 in GM.
 
@@ -117,7 +117,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/regular/TLOAD.asl -->
 ```asl
-readonly func SelectTLOADOperation() => TileOperation
+readonly func TLOADOperation() => TileOperation
 begin
     return TileOperation_TLOAD;
 end;
@@ -155,24 +155,24 @@ begin
         valid_rows, valid_columns, data_type);
 end;
 
-readonly func SelectTLOADHandler() => TileSemanticHandler
+readonly func TLOADHandler() => TileSemanticHandler
 begin
     return TileHandler_TLOAD;
 end;
 
-readonly func ResolveTLOADGlobalAddress(
+readonly func TLOADGMAddress(
     base_address: Word, row: integer {0..65535},
     column: integer {0..65535}, row_stride_bytes: Word,
     data_type: TileDataType) => Word
 begin
-    return TileMemoryStridedByteAddress(
+    return TileElementAddress(
         base_address, row, column, row_stride_bytes, data_type);
 end;
 
-readonly func ComputeTLOADDenseStride(
+readonly func TLOADDenseStride(
     columns: integer {0..65535}, data_type: TileDataType) => Word
 begin
-    return TileDenseRowStrideBytes(columns, data_type);
+    return TileDenseRowBytes(columns, data_type);
 end;
 
 pure func TLOADZeroMaskNoEffect(

@@ -20,13 +20,13 @@
 // use two adjacent logical nibbles per indexed byte and one predicate per pair.
 // NDF-END: PTO-MSCATTER-MASK-TYPE-002
 // DOC-BEGIN: decode
-readonly func SelectMSCATTERMASKOperation() => TileOperation
+readonly func MSCATTERMASKOperation() => TileOperation
 begin
     return TileOperation_MSCATTER_MASK;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectMSCATTERMASKHandler() => TileSemanticHandler
+readonly func MSCATTERMASKHandler() => TileSemanticHandler
 begin
     return TileHandler_MSCATTER_MASK;
 end;

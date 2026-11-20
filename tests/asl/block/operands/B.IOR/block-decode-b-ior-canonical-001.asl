@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(7) == CommandOperation_b_ior_32_c3ea71404eb3;
     assert CommandHandlerOfForm(7) == CommandHandler_BindBundleScalarIO;
     assert BIOREncodingMatches(CommandOperationOfForm(7));
-    assert SelectBIORHandler() == CommandHandler_BindBundleScalarIO;
+    assert BIORHandler() == CommandHandler_BindBundleScalarIO;
     return 0;
 end;

@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FSQRT.asl -->
 ```asl
-readonly func SelectFSQRTOperation()
+readonly func FSQRTOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FSQRT;
@@ -128,7 +128,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FSQRT.asl -->
 ```asl
-readonly func SelectFSQRTHandler()
+readonly func FSQRTHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingUnary;
@@ -165,7 +165,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectFSQRTUnaryOperation()
+pure func FSQRTUnaryOperation()
     => FloatingUnaryOperation
 begin
     return FloatingUnary_SQRT;

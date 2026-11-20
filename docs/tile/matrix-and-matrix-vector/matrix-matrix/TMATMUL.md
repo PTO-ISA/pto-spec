@@ -134,7 +134,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.asl -->
 ```asl
-readonly func SelectTMATMULOperation()
+readonly func TMATMULOperation()
     => TileOperation
 begin
     return TileOperation_TMATMUL;
@@ -185,7 +185,7 @@ begin
         right);
 end;
 
-readonly func SelectTMATMULHandler()
+readonly func TMATMULHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TMATMUL;

@@ -28,7 +28,7 @@ Only the low word of each side reaches the disjunction, but the modifier and the
 <!-- PTO-READER-BLOCK: scalar-orw-mechanism role=mechanism -->
 ## How the word result is formed
 
-`ExecuteDecodedBinary` reads `SrcL`, the unmodified `SrcR`, `SrcRType` and `shamt`, then forms the right operand with `PrepareScalarRight(right, modifier, shift_amount, TRUE)`. With `word_operation` true it calls `ScalarBinaryW(ScalarBinary_OR, left, right)`, whose `left32`/`right32` bindings keep `[31:0]` and whose return is `SignExtend{PTO_XLEN}` of the `32`-bit OR (`asl/scalar/model/dispatch/alu.asl:82-83`, `asl/scalar/model/alu/semantics.asl:470-487`).
+`ExecuteDecodedBinary` reads `SrcL`, the unmodified `SrcR`, `SrcRType` and `shamt`, then forms the right operand with `ShiftModifiedScalar(right, modifier, shift_amount, TRUE)`. With `word_operation` true it calls `ScalarBinaryW(ScalarBinary_OR, left, right)`, whose `left32`/`right32` bindings keep `[31:0]` and whose return is `SignExtend{PTO_XLEN}` of the `32`-bit OR (`asl/scalar/model/dispatch/alu.asl:82-83`, `asl/scalar/model/alu/semantics.asl:470-487`).
 
 ```asm
 orw SrcL, SrcR<{.sw,.uw,.not}><<<shamt>, ->{t, u, Rd}
@@ -131,7 +131,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/ORW.asl -->
 ```asl
-readonly func SelectORWOperation()
+readonly func ORWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ORW;
@@ -143,7 +143,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/ORW.asl -->
 ```asl
-readonly func SelectORWHandler()
+readonly func ORWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
@@ -160,26 +160,26 @@ begin
     end;
 end;
 
-pure func PrepareORWRightOperand(
+pure func ORWRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
     let modifier = DecodeORWRightModifier(encoded_modifier);
-    let transformed = ApplyScalarRightModifier(right, modifier, TRUE);
+    let transformed = ModifyScalarOperand(right, modifier, TRUE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func ComputeORWResult(
+pure func ORWResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = PrepareORWRightOperand(
+    let prepared_right = ORWRightOperand(
         right,
         encoded_modifier,
         shift_amount);

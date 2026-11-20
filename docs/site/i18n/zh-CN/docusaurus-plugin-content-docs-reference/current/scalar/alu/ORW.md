@@ -28,7 +28,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-orw-mechanism role=mechanism -->
 ## 字结果形成方式
 
-`ExecuteDecodedBinary` 读取 `SrcL`、未修改的 `SrcR`、`SrcRType` 与 `shamt`，然后用 `PrepareScalarRight(right, modifier, shift_amount, TRUE)` 构造右操作数。在 `word_operation` 为真时它调用 `ScalarBinaryW(ScalarBinary_OR, left, right)`，后者的 `left32`/`right32` 绑定保留 `[31:0]`，返回 `32` 位或运算结果的 `SignExtend{PTO_XLEN}`（`asl/scalar/model/dispatch/alu.asl:82-83`、`asl/scalar/model/alu/semantics.asl:470-487`）。
+`ExecuteDecodedBinary` 读取 `SrcL`、未修改的 `SrcR`、`SrcRType` 与 `shamt`，然后用 `ShiftModifiedScalar(right, modifier, shift_amount, TRUE)` 构造右操作数。在 `word_operation` 为真时它调用 `ScalarBinaryW(ScalarBinary_OR, left, right)`，后者的 `left32`/`right32` 绑定保留 `[31:0]`，返回 `32` 位或运算结果的 `SignExtend{PTO_XLEN}`（`asl/scalar/model/dispatch/alu.asl:82-83`、`asl/scalar/model/alu/semantics.asl:470-487`）。
 
 ```asm
 orw SrcL, SrcR<{.sw,.uw,.not}><<<shamt>, ->{t, u, Rd}
@@ -131,7 +131,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/ORW.asl -->
 ```asl
-readonly func SelectORWOperation()
+readonly func ORWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ORW;
@@ -143,7 +143,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/ORW.asl -->
 ```asl
-readonly func SelectORWHandler()
+readonly func ORWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
@@ -160,26 +160,26 @@ begin
     end;
 end;
 
-pure func PrepareORWRightOperand(
+pure func ORWRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
     let modifier = DecodeORWRightModifier(encoded_modifier);
-    let transformed = ApplyScalarRightModifier(right, modifier, TRUE);
+    let transformed = ModifyScalarOperand(right, modifier, TRUE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func ComputeORWResult(
+pure func ORWResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = PrepareORWRightOperand(
+    let prepared_right = ORWRightOperand(
         right,
         encoded_modifier,
         shift_amount);

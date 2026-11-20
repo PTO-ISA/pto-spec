@@ -7,13 +7,13 @@
 // Each participating source word produces one complete valid 32-bit result word with selected bytes in its low bytes and zero in every remaining byte. U8/U16/U32 destinations publish that word directly; an M32 U64 destination joins each complete low/high result-word pair into one logical element and rejects an odd raw-word tail before effects. Destination columns are derived from raw-word count and BSTART element width. Validation precedes snapshot and atomic publication; TUNPACK performs no numeric conversion or status update.
 // NDF-END: PTO-TUNPACK-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTUNPACKOperation() => TileOperation
+readonly func TUNPACKOperation() => TileOperation
 begin
     return TileOperation_TUNPACK;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectTUNPACKHandler() => TileSemanticHandler
+readonly func TUNPACKHandler() => TileSemanticHandler
 begin
     return TileHandler_TUNPACK;
 end;

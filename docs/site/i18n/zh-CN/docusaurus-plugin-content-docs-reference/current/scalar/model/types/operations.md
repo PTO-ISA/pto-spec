@@ -40,7 +40,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: scalar-model-types-operations-rules role=rules-interactions -->
 ## 规则与交互
 
-`ScalarRight_NegateOrNot` 是一个值、两种含义。`ApplyScalarRightModifier` 对逻辑族把它视为按位 NOT，其他情况下视为取负。
+`ScalarRight_NegateOrNot` 是一个值、两种含义。`ModifyScalarOperand` 对逻辑族把它视为按位 NOT，其他情况下视为取负。
 
 设计要点：二元译码对 NOT 和取负返回同一个值。ALU 分派传入 `logical_family`，因此由运算决定具体变换。这与汇编后缀一致：AND、OR 和 XOR 用 `.not`，ADD 和 SUB 用 `.neg`。
 

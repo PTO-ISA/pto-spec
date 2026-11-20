@@ -43,8 +43,8 @@ begin
         ScalarDecodedAtomicAddress(instruction, form, ScalarField_SrcL),
         size_bytes, ScalarDecodedMemoryOrder(instruction, form));
     if _LastFault == Fault_None then
-        WriteScalarDestination(
-            ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+        WriteReg5(
+            DecodeReg5(instruction, form, ScalarField_RegDst),
             NormalizeAtomicReturn(old_value, size_bytes));
     end;
 end;
@@ -56,11 +56,11 @@ begin
     let status = StoreConditional(
         ScalarDecodedAtomicAddress(instruction, form, ScalarField_SrcR),
         size_bytes,
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcL),
         ScalarDecodedMemoryOrder(instruction, form));
     if _LastFault == Fault_None then
-        WriteScalarDestination(
-            ScalarDecodedSelector(instruction, form, ScalarField_RegDst), status);
+        WriteReg5(
+            DecodeReg5(instruction, form, ScalarField_RegDst), status);
     end;
 end;
 
@@ -72,11 +72,11 @@ begin
     let old_value = AtomicReadModifyWrite(
         ScalarDecodedAtomicAddress(instruction, form, ScalarField_SrcL),
         size_bytes, operation,
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcR),
         ScalarDecodedMemoryOrder(instruction, form));
     if write_result && _LastFault == Fault_None then
-        WriteScalarDestination(
-            ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+        WriteReg5(
+            DecodeReg5(instruction, form, ScalarField_RegDst),
             NormalizeAtomicReturn(old_value, size_bytes));
     end;
 end;
@@ -88,12 +88,12 @@ begin
     let old_value = CompareAndSwap(
         ScalarDecodedAtomicAddress(instruction, form, ScalarField_SrcL),
         size_bytes,
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcR),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcD),
         ScalarDecodedMemoryOrder(instruction, form));
     if _LastFault == Fault_None then
-        WriteScalarDestination(
-            ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+        WriteReg5(
+            DecodeReg5(instruction, form, ScalarField_RegDst),
             NormalizeAtomicReturn(old_value, size_bytes));
     end;
 end;
@@ -105,8 +105,8 @@ begin
     case operation of
         when ScalarOperation_DMA =>
             ExecuteScalarDMACopy64(
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR));
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcR));
         when ScalarOperation_LR_B =>
             ExecuteDecodedLoadReserved(instruction, form, 1);
         when ScalarOperation_LR_H =>

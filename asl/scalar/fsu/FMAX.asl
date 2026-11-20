@@ -8,14 +8,14 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-FMAX-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectFMAXOperation()
+readonly func FMAXOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FMAX;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectFMAXHandler()
+readonly func FMAXHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingBinary;
@@ -52,7 +52,7 @@ begin
     return FALSE;
 end;
 
-pure func SelectFMAXBinaryOperation()
+pure func FMAXBinaryOperation()
     => FloatingBinaryOperation
 begin
     return FloatingBinary_MAX;

@@ -114,7 +114,7 @@ begin
         FloatingUnary_EXP, NumericRound_RNE, Zeros{5}, Zeros{PTO_XLEN});
     assert fp_unary == Zeros{PTO_XLEN} + 0x3ff0000000000000;
     assert fp_unary_flags == Zeros{5};
-    let (fp_fused, fp_fused_flags) = ScalarFPFusedProfile(
+    let (fp_fused, fp_fused_flags) = FPMulAdd(
         FloatingFused_MADD, NumericRound_RNE, Zeros{5},
         Zeros{PTO_XLEN} + 0x3ff0000000000000,
         Zeros{PTO_XLEN} + 0x4000000000000000,

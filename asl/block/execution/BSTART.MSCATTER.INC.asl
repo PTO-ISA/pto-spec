@@ -7,7 +7,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBSTARTMSCATTERINCHandler() => CommandSemanticHandler
+readonly func BSTARTMSCATTERINCHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

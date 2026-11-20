@@ -117,7 +117,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/regular/TPREFETCH.asl -->
 ```asl
-readonly func SelectTPREFETCHOperation() => TileOperation
+readonly func TPREFETCHOperation() => TileOperation
 begin
     return TileOperation_TPREFETCH;
 end;
@@ -148,7 +148,7 @@ begin
     return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
 end;
 
-readonly func SelectTPREFETCHHandler() => TileSemanticHandler
+readonly func TPREFETCHHandler() => TileSemanticHandler
 begin
     return TileHandler_TPREFETCH;
 end;

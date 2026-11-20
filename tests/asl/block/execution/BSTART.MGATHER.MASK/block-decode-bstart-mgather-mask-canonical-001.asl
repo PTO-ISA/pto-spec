@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(24) == CommandOperation_bstart_mgather_mask_32_5573241cd944;
     assert CommandHandlerOfForm(24) == CommandHandler_ExecuteBundleStart;
     assert BSTARTMGATHERMASKEncodingMatches(CommandOperationOfForm(24));
-    assert SelectBSTARTMGATHERMASKHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTMGATHERMASKHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

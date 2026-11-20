@@ -110,7 +110,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/SETC.ORI.asl -->
 ```asl
-readonly func SelectSETCORIOperation() => ScalarOperation
+readonly func SETCORIOperation() => ScalarOperation
 begin
     return ScalarOperation_SETC_ORI;
 end;
@@ -127,7 +127,7 @@ Applicable only in the body of an active block whose BARG.TYPE is Conditional. A
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/SETC.ORI.asl -->
 ```asl
-readonly func SelectSETCORIHandler() => ScalarSemanticHandler
+readonly func SETCORIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommitLogical;
 end;

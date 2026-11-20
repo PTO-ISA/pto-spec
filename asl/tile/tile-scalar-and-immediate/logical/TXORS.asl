@@ -14,7 +14,7 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TXORS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTXORSOperation() => TileOperation
+readonly func TXORSOperation() => TileOperation
 begin
     return TileOperation_TXORS;
 end;
@@ -38,7 +38,7 @@ begin
         scalar);
 end;
 
-readonly func SelectTXORSHandler() => TileSemanticHandler
+readonly func TXORSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileScalar;
 end;

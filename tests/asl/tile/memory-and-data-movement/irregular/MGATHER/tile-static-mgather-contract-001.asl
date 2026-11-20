@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(76) == TileHandler_MGATHER;
     assert TileClassOfIndex(76) == TileClass_MemoryAndDataMovement;
     assert TileEngineOfIndex(76) == TileEngine_TLSU;
-    assert SelectMGATHEROperation() == TileOperation_MGATHER;
-    assert SelectMGATHERHandler() == TileHandler_MGATHER;
+    assert MGATHEROperation() == TileOperation_MGATHER;
+    assert MGATHERHandler() == TileHandler_MGATHER;
     return 0;
 end;

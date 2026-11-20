@@ -113,7 +113,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/HL.ADDTPC.asl -->
 ```asl
-readonly func SelectHLADDTPCOperation() => ScalarOperation
+readonly func HLADDTPCOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_ADDTPC;
 end;
@@ -124,7 +124,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/HL.ADDTPC.asl -->
 ```asl
-readonly func SelectHLADDTPCHandler() => ScalarSemanticHandler
+readonly func HLADDTPCHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_AddToPC;
 end;
@@ -159,7 +159,7 @@ begin
     return FALSE;
 end;
 
-pure func ResolveHLADDTPCTarget(
+pure func HLADDTPCTarget(
     base: Word,
     page_offset: Word)
     => Word

@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(0) == TileHandler_ExecuteTileBinary;
     assert TileClassOfIndex(0) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(0) == TileEngine_VEC;
-    assert SelectTADDOperation() == TileOperation_TADD;
-    assert SelectTADDHandler() == TileHandler_ExecuteTileBinary;
+    assert TADDOperation() == TileOperation_TADD;
+    assert TADDHandler() == TileHandler_ExecuteTileBinary;
     return 0;
 end;

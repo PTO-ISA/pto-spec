@@ -8,14 +8,14 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-FNES-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectFNESOperation()
+readonly func FNESOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FNES;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectFNESHandler()
+readonly func FNESHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingCompare;
@@ -52,7 +52,7 @@ begin
     return FALSE;
 end;
 
-pure func SelectFNESCompareOperation()
+pure func FNESCompareOperation()
     => FloatingCompareOperation
 begin
     return FloatingCompare_NE;

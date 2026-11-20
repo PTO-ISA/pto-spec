@@ -72,7 +72,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBSTARTTMATMULMXACCTileOperation()
+readonly func BSTARTTMATMULMXACCTileOperation()
     => TileOperation
 begin
     return TileOperation_TMATMUL_MX_ACC;
@@ -90,7 +90,7 @@ begin
     return TRUE;
 end;
 
-readonly func SelectBSTARTTMATMULMXACCHandler()
+readonly func BSTARTTMATMULMXACCHandler()
     => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;

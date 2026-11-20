@@ -129,7 +129,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduce-and-expand/column-reduction/TCOLMIN.asl -->
 ```asl
-readonly func SelectTCOLMINOperation() => TileOperation
+readonly func TCOLMINOperation() => TileOperation
 begin
     return TileOperation_TCOLMIN;
 end;
@@ -169,7 +169,7 @@ begin
         source);
 end;
 
-readonly func SelectTCOLMINHandler() => TileSemanticHandler
+readonly func TCOLMINHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileReduction;
 end;

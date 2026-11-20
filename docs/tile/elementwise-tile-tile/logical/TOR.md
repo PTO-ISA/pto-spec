@@ -107,7 +107,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TOR.asl -->
 ```asl
-readonly func SelectTOROperation() => TileOperation
+readonly func TOROperation() => TileOperation
 begin
     return TileOperation_TOR;
 end;
@@ -148,7 +148,7 @@ begin
         source_right);
 end;
 
-readonly func SelectTORHandler() => TileSemanticHandler
+readonly func TORHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;

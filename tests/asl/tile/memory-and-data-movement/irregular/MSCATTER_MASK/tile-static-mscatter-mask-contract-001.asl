@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(79) == TileHandler_MSCATTER_MASK;
     assert TileClassOfIndex(79) == TileClass_MemoryAndDataMovement;
     assert TileEngineOfIndex(79) == TileEngine_TLSU;
-    assert SelectMSCATTERMASKOperation() == TileOperation_MSCATTER_MASK;
-    assert SelectMSCATTERMASKHandler() == TileHandler_MSCATTER_MASK;
+    assert MSCATTERMASKOperation() == TileOperation_MSCATTER_MASK;
+    assert MSCATTERMASKHandler() == TileHandler_MSCATTER_MASK;
     return 0;
 end;

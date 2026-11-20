@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/TLB.IA.asl -->
 ```asl
-readonly func SelectTLBIAOperation()
+readonly func TLBIAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_TLB_IA;
@@ -118,7 +118,7 @@ TLB.IA executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/TLB.IA.asl -->
 ```asl
-readonly func SelectTLBIAHandler()
+readonly func TLBIAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
@@ -130,7 +130,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectTLBIAMaintenanceOperation()
+pure func TLBIAMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_TLB_IA;

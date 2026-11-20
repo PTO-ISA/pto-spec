@@ -114,7 +114,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/arithmetic/TMIN.asl -->
 ```asl
-readonly func SelectTMINOperation() => TileOperation
+readonly func TMINOperation() => TileOperation
 begin
     return TileOperation_TMIN;
 end;
@@ -155,7 +155,7 @@ begin
         source_right);
 end;
 
-pure func ComputeTMINFloatingValue(
+pure func TMINFloatingValue(
     data_type: TileDataType,
     source_left: Word,
     source_right: Word) => (Word, boolean)
@@ -169,7 +169,7 @@ begin
         source_right);
 end;
 
-readonly func SelectTMINHandler() => TileSemanticHandler
+readonly func TMINHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;

@@ -7,18 +7,18 @@
 // Encoded immediate zero MUST materialize zero.
 // NDF-END: PTO-HL-LUI-UPPER-HALF-001
 // DOC-BEGIN: decode
-readonly func SelectHLLUIOperation() => ScalarOperation
+readonly func HLLUIOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_LUI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLLUIHandler() => ScalarSemanticHandler
+readonly func HLLUIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_MaterializeLongUpper;
 end;
 
-pure func ComputeHLLUIResult(
+pure func HLLUIResult(
     encoded_immediate: bits(32))
     => Word
 begin

@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000000000000111010', 16) == 34;
     assert ScalarOperationOfForm(34) == ScalarOperation_C_SDI;
     assert ScalarHandlerOfForm(34) == ScalarHandler_ExecuteScalarStore;
-    assert SelectCSDIOperation() == ScalarOperation_C_SDI;
-    assert SelectCSDIHandler() == ScalarHandler_ExecuteScalarStore;
+    assert CSDIOperation() == ScalarOperation_C_SDI;
+    assert CSDIHandler() == ScalarHandler_ExecuteScalarStore;
     assert CSDIAGUAction() == ScalarAGU_Store;
     assert CSDIAGUAddressKind() == ScalarAGU_Compressed;
     assert CSDIAGUSizeBytes() == 8;

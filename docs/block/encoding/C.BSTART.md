@@ -136,7 +136,7 @@ After any active predecessor block commits successfully, C.BSTART opens one Stan
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/encoding/C.BSTART.asl -->
 ```asl
-pure func ResolveCBSTARTTarget(
+pure func CBSTARTTarget(
     instruction_pc: Word,
     displacement: bits(12))
     => Word
@@ -145,7 +145,7 @@ begin
         LSL(SignExtend{PTO_XLEN}(displacement), 1);
 end;
 
-readonly func SelectCBSTARTHandler() => CommandSemanticHandler
+readonly func CBSTARTHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

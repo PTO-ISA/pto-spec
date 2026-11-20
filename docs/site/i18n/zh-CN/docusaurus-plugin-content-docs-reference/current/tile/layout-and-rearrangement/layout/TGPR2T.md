@@ -111,7 +111,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/layout-and-rearrangement/layout/TGPR2T.asl -->
 ```asl
-readonly func SelectTGPR2TOperation() => TileOperation
+readonly func TGPR2TOperation() => TileOperation
 begin
     return TileOperation_TGPR2T;
 end;
@@ -135,7 +135,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/layout-and-rearrangement/layout/TGPR2T.asl -->
 ```asl
-readonly func SelectTGPR2THandler() => TileSemanticHandler
+readonly func TGPR2THandler() => TileSemanticHandler
 begin
     return TileHandler_TGPR2T;
 end;

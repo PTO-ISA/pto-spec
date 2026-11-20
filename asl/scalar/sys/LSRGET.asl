@@ -7,14 +7,14 @@
 // IDs 3 through 4095 and inapplicable ID 1 MUST reject before destination effects.
 // NDF-END: PTO-LSRGET-BARG-001
 // DOC-BEGIN: decode
-readonly func SelectLSRGETOperation()
+readonly func LSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_LSRGET;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectLSRGETHandler()
+readonly func LSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteLocalStateRegisterGet;

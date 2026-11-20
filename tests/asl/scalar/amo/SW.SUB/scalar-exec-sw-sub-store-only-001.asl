@@ -21,7 +21,7 @@ begin
     assert _MemoryEventCount == 1;
     assert _MemoryEvents[[0]].kind == MemoryEvent_Atomic;
     assert _MemoryEvents[[0]].write_value == Zeros{PTO_XLEN} + 2;
-    assert SelectSWSUBAtomicOperation() == Atomic_SUB;
+    assert SWSUBAtomicOperation() == Atomic_SUB;
     assert SWSUBAtomicSizeBytes() == 4;
     assert !SWSUBPublishesOldValue();
 end;

@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fence-i-mechanism role=mechanism -->
 ## System mechanism
 
-`SelectFENCEIHandler` selects `ScalarHandler_FenceInstruction` (`asl/scalar/sys/FENCE.I.asl:18`), and both `FENCEIFenceInvalidatesReservation` and `FENCEIAdvancesInstructionEpoch` return `TRUE` (`asl/scalar/sys/FENCE.I.asl:30`). `FenceInstruction` implements exactly those two steps, and its ASL comment states that the executable byte-array model already has coherent instruction and data storage, so the epoch is what makes the architectural visibility point explicit (`asl/scalar/model/sys/semantics.asl:83`).
+`FENCEIHandler` selects `ScalarHandler_FenceInstruction` (`asl/scalar/sys/FENCE.I.asl:18`), and both `FENCEIFenceInvalidatesReservation` and `FENCEIAdvancesInstructionEpoch` return `TRUE` (`asl/scalar/sys/FENCE.I.asl:30`). `FenceInstruction` implements exactly those two steps, and its ASL comment states that the executable byte-array model already has coherent instruction and data storage, so the epoch is what makes the architectural visibility point explicit (`asl/scalar/model/sys/semantics.asl:83`).
 
 The instruction requires the body of an active SYS block, like the other SYS-block instructions.
 
@@ -84,7 +84,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/FENCE.I.asl -->
 ```asl
-readonly func SelectFENCEIOperation()
+readonly func FENCEIOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FENCE_I;
@@ -102,7 +102,7 @@ FENCE.I executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/FENCE.I.asl -->
 ```asl
-readonly func SelectFENCEIHandler()
+readonly func FENCEIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FenceInstruction;

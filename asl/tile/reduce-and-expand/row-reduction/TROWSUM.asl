@@ -26,7 +26,7 @@
 // For CUBE_M16/M32, destination Columns MUST equal source Columns and destination Rows MUST be the minimum legal physical Rows covering destination ValidRows (16 for M16, 32 for M32).
 // NDF-END: PTO-TROWSUM-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTROWSUMOperation() => TileOperation
+readonly func TROWSUMOperation() => TileOperation
 begin
     return TileOperation_TROWSUM;
 end;
@@ -49,7 +49,7 @@ begin
         source);
 end;
 
-readonly func SelectTROWSUMHandler() => TileSemanticHandler
+readonly func TROWSUMHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileReduction;
 end;

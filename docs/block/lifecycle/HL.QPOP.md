@@ -141,7 +141,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/HL.QPOP.asl -->
 ```asl
-readonly func SelectHLQPOPHandler() => CommandSemanticHandler
+readonly func HLQPOPHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteQueuePop;
 end;

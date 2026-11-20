@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-civa-mechanism role=mechanism -->
 ## 系统机制
 
-`SelectDCCIVAHandler` 返回 `ScalarHandler_ExecuteMaintenance`（`asl/scalar/sys/DC.CIVA.asl:11`），而 `SelectDCCIVAMaintenanceOperation` 把成功尝试所记录的令牌固定为 `Maintenance_DC_CIVA`（`asl/scalar/sys/DC.CIVA.asl:23`）。执行器本身是共用的：`ExecuteMaintenance` 按操作令牌分派，而 `Maintenance_DC_CIVA` 属于推进 `_DataCacheEpoch` 的数据缓存组（`asl/scalar/model/sys/semantics.asl:134`）。
+`DCCIVAHandler` 返回 `ScalarHandler_ExecuteMaintenance`（`asl/scalar/sys/DC.CIVA.asl:11`），而 `DCCIVAMaintenanceOperation` 把成功尝试所记录的令牌固定为 `Maintenance_DC_CIVA`（`asl/scalar/sys/DC.CIVA.asl:23`）。执行器本身是共用的：`ExecuteMaintenance` 按操作令牌分派，而 `Maintenance_DC_CIVA` 属于推进 `_DataCacheEpoch` 的数据缓存组（`asl/scalar/model/sys/semantics.asl:134`）。
 
 与共用该处理程序的其他十五条指令一样，`DC.CIVA` 只在活动 SYS 块体内适用（`asl/scalar/model/sys/semantics.asl:322`）。
 
@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.CIVA.asl -->
 ```asl
-readonly func SelectDCCIVAOperation()
+readonly func DCCIVAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DC_CIVA;
@@ -118,7 +118,7 @@ DC.CIVA executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.CIVA.asl -->
 ```asl
-readonly func SelectDCCIVAHandler()
+readonly func DCCIVAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
@@ -130,7 +130,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectDCCIVAMaintenanceOperation()
+pure func DCCIVAMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_DC_CIVA;

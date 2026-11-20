@@ -16,6 +16,6 @@ begin
     assert ReadGPR(1) == Ones{PTO_XLEN};
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x44;
     assert DecodeSRAShiftAmount(Zeros{PTO_XLEN} + 63) == 63;
-    assert ComputeSRAResult('1000000000000000000000000000000000000000000000000000000000000000', Zeros{PTO_XLEN} + 63) == Ones{PTO_XLEN};
+    assert SRAResult('1000000000000000000000000000000000000000000000000000000000000000', Zeros{PTO_XLEN} + 63) == Ones{PTO_XLEN};
     return 0;
 end;

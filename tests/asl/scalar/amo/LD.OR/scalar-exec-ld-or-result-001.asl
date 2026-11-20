@@ -42,7 +42,7 @@ begin
     assert _MemoryEvents[[0]].write_value == expected;
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
-    assert SelectLDORAtomicOperation() == Atomic_OR;
+    assert LDORAtomicOperation() == Atomic_OR;
     assert LDORAtomicSizeBytes() == 8;
     assert LDORPublishesOldValue();
     assert !LDORSignExtendsOldValue();

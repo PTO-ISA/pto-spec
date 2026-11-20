@@ -138,7 +138,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SWAPB.asl -->
 ```asl
-readonly func SelectSWAPBOperation() => ScalarOperation
+readonly func SWAPBOperation() => ScalarOperation
 begin
     return ScalarOperation_SWAPB;
 end;
@@ -149,12 +149,12 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/SWAPB.asl -->
 ```asl
-readonly func SelectSWAPBHandler() => ScalarSemanticHandler
+readonly func SWAPBHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func SelectSWAPBAtomicOperation()
+pure func SWAPBAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_SWAP;

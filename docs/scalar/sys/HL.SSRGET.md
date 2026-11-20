@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-mechanism role=mechanism -->
 ## System mechanism
 
-`SelectHLSSRGETHandler` selects `ScalarHandler_ExecuteSystemRegisterGet` (`asl/scalar/sys/HL.SSRGET.asl:18`), the same helper used by the 32-bit form. What changes is the address: `HLSSRGETSystemAddressWidth` fixes the width at 24 (`asl/scalar/sys/HL.SSRGET.asl:36`), and the assembly is a 48-bit form (`asl/scalar/sys/HL.SSRGET.asl:1`).
+`HLSSRGETHandler` selects `ScalarHandler_ExecuteSystemRegisterGet` (`asl/scalar/sys/HL.SSRGET.asl:18`), the same helper used by the 32-bit form. What changes is the address: `HLSSRGETSystemAddressWidth` fixes the width at 24 (`asl/scalar/sys/HL.SSRGET.asl:36`), and the assembly is a 48-bit form (`asl/scalar/sys/HL.SSRGET.asl:1`).
 
 The dispatcher builds that 24-bit address from two 12-bit pieces before calling the get helper (`asl/scalar/model/dispatch/sys.asl:91`).
 
@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/HL.SSRGET.asl -->
 ```asl
-readonly func SelectHLSSRGETOperation()
+readonly func HLSSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_HL_SSRGET;
@@ -121,7 +121,7 @@ HL.SSRGET executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/HL.SSRGET.asl -->
 ```asl
-readonly func SelectHLSSRGETHandler()
+readonly func HLSSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterGet;

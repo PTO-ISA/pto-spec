@@ -44,7 +44,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
 
-    assert SelectLWANDAtomicOperation() == Atomic_AND;
+    assert LWANDAtomicOperation() == Atomic_AND;
     assert LWANDAtomicSizeBytes() == 4;
     assert LWANDPublishesOldValue();
     assert LWANDSignExtendsOldValue();

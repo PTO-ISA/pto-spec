@@ -17,6 +17,6 @@ begin
     assert HLADDIWImmediateWidth() == 24;
     assert HLADDIWImmediateIsUnsigned();
     assert HLADDIWIsWordOperation();
-    assert ComputeHLADDIWResult(Zeros{PTO_XLEN} + 0x7fffffff, immediate) == Zeros{PTO_XLEN} + 0xffffffff80000000;
+    assert HLADDIWResult(Zeros{PTO_XLEN} + 0x7fffffff, immediate) == Zeros{PTO_XLEN} + 0xffffffff80000000;
     return 0;
 end;

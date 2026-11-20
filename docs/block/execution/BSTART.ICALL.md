@@ -126,7 +126,7 @@ BSTART.ICALL retires one active Standard or Floating block whose BARG.BPCN suppl
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.ICALL.asl -->
 ```asl
-readonly func SelectBSTARTICALLHandler() => CommandSemanticHandler
+readonly func BSTARTICALLHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000001100000000010110000000000001110', 48) == 123;
     assert ScalarOperationOfForm(123) == ScalarOperation_HL_CASB;
     assert ScalarHandlerOfForm(123) == ScalarHandler_CompareAndSwap;
-    assert SelectHLCASBOperation() == ScalarOperation_HL_CASB;
-    assert SelectHLCASBHandler() == ScalarHandler_CompareAndSwap;
+    assert HLCASBOperation() == ScalarOperation_HL_CASB;
+    assert HLCASBHandler() == ScalarHandler_CompareAndSwap;
     assert DecodeScalarOperandRaw('000000000000000001100000000010110000000000001110', 123, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000001100000000010110000000000001110', 123, ScalarField_SrcD) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000001100000000010110000000000001110', 123, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';

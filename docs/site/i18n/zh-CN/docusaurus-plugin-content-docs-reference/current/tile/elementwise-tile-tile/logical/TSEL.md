@@ -121,7 +121,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TSEL.asl -->
 ```asl
-readonly func SelectTSELOperation() => TileOperation
+readonly func TSELOperation() => TileOperation
 begin
     return TileOperation_TSEL;
 end;
@@ -165,7 +165,7 @@ begin
         source_false);
 end;
 
-readonly func SelectTSELHandler() => TileSemanticHandler
+readonly func TSELHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileSelect;
 end;

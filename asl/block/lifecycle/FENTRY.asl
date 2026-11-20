@@ -11,7 +11,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectFENTRYHandler() => CommandSemanticHandler
+readonly func FENTRYHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteFrameEntry;
 end;

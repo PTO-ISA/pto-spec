@@ -118,7 +118,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TCMP.asl -->
 ```asl
-readonly func SelectTCMPOperation() => TileOperation
+readonly func TCMPOperation() => TileOperation
 begin
     return TileOperation_TCMP;
 end;
@@ -167,7 +167,7 @@ begin
         comparison);
 end;
 
-readonly func SelectTCMPHandler() => TileSemanticHandler
+readonly func TCMPHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileCompare;
 end;

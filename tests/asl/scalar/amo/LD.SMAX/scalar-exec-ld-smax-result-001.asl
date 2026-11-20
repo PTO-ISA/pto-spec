@@ -42,7 +42,7 @@ begin
     assert _MemoryEvents[[0]].write_value == expected;
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
-    assert SelectLDSMAXAtomicOperation() == Atomic_SMAX;
+    assert LDSMAXAtomicOperation() == Atomic_SMAX;
     assert LDSMAXAtomicSizeBytes() == 8;
     assert LDSMAXPublishesOldValue();
     assert !LDSMAXSignExtendsOldValue();

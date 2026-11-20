@@ -4,11 +4,11 @@ begin
     let positive_zero = Zeros{PTO_XLEN};
     let negative_zero = Zeros{PTO_XLEN} + 0x80000000;
 
-    let (forward, forward_invalid) = ComputeTMAXFloatingValue(
+    let (forward, forward_invalid) = TMAXFloatingValue(
         TileDataType_FP32, negative_zero, positive_zero);
-    let (reverse, reverse_invalid) = ComputeTMAXFloatingValue(
+    let (reverse, reverse_invalid) = TMAXFloatingValue(
         TileDataType_FP32, positive_zero, negative_zero);
-    let (same, same_invalid) = ComputeTMAXFloatingValue(
+    let (same, same_invalid) = TMAXFloatingValue(
         TileDataType_FP32, negative_zero, negative_zero);
     assert forward == positive_zero;
     assert reverse == positive_zero;

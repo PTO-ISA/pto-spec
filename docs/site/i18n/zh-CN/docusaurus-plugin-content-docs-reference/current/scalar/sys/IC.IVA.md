@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/IC.IVA.asl -->
 ```asl
-readonly func SelectICIVAOperation()
+readonly func ICIVAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_IC_IVA;
@@ -118,7 +118,7 @@ IC.IVA executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/IC.IVA.asl -->
 ```asl
-readonly func SelectICIVAHandler()
+readonly func ICIVAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
@@ -130,7 +130,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectICIVAMaintenanceOperation()
+pure func ICIVAMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_IC_IVA;

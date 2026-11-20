@@ -8,14 +8,14 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-FENCE-D-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectFENCEDOperation()
+readonly func FENCEDOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FENCE_D;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectFENCEDHandler()
+readonly func FENCEDHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FenceData;

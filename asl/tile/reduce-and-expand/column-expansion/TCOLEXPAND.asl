@@ -7,7 +7,7 @@
 // The complete BSTART, B.DIM, B.DATR, layout, PE-mask, padding, alias, snapshot, and atomic-publication rules remain unchanged.
 // NDF-END: PTO-TCOLEXPAND-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTCOLEXPANDOperation() => TileOperation
+readonly func TCOLEXPANDOperation() => TileOperation
 begin
     return TileOperation_TCOLEXPAND;
 end;
@@ -31,7 +31,7 @@ begin
         broadcast);
 end;
 
-readonly func SelectTCOLEXPANDHandler() => TileSemanticHandler
+readonly func TCOLEXPANDHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;

@@ -24,7 +24,7 @@
 // representability, TSize, and capacity rejection MUST occur before effects.
 // NDF-END: PTO-TCI-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTCIOperation() => TileOperation
+readonly func TCIOperation() => TileOperation
 begin
     return TileOperation_TCI;
 end;
@@ -57,7 +57,7 @@ begin
         descending);
 end;
 
-readonly func SelectTCIHandler() => TileSemanticHandler
+readonly func TCIHandler() => TileSemanticHandler
 begin
     return TileHandler_TCI;
 end;

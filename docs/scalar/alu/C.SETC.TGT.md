@@ -111,7 +111,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/C.SETC.TGT.asl -->
 ```asl
-readonly func SelectCSETCTGTOperation() => ScalarOperation
+readonly func CSETCTGTOperation() => ScalarOperation
 begin
     return ScalarOperation_C_SETC_TGT;
 end;
@@ -128,12 +128,12 @@ Applicable inside one active Standard or Floating block. The first successful oc
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/C.SETC.TGT.asl -->
 ```asl
-readonly func SelectCSETCTGTHandler() => ScalarSemanticHandler
+readonly func CSETCTGTHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_SetCommitTarget;
 end;
 
-readonly func ResolveCSETCTGTTarget(
+readonly func CSETCTGTTarget(
     source_value: Word)
     => Word
 begin

@@ -17,7 +17,7 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(1) == Zeros{PTO_XLEN} + 0x0000000000000004;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x44;
-    assert ComputeADDWResult(
+    assert ADDWResult(
         Zeros{PTO_XLEN} + 0x000000000000000a,
         Zeros{PTO_XLEN} + 0x0000000000000003,
         '10',

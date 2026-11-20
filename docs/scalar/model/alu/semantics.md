@@ -32,7 +32,7 @@ A right modifier transforms the right operand before use:
 - `ScalarRight_UnsignedWord` zero-extends bits 31:0.
 - `ScalarRight_NegateOrNot` applies bitwise NOT for the logical family and two's-complement negation otherwise.
 
-`PrepareScalarRight` applies the modifier and then shifts left. `ApplyRestrictedCompareModifier` treats `ScalarRight_NegateOrNot` as no change. `ApplySelectModifier` treats it as negation and ignores the other modifiers.
+`ShiftModifiedScalar` applies the modifier and then shifts left. `ApplyRestrictedCompareModifier` treats `ScalarRight_NegateOrNot` as no change. `ApplySelectModifier` treats it as negation and ignores the other modifiers.
 
 <!-- PTO-READER-BLOCK: scalar-model-alu-semantics-rules role=rules-interactions -->
 ## Rules and interactions
@@ -307,7 +307,7 @@ begin
     if !IsZero(predicate) then return selected_true; else return selected_false; end;
 end;
 
-pure func ApplyScalarRightModifier(value: Word, modifier: ScalarRightModifier,
+pure func ModifyScalarOperand(value: Word, modifier: ScalarRightModifier,
                                    logical_family: boolean) => Word
 begin
     case modifier of
@@ -325,7 +325,7 @@ pure func ApplyRestrictedCompareModifier(value: Word,
                                          modifier: ScalarRightModifier) => Word
 begin
     if modifier == ScalarRight_NegateOrNot then return value;
-    else return ApplyScalarRightModifier(value, modifier, FALSE);
+    else return ModifyScalarOperand(value, modifier, FALSE);
     end;
 end;
 
@@ -336,11 +336,11 @@ begin
     end;
 end;
 
-pure func PrepareScalarRight(value: Word, modifier: ScalarRightModifier,
+pure func ShiftModifiedScalar(value: Word, modifier: ScalarRightModifier,
                              shift_amount: integer {0..63},
                              logical_family: boolean) => Word
 begin
-    return LSL(ApplyScalarRightModifier(value, modifier, logical_family), shift_amount);
+    return LSL(ModifyScalarOperand(value, modifier, logical_family), shift_amount);
 end;
 
 pure func MaterializeLUI(immediate: bits(20)) => Word
@@ -410,16 +410,16 @@ func ExecuteConcatenatePair(destination_low: Reg5Selector,
                             left: Word, right: Word,
                             shift_amount: integer {0..127})
 begin
-    let low = ComputeHLCCATLowResult(
+    let low = HLCCATLowResult(
         left,
         right,
         shift_amount);
-    let high = ComputeHLCCATHighResult(
+    let high = HLCCATHighResult(
         left,
         right,
         shift_amount);
-    WriteScalarDestination(destination_low, low);
-    WriteScalarDestination(destination_high, high);
+    WriteReg5(destination_low, low);
+    WriteReg5(destination_high, high);
 end;
 
 func ExecuteConcatenatePairW(destination_low: Reg5Selector,
@@ -427,16 +427,16 @@ func ExecuteConcatenatePairW(destination_low: Reg5Selector,
                              left: Word, right: Word,
                              shift_amount: integer {0..127})
 begin
-    let low = ComputeHLCCATWLowResult(
+    let low = HLCCATWLowResult(
         left,
         right,
         shift_amount);
-    let high = ComputeHLCCATWHighResult(
+    let high = HLCCATWHighResult(
         left,
         right,
         shift_amount);
-    WriteScalarDestination(destination_low, low);
-    WriteScalarDestination(destination_high, high);
+    WriteReg5(destination_low, low);
+    WriteReg5(destination_high, high);
 end;
 
 func ExecuteScalarDividePair(destination_quotient: Reg5Selector,
@@ -447,8 +447,8 @@ begin
                    else ScalarDivideUnsigned(left, right);
     let remainder = if signed_operation then ScalarRemainderSigned(left, right)
                     else ScalarRemainderUnsigned(left, right);
-    WriteScalarDestination(destination_quotient, quotient);
-    WriteScalarDestination(destination_remainder, remainder);
+    WriteReg5(destination_quotient, quotient);
+    WriteReg5(destination_remainder, remainder);
 end;
 
 func ExecuteScalarRemainderPair(destination_remainder: Reg5Selector,
@@ -460,8 +460,8 @@ begin
                    else ScalarDivideUnsigned(left, right);
     let remainder = if signed_operation then ScalarRemainderSigned(left, right)
                     else ScalarRemainderUnsigned(left, right);
-    WriteScalarDestination(destination_remainder, remainder);
-    WriteScalarDestination(destination_quotient, quotient);
+    WriteReg5(destination_remainder, remainder);
+    WriteReg5(destination_quotient, quotient);
 end;
 
 func ExecuteScalarDividePairW(destination_quotient: Reg5Selector,
@@ -472,8 +472,8 @@ begin
                    else ScalarDivideUnsignedW(left, right);
     let remainder = if signed_operation then ScalarRemainderSignedW(left, right)
                     else ScalarRemainderUnsignedW(left, right);
-    WriteScalarDestination(destination_quotient, quotient);
-    WriteScalarDestination(destination_remainder, remainder);
+    WriteReg5(destination_quotient, quotient);
+    WriteReg5(destination_remainder, remainder);
 end;
 
 func ExecuteScalarRemainderPairW(destination_remainder: Reg5Selector,
@@ -485,8 +485,8 @@ begin
                    else ScalarDivideUnsignedW(left, right);
     let remainder = if signed_operation then ScalarRemainderSignedW(left, right)
                     else ScalarRemainderUnsignedW(left, right);
-    WriteScalarDestination(destination_remainder, remainder);
-    WriteScalarDestination(destination_quotient, quotient);
+    WriteReg5(destination_remainder, remainder);
+    WriteReg5(destination_quotient, quotient);
 end;
 
 func ExecuteScalarMultiplyPair(destination_low: Reg5Selector, destination_high: Reg5Selector,
@@ -494,8 +494,8 @@ func ExecuteScalarMultiplyPair(destination_low: Reg5Selector, destination_high: 
 begin
     let product = if signed_operation then MultiplyWideSigned(left, right)
                   else MultiplyWideUnsigned(left, right);
-    WriteScalarDestination(destination_low, product[63:0]);
-    WriteScalarDestination(destination_high, product[127:64]);
+    WriteReg5(destination_low, product[63:0]);
+    WriteReg5(destination_high, product[127:64]);
 end;
 
 func ExecuteScalarMultiplyAddPair(destination_low: Reg5Selector,
@@ -509,15 +509,15 @@ begin
     let product = MultiplyWideSigned(effective_left, effective_right);
     let accumulator = product + SignExtend{PTO_XLEN * 2}(effective_addend);
     if word_operation then
-        WriteScalarDestination(
+        WriteReg5(
             destination_low,
             SignExtend{PTO_XLEN}(accumulator[31:0]));
-        WriteScalarDestination(
+        WriteReg5(
             destination_high,
             SignExtend{PTO_XLEN}(accumulator[63:32]));
     else
-        WriteScalarDestination(destination_low, accumulator[63:0]);
-        WriteScalarDestination(destination_high, accumulator[127:64]);
+        WriteReg5(destination_low, accumulator[63:0]);
+        WriteReg5(destination_high, accumulator[127:64]);
     end;
 end;
 

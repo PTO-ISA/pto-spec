@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000001000001001001', 32) == 416;
     assert ScalarOperationOfForm(416) == ScalarOperation_SH;
     assert ScalarHandlerOfForm(416) == ScalarHandler_ExecuteScalarStore;
-    assert SelectSHOperation() == ScalarOperation_SH;
-    assert SelectSHHandler() == ScalarHandler_ExecuteScalarStore;
+    assert SHOperation() == ScalarOperation_SH;
+    assert SHHandler() == ScalarHandler_ExecuteScalarStore;
     assert SHAGUAction() == ScalarAGU_Store;
     assert SHAGUAddressKind() == ScalarAGU_Register;
     assert SHAGUSizeBytes() == 2;

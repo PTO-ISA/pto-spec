@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(49) == CommandOperation_bstart_tprefetch_32_d5f83e5aadf6;
     assert CommandHandlerOfForm(49) == CommandHandler_ExecuteBundleStart;
     assert BSTARTTPREFETCHEncodingMatches(CommandOperationOfForm(49));
-    assert SelectBSTARTTPREFETCHHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTTPREFETCHHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

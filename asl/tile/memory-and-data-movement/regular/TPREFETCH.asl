@@ -6,7 +6,7 @@
 // all four PE-private base/stride inputs and MUST NOT allocate or write a Tile.
 // NDF-END: PTO-TPREFETCH-FOOTPRINT-001
 // DOC-BEGIN: decode
-readonly func SelectTPREFETCHOperation() => TileOperation
+readonly func TPREFETCHOperation() => TileOperation
 begin
     return TileOperation_TPREFETCH;
 end;
@@ -22,7 +22,7 @@ begin
     return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
 end;
 
-readonly func SelectTPREFETCHHandler() => TileSemanticHandler
+readonly func TPREFETCHHandler() => TileSemanticHandler
 begin
     return TileHandler_TPREFETCH;
 end;

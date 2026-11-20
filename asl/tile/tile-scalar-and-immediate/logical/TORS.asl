@@ -14,7 +14,7 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TORS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTORSOperation() => TileOperation
+readonly func TORSOperation() => TileOperation
 begin
     return TileOperation_TORS;
 end;
@@ -38,7 +38,7 @@ begin
         scalar);
 end;
 
-readonly func SelectTORSHandler() => TileSemanticHandler
+readonly func TORSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileScalar;
 end;

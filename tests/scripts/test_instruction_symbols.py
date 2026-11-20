@@ -9,12 +9,12 @@ from scripts.instruction_symbols import contract_symbol
 ROOT = Path(__file__).resolve().parents[2]
 class InstructionSymbolTest(unittest.TestCase):
     def test_representative_roles_use_readable_arm_style_names(self) -> None:
-        self.assertEqual(contract_symbol("Operation", "ADD"), "SelectADDOperation")
-        self.assertEqual(contract_symbol("Handler", "B_IOT"), "SelectBIOTHandler")
+        self.assertEqual(contract_symbol("Operation", "ADD"), "ADDOperation")
+        self.assertEqual(contract_symbol("Handler", "B_IOT"), "BIOTHandler")
         self.assertEqual(contract_symbol("Execute", "TADD"), "ExecuteTADD")
-        self.assertEqual(contract_symbol("Result", "ADD"), "ComputeADDResult")
+        self.assertEqual(contract_symbol("Result", "ADD"), "ADDResult")
         self.assertEqual(
-            contract_symbol("GMAddress", "TLOAD"), "ResolveTLOADGlobalAddress"
+            contract_symbol("GMAddress", "TLOAD"), "TLOADGMAddress"
         )
         self.assertEqual(
             contract_symbol("OperandsLegal", "TMATMUL"), "TMATMULOperandsLegal"

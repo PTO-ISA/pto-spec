@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(63) == TileHandler_ExecuteTileExpand;
     assert TileClassOfIndex(63) == TileClass_ReduceAndExpand;
     assert TileEngineOfIndex(63) == TileEngine_SFU;
-    assert SelectTCOLEXPANDMAXOperation() == TileOperation_TCOLEXPANDMAX;
-    assert SelectTCOLEXPANDMAXHandler() == TileHandler_ExecuteTileExpand;
+    assert TCOLEXPANDMAXOperation() == TileOperation_TCOLEXPANDMAX;
+    assert TCOLEXPANDMAXHandler() == TileHandler_ExecuteTileExpand;
     return 0;
 end;

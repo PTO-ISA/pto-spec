@@ -112,7 +112,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/ADDI.asl -->
 ```asl
-readonly func SelectADDIOperation()
+readonly func ADDIOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ADDI;
@@ -124,7 +124,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/ADDI.asl -->
 ```asl
-readonly func SelectADDIHandler()
+readonly func ADDIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;

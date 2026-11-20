@@ -17,6 +17,6 @@ begin
     assert HLSUBIImmediateWidth() == 24;
     assert HLSUBIImmediateIsUnsigned();
     assert !HLSUBIIsWordOperation();
-    assert ComputeHLSUBIResult(Zeros{PTO_XLEN}, immediate) == Ones{PTO_XLEN};
+    assert HLSUBIResult(Zeros{PTO_XLEN}, immediate) == Ones{PTO_XLEN};
     return 0;
 end;

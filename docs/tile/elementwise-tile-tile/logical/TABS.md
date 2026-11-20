@@ -111,7 +111,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TABS.asl -->
 ```asl
-readonly func SelectTABSOperation() => TileOperation
+readonly func TABSOperation() => TileOperation
 begin
     return TileOperation_TABS;
 end;
@@ -150,7 +150,7 @@ begin
         source);
 end;
 
-pure func ComputeTABSValue(
+pure func TABSValue(
     data_type: TileDataType,
     source: Word) => Word
 begin
@@ -161,7 +161,7 @@ begin
     return result;
 end;
 
-readonly func SelectTABSHandler() => TileSemanticHandler
+readonly func TABSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;

@@ -1,7 +1,7 @@
 // PTO-TEST: {"id":"PTO-AVS-BLOCK-BSTART-TIMG2COL-STATIC-001","source":"asl/block/execution/BSTART.TIMG2COL.asl","requirements":["PTO-BSTART-TIMG2COL-CONTRACT-001"],"kind":"static-invariant","summary":"The frozen BSTART.TIMG2COL owner exposes the Function-28 carrier contract and six layout modes.","pass_condition":"The handler, layout applicability, DATR applicability, and core mask witnesses agree with the accepted owner.","related_sources":["asl/block/attributes/B.DATR.asl","asl/block/attributes/B.DIM.asl"]}
 func main() => integer
 begin
-    assert SelectBSTARTTIMG2COLHandler() ==
+    assert BSTARTTIMG2COLHandler() ==
         CommandHandler_ExecuteBundleStart;
     assert TIMG2COLLayoutLegal(Zeros{5} + 0);
     assert TIMG2COLLayoutLegal(Zeros{5} + 6);

@@ -20,7 +20,7 @@ This page is a generated reference view of the normative ASL unit.
 - `ExecuteDecodedFPUnary` 用于 `FABS`、`FEXP`、`FRECIP` 和 `FSQRT`；
 - `ExecuteDecodedFPBinary` 用于 `FADD`、`FSUB`、`FMUL`、`FDIV`、`FMIN` 和 `FMAX`；
 - `ExecuteDecodedFPCompare` 用于八种比较；
-- `ExecuteDecodedFPFused` 用于 `FMADD`、`FMSUB`、`FNMADD` 和 `FNMSUB`；
+- `ExecuteFPMulAdd` 用于 `FMADD`、`FMSUB`、`FNMADD` 和 `FNMSUB`；
 - `ExecuteDecodedFPConvert` 用于 `FCVT`、`FCVTA`、`FCVTM`、`FCVTN`、`FCVTP`、`FCVTZ`、`SCVTF` 和 `UCVTF`。
 
 <!-- PTO-READER-BLOCK: scalar-model-dispatch-fsu-concepts role=concepts-state -->
@@ -108,10 +108,10 @@ begin
         return;
     end;
     let left = NormalizeScalarFPSource(
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcL),
         source_type);
     let right = NormalizeScalarFPSource(
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcR),
         source_type);
     var result: Word;
     var flags: bits(5);
@@ -125,8 +125,8 @@ begin
             operation, ScalarFPActiveRoundingMode(), source_type, left, right);
     end;
     ScalarFPRecordFlags(flags);
-    WriteScalarDestination(
-        ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+    WriteReg5(
+        DecodeReg5(instruction, form, ScalarField_RegDst),
         NormalizeScalarFPResult(result, source_type));
 end;
 
@@ -141,7 +141,7 @@ begin
         return;
     end;
     let value = NormalizeScalarFPSource(
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcL),
         source_type);
     var result: Word;
     var flags: bits(5);
@@ -158,8 +158,8 @@ begin
             operation, ScalarFPActiveRoundingMode(), source_type, value);
     end;
     ScalarFPRecordFlags(flags);
-    WriteScalarDestination(
-        ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+    WriteReg5(
+        DecodeReg5(instruction, form, ScalarField_RegDst),
         NormalizeScalarFPResult(result, source_type));
 end;
 
@@ -174,10 +174,10 @@ begin
         return;
     end;
     let left = NormalizeScalarFPSource(
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcL),
         source_type);
     let right = NormalizeScalarFPSource(
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcR),
         source_type);
     let any_nan = ScalarFPIsNaN(left, source_selector) ||
                   ScalarFPIsNaN(right, source_selector);
@@ -188,12 +188,12 @@ begin
     end;
     let comparison = ScalarFPEncodingCompare(
         operation, left, right, source_selector);
-    WriteScalarDestination(
-        ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+    WriteReg5(
+        DecodeReg5(instruction, form, ScalarField_RegDst),
         if comparison then Zeros{PTO_XLEN} + 1 else Zeros{PTO_XLEN});
 end;
 
-func ExecuteDecodedFPFused(
+func ExecuteFPMulAdd(
     instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1},
     operation: FloatingFusedOperation)
 begin
@@ -204,20 +204,20 @@ begin
         return;
     end;
     let addend = NormalizeScalarFPSource(
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcA),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcA),
         source_type);
     let left = NormalizeScalarFPSource(
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcL),
         source_type);
     let right = NormalizeScalarFPSource(
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcR),
         source_type);
-    let (result, flags) = ScalarFPFusedProfile(
+    let (result, flags) = FPMulAdd(
         operation, ScalarFPActiveRoundingMode(), source_type,
         addend, left, right);
     ScalarFPRecordFlags(flags);
-    WriteScalarDestination(
-        ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+    WriteReg5(
+        DecodeReg5(instruction, form, ScalarField_RegDst),
         NormalizeScalarFPResult(result, source_type));
 end;
 
@@ -265,7 +265,7 @@ begin
     end;
 
     // Type legality is resolved before this first architectural source read.
-    let value = ReadDecodedScalarRegister(
+    let value = ReadDecodedReg5(
         instruction, form, ScalarField_SrcL);
     var result: Word;
     var flags: bits(5);
@@ -290,8 +290,8 @@ begin
         result = NormalizeScalarIntegerResult(result, destination_type);
     end;
     ScalarFPRecordFlags(flags);
-    WriteScalarDestination(
-        ScalarDecodedSelector(instruction, form, ScalarField_RegDst), result);
+    WriteReg5(
+        DecodeReg5(instruction, form, ScalarField_RegDst), result);
 end;
 
 func ExecuteDecodedFSUForm(instruction: bits(48),
@@ -335,13 +335,13 @@ begin
             instruction, form, FloatingCompare_GE, FALSE);
         when ScalarOperation_FGES => ExecuteDecodedFPCompare(
             instruction, form, FloatingCompare_GE, TRUE);
-        when ScalarOperation_FMADD => ExecuteDecodedFPFused(
+        when ScalarOperation_FMADD => ExecuteFPMulAdd(
             instruction, form, FloatingFused_MADD);
-        when ScalarOperation_FMSUB => ExecuteDecodedFPFused(
+        when ScalarOperation_FMSUB => ExecuteFPMulAdd(
             instruction, form, FloatingFused_MSUB);
-        when ScalarOperation_FNMADD => ExecuteDecodedFPFused(
+        when ScalarOperation_FNMADD => ExecuteFPMulAdd(
             instruction, form, FloatingFused_NMADD);
-        when ScalarOperation_FNMSUB => ExecuteDecodedFPFused(
+        when ScalarOperation_FNMSUB => ExecuteFPMulAdd(
             instruction, form, FloatingFused_NMSUB);
         when ScalarOperation_FCVT, ScalarOperation_FCVTA,
              ScalarOperation_FCVTM, ScalarOperation_FCVTN,

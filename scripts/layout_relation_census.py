@@ -217,6 +217,24 @@ ISSUE356_REDUCTION_HELPER_BODY_CHANGES = {
         "after_callers": ISSUE356_REDUCTION_OPERATION_CALLERS,
     },
 }
+READABLE_SHARED_HELPER_RENAMES = {
+    "ReadScalarRegisterOperand": "ReadReg5",
+    "WriteScalarDestination": "WriteReg5",
+    "ScalarDecodedSelector": "DecodeReg5",
+    "ReadDecodedScalarRegister": "ReadDecodedReg5",
+    "ScalarFPFusedProfile": "FPMulAdd",
+    "ReferenceScalarFPFusedProfile": "ReferenceFPMulAdd",
+    "ExecuteDecodedFPFused": "ExecuteFPMulAdd",
+    "ApplyScalarRightModifier": "ModifyScalarOperand",
+    "PrepareScalarRight": "ShiftModifiedScalar",
+    "DecodeScalarBinaryRightModifier": "DecodeBinaryModifier",
+    "DecodeScalarComparisonRightModifier": "DecodeCompareModifier",
+    "DecodeScalarSelectRightModifier": "DecodeSelectModifier",
+    "DecodeScalarAddressRightModifier": "DecodeAddressModifier",
+    "TileMemoryStridedByteAddress": "TileElementAddress",
+    "TileDenseRowStrideBytes": "TileDenseRowBytes",
+}
+READABLE_SHARED_HELPER_CLASSIFICATION = "mechanical readable-helper rename"
 BIAS = ("TMATMUL_BIAS", "TGEMV_BIAS", "TMATMUL_MX_BIAS", "TGEMV_MX_BIAS")
 INDEXED_TLSU = {
     "MGATHER", "MGATHER_MASK", "MGATHER_CAS",
@@ -3918,6 +3936,7 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
     rows: list[dict[str, Any]] = []
     errors: list[str] = []
     issue371_b64_active = "TileCubeM32B64DataType" in after["helpers"]
+    readable_new_names = set(READABLE_SHARED_HELPER_RENAMES.values())
     for name in sorted(set(before["helpers"]) | set(after["helpers"])):
         # Operation roots are retained in operation_reachability for
         # operation-specific extraction, but their body changes are accounted
@@ -3925,6 +3944,56 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
         # delta ledger.  A root mutation that changes reachability still
         # fails through the operation delta/closure checks.
         if name.startswith("TileOperandsLegal_"):
+            continue
+        if name in readable_new_names:
+            continue
+        if name in READABLE_SHARED_HELPER_RENAMES:
+            renamed = READABLE_SHARED_HELPER_RENAMES[name]
+            old_defs = before["helpers"].get(name, [])
+            new_defs = after["helpers"].get(renamed, [])
+            old_bodies = {
+                row["path"]: next(
+                    (item["body"] for item in before_defs.get(name, [])
+                     if item["path"] == row["path"]), ""
+                )
+                for row in old_defs
+            }
+            new_bodies = {
+                row["path"]: next(
+                    (item["body"] for item in after_defs.get(renamed, [])
+                     if item["path"] == row["path"]), ""
+                )
+                for row in new_defs
+            }
+            token = re.compile(r"\b[A-Za-z_][A-Za-z0-9_]*\b")
+            normalized_old = {
+                path: token.sub(
+                    lambda match: READABLE_SHARED_HELPER_RENAMES.get(
+                        match.group(), match.group()
+                    ), body
+                )
+                for path, body in old_bodies.items()
+            }
+            old_caller_paths = sorted(path for _caller, path in _direct_callers(before_defs, name))
+            new_caller_paths = sorted(path for _caller, path in _direct_callers(after_defs, renamed))
+            valid = (
+                [(row["path"], row["layouts"]) for row in old_defs] ==
+                [(row["path"], row["layouts"]) for row in new_defs] and
+                normalized_old == new_bodies
+            )
+            if not valid:
+                errors.append(f"readable shared-helper rename mismatch: {name} -> {renamed}")
+            rows.append({
+                "name": renamed,
+                "previous_name": name,
+                "classification": (
+                    READABLE_SHARED_HELPER_CLASSIFICATION if valid else "UNCLASSIFIED"
+                ),
+                "before": old_defs,
+                "after": new_defs,
+                "before_callers": sorted(_direct_callers(before_defs, name)),
+                "after_callers": sorted(_direct_callers(after_defs, renamed)),
+            })
             continue
         old_defs, new_defs = before["helpers"].get(name, []), after["helpers"].get(name, [])
         if len(old_defs) != len(new_defs) or [row["path"] for row in old_defs] != [row["path"] for row in new_defs]:

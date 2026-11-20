@@ -109,7 +109,7 @@ begin
         BIOTPerPECapacity(size_code));
 end;
 
-readonly func SelectBIOTHandler() => CommandSemanticHandler
+readonly func BIOTHandler() => CommandSemanticHandler
 begin
     return CommandHandler_BindBundleTileIO;
 end;

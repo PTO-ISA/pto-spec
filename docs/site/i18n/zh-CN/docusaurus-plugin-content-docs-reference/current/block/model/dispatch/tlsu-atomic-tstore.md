@@ -243,7 +243,7 @@ begin
             SetFault(Fault_TileLegality, ReadTPC());
             return FALSE;
         end;
-        row_stride_bytes = TileDenseRowStrideBytes(
+        row_stride_bytes = TileDenseRowBytes(
             columns as integer {0..65535}, data_type);
     else
         if BundleSharedBindingCount() != 0 ||
@@ -329,18 +329,18 @@ begin
         tile.valid_rows = valid_rows as integer {1..65535};
         tile.valid_columns = valid_columns as integer {1..65535};
         source_generation = TileStoreSourceGeneration(source);
-        row_stride_bytes = TileDenseRowStrideBytes(
+        row_stride_bytes = TileDenseRowBytes(
             (if cube_store then valid_columns else physical_columns)
                 as integer {1..65535}, data_type);
     end;
 
     if _BundleScalarBindings[[0]].valid then
         if _BundleScalarBindings[[0]].source_count > 0 then
-            base_address = ReadScalarRegisterOperand(
+            base_address = ReadReg5(
                 _BundleScalarBindings[[0]].source0);
         end;
         if _BundleScalarBindings[[0]].source_count > 1 then
-            row_stride_bytes = ReadScalarRegisterOperand(
+            row_stride_bytes = ReadReg5(
                 _BundleScalarBindings[[0]].source1);
         end;
     end;

@@ -14,7 +14,7 @@ begin
     assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 4;
     assert ReadTemporaryQueue(TRUE, 1) == Zeros{PTO_XLEN} + 5;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x102;
-    assert ComputeCADDIResult(
+    assert CADDIResult(
         Zeros{PTO_XLEN} + 5,
         Zeros{5} + 31) == Zeros{PTO_XLEN} + 4;
     return 0;

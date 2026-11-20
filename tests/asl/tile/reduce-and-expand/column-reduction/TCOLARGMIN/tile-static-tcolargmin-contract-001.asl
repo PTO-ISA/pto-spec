@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(67) == TileHandler_ExecuteTileReduction;
     assert TileClassOfIndex(67) == TileClass_ReduceAndExpand;
     assert TileEngineOfIndex(67) == TileEngine_SFU;
-    assert SelectTCOLARGMINOperation() == TileOperation_TCOLARGMIN;
-    assert SelectTCOLARGMINHandler() == TileHandler_ExecuteTileReduction;
+    assert TCOLARGMINOperation() == TileOperation_TCOLARGMIN;
+    assert TCOLARGMINHandler() == TileHandler_ExecuteTileReduction;
     return 0;
 end;

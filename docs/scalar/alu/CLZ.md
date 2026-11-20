@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/CLZ.asl -->
 ```asl
-readonly func SelectCLZOperation()
+readonly func CLZOperation()
     => ScalarOperation
 begin
     return ScalarOperation_CLZ;
@@ -140,13 +140,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/CLZ.asl -->
 ```asl
-readonly func SelectCLZHandler()
+readonly func CLZHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_CountBitfield;
 end;
 
-pure func ComputeCLZResult(
+pure func CLZResult(
     value: Word,
     width: integer {1..64},
     offset: integer {0..63})

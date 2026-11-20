@@ -15,7 +15,7 @@ begin
     assert execution == ScalarExecution_Executed;
     assert ReadGPR(3) == Zeros{PTO_XLEN} + 1;
     assert ReadGPR(4) == Zeros{PTO_XLEN} + 0x7fffffff;
-    assert ComputeHLREMUWQuotient(dividend, divisor) == Zeros{PTO_XLEN} + 0x7fffffff;
-    assert ComputeHLREMUWRemainder(dividend, divisor) == Zeros{PTO_XLEN} + 1;
+    assert HLREMUWQuotient(dividend, divisor) == Zeros{PTO_XLEN} + 0x7fffffff;
+    assert HLREMUWRemainder(dividend, divisor) == Zeros{PTO_XLEN} + 1;
     return 0;
 end;

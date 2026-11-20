@@ -7,19 +7,19 @@
 // NDF-END: PTO-SB-ADD-CONTRACT-001
 // PTO-REVIEW: {"review_method":"formal-definition-read","outcome":"FORMAL-COMPLETE","reviewed_fields":["assembly","encoding","defaults","operation","state","memory","ordering","faults","reserved"]}
 // DOC-BEGIN: decode
-readonly func SelectSBADDOperation() => ScalarOperation
+readonly func SBADDOperation() => ScalarOperation
 begin
     return ScalarOperation_SB_ADD;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSBADDHandler()
+readonly func SBADDHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func SelectSBADDAtomicOperation()
+pure func SBADDAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_ADD;

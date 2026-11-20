@@ -17,6 +17,6 @@ begin
     assert ReadGPR(3) == Zeros{PTO_XLEN} + 0x111;
     assert _SystemRegisters.thread_ptr == Zeros{PTO_XLEN} + 0x222;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert SelectSSRSWAPOperation() == ScalarOperation_SSRSWAP;
+    assert SSRSWAPOperation() == ScalarOperation_SSRSWAP;
     return 0;
 end;

@@ -113,7 +113,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/transcendental/TREM.asl -->
 ```asl
-readonly func SelectTREMOperation() => TileOperation
+readonly func TREMOperation() => TileOperation
 begin
     return TileOperation_TREM;
 end;
@@ -154,7 +154,7 @@ begin
         divisor);
 end;
 
-readonly func SelectTREMHandler() => TileSemanticHandler
+readonly func TREMHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;

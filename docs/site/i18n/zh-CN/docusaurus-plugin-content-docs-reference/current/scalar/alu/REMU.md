@@ -125,7 +125,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/REMU.asl -->
 ```asl
-readonly func SelectREMUOperation() => ScalarOperation
+readonly func REMUOperation() => ScalarOperation
 begin
     return ScalarOperation_REMU;
 end;
@@ -136,11 +136,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/REMU.asl -->
 ```asl
-readonly func SelectREMUHandler() => ScalarSemanticHandler
+readonly func REMUHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarRemainderUnsigned;
 end;
-pure func ComputeREMUResult(
+pure func REMUResult(
     dividend: Word,
     divisor: Word)
     => Word

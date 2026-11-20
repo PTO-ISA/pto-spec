@@ -7,11 +7,11 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectMGATHERADDHandler() => TileSemanticHandler
+readonly func MGATHERADDHandler() => TileSemanticHandler
 begin
     return TileHandler_GM_ATOM_VALUE;
 end;
-readonly func SelectMGATHERADDOperation() => TileOperation
+readonly func MGATHERADDOperation() => TileOperation
 begin
     return TileOperation_MGATHER_ADD;
 end;

@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(67) == CommandOperation_hl_qpop_48_a2c57f5bc27b;
     assert CommandHandlerOfForm(67) == CommandHandler_ExecuteQueuePop;
     assert HLQPOPEncodingMatches(CommandOperationOfForm(67));
-    assert SelectHLQPOPHandler() == CommandHandler_ExecuteQueuePop;
+    assert HLQPOPHandler() == CommandHandler_ExecuteQueuePop;
     return 0;
 end;

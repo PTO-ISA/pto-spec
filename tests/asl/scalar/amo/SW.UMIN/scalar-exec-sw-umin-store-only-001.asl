@@ -48,7 +48,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_Release;
 
-    assert SelectSWUMINAtomicOperation() == Atomic_UMIN;
+    assert SWUMINAtomicOperation() == Atomic_UMIN;
     assert SWUMINAtomicSizeBytes() == 4;
     assert !SWUMINPublishesOldValue();
 end;

@@ -48,7 +48,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_Release;
 
-    assert SelectSDANDAtomicOperation() == Atomic_AND;
+    assert SDANDAtomicOperation() == Atomic_AND;
     assert SDANDAtomicSizeBytes() == 8;
     assert !SDANDPublishesOldValue();
 end;

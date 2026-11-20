@@ -128,7 +128,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV.asl -->
 ```asl
-readonly func SelectTGEMVOperation()
+readonly func TGEMVOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV;
@@ -178,7 +178,7 @@ begin
         right_matrix);
 end;
 
-readonly func SelectTGEMVHandler()
+readonly func TGEMVHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TGEMV;

@@ -113,7 +113,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/pe-movement/GMOV.asl -->
 ```asl
-readonly func SelectGMOVOperation() => TileOperation
+readonly func GMOVOperation() => TileOperation
 begin
     return TileOperation_GMOV;
 end;
@@ -140,7 +140,7 @@ begin
     return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
 end;
 
-readonly func SelectGMOVHandler() => TileSemanticHandler
+readonly func GMOVHandler() => TileSemanticHandler
 begin
     return TileHandler_GMOV;
 end;

@@ -63,7 +63,7 @@ end;
 // BSTART type; DTYPE_NONE preserves a concrete BSTART type and still latches
 // the remaining B.DATR controls. If no concrete type can be resolved, complete
 // bundle preflight raises Fault_TileLegality before allocation or effects.
-readonly func SelectBDATRHandler() => CommandSemanticHandler
+readonly func BDATRHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleDataAttributes;
 end;

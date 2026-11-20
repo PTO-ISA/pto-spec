@@ -22,7 +22,7 @@
 // Cache behavior MUST NOT alter results, faults, source lifetime, or ordering.
 // NDF-END: PTO-TGEMV-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTGEMVOperation()
+readonly func TGEMVOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV;
@@ -52,7 +52,7 @@ begin
         right_matrix);
 end;
 
-readonly func SelectTGEMVHandler()
+readonly func TGEMVHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TGEMV;

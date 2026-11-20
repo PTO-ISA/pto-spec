@@ -25,7 +25,7 @@ begin
     assert ADDTPCImmediateIsSigned();
     assert ADDTPCPageShift() == 12;
     assert !ADDTPCWritesTPC();
-    assert ResolveADDTPCTarget(
+    assert ADDTPCTarget(
         Zeros{PTO_XLEN} + 0x100,
         Zeros{PTO_XLEN} + 1) == Zeros{PTO_XLEN} + 0x1100;
     return 0;

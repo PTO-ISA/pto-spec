@@ -10,7 +10,7 @@
 // Layout 29 selects direct Local CUBE_M32 and Layout 31 selects direct Local CUBE_M16. Omitted B.DATR and Layout=NORM retain RowMajor; all Tile operands in one operation MUST use the same layout.
 // NDF-END: PTO-TEXPANDS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTEXPANDSOperation() => TileOperation
+readonly func TEXPANDSOperation() => TileOperation
 begin
     return TileOperation_TEXPANDS;
 end;
@@ -31,7 +31,7 @@ begin
         scalar);
 end;
 
-readonly func SelectTEXPANDSHandler() => TileSemanticHandler
+readonly func TEXPANDSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileFillScalar;
 end;

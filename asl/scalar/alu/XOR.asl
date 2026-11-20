@@ -8,14 +8,14 @@
 // assigned destination or commit effect in alias-safe order.
 // NDF-END: PTO-XOR-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectXOROperation()
+readonly func XOROperation()
     => ScalarOperation
 begin
     return ScalarOperation_XOR;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectXORHandler()
+readonly func XORHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
@@ -32,26 +32,26 @@ begin
     end;
 end;
 
-pure func PrepareXORRightOperand(
+pure func XORRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
     let modifier = DecodeXORRightModifier(encoded_modifier);
-    let transformed = ApplyScalarRightModifier(right, modifier, TRUE);
+    let transformed = ModifyScalarOperand(right, modifier, TRUE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func ComputeXORResult(
+pure func XORResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = PrepareXORRightOperand(
+    let prepared_right = XORRightOperand(
         right,
         encoded_modifier,
         shift_amount);

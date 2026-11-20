@@ -16,7 +16,7 @@
 // and predicate padding MUST follow the existing ExecutionMask and writer rules.
 // NDF-END: PTO-TOR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTOROperation() => TileOperation
+readonly func TOROperation() => TileOperation
 begin
     return TileOperation_TOR;
 end;
@@ -40,7 +40,7 @@ begin
         source_right);
 end;
 
-readonly func SelectTORHandler() => TileSemanticHandler
+readonly func TORHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;

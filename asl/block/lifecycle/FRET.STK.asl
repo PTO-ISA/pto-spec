@@ -11,7 +11,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectFRETSTKHandler() => CommandSemanticHandler
+readonly func FRETSTKHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteFrameReturnStack;
 end;

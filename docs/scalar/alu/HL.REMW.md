@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-remw-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `ComputeHLREMWQuotient` and `ComputeHLREMWRemainder`, which call `ScalarDivideSignedW` and `ScalarRemainderSignedW`. Those helpers sign-extend the low words, divide, and return `SignExtend{PTO_XLEN}` of the `32`-bit result. Dispatch calls `ExecuteScalarRemainderPairW` with `signed_operation` true, which writes the remainder first and the quotient second.
+The owning ASL exposes `HLREMWQuotient` and `HLREMWRemainder`, which call `ScalarDivideSignedW` and `ScalarRemainderSignedW`. Those helpers sign-extend the low words, divide, and return `SignExtend{PTO_XLEN}` of the `32`-bit result. Dispatch calls `ExecuteScalarRemainderPairW` with `signed_operation` true, which writes the remainder first and the quotient second.
 
 ```asm
 hl.remw SrcL, SrcR, ->Dst0, Dst1
@@ -122,7 +122,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.REMW.asl -->
 ```asl
-readonly func SelectHLREMWOperation() => ScalarOperation
+readonly func HLREMWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_REMW;
 end;
@@ -133,11 +133,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.REMW.asl -->
 ```asl
-readonly func SelectHLREMWHandler() => ScalarSemanticHandler
+readonly func HLREMWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarRemainderPairW;
 end;
-pure func ComputeHLREMWQuotient(
+pure func HLREMWQuotient(
     dividend: Word,
     divisor: Word)
     => Word
@@ -147,7 +147,7 @@ begin
         divisor);
 end;
 
-pure func ComputeHLREMWRemainder(
+pure func HLREMWRemainder(
     dividend: Word,
     divisor: Word)
     => Word
@@ -162,7 +162,7 @@ pure func HLREMWDst0(
     divisor: Word)
     => Word
 begin
-    return ComputeHLREMWRemainder(
+    return HLREMWRemainder(
         dividend,
         divisor);
 end;
@@ -172,7 +172,7 @@ pure func HLREMWDst1(
     divisor: Word)
     => Word
 begin
-    return ComputeHLREMWQuotient(
+    return HLREMWQuotient(
         dividend,
         divisor);
 end;

@@ -26,7 +26,7 @@ The completed block has exactly one source domain. A Local source arrives throug
 <!-- PTO-READER-BLOCK: tile-c-tstore-mechanism role=mechanism -->
 ## Addressing and access order
 
-Each selected PE and each active valid coordinate is written at `base + row * row_stride_bytes + column * element_size` through `TileMemoryStridedByteAddress`. For the packed four-bit types the column contributes `floor(column / 2)` bytes and the low or high nibble is chosen by column parity.
+Each selected PE and each active valid coordinate is written at `base + row * row_stride_bytes + column * element_size` through `TileElementAddress`. For the packed four-bit types the column contributes `floor(column / 2)` bytes and the low or high nibble is chosen by column parity.
 
 `B.IOR.RegSrc0` supplies the per-PE GM base and `B.IOR.RegSrc1` the byte row stride. An omitted `B.IOR` gives base zero and the dense stride derived from the resolved physical `Col` and the data type, that is `ceil(columns * element_bits / 8)`; an explicitly encoded zero selector is a real stride of zero.
 
@@ -162,7 +162,7 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/regular/TSTORE.asl -->
 ```asl
-readonly func SelectTSTOREOperation() => TileOperation
+readonly func TSTOREOperation() => TileOperation
 begin
     return TileOperation_TSTORE;
 end;
@@ -190,26 +190,26 @@ begin
     return TileRegularTLSUDataTypeSupported(data_type);
 end;
 
-readonly func SelectTSTOREHandler() => TileSemanticHandler
+readonly func TSTOREHandler() => TileSemanticHandler
 begin
     return TileHandler_TSTORE;
 end;
 
-readonly func ResolveTSTOREGlobalAddress(
+readonly func TSTOREGMAddress(
     base_address: Word,
     row: integer {0..65535},
     column: integer {0..65535},
     row_stride_bytes: Word,
     data_type: TileDataType) => Word
 begin
-    return TileMemoryStridedByteAddress(
+    return TileElementAddress(
         base_address, row, column, row_stride_bytes, data_type);
 end;
 
-readonly func ComputeTSTOREDenseStride(
+readonly func TSTOREDenseStride(
     columns: integer {0..65535}, data_type: TileDataType) => Word
 begin
-    return TileDenseRowStrideBytes(columns, data_type);
+    return TileDenseRowBytes(columns, data_type);
 end;
 
 pure func TSTORESharedMaskLegal(

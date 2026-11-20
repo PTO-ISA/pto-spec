@@ -17,7 +17,7 @@ begin
     return BundleKind_System;
 end;
 
-readonly func SelectCBSTARTSYSHandler() => CommandSemanticHandler
+readonly func CBSTARTSYSHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

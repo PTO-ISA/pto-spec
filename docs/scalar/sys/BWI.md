@@ -105,7 +105,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/BWI.asl -->
 ```asl
-readonly func SelectBWIOperation()
+readonly func BWIOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BWI;
@@ -123,7 +123,7 @@ BWI executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/BWI.asl -->
 ```asl
-readonly func SelectBWIHandler()
+readonly func BWIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteControlRequest;

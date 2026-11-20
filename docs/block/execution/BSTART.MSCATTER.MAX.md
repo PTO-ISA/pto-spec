@@ -275,7 +275,7 @@ When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiG
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.MSCATTER.MAX.asl -->
 ```asl
-readonly func SelectBSTARTMSCATTERMAXHandler() => CommandSemanticHandler
+readonly func BSTARTMSCATTERMAXHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

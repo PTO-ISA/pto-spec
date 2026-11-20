@@ -9,13 +9,13 @@
 // the fresh destination is published; invalid indices reject atomically.
 // NDF-END: PTO-TPERMUTE-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTPERMUTEOperation() => TileOperation
+readonly func TPERMUTEOperation() => TileOperation
 begin
     return TileOperation_TPERMUTE;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectTPERMUTEHandler() => TileSemanticHandler
+readonly func TPERMUTEHandler() => TileSemanticHandler
 begin
     return TileHandler_TPERMUTE;
 end;

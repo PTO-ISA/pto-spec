@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000100000000010010000000000111110', 48) == 197;
     assert ScalarOperationOfForm(197) == ScalarOperation_HL_LW_PO;
     assert ScalarHandlerOfForm(197) == ScalarHandler_ExecuteScalarLoad;
-    assert SelectHLLWPOOperation() == ScalarOperation_HL_LW_PO;
-    assert SelectHLLWPOHandler() == ScalarHandler_ExecuteScalarLoad;
+    assert HLLWPOOperation() == ScalarOperation_HL_LW_PO;
+    assert HLLWPOHandler() == ScalarHandler_ExecuteScalarLoad;
     assert HLLWPOAGUAction() == ScalarAGU_Load;
     assert HLLWPOAGUAddressKind() == ScalarAGU_Register;
     assert HLLWPOAGUSizeBytes() == 4;

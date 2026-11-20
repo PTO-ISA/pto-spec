@@ -131,7 +131,7 @@ SYS has no candidate transfer: BPCN, TYPE, and TAKEN are inapplicable and cannot
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.SYS.asl -->
 ```asl
-readonly func SelectBSTARTSYSHandler() => CommandSemanticHandler
+readonly func BSTARTSYSHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

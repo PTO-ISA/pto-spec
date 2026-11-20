@@ -30,13 +30,13 @@ This page is a generated reference view of the normative ASL unit.
 
 这些辅助函数解释该原始值：
 
-- `ScalarDecodedSelector` 保留 5 位作为 `Reg5Selector`。
+- `DecodeReg5` 保留 5 位作为 `Reg5Selector`。
 - `ScalarDecodedWord` 对目录有符号性为 `Signed` 的字段做符号扩展，对其他所有字段做零扩展。
 - `ScalarDecodedUInt6`、`ScalarDecodedUInt7` 以及 `ScalarDecodedBits*` 辅助函数保留固定的低位片。
 - `ScalarDecodedBitfieldWidth` 对 6 位 `imml` 加 1，因此宽度为 1 到 64。
 - `ScalarDecodedMemoryOrder` 把 `aq` 和 `rl` 位映射为宽松、获取、释放或获取-释放。
 
-这些辅助函数是纯函数或只读函数。`ReadDecodedScalarRegister` 通过 `ReadScalarRegisterOperand` 读取 GPR 或 T/U 队列条目，`ScalarDecodedAtomicAddress` 通过 `ReadDecodedScalarRegister` 读取其地址寄存器；其他辅助函数不读取状态。
+这些辅助函数是纯函数或只读函数。`ReadDecodedReg5` 通过 `ReadReg5` 读取 GPR 或 T/U 队列条目，`ScalarDecodedAtomicAddress` 通过 `ReadDecodedReg5` 读取其地址寄存器；其他辅助函数不读取状态。
 
 <!-- PTO-READER-BLOCK: scalar-model-dispatch-decode-rules role=rules-interactions -->
 ## 规则与交互
@@ -52,7 +52,7 @@ This page is a generated reference view of the normative ASL unit.
 
 设计要点：二元 ALU 表把“无修饰符”放在 `11`。ADD 契约说明，省略的汇编后缀编码为 `11`，因此该字段的编码零选择 `.sw`，而不是“不变”。
 
-NDF 条款 PTO-REQ-AGU-SRCRTYPE-001 规定寄存器偏移 AGU 形式的原始 `11` 为保留值，必须在读取任何源之前拒绝。译码器通过目录约束满足这一点：每个此类形式都把 `SrcRType` 限定为 0、1 或 2 之一，`ScalarFormOperandsLegal` 会在 AGU 处理函数运行之前拒绝该字。这就是 `DecodeScalarAddressRightModifier` 能把 `11` 标记为 `unreachable` 的原因。
+NDF 条款 PTO-REQ-AGU-SRCRTYPE-001 规定寄存器偏移 AGU 形式的原始 `11` 为保留值，必须在读取任何源之前拒绝。译码器通过目录约束满足这一点：每个此类形式都把 `SrcRType` 限定为 0、1 或 2 之一，`ScalarFormOperandsLegal` 会在 AGU 处理函数运行之前拒绝该字。这就是 `DecodeAddressModifier` 能把 `11` 标记为 `unreachable` 的原因。
 
 设计要点：目录约束的保留值由合法性检查拒绝，而不是由取值辅助函数拒绝。因此取值辅助函数可以把这些值标记为 `unreachable`，这样的字会在任何族处理函数读取源或写入结果之前被拒绝。
 
@@ -120,7 +120,7 @@ begin
            handler == ScalarHandler_ArchitectureEnterRequest;
 end;
 
-pure func ScalarDecodedSelector(instruction: bits(48),
+pure func DecodeReg5(instruction: bits(48),
                                 form: integer {0..PTO_SCALAR_FORM_COUNT-1},
                                 field: ScalarOperandField) => Reg5Selector
 begin
@@ -207,7 +207,7 @@ readonly func ScalarDecodedAtomicAddress(
     instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1},
     field: ScalarOperandField) => Word
 begin
-    let address = ReadDecodedScalarRegister(instruction, form, field);
+    let address = ReadDecodedReg5(instruction, form, field);
     let far = ScalarDecodedBoolean(instruction, form, ScalarField_far);
     return AtomicAddress(address, far);
 end;
@@ -240,7 +240,7 @@ begin
     return UInt(DecodeScalarOperandRaw(instruction, form, ScalarField_imml)[5:0]) + 1;
 end;
 
-pure func DecodeScalarBinaryRightModifier(raw: bits(2))
+pure func DecodeBinaryModifier(raw: bits(2))
                                            => ScalarRightModifier
 begin
     case raw of
@@ -251,7 +251,7 @@ begin
     end;
 end;
 
-pure func DecodeScalarComparisonRightModifier(raw: bits(2))
+pure func DecodeCompareModifier(raw: bits(2))
                                                => ScalarRightModifier
 begin
     case raw of
@@ -262,7 +262,7 @@ begin
     end;
 end;
 
-pure func DecodeScalarSelectRightModifier(raw: bits(2))
+pure func DecodeSelectModifier(raw: bits(2))
                                           => ScalarRightModifier
 begin
     if raw == '11' then
@@ -272,7 +272,7 @@ begin
     end;
 end;
 
-pure func DecodeScalarAddressRightModifier(raw: bits(2))
+pure func DecodeAddressModifier(raw: bits(2))
                                            => ScalarRightModifier
 begin
     case raw of
@@ -291,7 +291,7 @@ begin
         instruction,
         form,
         ScalarField_SrcRType)[1:0];
-    return DecodeScalarBinaryRightModifier(raw);
+    return DecodeBinaryModifier(raw);
 end;
 
 pure func ScalarDecodedComparisonRightModifier(
@@ -302,7 +302,7 @@ begin
         instruction,
         form,
         ScalarField_SrcRType)[1:0];
-    return DecodeScalarComparisonRightModifier(raw);
+    return DecodeCompareModifier(raw);
 end;
 
 pure func ScalarDecodedSelectRightModifier(
@@ -313,7 +313,7 @@ begin
         instruction,
         form,
         ScalarField_SrcRType)[1:0];
-    return DecodeScalarSelectRightModifier(raw);
+    return DecodeSelectModifier(raw);
 end;
 
 pure func ScalarDecodedAddressRightModifier(
@@ -324,14 +324,14 @@ begin
         instruction,
         form,
         ScalarField_SrcRType)[1:0];
-    return DecodeScalarAddressRightModifier(raw);
+    return DecodeAddressModifier(raw);
 end;
 
-readonly func ReadDecodedScalarRegister(instruction: bits(48),
+readonly func ReadDecodedReg5(instruction: bits(48),
                                         form: integer {0..PTO_SCALAR_FORM_COUNT-1},
                                         field: ScalarOperandField) => Word
 begin
-    return ReadScalarRegisterOperand(ScalarDecodedSelector(instruction, form, field));
+    return ReadReg5(DecodeReg5(instruction, form, field));
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

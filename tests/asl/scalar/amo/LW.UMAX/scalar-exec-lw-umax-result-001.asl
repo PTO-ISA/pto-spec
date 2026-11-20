@@ -42,7 +42,7 @@ begin
     assert _MemoryEvents[[0]].write_value == expected;
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
-    assert SelectLWUMAXAtomicOperation() == Atomic_UMAX;
+    assert LWUMAXAtomicOperation() == Atomic_UMAX;
     assert LWUMAXAtomicSizeBytes() == 4;
     assert LWUMAXPublishesOldValue();
     assert LWUMAXSignExtendsOldValue();

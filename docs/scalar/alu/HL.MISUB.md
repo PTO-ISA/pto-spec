@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-misub-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `ComputeHLMISUBResult`, which returns `ScalarMultiplyImmediateAdd(left, right, immediate, TRUE)`. With the subtract flag set, the helper computes `MultiplyWord(right, ZeroExtend{PTO_XLEN}(immediate))` first and then returns `left - product`. Dispatch shares the `ScalarOperation_HL_MIADD, ScalarOperation_HL_MISUB` alternative and passes `operation == ScalarOperation_HL_MISUB` as that flag.
+The owning ASL exposes `HLMISUBResult`, which returns `ScalarMultiplyImmediateAdd(left, right, immediate, TRUE)`. With the subtract flag set, the helper computes `MultiplyWord(right, ZeroExtend{PTO_XLEN}(immediate))` first and then returns `left - product`. Dispatch shares the `ScalarOperation_HL_MIADD, ScalarOperation_HL_MISUB` alternative and passes `operation == ScalarOperation_HL_MISUB` as that flag.
 
 ```asm
 hl.misub SrcL, SrcR, uimm, ->{t, u, Rd}
@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.MISUB.asl -->
 ```asl
-readonly func SelectHLMISUBOperation() => ScalarOperation
+readonly func HLMISUBOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_MISUB;
 end;
@@ -131,11 +131,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.MISUB.asl -->
 ```asl
-readonly func SelectHLMISUBHandler() => ScalarSemanticHandler
+readonly func HLMISUBHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarMultiplyImmediateAdd;
 end;
-pure func ComputeHLMISUBResult(
+pure func HLMISUBResult(
     left: Word,
     right: Word,
     immediate: bits(19))

@@ -133,7 +133,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/BSTART.asl -->
 ```asl
-readonly func SelectBSTARTHandler() => CommandSemanticHandler
+readonly func BSTARTHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-ccat-mechanism role=mechanism -->
 ## 结果形成方式
 
-`ComputeHLCCATLowResult` 返回位 `63:0`，`ComputeHLCCATHighResult` 返回位 `127:64`（`asl/scalar/alu/HL.CCAT.asl:26-55`）。
+`HLCCATLowResult` 返回位 `63:0`，`HLCCATHighResult` 返回位 `127:64`（`asl/scalar/alu/HL.CCAT.asl:26-55`）。
 
 - 当 `shamt=0` 时，低部结果是 `SrcR`，高部结果是 `SrcL`。
 - 当 `shamt` 取 `1..63` 时，低部结果是 `LSR(SrcR, shamt) OR LSL(SrcL, 64 - shamt)`，高部结果是 `LSR(SrcL, shamt)`。
@@ -130,7 +130,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.CCAT.asl -->
 ```asl
-readonly func SelectHLCCATOperation() => ScalarOperation
+readonly func HLCCATOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_CCAT;
 end;
@@ -141,12 +141,12 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.CCAT.asl -->
 ```asl
-readonly func SelectHLCCATHandler() => ScalarSemanticHandler
+readonly func HLCCATHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteConcatenatePair;
 end;
 
-pure func ComputeHLCCATLowResult(
+pure func HLCCATLowResult(
     left: Word,
     right: Word,
     shift_amount: integer {0..127})
@@ -162,7 +162,7 @@ begin
     end;
 end;
 
-pure func ComputeHLCCATHighResult(
+pure func HLCCATHighResult(
     left: Word,
     right: Word,
     shift_amount: integer {0..127})

@@ -48,7 +48,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_Release;
 
-    assert SelectSDSUBAtomicOperation() == Atomic_SUB;
+    assert SDSUBAtomicOperation() == Atomic_SUB;
     assert SDSUBAtomicSizeBytes() == 8;
     assert !SDSUBPublishesOldValue();
 end;

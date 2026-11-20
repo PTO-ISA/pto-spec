@@ -118,7 +118,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FCVTZ.asl -->
 ```asl
-readonly func SelectFCVTZOperation()
+readonly func FCVTZOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FCVTZ;
@@ -130,7 +130,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FCVTZ.asl -->
 ```asl
-readonly func SelectFCVTZHandler()
+readonly func FCVTZHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ConvertFloatingEncoding;

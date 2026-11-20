@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(16) == TileHandler_ExecuteTileUnary;
     assert TileClassOfIndex(16) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(16) == TileEngine_SFU;
-    assert SelectTEXPOperation() == TileOperation_TEXP;
-    assert SelectTEXPHandler() == TileHandler_ExecuteTileUnary;
+    assert TEXPOperation() == TileOperation_TEXP;
+    assert TEXPHandler() == TileHandler_ExecuteTileUnary;
     return 0;
 end;

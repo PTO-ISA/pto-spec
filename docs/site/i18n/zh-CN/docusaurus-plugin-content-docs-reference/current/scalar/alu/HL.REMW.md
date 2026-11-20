@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-remw-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `ComputeHLREMWQuotient` 与 `ComputeHLREMWRemainder`，它们分别调用 `ScalarDivideSignedW` 与 `ScalarRemainderSignedW`。这些辅助函数对低字做符号扩展、执行除法，并返回 `32` 位结果的 `SignExtend{PTO_XLEN}`。分派路径以 `signed_operation` 为真调用 `ExecuteScalarRemainderPairW`，它先写余数、后写商。
+所属 ASL 提供 `HLREMWQuotient` 与 `HLREMWRemainder`，它们分别调用 `ScalarDivideSignedW` 与 `ScalarRemainderSignedW`。这些辅助函数对低字做符号扩展、执行除法，并返回 `32` 位结果的 `SignExtend{PTO_XLEN}`。分派路径以 `signed_operation` 为真调用 `ExecuteScalarRemainderPairW`，它先写余数、后写商。
 
 ```asm
 hl.remw SrcL, SrcR, ->Dst0, Dst1
@@ -122,7 +122,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.REMW.asl -->
 ```asl
-readonly func SelectHLREMWOperation() => ScalarOperation
+readonly func HLREMWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_REMW;
 end;
@@ -133,11 +133,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.REMW.asl -->
 ```asl
-readonly func SelectHLREMWHandler() => ScalarSemanticHandler
+readonly func HLREMWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarRemainderPairW;
 end;
-pure func ComputeHLREMWQuotient(
+pure func HLREMWQuotient(
     dividend: Word,
     divisor: Word)
     => Word
@@ -147,7 +147,7 @@ begin
         divisor);
 end;
 
-pure func ComputeHLREMWRemainder(
+pure func HLREMWRemainder(
     dividend: Word,
     divisor: Word)
     => Word
@@ -162,7 +162,7 @@ pure func HLREMWDst0(
     divisor: Word)
     => Word
 begin
-    return ComputeHLREMWRemainder(
+    return HLREMWRemainder(
         dividend,
         divisor);
 end;
@@ -172,7 +172,7 @@ pure func HLREMWDst1(
     divisor: Word)
     => Word
 begin
-    return ComputeHLREMWQuotient(
+    return HLREMWQuotient(
         dividend,
         divisor);
 end;

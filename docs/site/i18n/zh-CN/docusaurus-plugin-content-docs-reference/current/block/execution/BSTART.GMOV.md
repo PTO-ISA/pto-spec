@@ -184,7 +184,7 @@ B.IOS and B.DIM are not members of a GMOV schema.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.GMOV.asl -->
 ```asl
-readonly func SelectBSTARTGMOVHandler() => CommandSemanticHandler
+readonly func BSTARTGMOVHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

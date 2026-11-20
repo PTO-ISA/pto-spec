@@ -15,7 +15,7 @@ begin
     assert execution == ScalarExecution_Executed;
     assert ReadGPR(3) == Zeros{PTO_XLEN} - 2;
     assert ReadGPR(4) == Ones{PTO_XLEN};
-    assert ComputeHLDIVWQuotient(dividend, divisor) == Zeros{PTO_XLEN} - 2;
-    assert ComputeHLDIVWRemainder(dividend, divisor) == Ones{PTO_XLEN};
+    assert HLDIVWQuotient(dividend, divisor) == Zeros{PTO_XLEN} - 2;
+    assert HLDIVWRemainder(dividend, divisor) == Ones{PTO_XLEN};
     return 0;
 end;

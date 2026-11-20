@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000000000000000110', 16) == 32;
     assert ScalarOperationOfForm(32) == ScalarOperation_C_MOVR;
     assert ScalarHandlerOfForm(32) == ScalarHandler_MoveScalarValue;
-    assert SelectCMOVROperation() == ScalarOperation_C_MOVR;
-    assert SelectCMOVRHandler() == ScalarHandler_MoveScalarValue;
+    assert CMOVROperation() == ScalarOperation_C_MOVR;
+    assert CMOVRHandler() == ScalarHandler_MoveScalarValue;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000000110', 32, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000000110', 32, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     return 0;

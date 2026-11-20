@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(84) == CommandOperation_bstart_mgather_xor_32_gm18;
     assert CommandHandlerOfForm(84) == CommandHandler_ExecuteBundleStart;
     assert BSTARTMGATHERXOREncodingMatches(CommandOperationOfForm(84));
-    assert SelectBSTARTMGATHERXORHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTMGATHERXORHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

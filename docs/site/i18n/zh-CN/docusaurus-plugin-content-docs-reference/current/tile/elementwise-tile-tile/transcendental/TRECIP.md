@@ -128,7 +128,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/transcendental/TRECIP.asl -->
 ```asl
-readonly func SelectTRECIPOperation() => TileOperation
+readonly func TRECIPOperation() => TileOperation
 begin
     return TileOperation_TRECIP;
 end;
@@ -169,7 +169,7 @@ begin
         source);
 end;
 
-readonly func SelectTRECIPHandler() => TileSemanticHandler
+readonly func TRECIPHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;

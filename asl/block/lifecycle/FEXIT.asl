@@ -11,7 +11,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectFEXITHandler() => CommandSemanticHandler
+readonly func FEXITHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteFrameExit;
 end;

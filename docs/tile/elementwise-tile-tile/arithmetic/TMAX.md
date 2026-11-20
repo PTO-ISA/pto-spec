@@ -114,7 +114,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/arithmetic/TMAX.asl -->
 ```asl
-readonly func SelectTMAXOperation() => TileOperation
+readonly func TMAXOperation() => TileOperation
 begin
     return TileOperation_TMAX;
 end;
@@ -155,7 +155,7 @@ begin
         source_right);
 end;
 
-pure func ComputeTMAXFloatingValue(
+pure func TMAXFloatingValue(
     data_type: TileDataType,
     source_left: Word,
     source_right: Word) => (Word, boolean)
@@ -169,7 +169,7 @@ begin
         source_right);
 end;
 
-readonly func SelectTMAXHandler() => TileSemanticHandler
+readonly func TMAXHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;

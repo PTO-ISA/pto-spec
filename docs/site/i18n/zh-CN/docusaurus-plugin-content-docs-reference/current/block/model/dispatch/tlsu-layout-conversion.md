@@ -282,11 +282,11 @@ begin
     let valid_rows = UInt(_BundleDimensions[[1]])
         as integer {1..65535};
     let base_address = if _BundleScalarBindings[[0]].valid then
-        ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source0)
+        ReadReg5(_BundleScalarBindings[[0]].source0)
         else Zeros{PTO_XLEN};
     let row_stride_bytes = if _BundleScalarBindings[[0]].valid then
-        ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
-        else TileDenseRowStrideBytes(valid_columns, data_type);
+        ReadReg5(_BundleScalarBindings[[0]].source1)
+        else TileDenseRowBytes(valid_columns, data_type);
     if function == 0 then
         if !ResolveBundleCubeTransportDestination(
                valid_rows, valid_columns, data_type, layout) then

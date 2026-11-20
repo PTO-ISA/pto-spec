@@ -45,7 +45,7 @@ Design point: base defaulting and stride defaulting are different operations. An
 
 The clause states that selected PE accesses are preflighted before any effect and that the architecture defines no order among them. This file contains neither the preflight nor the ordering: the transfer bodies probe each element and record or perform it only after the probe passes, and the clause is what makes the missing cross-PE order a defined property rather than an omission. A program that lets two participating PEs touch the same GM bytes therefore has no guaranteed result and must avoid the conflict.
 
-The byte-address formula is also not computed here. `TileMemoryStridedByteAddress` in `asl/tile/model/memory/stride.asl` forms `row_base` as `base_address + row * row_stride_bytes`, then adds `column DIVRM 2` for four-bit data and `column * TileElementBytes(data_type)` otherwise; `TileMemoryStridedByteHighNibble` is the `column MOD 2 == 1` test. `SharedStorePEMaskLegal` is called for example from `asl/tile/memory-and-data-movement/regular/TSTORE.asl` and from `asl/block/model/dispatch/shared-tlsu.asl`.
+The byte-address formula is also not computed here. `TileElementAddress` in `asl/tile/model/memory/stride.asl` forms `row_base` as `base_address + row * row_stride_bytes`, then adds `column DIVRM 2` for four-bit data and `column * TileElementBytes(data_type)` otherwise; `TileMemoryStridedByteHighNibble` is the `column MOD 2 == 1` test. `SharedStorePEMaskLegal` is called for example from `asl/tile/memory-and-data-movement/regular/TSTORE.asl` and from `asl/block/model/dispatch/shared-tlsu.asl`.
 
 <!-- PTO-READER-BLOCK: arch-gm-access-example role=example-usage -->
 ## Non-normative mask example

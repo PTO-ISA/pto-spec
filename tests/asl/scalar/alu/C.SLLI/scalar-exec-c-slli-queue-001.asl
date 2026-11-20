@@ -13,7 +13,7 @@ begin
     assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 0x0000000000000002;
     assert ReadTemporaryQueue(TRUE, 1) == Zeros{PTO_XLEN} + 0x8000000000000001;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x102;
-    assert ComputeCSLLIResult(
+    assert CSLLIResult(
         Zeros{PTO_XLEN} + 0x8000000000000001,
         Zeros{5} + 1) == Zeros{PTO_XLEN} + 0x0000000000000002;
     return 0;

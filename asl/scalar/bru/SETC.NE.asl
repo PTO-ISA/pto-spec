@@ -8,18 +8,18 @@
 // BARG.TAKEN. A rejected occurrence MUST NOT consume the shared marker.
 // NDF-END: PTO-SETC-NE-CONDITIONAL-SETTER-001
 // DOC-BEGIN: decode
-readonly func SelectSETCNEOperation() => ScalarOperation
+readonly func SETCNEOperation() => ScalarOperation
 begin
     return ScalarOperation_SETC_NE;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSETCNEHandler() => ScalarSemanticHandler
+readonly func SETCNEHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommit;
 end;
 
-pure func DecodeSETCNECondition()
+pure func SETCNECondition()
     => ScalarCondition
 begin
     return ScalarCondition_NE;
@@ -31,7 +31,7 @@ pure func CommitSETCNEResult(
     => boolean
 begin
     return ConditionHolds(
-        DecodeSETCNECondition(),
+        SETCNECondition(),
         left,
         right);
 end;

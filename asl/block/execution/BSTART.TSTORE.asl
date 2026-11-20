@@ -25,7 +25,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBSTARTTSTOREHandler() => CommandSemanticHandler
+readonly func BSTARTTSTOREHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

@@ -9,14 +9,14 @@
 // then consume and restore the complete saved context atomically.
 // NDF-END: PTO-ACRE-IMPLICIT-STOP-001
 // DOC-BEGIN: decode
-readonly func SelectACREOperation()
+readonly func ACREOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ACRE;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectACREHandler()
+readonly func ACREHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ArchitectureEnterRequest;

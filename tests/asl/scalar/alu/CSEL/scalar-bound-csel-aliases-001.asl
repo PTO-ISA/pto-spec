@@ -7,17 +7,17 @@ begin
     PushTemporaryQueue(TRUE, Zeros{PTO_XLEN} + 1);
     PushTemporaryQueue(FALSE, Zeros{PTO_XLEN} + 0x55);
 
-    assert ComputeCSELResult(
+    assert CSELResult(
         Zeros{PTO_XLEN},
         Zeros{PTO_XLEN} + 0xaa,
         Zeros{PTO_XLEN} + 0x55,
         '00') == Zeros{PTO_XLEN} + 0x55;
-    assert ComputeCSELResult(
+    assert CSELResult(
         Zeros{PTO_XLEN},
         Zeros{PTO_XLEN} + 0xaa,
         Zeros{PTO_XLEN} + 0x55,
         '01') == Zeros{PTO_XLEN} + 0x55;
-    assert ComputeCSELResult(
+    assert CSELResult(
         Zeros{PTO_XLEN},
         Zeros{PTO_XLEN} + 0xaa,
         Zeros{PTO_XLEN} + 0x55,

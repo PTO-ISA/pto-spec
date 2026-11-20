@@ -20,7 +20,7 @@
 // numeric status.
 // NDF-END: PTO-TCMPS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTCMPSOperation() => TileOperation
+readonly func TCMPSOperation() => TileOperation
 begin
     return TileOperation_TCMPS;
 end;
@@ -51,7 +51,7 @@ begin
         comparison);
 end;
 
-readonly func SelectTCMPSHandler() => TileSemanticHandler
+readonly func TCMPSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileCompareScalar;
 end;

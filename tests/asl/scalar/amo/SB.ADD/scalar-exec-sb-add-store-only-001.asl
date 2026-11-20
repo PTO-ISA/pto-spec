@@ -50,7 +50,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_Release;
 
-    assert SelectSBADDAtomicOperation() == Atomic_ADD;
+    assert SBADDAtomicOperation() == Atomic_ADD;
     assert SBADDAtomicSizeBytes() == 1;
     assert !SBADDPublishesOldValue();
 end;

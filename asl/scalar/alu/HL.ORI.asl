@@ -12,13 +12,13 @@
 // memory, Tile, block, reservation, privilege, numeric-status, or fault state.
 // NDF-END: PTO-HL-ORI-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectHLORIOperation() => ScalarOperation
+readonly func HLORIOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_ORI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLORIHandler() => ScalarSemanticHandler
+readonly func HLORIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
@@ -41,7 +41,7 @@ begin
     return FALSE;
 end;
 
-pure func ComputeHLORIResult(
+pure func HLORIResult(
     left: Word,
     immediate: bits(24))
     => Word

@@ -16,7 +16,7 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 0x0000000000000001;
     assert ReadTemporaryQueue(FALSE, 0) == Zeros{PTO_XLEN} + 0xffffffff80000001;
-    assert ComputeADDWResult(
+    assert ADDWResult(
         Zeros{PTO_XLEN} + 0x0000000000000001,
         Zeros{PTO_XLEN} + 1,
         '11',

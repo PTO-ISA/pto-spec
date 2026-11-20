@@ -15,7 +15,7 @@ begin
     assert execution == ScalarExecution_Executed;
     assert ReadGPR(3) == Zeros{PTO_XLEN} + 2;
     assert ReadGPR(4) == Zeros{PTO_XLEN} + 1;
-    assert ComputeHLDIVUQuotient(dividend, divisor) == Zeros{PTO_XLEN} + 2;
-    assert ComputeHLDIVURemainder(dividend, divisor) == Zeros{PTO_XLEN} + 1;
+    assert HLDIVUQuotient(dividend, divisor) == Zeros{PTO_XLEN} + 2;
+    assert HLDIVURemainder(dividend, divisor) == Zeros{PTO_XLEN} + 1;
     return 0;
 end;

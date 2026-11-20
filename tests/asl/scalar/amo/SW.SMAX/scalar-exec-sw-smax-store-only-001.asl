@@ -48,7 +48,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_Release;
 
-    assert SelectSWSMAXAtomicOperation() == Atomic_SMAX;
+    assert SWSMAXAtomicOperation() == Atomic_SMAX;
     assert SWSMAXAtomicSizeBytes() == 4;
     assert !SWSMAXPublishesOldValue();
 end;

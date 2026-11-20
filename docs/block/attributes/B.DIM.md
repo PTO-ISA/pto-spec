@@ -168,7 +168,7 @@ begin
     end;
 end;
 
-readonly func SelectBDIMHandler() => CommandSemanticHandler
+readonly func BDIMHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleDimension;
 end;

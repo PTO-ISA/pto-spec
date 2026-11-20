@@ -99,7 +99,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TNOT.asl -->
 ```asl
-readonly func SelectTNOTOperation() => TileOperation
+readonly func TNOTOperation() => TileOperation
 begin
     return TileOperation_TNOT;
 end;
@@ -138,7 +138,7 @@ begin
         source);
 end;
 
-pure func ComputeTNOTValue(
+pure func TNOTValue(
     data_type: TileDataType,
     source: Word) => Word
 begin
@@ -149,7 +149,7 @@ begin
     return result;
 end;
 
-readonly func SelectTNOTHandler() => TileSemanticHandler
+readonly func TNOTHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;

@@ -8,18 +8,18 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-HL-LIS-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectHLLISOperation() => ScalarOperation
+readonly func HLLISOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_LIS;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLLISHandler() => ScalarSemanticHandler
+readonly func HLLISHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_MaterializeLongSigned;
 end;
 
-pure func ComputeHLLISResult(
+pure func HLLISResult(
     encoded_immediate: bits(32))
     => Word
 begin

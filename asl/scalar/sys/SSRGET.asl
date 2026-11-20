@@ -8,14 +8,14 @@
 // on rejection except for the ordinary instruction-attempt trap envelope.
 // NDF-END: PTO-SSRGET-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectSSRGETOperation()
+readonly func SSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SSRGET;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSSRGETHandler()
+readonly func SSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterGet;

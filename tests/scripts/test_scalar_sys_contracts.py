@@ -116,7 +116,7 @@ class ScalarSysContractTest(unittest.TestCase):
         setter = registers[start:end]
 
         preflight = setter.index("SystemRegisterWritePermitted")
-        source_read = setter.index("ReadScalarRegisterOperand")
+        source_read = setter.index("ReadReg5")
         self.assertLess(preflight, source_read)
 
     def test_register_swap_preflights_before_source_read(self) -> None:
@@ -127,7 +127,7 @@ class ScalarSysContractTest(unittest.TestCase):
         swap = registers[start:]
 
         preflight = swap.index("SystemRegisterSwapPermitted")
-        source_read = swap.index("ReadScalarRegisterOperand")
+        source_read = swap.index("ReadReg5")
         self.assertLess(preflight, source_read)
 
     def test_scalar_placement_precedes_operand_legality(self) -> None:

@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-tlb-iv-mechanism role=mechanism -->
 ## System mechanism
 
-`SelectTLBIVHandler` selects the shared maintenance handler (`asl/scalar/sys/TLB.IV.asl:18`), and `TLBIVMaintenanceRequiresRootRing` returning `TRUE` (`asl/scalar/sys/TLB.IV.asl:42`) is what puts this operation in the executor's ring-restricted group (`asl/scalar/model/sys/semantics.asl:121`). The dispatcher reads `SrcL` for this form because `TLBIVMaintenanceUsesOperand` is `TRUE` (`asl/scalar/model/dispatch/sys.asl:50`).
+`TLBIVHandler` selects the shared maintenance handler (`asl/scalar/sys/TLB.IV.asl:18`), and `TLBIVMaintenanceRequiresRootRing` returning `TRUE` (`asl/scalar/sys/TLB.IV.asl:42`) is what puts this operation in the executor's ring-restricted group (`asl/scalar/model/sys/semantics.asl:121`). The dispatcher reads `SrcL` for this form because `TLBIVMaintenanceUsesOperand` is `TRUE` (`asl/scalar/model/dispatch/sys.asl:50`).
 
 Order inside the executor is privilege first, operand second: the ring check runs before the canonical-address test, and each failure has its own fault class (`asl/scalar/model/sys/semantics.asl:129`).
 
@@ -102,7 +102,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/TLB.IV.asl -->
 ```asl
-readonly func SelectTLBIVOperation()
+readonly func TLBIVOperation()
     => ScalarOperation
 begin
     return ScalarOperation_TLB_IV;
@@ -120,7 +120,7 @@ TLB.IV executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/TLB.IV.asl -->
 ```asl
-readonly func SelectTLBIVHandler()
+readonly func TLBIVHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
@@ -132,7 +132,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectTLBIVMaintenanceOperation()
+pure func TLBIVMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_TLB_IV;

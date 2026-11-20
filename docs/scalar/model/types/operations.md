@@ -40,7 +40,7 @@ None of these types holds state. They are names that decode and dispatch pass to
 <!-- PTO-READER-BLOCK: scalar-model-types-operations-rules role=rules-interactions -->
 ## Rules and interactions
 
-`ScalarRight_NegateOrNot` is one value with two meanings. `ApplyScalarRightModifier` treats it as bitwise NOT for the logical family and as negation otherwise.
+`ScalarRight_NegateOrNot` is one value with two meanings. `ModifyScalarOperand` treats it as bitwise NOT for the logical family and as negation otherwise.
 
 Design point: the binary decode returns the same value for NOT and negation. ALU dispatch passes `logical_family`, so the operation decides the concrete transform. This matches the assembly suffixes: `.not` for AND, OR, and XOR, and `.neg` for ADD and SUB.
 

@@ -26,7 +26,7 @@ The published word is one of the two operand bit patterns, not a newly computed 
 <!-- PTO-READER-BLOCK: scalar-max-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `ComputeMAXResult`, which returns `left` when `SInt(left) > SInt(right)` and `right` otherwise, and `MAXUsesSignedComparison`, which returns true. Dispatch reaches the same helper through `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MAX, FALSE)`, which reads `SrcL` and `SrcR` and writes the selected operand.
+The owning ASL exposes `MAXResult`, which returns `left` when `SInt(left) > SInt(right)` and `right` otherwise, and `MAXUsesSignedComparison`, which returns true. Dispatch reaches the same helper through `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MAX, FALSE)`, which reads `SrcL` and `SrcR` and writes the selected operand.
 
 ```asm
 max SrcL, SrcR, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MAX.asl -->
 ```asl
-readonly func SelectMAXOperation()
+readonly func MAXOperation()
     => ScalarOperation
 begin
     return ScalarOperation_MAX;
@@ -128,13 +128,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MAX.asl -->
 ```asl
-readonly func SelectMAXHandler()
+readonly func MAXHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func ComputeMAXResult(left: Word, right: Word)
+pure func MAXResult(left: Word, right: Word)
     => Word
 begin
     if SInt(left) > SInt(right) then

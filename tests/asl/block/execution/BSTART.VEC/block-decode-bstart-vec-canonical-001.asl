@@ -6,7 +6,7 @@ begin
     assert CommandOperationOfForm(33) == CommandOperation_bstart_tepl_32_d022db6dacb3;
     assert CommandHandlerOfForm(33) == CommandHandler_ExecuteBundleStart;
     assert BSTARTVECEncodingMatches(CommandOperationOfForm(33));
-    assert SelectBSTARTVECHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTVECHandler() == CommandHandler_ExecuteBundleStart;
     assert BSTARTVECAliasEngine() == TileEngine_VEC;
     return 0;
 end;

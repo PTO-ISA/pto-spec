@@ -13,7 +13,7 @@ begin
     let status = ExecuteScalarInstruction(instruction, 48);
     assert status == ScalarExecution_Executed;
     assert ReadGPR(3) == Zeros{PTO_XLEN} + 0x8000000000000001;
-    assert ComputeHLBFIResult(
+    assert HLBFIResult(
         Zeros{PTO_XLEN},
         Zeros{PTO_XLEN} + 3,
         63,

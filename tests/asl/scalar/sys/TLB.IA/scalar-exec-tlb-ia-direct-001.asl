@@ -17,6 +17,6 @@ begin
     assert _LastMaintenanceOperation == Maintenance_TLB_IA;
     assert _LastMaintenanceOperand == Zeros{PTO_XLEN} + 0x1234;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert SelectTLBIAOperation() == ScalarOperation_TLB_IA;
+    assert TLBIAOperation() == ScalarOperation_TLB_IA;
     return 0;
 end;

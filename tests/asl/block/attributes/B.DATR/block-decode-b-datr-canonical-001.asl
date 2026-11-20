@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(1) == CommandOperation_b_datr_32_c161a042ff38;
     assert CommandHandlerOfForm(1) == CommandHandler_SetBundleDataAttributes;
     assert BDATREncodingMatches(CommandOperationOfForm(1));
-    assert SelectBDATRHandler() == CommandHandler_SetBundleDataAttributes;
+    assert BDATRHandler() == CommandHandler_SetBundleDataAttributes;
     return 0;
 end;

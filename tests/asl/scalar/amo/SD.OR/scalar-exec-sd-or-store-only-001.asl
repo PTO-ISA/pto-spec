@@ -48,7 +48,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_Release;
 
-    assert SelectSDORAtomicOperation() == Atomic_OR;
+    assert SDORAtomicOperation() == Atomic_OR;
     assert SDORAtomicSizeBytes() == 8;
     assert !SDORPublishesOldValue();
 end;

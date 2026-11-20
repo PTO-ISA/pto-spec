@@ -48,7 +48,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_Release;
 
-    assert SelectSDSMINAtomicOperation() == Atomic_SMIN;
+    assert SDSMINAtomicOperation() == Atomic_SMIN;
     assert SDSMINAtomicSizeBytes() == 8;
     assert !SDSMINPublishesOldValue();
 end;

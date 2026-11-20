@@ -12,7 +12,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLQPOPHandler() => CommandSemanticHandler
+readonly func HLQPOPHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteQueuePop;
 end;

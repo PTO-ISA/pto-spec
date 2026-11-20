@@ -43,7 +43,7 @@ The unit fills the record in these steps.
 
 Design point: the ASL comment says optional scalar fields pack densely into `RegSrc0` to `RegSrc2` in one architectural order. An operation with only `scalar0` reads it from slot 0, and an operation with `address` and `scalar0` reads them from slots 0 and 1. No slot is left empty for an absent field.
 
-Design point: when no scalar binding is present, `TLOAD` and `TSTORE` still get a row stride. It is the dense byte pitch from `TileDenseRowStrideBytes`, using the resolved physical columns and the operation data type. Omitting the binding therefore means "packed rows", not stride zero. For other operations that have an `address`, an omitted `scalar0` takes dimension 2.
+Design point: when no scalar binding is present, `TLOAD` and `TSTORE` still get a row stride. It is the dense byte pitch from `TileDenseRowBytes`, using the resolved physical columns and the operation data type. Omitting the binding therefore means "packed rows", not stride zero. For other operations that have an `address`, an omitted `scalar0` takes dimension 2.
 
 Design point: range checks for raw register values happen earlier, during bundle commit preflight. The ASL comments state that the signed `diagonal` and the boolean `flag0` are converted only after preflight has proved they are in range.
 
@@ -154,7 +154,7 @@ begin
     // omission-only dense-row stride default.
     if TileOperandPresent(operation, TileOperand_address) then
         if _BundleScalarBindings[[0]].valid then
-            operands.address = ReadScalarRegisterOperand(
+            operands.address = ReadReg5(
                 BundleOperationGPRInputSelector(
                     BundleOperationGPRInputSlot(
                         operation, TileOperand_address) as integer {0..2}));
@@ -162,7 +162,7 @@ begin
     end;
     if TileOperandPresent(operation, TileOperand_scalar0) then
         if _BundleScalarBindings[[0]].valid then
-            operands.scalar0 = ReadScalarRegisterOperand(
+            operands.scalar0 = ReadReg5(
                 BundleOperationGPRInputSelector(
                     BundleOperationGPRInputSlot(
                         operation, TileOperand_scalar0) as integer {0..2}));
@@ -175,7 +175,7 @@ begin
                 TileOperation_TSTORE;
             let columns = BundleDestinationPhysicalColumns(
                 tstore, operands.source0);
-            operands.scalar0 = TileDenseRowStrideBytes(
+            operands.scalar0 = TileDenseRowBytes(
                 columns,
                 TileDataTypeFromEncoding(
                     CurrentBundleTileOperationDataTypeCode()
@@ -186,7 +186,7 @@ begin
     end;
     if TileOperandPresent(operation, TileOperand_diagonal) then
         if _BundleScalarBindings[[0]].valid then
-            let raw = ReadScalarRegisterOperand(
+            let raw = ReadReg5(
                 BundleOperationGPRInputSelector(
                     BundleOperationGPRInputSlot(
                         operation, TileOperand_diagonal) as integer {0..2}));
@@ -197,7 +197,7 @@ begin
     end;
     if TileOperandPresent(operation, TileOperand_flag0) && !(TileOperationOfIndex(operation) == TileOperation_TCI && (CurrentBundleTileLayout() == TileLayout_CUBE_M16 || CurrentBundleTileLayout() == TileLayout_CUBE_M32)) then
         if _BundleScalarBindings[[0]].valid then
-            let raw = ReadScalarRegisterOperand(
+            let raw = ReadReg5(
                 BundleOperationGPRInputSelector(
                     BundleOperationGPRInputSlot(
                         operation, TileOperand_flag0) as integer {0..2}));
@@ -217,13 +217,13 @@ begin
         var post_slot: integer {0..2} = 0;
         if BundleFPATRModeUsesScalarParameter(
                _BundleFixedPointAttributes.pre_quant_mode) then
-            operands.post_quant_param = ReadScalarRegisterOperand(
+            operands.post_quant_param = ReadReg5(
                 BundleOperationGPRInputSelector(post_slot));
             post_slot = (post_slot + 1) as integer {0..2};
         end;
         if BundleFPATRReluModeUsesScalarParameter(
                _BundleFixedPointAttributes.relu_mode) then
-            operands.post_lrelu_param = ReadScalarRegisterOperand(
+            operands.post_lrelu_param = ReadReg5(
                 BundleOperationGPRInputSelector(post_slot));
         end;
     end;

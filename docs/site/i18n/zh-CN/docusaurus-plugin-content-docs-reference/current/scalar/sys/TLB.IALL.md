@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-tlb-iall-mechanism role=mechanism -->
 ## 系统机制
 
-`SelectTLBIALLHandler` 选择共用的维护处理程序（`asl/scalar/sys/TLB.IALL.asl:18`），而令牌 `Maintenance_TLB_IALL` 位于执行器的最后一个分支，推进 TLB 纪元且完全没有操作数测试（`asl/scalar/model/sys/semantics.asl:154`）。
+`TLBIALLHandler` 选择共用的维护处理程序（`asl/scalar/sys/TLB.IALL.asl:18`），而令牌 `Maintenance_TLB_IALL` 位于执行器的最后一个分支，推进 TLB 纪元且完全没有操作数测试（`asl/scalar/model/sys/semantics.asl:154`）。
 
 `TLBIALLMaintenanceUsesOperand` 为 `FALSE`（`asl/scalar/sys/TLB.IALL.asl:36`），因此派发器传入 `Zeros{PTO_XLEN}`，不读取任何标量寄存器（`asl/scalar/model/dispatch/sys.asl:59`）。
 
@@ -86,7 +86,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/TLB.IALL.asl -->
 ```asl
-readonly func SelectTLBIALLOperation()
+readonly func TLBIALLOperation()
     => ScalarOperation
 begin
     return ScalarOperation_TLB_IALL;
@@ -104,7 +104,7 @@ TLB.IALL executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/TLB.IALL.asl -->
 ```asl
-readonly func SelectTLBIALLHandler()
+readonly func TLBIALLHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
@@ -116,7 +116,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectTLBIALLMaintenanceOperation()
+pure func TLBIALLMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_TLB_IALL;

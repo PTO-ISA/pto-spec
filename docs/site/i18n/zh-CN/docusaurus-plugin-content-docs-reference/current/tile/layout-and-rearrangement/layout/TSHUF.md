@@ -109,7 +109,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/layout-and-rearrangement/layout/TSHUF.asl -->
 ```asl
-readonly func SelectTSHUFOperation() => TileOperation
+readonly func TSHUFOperation() => TileOperation
 begin
     return TileOperation_TSHUF;
 end;
@@ -131,7 +131,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/layout-and-rearrangement/layout/TSHUF.asl -->
 ```asl
-readonly func SelectTSHUFHandler() => TileSemanticHandler
+readonly func TSHUFHandler() => TileSemanticHandler
 begin
     return TileHandler_TSHUF;
 end;

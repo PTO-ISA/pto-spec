@@ -136,7 +136,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMUL.asl -->
 ```asl
-readonly func SelectTROWEXPANDMULOperation() => TileOperation
+readonly func TROWEXPANDMULOperation() => TileOperation
 begin
     return TileOperation_TROWEXPANDMUL;
 end;
@@ -178,7 +178,7 @@ begin
         broadcast);
 end;
 
-readonly func SelectTROWEXPANDMULHandler() => TileSemanticHandler
+readonly func TROWEXPANDMULHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;

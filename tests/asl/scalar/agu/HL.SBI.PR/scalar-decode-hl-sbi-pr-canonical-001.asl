@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000010110010000000000101110', 48) == 241;
     assert ScalarOperationOfForm(241) == ScalarOperation_HL_SBI_PR;
     assert ScalarHandlerOfForm(241) == ScalarHandler_ExecuteScalarStore;
-    assert SelectHLSBIPROperation() == ScalarOperation_HL_SBI_PR;
-    assert SelectHLSBIPRHandler() == ScalarHandler_ExecuteScalarStore;
+    assert HLSBIPROperation() == ScalarOperation_HL_SBI_PR;
+    assert HLSBIPRHandler() == ScalarHandler_ExecuteScalarStore;
     assert HLSBIPRAGUAction() == ScalarAGU_Store;
     assert HLSBIPRAGUAddressKind() == ScalarAGU_Immediate;
     assert HLSBIPRAGUSizeBytes() == 1;

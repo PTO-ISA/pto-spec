@@ -118,7 +118,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FEQ.asl -->
 ```asl
-readonly func SelectFEQOperation()
+readonly func FEQOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FEQ;
@@ -130,7 +130,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FEQ.asl -->
 ```asl
-readonly func SelectFEQHandler()
+readonly func FEQHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingCompare;
@@ -167,7 +167,7 @@ begin
     return FALSE;
 end;
 
-pure func SelectFEQCompareOperation()
+pure func FEQCompareOperation()
     => FloatingCompareOperation
 begin
     return FloatingCompare_EQ;

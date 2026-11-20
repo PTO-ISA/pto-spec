@@ -109,7 +109,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/BSTOP.asl -->
 ```asl
-readonly func SelectBSTOPHandler() => CommandSemanticHandler
+readonly func BSTOPHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStop;
 end;

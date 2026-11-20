@@ -8,14 +8,14 @@
 // assigned destination or commit effect in alias-safe order.
 // NDF-END: PTO-SUB-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectSUBOperation()
+readonly func SUBOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SUB;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSUBHandler()
+readonly func SUBHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
@@ -32,26 +32,26 @@ begin
     end;
 end;
 
-pure func PrepareSUBRightOperand(
+pure func SUBRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
     let modifier = DecodeSUBRightModifier(encoded_modifier);
-    let transformed = ApplyScalarRightModifier(right, modifier, FALSE);
+    let transformed = ModifyScalarOperand(right, modifier, FALSE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func ComputeSUBResult(
+pure func SUBResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = PrepareSUBRightOperand(
+    let prepared_right = SUBRightOperand(
         right,
         encoded_modifier,
         shift_amount);

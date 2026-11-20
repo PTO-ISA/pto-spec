@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(70) == CommandOperation_mset_32_0b932f291932;
     assert CommandHandlerOfForm(70) == CommandHandler_ExecuteMemorySet;
     assert MSETEncodingMatches(CommandOperationOfForm(70));
-    assert SelectMSETHandler() == CommandHandler_ExecuteMemorySet;
+    assert MSETHandler() == CommandHandler_ExecuteMemorySet;
     return 0;
 end;

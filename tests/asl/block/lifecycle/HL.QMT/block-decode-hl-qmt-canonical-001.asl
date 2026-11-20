@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(66) == CommandOperation_hl_qmt_48_eb9e41958045;
     assert CommandHandlerOfForm(66) == CommandHandler_ExecuteQueueMove;
     assert HLQMTEncodingMatches(CommandOperationOfForm(66));
-    assert SelectHLQMTHandler() == CommandHandler_ExecuteQueueMove;
+    assert HLQMTHandler() == CommandHandler_ExecuteQueueMove;
     return 0;
 end;

@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(78) == TileHandler_MGATHER_MASK;
     assert TileClassOfIndex(78) == TileClass_MemoryAndDataMovement;
     assert TileEngineOfIndex(78) == TileEngine_TLSU;
-    assert SelectMGATHERMASKOperation() == TileOperation_MGATHER_MASK;
-    assert SelectMGATHERMASKHandler() == TileHandler_MGATHER_MASK;
+    assert MGATHERMASKOperation() == TileOperation_MGATHER_MASK;
+    assert MGATHERMASKHandler() == TileHandler_MGATHER_MASK;
     return 0;
 end;

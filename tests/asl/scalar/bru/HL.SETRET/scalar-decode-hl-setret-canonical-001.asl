@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000101000001110000000000001110', 48) == 267;
     assert ScalarOperationOfForm(267) == ScalarOperation_HL_SETRET;
     assert ScalarHandlerOfForm(267) == ScalarHandler_SetReturnAddress;
-    assert SelectHLSETRETOperation() == ScalarOperation_HL_SETRET;
-    assert SelectHLSETRETHandler() == ScalarHandler_SetReturnAddress;
+    assert HLSETRETOperation() == ScalarOperation_HL_SETRET;
+    assert HLSETRETHandler() == ScalarHandler_SetReturnAddress;
     assert DecodeScalarOperandRaw('000000000000000000000101000001110000000000001110', 267, ScalarField_imm32) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

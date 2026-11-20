@@ -19,7 +19,7 @@
 // ExecutionMask carrier MUST remain fully defined and canonical before capture.
 // NDF-END: PTO-TSEL-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTSELOperation() => TileOperation
+readonly func TSELOperation() => TileOperation
 begin
     return TileOperation_TSEL;
 end;
@@ -44,7 +44,7 @@ begin
         source_false);
 end;
 
-readonly func SelectTSELHandler() => TileSemanticHandler
+readonly func TSELHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileSelect;
 end;

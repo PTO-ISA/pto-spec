@@ -17,7 +17,7 @@ This page is a generated reference view of the normative ASL unit.
 
 本单元定义一个纯辅助函数 `TileFloatingMinMaxValue`。它计算两个原始元素载体的浮点最小值或最大值，并报告是否发生了无效操作条件。
 
-它是架构配置档 `HardwareNumericFloatingMinMax` 之上的 Tile 级适配器。调用者包括[逐元素执行](elementwise.md)中用于浮点 MIN 和 MAX 的 `TileProfileBinaryWithFlags`，以及 TMAX 和 TMIN 的 `ComputeTMAXFloatingValue` 与 `ComputeTMINFloatingValue` 辅助函数。
+它是架构配置档 `HardwareNumericFloatingMinMax` 之上的 Tile 级适配器。调用者包括[逐元素执行](elementwise.md)中用于浮点 MIN 和 MAX 的 `TileProfileBinaryWithFlags`，以及 TMAX 和 TMIN 的 `TMAXFloatingValue` 与 `TMINFloatingValue` 辅助函数。
 
 <!-- PTO-READER-BLOCK: tile-model-execution-minmax-concepts role=concepts-state -->
 ## 概念与可见状态

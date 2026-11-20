@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000100000011010010000000000001110', 48) == 287;
     assert ScalarOperationOfForm(287) == ScalarOperation_HL_SW_PCR;
     assert ScalarHandlerOfForm(287) == ScalarHandler_ExecuteScalarStore;
-    assert SelectHLSWPCROperation() == ScalarOperation_HL_SW_PCR;
-    assert SelectHLSWPCRHandler() == ScalarHandler_ExecuteScalarStore;
+    assert HLSWPCROperation() == ScalarOperation_HL_SW_PCR;
+    assert HLSWPCRHandler() == ScalarHandler_ExecuteScalarStore;
     assert HLSWPCRAGUAction() == ScalarAGU_Store;
     assert HLSWPCRAGUAddressKind() == ScalarAGU_PCRelative;
     assert HLSWPCRAGUSizeBytes() == 4;

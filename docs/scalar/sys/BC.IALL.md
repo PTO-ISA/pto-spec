@@ -90,7 +90,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/BC.IALL.asl -->
 ```asl
-readonly func SelectBCIALLOperation()
+readonly func BCIALLOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BC_IALL;
@@ -108,7 +108,7 @@ BC.IALL executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/BC.IALL.asl -->
 ```asl
-readonly func SelectBCIALLHandler()
+readonly func BCIALLHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
@@ -120,7 +120,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectBCIALLMaintenanceOperation()
+pure func BCIALLMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_BC_IALL;

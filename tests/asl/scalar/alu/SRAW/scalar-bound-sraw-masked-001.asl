@@ -17,7 +17,7 @@ begin
         Zeros{PTO_XLEN} + 0xffffffff80000001;
     assert ReadTemporaryQueue(FALSE, 1) == Zeros{PTO_XLEN} + 32;
     assert DecodeSRAWShiftAmount(Zeros{PTO_XLEN} + 32) == 0;
-    assert ComputeSRAWResult(
+    assert SRAWResult(
         Zeros{PTO_XLEN} + 0x80000001,
         Zeros{PTO_XLEN} + 32) ==
         Zeros{PTO_XLEN} + 0xffffffff80000001;

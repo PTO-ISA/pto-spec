@@ -17,7 +17,7 @@ This page is a generated reference view of the normative ASL unit.
 
 本单元固定标量浮点执行中不依赖具体数值实现的部分：载体、类型码、舍入模式和标志访问、NaN 分类、比较以及 `FMIN`/`FMAX`。确实需要数值实现的算术经由此处定义的显式配置档钩子，例如 `ScalarFPBinaryProfile` 或 `ScalarFPConvertProfile`。
 
-[FSU 分派](../dispatch/fsu.md)调用这些函数。Tile 单元也调用其中两个钩子：逐元素执行调用 `ScalarFPBinaryProfile`，融合乘加调用 `ScalarFPFusedProfile`。
+[FSU 分派](../dispatch/fsu.md)调用这些函数。Tile 单元也调用其中两个钩子：逐元素执行调用 `ScalarFPBinaryProfile`，融合乘加调用 `FPMulAdd`。
 
 <!-- PTO-READER-BLOCK: scalar-model-fsu-scalar-fp-concepts role=concepts-state -->
 ## 概念与可见状态
@@ -50,12 +50,12 @@ This page is a generated reference view of the normative ASL unit.
 
 设计要点：最小值和最大值为零的符号规定了顺序，因此 `FMIN(-0.0, +0.0)` 和 `FMIN(+0.0, -0.0)` 都返回 -0.0。结果不依赖操作数顺序。
 
-每个配置档钩子都对其支持的类型码做断言。`ScalarFPBinaryProfile` 和 `ScalarFPUnaryProfile` 接受 FP64、FP32、FP16（编码 4）和 BF16（编码 5）。`ScalarFPFusedProfile` 接受 FP64、FP32 和 FP16。三个转换钩子在禁用饱和的情况下委托给 `ReferenceCommonConvert`。
+每个配置档钩子都对其支持的类型码做断言。`ScalarFPBinaryProfile` 和 `ScalarFPUnaryProfile` 接受 FP64、FP32、FP16（编码 4）和 BF16（编码 5）。`FPMulAdd` 接受 FP64、FP32 和 FP16。三个转换钩子在禁用饱和的情况下委托给 `ReferenceCommonConvert`。
 
 <!-- PTO-READER-BLOCK: scalar-model-fsu-scalar-fp-boundaries role=boundaries -->
 ## 架构边界
 
-已译码的标量 FSU 形式只以 FP64 或 FP32 到达二元、一元和融合钩子；已译码的转换还可以向转换钩子传递 FP16 和 E4M3。`ScalarFPBinaryProfile` 的 FP16 和 BF16 编码以及 `ScalarFPFusedProfile` 的 FP16 编码服务于 Tile 逐元素执行和融合乘加。`ScalarFPUnaryProfile` 没有 Tile 调用者，因此其 FP16 和 BF16 编码不会被到达。
+已译码的标量 FSU 形式只以 FP64 或 FP32 到达二元、一元和融合钩子；已译码的转换还可以向转换钩子传递 FP16 和 E4M3。`ScalarFPBinaryProfile` 的 FP16 和 BF16 编码以及 `FPMulAdd` 的 FP16 编码服务于 Tile 逐元素执行和融合乘加。`ScalarFPUnaryProfile` 没有 Tile 调用者，因此其 FP16 和 BF16 编码不会被到达。
 
 `ScalarFPBinaryProfile` 中的 `FloatingBinary_MIN` 和 `FloatingBinary_MAX` 分支由 ASL 注释标明不会被已译码的 `FMIN`/`FMAX` 到达；分派改用 `ScalarFPMinMax`。
 
@@ -515,14 +515,14 @@ begin
         operation, rounding_mode, source_type, value);
 end;
 
-func ScalarFPFusedProfile(operation: FloatingFusedOperation,
+func FPMulAdd(operation: FloatingFusedOperation,
                                           rounding_mode: NumericRoundingMode,
                                           source_type: bits(5), addend: Word,
                                           left: Word, right: Word)
                                           => (Word, bits(5))
 begin
     assert ScalarFPTypeCodeSupported(source_type) || source_type == '00100';
-    return ReferenceScalarFPFusedProfile(
+    return ReferenceFPMulAdd(
         operation, rounding_mode, source_type, addend, left, right);
 end;
 

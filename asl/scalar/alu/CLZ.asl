@@ -8,7 +8,7 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-CLZ-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectCLZOperation()
+readonly func CLZOperation()
     => ScalarOperation
 begin
     return ScalarOperation_CLZ;
@@ -27,13 +27,13 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectCLZHandler()
+readonly func CLZHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_CountBitfield;
 end;
 
-pure func ComputeCLZResult(
+pure func CLZResult(
     value: Word,
     width: integer {1..64},
     offset: integer {0..63})

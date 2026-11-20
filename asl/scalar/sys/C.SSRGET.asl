@@ -6,14 +6,14 @@
 // Every other five-bit ID MUST reject before the implicit T destination effect.
 // NDF-END: PTO-C-SSRGET-DIRECT-IDS-001
 // DOC-BEGIN: decode
-readonly func SelectCSSRGETOperation()
+readonly func CSSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_C_SSRGET;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectCSSRGETHandler()
+readonly func CSSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteCompressedSystemRegisterGet;

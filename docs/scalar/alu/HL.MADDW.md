@@ -26,7 +26,7 @@ Both halves are published, so the destination pair carries the complete 64-bit a
 <!-- PTO-READER-BLOCK: scalar-hl-maddw-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `ComputeHLMADDWResult`, which sign-extends `addend[31:0]`, `left[31:0]` and `right[31:0]` to XLEN, takes the low `64` bits of `MultiplyWideSigned`, and adds the widened addend. Dispatch reaches the same 64-bit accumulator through `ExecuteScalarMultiplyAddPair` with `word_operation` true.
+The owning ASL exposes `HLMADDWResult`, which sign-extends `addend[31:0]`, `left[31:0]` and `right[31:0]` to XLEN, takes the low `64` bits of `MultiplyWideSigned`, and adds the widened addend. Dispatch reaches the same 64-bit accumulator through `ExecuteScalarMultiplyAddPair` with `word_operation` true.
 
 ```asm
 hl.maddw SrcL, SrcR, SrcD, ->Dst0, Dst1
@@ -126,7 +126,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.MADDW.asl -->
 ```asl
-readonly func SelectHLMADDWOperation() => ScalarOperation
+readonly func HLMADDWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_MADDW;
 end;
@@ -137,11 +137,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.MADDW.asl -->
 ```asl
-readonly func SelectHLMADDWHandler() => ScalarSemanticHandler
+readonly func HLMADDWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarMultiplyAddPair;
 end;
-pure func ComputeHLMADDWResult(
+pure func HLMADDWResult(
     addend: Word,
     left: Word,
     right: Word)
@@ -161,7 +161,7 @@ pure func HLMADDWLow(
     => Word
 begin
     return SignExtend{PTO_XLEN}(
-        ComputeHLMADDWResult(addend, left, right)[31:0]);
+        HLMADDWResult(addend, left, right)[31:0]);
 end;
 
 pure func HLMADDWHigh(
@@ -171,7 +171,7 @@ pure func HLMADDWHigh(
     => Word
 begin
     return SignExtend{PTO_XLEN}(
-        ComputeHLMADDWResult(addend, left, right)[63:32]);
+        HLMADDWResult(addend, left, right)[63:32]);
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->

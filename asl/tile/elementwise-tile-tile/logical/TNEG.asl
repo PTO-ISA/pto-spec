@@ -13,7 +13,7 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TNEG-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTNEGOperation() => TileOperation
+readonly func TNEGOperation() => TileOperation
 begin
     return TileOperation_TNEG;
 end;
@@ -35,7 +35,7 @@ begin
         source);
 end;
 
-pure func ComputeTNEGValue(
+pure func TNEGValue(
     data_type: TileDataType,
     source: Word) => Word
 begin
@@ -46,7 +46,7 @@ begin
     return result;
 end;
 
-readonly func SelectTNEGHandler() => TileSemanticHandler
+readonly func TNEGHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;

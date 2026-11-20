@@ -181,7 +181,7 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduce-and-expand/row-expansion/TROWEXPANDEXPDIF.asl -->
 ```asl
-readonly func SelectTROWEXPANDEXPDIFOperation() => TileOperation
+readonly func TROWEXPANDEXPDIFOperation() => TileOperation
 begin
     return TileOperation_TROWEXPANDEXPDIF;
 end;
@@ -226,7 +226,7 @@ begin
         broadcast);
 end;
 
-readonly func SelectTROWEXPANDEXPDIFHandler() => TileSemanticHandler
+readonly func TROWEXPANDEXPDIFHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;

@@ -8,14 +8,14 @@
 // assigned destination or commit effect in alias-safe order.
 // NDF-END: PTO-SRAW-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectSRAWOperation()
+readonly func SRAWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SRAW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSRAWHandler()
+readonly func SRAWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
@@ -27,7 +27,7 @@ begin
     return UInt(right[4:0]);
 end;
 
-pure func ComputeSRAWResult(left: Word, right: Word)
+pure func SRAWResult(left: Word, right: Word)
     => Word
 begin
     let amount = DecodeSRAWShiftAmount(right);

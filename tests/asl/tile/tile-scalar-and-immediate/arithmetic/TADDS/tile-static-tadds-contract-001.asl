@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(25) == TileHandler_ExecuteTileScalar;
     assert TileClassOfIndex(25) == TileClass_TileScalarAndImmediate;
     assert TileEngineOfIndex(25) == TileEngine_VEC;
-    assert SelectTADDSOperation() == TileOperation_TADDS;
-    assert SelectTADDSHandler() == TileHandler_ExecuteTileScalar;
+    assert TADDSOperation() == TileOperation_TADDS;
+    assert TADDSHandler() == TileHandler_ExecuteTileScalar;
     return 0;
 end;

@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(75) == CommandOperation_b_assemble_32_122000000002;
     assert CommandHandlerOfForm(75) == CommandHandler_ApplyBundleAssemble;
     assert BASSEMBLEEncodingMatches(CommandOperationOfForm(75));
-    assert SelectBASSEMBLEHandler() == CommandHandler_ApplyBundleAssemble;
+    assert BASSEMBLEHandler() == CommandHandler_ApplyBundleAssemble;
     return 0;
 end;

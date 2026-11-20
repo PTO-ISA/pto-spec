@@ -8,14 +8,14 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-ACRC-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectACRCOperation()
+readonly func ACRCOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ACRC;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectACRCHandler()
+readonly func ACRCHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ArchitectureCloseRequest;

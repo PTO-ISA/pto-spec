@@ -10,7 +10,7 @@
 // NOT wrap.
 // NDF-END: PTO-TTRI-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTTRIOperation() => TileOperation
+readonly func TTRIOperation() => TileOperation
 begin
     return TileOperation_TTRI;
 end;
@@ -44,7 +44,7 @@ begin
         diagonal);
 end;
 
-readonly func SelectTTRIHandler() => TileSemanticHandler
+readonly func TTRIHandler() => TileSemanticHandler
 begin
     return TileHandler_TTRI;
 end;

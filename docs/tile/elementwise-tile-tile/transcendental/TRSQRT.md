@@ -129,7 +129,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/transcendental/TRSQRT.asl -->
 ```asl
-readonly func SelectTRSQRTOperation() => TileOperation
+readonly func TRSQRTOperation() => TileOperation
 begin
     return TileOperation_TRSQRT;
 end;
@@ -170,7 +170,7 @@ begin
         source);
 end;
 
-readonly func SelectTRSQRTHandler() => TileSemanticHandler
+readonly func TRSQRTHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;

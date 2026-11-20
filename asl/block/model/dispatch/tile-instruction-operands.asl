@@ -80,7 +80,7 @@ begin
     // omission-only dense-row stride default.
     if TileOperandPresent(operation, TileOperand_address) then
         if _BundleScalarBindings[[0]].valid then
-            operands.address = ReadScalarRegisterOperand(
+            operands.address = ReadReg5(
                 BundleOperationGPRInputSelector(
                     BundleOperationGPRInputSlot(
                         operation, TileOperand_address) as integer {0..2}));
@@ -88,7 +88,7 @@ begin
     end;
     if TileOperandPresent(operation, TileOperand_scalar0) then
         if _BundleScalarBindings[[0]].valid then
-            operands.scalar0 = ReadScalarRegisterOperand(
+            operands.scalar0 = ReadReg5(
                 BundleOperationGPRInputSelector(
                     BundleOperationGPRInputSlot(
                         operation, TileOperand_scalar0) as integer {0..2}));
@@ -101,7 +101,7 @@ begin
                 TileOperation_TSTORE;
             let columns = BundleDestinationPhysicalColumns(
                 tstore, operands.source0);
-            operands.scalar0 = TileDenseRowStrideBytes(
+            operands.scalar0 = TileDenseRowBytes(
                 columns,
                 TileDataTypeFromEncoding(
                     CurrentBundleTileOperationDataTypeCode()
@@ -112,7 +112,7 @@ begin
     end;
     if TileOperandPresent(operation, TileOperand_diagonal) then
         if _BundleScalarBindings[[0]].valid then
-            let raw = ReadScalarRegisterOperand(
+            let raw = ReadReg5(
                 BundleOperationGPRInputSelector(
                     BundleOperationGPRInputSlot(
                         operation, TileOperand_diagonal) as integer {0..2}));
@@ -123,7 +123,7 @@ begin
     end;
     if TileOperandPresent(operation, TileOperand_flag0) && !(TileOperationOfIndex(operation) == TileOperation_TCI && (CurrentBundleTileLayout() == TileLayout_CUBE_M16 || CurrentBundleTileLayout() == TileLayout_CUBE_M32)) then
         if _BundleScalarBindings[[0]].valid then
-            let raw = ReadScalarRegisterOperand(
+            let raw = ReadReg5(
                 BundleOperationGPRInputSelector(
                     BundleOperationGPRInputSlot(
                         operation, TileOperand_flag0) as integer {0..2}));
@@ -143,13 +143,13 @@ begin
         var post_slot: integer {0..2} = 0;
         if BundleFPATRModeUsesScalarParameter(
                _BundleFixedPointAttributes.pre_quant_mode) then
-            operands.post_quant_param = ReadScalarRegisterOperand(
+            operands.post_quant_param = ReadReg5(
                 BundleOperationGPRInputSelector(post_slot));
             post_slot = (post_slot + 1) as integer {0..2};
         end;
         if BundleFPATRReluModeUsesScalarParameter(
                _BundleFixedPointAttributes.relu_mode) then
-            operands.post_lrelu_param = ReadScalarRegisterOperand(
+            operands.post_lrelu_param = ReadReg5(
                 BundleOperationGPRInputSelector(post_slot));
         end;
     end;

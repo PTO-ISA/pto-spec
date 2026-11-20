@@ -200,7 +200,7 @@ BSTART.TIMG2COL DataType; optional B.DATR; exactly one write-once binding for ea
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.TIMG2COL.asl -->
 ```asl
-readonly func SelectBSTARTTIMG2COLHandler() => CommandSemanticHandler
+readonly func BSTARTTIMG2COLHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

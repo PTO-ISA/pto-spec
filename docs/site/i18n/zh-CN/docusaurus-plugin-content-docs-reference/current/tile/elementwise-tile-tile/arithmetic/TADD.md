@@ -111,7 +111,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/arithmetic/TADD.asl -->
 ```asl
-readonly func SelectTADDOperation() => TileOperation
+readonly func TADDOperation() => TileOperation
 begin
     return TileOperation_TADD;
 end;
@@ -152,7 +152,7 @@ begin
         source_right);
 end;
 
-readonly func SelectTADDHandler() => TileSemanticHandler
+readonly func TADDHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;

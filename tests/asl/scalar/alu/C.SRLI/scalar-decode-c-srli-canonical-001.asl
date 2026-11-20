@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000001100000101100', 16) == 43;
     assert ScalarOperationOfForm(43) == ScalarOperation_C_SRLI;
     assert ScalarHandlerOfForm(43) == ScalarHandler_ScalarBinary;
-    assert SelectCSRLIOperation() == ScalarOperation_C_SRLI;
-    assert SelectCSRLIHandler() == ScalarHandler_ScalarBinary;
+    assert CSRLIOperation() == ScalarOperation_C_SRLI;
+    assert CSRLIHandler() == ScalarHandler_ScalarBinary;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000001100000101100', 43, ScalarField_uimm5) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

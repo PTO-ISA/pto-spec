@@ -10,7 +10,7 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TNOT-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTNOTOperation() => TileOperation
+readonly func TNOTOperation() => TileOperation
 begin
     return TileOperation_TNOT;
 end;
@@ -32,7 +32,7 @@ begin
         source);
 end;
 
-pure func ComputeTNOTValue(
+pure func TNOTValue(
     data_type: TileDataType,
     source: Word) => Word
 begin
@@ -43,7 +43,7 @@ begin
     return result;
 end;
 
-readonly func SelectTNOTHandler() => TileSemanticHandler
+readonly func TNOTHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;

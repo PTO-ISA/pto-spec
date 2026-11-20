@@ -41,7 +41,7 @@ Reg5 选择子是 5 位寄存器码。作为源时，0 到 23 表示 GPR，24 �
 
 `ExecuteDecodedBinary` 读取 `SrcL` 和 `SrcR`，译码二元右操作数修饰符并应用它，把结果左移 `shamt` 位，然后执行 64 位运算或字运算。AND、OR 和 XOR 传入 `logical_family` 为 TRUE，因此修饰符 `.not` 对右操作数取反；ADD 和 SUB 使用 `.neg`。
 
-设计要点：每个处理函数在调用 `WriteScalarDestination` 之前把每个源读入局部值。同时作为源的目标，或压入某个源所读队列的操作，都无法改变同一指令中使用的值。
+设计要点：每个处理函数在调用 `WriteReg5` 之前把每个源读入局部值。同时作为源的目标，或压入某个源所读队列的操作，都无法改变同一指令中使用的值。
 
 成对形式按固定顺序写两个目标：
 
@@ -101,15 +101,15 @@ func ExecuteDecodedBinary(instruction: bits(48),
                           operation: ScalarBinaryOperation,
                           logical_family: boolean, word_operation: boolean)
 begin
-    let destination = ScalarDecodedSelector(instruction, form, ScalarField_RegDst);
-    let left = ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL);
-    let unmodified_right = ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR);
+    let destination = DecodeReg5(instruction, form, ScalarField_RegDst);
+    let left = ReadDecodedReg5(instruction, form, ScalarField_SrcL);
+    let unmodified_right = ReadDecodedReg5(instruction, form, ScalarField_SrcR);
     let modifier = ScalarDecodedBinaryRightModifier(instruction, form);
     let shift_amount = ScalarDecodedUInt6(instruction, form, ScalarField_shamt);
-    let right = PrepareScalarRight(unmodified_right, modifier, shift_amount, logical_family);
+    let right = ShiftModifiedScalar(unmodified_right, modifier, shift_amount, logical_family);
     let result = if word_operation then ScalarBinaryW(operation, left, right)
                  else ScalarBinary(operation, left, right);
-    WriteScalarDestination(destination, result);
+    WriteReg5(destination, result);
 end;
 
 func ExecuteDecodedImmediateBinary(instruction: bits(48),
@@ -118,12 +118,12 @@ func ExecuteDecodedImmediateBinary(instruction: bits(48),
                                    immediate_field: ScalarOperandField,
                                    word_operation: boolean)
 begin
-    let destination = ScalarDecodedSelector(instruction, form, ScalarField_RegDst);
-    let left = ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL);
+    let destination = DecodeReg5(instruction, form, ScalarField_RegDst);
+    let left = ReadDecodedReg5(instruction, form, ScalarField_SrcL);
     let right = ScalarDecodedWord(instruction, form, immediate_field);
     let result = if word_operation then ScalarBinaryW(operation, left, right)
                  else ScalarBinary(operation, left, right);
-    WriteScalarDestination(destination, result);
+    WriteReg5(destination, result);
 end;
 
 func ExecuteDecodedSimpleBinary(instruction: bits(48),
@@ -131,12 +131,12 @@ func ExecuteDecodedSimpleBinary(instruction: bits(48),
                                 operation: ScalarBinaryOperation,
                                 word_operation: boolean)
 begin
-    let destination = ScalarDecodedSelector(instruction, form, ScalarField_RegDst);
-    let left = ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL);
-    let right = ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR);
+    let destination = DecodeReg5(instruction, form, ScalarField_RegDst);
+    let left = ReadDecodedReg5(instruction, form, ScalarField_SrcL);
+    let right = ReadDecodedReg5(instruction, form, ScalarField_SrcR);
     let result = if word_operation then ScalarBinaryW(operation, left, right)
                  else ScalarBinary(operation, left, right);
-    WriteScalarDestination(destination, result);
+    WriteReg5(destination, result);
 end;
 
 func ExecuteDecodedShiftImmediate(instruction: bits(48),
@@ -144,20 +144,20 @@ func ExecuteDecodedShiftImmediate(instruction: bits(48),
                                   operation: ScalarBinaryOperation,
                                   word_operation: boolean)
 begin
-    let destination = ScalarDecodedSelector(instruction, form, ScalarField_RegDst);
-    let left = ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL);
+    let destination = DecodeReg5(instruction, form, ScalarField_RegDst);
+    let left = ReadDecodedReg5(instruction, form, ScalarField_SrcL);
     let amount = ScalarDecodedWord(instruction, form, ScalarField_shamt);
     let result = if word_operation then ScalarBinaryW(operation, left, amount)
                  else ScalarBinary(operation, left, amount);
-    WriteScalarDestination(destination, result);
+    WriteReg5(destination, result);
 end;
 
 func ExecuteDecodedCompressedBinary(instruction: bits(48),
                                     form: integer {0..PTO_SCALAR_FORM_COUNT-1},
                                     operation: ScalarBinaryOperation)
 begin
-    let left = ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL);
-    let right = ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR);
+    let left = ReadDecodedReg5(instruction, form, ScalarField_SrcL);
+    let right = ReadDecodedReg5(instruction, form, ScalarField_SrcR);
     WriteCompressedTResult(ScalarBinary(operation, left, right));
 end;
 
@@ -259,15 +259,15 @@ begin
             ExecuteDecodedCompressedBinary(instruction, form, ScalarBinary_SUB);
         when ScalarOperation_C_ADDI =>
             WriteCompressedTResult(ScalarBinary(ScalarBinary_ADD,
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL),
                 ScalarDecodedWord(instruction, form, ScalarField_simm5)));
         when ScalarOperation_C_SLLI =>
             WriteCompressedTResult(ScalarBinary(ScalarBinary_SLL,
-                ReadScalarRegisterOperand(24),
+                ReadReg5(24),
                 ScalarDecodedWord(instruction, form, ScalarField_uimm5)));
         when ScalarOperation_C_SRLI =>
             WriteCompressedTResult(ScalarBinary(ScalarBinary_SRL,
-                ReadScalarRegisterOperand(24),
+                ReadReg5(24),
                 ScalarDecodedWord(instruction, form, ScalarField_uimm5)));
 
         when ScalarOperation_SLL =>
@@ -305,247 +305,247 @@ begin
             ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MINU, FALSE);
 
         when ScalarOperation_DIV =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ScalarDivideSigned(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR)));
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcR)));
         when ScalarOperation_DIVU =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ScalarDivideUnsigned(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR)));
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcR)));
         when ScalarOperation_DIVW =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ScalarDivideSignedW(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR)));
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcR)));
         when ScalarOperation_DIVUW =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ScalarDivideUnsignedW(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR)));
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcR)));
         when ScalarOperation_REM =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ScalarRemainderSigned(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR)));
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcR)));
         when ScalarOperation_REMU =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ScalarRemainderUnsigned(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR)));
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcR)));
         when ScalarOperation_REMW =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ScalarRemainderSignedW(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR)));
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcR)));
         when ScalarOperation_REMUW =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ScalarRemainderUnsignedW(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR)));
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcR)));
 
         when ScalarOperation_MUL, ScalarOperation_MULU =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 MultiplyWord(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR)));
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcR)));
         when ScalarOperation_MULW, ScalarOperation_MULUW =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ScalarMultiplyW(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR)));
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcR)));
         when ScalarOperation_MADD =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ScalarMultiplyAdd(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR)));
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcD),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcR)));
         when ScalarOperation_MADDW =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ScalarMultiplyAddW(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR)));
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcD),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcR)));
 
         when ScalarOperation_HL_MUL =>
             ExecuteScalarMultiplyPair(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR), TRUE);
+                DecodeReg5(instruction, form, ScalarField_RegDst0),
+                DecodeReg5(instruction, form, ScalarField_RegDst1),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcR), TRUE);
         when ScalarOperation_HL_MULU =>
             ExecuteScalarMultiplyPair(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR), FALSE);
+                DecodeReg5(instruction, form, ScalarField_RegDst0),
+                DecodeReg5(instruction, form, ScalarField_RegDst1),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcR), FALSE);
         when ScalarOperation_HL_MADD, ScalarOperation_HL_MADDW =>
             ExecuteScalarMultiplyAddPair(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+                DecodeReg5(instruction, form, ScalarField_RegDst0),
+                DecodeReg5(instruction, form, ScalarField_RegDst1),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcD),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcR),
                 operation == ScalarOperation_HL_MADDW);
 
         when ScalarOperation_HL_DIV, ScalarOperation_HL_DIVU =>
             ExecuteScalarDividePair(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+                DecodeReg5(instruction, form, ScalarField_RegDst0),
+                DecodeReg5(instruction, form, ScalarField_RegDst1),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcR),
                 operation == ScalarOperation_HL_DIV);
         when ScalarOperation_HL_REM, ScalarOperation_HL_REMU =>
             ExecuteScalarRemainderPair(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+                DecodeReg5(instruction, form, ScalarField_RegDst0),
+                DecodeReg5(instruction, form, ScalarField_RegDst1),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcR),
                 operation == ScalarOperation_HL_REM);
         when ScalarOperation_HL_DIVW, ScalarOperation_HL_DIVUW =>
             ExecuteScalarDividePairW(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+                DecodeReg5(instruction, form, ScalarField_RegDst0),
+                DecodeReg5(instruction, form, ScalarField_RegDst1),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcR),
                 operation == ScalarOperation_HL_DIVW);
         when ScalarOperation_HL_REMW, ScalarOperation_HL_REMUW =>
             ExecuteScalarRemainderPairW(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+                DecodeReg5(instruction, form, ScalarField_RegDst0),
+                DecodeReg5(instruction, form, ScalarField_RegDst1),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcR),
                 operation == ScalarOperation_HL_REMW);
 
         when ScalarOperation_HL_CCAT =>
             ExecuteConcatenatePair(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+                DecodeReg5(instruction, form, ScalarField_RegDst0),
+                DecodeReg5(instruction, form, ScalarField_RegDst1),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcR),
                 ScalarDecodedUInt7(instruction, form, ScalarField_shamt));
         when ScalarOperation_HL_CCATW =>
             ExecuteConcatenatePairW(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+                DecodeReg5(instruction, form, ScalarField_RegDst0),
+                DecodeReg5(instruction, form, ScalarField_RegDst1),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcR),
                 ScalarDecodedUInt7(instruction, form, ScalarField_shamt));
 
         when ScalarOperation_HL_MIADD, ScalarOperation_HL_MISUB =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ScalarMultiplyImmediateAdd(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcR),
                     ScalarDecodedBits19(instruction, form, ScalarField_uimm19),
                     operation == ScalarOperation_HL_MISUB));
 
         when ScalarOperation_BXS, ScalarOperation_BXU =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ExtractBitfield(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
                     ScalarDecodedBitfieldWidth(instruction, form),
                     ScalarDecodedUInt6(instruction, form, ScalarField_imms),
                     operation == ScalarOperation_BXS));
         when ScalarOperation_CLZ, ScalarOperation_CTZ, ScalarOperation_BCNT =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 CountBitfield(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
                     ScalarDecodedBitfieldWidth(instruction, form),
                     ScalarDecodedUInt6(instruction, form, ScalarField_imms),
                     operation == ScalarOperation_CLZ,
                     operation == ScalarOperation_BCNT));
         when ScalarOperation_BIC, ScalarOperation_BIS =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ModifyBitfield(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
                     ScalarDecodedBitfieldWidth(instruction, form),
                     ScalarDecodedUInt6(instruction, form, ScalarField_imms),
                     operation == ScalarOperation_BIS));
         when ScalarOperation_REV =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ReverseBitfieldBytes(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
                     ScalarDecodedBitfieldWidth(instruction, form),
                     ScalarDecodedUInt6(instruction, form, ScalarField_immr)));
         when ScalarOperation_HL_BFI =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 InsertBitfield(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcR),
                     ScalarDecodedUInt6(instruction, form, ScalarField_immr),
                     ScalarDecodedUInt6(instruction, form, ScalarField_imms)));
 
         when ScalarOperation_CSEL =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ScalarConditionalSelect(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcP),
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcP),
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL),
                     ApplySelectModifier(
-                        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+                        ReadDecodedReg5(instruction, form, ScalarField_SrcR),
                         ScalarDecodedSelectRightModifier(instruction, form))));
 
         when ScalarOperation_LUI =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 MaterializeLUI(ScalarDecodedBits20(instruction, form, ScalarField_imm20)));
         when ScalarOperation_HL_LUI =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 MaterializeLongUpper(ScalarDecodedBits32(instruction, form, ScalarField_imm)));
         when ScalarOperation_HL_LIS =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 MaterializeLongSigned(ScalarDecodedBits32(instruction, form, ScalarField_simm32)));
         when ScalarOperation_HL_LIU =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 MaterializeLongUnsigned(ScalarDecodedBits32(instruction, form, ScalarField_uimm32)));
         when ScalarOperation_C_MOVI =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 MoveScalarValue(
                     ScalarDecodedWord(instruction, form, ScalarField_simm5)));
         when ScalarOperation_C_MOVR =>
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 MoveScalarValue(
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL)));
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL)));
 
         when ScalarOperation_C_SEXT_B, ScalarOperation_C_ZEXT_B =>
             WriteCompressedTResult(ExtendScalarValue(
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL), 8,
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL), 8,
                 operation == ScalarOperation_C_SEXT_B));
         when ScalarOperation_C_SEXT_H, ScalarOperation_C_ZEXT_H =>
             WriteCompressedTResult(ExtendScalarValue(
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL), 16,
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL), 16,
                 operation == ScalarOperation_C_SEXT_H));
         when ScalarOperation_C_SEXT_W, ScalarOperation_C_ZEXT_W =>
             WriteCompressedTResult(ExtendScalarValue(
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL), 32,
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL), 32,
                 operation == ScalarOperation_C_SEXT_W));
         when ScalarOperation_C_SETC_TGT =>
-            SetCompressedCommitTarget(ReadDecodedScalarRegister(
+            SetCompressedCommitTarget(ReadDecodedReg5(
                 instruction,
                 form,
                 ScalarField_SrcL));

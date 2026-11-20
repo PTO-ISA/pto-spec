@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(32) == CommandOperation_bstart_sys_32_762d9d84a6d8;
     assert CommandHandlerOfForm(32) == CommandHandler_ExecuteBundleStart;
     assert BSTARTSYSEncodingMatches(CommandOperationOfForm(32));
-    assert SelectBSTARTSYSHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTSYSHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

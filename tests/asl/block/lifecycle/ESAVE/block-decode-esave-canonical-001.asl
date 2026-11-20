@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(61) == CommandOperation_esave_32_4c4f79fe3171;
     assert CommandHandlerOfForm(61) == CommandHandler_SaveExecutionContext;
     assert ESAVEEncodingMatches(CommandOperationOfForm(61));
-    assert SelectESAVEHandler() == CommandHandler_SaveExecutionContext;
+    assert ESAVEHandler() == CommandHandler_SaveExecutionContext;
     return 0;
 end;

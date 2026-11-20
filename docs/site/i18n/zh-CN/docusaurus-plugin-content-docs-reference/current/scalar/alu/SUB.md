@@ -28,7 +28,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-sub-mechanism role=mechanism -->
 ## 操作数形成方式
 
-分派路径以 `ScalarBinary_SUB`、为假的 `logical_family` 与为假的 `word_operation` 调用 `ExecuteDecodedBinary`（`asl/scalar/model/dispatch/alu.asl:84-85`）。该路径读取 `SrcL`、未修改的 `SrcR`、`SrcRType` 与 `shamt`，用 `PrepareScalarRight(right, modifier, shift_amount, FALSE)` 构造右操作数，并从 `ScalarBinary` 返回 `left - right`（`asl/scalar/model/alu/semantics.asl:452`）。
+分派路径以 `ScalarBinary_SUB`、为假的 `logical_family` 与为假的 `word_operation` 调用 `ExecuteDecodedBinary`（`asl/scalar/model/dispatch/alu.asl:84-85`）。该路径读取 `SrcL`、未修改的 `SrcR`、`SrcRType` 与 `shamt`，用 `ShiftModifiedScalar(right, modifier, shift_amount, FALSE)` 构造右操作数，并从 `ScalarBinary` 返回 `left - right`（`asl/scalar/model/alu/semantics.asl:452`）。
 
 ```asm
 sub SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>, ->{t, u, Rd}
@@ -137,7 +137,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/SUB.asl -->
 ```asl
-readonly func SelectSUBOperation()
+readonly func SUBOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SUB;
@@ -149,7 +149,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/SUB.asl -->
 ```asl
-readonly func SelectSUBHandler()
+readonly func SUBHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
@@ -166,26 +166,26 @@ begin
     end;
 end;
 
-pure func PrepareSUBRightOperand(
+pure func SUBRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
     let modifier = DecodeSUBRightModifier(encoded_modifier);
-    let transformed = ApplyScalarRightModifier(right, modifier, FALSE);
+    let transformed = ModifyScalarOperand(right, modifier, FALSE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func ComputeSUBResult(
+pure func SUBResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = PrepareSUBRightOperand(
+    let prepared_right = SUBRightOperand(
         right,
         encoded_modifier,
         shift_amount);

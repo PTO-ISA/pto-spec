@@ -8,14 +8,14 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-FCVTZ-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectFCVTZOperation()
+readonly func FCVTZOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FCVTZ;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectFCVTZHandler()
+readonly func FCVTZHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ConvertFloatingEncoding;

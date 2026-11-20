@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(70) == TileHandler_TGATHER;
     assert TileClassOfIndex(70) == TileClass_IrregularAndComplex;
     assert TileEngineOfIndex(70) == TileEngine_SFU;
-    assert SelectTGATHEROperation() == TileOperation_TGATHER;
-    assert SelectTGATHERHandler() == TileHandler_TGATHER;
+    assert TGATHEROperation() == TileOperation_TGATHER;
+    assert TGATHERHandler() == TileHandler_TGATHER;
     return 0;
 end;

@@ -9,6 +9,6 @@ begin
     assert execution == ScalarExecution_Executed;
     assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 0xffffffff80000000;
     assert ReadTemporaryQueue(TRUE, 1) == Zeros{PTO_XLEN} + 0x80000000;
-    assert ComputeCSEXTWResult(Zeros{PTO_XLEN} + 0x80000000) == Zeros{PTO_XLEN} + 0xffffffff80000000;
+    assert CSEXTWResult(Zeros{PTO_XLEN} + 0x80000000) == Zeros{PTO_XLEN} + 0xffffffff80000000;
     return 0;
 end;

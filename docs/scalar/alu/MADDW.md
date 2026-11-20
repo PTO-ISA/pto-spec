@@ -26,7 +26,7 @@ Only the low word of each source participates. Bits `63:32` of `SrcL`, `SrcR` an
 <!-- PTO-READER-BLOCK: scalar-maddw-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `ComputeMADDWResult`, which returns `ScalarMultiplyAddW(addend, left, right)`. That helper multiplies with `MultiplyWord(left, right)`, takes `product[31:0]`, adds `addend[31:0]` into a 32-bit value, and applies `SignExtend{PTO_XLEN}` to the 32-bit sum.
+The owning ASL exposes `MADDWResult`, which returns `ScalarMultiplyAddW(addend, left, right)`. That helper multiplies with `MultiplyWord(left, right)`, takes `product[31:0]`, adds `addend[31:0]` into a 32-bit value, and applies `SignExtend{PTO_XLEN}` to the 32-bit sum.
 
 ```asm
 maddw SrcL, SrcR, SrcD, ->{t, u, Rd}
@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MADDW.asl -->
 ```asl
-readonly func SelectMADDWOperation() => ScalarOperation
+readonly func MADDWOperation() => ScalarOperation
 begin
     return ScalarOperation_MADDW;
 end;
@@ -131,11 +131,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MADDW.asl -->
 ```asl
-readonly func SelectMADDWHandler() => ScalarSemanticHandler
+readonly func MADDWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarMultiplyAddW;
 end;
-pure func ComputeMADDWResult(addend: Word, left: Word, right: Word) => Word
+pure func MADDWResult(addend: Word, left: Word, right: Word) => Word
 begin
     return ScalarMultiplyAddW(addend, left, right);
 end;

@@ -8,13 +8,13 @@
 // advance TPC. Encoded immediate zero MUST produce the current TPC.
 // NDF-END: PTO-HL-ADDTPC-PAGE-001
 // DOC-BEGIN: decode
-readonly func SelectHLADDTPCOperation() => ScalarOperation
+readonly func HLADDTPCOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_ADDTPC;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLADDTPCHandler() => ScalarSemanticHandler
+readonly func HLADDTPCHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_AddToPC;
 end;
@@ -49,7 +49,7 @@ begin
     return FALSE;
 end;
 
-pure func ResolveHLADDTPCTarget(
+pure func HLADDTPCTarget(
     base: Word,
     page_offset: Word)
     => Word

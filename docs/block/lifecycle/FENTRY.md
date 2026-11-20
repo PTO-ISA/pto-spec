@@ -141,7 +141,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/FENTRY.asl -->
 ```asl
-readonly func SelectFENTRYHandler() => CommandSemanticHandler
+readonly func FENTRYHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteFrameEntry;
 end;

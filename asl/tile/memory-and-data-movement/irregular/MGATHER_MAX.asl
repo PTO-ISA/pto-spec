@@ -7,11 +7,11 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectMGATHERMAXHandler() => TileSemanticHandler
+readonly func MGATHERMAXHandler() => TileSemanticHandler
 begin
     return TileHandler_GM_ATOM_VALUE;
 end;
-readonly func SelectMGATHERMAXOperation() => TileOperation
+readonly func MGATHERMAXOperation() => TileOperation
 begin
     return TileOperation_MGATHER_MAX;
 end;

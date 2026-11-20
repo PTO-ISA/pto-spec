@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-miadd-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `ComputeHLMIADDResult`，它返回 `ScalarMultiplyImmediateAdd(left, right, immediate, FALSE)`。该辅助函数计算 `MultiplyWord(right, ZeroExtend{PTO_XLEN}(immediate))`，再把 `left` 加到乘积上。分派路径从 `ScalarOperation_HL_MIADD, ScalarOperation_HL_MISUB` 分支以 `ScalarDecodedBits19(instruction, form, ScalarField_uimm19)` 到达它。
+所属 ASL 提供 `HLMIADDResult`，它返回 `ScalarMultiplyImmediateAdd(left, right, immediate, FALSE)`。该辅助函数计算 `MultiplyWord(right, ZeroExtend{PTO_XLEN}(immediate))`，再把 `left` 加到乘积上。分派路径从 `ScalarOperation_HL_MIADD, ScalarOperation_HL_MISUB` 分支以 `ScalarDecodedBits19(instruction, form, ScalarField_uimm19)` 到达它。
 
 ```asm
 hl.miadd SrcL, SrcR, uimm, ->{t, u, Rd}
@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.MIADD.asl -->
 ```asl
-readonly func SelectHLMIADDOperation() => ScalarOperation
+readonly func HLMIADDOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_MIADD;
 end;
@@ -131,11 +131,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.MIADD.asl -->
 ```asl
-readonly func SelectHLMIADDHandler() => ScalarSemanticHandler
+readonly func HLMIADDHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarMultiplyImmediateAdd;
 end;
-pure func ComputeHLMIADDResult(
+pure func HLMIADDResult(
     left: Word,
     right: Word,
     immediate: bits(19))

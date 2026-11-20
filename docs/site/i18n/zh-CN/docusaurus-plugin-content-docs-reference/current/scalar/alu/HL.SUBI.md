@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-subi-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `ComputeHLSUBIResult`，它构造 `right = ZeroExtend{PTO_XLEN}(immediate)` 并返回 `ScalarBinary(ScalarBinary_SUB, left, right)`。分派路径用 `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_SUB, ScalarField_uimm24, FALSE)` 选择同一条路径。
+所属 ASL 提供 `HLSUBIResult`，它构造 `right = ZeroExtend{PTO_XLEN}(immediate)` 并返回 `ScalarBinary(ScalarBinary_SUB, left, right)`。分派路径用 `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_SUB, ScalarField_uimm24, FALSE)` 选择同一条路径。
 
 ```asm
 hl.subi SrcL, uimm, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.SUBI.asl -->
 ```asl
-readonly func SelectHLSUBIOperation() => ScalarOperation
+readonly func HLSUBIOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_SUBI;
 end;
@@ -127,7 +127,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.SUBI.asl -->
 ```asl
-readonly func SelectHLSUBIHandler() => ScalarSemanticHandler
+readonly func HLSUBIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
@@ -150,7 +150,7 @@ begin
     return FALSE;
 end;
 
-pure func ComputeHLSUBIResult(
+pure func HLSUBIResult(
     left: Word,
     immediate: bits(24))
     => Word

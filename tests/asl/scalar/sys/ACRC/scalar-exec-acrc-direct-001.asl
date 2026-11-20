@@ -27,6 +27,6 @@ begin
     assert _ControlRequestOperand == Zeros{PTO_XLEN} + 1;
     assert CurrentACR() == 1;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x180;
-    assert SelectACRCOperation() == ScalarOperation_ACRC;
+    assert ACRCOperation() == ScalarOperation_ACRC;
     return 0;
 end;

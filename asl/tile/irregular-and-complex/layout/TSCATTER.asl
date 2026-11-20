@@ -11,7 +11,7 @@
 // writes atomically.
 // NDF-END: PTO-TSCATTER-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTSCATTEROperation() => TileOperation
+readonly func TSCATTEROperation() => TileOperation
 begin
     return TileOperation_TSCATTER;
 end;
@@ -25,7 +25,7 @@ begin
     return TileOperandsLegal_TSCATTER(destination, source, indices);
 end;
 
-readonly func SelectTSCATTERHandler() => TileSemanticHandler
+readonly func TSCATTERHandler() => TileSemanticHandler
 begin
     return TileHandler_TSCATTER;
 end;

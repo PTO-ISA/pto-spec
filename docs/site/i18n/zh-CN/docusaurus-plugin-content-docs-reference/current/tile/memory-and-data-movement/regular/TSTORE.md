@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tstore-mechanism role=mechanism -->
 ## 寻址与访问顺序
 
-每个被选中的 PE 与每个活动的有效坐标都通过 `TileMemoryStridedByteAddress` 写入 `base + row * row_stride_bytes + column * element_size`。对打包四位类型，列贡献 `floor(column / 2)` 字节，低半字节或高半字节由列奇偶性选择。
+每个被选中的 PE 与每个活动的有效坐标都通过 `TileElementAddress` 写入 `base + row * row_stride_bytes + column * element_size`。对打包四位类型，列贡献 `floor(column / 2)` 字节，低半字节或高半字节由列奇偶性选择。
 
 `B.IOR.RegSrc0` 提供每 PE 的 GM 基址，`B.IOR.RegSrc1` 提供字节行步幅。省略 `B.IOR` 时基址为零，步幅为从解析的物理 `Col` 与数据类型推导出的紧密步幅，即 `ceil(columns * element_bits / 8)`；显式编码的零选择子是真正的零步幅。
 
@@ -162,7 +162,7 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/regular/TSTORE.asl -->
 ```asl
-readonly func SelectTSTOREOperation() => TileOperation
+readonly func TSTOREOperation() => TileOperation
 begin
     return TileOperation_TSTORE;
 end;
@@ -190,26 +190,26 @@ begin
     return TileRegularTLSUDataTypeSupported(data_type);
 end;
 
-readonly func SelectTSTOREHandler() => TileSemanticHandler
+readonly func TSTOREHandler() => TileSemanticHandler
 begin
     return TileHandler_TSTORE;
 end;
 
-readonly func ResolveTSTOREGlobalAddress(
+readonly func TSTOREGMAddress(
     base_address: Word,
     row: integer {0..65535},
     column: integer {0..65535},
     row_stride_bytes: Word,
     data_type: TileDataType) => Word
 begin
-    return TileMemoryStridedByteAddress(
+    return TileElementAddress(
         base_address, row, column, row_stride_bytes, data_type);
 end;
 
-readonly func ComputeTSTOREDenseStride(
+readonly func TSTOREDenseStride(
     columns: integer {0..65535}, data_type: TileDataType) => Word
 begin
-    return TileDenseRowStrideBytes(columns, data_type);
+    return TileDenseRowBytes(columns, data_type);
 end;
 
 pure func TSTORESharedMaskLegal(

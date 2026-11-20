@@ -110,7 +110,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SD.SMAX.asl -->
 ```asl
-readonly func SelectSDSMAXOperation() => ScalarOperation
+readonly func SDSMAXOperation() => ScalarOperation
 begin
     return ScalarOperation_SD_SMAX;
 end;
@@ -121,13 +121,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/SD.SMAX.asl -->
 ```asl
-readonly func SelectSDSMAXHandler()
+readonly func SDSMAXHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func SelectSDSMAXAtomicOperation()
+pure func SDSMAXAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_SMAX;

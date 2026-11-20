@@ -114,7 +114,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FABS.asl -->
 ```asl
-readonly func SelectFABSOperation()
+readonly func FABSOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FABS;
@@ -126,7 +126,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FABS.asl -->
 ```asl
-readonly func SelectFABSHandler()
+readonly func FABSHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingUnary;
@@ -163,7 +163,7 @@ begin
     return FALSE;
 end;
 
-pure func SelectFABSUnaryOperation()
+pure func FABSUnaryOperation()
     => FloatingUnaryOperation
 begin
     return FloatingUnary_ABS;

@@ -8,18 +8,18 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-C-SETRET-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectCSETRETOperation() => ScalarOperation
+readonly func CSETRETOperation() => ScalarOperation
 begin
     return ScalarOperation_C_SETRET;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectCSETRETHandler() => ScalarSemanticHandler
+readonly func CSETRETHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_SetReturnAddress;
 end;
 
-pure func ResolveCSETRETTarget(
+pure func CSETRETTarget(
     tpc: Word,
     uimm5: bits(5))
     => Word

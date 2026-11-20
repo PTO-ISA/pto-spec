@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(19) == TileHandler_ExecuteTileUnary;
     assert TileClassOfIndex(19) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(19) == TileEngine_SFU;
-    assert SelectTSQRTOperation() == TileOperation_TSQRT;
-    assert SelectTSQRTHandler() == TileHandler_ExecuteTileUnary;
+    assert TSQRTOperation() == TileOperation_TSQRT;
+    assert TSQRTHandler() == TileHandler_ExecuteTileUnary;
     return 0;
 end;

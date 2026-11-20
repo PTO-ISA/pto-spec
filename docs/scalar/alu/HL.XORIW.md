@@ -26,7 +26,7 @@ The result is a `32`-bit value that is widened afterwards, so the published high
 <!-- PTO-READER-BLOCK: scalar-hl-xoriw-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `ComputeHLXORIWResult`, which builds `right = SignExtend{PTO_XLEN}(immediate)` and returns `ScalarBinaryW(ScalarBinary_XOR, left, right)`. `ScalarBinaryW` exclusive-ors `left[31:0]` with `right[31:0]` into a 32-bit value and returns `SignExtend{PTO_XLEN}` of it. Dispatch selects the path with `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_XOR, ScalarField_simm24, TRUE)`.
+The owning ASL exposes `HLXORIWResult`, which builds `right = SignExtend{PTO_XLEN}(immediate)` and returns `ScalarBinaryW(ScalarBinary_XOR, left, right)`. `ScalarBinaryW` exclusive-ors `left[31:0]` with `right[31:0]` into a 32-bit value and returns `SignExtend{PTO_XLEN}` of it. Dispatch selects the path with `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_XOR, ScalarField_simm24, TRUE)`.
 
 ```asm
 hl.xoriw SrcL, simm, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.XORIW.asl -->
 ```asl
-readonly func SelectHLXORIWOperation() => ScalarOperation
+readonly func HLXORIWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_XORIW;
 end;
@@ -127,7 +127,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.XORIW.asl -->
 ```asl
-readonly func SelectHLXORIWHandler() => ScalarSemanticHandler
+readonly func HLXORIWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
@@ -150,7 +150,7 @@ begin
     return TRUE;
 end;
 
-pure func ComputeHLXORIWResult(
+pure func HLXORIWResult(
     left: Word,
     immediate: bits(24))
     => Word

@@ -28,7 +28,7 @@ The transformation and the shift run at full width on `SrcR`; the narrowing appl
 <!-- PTO-READER-BLOCK: scalar-subw-mechanism role=mechanism -->
 ## How the word result is formed
 
-`ExecuteDecodedBinary` reads both sources and the two suffix fields, forms the right operand with `PrepareScalarRight(right, modifier, shift_amount, FALSE)`, and with `word_operation` true calls `ScalarBinaryW(ScalarBinary_SUB, left, right)` (`asl/scalar/model/dispatch/alu.asl:86-87`). That helper computes the difference at `32` bits and returns `SignExtend{PTO_XLEN}(result32)` (`asl/scalar/model/alu/semantics.asl:477`).
+`ExecuteDecodedBinary` reads both sources and the two suffix fields, forms the right operand with `ShiftModifiedScalar(right, modifier, shift_amount, FALSE)`, and with `word_operation` true calls `ScalarBinaryW(ScalarBinary_SUB, left, right)` (`asl/scalar/model/dispatch/alu.asl:86-87`). That helper computes the difference at `32` bits and returns `SignExtend{PTO_XLEN}(result32)` (`asl/scalar/model/alu/semantics.asl:477`).
 
 ```asm
 subw SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>, ->{t, u, Rd}
@@ -131,7 +131,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/SUBW.asl -->
 ```asl
-readonly func SelectSUBWOperation()
+readonly func SUBWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SUBW;
@@ -143,7 +143,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/SUBW.asl -->
 ```asl
-readonly func SelectSUBWHandler()
+readonly func SUBWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
@@ -160,26 +160,26 @@ begin
     end;
 end;
 
-pure func PrepareSUBWRightOperand(
+pure func SUBWRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
     let modifier = DecodeSUBWRightModifier(encoded_modifier);
-    let transformed = ApplyScalarRightModifier(right, modifier, FALSE);
+    let transformed = ModifyScalarOperand(right, modifier, FALSE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func ComputeSUBWResult(
+pure func SUBWResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = PrepareSUBWRightOperand(
+    let prepared_right = SUBWRightOperand(
         right,
         encoded_modifier,
         shift_amount);

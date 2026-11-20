@@ -151,7 +151,7 @@ TRACE form: acts as a block start only when predecessor commit selects the fetch
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/B.HINT.asl -->
 ```asl
-readonly func SelectBHINTHandler() => CommandSemanticHandler
+readonly func BHINTHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleHint;
 end;

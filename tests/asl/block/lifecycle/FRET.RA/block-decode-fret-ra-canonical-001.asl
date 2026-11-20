@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(64) == CommandOperation_fret_ra_32_659c886221c1;
     assert CommandHandlerOfForm(64) == CommandHandler_ExecuteFrameReturnAddress;
     assert FRETRAEncodingMatches(CommandOperationOfForm(64));
-    assert SelectFRETRAHandler() == CommandHandler_ExecuteFrameReturnAddress;
+    assert FRETRAHandler() == CommandHandler_ExecuteFrameReturnAddress;
     return 0;
 end;

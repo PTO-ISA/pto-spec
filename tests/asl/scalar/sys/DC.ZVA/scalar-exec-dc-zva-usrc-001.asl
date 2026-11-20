@@ -19,6 +19,6 @@ begin
     assert _LastMaintenanceOperation == Maintenance_DC_ZVA;
     assert _LastMaintenanceOperand == Zeros{PTO_XLEN} + 0x1000;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert SelectDCZVAOperation() == ScalarOperation_DC_ZVA;
+    assert DCZVAOperation() == ScalarOperation_DC_ZVA;
     return 0;
 end;

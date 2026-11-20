@@ -218,7 +218,7 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl -->
 ```asl
-readonly func SelectTCVTOperation() => TileOperation
+readonly func TCVTOperation() => TileOperation
 begin
     return TileOperation_TCVT;
 end;
@@ -280,7 +280,7 @@ begin
     TCVT(destination, source, control);
 end;
 
-readonly func SelectTCVTHandler() => TileSemanticHandler
+readonly func TCVTHandler() => TileSemanticHandler
 begin
     return TileHandler_TCVT;
 end;

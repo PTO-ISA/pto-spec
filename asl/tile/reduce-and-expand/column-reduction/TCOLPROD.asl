@@ -26,7 +26,7 @@
 // For CUBE_M16/M32, destination Rows MUST equal source Rows and destination Columns MUST equal align_up(destination ValidColumns, destination CellCols), where destination CellCols is computed from destination DataType.
 // NDF-END: PTO-TCOLPROD-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTCOLPRODOperation() => TileOperation
+readonly func TCOLPRODOperation() => TileOperation
 begin
     return TileOperation_TCOLPROD;
 end;
@@ -49,7 +49,7 @@ begin
         source);
 end;
 
-readonly func SelectTCOLPRODHandler() => TileSemanticHandler
+readonly func TCOLPRODHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileReduction;
 end;

@@ -12,13 +12,13 @@
 // memory, Tile, block, reservation, privilege, numeric-status, or fault state.
 // NDF-END: PTO-HL-ADDI-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectHLADDIOperation() => ScalarOperation
+readonly func HLADDIOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_ADDI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLADDIHandler() => ScalarSemanticHandler
+readonly func HLADDIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
@@ -41,7 +41,7 @@ begin
     return FALSE;
 end;
 
-pure func ComputeHLADDIResult(
+pure func HLADDIResult(
     left: Word,
     immediate: bits(24))
     => Word

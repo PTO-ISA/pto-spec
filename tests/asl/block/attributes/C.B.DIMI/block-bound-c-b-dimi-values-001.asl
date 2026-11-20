@@ -37,7 +37,7 @@ begin
     assert CBDIMIDimension('00') == 0;
     assert CBDIMIDimension('01') == 1;
     assert CBDIMIDimension('10') == 2;
-    assert ComputeCBDIMIValue(Ones{8}) ==
+    assert CBDIMIValue(Ones{8}) ==
         Zeros{PTO_XLEN} + 255;
     return 0;
 end;

@@ -144,7 +144,7 @@ MCOPY is one standalone template block. It retires only after the complete byte 
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/MCOPY.asl -->
 ```asl
-readonly func SelectMCOPYHandler() => CommandSemanticHandler
+readonly func MCOPYHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteMemoryCopy;
 end;

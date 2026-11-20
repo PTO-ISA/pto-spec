@@ -22,7 +22,7 @@
 // operation and numeric-status policy; mixed FP64 pairs remain unassigned.
 // NDF-END: PTO-TEXPDIF-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTEXPDIFOperation() => TileOperation
+readonly func TEXPDIFOperation() => TileOperation
 begin
     return TileOperation_TEXPDIF;
 end;
@@ -45,7 +45,7 @@ begin
         destination, source0, source1);
 end;
 
-readonly func SelectTEXPDIFHandler() => TileSemanticHandler
+readonly func TEXPDIFHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpdif;
 end;

@@ -14,7 +14,7 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(3) == Zeros{PTO_XLEN} + 0x7fffffff;
     assert ReadGPR(4) == Zeros{PTO_XLEN} + 0xffffffff80000001;
-    assert ComputeHLCCATWLowResult(Zeros{PTO_XLEN} + 0x80000001, Zeros{PTO_XLEN} + 0x7fffffff, 0) == Zeros{PTO_XLEN} + 0x7fffffff;
-    assert ComputeHLCCATWHighResult(Zeros{PTO_XLEN} + 0x80000001, Zeros{PTO_XLEN} + 0x7fffffff, 0) == Zeros{PTO_XLEN} + 0xffffffff80000001;
+    assert HLCCATWLowResult(Zeros{PTO_XLEN} + 0x80000001, Zeros{PTO_XLEN} + 0x7fffffff, 0) == Zeros{PTO_XLEN} + 0x7fffffff;
+    assert HLCCATWHighResult(Zeros{PTO_XLEN} + 0x80000001, Zeros{PTO_XLEN} + 0x7fffffff, 0) == Zeros{PTO_XLEN} + 0xffffffff80000001;
     return 0;
 end;

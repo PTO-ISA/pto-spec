@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000011000001101001', 32) == 389;
     assert ScalarOperationOfForm(389) == ScalarOperation_SD_PCR;
     assert ScalarHandlerOfForm(389) == ScalarHandler_ExecuteScalarStore;
-    assert SelectSDPCROperation() == ScalarOperation_SD_PCR;
-    assert SelectSDPCRHandler() == ScalarHandler_ExecuteScalarStore;
+    assert SDPCROperation() == ScalarOperation_SD_PCR;
+    assert SDPCRHandler() == ScalarHandler_ExecuteScalarStore;
     assert SDPCRAGUAction() == ScalarAGU_Store;
     assert SDPCRAGUAddressKind() == ScalarAGU_PCRelative;
     assert SDPCRAGUSizeBytes() == 8;

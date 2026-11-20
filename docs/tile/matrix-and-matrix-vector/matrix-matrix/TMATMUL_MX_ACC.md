@@ -148,7 +148,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC.asl -->
 ```asl
-readonly func SelectTMATMULMXACCOperation()
+readonly func TMATMULMXACCOperation()
     => TileOperation
 begin
     return TileOperation_TMATMUL_MX_ACC;
@@ -205,7 +205,7 @@ begin
         column_scale);
 end;
 
-readonly func SelectTMATMULMXACCHandler()
+readonly func TMATMULMXACCHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TMATMUL_MX_ACC;

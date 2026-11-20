@@ -6,8 +6,8 @@ begin
     assert CommandOperationOfForm(39) == CommandOperation_bstart_tgemvmx_bias_32_d23011f15171;
     assert CommandHandlerOfForm(39) == CommandHandler_ExecuteBundleStart;
     assert BSTARTTGEMVMXBIASEncodingMatches(CommandOperationOfForm(39));
-    assert SelectBSTARTTGEMVMXBIASHandler() == CommandHandler_ExecuteBundleStart;
-    assert SelectBSTARTTGEMVMXBIASTileOperation() == TileOperation_TGEMV_MX_BIAS;
+    assert BSTARTTGEMVMXBIASHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTTGEMVMXBIASTileOperation() == TileOperation_TGEMV_MX_BIAS;
     assert BSTARTTGEMVMXBIASCubeFunction() == 21;
     assert BSTARTTGEMVMXBIASSharedOperandsAllowed() == FALSE;
     return 0;

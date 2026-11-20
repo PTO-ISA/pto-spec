@@ -16,6 +16,6 @@ begin
     assert ReadGPR(1) == Zeros{PTO_XLEN} + 1;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x44;
     assert DecodeSRLWShiftAmount(Zeros{PTO_XLEN} + 31) == 31;
-    assert ComputeSRLWResult(Zeros{PTO_XLEN} + 0x80000000, Zeros{PTO_XLEN} + 31) == Zeros{PTO_XLEN} + 1;
+    assert SRLWResult(Zeros{PTO_XLEN} + 0x80000000, Zeros{PTO_XLEN} + 31) == Zeros{PTO_XLEN} + 1;
     return 0;
 end;

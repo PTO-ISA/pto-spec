@@ -8,13 +8,13 @@
 // BARG.TAKEN. A rejected occurrence MUST NOT consume the shared marker.
 // NDF-END: PTO-SETC-AND-CONDITIONAL-SETTER-001
 // DOC-BEGIN: decode
-readonly func SelectSETCANDOperation() => ScalarOperation
+readonly func SETCANDOperation() => ScalarOperation
 begin
     return ScalarOperation_SETC_AND;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSETCANDHandler() => ScalarSemanticHandler
+readonly func SETCANDHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommitLogical;
 end;

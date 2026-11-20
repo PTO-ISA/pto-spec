@@ -270,7 +270,7 @@
     "FloatingRoundNearest",
     "ScalarFPBinaryProfile",
     "ScalarFPConvertProfile",
-    "ScalarFPFusedProfile",
+    "FPMulAdd",
     "ScalarFPToIntegerProfile",
     "ScalarFPUnaryProfile",
     "ScalarIntegerToFPProfile",
@@ -565,7 +565,7 @@
         "scalar:fnmsub_32_6542d56665b3"
       ],
       "hooks": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "decision_adr_ids": [
         "ADR-NUM-0008",

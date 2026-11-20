@@ -27,7 +27,7 @@ begin
     WriteGPR(1, Ones{PTO_XLEN});
     let discard_status = ExecuteScalarInstruction(discard, 32);
     assert discard_status == ScalarExecution_Executed;
-    assert ComputeREVResult(Ones{PTO_XLEN}, 7, 0) ==
+    assert REVResult(Ones{PTO_XLEN}, 7, 0) ==
         Zeros{PTO_XLEN};
     return 0;
 end;

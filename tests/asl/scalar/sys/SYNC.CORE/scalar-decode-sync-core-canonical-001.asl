@@ -5,7 +5,7 @@ begin
     assert DecodeScalarForm('000000000000000000000011001100001010000000101011', 32) == 466;
     assert ScalarOperationOfForm(466) == ScalarOperation_SYNC_CORE;
     assert ScalarHandlerOfForm(466) == ScalarHandler_SyncCore;
-    assert SelectSYNCCOREOperation() == ScalarOperation_SYNC_CORE;
-    assert SelectSYNCCOREHandler() == ScalarHandler_SyncCore;
+    assert SYNCCOREOperation() == ScalarOperation_SYNC_CORE;
+    assert SYNCCOREHandler() == ScalarHandler_SyncCore;
     return 0;
 end;

@@ -8,19 +8,19 @@
 // selected width, ordering, memory update, event, and result atomically.
 // NDF-END: PTO-SW-UMAX-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectSWUMAXOperation() => ScalarOperation
+readonly func SWUMAXOperation() => ScalarOperation
 begin
     return ScalarOperation_SW_UMAX;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSWUMAXHandler()
+readonly func SWUMAXHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func SelectSWUMAXAtomicOperation()
+pure func SWUMAXAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_UMAX;

@@ -19,9 +19,9 @@ This unit owns row-strided GM addressing for Tile transfers. A row stride is the
 
 It defines four helpers:
 
-- `TileMemoryStridedByteAddress` computes the byte address of `(row, column)` from a byte row stride.
+- `TileElementAddress` computes the byte address of `(row, column)` from a byte row stride.
 - `TileMemoryStridedByteHighNibble` selects the nibble for four-bit types.
-- `TileDenseRowStrideBytes` computes the dense row width in bytes.
+- `TileDenseRowBytes` computes the dense row width in bytes.
 - `TileMemoryStridedIndex` computes an element index from a row stride counted in elements.
 
 <!-- PTO-READER-BLOCK: tile-model-memory-stride-concepts role=concepts-state -->
@@ -37,11 +37,11 @@ A four-bit type (E2M1X2, E1M2X2, HiF4X2, S4X2, U4X2) packs two elements per byte
 <!-- PTO-READER-BLOCK: tile-model-memory-stride-rules role=rules-interactions -->
 ## Rules and interactions
 
-For a type that is not four-bit, `TileMemoryStridedByteAddress` returns `base + row * row_stride_bytes + column * TileElementBytes(data_type)`.
+For a type that is not four-bit, `TileElementAddress` returns `base + row * row_stride_bytes + column * TileElementBytes(data_type)`.
 
 For a four-bit type it returns `base + row * row_stride_bytes + column / 2` (rounded down). `TileMemoryStridedByteHighNibble` is TRUE for an odd column of a four-bit type and FALSE otherwise.
 
-`TileDenseRowStrideBytes` returns `columns * TileElementBytes(data_type)` for types that are not four-bit, and `(columns + 1) / 2` rounded down for four-bit types. The block operand resolver uses it as the `TLOAD` and `TSTORE` row stride when `B.IOR` is omitted, with the resolved physical column count.
+`TileDenseRowBytes` returns `columns * TileElementBytes(data_type)` for types that are not four-bit, and `(columns + 1) / 2` rounded down for four-bit types. The block operand resolver uses it as the `TLOAD` and `TSTORE` row stride when `B.IOR` is omitted, with the resolved physical column count.
 
 `TileMemoryStridedIndex` returns `row * row_stride_elements + column`. All products and sums use `Word` arithmetic and wrap modulo 2^64.
 
@@ -91,7 +91,7 @@ begin
            NaturalToWord(column as integer {0..262144});
 end;
 
-pure func TileDenseRowStrideBytes(columns: integer {0..65535},
+pure func TileDenseRowBytes(columns: integer {0..65535},
                                   data_type: TileDataType) => Word
 begin
     if TileDataTypeIsFourBit(data_type) then
@@ -105,7 +105,7 @@ begin
     end;
 end;
 
-readonly func TileMemoryStridedByteAddress(
+readonly func TileElementAddress(
     base_address: Word, row: integer {0..65535},
     column: integer {0..65535}, row_stride_bytes: Word,
     data_type: TileDataType) => Word

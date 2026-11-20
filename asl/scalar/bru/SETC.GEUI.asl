@@ -8,18 +8,18 @@
 // BARG.TAKEN. A rejected occurrence MUST NOT consume the shared marker.
 // NDF-END: PTO-SETC-GEUI-CONDITIONAL-SETTER-001
 // DOC-BEGIN: decode
-readonly func SelectSETCGEUIOperation() => ScalarOperation
+readonly func SETCGEUIOperation() => ScalarOperation
 begin
     return ScalarOperation_SETC_GEUI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSETCGEUIHandler() => ScalarSemanticHandler
+readonly func SETCGEUIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommit;
 end;
 
-pure func DecodeSETCGEUICondition()
+pure func SETCGEUICondition()
     => ScalarCondition
 begin
     return ScalarCondition_GEU;
@@ -31,7 +31,7 @@ pure func CommitSETCGEUIResult(
     => boolean
 begin
     return ConditionHolds(
-        DecodeSETCGEUICondition(),
+        SETCGEUICondition(),
         left,
         right);
 end;

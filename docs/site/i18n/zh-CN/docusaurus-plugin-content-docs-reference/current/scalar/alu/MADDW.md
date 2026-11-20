@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-maddw-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `ComputeMADDWResult`，它返回 `ScalarMultiplyAddW(addend, left, right)`。该辅助函数用 `MultiplyWord(left, right)` 做乘法，取 `product[31:0]`，把 `addend[31:0]` 加进一个 32 位值，再对 32 位和应用 `SignExtend{PTO_XLEN}`。
+所属 ASL 提供 `MADDWResult`，它返回 `ScalarMultiplyAddW(addend, left, right)`。该辅助函数用 `MultiplyWord(left, right)` 做乘法，取 `product[31:0]`，把 `addend[31:0]` 加进一个 32 位值，再对 32 位和应用 `SignExtend{PTO_XLEN}`。
 
 ```asm
 maddw SrcL, SrcR, SrcD, ->{t, u, Rd}
@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MADDW.asl -->
 ```asl
-readonly func SelectMADDWOperation() => ScalarOperation
+readonly func MADDWOperation() => ScalarOperation
 begin
     return ScalarOperation_MADDW;
 end;
@@ -131,11 +131,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MADDW.asl -->
 ```asl
-readonly func SelectMADDWHandler() => ScalarSemanticHandler
+readonly func MADDWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarMultiplyAddW;
 end;
-pure func ComputeMADDWResult(addend: Word, left: Word, right: Word) => Word
+pure func MADDWResult(addend: Word, left: Word, right: Word) => Word
 begin
     return ScalarMultiplyAddW(addend, left, right);
 end;

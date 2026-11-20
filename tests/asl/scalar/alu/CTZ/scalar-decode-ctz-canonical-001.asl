@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000100000001100111', 32) == 72;
     assert ScalarOperationOfForm(72) == ScalarOperation_CTZ;
     assert ScalarHandlerOfForm(72) == ScalarHandler_CountBitfield;
-    assert SelectCTZOperation() == ScalarOperation_CTZ;
-    assert SelectCTZHandler() == ScalarHandler_CountBitfield;
+    assert CTZOperation() == ScalarOperation_CTZ;
+    assert CTZHandler() == ScalarHandler_CountBitfield;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000100000001100111', 72, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000100000001100111', 72, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000100000001100111', 72, ScalarField_imml) == '000000000000000000000000000000000000000000000000';

@@ -10,7 +10,7 @@ begin
     let status = ExecuteScalarInstruction(instruction, 32);
     assert status == ScalarExecution_Executed;
     assert ReadGPR(2) == Zeros{PTO_XLEN} + 0x8000000000000001;
-    assert ComputeBISResult(Zeros{PTO_XLEN}, 2, 63) ==
+    assert BISResult(Zeros{PTO_XLEN}, 2, 63) ==
         Zeros{PTO_XLEN} + 0x8000000000000001;
     return 0;
 end;

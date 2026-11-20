@@ -43,7 +43,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
 
-    assert SelectLWSMAXAtomicOperation() == Atomic_SMAX;
+    assert LWSMAXAtomicOperation() == Atomic_SMAX;
     assert LWSMAXAtomicSizeBytes() == 4;
     assert LWSMAXPublishesOldValue();
     assert LWSMAXSignExtendsOldValue();

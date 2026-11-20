@@ -24,14 +24,14 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-cisw-mechanism role=mechanism -->
 ## 系统机制
 
-`SelectDCCISWHandler` 选择 `ScalarHandler_ExecuteMaintenance`（`asl/scalar/sys/DC.CISW.asl:11`），而 `SelectDCCISWMaintenanceOperation` 把操作固定为 `Maintenance_DC_CISW`（`asl/scalar/sys/DC.CISW.asl:23`）。该处理程序与其他所有缓存、bundle 缓存和 TLB 维护指令共用，因此它们之间的差别只在于操作令牌和操作数规则。
+`DCCISWHandler` 选择 `ScalarHandler_ExecuteMaintenance`（`asl/scalar/sys/DC.CISW.asl:11`），而 `DCCISWMaintenanceOperation` 把操作固定为 `Maintenance_DC_CISW`（`asl/scalar/sys/DC.CISW.asl:23`）。该处理程序与其他所有缓存、bundle 缓存和 TLB 维护指令共用，因此它们之间的差别只在于操作令牌和操作数规则。
 
 该指令占用活动 SYS 块体中的一个标量操作位置（`asl/scalar/model/sys/semantics.asl:322`）。所有固定位和操作数约束都在合法性检查阶段完成，早于处理程序运行。
 
 <!-- PTO-READER-BLOCK: scalar-dc-cisw-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`SrcL` 是 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。派发器通过 `ReadDecodedScalarRegister` 读取它，并把取到的值作为操作数传给执行器（`asl/scalar/model/dispatch/sys.asl:42`）。编码零命名架构零 GPR，因此它是已分配的值，从不表示省略操作数。
+`SrcL` 是 Reg5 源：R0..R23、T#1..T#4 或 U#1..U#4。派发器通过 `ReadDecodedReg5` 读取它，并把取到的值作为操作数传给执行器（`asl/scalar/model/dispatch/sys.asl:42`）。编码零命名架构零 GPR，因此它是已分配的值，从不表示省略操作数。
 
 `DC.CISW` 不产生标量目的地。唯一的输出是维护记录。
 
@@ -102,7 +102,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.CISW.asl -->
 ```asl
-readonly func SelectDCCISWOperation()
+readonly func DCCISWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DC_CISW;
@@ -120,7 +120,7 @@ DC.CISW executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.CISW.asl -->
 ```asl
-readonly func SelectDCCISWHandler()
+readonly func DCCISWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
@@ -132,7 +132,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectDCCISWMaintenanceOperation()
+pure func DCCISWMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_DC_CISW;

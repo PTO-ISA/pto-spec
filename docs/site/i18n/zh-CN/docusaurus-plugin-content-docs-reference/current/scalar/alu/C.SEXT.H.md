@@ -107,7 +107,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/C.SEXT.H.asl -->
 ```asl
-readonly func SelectCSEXTHOperation() => ScalarOperation
+readonly func CSEXTHOperation() => ScalarOperation
 begin
     return ScalarOperation_C_SEXT_H;
 end;
@@ -118,12 +118,12 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/C.SEXT.H.asl -->
 ```asl
-readonly func SelectCSEXTHHandler() => ScalarSemanticHandler
+readonly func CSEXTHHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExtendScalarValue;
 end;
 
-pure func ComputeCSEXTHResult(value: Word)
+pure func CSEXTHResult(value: Word)
     => Word
 begin
     return ExtendScalarValue(

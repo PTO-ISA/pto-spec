@@ -9,13 +9,13 @@
 // The effective address MUST be discarded with no destination effect.
 // NDF-END: PTO-HL-PRFI-U-CACHE-MODEL-001
 // DOC-BEGIN: decode
-readonly func SelectHLPRFIUOperation() => ScalarOperation
+readonly func HLPRFIUOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_PRFI_U;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLPRFIUHandler()
+readonly func HLPRFIUHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarPrefetch;

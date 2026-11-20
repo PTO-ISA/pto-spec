@@ -266,7 +266,7 @@ begin
             let agent = pe as MemoryAgentId;
             if pe_mask[PTOPEMaskBitOfPEIdentity(agent)] == '1' then
                 for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-                    let address = TileMemoryStridedByteAddress(
+                    let address = TileElementAddress(
                         base_addresses[[agent]], 0,
                         column as integer {0..65535},
                         row_stride_bytes[[agent]], tile.data_type);
@@ -314,7 +314,7 @@ begin
                     else region as MemoryAgentId;
                 let high_nibble = TileMemoryStridedByteHighNibble(
                     column as integer {0..65535}, tile.data_type);
-                let address = TileMemoryStridedByteAddress(
+                let address = TileElementAddress(
                     base_addresses[[agent]], row as integer {0..65535},
                     column as integer {0..65535},
                     row_stride_bytes[[agent]], tile.data_type);
@@ -378,7 +378,7 @@ begin
                     let element = TileLogicalLinearIndex(tile,
                         row as integer {0..65535},
                         column as integer {0..65535});
-                    let address = TileMemoryStridedByteAddress(
+                    let address = TileElementAddress(
                         base_addresses[[agent]], row as integer {0..65535},
                         column as integer {0..65535},
                         row_stride_bytes[[agent]], tile.data_type);
@@ -461,7 +461,7 @@ begin
             assert tile.allocated && tile.contents_defined;
             for row = 0 to tile.valid_rows - 1 looplimit 65536 do
                 for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-                    let address = TileMemoryStridedByteAddress(
+                    let address = TileElementAddress(
                         base_addresses[[agent]], row as integer {0..65535},
                         column as integer {0..65535},
                         row_stride_bytes[[agent]], tile.data_type);

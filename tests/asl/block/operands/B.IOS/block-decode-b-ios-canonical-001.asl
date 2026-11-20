@@ -6,11 +6,11 @@ begin
     assert CommandOperationOfForm(52) == CommandOperation_b_ios_32_4ba5ef98fdaa;
     assert CommandHandlerOfForm(52) == CommandHandler_BindBundleSharedIO;
     assert BIOSEncodingMatches(CommandOperationOfForm(52));
-    assert SelectBIOSHandler() == CommandHandler_BindBundleSharedIO;
+    assert BIOSHandler() == CommandHandler_BindBundleSharedIO;
     assert DecodeCommandForm('0000000000000000000000000000000000000100000000000001000000010011', 32) == 104;
     assert CommandOperationOfForm(104) == CommandOperation_b_ios_32_last_src;
     assert CommandHandlerOfForm(104) == CommandHandler_BindBundleSharedIO;
     assert BIOSEncodingMatches(CommandOperationOfForm(104));
-    assert SelectBIOSHandler() == CommandHandler_BindBundleSharedIO;
+    assert BIOSHandler() == CommandHandler_BindBundleSharedIO;
     return 0;
 end;

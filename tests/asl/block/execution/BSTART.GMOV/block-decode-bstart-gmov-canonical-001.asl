@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(48) == CommandOperation_bstart_gmov_32_6c21e223eaa7;
     assert CommandHandlerOfForm(48) == CommandHandler_ExecuteBundleStart;
     assert BSTARTGMOVEncodingMatches(CommandOperationOfForm(48));
-    assert SelectBSTARTGMOVHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTGMOVHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

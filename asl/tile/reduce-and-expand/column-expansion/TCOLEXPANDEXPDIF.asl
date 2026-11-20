@@ -9,7 +9,7 @@
 // operation and numeric-status policy; mixed FP64 pairs remain unassigned.
 // NDF-END: PTO-TCOLEXPANDEXPDIF-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTCOLEXPANDEXPDIFOperation() => TileOperation
+readonly func TCOLEXPANDEXPDIFOperation() => TileOperation
 begin
     return TileOperation_TCOLEXPANDEXPDIF;
 end;
@@ -37,7 +37,7 @@ begin
         broadcast);
 end;
 
-readonly func SelectTCOLEXPANDEXPDIFHandler() => TileSemanticHandler
+readonly func TCOLEXPANDEXPDIFHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;

@@ -71,7 +71,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/SYNC.CORE.asl -->
 ```asl
-readonly func SelectSYNCCOREOperation() => ScalarOperation
+readonly func SYNCCOREOperation() => ScalarOperation
 begin
     return ScalarOperation_SYNC_CORE;
 end;
@@ -88,7 +88,7 @@ The only canonical body is BSTART.SYS FALL, sync.core, BSTOP.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/SYNC.CORE.asl -->
 ```asl
-readonly func SelectSYNCCOREHandler() => ScalarSemanticHandler
+readonly func SYNCCOREHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_SyncCore;
 end;

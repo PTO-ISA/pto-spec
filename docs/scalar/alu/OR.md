@@ -28,7 +28,7 @@ The carrier matches `0x00003005` under mask `0x0000707f`; the mnemonic and those
 <!-- PTO-READER-BLOCK: scalar-or-mechanism role=mechanism -->
 ## How the operands are formed
 
-Dispatch reads `SrcL`, the unmodified `SrcR`, `SrcRType` and `shamt`, then calls `PrepareScalarRight(unmodified_right, modifier, shift_amount, TRUE)` at `asl/scalar/model/dispatch/alu.asl:80-83`. That helper applies the modifier first and then shifts the result logically left by `shamt`; the modified and shifted value is the right operand of the final `ScalarBinary_OR`.
+Dispatch reads `SrcL`, the unmodified `SrcR`, `SrcRType` and `shamt`, then calls `ShiftModifiedScalar(unmodified_right, modifier, shift_amount, TRUE)` at `asl/scalar/model/dispatch/alu.asl:80-83`. That helper applies the modifier first and then shifts the result logically left by `shamt`; the modified and shifted value is the right operand of the final `ScalarBinary_OR`.
 
 ```asm
 or SrcL, SrcR<{.sw,.uw,.not}><<<shamt>, ->{t, u, Rd}
@@ -137,7 +137,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/OR.asl -->
 ```asl
-readonly func SelectOROperation()
+readonly func OROperation()
     => ScalarOperation
 begin
     return ScalarOperation_OR;
@@ -149,7 +149,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/OR.asl -->
 ```asl
-readonly func SelectORHandler()
+readonly func ORHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
@@ -166,26 +166,26 @@ begin
     end;
 end;
 
-pure func PrepareORRightOperand(
+pure func ORRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
     let modifier = DecodeORRightModifier(encoded_modifier);
-    let transformed = ApplyScalarRightModifier(right, modifier, TRUE);
+    let transformed = ModifyScalarOperand(right, modifier, TRUE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func ComputeORResult(
+pure func ORResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = PrepareORRightOperand(
+    let prepared_right = ORRightOperand(
         right,
         encoded_modifier,
         shift_amount);

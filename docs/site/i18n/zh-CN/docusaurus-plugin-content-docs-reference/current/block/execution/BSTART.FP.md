@@ -151,7 +151,7 @@ COND publishes a candidate BPCN but SETC may update TAKEN before commit; IND req
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.FP.asl -->
 ```asl
-readonly func SelectBSTARTFPHandler() => CommandSemanticHandler
+readonly func BSTARTFPHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

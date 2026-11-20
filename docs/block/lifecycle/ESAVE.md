@@ -137,7 +137,7 @@ none; ESAVE is not an executable PTO command
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/ESAVE.asl -->
 ```asl
-readonly func SelectESAVEHandler() => CommandSemanticHandler
+readonly func ESAVEHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SaveExecutionContext;
 end;

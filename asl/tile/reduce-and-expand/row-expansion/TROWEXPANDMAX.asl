@@ -11,7 +11,7 @@
 // ExecutionMask, Predicate-GPR/PredicateCell, PredInv, and Zero retain their existing meanings; inactive destination coordinates continue to use the existing MERGE/ZERO policy.
 // NDF-END: PTO-TROWEXPANDMAX-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTROWEXPANDMAXOperation() => TileOperation
+readonly func TROWEXPANDMAXOperation() => TileOperation
 begin
     return TileOperation_TROWEXPANDMAX;
 end;
@@ -36,7 +36,7 @@ begin
         broadcast);
 end;
 
-readonly func SelectTROWEXPANDMAXHandler() => TileSemanticHandler
+readonly func TROWEXPANDMAXHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;

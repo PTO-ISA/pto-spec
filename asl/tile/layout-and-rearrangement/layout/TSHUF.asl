@@ -9,13 +9,13 @@
 // checked before publication; SELF and ZERO define out-of-segment behavior.
 // NDF-END: PTO-TSHUF-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTSHUFOperation() => TileOperation
+readonly func TSHUFOperation() => TileOperation
 begin
     return TileOperation_TSHUF;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectTSHUFHandler() => TileSemanticHandler
+readonly func TSHUFHandler() => TileSemanticHandler
 begin
     return TileHandler_TSHUF;
 end;

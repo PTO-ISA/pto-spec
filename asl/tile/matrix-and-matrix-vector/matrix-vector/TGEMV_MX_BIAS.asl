@@ -22,7 +22,7 @@
 // Cache behavior MUST NOT alter results, faults, source lifetime, or ordering.
 // NDF-END: PTO-TGEMV-MX-BIAS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTGEMVMXBIASOperation()
+readonly func TGEMVMXBIASOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV_MX_BIAS;
@@ -58,7 +58,7 @@ begin
         bias);
 end;
 
-readonly func SelectTGEMVMXBIASHandler()
+readonly func TGEMVMXBIASHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TGEMV_MX_BIAS;

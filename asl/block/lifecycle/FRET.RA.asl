@@ -11,7 +11,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectFRETRAHandler() => CommandSemanticHandler
+readonly func FRETRAHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteFrameReturnAddress;
 end;

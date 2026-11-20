@@ -17,14 +17,14 @@ begin
     return UInt(loop_nest) as BundleDimensionIndex;
 end;
 
-pure func ComputeCBDIMIValue(
+pure func CBDIMIValue(
     immediate: bits(8))
     => Word
 begin
     return ZeroExtend{PTO_XLEN}(immediate);
 end;
 
-readonly func SelectCBDIMIHandler()
+readonly func CBDIMIHandler()
     => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleDimension;

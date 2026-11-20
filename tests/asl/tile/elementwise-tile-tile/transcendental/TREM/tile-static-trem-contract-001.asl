@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(4) == TileHandler_ExecuteTileBinary;
     assert TileClassOfIndex(4) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(4) == TileEngine_SFU;
-    assert SelectTREMOperation() == TileOperation_TREM;
-    assert SelectTREMHandler() == TileHandler_ExecuteTileBinary;
+    assert TREMOperation() == TileOperation_TREM;
+    assert TREMHandler() == TileHandler_ExecuteTileBinary;
     return 0;
 end;

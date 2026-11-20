@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(85) == CommandOperation_bstart_mscatter_max_32_gm19;
     assert CommandHandlerOfForm(85) == CommandHandler_ExecuteBundleStart;
     assert BSTARTMSCATTERMAXEncodingMatches(CommandOperationOfForm(85));
-    assert SelectBSTARTMSCATTERMAXHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTMSCATTERMAXHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

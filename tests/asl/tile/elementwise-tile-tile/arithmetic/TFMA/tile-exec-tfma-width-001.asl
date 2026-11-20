@@ -6,7 +6,7 @@ begin
     assert !TFMADataTypeLegal(TileDataType_S8);
     assert !TFMADataTypeLegal(TileDataType_U8);
 
-    let (signed_result, signed_flags) = ComputeTFMAValue(
+    let (signed_result, signed_flags) = TFMAValue(
         TileDataType_S64,
         Ones{PTO_XLEN},
         Zeros{PTO_XLEN} + 2,
@@ -14,7 +14,7 @@ begin
     assert signed_result == Zeros{PTO_XLEN} + 1;
     assert signed_flags == Zeros{5};
 
-    let (unsigned_result, unsigned_flags) = ComputeTFMAValue(
+    let (unsigned_result, unsigned_flags) = TFMAValue(
         TileDataType_U64,
         Zeros{PTO_XLEN} + 0x8000000000000000,
         Zeros{PTO_XLEN} + 2,

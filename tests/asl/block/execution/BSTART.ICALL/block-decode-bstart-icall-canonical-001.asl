@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(16) == CommandOperation_bstart_icall_32_50166001;
     assert CommandHandlerOfForm(16) == CommandHandler_ExecuteBundleStart;
     assert BSTARTICALLEncodingMatches(CommandOperationOfForm(16));
-    assert SelectBSTARTICALLHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTICALLHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

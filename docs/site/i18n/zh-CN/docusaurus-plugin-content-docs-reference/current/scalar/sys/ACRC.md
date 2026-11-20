@@ -108,7 +108,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/ACRC.asl -->
 ```asl
-readonly func SelectACRCOperation()
+readonly func ACRCOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ACRC;
@@ -126,7 +126,7 @@ ACRC executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/ACRC.asl -->
 ```asl
-readonly func SelectACRCHandler()
+readonly func ACRCHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ArchitectureCloseRequest;

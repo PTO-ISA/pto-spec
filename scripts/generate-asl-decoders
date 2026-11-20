@@ -6625,7 +6625,7 @@ def emit_scalar_agu_source_alias_case(
     print(f"    {queue}[[{index}]] = {bit_literal(selected_value, 64)};")
     print(
         f"    let scalar_agu_source_alias_value_{case_index} = "
-        f"ReadDecodedScalarRegister({bit_literal(instruction, 48)}, "
+        f"ReadDecodedReg5({bit_literal(instruction, 48)}, "
         f"{row['_form_index']}, ScalarField_{field_name});"
     )
     print(
@@ -11765,7 +11765,7 @@ def _emit_monolithic() -> None:
             print("    end;")
             print(
                 f"    let scalar_sys_selector_source_{selector_case_index} = "
-                f"ReadScalarRegisterOperand({source});"
+                f"ReadReg5({source});"
             )
             print(
                 f"    let scalar_sys_selector_cycle_{selector_case_index} = _SystemRegisters.cycle;"
@@ -11850,7 +11850,7 @@ def _emit_monolithic() -> None:
                 )
                 print(
                     f"    let scalar_sys_selector_source_{selector_case_index} = "
-                    f"ReadScalarRegisterOperand({source});"
+                    f"ReadReg5({source});"
                 )
                 print(
                     f"    let scalar_sys_selector_cycle_{selector_case_index} = _SystemRegisters.cycle;"

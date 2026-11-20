@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-mulu-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `ComputeMULUResult`，它返回 `MultiplyWord(left, right)`。该辅助函数在累加过程中把每个部分和按模 `2^PTO_XLEN` 约简，因此它返回的是两个源位模式精确乘积的低 XLEN 位。
+所属 ASL 提供 `MULUResult`，它返回 `MultiplyWord(left, right)`。该辅助函数在累加过程中把每个部分和按模 `2^PTO_XLEN` 约简，因此它返回的是两个源位模式精确乘积的低 XLEN 位。
 
 ```asm
 mulu SrcL, SrcR, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MULU.asl -->
 ```asl
-readonly func SelectMULUOperation() => ScalarOperation
+readonly func MULUOperation() => ScalarOperation
 begin
     return ScalarOperation_MULU;
 end;
@@ -127,11 +127,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MULU.asl -->
 ```asl
-readonly func SelectMULUHandler() => ScalarSemanticHandler
+readonly func MULUHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_MultiplyWord;
 end;
-pure func ComputeMULUResult(left: Word, right: Word) => Word
+pure func MULUResult(left: Word, right: Word) => Word
 begin
     return MultiplyWord(left, right);
 end;

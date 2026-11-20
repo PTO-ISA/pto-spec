@@ -65,7 +65,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBSTARTTMATMULMXBIASTileOperation()
+readonly func BSTARTTMATMULMXBIASTileOperation()
     => TileOperation
 begin
     return TileOperation_TMATMUL_MX_BIAS;
@@ -83,7 +83,7 @@ begin
     return TRUE;
 end;
 
-readonly func SelectBSTARTTMATMULMXBIASHandler()
+readonly func BSTARTTMATMULMXBIASHandler()
     => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;

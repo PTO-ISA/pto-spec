@@ -8,13 +8,13 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-HL-SH-UPO-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectHLSHUPOOperation() => ScalarOperation
+readonly func HLSHUPOOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_SH_UPO;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLSHUPOHandler()
+readonly func HLSHUPOHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStore;

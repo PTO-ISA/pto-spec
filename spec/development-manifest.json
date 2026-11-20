@@ -34,7 +34,7 @@
     "release": "0.59.0"
   },
   "normative_source_count": 960,
-  "normative_sources_sha256": "725d530fee9e5b4e87a899f68dfb9d7e0bacf0066b5bf91516daf1ea543aa742",
+  "normative_sources_sha256": "c618b49dad2deb66300a70fb6e9020f6d9068f4dfc018bfda143e36ebe6a7a6a",
   "publication": null,
   "schema": "pto.development-manifest.v1",
   "status": "development-not-published"

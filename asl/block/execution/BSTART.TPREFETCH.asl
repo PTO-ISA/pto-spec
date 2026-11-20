@@ -13,7 +13,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBSTARTTPREFETCHHandler() => CommandSemanticHandler
+readonly func BSTARTTPREFETCHHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

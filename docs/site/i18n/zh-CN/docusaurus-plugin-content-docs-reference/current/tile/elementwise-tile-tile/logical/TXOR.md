@@ -107,7 +107,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TXOR.asl -->
 ```asl
-readonly func SelectTXOROperation() => TileOperation
+readonly func TXOROperation() => TileOperation
 begin
     return TileOperation_TXOR;
 end;
@@ -148,7 +148,7 @@ begin
         source_right);
 end;
 
-readonly func SelectTXORHandler() => TileSemanticHandler
+readonly func TXORHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;

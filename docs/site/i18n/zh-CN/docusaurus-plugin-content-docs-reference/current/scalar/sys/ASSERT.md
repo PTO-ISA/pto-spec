@@ -104,7 +104,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/ASSERT.asl -->
 ```asl
-readonly func SelectASSERTOperation()
+readonly func ASSERTOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ASSERT;
@@ -122,7 +122,7 @@ ASSERT executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/ASSERT.asl -->
 ```asl
-readonly func SelectASSERTHandler()
+readonly func ASSERTHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ArchitectureAssert;

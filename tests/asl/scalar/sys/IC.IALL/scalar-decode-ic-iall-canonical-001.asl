@@ -5,7 +5,7 @@ begin
     assert DecodeScalarForm('000000000000000000000000000100000101000000101011', 32) == 304;
     assert ScalarOperationOfForm(304) == ScalarOperation_IC_IALL;
     assert ScalarHandlerOfForm(304) == ScalarHandler_ExecuteMaintenance;
-    assert SelectICIALLOperation() == ScalarOperation_IC_IALL;
-    assert SelectICIALLHandler() == ScalarHandler_ExecuteMaintenance;
+    assert ICIALLOperation() == ScalarOperation_IC_IALL;
+    assert ICIALLHandler() == ScalarHandler_ExecuteMaintenance;
     return 0;
 end;

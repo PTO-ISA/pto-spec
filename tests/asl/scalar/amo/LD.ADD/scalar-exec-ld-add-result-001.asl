@@ -42,7 +42,7 @@ begin
     assert _MemoryEvents[[0]].write_value == expected;
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
-    assert SelectLDADDAtomicOperation() == Atomic_ADD;
+    assert LDADDAtomicOperation() == Atomic_ADD;
     assert LDADDAtomicSizeBytes() == 8;
     assert LDADDPublishesOldValue();
     assert !LDADDSignExtendsOldValue();

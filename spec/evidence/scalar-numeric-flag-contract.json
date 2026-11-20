@@ -274,7 +274,7 @@
       "mnemonic": "FMADD",
       "semantic_handler": "FloatingFused",
       "producer_owner": "named-numeric-profile",
-      "producer_interface": "ScalarFPFusedProfile",
+      "producer_interface": "FPMulAdd",
       "numeric_contract": "scalar-fused",
       "possible_flags": [
         "NV",
@@ -317,7 +317,7 @@
       "mnemonic": "FMSUB",
       "semantic_handler": "FloatingFused",
       "producer_owner": "named-numeric-profile",
-      "producer_interface": "ScalarFPFusedProfile",
+      "producer_interface": "FPMulAdd",
       "numeric_contract": "scalar-fused",
       "possible_flags": [
         "NV",
@@ -377,7 +377,7 @@
       "mnemonic": "FNMADD",
       "semantic_handler": "FloatingFused",
       "producer_owner": "named-numeric-profile",
-      "producer_interface": "ScalarFPFusedProfile",
+      "producer_interface": "FPMulAdd",
       "numeric_contract": "scalar-fused",
       "possible_flags": [
         "NV",
@@ -394,7 +394,7 @@
       "mnemonic": "FNMSUB",
       "semantic_handler": "FloatingFused",
       "producer_owner": "named-numeric-profile",
-      "producer_interface": "ScalarFPFusedProfile",
+      "producer_interface": "FPMulAdd",
       "numeric_contract": "scalar-fused",
       "possible_flags": [
         "NV",

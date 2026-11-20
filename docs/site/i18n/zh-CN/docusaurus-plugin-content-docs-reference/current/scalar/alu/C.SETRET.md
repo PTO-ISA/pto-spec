@@ -110,7 +110,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/C.SETRET.asl -->
 ```asl
-readonly func SelectCSETRETOperation() => ScalarOperation
+readonly func CSETRETOperation() => ScalarOperation
 begin
     return ScalarOperation_C_SETRET;
 end;
@@ -127,12 +127,12 @@ Standalone scalar return-address materialization. Each BSTART variant's DIRECT f
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/C.SETRET.asl -->
 ```asl
-readonly func SelectCSETRETHandler() => ScalarSemanticHandler
+readonly func CSETRETHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_SetReturnAddress;
 end;
 
-pure func ResolveCSETRETTarget(
+pure func CSETRETTarget(
     tpc: Word,
     uimm5: bits(5))
     => Word

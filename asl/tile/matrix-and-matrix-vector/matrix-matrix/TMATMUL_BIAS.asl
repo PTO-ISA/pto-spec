@@ -45,7 +45,7 @@
 // Cache behavior MUST NOT alter results, faults, source lifetime, or ordering.
 // NDF-END: PTO-TMATMUL-BIAS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTMATMULBIASOperation()
+readonly func TMATMULBIASOperation()
     => TileOperation
 begin
     return TileOperation_TMATMUL_BIAS;
@@ -77,7 +77,7 @@ begin
         bias);
 end;
 
-readonly func SelectTMATMULBIASHandler()
+readonly func TMATMULBIASHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TMATMUL_BIAS;

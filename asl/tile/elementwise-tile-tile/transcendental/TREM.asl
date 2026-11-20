@@ -14,7 +14,7 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TREM-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTREMOperation() => TileOperation
+readonly func TREMOperation() => TileOperation
 begin
     return TileOperation_TREM;
 end;
@@ -38,7 +38,7 @@ begin
         divisor);
 end;
 
-readonly func SelectTREMHandler() => TileSemanticHandler
+readonly func TREMHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;

@@ -19,6 +19,6 @@ begin
     assert _TrapContexts[[0]].valid;
     assert _TrapContexts[[0]].tpc == Zeros{PTO_XLEN} + 0x180;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x180;
-    assert SelectCEBREAKOperation() == ScalarOperation_C_EBREAK;
+    assert CEBREAKOperation() == ScalarOperation_C_EBREAK;
     return 0;
 end;

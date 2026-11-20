@@ -14,6 +14,6 @@ begin
     assert _LastFault == Fault_None;
     assert ReadGPR(3) == Zeros{PTO_XLEN} + 0x100;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert SelectLSRGETOperation() == ScalarOperation_LSRGET;
+    assert LSRGETOperation() == ScalarOperation_LSRGET;
     return 0;
 end;

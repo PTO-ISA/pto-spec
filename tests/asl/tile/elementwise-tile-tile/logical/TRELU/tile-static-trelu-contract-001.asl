@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(21) == TileHandler_ExecuteTileUnary;
     assert TileClassOfIndex(21) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(21) == TileEngine_VEC;
-    assert SelectTRELUOperation() == TileOperation_TRELU;
-    assert SelectTRELUHandler() == TileHandler_ExecuteTileUnary;
+    assert TRELUOperation() == TileOperation_TRELU;
+    assert TRELUHandler() == TileHandler_ExecuteTileUnary;
     return 0;
 end;

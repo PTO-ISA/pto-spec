@@ -17,6 +17,6 @@ begin
     assert HLANDIWImmediateWidth() == 24;
     assert HLANDIWImmediateIsSigned();
     assert HLANDIWIsWordOperation();
-    assert ComputeHLANDIWResult(Zeros{PTO_XLEN} + 0x80000001, immediate) == Zeros{PTO_XLEN} + 0xffffffff80000001;
+    assert HLANDIWResult(Zeros{PTO_XLEN} + 0x80000001, immediate) == Zeros{PTO_XLEN} + 0xffffffff80000001;
     return 0;
 end;

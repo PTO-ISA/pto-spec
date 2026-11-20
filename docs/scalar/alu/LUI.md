@@ -26,7 +26,7 @@ The published value is always a multiple of `4096` whose magnitude is at most `2
 <!-- PTO-READER-BLOCK: scalar-lui-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `ComputeLUIResult`, which returns `MaterializeLUI(encoded_immediate)`. That helper is `LSL(SignExtend{PTO_XLEN}(immediate), 12)`: the `20`-bit field is sign-extended first and shifted left afterwards. Dispatch calls it from `ScalarOperation_LUI` with `ScalarDecodedBits20(instruction, form, ScalarField_imm20)`.
+The owning ASL exposes `LUIResult`, which returns `MaterializeLUI(encoded_immediate)`. That helper is `LSL(SignExtend{PTO_XLEN}(immediate), 12)`: the `20`-bit field is sign-extended first and shifted left afterwards. Dispatch calls it from `ScalarOperation_LUI` with `ScalarDecodedBits20(instruction, form, ScalarField_imm20)`.
 
 ```asm
 lui simm, ->{t, u, Rd}
@@ -112,7 +112,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/LUI.asl -->
 ```asl
-readonly func SelectLUIOperation() => ScalarOperation
+readonly func LUIOperation() => ScalarOperation
 begin
     return ScalarOperation_LUI;
 end;
@@ -123,12 +123,12 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/LUI.asl -->
 ```asl
-readonly func SelectLUIHandler() => ScalarSemanticHandler
+readonly func LUIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_MaterializeLUI;
 end;
 
-pure func ComputeLUIResult(
+pure func LUIResult(
     encoded_immediate: bits(20))
     => Word
 begin

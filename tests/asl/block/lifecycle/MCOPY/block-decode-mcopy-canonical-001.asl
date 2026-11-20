@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(69) == CommandOperation_mcopy_32_4fc4a803e995;
     assert CommandHandlerOfForm(69) == CommandHandler_ExecuteMemoryCopy;
     assert MCOPYEncodingMatches(CommandOperationOfForm(69));
-    assert SelectMCOPYHandler() == CommandHandler_ExecuteMemoryCopy;
+    assert MCOPYHandler() == CommandHandler_ExecuteMemoryCopy;
     return 0;
 end;

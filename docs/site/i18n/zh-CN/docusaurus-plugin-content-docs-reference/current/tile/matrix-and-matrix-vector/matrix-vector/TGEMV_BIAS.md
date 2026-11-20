@@ -136,7 +136,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl -->
 ```asl
-readonly func SelectTGEMVBIASOperation()
+readonly func TGEMVBIASOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV_BIAS;
@@ -188,7 +188,7 @@ begin
         bias);
 end;
 
-readonly func SelectTGEMVBIASHandler()
+readonly func TGEMVBIASHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TGEMV_BIAS;

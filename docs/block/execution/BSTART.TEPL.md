@@ -186,7 +186,7 @@ BSTART.TEPL remains accepted compatibility input, but canonical assembly and dis
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.TEPL.asl -->
 ```asl
-readonly func SelectBSTARTTEPLHandler() => CommandSemanticHandler
+readonly func BSTARTTEPLHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

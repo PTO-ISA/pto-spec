@@ -109,7 +109,7 @@ def validate_formal_operation_region(root: Path, unit: AslUnit) -> list[str]:
     operation = text.split(OPERATION_BEGIN, 1)[1].split(OPERATION_END, 1)[0]
     functions = OPERATION_FUNCTION.findall(operation)
     meaningful = tuple(
-        name for name in functions if not (name.startswith("Select") and name.endswith("Handler"))
+        name for name in functions if not name.endswith("Handler")
     )
     if not meaningful:
         return [

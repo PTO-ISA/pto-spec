@@ -110,7 +110,7 @@ class ScalarFsuValidationShardTest(unittest.TestCase):
         end = dispatch.index("func ExecuteDecodedFSUForm(", start)
         conversion = dispatch[start:end]
 
-        source_read = conversion.index("let value = ReadDecodedScalarRegister(")
+        source_read = conversion.index("let value = ReadDecodedReg5(")
         legality_fault = conversion.index(
             "SetFault(Fault_IllegalInstruction, ReadPC());"
         )
@@ -138,7 +138,7 @@ class ScalarFsuValidationShardTest(unittest.TestCase):
         self.assertLessEqual(expected, set(functions))
         self.assertIn("ExecuteScalarInstruction", functions["ValidateScalarFSUExecute_FADD"])
         self.assertIn(
-            "SelectFADDBinaryOperation() == FloatingBinary_ADD",
+            "FADDBinaryOperation() == FloatingBinary_ADD",
             functions["ValidateScalarFSUExecute_FADD"],
         )
         self.assertIn(

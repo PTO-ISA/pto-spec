@@ -4,7 +4,7 @@ func TestBundleConfigurationState()
 begin
     ResetBundleControlState();
     WriteGPR(2, Zeros{PTO_XLEN} + 33);
-    SetBundleDimension(1, ReadScalarRegisterOperand(2) + (Zeros{PTO_XLEN} + 7));
+    SetBundleDimension(1, ReadReg5(2) + (Zeros{PTO_XLEN} + 7));
     assert _BundleDimensions[[1]] == Zeros{PTO_XLEN} + 40;
 
     SetBundleScalarBinding(0, 5, 2, 3, 4, 3);

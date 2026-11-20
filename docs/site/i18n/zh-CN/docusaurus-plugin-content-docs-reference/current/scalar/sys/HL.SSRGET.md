@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-mechanism role=mechanism -->
 ## 系统机制
 
-`SelectHLSSRGETHandler` 选择 `ScalarHandler_ExecuteSystemRegisterGet`（`asl/scalar/sys/HL.SSRGET.asl:18`），即 32 位形式所用的同一个辅助函数。变化的是地址：`HLSSRGETSystemAddressWidth` 把宽度固定为 24（`asl/scalar/sys/HL.SSRGET.asl:36`），汇编形式为 48 位（`asl/scalar/sys/HL.SSRGET.asl:1`）。
+`HLSSRGETHandler` 选择 `ScalarHandler_ExecuteSystemRegisterGet`（`asl/scalar/sys/HL.SSRGET.asl:18`），即 32 位形式所用的同一个辅助函数。变化的是地址：`HLSSRGETSystemAddressWidth` 把宽度固定为 24（`asl/scalar/sys/HL.SSRGET.asl:36`），汇编形式为 48 位（`asl/scalar/sys/HL.SSRGET.asl:1`）。
 
 派发器在调用读取辅助函数之前，用两个 12 位片段拼出该 24 位地址（`asl/scalar/model/dispatch/sys.asl:91`）。
 
@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/HL.SSRGET.asl -->
 ```asl
-readonly func SelectHLSSRGETOperation()
+readonly func HLSSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_HL_SSRGET;
@@ -121,7 +121,7 @@ HL.SSRGET executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/HL.SSRGET.asl -->
 ```asl
-readonly func SelectHLSSRGETHandler()
+readonly func HLSSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterGet;

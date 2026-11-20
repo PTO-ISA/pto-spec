@@ -12,7 +12,7 @@
 // Integer divide-by-zero preflight checks the selected broadcast slot only for rows consumed by active outputs.
 // NDF-END: PTO-TROWEXPANDDIV-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTROWEXPANDDIVOperation() => TileOperation
+readonly func TROWEXPANDDIVOperation() => TileOperation
 begin
     return TileOperation_TROWEXPANDDIV;
 end;
@@ -37,7 +37,7 @@ begin
         broadcast);
 end;
 
-readonly func SelectTROWEXPANDDIVHandler() => TileSemanticHandler
+readonly func TROWEXPANDDIVHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;

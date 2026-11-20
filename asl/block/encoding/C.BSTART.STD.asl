@@ -37,7 +37,7 @@ begin
     end;
 end;
 
-readonly func SelectCBSTARTSTDHandler() => CommandSemanticHandler
+readonly func CBSTARTSTDHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

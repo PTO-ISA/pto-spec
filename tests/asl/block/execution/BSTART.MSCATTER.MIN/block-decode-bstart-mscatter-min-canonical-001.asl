@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(86) == CommandOperation_bstart_mscatter_min_32_gm20;
     assert CommandHandlerOfForm(86) == CommandHandler_ExecuteBundleStart;
     assert BSTARTMSCATTERMINEncodingMatches(CommandOperationOfForm(86));
-    assert SelectBSTARTMSCATTERMINHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTMSCATTERMINHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

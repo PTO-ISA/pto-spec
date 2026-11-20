@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(53) == CommandOperation_c_b_dimi_16_3f1b113c76ce;
     assert CommandHandlerOfForm(53) == CommandHandler_SetBundleDimension;
     assert CBDIMIEncodingMatches(CommandOperationOfForm(53));
-    assert SelectCBDIMIHandler() == CommandHandler_SetBundleDimension;
+    assert CBDIMIHandler() == CommandHandler_SetBundleDimension;
     return 0;
 end;

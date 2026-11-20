@@ -94,7 +94,7 @@ class ManualSemanticAuditTest(unittest.TestCase):
             self.review(),
             operation_region=(
                 "// DOC-BEGIN: operation\n"
-                "readonly func SelectBIORHandler()\n"
+                "readonly func BIORHandler()\n"
                 "    => CommandSemanticHandler\n"
                 "begin\n"
                 "    return CommandHandler_BindBundleScalarIO;\n"

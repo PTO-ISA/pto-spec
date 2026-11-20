@@ -188,7 +188,7 @@ B.IOT and B.IOS are not members of a TPREFETCH block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.TPREFETCH.asl -->
 ```asl
-readonly func SelectBSTARTTPREFETCHHandler() => CommandSemanticHandler
+readonly func BSTARTTPREFETCHHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

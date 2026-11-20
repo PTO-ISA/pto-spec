@@ -130,7 +130,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/transcendental/TLOG.asl -->
 ```asl
-readonly func SelectTLOGOperation() => TileOperation
+readonly func TLOGOperation() => TileOperation
 begin
     return TileOperation_TLOG;
 end;
@@ -171,7 +171,7 @@ begin
         source);
 end;
 
-readonly func SelectTLOGHandler() => TileSemanticHandler
+readonly func TLOGHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;

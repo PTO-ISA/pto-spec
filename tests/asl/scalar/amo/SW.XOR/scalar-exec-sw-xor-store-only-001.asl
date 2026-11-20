@@ -48,7 +48,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_Release;
 
-    assert SelectSWXORAtomicOperation() == Atomic_XOR;
+    assert SWXORAtomicOperation() == Atomic_XOR;
     assert SWXORAtomicSizeBytes() == 4;
     assert !SWXORPublishesOldValue();
 end;

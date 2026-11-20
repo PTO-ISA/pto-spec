@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(92) == CommandOperation_bstart_mscatter_xor_32_gm26;
     assert CommandHandlerOfForm(92) == CommandHandler_ExecuteBundleStart;
     assert BSTARTMSCATTERXOREncodingMatches(CommandOperationOfForm(92));
-    assert SelectBSTARTMSCATTERXORHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTMSCATTERXORHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

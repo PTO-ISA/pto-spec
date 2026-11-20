@@ -285,7 +285,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/irregular-and-complex/initialization/TTRI.asl -->
 ```asl
-readonly func SelectTTRIOperation() => TileOperation
+readonly func TTRIOperation() => TileOperation
 begin
     return TileOperation_TTRI;
 end;
@@ -337,7 +337,7 @@ begin
         diagonal);
 end;
 
-readonly func SelectTTRIHandler() => TileSemanticHandler
+readonly func TTRIHandler() => TileSemanticHandler
 begin
     return TileHandler_TTRI;
 end;

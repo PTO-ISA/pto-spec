@@ -13,7 +13,7 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(2) == Zeros{PTO_XLEN} + 1;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x104;
-    assert ComputeCTZResult(
+    assert CTZResult(
         Zeros{PTO_XLEN} + 0x2000000000000003,
         8,
         60) == Zeros{PTO_XLEN} + 1;

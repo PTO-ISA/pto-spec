@@ -104,7 +104,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/J.asl -->
 ```asl
-readonly func SelectJOperation() => ScalarOperation
+readonly func JOperation() => ScalarOperation
 begin
     return ScalarOperation_J;
 end;
@@ -115,7 +115,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/J.asl -->
 ```asl
-readonly func SelectJHandler() => ScalarSemanticHandler
+readonly func JHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_JumpRelative;
 end;
@@ -126,7 +126,7 @@ begin
     return TRUE;
 end;
 
-pure func ResolveJTarget(
+pure func JTarget(
     current_pc: Word,
     halfword_offset: Word)
     => Word

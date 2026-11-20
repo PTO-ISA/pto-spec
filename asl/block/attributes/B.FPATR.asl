@@ -307,7 +307,7 @@ begin
     return TRUE;
 end;
 
-readonly func SelectBFPATRHandler() => CommandSemanticHandler
+readonly func BFPATRHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleFixedPointAttributes;
 end;

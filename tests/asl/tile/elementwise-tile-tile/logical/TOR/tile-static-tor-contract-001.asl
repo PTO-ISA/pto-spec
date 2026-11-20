@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(6) == TileHandler_ExecuteTileBinary;
     assert TileClassOfIndex(6) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(6) == TileEngine_VEC;
-    assert SelectTOROperation() == TileOperation_TOR;
-    assert SelectTORHandler() == TileHandler_ExecuteTileBinary;
+    assert TOROperation() == TileOperation_TOR;
+    assert TORHandler() == TileHandler_ExecuteTileBinary;
     return 0;
 end;

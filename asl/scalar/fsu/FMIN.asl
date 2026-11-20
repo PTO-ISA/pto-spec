@@ -8,14 +8,14 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-FMIN-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectFMINOperation()
+readonly func FMINOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FMIN;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectFMINHandler()
+readonly func FMINHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingBinary;
@@ -52,7 +52,7 @@ begin
     return FALSE;
 end;
 
-pure func SelectFMINBinaryOperation()
+pure func FMINBinaryOperation()
     => FloatingBinaryOperation
 begin
     return FloatingBinary_MIN;

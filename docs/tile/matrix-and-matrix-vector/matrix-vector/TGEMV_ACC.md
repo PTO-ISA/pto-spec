@@ -136,7 +136,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_ACC.asl -->
 ```asl
-readonly func SelectTGEMVACCOperation()
+readonly func TGEMVACCOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV_ACC;
@@ -188,7 +188,7 @@ begin
         right_matrix);
 end;
 
-readonly func SelectTGEMVACCHandler()
+readonly func TGEMVACCHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TGEMV_ACC;

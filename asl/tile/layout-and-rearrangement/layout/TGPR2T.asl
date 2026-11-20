@@ -9,13 +9,13 @@
 // or Max whole-tile padding, and publish no GPR or numeric-status effect.
 // NDF-END: PTO-TGPR2T-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTGPR2TOperation() => TileOperation
+readonly func TGPR2TOperation() => TileOperation
 begin
     return TileOperation_TGPR2T;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectTGPR2THandler() => TileSemanticHandler
+readonly func TGPR2THandler() => TileSemanticHandler
 begin
     return TileHandler_TGPR2T;
 end;

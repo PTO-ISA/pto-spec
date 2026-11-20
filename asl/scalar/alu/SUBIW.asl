@@ -8,14 +8,14 @@
 // assigned destination or commit effect in alias-safe order.
 // NDF-END: PTO-SUBIW-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectSUBIWOperation()
+readonly func SUBIWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SUBIW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSUBIWHandler()
+readonly func SUBIWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;

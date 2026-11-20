@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ssrswap-mechanism role=mechanism -->
 ## 系统机制
 
-`SelectSSRSWAPHandler` 选择 `ScalarHandler_ExecuteSystemRegisterSwap`（`asl/scalar/sys/SSRSWAP.asl:18`），派发器解码全部三个操作数：`RegDst`、`SrcL` 以及 12 位 `SSR_ID` 地址（`asl/scalar/model/dispatch/sys.asl:116`）。`SSRSWAPSystemTransferKind` 返回 `'10'`，即把交换与读取或写入区分开的传送种类（`asl/scalar/sys/SSRSWAP.asl:30`）。
+`SSRSWAPHandler` 选择 `ScalarHandler_ExecuteSystemRegisterSwap`（`asl/scalar/sys/SSRSWAP.asl:18`），派发器解码全部三个操作数：`RegDst`、`SrcL` 以及 12 位 `SSR_ID` 地址（`asl/scalar/model/dispatch/sys.asl:116`）。`SSRSWAPSystemTransferKind` 返回 `'10'`，即把交换与读取或写入区分开的传送种类（`asl/scalar/sys/SSRSWAP.asl:30`）。
 
 该辅助函数在读取任何内容之前先做预检。所有 MSGB 地址都会先被拒绝，因为它们的读写两侧具有不同的快照、暂存或命令语义。其他地址要求 `SystemRegisterSwapPermitted`，即读权限、写权限和读写访问类别。
 
@@ -106,7 +106,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/SSRSWAP.asl -->
 ```asl
-readonly func SelectSSRSWAPOperation()
+readonly func SSRSWAPOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SSRSWAP;
@@ -124,7 +124,7 @@ SSRSWAP executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/SSRSWAP.asl -->
 ```asl
-readonly func SelectSSRSWAPHandler()
+readonly func SSRSWAPHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterSwap;

@@ -9,6 +9,6 @@ begin
     let execution = ExecuteScalarInstruction(instruction, 16);
     assert execution == ScalarExecution_Executed;
     assert ReadGPR(2) == Zeros{PTO_XLEN} + 0x1234;
-    assert ComputeCMOVRResult(Zeros{PTO_XLEN} + 0x1234) == Zeros{PTO_XLEN} + 0x1234;
+    assert CMOVRResult(Zeros{PTO_XLEN} + 0x1234) == Zeros{PTO_XLEN} + 0x1234;
     return 0;
 end;

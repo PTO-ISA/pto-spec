@@ -129,7 +129,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/LW.SMIN.asl -->
 ```asl
-readonly func SelectLWSMINOperation() => ScalarOperation
+readonly func LWSMINOperation() => ScalarOperation
 begin
     return ScalarOperation_LW_SMIN;
 end;
@@ -140,13 +140,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/LW.SMIN.asl -->
 ```asl
-readonly func SelectLWSMINHandler()
+readonly func LWSMINHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func SelectLWSMINAtomicOperation()
+pure func LWSMINAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_SMIN;

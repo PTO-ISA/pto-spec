@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(77) == CommandOperation_bstart_mgather_max_32_gm10;
     assert CommandHandlerOfForm(77) == CommandHandler_ExecuteBundleStart;
     assert BSTARTMGATHERMAXEncodingMatches(CommandOperationOfForm(77));
-    assert SelectBSTARTMGATHERMAXHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTMGATHERMAXHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

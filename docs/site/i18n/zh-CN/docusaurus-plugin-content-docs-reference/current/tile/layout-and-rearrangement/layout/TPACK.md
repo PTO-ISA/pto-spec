@@ -102,7 +102,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/layout-and-rearrangement/layout/TPACK.asl -->
 ```asl
-readonly func SelectTPACKOperation() => TileOperation
+readonly func TPACKOperation() => TileOperation
 begin
     return TileOperation_TPACK;
 end;
@@ -124,7 +124,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/layout-and-rearrangement/layout/TPACK.asl -->
 ```asl
-readonly func SelectTPACKHandler() => TileSemanticHandler
+readonly func TPACKHandler() => TileSemanticHandler
 begin
     return TileHandler_TPACK;
 end;

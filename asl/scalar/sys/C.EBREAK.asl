@@ -7,14 +7,14 @@
 // It MUST NOT maintain a separate architectural breakpoint-tag state.
 // NDF-END: PTO-C-EBREAK-CAUSE-001
 // DOC-BEGIN: decode
-readonly func SelectCEBREAKOperation()
+readonly func CEBREAKOperation()
     => ScalarOperation
 begin
     return ScalarOperation_C_EBREAK;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectCEBREAKHandler()
+readonly func CEBREAKHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_SoftwareBreakpoint;

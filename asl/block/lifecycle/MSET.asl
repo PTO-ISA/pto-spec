@@ -21,7 +21,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectMSETHandler() => CommandSemanticHandler
+readonly func MSETHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteMemorySet;
 end;

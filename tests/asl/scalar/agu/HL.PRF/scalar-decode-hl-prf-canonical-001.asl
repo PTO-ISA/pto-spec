@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000001110000000010010000000000001110', 48) == 228;
     assert ScalarOperationOfForm(228) == ScalarOperation_HL_PRF;
     assert ScalarHandlerOfForm(228) == ScalarHandler_ScalarPrefetch;
-    assert SelectHLPRFOperation() == ScalarOperation_HL_PRF;
-    assert SelectHLPRFHandler() == ScalarHandler_ScalarPrefetch;
+    assert HLPRFOperation() == ScalarOperation_HL_PRF;
+    assert HLPRFHandler() == ScalarHandler_ScalarPrefetch;
     assert HLPRFAGUAction() == ScalarAGU_Prefetch;
     assert HLPRFAGUAddressKind() == ScalarAGU_Register;
     assert HLPRFAGUSizeBytes() == 1;

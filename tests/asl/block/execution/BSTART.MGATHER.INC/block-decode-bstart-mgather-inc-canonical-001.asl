@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(80) == CommandOperation_bstart_mgather_inc_32_gm14;
     assert CommandHandlerOfForm(80) == CommandHandler_ExecuteBundleStart;
     assert BSTARTMGATHERINCEncodingMatches(CommandOperationOfForm(80));
-    assert SelectBSTARTMGATHERINCHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTMGATHERINCHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

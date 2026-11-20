@@ -14,7 +14,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func ResolveCBSTARTTarget(
+pure func CBSTARTTarget(
     instruction_pc: Word,
     displacement: bits(12))
     => Word
@@ -23,7 +23,7 @@ begin
         LSL(SignExtend{PTO_XLEN}(displacement), 1);
 end;
 
-readonly func SelectCBSTARTHandler() => CommandSemanticHandler
+readonly func CBSTARTHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

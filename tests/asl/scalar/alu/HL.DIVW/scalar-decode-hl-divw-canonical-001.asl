@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000100000010101110000000000001110', 48) == 140;
     assert ScalarOperationOfForm(140) == ScalarOperation_HL_DIVW;
     assert ScalarHandlerOfForm(140) == ScalarHandler_ExecuteScalarDividePairW;
-    assert SelectHLDIVWOperation() == ScalarOperation_HL_DIVW;
-    assert SelectHLDIVWHandler() == ScalarHandler_ExecuteScalarDividePairW;
+    assert HLDIVWOperation() == ScalarOperation_HL_DIVW;
+    assert HLDIVWHandler() == ScalarHandler_ExecuteScalarDividePairW;
     assert DecodeScalarOperandRaw('000000000000000000100000010101110000000000001110', 140, ScalarField_RegDst0) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000100000010101110000000000001110', 140, ScalarField_RegDst1) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000100000010101110000000000001110', 140, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';

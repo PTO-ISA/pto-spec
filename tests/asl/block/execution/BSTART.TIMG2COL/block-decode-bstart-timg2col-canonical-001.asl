@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(94) == CommandOperation_bstart_timg2col_32_7a0f8d6c3e21;
     assert CommandHandlerOfForm(94) == CommandHandler_ExecuteBundleStart;
     assert BSTARTTIMG2COLEncodingMatches(CommandOperationOfForm(94));
-    assert SelectBSTARTTIMG2COLHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTTIMG2COLHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

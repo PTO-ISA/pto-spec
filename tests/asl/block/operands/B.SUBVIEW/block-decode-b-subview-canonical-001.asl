@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(74) == CommandOperation_b_subview_32_122000000001;
     assert CommandHandlerOfForm(74) == CommandHandler_ApplyBundleSubview;
     assert BSUBVIEWEncodingMatches(CommandOperationOfForm(74));
-    assert SelectBSUBVIEWHandler() == CommandHandler_ApplyBundleSubview;
+    assert BSUBVIEWHandler() == CommandHandler_ApplyBundleSubview;
     return 0;
 end;

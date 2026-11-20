@@ -40,7 +40,7 @@ The commit argument `_CommitArgument` holds the canonical boolean written by the
 <!-- PTO-READER-BLOCK: scalar-model-bru-semantics-rules role=rules-interactions -->
 ## Rules and interactions
 
-`ExecuteCompare` and `ExecuteCompareLogical` write a canonical boolean through `WriteScalarDestination`. The logical variant combines the two words with AND or OR and tests the result for nonzero.
+`ExecuteCompare` and `ExecuteCompareLogical` write a canonical boolean through `WriteReg5`. The logical variant combines the two words with AND or OR and tests the result for nonzero.
 
 `ExecuteSetCommit` and `ExecuteSetCommitLogical` do not write a register. They store the canonical boolean in `_CommitArgument`, copy it to `_BARG.taken` when a bundle is active, and set `_BundleConditionSet`.
 
@@ -141,14 +141,14 @@ func ExecuteCompare(destination: Reg5Selector, condition: ScalarCondition,
 begin
     let result = if ConditionHolds(condition, left, right) then
         Zeros{PTO_XLEN} + 1 else Zeros{PTO_XLEN};
-    WriteScalarDestination(destination, result);
+    WriteReg5(destination, result);
 end;
 
 func ExecuteCompareLogical(destination: Reg5Selector, left: Word,
                            right: Word, combine_or: boolean)
 begin
     let logical_result = if combine_or then left OR right else left AND right;
-    WriteScalarDestination(destination,
+    WriteReg5(destination,
         if IsZero(logical_result) then Zeros{PTO_XLEN}
         else Zeros{PTO_XLEN} + 1);
 end;
@@ -186,7 +186,7 @@ end;
 
 func AddToPC(destination: Reg5Selector, page_offset: Word)
 begin
-    WriteScalarDestination(destination, ReadTPC() + LSL(page_offset, 12));
+    WriteReg5(destination, ReadTPC() + LSL(page_offset, 12));
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

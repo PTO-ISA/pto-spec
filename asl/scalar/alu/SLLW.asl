@@ -8,14 +8,14 @@
 // assigned destination or commit effect in alias-safe order.
 // NDF-END: PTO-SLLW-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectSLLWOperation()
+readonly func SLLWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SLLW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSLLWHandler()
+readonly func SLLWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
@@ -27,7 +27,7 @@ begin
     return UInt(right[4:0]);
 end;
 
-pure func ComputeSLLWResult(left: Word, right: Word)
+pure func SLLWResult(left: Word, right: Word)
     => Word
 begin
     let amount = DecodeSLLWShiftAmount(right);

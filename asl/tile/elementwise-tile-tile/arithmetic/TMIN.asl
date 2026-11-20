@@ -15,7 +15,7 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TMIN-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTMINOperation() => TileOperation
+readonly func TMINOperation() => TileOperation
 begin
     return TileOperation_TMIN;
 end;
@@ -39,7 +39,7 @@ begin
         source_right);
 end;
 
-pure func ComputeTMINFloatingValue(
+pure func TMINFloatingValue(
     data_type: TileDataType,
     source_left: Word,
     source_right: Word) => (Word, boolean)
@@ -53,7 +53,7 @@ begin
         source_right);
 end;
 
-readonly func SelectTMINHandler() => TileSemanticHandler
+readonly func TMINHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;

@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000111000001011001', 32) == 397;
     assert ScalarOperationOfForm(397) == ScalarOperation_SDI_U;
     assert ScalarHandlerOfForm(397) == ScalarHandler_ExecuteScalarStore;
-    assert SelectSDIUOperation() == ScalarOperation_SDI_U;
-    assert SelectSDIUHandler() == ScalarHandler_ExecuteScalarStore;
+    assert SDIUOperation() == ScalarOperation_SDI_U;
+    assert SDIUHandler() == ScalarHandler_ExecuteScalarStore;
     assert SDIUAGUAction() == ScalarAGU_Store;
     assert SDIUAGUAddressKind() == ScalarAGU_Immediate;
     assert SDIUAGUSizeBytes() == 8;

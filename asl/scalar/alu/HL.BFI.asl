@@ -8,7 +8,7 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-HL-BFI-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectHLBFIOperation()
+readonly func HLBFIOperation()
     => ScalarOperation
 begin
     return ScalarOperation_HL_BFI;
@@ -27,13 +27,13 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLBFIHandler()
+readonly func HLBFIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_InsertBitfield;
 end;
 
-pure func ComputeHLBFIResult(
+pure func HLBFIResult(
     base: Word,
     source: Word,
     first: integer {0..63},

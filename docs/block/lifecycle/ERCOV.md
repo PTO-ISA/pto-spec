@@ -137,7 +137,7 @@ none; ERCOV is not an executable PTO command
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/ERCOV.asl -->
 ```asl
-readonly func SelectERCOVHandler() => CommandSemanticHandler
+readonly func ERCOVHandler() => CommandSemanticHandler
 begin
     return CommandHandler_RecoverExecutionContext;
 end;

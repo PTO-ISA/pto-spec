@@ -131,7 +131,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduce-and-expand/row-reduction/TROWARGMAX.asl -->
 ```asl
-readonly func SelectTROWARGMAXOperation() => TileOperation
+readonly func TROWARGMAXOperation() => TileOperation
 begin
     return TileOperation_TROWARGMAX;
 end;
@@ -171,7 +171,7 @@ begin
         source);
 end;
 
-readonly func SelectTROWARGMAXHandler() => TileSemanticHandler
+readonly func TROWARGMAXHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileReduction;
 end;

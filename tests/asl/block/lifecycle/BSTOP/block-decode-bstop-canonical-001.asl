@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(51) == CommandOperation_bstop_32_d25b09fdd59c;
     assert CommandHandlerOfForm(51) == CommandHandler_ExecuteBundleStop;
     assert BSTOPEncodingMatches(CommandOperationOfForm(51));
-    assert SelectBSTOPHandler() == CommandHandler_ExecuteBundleStop;
+    assert BSTOPHandler() == CommandHandler_ExecuteBundleStop;
     return 0;
 end;

@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(93) == CommandOperation_bstart_mscatter_popc_32_gm27;
     assert CommandHandlerOfForm(93) == CommandHandler_ExecuteBundleStart;
     assert BSTARTMSCATTERPOPCEncodingMatches(CommandOperationOfForm(93));
-    assert SelectBSTARTMSCATTERPOPCHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTMSCATTERPOPCHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

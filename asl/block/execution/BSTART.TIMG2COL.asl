@@ -20,7 +20,7 @@ end;
 // 0x01c11181; DataType occupies instruction bits [31:27].
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBSTARTTIMG2COLHandler() => CommandSemanticHandler
+readonly func BSTARTTIMG2COLHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

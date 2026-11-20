@@ -84,13 +84,13 @@
 // guarantee is introduced.
 // NDF-END: PTO-TMOV-SHARED-ND-TO-CUBE-001
 // DOC-BEGIN: decode
-readonly func SelectTMOVOperation() => TileOperation
+readonly func TMOVOperation() => TileOperation
 begin
     return TileOperation_TMOV;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectTMOVHandler() => TileSemanticHandler
+readonly func TMOVHandler() => TileSemanticHandler
 begin
     return TileHandler_TMOV;
 end;

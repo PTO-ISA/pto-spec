@@ -109,7 +109,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TSHR.asl -->
 ```asl
-readonly func SelectTSHROperation() => TileOperation
+readonly func TSHROperation() => TileOperation
 begin
     return TileOperation_TSHR;
 end;
@@ -150,7 +150,7 @@ begin
         count_source);
 end;
 
-readonly func SelectTSHRHandler() => TileSemanticHandler
+readonly func TSHRHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;

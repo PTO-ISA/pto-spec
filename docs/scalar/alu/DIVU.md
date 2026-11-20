@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/DIVU.asl -->
 ```asl
-readonly func SelectDIVUOperation() => ScalarOperation
+readonly func DIVUOperation() => ScalarOperation
 begin
     return ScalarOperation_DIVU;
 end;
@@ -127,11 +127,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/DIVU.asl -->
 ```asl
-readonly func SelectDIVUHandler() => ScalarSemanticHandler
+readonly func DIVUHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarDivideUnsigned;
 end;
-pure func ComputeDIVUResult(
+pure func DIVUResult(
     dividend: Word,
     divisor: Word)
     => Word

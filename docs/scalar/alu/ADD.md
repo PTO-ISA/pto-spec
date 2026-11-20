@@ -124,7 +124,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/ADD.asl -->
 ```asl
-readonly func SelectADDOperation()
+readonly func ADDOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ADD;
@@ -136,7 +136,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/ADD.asl -->
 ```asl
-readonly func SelectADDHandler()
+readonly func ADDHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
@@ -153,26 +153,26 @@ begin
     end;
 end;
 
-pure func PrepareADDRightOperand(
+pure func ADDRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
     let modifier = DecodeADDRightModifier(encoded_modifier);
-    let transformed = ApplyScalarRightModifier(right, modifier, FALSE);
+    let transformed = ModifyScalarOperand(right, modifier, FALSE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func ComputeADDResult(
+pure func ADDResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = PrepareADDRightOperand(
+    let prepared_right = ADDRightOperand(
         right,
         encoded_modifier,
         shift_amount);

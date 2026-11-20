@@ -109,7 +109,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/arithmetic/TSUB.asl -->
 ```asl
-readonly func SelectTSUBOperation() => TileOperation
+readonly func TSUBOperation() => TileOperation
 begin
     return TileOperation_TSUB;
 end;
@@ -150,7 +150,7 @@ begin
         source_right);
 end;
 
-readonly func SelectTSUBHandler() => TileSemanticHandler
+readonly func TSUBHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;

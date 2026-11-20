@@ -16,7 +16,7 @@
 // and predicate padding MUST follow the existing ExecutionMask and writer rules.
 // NDF-END: PTO-TXOR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTXOROperation() => TileOperation
+readonly func TXOROperation() => TileOperation
 begin
     return TileOperation_TXOR;
 end;
@@ -40,7 +40,7 @@ begin
         source_right);
 end;
 
-readonly func SelectTXORHandler() => TileSemanticHandler
+readonly func TXORHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;

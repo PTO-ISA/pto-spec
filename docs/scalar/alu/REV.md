@@ -128,7 +128,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/REV.asl -->
 ```asl
-readonly func SelectREVOperation()
+readonly func REVOperation()
     => ScalarOperation
 begin
     return ScalarOperation_REV;
@@ -152,13 +152,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/REV.asl -->
 ```asl
-readonly func SelectREVHandler()
+readonly func REVHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ReverseBitfieldBytes;
 end;
 
-pure func ComputeREVResult(
+pure func REVResult(
     value: Word,
     width: integer {1..64},
     offset: integer {0..63})

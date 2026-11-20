@@ -16,7 +16,7 @@
 // and predicate padding MUST follow the existing ExecutionMask and writer rules.
 // NDF-END: PTO-TAND-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTANDOperation() => TileOperation
+readonly func TANDOperation() => TileOperation
 begin
     return TileOperation_TAND;
 end;
@@ -40,7 +40,7 @@ begin
         source_right);
 end;
 
-readonly func SelectTANDHandler() => TileSemanticHandler
+readonly func TANDHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;

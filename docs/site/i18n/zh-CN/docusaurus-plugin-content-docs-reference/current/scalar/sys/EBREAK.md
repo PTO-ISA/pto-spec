@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ebreak-mechanism role=mechanism -->
 ## 系统机制
 
-`SelectEBREAKHandler` 选择 `ScalarHandler_SoftwareBreakpoint`（`asl/scalar/sys/EBREAK.asl:11`）。派发器解码 4 位 `imm4` 字段，将其零扩展为 5 位，并调用 `SoftwareBreakpoint`（`asl/scalar/model/dispatch/sys.asl:78`）。该辅助函数以当前指令地址和零扩展后的原因引发 `Fault_SoftwareBreakpoint`（`asl/scalar/model/sys/semantics.asl:91`）。
+`EBREAKHandler` 选择 `ScalarHandler_SoftwareBreakpoint`（`asl/scalar/sys/EBREAK.asl:11`）。派发器解码 4 位 `imm4` 字段，将其零扩展为 5 位，并调用 `SoftwareBreakpoint`（`asl/scalar/model/dispatch/sys.asl:78`）。该辅助函数以当前指令地址和零扩展后的原因引发 `Fault_SoftwareBreakpoint`（`asl/scalar/model/sys/semantics.asl:91`）。
 
 故障类别决定陷阱身份：`Fault_SoftwareBreakpoint` 映射到陷阱号 50（`asl/arch/memory-model/fault-precision.asl:80`）。`EBREAKBreakpointPublishesTrapCause` 返回 `TRUE`（`asl/scalar/sys/EBREAK.asl:36`），因此立即数作为原因发布，而不是保存在单独的断点寄存器中。
 
@@ -102,7 +102,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/EBREAK.asl -->
 ```asl
-readonly func SelectEBREAKOperation()
+readonly func EBREAKOperation()
     => ScalarOperation
 begin
     return ScalarOperation_EBREAK;
@@ -120,7 +120,7 @@ EBREAK executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/EBREAK.asl -->
 ```asl
-readonly func SelectEBREAKHandler()
+readonly func EBREAKHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_SoftwareBreakpoint;

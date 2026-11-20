@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(26) == TileHandler_ExecuteTileScalar;
     assert TileClassOfIndex(26) == TileClass_TileScalarAndImmediate;
     assert TileEngineOfIndex(26) == TileEngine_VEC;
-    assert SelectTSUBSOperation() == TileOperation_TSUBS;
-    assert SelectTSUBSHandler() == TileHandler_ExecuteTileScalar;
+    assert TSUBSOperation() == TileOperation_TSUBS;
+    assert TSUBSHandler() == TileHandler_ExecuteTileScalar;
     return 0;
 end;

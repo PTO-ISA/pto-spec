@@ -8,14 +8,14 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-HL-SSRGET-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectHLSSRGETOperation()
+readonly func HLSSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_HL_SSRGET;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLSSRGETHandler()
+readonly func HLSSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterGet;

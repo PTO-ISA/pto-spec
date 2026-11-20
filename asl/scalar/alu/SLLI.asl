@@ -8,14 +8,14 @@
 // assigned destination or commit effect in alias-safe order.
 // NDF-END: PTO-SLLI-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectSLLIOperation()
+readonly func SLLIOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SLLI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSLLIHandler()
+readonly func SLLIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;

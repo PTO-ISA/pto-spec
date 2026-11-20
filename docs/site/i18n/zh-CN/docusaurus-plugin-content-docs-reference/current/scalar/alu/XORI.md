@@ -118,7 +118,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/XORI.asl -->
 ```asl
-readonly func SelectXORIOperation()
+readonly func XORIOperation()
     => ScalarOperation
 begin
     return ScalarOperation_XORI;
@@ -130,7 +130,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/XORI.asl -->
 ```asl
-readonly func SelectXORIHandler()
+readonly func XORIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;

@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-mechanism role=mechanism -->
 ## 系统机制
 
-`SelectSETCTGTHandler` 选择 `ScalarHandler_SetCommitTarget`（`asl/scalar/sys/SETC.TGT.asl:18`），且 `SETCTGTRequiresCommitTargetBlock` 返回 `TRUE`（`asl/scalar/sys/SETC.TGT.asl:30`）。该操作的适用性规则是 `BundleCommitTargetWritable`，它要求活动 bundle 且块种类为 Standard 或 Floating（`asl/scalar/model/sys/semantics.asl:316`）。
+`SETCTGTHandler` 选择 `ScalarHandler_SetCommitTarget`（`asl/scalar/sys/SETC.TGT.asl:18`），且 `SETCTGTRequiresCommitTargetBlock` 返回 `TRUE`（`asl/scalar/sys/SETC.TGT.asl:30`）。该操作的适用性规则是 `BundleCommitTargetWritable`，它要求活动 bundle 且块种类为 Standard 或 Floating（`asl/scalar/model/sys/semantics.asl:316`）。
 
 `SETCTGTRequiresSystemBlock` 返回 `FALSE`（`asl/scalar/sys/SETC.TGT.asl:24`），因此该指令不是 SYS 块操作：它就在自己所修改目标的那个块中运行。
 
@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/SETC.TGT.asl -->
 ```asl
-readonly func SelectSETCTGTOperation()
+readonly func SETCTGTOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SETC_TGT;
@@ -118,7 +118,7 @@ SETC.TGT is legal in the body of an active Standard or Floating block and is not
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/SETC.TGT.asl -->
 ```asl
-readonly func SelectSETCTGTHandler()
+readonly func SETCTGTHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_SetCommitTarget;

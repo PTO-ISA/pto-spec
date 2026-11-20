@@ -15,7 +15,7 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(1) == Zeros{PTO_XLEN} + 0x8000000000000000;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x84;
-    assert ComputeMAXUResult(
+    assert MAXUResult(
         Zeros{PTO_XLEN} + 0x8000000000000000,
         Zeros{PTO_XLEN} + 0x7fffffffffffffff) == Zeros{PTO_XLEN} + 0x8000000000000000;
     return 0;

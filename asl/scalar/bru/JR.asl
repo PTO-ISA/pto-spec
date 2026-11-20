@@ -8,13 +8,13 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-JR-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectJROperation() => ScalarOperation
+readonly func JROperation() => ScalarOperation
 begin
     return ScalarOperation_JR;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectJRHandler() => ScalarSemanticHandler
+readonly func JRHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_JumpRegister;
 end;
@@ -25,7 +25,7 @@ begin
     return TRUE;
 end;
 
-pure func ResolveJRTarget(
+pure func JRTarget(
     register_value: Word,
     halfword_offset: Word)
     => Word

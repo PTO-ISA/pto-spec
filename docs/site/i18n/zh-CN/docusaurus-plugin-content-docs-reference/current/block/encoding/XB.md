@@ -132,7 +132,7 @@ none; XB is not an executable PTO block command
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/encoding/XB.asl -->
 ```asl
-readonly func SelectXBHandler() => CommandSemanticHandler
+readonly func XBHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteCrossBlockTransfer;
 end;

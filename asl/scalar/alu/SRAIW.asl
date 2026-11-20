@@ -8,14 +8,14 @@
 // assigned destination or commit effect in alias-safe order.
 // NDF-END: PTO-SRAIW-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectSRAIWOperation()
+readonly func SRAIWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SRAIW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSRAIWHandler()
+readonly func SRAIWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;

@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-mechanism role=mechanism -->
 ## System mechanism
 
-`SelectTLBIAVHandler` returns the shared maintenance handler (`asl/scalar/sys/TLB.IAV.asl:18`), and the token `Maintenance_TLB_IAV` is grouped with `Maintenance_TLB_IV` in the executor's address case (`asl/scalar/model/sys/semantics.asl:142`). Both share the canonical-address test and the same privilege rule.
+`TLBIAVHandler` returns the shared maintenance handler (`asl/scalar/sys/TLB.IAV.asl:18`), and the token `Maintenance_TLB_IAV` is grouped with `Maintenance_TLB_IV` in the executor's address case (`asl/scalar/model/sys/semantics.asl:142`). Both share the canonical-address test and the same privilege rule.
 
 `TLBIAVMaintenanceRequiresRootRing` returns `TRUE` (`asl/scalar/sys/TLB.IAV.asl:42`), so the operation rejects any ring other than ACR0 before the operand is examined by the executor.
 
@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/TLB.IAV.asl -->
 ```asl
-readonly func SelectTLBIAVOperation()
+readonly func TLBIAVOperation()
     => ScalarOperation
 begin
     return ScalarOperation_TLB_IAV;
@@ -118,7 +118,7 @@ TLB.IAV executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/TLB.IAV.asl -->
 ```asl
-readonly func SelectTLBIAVHandler()
+readonly func TLBIAVHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
@@ -130,7 +130,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectTLBIAVMaintenanceOperation()
+pure func TLBIAVMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_TLB_IAV;

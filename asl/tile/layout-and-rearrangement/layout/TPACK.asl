@@ -7,13 +7,13 @@
 // Each paired source word produces one complete valid 32-bit result word with selected bytes in order and all remaining bytes zero. U8/U16/U32 destinations publish that word directly; an M32 U64 destination joins each complete low/high result-word pair into one logical element and rejects an odd raw-word tail before effects. Destination columns are derived from raw-word count and BSTART element width. Validation precedes snapshot and atomic publication; TPACK performs no numeric conversion or status update.
 // NDF-END: PTO-TPACK-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTPACKOperation() => TileOperation
+readonly func TPACKOperation() => TileOperation
 begin
     return TileOperation_TPACK;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectTPACKHandler() => TileSemanticHandler
+readonly func TPACKHandler() => TileSemanticHandler
 begin
     return TileHandler_TPACK;
 end;

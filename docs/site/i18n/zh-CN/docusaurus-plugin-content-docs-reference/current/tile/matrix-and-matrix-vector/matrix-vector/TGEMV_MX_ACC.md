@@ -143,7 +143,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_ACC.asl -->
 ```asl
-readonly func SelectTGEMVMXACCOperation()
+readonly func TGEMVMXACCOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV_MX_ACC;
@@ -199,7 +199,7 @@ begin
         column_scale);
 end;
 
-readonly func SelectTGEMVMXACCHandler()
+readonly func TGEMVMXACCHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TGEMV_MX_ACC;

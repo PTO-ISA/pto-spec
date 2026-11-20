@@ -5,7 +5,7 @@ begin
     assert DecodeScalarForm('000000000000000000000000001100000111000000101011', 32) == 458;
     assert ScalarOperationOfForm(458) == ScalarOperation_TLB_IALL;
     assert ScalarHandlerOfForm(458) == ScalarHandler_ExecuteMaintenance;
-    assert SelectTLBIALLOperation() == ScalarOperation_TLB_IALL;
-    assert SelectTLBIALLHandler() == ScalarHandler_ExecuteMaintenance;
+    assert TLBIALLOperation() == ScalarOperation_TLB_IALL;
+    assert TLBIALLHandler() == ScalarHandler_ExecuteMaintenance;
     return 0;
 end;

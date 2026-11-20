@@ -7,7 +7,7 @@
 // The complete BSTART, B.DIM, B.DATR, layout, PE-mask, integer DIV, numeric-status, padding, alias, snapshot, and atomic-publication rules remain unchanged.
 // NDF-END: PTO-TCOLEXPANDMAX-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTCOLEXPANDMAXOperation() => TileOperation
+readonly func TCOLEXPANDMAXOperation() => TileOperation
 begin
     return TileOperation_TCOLEXPANDMAX;
 end;
@@ -32,7 +32,7 @@ begin
         broadcast);
 end;
 
-readonly func SelectTCOLEXPANDMAXHandler() => TileSemanticHandler
+readonly func TCOLEXPANDMAXHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;

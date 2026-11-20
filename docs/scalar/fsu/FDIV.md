@@ -118,7 +118,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FDIV.asl -->
 ```asl
-readonly func SelectFDIVOperation()
+readonly func FDIVOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FDIV;
@@ -130,7 +130,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FDIV.asl -->
 ```asl
-readonly func SelectFDIVHandler()
+readonly func FDIVHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingBinary;
@@ -167,7 +167,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectFDIVBinaryOperation()
+pure func FDIVBinaryOperation()
     => FloatingBinaryOperation
 begin
     return FloatingBinary_DIV;

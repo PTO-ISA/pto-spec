@@ -18,7 +18,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBCATRHandler() => CommandSemanticHandler
+readonly func BCATRHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleControlAttributes;
 end;

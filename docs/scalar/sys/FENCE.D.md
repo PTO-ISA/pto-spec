@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fence-d-mechanism role=mechanism -->
 ## System mechanism
 
-`SelectFENCEDHandler` selects `ScalarHandler_FenceData` (`asl/scalar/sys/FENCE.D.asl:18`), and `FENCEDFenceInvalidatesReservation` returns `TRUE` (`asl/scalar/sys/FENCE.D.asl:36`). The dispatcher decodes `PRED_IMM` and `SUCC_IMM` as two 4-bit fields and passes them to `FenceData` in that order (`asl/scalar/model/dispatch/sys.asl:81`).
+`FENCEDHandler` selects `ScalarHandler_FenceData` (`asl/scalar/sys/FENCE.D.asl:18`), and `FENCEDFenceInvalidatesReservation` returns `TRUE` (`asl/scalar/sys/FENCE.D.asl:36`). The dispatcher decodes `PRED_IMM` and `SUCC_IMM` as two 4-bit fields and passes them to `FenceData` in that order (`asl/scalar/model/dispatch/sys.asl:81`).
 
 `FenceData` performs four steps in sequence: clear the local reservation, store the predecessor mask, store the successor mask, then test bit 3 of both masks (`asl/scalar/model/sys/semantics.asl:72`).
 
@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/FENCE.D.asl -->
 ```asl
-readonly func SelectFENCEDOperation()
+readonly func FENCEDOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FENCE_D;
@@ -121,7 +121,7 @@ FENCE.D executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/FENCE.D.asl -->
 ```asl
-readonly func SelectFENCEDHandler()
+readonly func FENCEDHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FenceData;

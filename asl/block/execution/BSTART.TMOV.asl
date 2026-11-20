@@ -59,7 +59,7 @@ end;
 // BSTART.TMOV accepts DTYPE_NONE (encoded 31). When neither B.DATR nor BSTART
 // contributes a concrete type, Local/Shared TMOV inherits the bound source
 // descriptor type. DTYPE_NONE is never installed in a tile descriptor.
-readonly func SelectBSTARTTMOVHandler() => CommandSemanticHandler
+readonly func BSTARTTMOVHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

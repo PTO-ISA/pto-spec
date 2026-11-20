@@ -50,7 +50,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_Release;
 
-    assert SelectSHSUBAtomicOperation() == Atomic_SUB;
+    assert SHSUBAtomicOperation() == Atomic_SUB;
     assert SHSUBAtomicSizeBytes() == 2;
     assert !SHSUBPublishesOldValue();
 end;

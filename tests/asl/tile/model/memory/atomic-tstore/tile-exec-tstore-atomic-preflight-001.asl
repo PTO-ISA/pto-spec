@@ -80,9 +80,9 @@ begin
                ReadMemoryByte(base + 8) == Zeros{8} + 0xD4;
     end;
     if case_id == 1 then SetCurrentACR(2); end;
-    let first_target = TileMemoryStridedByteAddress(base, 0, 0, stride,
+    let first_target = TileElementAddress(base, 0, 0, stride,
         TileDataType_U32);
-    let second_target = TileMemoryStridedByteAddress(base,
+    let second_target = TileElementAddress(base,
         if case_id == 2 then 1 else 0, if case_id == 2 then 0 else 1,
         stride, TileDataType_U32);
     assert first_target == base;

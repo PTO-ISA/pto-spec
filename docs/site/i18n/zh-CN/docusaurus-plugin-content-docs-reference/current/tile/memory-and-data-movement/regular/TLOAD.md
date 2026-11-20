@@ -26,9 +26,9 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tload-mechanism role=mechanism -->
 ## 寻址与访问顺序
 
-每个被选中的 PE 与每个有效坐标使用由 `TileMemoryStridedByteAddress` 构造的地址 `base + row * row_stride_bytes + column * element_size`。对打包四位类型，列贡献 `floor(column / 2)` 字节，半字节由列奇偶性选择。
+每个被选中的 PE 与每个有效坐标使用由 `TileElementAddress` 构造的地址 `base + row * row_stride_bytes + column * element_size`。对打包四位类型，列贡献 `floor(column / 2)` 字节，半字节由列奇偶性选择。
 
-`B.IOR.RegSrc0` 提供每 PE 的 GM 基址，`B.IOR.RegSrc1` 提供字节行步幅。省略 `B.IOR` 时基址为零，步幅为紧密宽度 `TileDenseRowStrideBytes(physical Col, data_type)`，即 `ceil(columns * element_bits / 8)`。
+`B.IOR.RegSrc0` 提供每 PE 的 GM 基址，`B.IOR.RegSrc1` 提供字节行步幅。省略 `B.IOR` 时基址为零，步幅为紧密宽度 `TileDenseRowBytes(physical Col, data_type)`，即 `ceil(columns * element_bits / 8)`。
 
 设计要点：紧密默认值只在省略时生效。显式编码的零选择子读取零 GPR，因此它是真正的零步幅，每一行都别名到 GM 的第 0 行。
 
@@ -117,7 +117,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/regular/TLOAD.asl -->
 ```asl
-readonly func SelectTLOADOperation() => TileOperation
+readonly func TLOADOperation() => TileOperation
 begin
     return TileOperation_TLOAD;
 end;
@@ -155,24 +155,24 @@ begin
         valid_rows, valid_columns, data_type);
 end;
 
-readonly func SelectTLOADHandler() => TileSemanticHandler
+readonly func TLOADHandler() => TileSemanticHandler
 begin
     return TileHandler_TLOAD;
 end;
 
-readonly func ResolveTLOADGlobalAddress(
+readonly func TLOADGMAddress(
     base_address: Word, row: integer {0..65535},
     column: integer {0..65535}, row_stride_bytes: Word,
     data_type: TileDataType) => Word
 begin
-    return TileMemoryStridedByteAddress(
+    return TileElementAddress(
         base_address, row, column, row_stride_bytes, data_type);
 end;
 
-readonly func ComputeTLOADDenseStride(
+readonly func TLOADDenseStride(
     columns: integer {0..65535}, data_type: TileDataType) => Word
 begin
-    return TileDenseRowStrideBytes(columns, data_type);
+    return TileDenseRowBytes(columns, data_type);
 end;
 
 pure func TLOADZeroMaskNoEffect(

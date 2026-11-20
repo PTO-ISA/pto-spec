@@ -15,6 +15,6 @@ begin
     assert _LastFault == Fault_None;
     assert _SystemRegisters.thread_ptr == Zeros{PTO_XLEN} + 0x222;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert SelectSSRSETOperation() == ScalarOperation_SSRSET;
+    assert SSRSETOperation() == ScalarOperation_SSRSET;
     return 0;
 end;

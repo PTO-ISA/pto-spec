@@ -42,7 +42,7 @@ begin
     assert _MemoryEvents[[0]].write_value == expected;
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
-    assert SelectLDXORAtomicOperation() == Atomic_XOR;
+    assert LDXORAtomicOperation() == Atomic_XOR;
     assert LDXORAtomicSizeBytes() == 8;
     assert LDXORPublishesOldValue();
     assert !LDXORSignExtendsOldValue();

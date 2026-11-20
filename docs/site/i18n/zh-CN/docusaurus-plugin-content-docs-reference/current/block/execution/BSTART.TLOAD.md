@@ -202,7 +202,7 @@ Weight-mode Shared destination: explicit B.DATR OHWI2NK or OIHW2NK; LB0=ValidK, 
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.TLOAD.asl -->
 ```asl
-readonly func SelectBSTARTTLOADHandler() => CommandSemanticHandler
+readonly func BSTARTTLOADHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

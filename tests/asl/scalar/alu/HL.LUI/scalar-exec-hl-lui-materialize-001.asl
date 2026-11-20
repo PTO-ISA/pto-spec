@@ -10,6 +10,6 @@ begin
     let execution = ExecuteScalarInstruction(instruction, 48);
     assert execution == ScalarExecution_Executed;
     assert ReadGPR(2) == Zeros{PTO_XLEN} + 0x8000000000000000;
-    assert ComputeHLLUIResult(Zeros{32} + 0x80000000) == Zeros{PTO_XLEN} + 0x8000000000000000;
+    assert HLLUIResult(Zeros{32} + 0x80000000) == Zeros{PTO_XLEN} + 0x8000000000000000;
     return 0;
 end;

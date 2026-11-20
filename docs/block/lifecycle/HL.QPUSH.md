@@ -148,7 +148,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/HL.QPUSH.asl -->
 ```asl
-readonly func SelectHLQPUSHHandler() => CommandSemanticHandler
+readonly func HLQPUSHHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteQueuePush;
 end;

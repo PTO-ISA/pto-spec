@@ -146,7 +146,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl -->
 ```asl
-readonly func SelectTMATMULMXBIASOperation()
+readonly func TMATMULMXBIASOperation()
     => TileOperation
 begin
     return TileOperation_TMATMUL_MX_BIAS;
@@ -203,7 +203,7 @@ begin
         bias);
 end;
 
-readonly func SelectTMATMULMXBIASHandler()
+readonly func TMATMULMXBIASHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TMATMUL_MX_BIAS;

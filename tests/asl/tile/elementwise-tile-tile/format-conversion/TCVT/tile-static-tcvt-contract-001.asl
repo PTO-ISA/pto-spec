@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(23) == TileHandler_TCVT;
     assert TileClassOfIndex(23) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(23) == TileEngine_VEC;
-    assert SelectTCVTOperation() == TileOperation_TCVT;
-    assert SelectTCVTHandler() == TileHandler_TCVT;
+    assert TCVTOperation() == TileOperation_TCVT;
+    assert TCVTHandler() == TileHandler_TCVT;
     return 0;
 end;

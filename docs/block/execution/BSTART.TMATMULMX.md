@@ -236,7 +236,7 @@ BSTOP or the next BSTART completion boundary
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.TMATMULMX.asl -->
 ```asl
-readonly func SelectBSTARTTMATMULMXTileOperation()
+readonly func BSTARTTMATMULMXTileOperation()
     => TileOperation
 begin
     return TileOperation_TMATMUL_MX;
@@ -254,7 +254,7 @@ begin
     return TRUE;
 end;
 
-readonly func SelectBSTARTTMATMULMXHandler()
+readonly func BSTARTTMATMULMXHandler()
     => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;

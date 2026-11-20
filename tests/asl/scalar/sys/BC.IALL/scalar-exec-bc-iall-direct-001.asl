@@ -16,6 +16,6 @@ begin
     assert _LastMaintenanceOperation == Maintenance_BC_IALL;
     assert _LastMaintenanceOperand == Zeros{PTO_XLEN} + 0x0;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert SelectBCIALLOperation() == ScalarOperation_BC_IALL;
+    assert BCIALLOperation() == ScalarOperation_BC_IALL;
     return 0;
 end;

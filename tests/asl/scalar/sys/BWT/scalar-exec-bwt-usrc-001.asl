@@ -19,6 +19,6 @@ begin
     assert _ArchitectureRequestEpoch == 1;
     assert ReadTemporaryQueue(FALSE, 0) == Zeros{PTO_XLEN} + 0x1000;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert SelectBWTOperation() == ScalarOperation_BWT;
+    assert BWTOperation() == ScalarOperation_BWT;
     return 0;
 end;

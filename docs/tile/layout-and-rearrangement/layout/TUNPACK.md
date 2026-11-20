@@ -101,7 +101,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/layout-and-rearrangement/layout/TUNPACK.asl -->
 ```asl
-readonly func SelectTUNPACKOperation() => TileOperation
+readonly func TUNPACKOperation() => TileOperation
 begin
     return TileOperation_TUNPACK;
 end;
@@ -123,7 +123,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/layout-and-rearrangement/layout/TUNPACK.asl -->
 ```asl
-readonly func SelectTUNPACKHandler() => TileSemanticHandler
+readonly func TUNPACKHandler() => TileSemanticHandler
 begin
     return TileHandler_TUNPACK;
 end;

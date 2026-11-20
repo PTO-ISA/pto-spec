@@ -6,7 +6,7 @@ begin
     assert CommandOperationOfForm(33) == CommandOperation_bstart_tepl_32_d022db6dacb3;
     assert CommandHandlerOfForm(33) == CommandHandler_ExecuteBundleStart;
     assert BSTARTSFUEncodingMatches(CommandOperationOfForm(33));
-    assert SelectBSTARTSFUHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTSFUHandler() == CommandHandler_ExecuteBundleStart;
     assert BSTARTSFUAliasEngine() == TileEngine_SFU;
     return 0;
 end;

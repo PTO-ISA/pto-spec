@@ -42,7 +42,7 @@ begin
     assert _MemoryEvents[[0]].write_value == expected;
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
-    assert SelectLDSMINAtomicOperation() == Atomic_SMIN;
+    assert LDSMINAtomicOperation() == Atomic_SMIN;
     assert LDSMINAtomicSizeBytes() == 8;
     assert LDSMINPublishesOldValue();
     assert !LDSMINSignExtendsOldValue();

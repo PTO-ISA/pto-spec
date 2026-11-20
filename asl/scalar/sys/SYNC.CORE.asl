@@ -9,13 +9,13 @@
 // defined by this owner and its referenced state and memory contracts.
 // NDF-END: PTO-SYNC-CORE-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectSYNCCOREOperation() => ScalarOperation
+readonly func SYNCCOREOperation() => ScalarOperation
 begin
     return ScalarOperation_SYNC_CORE;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSYNCCOREHandler() => ScalarSemanticHandler
+readonly func SYNCCOREHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_SyncCore;
 end;

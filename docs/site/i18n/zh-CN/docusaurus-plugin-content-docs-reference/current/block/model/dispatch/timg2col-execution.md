@@ -203,10 +203,10 @@ begin
     if !BundleTIMG2COLIORBindingsPreflight(participant_mask) then
         return FALSE;
     end;
-    let param0 = ReadScalarRegisterOperand(_BundleScalarBindings[[1]].source0);
-    let param1 = ReadScalarRegisterOperand(_BundleScalarBindings[[1]].source1);
-    let param2 = ReadScalarRegisterOperand(_BundleScalarBindings[[1]].source2);
-    let gm_base = ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source0);
+    let param0 = ReadReg5(_BundleScalarBindings[[1]].source0);
+    let param1 = ReadReg5(_BundleScalarBindings[[1]].source1);
+    let param2 = ReadReg5(_BundleScalarBindings[[1]].source2);
+    let gm_base = ReadReg5(_BundleScalarBindings[[0]].source0);
     if !BundleTIMG2COLBaseParameterExtensionLegal(param1) then return FALSE; end;
     let parameters = BundleTIMG2COLParametersFromWords(param0, param1, param2);
     if !BundleTIMG2COLParametersLegal(parameters) then return FALSE; end;
@@ -329,20 +329,20 @@ begin
     end;
     let pe_valid_row = if cooperative then
         BundleTIMG2COLPEValidRow(output, valid_row) else valid_row;
-    let encoded_row_start = UInt(ReadScalarRegisterOperand(
+    let encoded_row_start = UInt(ReadReg5(
         _BundleScalarBindings[[1]].source2)[31:0]);
     let pe_row_start = if cooperative then
         BundleTIMG2COLPERowStart(output, valid_row, encoded_row_start)
         else encoded_row_start;
-    let param0 = ReadScalarRegisterOperand(_BundleScalarBindings[[1]].source0);
-    let param1 = ReadScalarRegisterOperand(_BundleScalarBindings[[1]].source1);
-    let param2 = ReadScalarRegisterOperand(_BundleScalarBindings[[1]].source2);
+    let param0 = ReadReg5(_BundleScalarBindings[[1]].source0);
+    let param1 = ReadReg5(_BundleScalarBindings[[1]].source1);
+    let param2 = ReadReg5(_BundleScalarBindings[[1]].source2);
     let base_parameters = BundleTIMG2COLParametersFromWords(
         param0, param1, param2);
     var parameters = base_parameters;
     parameters.row_start = pe_row_start as integer {0..4294967295};
     let layout = TileDataLayoutOfCode(_BundleDataAttributes.data_layout);
-    let gm_base = ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source0);
+    let gm_base = ReadReg5(_BundleScalarBindings[[0]].source0);
     let element_bytes = TileMemoryElementBytes(data_type);
     // Zero-row cooperative PEs complete the collective protocol but have no
     // Local allocation, GM read, payload write, or definedness effect.

@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(68) == TileHandler_TCI;
     assert TileClassOfIndex(68) == TileClass_IrregularAndComplex;
     assert TileEngineOfIndex(68) == TileEngine_SFU;
-    assert SelectTCIOperation() == TileOperation_TCI;
-    assert SelectTCIHandler() == TileHandler_TCI;
+    assert TCIOperation() == TileOperation_TCI;
+    assert TCIHandler() == TileHandler_TCI;
     return 0;
 end;

@@ -198,7 +198,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-and-immediate/logical/TCMPS.asl -->
 ```asl
-readonly func SelectTCMPSOperation() => TileOperation
+readonly func TCMPSOperation() => TileOperation
 begin
     return TileOperation_TCMPS;
 end;
@@ -247,7 +247,7 @@ begin
         comparison);
 end;
 
-readonly func SelectTCMPSHandler() => TileSemanticHandler
+readonly func TCMPSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileCompareScalar;
 end;

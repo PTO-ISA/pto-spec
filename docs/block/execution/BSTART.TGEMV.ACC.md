@@ -231,7 +231,7 @@ BSTOP or the next BSTART completion boundary
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.TGEMV.ACC.asl -->
 ```asl
-readonly func SelectBSTARTTGEMVACCTileOperation()
+readonly func BSTARTTGEMVACCTileOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV_ACC;
@@ -249,7 +249,7 @@ begin
     return FALSE;
 end;
 
-readonly func SelectBSTARTTGEMVACCHandler()
+readonly func BSTARTTGEMVACCHandler()
     => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;

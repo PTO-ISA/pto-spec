@@ -19,7 +19,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectESAVEHandler() => CommandSemanticHandler
+readonly func ESAVEHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SaveExecutionContext;
 end;

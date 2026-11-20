@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-remu-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `ComputeHLREMUQuotient` 与 `ComputeHLREMURemainder`，它们分别调用 `ScalarDivideUnsigned` 与 `ScalarRemainderUnsigned`。分派路径以 `signed_operation` 为假调用 `ExecuteScalarRemainderPair`；该辅助函数先算出两个值，再先写余数、后写商。
+所属 ASL 提供 `HLREMUQuotient` 与 `HLREMURemainder`，它们分别调用 `ScalarDivideUnsigned` 与 `ScalarRemainderUnsigned`。分派路径以 `signed_operation` 为假调用 `ExecuteScalarRemainderPair`；该辅助函数先算出两个值，再先写余数、后写商。
 
 ```asm
 hl.remu SrcL, SrcR, ->Dst0, Dst1
@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.REMU.asl -->
 ```asl
-readonly func SelectHLREMUOperation() => ScalarOperation
+readonly func HLREMUOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_REMU;
 end;
@@ -131,11 +131,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.REMU.asl -->
 ```asl
-readonly func SelectHLREMUHandler() => ScalarSemanticHandler
+readonly func HLREMUHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarRemainderPair;
 end;
-pure func ComputeHLREMUQuotient(
+pure func HLREMUQuotient(
     dividend: Word,
     divisor: Word)
     => Word
@@ -145,7 +145,7 @@ begin
         divisor);
 end;
 
-pure func ComputeHLREMURemainder(
+pure func HLREMURemainder(
     dividend: Word,
     divisor: Word)
     => Word
@@ -160,7 +160,7 @@ pure func HLREMUDst0(
     divisor: Word)
     => Word
 begin
-    return ComputeHLREMURemainder(
+    return HLREMURemainder(
         dividend,
         divisor);
 end;
@@ -170,7 +170,7 @@ pure func HLREMUDst1(
     divisor: Word)
     => Word
 begin
-    return ComputeHLREMUQuotient(
+    return HLREMUQuotient(
         dividend,
         divisor);
 end;

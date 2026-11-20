@@ -48,7 +48,7 @@
       "id": "scalar-fused",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "stage4_target": "S4-T5",
@@ -292,7 +292,7 @@
       ]
     },
     {
-      "name": "ScalarFPFusedProfile",
+      "name": "FPMulAdd",
       "role": "portable-profile-boundary",
       "model": "asl/scalar/model/fsu/scalar-fp.asl",
       "requirement": "PTO-REQ-SCALAR-FP-001",
@@ -769,7 +769,7 @@
       "numeric_contract": "scalar-fused",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-SCALAR-FP-001",
@@ -785,7 +785,7 @@
       "numeric_contract": "scalar-fused",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-SCALAR-FP-001",
@@ -817,7 +817,7 @@
       "numeric_contract": "scalar-fused",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-SCALAR-FP-001",
@@ -833,7 +833,7 @@
       "numeric_contract": "scalar-fused",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-SCALAR-FP-001",

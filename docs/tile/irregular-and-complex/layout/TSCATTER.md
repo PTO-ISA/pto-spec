@@ -113,7 +113,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/irregular-and-complex/layout/TSCATTER.asl -->
 ```asl
-readonly func SelectTSCATTEROperation() => TileOperation
+readonly func TSCATTEROperation() => TileOperation
 begin
     return TileOperation_TSCATTER;
 end;
@@ -144,7 +144,7 @@ begin
     return TileOperandsLegal_TSCATTER(destination, source, indices);
 end;
 
-readonly func SelectTSCATTERHandler() => TileSemanticHandler
+readonly func TSCATTERHandler() => TileSemanticHandler
 begin
     return TileHandler_TSCATTER;
 end;

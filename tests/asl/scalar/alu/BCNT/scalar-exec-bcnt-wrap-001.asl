@@ -13,7 +13,7 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(2) == Zeros{PTO_XLEN} + 3;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x104;
-    assert ComputeBCNTResult(
+    assert BCNTResult(
         Zeros{PTO_XLEN} + 0x2000000000000003,
         8,
         60) == Zeros{PTO_XLEN} + 3;

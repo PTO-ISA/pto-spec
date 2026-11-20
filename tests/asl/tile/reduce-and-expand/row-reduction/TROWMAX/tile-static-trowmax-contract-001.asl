@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(41) == TileHandler_ExecuteTileReduction;
     assert TileClassOfIndex(41) == TileClass_ReduceAndExpand;
     assert TileEngineOfIndex(41) == TileEngine_SFU;
-    assert SelectTROWMAXOperation() == TileOperation_TROWMAX;
-    assert SelectTROWMAXHandler() == TileHandler_ExecuteTileReduction;
+    assert TROWMAXOperation() == TileOperation_TROWMAX;
+    assert TROWMAXHandler() == TileHandler_ExecuteTileReduction;
     return 0;
 end;

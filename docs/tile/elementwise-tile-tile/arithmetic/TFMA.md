@@ -113,7 +113,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/arithmetic/TFMA.asl -->
 ```asl
-readonly func SelectTFMAOperation() => TileOperation
+readonly func TFMAOperation() => TileOperation
 begin
     return TileOperation_TFMA;
 end;
@@ -156,7 +156,7 @@ begin
         addend);
 end;
 
-func ComputeTFMAValue(
+func TFMAValue(
     data_type: TileDataType,
     left: Word,
     right: Word,
@@ -169,7 +169,7 @@ begin
         addend);
 end;
 
-readonly func SelectTFMAHandler() => TileSemanticHandler
+readonly func TFMAHandler() => TileSemanticHandler
 begin
     return TileHandler_TFMA;
 end;

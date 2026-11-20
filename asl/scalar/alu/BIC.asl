@@ -8,7 +8,7 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-BIC-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectBICOperation()
+readonly func BICOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BIC;
@@ -27,13 +27,13 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBICHandler()
+readonly func BICHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ModifyBitfield;
 end;
 
-pure func ComputeBICResult(
+pure func BICResult(
     value: Word,
     width: integer {1..64},
     offset: integer {0..63})

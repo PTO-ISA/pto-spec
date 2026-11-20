@@ -8,17 +8,17 @@
 // SignExtend(result[63:32]). Sources MUST be snapshotted before either write.
 // NDF-END: PTO-HL-MADDW-WORD-HALVES-001
 // DOC-BEGIN: decode
-readonly func SelectHLMADDWOperation() => ScalarOperation
+readonly func HLMADDWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_MADDW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLMADDWHandler() => ScalarSemanticHandler
+readonly func HLMADDWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarMultiplyAddPair;
 end;
-pure func ComputeHLMADDWResult(
+pure func HLMADDWResult(
     addend: Word,
     left: Word,
     right: Word)
@@ -38,7 +38,7 @@ pure func HLMADDWLow(
     => Word
 begin
     return SignExtend{PTO_XLEN}(
-        ComputeHLMADDWResult(addend, left, right)[31:0]);
+        HLMADDWResult(addend, left, right)[31:0]);
 end;
 
 pure func HLMADDWHigh(
@@ -48,6 +48,6 @@ pure func HLMADDWHigh(
     => Word
 begin
     return SignExtend{PTO_XLEN}(
-        ComputeHLMADDWResult(addend, left, right)[63:32]);
+        HLMADDWResult(addend, left, right)[63:32]);
 end;
 // DOC-END: operation

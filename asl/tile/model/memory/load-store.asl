@@ -136,7 +136,7 @@ begin
             PackedTileLogicalCapacity(tile.capacity_bytes, tile.data_type);
     if packed_zero_fast then
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let address = TileMemoryStridedByteAddress(base_address,
+            let address = TileElementAddress(base_address,
                 0, column as integer {0..65535}, row_stride_bytes,
                 tile.data_type);
             let probe = ProbeTileMemoryAccess(address, tile.data_type, FALSE);
@@ -169,7 +169,7 @@ begin
                 result = TileInfoWithLogicalElementAndDefined(
                     result, element, inactive_value, TRUE);
             else
-            let address = TileMemoryStridedByteAddress(base_address,
+            let address = TileElementAddress(base_address,
                 row as integer {0..65535}, column as integer {0..65535},
                 row_stride_bytes, tile.data_type);
             let probe = ProbeTileMemoryAccess(address, tile.data_type, FALSE);
@@ -241,7 +241,7 @@ begin
             if BundleExecutionMaskActiveAt(tile.layout,
                    row as integer {0..65535},
                    column as integer {0..65535}) then
-                let address = TileMemoryStridedByteAddress(base_address,
+                let address = TileElementAddress(base_address,
                     row as integer {0..65535},
                     column as integer {0..65535}, row_stride_bytes,
                     tile.data_type);
@@ -286,7 +286,7 @@ begin
                     let element = TileLogicalLinearIndex(tile,
                         row as integer {0..65535},
                         column as integer {0..65535});
-                    let address = TileMemoryStridedByteAddress(base_address,
+                    let address = TileElementAddress(base_address,
                         row as integer {0..65535},
                         column as integer {0..65535}, row_stride_bytes,
                         tile.data_type);

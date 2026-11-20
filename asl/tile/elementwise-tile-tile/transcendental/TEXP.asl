@@ -14,7 +14,7 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TEXP-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTEXPOperation() => TileOperation
+readonly func TEXPOperation() => TileOperation
 begin
     return TileOperation_TEXP;
 end;
@@ -38,7 +38,7 @@ begin
         source);
 end;
 
-readonly func SelectTEXPHandler() => TileSemanticHandler
+readonly func TEXPHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;

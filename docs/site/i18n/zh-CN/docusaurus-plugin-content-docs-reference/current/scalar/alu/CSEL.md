@@ -121,7 +121,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/CSEL.asl -->
 ```asl
-readonly func SelectCSELOperation()
+readonly func CSELOperation()
     => ScalarOperation
 begin
     return ScalarOperation_CSEL;
@@ -130,7 +130,7 @@ end;
 pure func DecodeCSELRightModifier(encoded: bits(2))
     => ScalarRightModifier
 begin
-    return DecodeScalarSelectRightModifier(encoded);
+    return DecodeSelectModifier(encoded);
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
@@ -139,7 +139,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/CSEL.asl -->
 ```asl
-readonly func SelectCSELHandler()
+readonly func CSELHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarConditionalSelect;
@@ -154,7 +154,7 @@ begin
     return ApplySelectModifier(right, modifier);
 end;
 
-pure func ComputeCSELResult(
+pure func CSELResult(
     predicate: Word,
     selected_true: Word,
     selected_false: Word,

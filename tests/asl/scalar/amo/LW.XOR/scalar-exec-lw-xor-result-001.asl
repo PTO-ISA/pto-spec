@@ -43,7 +43,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
 
-    assert SelectLWXORAtomicOperation() == Atomic_XOR;
+    assert LWXORAtomicOperation() == Atomic_XOR;
     assert LWXORAtomicSizeBytes() == 4;
     assert LWXORPublishesOldValue();
     assert LWXORSignExtendsOldValue();

@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/HL.SETC.NEI.asl -->
 ```asl
-readonly func SelectHLSETCNEIOperation() => ScalarOperation
+readonly func HLSETCNEIOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_SETC_NEI;
 end;
@@ -137,12 +137,12 @@ Applicable only in the body of an active block whose BARG.TYPE is Conditional. A
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/HL.SETC.NEI.asl -->
 ```asl
-readonly func SelectHLSETCNEIHandler() => ScalarSemanticHandler
+readonly func HLSETCNEIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommit;
 end;
 
-pure func DecodeHLSETCNEICondition()
+pure func HLSETCNEICondition()
     => ScalarCondition
 begin
     return ScalarCondition_NE;
@@ -154,7 +154,7 @@ pure func CommitHLSETCNEIResult(
     => boolean
 begin
     return ConditionHolds(
-        DecodeHLSETCNEICondition(),
+        HLSETCNEICondition(),
         left,
         right);
 end;

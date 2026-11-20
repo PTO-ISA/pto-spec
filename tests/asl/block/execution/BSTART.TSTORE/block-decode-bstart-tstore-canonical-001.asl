@@ -6,6 +6,6 @@ begin
     assert CommandOperationOfForm(50) == CommandOperation_bstart_tstore_32_4048b6e8b0f4;
     assert CommandHandlerOfForm(50) == CommandHandler_ExecuteBundleStart;
     assert BSTARTTSTOREEncodingMatches(CommandOperationOfForm(50));
-    assert SelectBSTARTTSTOREHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTTSTOREHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

@@ -8,14 +8,14 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-FABS-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectFABSOperation()
+readonly func FABSOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FABS;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectFABSHandler()
+readonly func FABSHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingUnary;
@@ -52,7 +52,7 @@ begin
     return FALSE;
 end;
 
-pure func SelectFABSUnaryOperation()
+pure func FABSUnaryOperation()
     => FloatingUnaryOperation
 begin
     return FloatingUnary_ABS;

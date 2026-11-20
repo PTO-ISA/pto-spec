@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(14) == TileHandler_ExecuteTileUnary;
     assert TileClassOfIndex(14) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(14) == TileEngine_VEC;
-    assert SelectTNOTOperation() == TileOperation_TNOT;
-    assert SelectTNOTHandler() == TileHandler_ExecuteTileUnary;
+    assert TNOTOperation() == TileOperation_TNOT;
+    assert TNOTHandler() == TileHandler_ExecuteTileUnary;
     return 0;
 end;

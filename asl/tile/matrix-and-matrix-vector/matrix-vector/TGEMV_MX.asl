@@ -23,7 +23,7 @@
 // Cache behavior MUST NOT alter results, faults, source lifetime, or ordering.
 // NDF-END: PTO-TGEMV-MX-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTGEMVMXOperation()
+readonly func TGEMVMXOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV_MX;
@@ -57,7 +57,7 @@ begin
         column_scale);
 end;
 
-readonly func SelectTGEMVMXHandler()
+readonly func TGEMVMXHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TGEMV_MX;

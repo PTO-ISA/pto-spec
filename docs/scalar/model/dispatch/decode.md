@@ -30,13 +30,13 @@ A field is a named operand inside a form, such as `RegDst`, `SrcL`, `simm12`, or
 
 The helpers interpret that raw value:
 
-- `ScalarDecodedSelector` keeps 5 bits as a `Reg5Selector`.
+- `DecodeReg5` keeps 5 bits as a `Reg5Selector`.
 - `ScalarDecodedWord` sign-extends a field whose catalog signedness is `Signed` and zero-extends every other field.
 - `ScalarDecodedUInt6`, `ScalarDecodedUInt7`, and the `ScalarDecodedBits*` helpers keep fixed low slices.
 - `ScalarDecodedBitfieldWidth` adds 1 to the 6-bit `imml`, so widths are 1 through 64.
 - `ScalarDecodedMemoryOrder` maps the `aq` and `rl` bits to relaxed, acquire, release, or acquire-release.
 
-These helpers are pure or read-only. `ReadDecodedScalarRegister` reads a GPR or a T/U queue entry through `ReadScalarRegisterOperand`, and `ScalarDecodedAtomicAddress` reads its address register through `ReadDecodedScalarRegister`; the other helpers read no state.
+These helpers are pure or read-only. `ReadDecodedReg5` reads a GPR or a T/U queue entry through `ReadReg5`, and `ScalarDecodedAtomicAddress` reads its address register through `ReadDecodedReg5`; the other helpers read no state.
 
 <!-- PTO-READER-BLOCK: scalar-model-dispatch-decode-rules role=rules-interactions -->
 ## Rules and interactions
@@ -52,7 +52,7 @@ The 2-bit `SrcRType` field is decoded differently for each family:
 
 Design point: the binary ALU table puts "no modifier" at `11`. The ADD contract states that an omitted assembly suffix encodes `11`, so an encoded zero in this field selects `.sw`, not "no change".
 
-The NDF clause PTO-REQ-AGU-SRCRTYPE-001 makes raw `11` reserved for register-offset AGU forms. It must be rejected before any source read. The decoder meets this through catalog constraints: each such form lists `SrcRType` as one of 0, 1, or 2, and `ScalarFormOperandsLegal` rejects the word before the AGU handler runs. That is why `DecodeScalarAddressRightModifier` can mark `11` as `unreachable`.
+The NDF clause PTO-REQ-AGU-SRCRTYPE-001 makes raw `11` reserved for register-offset AGU forms. It must be rejected before any source read. The decoder meets this through catalog constraints: each such form lists `SrcRType` as one of 0, 1, or 2, and `ScalarFormOperandsLegal` rejects the word before the AGU handler runs. That is why `DecodeAddressModifier` can mark `11` as `unreachable`.
 
 Design point: reserved values that the catalog constrains are rejected by legality checks, not by the value helpers. The value helpers can therefore mark those values `unreachable`, and such a word is rejected before any family handler reads a source or writes a result.
 
@@ -120,7 +120,7 @@ begin
            handler == ScalarHandler_ArchitectureEnterRequest;
 end;
 
-pure func ScalarDecodedSelector(instruction: bits(48),
+pure func DecodeReg5(instruction: bits(48),
                                 form: integer {0..PTO_SCALAR_FORM_COUNT-1},
                                 field: ScalarOperandField) => Reg5Selector
 begin
@@ -207,7 +207,7 @@ readonly func ScalarDecodedAtomicAddress(
     instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1},
     field: ScalarOperandField) => Word
 begin
-    let address = ReadDecodedScalarRegister(instruction, form, field);
+    let address = ReadDecodedReg5(instruction, form, field);
     let far = ScalarDecodedBoolean(instruction, form, ScalarField_far);
     return AtomicAddress(address, far);
 end;
@@ -240,7 +240,7 @@ begin
     return UInt(DecodeScalarOperandRaw(instruction, form, ScalarField_imml)[5:0]) + 1;
 end;
 
-pure func DecodeScalarBinaryRightModifier(raw: bits(2))
+pure func DecodeBinaryModifier(raw: bits(2))
                                            => ScalarRightModifier
 begin
     case raw of
@@ -251,7 +251,7 @@ begin
     end;
 end;
 
-pure func DecodeScalarComparisonRightModifier(raw: bits(2))
+pure func DecodeCompareModifier(raw: bits(2))
                                                => ScalarRightModifier
 begin
     case raw of
@@ -262,7 +262,7 @@ begin
     end;
 end;
 
-pure func DecodeScalarSelectRightModifier(raw: bits(2))
+pure func DecodeSelectModifier(raw: bits(2))
                                           => ScalarRightModifier
 begin
     if raw == '11' then
@@ -272,7 +272,7 @@ begin
     end;
 end;
 
-pure func DecodeScalarAddressRightModifier(raw: bits(2))
+pure func DecodeAddressModifier(raw: bits(2))
                                            => ScalarRightModifier
 begin
     case raw of
@@ -291,7 +291,7 @@ begin
         instruction,
         form,
         ScalarField_SrcRType)[1:0];
-    return DecodeScalarBinaryRightModifier(raw);
+    return DecodeBinaryModifier(raw);
 end;
 
 pure func ScalarDecodedComparisonRightModifier(
@@ -302,7 +302,7 @@ begin
         instruction,
         form,
         ScalarField_SrcRType)[1:0];
-    return DecodeScalarComparisonRightModifier(raw);
+    return DecodeCompareModifier(raw);
 end;
 
 pure func ScalarDecodedSelectRightModifier(
@@ -313,7 +313,7 @@ begin
         instruction,
         form,
         ScalarField_SrcRType)[1:0];
-    return DecodeScalarSelectRightModifier(raw);
+    return DecodeSelectModifier(raw);
 end;
 
 pure func ScalarDecodedAddressRightModifier(
@@ -324,14 +324,14 @@ begin
         instruction,
         form,
         ScalarField_SrcRType)[1:0];
-    return DecodeScalarAddressRightModifier(raw);
+    return DecodeAddressModifier(raw);
 end;
 
-readonly func ReadDecodedScalarRegister(instruction: bits(48),
+readonly func ReadDecodedReg5(instruction: bits(48),
                                         form: integer {0..PTO_SCALAR_FORM_COUNT-1},
                                         field: ScalarOperandField) => Word
 begin
-    return ReadScalarRegisterOperand(ScalarDecodedSelector(instruction, form, field));
+    return ReadReg5(DecodeReg5(instruction, form, field));
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

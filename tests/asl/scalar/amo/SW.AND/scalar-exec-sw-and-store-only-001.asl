@@ -48,7 +48,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_Release;
 
-    assert SelectSWANDAtomicOperation() == Atomic_AND;
+    assert SWANDAtomicOperation() == Atomic_AND;
     assert SWANDAtomicSizeBytes() == 4;
     assert !SWANDPublishesOldValue();
 end;

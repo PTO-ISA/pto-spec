@@ -169,7 +169,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS.asl -->
 ```asl
-readonly func SelectTEXPANDSOperation() => TileOperation
+readonly func TEXPANDSOperation() => TileOperation
 begin
     return TileOperation_TEXPANDS;
 end;
@@ -208,7 +208,7 @@ begin
         scalar);
 end;
 
-readonly func SelectTEXPANDSHandler() => TileSemanticHandler
+readonly func TEXPANDSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileFillScalar;
 end;

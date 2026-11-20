@@ -173,7 +173,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-and-immediate/arithmetic/TMINS.asl -->
 ```asl
-readonly func SelectTMINSOperation() => TileOperation
+readonly func TMINSOperation() => TileOperation
 begin
     return TileOperation_TMINS;
 end;
@@ -217,7 +217,7 @@ begin
         scalar);
 end;
 
-readonly func SelectTMINSHandler() => TileSemanticHandler
+readonly func TMINSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileScalar;
 end;

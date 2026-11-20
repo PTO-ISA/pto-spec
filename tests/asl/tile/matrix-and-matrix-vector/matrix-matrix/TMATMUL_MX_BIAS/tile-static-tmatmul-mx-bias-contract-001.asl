@@ -9,8 +9,8 @@ begin
     assert TileHandlerOfIndex(86) == TileHandler_TMATMUL_MX_BIAS;
     assert TileClassOfIndex(86) == TileClass_MatrixAndMatrixVector;
     assert TileEngineOfIndex(86) == TileEngine_CUBE;
-    assert SelectTMATMULMXBIASOperation() == TileOperation_TMATMUL_MX_BIAS;
-    assert SelectTMATMULMXBIASHandler() == TileHandler_TMATMUL_MX_BIAS;
+    assert TMATMULMXBIASOperation() == TileOperation_TMATMUL_MX_BIAS;
+    assert TMATMULMXBIASHandler() == TileHandler_TMATMUL_MX_BIAS;
     assert TMATMULMXBIASCubeFunction() == 5;
     assert TMATMULMXBIASSharedOperandsAllowed() == TRUE;
     return 0;

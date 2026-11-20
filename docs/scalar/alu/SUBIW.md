@@ -125,7 +125,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/SUBIW.asl -->
 ```asl
-readonly func SelectSUBIWOperation()
+readonly func SUBIWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SUBIW;
@@ -137,7 +137,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/SUBIW.asl -->
 ```asl
-readonly func SelectSUBIWHandler()
+readonly func SUBIWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;

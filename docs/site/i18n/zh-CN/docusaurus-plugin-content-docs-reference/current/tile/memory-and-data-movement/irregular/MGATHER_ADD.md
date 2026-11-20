@@ -147,11 +147,11 @@ When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiG
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/irregular/MGATHER_ADD.asl -->
 ```asl
-readonly func SelectMGATHERADDHandler() => TileSemanticHandler
+readonly func MGATHERADDHandler() => TileSemanticHandler
 begin
     return TileHandler_GM_ATOM_VALUE;
 end;
-readonly func SelectMGATHERADDOperation() => TileOperation
+readonly func MGATHERADDOperation() => TileOperation
 begin
     return TileOperation_MGATHER_ADD;
 end;

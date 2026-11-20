@@ -85,9 +85,9 @@ begin
        total_col_raw == 0 || total_col_raw > 65535 then
         return FALSE;
     end;
-    let shape_word = ReadScalarRegisterOperand(
+    let shape_word = ReadReg5(
         _BundleScalarBindings[[0]].source1);
-    let start_word = ReadScalarRegisterOperand(
+    let start_word = ReadReg5(
         _BundleScalarBindings[[0]].source2);
     if !BundleWeightTLOADShapeReservedBitsLegal(shape_word) then return FALSE; end;
     let parameters = BundleWeightTLOADParametersFromWords(
@@ -157,7 +157,7 @@ begin
     let (coverage_legal, coverage_cells) = BundleWeightTLOADGenerationCoverage(
         derived_offset as integer {0..8192}, payload_cells);
     if !coverage_legal then return FALSE; end;
-    let gm_base = ReadScalarRegisterOperand(
+    let gm_base = ReadReg5(
         _BundleScalarBindings[[0]].source0);
     let generation_metadata = BundleWeightTLOADGenerationMetadata(
         _BundleDataAttributes.data_layout, _BundleOperation.data_type,
@@ -181,9 +181,9 @@ begin
     let total_col = UInt(_BundleDimensions[[2]]) as integer {1..65535};
     let mask = BundleSharedBindingMask(0);
     if mask == Zeros{4} then return TRUE; end;
-    let shape_word = ReadScalarRegisterOperand(
+    let shape_word = ReadReg5(
         _BundleScalarBindings[[0]].source1);
-    let start_word = ReadScalarRegisterOperand(
+    let start_word = ReadReg5(
         _BundleScalarBindings[[0]].source2);
     let base_parameters = BundleWeightTLOADParametersFromWords(
         shape_word, start_word);
@@ -197,7 +197,7 @@ begin
     var parameters = base_parameters;
     parameters.n_start = (base_parameters.n_start + destination_row_start)
         as integer {0..4294967295};
-    let gm_base = ReadScalarRegisterOperand(
+    let gm_base = ReadReg5(
         _BundleScalarBindings[[0]].source0);
     let element_bytes = TileMemoryElementBytes(data_type);
     // Every participant proves the complete selected-PE footprint before any

@@ -8,7 +8,7 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-BCNT-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func SelectBCNTOperation()
+readonly func BCNTOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BCNT;
@@ -27,13 +27,13 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBCNTHandler()
+readonly func BCNTHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_CountBitfield;
 end;
 
-pure func ComputeBCNTResult(
+pure func BCNTResult(
     value: Word,
     width: integer {1..64},
     offset: integer {0..63})

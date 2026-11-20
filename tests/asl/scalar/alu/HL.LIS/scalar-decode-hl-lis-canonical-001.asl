@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000011010000000000001110', 48) == 193;
     assert ScalarOperationOfForm(193) == ScalarOperation_HL_LIS;
     assert ScalarHandlerOfForm(193) == ScalarHandler_MaterializeLongSigned;
-    assert SelectHLLISOperation() == ScalarOperation_HL_LIS;
-    assert SelectHLLISHandler() == ScalarHandler_MaterializeLongSigned;
+    assert HLLISOperation() == ScalarOperation_HL_LIS;
+    assert HLLISHandler() == ScalarHandler_MaterializeLongSigned;
     assert DecodeScalarOperandRaw('000000000000000000000000000011010000000000001110', 193, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000011010000000000001110', 193, ScalarField_simm32) == '000000000000000000000000000000000000000000000000';
     return 0;

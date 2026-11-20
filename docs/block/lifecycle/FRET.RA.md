@@ -139,7 +139,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/FRET.RA.asl -->
 ```asl
-readonly func SelectFRETRAHandler() => CommandSemanticHandler
+readonly func FRETRAHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteFrameReturnAddress;
 end;

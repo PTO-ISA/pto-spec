@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FNES.asl -->
 ```asl
-readonly func SelectFNESOperation()
+readonly func FNESOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FNES;
@@ -132,7 +132,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FNES.asl -->
 ```asl
-readonly func SelectFNESHandler()
+readonly func FNESHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingCompare;
@@ -169,7 +169,7 @@ begin
     return FALSE;
 end;
 
-pure func SelectFNESCompareOperation()
+pure func FNESCompareOperation()
     => FloatingCompareOperation
 begin
     return FloatingCompare_NE;

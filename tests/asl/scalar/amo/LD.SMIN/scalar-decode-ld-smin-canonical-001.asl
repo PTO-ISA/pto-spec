@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000101000000000000100000000001011', 32) == 320;
     assert ScalarOperationOfForm(320) == ScalarOperation_LD_SMIN;
     assert ScalarHandlerOfForm(320) == ScalarHandler_AtomicReadModifyWrite;
-    assert SelectLDSMINOperation() == ScalarOperation_LD_SMIN;
-    assert SelectLDSMINHandler() == ScalarHandler_AtomicReadModifyWrite;
+    assert LDSMINOperation() == ScalarOperation_LD_SMIN;
+    assert LDSMINHandler() == ScalarHandler_AtomicReadModifyWrite;
     assert DecodeScalarOperandRaw('000000000000000000101000000000000100000000001011', 320, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000101000000000000100000000001011', 320, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000101000000000000100000000001011', 320, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';

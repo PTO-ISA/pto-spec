@@ -15,9 +15,9 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBSTARTVECHandler() => CommandSemanticHandler
+readonly func BSTARTVECHandler() => CommandSemanticHandler
 begin
-    return SelectBSTARTTEPLHandler();
+    return BSTARTTEPLHandler();
 end;
 
 pure func BSTARTVECAliasEngine() => TileExecutionEngine

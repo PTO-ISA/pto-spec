@@ -43,7 +43,7 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
 
-    assert SelectLWSMINAtomicOperation() == Atomic_SMIN;
+    assert LWSMINAtomicOperation() == Atomic_SMIN;
     assert LWSMINAtomicSizeBytes() == 4;
     assert LWSMINPublishesOldValue();
     assert LWSMINSignExtendsOldValue();

@@ -113,7 +113,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/transcendental/TDIV.asl -->
 ```asl
-readonly func SelectTDIVOperation() => TileOperation
+readonly func TDIVOperation() => TileOperation
 begin
     return TileOperation_TDIV;
 end;
@@ -154,7 +154,7 @@ begin
         denominator);
 end;
 
-readonly func SelectTDIVHandler() => TileSemanticHandler
+readonly func TDIVHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;

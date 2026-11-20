@@ -8,14 +8,14 @@
 // Rejection MUST preserve the prior target and pending-block state.
 // NDF-END: PTO-SETC-TGT-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectSETCTGTOperation()
+readonly func SETCTGTOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SETC_TGT;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectSETCTGTHandler()
+readonly func SETCTGTHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_SetCommitTarget;

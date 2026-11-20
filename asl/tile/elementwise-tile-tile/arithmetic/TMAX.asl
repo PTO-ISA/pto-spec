@@ -15,7 +15,7 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TMAX-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectTMAXOperation() => TileOperation
+readonly func TMAXOperation() => TileOperation
 begin
     return TileOperation_TMAX;
 end;
@@ -39,7 +39,7 @@ begin
         source_right);
 end;
 
-pure func ComputeTMAXFloatingValue(
+pure func TMAXFloatingValue(
     data_type: TileDataType,
     source_left: Word,
     source_right: Word) => (Word, boolean)
@@ -53,7 +53,7 @@ begin
         source_right);
 end;
 
-readonly func SelectTMAXHandler() => TileSemanticHandler
+readonly func TMAXHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;

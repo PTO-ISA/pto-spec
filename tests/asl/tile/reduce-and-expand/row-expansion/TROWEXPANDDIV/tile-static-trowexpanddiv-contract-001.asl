@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(48) == TileHandler_ExecuteTileExpand;
     assert TileClassOfIndex(48) == TileClass_ReduceAndExpand;
     assert TileEngineOfIndex(48) == TileEngine_SFU;
-    assert SelectTROWEXPANDDIVOperation() == TileOperation_TROWEXPANDDIV;
-    assert SelectTROWEXPANDDIVHandler() == TileHandler_ExecuteTileExpand;
+    assert TROWEXPANDDIVOperation() == TileOperation_TROWEXPANDDIV;
+    assert TROWEXPANDDIVHandler() == TileHandler_ExecuteTileExpand;
     return 0;
 end;

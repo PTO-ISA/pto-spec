@@ -153,7 +153,7 @@ MSET is a standalone template instruction and does not consume a BSTART/BSTOP bo
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/MSET.asl -->
 ```asl
-readonly func SelectMSETHandler() => CommandSemanticHandler
+readonly func MSETHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteMemorySet;
 end;

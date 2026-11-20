@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ssrset-mechanism role=mechanism -->
 ## 系统机制
 
-`SelectSSRSETHandler` 选择 `ScalarHandler_ExecuteSystemRegisterSet`（`asl/scalar/sys/SSRSET.asl:18`），`SSRSETSystemAddressWidth` 把地址宽度固定为 12（`asl/scalar/sys/SSRSET.asl:36`）。派发器把 `SrcL` 解码为 Reg5 选择器、把 `SSR_ID` 解码为系统寄存器地址（`asl/scalar/model/dispatch/sys.asl:111`）。
+`SSRSETHandler` 选择 `ScalarHandler_ExecuteSystemRegisterSet`（`asl/scalar/sys/SSRSET.asl:18`），`SSRSETSystemAddressWidth` 把地址宽度固定为 12（`asl/scalar/sys/SSRSET.asl:36`）。派发器把 `SrcL` 解码为 Reg5 选择器、把 `SSR_ID` 解码为系统寄存器地址（`asl/scalar/model/dispatch/sys.asl:111`）。
 
 该辅助函数先检查后读取。它先拒绝不可写地址；对于 MSGB，还会预检 kernel 上下文、Block 属性和更早的可故障工作。只有获准的尝试才读取源寄存器（`asl/scalar/model/sys/registers.asl`）。
 
@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/SSRSET.asl -->
 ```asl
-readonly func SelectSSRSETOperation()
+readonly func SSRSETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SSRSET;
@@ -121,7 +121,7 @@ SSRSET executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/SSRSET.asl -->
 ```asl
-readonly func SelectSSRSETHandler()
+readonly func SSRSETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterSet;

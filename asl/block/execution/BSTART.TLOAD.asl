@@ -30,7 +30,7 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectBSTARTTLOADHandler() => CommandSemanticHandler
+readonly func BSTARTTLOADHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

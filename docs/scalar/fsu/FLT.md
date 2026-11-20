@@ -118,7 +118,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FLT.asl -->
 ```asl
-readonly func SelectFLTOperation()
+readonly func FLTOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FLT;
@@ -130,7 +130,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FLT.asl -->
 ```asl
-readonly func SelectFLTHandler()
+readonly func FLTHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingCompare;
@@ -167,7 +167,7 @@ begin
     return FALSE;
 end;
 
-pure func SelectFLTCompareOperation()
+pure func FLTCompareOperation()
     => FloatingCompareOperation
 begin
     return FloatingCompare_LT;

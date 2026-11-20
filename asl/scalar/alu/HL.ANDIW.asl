@@ -12,13 +12,13 @@
 // memory, Tile, block, reservation, privilege, numeric-status, or fault state.
 // NDF-END: PTO-HL-ANDIW-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func SelectHLANDIWOperation() => ScalarOperation
+readonly func HLANDIWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_ANDIW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectHLANDIWHandler() => ScalarSemanticHandler
+readonly func HLANDIWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
@@ -41,7 +41,7 @@ begin
     return TRUE;
 end;
 
-pure func ComputeHLANDIWResult(
+pure func HLANDIWResult(
     left: Word,
     immediate: bits(24))
     => Word

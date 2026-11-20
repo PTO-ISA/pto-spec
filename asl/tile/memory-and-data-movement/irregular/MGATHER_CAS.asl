@@ -8,11 +8,11 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func SelectMGATHERCASHandler() => TileSemanticHandler
+readonly func MGATHERCASHandler() => TileSemanticHandler
 begin
     return TileHandler_GM_ATOM_CAS;
 end;
-readonly func SelectMGATHERCASOperation() => TileOperation
+readonly func MGATHERCASOperation() => TileOperation
 begin
     return TileOperation_MGATHER_CAS;
 end;

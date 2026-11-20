@@ -26,7 +26,7 @@ begin
     assert HLADDTPCImmediateIsSigned();
     assert HLADDTPCPageShift() == 12;
     assert !HLADDTPCWritesTPC();
-    assert ResolveHLADDTPCTarget(
+    assert HLADDTPCTarget(
         Zeros{PTO_XLEN} + 0x100,
         Zeros{PTO_XLEN} + 1) == Zeros{PTO_XLEN} + 0x1100;
     return 0;

@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-cva-mechanism role=mechanism -->
 ## System mechanism
 
-`SelectDCCVAHandler` selects `ScalarHandler_ExecuteMaintenance`, the one handler shared by the whole cache and translation maintenance group (`asl/scalar/sys/DC.CVA.asl:11`). What makes this instruction distinct is its operation token: `Maintenance_DC_CVA` selects the data-cache branch of `ExecuteMaintenance`, which advances `_DataCacheEpoch` by one (`asl/scalar/model/sys/semantics.asl:135`).
+`DCCVAHandler` selects `ScalarHandler_ExecuteMaintenance`, the one handler shared by the whole cache and translation maintenance group (`asl/scalar/sys/DC.CVA.asl:11`). What makes this instruction distinct is its operation token: `Maintenance_DC_CVA` selects the data-cache branch of `ExecuteMaintenance`, which advances `_DataCacheEpoch` by one (`asl/scalar/model/sys/semantics.asl:135`).
 
 Placement is part of the mechanism rather than an afterthought. The instruction is applicable only in an active SYS block body, and the dispatcher rejects everything else before the handler is reached (`asl/scalar/model/sys/semantics.asl:321`).
 
@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.CVA.asl -->
 ```asl
-readonly func SelectDCCVAOperation()
+readonly func DCCVAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DC_CVA;
@@ -118,7 +118,7 @@ DC.CVA executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.CVA.asl -->
 ```asl
-readonly func SelectDCCVAHandler()
+readonly func DCCVAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
@@ -130,7 +130,7 @@ begin
     return TRUE;
 end;
 
-pure func SelectDCCVAMaintenanceOperation()
+pure func DCCVAMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_DC_CVA;
