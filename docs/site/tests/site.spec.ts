@@ -463,7 +463,7 @@ test('source-declared bundle template covers representative Tile families', asyn
   await expect(page.getByRole('heading', {name: 'Operational information'})).toBeVisible();
   await expect(page.getByRole('heading', {name: 'Legality and faults'})).toBeVisible();
   await expect(page.getByRole('heading', {name: 'Operation and architectural effects'})).toBeVisible();
-  await expect(page.getByRole('heading', {name: 'Select TADD Operation'})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'TADD Operation'})).toBeVisible();
   await expect(page.getByRole('heading', {name: 'Execute TADD'})).toBeVisible();
 
   await page.goto('/instructions/tile/memory-and-data-movement/regular/TSTORE/');
@@ -502,7 +502,7 @@ test('source-declared bundle template covers representative Tile families', asyn
     {exact: true},
   )).toBeVisible();
   await expect(page.getByRole('heading', {name: '物理 Bundle'})).toBeVisible();
-  await expect(page.getByRole('heading', {name: 'Select TADD Operation'})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'TADD Operation'})).toBeVisible();
   await expect(page).toHaveURL(/\/zh-CN\/instructions\/tile\/elementwise-tile-tile\/arithmetic\/TADD\//);
 });
 

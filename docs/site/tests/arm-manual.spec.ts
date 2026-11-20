@@ -3,7 +3,7 @@ import {expect, test} from '@playwright/test';
 
 const representatives = [
   {section: 'scalar', mnemonic: 'ADD', helper: 'ADDResult'},
-  {section: 'float', mnemonic: 'FMADD', helper: 'DecodeFMADDSourceCarrier'},
+  {section: 'float', mnemonic: 'FMADD', helper: 'ExecuteFPMulAdd'},
   {section: 'block', mnemonic: 'B.IOT', helper: 'BIOTZeroMaskNoEffect'},
   {section: 'cube', mnemonic: 'TMATMUL', helper: 'TMATMULOperandsLegal'},
   {section: 'vector', mnemonic: 'TADD', helper: 'ExecuteTADD'},
@@ -54,8 +54,8 @@ test.describe('static manual', () => {
     await expect(page.getByRole('heading', {name: 'CASW', level: 1})).toBeVisible();
     await expect(page.locator('#encoding').getByRole('heading', {name: /casw.*\.private/i})).toBeVisible();
     await expect(page.locator('#encoding').getByRole('heading', {name: /casw.*\.inter/i})).toBeVisible();
-    await expect(page.getByRole('heading', {name: 'Decode', level: 2})).toBeVisible();
-    await expect(page.getByRole('heading', {name: 'Operation', level: 2})).toBeVisible();
+    await expect(page.getByRole('heading', {name: 'Decode', level: 2, exact: true})).toBeVisible();
+    await expect(page.getByRole('heading', {name: 'Operation', level: 2, exact: true})).toBeVisible();
 
     await page.goto('/instructions/block/execution/BSTART.VEC/');
     const aliasEncoding = page.locator('#encoding');
