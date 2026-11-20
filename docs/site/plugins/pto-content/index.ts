@@ -3066,6 +3066,20 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
           'spec/catalog/tile-operations.json',
         ).operations,
       };
+      const tileMacroMnemonics = new Set(
+        catalogs.tileMacros.map((operation) => stringValue(operation, 'mnemonic')),
+      );
+      const tileOperationMnemonics = new Set(
+        catalogs.tileOperations.map((operation) => stringValue(operation, 'name')),
+      );
+      if (
+        tileMacroMnemonics.has(null) ||
+        tileOperationMnemonics.has(null) ||
+        tileMacroMnemonics.size !== tileOperationMnemonics.size ||
+        [...tileOperationMnemonics].some((mnemonic) => !tileMacroMnemonics.has(mnemonic))
+      ) {
+        fail('Tile macro catalog does not exactly cover the direct Tile operation inventory');
+      }
       const evidence = [
         evidenceArtifact(
           root,
@@ -3449,6 +3463,9 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
           const bundleLines = Array.isArray(data.metadata.block)
             ? data.metadata.block.filter((line) => typeof line === 'string' && !line.startsWith('#')).length
             : 0;
+          const inlineBundleVariants = Array.isArray(data.metadata.block) && data.metadata.block.some(
+            (line) => typeof line === 'string' && /^[^;]+:\s*BSTART\b/.test(line) && line.includes(';'),
+          );
           const bundleRuleCount = Array.isArray(contract.block_composition)
             ? contract.block_composition.length : 0;
           const exampleCount = Array.isArray(contract.examples) ? contract.examples.length : 0;
@@ -3518,6 +3535,7 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
             syntax: assemblyCount > 0 ? 'complete' : 'missing',
             assembler_symbols: encodedFieldCount === 0 || data.assemblerSymbols.length > 0
               ? 'complete' : 'missing',
+            assembler_symbol_count: data.assemblerSymbols.length,
             decode_source: decodeStatus,
             operation_source: operationStatus,
             manual_source: data.manual?.asl.status ?? 'missing',
@@ -3527,6 +3545,13 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
             state_reads_writes_result: stateContractCount > 0 ? 'complete' : 'explained-gap',
             bundle_source: bundleLines > 0 ? 'owner-metadata' : 'not-applicable',
             bundle_status: bundleStatus,
+            bundle_presentation: String(data.unit.surface ?? data.metadata.surface) !== 'tile'
+              ? 'not-applicable'
+              : data.composition !== null
+                ? 'composition'
+                : inlineBundleVariants
+                  ? 'source-variants'
+                  : 'physical-sequence',
             bundle_lines: bundleLines,
             bundle_rules: bundleRuleCount,
             decisions: data.adrs.length,

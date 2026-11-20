@@ -179,6 +179,11 @@ ISSUE356_REDUCTION_OPERATION_CALLERS = {
      f"asl/tile/reduce-and-expand/{relative_path}")
     for mnemonic, relative_path in REDUCTION_OPERATION_PATHS.items()
 }
+ISSUE356_REDUCTION_LEGACY_OPERATION_CALLERS = {
+    (f"InstructionContractExecute_{mnemonic}",
+     f"asl/tile/reduce-and-expand/{relative_path}")
+    for mnemonic, relative_path in REDUCTION_OPERATION_PATHS.items()
+}
 ISSUE356_REDUCTION_MODEL_PATH = "asl/tile/model/legality/reduction-and-expansion.asl"
 ISSUE356_REDUCTION_HELPER_DEFINITION_DELTAS = {
     "TileReductionAndExpansionSourceLegal": {
@@ -208,7 +213,8 @@ ISSUE356_REDUCTION_HELPER_BODY_CHANGES = {
     "ExecuteTileReduction": {
         "path": "asl/tile/model/execution/reduction.asl",
         "layouts": set(),
-        "callers": ISSUE356_REDUCTION_OPERATION_CALLERS,
+        "before_callers": ISSUE356_REDUCTION_LEGACY_OPERATION_CALLERS,
+        "after_callers": ISSUE356_REDUCTION_OPERATION_CALLERS,
     },
 }
 BIAS = ("TMATMUL_BIAS", "TGEMV_BIAS", "TMATMUL_MX_BIAS", "TGEMV_MX_BIAS")
@@ -2749,7 +2755,8 @@ def _operation_reachability(source_map: dict[str, str], metadata: list[tuple[str
                               if item["path"] == bundle_owner]
                 owner_token = re.sub(r"[^A-Za-z0-9]", "", str(op.get("block_owner") or ""))
                 owner_roots = [item["name"] for item in owner_defs
-                               if not owner_token or owner_token in item["name"]]
+                               if not owner_token or owner_token in
+                               re.sub(r"[^A-Za-z0-9]", "", item["name"])]
                 if not owner_roots:
                     errors.append(f"{op['path']}: missing bundle contract root in {bundle_owner}")
                 bundle_roots.update(owner_roots)
@@ -4339,8 +4346,8 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                     old["path"] == spec["path"] and new["path"] == spec["path"] and
                     set(old["layouts"]) == set(spec["layouts"]) and
                     set(new["layouts"]) == set(spec["layouts"]) and
-                    before_callers == set(spec["callers"]) and
-                    after_callers == set(spec["callers"])
+                    before_callers == set(spec["before_callers"]) and
+                    after_callers == set(spec["after_callers"])
                 )
                 if not valid:
                     errors.append(
@@ -4540,7 +4547,10 @@ def _r4_layout_relation_closure(
         handlers = {record.get("semantic_handler") for record in records if isinstance(record, dict)}
         if "ExecuteTileExpand" in handlers:
             handled_before_expansions.add(mnemonic)
-            expected_before_callers.add((contract_symbol("Execute", mnemonic), op["path"]))
+            # The frozen comparison object predates the global readable-symbol
+            # migration.  Its exact caller identity remains part of the
+            # canary, while the candidate uses contract_symbol above.
+            expected_before_callers.add((f"InstructionContractExecute_{mnemonic}", op["path"]))
     old_execution_defs = before_defs.get(R4_EXECUTION_HELPER["name"], [])
     new_execution_defs = after_defs.get(R4_EXECUTION_HELPER["name"], [])
     old_execution_helpers = before_reach.get("helpers", {}).get(R4_EXECUTION_HELPER["name"], [])

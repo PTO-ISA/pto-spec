@@ -7,6 +7,7 @@ import type {
 import AslCode from './AslCode';
 import HighLevelAssembly from './HighLevelAssembly';
 import InstructionComposition from './InstructionComposition';
+import InstructionOverview from './InstructionOverview';
 import SemanticExecution from './SemanticExecution';
 import {parseEncodingForm, type EncodingWordModel} from './encodingModel';
 import {firstText, list, record, text} from './data';
@@ -188,6 +189,28 @@ function AssemblyForms({unitData, chinese, manual}: {unitData: PtoUnitWorkbenchD
           highLevelAssembly={unitData.highLevelAssembly}
           ndfClauses={unitData.ndfClauses}
           ownerSourceUrl={unitData.source.githubUrl}
+        />
+      </>
+    );
+  }
+  const inlineVariants = block.some((line) => /^[^;]+:\s*BSTART\b/.test(line) && line.includes(';'));
+  if (inlineVariants) {
+    return (
+      <>
+        {macroForms.length > 0 && (
+          <section className={styles.section} aria-labelledby="tileop-assembly-heading">
+            <h2 id="tileop-assembly-heading">{chinese ? 'TileOp 汇编' : 'TileOp assembly'}</h2>
+            <div className={styles.assemblyForms}>
+              {macroForms.map((form) => <InstructionText key={form} value={form} symbols={unitData.assemblerSymbols} />)}
+            </div>
+          </section>
+        )}
+        <InstructionOverview
+          commandHrefs={manual?.tile?.commandHrefs}
+          highLevelAssembly={unitData.highLevelAssembly}
+          metadata={unitData.metadata}
+          mnemonic
+          chinese={chinese}
         />
       </>
     );

@@ -117,10 +117,22 @@ test('instruction coverage matrix closes the released bilingual inventory', asyn
     expect(matrix.surface_totals).toEqual(instructionSurfaceTotals);
     expect(matrix.unexplained_omissions).toBe(0);
     expect(matrix.entries).toHaveLength(instructionUnits.length);
-    expect(matrix.entries.every((entry: {layout_contract: string; manual_source: string; manual_function_count: number}) =>
+    expect(matrix.entries.every((entry: {
+      surface: string;
+      layout_contract: string;
+      manual_source: string;
+      manual_function_count: number;
+      assembler_symbol_count: number;
+      bundle_presentation: string;
+    }) =>
       entry.layout_contract === 'UnitWorkbenchView.arm-style.v1' &&
       entry.manual_source === 'complete' &&
-      entry.manual_function_count >= 2)).toBe(true);
+      entry.manual_function_count >= 2 &&
+      Number.isInteger(entry.assembler_symbol_count) &&
+      entry.assembler_symbol_count >= 0 &&
+      (entry.surface === 'tile'
+        ? ['composition', 'source-variants', 'physical-sequence'].includes(entry.bundle_presentation)
+        : entry.bundle_presentation === 'not-applicable'))).toBe(true);
     expect(matrix.entries.filter((entry: {surface: string; bundle_source: string}) =>
       entry.surface === 'tile' && entry.bundle_source === 'owner-metadata')).toHaveLength(
         instructionSurfaceTotals.tile,
@@ -251,49 +263,27 @@ test('representative mnemonic, model, and architecture units use the generic wor
   await expect(addEncodingTable.getByRole('row', {name: /6:0 7'b0000101 0x05/})).toBeVisible();
 
   await page.goto('/instructions/scalar/bru/C.CMP.EQI/');
-  const compactEncoding = page.getByRole('heading', {name: 'Encoding', level: 2}).locator('..');
-  await expect(compactEncoding.getByRole('img', {name: /WaveDrom encoding diagram/})).toBeVisible();
-  await compactEncoding.getByText('Encoding fields as an accessible table', {exact: true}).click();
-  const compactTable = compactEncoding.getByRole('table', {name: /Generated encoding fields/});
-  await expect(compactTable.getByText('15:11', {exact: true})).toBeVisible();
-  await expect(compactTable.getByText('10:6', {exact: true})).toBeVisible();
-  await expect(compactTable.getByText('5:0', {exact: true})).toBeVisible();
+  const compactEncoding = page.getByRole('heading', {name: 'Instruction encoding', level: 2}).locator('..');
+  await expect(compactEncoding.getByRole('img')).toHaveCount(0);
+  const compactTable = compactEncoding.getByRole('table', {name: /c\.cmp\.eqi.*word 1/i});
+  await expect(compactTable.getByRole('row', {name: /15:11.*constant/i})).toBeVisible();
+  await expect(compactTable.getByRole('row', {name: /10:6 simm5 variable/i})).toBeVisible();
+  await expect(compactTable.getByRole('row', {name: /5:0.*constant/i})).toBeVisible();
   await expect(compactTable.getByText('26:0', {exact: true})).toHaveCount(0);
-  await compactEncoding.getByText('WaveJSON source', {exact: true}).click();
-  await expect(compactEncoding.locator('pre')).toContainText('"bits": 16');
 
   await page.goto('/instructions/block/lifecycle/L.BSTOP/');
-  await expect(page.getByRole('heading', {name: /Encoding word 1/})).toBeVisible();
-  await expect(page.getByRole('heading', {name: /Encoding word 2/})).toBeVisible();
-  await expect(page.getByRole('img', {name: /word 1/})).toBeVisible();
-  await expect(page.getByRole('img', {name: /word 2/})).toBeVisible();
-  const blockTables = page.getByText('Encoding fields as an accessible table', {exact: true});
-  await blockTables.nth(0).click();
-  await blockTables.nth(1).click();
-  await expect(page.getByRole('table').nth(0).getByRole('row', {name: "Constant 31:0 32'b00000000000000000000000000001111"})).toBeVisible();
-  await expect(page.getByRole('table').nth(1).getByRole('row', {name: "Constant 63:32 32'b00000000000000000000000000000001"})).toBeVisible();
-  const blockWaveJson = page.getByText('WaveJSON source', {exact: true});
-  await expect(blockWaveJson).toHaveCount(2);
-  await blockWaveJson.nth(1).click();
-  await expect(blockWaveJson.nth(1).locator('..').locator('pre')).toContainText('"offset": 32');
+  const blockTables = page.locator('#encoding').getByRole('table', {name: /L\.BSTOP, word/});
+  await expect(blockTables).toHaveCount(2);
+  await expect(blockTables.nth(0).getByRole('row', {name: /31:0.*00000000000000000000000000001111/})).toBeVisible();
+  await expect(blockTables.nth(1).getByRole('row', {name: /63:32.*00000000000000000000000000000001/})).toBeVisible();
 
   await page.goto('/instructions/block/attributes/B.FPATR/');
-  await expect(page.getByRole('img', {name: /WaveDrom encoding diagram/})).toBeVisible();
-  const fixedFieldDisclosure = page.getByText(
-    'Encoding fields as an accessible table',
-    {exact: true},
-  );
-  if (testInfo.project.name === 'mobile-chromium') {
-    await fixedFieldDisclosure.focus();
-    await fixedFieldDisclosure.press('Enter');
-  } else {
-    await fixedFieldDisclosure.click();
-  }
-  const fixedNamedFields = page.getByRole('table', {name: /Generated encoding fields/});
-  await expect(fixedNamedFields.getByRole('row', {name: 'Func 14:12 0b010'})).toBeVisible();
-  await expect(fixedNamedFields.getByRole('row', {name: 'Opc1 6:4 0b010'})).toBeVisible();
-  await expect(fixedNamedFields.getByRole('row', {name: 'Opcode 3:1 0b001'})).toBeVisible();
-  await expect(fixedNamedFields.getByRole('row', {name: 'W 0 1'})).toBeVisible();
+  await expect(page.getByRole('img', {name: /WaveDrom encoding diagram/})).toHaveCount(0);
+  const fixedNamedFields = page.locator('#encoding').getByRole('table', {name: /B\.FPATR.*word 1/});
+  await expect(fixedNamedFields.getByRole('row', {name: /14:12 Func 0b010/})).toBeVisible();
+  await expect(fixedNamedFields.getByRole('row', {name: /6:4 Opc1 0b010/})).toBeVisible();
+  await expect(fixedNamedFields.getByRole('row', {name: /3:1 Opcode 0b001/})).toBeVisible();
+  await expect(fixedNamedFields.getByRole('row', {name: /^0 W 1$/})).toBeVisible();
 
   for (const unit of [
     {

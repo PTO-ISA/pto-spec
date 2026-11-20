@@ -52,7 +52,7 @@ test.describe('static manual', () => {
     await page.goto('/instructions/scalar/amo/CASW/');
     await expect(page.locator('[data-layout-contract="arm-style-v1"]')).toHaveCount(1);
     await expect(page.getByRole('heading', {name: 'CASW', level: 1})).toBeVisible();
-    await expect(page.locator('#encoding').getByRole('heading', {name: /casw\.private/i})).toBeVisible();
+    await expect(page.locator('#encoding').getByRole('heading', {name: /casw.*\.private/i})).toBeVisible();
     await expect(page.locator('#encoding').getByRole('heading', {name: /casw.*\.inter/i})).toBeVisible();
     await expect(page.getByRole('heading', {name: 'Decode', level: 2})).toBeVisible();
     await expect(page.getByRole('heading', {name: 'Operation', level: 2})).toBeVisible();

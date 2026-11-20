@@ -385,8 +385,11 @@ def validate_instruction_coverage() -> int:
     required_fields = {
         "id", "mnemonic", "surface", "route", "layout_contract", "source",
         "source_sha256", "encoding", "syntax", "assembler_symbols",
+        "assembler_symbol_count",
         "decode_source", "operation_source", "behavior", "bundle_source",
+        "manual_source", "manual_function_count",
         "constraints_faults", "state_reads_writes_result", "bundle_status",
+        "bundle_presentation",
         "bundle_lines", "bundle_rules",
         "decisions", "ndf_owners", "evidence", "source_records", "examples",
         "locale", "content_locale", "locale_status", "specialized_projection",
@@ -423,6 +426,11 @@ def validate_instruction_coverage() -> int:
                 entry["source"] != unit["source"] or
                 entry["source_sha256"] != traceability["sources"][unit["source"]] or
                 entry["layout_contract"] != "UnitWorkbenchView.arm-style.v1" or
+                entry["manual_source"] != "complete" or
+                not isinstance(entry["manual_function_count"], int) or
+                entry["manual_function_count"] < 2 or
+                not isinstance(entry["assembler_symbol_count"], int) or
+                entry["assembler_symbol_count"] < 0 or
                 entry["locale"] != locale or
                 entry["unexplained_gaps"] != []
             ):
@@ -441,39 +449,52 @@ def validate_instruction_coverage() -> int:
                 raise ValueError(f"{relative} {unit['id']} lacks owner-backed bundle coverage")
             if unit["surface"] == "tile" and entry["bundle_status"] not in {"complete", "source-gap"}:
                 raise ValueError(f"{relative} {unit['id']} has invalid bundle status")
+            if unit["surface"] == "tile" and entry["bundle_presentation"] not in {
+                "composition", "source-variants", "physical-sequence",
+            }:
+                raise ValueError(f"{relative} {unit['id']} has invalid bundle presentation")
+            if unit["surface"] != "tile" and entry["bundle_presentation"] != "not-applicable":
+                raise ValueError(f"{relative} {unit['id']} has unexpected bundle presentation")
             if entry["bundle_status"] == "source-gap" and not entry["explained_gaps"]:
                 raise ValueError(f"{relative} {unit['id']} has an unexplained bundle gap")
             page_relative = f"{expected_route.lstrip('/')}index.html"
-            require_text(
-                page_relative,
-                (
-                    "Assembly syntax",
-                    "Assembler symbols",
+            conventional_bundle = unit["surface"] == "tile" and entry["bundle_presentation"] in {
+                "composition", "source-variants",
+            }
+            expected_page_terms = [
+                    "Assembly syntax" if conventional_bundle else "Assembler syntax",
                     "Behavior",
                     "NDF clauses",
                     "Evidence index",
                     "Sources and release identity",
-                ) if locale == "en" else (
+                ] if locale == "en" else [
                     "汇编格式",
-                    "汇编符号",
                     "行为",
                     "NDF 条款",
                     "Evidence index",
                     "来源与发布信息",
-                ),
-            )
+                ]
+            if entry["assembler_symbol_count"] > 0:
+                expected_page_terms.append("Assembler symbols" if locale == "en" else "汇编符号")
+            require_text(page_relative, tuple(expected_page_terms))
             if unit["surface"] == "tile":
                 require_text(
                     page_relative,
-                    (
+                    ((
                         "High Level Assembly",
                         "Complete Bundle Assembly",
                         "Show High Level Assembly operands mapped to the owning ASL",
-                    ) if locale == "en" else (
+                    ) if conventional_bundle else (
+                        "TileOp assembly",
+                        "Physical bundle",
+                    )) if locale == "en" else ((
                         "高层汇编",
                         "完整 Bundle Assembly",
                         "显示高层汇编 operand 到 owning ASL 的映射",
-                    ),
+                    ) if conventional_bundle else (
+                        "TileOp 汇编",
+                        "物理 Bundle",
+                    )),
                 )
     return len(instructions)
 

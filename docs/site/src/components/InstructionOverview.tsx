@@ -19,11 +19,13 @@ export default function InstructionOverview({
   mnemonic,
   chinese,
   highLevelAssembly,
+  commandHrefs,
 }: {
   metadata: Record<string, PtoJsonValue>;
   mnemonic: boolean;
   chinese: boolean;
   highLevelAssembly: PtoHighLevelAssembly | null;
+  commandHrefs?: Record<string, string>;
 }): React.JSX.Element | null {
   const assembly = assemblyForms(metadata);
   const rawBlock = stringList(metadata.block).filter((line) => !line.startsWith('#'));
@@ -70,6 +72,10 @@ export default function InstructionOverview({
   const block = bundleVariants.flatMap((variant) => variant.lines);
   const commandKey = (line: string): string =>
     line.trim().replace(/^optional\s+/i, '').split(/\s+/, 1)[0] ?? line;
+  const commandReferences = (line: string): Array<[string, string]> =>
+    Object.entries(commandHrefs ?? {})
+      .filter(([command]) => new RegExp(`(^|[^A-Za-z0-9.])${command.replaceAll('.', '\\.') }($|[^A-Za-z0-9.])`).test(line))
+      .sort(([left], [right]) => left.localeCompare(right));
 
   return (
     <section className={styles.section} aria-labelledby="assembly-syntax-heading">
@@ -118,6 +124,13 @@ export default function InstructionOverview({
                       )}
                       {/\bor\b|replace|mutually/i.test(line) && (
                         <em className={styles.bundleRequirement_mutual}>{chinese ? '互斥' : 'Mutually exclusive'}</em>
+                      )}
+                      {commandReferences(line).length > 0 && (
+                        <span className={styles.genericBundleDefinitions}>
+                          {commandReferences(line).map(([command, href]) => (
+                            <a href={href} key={command}><code>{command}</code> {chinese ? '定义' : 'definition'}</a>
+                          ))}
+                        </span>
                       )}
                     </li>
                   ))}
