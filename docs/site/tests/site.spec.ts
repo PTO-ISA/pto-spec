@@ -266,9 +266,9 @@ test('representative mnemonic, model, and architecture units use the generic wor
   const compactEncoding = page.getByRole('heading', {name: 'Instruction encoding', level: 2}).locator('..');
   await expect(compactEncoding.getByRole('img')).toHaveCount(0);
   const compactTable = compactEncoding.getByRole('table', {name: /c\.cmp\.eqi.*word 1/i});
-  await expect(compactTable.getByRole('row', {name: /15:11.*constant/i})).toBeVisible();
+  await expect(compactTable.getByRole('row', {name: /15:11 5'b00000 0x00/})).toBeVisible();
   await expect(compactTable.getByRole('row', {name: /10:6 simm5 variable/i})).toBeVisible();
-  await expect(compactTable.getByRole('row', {name: /5:0.*constant/i})).toBeVisible();
+  await expect(compactTable.getByRole('row', {name: /5:0 6'b101100 0x2c/})).toBeVisible();
   await expect(compactTable.getByText('26:0', {exact: true})).toHaveCount(0);
 
   await page.goto('/instructions/block/lifecycle/L.BSTOP/');
@@ -480,7 +480,7 @@ test('source-declared bundle template covers representative Tile families', asyn
   await expect(page.getByText('Bundle source gap', {exact: true})).toHaveCount(0);
 
   await page.goto('/instructions/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL/');
-  await expect(page.locator('#assembly-syntax-heading').getByText(/TMATMUL <M=1, N=1, K=1/).first()).toBeVisible();
+  await expect(page.getByRole('region', {name: 'TileOp assembly'}).getByText(/TMATMUL <M=1, N=1, K=1/).first()).toBeVisible();
   await page.getByText('High Level Assembly operand mapping', {exact: true}).click();
   await expect(page.getByText(
     'TMATMUL <LB0:M, LB1:N, LB2:K, DataTypeA, DataTypeB> SrcTile0, SrcTile1 -> DstTile',

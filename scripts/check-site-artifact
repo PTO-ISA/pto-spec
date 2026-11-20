@@ -478,6 +478,7 @@ def validate_instruction_coverage() -> int:
                 expected_page_terms.append("Assembler symbols" if locale == "en" else "汇编符号")
             require_text(page_relative, tuple(expected_page_terms))
             if unit["surface"] == "tile":
+                require_text(page_relative, ("TileOp assembly" if locale == "en" else "TileOp 汇编",))
                 require_text(
                     page_relative,
                     ((
@@ -485,14 +486,12 @@ def validate_instruction_coverage() -> int:
                         "Complete Bundle Assembly",
                         "Show High Level Assembly operands mapped to the owning ASL",
                     ) if conventional_bundle else (
-                        "TileOp assembly",
                         "Physical bundle",
                     )) if locale == "en" else ((
                         "高层汇编",
                         "完整 Bundle Assembly",
                         "显示高层汇编 operand 到 owning ASL 的映射",
                     ) if conventional_bundle else (
-                        "TileOp 汇编",
                         "物理 Bundle",
                     )),
                 )

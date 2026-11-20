@@ -107,7 +107,7 @@ function EncodingWord({word, label}: {word: EncodingWordModel; label: string}): 
           <tr key={`${field.bits}-${index}`}>
             <td>{field.bits}</td>
             <td>{field.fieldName ? <a href={`#field-${slug(field.fieldName)}`}>{field.name}</a> : field.name}</td>
-            <td>{field.kind === 'field' ? 'variable' : field.value ?? 'unspecified'}</td>
+            <td>{field.value ?? (field.kind === 'field' ? 'variable' : 'unspecified')}</td>
           </tr>
         ))}</tbody>
       </table>
@@ -171,17 +171,18 @@ function AssemblyForms({unitData, chinese, manual}: {unitData: PtoUnitWorkbenchD
   const assembly = canonical.length > 0 ? canonical : strings(metadata.assembly);
   const block = strings(metadata.block).filter((line) => !line.startsWith('#'));
   const macroForms = manual?.tile?.macros ?? [];
+  const macroAssembly = macroForms.length > 0 && (
+    <section className={styles.section} aria-labelledby="tileop-assembly-heading">
+      <h2 id="tileop-assembly-heading">{chinese ? 'TileOp 汇编' : 'TileOp assembly'}</h2>
+      <div className={styles.assemblyForms}>
+        {macroForms.map((form) => <InstructionText key={form} value={form} symbols={unitData.assemblerSymbols} />)}
+      </div>
+    </section>
+  );
   if (unitData.composition !== null && unitData.highLevelAssembly !== null) {
     return (
       <>
-        {macroForms.length > 0 && (
-          <section className={styles.section} aria-labelledby="tileop-assembly-heading">
-            <h2 id="tileop-assembly-heading">{chinese ? 'TileOp 汇编' : 'TileOp assembly'}</h2>
-            <div className={styles.assemblyForms}>
-              {macroForms.map((form) => <InstructionText key={form} value={form} symbols={unitData.assemblerSymbols} />)}
-            </div>
-          </section>
-        )}
+        {macroAssembly}
         <InstructionComposition
           apiForms={assembly}
           chinese={chinese}
@@ -197,14 +198,7 @@ function AssemblyForms({unitData, chinese, manual}: {unitData: PtoUnitWorkbenchD
   if (inlineVariants) {
     return (
       <>
-        {macroForms.length > 0 && (
-          <section className={styles.section} aria-labelledby="tileop-assembly-heading">
-            <h2 id="tileop-assembly-heading">{chinese ? 'TileOp 汇编' : 'TileOp assembly'}</h2>
-            <div className={styles.assemblyForms}>
-              {macroForms.map((form) => <InstructionText key={form} value={form} symbols={unitData.assemblerSymbols} />)}
-            </div>
-          </section>
-        )}
+        {macroAssembly}
         <InstructionOverview
           commandHrefs={manual?.tile?.commandHrefs}
           highLevelAssembly={unitData.highLevelAssembly}
@@ -216,36 +210,38 @@ function AssemblyForms({unitData, chinese, manual}: {unitData: PtoUnitWorkbenchD
     );
   }
   return (
-    <section className={styles.section} id="assembly-syntax-heading">
-      <h2>{chinese ? '汇编格式' : 'Assembler syntax'}</h2>
-      <div className={styles.assemblyForms}>
-        {macroForms.map((form) => <InstructionText key={form} value={form} symbols={unitData.assemblerSymbols} />)}
-        {macroForms.length === 0 && unitData.highLevelAssembly !== null && (
-          <InstructionText value={unitData.highLevelAssembly.form} symbols={unitData.assemblerSymbols} />
+    <>
+      {macroAssembly}
+      <section className={styles.section} id="assembly-syntax-heading">
+        <h2>{chinese ? '汇编格式' : 'Assembler syntax'}</h2>
+        <div className={styles.assemblyForms}>
+          {macroForms.length === 0 && unitData.highLevelAssembly !== null && (
+            <InstructionText value={unitData.highLevelAssembly.form} symbols={unitData.assemblerSymbols} />
+          )}
+          {assembly.map((form) => <InstructionText key={form} value={form} symbols={unitData.assemblerSymbols} />)}
+        </div>
+        {macroForms.length > 0 && unitData.highLevelAssembly !== null && (
+          <details className={styles.legacyAssembly}>
+            <summary>{chinese ? '高层操作数到 owning ASL 的映射' : 'High Level Assembly operand mapping'}</summary>
+            <HighLevelAssembly assembly={unitData.highLevelAssembly} chinese={chinese} />
+          </details>
         )}
-        {assembly.map((form) => <InstructionText key={form} value={form} symbols={unitData.assemblerSymbols} />)}
-      </div>
-      {macroForms.length > 0 && unitData.highLevelAssembly !== null && (
-        <details className={styles.legacyAssembly}>
-          <summary>{chinese ? '高层操作数到 owning ASL 的映射' : 'High Level Assembly operand mapping'}</summary>
-          <HighLevelAssembly assembly={unitData.highLevelAssembly} chinese={chinese} />
-        </details>
-      )}
-      {block.length > 0 ? (
-        <section className={styles.bundle}>
-          <h3>{chinese ? '物理 Bundle' : 'Physical bundle'}</h3>
-          <ol>{block.map((line, index) => {
-            const references = commandReferences(line, manual?.tile?.commandHrefs);
-            return <li key={`${line}-${index}`}>
-              <InstructionText value={line} symbols={unitData.assemblerSymbols} />
-              {references.map(({mnemonic, href}) => <React.Fragment key={mnemonic}> · <a href={href}>
-                <code>{mnemonic}</code> {chinese ? '定义' : 'definition'}
-              </a></React.Fragment>)}
-            </li>;
-          })}</ol>
-        </section>
-      ) : null}
-    </section>
+        {block.length > 0 ? (
+          <section className={styles.bundle}>
+            <h3>{chinese ? '物理 Bundle' : 'Physical bundle'}</h3>
+            <ol>{block.map((line, index) => {
+              const references = commandReferences(line, manual?.tile?.commandHrefs);
+              return <li key={`${line}-${index}`}>
+                <InstructionText value={line} symbols={unitData.assemblerSymbols} />
+                {references.map(({mnemonic, href}) => <React.Fragment key={mnemonic}> · <a href={href}>
+                  <code>{mnemonic}</code> {chinese ? '定义' : 'definition'}
+                </a></React.Fragment>)}
+              </li>;
+            })}</ol>
+          </section>
+        ) : null}
+      </section>
+    </>
   );
 }
 
@@ -278,8 +274,8 @@ function Contract({metadata, chinese}: {metadata: Record<string, unknown>; chine
   ].filter((group) => group.values.length > 0);
   if (groups.length === 0) return null;
   return (
-    <section className={styles.section} id="instruction-contract">
-      <h2>{chinese ? '指令契约' : 'Instruction contract'}</h2>
+    <section className={styles.section} id="instruction-contract" aria-labelledby="instruction-contract-heading">
+      <h2 id="instruction-contract-heading">{chinese ? '指令契约' : 'Instruction contract'}</h2>
       <div className={styles.contractGrid}>{groups.map((group) => (
         <section key={group.id}><h3>{group.title}</h3>{group.id === 'examples'
           ? <div className={styles.examples}>{group.values.map((value) => <code key={value}>{value}</code>)}</div>
