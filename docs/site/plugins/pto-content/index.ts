@@ -42,6 +42,10 @@ import type {
 } from '../../src/types/pto';
 import {ndfOverviewSvg} from './ndfOverview';
 import {legacyReferenceRoute, unitRoute} from './routes';
+import {inlineUnitSource} from './unitSource';
+import {manualSectionPath, type ManualIndexData} from '../../src/manual/sections';
+import {buildManualIndexes, manualSection, manualTileAssembly, type ManualCatalogs} from './manualCatalog';
+import {projectManualAsl} from './manualAsl';
 
 const TLOAD_ROUTE =
   '/instructions/tile/memory-and-data-movement/regular/TLOAD/';
@@ -117,6 +121,7 @@ interface LoadedPtoContent {
   ndfIndexPages: PtoNdfIndexPageData[];
   adrDecisions: Record<string, PtoReaderNode[]>;
   instructionIndex: PtoInstructionIndexData;
+  manualIndexes: ManualIndexData[];
   ndfCatalog: PtoNdfCatalogData;
   ndfDetails: PtoNdfDetailData[];
 }
@@ -1731,11 +1736,7 @@ function instructionTests(
     });
 }
 
-interface PtoCatalogs {
-  commandForms: Record<string, PtoJsonValue>[];
-  scalarForms: Record<string, PtoJsonValue>[];
-  tileOperations: Record<string, PtoJsonValue>[];
-}
+type PtoCatalogs = ManualCatalogs;
 
 function architectureGuide(
   context: LoadContext,
@@ -2404,9 +2405,10 @@ function catalogEncoding(
     return {commandForm: catalogForms[0], catalogForms};
   }
   if (unit.surface === 'scalar') {
-    const catalogForms = catalogs.scalarForms.filter(
-      (form) => form.mnemonic === unit.mnemonic,
-    );
+    const catalogForms = [
+      ...catalogs.scalarForms,
+      ...catalogs.scopedScalarForms,
+    ].filter((form) => form.mnemonic === unit.mnemonic);
     if (catalogForms.length === 0) {
       fail(`scalar catalog is missing ${unit.mnemonic}`);
     }
@@ -3035,15 +3037,30 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
       const requirementsById = new Map(
         traceability.requirements.map((requirement) => [requirement.id, requirement]),
       );
+      const scalarCatalog = readJson<{
+        forms: Record<string, PtoJsonValue>[];
+        scoped_form_count: number;
+        scoped_forms: Record<string, PtoJsonValue>[];
+      }>(root, 'spec/catalog/scalar-forms.json');
+      if (!Array.isArray(scalarCatalog.scoped_forms) ||
+          scalarCatalog.scoped_forms.length !== scalarCatalog.scoped_form_count) {
+        fail('scalar form catalog does not contain its declared scoped encoding inventory');
+      }
       const catalogs: PtoCatalogs = {
         commandForms: readJson<{forms: Record<string, PtoJsonValue>[]}>(
           root,
           'spec/catalog/command-forms.json',
         ).forms,
-        scalarForms: readJson<{forms: Record<string, PtoJsonValue>[]}>(
+        scalarForms: scalarCatalog.forms,
+        scopedScalarForms: scalarCatalog.scoped_forms,
+        reservations: readJson<{reservations: Record<string, PtoJsonValue>[]}>(
           root,
-          'spec/catalog/scalar-forms.json',
-        ).forms,
+          'spec/catalog/extension-encoding-reservations.json',
+        ).reservations,
+        tileMacros: readJson<{operations: Record<string, PtoJsonValue>[]}>(
+          root,
+          'spec/catalog/tile-macro-assembly.json',
+        ).operations,
         tileOperations: readJson<{operations: Record<string, PtoJsonValue>[]}>(
           root,
           'spec/catalog/tile-operations.json',
@@ -3129,6 +3146,34 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
         fail(`TLOAD route must remain ${TLOAD_ROUTE}`);
       }
       const instructionIndex = instructionIndexData(context, release, units);
+      const commandRoutes = new Map(instructionIndex.entries
+        .filter((entry) => entry.surface === 'block')
+        .map((entry) => [entry.mnemonic, entry.route]));
+      const sectionById = new Map<string, {section: ReturnType<typeof manualSection>; engine: string}>();
+      for (const {data} of units) {
+        const mnemonic = stringValue(data.unit, 'mnemonic');
+        if (mnemonic === null) continue;
+        const engine = stringValue(data.metadata, 'engine') ??
+          stringValue(data.encoding.tileOperation ?? {}, 'engine') ?? '';
+        const identity = String(data.unit.id);
+        const traceabilityUnit = data.unit as unknown as TraceabilityUnit;
+        const section = manualSection(traceabilityUnit.surface, traceabilityUnit.classification, engine);
+        sectionById.set(identity, {section, engine});
+        const asl = projectManualAsl(root, release, identity, data.source.path);
+        data.manual = {
+          section,
+          asl,
+          alias: stringValue(data.metadata, 'alias_of') === null ? undefined : {
+            owner: stringValue(data.metadata, 'alias_of')!,
+            href: commandRoutes.get(stringValue(data.metadata, 'alias_of')!),
+            engine: stringValue(data.metadata, 'alias_engine') ?? undefined,
+          },
+          tile: manualTileAssembly(mnemonic, data.encoding, catalogs, commandRoutes),
+        };
+      }
+      const manualIndexes = buildManualIndexes(
+        instructionIndex, sectionById, catalogs, context.i18n.currentLocale === 'zh-CN',
+      );
       const {catalog: ndfCatalog, details: ndfDetails} = ndfCatalogData(
         root,
         context,
@@ -3146,6 +3191,7 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
         release,
         graph,
         instructionIndex,
+        manualIndexes,
         ndfCatalog,
         ndfDetails,
         adrDecisions: Object.fromEntries(
@@ -3202,6 +3248,14 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
         content.units.map(async (unit, index) => {
           const publicData = {
             ...unit.data,
+            source: inlineUnitSource(unit.data.source),
+            manual: unit.data.manual === undefined ? undefined : {
+              ...unit.data.manual,
+              asl: {
+                ...unit.data.manual.asl,
+                references: unit.data.manual.asl.references.map(({text: _text, ...reference}) => reference),
+              },
+            },
             tests: unit.data.tests.map(({sourceText: _sourceText, ...test}) => test),
             semanticExecution: unit.data.semanticExecution === null ? null : {
               ...unit.data.semanticExecution,
@@ -3282,6 +3336,18 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
         exact: true,
         modules: {index: instructionIndexModule},
       });
+      for (const index of content.manualIndexes) {
+        const module = await actions.createData(
+          `manual-index-${index.section}.json`,
+          JSON.stringify(index),
+        );
+        actions.addRoute({
+          path: localizedRoute(context, manualSectionPath(index.section)),
+          component: '@site/src/routes/ManualIndex',
+          exact: true,
+          modules: {index: module},
+        });
+      }
       actions.addRoute({
         path: localizedRoute(context, '/ndf/'),
         component: '@site/src/routes/NdfCatalog',
@@ -3432,6 +3498,9 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
           if (encodedFieldCount > 0 && data.assemblerSymbols.length === 0) {
             unexplainedGaps.push('encoded fields lack assembler-symbol projection');
           }
+          if (data.manual?.asl.status !== 'complete') {
+            unexplainedGaps.push('Arm-style manual lacks complete owner Decode/Operation projection');
+          }
           const localizedInstructionRoute = localizedRoute(context, route);
           const localePrefix = locale === context.i18n.defaultLocale ? '/' : `/${locale}/`;
           if (!localizedInstructionRoute.startsWith(localePrefix)) {
@@ -3451,6 +3520,8 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
               ? 'complete' : 'missing',
             decode_source: decodeStatus,
             operation_source: operationStatus,
+            manual_source: data.manual?.asl.status ?? 'missing',
+            manual_function_count: data.manual?.asl.functions.length ?? 0,
             behavior: data.readerGuide.status,
             constraints_faults: constraintCount > 0 ? 'complete' : 'explained-gap',
             state_reads_writes_result: stateContractCount > 0 ? 'complete' : 'explained-gap',
@@ -3524,6 +3595,33 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
       mkdirSync(fragmentDirectory, {recursive: true});
       const fragments = new Map<string, string>();
       for (const {data} of content.units) {
+        const source = data.source;
+        if (inlineUnitSource(source).inlineExcerpt) {
+          if (sha256(source.text) !== source.sha256) {
+            fail(`build content has a stale ASL source asset for ${source.path}`);
+          }
+          fragments.set(source.sha256, source.text);
+        }
+        for (const fn of data.manual?.asl?.functions ?? []) {
+          if (sha256(fn.text) !== fn.fragmentSha256) {
+            fail(`build content has stale instruction manual fragment ${fn.symbol}`);
+          }
+          const previous = fragments.get(fn.fragmentSha256);
+          if (previous !== undefined && previous !== fn.text) {
+            fail(`instruction manual fragment hash collision for ${fn.symbol}`);
+          }
+          fragments.set(fn.fragmentSha256, fn.text);
+        }
+        for (const reference of data.manual?.asl?.references ?? []) {
+          if (reference.text === undefined || sha256(reference.text) !== reference.fragmentSha256) {
+            fail(`build content has stale shared manual fragment ${reference.symbol}`);
+          }
+          const previous = fragments.get(reference.fragmentSha256);
+          if (previous !== undefined && previous !== reference.text) {
+            fail(`shared manual fragment hash collision for ${reference.symbol}`);
+          }
+          fragments.set(reference.fragmentSha256, reference.text);
+        }
         for (const stage of data.semanticExecution?.stages ?? []) {
           for (const region of stage.sharedRegions) {
             if (region.text === undefined || sha256(region.text) !== region.fragmentSha256) {

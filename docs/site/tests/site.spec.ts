@@ -70,9 +70,7 @@ test('latest release landing page teaches the architecture before implementation
   await page.goto('/');
   await expect(page.getByRole('heading', {level: 1})).toContainText('Architecture');
   await expect(page.getByText(/^v\d+\.\d+\.\d+\.\d+$/, {exact: true})).toBeVisible();
-  await expect(page.getByRole('heading', {name: 'Scalar', level: 3})).toBeVisible();
-  await expect(page.getByRole('heading', {name: 'Block', level: 3})).toBeVisible();
-  await expect(page.getByRole('heading', {name: 'Tile', level: 3})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Instruction reference', level: 2})).toBeVisible();
   await expect(page.getByRole('heading', {name: /ADR explains why/})).toBeVisible();
   await expect(
     page.getByRole('heading', {name: 'NDF relationships at a glance', level: 2}),
@@ -92,10 +90,12 @@ test('latest release landing page teaches the architecture before implementation
   await expect(
     page.getByRole('link', {name: 'Open the interactive NDF explorer', exact: true}),
   ).toHaveAttribute('href', '/explore/ndf/');
-  const scalarCard = page.getByRole('heading', {name: 'Scalar', level: 3}).locator('xpath=ancestor::article[1]');
-  await scalarCard.getByRole('link', {name: /Browse Scalar units/}).click();
-  await expect(page).toHaveURL(/\/instructions\/\?surface=scalar/);
-  await expect(page.getByRole('status')).toContainText(`${instructionSurfaceTotals.scalar} instructions`);
+  const manual = page.getByRole('navigation', {name: 'Instruction manual categories'});
+  await expect(manual.getByRole('link')).toHaveText(['Scalar', 'Float', 'Block', 'Cube', 'Vector', 'TMA', 'Encoding Table']);
+  await manual.getByRole('link', {name: 'Scalar', exact: true}).click();
+  await expect(page).toHaveURL('/instructions/scalar/');
+  await expect(page.getByRole('link', {name: 'ADD', exact: true})).toHaveAttribute('href', '/instructions/scalar/alu/ADD/');
+  await expect(page.getByRole('link', {name: 'FMADD', exact: true})).toHaveCount(0);
   await page.goto('/');
   await page.getByRole('searchbox', {name: 'Search the PTO formal specification'}).fill('TLOAD');
   await page.getByRole('button', {name: 'Search specification'}).click();
@@ -117,6 +117,10 @@ test('instruction coverage matrix closes the released bilingual inventory', asyn
     expect(matrix.surface_totals).toEqual(instructionSurfaceTotals);
     expect(matrix.unexplained_omissions).toBe(0);
     expect(matrix.entries).toHaveLength(instructionUnits.length);
+    expect(matrix.entries.every((entry: {layout_contract: string; manual_source: string; manual_function_count: number}) =>
+      entry.layout_contract === 'UnitWorkbenchView.arm-style.v1' &&
+      entry.manual_source === 'complete' &&
+      entry.manual_function_count >= 2)).toBe(true);
     expect(matrix.entries.filter((entry: {surface: string; bundle_source: string}) =>
       entry.surface === 'tile' && entry.bundle_source === 'owner-metadata')).toHaveLength(
         instructionSurfaceTotals.tile,
@@ -199,18 +203,18 @@ test('representative mnemonic, model, and architecture units use the generic wor
   await expect(
     page.locator('header code').filter({hasText: /^PTO-SCALAR-ADD$/}),
   ).toBeVisible();
-  await expect(page.getByRole('heading', {name: 'Encoding', level: 2})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Instruction encoding', level: 2})).toBeVisible();
   await expect(page.locator('header').getByText(/ADD applies the selected right-source transformation/)).toBeVisible();
   await expect(page.getByText('At a glance', {exact: true})).toHaveCount(0);
-  await expect(page.getByRole('heading', {name: 'Assembly syntax', level: 2})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Assembler syntax', level: 2})).toBeVisible();
   await expect(
-    page.getByRole('heading', {name: 'Assembly syntax', level: 2}).locator('..').getByText(
+    page.getByRole('heading', {name: 'Assembler syntax', level: 2}).locator('..').getByText(
       'add SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>, ->{t, u, Rd}',
       {exact: true},
     ),
   ).toBeVisible();
   await expect(page.getByRole('heading', {name: 'Assembler symbols', level: 2})).toBeVisible();
-  const symbols = page.getByRole('table', {name: 'Assembly fields and architectural roles'});
+  const symbols = page.locator('#assembler-symbols table');
   await expect(symbols.getByText('SrcRType', {exact: true})).toBeVisible();
   await expect(symbols.getByText('right-source transformation selector', {exact: true})).toBeVisible();
   const readerGuide = page.getByRole('region', {name: 'Behavior'});
@@ -225,27 +229,26 @@ test('representative mnemonic, model, and architecture units use the generic wor
     /github\.com\/PTO-ISA\/pto-spec\/blob\/[0-9a-f]{40}\/asl\/scalar\/alu\/ADD\.asl/,
   );
   const guidePosition = await readerGuide.evaluate((element) => element.getBoundingClientRect().top);
-  const encodingPosition = await page.getByRole('heading', {name: 'Encoding', level: 2}).evaluate(
+  const encodingPosition = await page.getByRole('heading', {name: 'Instruction encoding', level: 2}).evaluate(
     (element) => element.getBoundingClientRect().top,
   );
-  const aslPosition = await page.getByRole('heading', {name: 'ASL pseudocode', level: 2}).evaluate(
+  const aslPosition = await page.getByRole('heading', {name: 'Decode', level: 2}).evaluate(
     (element) => element.getBoundingClientRect().top,
   );
   const sourcePosition = await sourceLedger.evaluate((element) => element.getBoundingClientRect().top);
   expect(encodingPosition).toBeLessThan(aslPosition);
   expect(aslPosition).toBeLessThan(guidePosition);
   expect(sourcePosition).toBeGreaterThan(encodingPosition);
-  await expect(page.getByRole('heading', {name: 'Decode source binding', level: 3})).toBeVisible();
-  await expect(page.getByRole('heading', {name: 'Operation source binding', level: 3})).toBeVisible();
-  await expect(page.getByLabel(/decode source binding ASL source/)).toContainText('InstructionContractOperation_ADD');
-  await expect(page.getByLabel(/operation ASL source/)).toContainText('InstructionContractHandler_ADD');
+  await expect(page.getByRole('heading', {name: 'Select ADD Operation', level: 3})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Prepare ADD Right Operand', level: 3})).toBeVisible();
+  await expect(page.getByLabel(/SelectADDOperation/)).toContainText('SelectADDOperation');
+  await expect(page.getByLabel(/PrepareADDRightOperand/)).toContainText('PrepareADDRightOperand');
   await expect(page.getByText(/non-normative|unpublished release preview/i)).toHaveCount(0);
-  const addEncoding = page.getByRole('heading', {name: 'Encoding', level: 2}).locator('..');
-  await expect(addEncoding.getByRole('img', {name: /WaveDrom encoding diagram/})).toBeVisible();
-  await expect(addEncoding.locator('[data-wavedrom-source="catalog-encoding-json"]')).toBeVisible();
-  await addEncoding.getByText('WaveJSON source', {exact: true}).click();
-  await expect(addEncoding.locator('pre')).toContainText('"bits": 32');
-  await expect(addEncoding.locator('pre')).toContainText('"name": "7\'b0000101"');
+  const addEncoding = page.getByRole('heading', {name: 'Instruction encoding', level: 2}).locator('..');
+  await expect(addEncoding.getByRole('region', {name: /add SrcL.*word 1/})).toBeVisible();
+  const addEncodingTable = addEncoding.getByRole('table', {name: /add SrcL.*word 1/});
+  await expect(addEncodingTable.getByRole('row', {name: /31:27 shamt variable/})).toBeVisible();
+  await expect(addEncodingTable.getByRole('row', {name: /6:0 7'b0000101 0x05/})).toBeVisible();
 
   await page.goto('/instructions/scalar/bru/C.CMP.EQI/');
   const compactEncoding = page.getByRole('heading', {name: 'Encoding', level: 2}).locator('..');
@@ -457,16 +460,21 @@ test('legacy unit references redirect to canonical workbenches while project rec
 
 test('source-declared bundle template covers representative Tile families', async ({page}) => {
   await page.goto('/instructions/tile/elementwise-tile-tile/arithmetic/TADD/');
-  await expect(page.getByRole('heading', {name: '2. Complete Bundle Assembly'})).toBeVisible();
-  const taddBundle = page.locator('[class*="genericBundleSequence"]');
+  await expect(page.getByText(/TADD <Row=Derived, Col, ValidRow=Row/)).toBeVisible();
+  await page.getByText('High Level Assembly operand mapping', {exact: true}).click();
+  await expect(page.getByText(
+    'TADD <LB0:ValidCol, LB1:ValidRow, LB2:Col, DataType, Layout, PadValue> SrcTile0, SrcTile1 -> DstTile',
+    {exact: true},
+  )).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Physical bundle'})).toBeVisible();
+  const taddBundle = page.getByRole('heading', {name: 'Physical bundle'}).locator('..');
   await expect(taddBundle.getByText(/BSTART\.VEC TADD/)).toBeVisible();
   await expect(taddBundle.getByText(/B\.IOT SrcLeft, SrcRight/)).toBeVisible();
-  await expect(taddBundle.getByText('Repeatable', {exact: true}).first()).toBeVisible();
   await expect(page.getByRole('heading', {name: 'Instruction contract'})).toBeVisible();
-  await expect(page.getByRole('heading', {name: 'Constraints, checks, and faults'})).toBeVisible();
-  await expect(page.getByRole('heading', {name: 'State reads, writes, and result'})).toBeVisible();
-  await expect(page.getByRole('heading', {name: 'Decode source binding'})).toBeVisible();
-  await expect(page.getByRole('heading', {name: 'Operation source binding'})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Legality and faults'})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Operation and architectural effects'})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Select TADD Operation'})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Execute TADD'})).toBeVisible();
 
   await page.goto('/instructions/tile/memory-and-data-movement/regular/TSTORE/');
   for (const variant of ['Local', 'Shared']) {
@@ -482,6 +490,8 @@ test('source-declared bundle template covers representative Tile families', asyn
   await expect(page.getByText('Bundle source gap', {exact: true})).toHaveCount(0);
 
   await page.goto('/instructions/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL/');
+  await expect(page.locator('#assembly-syntax-heading').getByText(/TMATMUL <M=1, N=1, K=1/).first()).toBeVisible();
+  await page.getByText('High Level Assembly operand mapping', {exact: true}).click();
   await expect(page.getByText(
     'TMATMUL <LB0:M, LB1:N, LB2:K, DataTypeA, DataTypeB> SrcTile0, SrcTile1 -> DstTile',
     {exact: true},
@@ -490,16 +500,19 @@ test('source-declared bundle template covers representative Tile families', asyn
   const highLevelBindings = page.getByRole('table', {name: 'Source bindings for High Level Assembly operands'});
   await expect(highLevelBindings.getByRole('row', {name: /Parameter DataTypeA left data type BSTART\.TMATMUL AType/})).toBeVisible();
   await expect(highLevelBindings.getByRole('row', {name: /Output DstTile destination contract\.operands\[0\]\.destination0/})).toBeVisible();
-  await expect(page.getByText('Repeatable', {exact: true}).first()).toBeVisible();
-  await expect(page.getByText('Mutually exclusive', {exact: true}).first()).toBeVisible();
+  const matrixBundle = page.getByRole('heading', {name: 'Physical bundle'}).locator('..');
+  await expect(matrixBundle.getByText(/B\.DIM LB0 M/)).toBeVisible();
+  await expect(matrixBundle.getByText(/B\.IOT ordered Local mathematical sources/)).toBeVisible();
 
   await page.goto('/zh-CN/instructions/tile/elementwise-tile-tile/arithmetic/TADD/');
+  await expect(page.getByText(/TADD <Row=Derived, Col, ValidRow=Row/)).toBeVisible();
+  await page.getByText('高层操作数到 owning ASL 的映射', {exact: true}).click();
   await expect(page.getByText(
     'TADD <LB0:ValidCol, LB1:ValidRow, LB2:Col, DataType, Layout, PadValue> SrcTile0, SrcTile1 -> DstTile',
     {exact: true},
   )).toBeVisible();
-  await expect(page.getByRole('heading', {name: '2. 完整 Bundle Assembly'})).toBeVisible();
-  await expect(page.getByText('可重复', {exact: true}).first()).toBeVisible();
+  await expect(page.getByRole('heading', {name: '物理 Bundle'})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Select TADD Operation'})).toBeVisible();
   await expect(page).toHaveURL(/\/zh-CN\/instructions\/tile\/elementwise-tile-tile\/arithmetic\/TADD\//);
 });
 
@@ -551,10 +564,11 @@ test('TLOAD workbench preserves source identity and evidence interaction', async
   }
 
   const bundlePosition = await composition.evaluate((element) => element.getBoundingClientRect().top);
-  const encoding = page.getByRole('heading', {name: 'Entry instruction encoding: BSTART'}).locator('..');
+  const encoding = page.getByRole('heading', {name: 'Instruction encoding'}).locator('..');
   const encodingPosition = await encoding.evaluate((element) => element.getBoundingClientRect().top);
   expect(bundlePosition).toBeLessThan(encodingPosition);
-  await expect(encoding.getByText(/encodes only the bundle-entry BSTART command/)).toBeVisible();
+  await expect(encoding.getByText('BSTART.TLOAD DataType', {exact: true})).toBeVisible();
+  await expect(encoding.getByRole('row', {name: /31:27 DataType variable/})).toBeVisible();
 
   const execution = page.getByRole('region', {name: 'ASL execution path'});
   await expect(execution).toBeVisible();
@@ -566,7 +580,7 @@ test('TLOAD workbench preserves source identity and evidence interaction', async
   }
   await expect(execution.getByText(/current owner exposes instruction selection/i)).toBeVisible();
   await expect(execution.getByText(/current owner binds the generic Tile handler/i)).toBeVisible();
-  await expect(execution.getByLabel(/TLOAD\.asl lines/).filter({hasText: 'InstructionContractGMAddress_TLOAD'})).toBeVisible();
+  await expect(execution.getByLabel(/TLOAD\.asl lines/).filter({hasText: 'ResolveTLOADGlobalAddress'})).toBeVisible();
   const localMemorySource = execution.getByText(new RegExp(
     `Show shared ASL: ${tloadFirstFaultSharedLabels['asl/tile/model/memory/load-store.asl']}`,
   ));
@@ -763,23 +777,17 @@ test.describe('no JavaScript fallback', () => {
     await expect(page.getByRole('heading', {name: 'Assembly syntax', level: 2})).toBeVisible();
     await expect(page.getByRole('heading', {name: 'Behavior', level: 2})).toBeVisible();
     await expect(page.getByRole('heading', {name: 'ASL execution path', level: 2})).toBeVisible();
-    await expect(page.getByLabel(/TLOAD\.asl lines/).filter({hasText: 'InstructionContractGMAddress_TLOAD'})).toBeVisible();
+    const execution = page.getByRole('region', {name: 'ASL execution path'});
+    await expect(execution.getByLabel(/TLOAD\.asl lines/).filter({hasText: 'ResolveTLOADGlobalAddress'})).toBeVisible();
     const cubeClause = page.locator('#ndf-pto-tload-cube-001');
     await expect(cubeClause).toBeVisible();
     await expect(cubeClause.getByText(/CUBE TLOAD MUST derive persistent CELL geometry/)).toBeVisible();
   });
 
-  test('catalog encoding remains readable as a native table', async ({page}, testInfo) => {
+  test('catalog encoding remains readable as a native table', async ({page}) => {
     await page.goto('/instructions/scalar/alu/ADD/');
     await expect(page.getByRole('img', {name: /WaveDrom encoding diagram/})).toHaveCount(0);
-    const encodingTableSummary = page.getByText('Encoding fields as an accessible table', {exact: true});
-    if (testInfo.project.name === 'mobile-chromium') {
-      await encodingTableSummary.focus();
-      await encodingTableSummary.press('Enter');
-    } else {
-      await encodingTableSummary.click();
-    }
-    const table = page.getByRole('table', {name: /Generated encoding fields/});
+    const table = page.getByRole('table', {name: /add SrcL.*word 1/});
     await expect(table).toBeVisible();
     await expect(table.getByText('31:27', {exact: true})).toBeVisible();
     await expect(table.getByText("7'b0000101", {exact: true})).toBeVisible();

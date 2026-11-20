@@ -2,6 +2,8 @@ import React from 'react';
 import type {PtoUnitWorkbenchData} from '@site/src/types/pto';
 import ASLViewer from './ASLViewer';
 import AssemblerSymbols from './AssemblerSymbols';
+import ArmInstructionReference from './ArmInstructionReference';
+import ManualNav from './ManualNav';
 import EncodingBitfield from './EncodingBitfield';
 import EvidenceIndex from './EvidenceIndex';
 import GeneratedMetadata from './GeneratedMetadata';
@@ -50,60 +52,65 @@ export default function UnitWorkbenchView({unitData}: {unitData: PtoUnitWorkbenc
 
   return (
     <main className={styles.page}>
+      {unitData.manual && <ManualNav active={unitData.manual.section} />}
       <LanguageFallbackNotice guide={unitData.readerGuide} />
-      <header className={styles.hero}>
-        <div>
-          <h1>{presentation.title}</h1>
-          {presentation.summary && <p>{presentation.summary}</p>}
-        </div>
-        {presentation.identity && <code className={styles.badge}>{presentation.identity}</code>}
-      </header>
-      {!unitData.composition && (
-        <InstructionOverview
-          metadata={metadata}
-          mnemonic={Boolean(presentation.mnemonic)}
-          chinese={unitData.readerGuide.locale === 'zh-CN'}
-          highLevelAssembly={unitData.highLevelAssembly}
-        />
-      )}
-      {unitData.composition && (
-        <InstructionComposition
-          composition={unitData.composition}
-          chinese={unitData.readerGuide.locale === 'zh-CN'}
-          ownerSourceUrl={unitData.source.githubUrl}
-          ndfClauses={unitData.ndfClauses}
-          apiForms={Array.isArray(metadata.assembly)
-            ? metadata.assembly.filter((value): value is string => typeof value === 'string')
-            : []}
-          highLevelAssembly={unitData.highLevelAssembly!}
-        />
-      )}
-      {presentation.mnemonic && (
-        <AssemblerSymbols
-          symbols={unitData.assemblerSymbols}
-          chinese={unitData.readerGuide.locale === 'zh-CN'}
-        />
-      )}
-      {unitData.encoding && unitData.encoding.catalogForms.length > 0 && (
-        <EncodingBitfield
-          encoding={unitData.encoding}
-          entryOnly={Boolean(unitData.composition)}
-          chinese={unitData.readerGuide.locale === 'zh-CN'}
-        />
-      )}
-      {!unitData.semanticExecution && (
-        <InstructionContractSummary
-          metadata={metadata}
-          chinese={unitData.readerGuide.locale === 'zh-CN'}
-        />
-      )}
-      {unitData.semanticExecution ? (
-        <SemanticExecution
-          execution={unitData.semanticExecution}
-          chinese={unitData.readerGuide.locale === 'zh-CN'}
-        />
-      ) : (
-        <ASLViewer source={unitData.source} chinese={unitData.readerGuide.locale === 'zh-CN'} />
+      {presentation.mnemonic ? <ArmInstructionReference unitData={unitData} /> : (
+        <>
+          <header className={styles.hero}>
+            <div>
+              <h1>{presentation.title}</h1>
+              {presentation.summary && <p>{presentation.summary}</p>}
+            </div>
+            {presentation.identity && <code className={styles.badge}>{presentation.identity}</code>}
+          </header>
+          {!unitData.composition && (
+            <InstructionOverview
+              metadata={metadata}
+              mnemonic={Boolean(presentation.mnemonic)}
+              chinese={unitData.readerGuide.locale === 'zh-CN'}
+              highLevelAssembly={unitData.highLevelAssembly}
+            />
+          )}
+          {unitData.composition && (
+            <InstructionComposition
+              composition={unitData.composition}
+              chinese={unitData.readerGuide.locale === 'zh-CN'}
+              ownerSourceUrl={unitData.source.githubUrl}
+              ndfClauses={unitData.ndfClauses}
+              apiForms={Array.isArray(metadata.assembly)
+                ? metadata.assembly.filter((value): value is string => typeof value === 'string')
+                : []}
+              highLevelAssembly={unitData.highLevelAssembly!}
+            />
+          )}
+          {presentation.mnemonic && (
+            <AssemblerSymbols
+              symbols={unitData.assemblerSymbols}
+              chinese={unitData.readerGuide.locale === 'zh-CN'}
+            />
+          )}
+          {unitData.encoding && unitData.encoding.catalogForms.length > 0 && (
+            <EncodingBitfield
+              encoding={unitData.encoding}
+              entryOnly={Boolean(unitData.composition)}
+              chinese={unitData.readerGuide.locale === 'zh-CN'}
+            />
+          )}
+          {!unitData.semanticExecution && (
+            <InstructionContractSummary
+              metadata={metadata}
+              chinese={unitData.readerGuide.locale === 'zh-CN'}
+            />
+          )}
+          {unitData.semanticExecution ? (
+            <SemanticExecution
+              execution={unitData.semanticExecution}
+              chinese={unitData.readerGuide.locale === 'zh-CN'}
+            />
+          ) : (
+            <ASLViewer source={unitData.source} chinese={unitData.readerGuide.locale === 'zh-CN'} />
+          )}
+        </>
       )}
       <ReaderGuide guide={unitData.readerGuide} mnemonic={Boolean(presentation.mnemonic)} />
       {presentation.mnemonic === 'TLOAD' && <TloadStateTransitionDemo />}

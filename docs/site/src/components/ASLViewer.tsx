@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import type {PtoSourceIdentity} from '@site/src/types/pto';
 import styles from './PtoWorkbench.module.css';
 import {firstText, record} from './data';
 import AslCode from './AslCode';
@@ -26,13 +27,6 @@ function sourceRegion(sourceText: string, name: string): SourceRegion | null {
   };
 }
 
-function isInstructionSelection(region: SourceRegion): boolean {
-  return (
-    /InstructionContractOperation_/.test(region.text) &&
-    !/\b(?:let|var|if|case|assert)\b/.test(region.text)
-  );
-}
-
 function SourceCode({region, wrap}: {region: SourceRegion; wrap: boolean}): React.JSX.Element {
   return (
     <div className={`${styles.source} ${wrap ? styles.sourceWrap : ''}`} tabIndex={0}>
@@ -46,21 +40,38 @@ function SourceCode({region, wrap}: {region: SourceRegion; wrap: boolean}): Reac
 }
 
 export interface ASLViewerProps {
-  source: unknown;
+  source: PtoSourceIdentity;
   chinese?: boolean;
 }
 
 export default function ASLViewer({source, chinese = false}: ASLViewerProps): React.JSX.Element {
   const [wrap, setWrap] = useState(false);
+  if (source.inlineExcerpt) {
+    return (
+      <section className={`${styles.section} ${styles.aslDefinition}`} aria-labelledby="asl-source-heading">
+        <h2 id="asl-source-heading">{chinese ? 'ASL 伪代码' : 'ASL pseudocode'}</h2>
+        <p>
+          <a href={source.inlineExcerpt.completeAssetUrl}>
+            {chinese ? '查看完整 ASL 源文件和 TileOp 宏记录' : 'Open complete ASL and TileOp macro records'}
+          </a>
+        </p>
+        {source.inlineExcerpt.sections.map((section) => {
+          const endLine = section.startLine + section.text.split('\n').length - 1;
+          return (
+            <SourceCode
+              key={section.startLine}
+              wrap={wrap}
+              region={{...section, name: 'owner excerpt', endLine}}
+            />
+          );
+        })}
+      </section>
+    );
+  }
   const data = record(source);
   const sourceText = firstText(data, ['text', 'content', 'source']);
   const operation = sourceRegion(sourceText, 'operation');
   const decode = sourceRegion(sourceText, 'decode');
-  const selectionOnly = decode !== null && isInstructionSelection(decode);
-  const pageShapedDecode = decode !== null && !selectionOnly;
-  const operationBindingOnly = operation !== null &&
-    !/\bExecuteDecoded_[A-Za-z0-9_]+\s*\(/.test(operation.text) &&
-    /InstructionContractHandler_/.test(operation.text);
   const fullSource: SourceRegion = {
     name: 'complete owner',
     text: sourceText || (chinese ? '此发布制品未包含源文本。' : 'Source text is not present in this release artifact.'),
@@ -81,42 +92,13 @@ export default function ASLViewer({source, chinese = false}: ASLViewerProps): Re
             : (chinese ? '自动换行' : 'Wrap long lines')}
         </button>
       </header>
-      <p className={styles.aslIntroduction}>
-        {chinese
-          ? pageShapedDecode
-            ? 'Decode 与 Operation 均直接来自指令所有者，并按执行阶段分开显示。'
-            : operation ? '下面是该指令所有者中的 Operation；页面没有重写这段行为。' : '下面直接显示完整的 ASL 所有者。'
-          : pageShapedDecode
-            ? 'Decode and Operation come directly from the instruction owner and remain separated by execution phase.'
-            : operation ? 'This Operation comes directly from the instruction owner; the page does not rewrite its behavior.' : 'The complete ASL owner is shown directly below.'}
-      </p>
-      {selectionOnly && (
-        <aside className={styles.semanticGap} role="note">
-          <strong>{chinese ? 'Decode 源缺口' : 'Decode source gap'}</strong>
-          <p>{chinese
-            ? '当前 owner 只公开真实的指令选择绑定，没有操作数绑定 Decode 过程；页面不会伪造。'
-            : 'The current owner exposes the real instruction-selection binding but no operand-binding Decode procedure; the page does not invent one.'}</p>
-        </aside>
-      )}
-      {operationBindingOnly && (
-        <aside className={styles.semanticGap} role="note">
-          <strong>{chinese ? 'Operation 源缺口' : 'Operation source gap'}</strong>
-          <p>{chinese
-            ? '当前 owner 公开真实 handler/helper 绑定，但没有 mnemonic-specific ExecuteDecoded 过程。'
-            : 'The current owner exposes real handler/helper bindings but no mnemonic-specific ExecuteDecoded procedure.'}</p>
-        </aside>
-      )}
       {decode ? (
         <>
-          <h3>{selectionOnly
-            ? (chinese ? 'Decode 源绑定' : 'Decode source binding')
-            : 'Decode ASL'}</h3>
-          <SourceCode region={{...decode, name: selectionOnly ? 'decode source binding' : decode.name}} wrap={wrap} />
+          <h3>Decode ASL</h3>
+          <SourceCode region={decode} wrap={wrap} />
           {operation && (
             <>
-              <h3 className={styles.aslPhaseHeading}>{operationBindingOnly
-                ? (chinese ? 'Operation 源绑定' : 'Operation source binding')
-                : 'Operation ASL'}</h3>
+              <h3 className={styles.aslPhaseHeading}>Operation ASL</h3>
               <SourceCode region={operation} wrap={wrap} />
             </>
           )}

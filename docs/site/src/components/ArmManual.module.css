@@ -1,0 +1,226 @@
+.manualPage {
+  width: min(100%, 94rem);
+  padding: 1.5rem clamp(0.75rem, 3vw, 2.5rem) 5rem;
+  margin: 0 auto;
+}
+
+.manualNav {
+  overflow-x: auto;
+  margin-bottom: 1.25rem;
+  border-block: 1px solid var(--pto-border);
+}
+
+.manualNav ul {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.manualNav li {
+  display: contents;
+}
+
+.manualNav a {
+  padding: 0.7rem clamp(0.7rem, 1.7vw, 1.2rem);
+  color: var(--ifm-font-color-base);
+  border-right: 1px solid var(--pto-border);
+  font-size: 0.82rem;
+  font-weight: 720;
+  white-space: nowrap;
+}
+
+.manualNav a:hover,
+.manualNavActive {
+  color: var(--ifm-color-primary) !important;
+  background: var(--pto-surface-focus);
+  text-decoration: none;
+}
+
+.manualHero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2rem;
+  align-items: end;
+  padding: 1rem 0 1.35rem;
+  border-bottom: 2px solid var(--ifm-font-color-base);
+}
+
+.manualHero h1 {
+  margin: 0.1rem 0 0.45rem;
+  font-size: clamp(2rem, 5vw, 3.65rem);
+  font-weight: 650;
+  letter-spacing: -0.04em;
+}
+
+.manualHero p {
+  max-width: 78ch;
+  margin: 0;
+}
+
+.manualKicker {
+  color: var(--ifm-color-primary);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.72rem;
+  font-weight: 760;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.manualCount {
+  color: var(--pto-text-muted);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 1.1rem;
+}
+
+.manualGroup {
+  margin-top: 2.15rem;
+  scroll-margin-top: 5rem;
+}
+
+.manualGroupHeader {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.35fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: baseline;
+  padding-bottom: 0.45rem;
+}
+
+.manualGroupHeader h2,
+.manualGroupHeader p {
+  margin: 0;
+}
+
+.manualGroupHeader h2 {
+  font-size: 1.25rem;
+}
+
+.manualGroupHeader p,
+.manualEntryDetail,
+.manualEmpty {
+  color: var(--pto-text-muted);
+}
+
+.manualTableViewport {
+  overflow-x: auto;
+  border-top: 1px solid var(--ifm-font-color-base);
+  border-bottom: 1px solid var(--pto-border);
+}
+
+.manualTable {
+  width: 100%;
+  min-width: 42rem;
+  margin: 0;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.manualTable th,
+.manualTable td {
+  padding: 0.55rem 0.7rem;
+  border: 0;
+  border-bottom: 1px solid var(--pto-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.manualTable thead th {
+  color: var(--pto-text-muted);
+  background: var(--pto-surface-subtle);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.manualTable tbody th {
+  width: 22%;
+  font-weight: 650;
+}
+
+.manualTable tbody tr:hover {
+  background: color-mix(in srgb, var(--ifm-color-primary) 5%, transparent);
+}
+
+.manualTable code {
+  color: inherit;
+  background: transparent;
+  border: 0;
+  font-size: 0.84rem;
+}
+
+.manualEntryDetail {
+  display: block;
+  margin-top: 0.18rem;
+  font-size: 0.76rem;
+  font-weight: 400;
+}
+
+.manualPattern {
+  display: block;
+  white-space: nowrap;
+}
+
+.encodingTable {
+  min-width: 68rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+.encodingTable tbody th {
+  min-width: 13rem;
+  font-family: var(--ifm-font-family-base);
+}
+
+.manualEmpty {
+  padding: 2rem 0;
+}
+
+/* Shared by the Arm-style instruction reference and category indexes. */
+.instructionLead {
+  margin-block: 1rem 1.5rem;
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
+.instructionSection {
+  padding-block: 1.25rem;
+  border-top: 1px solid var(--pto-border);
+}
+
+.instructionSection > h2 {
+  margin-top: 0;
+  font-size: 1.35rem;
+}
+
+@media (max-width: 720px) {
+  .manualPage {
+    padding-inline: 0.75rem;
+  }
+
+  .manualHero,
+  .manualGroupHeader {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+.encodingGroups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+  margin-top: 1rem;
+  font-size: .88rem;
+}
+
+@media (max-width: 600px) {
+  .manualNav ul {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .manualNav a {
+    border-bottom: 1px solid var(--pto-border);
+  }
+}

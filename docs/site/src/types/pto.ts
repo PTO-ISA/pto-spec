@@ -1,3 +1,6 @@
+import type {ManualSection} from '../manual/sections';
+import type {ManualAslProjection} from '../../plugins/pto-content/manualAsl';
+
 export type PtoJsonPrimitive = string | number | boolean | null;
 
 export type PtoJsonValue =
@@ -19,6 +22,10 @@ export interface PtoSourceIdentity {
   sha256: string;
   text: string;
   githubUrl: string;
+  inlineExcerpt?: {
+    sections: {text: string; startLine: number}[];
+    completeAssetUrl: string;
+  };
 }
 
 /** A generated documentation projection never carries its complete Markdown in route data. */
@@ -315,6 +322,20 @@ export interface PtoHighLevelAssembly {
 }
 
 export interface PtoUnitWorkbenchData {
+  manual?: {
+    section: Exclude<ManualSection, 'encoding'>;
+    asl: ManualAslProjection;
+    alias?: {
+      owner: string;
+      href?: string;
+      engine?: string;
+    };
+    tile?: {
+      macros: string[];
+      carrierHref?: string;
+      commandHrefs: Record<string, string>;
+    };
+  };
   release: PtoReleaseIdentity;
   source: PtoSourceIdentity;
   documentation: PtoDocumentationIdentity;

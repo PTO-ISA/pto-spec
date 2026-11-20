@@ -7,6 +7,7 @@ import {usePluginData} from '@docusaurus/useGlobalData';
 import type {PtoReleaseIdentity} from '@site/src/types/pto';
 import {useLocalizedPath} from '@site/src/components/releasePresentation';
 import PortalShell from '@site/src/components/PortalShell';
+import ManualNav from '@site/src/components/ManualNav';
 
 import styles from './index.module.css';
 
@@ -36,70 +37,6 @@ type PtoPluginData = {
     avs: number;
   };
 };
-
-type SurfaceIntroduction = {
-  number: string;
-  surface: Exclude<SurfaceName, 'arch'>;
-  title: ReactNode;
-  description: ReactNode;
-  families: ReactNode;
-  to: string;
-  action: ReactNode;
-};
-
-const surfaceIntroductions: SurfaceIntroduction[] = [
-  {
-    number: '01',
-    surface: 'scalar',
-    title: <Translate id="homepage.surface.scalar.title">Scalar</Translate>,
-    description: (
-      <Translate id="homepage.surface.scalar.description">
-        Begin with the scalar instruction surface and its architectural operands, control flow, memory access, arithmetic, and system forms.
-      </Translate>
-    ),
-    families: (
-      <Translate id="homepage.surface.scalar.families">
-        AGU · ALU · AMO · BRU · FSU · SYS
-      </Translate>
-    ),
-    to: '/instructions/?surface=scalar',
-    action: <Translate id="homepage.surface.scalar.action">Browse Scalar units</Translate>,
-  },
-  {
-    number: '02',
-    surface: 'block',
-    title: <Translate id="homepage.surface.block.title">Block</Translate>,
-    description: (
-      <Translate id="homepage.surface.block.description">
-        Continue with the explicit Block and command surface: lifecycle, execution descriptors, operands, attributes, and control state.
-      </Translate>
-    ),
-    families: (
-      <Translate id="homepage.surface.block.families">
-        Lifecycle · Execution · Attributes · Operands · Encoding
-      </Translate>
-    ),
-    to: '/instructions/?surface=block',
-    action: <Translate id="homepage.surface.block.action">Browse Block units</Translate>,
-  },
-  {
-    number: '03',
-    surface: 'tile',
-    title: <Translate id="homepage.surface.tile.title">Tile</Translate>,
-    description: (
-      <Translate id="homepage.surface.tile.description">
-        Then read the direct Tile operation surface, organized by computation, reduction, layout, matrix, and data-movement families.
-      </Translate>
-    ),
-    families: (
-      <Translate id="homepage.surface.tile.families">
-        Elementwise · Reduce/expand · Layout · Matrix · Memory/data movement
-      </Translate>
-    ),
-    to: '/instructions/?surface=tile',
-    action: <Translate id="homepage.surface.tile.action">Browse Tile units</Translate>,
-  },
-];
 
 function SearchPanel(): ReactNode {
   const searchPath = useLocalizedPath('/search/');
@@ -167,6 +104,15 @@ function Home(): ReactNode {
       </Head>
 
       <main>
+        <section className={styles.surfaceSection} aria-labelledby="surface-title">
+          <div className="container">
+            <h2 id="surface-title">
+              <Translate id="homepage.surface.title">Instruction reference</Translate>
+            </h2>
+            <ManualNav />
+          </div>
+        </section>
+
         <section className={styles.hero}>
           <div className="container">
             <div className={styles.releaseLine}>
@@ -199,7 +145,7 @@ function Home(): ReactNode {
                 </h1>
                 <p className={styles.lede}>
                   <Translate id="homepage.hero.subtitle">
-                    One released architecture, read in order through Scalar, Block, and direct Tile instruction surfaces.
+                    The PTO instruction reference and the architecture contracts behind each instruction.
                   </Translate>
                 </p>
                 <div className={styles.heroActions}>
@@ -247,7 +193,7 @@ function Home(): ReactNode {
               </p>
               <p>
                 <Translate id="homepage.architecture.guidance">
-                  Read the architecture owner first. Use the three surface chapters below as navigation, then open each unit's embedded source and evidence when implementation detail is needed.
+                  Use the instruction reference below to find a mnemonic or its encoding. Each instruction page links to the owning ASL and its evidence.
                 </Translate>
               </p>
               <Link to={architectureRoute}>
@@ -259,37 +205,6 @@ function Home(): ReactNode {
               <div><dt>{surfaceCounts.scalar.mnemonics + surfaceCounts.block.mnemonics + surfaceCounts.tile.mnemonics}</dt><dd><Translate id="homepage.architecture.mnemonics">released mnemonics</Translate></dd></div>
               <div><dt>{recordCounts.avs}</dt><dd><Translate id="homepage.architecture.avs">executable AVS identities</Translate></dd></div>
             </dl>
-          </div>
-        </section>
-
-        <section className={styles.surfaceSection} aria-labelledby="surface-title">
-          <div className="container">
-            <div className={styles.sectionHeading}>
-              <p><Translate id="homepage.surface.kicker">Read the instruction surfaces</Translate></p>
-              <h2 id="surface-title">
-                <Translate id="homepage.surface.title">Scalar, then Block, then Tile</Translate>
-              </h2>
-            </div>
-            <div className={styles.surfaceList}>
-              {surfaceIntroductions.map((surface) => {
-                const count = surfaceCounts[surface.surface];
-                return (
-                  <article className={styles.surfaceCard} key={surface.surface}>
-                    <div className={styles.surfaceNumber} aria-hidden="true">{surface.number}</div>
-                    <div>
-                      <p className={styles.surfaceInventory}>
-                        {count.mnemonics} <Translate id="homepage.surface.mnemonics">mnemonics</Translate>
-                        {' · '}{count.units} <Translate id="homepage.surface.units">ASL units</Translate>
-                      </p>
-                      <h3>{surface.title}</h3>
-                      <p>{surface.description}</p>
-                      <small>{surface.families}</small>
-                    </div>
-                    <Link to={surface.to}>{surface.action} <span aria-hidden="true">→</span></Link>
-                  </article>
-                );
-              })}
-            </div>
           </div>
         </section>
 

@@ -1,0 +1,351 @@
+.reference {
+  --arm-rule: var(--ifm-color-emphasis-300);
+  --arm-muted: var(--ifm-color-emphasis-700);
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 3vw, 2.5rem) 3rem;
+}
+
+.hero {
+  padding: 1.4rem 0 1.1rem;
+  border-bottom: 3px double var(--arm-rule);
+}
+
+.hero h1 {
+  margin: .15rem 0 .25rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  font-weight: 620;
+  letter-spacing: -.04em;
+}
+
+.hero > p:not(.breadcrumb) {
+  max-width: 76ch;
+  margin: 0;
+  font-size: 1.02rem;
+}
+
+.hero > code {
+  display: inline-block;
+  margin-top: .8rem;
+  color: var(--arm-muted);
+  font-size: .78rem;
+}
+
+.breadcrumb {
+  margin: 0;
+  color: var(--arm-muted);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: .74rem;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.section {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--arm-rule);
+  scroll-margin-top: calc(var(--ifm-navbar-height) + 1rem);
+}
+
+.section h2 {
+  margin: 0 0 .8rem;
+  font-size: 1.35rem;
+}
+
+.section h3 {
+  margin: 1rem 0 .55rem;
+  font-size: 1.05rem;
+}
+
+.section h4 {
+  margin: .8rem 0 .4rem;
+  font-size: .9rem;
+}
+
+.section table {
+  display: table;
+  width: 100%;
+  margin: .75rem 0 0;
+  font-size: .84rem;
+}
+
+.section th,
+.section td {
+  padding: .38rem .55rem;
+  border: 1px solid var(--arm-rule);
+  text-align: left;
+  vertical-align: top;
+}
+
+.section thead th {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.assemblyForms,
+.examples {
+  display: grid;
+  gap: .4rem;
+}
+
+.assemblyForms > code,
+.examples > code {
+  display: block;
+  padding: .55rem .7rem;
+  border-left: 3px solid var(--ifm-color-primary);
+  background: var(--ifm-code-background);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.assemblyForms code a {
+  color: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: .2em;
+}
+
+.bundleVariants {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: .75rem;
+  margin-top: 1rem;
+}
+
+.bundle {
+  margin-top: 1rem;
+  padding: .7rem .85rem;
+  border: 1px solid var(--arm-rule);
+  background: color-mix(in srgb, var(--ifm-background-surface-color) 96%, var(--ifm-color-primary));
+}
+
+.bundle > summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.bundle ol {
+  margin-bottom: 0;
+}
+
+.bundle li {
+  margin: .3rem 0;
+}
+
+.bundle li > a {
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}
+
+.legacyAssembly {
+  margin-top: .8rem;
+  padding: .55rem .7rem;
+  border: 1px solid var(--arm-rule);
+}
+
+.legacyAssembly > summary {
+  cursor: pointer;
+  font-weight: 650;
+}
+
+.selectorStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin: 0 0 .8rem;
+}
+
+.selectorStrip > div {
+  display: flex;
+  gap: .4rem;
+  align-items: baseline;
+  padding: .25rem .45rem;
+  border: 1px solid var(--arm-rule);
+}
+
+.selectorStrip dt {
+  color: var(--arm-muted);
+  font-size: .7rem;
+  text-transform: uppercase;
+}
+
+.selectorStrip dd {
+  margin: 0;
+}
+
+.encodingForm + .encodingForm {
+  margin-top: 1.4rem;
+  padding-top: .6rem;
+  border-top: 1px dashed var(--arm-rule);
+}
+
+.encodingWord {
+  margin: .55rem 0 1rem;
+  overflow-x: auto;
+}
+
+.bitNumbers,
+.bitFields {
+  display: grid;
+  min-width: 44rem;
+}
+
+.bitNumbers {
+  padding: 0 1px;
+  color: var(--arm-muted);
+  font: .68rem var(--ifm-font-family-monospace);
+  text-align: center;
+}
+
+.bitFields {
+  border: 1px solid currentColor;
+}
+
+.bitFields > * {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding: .42rem .1rem;
+  border-right: 1px solid currentColor;
+  color: inherit;
+  text-align: center;
+  text-decoration: none;
+}
+
+.bitFields > *:last-child {
+  border-right: 0;
+}
+
+.bitFields strong {
+  overflow: hidden;
+  font: .62rem var(--ifm-font-family-monospace);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bitFields small {
+  margin-top: .15rem;
+  font-size: .6rem;
+}
+
+.variableField {
+  background: color-mix(in srgb, var(--ifm-color-primary) 10%, var(--ifm-background-surface-color));
+}
+
+.constantField {
+  background: var(--ifm-color-emphasis-200);
+}
+
+.unspecifiedField {
+  background: repeating-linear-gradient(135deg, transparent, transparent 5px, var(--ifm-color-emphasis-200) 5px, var(--ifm-color-emphasis-200) 6px);
+}
+
+.encodingTable caption {
+  text-align: left;
+  font-weight: 700;
+}
+
+.symbolTable tr {
+  scroll-margin-top: calc(var(--ifm-navbar-height) + 1rem);
+}
+
+.contractGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.contractGrid > section {
+  padding: .1rem .8rem .4rem;
+  border-left: 2px solid var(--arm-rule);
+}
+
+.contractGrid ul {
+  padding-left: 1.1rem;
+}
+
+.aslPhase + .aslPhase {
+  margin-top: 1.3rem;
+  padding-top: .4rem;
+  border-top: 1px dashed var(--arm-rule);
+}
+
+.sourceRegion {
+  margin-top: .8rem;
+  border: 1px solid var(--arm-rule);
+  background: var(--ifm-background-surface-color);
+}
+
+.sourceRegion > header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .45rem .65rem;
+  border-bottom: 1px solid var(--arm-rule);
+}
+
+.sourceRegion > header h3,
+.sourceRegion > header p {
+  margin: .15rem 0;
+}
+
+.sourceRegion > header span {
+  color: var(--arm-muted);
+  font-size: .72rem;
+  text-transform: uppercase;
+}
+
+.sourceRegion > h3 {
+  padding: .55rem .7rem 0;
+}
+
+.sourceRegion pre {
+  max-height: 34rem;
+  margin: 0;
+  overflow: auto;
+  border-radius: 0;
+}
+
+.sourceGap {
+  padding: .7rem .85rem;
+  border-left: 3px solid var(--pto-status-caution);
+  background: var(--ifm-color-emphasis-100);
+}
+
+.sourceGap p {
+  margin: .25rem 0 0;
+}
+
+@media (max-width: 760px) {
+  .contractGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .section table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .sourceRegion > header {
+    flex-direction: column;
+  }
+}
+
+@media print {
+  .reference {
+    max-width: none;
+    padding: 0;
+  }
+
+  .encodingWord {
+    overflow: visible;
+  }
+}
+
+.sourceRegion pre a {
+  text-decoration: underline dotted;
+  text-underline-offset: .2em;
+}
+
+.sourceRegion {
+  scroll-margin-top: calc(var(--ifm-navbar-height) + 1rem);
+}
