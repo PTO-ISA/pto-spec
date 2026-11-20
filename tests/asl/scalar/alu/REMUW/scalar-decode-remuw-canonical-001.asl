@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000111000001010111', 32) == 374;
     assert ScalarOperationOfForm(374) == ScalarOperation_REMUW;
     assert ScalarHandlerOfForm(374) == ScalarHandler_ScalarRemainderUnsignedW;
-    assert InstructionContractOperation_REMUW() == ScalarOperation_REMUW;
-    assert InstructionContractHandler_REMUW() == ScalarHandler_ScalarRemainderUnsignedW;
+    assert SelectREMUWOperation() == ScalarOperation_REMUW;
+    assert SelectREMUWHandler() == ScalarHandler_ScalarRemainderUnsignedW;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000111000001010111', 374, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000111000001010111', 374, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000111000001010111', 374, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';

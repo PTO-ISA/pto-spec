@@ -26,7 +26,7 @@ There is no rounding, saturation, or flag output. The low half goes to `RegDst0`
 <!-- PTO-READER-BLOCK: scalar-hl-madd-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `InstructionContractAccumulator_HL_MADD`: `MultiplyWideSigned(left, right)` produces the 128-bit product, `SignExtend{PTO_XLEN * 2}(addend)` widens `SrcD` to the same width, and one 128-bit addition combines them. Dispatch reaches the same accumulator through `ExecuteScalarMultiplyAddPair` with `word_operation` false.
+The owning ASL exposes `HLMADDAccumulator`: `MultiplyWideSigned(left, right)` produces the 128-bit product, `SignExtend{PTO_XLEN * 2}(addend)` widens `SrcD` to the same width, and one 128-bit addition combines them. Dispatch reaches the same accumulator through `ExecuteScalarMultiplyAddPair` with `word_operation` false.
 
 ```asm
 hl.madd SrcL, SrcR, SrcD, ->Dst0, Dst1
@@ -126,7 +126,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.MADD.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_MADD() => ScalarOperation
+readonly func SelectHLMADDOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_MADD;
 end;
@@ -137,11 +137,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.MADD.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_MADD() => ScalarSemanticHandler
+readonly func SelectHLMADDHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarMultiplyAddPair;
 end;
-pure func InstructionContractAccumulator_HL_MADD(
+pure func HLMADDAccumulator(
     addend: Word,
     left: Word,
     right: Word)
@@ -151,14 +151,14 @@ begin
     return product + SignExtend{PTO_XLEN * 2}(addend);
 end;
 
-pure func InstructionContractLow_HL_MADD(addend: Word, left: Word, right: Word) => Word
+pure func HLMADDLow(addend: Word, left: Word, right: Word) => Word
 begin
-    return InstructionContractAccumulator_HL_MADD(addend, left, right)[63:0];
+    return HLMADDAccumulator(addend, left, right)[63:0];
 end;
 
-pure func InstructionContractHigh_HL_MADD(addend: Word, left: Word, right: Word) => Word
+pure func HLMADDHigh(addend: Word, left: Word, right: Word) => Word
 begin
-    return InstructionContractAccumulator_HL_MADD(addend, left, right)[127:64];
+    return HLMADDAccumulator(addend, left, right)[127:64];
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->

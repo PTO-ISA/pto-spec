@@ -175,7 +175,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-and-immediate/logical/TSHLS.asl -->
 ```asl
-readonly func InstructionContractOperation_TSHLS() => TileOperation
+readonly func SelectTSHLSOperation() => TileOperation
 begin
     return TileOperation_TSHLS;
 end;
@@ -199,7 +199,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/tile-scalar-and-immediate/logical/TSHLS.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TSHLS(
+pure func TSHLSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileBinaryDataTypeSupported(
@@ -207,7 +207,7 @@ begin
         data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TSHLS(
+readonly func TSHLSOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word) => boolean
@@ -219,17 +219,17 @@ begin
         scalar);
 end;
 
-readonly func InstructionContractHandler_TSHLS() => TileSemanticHandler
+readonly func SelectTSHLSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileScalar;
 end;
 
-func InstructionContractExecute_TSHLS(
+func ExecuteTSHLS(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word)
 begin
-    assert InstructionContractOperandsLegal_TSHLS(
+    assert TSHLSOperandsLegal(
         destination,
         source,
         scalar);

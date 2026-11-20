@@ -11,30 +11,30 @@
 // Shared tile state.
 // NDF-END: PTO-GMOV-CORE4-PEER-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_GMOV() => TileOperation
+readonly func SelectGMOVOperation() => TileOperation
 begin
     return TileOperation_GMOV;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_GMOV(
+pure func GMOVDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractHandler_GMOV() => TileSemanticHandler
+readonly func SelectGMOVHandler() => TileSemanticHandler
 begin
     return TileHandler_GMOV;
 end;
 
-pure func InstructionContractRequiresCoreFourReadiness_GMOV()
+pure func GMOVRequiresCoreFourReadiness()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractPartialMaskWritesSelectedPEs_GMOV()
+pure func GMOVPartialMaskWritesSelectedPEs()
     => boolean
 begin
     return TRUE;

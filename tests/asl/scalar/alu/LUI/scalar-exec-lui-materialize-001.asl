@@ -9,6 +9,6 @@ begin
     let execution = ExecuteScalarInstruction(instruction, 32);
     assert execution == ScalarExecution_Executed;
     assert ReadGPR(2) == Zeros{PTO_XLEN} + 0xffffffff80000000;
-    assert InstructionContractResult_LUI(Zeros{20} + 0x80000) == Zeros{PTO_XLEN} + 0xffffffff80000000;
+    assert ComputeLUIResult(Zeros{20} + 0x80000) == Zeros{PTO_XLEN} + 0xffffffff80000000;
     return 0;
 end;

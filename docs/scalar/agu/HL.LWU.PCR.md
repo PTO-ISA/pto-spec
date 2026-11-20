@@ -125,7 +125,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.LWU.PCR.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_LWU_PCR() => ScalarOperation
+readonly func SelectHLLWUPCROperation() => ScalarOperation
 begin
     return ScalarOperation_HL_LWU_PCR;
 end;
@@ -136,49 +136,49 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/HL.LWU.PCR.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_LWU_PCR()
+readonly func SelectHLLWUPCRHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarLoad;
 end;
 
-pure func InstructionContractAGUAction_HL_LWU_PCR()
+pure func HLLWUPCRAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Load;
 end;
 
-pure func InstructionContractAGUAddressKind_HL_LWU_PCR()
+pure func HLLWUPCRAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_PCRelative;
 end;
 
-pure func InstructionContractAGUSizeBytes_HL_LWU_PCR()
+pure func HLLWUPCRAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 4;
 end;
 
-pure func InstructionContractAGUOffsetScale_HL_LWU_PCR()
+pure func HLLWUPCRAGUOffsetScale()
     => integer {0..3}
 begin
     return 2;
 end;
 
-pure func InstructionContractAGUUpdateMode_HL_LWU_PCR()
+pure func HLLWUPCRAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_None;
 end;
 
-pure func InstructionContractAGUSignedLoad_HL_LWU_PCR()
+pure func HLLWUPCRAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_HL_LWU_PCR()
+pure func HLLWUPCRAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

@@ -3,10 +3,10 @@ func main() => integer
 begin
     assert DecodeCommandForm(Zeros{64} + 0x00111181, 32) == 50;
     assert DecodeCommandForm(Zeros{64} + 0x00e11181, 32) != 50;
-    assert InstructionContractMatches_BSTART_TSTORE(
+    assert BSTARTTSTOREEncodingMatches(
         CommandOperationOfForm(50));
-    assert InstructionContractSharedMaskLegal_TSTORE(1, '0001');
-    assert InstructionContractSharedMaskLegal_TSTORE(1, '1111');
-    assert InstructionContractSharedMaskLegal_TSTORE(1, Zeros{4});
+    assert TSTORESharedMaskLegal(1, '0001');
+    assert TSTORESharedMaskLegal(1, '1111');
+    assert TSTORESharedMaskLegal(1, Zeros{4});
     return 0;
 end;

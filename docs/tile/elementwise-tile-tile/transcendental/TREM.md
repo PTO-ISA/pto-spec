@@ -113,7 +113,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/transcendental/TREM.asl -->
 ```asl
-readonly func InstructionContractOperation_TREM() => TileOperation
+readonly func SelectTREMOperation() => TileOperation
 begin
     return TileOperation_TREM;
 end;
@@ -136,13 +136,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/transcendental/TREM.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TREM(
+pure func TREMDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TREM(
+readonly func TREMOperandsLegal(
     destination: TileIndex,
     dividend: TileIndex,
     divisor: TileIndex) => boolean
@@ -154,12 +154,12 @@ begin
         divisor);
 end;
 
-readonly func InstructionContractHandler_TREM() => TileSemanticHandler
+readonly func SelectTREMHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TREM(
+func ExecuteTREM(
     destination: TileIndex,
     dividend: TileIndex,
     divisor: TileIndex)

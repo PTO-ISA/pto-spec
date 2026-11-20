@@ -8,24 +8,24 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-BSTOP-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTOP(operation: CommandOperation) => boolean
+readonly func BSTOPEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstop_32_d25b09fdd59c);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSTOP() => CommandSemanticHandler
+readonly func SelectBSTOPHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStop;
 end;
 
-pure func InstructionContractCommitsActiveBundle_BSTOP()
+pure func BSTOPCommitsActiveBundle()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractClearsHeaderState_BSTOP()
+pure func BSTOPClearsHeaderState()
     => boolean
 begin
     return TRUE;

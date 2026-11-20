@@ -19,7 +19,7 @@ This unit owns the type classes, dimension checks, and per-instruction operand l
 
 - The ordinary Matrix input types and the accumulator type rule.
 - Bundle dimension checks for `B.DIM` values LB0, LB1, and LB2 (M, N, and K).
-- The direct Tile legality handlers `TileOperandsLegal_TMATMUL` through `TileOperandsLegal_TGEMV_MX_ACC`, one for each of the twelve Matrix instructions. Each instruction's metadata names its handler as `legality_handler`, and each instruction unit wraps it in a matching `InstructionContractOperandsLegal_` function, for example `InstructionContractOperandsLegal_TMATMUL`.
+- The direct Tile legality handlers `TileOperandsLegal_TMATMUL` through `TileOperandsLegal_TGEMV_MX_ACC`, one for each of the twelve Matrix instructions. Each instruction's metadata names its handler as `legality_handler`, and each instruction unit supplies a corresponding wrapper, such as `TMATMULOperandsLegal` for `TMATMUL`.
 
 It also defines `TileInfo`-based checks that the bundle path asserts after preflight.
 

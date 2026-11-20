@@ -23,13 +23,13 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureReciprocalTiles(TileDataType_FP32);
-    assert InstructionContractOperandsLegal_TRECIP(
+    assert TRECIPOperandsLegal(
         1,
         0);
 
     ResetProfileState();
     ConfigureReciprocalTiles(TileDataType_U64);
-    assert !InstructionContractOperandsLegal_TRECIP(
+    assert !TRECIPOperandsLegal(
         1,
         0);
     return 0;

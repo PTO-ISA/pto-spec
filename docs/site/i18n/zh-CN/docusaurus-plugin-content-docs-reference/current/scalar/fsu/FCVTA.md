@@ -118,7 +118,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FCVTA.asl -->
 ```asl
-readonly func InstructionContractOperation_FCVTA()
+readonly func SelectFCVTAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FCVTA;
@@ -130,57 +130,57 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FCVTA.asl -->
 ```asl
-readonly func InstructionContractHandler_FCVTA()
+readonly func SelectFCVTAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ConvertFloatingEncoding;
 end;
 
-pure func InstructionContractSourceTypeLegal_FCVTA(encoded: bits(2))
+pure func FCVTASourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSourceCarrier_FCVTA(encoded: bits(2))
+pure func DecodeFCVTASourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_FCVTA(encoded);
+    assert FCVTASourceTypeLegal(encoded);
     return ScalarConvertFloatingTypeCode(encoded);
 end;
 
-pure func InstructionContractDestinationTypeLegal_FCVTA(encoded: bits(5))
+pure func FCVTADestinationTypeLegal(encoded: bits(5))
     => boolean
 begin
     return ScalarFPToIntegerDestinationRawLegal(encoded);
 end;
 
-pure func InstructionContractDestinationCarrier_FCVTA(encoded: bits(5))
+pure func DecodeFCVTADestinationCarrier(encoded: bits(5))
     => bits(5)
 begin
-    assert InstructionContractDestinationTypeLegal_FCVTA(encoded);
+    assert FCVTADestinationTypeLegal(encoded);
     return ScalarFPToIntegerDestinationTypeCode(encoded);
 end;
 
-pure func InstructionContractSourceArity_FCVTA()
+pure func FCVTASourceArity()
     => integer {1..3}
 begin
     return 1;
 end;
 
-pure func InstructionContractUsesProfileFlags_FCVTA()
+pure func FCVTAUsesProfileFlags()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesActiveRounding_FCVTA()
+pure func FCVTAUsesActiveRounding()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractFixedRounding_FCVTA()
+pure func FCVTAFixedRounding()
     => NumericRoundingMode
 begin
     return NumericRound_RNA;

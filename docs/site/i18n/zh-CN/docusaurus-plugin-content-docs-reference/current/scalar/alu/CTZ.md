@@ -116,19 +116,19 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/CTZ.asl -->
 ```asl
-readonly func InstructionContractOperation_CTZ()
+readonly func SelectCTZOperation()
     => ScalarOperation
 begin
     return ScalarOperation_CTZ;
 end;
 
-pure func InstructionContractWidth_CTZ(encoded_imml: bits(6))
+pure func CTZWidth(encoded_imml: bits(6))
     => integer {1..64}
 begin
     return UInt(encoded_imml) + 1;
 end;
 
-pure func InstructionContractOffset_CTZ(encoded_imms: bits(6))
+pure func DecodeCTZOffset(encoded_imms: bits(6))
     => integer {0..63}
 begin
     return UInt(encoded_imms);
@@ -140,13 +140,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/CTZ.asl -->
 ```asl
-readonly func InstructionContractHandler_CTZ()
+readonly func SelectCTZHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_CountBitfield;
 end;
 
-pure func InstructionContractResult_CTZ(
+pure func ComputeCTZResult(
     value: Word,
     width: integer {1..64},
     offset: integer {0..63})

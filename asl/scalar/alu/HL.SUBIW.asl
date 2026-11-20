@@ -12,36 +12,36 @@
 // memory, Tile, block, reservation, privilege, numeric-status, or fault state.
 // NDF-END: PTO-HL-SUBIW-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_SUBIW() => ScalarOperation
+readonly func SelectHLSUBIWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_SUBIW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_SUBIW() => ScalarSemanticHandler
+readonly func SelectHLSUBIWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractImmediateWidth_HL_SUBIW()
+pure func HLSUBIWImmediateWidth()
     => integer {1..64}
 begin
     return 24;
 end;
 
-pure func InstructionContractImmediateIsUnsigned_HL_SUBIW()
+pure func HLSUBIWImmediateIsUnsigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_HL_SUBIW()
+pure func HLSUBIWIsWordOperation()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractResult_HL_SUBIW(
+pure func ComputeHLSUBIWResult(
     left: Word,
     immediate: bits(24))
     => Word

@@ -13,19 +13,19 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TSHR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TSHR() => TileOperation
+readonly func SelectTSHROperation() => TileOperation
 begin
     return TileOperation_TSHR;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TSHR(
+pure func TSHRDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileBinaryDataTypeSupported(TileBinary_SHR, data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TSHR(
+readonly func TSHROperandsLegal(
     destination: TileIndex,
     value_source: TileIndex,
     count_source: TileIndex) => boolean
@@ -37,12 +37,12 @@ begin
         count_source);
 end;
 
-readonly func InstructionContractHandler_TSHR() => TileSemanticHandler
+readonly func SelectTSHRHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TSHR(
+func ExecuteTSHR(
     destination: TileIndex,
     value_source: TileIndex,
     count_source: TileIndex)

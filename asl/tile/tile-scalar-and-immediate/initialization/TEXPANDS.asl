@@ -10,19 +10,19 @@
 // Layout 29 selects direct Local CUBE_M32 and Layout 31 selects direct Local CUBE_M16. Omitted B.DATR and Layout=NORM retain RowMajor; all Tile operands in one operation MUST use the same layout.
 // NDF-END: PTO-TEXPANDS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TEXPANDS() => TileOperation
+readonly func SelectTEXPANDSOperation() => TileOperation
 begin
     return TileOperation_TEXPANDS;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TEXPANDS(
+pure func TEXPANDSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TEXPANDS(
+readonly func TEXPANDSOperandsLegal(
     destination: TileIndex,
     scalar: Word) => boolean
 begin
@@ -31,16 +31,16 @@ begin
         scalar);
 end;
 
-readonly func InstructionContractHandler_TEXPANDS() => TileSemanticHandler
+readonly func SelectTEXPANDSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileFillScalar;
 end;
 
-func InstructionContractExecute_TEXPANDS(
+func ExecuteTEXPANDS(
     destination: TileIndex,
     scalar: Word)
 begin
-    assert InstructionContractOperandsLegal_TEXPANDS(
+    assert TEXPANDSOperandsLegal(
         destination,
         scalar);
     ExecuteTileFillScalar(

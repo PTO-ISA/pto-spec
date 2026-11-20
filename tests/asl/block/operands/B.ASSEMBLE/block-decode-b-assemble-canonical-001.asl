@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000001000001010011', 32) == 75;
     assert CommandOperationOfForm(75) == CommandOperation_b_assemble_32_122000000002;
     assert CommandHandlerOfForm(75) == CommandHandler_ApplyBundleAssemble;
-    assert InstructionContractMatches_B_ASSEMBLE(CommandOperationOfForm(75));
-    assert InstructionContractHandler_B_ASSEMBLE() == CommandHandler_ApplyBundleAssemble;
+    assert BASSEMBLEEncodingMatches(CommandOperationOfForm(75));
+    assert SelectBASSEMBLEHandler() == CommandHandler_ApplyBundleAssemble;
     return 0;
 end;

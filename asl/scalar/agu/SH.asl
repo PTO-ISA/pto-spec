@@ -8,55 +8,55 @@
 // the store event and any base update at the defined restart boundary.
 // NDF-END: PTO-SH-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SH() => ScalarOperation
+readonly func SelectSHOperation() => ScalarOperation
 begin
     return ScalarOperation_SH;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SH()
+readonly func SelectSHHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStore;
 end;
 
-pure func InstructionContractAGUAction_SH()
+pure func SHAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Store;
 end;
 
-pure func InstructionContractAGUAddressKind_SH()
+pure func SHAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_Register;
 end;
 
-pure func InstructionContractAGUSizeBytes_SH()
+pure func SHAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 2;
 end;
 
-pure func InstructionContractAGUOffsetScale_SH()
+pure func SHAGUOffsetScale()
     => integer {0..3}
 begin
     return 1;
 end;
 
-pure func InstructionContractAGUUpdateMode_SH()
+pure func SHAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_None;
 end;
 
-pure func InstructionContractAGUSignedLoad_SH()
+pure func SHAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_SH()
+pure func SHAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

@@ -9,7 +9,7 @@ begin
     WriteTileElement(4, 1, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(4, 1, 1, Zeros{PTO_XLEN} + 4);
 
-    let stride = InstructionContractDenseStride_TSTORE(4, TileDataType_U64);
+    let stride = ComputeTSTOREDenseStride(4, TileDataType_U64);
     TSTORE(Zeros{PTO_XLEN} + 0x300, stride, 4);
 
     assert _LastFault == Fault_None;

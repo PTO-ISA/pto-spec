@@ -12,8 +12,8 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(1) == '1111111111111111111111111111111111111111111111111111100000000000';
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x44;
-    assert InstructionContractImmediateWidth_ANDI() == 12;
-    assert InstructionContractImmediateIsSigned_ANDI();
-    assert !InstructionContractIsWordOperation_ANDI();
+    assert ANDIImmediateWidth() == 12;
+    assert ANDIImmediateIsSigned();
+    assert !ANDIIsWordOperation();
     return 0;
 end;

@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000101000000011100', 16) == 41;
     assert ScalarOperationOfForm(41) == ScalarOperation_C_SEXT_W;
     assert ScalarHandlerOfForm(41) == ScalarHandler_ExtendScalarValue;
-    assert InstructionContractOperation_C_SEXT_W() == ScalarOperation_C_SEXT_W;
-    assert InstructionContractHandler_C_SEXT_W() == ScalarHandler_ExtendScalarValue;
+    assert SelectCSEXTWOperation() == ScalarOperation_C_SEXT_W;
+    assert SelectCSEXTWHandler() == ScalarHandler_ExtendScalarValue;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000101000000011100', 41, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

@@ -23,19 +23,19 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TADD-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TADD() => TileOperation
+readonly func SelectTADDOperation() => TileOperation
 begin
     return TileOperation_TADD;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TADD(
+pure func TADDDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TADD(
+readonly func TADDOperandsLegal(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex) => boolean
@@ -47,12 +47,12 @@ begin
         source_right);
 end;
 
-readonly func InstructionContractHandler_TADD() => TileSemanticHandler
+readonly func SelectTADDHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TADD(
+func ExecuteTADD(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex)

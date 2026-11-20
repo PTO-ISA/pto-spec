@@ -10,7 +10,7 @@ begin
         Zeros{PTO_XLEN} + 0x7fefffffffffffff);
     WriteTileElement(1, 0, 0,
         Zeros{PTO_XLEN} + 0x3ff0000000000000);
-    InstructionContractExecute_TREM(2, 0, 1);
+    ExecuteTREM(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN};
     assert NumericStatusFlags() == Zeros{5};
     return 0;

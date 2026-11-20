@@ -148,7 +148,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/HL.QMT.asl -->
 ```asl
-readonly func InstructionContractMatches_HL_QMT(operation: CommandOperation) => boolean
+readonly func HLQMTEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_hl_qmt_48_eb9e41958045);
 end;
@@ -159,7 +159,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/HL.QMT.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_QMT() => CommandSemanticHandler
+readonly func SelectHLQMTHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteQueueMove;
 end;
@@ -176,13 +176,13 @@ begin
         flags);
 end;
 
-pure func InstructionContractChangesQueueManagerState_HL_QMT()
+pure func HLQMTChangesQueueManagerState()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSnapshotsSourcesBeforeWrite_HL_QMT()
+pure func HLQMTSnapshotsSourcesBeforeWrite()
     => boolean
 begin
     return TRUE;

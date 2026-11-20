@@ -15,6 +15,6 @@ begin
     assert _LastFault == Fault_None;
     assert ReadGPR(5) == Zeros{PTO_XLEN} + 0x1000;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert InstructionContractOperation_ASSERT() == ScalarOperation_ASSERT;
+    assert SelectASSERTOperation() == ScalarOperation_ASSERT;
     return 0;
 end;

@@ -25,7 +25,7 @@ begin
     assert pe0_offset == 448 && pe0_bytes == 2048;
     assert pe2_offset == 4544 && pe2_bytes == 64;
     assert pe3_offset == 4608 && pe3_bytes == 0;
-    assert InstructionContractTIMG2COLCoreMaskLegal('1111');
-    assert !InstructionContractTIMG2COLCoreMaskLegal('0111');
+    assert TIMG2COLCoreMaskLegal('1111');
+    assert !TIMG2COLCoreMaskLegal('0111');
     return 0;
 end;

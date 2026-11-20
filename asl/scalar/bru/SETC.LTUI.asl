@@ -8,30 +8,30 @@
 // BARG.TAKEN. A rejected occurrence MUST NOT consume the shared marker.
 // NDF-END: PTO-SETC-LTUI-CONDITIONAL-SETTER-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SETC_LTUI() => ScalarOperation
+readonly func SelectSETCLTUIOperation() => ScalarOperation
 begin
     return ScalarOperation_SETC_LTUI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SETC_LTUI() => ScalarSemanticHandler
+readonly func SelectSETCLTUIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommit;
 end;
 
-pure func InstructionContractCondition_SETC_LTUI()
+pure func DecodeSETCLTUICondition()
     => ScalarCondition
 begin
     return ScalarCondition_LTU;
 end;
 
-pure func InstructionContractCommitResult_SETC_LTUI(
+pure func CommitSETCLTUIResult(
     left: Word,
     right: Word)
     => boolean
 begin
     return ConditionHolds(
-        InstructionContractCondition_SETC_LTUI(),
+        DecodeSETCLTUICondition(),
         left,
         right);
 end;

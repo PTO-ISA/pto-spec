@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fence-i-mechanism role=mechanism -->
 ## 系统机制
 
-`InstructionContractHandler_FENCE_I` 选择 `ScalarHandler_FenceInstruction`（`asl/scalar/sys/FENCE.I.asl:18`），且 `InstructionContractFenceInvalidatesReservation_FENCE_I` 与 `InstructionContractAdvancesInstructionEpoch_FENCE_I` 都返回 `TRUE`（`asl/scalar/sys/FENCE.I.asl:30`）。`FenceInstruction` 恰好实现这两步，其 ASL 注释指出可执行字节数组模型本就具有一致的指令与数据存储，因此是指令缓存纪元把架构可见性点显式化（`asl/scalar/model/sys/semantics.asl:83`）。
+`SelectFENCEIHandler` 选择 `ScalarHandler_FenceInstruction`（`asl/scalar/sys/FENCE.I.asl:18`），且 `FENCEIFenceInvalidatesReservation` 与 `FENCEIAdvancesInstructionEpoch` 都返回 `TRUE`（`asl/scalar/sys/FENCE.I.asl:30`）。`FenceInstruction` 恰好实现这两步，其 ASL 注释指出可执行字节数组模型本就具有一致的指令与数据存储，因此是指令缓存纪元把架构可见性点显式化（`asl/scalar/model/sys/semantics.asl:83`）。
 
 与其他 SYS 块指令一样，该指令要求活动 SYS 块的块体。
 
@@ -84,7 +84,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/FENCE.I.asl -->
 ```asl
-readonly func InstructionContractOperation_FENCE_I()
+readonly func SelectFENCEIOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FENCE_I;
@@ -102,25 +102,25 @@ FENCE.I executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/FENCE.I.asl -->
 ```asl
-readonly func InstructionContractHandler_FENCE_I()
+readonly func SelectFENCEIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FenceInstruction;
 end;
 
-pure func InstructionContractRequiresSystemBlock_FENCE_I()
+pure func FENCEIRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractFenceInvalidatesReservation_FENCE_I()
+pure func FENCEIFenceInvalidatesReservation()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractAdvancesInstructionEpoch_FENCE_I()
+pure func FENCEIAdvancesInstructionEpoch()
     => boolean
 begin
     return TRUE;

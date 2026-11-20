@@ -175,7 +175,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-and-immediate/arithmetic/TSUBS.asl -->
 ```asl
-readonly func InstructionContractOperation_TSUBS() => TileOperation
+readonly func SelectTSUBSOperation() => TileOperation
 begin
     return TileOperation_TSUBS;
 end;
@@ -199,7 +199,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/tile-scalar-and-immediate/arithmetic/TSUBS.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TSUBS(
+pure func TSUBSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileBinaryDataTypeSupported(
@@ -207,7 +207,7 @@ begin
         data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TSUBS(
+readonly func TSUBSOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word) => boolean
@@ -219,17 +219,17 @@ begin
         scalar);
 end;
 
-readonly func InstructionContractHandler_TSUBS() => TileSemanticHandler
+readonly func SelectTSUBSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileScalar;
 end;
 
-func InstructionContractExecute_TSUBS(
+func ExecuteTSUBS(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word)
 begin
-    assert InstructionContractOperandsLegal_TSUBS(
+    assert TSUBSOperandsLegal(
         destination,
         source,
         scalar);

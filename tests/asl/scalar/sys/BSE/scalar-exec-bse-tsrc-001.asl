@@ -20,6 +20,6 @@ begin
     assert !MessageBufferEnabledForCurrentContext();
     assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 0x1000;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert InstructionContractOperation_BSE() == ScalarOperation_BSE;
+    assert SelectBSEOperation() == ScalarOperation_BSE;
     return 0;
 end;

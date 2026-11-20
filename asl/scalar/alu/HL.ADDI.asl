@@ -12,36 +12,36 @@
 // memory, Tile, block, reservation, privilege, numeric-status, or fault state.
 // NDF-END: PTO-HL-ADDI-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_ADDI() => ScalarOperation
+readonly func SelectHLADDIOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_ADDI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_ADDI() => ScalarSemanticHandler
+readonly func SelectHLADDIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractImmediateWidth_HL_ADDI()
+pure func HLADDIImmediateWidth()
     => integer {1..64}
 begin
     return 24;
 end;
 
-pure func InstructionContractImmediateIsUnsigned_HL_ADDI()
+pure func HLADDIImmediateIsUnsigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_HL_ADDI()
+pure func HLADDIIsWordOperation()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractResult_HL_ADDI(
+pure func ComputeHLADDIResult(
     left: Word,
     immediate: bits(24))
     => Word

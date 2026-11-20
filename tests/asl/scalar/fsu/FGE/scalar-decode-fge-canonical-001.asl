@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000011000001011011', 32) == 101;
     assert ScalarOperationOfForm(101) == ScalarOperation_FGE;
     assert ScalarHandlerOfForm(101) == ScalarHandler_FloatingCompare;
-    assert InstructionContractOperation_FGE() == ScalarOperation_FGE;
-    assert InstructionContractHandler_FGE() == ScalarHandler_FloatingCompare;
+    assert SelectFGEOperation() == ScalarOperation_FGE;
+    assert SelectFGEHandler() == ScalarHandler_FloatingCompare;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000011000001011011', 101, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000011000001011011', 101, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000011000001011011', 101, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';

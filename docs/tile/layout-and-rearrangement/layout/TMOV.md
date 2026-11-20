@@ -107,7 +107,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/layout-and-rearrangement/layout/TMOV.asl -->
 ```asl
-readonly func InstructionContractOperation_TMOV() => TileOperation
+readonly func SelectTMOVOperation() => TileOperation
 begin
     return TileOperation_TMOV;
 end;
@@ -129,23 +129,23 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/layout-and-rearrangement/layout/TMOV.asl -->
 ```asl
-readonly func InstructionContractHandler_TMOV() => TileSemanticHandler
+readonly func SelectTMOVHandler() => TileSemanticHandler
 begin
     return TileHandler_TMOV;
 end;
 
-readonly func InstructionContractOperandsLegal_TMOV(
+readonly func TMOVOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
     return TileOperandsLegal_TMOV(destination, source);
 end;
 
-func InstructionContractExecute_TMOV(
+func ExecuteTMOV(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TMOV(destination, source);
+    assert TMOVOperandsLegal(destination, source);
     TMOV(destination, source);
 end;
 ```

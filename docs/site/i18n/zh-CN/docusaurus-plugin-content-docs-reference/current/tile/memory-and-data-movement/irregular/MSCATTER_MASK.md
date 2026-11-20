@@ -21,7 +21,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `MSCATTER_MASK` 是 TLSU Function 7，写作 `BSTART.MSCATTER.MASK DataType`。它的寻址沿用 `MSCATTER` 的字节位移规则：`B.IOR.RegSrc0` 指定的每 PE 基地址加上索引值，存储的值是源元素的原始位。区别在于一个 Local `U8` 谓词 Tile 决定哪些索引事务执行存储。NDF `PTO-MSCATTER-MASK-PREDICATE-001` 规定每个事务只能取 `0x00` 与 `0x01`，并规定零值会抑制地址生成、转换、权限检查、存储与事件。
 
-拥有者声明 `InstructionContractUsesMaskTile_MSCATTER_MASK` 为 TRUE、`InstructionContractWritesMemory_MSCATTER_MASK` 为 TRUE。分派器 `ExecuteBundleMSCATTERMASKOperation` 解码 Function 7，检查两条 `B.IOT` 绑定与描述符，然后调用 `TileOperandsLegal_MSCATTER_MASK` 与执行体 `MSCATTER_MASK`。
+拥有者声明 `MSCATTERMASKUsesMaskTile` 为 TRUE、`MSCATTERMASKWritesMemory` 为 TRUE。分派器 `ExecuteBundleMSCATTERMASKOperation` 解码 Function 7，检查两条 `B.IOT` 绑定与描述符，然后调用 `TileOperandsLegal_MSCATTER_MASK` 与执行体 `MSCATTER_MASK`。
 
 设计要点：通道判定为 `BundleExecutionMaskActiveAt(...) && ReadIndexedTLSUPredicate(mask, ...)`，地址计算与探测都在该判定之内。因此谓词元素为零的通道不会被转换，也不会发生故障，所以超出范围或未对齐的位移在其谓词元素为零时是无害的。
 
@@ -164,7 +164,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl -->
 ```asl
-readonly func InstructionContractOperation_MSCATTER_MASK() => TileOperation
+readonly func SelectMSCATTERMASKOperation() => TileOperation
 begin
     return TileOperation_MSCATTER_MASK;
 end;
@@ -190,30 +190,30 @@ When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiG
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl -->
 ```asl
-readonly func InstructionContractHandler_MSCATTER_MASK() => TileSemanticHandler
+readonly func SelectMSCATTERMASKHandler() => TileSemanticHandler
 begin
     return TileHandler_MSCATTER_MASK;
 end;
 
-pure func InstructionContractUsesByteDisplacements_MSCATTER_MASK()
+pure func MSCATTERMASKUsesByteDisplacements()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesMaskTile_MSCATTER_MASK()
+pure func MSCATTERMASKUsesMaskTile()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsAtomicMemoryOperation_MSCATTER_MASK()
+pure func MSCATTERMASKIsAtomicMemoryOperation()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractWritesMemory_MSCATTER_MASK()
+pure func MSCATTERMASKWritesMemory()
     => boolean
 begin
     return TRUE;

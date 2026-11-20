@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000001000000100011', 32) == 1;
     assert CommandOperationOfForm(1) == CommandOperation_b_datr_32_c161a042ff38;
     assert CommandHandlerOfForm(1) == CommandHandler_SetBundleDataAttributes;
-    assert InstructionContractMatches_B_DATR(CommandOperationOfForm(1));
-    assert InstructionContractHandler_B_DATR() == CommandHandler_SetBundleDataAttributes;
+    assert BDATREncodingMatches(CommandOperationOfForm(1));
+    assert SelectBDATRHandler() == CommandHandler_SetBundleDataAttributes;
     return 0;
 end;

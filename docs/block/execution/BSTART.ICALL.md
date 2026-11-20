@@ -21,7 +21,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `BSTART.ICALL` is the fused indirect call. It retires the block that is active, snapshots that block's `BARG.BPCN` as the call target, opens a new Standard indirect-call block, and publishes an independent return target to `ra`. The call target is not encoded in this command at all; only the return address is.
 
-The one accepted spelling is `BSTART.ICALL <rt_label>, ->ra`, a 32-bit word with match `0x50166001` under mask `0xf83fffff`. The mask fixes the high discriminator bits and bits 21 to 0, and leaves the unsigned 5-bit `uimm5` visible in bits 26 to 22. `InstructionContractTransfer_BSTART_ICALL` returns `BundleTransfer_IndirectCall` and `InstructionContractWritesReturnAddress_BSTART_ICALL` returns TRUE.
+The one accepted spelling is `BSTART.ICALL <rt_label>, ->ra`, a 32-bit word with match `0x50166001` under mask `0xf83fffff`. The mask fixes the high discriminator bits and bits 21 to 0, and leaves the unsigned 5-bit `uimm5` visible in bits 26 to 22. `BSTARTICALLTransfer` returns `BundleTransfer_IndirectCall` and `BSTARTICALLWritesReturnAddress` returns TRUE.
 
 Design point: `BSTART.STD CALL, <label>` and `BSTART.FP CALL, <label>` take their target from `simm17` and their return address from the sequential word. `BSTART.ICALL` reverses that split: the target comes from the retiring block's `BARG.BPCN` and the return target comes from `uimm5`. The observable consequence is that a caller can call a destination the closing block only knows as its own candidate continuation.
 
@@ -109,7 +109,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.ICALL.asl -->
 ```asl
-readonly func InstructionContractMatches_BSTART_ICALL(operation: CommandOperation) => boolean
+readonly func BSTARTICALLEncodingMatches(operation: CommandOperation) => boolean
 begin
     return operation == CommandOperation_bstart_icall_32_50166001;
 end;
@@ -126,18 +126,18 @@ BSTART.ICALL retires one active Standard or Floating block whose BARG.BPCN suppl
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.ICALL.asl -->
 ```asl
-readonly func InstructionContractHandler_BSTART_ICALL() => CommandSemanticHandler
+readonly func SelectBSTARTICALLHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractTransfer_BSTART_ICALL()
+readonly func BSTARTICALLTransfer()
     => BundleTransfer
 begin
     return BundleTransfer_IndirectCall;
 end;
 
-pure func InstructionContractWritesReturnAddress_BSTART_ICALL()
+pure func BSTARTICALLWritesReturnAddress()
     => boolean
 begin
     return TRUE;

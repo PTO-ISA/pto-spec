@@ -24,16 +24,16 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-lsrget-mechanism role=mechanism -->
 ## 系统机制
 
-`InstructionContractHandler_LSRGET` 选择 `ScalarHandler_ExecuteLocalStateRegisterGet`（`asl/scalar/sys/LSRGET.asl:17`），而 `InstructionContractRequiresSystemBlock_LSRGET` 返回 `FALSE`（`asl/scalar/sys/LSRGET.asl:23`），因此它不是 SYS 块指令：它需要任意活动的块体。派发器解码 `RegDst`，并把标识符的低 12 位传给辅助函数（`asl/scalar/model/dispatch/sys.asl:101`）。
+`SelectLSRGETHandler` 选择 `ScalarHandler_ExecuteLocalStateRegisterGet`（`asl/scalar/sys/LSRGET.asl:17`），而 `LSRGETRequiresSystemBlock` 返回 `FALSE`（`asl/scalar/sys/LSRGET.asl:23`），因此它不是 SYS 块指令：它需要任意活动的块体。派发器解码 `RegDst`，并把标识符的低 12 位传给辅助函数（`asl/scalar/model/dispatch/sys.asl:101`）。
 
 该辅助函数先询问 `CurrentBARGWordApplicable`，当答案为否时引发 `Fault_BundleControl`（`asl/scalar/model/sys/semantics.asl:172`）。
 
 <!-- PTO-READER-BLOCK: scalar-lsrget-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`LSR_ID` 是 12 位 BARG 字标识符，`RegDst` 是 Reg5 目的地（`asl/scalar/sys/LSRGET.asl:1`）。标识符 0 选择 `BARG.BPC`，标识符 1 选择 `BARG.BPCN`，标识符 2 选择打包控制字；标识符 3 到 4095 为保留。`InstructionContractLocalRegisterIDLegal_LSRGET` 把该限制写成 `UInt(identifier) <= 2`（`asl/scalar/sys/LSRGET.asl:29`）。
+`LSR_ID` 是 12 位 BARG 字标识符，`RegDst` 是 Reg5 目的地（`asl/scalar/sys/LSRGET.asl:1`）。标识符 0 选择 `BARG.BPC`，标识符 1 选择 `BARG.BPCN`，标识符 2 选择打包控制字；标识符 3 到 4095 为保留。`LSRGETLocalRegisterIDLegal` 把该限制写成 `UInt(identifier) <= 2`（`asl/scalar/sys/LSRGET.asl:29`）。
 
-设计要点：标识符 1 只对 Standard 与 Floating 块适用，因为 `BARGHasCandidateWord` 仅对这两个块种类为真（`asl/block/model/state/barg.asl:31`）。`InstructionContractBPCNApplicable_LSRGET` 规定了同样这两个种类（`asl/scalar/sys/LSRGET.asl:35`），因此没有 `BARG.BPCN` 的块种类无法被索取该字。
+设计要点：标识符 1 只对 Standard 与 Floating 块适用，因为 `BARGHasCandidateWord` 仅对这两个块种类为真（`asl/block/model/state/barg.asl:31`）。`LSRGETBPCNApplicable` 规定了同样这两个种类（`asl/scalar/sys/LSRGET.asl:35`），因此没有 `BARG.BPCN` 的块种类无法被索取该字。
 
 <!-- PTO-READER-BLOCK: scalar-lsrget-effects role=effects -->
 ## 架构效果
@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/LSRGET.asl -->
 ```asl
-readonly func InstructionContractOperation_LSRGET()
+readonly func SelectLSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_LSRGET;
@@ -121,32 +121,32 @@ LSRGET is legal in any active block body for which the selected BARG word exists
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/LSRGET.asl -->
 ```asl
-readonly func InstructionContractHandler_LSRGET()
+readonly func SelectLSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteLocalStateRegisterGet;
 end;
 
-pure func InstructionContractRequiresSystemBlock_LSRGET()
+pure func LSRGETRequiresSystemBlock()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractLocalRegisterIDLegal_LSRGET(
+pure func LSRGETLocalRegisterIDLegal(
     identifier: bits(12)) => boolean
 begin
     return UInt(identifier) <= 2;
 end;
 
-pure func InstructionContractBPCNApplicable_LSRGET(
+pure func LSRGETBPCNApplicable(
     kind: BundleKind) => boolean
 begin
     return kind == BundleKind_Standard ||
            kind == BundleKind_Floating;
 end;
 
-pure func InstructionContractReadsBARG_LSRGET()
+pure func LSRGETReadsBARG()
     => boolean
 begin
     return TRUE;

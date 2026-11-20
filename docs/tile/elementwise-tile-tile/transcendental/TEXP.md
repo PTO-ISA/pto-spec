@@ -129,7 +129,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/transcendental/TEXP.asl -->
 ```asl
-readonly func InstructionContractOperation_TEXP() => TileOperation
+readonly func SelectTEXPOperation() => TileOperation
 begin
     return TileOperation_TEXP;
 end;
@@ -152,7 +152,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/transcendental/TEXP.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TEXP(
+pure func TEXPDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileUnaryDataTypeSupported(
@@ -160,7 +160,7 @@ begin
         data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TEXP(
+readonly func TEXPOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -170,16 +170,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TEXP() => TileSemanticHandler
+readonly func SelectTEXPHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;
 
-func InstructionContractExecute_TEXP(
+func ExecuteTEXP(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TEXP(
+    assert TEXPOperandsLegal(
         destination,
         source);
     ExecuteTileUnary(

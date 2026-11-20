@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/attributes/C.B.DIMI.asl -->
 ```asl
-readonly func InstructionContractMatches_C_B_DIMI(
+readonly func CBDIMIEncodingMatches(
     operation: CommandOperation)
     => boolean
 begin
@@ -139,7 +139,7 @@ Header command after BSTART and before the first body instruction. C.B.DIMI and 
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/attributes/C.B.DIMI.asl -->
 ```asl
-pure func InstructionContractDimension_C_B_DIMI(
+pure func CBDIMIDimension(
     loop_nest: bits(2))
     => BundleDimensionIndex
 begin
@@ -147,14 +147,14 @@ begin
     return UInt(loop_nest) as BundleDimensionIndex;
 end;
 
-pure func InstructionContractValue_C_B_DIMI(
+pure func ComputeCBDIMIValue(
     immediate: bits(8))
     => Word
 begin
     return ZeroExtend{PTO_XLEN}(immediate);
 end;
 
-readonly func InstructionContractHandler_C_B_DIMI()
+readonly func SelectCBDIMIHandler()
     => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleDimension;

@@ -16,14 +16,14 @@ begin
     SetBundleDataAttributeState(Zeros{5} + 24, Zeros{5}, '10',
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     _BundleDataAttributesPresent = TRUE;
-    InstructionContractExecute_TMIN(2, 0, 1);
+    ExecuteTMIN(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 5;
     assert TileElementDefined(2, 0, 1);
     assert ReadTileElement(2, 0, 1) == Zeros{PTO_XLEN} + 0x80;
 
     ResetProfileState();
     ConfigureTminPaddedTiles();
-    InstructionContractExecute_TMIN(2, 0, 1);
+    ExecuteTMIN(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 5;
     assert !TileElementDefined(2, 0, 1);
     return 0;

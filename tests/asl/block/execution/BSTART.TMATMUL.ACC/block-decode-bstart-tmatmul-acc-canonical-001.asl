@@ -5,10 +5,10 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000001000110001000110000001', 32) == 42;
     assert CommandOperationOfForm(42) == CommandOperation_bstart_tmatmul_acc_32_0c8c62e5f00a;
     assert CommandHandlerOfForm(42) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_BSTART_TMATMUL_ACC(CommandOperationOfForm(42));
-    assert InstructionContractHandler_BSTART_TMATMUL_ACC() == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractTileOperation_BSTART_TMATMUL_ACC() == TileOperation_TMATMUL_ACC;
-    assert InstructionContractCubeFunction_BSTART_TMATMUL_ACC() == 2;
-    assert InstructionContractSharedOperandsAllowed_BSTART_TMATMUL_ACC() == TRUE;
+    assert BSTARTTMATMULACCEncodingMatches(CommandOperationOfForm(42));
+    assert SelectBSTARTTMATMULACCHandler() == CommandHandler_ExecuteBundleStart;
+    assert SelectBSTARTTMATMULACCTileOperation() == TileOperation_TMATMUL_ACC;
+    assert BSTARTTMATMULACCCubeFunction() == 2;
+    assert BSTARTTMATMULACCSharedOperandsAllowed() == TRUE;
     return 0;
 end;

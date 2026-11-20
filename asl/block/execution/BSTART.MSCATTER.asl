@@ -9,24 +9,24 @@
 // encode zero.
 // NDF-END: PTO-BSTART-MSCATTER-SCHEMA-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_MSCATTER(operation: CommandOperation) => boolean
+readonly func BSTARTMSCATTEREncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_mscatter_32_0f0ba08bd798);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSTART_MSCATTER() => CommandSemanticHandler
+readonly func SelectBSTARTMSCATTERHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractStartedTileOperation_BSTART_MSCATTER()
+readonly func BSTARTMSCATTERStartedTileOperation()
     => TileOperation
 begin
     return TileOperation_MSCATTER;
 end;
 
-pure func InstructionContractStartsTileBundle_BSTART_MSCATTER()
+pure func BSTARTMSCATTERStartsTileBundle()
     => boolean
 begin
     return TRUE;

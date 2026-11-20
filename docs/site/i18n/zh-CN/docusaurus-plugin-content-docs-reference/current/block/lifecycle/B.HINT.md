@@ -132,7 +132,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/B.HINT.asl -->
 ```asl
-readonly func InstructionContractMatches_B_HINT(operation: CommandOperation) => boolean
+readonly func BHINTEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_b_hint_32_69d942ff1583) ||
            (operation == CommandOperation_b_hint_32_f7d01d734925);
@@ -151,18 +151,18 @@ TRACE form: acts as a block start only when predecessor commit selects the fetch
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/B.HINT.asl -->
 ```asl
-readonly func InstructionContractHandler_B_HINT() => CommandSemanticHandler
+readonly func SelectBHINTHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleHint;
 end;
 
-pure func InstructionContractIsBundleHint_B_HINT()
+pure func BHINTIsBundleHint()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractTraceFormMayTerminate_B_HINT()
+pure func BHINTTraceFormMayTerminate()
     => boolean
 begin
     return TRUE;

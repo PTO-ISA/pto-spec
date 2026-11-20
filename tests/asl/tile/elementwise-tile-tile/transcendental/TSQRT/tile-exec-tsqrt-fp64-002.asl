@@ -9,7 +9,7 @@ begin
     WriteTileElement(0, 0, 0,
         Zeros{PTO_XLEN} + 0x4010000000000000);
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 1);
-    InstructionContractExecute_TSQRT(1, 0);
+    ExecuteTSQRT(1, 0);
     assert ReadTileElement(1, 0, 0) ==
         Zeros{PTO_XLEN} + 0x4000000000000000;
     assert ReadTileElement(1, 0, 1) ==

@@ -121,7 +121,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/SCVTF.asl -->
 ```asl
-readonly func InstructionContractOperation_SCVTF()
+readonly func SelectSCVTFOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SCVTF;
@@ -133,44 +133,44 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/SCVTF.asl -->
 ```asl
-readonly func InstructionContractHandler_SCVTF()
+readonly func SelectSCVTFHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ConvertFloatingEncoding;
 end;
 
-pure func InstructionContractSourceTypeLegal_SCVTF(encoded: bits(2))
+pure func SCVTFSourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSourceCarrier_SCVTF(encoded: bits(2))
+pure func DecodeSCVTFSourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_SCVTF(encoded);
+    assert SCVTFSourceTypeLegal(encoded);
     return ScalarSignedIntegerSourceTypeCode(encoded);
 end;
 
-pure func InstructionContractDestinationTypeLegal_SCVTF(encoded: bits(5))
+pure func SCVTFDestinationTypeLegal(encoded: bits(5))
     => boolean
 begin
     return UInt(encoded) <= 3;
 end;
 
-pure func InstructionContractSourceArity_SCVTF()
+pure func SCVTFSourceArity()
     => integer {1..3}
 begin
     return 1;
 end;
 
-pure func InstructionContractUsesProfileFlags_SCVTF()
+pure func SCVTFUsesProfileFlags()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesActiveRounding_SCVTF()
+pure func SCVTFUsesActiveRounding()
     => boolean
 begin
     return TRUE;

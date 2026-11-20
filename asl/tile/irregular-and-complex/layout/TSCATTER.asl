@@ -11,13 +11,13 @@
 // writes atomically.
 // NDF-END: PTO-TSCATTER-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TSCATTER() => TileOperation
+readonly func SelectTSCATTEROperation() => TileOperation
 begin
     return TileOperation_TSCATTER;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractOperandsLegal_TSCATTER(
+readonly func TSCATTEROperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     indices: TileIndex) => boolean
@@ -25,17 +25,17 @@ begin
     return TileOperandsLegal_TSCATTER(destination, source, indices);
 end;
 
-readonly func InstructionContractHandler_TSCATTER() => TileSemanticHandler
+readonly func SelectTSCATTERHandler() => TileSemanticHandler
 begin
     return TileHandler_TSCATTER;
 end;
 
-func InstructionContractExecute_TSCATTER(
+func ExecuteTSCATTER(
     destination: TileIndex,
     source: TileIndex,
     indices: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TSCATTER(
+    assert TSCATTEROperandsLegal(
         destination,
         source,
         indices);

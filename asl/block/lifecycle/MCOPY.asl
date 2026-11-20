@@ -6,24 +6,24 @@
 // Each memory step MUST be an exact restart boundary and MUST NOT be repeated.
 // NDF-END: PTO-MCOPY-RESTART-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_MCOPY(operation: CommandOperation) => boolean
+readonly func MCOPYEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_mcopy_32_4fc4a803e995);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_MCOPY() => CommandSemanticHandler
+readonly func SelectMCOPYHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteMemoryCopy;
 end;
 
-pure func InstructionContractMemoryStepRestartable_MCOPY()
+pure func MCOPYMemoryStepRestartable()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractForbidsOverlap_MCOPY()
+pure func MCOPYForbidsOverlap()
     => boolean
 begin
     return TRUE;

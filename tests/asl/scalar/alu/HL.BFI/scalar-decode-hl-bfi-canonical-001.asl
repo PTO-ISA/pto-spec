@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000100000010011010000000000001110', 48) == 122;
     assert ScalarOperationOfForm(122) == ScalarOperation_HL_BFI;
     assert ScalarHandlerOfForm(122) == ScalarHandler_InsertBitfield;
-    assert InstructionContractOperation_HL_BFI() == ScalarOperation_HL_BFI;
-    assert InstructionContractHandler_HL_BFI() == ScalarHandler_InsertBitfield;
+    assert SelectHLBFIOperation() == ScalarOperation_HL_BFI;
+    assert SelectHLBFIHandler() == ScalarHandler_InsertBitfield;
     assert DecodeScalarOperandRaw('000000000000000000100000010011010000000000001110', 122, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000100000010011010000000000001110', 122, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000100000010011010000000000001110', 122, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';

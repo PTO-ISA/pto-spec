@@ -114,13 +114,13 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/ERCOV.asl -->
 ```asl
-readonly func InstructionContractMatches_ERCOV(operation: CommandOperation)
+readonly func ERCOVEncodingMatches(operation: CommandOperation)
     => boolean
 begin
     return operation == CommandOperation_ercov_32_dc0be14a2d8b;
 end;
 
-pure func InstructionContractSupported_ERCOV() => boolean
+pure func ERCOVSupported() => boolean
 begin
     return FALSE;
 end;
@@ -137,12 +137,12 @@ none; ERCOV is not an executable PTO command
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/ERCOV.asl -->
 ```asl
-readonly func InstructionContractHandler_ERCOV() => CommandSemanticHandler
+readonly func SelectERCOVHandler() => CommandSemanticHandler
 begin
     return CommandHandler_RecoverExecutionContext;
 end;
 
-pure func InstructionContractRejectsBeforeEffects_ERCOV() => boolean
+pure func ERCOVRejectsBeforeEffects() => boolean
 begin
     return !CommandHandlerSupported(
         CommandHandler_RecoverExecutionContext);

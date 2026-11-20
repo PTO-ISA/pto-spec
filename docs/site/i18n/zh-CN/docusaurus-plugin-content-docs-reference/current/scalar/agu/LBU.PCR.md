@@ -115,7 +115,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/LBU.PCR.asl -->
 ```asl
-readonly func InstructionContractOperation_LBU_PCR() => ScalarOperation
+readonly func SelectLBUPCROperation() => ScalarOperation
 begin
     return ScalarOperation_LBU_PCR;
 end;
@@ -126,49 +126,49 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/LBU.PCR.asl -->
 ```asl
-readonly func InstructionContractHandler_LBU_PCR()
+readonly func SelectLBUPCRHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarLoad;
 end;
 
-pure func InstructionContractAGUAction_LBU_PCR()
+pure func LBUPCRAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Load;
 end;
 
-pure func InstructionContractAGUAddressKind_LBU_PCR()
+pure func LBUPCRAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_PCRelative;
 end;
 
-pure func InstructionContractAGUSizeBytes_LBU_PCR()
+pure func LBUPCRAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 1;
 end;
 
-pure func InstructionContractAGUOffsetScale_LBU_PCR()
+pure func LBUPCRAGUOffsetScale()
     => integer {0..3}
 begin
     return 2;
 end;
 
-pure func InstructionContractAGUUpdateMode_LBU_PCR()
+pure func LBUPCRAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_None;
 end;
 
-pure func InstructionContractAGUSignedLoad_LBU_PCR()
+pure func LBUPCRAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_LBU_PCR()
+pure func LBUPCRAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

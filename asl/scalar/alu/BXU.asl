@@ -8,32 +8,32 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-BXU-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_BXU()
+readonly func SelectBXUOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BXU;
 end;
 
-pure func InstructionContractWidth_BXU(encoded_imml: bits(6))
+pure func BXUWidth(encoded_imml: bits(6))
     => integer {1..64}
 begin
     return UInt(encoded_imml) + 1;
 end;
 
-pure func InstructionContractOffset_BXU(encoded_imms: bits(6))
+pure func DecodeBXUOffset(encoded_imms: bits(6))
     => integer {0..63}
 begin
     return UInt(encoded_imms);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BXU()
+readonly func SelectBXUHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExtractBitfield;
 end;
 
-pure func InstructionContractResult_BXU(
+pure func ComputeBXUResult(
     value: Word,
     width: integer {1..64},
     offset: integer {0..63})

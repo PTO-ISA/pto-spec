@@ -188,7 +188,7 @@ Expected: all pass.
 Each test must assert its exact mask/match, every operand field, semantic handler, positive decode witness, and canonical assembly. For PRE, include:
 
 ```asl
-assert InstructionContractMatches_B_FPATR_PRE(operation);
+assert BFPATRPREEncodingMatches(operation);
 assert CommandHandlerOfForm(form) ==
     CommandHandler_SetBundleFixedPointPreAttributes;
 assert DecodeCommandOperandRaw(instruction, form,

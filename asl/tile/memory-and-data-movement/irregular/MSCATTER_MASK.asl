@@ -20,36 +20,36 @@
 // use two adjacent logical nibbles per indexed byte and one predicate per pair.
 // NDF-END: PTO-MSCATTER-MASK-TYPE-002
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_MSCATTER_MASK() => TileOperation
+readonly func SelectMSCATTERMASKOperation() => TileOperation
 begin
     return TileOperation_MSCATTER_MASK;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_MSCATTER_MASK() => TileSemanticHandler
+readonly func SelectMSCATTERMASKHandler() => TileSemanticHandler
 begin
     return TileHandler_MSCATTER_MASK;
 end;
 
-pure func InstructionContractUsesByteDisplacements_MSCATTER_MASK()
+pure func MSCATTERMASKUsesByteDisplacements()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesMaskTile_MSCATTER_MASK()
+pure func MSCATTERMASKUsesMaskTile()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsAtomicMemoryOperation_MSCATTER_MASK()
+pure func MSCATTERMASKIsAtomicMemoryOperation()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractWritesMemory_MSCATTER_MASK()
+pure func MSCATTERMASKWritesMemory()
     => boolean
 begin
     return TRUE;

@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000000000011010011', 32) == 74;
     assert CommandOperationOfForm(74) == CommandOperation_b_subview_32_122000000001;
     assert CommandHandlerOfForm(74) == CommandHandler_ApplyBundleSubview;
-    assert InstructionContractMatches_B_SUBVIEW(CommandOperationOfForm(74));
-    assert InstructionContractHandler_B_SUBVIEW() == CommandHandler_ApplyBundleSubview;
+    assert BSUBVIEWEncodingMatches(CommandOperationOfForm(74));
+    assert SelectBSUBVIEWHandler() == CommandHandler_ApplyBundleSubview;
     return 0;
 end;

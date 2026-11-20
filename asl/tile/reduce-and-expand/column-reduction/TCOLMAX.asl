@@ -26,19 +26,19 @@
 // For CUBE_M16/M32, destination Rows MUST equal source Rows and destination Columns MUST equal align_up(destination ValidColumns, destination CellCols), where destination CellCols is computed from destination DataType.
 // NDF-END: PTO-TCOLMAX-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TCOLMAX() => TileOperation
+readonly func SelectTCOLMAXOperation() => TileOperation
 begin
     return TileOperation_TCOLMAX;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TCOLMAX(
+pure func TCOLMAXDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TCOLMAX(
+readonly func TCOLMAXOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -49,16 +49,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TCOLMAX() => TileSemanticHandler
+readonly func SelectTCOLMAXHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileReduction;
 end;
 
-func InstructionContractExecute_TCOLMAX(
+func ExecuteTCOLMAX(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TCOLMAX(
+    assert TCOLMAXOperandsLegal(
         destination,
         source);
     ExecuteTileReduction(

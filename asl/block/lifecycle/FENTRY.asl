@@ -5,13 +5,13 @@
 // MUST commit each descending stack store as one restartable memory step.
 // NDF-END: PTO-FENTRY-RESTARTABLE-FRAME-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_FENTRY(operation: CommandOperation) => boolean
+readonly func FENTRYEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_fentry_32_a47584ec13b6);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_FENTRY() => CommandSemanticHandler
+readonly func SelectFENTRYHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteFrameEntry;
 end;
@@ -23,13 +23,13 @@ begin
     EnterFrame(begin_reg, end_reg, frame_size);
 end;
 
-pure func InstructionContractUsesInclusiveRegisterRange_FENTRY()
+pure func FENTRYUsesInclusiveRegisterRange()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractRejectsInvalidFrameRange_FENTRY()
+pure func FENTRYRejectsInvalidFrameRange()
     => boolean
 begin
     return TRUE;

@@ -43,10 +43,10 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
 
-    assert InstructionContractAtomicOperation_LW_SMIN() == Atomic_SMIN;
-    assert InstructionContractAtomicSizeBytes_LW_SMIN() == 4;
-    assert InstructionContractPublishesOldValue_LW_SMIN();
-    assert InstructionContractSignExtendsOldValue_LW_SMIN();
+    assert SelectLWSMINAtomicOperation() == Atomic_SMIN;
+    assert LWSMINAtomicSizeBytes() == 4;
+    assert LWSMINPublishesOldValue();
+    assert LWSMINSignExtendsOldValue();
 end;
 
 func main() => integer

@@ -31,7 +31,7 @@ begin
         1,
         Zeros{PTO_XLEN} + 9);
 
-    InstructionContractExecute_TSUBS(
+    ExecuteTSUBS(
         1,
         0,
         Zeros{PTO_XLEN} + 5);

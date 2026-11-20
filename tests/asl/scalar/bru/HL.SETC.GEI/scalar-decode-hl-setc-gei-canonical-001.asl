@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000001010000011101010000000000001110', 48) == 261;
     assert ScalarOperationOfForm(261) == ScalarOperation_HL_SETC_GEI;
     assert ScalarHandlerOfForm(261) == ScalarHandler_ExecuteSetCommit;
-    assert InstructionContractOperation_HL_SETC_GEI() == ScalarOperation_HL_SETC_GEI;
-    assert InstructionContractHandler_HL_SETC_GEI() == ScalarHandler_ExecuteSetCommit;
+    assert SelectHLSETCGEIOperation() == ScalarOperation_HL_SETC_GEI;
+    assert SelectHLSETCGEIHandler() == ScalarHandler_ExecuteSetCommit;
     assert DecodeScalarOperandRaw('000000000000000001010000011101010000000000001110', 261, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000001010000011101010000000000001110', 261, ScalarField_shamt) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000001010000011101010000000000001110', 261, ScalarField_simm24) == '000000000000000000000000000000000000000000000000';

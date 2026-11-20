@@ -31,7 +31,7 @@ begin
         1,
         Zeros{PTO_XLEN} + 255);
 
-    InstructionContractExecute_TDIVS(
+    ExecuteTDIVS(
         1,
         0,
         Zeros{PTO_XLEN} + 2);

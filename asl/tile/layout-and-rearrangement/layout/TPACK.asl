@@ -7,18 +7,18 @@
 // Each paired source word produces one complete valid 32-bit result word with selected bytes in order and all remaining bytes zero. U8/U16/U32 destinations publish that word directly; an M32 U64 destination joins each complete low/high result-word pair into one logical element and rejects an odd raw-word tail before effects. Destination columns are derived from raw-word count and BSTART element width. Validation precedes snapshot and atomic publication; TPACK performs no numeric conversion or status update.
 // NDF-END: PTO-TPACK-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TPACK() => TileOperation
+readonly func SelectTPACKOperation() => TileOperation
 begin
     return TileOperation_TPACK;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_TPACK() => TileSemanticHandler
+readonly func SelectTPACKHandler() => TileSemanticHandler
 begin
     return TileHandler_TPACK;
 end;
 
-pure func InstructionContractDataTypeLegal_TPACK(
+pure func TPACKDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_U8 ||
@@ -27,18 +27,18 @@ begin
            data_type == TileDataType_U64;
 end;
 
-readonly func InstructionContractOperandsLegal_TPACK(
+readonly func TPACKOperandsLegal(
     destination: TileIndex, source0: TileIndex,
     source1: TileIndex, control: Word) => boolean
 begin
     return TileOperandsLegal_TPACK(destination, source0, source1, control);
 end;
 
-func InstructionContractExecute_TPACK(
+func ExecuteTPACK(
     destination: TileIndex, source0: TileIndex,
     source1: TileIndex, control: Word)
 begin
-    assert InstructionContractOperandsLegal_TPACK(
+    assert TPACKOperandsLegal(
         destination, source0, source1, control);
     TPACK(destination, source0, source1, control);
 end;

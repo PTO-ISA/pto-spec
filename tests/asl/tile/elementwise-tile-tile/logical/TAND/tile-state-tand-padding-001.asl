@@ -11,8 +11,8 @@ begin
     SetBundleDataAttributeState(Zeros{5} + 14, Zeros{5}, '00',
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     _BundleDataAttributesPresent = TRUE;
-    assert InstructionContractOperandsLegal_TAND(2, 0, 1);
-    InstructionContractExecute_TAND(2, 0, 1);
+    assert TANDOperandsLegal(2, 0, 1);
+    ExecuteTAND(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 6;
     assert TileElementDefined(2, 0, 1);
     assert ReadTileElement(2, 0, 1) == Zeros{PTO_XLEN};

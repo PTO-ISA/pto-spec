@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 The instruction selects the shared maintenance handler (`asl/scalar/sys/IC.IALL.asl:11`) and the token `Maintenance_IC_IALL` (`asl/scalar/sys/IC.IALL.asl:23`). `Maintenance_IC_IALL` is one of the two instruction-cache cases in the executor, so it advances `_InstructionCacheEpoch` rather than the data-cache epoch (`asl/scalar/model/sys/semantics.asl:138`).
 
-Because `InstructionContractMaintenanceUsesOperand_IC_IALL` is `FALSE` (`asl/scalar/sys/IC.IALL.asl:29`), the dispatcher supplies `Zeros{PTO_XLEN}` directly and reads no scalar register (`asl/scalar/model/dispatch/sys.asl:46`).
+Because `ICIALLMaintenanceUsesOperand` is `FALSE` (`asl/scalar/sys/IC.IALL.asl:29`), the dispatcher supplies `Zeros{PTO_XLEN}` directly and reads no scalar register (`asl/scalar/model/dispatch/sys.asl:46`).
 
 `IC.IALL` is applicable only in an active SYS block body (`asl/scalar/model/sys/semantics.asl:322`).
 
@@ -86,7 +86,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/IC.IALL.asl -->
 ```asl
-readonly func InstructionContractOperation_IC_IALL()
+readonly func SelectICIALLOperation()
     => ScalarOperation
 begin
     return ScalarOperation_IC_IALL;
@@ -104,31 +104,31 @@ IC.IALL executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/IC.IALL.asl -->
 ```asl
-readonly func InstructionContractHandler_IC_IALL()
+readonly func SelectICIALLHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_IC_IALL()
+pure func ICIALLRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_IC_IALL()
+pure func SelectICIALLMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_IC_IALL;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_IC_IALL()
+pure func ICIALLMaintenanceUsesOperand()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_IC_IALL()
+pure func ICIALLMaintenanceRequiresRootRing()
     => boolean
 begin
     return FALSE;

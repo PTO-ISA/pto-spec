@@ -8,32 +8,32 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-FENCE-I-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_FENCE_I()
+readonly func SelectFENCEIOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FENCE_I;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_FENCE_I()
+readonly func SelectFENCEIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FenceInstruction;
 end;
 
-pure func InstructionContractRequiresSystemBlock_FENCE_I()
+pure func FENCEIRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractFenceInvalidatesReservation_FENCE_I()
+pure func FENCEIFenceInvalidatesReservation()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractAdvancesInstructionEpoch_FENCE_I()
+pure func FENCEIAdvancesInstructionEpoch()
     => boolean
 begin
     return TRUE;

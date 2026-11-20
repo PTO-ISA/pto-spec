@@ -32,7 +32,7 @@ begin
         FALSE,
         FALSE);
     _BundleDataAttributesPresent = TRUE;
-    InstructionContractExecute_TSQRT(
+    ExecuteTSQRT(
         1,
         0);
     assert TileElementDefined(
@@ -42,7 +42,7 @@ begin
 
     ResetProfileState();
     ConfigureSquareRootPaddingTiles();
-    InstructionContractExecute_TSQRT(
+    ExecuteTSQRT(
         1,
         0);
     assert !TileElementDefined(

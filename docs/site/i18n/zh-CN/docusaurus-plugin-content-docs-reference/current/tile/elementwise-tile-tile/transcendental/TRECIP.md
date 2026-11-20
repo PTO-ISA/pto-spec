@@ -128,7 +128,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/transcendental/TRECIP.asl -->
 ```asl
-readonly func InstructionContractOperation_TRECIP() => TileOperation
+readonly func SelectTRECIPOperation() => TileOperation
 begin
     return TileOperation_TRECIP;
 end;
@@ -151,7 +151,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/transcendental/TRECIP.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TRECIP(
+pure func TRECIPDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileUnaryDataTypeSupported(
@@ -159,7 +159,7 @@ begin
         data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TRECIP(
+readonly func TRECIPOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -169,16 +169,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TRECIP() => TileSemanticHandler
+readonly func SelectTRECIPHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;
 
-func InstructionContractExecute_TRECIP(
+func ExecuteTRECIP(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TRECIP(
+    assert TRECIPOperandsLegal(
         destination,
         source);
     ExecuteTileUnary(

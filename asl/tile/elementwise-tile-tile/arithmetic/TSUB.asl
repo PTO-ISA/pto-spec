@@ -19,19 +19,19 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TSUB-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TSUB() => TileOperation
+readonly func SelectTSUBOperation() => TileOperation
 begin
     return TileOperation_TSUB;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TSUB(
+pure func TSUBDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TSUB(
+readonly func TSUBOperandsLegal(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex) => boolean
@@ -43,12 +43,12 @@ begin
         source_right);
 end;
 
-readonly func InstructionContractHandler_TSUB() => TileSemanticHandler
+readonly func SelectTSUBHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TSUB(
+func ExecuteTSUB(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex)

@@ -26,7 +26,7 @@ Canonical assembly and disassembly use `BSTART.SFU` for every SFU operation, and
 <!-- PTO-READER-BLOCK: block-bstart-sfu-mechanism role=mechanism -->
 ## Placement and mechanism
 
-The alias owner maps each piece to `BSTART.TEPL`: `InstructionContractMatches_BSTART_SFU` matches the TEPL form, and `InstructionContractHandler_BSTART_SFU` returns the TEPL handler, `CommandHandler_ExecuteBundleStart`. Execution is therefore exactly the TEPL path.
+The alias owner maps each piece to `BSTART.TEPL`: `BSTARTSFUEncodingMatches` matches the TEPL form, and `SelectBSTARTSFUHandler` returns the TEPL handler, `CommandHandler_ExecuteBundleStart`. Execution is therefore exactly the TEPL path.
 
 1. [Bundle start dispatch](../model/dispatch/start.md) checks the decoded descriptor before it commits any predecessor.
 2. It commits the predecessor, opens a Tile-element block, and installs the descriptor.
@@ -162,10 +162,10 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.SFU.asl -->
 ```asl
-readonly func InstructionContractMatches_BSTART_SFU(
+readonly func BSTARTSFUEncodingMatches(
     operation: CommandOperation) => boolean
 begin
-    return InstructionContractMatches_BSTART_TEPL(operation);
+    return BSTARTTEPLEncodingMatches(operation);
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
@@ -181,17 +181,17 @@ The resulting block uses the same descriptor, header composition, commit, and ro
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.SFU.asl -->
 ```asl
-readonly func InstructionContractHandler_BSTART_SFU() => CommandSemanticHandler
+readonly func SelectBSTARTSFUHandler() => CommandSemanticHandler
 begin
-    return InstructionContractHandler_BSTART_TEPL();
+    return SelectBSTARTTEPLHandler();
 end;
 
-pure func InstructionContractAliasEngine_BSTART_SFU() => TileExecutionEngine
+pure func BSTARTSFUAliasEngine() => TileExecutionEngine
 begin
     return TileEngine_SFU;
 end;
 
-pure func InstructionContractAcceptsTileOperation_BSTART_SFU(
+pure func BSTARTSFUAcceptsTileOperation(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
     return TileTEPLAliasAcceptsOperation(TileTEPLAlias_SFU, operation);

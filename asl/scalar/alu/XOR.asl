@@ -8,20 +8,20 @@
 // assigned destination or commit effect in alias-safe order.
 // NDF-END: PTO-XOR-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_XOR()
+readonly func SelectXOROperation()
     => ScalarOperation
 begin
     return ScalarOperation_XOR;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_XOR()
+readonly func SelectXORHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractRightModifier_XOR(encoded: bits(2))
+pure func DecodeXORRightModifier(encoded: bits(2))
     => ScalarRightModifier
 begin
     case encoded of
@@ -32,39 +32,39 @@ begin
     end;
 end;
 
-pure func InstructionContractPreparedRight_XOR(
+pure func PrepareXORRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let modifier = InstructionContractRightModifier_XOR(encoded_modifier);
+    let modifier = DecodeXORRightModifier(encoded_modifier);
     let transformed = ApplyScalarRightModifier(right, modifier, TRUE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func InstructionContractResult_XOR(
+pure func ComputeXORResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = InstructionContractPreparedRight_XOR(
+    let prepared_right = PrepareXORRightOperand(
         right,
         encoded_modifier,
         shift_amount);
     return ScalarBinary(ScalarBinary_XOR, left, prepared_right);
 end;
 
-pure func InstructionContractIsLogicalFamily_XOR()
+pure func XORIsLogicalFamily()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_XOR()
+pure func XORIsWordOperation()
     => boolean
 begin
     return FALSE;

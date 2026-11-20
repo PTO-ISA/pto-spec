@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000000000000100011', 32) == 0;
     assert CommandOperationOfForm(0) == CommandOperation_b_catr_32_e90bd52fa480;
     assert CommandHandlerOfForm(0) == CommandHandler_SetBundleControlAttributes;
-    assert InstructionContractMatches_B_CATR(CommandOperationOfForm(0));
-    assert InstructionContractHandler_B_CATR() == CommandHandler_SetBundleControlAttributes;
+    assert BCATREncodingMatches(CommandOperationOfForm(0));
+    assert SelectBCATRHandler() == CommandHandler_SetBundleControlAttributes;
     return 0;
 end;

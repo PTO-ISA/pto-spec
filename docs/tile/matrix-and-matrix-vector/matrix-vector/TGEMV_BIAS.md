@@ -136,7 +136,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl -->
 ```asl
-readonly func InstructionContractOperation_TGEMV_BIAS()
+readonly func SelectTGEMVBIASOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV_BIAS;
@@ -163,19 +163,19 @@ BSTOP or the next BSTART completion boundary
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl -->
 ```asl
-readonly func InstructionContractCubeFunction_TGEMV_BIAS()
+readonly func TGEMVBIASCubeFunction()
     => integer {0..31}
 begin
     return 17;
 end;
 
-readonly func InstructionContractSharedOperandsAllowed_TGEMV_BIAS()
+readonly func TGEMVBIASSharedOperandsAllowed()
     => boolean
 begin
     return FALSE;
 end;
 
-readonly func InstructionContractOperandsLegal_TGEMV_BIAS(
+readonly func TGEMVBIASOperandsLegal(
     destination: TileIndex,
     left_vector: TileIndex,
     right_matrix: TileIndex,
@@ -188,7 +188,7 @@ begin
         bias);
 end;
 
-readonly func InstructionContractHandler_TGEMV_BIAS()
+readonly func SelectTGEMVBIASHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TGEMV_BIAS;

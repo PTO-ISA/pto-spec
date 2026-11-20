@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000111000001100111', 32) == 376;
     assert ScalarOperationOfForm(376) == ScalarOperation_REV;
     assert ScalarHandlerOfForm(376) == ScalarHandler_ReverseBitfieldBytes;
-    assert InstructionContractOperation_REV() == ScalarOperation_REV;
-    assert InstructionContractHandler_REV() == ScalarHandler_ReverseBitfieldBytes;
+    assert SelectREVOperation() == ScalarOperation_REV;
+    assert SelectREVHandler() == ScalarHandler_ReverseBitfieldBytes;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000111000001100111', 376, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000111000001100111', 376, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000111000001100111', 376, ScalarField_imml) == '000000000000000000000000000000000000000000000000';

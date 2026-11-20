@@ -13,14 +13,14 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureTSHR(TileDataType_S8);
-    assert InstructionContractOperandsLegal_TSHR(2, 0, 1);
-    InstructionContractExecute_TSHR(2, 0, 1);
+    assert TSHROperandsLegal(2, 0, 1);
+    ExecuteTSHR(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 192;
 
     ResetProfileState();
     ConfigureTSHR(TileDataType_U8);
-    assert InstructionContractOperandsLegal_TSHR(2, 0, 1);
-    InstructionContractExecute_TSHR(2, 0, 1);
+    assert TSHROperandsLegal(2, 0, 1);
+    ExecuteTSHR(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 64;
     return 0;
 end;

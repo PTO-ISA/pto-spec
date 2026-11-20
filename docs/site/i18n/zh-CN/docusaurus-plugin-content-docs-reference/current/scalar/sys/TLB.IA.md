@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 该指令选择共用的维护处理程序（`asl/scalar/sys/TLB.IA.asl:18`）与令牌 `Maintenance_TLB_IA`（`asl/scalar/sys/TLB.IA.asl:30`）。该令牌在执行器中拥有自己的分支，与两个地址分支分开，因为它的操作数测试是位范围测试而不是规范性测试（`asl/scalar/model/sys/semantics.asl:148`）。
 
-`InstructionContractMaintenanceRequiresRootRing_TLB_IA` 返回 `TRUE`（`asl/scalar/sys/TLB.IA.asl:42`），这使该操作进入 `MaintenanceAccessPermitted` 中仅限 ACR0 的那一组。
+`TLBIAMaintenanceRequiresRootRing` 返回 `TRUE`（`asl/scalar/sys/TLB.IA.asl:42`），这使该操作进入 `MaintenanceAccessPermitted` 中仅限 ACR0 的那一组。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-ia-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/TLB.IA.asl -->
 ```asl
-readonly func InstructionContractOperation_TLB_IA()
+readonly func SelectTLBIAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_TLB_IA;
@@ -118,31 +118,31 @@ TLB.IA executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/TLB.IA.asl -->
 ```asl
-readonly func InstructionContractHandler_TLB_IA()
+readonly func SelectTLBIAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_TLB_IA()
+pure func TLBIARequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_TLB_IA()
+pure func SelectTLBIAMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_TLB_IA;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_TLB_IA()
+pure func TLBIAMaintenanceUsesOperand()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_TLB_IA()
+pure func TLBIAMaintenanceRequiresRootRing()
     => boolean
 begin
     return TRUE;

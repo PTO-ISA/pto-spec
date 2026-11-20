@@ -125,7 +125,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/SRA.asl -->
 ```asl
-readonly func InstructionContractOperation_SRA()
+readonly func SelectSRAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SRA;
@@ -137,27 +137,27 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/SRA.asl -->
 ```asl
-readonly func InstructionContractHandler_SRA()
+readonly func SelectSRAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractShiftAmount_SRA(right: Word)
+pure func DecodeSRAShiftAmount(right: Word)
     => integer {0..63}
 begin
     return UInt(right[5:0]);
 end;
 
-pure func InstructionContractResult_SRA(left: Word, right: Word)
+pure func ComputeSRAResult(left: Word, right: Word)
     => Word
 begin
-    let amount = InstructionContractShiftAmount_SRA(right);
+    let amount = DecodeSRAShiftAmount(right);
     let shifted = ASR(left, amount);
     return shifted;
 end;
 
-pure func InstructionContractIsWordOperation_SRA()
+pure func SRAIsWordOperation()
     => boolean
 begin
     return FALSE;

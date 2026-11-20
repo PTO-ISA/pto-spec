@@ -26,7 +26,7 @@ Bits `63:32` of either source are outside the operation, so a source that differ
 <!-- PTO-READER-BLOCK: scalar-muluw-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `InstructionContractResult_MULUW`, which returns `ScalarMultiplyW(left, right)`. That helper zero-extends `left[31:0]` and `right[31:0]`, multiplies them with `MultiplyWord`, and applies `SignExtend{PTO_XLEN}` to `product[31:0]`.
+The owning ASL exposes `ComputeMULUWResult`, which returns `ScalarMultiplyW(left, right)`. That helper zero-extends `left[31:0]` and `right[31:0]`, multiplies them with `MultiplyWord`, and applies `SignExtend{PTO_XLEN}` to `product[31:0]`.
 
 ```asm
 muluw SrcL, SrcR, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MULUW.asl -->
 ```asl
-readonly func InstructionContractOperation_MULUW() => ScalarOperation
+readonly func SelectMULUWOperation() => ScalarOperation
 begin
     return ScalarOperation_MULUW;
 end;
@@ -127,11 +127,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MULUW.asl -->
 ```asl
-readonly func InstructionContractHandler_MULUW() => ScalarSemanticHandler
+readonly func SelectMULUWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarMultiplyW;
 end;
-pure func InstructionContractResult_MULUW(left: Word, right: Word) => Word
+pure func ComputeMULUWResult(left: Word, right: Word) => Word
 begin
     return ScalarMultiplyW(left, right);
 end;

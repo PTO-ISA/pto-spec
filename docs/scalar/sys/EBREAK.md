@@ -24,16 +24,16 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ebreak-mechanism role=mechanism -->
 ## System mechanism
 
-`InstructionContractHandler_EBREAK` selects `ScalarHandler_SoftwareBreakpoint` (`asl/scalar/sys/EBREAK.asl:11`). The dispatcher decodes the 4-bit `imm4` field, zero-extends it to 5 bits, and calls `SoftwareBreakpoint` (`asl/scalar/model/dispatch/sys.asl:78`). That helper raises `Fault_SoftwareBreakpoint` with the current instruction address and the zero-extended cause (`asl/scalar/model/sys/semantics.asl:91`).
+`SelectEBREAKHandler` selects `ScalarHandler_SoftwareBreakpoint` (`asl/scalar/sys/EBREAK.asl:11`). The dispatcher decodes the 4-bit `imm4` field, zero-extends it to 5 bits, and calls `SoftwareBreakpoint` (`asl/scalar/model/dispatch/sys.asl:78`). That helper raises `Fault_SoftwareBreakpoint` with the current instruction address and the zero-extended cause (`asl/scalar/model/sys/semantics.asl:91`).
 
-The fault class fixes the trap identity: `Fault_SoftwareBreakpoint` maps to trap number 50 (`asl/arch/memory-model/fault-precision.asl:80`). `InstructionContractBreakpointPublishesTrapCause_EBREAK` returns `TRUE` (`asl/scalar/sys/EBREAK.asl:36`), so the immediate is published as the cause rather than kept in a separate breakpoint register.
+The fault class fixes the trap identity: `Fault_SoftwareBreakpoint` maps to trap number 50 (`asl/arch/memory-model/fault-precision.asl:80`). `EBREAKBreakpointPublishesTrapCause` returns `TRUE` (`asl/scalar/sys/EBREAK.asl:36`), so the immediate is published as the cause rather than kept in a separate breakpoint register.
 
 The instruction is applicable only in the body of an active SYS block (`asl/scalar/model/sys/semantics.asl:322`).
 
 <!-- PTO-READER-BLOCK: scalar-ebreak-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`imm4` is a 4-bit immediate at instruction bits 27:24 (`asl/scalar/sys/EBREAK.asl:1`). All sixteen of its values are assigned, and `InstructionContractBreakpointImmediateWidth_EBREAK` reports the width as 4 (`asl/scalar/sys/EBREAK.asl:30`).
+`imm4` is a 4-bit immediate at instruction bits 27:24 (`asl/scalar/sys/EBREAK.asl:1`). All sixteen of its values are assigned, and `EBREAKBreakpointImmediateWidth` reports the width as 4 (`asl/scalar/sys/EBREAK.asl:30`).
 
 The instruction writes no register. Its outputs are architectural trap state: the trap cause and the faulting address. Encoded zero in `imm4` is a real zero cause, not an omitted operand.
 
@@ -102,7 +102,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/EBREAK.asl -->
 ```asl
-readonly func InstructionContractOperation_EBREAK()
+readonly func SelectEBREAKOperation()
     => ScalarOperation
 begin
     return ScalarOperation_EBREAK;
@@ -120,25 +120,25 @@ EBREAK executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/EBREAK.asl -->
 ```asl
-readonly func InstructionContractHandler_EBREAK()
+readonly func SelectEBREAKHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_SoftwareBreakpoint;
 end;
 
-pure func InstructionContractRequiresSystemBlock_EBREAK()
+pure func EBREAKRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractBreakpointImmediateWidth_EBREAK()
+pure func EBREAKBreakpointImmediateWidth()
     => integer {4,5}
 begin
     return 4;
 end;
 
-pure func InstructionContractBreakpointPublishesTrapCause_EBREAK()
+pure func EBREAKBreakpointPublishesTrapCause()
     => boolean
 begin
     return TRUE;

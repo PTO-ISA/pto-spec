@@ -139,7 +139,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.STD.asl -->
 ```asl
-readonly func InstructionContractMatches_BSTART_STD(operation: CommandOperation) => boolean
+readonly func BSTARTSTDEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_std_32_1ef99c4cedcb) ||
            (operation == CommandOperation_bstart_std_32_441ad677fffe) ||
@@ -162,18 +162,18 @@ COND publishes a candidate BPCN but SETC may update TAKEN before commit; IND req
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.STD.asl -->
 ```asl
-readonly func InstructionContractHandler_BSTART_STD() => CommandSemanticHandler
+readonly func SelectBSTARTSTDHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractBundleKind_BSTART_STD()
+readonly func BSTARTSTDBundleKind()
     => BundleKind
 begin
     return BundleKind_Standard;
 end;
 
-pure func InstructionContractStartsBundle_BSTART_STD()
+pure func BSTARTSTDStartsBundle()
     => boolean
 begin
     return TRUE;

@@ -15,13 +15,13 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TMINS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TMINS() => TileOperation
+readonly func SelectTMINSOperation() => TileOperation
 begin
     return TileOperation_TMINS;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TMINS(
+pure func TMINSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileBinaryDataTypeSupported(
@@ -29,7 +29,7 @@ begin
         data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TMINS(
+readonly func TMINSOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word) => boolean
@@ -41,17 +41,17 @@ begin
         scalar);
 end;
 
-readonly func InstructionContractHandler_TMINS() => TileSemanticHandler
+readonly func SelectTMINSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileScalar;
 end;
 
-func InstructionContractExecute_TMINS(
+func ExecuteTMINS(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word)
 begin
-    assert InstructionContractOperandsLegal_TMINS(
+    assert TMINSOperandsLegal(
         destination,
         source,
         scalar);

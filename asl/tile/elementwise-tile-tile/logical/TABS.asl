@@ -14,19 +14,19 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TABS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TABS() => TileOperation
+readonly func SelectTABSOperation() => TileOperation
 begin
     return TileOperation_TABS;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TABS(
+pure func TABSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TABS(
+readonly func TABSOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -36,7 +36,7 @@ begin
         source);
 end;
 
-pure func InstructionContractValue_TABS(
+pure func ComputeTABSValue(
     data_type: TileDataType,
     source: Word) => Word
 begin
@@ -47,12 +47,12 @@ begin
     return result;
 end;
 
-readonly func InstructionContractHandler_TABS() => TileSemanticHandler
+readonly func SelectTABSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;
 
-func InstructionContractExecute_TABS(
+func ExecuteTABS(
     destination: TileIndex,
     source: TileIndex)
 begin

@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-min-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `InstructionContractResult_MIN`：当 `SInt(left) < SInt(right)` 时返回 `left`，否则返回 `right`；并提供返回真的 `InstructionContractUsesSignedComparison_MIN`。分派路径通过 `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MIN, FALSE)` 到达同一个辅助函数。
+所属 ASL 提供 `ComputeMINResult`：当 `SInt(left) < SInt(right)` 时返回 `left`，否则返回 `right`；并提供返回真的 `MINUsesSignedComparison`。分派路径通过 `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MIN, FALSE)` 到达同一个辅助函数。
 
 ```asm
 min SrcL, SrcR, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MIN.asl -->
 ```asl
-readonly func InstructionContractOperation_MIN()
+readonly func SelectMINOperation()
     => ScalarOperation
 begin
     return ScalarOperation_MIN;
@@ -128,13 +128,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MIN.asl -->
 ```asl
-readonly func InstructionContractHandler_MIN()
+readonly func SelectMINHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractResult_MIN(left: Word, right: Word)
+pure func ComputeMINResult(left: Word, right: Word)
     => Word
 begin
     if SInt(left) < SInt(right) then
@@ -144,7 +144,7 @@ begin
     end;
 end;
 
-pure func InstructionContractUsesSignedComparison_MIN()
+pure func MINUsesSignedComparison()
     => boolean
 begin
     return TRUE;

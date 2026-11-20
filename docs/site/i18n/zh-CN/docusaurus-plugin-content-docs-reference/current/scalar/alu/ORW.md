@@ -131,7 +131,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/ORW.asl -->
 ```asl
-readonly func InstructionContractOperation_ORW()
+readonly func SelectORWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ORW;
@@ -143,13 +143,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/ORW.asl -->
 ```asl
-readonly func InstructionContractHandler_ORW()
+readonly func SelectORWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractRightModifier_ORW(encoded: bits(2))
+pure func DecodeORWRightModifier(encoded: bits(2))
     => ScalarRightModifier
 begin
     case encoded of
@@ -160,39 +160,39 @@ begin
     end;
 end;
 
-pure func InstructionContractPreparedRight_ORW(
+pure func PrepareORWRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let modifier = InstructionContractRightModifier_ORW(encoded_modifier);
+    let modifier = DecodeORWRightModifier(encoded_modifier);
     let transformed = ApplyScalarRightModifier(right, modifier, TRUE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func InstructionContractResult_ORW(
+pure func ComputeORWResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = InstructionContractPreparedRight_ORW(
+    let prepared_right = PrepareORWRightOperand(
         right,
         encoded_modifier,
         shift_amount);
     return ScalarBinaryW(ScalarBinary_OR, left, prepared_right);
 end;
 
-pure func InstructionContractIsLogicalFamily_ORW()
+pure func ORWIsLogicalFamily()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_ORW()
+pure func ORWIsWordOperation()
     => boolean
 begin
     return TRUE;

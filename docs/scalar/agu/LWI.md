@@ -119,7 +119,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/LWI.asl -->
 ```asl
-readonly func InstructionContractOperation_LWI() => ScalarOperation
+readonly func SelectLWIOperation() => ScalarOperation
 begin
     return ScalarOperation_LWI;
 end;
@@ -130,49 +130,49 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/LWI.asl -->
 ```asl
-readonly func InstructionContractHandler_LWI()
+readonly func SelectLWIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarLoad;
 end;
 
-pure func InstructionContractAGUAction_LWI()
+pure func LWIAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Load;
 end;
 
-pure func InstructionContractAGUAddressKind_LWI()
+pure func LWIAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_Immediate;
 end;
 
-pure func InstructionContractAGUSizeBytes_LWI()
+pure func LWIAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 4;
 end;
 
-pure func InstructionContractAGUOffsetScale_LWI()
+pure func LWIAGUOffsetScale()
     => integer {0..3}
 begin
     return 2;
 end;
 
-pure func InstructionContractAGUUpdateMode_LWI()
+pure func LWIAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_None;
 end;
 
-pure func InstructionContractAGUSignedLoad_LWI()
+pure func LWIAGUSignedLoad()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_LWI()
+pure func LWIAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

@@ -8,31 +8,31 @@
 // selected width, ordering, memory update, event, and result atomically.
 // NDF-END: PTO-SW-SMAX-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SW_SMAX() => ScalarOperation
+readonly func SelectSWSMAXOperation() => ScalarOperation
 begin
     return ScalarOperation_SW_SMAX;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SW_SMAX()
+readonly func SelectSWSMAXHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_SW_SMAX()
+pure func SelectSWSMAXAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_SMAX;
 end;
 
-pure func InstructionContractAtomicSizeBytes_SW_SMAX()
+pure func SWSMAXAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 4;
 end;
 
-pure func InstructionContractPublishesOldValue_SW_SMAX()
+pure func SWSMAXPublishesOldValue()
     => boolean
 begin
     return FALSE;

@@ -8,24 +8,24 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-HL-SETRET-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_SETRET() => ScalarOperation
+readonly func SelectHLSETRETOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_SETRET;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_SETRET() => ScalarSemanticHandler
+readonly func SelectHLSETRETHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_SetReturnAddress;
 end;
 
-pure func InstructionContractUsesTPC_HL_SETRET()
+pure func HLSETRETUsesTPC()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractTarget_HL_SETRET(
+pure func ResolveHLSETRETTarget(
     base: Word,
     halfword_offset: Word)
     => Word

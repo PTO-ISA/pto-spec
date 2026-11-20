@@ -129,7 +129,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MULW.asl -->
 ```asl
-readonly func InstructionContractOperation_MULW() => ScalarOperation
+readonly func SelectMULWOperation() => ScalarOperation
 begin
     return ScalarOperation_MULW;
 end;
@@ -140,11 +140,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MULW.asl -->
 ```asl
-readonly func InstructionContractHandler_MULW() => ScalarSemanticHandler
+readonly func SelectMULWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarMultiplyW;
 end;
-pure func InstructionContractResult_MULW(left: Word, right: Word) => Word
+pure func ComputeMULWResult(left: Word, right: Word) => Word
 begin
     return ScalarMultiplyW(left, right);
 end;

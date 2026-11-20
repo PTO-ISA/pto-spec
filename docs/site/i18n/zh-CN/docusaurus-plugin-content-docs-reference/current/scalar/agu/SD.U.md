@@ -124,7 +124,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/SD.U.asl -->
 ```asl
-readonly func InstructionContractOperation_SD_U() => ScalarOperation
+readonly func SelectSDUOperation() => ScalarOperation
 begin
     return ScalarOperation_SD_U;
 end;
@@ -135,49 +135,49 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/SD.U.asl -->
 ```asl
-readonly func InstructionContractHandler_SD_U()
+readonly func SelectSDUHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStore;
 end;
 
-pure func InstructionContractAGUAction_SD_U()
+pure func SDUAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Store;
 end;
 
-pure func InstructionContractAGUAddressKind_SD_U()
+pure func SDUAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_Register;
 end;
 
-pure func InstructionContractAGUSizeBytes_SD_U()
+pure func SDUAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractAGUOffsetScale_SD_U()
+pure func SDUAGUOffsetScale()
     => integer {0..3}
 begin
     return 0;
 end;
 
-pure func InstructionContractAGUUpdateMode_SD_U()
+pure func SDUAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_None;
 end;
 
-pure func InstructionContractAGUSignedLoad_SD_U()
+pure func SDUAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_SD_U()
+pure func SDUAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

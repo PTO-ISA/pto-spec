@@ -74,7 +74,7 @@ begin
         return FALSE;
     end;
     if _BundleDataAttributesPresent &&
-       !InstructionContractB_DATR_TIMG2COLFieldsLegal(
+       !TIMG2COLDataAttributeFieldsLegal(
            TileDataLayoutOfCode(_BundleDataAttributes.data_layout),
            _BundleDataAttributes.data_type,
            _BundleDataAttributes.pad_value,

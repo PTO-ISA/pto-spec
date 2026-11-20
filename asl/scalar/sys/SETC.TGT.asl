@@ -8,32 +8,32 @@
 // Rejection MUST preserve the prior target and pending-block state.
 // NDF-END: PTO-SETC-TGT-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SETC_TGT()
+readonly func SelectSETCTGTOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SETC_TGT;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SETC_TGT()
+readonly func SelectSETCTGTHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_SetCommitTarget;
 end;
 
-pure func InstructionContractRequiresSystemBlock_SETC_TGT()
+pure func SETCTGTRequiresSystemBlock()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractRequiresCommitTargetBlock_SETC_TGT()
+pure func SETCTGTRequiresCommitTargetBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractWritesBARGBPCN_SETC_TGT()
+pure func SETCTGTWritesBARGBPCN()
     => boolean
 begin
     return TRUE;

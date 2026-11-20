@@ -121,7 +121,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/C.SWI.asl -->
 ```asl
-readonly func InstructionContractOperation_C_SWI() => ScalarOperation
+readonly func SelectCSWIOperation() => ScalarOperation
 begin
     return ScalarOperation_C_SWI;
 end;
@@ -132,49 +132,49 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/C.SWI.asl -->
 ```asl
-readonly func InstructionContractHandler_C_SWI()
+readonly func SelectCSWIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStore;
 end;
 
-pure func InstructionContractAGUAction_C_SWI()
+pure func CSWIAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Store;
 end;
 
-pure func InstructionContractAGUAddressKind_C_SWI()
+pure func CSWIAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_Compressed;
 end;
 
-pure func InstructionContractAGUSizeBytes_C_SWI()
+pure func CSWIAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 4;
 end;
 
-pure func InstructionContractAGUOffsetScale_C_SWI()
+pure func CSWIAGUOffsetScale()
     => integer {0..3}
 begin
     return 2;
 end;
 
-pure func InstructionContractAGUUpdateMode_C_SWI()
+pure func CSWIAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_None;
 end;
 
-pure func InstructionContractAGUSignedLoad_C_SWI()
+pure func CSWIAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_C_SWI()
+pure func CSWIAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

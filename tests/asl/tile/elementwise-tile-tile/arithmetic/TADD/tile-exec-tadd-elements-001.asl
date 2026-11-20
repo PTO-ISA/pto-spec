@@ -11,8 +11,8 @@ begin
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 5);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 2);
 
-    assert InstructionContractOperandsLegal_TADD(2, 0, 1);
-    InstructionContractExecute_TADD(2, 0, 1);
+    assert TADDOperandsLegal(2, 0, 1);
+    ExecuteTADD(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 12;
     assert ReadTileElement(2, 0, 1) == Zeros{PTO_XLEN} + 11;
     return 0;

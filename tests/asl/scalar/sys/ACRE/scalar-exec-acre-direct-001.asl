@@ -38,6 +38,6 @@ begin
     assert !_TrapContexts[[0]].valid;
     assert _ArchitectureRequestEpoch == 1;
     assert _ControlRequestOperand == Zeros{PTO_XLEN} + 0;
-    assert InstructionContractOperation_ACRE() == ScalarOperation_ACRE;
+    assert SelectACREOperation() == ScalarOperation_ACRE;
     return 0;
 end;

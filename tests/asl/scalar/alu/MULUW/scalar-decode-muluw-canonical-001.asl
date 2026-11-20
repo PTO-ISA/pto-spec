@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000011000001000111', 32) == 364;
     assert ScalarOperationOfForm(364) == ScalarOperation_MULUW;
     assert ScalarHandlerOfForm(364) == ScalarHandler_ScalarMultiplyW;
-    assert InstructionContractOperation_MULUW() == ScalarOperation_MULUW;
-    assert InstructionContractHandler_MULUW() == ScalarHandler_ScalarMultiplyW;
+    assert SelectMULUWOperation() == ScalarOperation_MULUW;
+    assert SelectMULUWHandler() == ScalarHandler_ScalarMultiplyW;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000011000001000111', 364, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000011000001000111', 364, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000011000001000111', 364, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';

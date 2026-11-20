@@ -8,24 +8,24 @@
 // atomically, then retire sequentially without installing a direct branch target.
 // NDF-END: PTO-SETRET-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SETRET() => ScalarOperation
+readonly func SelectSETRETOperation() => ScalarOperation
 begin
     return ScalarOperation_SETRET;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SETRET() => ScalarSemanticHandler
+readonly func SelectSETRETHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_SetReturnAddress;
 end;
 
-pure func InstructionContractUsesTPC_SETRET()
+pure func SETRETUsesTPC()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractTarget_SETRET(
+pure func ResolveSETRETTarget(
     base: Word,
     halfword_offset: Word)
     => Word

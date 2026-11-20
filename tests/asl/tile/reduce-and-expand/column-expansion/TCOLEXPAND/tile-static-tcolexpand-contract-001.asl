@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(58) == TileHandler_ExecuteTileExpand;
     assert TileClassOfIndex(58) == TileClass_ReduceAndExpand;
     assert TileEngineOfIndex(58) == TileEngine_SFU;
-    assert InstructionContractOperation_TCOLEXPAND() == TileOperation_TCOLEXPAND;
-    assert InstructionContractHandler_TCOLEXPAND() == TileHandler_ExecuteTileExpand;
+    assert SelectTCOLEXPANDOperation() == TileOperation_TCOLEXPAND;
+    assert SelectTCOLEXPANDHandler() == TileHandler_ExecuteTileExpand;
     return 0;
 end;

@@ -95,7 +95,7 @@ begin
     WriteOddFP16Source(0);
     assert TileOperandsLegal_TCVT(
         1, 0, DefaultNumericExecutionControl());
-    InstructionContractExecute_TCVT(
+    ExecuteTCVT(
         1, 0, DefaultNumericExecutionControl());
     assert NumericStatusFlags() == Zeros{5};
     for row = 0 to 31 looplimit 32 do
@@ -121,7 +121,7 @@ begin
     WriteOddE2M1Source(0);
     assert TileOperandsLegal_TCVT(
         1, 0, DefaultNumericExecutionControl());
-    InstructionContractExecute_TCVT(
+    ExecuteTCVT(
         1, 0, DefaultNumericExecutionControl());
     assert NumericStatusFlags() == Zeros{5};
     for row = 0 to 31 looplimit 32 do

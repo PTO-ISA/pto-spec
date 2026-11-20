@@ -16,16 +16,16 @@ begin
     SetBundleDataAttributeState(Zeros{5} + 24, Zeros{5}, '01',
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     _BundleDataAttributesPresent = TRUE;
-    assert InstructionContractOperandsLegal_TDIV(2, 0, 1);
-    InstructionContractExecute_TDIV(2, 0, 1);
+    assert TDIVOperandsLegal(2, 0, 1);
+    ExecuteTDIV(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 5;
     assert TileElementDefined(2, 0, 1);
     assert ReadTileElement(2, 0, 1) == Ones{PTO_XLEN};
 
     ResetProfileState();
     ConfigurePaddedTDIVTiles();
-    assert InstructionContractOperandsLegal_TDIV(2, 0, 1);
-    InstructionContractExecute_TDIV(2, 0, 1);
+    assert TDIVOperandsLegal(2, 0, 1);
+    ExecuteTDIV(2, 0, 1);
     assert !TileElementDefined(2, 0, 1);
     return 0;
 end;

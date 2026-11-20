@@ -24,14 +24,14 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-mechanism role=mechanism -->
 ## 系统机制
 
-`InstructionContractHandler_HL_SSRGET` 选择 `ScalarHandler_ExecuteSystemRegisterGet`（`asl/scalar/sys/HL.SSRGET.asl:18`），即 32 位形式所用的同一个辅助函数。变化的是地址：`InstructionContractSystemAddressWidth_HL_SSRGET` 把宽度固定为 24（`asl/scalar/sys/HL.SSRGET.asl:36`），汇编形式为 48 位（`asl/scalar/sys/HL.SSRGET.asl:1`）。
+`SelectHLSSRGETHandler` 选择 `ScalarHandler_ExecuteSystemRegisterGet`（`asl/scalar/sys/HL.SSRGET.asl:18`），即 32 位形式所用的同一个辅助函数。变化的是地址：`HLSSRGETSystemAddressWidth` 把宽度固定为 24（`asl/scalar/sys/HL.SSRGET.asl:36`），汇编形式为 48 位（`asl/scalar/sys/HL.SSRGET.asl:1`）。
 
 派发器在调用读取辅助函数之前，用两个 12 位片段拼出该 24 位地址（`asl/scalar/model/dispatch/sys.asl:91`）。
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`SSR_ID` 是 24 位系统寄存器地址，`RegDst` 是目的地选择器 `discard, R1..R23, push U, or push T`（`asl/scalar/sys/HL.SSRGET.asl:1`）。`InstructionContractPushesTemporaryT_HL_SSRGET` 返回 `FALSE`（`asl/scalar/sys/HL.SSRGET.asl:42`），由目的地选择器单独决定该值是落入 GPR 还是进入临时队列。
+`SSR_ID` 是 24 位系统寄存器地址，`RegDst` 是目的地选择器 `discard, R1..R23, push U, or push T`（`asl/scalar/sys/HL.SSRGET.asl:1`）。`HLSSRGETPushesTemporaryT` 返回 `FALSE`（`asl/scalar/sys/HL.SSRGET.asl:42`），由目的地选择器单独决定该值是落入 GPR 还是进入临时队列。
 
 `SSR_ID` 中的编码零是地址 0 处的基寄存器，`RegDst` 中的编码零命名架构零 GPR。
 
@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/HL.SSRGET.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_SSRGET()
+readonly func SelectHLSSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_HL_SSRGET;
@@ -121,31 +121,31 @@ HL.SSRGET executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/HL.SSRGET.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_SSRGET()
+readonly func SelectHLSSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterGet;
 end;
 
-pure func InstructionContractRequiresSystemBlock_HL_SSRGET()
+pure func HLSSRGETRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSystemTransferKind_HL_SSRGET()
+pure func HLSSRGETSystemTransferKind()
     => bits(2)
 begin
     return '00';
 end;
 
-pure func InstructionContractSystemAddressWidth_HL_SSRGET()
+pure func HLSSRGETSystemAddressWidth()
     => integer {5,12,24}
 begin
     return 24;
 end;
 
-pure func InstructionContractPushesTemporaryT_HL_SSRGET()
+pure func HLSSRGETPushesTemporaryT()
     => boolean
 begin
     return FALSE;

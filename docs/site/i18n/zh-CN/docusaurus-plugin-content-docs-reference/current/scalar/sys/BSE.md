@@ -105,7 +105,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/BSE.asl -->
 ```asl
-readonly func InstructionContractOperation_BSE()
+readonly func SelectBSEOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BSE;
@@ -123,25 +123,25 @@ BSE executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/BSE.asl -->
 ```asl
-readonly func InstructionContractHandler_BSE()
+readonly func SelectBSEHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteControlRequest;
 end;
 
-pure func InstructionContractRequiresSystemBlock_BSE()
+pure func BSERequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractControlRequest_BSE()
+pure func BSEControlRequest()
     => ExecutionControlRequest
 begin
     return ExecutionControl_SendEvent;
 end;
 
-readonly func InstructionContractControlRequestIsNonblocking_BSE()
+readonly func BSEControlRequestIsNonblocking()
     => boolean
 begin
     return !MessageBufferEnabledForCurrentContext();

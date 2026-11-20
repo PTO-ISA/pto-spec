@@ -6,13 +6,13 @@
 // Full, suspended, missing, or corrupt queues MUST report status without insertion.
 // NDF-END: PTO-HL-QPUSH-GQM-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_HL_QPUSH(operation: CommandOperation) => boolean
+readonly func HLQPUSHEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_hl_qpush_48_3eab8e05d61a);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_QPUSH() => CommandSemanticHandler
+readonly func SelectHLQPUSHHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteQueuePush;
 end;
@@ -29,13 +29,13 @@ begin
         flags);
 end;
 
-pure func InstructionContractChangesQueueManagerState_HL_QPUSH()
+pure func HLQPUSHChangesQueueManagerState()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSnapshotsSourcesBeforeWrite_HL_QPUSH()
+pure func HLQPUSHSnapshotsSourcesBeforeWrite()
     => boolean
 begin
     return TRUE;

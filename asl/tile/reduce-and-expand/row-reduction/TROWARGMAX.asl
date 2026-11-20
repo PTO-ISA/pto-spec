@@ -26,19 +26,19 @@
 // For CUBE_M16/M32, destination Columns MUST equal source Columns and destination Rows MUST be the minimum legal physical Rows covering destination ValidRows (16 for M16, 32 for M32).
 // NDF-END: PTO-TROWARGMAX-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TROWARGMAX() => TileOperation
+readonly func SelectTROWARGMAXOperation() => TileOperation
 begin
     return TileOperation_TROWARGMAX;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TROWARGMAX(
+pure func TROWARGMAXDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileArgReductionSourceDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TROWARGMAX(
+readonly func TROWARGMAXOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -49,16 +49,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TROWARGMAX() => TileSemanticHandler
+readonly func SelectTROWARGMAXHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileReduction;
 end;
 
-func InstructionContractExecute_TROWARGMAX(
+func ExecuteTROWARGMAX(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TROWARGMAX(
+    assert TROWARGMAXOperandsLegal(
         destination,
         source);
     ExecuteTileReduction(

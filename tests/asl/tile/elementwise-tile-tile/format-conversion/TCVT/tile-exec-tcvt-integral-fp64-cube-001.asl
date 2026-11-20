@@ -27,7 +27,7 @@ begin
     assert _Tiles[[0]].capacity_bytes == 256;
     assert _Tiles[[0]].cube_cell_count == 2;
     assert TileOperandsLegal_TCVT(1, 0, control);
-    InstructionContractExecute_TCVT(1, 0, control);
+    ExecuteTCVT(1, 0, control);
 
     assert _LastFault == Fault_None;
     assert _Tiles[[1]].data_type == TileDataType_FP64;

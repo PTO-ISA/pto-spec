@@ -154,7 +154,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-and-immediate/arithmetic/TLEA.asl -->
 ```asl
-readonly func InstructionContractOperation_TLEA() => TileOperation
+readonly func SelectTLEAOperation() => TileOperation
 begin
     return TileOperation_TLEA;
 end;
@@ -178,18 +178,18 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/tile-scalar-and-immediate/arithmetic/TLEA.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TLEA(data_type: TileDataType)
+pure func TLEADataTypeLegal(data_type: TileDataType)
     => boolean
 begin
     return TileLEAIndexDataTypeLegal(data_type);
 end;
 
-readonly func InstructionContractHandler_TLEA() => TileSemanticHandler
+readonly func SelectTLEAHandler() => TileSemanticHandler
 begin
     return TileHandler_TLEA;
 end;
 
-func InstructionContractExecute_TLEA(
+func ExecuteTLEA(
     destination: TileIndex, source: TileIndex, element_bits: Word)
 begin
     assert TileOperandsLegal_TLEA(destination, source, element_bits);

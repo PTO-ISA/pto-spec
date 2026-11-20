@@ -8,8 +8,8 @@ begin
     end;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 240);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 15);
-    assert InstructionContractOperandsLegal_TOR(2, 0, 1);
-    InstructionContractExecute_TOR(2, 0, 1);
+    assert TOROperandsLegal(2, 0, 1);
+    ExecuteTOR(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 255;
     return 0;
 end;

@@ -17,7 +17,7 @@ begin
     assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 1;
     assert ReadTemporaryQueue(FALSE, 0) == Zeros{PTO_XLEN} + 0x0000000080000001;
     assert ReadTemporaryQueue(FALSE, 1) == Zeros{PTO_XLEN} + 1;
-    assert InstructionContractResult_ADD(
+    assert ComputeADDResult(
         Zeros{PTO_XLEN} + 1,
         Zeros{PTO_XLEN} + 1,
         '11',

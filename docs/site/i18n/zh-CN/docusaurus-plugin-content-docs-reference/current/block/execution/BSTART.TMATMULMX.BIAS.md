@@ -210,7 +210,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.TMATMULMX.BIAS.asl -->
 ```asl
-readonly func InstructionContractMatches_BSTART_TMATMULMX_BIAS(
+readonly func BSTARTTMATMULMXBIASEncodingMatches(
     operation: CommandOperation) => boolean
 begin
     return operation ==
@@ -239,25 +239,25 @@ BSTOP or the next BSTART completion boundary
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.TMATMULMX.BIAS.asl -->
 ```asl
-readonly func InstructionContractTileOperation_BSTART_TMATMULMX_BIAS()
+readonly func SelectBSTARTTMATMULMXBIASTileOperation()
     => TileOperation
 begin
     return TileOperation_TMATMUL_MX_BIAS;
 end;
 
-readonly func InstructionContractCubeFunction_BSTART_TMATMULMX_BIAS()
+readonly func BSTARTTMATMULMXBIASCubeFunction()
     => integer {0..31}
 begin
     return 5;
 end;
 
-readonly func InstructionContractSharedOperandsAllowed_BSTART_TMATMULMX_BIAS()
+readonly func BSTARTTMATMULMXBIASSharedOperandsAllowed()
     => boolean
 begin
     return TRUE;
 end;
 
-readonly func InstructionContractHandler_BSTART_TMATMULMX_BIAS()
+readonly func SelectBSTARTTMATMULMXBIASHandler()
     => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;

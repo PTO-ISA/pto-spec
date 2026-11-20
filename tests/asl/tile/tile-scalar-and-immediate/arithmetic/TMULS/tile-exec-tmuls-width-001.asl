@@ -31,7 +31,7 @@ begin
         1,
         Zeros{PTO_XLEN} + 0x5556);
 
-    InstructionContractExecute_TMULS(
+    ExecuteTMULS(
         1,
         0,
         Zeros{PTO_XLEN} + 3);

@@ -9,24 +9,24 @@
 // Omitted LB1, LB2, and B.DATR MUST use the MGATHER defaults.
 // NDF-END: PTO-BSTART-MGATHER-SCHEMA-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_MGATHER(operation: CommandOperation) => boolean
+readonly func BSTARTMGATHEREncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_mgather_32_c9defbf18276);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSTART_MGATHER() => CommandSemanticHandler
+readonly func SelectBSTARTMGATHERHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractStartedTileOperation_BSTART_MGATHER()
+readonly func BSTARTMGATHERStartedTileOperation()
     => TileOperation
 begin
     return TileOperation_MGATHER;
 end;
 
-pure func InstructionContractStartsTileBundle_BSTART_MGATHER()
+pure func BSTARTMGATHERStartsTileBundle()
     => boolean
 begin
     return TRUE;

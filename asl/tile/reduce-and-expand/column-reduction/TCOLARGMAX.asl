@@ -26,19 +26,19 @@
 // For CUBE_M16/M32, destination Rows MUST equal source Rows and destination Columns MUST equal align_up(destination ValidColumns, destination CellCols), where destination CellCols is computed from destination DataType.
 // NDF-END: PTO-TCOLARGMAX-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TCOLARGMAX() => TileOperation
+readonly func SelectTCOLARGMAXOperation() => TileOperation
 begin
     return TileOperation_TCOLARGMAX;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TCOLARGMAX(
+pure func TCOLARGMAXDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileArgReductionSourceDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TCOLARGMAX(
+readonly func TCOLARGMAXOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -49,16 +49,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TCOLARGMAX() => TileSemanticHandler
+readonly func SelectTCOLARGMAXHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileReduction;
 end;
 
-func InstructionContractExecute_TCOLARGMAX(
+func ExecuteTCOLARGMAX(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TCOLARGMAX(
+    assert TCOLARGMAXOperandsLegal(
         destination,
         source);
     ExecuteTileReduction(

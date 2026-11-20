@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000011000000110001', 32) == 60;
     assert CommandOperationOfForm(60) == CommandOperation_ercov_32_dc0be14a2d8b;
     assert CommandHandlerOfForm(60) == CommandHandler_RecoverExecutionContext;
-    assert InstructionContractMatches_ERCOV(CommandOperationOfForm(60));
-    assert InstructionContractHandler_ERCOV() == CommandHandler_RecoverExecutionContext;
+    assert ERCOVEncodingMatches(CommandOperationOfForm(60));
+    assert SelectERCOVHandler() == CommandHandler_RecoverExecutionContext;
     return 0;
 end;

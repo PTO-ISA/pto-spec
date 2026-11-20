@@ -125,7 +125,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/ORI.asl -->
 ```asl
-readonly func InstructionContractOperation_ORI()
+readonly func SelectORIOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ORI;
@@ -137,25 +137,25 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/ORI.asl -->
 ```asl
-readonly func InstructionContractHandler_ORI()
+readonly func SelectORIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractImmediateWidth_ORI()
+pure func ORIImmediateWidth()
     => integer {1..64}
 begin
     return 12;
 end;
 
-pure func InstructionContractImmediateIsSigned_ORI()
+pure func ORIImmediateIsSigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_ORI()
+pure func ORIIsWordOperation()
     => boolean
 begin
     return FALSE;

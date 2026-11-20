@@ -59,7 +59,7 @@ Design point: once every requested store completes without a fault, store beats 
 <!-- PTO-READER-BLOCK: tile-c-tstore-constraints role=constraints -->
 ## Legality, fault, and order boundaries
 
-`InstructionContractDataTypeLegal_TSTORE` accepts the codes that `TileRegularTLSUDataTypeSupported` admits, namely `0` through `14`, `16` through `20`, and `24` through `28`; the remaining codes are reserved and reject before effects.
+`TSTOREDataTypeLegal` accepts the codes that `TileRegularTLSUDataTypeSupported` admits, namely `0` through `14`, `16` through `20`, and `24` through `28`; the remaining codes are reserved and reject before effects.
 
 `ValidCol` and `ValidRow` are nonzero, `ValidCol` may not exceed the physical `Col`, and the resolved valid rectangle must fit the persistent source descriptor. Ordinary and Shared forms require `PadValue` zero; the Local CUBE codes `24` through `26` require `DTYPE_NONE`, accept all four `PadValue` encodings, and store only valid elements while ignoring physical padding.
 
@@ -162,7 +162,7 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/regular/TSTORE.asl -->
 ```asl
-readonly func InstructionContractOperation_TSTORE() => TileOperation
+readonly func SelectTSTOREOperation() => TileOperation
 begin
     return TileOperation_TSTORE;
 end;
@@ -181,7 +181,7 @@ The Local CUBE form uses Function 1, explicit B.DATR M322ND, M162ND, or N82ND wi
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/regular/TSTORE.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TSTORE(code: bits(5)) => boolean
+pure func TSTOREDataTypeLegal(code: bits(5)) => boolean
 begin
     if !TileDataTypeEncodingValid(code as TileDataTypeEncoding) then
         return FALSE;
@@ -190,12 +190,12 @@ begin
     return TileRegularTLSUDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractHandler_TSTORE() => TileSemanticHandler
+readonly func SelectTSTOREHandler() => TileSemanticHandler
 begin
     return TileHandler_TSTORE;
 end;
 
-readonly func InstructionContractGMAddress_TSTORE(
+readonly func ResolveTSTOREGlobalAddress(
     base_address: Word,
     row: integer {0..65535},
     column: integer {0..65535},
@@ -206,25 +206,25 @@ begin
         base_address, row, column, row_stride_bytes, data_type);
 end;
 
-readonly func InstructionContractDenseStride_TSTORE(
+readonly func ComputeTSTOREDenseStride(
     columns: integer {0..65535}, data_type: TileDataType) => Word
 begin
     return TileDenseRowStrideBytes(columns, data_type);
 end;
 
-pure func InstructionContractSharedMaskLegal_TSTORE(
+pure func TSTORESharedMaskLegal(
     function: integer {0..31}, pe_mask: bits(4)) => boolean
 begin
     return SharedStorePEMaskLegal(function, pe_mask);
 end;
 
-pure func InstructionContractZeroMaskNoEffect_TSTORE(
+pure func TSTOREZeroMaskNoEffect(
     pe_mask: bits(4)) => boolean
 begin
     return pe_mask == Zeros{4};
 end;
 
-pure func InstructionContractCubeDimensionsLegal_TSTORE(
+pure func TSTORECubeDimensionsLegal(
     lb0_present: boolean, lb0: integer {0..65535},
     lb1_present: boolean, lb1: integer {0..65535},
     lb2_present: boolean) => boolean

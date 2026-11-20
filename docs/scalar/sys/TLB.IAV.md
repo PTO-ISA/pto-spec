@@ -24,9 +24,9 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-mechanism role=mechanism -->
 ## System mechanism
 
-`InstructionContractHandler_TLB_IAV` returns the shared maintenance handler (`asl/scalar/sys/TLB.IAV.asl:18`), and the token `Maintenance_TLB_IAV` is grouped with `Maintenance_TLB_IV` in the executor's address case (`asl/scalar/model/sys/semantics.asl:142`). Both share the canonical-address test and the same privilege rule.
+`SelectTLBIAVHandler` returns the shared maintenance handler (`asl/scalar/sys/TLB.IAV.asl:18`), and the token `Maintenance_TLB_IAV` is grouped with `Maintenance_TLB_IV` in the executor's address case (`asl/scalar/model/sys/semantics.asl:142`). Both share the canonical-address test and the same privilege rule.
 
-`InstructionContractMaintenanceRequiresRootRing_TLB_IAV` returns `TRUE` (`asl/scalar/sys/TLB.IAV.asl:42`), so the operation rejects any ring other than ACR0 before the operand is examined by the executor.
+`TLBIAVMaintenanceRequiresRootRing` returns `TRUE` (`asl/scalar/sys/TLB.IAV.asl:42`), so the operation rejects any ring other than ACR0 before the operand is examined by the executor.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/TLB.IAV.asl -->
 ```asl
-readonly func InstructionContractOperation_TLB_IAV()
+readonly func SelectTLBIAVOperation()
     => ScalarOperation
 begin
     return ScalarOperation_TLB_IAV;
@@ -118,31 +118,31 @@ TLB.IAV executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/TLB.IAV.asl -->
 ```asl
-readonly func InstructionContractHandler_TLB_IAV()
+readonly func SelectTLBIAVHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_TLB_IAV()
+pure func TLBIAVRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_TLB_IAV()
+pure func SelectTLBIAVMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_TLB_IAV;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_TLB_IAV()
+pure func TLBIAVMaintenanceUsesOperand()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_TLB_IAV()
+pure func TLBIAVMaintenanceRequiresRootRing()
     => boolean
 begin
     return TRUE;

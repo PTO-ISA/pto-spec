@@ -14,19 +14,19 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TRELU-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TRELU() => TileOperation
+readonly func SelectTRELUOperation() => TileOperation
 begin
     return TileOperation_TRELU;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TRELU(
+pure func TRELUDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileTReluDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TRELU(
+readonly func TRELUOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -36,7 +36,7 @@ begin
         source);
 end;
 
-pure func InstructionContractValue_TRELU(
+pure func ComputeTRELUValue(
     data_type: TileDataType,
     source: Word) => (Word, boolean)
 begin
@@ -46,12 +46,12 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TRELU() => TileSemanticHandler
+readonly func SelectTRELUHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;
 
-func InstructionContractExecute_TRELU(
+func ExecuteTRELU(
     destination: TileIndex,
     source: TileIndex)
 begin

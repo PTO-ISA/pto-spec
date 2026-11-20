@@ -8,30 +8,30 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-C-CMP-EQI-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_C_CMP_EQI() => ScalarOperation
+readonly func SelectCCMPEQIOperation() => ScalarOperation
 begin
     return ScalarOperation_C_CMP_EQI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_C_CMP_EQI() => ScalarSemanticHandler
+readonly func SelectCCMPEQIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteCompare;
 end;
 
-pure func InstructionContractCondition_C_CMP_EQI()
+pure func DecodeCCMPEQICondition()
     => ScalarCondition
 begin
     return ScalarCondition_EQ;
 end;
 
-pure func InstructionContractCompareResult_C_CMP_EQI(
+pure func ComputeCCMPEQIComparisonResult(
     left: Word,
     right: Word)
     => boolean
 begin
     return ConditionHolds(
-        InstructionContractCondition_C_CMP_EQI(),
+        DecodeCCMPEQICondition(),
         left,
         right);
 end;

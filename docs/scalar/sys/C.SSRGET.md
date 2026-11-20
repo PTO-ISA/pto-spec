@@ -110,7 +110,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/C.SSRGET.asl -->
 ```asl
-readonly func InstructionContractOperation_C_SSRGET()
+readonly func SelectCSSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_C_SSRGET;
@@ -128,37 +128,37 @@ C.SSRGET executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/C.SSRGET.asl -->
 ```asl
-readonly func InstructionContractHandler_C_SSRGET()
+readonly func SelectCSSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteCompressedSystemRegisterGet;
 end;
 
-pure func InstructionContractRequiresSystemBlock_C_SSRGET()
+pure func CSSRGETRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSystemTransferKind_C_SSRGET()
+pure func CSSRGETSystemTransferKind()
     => bits(2)
 begin
     return '00';
 end;
 
-pure func InstructionContractSystemAddressWidth_C_SSRGET()
+pure func CSSRGETSystemAddressWidth()
     => integer {5,12,24}
 begin
     return 5;
 end;
 
-pure func InstructionContractPushesTemporaryT_C_SSRGET()
+pure func CSSRGETPushesTemporaryT()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractDirectSystemIDLegal_C_SSRGET(
+pure func CSSRGETDirectSystemIDLegal(
     identifier: bits(5)) => boolean
 begin
     return identifier == '00000' ||

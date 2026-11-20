@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-subiw-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `InstructionContractResult_HL_SUBIW`, which builds `right = ZeroExtend{PTO_XLEN}(immediate)` and returns `ScalarBinaryW(ScalarBinary_SUB, left, right)`. `ScalarBinaryW` subtracts the two low words into a 32-bit value and returns `SignExtend{PTO_XLEN}` of it. Dispatch selects the path with `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_SUB, ScalarField_uimm24, TRUE)`.
+The owning ASL exposes `ComputeHLSUBIWResult`, which builds `right = ZeroExtend{PTO_XLEN}(immediate)` and returns `ScalarBinaryW(ScalarBinary_SUB, left, right)`. `ScalarBinaryW` subtracts the two low words into a 32-bit value and returns `SignExtend{PTO_XLEN}` of it. Dispatch selects the path with `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_SUB, ScalarField_uimm24, TRUE)`.
 
 ```asm
 hl.subiw SrcL, uimm, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.SUBIW.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_SUBIW() => ScalarOperation
+readonly func SelectHLSUBIWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_SUBIW;
 end;
@@ -127,30 +127,30 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.SUBIW.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_SUBIW() => ScalarSemanticHandler
+readonly func SelectHLSUBIWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractImmediateWidth_HL_SUBIW()
+pure func HLSUBIWImmediateWidth()
     => integer {1..64}
 begin
     return 24;
 end;
 
-pure func InstructionContractImmediateIsUnsigned_HL_SUBIW()
+pure func HLSUBIWImmediateIsUnsigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_HL_SUBIW()
+pure func HLSUBIWIsWordOperation()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractResult_HL_SUBIW(
+pure func ComputeHLSUBIWResult(
     left: Word,
     immediate: bits(24))
     => Word

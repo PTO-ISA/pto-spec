@@ -218,7 +218,7 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl -->
 ```asl
-readonly func InstructionContractOperation_TCVT() => TileOperation
+readonly func SelectTCVTOperation() => TileOperation
 begin
     return TileOperation_TCVT;
 end;
@@ -241,7 +241,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TCVT(
+pure func TCVTDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     // Assigned identity is separate from TCVT pair legality. HiF4X2 remains
@@ -249,7 +249,7 @@ begin
     return data_type != TileDataType_HiF4X2;
 end;
 
-pure func InstructionContractDestinationDataType_TCVT(
+pure func TCVTDestinationDataType(
     source_type: TileDataType,
     data_type_field_present: boolean,
     data_type_code: bits(5)) => TileDataType
@@ -260,7 +260,7 @@ begin
     return source_type;
 end;
 
-pure func InstructionContractDefaultRounding_TCVT(
+pure func TCVTDefaultRounding(
     source_type: TileDataType,
     destination_type: TileDataType) => NumericRoundingMode
 begin
@@ -271,7 +271,7 @@ begin
     return NumericRound_RNE;
 end;
 
-func InstructionContractExecute_TCVT(
+func ExecuteTCVT(
     destination: TileIndex,
     source: TileIndex,
     control: NumericExecutionControl)
@@ -280,7 +280,7 @@ begin
     TCVT(destination, source, control);
 end;
 
-readonly func InstructionContractHandler_TCVT() => TileSemanticHandler
+readonly func SelectTCVTHandler() => TileSemanticHandler
 begin
     return TileHandler_TCVT;
 end;

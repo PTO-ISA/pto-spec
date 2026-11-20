@@ -26,7 +26,7 @@ Design point: the concatenation never exists as a register value. The halves are
 <!-- PTO-READER-BLOCK: scalar-hl-ccat-mechanism role=mechanism -->
 ## How the result is formed
 
-`InstructionContractLowResult_HL_CCAT` returns bits `63:0` and `InstructionContractHighResult_HL_CCAT` returns bits `127:64` (`asl/scalar/alu/HL.CCAT.asl:26-55`).
+`ComputeHLCCATLowResult` returns bits `63:0` and `ComputeHLCCATHighResult` returns bits `127:64` (`asl/scalar/alu/HL.CCAT.asl:26-55`).
 
 - For `shamt=0` the low result is `SrcR` and the high result is `SrcL`.
 - For `shamt` in `1..63` the low result is `LSR(SrcR, shamt) OR LSL(SrcL, 64 - shamt)`, and the high result is `LSR(SrcL, shamt)`.
@@ -130,7 +130,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.CCAT.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_CCAT() => ScalarOperation
+readonly func SelectHLCCATOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_CCAT;
 end;
@@ -141,12 +141,12 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.CCAT.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_CCAT() => ScalarSemanticHandler
+readonly func SelectHLCCATHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteConcatenatePair;
 end;
 
-pure func InstructionContractLowResult_HL_CCAT(
+pure func ComputeHLCCATLowResult(
     left: Word,
     right: Word,
     shift_amount: integer {0..127})
@@ -162,7 +162,7 @@ begin
     end;
 end;
 
-pure func InstructionContractHighResult_HL_CCAT(
+pure func ComputeHLCCATHighResult(
     left: Word,
     right: Word,
     shift_amount: integer {0..127})

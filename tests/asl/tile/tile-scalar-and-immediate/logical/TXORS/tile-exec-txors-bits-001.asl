@@ -31,7 +31,7 @@ begin
         1,
         Zeros{PTO_XLEN} + 243);
 
-    InstructionContractExecute_TXORS(
+    ExecuteTXORS(
         1,
         0,
         Zeros{PTO_XLEN} + 15);

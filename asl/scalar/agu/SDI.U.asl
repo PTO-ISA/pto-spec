@@ -8,55 +8,55 @@
 // the store event and any base update at the defined restart boundary.
 // NDF-END: PTO-SDI-U-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SDI_U() => ScalarOperation
+readonly func SelectSDIUOperation() => ScalarOperation
 begin
     return ScalarOperation_SDI_U;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SDI_U()
+readonly func SelectSDIUHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStore;
 end;
 
-pure func InstructionContractAGUAction_SDI_U()
+pure func SDIUAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Store;
 end;
 
-pure func InstructionContractAGUAddressKind_SDI_U()
+pure func SDIUAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_Immediate;
 end;
 
-pure func InstructionContractAGUSizeBytes_SDI_U()
+pure func SDIUAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractAGUOffsetScale_SDI_U()
+pure func SDIUAGUOffsetScale()
     => integer {0..3}
 begin
     return 0;
 end;
 
-pure func InstructionContractAGUUpdateMode_SDI_U()
+pure func SDIUAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_None;
 end;
 
-pure func InstructionContractAGUSignedLoad_SDI_U()
+pure func SDIUAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_SDI_U()
+pure func SDIUAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

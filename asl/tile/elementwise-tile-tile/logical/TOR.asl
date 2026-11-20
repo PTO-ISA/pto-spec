@@ -16,19 +16,19 @@
 // and predicate padding MUST follow the existing ExecutionMask and writer rules.
 // NDF-END: PTO-TOR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TOR() => TileOperation
+readonly func SelectTOROperation() => TileOperation
 begin
     return TileOperation_TOR;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TOR(
+pure func TORDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecScalarIntegerDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TOR(
+readonly func TOROperandsLegal(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex) => boolean
@@ -40,12 +40,12 @@ begin
         source_right);
 end;
 
-readonly func InstructionContractHandler_TOR() => TileSemanticHandler
+readonly func SelectTORHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TOR(
+func ExecuteTOR(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex)

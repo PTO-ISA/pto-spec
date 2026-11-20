@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000010000000101011', 32) == 96;
     assert ScalarOperationOfForm(96) == ScalarOperation_FENCE_D;
     assert ScalarHandlerOfForm(96) == ScalarHandler_FenceData;
-    assert InstructionContractOperation_FENCE_D() == ScalarOperation_FENCE_D;
-    assert InstructionContractHandler_FENCE_D() == ScalarHandler_FenceData;
+    assert SelectFENCEDOperation() == ScalarOperation_FENCE_D;
+    assert SelectFENCEDHandler() == ScalarHandler_FenceData;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000010000000101011', 96, ScalarField_PRED_IMM) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000010000000101011', 96, ScalarField_SUCC_IMM) == '000000000000000000000000000000000000000000000000';
     return 0;

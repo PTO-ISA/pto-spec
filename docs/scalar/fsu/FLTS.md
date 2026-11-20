@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FLTS.asl -->
 ```asl
-readonly func InstructionContractOperation_FLTS()
+readonly func SelectFLTSOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FLTS;
@@ -132,50 +132,50 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FLTS.asl -->
 ```asl
-readonly func InstructionContractHandler_FLTS()
+readonly func SelectFLTSHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingCompare;
 end;
 
-pure func InstructionContractSourceTypeLegal_FLTS(encoded: bits(2))
+pure func FLTSSourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return encoded == '00' || encoded == '01';
 end;
 
-pure func InstructionContractSourceCarrier_FLTS(encoded: bits(2))
+pure func DecodeFLTSSourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_FLTS(encoded);
+    assert FLTSSourceTypeLegal(encoded);
     return ScalarFPSourceTypeCode(encoded);
 end;
 
-pure func InstructionContractSourceArity_FLTS()
+pure func FLTSSourceArity()
     => integer {1..3}
 begin
     return 2;
 end;
 
-pure func InstructionContractUsesProfileFlags_FLTS()
+pure func FLTSUsesProfileFlags()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractUsesActiveRounding_FLTS()
+pure func FLTSUsesActiveRounding()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractCompareOperation_FLTS()
+pure func SelectFLTSCompareOperation()
     => FloatingCompareOperation
 begin
     return FloatingCompare_LT;
 end;
 
-pure func InstructionContractSignalingCompare_FLTS()
+pure func FLTSSignalingCompare()
     => boolean
 begin
     return TRUE;

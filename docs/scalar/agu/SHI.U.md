@@ -119,7 +119,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/SHI.U.asl -->
 ```asl
-readonly func InstructionContractOperation_SHI_U() => ScalarOperation
+readonly func SelectSHIUOperation() => ScalarOperation
 begin
     return ScalarOperation_SHI_U;
 end;
@@ -130,49 +130,49 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/SHI.U.asl -->
 ```asl
-readonly func InstructionContractHandler_SHI_U()
+readonly func SelectSHIUHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStore;
 end;
 
-pure func InstructionContractAGUAction_SHI_U()
+pure func SHIUAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Store;
 end;
 
-pure func InstructionContractAGUAddressKind_SHI_U()
+pure func SHIUAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_Immediate;
 end;
 
-pure func InstructionContractAGUSizeBytes_SHI_U()
+pure func SHIUAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 2;
 end;
 
-pure func InstructionContractAGUOffsetScale_SHI_U()
+pure func SHIUAGUOffsetScale()
     => integer {0..3}
 begin
     return 0;
 end;
 
-pure func InstructionContractAGUUpdateMode_SHI_U()
+pure func SHIUAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_None;
 end;
 
-pure func InstructionContractAGUSignedLoad_SHI_U()
+pure func SHIUAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_SHI_U()
+pure func SHIUAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

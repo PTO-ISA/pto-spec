@@ -34,10 +34,10 @@ begin
     assert _BundleDimensions[[2]] == Zeros{PTO_XLEN} + 255;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x108;
 
-    assert InstructionContractDimension_C_B_DIMI('00') == 0;
-    assert InstructionContractDimension_C_B_DIMI('01') == 1;
-    assert InstructionContractDimension_C_B_DIMI('10') == 2;
-    assert InstructionContractValue_C_B_DIMI(Ones{8}) ==
+    assert CBDIMIDimension('00') == 0;
+    assert CBDIMIDimension('01') == 1;
+    assert CBDIMIDimension('10') == 2;
+    assert ComputeCBDIMIValue(Ones{8}) ==
         Zeros{PTO_XLEN} + 255;
     return 0;
 end;

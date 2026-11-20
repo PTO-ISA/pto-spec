@@ -136,7 +136,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.asl -->
 ```asl
-readonly func InstructionContractOperation_TROWEXPANDDIV() => TileOperation
+readonly func SelectTROWEXPANDDIVOperation() => TileOperation
 begin
     return TileOperation_TROWEXPANDDIV;
 end;
@@ -159,13 +159,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/reduce-and-expand/row-expansion/TROWEXPANDDIV.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TROWEXPANDDIV(
+pure func TROWEXPANDDIVDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TROWEXPANDDIV(
+readonly func TROWEXPANDDIVOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex) => boolean
@@ -178,17 +178,17 @@ begin
         broadcast);
 end;
 
-readonly func InstructionContractHandler_TROWEXPANDDIV() => TileSemanticHandler
+readonly func SelectTROWEXPANDDIVHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;
 
-func InstructionContractExecute_TROWEXPANDDIV(
+func ExecuteTROWEXPANDDIV(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TROWEXPANDDIV(
+    assert TROWEXPANDDIVOperandsLegal(
         destination,
         source,
         broadcast);

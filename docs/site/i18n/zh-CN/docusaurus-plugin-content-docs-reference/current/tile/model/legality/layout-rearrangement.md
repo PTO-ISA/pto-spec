@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-purpose role=purpose-scope -->
 ## 用途与范围
 
-本单元包含四条 CUBE 单元重排指令的操作数合法性谓词：`TileOperandsLegal_TPERMUTE`、`TileOperandsLegal_TSHUF`、`TileOperandsLegal_TPACK` 与 `TileOperandsLegal_TUNPACK`。每条指令的 `InstructionContractOperandsLegal_*` 返回对应谓词，其目录记录也把该谓词列为 `legality_handler`。
+本单元包含四条 CUBE 单元重排指令的操作数合法性谓词：`TileOperandsLegal_TPERMUTE`、`TileOperandsLegal_TSHUF`、`TileOperandsLegal_TPACK` 与 `TileOperandsLegal_TUNPACK`。每条指令的 `<MNEMONIC>OperandsLegal` 封装函数返回对应谓词，其目录记录也把该谓词列为 `legality_handler`。
 
 合法性谓词是只读检查。它检查描述符、类型、控制字段与元素已定义性，并以返回 FALSE 代替修改状态。重排执行单元中的模型执行函数在构造结果之前断言同一谓词，因此未通过该谓词的操作数组合不会写入任何目标字节。
 

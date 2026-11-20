@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000001001100010001000110000001', 32) == 85;
     assert CommandOperationOfForm(85) == CommandOperation_bstart_mscatter_max_32_gm19;
     assert CommandHandlerOfForm(85) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_BSTART_MSCATTER_MAX(CommandOperationOfForm(85));
-    assert InstructionContractHandler_BSTART_MSCATTER_MAX() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTMSCATTERMAXEncodingMatches(CommandOperationOfForm(85));
+    assert SelectBSTARTMSCATTERMAXHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

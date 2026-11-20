@@ -15,19 +15,19 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TMAX-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TMAX() => TileOperation
+readonly func SelectTMAXOperation() => TileOperation
 begin
     return TileOperation_TMAX;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TMAX(
+pure func TMAXDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TMAX(
+readonly func TMAXOperandsLegal(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex) => boolean
@@ -39,12 +39,12 @@ begin
         source_right);
 end;
 
-pure func InstructionContractFloatingValue_TMAX(
+pure func ComputeTMAXFloatingValue(
     data_type: TileDataType,
     source_left: Word,
     source_right: Word) => (Word, boolean)
 begin
-    assert InstructionContractDataTypeLegal_TMAX(data_type);
+    assert TMAXDataTypeLegal(data_type);
     assert TileDataTypeIsFloating(data_type);
     return TileFloatingMinMaxValue(
         TileBinary_MAX,
@@ -53,12 +53,12 @@ begin
         source_right);
 end;
 
-readonly func InstructionContractHandler_TMAX() => TileSemanticHandler
+readonly func SelectTMAXHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TMAX(
+func ExecuteTMAX(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex)

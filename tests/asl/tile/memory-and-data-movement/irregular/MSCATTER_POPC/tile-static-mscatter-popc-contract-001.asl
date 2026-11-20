@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(116) == TileHandler_GM_RED_POPC;
     assert TileClassOfIndex(116) == TileClass_MemoryAndDataMovement;
     assert TileEngineOfIndex(116) == TileEngine_TLSU;
-    assert InstructionContractOperation_MSCATTER_POPC() == TileOperation_MSCATTER_POPC;
-    assert InstructionContractHandler_MSCATTER_POPC() == TileHandler_GM_RED_POPC;
+    assert SelectMSCATTERPOPCOperation() == TileOperation_MSCATTER_POPC;
+    assert SelectMSCATTERPOPCHandler() == TileHandler_GM_RED_POPC;
     return 0;
 end;

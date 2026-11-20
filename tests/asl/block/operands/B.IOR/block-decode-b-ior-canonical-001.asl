@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000000000000010011', 32) == 7;
     assert CommandOperationOfForm(7) == CommandOperation_b_ior_32_c3ea71404eb3;
     assert CommandHandlerOfForm(7) == CommandHandler_BindBundleScalarIO;
-    assert InstructionContractMatches_B_IOR(CommandOperationOfForm(7));
-    assert InstructionContractHandler_B_IOR() == CommandHandler_BindBundleScalarIO;
+    assert BIOREncodingMatches(CommandOperationOfForm(7));
+    assert SelectBIORHandler() == CommandHandler_BindBundleScalarIO;
     return 0;
 end;

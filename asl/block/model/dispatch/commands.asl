@@ -167,7 +167,7 @@ begin
                 DecodeCommandOperandRaw(instruction, form,
                     CommandField_SharedTileID)[5:0] as SharedTileID,
                 shared_size, shared_mask,
-                InstructionContractSharedSourceReuse_B_IOS(CommandOperationOfForm(form)));
+                BIOSSharedSourceReuse(CommandOperationOfForm(form)));
             if _LastFault == Fault_None then
                 OpenBundleRangeSharedGroup(FALSE, shared_size == 0,
                     shared_size != 0);
@@ -253,7 +253,7 @@ begin
                 if CommandOperandPresent(form, CommandField_SrcTile1) then
                     CommandDecodedTile(instruction, form, CommandField_SrcTile1)
                 else 0,
-                InstructionContractSource0Reuse_B_IOT(CommandOperationOfForm(form)), InstructionContractSource1Reuse_B_IOT(CommandOperationOfForm(form)),
+                BIOTSource0Reuse(CommandOperationOfForm(form)), BIOTSource1Reuse(CommandOperationOfForm(form)),
                 CommandOperandPresent(form, CommandField_L) &&
                     CommandDecodedBool(instruction, form, CommandField_L));
             if _LastFault == Fault_None then

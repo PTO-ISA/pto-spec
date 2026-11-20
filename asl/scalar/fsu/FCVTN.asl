@@ -8,64 +8,64 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-FCVTN-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_FCVTN()
+readonly func SelectFCVTNOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FCVTN;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_FCVTN()
+readonly func SelectFCVTNHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ConvertFloatingEncoding;
 end;
 
-pure func InstructionContractSourceTypeLegal_FCVTN(encoded: bits(2))
+pure func FCVTNSourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSourceCarrier_FCVTN(encoded: bits(2))
+pure func DecodeFCVTNSourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_FCVTN(encoded);
+    assert FCVTNSourceTypeLegal(encoded);
     return ScalarConvertFloatingTypeCode(encoded);
 end;
 
-pure func InstructionContractDestinationTypeLegal_FCVTN(encoded: bits(5))
+pure func FCVTNDestinationTypeLegal(encoded: bits(5))
     => boolean
 begin
     return ScalarFPToIntegerDestinationRawLegal(encoded);
 end;
 
-pure func InstructionContractDestinationCarrier_FCVTN(encoded: bits(5))
+pure func DecodeFCVTNDestinationCarrier(encoded: bits(5))
     => bits(5)
 begin
-    assert InstructionContractDestinationTypeLegal_FCVTN(encoded);
+    assert FCVTNDestinationTypeLegal(encoded);
     return ScalarFPToIntegerDestinationTypeCode(encoded);
 end;
 
-pure func InstructionContractSourceArity_FCVTN()
+pure func FCVTNSourceArity()
     => integer {1..3}
 begin
     return 1;
 end;
 
-pure func InstructionContractUsesProfileFlags_FCVTN()
+pure func FCVTNUsesProfileFlags()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesActiveRounding_FCVTN()
+pure func FCVTNUsesActiveRounding()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractFixedRounding_FCVTN()
+pure func FCVTNFixedRounding()
     => NumericRoundingMode
 begin
     return NumericRound_RNE;

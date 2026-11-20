@@ -16,6 +16,6 @@ begin
     let execution = ExecuteScalarInstruction(instruction, 32);
     assert execution == ScalarExecution_Executed;
     assert ReadGPR(4) == Zeros{PTO_XLEN} + 0xffffffff80000000;
-    assert InstructionContractResult_MADDW(addend, left, right) == Zeros{PTO_XLEN} + 0xffffffff80000000;
+    assert ComputeMADDWResult(addend, left, right) == Zeros{PTO_XLEN} + 0xffffffff80000000;
     return 0;
 end;

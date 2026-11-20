@@ -25,7 +25,7 @@ Its recorded summary is: SD.ADD atomically replaces the aligned 64-bit memory va
 ## Atomic mechanism
 The instruction contract selects `ScalarHandler_AtomicReadModifyWrite` at width `8` and maps this operation to `Atomic_ADD`. Scalar dispatch calls `AtomicReadModifyWrite`, which preflights the same address twice, reads, combines, and writes back; its return value is discarded.
 `Atomic_ADD` returns `old_value + operand`; at the 64-bit width of `SD.*` the sum wraps modulo 2^64.
-The helper returns the old memory value, but scalar dispatch passes `write_result` as `FALSE`, and the metadata helper `InstructionContractPublishesOldValue_SD_ADD` also returns `FALSE`, so nothing is published.
+The helper returns the old memory value, but scalar dispatch passes `write_result` as `FALSE`, and the metadata helper `SDADDPublishesOldValue` also returns `FALSE`, so nothing is published.
 Design point: the read probe is built and checked before the write probe is built, so a permitted read with a refused write faults with memory untouched, before any load takes place.
 
 <!-- PTO-READER-BLOCK: scalar-sd-add-inputs-outputs role=inputs-outputs -->
@@ -110,7 +110,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SD.ADD.asl -->
 ```asl
-readonly func InstructionContractOperation_SD_ADD() => ScalarOperation
+readonly func SelectSDADDOperation() => ScalarOperation
 begin
     return ScalarOperation_SD_ADD;
 end;
@@ -121,25 +121,25 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/SD.ADD.asl -->
 ```asl
-readonly func InstructionContractHandler_SD_ADD()
+readonly func SelectSDADDHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_SD_ADD()
+pure func SelectSDADDAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_ADD;
 end;
 
-pure func InstructionContractAtomicSizeBytes_SD_ADD()
+pure func SDADDAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractPublishesOldValue_SD_ADD()
+pure func SDADDPublishesOldValue()
     => boolean
 begin
     return FALSE;

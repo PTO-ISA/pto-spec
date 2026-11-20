@@ -7,39 +7,39 @@
 // IDs 3 through 4095 and inapplicable ID 1 MUST reject before destination effects.
 // NDF-END: PTO-LSRGET-BARG-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_LSRGET()
+readonly func SelectLSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_LSRGET;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_LSRGET()
+readonly func SelectLSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteLocalStateRegisterGet;
 end;
 
-pure func InstructionContractRequiresSystemBlock_LSRGET()
+pure func LSRGETRequiresSystemBlock()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractLocalRegisterIDLegal_LSRGET(
+pure func LSRGETLocalRegisterIDLegal(
     identifier: bits(12)) => boolean
 begin
     return UInt(identifier) <= 2;
 end;
 
-pure func InstructionContractBPCNApplicable_LSRGET(
+pure func LSRGETBPCNApplicable(
     kind: BundleKind) => boolean
 begin
     return kind == BundleKind_Standard ||
            kind == BundleKind_Floating;
 end;
 
-pure func InstructionContractReadsBARG_LSRGET()
+pure func LSRGETReadsBARG()
     => boolean
 begin
     return TRUE;

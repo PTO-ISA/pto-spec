@@ -124,7 +124,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.LBI.PO.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_LBI_PO() => ScalarOperation
+readonly func SelectHLLBIPOOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_LBI_PO;
 end;
@@ -135,49 +135,49 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/HL.LBI.PO.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_LBI_PO()
+readonly func SelectHLLBIPOHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarLoad;
 end;
 
-pure func InstructionContractAGUAction_HL_LBI_PO()
+pure func HLLBIPOAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Load;
 end;
 
-pure func InstructionContractAGUAddressKind_HL_LBI_PO()
+pure func HLLBIPOAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_Immediate;
 end;
 
-pure func InstructionContractAGUSizeBytes_HL_LBI_PO()
+pure func HLLBIPOAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 1;
 end;
 
-pure func InstructionContractAGUOffsetScale_HL_LBI_PO()
+pure func HLLBIPOAGUOffsetScale()
     => integer {0..3}
 begin
     return 0;
 end;
 
-pure func InstructionContractAGUUpdateMode_HL_LBI_PO()
+pure func HLLBIPOAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_PostIndex;
 end;
 
-pure func InstructionContractAGUSignedLoad_HL_LBI_PO()
+pure func HLLBIPOAGUSignedLoad()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_HL_LBI_PO()
+pure func HLLBIPOAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

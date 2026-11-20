@@ -152,7 +152,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/irregular/MGATHER.asl -->
 ```asl
-readonly func InstructionContractOperation_MGATHER() => TileOperation
+readonly func SelectMGATHEROperation() => TileOperation
 begin
     return TileOperation_MGATHER;
 end;
@@ -177,30 +177,30 @@ When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiG
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/irregular/MGATHER.asl -->
 ```asl
-readonly func InstructionContractHandler_MGATHER() => TileSemanticHandler
+readonly func SelectMGATHERHandler() => TileSemanticHandler
 begin
     return TileHandler_MGATHER;
 end;
 
-pure func InstructionContractUsesByteDisplacements_MGATHER()
+pure func MGATHERUsesByteDisplacements()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesMaskTile_MGATHER()
+pure func MGATHERUsesMaskTile()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractIsAtomicMemoryOperation_MGATHER()
+pure func MGATHERIsAtomicMemoryOperation()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractWritesMemory_MGATHER()
+pure func MGATHERWritesMemory()
     => boolean
 begin
     return FALSE;

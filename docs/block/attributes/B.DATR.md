@@ -224,7 +224,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/attributes/B.DATR.asl -->
 ```asl
-readonly func InstructionContractMatches_B_DATR(operation: CommandOperation) => boolean
+readonly func BDATREncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_b_datr_32_c161a042ff38);
 end;
@@ -257,18 +257,18 @@ Optional header command after BSTART and before B.IOR, B.IOT, B.IOS, or the firs
 // BSTART type; DTYPE_NONE preserves a concrete BSTART type and still latches
 // the remaining B.DATR controls. If no concrete type can be resolved, complete
 // bundle preflight raises Fault_TileLegality before allocation or effects.
-readonly func InstructionContractHandler_B_DATR() => CommandSemanticHandler
+readonly func SelectBDATRHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleDataAttributes;
 end;
 
-pure func InstructionContractHeaderOnly_B_DATR()
+pure func BDATRHeaderOnly()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractDuplicateRejects_B_DATR()
+pure func BDATRDuplicateRejects()
     => boolean
 begin
     return TRUE;

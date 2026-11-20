@@ -130,7 +130,7 @@ begin
     let data_type = TileDataTypeFromEncoding(
         _BundleOperation.data_type as TileDataTypeEncoding);
     if !BundleWeightTLOADDataTypeSupported(data_type) ||
-       !InstructionContractB_DATR_TLOADWeightFieldsLegal(
+       !TLOADWeightDataAttributesLegal(
            TileDataLayoutOfCode(_BundleDataAttributes.data_layout),
            _BundleDataAttributes.data_type,
            _BundleDataAttributes.pad_value,

@@ -26,7 +26,7 @@ It is a materializing instruction, not a branch: the computed address becomes da
 <!-- PTO-READER-BLOCK: scalar-addtpc-mechanism role=mechanism -->
 ## Mechanism
 
-The contract returns `ScalarHandler_AddToPC` with `InstructionContractUsesTPC_ADDTPC` true, `InstructionContractImmediateIsSigned_ADDTPC` true, `InstructionContractImmediateWidth_ADDTPC` `20`, and `InstructionContractPageShift_ADDTPC` `12`.
+The contract returns `ScalarHandler_AddToPC` with `ADDTPCUsesTPC` true, `ADDTPCImmediateIsSigned` true, `ADDTPCImmediateWidth` `20`, and `ADDTPCPageShift` `12`.
 
 The model adds `SignExtend(imm20)` shifted left by `12` to `TPC` and writes that sum through the destination selector. The addition wraps at XLEN. `TPC` is read once, before the addition, so the sum is relative to the address of `ADDTPC` itself and never to the next instruction.
 
@@ -46,7 +46,7 @@ Design point: `RegDst` excludes code `10` because that five-bit value is the enc
 <!-- PTO-READER-BLOCK: scalar-addtpc-effects role=effects -->
 ## Effects and ordering
 
-`ADDTPC` writes one destination value and nothing else. `InstructionContractWritesTPC_ADDTPC` returns false, and the state contract states that the instruction neither installs a control-flow target nor modifies `TPC` directly.
+`ADDTPC` writes one destination value and nothing else. `ADDTPCWritesTPC` returns false, and the state contract states that the instruction neither installs a control-flow target nor modifies `TPC` directly.
 
 After the destination effect, scalar dispatch advances `TPC` by `4` bytes, the encoded length of the form, because `ScalarHandlerWritesTPC` is false for `AddToPC`.
 
@@ -117,7 +117,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/ADDTPC.asl -->
 ```asl
-readonly func InstructionContractOperation_ADDTPC() => ScalarOperation
+readonly func SelectADDTPCOperation() => ScalarOperation
 begin
     return ScalarOperation_ADDTPC;
 end;
@@ -128,42 +128,42 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/ADDTPC.asl -->
 ```asl
-readonly func InstructionContractHandler_ADDTPC() => ScalarSemanticHandler
+readonly func SelectADDTPCHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_AddToPC;
 end;
 
-pure func InstructionContractUsesTPC_ADDTPC()
+pure func ADDTPCUsesTPC()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractImmediateWidth_ADDTPC()
+pure func ADDTPCImmediateWidth()
     => integer {20}
 begin
     return 20;
 end;
 
-pure func InstructionContractImmediateIsSigned_ADDTPC()
+pure func ADDTPCImmediateIsSigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractPageShift_ADDTPC()
+pure func ADDTPCPageShift()
     => integer {12}
 begin
     return 12;
 end;
 
-pure func InstructionContractWritesTPC_ADDTPC()
+pure func ADDTPCWritesTPC()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractTarget_ADDTPC(
+pure func ResolveADDTPCTarget(
     base: Word,
     page_offset: Word)
     => Word

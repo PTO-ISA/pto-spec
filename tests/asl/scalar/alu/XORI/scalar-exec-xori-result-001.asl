@@ -12,8 +12,8 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(1) == Zeros{PTO_XLEN};
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x44;
-    assert InstructionContractImmediateWidth_XORI() == 12;
-    assert InstructionContractImmediateIsSigned_XORI();
-    assert !InstructionContractIsWordOperation_XORI();
+    assert XORIImmediateWidth() == 12;
+    assert XORIImmediateIsSigned();
+    assert !XORIIsWordOperation();
     return 0;
 end;

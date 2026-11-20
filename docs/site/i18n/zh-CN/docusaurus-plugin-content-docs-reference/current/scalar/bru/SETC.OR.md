@@ -110,7 +110,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/SETC.OR.asl -->
 ```asl
-readonly func InstructionContractOperation_SETC_OR() => ScalarOperation
+readonly func SelectSETCOROperation() => ScalarOperation
 begin
     return ScalarOperation_SETC_OR;
 end;
@@ -127,23 +127,23 @@ Applicable only in the body of an active block whose BARG.TYPE is Conditional. A
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/SETC.OR.asl -->
 ```asl
-readonly func InstructionContractHandler_SETC_OR() => ScalarSemanticHandler
+readonly func SelectSETCORHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommitLogical;
 end;
 
-pure func InstructionContractCombinesWithOR_SETC_OR()
+pure func SETCORCombinesWithOR()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractCommitLogicalValue_SETC_OR(
+pure func SETCORCommitLogicalValue(
     left: Word,
     right: Word)
     => Word
 begin
-    if InstructionContractCombinesWithOR_SETC_OR() then
+    if SETCORCombinesWithOR() then
         return left OR right;
     end;
     return left AND right;

@@ -26,7 +26,7 @@ As with `MAX`, the result is one of the operand bit patterns rather than a compu
 <!-- PTO-READER-BLOCK: scalar-min-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `InstructionContractResult_MIN`, which returns `left` when `SInt(left) < SInt(right)` and `right` otherwise, and `InstructionContractUsesSignedComparison_MIN`, which returns true. Dispatch reaches the same helper through `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MIN, FALSE)`.
+The owning ASL exposes `ComputeMINResult`, which returns `left` when `SInt(left) < SInt(right)` and `right` otherwise, and `MINUsesSignedComparison`, which returns true. Dispatch reaches the same helper through `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MIN, FALSE)`.
 
 ```asm
 min SrcL, SrcR, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MIN.asl -->
 ```asl
-readonly func InstructionContractOperation_MIN()
+readonly func SelectMINOperation()
     => ScalarOperation
 begin
     return ScalarOperation_MIN;
@@ -128,13 +128,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MIN.asl -->
 ```asl
-readonly func InstructionContractHandler_MIN()
+readonly func SelectMINHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractResult_MIN(left: Word, right: Word)
+pure func ComputeMINResult(left: Word, right: Word)
     => Word
 begin
     if SInt(left) < SInt(right) then
@@ -144,7 +144,7 @@ begin
     end;
 end;
 
-pure func InstructionContractUsesSignedComparison_MIN()
+pure func MINUsesSignedComparison()
     => boolean
 begin
     return TRUE;

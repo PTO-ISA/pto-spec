@@ -111,7 +111,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TABS.asl -->
 ```asl
-readonly func InstructionContractOperation_TABS() => TileOperation
+readonly func SelectTABSOperation() => TileOperation
 begin
     return TileOperation_TABS;
 end;
@@ -134,13 +134,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/logical/TABS.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TABS(
+pure func TABSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TABS(
+readonly func TABSOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -150,7 +150,7 @@ begin
         source);
 end;
 
-pure func InstructionContractValue_TABS(
+pure func ComputeTABSValue(
     data_type: TileDataType,
     source: Word) => Word
 begin
@@ -161,12 +161,12 @@ begin
     return result;
 end;
 
-readonly func InstructionContractHandler_TABS() => TileSemanticHandler
+readonly func SelectTABSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;
 
-func InstructionContractExecute_TABS(
+func ExecuteTABS(
     destination: TileIndex,
     source: TileIndex)
 begin

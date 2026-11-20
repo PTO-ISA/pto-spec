@@ -8,55 +8,55 @@
 // the store event and any base update at the defined restart boundary.
 // NDF-END: PTO-SW-PCR-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SW_PCR() => ScalarOperation
+readonly func SelectSWPCROperation() => ScalarOperation
 begin
     return ScalarOperation_SW_PCR;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SW_PCR()
+readonly func SelectSWPCRHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStore;
 end;
 
-pure func InstructionContractAGUAction_SW_PCR()
+pure func SWPCRAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Store;
 end;
 
-pure func InstructionContractAGUAddressKind_SW_PCR()
+pure func SWPCRAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_PCRelative;
 end;
 
-pure func InstructionContractAGUSizeBytes_SW_PCR()
+pure func SWPCRAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 4;
 end;
 
-pure func InstructionContractAGUOffsetScale_SW_PCR()
+pure func SWPCRAGUOffsetScale()
     => integer {0..3}
 begin
     return 2;
 end;
 
-pure func InstructionContractAGUUpdateMode_SW_PCR()
+pure func SWPCRAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_None;
 end;
 
-pure func InstructionContractAGUSignedLoad_SW_PCR()
+pure func SWPCRAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_SW_PCR()
+pure func SWPCRAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

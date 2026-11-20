@@ -8,24 +8,24 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-BSTART-VEC-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_VEC(
+readonly func BSTARTVECEncodingMatches(
     operation: CommandOperation) => boolean
 begin
-    return InstructionContractMatches_BSTART_TEPL(operation);
+    return BSTARTTEPLEncodingMatches(operation);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSTART_VEC() => CommandSemanticHandler
+readonly func SelectBSTARTVECHandler() => CommandSemanticHandler
 begin
-    return InstructionContractHandler_BSTART_TEPL();
+    return SelectBSTARTTEPLHandler();
 end;
 
-pure func InstructionContractAliasEngine_BSTART_VEC() => TileExecutionEngine
+pure func BSTARTVECAliasEngine() => TileExecutionEngine
 begin
     return TileEngine_VEC;
 end;
 
-pure func InstructionContractAcceptsTileOperation_BSTART_VEC(
+pure func BSTARTVECAcceptsTileOperation(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
     return TileTEPLAliasAcceptsOperation(TileTEPLAlias_VEC, operation);

@@ -1,14 +1,14 @@
 // PTO-TEST: {"id":"PTO-AVS-BLOCK-C-BSTART-STD-BRTYPE-001","source":"asl/block/encoding/C.BSTART.STD.asl","requirements":["PTO-INST-BLOCK-C-BSTART-STD"],"kind":"execution","summary":"C.BSTART.STD maps its three assigned BrType values to standard block transfers","pass_condition":"FALL, IND, and RET select the normative transfer mapping and standard block kind","related_sources":["asl/block/model/dispatch/start.asl"]}
 func main() => integer
 begin
-    assert InstructionContractBranchTypeLegal_C_BSTART_STD('001');
-    assert InstructionContractBranchTypeLegal_C_BSTART_STD('101');
-    assert InstructionContractBranchTypeLegal_C_BSTART_STD('111');
-    assert InstructionContractTransfer_C_BSTART_STD('001') ==
+    assert CBSTARTSTDBranchTypeLegal('001');
+    assert CBSTARTSTDBranchTypeLegal('101');
+    assert CBSTARTSTDBranchTypeLegal('111');
+    assert CBSTARTSTDTransfer('001') ==
         BundleTransfer_Fallthrough;
-    assert InstructionContractTransfer_C_BSTART_STD('101') ==
+    assert CBSTARTSTDTransfer('101') ==
         BundleTransfer_Indirect;
-    assert InstructionContractTransfer_C_BSTART_STD('111') ==
+    assert CBSTARTSTDTransfer('111') ==
         BundleTransfer_Return;
 
     ResetProfileState();

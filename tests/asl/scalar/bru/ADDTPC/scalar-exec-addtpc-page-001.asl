@@ -21,11 +21,11 @@ begin
     assert _LastFault == Fault_None;
     assert ReadGPR(3) == Zeros{PTO_XLEN} + 0x1100;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x104;
-    assert InstructionContractImmediateWidth_ADDTPC() == 20;
-    assert InstructionContractImmediateIsSigned_ADDTPC();
-    assert InstructionContractPageShift_ADDTPC() == 12;
-    assert !InstructionContractWritesTPC_ADDTPC();
-    assert InstructionContractTarget_ADDTPC(
+    assert ADDTPCImmediateWidth() == 20;
+    assert ADDTPCImmediateIsSigned();
+    assert ADDTPCPageShift() == 12;
+    assert !ADDTPCWritesTPC();
+    assert ResolveADDTPCTarget(
         Zeros{PTO_XLEN} + 0x100,
         Zeros{PTO_XLEN} + 1) == Zeros{PTO_XLEN} + 0x1100;
     return 0;

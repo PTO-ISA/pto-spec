@@ -19,8 +19,8 @@ end;
 
 func main() => integer
 begin
-    assert InstructionContractSupported_XB() == FALSE;
-    assert InstructionContractRejectsBeforeEffects_XB();
+    assert XBSupported() == FALSE;
+    assert XBRejectsBeforeEffects();
     AssertXBReserved(Zeros{64} + 0x00006f81);
     AssertXBReserved(Zeros{64} + 0xffffef81);
     return 0;

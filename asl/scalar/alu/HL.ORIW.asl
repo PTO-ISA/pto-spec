@@ -12,36 +12,36 @@
 // memory, Tile, block, reservation, privilege, numeric-status, or fault state.
 // NDF-END: PTO-HL-ORIW-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_ORIW() => ScalarOperation
+readonly func SelectHLORIWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_ORIW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_ORIW() => ScalarSemanticHandler
+readonly func SelectHLORIWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractImmediateWidth_HL_ORIW()
+pure func HLORIWImmediateWidth()
     => integer {1..64}
 begin
     return 24;
 end;
 
-pure func InstructionContractImmediateIsSigned_HL_ORIW()
+pure func HLORIWImmediateIsSigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_HL_ORIW()
+pure func HLORIWIsWordOperation()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractResult_HL_ORIW(
+pure func ComputeHLORIWResult(
     left: Word,
     immediate: bits(24))
     => Word

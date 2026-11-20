@@ -410,11 +410,11 @@ func ExecuteConcatenatePair(destination_low: Reg5Selector,
                             left: Word, right: Word,
                             shift_amount: integer {0..127})
 begin
-    let low = InstructionContractLowResult_HL_CCAT(
+    let low = ComputeHLCCATLowResult(
         left,
         right,
         shift_amount);
-    let high = InstructionContractHighResult_HL_CCAT(
+    let high = ComputeHLCCATHighResult(
         left,
         right,
         shift_amount);
@@ -427,11 +427,11 @@ func ExecuteConcatenatePairW(destination_low: Reg5Selector,
                              left: Word, right: Word,
                              shift_amount: integer {0..127})
 begin
-    let low = InstructionContractLowResult_HL_CCATW(
+    let low = ComputeHLCCATWLowResult(
         left,
         right,
         shift_amount);
-    let high = InstructionContractHighResult_HL_CCATW(
+    let high = ComputeHLCCATWHighResult(
         left,
         right,
         shift_amount);

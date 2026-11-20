@@ -138,7 +138,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX.asl -->
 ```asl
-readonly func InstructionContractOperation_TGEMV_MX()
+readonly func SelectTGEMVMXOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV_MX;
@@ -165,19 +165,19 @@ BSTOP or the next BSTART completion boundary
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX.asl -->
 ```asl
-readonly func InstructionContractCubeFunction_TGEMV_MX()
+readonly func TGEMVMXCubeFunction()
     => integer {0..31}
 begin
     return 20;
 end;
 
-readonly func InstructionContractSharedOperandsAllowed_TGEMV_MX()
+readonly func TGEMVMXSharedOperandsAllowed()
     => boolean
 begin
     return FALSE;
 end;
 
-readonly func InstructionContractOperandsLegal_TGEMV_MX(
+readonly func TGEMVMXOperandsLegal(
     destination: TileIndex,
     left_vector: TileIndex,
     row_scale: TileIndex,
@@ -192,7 +192,7 @@ begin
         column_scale);
 end;
 
-readonly func InstructionContractHandler_TGEMV_MX()
+readonly func SelectTGEMVMXHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TGEMV_MX;

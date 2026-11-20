@@ -48,7 +48,7 @@ This page is a generated reference view of the normative ASL unit.
 
 设计要点：`RMode` 为零表示“使用本操作的默认值”，而不是某个特定舍入模式。代码 `001` 显式指定 `RNE`。因此程序可以为一个自身默认值为 `RTZ` 的转换选择 `RNE`。省略 `B.DATR` 时该字段保持为零，所以省略与显式 `000` 结果相同。
 
-设计要点：浮点值转换为整数类型时，`TCVT` 的默认值向零截断，其他情形则就近舍入、平局取偶；`TCVT` 所有者中的 `InstructionContractDefaultRounding_TCVT` 也给出同一规则。在当前类型枚举中，每种类型要么是浮点要么是整数，因此“非浮点目标”与“整数目标”选中的类型对相同。
+设计要点：浮点值转换为整数类型时，`TCVT` 的默认值向零截断，其他情形则就近舍入、平局取偶；`TCVT` 所有者中的 `TCVTDefaultRounding` 也给出同一规则。在当前类型枚举中，每种类型要么是浮点要么是整数，因此“非浮点目标”与“整数目标”选中的类型对相同。
 
 <!-- PTO-READER-BLOCK: block-model-dispatch-numeric-control-boundaries role=boundaries -->
 ## 架构边界

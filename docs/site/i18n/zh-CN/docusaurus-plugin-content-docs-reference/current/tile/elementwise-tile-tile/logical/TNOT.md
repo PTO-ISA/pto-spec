@@ -99,7 +99,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TNOT.asl -->
 ```asl
-readonly func InstructionContractOperation_TNOT() => TileOperation
+readonly func SelectTNOTOperation() => TileOperation
 begin
     return TileOperation_TNOT;
 end;
@@ -122,13 +122,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/logical/TNOT.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TNOT(
+pure func TNOTDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecScalarIntegerDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TNOT(
+readonly func TNOTOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -138,7 +138,7 @@ begin
         source);
 end;
 
-pure func InstructionContractValue_TNOT(
+pure func ComputeTNOTValue(
     data_type: TileDataType,
     source: Word) => Word
 begin
@@ -149,12 +149,12 @@ begin
     return result;
 end;
 
-readonly func InstructionContractHandler_TNOT() => TileSemanticHandler
+readonly func SelectTNOTHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;
 
-func InstructionContractExecute_TNOT(
+func ExecuteTNOT(
     destination: TileIndex,
     source: TileIndex)
 begin

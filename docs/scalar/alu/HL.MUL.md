@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-mul-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `InstructionContractProduct_HL_MUL`, which returns `MultiplyWideSigned(left, right)`. `InstructionContractLow_HL_MUL` slices bits `63:0` of that product and `InstructionContractHigh_HL_MUL` slices bits `127:64`. Dispatch reaches the same slices through `ExecuteScalarMultiplyPair` with `signed_operation` true.
+The owning ASL exposes `ComputeHLMULProduct`, which returns `MultiplyWideSigned(left, right)`. `HLMULLow` slices bits `63:0` of that product and `HLMULHigh` slices bits `127:64`. Dispatch reaches the same slices through `ExecuteScalarMultiplyPair` with `signed_operation` true.
 
 ```asm
 hl.mul SrcL, SrcR, ->Dst0, Dst1
@@ -122,7 +122,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.MUL.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_MUL() => ScalarOperation
+readonly func SelectHLMULOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_MUL;
 end;
@@ -133,23 +133,23 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.MUL.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_MUL() => ScalarSemanticHandler
+readonly func SelectHLMULHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarMultiplyPair;
 end;
-pure func InstructionContractProduct_HL_MUL(left: Word, right: Word) => DoubleWord
+pure func ComputeHLMULProduct(left: Word, right: Word) => DoubleWord
 begin
     return MultiplyWideSigned(left, right);
 end;
 
-pure func InstructionContractLow_HL_MUL(left: Word, right: Word) => Word
+pure func HLMULLow(left: Word, right: Word) => Word
 begin
-    return InstructionContractProduct_HL_MUL(left, right)[63:0];
+    return ComputeHLMULProduct(left, right)[63:0];
 end;
 
-pure func InstructionContractHigh_HL_MUL(left: Word, right: Word) => Word
+pure func HLMULHigh(left: Word, right: Word) => Word
 begin
-    return InstructionContractProduct_HL_MUL(left, right)[127:64];
+    return ComputeHLMULProduct(left, right)[127:64];
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->

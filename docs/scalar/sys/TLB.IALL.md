@@ -24,11 +24,11 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-tlb-iall-mechanism role=mechanism -->
 ## System mechanism
 
-`InstructionContractHandler_TLB_IALL` selects the shared maintenance handler (`asl/scalar/sys/TLB.IALL.asl:18`), and the token `Maintenance_TLB_IALL` has the last case in the executor, advancing the TLB epoch with no operand test at all (`asl/scalar/model/sys/semantics.asl:154`).
+`SelectTLBIALLHandler` selects the shared maintenance handler (`asl/scalar/sys/TLB.IALL.asl:18`), and the token `Maintenance_TLB_IALL` has the last case in the executor, advancing the TLB epoch with no operand test at all (`asl/scalar/model/sys/semantics.asl:154`).
 
-`InstructionContractMaintenanceUsesOperand_TLB_IALL` is `FALSE` (`asl/scalar/sys/TLB.IALL.asl:36`), so the dispatcher passes `Zeros{PTO_XLEN}` and reads no scalar register (`asl/scalar/model/dispatch/sys.asl:59`).
+`TLBIALLMaintenanceUsesOperand` is `FALSE` (`asl/scalar/sys/TLB.IALL.asl:36`), so the dispatcher passes `Zeros{PTO_XLEN}` and reads no scalar register (`asl/scalar/model/dispatch/sys.asl:59`).
 
-Ring privilege still applies: `InstructionContractMaintenanceRequiresRootRing_TLB_IALL` returns `TRUE` (`asl/scalar/sys/TLB.IALL.asl:42`).
+Ring privilege still applies: `TLBIALLMaintenanceRequiresRootRing` returns `TRUE` (`asl/scalar/sys/TLB.IALL.asl:42`).
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iall-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
@@ -86,7 +86,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/TLB.IALL.asl -->
 ```asl
-readonly func InstructionContractOperation_TLB_IALL()
+readonly func SelectTLBIALLOperation()
     => ScalarOperation
 begin
     return ScalarOperation_TLB_IALL;
@@ -104,31 +104,31 @@ TLB.IALL executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/TLB.IALL.asl -->
 ```asl
-readonly func InstructionContractHandler_TLB_IALL()
+readonly func SelectTLBIALLHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_TLB_IALL()
+pure func TLBIALLRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_TLB_IALL()
+pure func SelectTLBIALLMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_TLB_IALL;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_TLB_IALL()
+pure func TLBIALLMaintenanceUsesOperand()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_TLB_IALL()
+pure func TLBIALLMaintenanceRequiresRootRing()
     => boolean
 begin
     return TRUE;

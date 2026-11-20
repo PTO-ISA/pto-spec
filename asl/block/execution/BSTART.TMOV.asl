@@ -50,7 +50,7 @@
 // CUBE-to-Shared-ND movement without restoring an independent Shared opcode.
 // NDF-END: PTO-ISA-LEGACY-SHARED-MOVEMENT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_TMOV(operation: CommandOperation) => boolean
+readonly func BSTARTTMOVEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_tmov_32_211446509efb);
 end;
@@ -59,18 +59,18 @@ end;
 // BSTART.TMOV accepts DTYPE_NONE (encoded 31). When neither B.DATR nor BSTART
 // contributes a concrete type, Local/Shared TMOV inherits the bound source
 // descriptor type. DTYPE_NONE is never installed in a tile descriptor.
-readonly func InstructionContractHandler_BSTART_TMOV() => CommandSemanticHandler
+readonly func SelectBSTARTTMOVHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractStartedTileOperation_BSTART_TMOV()
+readonly func BSTARTTMOVStartedTileOperation()
     => TileOperation
 begin
     return TileOperation_TMOV;
 end;
 
-pure func InstructionContractStartsTileBundle_BSTART_TMOV()
+pure func BSTARTTMOVStartsTileBundle()
     => boolean
 begin
     return TRUE;

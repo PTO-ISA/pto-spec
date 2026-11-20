@@ -104,7 +104,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/C.EBREAK.asl -->
 ```asl
-readonly func InstructionContractOperation_C_EBREAK()
+readonly func SelectCEBREAKOperation()
     => ScalarOperation
 begin
     return ScalarOperation_C_EBREAK;
@@ -122,25 +122,25 @@ C.EBREAK executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/C.EBREAK.asl -->
 ```asl
-readonly func InstructionContractHandler_C_EBREAK()
+readonly func SelectCEBREAKHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_SoftwareBreakpoint;
 end;
 
-pure func InstructionContractRequiresSystemBlock_C_EBREAK()
+pure func CEBREAKRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractBreakpointImmediateWidth_C_EBREAK()
+pure func CEBREAKBreakpointImmediateWidth()
     => integer {4,5}
 begin
     return 5;
 end;
 
-pure func InstructionContractBreakpointPublishesTrapCause_C_EBREAK()
+pure func CEBREAKBreakpointPublishesTrapCause()
     => boolean
 begin
     return TRUE;

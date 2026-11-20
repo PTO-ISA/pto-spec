@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(106) == TileHandler_GM_ATOM_VALUE;
     assert TileClassOfIndex(106) == TileClass_MemoryAndDataMovement;
     assert TileEngineOfIndex(106) == TileEngine_TLSU;
-    assert InstructionContractOperation_MGATHER_OR() == TileOperation_MGATHER_OR;
-    assert InstructionContractHandler_MGATHER_OR() == TileHandler_GM_ATOM_VALUE;
+    assert SelectMGATHEROROperation() == TileOperation_MGATHER_OR;
+    assert SelectMGATHERORHandler() == TileHandler_GM_ATOM_VALUE;
     return 0;
 end;

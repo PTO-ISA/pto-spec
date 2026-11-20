@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(54) == TileHandler_ExecuteTileReduction;
     assert TileClassOfIndex(54) == TileClass_ReduceAndExpand;
     assert TileEngineOfIndex(54) == TileEngine_SFU;
-    assert InstructionContractOperation_TCOLSUM() == TileOperation_TCOLSUM;
-    assert InstructionContractHandler_TCOLSUM() == TileHandler_ExecuteTileReduction;
+    assert SelectTCOLSUMOperation() == TileOperation_TCOLSUM;
+    assert SelectTCOLSUMHandler() == TileHandler_ExecuteTileReduction;
     return 0;
 end;

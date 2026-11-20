@@ -14,13 +14,13 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TMULS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TMULS() => TileOperation
+readonly func SelectTMULSOperation() => TileOperation
 begin
     return TileOperation_TMULS;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TMULS(
+pure func TMULSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileBinaryDataTypeSupported(
@@ -28,7 +28,7 @@ begin
         data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TMULS(
+readonly func TMULSOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word) => boolean
@@ -40,17 +40,17 @@ begin
         scalar);
 end;
 
-readonly func InstructionContractHandler_TMULS() => TileSemanticHandler
+readonly func SelectTMULSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileScalar;
 end;
 
-func InstructionContractExecute_TMULS(
+func ExecuteTMULS(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word)
 begin
-    assert InstructionContractOperandsLegal_TMULS(
+    assert TMULSOperandsLegal(
         destination,
         source,
         scalar);

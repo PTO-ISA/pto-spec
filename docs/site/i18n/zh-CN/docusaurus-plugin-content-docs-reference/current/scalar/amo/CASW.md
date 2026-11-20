@@ -135,7 +135,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/CASW.asl -->
 ```asl
-readonly func InstructionContractOperation_CASW() => ScalarOperation
+readonly func SelectCASWOperation() => ScalarOperation
 begin
     return ScalarOperation_CASW;
 end;
@@ -146,30 +146,30 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/CASW.asl -->
 ```asl
-readonly func InstructionContractHandler_CASW() => ScalarSemanticHandler
+readonly func SelectCASWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_CompareAndSwap;
 end;
 
-pure func InstructionContractCompareSizeBytes_CASW()
+pure func CASWCompareSizeBytes()
     => integer {1,2,4,8}
 begin
     return 4;
 end;
 
-pure func InstructionContractHasFarField_CASW()
+pure func CASWHasFarField()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractZeroExtendsOldValue_CASW()
+pure func CASWZeroExtendsOldValue()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractSignExtendsOldValue_CASW()
+pure func CASWSignExtendsOldValue()
     => boolean
 begin
     return TRUE;

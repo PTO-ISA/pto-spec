@@ -121,7 +121,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TSEL.asl -->
 ```asl
-readonly func InstructionContractOperation_TSEL() => TileOperation
+readonly func SelectTSELOperation() => TileOperation
 begin
     return TileOperation_TSEL;
 end;
@@ -146,13 +146,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/logical/TSEL.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TSEL(
+pure func TSELDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileSelectDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TSEL(
+readonly func TSELOperandsLegal(
     destination: TileIndex,
     predicate: TileIndex,
     source_true: TileIndex,
@@ -165,18 +165,18 @@ begin
         source_false);
 end;
 
-readonly func InstructionContractHandler_TSEL() => TileSemanticHandler
+readonly func SelectTSELHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileSelect;
 end;
 
-func InstructionContractExecute_TSEL(
+func ExecuteTSEL(
     destination: TileIndex,
     predicate: TileIndex,
     source_true: TileIndex,
     source_false: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TSEL(
+    assert TSELOperandsLegal(
         destination,
         predicate,
         source_true,

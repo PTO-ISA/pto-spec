@@ -8,32 +8,32 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-BWI-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_BWI()
+readonly func SelectBWIOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BWI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BWI()
+readonly func SelectBWIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteControlRequest;
 end;
 
-pure func InstructionContractRequiresSystemBlock_BWI()
+pure func BWIRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractControlRequest_BWI()
+pure func BWIControlRequest()
     => ExecutionControlRequest
 begin
     return ExecutionControl_WaitInterrupt;
 end;
 
-pure func InstructionContractControlRequestIsNonblocking_BWI()
+pure func BWIControlRequestIsNonblocking()
     => boolean
 begin
     return TRUE;

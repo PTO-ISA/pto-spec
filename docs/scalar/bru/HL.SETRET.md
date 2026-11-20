@@ -108,7 +108,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/HL.SETRET.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_SETRET() => ScalarOperation
+readonly func SelectHLSETRETOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_SETRET;
 end;
@@ -119,18 +119,18 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/HL.SETRET.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_SETRET() => ScalarSemanticHandler
+readonly func SelectHLSETRETHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_SetReturnAddress;
 end;
 
-pure func InstructionContractUsesTPC_HL_SETRET()
+pure func HLSETRETUsesTPC()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractTarget_HL_SETRET(
+pure func ResolveHLSETRETTarget(
     base: Word,
     halfword_offset: Word)
     => Word

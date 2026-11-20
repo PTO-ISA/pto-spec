@@ -9,24 +9,24 @@
 // or Max whole-tile padding, and publish no GPR or numeric-status effect.
 // NDF-END: PTO-TGPR2T-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TGPR2T() => TileOperation
+readonly func SelectTGPR2TOperation() => TileOperation
 begin
     return TileOperation_TGPR2T;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_TGPR2T() => TileSemanticHandler
+readonly func SelectTGPR2THandler() => TileSemanticHandler
 begin
     return TileHandler_TGPR2T;
 end;
 
-pure func InstructionContractDataTypeLegal_TGPR2T(
+pure func TGPR2TDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_U8;
 end;
 
-readonly func InstructionContractOperandsLegal_TGPR2T(
+readonly func TGPR2TOperandsLegal(
     destination: TileIndex, source0: TileIndex, source1: TileIndex,
     source2: TileIndex, source3: TileIndex) => boolean
 begin
@@ -34,11 +34,11 @@ begin
         destination, source0, source1, source2, source3);
 end;
 
-func InstructionContractExecute_TGPR2T(
+func ExecuteTGPR2T(
     destination: TileIndex, source0: TileIndex, source1: TileIndex,
     source2: TileIndex, source3: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TGPR2T(
+    assert TGPR2TOperandsLegal(
         destination, source0, source1, source2, source3);
     TGPR2T(destination, source0, source1, source2, source3);
 end;

@@ -24,9 +24,9 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-mechanism role=mechanism -->
 ## 系统机制
 
-`InstructionContractHandler_SETC_TGT` 选择 `ScalarHandler_SetCommitTarget`（`asl/scalar/sys/SETC.TGT.asl:18`），且 `InstructionContractRequiresCommitTargetBlock_SETC_TGT` 返回 `TRUE`（`asl/scalar/sys/SETC.TGT.asl:30`）。该操作的适用性规则是 `BundleCommitTargetWritable`，它要求活动 bundle 且块种类为 Standard 或 Floating（`asl/scalar/model/sys/semantics.asl:316`）。
+`SelectSETCTGTHandler` 选择 `ScalarHandler_SetCommitTarget`（`asl/scalar/sys/SETC.TGT.asl:18`），且 `SETCTGTRequiresCommitTargetBlock` 返回 `TRUE`（`asl/scalar/sys/SETC.TGT.asl:30`）。该操作的适用性规则是 `BundleCommitTargetWritable`，它要求活动 bundle 且块种类为 Standard 或 Floating（`asl/scalar/model/sys/semantics.asl:316`）。
 
-`InstructionContractRequiresSystemBlock_SETC_TGT` 返回 `FALSE`（`asl/scalar/sys/SETC.TGT.asl:24`），因此该指令不是 SYS 块操作：它就在自己所修改目标的那个块中运行。
+`SETCTGTRequiresSystemBlock` 返回 `FALSE`（`asl/scalar/sys/SETC.TGT.asl:24`），因此该指令不是 SYS 块操作：它就在自己所修改目标的那个块中运行。
 
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/SETC.TGT.asl -->
 ```asl
-readonly func InstructionContractOperation_SETC_TGT()
+readonly func SelectSETCTGTOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SETC_TGT;
@@ -118,25 +118,25 @@ SETC.TGT is legal in the body of an active Standard or Floating block and is not
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/SETC.TGT.asl -->
 ```asl
-readonly func InstructionContractHandler_SETC_TGT()
+readonly func SelectSETCTGTHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_SetCommitTarget;
 end;
 
-pure func InstructionContractRequiresSystemBlock_SETC_TGT()
+pure func SETCTGTRequiresSystemBlock()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractRequiresCommitTargetBlock_SETC_TGT()
+pure func SETCTGTRequiresCommitTargetBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractWritesBARGBPCN_SETC_TGT()
+pure func SETCTGTWritesBARGBPCN()
     => boolean
 begin
     return TRUE;

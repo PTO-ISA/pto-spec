@@ -10,18 +10,18 @@
 // attached to a Shared group remain legal.
 // NDF-END: PTO-B-SUBVIEW-RANGE-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_B_SUBVIEW(operation: CommandOperation) => boolean
+readonly func BSUBVIEWEncodingMatches(operation: CommandOperation) => boolean
 begin
     return operation == CommandOperation_b_subview_32_122000000001;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractSubviewSizeCodeIsAssigned_B_SUBVIEW(code: integer {0..15}) => boolean
+pure func BSUBVIEWSubviewSizeCodeIsAssigned(code: integer {0..15}) => boolean
 begin
     return 1 <= code && code <= 12;
 end;
 
-readonly func InstructionContractHandler_B_SUBVIEW() => CommandSemanticHandler
+readonly func SelectBSUBVIEWHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ApplyBundleSubview;
 end;

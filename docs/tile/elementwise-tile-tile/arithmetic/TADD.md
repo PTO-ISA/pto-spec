@@ -111,7 +111,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/arithmetic/TADD.asl -->
 ```asl
-readonly func InstructionContractOperation_TADD() => TileOperation
+readonly func SelectTADDOperation() => TileOperation
 begin
     return TileOperation_TADD;
 end;
@@ -134,13 +134,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/arithmetic/TADD.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TADD(
+pure func TADDDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TADD(
+readonly func TADDOperandsLegal(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex) => boolean
@@ -152,12 +152,12 @@ begin
         source_right);
 end;
 
-readonly func InstructionContractHandler_TADD() => TileSemanticHandler
+readonly func SelectTADDHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TADD(
+func ExecuteTADD(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex)

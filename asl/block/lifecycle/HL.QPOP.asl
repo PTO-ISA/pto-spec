@@ -6,13 +6,13 @@
 // Empty, missing, or corrupt queues MUST report status without a queue update.
 // NDF-END: PTO-HL-QPOP-GQM-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_HL_QPOP(operation: CommandOperation) => boolean
+readonly func HLQPOPEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_hl_qpop_48_a2c57f5bc27b);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_QPOP() => CommandSemanticHandler
+readonly func SelectHLQPOPHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteQueuePop;
 end;
@@ -29,13 +29,13 @@ begin
         flags);
 end;
 
-pure func InstructionContractChangesQueueManagerState_HL_QPOP()
+pure func HLQPOPChangesQueueManagerState()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSnapshotsSourcesBeforeWrite_HL_QPOP()
+pure func HLQPOPSnapshotsSourcesBeforeWrite()
     => boolean
 begin
     return TRUE;

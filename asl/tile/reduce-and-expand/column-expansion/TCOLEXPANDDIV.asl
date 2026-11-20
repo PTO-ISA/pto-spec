@@ -7,19 +7,19 @@
 // The complete BSTART, B.DIM, B.DATR, layout, PE-mask, integer DIV, numeric-status, padding, alias, snapshot, and atomic-publication rules remain unchanged.
 // NDF-END: PTO-TCOLEXPANDDIV-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TCOLEXPANDDIV() => TileOperation
+readonly func SelectTCOLEXPANDDIVOperation() => TileOperation
 begin
     return TileOperation_TCOLEXPANDDIV;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TCOLEXPANDDIV(
+pure func TCOLEXPANDDIVDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TCOLEXPANDDIV(
+readonly func TCOLEXPANDDIVOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex) => boolean
@@ -32,17 +32,17 @@ begin
         broadcast);
 end;
 
-readonly func InstructionContractHandler_TCOLEXPANDDIV() => TileSemanticHandler
+readonly func SelectTCOLEXPANDDIVHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;
 
-func InstructionContractExecute_TCOLEXPANDDIV(
+func ExecuteTCOLEXPANDDIV(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TCOLEXPANDDIV(
+    assert TCOLEXPANDDIVOperandsLegal(
         destination,
         source,
         broadcast);

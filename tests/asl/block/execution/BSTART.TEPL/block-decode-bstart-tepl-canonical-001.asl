@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000011001000110000001', 32) == 33;
     assert CommandOperationOfForm(33) == CommandOperation_bstart_tepl_32_d022db6dacb3;
     assert CommandHandlerOfForm(33) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_BSTART_TEPL(CommandOperationOfForm(33));
-    assert InstructionContractHandler_BSTART_TEPL() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTTEPLEncodingMatches(CommandOperationOfForm(33));
+    assert SelectBSTARTTEPLHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

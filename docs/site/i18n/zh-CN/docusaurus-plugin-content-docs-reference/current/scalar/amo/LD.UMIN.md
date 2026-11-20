@@ -128,7 +128,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/LD.UMIN.asl -->
 ```asl
-readonly func InstructionContractOperation_LD_UMIN() => ScalarOperation
+readonly func SelectLDUMINOperation() => ScalarOperation
 begin
     return ScalarOperation_LD_UMIN;
 end;
@@ -139,31 +139,31 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/LD.UMIN.asl -->
 ```asl
-readonly func InstructionContractHandler_LD_UMIN()
+readonly func SelectLDUMINHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_LD_UMIN()
+pure func SelectLDUMINAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_UMIN;
 end;
 
-pure func InstructionContractAtomicSizeBytes_LD_UMIN()
+pure func LDUMINAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractPublishesOldValue_LD_UMIN()
+pure func LDUMINPublishesOldValue()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSignExtendsOldValue_LD_UMIN()
+pure func LDUMINSignExtendsOldValue()
     => boolean
 begin
     return FALSE;

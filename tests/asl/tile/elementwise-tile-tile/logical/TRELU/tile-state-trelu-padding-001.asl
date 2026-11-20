@@ -16,13 +16,13 @@ begin
         Zeros{5} + 24, Zeros{5}, '01',
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     _BundleDataAttributesPresent = TRUE;
-    InstructionContractExecute_TRELU(1, 0);
+    ExecuteTRELU(1, 0);
     assert TileElementDefined(1, 0, 1);
     assert ReadTileElement(1, 0, 1) == Ones{PTO_XLEN};
 
     ResetProfileState();
     ConfigureTreluPaddingTiles();
-    InstructionContractExecute_TRELU(1, 0);
+    ExecuteTRELU(1, 0);
     assert !TileElementDefined(1, 0, 1);
     return 0;
 end;

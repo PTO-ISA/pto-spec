@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(69) == TileHandler_TTRI;
     assert TileClassOfIndex(69) == TileClass_IrregularAndComplex;
     assert TileEngineOfIndex(69) == TileEngine_SFU;
-    assert InstructionContractOperation_TTRI() == TileOperation_TTRI;
-    assert InstructionContractHandler_TTRI() == TileHandler_TTRI;
+    assert SelectTTRIOperation() == TileOperation_TTRI;
+    assert SelectTTRIHandler() == TileHandler_TTRI;
     return 0;
 end;

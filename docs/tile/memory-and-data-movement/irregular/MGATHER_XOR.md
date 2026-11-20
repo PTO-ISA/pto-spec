@@ -123,7 +123,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/irregular/MGATHER_XOR.asl -->
 ```asl
-readonly func InstructionContractMatches_MGATHER_XOR(operation: TileOperation) => boolean
+readonly func MGATHERXOREncodingMatches(operation: TileOperation) => boolean
 begin
     return operation == TileOperation_MGATHER_XOR;
 end;
@@ -147,11 +147,11 @@ When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiG
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/irregular/MGATHER_XOR.asl -->
 ```asl
-readonly func InstructionContractHandler_MGATHER_XOR() => TileSemanticHandler
+readonly func SelectMGATHERXORHandler() => TileSemanticHandler
 begin
     return TileHandler_GM_ATOM_VALUE;
 end;
-readonly func InstructionContractOperation_MGATHER_XOR() => TileOperation
+readonly func SelectMGATHERXOROperation() => TileOperation
 begin
     return TileOperation_MGATHER_XOR;
 end;

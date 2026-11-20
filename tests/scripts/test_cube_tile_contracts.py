@@ -5,6 +5,7 @@ import unittest
 from pathlib import Path
 
 from scripts.asl_units import load_units
+from scripts.instruction_symbols import contract_symbol
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -105,7 +106,7 @@ class CubeTileContractTest(unittest.TestCase):
                 source = (ROOT / start.source_path).read_text(encoding="utf-8")
                 identifier = start_name.replace(".", "_")
                 function_match = re.search(
-                    rf"InstructionContractCubeFunction_{identifier}\(\).*?"
+                    rf"{contract_symbol('CubeFunction', identifier)}\(\).*?"
                     rf"return\s+([0-9]+);",
                     source,
                     flags=re.DOTALL,

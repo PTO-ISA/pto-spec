@@ -54,12 +54,12 @@ The current instruction contract is owned by the ASL source linked above.
 
 这些事件是 `TLOAD` 对相同足迹会记录的带类型元素 load 事件，但没有任何值被发布到任何位置。
 
-设计要点：`InstructionContractPublishesTileDestination_TPREFETCH` 为 `FALSE`，并且契约声明缓存放置与保留在架构上不可见，因此可观察结果是事件序列，而不是数据存在于任何缓存中。
+设计要点：`TPREFETCHPublishesTileDestination` 为 `FALSE`，并且契约声明缓存放置与保留在架构上不可见，因此可观察结果是事件序列，而不是数据存在于任何缓存中。
 
 <!-- PTO-READER-BLOCK: tile-tprefetch-constraints role=constraints -->
 ## 类型、形状与故障
 
-`InstructionContractDataTypeLegal_TPREFETCH` 接受 `TileCarrierOrPackedBaselineDataTypeSupported` 允许的类型：最高 64 位的非打包载体，加上打包四位基线。
+`TPREFETCHDataTypeLegal` 接受 `TileCarrierOrPackedBaselineDataTypeSupported` 允许的类型：最高 64 位的非打包载体，加上打包四位基线。
 
 `ValidCol` 与 `ValidRow` 为正，`Col` 是非零的 2 的幂且至少为 `ValidCol`，并且 `ValidRow * ValidCol` 不得超过 `PTO_MODEL_TILE_ELEMENTS`。`B.DATR` 只允许 `Layout` 作为非零操作属性，并要求填充并集保持为零。
 
@@ -117,7 +117,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/regular/TPREFETCH.asl -->
 ```asl
-readonly func InstructionContractOperation_TPREFETCH() => TileOperation
+readonly func SelectTPREFETCHOperation() => TileOperation
 begin
     return TileOperation_TPREFETCH;
 end;
@@ -138,7 +138,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/regular/TPREFETCH.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TPREFETCH(
+pure func TPREFETCHDataTypeLegal(
     code: bits(5)) => boolean
 begin
     if !TileDataTypeEncodingValid(code as TileDataTypeEncoding) then
@@ -148,18 +148,18 @@ begin
     return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractHandler_TPREFETCH() => TileSemanticHandler
+readonly func SelectTPREFETCHHandler() => TileSemanticHandler
 begin
     return TileHandler_TPREFETCH;
 end;
 
-pure func InstructionContractPublishesTileDestination_TPREFETCH()
+pure func TPREFETCHPublishesTileDestination()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractUsesTLOADFootprint_TPREFETCH()
+pure func TPREFETCHUsesTLOADFootprint()
     => boolean
 begin
     return TRUE;

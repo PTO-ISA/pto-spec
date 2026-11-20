@@ -16,14 +16,14 @@ begin
     SetBundleDataAttributeState(Zeros{5} + 24, Zeros{5}, '10',
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     _BundleDataAttributesPresent = TRUE;
-    InstructionContractExecute_TMUL(2, 0, 1);
+    ExecuteTMUL(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 15;
     assert TileElementDefined(2, 0, 1);
     assert ReadTileElement(2, 0, 1) == '1000000000000000000000000000000000000000000000000000000000000000';
 
     ResetProfileState();
     ConfigurePaddedTMULTiles();
-    InstructionContractExecute_TMUL(2, 0, 1);
+    ExecuteTMUL(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 15;
     assert !TileElementDefined(2, 0, 1);
     return 0;

@@ -8,55 +8,55 @@
 // the store event and any base update at the defined restart boundary.
 // NDF-END: PTO-SW-U-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SW_U() => ScalarOperation
+readonly func SelectSWUOperation() => ScalarOperation
 begin
     return ScalarOperation_SW_U;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SW_U()
+readonly func SelectSWUHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStore;
 end;
 
-pure func InstructionContractAGUAction_SW_U()
+pure func SWUAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Store;
 end;
 
-pure func InstructionContractAGUAddressKind_SW_U()
+pure func SWUAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_Register;
 end;
 
-pure func InstructionContractAGUSizeBytes_SW_U()
+pure func SWUAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 4;
 end;
 
-pure func InstructionContractAGUOffsetScale_SW_U()
+pure func SWUAGUOffsetScale()
     => integer {0..3}
 begin
     return 0;
 end;
 
-pure func InstructionContractAGUUpdateMode_SW_U()
+pure func SWUAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_None;
 end;
 
-pure func InstructionContractAGUSignedLoad_SW_U()
+pure func SWUAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_SW_U()
+pure func SWUAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

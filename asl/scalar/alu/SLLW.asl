@@ -8,34 +8,34 @@
 // assigned destination or commit effect in alias-safe order.
 // NDF-END: PTO-SLLW-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SLLW()
+readonly func SelectSLLWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SLLW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SLLW()
+readonly func SelectSLLWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractShiftAmount_SLLW(right: Word)
+pure func DecodeSLLWShiftAmount(right: Word)
     => integer {0..31}
 begin
     return UInt(right[4:0]);
 end;
 
-pure func InstructionContractResult_SLLW(left: Word, right: Word)
+pure func ComputeSLLWResult(left: Word, right: Word)
     => Word
 begin
-    let amount = InstructionContractShiftAmount_SLLW(right);
+    let amount = DecodeSLLWShiftAmount(right);
     let shifted = LSL(left[31:0], amount);
     return SignExtend{PTO_XLEN}(shifted);
 end;
 
-pure func InstructionContractIsWordOperation_SLLW()
+pure func SLLWIsWordOperation()
     => boolean
 begin
     return TRUE;

@@ -24,16 +24,16 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-lsrget-mechanism role=mechanism -->
 ## System mechanism
 
-`InstructionContractHandler_LSRGET` selects `ScalarHandler_ExecuteLocalStateRegisterGet` (`asl/scalar/sys/LSRGET.asl:17`), and `InstructionContractRequiresSystemBlock_LSRGET` returns `FALSE` (`asl/scalar/sys/LSRGET.asl:23`), so this is not a SYS-block instruction: it needs any active block body. The dispatcher decodes `RegDst` and passes the low 12 bits of the identifier to the helper (`asl/scalar/model/dispatch/sys.asl:101`).
+`SelectLSRGETHandler` selects `ScalarHandler_ExecuteLocalStateRegisterGet` (`asl/scalar/sys/LSRGET.asl:17`), and `LSRGETRequiresSystemBlock` returns `FALSE` (`asl/scalar/sys/LSRGET.asl:23`), so this is not a SYS-block instruction: it needs any active block body. The dispatcher decodes `RegDst` and passes the low 12 bits of the identifier to the helper (`asl/scalar/model/dispatch/sys.asl:101`).
 
 The helper asks `CurrentBARGWordApplicable` first and raises `Fault_BundleControl` when the answer is no (`asl/scalar/model/sys/semantics.asl:172`).
 
 <!-- PTO-READER-BLOCK: scalar-lsrget-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`LSR_ID` is the 12-bit BARG word identifier and `RegDst` is the Reg5 destination (`asl/scalar/sys/LSRGET.asl:1`). Identifier 0 selects `BARG.BPC`, identifier 1 selects `BARG.BPCN`, and identifier 2 selects the packed control word; identifiers 3 through 4095 are reserved. `InstructionContractLocalRegisterIDLegal_LSRGET` encodes that limit as `UInt(identifier) <= 2` (`asl/scalar/sys/LSRGET.asl:29`).
+`LSR_ID` is the 12-bit BARG word identifier and `RegDst` is the Reg5 destination (`asl/scalar/sys/LSRGET.asl:1`). Identifier 0 selects `BARG.BPC`, identifier 1 selects `BARG.BPCN`, and identifier 2 selects the packed control word; identifiers 3 through 4095 are reserved. `LSRGETLocalRegisterIDLegal` encodes that limit as `UInt(identifier) <= 2` (`asl/scalar/sys/LSRGET.asl:29`).
 
-Design point: identifier 1 is applicable only to Standard and Floating blocks, because `BARGHasCandidateWord` is true for those kinds only (`asl/block/model/state/barg.asl:31`). `InstructionContractBPCNApplicable_LSRGET` states the same two kinds (`asl/scalar/sys/LSRGET.asl:35`), so a block type without a `BARG.BPCN` cannot be asked for one.
+Design point: identifier 1 is applicable only to Standard and Floating blocks, because `BARGHasCandidateWord` is true for those kinds only (`asl/block/model/state/barg.asl:31`). `LSRGETBPCNApplicable` states the same two kinds (`asl/scalar/sys/LSRGET.asl:35`), so a block type without a `BARG.BPCN` cannot be asked for one.
 
 <!-- PTO-READER-BLOCK: scalar-lsrget-effects role=effects -->
 ## Architectural effects
@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/LSRGET.asl -->
 ```asl
-readonly func InstructionContractOperation_LSRGET()
+readonly func SelectLSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_LSRGET;
@@ -121,32 +121,32 @@ LSRGET is legal in any active block body for which the selected BARG word exists
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/LSRGET.asl -->
 ```asl
-readonly func InstructionContractHandler_LSRGET()
+readonly func SelectLSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteLocalStateRegisterGet;
 end;
 
-pure func InstructionContractRequiresSystemBlock_LSRGET()
+pure func LSRGETRequiresSystemBlock()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractLocalRegisterIDLegal_LSRGET(
+pure func LSRGETLocalRegisterIDLegal(
     identifier: bits(12)) => boolean
 begin
     return UInt(identifier) <= 2;
 end;
 
-pure func InstructionContractBPCNApplicable_LSRGET(
+pure func LSRGETBPCNApplicable(
     kind: BundleKind) => boolean
 begin
     return kind == BundleKind_Standard ||
            kind == BundleKind_Floating;
 end;
 
-pure func InstructionContractReadsBARG_LSRGET()
+pure func LSRGETReadsBARG()
     => boolean
 begin
     return TRUE;

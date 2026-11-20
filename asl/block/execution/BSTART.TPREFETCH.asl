@@ -7,24 +7,24 @@
 // fault, and restart rules as destination-producing TLOAD.
 // NDF-END: PTO-BSTART-TPREFETCH-MEMORY-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_TPREFETCH(operation: CommandOperation) => boolean
+readonly func BSTARTTPREFETCHEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_tprefetch_32_d5f83e5aadf6);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSTART_TPREFETCH() => CommandSemanticHandler
+readonly func SelectBSTARTTPREFETCHHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractStartedTileOperation_BSTART_TPREFETCH()
+readonly func BSTARTTPREFETCHStartedTileOperation()
     => TileOperation
 begin
     return TileOperation_TPREFETCH;
 end;
 
-pure func InstructionContractStartsTileBundle_BSTART_TPREFETCH()
+pure func BSTARTTPREFETCHStartsTileBundle()
     => boolean
 begin
     return TRUE;

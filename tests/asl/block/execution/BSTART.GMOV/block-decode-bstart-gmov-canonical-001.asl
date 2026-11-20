@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000110100010001000110000001', 32) == 48;
     assert CommandOperationOfForm(48) == CommandOperation_bstart_gmov_32_6c21e223eaa7;
     assert CommandHandlerOfForm(48) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_BSTART_GMOV(CommandOperationOfForm(48));
-    assert InstructionContractHandler_BSTART_GMOV() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTGMOVEncodingMatches(CommandOperationOfForm(48));
+    assert SelectBSTARTGMOVHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

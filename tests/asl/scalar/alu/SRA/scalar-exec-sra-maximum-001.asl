@@ -15,7 +15,7 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(1) == Ones{PTO_XLEN};
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x44;
-    assert InstructionContractShiftAmount_SRA(Zeros{PTO_XLEN} + 63) == 63;
-    assert InstructionContractResult_SRA('1000000000000000000000000000000000000000000000000000000000000000', Zeros{PTO_XLEN} + 63) == Ones{PTO_XLEN};
+    assert DecodeSRAShiftAmount(Zeros{PTO_XLEN} + 63) == 63;
+    assert ComputeSRAResult('1000000000000000000000000000000000000000000000000000000000000000', Zeros{PTO_XLEN} + 63) == Ones{PTO_XLEN};
     return 0;
 end;

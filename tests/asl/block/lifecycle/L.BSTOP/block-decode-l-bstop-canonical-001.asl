@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000100000000000000000000000000001111', 64) == 72;
     assert CommandOperationOfForm(72) == CommandOperation_l_bstop_64_94c7f0a5e8b3;
     assert CommandHandlerOfForm(72) == CommandHandler_ExecuteBundleStop;
-    assert InstructionContractMatches_L_BSTOP(CommandOperationOfForm(72));
-    assert InstructionContractHandler_L_BSTOP() == CommandHandler_ExecuteBundleStop;
+    assert LBSTOPEncodingMatches(CommandOperationOfForm(72));
+    assert SelectLBSTOPHandler() == CommandHandler_ExecuteBundleStop;
     return 0;
 end;

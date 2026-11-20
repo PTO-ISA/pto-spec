@@ -129,7 +129,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduce-and-expand/row-reduction/TROWMAX.asl -->
 ```asl
-readonly func InstructionContractOperation_TROWMAX() => TileOperation
+readonly func SelectTROWMAXOperation() => TileOperation
 begin
     return TileOperation_TROWMAX;
 end;
@@ -152,13 +152,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/reduce-and-expand/row-reduction/TROWMAX.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TROWMAX(
+pure func TROWMAXDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TROWMAX(
+readonly func TROWMAXOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -169,16 +169,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TROWMAX() => TileSemanticHandler
+readonly func SelectTROWMAXHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileReduction;
 end;
 
-func InstructionContractExecute_TROWMAX(
+func ExecuteTROWMAX(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TROWMAX(
+    assert TROWMAXOperandsLegal(
         destination,
         source);
     ExecuteTileReduction(

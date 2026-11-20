@@ -31,7 +31,7 @@ begin
         1,
         Zeros{PTO_XLEN} + 126);
 
-    InstructionContractExecute_TSHRS(
+    ExecuteTSHRS(
         1,
         0,
         Zeros{PTO_XLEN} + 9);

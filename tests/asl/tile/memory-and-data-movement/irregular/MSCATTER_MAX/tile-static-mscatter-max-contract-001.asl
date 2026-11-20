@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(108) == TileHandler_GM_RED_VALUE;
     assert TileClassOfIndex(108) == TileClass_MemoryAndDataMovement;
     assert TileEngineOfIndex(108) == TileEngine_TLSU;
-    assert InstructionContractOperation_MSCATTER_MAX() == TileOperation_MSCATTER_MAX;
-    assert InstructionContractHandler_MSCATTER_MAX() == TileHandler_GM_RED_VALUE;
+    assert SelectMSCATTERMAXOperation() == TileOperation_MSCATTER_MAX;
+    assert SelectMSCATTERMAXHandler() == TileHandler_GM_RED_VALUE;
     return 0;
 end;

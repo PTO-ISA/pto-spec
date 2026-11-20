@@ -8,32 +8,32 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-BCNT-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_BCNT()
+readonly func SelectBCNTOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BCNT;
 end;
 
-pure func InstructionContractWidth_BCNT(encoded_imml: bits(6))
+pure func BCNTWidth(encoded_imml: bits(6))
     => integer {1..64}
 begin
     return UInt(encoded_imml) + 1;
 end;
 
-pure func InstructionContractOffset_BCNT(encoded_imms: bits(6))
+pure func DecodeBCNTOffset(encoded_imms: bits(6))
     => integer {0..63}
 begin
     return UInt(encoded_imms);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BCNT()
+readonly func SelectBCNTHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_CountBitfield;
 end;
 
-pure func InstructionContractResult_BCNT(
+pure func ComputeBCNTResult(
     value: Word,
     width: integer {1..64},
     offset: integer {0..63})

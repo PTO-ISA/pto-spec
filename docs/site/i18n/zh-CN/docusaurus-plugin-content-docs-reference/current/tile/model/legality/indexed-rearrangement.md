@@ -17,7 +17,7 @@ This page is a generated reference view of the normative ASL unit.
 
 本单元包含两条按行索引的 Tile 指令 `TGATHER` 与 `TSCATTER` 的操作数合法性谓词。`TileOperandsLegal_TGATHER` 与 `TileOperandsLegal_TSCATTER` 是这两条指令的 `legality_handler` 条目，索引重排执行单元中的执行函数在构造目标之前断言它们。
 
-本单元还定义类型规则（`InstructionContractValueDataTypeLegal_TGATHER`、`InstructionContractIndexDataTypeLegal_TGATHER`、`InstructionContractTypePairLegal_TSCATTER`）以及索引译码函数 `TileIndexedRowIsNegative` 与 `TileIndexedRowValue`。执行过程复用 `TileIndexedRowValue` 来确定所选行。
+本单元还定义类型规则（`TGATHERValueDataTypeLegal`、`TGATHERIndexDataTypeLegal`、`TSCATTERTypePairLegal`）以及索引译码函数 `TileIndexedRowIsNegative` 与 `TileIndexedRowValue`。执行过程复用 `TileIndexedRowValue` 来确定所选行。
 
 每个谓词都是只读的，并对非法操作数组合返回 FALSE，因此拒绝发生在预检阶段，早于写入任何目标元素。
 
@@ -89,13 +89,13 @@ This page is a generated reference view of the normative ASL unit.
 ```asl
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-INDEXED-REARRANGEMENT","surface":"tile","classification":["model","legality","indexed-rearrangement"],"depends_on":["PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA","PTO-TILE-MODEL-STATE-TYPES"]}
 
-pure func InstructionContractValueDataTypeLegal_TGATHER(
+pure func TGATHERValueDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return IndexedTLSUTransferDataTypeLegal(data_type);
 end;
 
-pure func InstructionContractIndexDataTypeLegal_TGATHER(
+pure func TGATHERIndexDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_S32 ||
@@ -106,7 +106,7 @@ begin
            data_type == TileDataType_U64;
 end;
 
-pure func InstructionContractTypePairLegal_TSCATTER(
+pure func TSCATTERTypePairLegal(
     value_type: TileDataType,
     index_type: TileDataType) => boolean
 begin
@@ -242,9 +242,9 @@ begin
     if destination_tile.storage_kind != TileStorage_Numeric ||
        source_tile.storage_kind != TileStorage_Numeric ||
        index_tile.storage_kind != TileStorage_Numeric ||
-       !InstructionContractValueDataTypeLegal_TGATHER(
+       !TGATHERValueDataTypeLegal(
            source_tile.data_type) ||
-       !InstructionContractIndexDataTypeLegal_TGATHER(
+       !TGATHERIndexDataTypeLegal(
            index_tile.data_type) ||
        destination_tile.data_type != source_tile.data_type ||
        destination_tile.valid_rows == 0 ||
@@ -277,9 +277,9 @@ begin
     if output.storage_kind != TileStorage_Numeric ||
        source_tile.storage_kind != TileStorage_Numeric ||
        index_tile.storage_kind != TileStorage_Numeric ||
-       !InstructionContractValueDataTypeLegal_TGATHER(
+       !TGATHERValueDataTypeLegal(
            source_tile.data_type) ||
-       !InstructionContractIndexDataTypeLegal_TGATHER(
+       !TGATHERIndexDataTypeLegal(
            index_tile.data_type) ||
        output.data_type != source_tile.data_type ||
        output.valid_rows == 0 || output.valid_columns == 0 ||
@@ -310,7 +310,7 @@ begin
        source_tile.storage_kind != TileStorage_Numeric ||
        index_tile.storage_kind != TileStorage_Numeric ||
        destination_tile.data_type != source_tile.data_type ||
-       !InstructionContractTypePairLegal_TSCATTER(
+       !TSCATTERTypePairLegal(
            source_tile.data_type,
            index_tile.data_type) ||
        source_tile.valid_rows == 0 ||

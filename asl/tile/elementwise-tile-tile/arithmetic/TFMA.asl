@@ -12,19 +12,19 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TFMA-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TFMA() => TileOperation
+readonly func SelectTFMAOperation() => TileOperation
 begin
     return TileOperation_TFMA;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TFMA(
+pure func TFMADataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileFusedMultiplyAddDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TFMA(
+readonly func TFMAOperandsLegal(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex,
@@ -37,7 +37,7 @@ begin
         addend);
 end;
 
-func InstructionContractValue_TFMA(
+func ComputeTFMAValue(
     data_type: TileDataType,
     left: Word,
     right: Word,
@@ -50,12 +50,12 @@ begin
         addend);
 end;
 
-readonly func InstructionContractHandler_TFMA() => TileSemanticHandler
+readonly func SelectTFMAHandler() => TileSemanticHandler
 begin
     return TileHandler_TFMA;
 end;
 
-func InstructionContractExecute_TFMA(
+func ExecuteTFMA(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex,

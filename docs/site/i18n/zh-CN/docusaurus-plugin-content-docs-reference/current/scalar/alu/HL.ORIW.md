@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-oriw-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `InstructionContractResult_HL_ORIW`，它构造 `right = SignExtend{PTO_XLEN}(immediate)` 并返回 `ScalarBinaryW(ScalarBinary_OR, left, right)`。`ScalarBinaryW` 取 `left[31:0]` 与 `right[31:0]`，把它们或合成 32 位值，并返回该值的 `SignExtend{PTO_XLEN}`。分派路径用 `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_OR, ScalarField_simm24, TRUE)` 选择它。
+所属 ASL 提供 `ComputeHLORIWResult`，它构造 `right = SignExtend{PTO_XLEN}(immediate)` 并返回 `ScalarBinaryW(ScalarBinary_OR, left, right)`。`ScalarBinaryW` 取 `left[31:0]` 与 `right[31:0]`，把它们或合成 32 位值，并返回该值的 `SignExtend{PTO_XLEN}`。分派路径用 `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_OR, ScalarField_simm24, TRUE)` 选择它。
 
 ```asm
 hl.oriw SrcL, simm, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.ORIW.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_ORIW() => ScalarOperation
+readonly func SelectHLORIWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_ORIW;
 end;
@@ -127,30 +127,30 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.ORIW.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_ORIW() => ScalarSemanticHandler
+readonly func SelectHLORIWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractImmediateWidth_HL_ORIW()
+pure func HLORIWImmediateWidth()
     => integer {1..64}
 begin
     return 24;
 end;
 
-pure func InstructionContractImmediateIsSigned_HL_ORIW()
+pure func HLORIWImmediateIsSigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_HL_ORIW()
+pure func HLORIWIsWordOperation()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractResult_HL_ORIW(
+pure func ComputeHLORIWResult(
     left: Word,
     immediate: bits(24))
     => Word

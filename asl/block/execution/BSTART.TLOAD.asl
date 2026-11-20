@@ -24,30 +24,30 @@
 // LB1 as valid rows and LB0 as valid columns, and MUST reject LB2 or B.IOS.
 // NDF-END: PTO-BSTART-TLOAD-CUBE-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_TLOAD(operation: CommandOperation) => boolean
+readonly func BSTARTTLOADEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_tload_32_d0c18bb0ab15);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSTART_TLOAD() => CommandSemanticHandler
+readonly func SelectBSTARTTLOADHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractStartedTileOperation_BSTART_TLOAD()
+readonly func BSTARTTLOADStartedTileOperation()
     => TileOperation
 begin
     return TileOperation_TLOAD;
 end;
 
-pure func InstructionContractStartsTileBundle_BSTART_TLOAD()
+pure func BSTARTTLOADStartsTileBundle()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractCubeLayoutLegal_BSTART_TLOAD(
+pure func BSTARTTLOADCubeLayoutLegal(
     data_layout: bits(5)) => boolean
 begin
     return TileDataLayoutConversionIsLoad(data_layout);

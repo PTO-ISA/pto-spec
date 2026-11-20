@@ -14,19 +14,19 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TDIV-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TDIV() => TileOperation
+readonly func SelectTDIVOperation() => TileOperation
 begin
     return TileOperation_TDIV;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TDIV(
+pure func TDIVDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TDIV(
+readonly func TDIVOperandsLegal(
     destination: TileIndex,
     numerator: TileIndex,
     denominator: TileIndex) => boolean
@@ -38,12 +38,12 @@ begin
         denominator);
 end;
 
-readonly func InstructionContractHandler_TDIV() => TileSemanticHandler
+readonly func SelectTDIVHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TDIV(
+func ExecuteTDIV(
     destination: TileIndex,
     numerator: TileIndex,
     denominator: TileIndex)

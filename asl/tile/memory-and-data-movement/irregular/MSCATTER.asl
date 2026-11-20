@@ -16,36 +16,36 @@
 // lane order; it only makes the complete block effect non-interleavable.
 // NDF-END: PTO-MSCATTER-DUPLICATE-ORDER-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_MSCATTER() => TileOperation
+readonly func SelectMSCATTEROperation() => TileOperation
 begin
     return TileOperation_MSCATTER;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_MSCATTER() => TileSemanticHandler
+readonly func SelectMSCATTERHandler() => TileSemanticHandler
 begin
     return TileHandler_MSCATTER;
 end;
 
-pure func InstructionContractUsesByteDisplacements_MSCATTER()
+pure func MSCATTERUsesByteDisplacements()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesMaskTile_MSCATTER()
+pure func MSCATTERUsesMaskTile()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractIsAtomicMemoryOperation_MSCATTER()
+pure func MSCATTERIsAtomicMemoryOperation()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractWritesMemory_MSCATTER()
+pure func MSCATTERWritesMemory()
     => boolean
 begin
     return TRUE;

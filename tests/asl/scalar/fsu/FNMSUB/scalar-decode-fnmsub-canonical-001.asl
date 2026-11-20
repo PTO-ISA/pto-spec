@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000111000001001011', 32) == 113;
     assert ScalarOperationOfForm(113) == ScalarOperation_FNMSUB;
     assert ScalarHandlerOfForm(113) == ScalarHandler_FloatingFused;
-    assert InstructionContractOperation_FNMSUB() == ScalarOperation_FNMSUB;
-    assert InstructionContractHandler_FNMSUB() == ScalarHandler_FloatingFused;
+    assert SelectFNMSUBOperation() == ScalarOperation_FNMSUB;
+    assert SelectFNMSUBHandler() == ScalarHandler_FloatingFused;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000111000001001011', 113, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000111000001001011', 113, ScalarField_SrcA) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000111000001001011', 113, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';

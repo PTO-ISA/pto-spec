@@ -21,7 +21,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `MSCATTER_MASK` is TLSU Function 7, written `BSTART.MSCATTER.MASK DataType`. Its addressing is the byte-displacement rule of `MSCATTER`: the per-PE base address named by `B.IOR.RegSrc0` plus the index value, and the stored value is the raw source element. The difference is a Local `U8` predicate Tile that decides which indexed transactions store. NDF `PTO-MSCATTER-MASK-PREDICATE-001` allows only `0x00` and `0x01` per transaction and states that a zero suppresses address generation, translation, permission checks, stores, and events.
 
-The owner declares `InstructionContractUsesMaskTile_MSCATTER_MASK` TRUE and `InstructionContractWritesMemory_MSCATTER_MASK` TRUE. The dispatcher `ExecuteBundleMSCATTERMASKOperation` decodes Function 7, checks two `B.IOT` bindings and the descriptors, then calls `TileOperandsLegal_MSCATTER_MASK` and the body `MSCATTER_MASK`.
+The owner declares `MSCATTERMASKUsesMaskTile` TRUE and `MSCATTERMASKWritesMemory` TRUE. The dispatcher `ExecuteBundleMSCATTERMASKOperation` decodes Function 7, checks two `B.IOT` bindings and the descriptors, then calls `TileOperandsLegal_MSCATTER_MASK` and the body `MSCATTER_MASK`.
 
 Design point: the lane test is `BundleExecutionMaskActiveAt(...) && ReadIndexedTLSUPredicate(mask, ...)`, and the address computation and the probe sit inside it. A lane whose predicate element is zero is therefore not translated and cannot fault, so an out-of-range or misaligned displacement is harmless while its predicate element is zero.
 
@@ -164,7 +164,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl -->
 ```asl
-readonly func InstructionContractOperation_MSCATTER_MASK() => TileOperation
+readonly func SelectMSCATTERMASKOperation() => TileOperation
 begin
     return TileOperation_MSCATTER_MASK;
 end;
@@ -190,30 +190,30 @@ When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiG
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl -->
 ```asl
-readonly func InstructionContractHandler_MSCATTER_MASK() => TileSemanticHandler
+readonly func SelectMSCATTERMASKHandler() => TileSemanticHandler
 begin
     return TileHandler_MSCATTER_MASK;
 end;
 
-pure func InstructionContractUsesByteDisplacements_MSCATTER_MASK()
+pure func MSCATTERMASKUsesByteDisplacements()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesMaskTile_MSCATTER_MASK()
+pure func MSCATTERMASKUsesMaskTile()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsAtomicMemoryOperation_MSCATTER_MASK()
+pure func MSCATTERMASKIsAtomicMemoryOperation()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractWritesMemory_MSCATTER_MASK()
+pure func MSCATTERMASKWritesMemory()
     => boolean
 begin
     return TRUE;

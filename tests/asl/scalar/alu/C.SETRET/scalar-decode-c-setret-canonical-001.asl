@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000101000000010110', 16) == 38;
     assert ScalarOperationOfForm(38) == ScalarOperation_C_SETRET;
     assert ScalarHandlerOfForm(38) == ScalarHandler_SetReturnAddress;
-    assert InstructionContractOperation_C_SETRET() == ScalarOperation_C_SETRET;
-    assert InstructionContractHandler_C_SETRET() == ScalarHandler_SetReturnAddress;
+    assert SelectCSETRETOperation() == ScalarOperation_C_SETRET;
+    assert SelectCSETRETHandler() == ScalarHandler_SetReturnAddress;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000101000000010110', 38, ScalarField_uimm5) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

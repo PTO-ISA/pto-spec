@@ -109,7 +109,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TSHL.asl -->
 ```asl
-readonly func InstructionContractOperation_TSHL() => TileOperation
+readonly func SelectTSHLOperation() => TileOperation
 begin
     return TileOperation_TSHL;
 end;
@@ -132,13 +132,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/logical/TSHL.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TSHL(
+pure func TSHLDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileBinaryDataTypeSupported(TileBinary_SHL, data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TSHL(
+readonly func TSHLOperandsLegal(
     destination: TileIndex,
     value_source: TileIndex,
     count_source: TileIndex) => boolean
@@ -150,12 +150,12 @@ begin
         count_source);
 end;
 
-readonly func InstructionContractHandler_TSHL() => TileSemanticHandler
+readonly func SelectTSHLHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TSHL(
+func ExecuteTSHL(
     destination: TileIndex,
     value_source: TileIndex,
     count_source: TileIndex)

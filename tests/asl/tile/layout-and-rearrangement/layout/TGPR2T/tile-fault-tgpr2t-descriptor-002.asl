@@ -16,7 +16,7 @@ begin
 
     _Tiles[[0]].rows = 31;
     assert !TileOperandsLegal_TGPR2T(0, 1, 2, 3, 4);
-    assert !InstructionContractOperandsLegal_TGPR2T(0, 1, 2, 3, 4);
+    assert !TGPR2TOperandsLegal(0, 1, 2, 3, 4);
     assert _Tiles[[0]].payload[[0]] == old_payload;
     assert ReadGPR(1) == Zeros{PTO_XLEN} + 0x1111;
     assert ReadGPR(2) == Zeros{PTO_XLEN} + 0x2222;

@@ -13,19 +13,19 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TNEG-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TNEG() => TileOperation
+readonly func SelectTNEGOperation() => TileOperation
 begin
     return TileOperation_TNEG;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TNEG(
+pure func TNEGDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileTNegDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TNEG(
+readonly func TNEGOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -35,7 +35,7 @@ begin
         source);
 end;
 
-pure func InstructionContractValue_TNEG(
+pure func ComputeTNEGValue(
     data_type: TileDataType,
     source: Word) => Word
 begin
@@ -46,12 +46,12 @@ begin
     return result;
 end;
 
-readonly func InstructionContractHandler_TNEG() => TileSemanticHandler
+readonly func SelectTNEGHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;
 
-func InstructionContractExecute_TNEG(
+func ExecuteTNEG(
     destination: TileIndex,
     source: TileIndex)
 begin

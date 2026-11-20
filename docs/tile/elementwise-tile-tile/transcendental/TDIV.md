@@ -113,7 +113,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/transcendental/TDIV.asl -->
 ```asl
-readonly func InstructionContractOperation_TDIV() => TileOperation
+readonly func SelectTDIVOperation() => TileOperation
 begin
     return TileOperation_TDIV;
 end;
@@ -136,13 +136,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/transcendental/TDIV.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TDIV(
+pure func TDIVDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TDIV(
+readonly func TDIVOperandsLegal(
     destination: TileIndex,
     numerator: TileIndex,
     denominator: TileIndex) => boolean
@@ -154,12 +154,12 @@ begin
         denominator);
 end;
 
-readonly func InstructionContractHandler_TDIV() => TileSemanticHandler
+readonly func SelectTDIVHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TDIV(
+func ExecuteTDIV(
     destination: TileIndex,
     numerator: TileIndex,
     denominator: TileIndex)

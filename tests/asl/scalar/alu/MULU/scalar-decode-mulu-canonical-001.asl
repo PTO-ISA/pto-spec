@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000001000001000111', 32) == 363;
     assert ScalarOperationOfForm(363) == ScalarOperation_MULU;
     assert ScalarHandlerOfForm(363) == ScalarHandler_MultiplyWord;
-    assert InstructionContractOperation_MULU() == ScalarOperation_MULU;
-    assert InstructionContractHandler_MULU() == ScalarHandler_MultiplyWord;
+    assert SelectMULUOperation() == ScalarOperation_MULU;
+    assert SelectMULUHandler() == ScalarHandler_MultiplyWord;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001000111', 363, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001000111', 363, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001000111', 363, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';

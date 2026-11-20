@@ -20,25 +20,25 @@
 // inactive ZERO writes zero. Inactive compares contribute no numeric status.
 // NDF-END: PTO-TCMP-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TCMP() => TileOperation
+readonly func SelectTCMPOperation() => TileOperation
 begin
     return TileOperation_TCMP;
 end;
 
-pure func InstructionContractComparisonCodeLegal_TCMP(
+pure func TCMPComparisonCodeLegal(
     comparison_code: bits(3)) => boolean
 begin
     return UInt(comparison_code) <= 5;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TCMP(
+pure func TCMPDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileCompareDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TCMP(
+readonly func TCMPOperandsLegal(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex,
@@ -51,18 +51,18 @@ begin
         comparison);
 end;
 
-readonly func InstructionContractHandler_TCMP() => TileSemanticHandler
+readonly func SelectTCMPHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileCompare;
 end;
 
-func InstructionContractExecute_TCMP(
+func ExecuteTCMP(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex,
     comparison: TileComparison)
 begin
-    assert InstructionContractOperandsLegal_TCMP(
+    assert TCMPOperandsLegal(
         destination,
         source_left,
         source_right,

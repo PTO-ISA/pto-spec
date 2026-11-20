@@ -15,6 +15,6 @@ begin
     assert _LastFault == Fault_None;
     assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 0x111;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x182;
-    assert InstructionContractOperation_C_SSRGET() == ScalarOperation_C_SSRGET;
+    assert SelectCSSRGETOperation() == ScalarOperation_C_SSRGET;
     return 0;
 end;

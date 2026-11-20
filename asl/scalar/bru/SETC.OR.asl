@@ -8,29 +8,29 @@
 // BARG.TAKEN. A rejected occurrence MUST NOT consume the shared marker.
 // NDF-END: PTO-SETC-OR-CONDITIONAL-SETTER-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SETC_OR() => ScalarOperation
+readonly func SelectSETCOROperation() => ScalarOperation
 begin
     return ScalarOperation_SETC_OR;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SETC_OR() => ScalarSemanticHandler
+readonly func SelectSETCORHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommitLogical;
 end;
 
-pure func InstructionContractCombinesWithOR_SETC_OR()
+pure func SETCORCombinesWithOR()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractCommitLogicalValue_SETC_OR(
+pure func SETCORCommitLogicalValue(
     left: Word,
     right: Word)
     => Word
 begin
-    if InstructionContractCombinesWithOR_SETC_OR() then
+    if SETCORCombinesWithOR() then
         return left OR right;
     end;
     return left AND right;

@@ -15,12 +15,12 @@ begin
     SetBundleDataAttributeState(Zeros{5} + 4, Zeros{5}, '01',
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     _BundleDataAttributesPresent = TRUE;
-    InstructionContractExecute_TEXP(1, 0);
+    ExecuteTEXP(1, 0);
     assert TileElementDefined(1, 0, 1);
 
     ResetProfileState();
     ConfigureExponentialPaddingTiles();
-    InstructionContractExecute_TEXP(1, 0);
+    ExecuteTEXP(1, 0);
     assert !TileElementDefined(1, 0, 1);
     return 0;
 end;

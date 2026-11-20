@@ -179,7 +179,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.TSTORE.asl -->
 ```asl
-readonly func InstructionContractMatches_BSTART_TSTORE(operation: CommandOperation) => boolean
+readonly func BSTARTTSTOREEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_tstore_32_4048b6e8b0f4);
 end;
@@ -198,24 +198,24 @@ Local CUBE source: Function 1 encodes B.DATR Layout M322ND, M162ND, or N82ND wit
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.TSTORE.asl -->
 ```asl
-readonly func InstructionContractHandler_BSTART_TSTORE() => CommandSemanticHandler
+readonly func SelectBSTARTTSTOREHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractStartedTileOperation_BSTART_TSTORE()
+readonly func BSTARTTSTOREStartedTileOperation()
     => TileOperation
 begin
     return TileOperation_TSTORE;
 end;
 
-pure func InstructionContractStartsTileBundle_BSTART_TSTORE()
+pure func BSTARTTSTOREStartsTileBundle()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractCubeLayoutLegal_BSTART_TSTORE(
+pure func BSTARTTSTORECubeLayoutLegal(
     data_layout: bits(5)) => boolean
 begin
     return TileDataLayoutConversionIsStore(data_layout);

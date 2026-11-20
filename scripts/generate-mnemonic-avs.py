@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.instruction_symbols import contract_symbol  # noqa: E402
 from scripts.asl_units import AslUnit, load_units  # noqa: E402
 from scripts.encoding_witness import encode_field, encoded_catalog_witnesses  # noqa: E402
 from scripts.ndf import instruction_clause_id, parse_ndf_regions  # noqa: E402
@@ -120,8 +121,8 @@ def _scalar_assertions(
                 f"    assert DecodeScalarForm({bit_literal(instruction, 48)}, {length}) == {index};",
                 f"    assert ScalarOperationOfForm({index}) == ScalarOperation_{mnemonic};",
                 f"    assert ScalarHandlerOfForm({index}) == ScalarHandler_{handler};",
-                f"    assert InstructionContractOperation_{mnemonic}() == ScalarOperation_{mnemonic};",
-                f"    assert InstructionContractHandler_{mnemonic}() == ScalarHandler_{handler};",
+                f"    assert {contract_symbol('Operation', mnemonic)}() == ScalarOperation_{mnemonic};",
+                f"    assert {contract_symbol('Handler', mnemonic)}() == ScalarHandler_{handler};",
             )
         )
         if record.get("semantic_family") == "AGU":
@@ -134,19 +135,19 @@ def _scalar_assertions(
             )
             lines.extend(
                 (
-                    f"    assert InstructionContractAGUAction_{mnemonic}() "
+                    f"    assert {contract_symbol('AGUAction', mnemonic)}() "
                     f"== ScalarAGU_{agu['action']};",
-                    f"    assert InstructionContractAGUAddressKind_{mnemonic}() "
+                    f"    assert {contract_symbol('AGUAddressKind', mnemonic)}() "
                     f"== ScalarAGU_{agu['address_kind']};",
-                    f"    assert InstructionContractAGUSizeBytes_{mnemonic}() "
+                    f"    assert {contract_symbol('AGUSizeBytes', mnemonic)}() "
                     f"== {agu['size_bytes']};",
-                    f"    assert InstructionContractAGUOffsetScale_{mnemonic}() "
+                    f"    assert {contract_symbol('AGUOffsetScale', mnemonic)}() "
                     f"== {agu['offset_scale']};",
-                    f"    assert InstructionContractAGUUpdateMode_{mnemonic}() "
+                    f"    assert {contract_symbol('AGUUpdateMode', mnemonic)}() "
                     f"== AddressUpdate_{agu['update_mode']};",
-                    f"    assert InstructionContractAGUSignedLoad_{mnemonic}() "
+                    f"    assert {contract_symbol('AGUSignedLoad', mnemonic)}() "
                     f"== {signed_load};",
-                    f"    assert InstructionContractAGUPrefetchReturnsAddress_{mnemonic}() "
+                    f"    assert {contract_symbol('AGUPrefetchReturnsAddress', mnemonic)}() "
                     f"== {returns_address};",
                 )
             )
@@ -207,8 +208,8 @@ def _block_assertions(
                 f"    assert DecodeCommandForm({bit_literal(instruction, 64)}, {length}) == {index};",
                 f"    assert CommandOperationOfForm({index}) == CommandOperation_{form_id};",
                 f"    assert CommandHandlerOfForm({index}) == CommandHandler_{handler};",
-                f"    assert InstructionContractMatches_{mnemonic}(CommandOperationOfForm({index}));",
-                f"    assert InstructionContractHandler_{mnemonic}() == CommandHandler_{handler};",
+                f"    assert {contract_symbol('Matches', mnemonic)}(CommandOperationOfForm({index}));",
+                f"    assert {contract_symbol('Handler', mnemonic)}() == CommandHandler_{handler};",
             )
         )
     alias_engine = unit.metadata.get("alias_engine")
@@ -216,7 +217,7 @@ def _block_assertions(
         if alias_engine not in {"VEC", "SFU", "TLSU"}:
             raise ValueError(f"{unit.source_path}: invalid Block alias engine")
         lines.append(
-            f"    assert InstructionContractAliasEngine_{mnemonic}() == "
+            f"    assert {contract_symbol('AliasEngine', mnemonic)}() == "
             f"TileEngine_{alias_engine};"
         )
     contract = unit.metadata.get("contract", {})
@@ -226,18 +227,18 @@ def _block_assertions(
     if not cube_keys and source_text is not None:
         helper_patterns = {
             "tile_operation": (
-                rf"readonly\s+func\s+InstructionContractTileOperation_{mnemonic}\(\)"
+                rf"readonly\s+func\s+{contract_symbol('TileOperation', mnemonic)}\(\)"
                 rf"\s*=>\s*TileOperation\s*begin\s*return\s+TileOperation_"
                 rf"([A-Za-z0-9_]+);\s*end;"
             ),
             "cube_function": (
-                rf"readonly\s+func\s+InstructionContractCubeFunction_{mnemonic}\(\)"
+                rf"readonly\s+func\s+{contract_symbol('CubeFunction', mnemonic)}\(\)"
                 rf"\s*=>\s*integer\s*\{{0\.\.31\}}\s*begin\s*return\s+"
                 rf"([0-9]+);\s*end;"
             ),
             "shared_operands_allowed": (
-                rf"readonly\s+func\s+InstructionContractSharedOperandsAllowed_"
-                rf"{mnemonic}\(\)\s*=>\s*boolean\s*begin\s*return\s+"
+                rf"readonly\s+func\s+{contract_symbol('SharedOperandsAllowed', mnemonic)}"
+                rf"\(\)\s*=>\s*boolean\s*begin\s*return\s+"
                 rf"(TRUE|FALSE);\s*end;"
             ),
         }
@@ -280,11 +281,11 @@ def _block_assertions(
             raise ValueError(f"{unit.source_path}: invalid CUBE Shared policy")
         lines.extend(
             (
-                f"    assert InstructionContractTileOperation_{mnemonic}() == "
+                f"    assert {contract_symbol('TileOperation', mnemonic)}() == "
                 f"TileOperation_{tile_operation};",
-                f"    assert InstructionContractCubeFunction_{mnemonic}() == "
+                f"    assert {contract_symbol('CubeFunction', mnemonic)}() == "
                 f"{cube_function};",
-                f"    assert InstructionContractSharedOperandsAllowed_{mnemonic}() == "
+                f"    assert {contract_symbol('SharedOperandsAllowed', mnemonic)}() == "
                 f"{'TRUE' if shared_operands_allowed else 'FALSE'};",
             )
         )
@@ -327,21 +328,21 @@ def _tile_assertions(unit: AslUnit, source_text: str | None = None) -> list[str]
                 f"    assert TileHandlerOfIndex({index}) == TileHandler_{handler};",
                 f"    assert TileClassOfIndex({index}) == {TILE_CLASS_ENUM[classification]};",
                 f"    assert TileEngineOfIndex({index}) == TileEngine_{engine};",
-                f"    assert InstructionContractOperation_{mnemonic}() == TileOperation_{mnemonic};",
-                f"    assert InstructionContractHandler_{mnemonic}() == TileHandler_{handler};",
+                f"    assert {contract_symbol('Operation', mnemonic)}() == TileOperation_{mnemonic};",
+                f"    assert {contract_symbol('Handler', mnemonic)}() == TileHandler_{handler};",
             )
         )
     if source_text is not None:
         function_match = re.search(
-            rf"readonly\s+func\s+InstructionContractCubeFunction_{mnemonic}\(\)"
+            rf"readonly\s+func\s+{contract_symbol('CubeFunction', mnemonic)}\(\)"
             rf"\s*=>\s*integer\s*\{{0\.\.31\}}\s*begin\s*return\s+"
             rf"([0-9]+);\s*end;",
             source_text,
             flags=re.MULTILINE,
         )
         shared_match = re.search(
-            rf"readonly\s+func\s+InstructionContractSharedOperandsAllowed_"
-            rf"{mnemonic}\(\)\s*=>\s*boolean\s*begin\s*return\s+"
+            rf"readonly\s+func\s+{contract_symbol('SharedOperandsAllowed', mnemonic)}"
+            rf"\(\)\s*=>\s*boolean\s*begin\s*return\s+"
             rf"(TRUE|FALSE);\s*end;",
             source_text,
             flags=re.MULTILINE,
@@ -358,9 +359,9 @@ def _tile_assertions(unit: AslUnit, source_text: str | None = None) -> list[str]
                 )
             lines.extend(
                 (
-                    f"    assert InstructionContractCubeFunction_{mnemonic}() == "
+                    f"    assert {contract_symbol('CubeFunction', mnemonic)}() == "
                     f"{expected_function};",
-                    f"    assert InstructionContractSharedOperandsAllowed_{mnemonic}() == "
+                    f"    assert {contract_symbol('SharedOperandsAllowed', mnemonic)}() == "
                     f"{shared_match.group(1)};",
                 )
             )
@@ -610,7 +611,7 @@ def render_block_alias_avs(
         "related_sources": ["asl/block/execution/BSTART.TEPL.asl"],
     }
     assertions = [
-        f"    assert InstructionContractAcceptsTileOperation_{identifier}({index}) "
+        f"    assert {contract_symbol('AcceptsTileOperation', identifier)}({index}) "
         f"== {'TRUE' if engine == alias_engine else 'FALSE'};"
         for index, engine in operation_partition
     ]
@@ -1034,7 +1035,7 @@ def _scalar_sys_sync_core_body(unit: AslUnit) -> list[str]:
         "    assert _LastFault == Fault_None;",
         "    assert ReadTPC() == entry + 4;",
         "    assert _CoreSyncRecords[[0]][[0]].arrived == '1000';",
-        f"    assert InstructionContractOperation_{identifier}() == "
+        f"    assert {contract_symbol('Operation', identifier)}() == "
         f"ScalarOperation_{identifier};",
         "    let aborted = AbortKernelInvocation(0);",
         "    assert aborted == KernelLifecycle_Started;",
@@ -1236,7 +1237,7 @@ def _scalar_sys_execution_body(
             next_tpc = 0x180 + length // 8
             lines.append(f"    assert ReadTPC() == Zeros{{PTO_XLEN}} + 0x{next_tpc:x};")
     lines.append(
-        f"    assert InstructionContractOperation_{identifier}() == "
+        f"    assert {contract_symbol('Operation', identifier)}() == "
         f"ScalarOperation_{identifier};"
     )
     return lines
@@ -1756,7 +1757,7 @@ def _scalar_sys_breakpoint_zero_body(unit: AslUnit) -> list[str]:
         "    assert ReadGPR(7) == Zeros{PTO_XLEN} + 0x777;",
         "    assert _DataCacheEpoch == 9;",
         "    assert _ArchitectureRequestEpoch == 11;",
-        f"    assert InstructionContractOperation_{identifier}() == "
+        f"    assert {contract_symbol('Operation', identifier)}() == "
         f"ScalarOperation_{identifier};",
     ]
     return lines
@@ -1786,7 +1787,7 @@ def _scalar_sys_compressed_register_body(unit: AslUnit, identifier: int) -> list
         f"    assert _SystemRegisters.cycle == Zeros{{PTO_XLEN}} + "
         f"{41 if identifier == 16 else 1};",
         f"    assert ReadTPC() == Zeros{{PTO_XLEN}} + 0x{0x180 + length // 8:x};",
-        "    assert InstructionContractDirectSystemIDLegal_C_SSRGET("
+        "    assert CSSRGETDirectSystemIDLegal("
         f"        {bit_literal(identifier, 5)});",
     ]
     return lines

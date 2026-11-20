@@ -9,24 +9,24 @@
 // encode zero.
 // NDF-END: PTO-BSTART-MGATHER-MASK-SCHEMA-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_MGATHER_MASK(operation: CommandOperation) => boolean
+readonly func BSTARTMGATHERMASKEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_mgather_mask_32_5573241cd944);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSTART_MGATHER_MASK() => CommandSemanticHandler
+readonly func SelectBSTARTMGATHERMASKHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractStartedTileOperation_BSTART_MGATHER_MASK()
+readonly func BSTARTMGATHERMASKStartedTileOperation()
     => TileOperation
 begin
     return TileOperation_MGATHER_MASK;
 end;
 
-pure func InstructionContractStartsTileBundle_BSTART_MGATHER_MASK()
+pure func BSTARTMGATHERMASKStartsTileBundle()
     => boolean
 begin
     return TRUE;

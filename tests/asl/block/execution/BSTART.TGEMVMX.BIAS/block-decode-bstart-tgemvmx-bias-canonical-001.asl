@@ -5,10 +5,10 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000001010100110001000110000001', 32) == 39;
     assert CommandOperationOfForm(39) == CommandOperation_bstart_tgemvmx_bias_32_d23011f15171;
     assert CommandHandlerOfForm(39) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_BSTART_TGEMVMX_BIAS(CommandOperationOfForm(39));
-    assert InstructionContractHandler_BSTART_TGEMVMX_BIAS() == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractTileOperation_BSTART_TGEMVMX_BIAS() == TileOperation_TGEMV_MX_BIAS;
-    assert InstructionContractCubeFunction_BSTART_TGEMVMX_BIAS() == 21;
-    assert InstructionContractSharedOperandsAllowed_BSTART_TGEMVMX_BIAS() == FALSE;
+    assert BSTARTTGEMVMXBIASEncodingMatches(CommandOperationOfForm(39));
+    assert SelectBSTARTTGEMVMXBIASHandler() == CommandHandler_ExecuteBundleStart;
+    assert SelectBSTARTTGEMVMXBIASTileOperation() == TileOperation_TGEMV_MX_BIAS;
+    assert BSTARTTGEMVMXBIASCubeFunction() == 21;
+    assert BSTARTTGEMVMXBIASSharedOperandsAllowed() == FALSE;
     return 0;
 end;

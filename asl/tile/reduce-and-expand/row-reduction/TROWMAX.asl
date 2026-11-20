@@ -26,19 +26,19 @@
 // For CUBE_M16/M32, destination Columns MUST equal source Columns and destination Rows MUST be the minimum legal physical Rows covering destination ValidRows (16 for M16, 32 for M32).
 // NDF-END: PTO-TROWMAX-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TROWMAX() => TileOperation
+readonly func SelectTROWMAXOperation() => TileOperation
 begin
     return TileOperation_TROWMAX;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TROWMAX(
+pure func TROWMAXDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TROWMAX(
+readonly func TROWMAXOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -49,16 +49,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TROWMAX() => TileSemanticHandler
+readonly func SelectTROWMAXHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileReduction;
 end;
 
-func InstructionContractExecute_TROWMAX(
+func ExecuteTROWMAX(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TROWMAX(
+    assert TROWMAXOperandsLegal(
         destination,
         source);
     ExecuteTileReduction(

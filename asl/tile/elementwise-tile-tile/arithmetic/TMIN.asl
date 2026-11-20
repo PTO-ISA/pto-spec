@@ -15,19 +15,19 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TMIN-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TMIN() => TileOperation
+readonly func SelectTMINOperation() => TileOperation
 begin
     return TileOperation_TMIN;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TMIN(
+pure func TMINDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TMIN(
+readonly func TMINOperandsLegal(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex) => boolean
@@ -39,12 +39,12 @@ begin
         source_right);
 end;
 
-pure func InstructionContractFloatingValue_TMIN(
+pure func ComputeTMINFloatingValue(
     data_type: TileDataType,
     source_left: Word,
     source_right: Word) => (Word, boolean)
 begin
-    assert InstructionContractDataTypeLegal_TMIN(data_type);
+    assert TMINDataTypeLegal(data_type);
     assert TileDataTypeIsFloating(data_type);
     return TileFloatingMinMaxValue(
         TileBinary_MIN,
@@ -53,12 +53,12 @@ begin
         source_right);
 end;
 
-readonly func InstructionContractHandler_TMIN() => TileSemanticHandler
+readonly func SelectTMINHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TMIN(
+func ExecuteTMIN(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex)

@@ -8,38 +8,38 @@
 // on rejection except for the ordinary instruction-attempt trap envelope.
 // NDF-END: PTO-SSRGET-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SSRGET()
+readonly func SelectSSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SSRGET;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SSRGET()
+readonly func SelectSSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterGet;
 end;
 
-pure func InstructionContractRequiresSystemBlock_SSRGET()
+pure func SSRGETRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSystemTransferKind_SSRGET()
+pure func SSRGETSystemTransferKind()
     => bits(2)
 begin
     return '00';
 end;
 
-pure func InstructionContractSystemAddressWidth_SSRGET()
+pure func SSRGETSystemAddressWidth()
     => integer {5,12,24}
 begin
     return 12;
 end;
 
-pure func InstructionContractPushesTemporaryT_SSRGET()
+pure func SSRGETPushesTemporaryT()
     => boolean
 begin
     return FALSE;

@@ -122,7 +122,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/AND.asl -->
 ```asl
-readonly func InstructionContractOperation_AND()
+readonly func SelectANDOperation()
     => ScalarOperation
 begin
     return ScalarOperation_AND;
@@ -134,13 +134,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/AND.asl -->
 ```asl
-readonly func InstructionContractHandler_AND()
+readonly func SelectANDHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractRightModifier_AND(encoded: bits(2))
+pure func DecodeANDRightModifier(encoded: bits(2))
     => ScalarRightModifier
 begin
     case encoded of
@@ -151,39 +151,39 @@ begin
     end;
 end;
 
-pure func InstructionContractPreparedRight_AND(
+pure func PrepareANDRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let modifier = InstructionContractRightModifier_AND(encoded_modifier);
+    let modifier = DecodeANDRightModifier(encoded_modifier);
     let transformed = ApplyScalarRightModifier(right, modifier, TRUE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func InstructionContractResult_AND(
+pure func ComputeANDResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = InstructionContractPreparedRight_AND(
+    let prepared_right = PrepareANDRightOperand(
         right,
         encoded_modifier,
         shift_amount);
     return ScalarBinary(ScalarBinary_AND, left, prepared_right);
 end;
 
-pure func InstructionContractIsLogicalFamily_AND()
+pure func ANDIsLogicalFamily()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_AND()
+pure func ANDIsWordOperation()
     => boolean
 begin
     return FALSE;

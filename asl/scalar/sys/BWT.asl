@@ -8,32 +8,32 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-BWT-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_BWT()
+readonly func SelectBWTOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BWT;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BWT()
+readonly func SelectBWTHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteControlRequest;
 end;
 
-pure func InstructionContractRequiresSystemBlock_BWT()
+pure func BWTRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractControlRequest_BWT()
+pure func BWTControlRequest()
     => ExecutionControlRequest
 begin
     return ExecutionControl_WaitTimeout;
 end;
 
-pure func InstructionContractControlRequestIsNonblocking_BWT()
+pure func BWTControlRequestIsNonblocking()
     => boolean
 begin
     return TRUE;

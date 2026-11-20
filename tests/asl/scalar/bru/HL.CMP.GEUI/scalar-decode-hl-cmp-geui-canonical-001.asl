@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000001110000010101010000000000001110', 48) == 132;
     assert ScalarOperationOfForm(132) == ScalarOperation_HL_CMP_GEUI;
     assert ScalarHandlerOfForm(132) == ScalarHandler_ExecuteCompare;
-    assert InstructionContractOperation_HL_CMP_GEUI() == ScalarOperation_HL_CMP_GEUI;
-    assert InstructionContractHandler_HL_CMP_GEUI() == ScalarHandler_ExecuteCompare;
+    assert SelectHLCMPGEUIOperation() == ScalarOperation_HL_CMP_GEUI;
+    assert SelectHLCMPGEUIHandler() == ScalarHandler_ExecuteCompare;
     assert DecodeScalarOperandRaw('000000000000000001110000010101010000000000001110', 132, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000001110000010101010000000000001110', 132, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000001110000010101010000000000001110', 132, ScalarField_uimm24) == '000000000000000000000000000000000000000000000000';

@@ -126,7 +126,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.LDI.UPO.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_LDI_UPO() => ScalarOperation
+readonly func SelectHLLDIUPOOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_LDI_UPO;
 end;
@@ -137,49 +137,49 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/HL.LDI.UPO.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_LDI_UPO()
+readonly func SelectHLLDIUPOHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarLoad;
 end;
 
-pure func InstructionContractAGUAction_HL_LDI_UPO()
+pure func HLLDIUPOAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Load;
 end;
 
-pure func InstructionContractAGUAddressKind_HL_LDI_UPO()
+pure func HLLDIUPOAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_Immediate;
 end;
 
-pure func InstructionContractAGUSizeBytes_HL_LDI_UPO()
+pure func HLLDIUPOAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractAGUOffsetScale_HL_LDI_UPO()
+pure func HLLDIUPOAGUOffsetScale()
     => integer {0..3}
 begin
     return 0;
 end;
 
-pure func InstructionContractAGUUpdateMode_HL_LDI_UPO()
+pure func HLLDIUPOAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_PostIndex;
 end;
 
-pure func InstructionContractAGUSignedLoad_HL_LDI_UPO()
+pure func HLLDIUPOAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_HL_LDI_UPO()
+pure func HLLDIUPOAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

@@ -8,24 +8,24 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-J-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_J() => ScalarOperation
+readonly func SelectJOperation() => ScalarOperation
 begin
     return ScalarOperation_J;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_J() => ScalarSemanticHandler
+readonly func SelectJHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_JumpRelative;
 end;
 
-pure func InstructionContractUsesCurrentPC_J()
+pure func JUsesCurrentPC()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractTarget_J(
+pure func ResolveJTarget(
     current_pc: Word,
     halfword_offset: Word)
     => Word

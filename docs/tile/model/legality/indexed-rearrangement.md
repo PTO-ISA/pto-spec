@@ -17,7 +17,7 @@ This page is a generated reference view of the normative ASL unit.
 
 This unit holds the operand legality predicates for the two row-indexed Tile instructions, `TGATHER` and `TSCATTER`. `TileOperandsLegal_TGATHER` and `TileOperandsLegal_TSCATTER` are the `legality_handler` entries of those instructions, and the execution functions in the indexed-rearrangement execution unit assert them before they build a destination.
 
-It also defines the type rules (`InstructionContractValueDataTypeLegal_TGATHER`, `InstructionContractIndexDataTypeLegal_TGATHER`, `InstructionContractTypePairLegal_TSCATTER`) and the index decoders `TileIndexedRowIsNegative` and `TileIndexedRowValue`. Execution reuses `TileIndexedRowValue` to find the selected row.
+It also defines the type rules (`TGATHERValueDataTypeLegal`, `TGATHERIndexDataTypeLegal`, `TSCATTERTypePairLegal`) and the index decoders `TileIndexedRowIsNegative` and `TileIndexedRowValue`. Execution reuses `TileIndexedRowValue` to find the selected row.
 
 Each predicate is read-only and returns FALSE for an illegal operand set, so rejection happens in preflight, before any destination element is written.
 
@@ -89,13 +89,13 @@ For `TSCATTER`, index column 0 with values `[2, 2]` sends two source elements to
 ```asl
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-INDEXED-REARRANGEMENT","surface":"tile","classification":["model","legality","indexed-rearrangement"],"depends_on":["PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA","PTO-TILE-MODEL-STATE-TYPES"]}
 
-pure func InstructionContractValueDataTypeLegal_TGATHER(
+pure func TGATHERValueDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return IndexedTLSUTransferDataTypeLegal(data_type);
 end;
 
-pure func InstructionContractIndexDataTypeLegal_TGATHER(
+pure func TGATHERIndexDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_S32 ||
@@ -106,7 +106,7 @@ begin
            data_type == TileDataType_U64;
 end;
 
-pure func InstructionContractTypePairLegal_TSCATTER(
+pure func TSCATTERTypePairLegal(
     value_type: TileDataType,
     index_type: TileDataType) => boolean
 begin
@@ -242,9 +242,9 @@ begin
     if destination_tile.storage_kind != TileStorage_Numeric ||
        source_tile.storage_kind != TileStorage_Numeric ||
        index_tile.storage_kind != TileStorage_Numeric ||
-       !InstructionContractValueDataTypeLegal_TGATHER(
+       !TGATHERValueDataTypeLegal(
            source_tile.data_type) ||
-       !InstructionContractIndexDataTypeLegal_TGATHER(
+       !TGATHERIndexDataTypeLegal(
            index_tile.data_type) ||
        destination_tile.data_type != source_tile.data_type ||
        destination_tile.valid_rows == 0 ||
@@ -277,9 +277,9 @@ begin
     if output.storage_kind != TileStorage_Numeric ||
        source_tile.storage_kind != TileStorage_Numeric ||
        index_tile.storage_kind != TileStorage_Numeric ||
-       !InstructionContractValueDataTypeLegal_TGATHER(
+       !TGATHERValueDataTypeLegal(
            source_tile.data_type) ||
-       !InstructionContractIndexDataTypeLegal_TGATHER(
+       !TGATHERIndexDataTypeLegal(
            index_tile.data_type) ||
        output.data_type != source_tile.data_type ||
        output.valid_rows == 0 || output.valid_columns == 0 ||
@@ -310,7 +310,7 @@ begin
        source_tile.storage_kind != TileStorage_Numeric ||
        index_tile.storage_kind != TileStorage_Numeric ||
        destination_tile.data_type != source_tile.data_type ||
-       !InstructionContractTypePairLegal_TSCATTER(
+       !TSCATTERTypePairLegal(
            source_tile.data_type,
            index_tile.data_type) ||
        source_tile.valid_rows == 0 ||

@@ -14,19 +14,19 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TXORS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TXORS() => TileOperation
+readonly func SelectTXORSOperation() => TileOperation
 begin
     return TileOperation_TXORS;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TXORS(
+pure func TXORSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecScalarIntegerDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TXORS(
+readonly func TXORSOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word) => boolean
@@ -38,17 +38,17 @@ begin
         scalar);
 end;
 
-readonly func InstructionContractHandler_TXORS() => TileSemanticHandler
+readonly func SelectTXORSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileScalar;
 end;
 
-func InstructionContractExecute_TXORS(
+func ExecuteTXORS(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word)
 begin
-    assert InstructionContractOperandsLegal_TXORS(
+    assert TXORSOperandsLegal(
         destination,
         source,
         scalar);

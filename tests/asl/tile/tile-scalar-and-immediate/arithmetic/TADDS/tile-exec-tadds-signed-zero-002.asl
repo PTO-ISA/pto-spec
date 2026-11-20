@@ -8,7 +8,7 @@ begin
         TileDataType_FP32, TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x80000000);
 
-    InstructionContractExecute_TADDS(
+    ExecuteTADDS(
         1, 0, Zeros{PTO_XLEN} + 0x80000000);
     assert ReadTileElement(1, 0, 0) ==
         Zeros{PTO_XLEN} + 0x80000000;

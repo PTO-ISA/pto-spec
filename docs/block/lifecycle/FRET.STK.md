@@ -128,7 +128,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/FRET.STK.asl -->
 ```asl
-readonly func InstructionContractMatches_FRET_STK(operation: CommandOperation) => boolean
+readonly func FRETSTKEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_fret_stk_32_4fe246bd8241);
 end;
@@ -139,7 +139,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/FRET.STK.asl -->
 ```asl
-readonly func InstructionContractHandler_FRET_STK() => CommandSemanticHandler
+readonly func SelectFRETSTKHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteFrameReturnStack;
 end;
@@ -151,13 +151,13 @@ begin
     ReturnFromFrame(begin_reg, end_reg, frame_size, FALSE);
 end;
 
-pure func InstructionContractUsesInclusiveRegisterRange_FRET_STK()
+pure func FRETSTKUsesInclusiveRegisterRange()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractRejectsInvalidFrameRange_FRET_STK()
+pure func FRETSTKRejectsInvalidFrameRange()
     => boolean
 begin
     return TRUE;

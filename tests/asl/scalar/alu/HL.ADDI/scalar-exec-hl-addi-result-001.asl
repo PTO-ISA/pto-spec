@@ -14,9 +14,9 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(1) == Zeros{PTO_XLEN};
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x46;
-    assert InstructionContractImmediateWidth_HL_ADDI() == 24;
-    assert InstructionContractImmediateIsUnsigned_HL_ADDI();
-    assert !InstructionContractIsWordOperation_HL_ADDI();
-    assert InstructionContractResult_HL_ADDI(Ones{PTO_XLEN}, immediate) == Zeros{PTO_XLEN};
+    assert HLADDIImmediateWidth() == 24;
+    assert HLADDIImmediateIsUnsigned();
+    assert !HLADDIIsWordOperation();
+    assert ComputeHLADDIResult(Ones{PTO_XLEN}, immediate) == Zeros{PTO_XLEN};
     return 0;
 end;

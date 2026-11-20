@@ -110,7 +110,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/ACRE.asl -->
 ```asl
-readonly func InstructionContractOperation_ACRE()
+readonly func SelectACREOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ACRE;
@@ -128,25 +128,25 @@ ACRE executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/ACRE.asl -->
 ```asl
-readonly func InstructionContractHandler_ACRE()
+readonly func SelectACREHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ArchitectureEnterRequest;
 end;
 
-pure func InstructionContractRequiresSystemBlock_ACRE()
+pure func ACRERequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractRequestTypeLegal_ACRE(
+pure func ACRERequestTypeLegal(
     request_type: bits(4)) => boolean
 begin
     return request_type == '0000' || request_type == '0001';
 end;
 
-pure func InstructionContractIsImplicitBlockStop_ACRE()
+pure func ACREIsImplicitBlockStop()
     => boolean
 begin
     return TRUE;

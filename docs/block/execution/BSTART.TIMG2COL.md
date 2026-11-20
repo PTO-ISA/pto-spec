@@ -178,7 +178,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.TIMG2COL.asl -->
 ```asl
-readonly func InstructionContractMatches_BSTART_TIMG2COL(
+readonly func BSTARTTIMG2COLEncodingMatches(
     operation: CommandOperation) => boolean
 begin
     return operation ==
@@ -200,12 +200,12 @@ BSTART.TIMG2COL DataType; optional B.DATR; exactly one write-once binding for ea
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.TIMG2COL.asl -->
 ```asl
-readonly func InstructionContractHandler_BSTART_TIMG2COL() => CommandSemanticHandler
+readonly func SelectBSTARTTIMG2COLHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-pure func InstructionContractTIMG2COLLayoutLegal(layout: bits(5)) => boolean
+pure func TIMG2COLLayoutLegal(layout: bits(5)) => boolean
 begin
     return layout == Zeros{5} + 0 ||
            layout == Zeros{5} + 6 ||
@@ -215,27 +215,27 @@ begin
            layout == Zeros{5} + 31;
 end;
 
-pure func InstructionContractTIMG2COLIsLocalCube(layout: bits(5)) => boolean
+pure func TIMG2COLIsLocalCube(layout: bits(5)) => boolean
 begin
     return layout == Zeros{5} + 21 || layout == Zeros{5} + 22 ||
            layout == Zeros{5} + 29 || layout == Zeros{5} + 31;
 end;
 
-pure func InstructionContractTIMG2COLIsM32(layout: bits(5)) => boolean
+pure func TIMG2COLIsM32(layout: bits(5)) => boolean
 begin
     return layout == Zeros{5} + 21 || layout == Zeros{5} + 29;
 end;
 
-pure func InstructionContractTIMG2COLDATRLegal(
+pure func TIMG2COLDataAttributesLegal(
     layout: bits(5), data_type: bits(5), pad: bits(2), cmode: bits(3),
     rmode: bits(3), sat: boolean, canonicalize: boolean) => boolean
 begin
-    return InstructionContractTIMG2COLLayoutLegal(layout) &&
+    return TIMG2COLLayoutLegal(layout) &&
            data_type == DTYPE_NONE && pad == Zeros{2} &&
            cmode == Zeros{3} && rmode == Zeros{3} && !sat && !canonicalize;
 end;
 
-pure func InstructionContractTIMG2COLCoreMaskLegal(mask: bits(4)) => boolean
+pure func TIMG2COLCoreMaskLegal(mask: bits(4)) => boolean
 begin
     return mask == '1111';
 end;

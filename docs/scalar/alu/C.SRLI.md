@@ -106,7 +106,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/C.SRLI.asl -->
 ```asl
-readonly func InstructionContractOperation_C_SRLI() => ScalarOperation
+readonly func SelectCSRLIOperation() => ScalarOperation
 begin
     return ScalarOperation_C_SRLI;
 end;
@@ -117,12 +117,12 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/C.SRLI.asl -->
 ```asl
-readonly func InstructionContractHandler_C_SRLI() => ScalarSemanticHandler
+readonly func SelectCSRLIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractResult_C_SRLI(
+pure func ComputeCSRLIResult(
     old_t1: Word,
     encoded_amount: bits(5))
     => Word

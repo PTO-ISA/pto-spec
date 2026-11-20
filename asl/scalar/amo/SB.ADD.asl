@@ -7,31 +7,31 @@
 // NDF-END: PTO-SB-ADD-CONTRACT-001
 // PTO-REVIEW: {"review_method":"formal-definition-read","outcome":"FORMAL-COMPLETE","reviewed_fields":["assembly","encoding","defaults","operation","state","memory","ordering","faults","reserved"]}
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SB_ADD() => ScalarOperation
+readonly func SelectSBADDOperation() => ScalarOperation
 begin
     return ScalarOperation_SB_ADD;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SB_ADD()
+readonly func SelectSBADDHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_SB_ADD()
+pure func SelectSBADDAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_ADD;
 end;
 
-pure func InstructionContractAtomicSizeBytes_SB_ADD()
+pure func SBADDAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 1;
 end;
 
-pure func InstructionContractPublishesOldValue_SB_ADD()
+pure func SBADDPublishesOldValue()
     => boolean
 begin
     return FALSE;

@@ -8,32 +8,32 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-ACRC-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_ACRC()
+readonly func SelectACRCOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ACRC;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_ACRC()
+readonly func SelectACRCHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ArchitectureCloseRequest;
 end;
 
-pure func InstructionContractRequiresSystemBlock_ACRC()
+pure func ACRCRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractRequestWidth_ACRC()
+pure func ACRCRequestWidth()
     => integer {4}
 begin
     return 4;
 end;
 
-pure func InstructionContractIsTerminalScalar_ACRC()
+pure func ACRCIsTerminalScalar()
     => boolean
 begin
     return TRUE;

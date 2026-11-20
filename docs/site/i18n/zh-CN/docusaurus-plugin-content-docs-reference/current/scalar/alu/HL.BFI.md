@@ -128,19 +128,19 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.BFI.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_BFI()
+readonly func SelectHLBFIOperation()
     => ScalarOperation
 begin
     return ScalarOperation_HL_BFI;
 end;
 
-pure func InstructionContractFirstBit_HL_BFI(encoded_immr: bits(6))
+pure func HLBFIFirstBit(encoded_immr: bits(6))
     => integer {0..63}
 begin
     return UInt(encoded_immr);
 end;
 
-pure func InstructionContractLastBit_HL_BFI(encoded_imms: bits(6))
+pure func HLBFILastBit(encoded_imms: bits(6))
     => integer {0..63}
 begin
     return UInt(encoded_imms);
@@ -152,13 +152,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.BFI.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_BFI()
+readonly func SelectHLBFIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_InsertBitfield;
 end;
 
-pure func InstructionContractResult_HL_BFI(
+pure func ComputeHLBFIResult(
     base: Word,
     source: Word,
     first: integer {0..63},

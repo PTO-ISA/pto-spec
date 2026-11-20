@@ -186,7 +186,7 @@ begin
     assert started == CommandExecution_Executed;
     assert TileOperandsLegal_TCVT(
         2, 1, DefaultNumericExecutionControl());
-    InstructionContractExecute_TCVT(
+    ExecuteTCVT(
         2, 1, DefaultNumericExecutionControl());
     assert _LastFault == Fault_None;
     let destination: TileIndex = 2;

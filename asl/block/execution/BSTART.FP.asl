@@ -8,7 +8,7 @@
 // effects.
 // NDF-END: PTO-BSTART-FP-CONTROL-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_FP(operation: CommandOperation) => boolean
+readonly func BSTARTFPEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_fp_32_0c671a644214) ||
            (operation == CommandOperation_bstart_fp_32_58ad7954fb49) ||
@@ -19,18 +19,18 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSTART_FP() => CommandSemanticHandler
+readonly func SelectBSTARTFPHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractBundleKind_BSTART_FP()
+readonly func BSTARTFPBundleKind()
     => BundleKind
 begin
     return BundleKind_Floating;
 end;
 
-pure func InstructionContractStartsBundle_BSTART_FP()
+pure func BSTARTFPStartsBundle()
     => boolean
 begin
     return TRUE;

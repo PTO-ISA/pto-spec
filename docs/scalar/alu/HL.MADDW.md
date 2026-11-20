@@ -26,7 +26,7 @@ Both halves are published, so the destination pair carries the complete 64-bit a
 <!-- PTO-READER-BLOCK: scalar-hl-maddw-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `InstructionContractResult_HL_MADDW`, which sign-extends `addend[31:0]`, `left[31:0]` and `right[31:0]` to XLEN, takes the low `64` bits of `MultiplyWideSigned`, and adds the widened addend. Dispatch reaches the same 64-bit accumulator through `ExecuteScalarMultiplyAddPair` with `word_operation` true.
+The owning ASL exposes `ComputeHLMADDWResult`, which sign-extends `addend[31:0]`, `left[31:0]` and `right[31:0]` to XLEN, takes the low `64` bits of `MultiplyWideSigned`, and adds the widened addend. Dispatch reaches the same 64-bit accumulator through `ExecuteScalarMultiplyAddPair` with `word_operation` true.
 
 ```asm
 hl.maddw SrcL, SrcR, SrcD, ->Dst0, Dst1
@@ -126,7 +126,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.MADDW.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_MADDW() => ScalarOperation
+readonly func SelectHLMADDWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_MADDW;
 end;
@@ -137,11 +137,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.MADDW.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_MADDW() => ScalarSemanticHandler
+readonly func SelectHLMADDWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarMultiplyAddPair;
 end;
-pure func InstructionContractResult_HL_MADDW(
+pure func ComputeHLMADDWResult(
     addend: Word,
     left: Word,
     right: Word)
@@ -154,24 +154,24 @@ begin
     return product[63:0] + effective_addend;
 end;
 
-pure func InstructionContractLow_HL_MADDW(
+pure func HLMADDWLow(
     addend: Word,
     left: Word,
     right: Word)
     => Word
 begin
     return SignExtend{PTO_XLEN}(
-        InstructionContractResult_HL_MADDW(addend, left, right)[31:0]);
+        ComputeHLMADDWResult(addend, left, right)[31:0]);
 end;
 
-pure func InstructionContractHigh_HL_MADDW(
+pure func HLMADDWHigh(
     addend: Word,
     left: Word,
     right: Word)
     => Word
 begin
     return SignExtend{PTO_XLEN}(
-        InstructionContractResult_HL_MADDW(addend, left, right)[63:32]);
+        ComputeHLMADDWResult(addend, left, right)[63:32]);
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->

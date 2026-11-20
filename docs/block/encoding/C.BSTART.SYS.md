@@ -96,7 +96,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/encoding/C.BSTART.SYS.asl -->
 ```asl
-readonly func InstructionContractMatches_C_BSTART_SYS(operation: CommandOperation) => boolean
+readonly func CBSTARTSYSEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_c_bstart_sys_16_ec213ce96eb7);
 end;
@@ -113,12 +113,12 @@ After any active predecessor block commits successfully, C.BSTART.SYS opens one 
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/encoding/C.BSTART.SYS.asl -->
 ```asl
-pure func InstructionContractKind_C_BSTART_SYS() => BundleKind
+pure func CBSTARTSYSKind() => BundleKind
 begin
     return BundleKind_System;
 end;
 
-readonly func InstructionContractHandler_C_BSTART_SYS() => CommandSemanticHandler
+readonly func SelectCBSTARTSYSHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

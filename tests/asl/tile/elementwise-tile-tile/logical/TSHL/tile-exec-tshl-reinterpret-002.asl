@@ -14,8 +14,8 @@ begin
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x3f80);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
 
-    assert InstructionContractOperandsLegal_TSHL(2, 0, 1);
-    InstructionContractExecute_TSHL(2, 0, 1);
+    assert TSHLOperandsLegal(2, 0, 1);
+    ExecuteTSHL(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 0x7f00;
     assert _Tiles[[2]].data_type == TileDataType_U16;
     return 0;

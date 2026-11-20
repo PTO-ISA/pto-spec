@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000001001000010001000110000001', 32) == 84;
     assert CommandOperationOfForm(84) == CommandOperation_bstart_mgather_xor_32_gm18;
     assert CommandHandlerOfForm(84) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_BSTART_MGATHER_XOR(CommandOperationOfForm(84));
-    assert InstructionContractHandler_BSTART_MGATHER_XOR() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTMGATHERXOREncodingMatches(CommandOperationOfForm(84));
+    assert SelectBSTARTMGATHERXORHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

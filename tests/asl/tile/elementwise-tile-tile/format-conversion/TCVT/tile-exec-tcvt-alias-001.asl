@@ -27,7 +27,7 @@ begin
         0,
         0,
         DefaultNumericExecutionControl());
-    InstructionContractExecute_TCVT(
+    ExecuteTCVT(
         0,
         0,
         DefaultNumericExecutionControl());

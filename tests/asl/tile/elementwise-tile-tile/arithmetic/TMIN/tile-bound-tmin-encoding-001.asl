@@ -9,7 +9,7 @@ begin
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x3f800001);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x40000000);
 
-    assert !InstructionContractOperandsLegal_TMIN(2, 0, 1);
+    assert !TMINOperandsLegal(2, 0, 1);
     assert !_Tiles[[2]].contents_defined;
     return 0;
 end;

@@ -1,12 +1,12 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-INDEXED-REARRANGEMENT","surface":"tile","classification":["model","legality","indexed-rearrangement"],"depends_on":["PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT","PTO-TILE-MODEL-EXECUTION-MASK-STATE","PTO-TILE-MODEL-LEGALITY-EXECUTION-MASK-SOURCE-SCHEMA","PTO-TILE-MODEL-STATE-TYPES"]}
 
-pure func InstructionContractValueDataTypeLegal_TGATHER(
+pure func TGATHERValueDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return IndexedTLSUTransferDataTypeLegal(data_type);
 end;
 
-pure func InstructionContractIndexDataTypeLegal_TGATHER(
+pure func TGATHERIndexDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_S32 ||
@@ -17,7 +17,7 @@ begin
            data_type == TileDataType_U64;
 end;
 
-pure func InstructionContractTypePairLegal_TSCATTER(
+pure func TSCATTERTypePairLegal(
     value_type: TileDataType,
     index_type: TileDataType) => boolean
 begin
@@ -153,9 +153,9 @@ begin
     if destination_tile.storage_kind != TileStorage_Numeric ||
        source_tile.storage_kind != TileStorage_Numeric ||
        index_tile.storage_kind != TileStorage_Numeric ||
-       !InstructionContractValueDataTypeLegal_TGATHER(
+       !TGATHERValueDataTypeLegal(
            source_tile.data_type) ||
-       !InstructionContractIndexDataTypeLegal_TGATHER(
+       !TGATHERIndexDataTypeLegal(
            index_tile.data_type) ||
        destination_tile.data_type != source_tile.data_type ||
        destination_tile.valid_rows == 0 ||
@@ -188,9 +188,9 @@ begin
     if output.storage_kind != TileStorage_Numeric ||
        source_tile.storage_kind != TileStorage_Numeric ||
        index_tile.storage_kind != TileStorage_Numeric ||
-       !InstructionContractValueDataTypeLegal_TGATHER(
+       !TGATHERValueDataTypeLegal(
            source_tile.data_type) ||
-       !InstructionContractIndexDataTypeLegal_TGATHER(
+       !TGATHERIndexDataTypeLegal(
            index_tile.data_type) ||
        output.data_type != source_tile.data_type ||
        output.valid_rows == 0 || output.valid_columns == 0 ||
@@ -221,7 +221,7 @@ begin
        source_tile.storage_kind != TileStorage_Numeric ||
        index_tile.storage_kind != TileStorage_Numeric ||
        destination_tile.data_type != source_tile.data_type ||
-       !InstructionContractTypePairLegal_TSCATTER(
+       !TSCATTERTypePairLegal(
            source_tile.data_type,
            index_tile.data_type) ||
        source_tile.valid_rows == 0 ||

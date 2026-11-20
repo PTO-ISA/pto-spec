@@ -252,7 +252,7 @@ begin
         saturating = FALSE
     };
     assert TileOperandsLegal_TCVT(1, 0, control);
-    InstructionContractExecute_TCVT(1, 0, control);
+    ExecuteTCVT(1, 0, control);
     assert _LastFault == Fault_None;
     for sample = 0 to 11 do
         let integer_result = TCVTIntegralMatrixInteger(mode_index, sample);

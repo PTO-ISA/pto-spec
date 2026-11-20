@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fence-i-mechanism role=mechanism -->
 ## System mechanism
 
-`InstructionContractHandler_FENCE_I` selects `ScalarHandler_FenceInstruction` (`asl/scalar/sys/FENCE.I.asl:18`), and both `InstructionContractFenceInvalidatesReservation_FENCE_I` and `InstructionContractAdvancesInstructionEpoch_FENCE_I` return `TRUE` (`asl/scalar/sys/FENCE.I.asl:30`). `FenceInstruction` implements exactly those two steps, and its ASL comment states that the executable byte-array model already has coherent instruction and data storage, so the epoch is what makes the architectural visibility point explicit (`asl/scalar/model/sys/semantics.asl:83`).
+`SelectFENCEIHandler` selects `ScalarHandler_FenceInstruction` (`asl/scalar/sys/FENCE.I.asl:18`), and both `FENCEIFenceInvalidatesReservation` and `FENCEIAdvancesInstructionEpoch` return `TRUE` (`asl/scalar/sys/FENCE.I.asl:30`). `FenceInstruction` implements exactly those two steps, and its ASL comment states that the executable byte-array model already has coherent instruction and data storage, so the epoch is what makes the architectural visibility point explicit (`asl/scalar/model/sys/semantics.asl:83`).
 
 The instruction requires the body of an active SYS block, like the other SYS-block instructions.
 
@@ -84,7 +84,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/FENCE.I.asl -->
 ```asl
-readonly func InstructionContractOperation_FENCE_I()
+readonly func SelectFENCEIOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FENCE_I;
@@ -102,25 +102,25 @@ FENCE.I executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/FENCE.I.asl -->
 ```asl
-readonly func InstructionContractHandler_FENCE_I()
+readonly func SelectFENCEIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FenceInstruction;
 end;
 
-pure func InstructionContractRequiresSystemBlock_FENCE_I()
+pure func FENCEIRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractFenceInvalidatesReservation_FENCE_I()
+pure func FENCEIFenceInvalidatesReservation()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractAdvancesInstructionEpoch_FENCE_I()
+pure func FENCEIAdvancesInstructionEpoch()
     => boolean
 begin
     return TRUE;

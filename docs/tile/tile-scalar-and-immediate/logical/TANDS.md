@@ -173,7 +173,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-and-immediate/logical/TANDS.asl -->
 ```asl
-readonly func InstructionContractOperation_TANDS() => TileOperation
+readonly func SelectTANDSOperation() => TileOperation
 begin
     return TileOperation_TANDS;
 end;
@@ -197,13 +197,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/tile-scalar-and-immediate/logical/TANDS.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TANDS(
+pure func TANDSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecScalarIntegerDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TANDS(
+readonly func TANDSOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word) => boolean
@@ -215,17 +215,17 @@ begin
         scalar);
 end;
 
-readonly func InstructionContractHandler_TANDS() => TileSemanticHandler
+readonly func SelectTANDSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileScalar;
 end;
 
-func InstructionContractExecute_TANDS(
+func ExecuteTANDS(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word)
 begin
-    assert InstructionContractOperandsLegal_TANDS(
+    assert TANDSOperandsLegal(
         destination,
         source,
         scalar);

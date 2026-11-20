@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000001000000000101100', 16) == 44;
     assert ScalarOperationOfForm(44) == ScalarOperation_C_SSRGET;
     assert ScalarHandlerOfForm(44) == ScalarHandler_ExecuteCompressedSystemRegisterGet;
-    assert InstructionContractOperation_C_SSRGET() == ScalarOperation_C_SSRGET;
-    assert InstructionContractHandler_C_SSRGET() == ScalarHandler_ExecuteCompressedSystemRegisterGet;
+    assert SelectCSSRGETOperation() == ScalarOperation_C_SSRGET;
+    assert SelectCSSRGETHandler() == ScalarHandler_ExecuteCompressedSystemRegisterGet;
     assert DecodeScalarOperandRaw('000000000000000000000000000000001000000000101100', 44, ScalarField_SSRID) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

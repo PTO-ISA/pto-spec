@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-madd-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `InstructionContractAccumulator_HL_MADD`：`MultiplyWideSigned(left, right)` 产生 128 位乘积，`SignExtend{PTO_XLEN * 2}(addend)` 把 `SrcD` 扩展到相同宽度，再由一次 128 位加法合并。分派路径以 `word_operation` 为假调用 `ExecuteScalarMultiplyAddPair`，得到同一个累加值。
+所属 ASL 提供 `HLMADDAccumulator`：`MultiplyWideSigned(left, right)` 产生 128 位乘积，`SignExtend{PTO_XLEN * 2}(addend)` 把 `SrcD` 扩展到相同宽度，再由一次 128 位加法合并。分派路径以 `word_operation` 为假调用 `ExecuteScalarMultiplyAddPair`，得到同一个累加值。
 
 ```asm
 hl.madd SrcL, SrcR, SrcD, ->Dst0, Dst1
@@ -126,7 +126,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.MADD.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_MADD() => ScalarOperation
+readonly func SelectHLMADDOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_MADD;
 end;
@@ -137,11 +137,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.MADD.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_MADD() => ScalarSemanticHandler
+readonly func SelectHLMADDHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarMultiplyAddPair;
 end;
-pure func InstructionContractAccumulator_HL_MADD(
+pure func HLMADDAccumulator(
     addend: Word,
     left: Word,
     right: Word)
@@ -151,14 +151,14 @@ begin
     return product + SignExtend{PTO_XLEN * 2}(addend);
 end;
 
-pure func InstructionContractLow_HL_MADD(addend: Word, left: Word, right: Word) => Word
+pure func HLMADDLow(addend: Word, left: Word, right: Word) => Word
 begin
-    return InstructionContractAccumulator_HL_MADD(addend, left, right)[63:0];
+    return HLMADDAccumulator(addend, left, right)[63:0];
 end;
 
-pure func InstructionContractHigh_HL_MADD(addend: Word, left: Word, right: Word) => Word
+pure func HLMADDHigh(addend: Word, left: Word, right: Word) => Word
 begin
-    return InstructionContractAccumulator_HL_MADD(addend, left, right)[127:64];
+    return HLMADDAccumulator(addend, left, right)[127:64];
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->

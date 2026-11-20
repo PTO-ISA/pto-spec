@@ -14,8 +14,8 @@ begin
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(0, 0, 2, Zeros{PTO_XLEN} + 2);
 
-    assert InstructionContractOperandsLegal_TROWARGMIN(1, 0);
-    InstructionContractExecute_TROWARGMIN(1, 0);
+    assert TROWARGMINOperandsLegal(1, 0);
+    ExecuteTROWARGMIN(1, 0);
 
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 1;
     return 0;

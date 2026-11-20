@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(22) == TileHandler_ExecuteTileSelect;
     assert TileClassOfIndex(22) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(22) == TileEngine_VEC;
-    assert InstructionContractOperation_TSEL() == TileOperation_TSEL;
-    assert InstructionContractHandler_TSEL() == TileHandler_ExecuteTileSelect;
+    assert SelectTSELOperation() == TileOperation_TSEL;
+    assert SelectTSELHandler() == TileHandler_ExecuteTileSelect;
     return 0;
 end;

@@ -52,26 +52,26 @@
 // Cache behavior MUST NOT alter results, faults, source lifetime, or ordering.
 // NDF-END: PTO-TMATMUL-MX-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TMATMUL_MX()
+readonly func SelectTMATMULMXOperation()
     => TileOperation
 begin
     return TileOperation_TMATMUL_MX;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractCubeFunction_TMATMUL_MX()
+readonly func TMATMULMXCubeFunction()
     => integer {0..31}
 begin
     return 4;
 end;
 
-readonly func InstructionContractSharedOperandsAllowed_TMATMUL_MX()
+readonly func TMATMULMXSharedOperandsAllowed()
     => boolean
 begin
     return TRUE;
 end;
 
-readonly func InstructionContractOperandsLegal_TMATMUL_MX(
+readonly func TMATMULMXOperandsLegal(
     destination: TileIndex,
     left: TileIndex,
     row_scale: TileIndex,
@@ -86,7 +86,7 @@ begin
         column_scale);
 end;
 
-readonly func InstructionContractHandler_TMATMUL_MX()
+readonly func SelectTMATMULMXHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TMATMUL_MX;

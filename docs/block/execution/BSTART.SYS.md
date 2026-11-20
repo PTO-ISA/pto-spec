@@ -113,7 +113,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.SYS.asl -->
 ```asl
-readonly func InstructionContractMatches_BSTART_SYS(operation: CommandOperation) => boolean
+readonly func BSTARTSYSEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_sys_32_762d9d84a6d8);
 end;
@@ -131,18 +131,18 @@ SYS has no candidate transfer: BPCN, TYPE, and TAKEN are inapplicable and cannot
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.SYS.asl -->
 ```asl
-readonly func InstructionContractHandler_BSTART_SYS() => CommandSemanticHandler
+readonly func SelectBSTARTSYSHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractBundleKind_BSTART_SYS()
+readonly func BSTARTSYSBundleKind()
     => BundleKind
 begin
     return BundleKind_System;
 end;
 
-pure func InstructionContractStartsBundle_BSTART_SYS()
+pure func BSTARTSYSStartsBundle()
     => boolean
 begin
     return TRUE;

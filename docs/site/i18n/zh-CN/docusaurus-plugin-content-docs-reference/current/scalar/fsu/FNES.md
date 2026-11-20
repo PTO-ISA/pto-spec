@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FNES.asl -->
 ```asl
-readonly func InstructionContractOperation_FNES()
+readonly func SelectFNESOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FNES;
@@ -132,50 +132,50 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FNES.asl -->
 ```asl
-readonly func InstructionContractHandler_FNES()
+readonly func SelectFNESHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingCompare;
 end;
 
-pure func InstructionContractSourceTypeLegal_FNES(encoded: bits(2))
+pure func FNESSourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return encoded == '00' || encoded == '01';
 end;
 
-pure func InstructionContractSourceCarrier_FNES(encoded: bits(2))
+pure func DecodeFNESSourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_FNES(encoded);
+    assert FNESSourceTypeLegal(encoded);
     return ScalarFPSourceTypeCode(encoded);
 end;
 
-pure func InstructionContractSourceArity_FNES()
+pure func FNESSourceArity()
     => integer {1..3}
 begin
     return 2;
 end;
 
-pure func InstructionContractUsesProfileFlags_FNES()
+pure func FNESUsesProfileFlags()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractUsesActiveRounding_FNES()
+pure func FNESUsesActiveRounding()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractCompareOperation_FNES()
+pure func SelectFNESCompareOperation()
     => FloatingCompareOperation
 begin
     return FloatingCompare_NE;
 end;
 
-pure func InstructionContractSignalingCompare_FNES()
+pure func FNESSignalingCompare()
     => boolean
 begin
     return TRUE;

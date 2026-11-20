@@ -24,6 +24,10 @@ import sys
 from typing import Any, Iterable
 
 ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.instruction_symbols import contract_symbol  # noqa: E402
 KNOWN_LAYOUTS = {
     "RowMajor", "CUBE_M16", "CUBE_M32", "CUBE_N8", "ColumnMajor", "ZN", "NZ",
 }
@@ -171,7 +175,7 @@ REDUCTION_OPERATION_PATHS = {
     "TROWSUM": "row-reduction/TROWSUM.asl",
 }
 ISSUE356_REDUCTION_OPERATION_CALLERS = {
-    (f"InstructionContractExecute_{mnemonic}",
+    (contract_symbol("Execute", mnemonic),
      f"asl/tile/reduce-and-expand/{relative_path}")
     for mnemonic, relative_path in REDUCTION_OPERATION_PATHS.items()
 }
@@ -2743,10 +2747,9 @@ def _operation_reachability(source_map: dict[str, str], metadata: list[tuple[str
             else:
                 owner_defs = [item for items in index.values() for item in items
                               if item["path"] == bundle_owner]
-                owner_token = re.sub(r"[^A-Za-z0-9]", "_", str(op.get("block_owner") or ""))
+                owner_token = re.sub(r"[^A-Za-z0-9]", "", str(op.get("block_owner") or ""))
                 owner_roots = [item["name"] for item in owner_defs
-                               if item["name"].startswith("InstructionContract") and
-                               (not owner_token or owner_token in item["name"])]
+                               if not owner_token or owner_token in item["name"]]
                 if not owner_roots:
                     errors.append(f"{op['path']}: missing bundle contract root in {bundle_owner}")
                 bundle_roots.update(owner_roots)
@@ -4529,7 +4532,7 @@ def _r4_layout_relation_closure(
         handlers = {record.get("semantic_handler") for record in records if isinstance(record, dict)}
         if "ExecuteTileExpand" in handlers:
             handled_expansions.add(mnemonic)
-            expected_execution_callers.add((f"InstructionContractExecute_{mnemonic}", op["path"]))
+            expected_execution_callers.add((contract_symbol("Execute", mnemonic), op["path"]))
     expected_before_callers: set[tuple[str, str]] = set()
     handled_before_expansions: set[str] = set()
     for mnemonic, op in before_inventory["operations"].items():
@@ -4537,7 +4540,7 @@ def _r4_layout_relation_closure(
         handlers = {record.get("semantic_handler") for record in records if isinstance(record, dict)}
         if "ExecuteTileExpand" in handlers:
             handled_before_expansions.add(mnemonic)
-            expected_before_callers.add((f"InstructionContractExecute_{mnemonic}", op["path"]))
+            expected_before_callers.add((contract_symbol("Execute", mnemonic), op["path"]))
     old_execution_defs = before_defs.get(R4_EXECUTION_HELPER["name"], [])
     new_execution_defs = after_defs.get(R4_EXECUTION_HELPER["name"], [])
     old_execution_helpers = before_reach.get("helpers", {}).get(R4_EXECUTION_HELPER["name"], [])
@@ -4909,8 +4912,8 @@ def _fixture() -> dict[str, str]:
     return {
         "asl/tile/TADD.asl": '// PTO-INSTRUCTION: {"mnemonic":"TADD","surface":"tile","block":["BSTART.VEC TADD"],"catalog_records":[{"legality_handler":"Legal","semantic_handler":"Execute","operands":[{"field":"destination0","role":"destination"},{"field":"source0","role":"source-left"},{"field":"source1","role":"source-right"}]}]}\n',
         "asl/tile/TMATMUL_BIAS.asl": '// PTO-INSTRUCTION: {"mnemonic":"TMATMUL_BIAS","surface":"tile","block":["BSTART.TMATMUL.BIAS AType"],"contract":{"legality":["Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D matches A layout.","Bias uses the resolved M layout ML (CUBE_M16 or CUBE_M32), matching D and Local A when present."]},"catalog_records":[{"legality_handler":"BiasLegal","semantic_handler":"Execute","operands":[{"field":"destination0","role":"destination"},{"field":"source0","role":"left"},{"field":"source1","role":"right"},{"field":"source2","role":"bias"}]}]}\n',
-        "asl/block/execution/BSTART.VEC.asl": '// PTO-INSTRUCTION: {"mnemonic":"BSTART.VEC","surface":"block","catalog_records":[{"semantic_handler":"ExecuteBundleStart"}]}\nreadonly func InstructionContractAcceptsTileOperation_BSTART_VEC() => boolean\nbegin\n    return TRUE;\nend;\n',
-        "asl/block/execution/BSTART.TMATMUL.BIAS.asl": '// PTO-INSTRUCTION: {"mnemonic":"BSTART.TMATMUL.BIAS","surface":"block","catalog_records":[{"semantic_handler":"ExecuteBundleStart"}]}\n// authoritative bundle layout contract: Local A and D use CUBE_M16 or CUBE_M32; Local B uses CUBE_N8.\nreadonly func InstructionContractCubeFunction_BSTART_TMATMUL_BIAS() => integer\nbegin\n    return 1;\nend;\n',
+        "asl/block/execution/BSTART.VEC.asl": '// PTO-INSTRUCTION: {"mnemonic":"BSTART.VEC","surface":"block","catalog_records":[{"semantic_handler":"ExecuteBundleStart"}]}\nreadonly func BSTARTVECAcceptsTileOperation() => boolean\nbegin\n    return TRUE;\nend;\n',
+        "asl/block/execution/BSTART.TMATMUL.BIAS.asl": '// PTO-INSTRUCTION: {"mnemonic":"BSTART.TMATMUL.BIAS","surface":"block","catalog_records":[{"semantic_handler":"ExecuteBundleStart"}]}\n// authoritative bundle layout contract: Local A and D use CUBE_M16 or CUBE_M32; Local B uses CUBE_N8.\nreadonly func BSTARTTMATMULBIASCubeFunction() => integer\nbegin\n    return 1;\nend;\n',
         "asl/block/model/commit/validation.asl": 'func CompleteBundleAtWithAcceptedApplicabilityRules() => boolean\nbegin\n    return TRUE;\nend;\n',
         "asl/block/model/dispatch/tile-execution.asl": 'func ExecuteBundleTileOperationWithAcceptedApplicabilityRules() => boolean\nbegin\n    return TRUE;\nend;\n',
         "asl/block/model/dispatch/destination-shape.asl": 'func ResolveBundleTileDestinationsForOperation() => boolean\nbegin\n    return TRUE;\nend;\n',

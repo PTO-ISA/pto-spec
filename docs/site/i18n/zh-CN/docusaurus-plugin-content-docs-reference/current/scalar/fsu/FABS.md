@@ -114,7 +114,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FABS.asl -->
 ```asl
-readonly func InstructionContractOperation_FABS()
+readonly func SelectFABSOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FABS;
@@ -126,44 +126,44 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FABS.asl -->
 ```asl
-readonly func InstructionContractHandler_FABS()
+readonly func SelectFABSHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingUnary;
 end;
 
-pure func InstructionContractSourceTypeLegal_FABS(encoded: bits(2))
+pure func FABSSourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return encoded == '00' || encoded == '01';
 end;
 
-pure func InstructionContractSourceCarrier_FABS(encoded: bits(2))
+pure func DecodeFABSSourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_FABS(encoded);
+    assert FABSSourceTypeLegal(encoded);
     return ScalarFPSourceTypeCode(encoded);
 end;
 
-pure func InstructionContractSourceArity_FABS()
+pure func FABSSourceArity()
     => integer {1..3}
 begin
     return 1;
 end;
 
-pure func InstructionContractUsesProfileFlags_FABS()
+pure func FABSUsesProfileFlags()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractUsesActiveRounding_FABS()
+pure func FABSUsesActiveRounding()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractUnaryOperation_FABS()
+pure func SelectFABSUnaryOperation()
     => FloatingUnaryOperation
 begin
     return FloatingUnary_ABS;

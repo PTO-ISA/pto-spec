@@ -128,19 +128,19 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/REV.asl -->
 ```asl
-readonly func InstructionContractOperation_REV()
+readonly func SelectREVOperation()
     => ScalarOperation
 begin
     return ScalarOperation_REV;
 end;
 
-pure func InstructionContractWidth_REV(encoded_imml: bits(6))
+pure func REVWidth(encoded_imml: bits(6))
     => integer {1..64}
 begin
     return UInt(encoded_imml) + 1;
 end;
 
-pure func InstructionContractOffset_REV(encoded_immr: bits(6))
+pure func DecodeREVOffset(encoded_immr: bits(6))
     => integer {0..63}
 begin
     return UInt(encoded_immr);
@@ -152,13 +152,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/REV.asl -->
 ```asl
-readonly func InstructionContractHandler_REV()
+readonly func SelectREVHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ReverseBitfieldBytes;
 end;
 
-pure func InstructionContractResult_REV(
+pure func ComputeREVResult(
     value: Word,
     width: integer {1..64},
     offset: integer {0..63})

@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(100) == TileHandler_GM_ATOM_VALUE;
     assert TileClassOfIndex(100) == TileClass_MemoryAndDataMovement;
     assert TileEngineOfIndex(100) == TileEngine_TLSU;
-    assert InstructionContractOperation_MGATHER_MAX() == TileOperation_MGATHER_MAX;
-    assert InstructionContractHandler_MGATHER_MAX() == TileHandler_GM_ATOM_VALUE;
+    assert SelectMGATHERMAXOperation() == TileOperation_MGATHER_MAX;
+    assert SelectMGATHERMAXHandler() == TileHandler_GM_ATOM_VALUE;
     return 0;
 end;

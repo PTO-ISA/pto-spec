@@ -20,25 +20,25 @@
 // numeric status.
 // NDF-END: PTO-TCMPS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TCMPS() => TileOperation
+readonly func SelectTCMPSOperation() => TileOperation
 begin
     return TileOperation_TCMPS;
 end;
 
-pure func InstructionContractComparisonCodeLegal_TCMPS(
+pure func TCMPSComparisonCodeLegal(
     comparison_code: bits(3)) => boolean
 begin
     return UInt(comparison_code) <= 5;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TCMPS(
+pure func TCMPSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileCompareDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TCMPS(
+readonly func TCMPSOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word,
@@ -51,18 +51,18 @@ begin
         comparison);
 end;
 
-readonly func InstructionContractHandler_TCMPS() => TileSemanticHandler
+readonly func SelectTCMPSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileCompareScalar;
 end;
 
-func InstructionContractExecute_TCMPS(
+func ExecuteTCMPS(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word,
     comparison: TileComparison)
 begin
-    assert InstructionContractOperandsLegal_TCMPS(
+    assert TCMPSOperandsLegal(
         destination,
         source,
         scalar,

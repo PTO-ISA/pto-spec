@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/CMP.EQ.asl -->
 ```asl
-readonly func InstructionContractOperation_CMP_EQ() => ScalarOperation
+readonly func SelectCMPEQOperation() => ScalarOperation
 begin
     return ScalarOperation_CMP_EQ;
 end;
@@ -131,24 +131,24 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/CMP.EQ.asl -->
 ```asl
-readonly func InstructionContractHandler_CMP_EQ() => ScalarSemanticHandler
+readonly func SelectCMPEQHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteCompare;
 end;
 
-pure func InstructionContractCondition_CMP_EQ()
+pure func DecodeCMPEQCondition()
     => ScalarCondition
 begin
     return ScalarCondition_EQ;
 end;
 
-pure func InstructionContractCompareResult_CMP_EQ(
+pure func ComputeCMPEQComparisonResult(
     left: Word,
     right: Word)
     => boolean
 begin
     return ConditionHolds(
-        InstructionContractCondition_CMP_EQ(),
+        DecodeCMPEQCondition(),
         left,
         right);
 end;

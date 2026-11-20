@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-tlb-iv-mechanism role=mechanism -->
 ## 系统机制
 
-`InstructionContractHandler_TLB_IV` 选择共用的维护处理程序（`asl/scalar/sys/TLB.IV.asl:18`），而 `InstructionContractMaintenanceRequiresRootRing_TLB_IV` 返回 `TRUE`（`asl/scalar/sys/TLB.IV.asl:42`），正是这一点把该操作放进执行器的环受限组（`asl/scalar/model/sys/semantics.asl:121`）。派发器为该形式读取 `SrcL`，因为 `InstructionContractMaintenanceUsesOperand_TLB_IV` 为 `TRUE`（`asl/scalar/model/dispatch/sys.asl:50`）。
+`SelectTLBIVHandler` 选择共用的维护处理程序（`asl/scalar/sys/TLB.IV.asl:18`），而 `TLBIVMaintenanceRequiresRootRing` 返回 `TRUE`（`asl/scalar/sys/TLB.IV.asl:42`），正是这一点把该操作放进执行器的环受限组（`asl/scalar/model/sys/semantics.asl:121`）。派发器为该形式读取 `SrcL`，因为 `TLBIVMaintenanceUsesOperand` 为 `TRUE`（`asl/scalar/model/dispatch/sys.asl:50`）。
 
 执行器内部的顺序是先特权、后操作数：环检查在规范地址测试之前运行，两种失败各有自己的故障类别（`asl/scalar/model/sys/semantics.asl:129`）。
 
@@ -102,7 +102,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/TLB.IV.asl -->
 ```asl
-readonly func InstructionContractOperation_TLB_IV()
+readonly func SelectTLBIVOperation()
     => ScalarOperation
 begin
     return ScalarOperation_TLB_IV;
@@ -120,31 +120,31 @@ TLB.IV executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/TLB.IV.asl -->
 ```asl
-readonly func InstructionContractHandler_TLB_IV()
+readonly func SelectTLBIVHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_TLB_IV()
+pure func TLBIVRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_TLB_IV()
+pure func SelectTLBIVMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_TLB_IV;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_TLB_IV()
+pure func TLBIVMaintenanceUsesOperand()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_TLB_IV()
+pure func TLBIVMaintenanceRequiresRootRing()
     => boolean
 begin
     return TRUE;

@@ -5,12 +5,12 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000000000000110011', 32) == 5;
     assert CommandOperationOfForm(5) == CommandOperation_b_hint_32_69d942ff1583;
     assert CommandHandlerOfForm(5) == CommandHandler_SetBundleHint;
-    assert InstructionContractMatches_B_HINT(CommandOperationOfForm(5));
-    assert InstructionContractHandler_B_HINT() == CommandHandler_SetBundleHint;
+    assert BHINTEncodingMatches(CommandOperationOfForm(5));
+    assert SelectBHINTHandler() == CommandHandler_SetBundleHint;
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000001000000110011', 32) == 6;
     assert CommandOperationOfForm(6) == CommandOperation_b_hint_32_f7d01d734925;
     assert CommandHandlerOfForm(6) == CommandHandler_SetBundleHint;
-    assert InstructionContractMatches_B_HINT(CommandOperationOfForm(6));
-    assert InstructionContractHandler_B_HINT() == CommandHandler_SetBundleHint;
+    assert BHINTEncodingMatches(CommandOperationOfForm(6));
+    assert SelectBHINTHandler() == CommandHandler_SetBundleHint;
     return 0;
 end;

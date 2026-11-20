@@ -9,9 +9,9 @@ begin
     assert TileHandlerOfIndex(90) == TileHandler_TGEMV_ACC;
     assert TileClassOfIndex(90) == TileClass_MatrixAndMatrixVector;
     assert TileEngineOfIndex(90) == TileEngine_CUBE;
-    assert InstructionContractOperation_TGEMV_ACC() == TileOperation_TGEMV_ACC;
-    assert InstructionContractHandler_TGEMV_ACC() == TileHandler_TGEMV_ACC;
-    assert InstructionContractCubeFunction_TGEMV_ACC() == 18;
-    assert InstructionContractSharedOperandsAllowed_TGEMV_ACC() == FALSE;
+    assert SelectTGEMVACCOperation() == TileOperation_TGEMV_ACC;
+    assert SelectTGEMVACCHandler() == TileHandler_TGEMV_ACC;
+    assert TGEMVACCCubeFunction() == 18;
+    assert TGEMVACCSharedOperandsAllowed() == FALSE;
     return 0;
 end;

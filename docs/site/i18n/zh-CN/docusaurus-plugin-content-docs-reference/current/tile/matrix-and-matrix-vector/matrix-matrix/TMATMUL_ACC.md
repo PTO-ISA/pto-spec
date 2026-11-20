@@ -142,7 +142,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.asl -->
 ```asl
-readonly func InstructionContractOperation_TMATMUL_ACC()
+readonly func SelectTMATMULACCOperation()
     => TileOperation
 begin
     return TileOperation_TMATMUL_ACC;
@@ -170,19 +170,19 @@ BSTOP or the next BSTART completion boundary
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.asl -->
 ```asl
-readonly func InstructionContractCubeFunction_TMATMUL_ACC()
+readonly func TMATMULACCCubeFunction()
     => integer {0..31}
 begin
     return 2;
 end;
 
-readonly func InstructionContractSharedOperandsAllowed_TMATMUL_ACC()
+readonly func TMATMULACCSharedOperandsAllowed()
     => boolean
 begin
     return TRUE;
 end;
 
-readonly func InstructionContractOperandsLegal_TMATMUL_ACC(
+readonly func TMATMULACCOperandsLegal(
     destination: TileIndex,
     accumulator: TileIndex,
     left: TileIndex,
@@ -195,7 +195,7 @@ begin
         right);
 end;
 
-readonly func InstructionContractHandler_TMATMUL_ACC()
+readonly func SelectTMATMULACCHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TMATMUL_ACC;

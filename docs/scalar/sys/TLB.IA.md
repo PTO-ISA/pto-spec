@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 The instruction selects the shared maintenance handler (`asl/scalar/sys/TLB.IA.asl:18`) and the token `Maintenance_TLB_IA` (`asl/scalar/sys/TLB.IA.asl:30`). That token has its own case in the executor, separate from the two address cases, because its operand test is a bit-range test rather than a canonicality test (`asl/scalar/model/sys/semantics.asl:148`).
 
-`InstructionContractMaintenanceRequiresRootRing_TLB_IA` returns `TRUE` (`asl/scalar/sys/TLB.IA.asl:42`), which places the operation in the ACR0-only group of `MaintenanceAccessPermitted`.
+`TLBIAMaintenanceRequiresRootRing` returns `TRUE` (`asl/scalar/sys/TLB.IA.asl:42`), which places the operation in the ACR0-only group of `MaintenanceAccessPermitted`.
 
 <!-- PTO-READER-BLOCK: scalar-tlb-ia-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/TLB.IA.asl -->
 ```asl
-readonly func InstructionContractOperation_TLB_IA()
+readonly func SelectTLBIAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_TLB_IA;
@@ -118,31 +118,31 @@ TLB.IA executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/TLB.IA.asl -->
 ```asl
-readonly func InstructionContractHandler_TLB_IA()
+readonly func SelectTLBIAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_TLB_IA()
+pure func TLBIARequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_TLB_IA()
+pure func SelectTLBIAMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_TLB_IA;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_TLB_IA()
+pure func TLBIAMaintenanceUsesOperand()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_TLB_IA()
+pure func TLBIAMaintenanceRequiresRootRing()
     => boolean
 begin
     return TRUE;

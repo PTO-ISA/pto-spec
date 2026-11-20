@@ -137,7 +137,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.SHIP.U.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_SHIP_U() => ScalarOperation
+readonly func SelectHLSHIPUOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_SHIP_U;
 end;
@@ -148,49 +148,49 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/HL.SHIP.U.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_SHIP_U()
+readonly func SelectHLSHIPUHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStorePair;
 end;
 
-pure func InstructionContractAGUAction_HL_SHIP_U()
+pure func HLSHIPUAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_StorePair;
 end;
 
-pure func InstructionContractAGUAddressKind_HL_SHIP_U()
+pure func HLSHIPUAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_Immediate;
 end;
 
-pure func InstructionContractAGUSizeBytes_HL_SHIP_U()
+pure func HLSHIPUAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 2;
 end;
 
-pure func InstructionContractAGUOffsetScale_HL_SHIP_U()
+pure func HLSHIPUAGUOffsetScale()
     => integer {0..3}
 begin
     return 0;
 end;
 
-pure func InstructionContractAGUUpdateMode_HL_SHIP_U()
+pure func HLSHIPUAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_None;
 end;
 
-pure func InstructionContractAGUSignedLoad_HL_SHIP_U()
+pure func HLSHIPUAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_HL_SHIP_U()
+pure func HLSHIPUAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

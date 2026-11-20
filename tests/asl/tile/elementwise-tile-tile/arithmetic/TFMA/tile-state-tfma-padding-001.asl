@@ -14,7 +14,7 @@ begin
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     _BundleDataAttributesPresent = TRUE;
 
-    InstructionContractExecute_TFMA(0, 1, 2, 3);
+    ExecuteTFMA(0, 1, 2, 3);
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 10;
     assert TileElementDefined(0, 0, 1);
     assert ReadTileElement(0, 0, 1) == Ones{PTO_XLEN};

@@ -8,32 +8,32 @@
 // assigned destination or commit effect in alias-safe order.
 // NDF-END: PTO-XORIW-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_XORIW()
+readonly func SelectXORIWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_XORIW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_XORIW()
+readonly func SelectXORIWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractImmediateWidth_XORIW()
+pure func XORIWImmediateWidth()
     => integer {1..64}
 begin
     return 12;
 end;
 
-pure func InstructionContractImmediateIsSigned_XORIW()
+pure func XORIWImmediateIsSigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_XORIW()
+pure func XORIWIsWordOperation()
     => boolean
 begin
     return TRUE;

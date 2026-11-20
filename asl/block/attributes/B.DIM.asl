@@ -7,7 +7,7 @@
 // once across all full and compressed dimension forms in one block.
 // NDF-END: PTO-B-DIM-WRITE-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_B_DIM(operation: CommandOperation) => boolean
+readonly func BDIMEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_b_dim_32_1caa1aa2944a) ||
            (operation == CommandOperation_b_dim_32_27602ab68929) ||
@@ -31,18 +31,18 @@ begin
     end;
 end;
 
-readonly func InstructionContractHandler_B_DIM() => CommandSemanticHandler
+readonly func SelectBDIMHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleDimension;
 end;
 
-pure func InstructionContractHeaderOnly_B_DIM()
+pure func BDIMHeaderOnly()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractDuplicateRejects_B_DIM()
+pure func BDIMDuplicateRejects()
     => boolean
 begin
     return TRUE;

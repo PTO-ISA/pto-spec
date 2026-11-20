@@ -8,7 +8,7 @@ begin
         TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
 
-    assert !InstructionContractOperandsLegal_TNEG(1, 0);
+    assert !TNEGOperandsLegal(1, 0);
     assert !_Tiles[[1]].contents_defined;
     return 0;
 end;

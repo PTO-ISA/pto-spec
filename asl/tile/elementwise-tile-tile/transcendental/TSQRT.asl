@@ -14,13 +14,13 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TSQRT-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TSQRT() => TileOperation
+readonly func SelectTSQRTOperation() => TileOperation
 begin
     return TileOperation_TSQRT;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TSQRT(
+pure func TSQRTDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileUnaryDataTypeSupported(
@@ -28,7 +28,7 @@ begin
         data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TSQRT(
+readonly func TSQRTOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -38,16 +38,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TSQRT() => TileSemanticHandler
+readonly func SelectTSQRTHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;
 
-func InstructionContractExecute_TSQRT(
+func ExecuteTSQRT(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TSQRT(
+    assert TSQRTOperandsLegal(
         destination,
         source);
     ExecuteTileUnary(

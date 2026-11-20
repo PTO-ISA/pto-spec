@@ -5,7 +5,7 @@ begin
     assert DecodeScalarForm('000000000000000000010000000000000010000000101011', 32) == 97;
     assert ScalarOperationOfForm(97) == ScalarOperation_FENCE_I;
     assert ScalarHandlerOfForm(97) == ScalarHandler_FenceInstruction;
-    assert InstructionContractOperation_FENCE_I() == ScalarOperation_FENCE_I;
-    assert InstructionContractHandler_FENCE_I() == ScalarHandler_FenceInstruction;
+    assert SelectFENCEIOperation() == ScalarOperation_FENCE_I;
+    assert SelectFENCEIHandler() == ScalarHandler_FenceInstruction;
     return 0;
 end;

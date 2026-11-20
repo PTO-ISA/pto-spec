@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-mechanism role=mechanism -->
 ## System mechanism
 
-`InstructionContractHandler_HL_SSRSET` selects `ScalarHandler_ExecuteSystemRegisterSet` (`asl/scalar/sys/HL.SSRSET.asl:18`), and `InstructionContractSystemAddressWidth_HL_SSRSET` fixes the address width at 24 (`asl/scalar/sys/HL.SSRSET.asl:36`). The 48-bit assembly carries the address as two 12-bit pieces, which the dispatcher recombines before the call (`asl/scalar/model/dispatch/sys.asl:96`).
+`SelectHLSSRSETHandler` selects `ScalarHandler_ExecuteSystemRegisterSet` (`asl/scalar/sys/HL.SSRSET.asl:18`), and `HLSSRSETSystemAddressWidth` fixes the address width at 24 (`asl/scalar/sys/HL.SSRSET.asl:36`). The 48-bit assembly carries the address as two 12-bit pieces, which the dispatcher recombines before the call (`asl/scalar/model/dispatch/sys.asl:96`).
 
 The helper preflights ordinary write permission and, for MSGB, the kernel context, Block attributes, and older fault-capable work before it reads the source. A rejected or blocked attempt therefore does not read the Reg5 value.
 
@@ -33,7 +33,7 @@ The helper preflights ordinary write permission and, for MSGB, the kernel contex
 
 `SrcL` is the Reg5 source from R0..R23, T#1..T#4, or U#1..U#4, and `SSR_ID` is the 24-bit register address (`asl/scalar/sys/HL.SSRSET.asl:1`). There is no destination operand.
 
-`InstructionContractPushesTemporaryT_HL_SSRSET` returns `FALSE` (`asl/scalar/sys/HL.SSRSET.asl:42`), and the instruction has no destination operand, so no temporary queue is written. Encoded zero in `SrcL` names the architectural zero GPR, which is an assigned value and a legal way to write zero.
+`HLSSRSETPushesTemporaryT` returns `FALSE` (`asl/scalar/sys/HL.SSRSET.asl:42`), and the instruction has no destination operand, so no temporary queue is written. Encoded zero in `SrcL` names the architectural zero GPR, which is an assigned value and a legal way to write zero.
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-effects role=effects -->
 ## Architectural effects
@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/HL.SSRSET.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_SSRSET()
+readonly func SelectHLSSRSETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_HL_SSRSET;
@@ -121,31 +121,31 @@ HL.SSRSET executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/HL.SSRSET.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_SSRSET()
+readonly func SelectHLSSRSETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterSet;
 end;
 
-pure func InstructionContractRequiresSystemBlock_HL_SSRSET()
+pure func HLSSRSETRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSystemTransferKind_HL_SSRSET()
+pure func HLSSRSETSystemTransferKind()
     => bits(2)
 begin
     return '01';
 end;
 
-pure func InstructionContractSystemAddressWidth_HL_SSRSET()
+pure func HLSSRSETSystemAddressWidth()
     => integer {5,12,24}
 begin
     return 24;
 end;
 
-pure func InstructionContractPushesTemporaryT_HL_SSRSET()
+pure func HLSSRSETPushesTemporaryT()
     => boolean
 begin
     return FALSE;

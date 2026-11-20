@@ -18,10 +18,10 @@ begin
     assert !_BARG.taken;
     assert _BARG.bpcn == Zeros{PTO_XLEN} + 0x1fe;
 
-    assert InstructionContractTarget_C_BSTART(
+    assert ResolveCBSTARTTarget(
         Zeros{PTO_XLEN} + 0x300, Zeros{12} + 1) ==
         Zeros{PTO_XLEN} + 0x302;
-    assert InstructionContractTarget_C_BSTART(
+    assert ResolveCBSTARTTarget(
         Zeros{PTO_XLEN} + 0x300, Ones{12}) ==
         Zeros{PTO_XLEN} + 0x2fe;
     return 0;

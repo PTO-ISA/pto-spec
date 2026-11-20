@@ -8,9 +8,9 @@ begin
         1, 128, 1, 1, TileDataType_U16, layout);
     assert source_configured && destination_configured;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 7);
-    assert InstructionContractOperandsLegal_TMULS(
+    assert TMULSOperandsLegal(
         1, 0, Zeros{PTO_XLEN} + 3);
-    InstructionContractExecute_TMULS(
+    ExecuteTMULS(
         1, 0, Zeros{PTO_XLEN} + 3);
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 21;
     assert _LastFault == Fault_None;

@@ -9,9 +9,9 @@ begin
     assert TileHandlerOfIndex(92) == TileHandler_TGEMV_MX_BIAS;
     assert TileClassOfIndex(92) == TileClass_MatrixAndMatrixVector;
     assert TileEngineOfIndex(92) == TileEngine_CUBE;
-    assert InstructionContractOperation_TGEMV_MX_BIAS() == TileOperation_TGEMV_MX_BIAS;
-    assert InstructionContractHandler_TGEMV_MX_BIAS() == TileHandler_TGEMV_MX_BIAS;
-    assert InstructionContractCubeFunction_TGEMV_MX_BIAS() == 21;
-    assert InstructionContractSharedOperandsAllowed_TGEMV_MX_BIAS() == FALSE;
+    assert SelectTGEMVMXBIASOperation() == TileOperation_TGEMV_MX_BIAS;
+    assert SelectTGEMVMXBIASHandler() == TileHandler_TGEMV_MX_BIAS;
+    assert TGEMVMXBIASCubeFunction() == 21;
+    assert TGEMVMXBIASSharedOperandsAllowed() == FALSE;
     return 0;
 end;

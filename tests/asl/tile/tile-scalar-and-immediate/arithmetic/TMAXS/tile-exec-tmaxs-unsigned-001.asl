@@ -31,7 +31,7 @@ begin
         1,
         Zeros{PTO_XLEN} + 250);
 
-    InstructionContractExecute_TMAXS(
+    ExecuteTMAXS(
         1,
         0,
         Zeros{PTO_XLEN} + 9);

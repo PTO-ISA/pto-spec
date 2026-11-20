@@ -10,18 +10,18 @@ end;
 
 func main() => integer
 begin
-    assert InstructionContractDataTypeLegal_TTRI(TileDataType_FP64);
-    assert InstructionContractDataTypeLegal_TTRI(TileDataType_FP32);
-    assert InstructionContractDataTypeLegal_TTRI(TileDataType_FP16);
-    assert InstructionContractDataTypeLegal_TTRI(TileDataType_S64);
-    assert InstructionContractDataTypeLegal_TTRI(TileDataType_S32);
-    assert InstructionContractDataTypeLegal_TTRI(TileDataType_S16);
-    assert InstructionContractDataTypeLegal_TTRI(TileDataType_U64);
-    assert InstructionContractDataTypeLegal_TTRI(TileDataType_U32);
-    assert InstructionContractDataTypeLegal_TTRI(TileDataType_U16);
-    assert !InstructionContractDataTypeLegal_TTRI(TileDataType_BF16);
-    assert !InstructionContractDataTypeLegal_TTRI(TileDataType_S8);
-    assert !InstructionContractDataTypeLegal_TTRI(TileDataType_U8);
+    assert TTRIDataTypeLegal(TileDataType_FP64);
+    assert TTRIDataTypeLegal(TileDataType_FP32);
+    assert TTRIDataTypeLegal(TileDataType_FP16);
+    assert TTRIDataTypeLegal(TileDataType_S64);
+    assert TTRIDataTypeLegal(TileDataType_S32);
+    assert TTRIDataTypeLegal(TileDataType_S16);
+    assert TTRIDataTypeLegal(TileDataType_U64);
+    assert TTRIDataTypeLegal(TileDataType_U32);
+    assert TTRIDataTypeLegal(TileDataType_U16);
+    assert !TTRIDataTypeLegal(TileDataType_BF16);
+    assert !TTRIDataTypeLegal(TileDataType_S8);
+    assert !TTRIDataTypeLegal(TileDataType_U8);
     ResetProfileState();
     let started = ExecuteCommandInstruction(TTRISchemaStart(), 32);
     assert started == CommandExecution_Executed;

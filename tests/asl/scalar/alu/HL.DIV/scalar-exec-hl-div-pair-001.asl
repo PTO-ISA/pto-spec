@@ -15,7 +15,7 @@ begin
     assert execution == ScalarExecution_Executed;
     assert ReadGPR(3) == Zeros{PTO_XLEN} - 2;
     assert ReadGPR(4) == Ones{PTO_XLEN};
-    assert InstructionContractQuotient_HL_DIV(dividend, divisor) == Zeros{PTO_XLEN} - 2;
-    assert InstructionContractRemainder_HL_DIV(dividend, divisor) == Ones{PTO_XLEN};
+    assert ComputeHLDIVQuotient(dividend, divisor) == Zeros{PTO_XLEN} - 2;
+    assert ComputeHLDIVRemainder(dividend, divisor) == Ones{PTO_XLEN};
     return 0;
 end;

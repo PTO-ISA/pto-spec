@@ -18,6 +18,6 @@ begin
     assert ReadTemporaryQueue(FALSE, 0) == Zeros{PTO_XLEN} + 0x111;
     assert _SystemRegisters.thread_ptr == Zeros{PTO_XLEN} + 0x222;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert InstructionContractOperation_SSRSWAP() == ScalarOperation_SSRSWAP;
+    assert SelectSSRSWAPOperation() == ScalarOperation_SSRSWAP;
     return 0;
 end;

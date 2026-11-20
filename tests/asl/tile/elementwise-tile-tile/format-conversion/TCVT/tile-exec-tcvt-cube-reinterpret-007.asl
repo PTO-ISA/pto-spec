@@ -24,7 +24,7 @@ begin
     let source_before = _Tiles[[0]];
     assert TileOperandsLegal_TCVT(
         1, 0, DefaultNumericExecutionControl());
-    InstructionContractExecute_TCVT(
+    ExecuteTCVT(
         1, 0, DefaultNumericExecutionControl());
     assert _LastFault == Fault_None;
     assert ReadTileElement(1, 0, 0) ==

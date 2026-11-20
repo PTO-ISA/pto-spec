@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-cva-mechanism role=mechanism -->
 ## 系统机制
 
-`InstructionContractHandler_DC_CVA` 选择 `ScalarHandler_ExecuteMaintenance`，即整个缓存与地址转换维护组共用的那一个处理程序（`asl/scalar/sys/DC.CVA.asl:11`）。使这条指令与众不同的是它的操作令牌：`Maintenance_DC_CVA` 选中 `ExecuteMaintenance` 的数据缓存分支，该分支把 `_DataCacheEpoch` 递增一（`asl/scalar/model/sys/semantics.asl:135`）。
+`SelectDCCVAHandler` 选择 `ScalarHandler_ExecuteMaintenance`，即整个缓存与地址转换维护组共用的那一个处理程序（`asl/scalar/sys/DC.CVA.asl:11`）。使这条指令与众不同的是它的操作令牌：`Maintenance_DC_CVA` 选中 `ExecuteMaintenance` 的数据缓存分支，该分支把 `_DataCacheEpoch` 递增一（`asl/scalar/model/sys/semantics.asl:135`）。
 
 位置是机制的一部分，而不是事后补充。该指令只在活动 SYS 块体中适用，派发器会在流程到达处理程序之前拒绝其他一切情况（`asl/scalar/model/sys/semantics.asl:321`）。
 
@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.CVA.asl -->
 ```asl
-readonly func InstructionContractOperation_DC_CVA()
+readonly func SelectDCCVAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DC_CVA;
@@ -118,31 +118,31 @@ DC.CVA executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.CVA.asl -->
 ```asl
-readonly func InstructionContractHandler_DC_CVA()
+readonly func SelectDCCVAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_DC_CVA()
+pure func DCCVARequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_DC_CVA()
+pure func SelectDCCVAMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_DC_CVA;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_DC_CVA()
+pure func DCCVAMaintenanceUsesOperand()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_DC_CVA()
+pure func DCCVAMaintenanceRequiresRootRing()
     => boolean
 begin
     return FALSE;

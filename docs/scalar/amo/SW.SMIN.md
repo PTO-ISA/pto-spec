@@ -110,7 +110,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SW.SMIN.asl -->
 ```asl
-readonly func InstructionContractOperation_SW_SMIN() => ScalarOperation
+readonly func SelectSWSMINOperation() => ScalarOperation
 begin
     return ScalarOperation_SW_SMIN;
 end;
@@ -121,25 +121,25 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/SW.SMIN.asl -->
 ```asl
-readonly func InstructionContractHandler_SW_SMIN()
+readonly func SelectSWSMINHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_SW_SMIN()
+pure func SelectSWSMINAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_SMIN;
 end;
 
-pure func InstructionContractAtomicSizeBytes_SW_SMIN()
+pure func SWSMINAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 4;
 end;
 
-pure func InstructionContractPublishesOldValue_SW_SMIN()
+pure func SWSMINPublishesOldValue()
     => boolean
 begin
     return FALSE;

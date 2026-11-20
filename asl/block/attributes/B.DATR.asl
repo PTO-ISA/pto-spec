@@ -41,7 +41,7 @@
 // Tile instruction identities or alter Function-1 TSTORE GM behavior.
 // NDF-END: PTO-CUBE-CELL-TRANSPORT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_B_DATR(operation: CommandOperation) => boolean
+readonly func BDATREncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_b_datr_32_c161a042ff38);
 end;
@@ -63,18 +63,18 @@ end;
 // BSTART type; DTYPE_NONE preserves a concrete BSTART type and still latches
 // the remaining B.DATR controls. If no concrete type can be resolved, complete
 // bundle preflight raises Fault_TileLegality before allocation or effects.
-readonly func InstructionContractHandler_B_DATR() => CommandSemanticHandler
+readonly func SelectBDATRHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleDataAttributes;
 end;
 
-pure func InstructionContractHeaderOnly_B_DATR()
+pure func BDATRHeaderOnly()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractDuplicateRejects_B_DATR()
+pure func BDATRDuplicateRejects()
     => boolean
 begin
     return TRUE;
@@ -88,7 +88,7 @@ begin
            data_layout == TileDataLayout_OIHW2NK;
 end;
 
-pure func InstructionContractB_DATR_TLOADWeightFieldsLegal(
+pure func TLOADWeightDataAttributesLegal(
     data_layout: TileDataLayout, data_type: bits(5), pad: bits(2),
     cmode: bits(3), rmode: bits(3), sat: boolean, canonicalize: boolean)
     => boolean
@@ -116,7 +116,7 @@ begin
     end;
 end;
 
-pure func InstructionContractB_DATR_TIMG2COLFieldsLegal(
+pure func TIMG2COLDataAttributeFieldsLegal(
     data_layout: TileDataLayout,
     data_type: bits(5), pad: bits(2), cmode: bits(3), rmode: bits(3),
     sat: boolean, canonicalize: boolean) => boolean

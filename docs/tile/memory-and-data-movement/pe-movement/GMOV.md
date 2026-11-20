@@ -55,7 +55,7 @@ Design point: definedness is copied rather than recomputed, so a later consumer 
 <!-- PTO-READER-BLOCK: tile-gmov-constraints role=constraints -->
 ## Types, layouts, and faults
 
-`InstructionContractDataTypeLegal_GMOV` accepts exactly the types `TileCarrierOrPackedBaselineDataTypeSupported` admits: every non-packed carrier through 64 bits, plus the packed four-bit baseline. A 64-bit source remains legal in `RowMajor`; among CUBE layouts it requires `CUBE_M32` double-CELL storage.
+`GMOVDataTypeLegal` accepts exactly the types `TileCarrierOrPackedBaselineDataTypeSupported` admits: every non-packed carrier through 64 bits, plus the packed four-bit baseline. A 64-bit source remains legal in `RowMajor`; among CUBE layouts it requires `CUBE_M32` double-CELL storage.
 
 Source and destination must agree on data type, layout, storage kind, rows, columns, valid rows, and valid columns (`TileOperandsLegal_GMOV`). The layout must be `RowMajor`, `CUBE_M16`, or `CUBE_M32`; `CUBE_N8` and Shared operands are illegal. A 64-bit CUBE operand requires the `CUBE_M32` double-CELL mapping; `CUBE_M16` rejects it.
 
@@ -113,7 +113,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/pe-movement/GMOV.asl -->
 ```asl
-readonly func InstructionContractOperation_GMOV() => TileOperation
+readonly func SelectGMOVOperation() => TileOperation
 begin
     return TileOperation_GMOV;
 end;
@@ -134,24 +134,24 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/pe-movement/GMOV.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_GMOV(
+pure func GMOVDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractHandler_GMOV() => TileSemanticHandler
+readonly func SelectGMOVHandler() => TileSemanticHandler
 begin
     return TileHandler_GMOV;
 end;
 
-pure func InstructionContractRequiresCoreFourReadiness_GMOV()
+pure func GMOVRequiresCoreFourReadiness()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractPartialMaskWritesSelectedPEs_GMOV()
+pure func GMOVPartialMaskWritesSelectedPEs()
     => boolean
 begin
     return TRUE;

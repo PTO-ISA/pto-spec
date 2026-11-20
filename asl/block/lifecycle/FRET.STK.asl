@@ -5,13 +5,13 @@
 // zero as the target, then restore remaining slots and publish that target.
 // NDF-END: PTO-FRET-STK-RESTARTABLE-FRAME-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_FRET_STK(operation: CommandOperation) => boolean
+readonly func FRETSTKEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_fret_stk_32_4fe246bd8241);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_FRET_STK() => CommandSemanticHandler
+readonly func SelectFRETSTKHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteFrameReturnStack;
 end;
@@ -23,13 +23,13 @@ begin
     ReturnFromFrame(begin_reg, end_reg, frame_size, FALSE);
 end;
 
-pure func InstructionContractUsesInclusiveRegisterRange_FRET_STK()
+pure func FRETSTKUsesInclusiveRegisterRange()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractRejectsInvalidFrameRange_FRET_STK()
+pure func FRETSTKRejectsInvalidFrameRange()
     => boolean
 begin
     return TRUE;

@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000001000010010000001000001', 32) == 64;
     assert CommandOperationOfForm(64) == CommandOperation_fret_ra_32_659c886221c1;
     assert CommandHandlerOfForm(64) == CommandHandler_ExecuteFrameReturnAddress;
-    assert InstructionContractMatches_FRET_RA(CommandOperationOfForm(64));
-    assert InstructionContractHandler_FRET_RA() == CommandHandler_ExecuteFrameReturnAddress;
+    assert FRETRAEncodingMatches(CommandOperationOfForm(64));
+    assert SelectFRETRAHandler() == CommandHandler_ExecuteFrameReturnAddress;
     return 0;
 end;

@@ -7,14 +7,14 @@
 // the C.BSTART address before the retiring block is committed.
 // NDF-END: PTO-C-BSTART-CONTROL-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_C_BSTART(operation: CommandOperation) => boolean
+readonly func CBSTARTEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_c_bstart_16_c4e238a9227a) ||
            (operation == CommandOperation_c_bstart_16_f833d2a4753c);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractTarget_C_BSTART(
+pure func ResolveCBSTARTTarget(
     instruction_pc: Word,
     displacement: bits(12))
     => Word
@@ -23,7 +23,7 @@ begin
         LSL(SignExtend{PTO_XLEN}(displacement), 1);
 end;
 
-readonly func InstructionContractHandler_C_BSTART() => CommandSemanticHandler
+readonly func SelectCBSTARTHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

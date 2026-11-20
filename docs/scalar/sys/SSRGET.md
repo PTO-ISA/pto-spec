@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ssrget-mechanism role=mechanism -->
 ## System mechanism
 
-`InstructionContractHandler_SSRGET` selects `ScalarHandler_ExecuteSystemRegisterGet` (`asl/scalar/sys/SSRGET.asl:18`), and `InstructionContractSystemAddressWidth_SSRGET` fixes the address width at 12 (`asl/scalar/sys/SSRGET.asl:36`). The dispatcher decodes `RegDst` as a Reg5 selector and `SSR_ID` as a system-register address, then calls the get helper in that order (`asl/scalar/model/dispatch/sys.asl:106`).
+`SelectSSRGETHandler` selects `ScalarHandler_ExecuteSystemRegisterGet` (`asl/scalar/sys/SSRGET.asl:18`), and `SSRGETSystemAddressWidth` fixes the address width at 12 (`asl/scalar/sys/SSRGET.asl:36`). The dispatcher decodes `RegDst` as a Reg5 selector and `SSR_ID` as a system-register address, then calls the get helper in that order (`asl/scalar/model/dispatch/sys.asl:106`).
 
 The helper reads first and writes second: `ExecuteSystemRegisterGet` reads the addressed register, then writes the destination only if no fault was raised and the read did not block behind older fault-capable work (`asl/scalar/model/sys/registers.asl`).
 
@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/SSRGET.asl -->
 ```asl
-readonly func InstructionContractOperation_SSRGET()
+readonly func SelectSSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SSRGET;
@@ -121,31 +121,31 @@ SSRGET executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/SSRGET.asl -->
 ```asl
-readonly func InstructionContractHandler_SSRGET()
+readonly func SelectSSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterGet;
 end;
 
-pure func InstructionContractRequiresSystemBlock_SSRGET()
+pure func SSRGETRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSystemTransferKind_SSRGET()
+pure func SSRGETSystemTransferKind()
     => bits(2)
 begin
     return '00';
 end;
 
-pure func InstructionContractSystemAddressWidth_SSRGET()
+pure func SSRGETSystemAddressWidth()
     => integer {5,12,24}
 begin
     return 12;
 end;
 
-pure func InstructionContractPushesTemporaryT_SSRGET()
+pure func SSRGETPushesTemporaryT()
     => boolean
 begin
     return FALSE;

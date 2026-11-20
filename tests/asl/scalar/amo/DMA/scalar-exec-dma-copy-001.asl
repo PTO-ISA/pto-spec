@@ -53,9 +53,9 @@ begin
             _MemoryEvents[[chunk]].read_value;
     end;
 
-    assert InstructionContractCopySizeBytes_DMA() == 64;
-    assert InstructionContractEventChunkSizeBytes_DMA() == 8;
-    assert InstructionContractEventChunkCount_DMA() == 8;
+    assert DMACopySizeBytes() == 64;
+    assert DMAEventChunkSizeBytes() == 8;
+    assert DMAEventChunkCount() == 8;
 end;
 
 func main() => integer

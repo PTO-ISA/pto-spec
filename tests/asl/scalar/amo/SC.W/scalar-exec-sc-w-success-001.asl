@@ -36,9 +36,9 @@ begin
     assert _MemoryEvents[[0]].size_bytes == 4;
     assert _MemoryEvents[[0]].write_value == Zeros{PTO_XLEN} + 0x55667788;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
-    assert InstructionContractStoreSizeBytes_SC_W() == 4;
-    assert InstructionContractReservationGranuleBytes_SC_W() == 64;
-    assert InstructionContractSuccessStatus_SC_W() == Zeros{PTO_XLEN};
+    assert SCWStoreSizeBytes() == 4;
+    assert SCWReservationGranuleBytes() == 64;
+    assert SCWSuccessStatus() == Zeros{PTO_XLEN};
 end;
 
 func main() => integer

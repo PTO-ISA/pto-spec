@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000001000010001000110000001', 32) == 47;
     assert CommandOperationOfForm(47) == CommandOperation_bstart_tmov_32_211446509efb;
     assert CommandHandlerOfForm(47) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_BSTART_TMOV(CommandOperationOfForm(47));
-    assert InstructionContractHandler_BSTART_TMOV() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTTMOVEncodingMatches(CommandOperationOfForm(47));
+    assert SelectBSTARTTMOVHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

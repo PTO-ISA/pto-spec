@@ -149,7 +149,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/HL.CASB.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_CASB() => ScalarOperation
+readonly func SelectHLCASBOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_CASB;
 end;
@@ -160,30 +160,30 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/HL.CASB.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_CASB() => ScalarSemanticHandler
+readonly func SelectHLCASBHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_CompareAndSwap;
 end;
 
-pure func InstructionContractCompareSizeBytes_HL_CASB()
+pure func HLCASBCompareSizeBytes()
     => integer {1,2,4,8}
 begin
     return 1;
 end;
 
-pure func InstructionContractHasFarField_HL_CASB()
+pure func HLCASBHasFarField()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractZeroExtendsOldValue_HL_CASB()
+pure func HLCASBZeroExtendsOldValue()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSignExtendsOldValue_HL_CASB()
+pure func HLCASBSignExtendsOldValue()
     => boolean
 begin
     return FALSE;

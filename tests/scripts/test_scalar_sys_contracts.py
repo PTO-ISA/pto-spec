@@ -4,6 +4,8 @@ import json
 import unittest
 from pathlib import Path
 
+from scripts.instruction_symbols import contract_symbol
+
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -46,7 +48,7 @@ class ScalarSysContractTest(unittest.TestCase):
             with self.subTest(mnemonic=owner.stem):
                 self.assertIn('"outcome":"FORMAL-COMPLETE"', text)
                 self.assertIn(
-                    f"InstructionContractRequiresSystemBlock_{mnemonic}", text
+                    contract_symbol("RequiresSystemBlock", mnemonic), text
                 )
                 self.assertGreaterEqual(len(text.splitlines()), 28)
 

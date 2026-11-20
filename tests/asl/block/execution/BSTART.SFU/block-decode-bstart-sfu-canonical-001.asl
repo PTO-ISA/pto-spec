@@ -5,8 +5,8 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000011001000110000001', 32) == 33;
     assert CommandOperationOfForm(33) == CommandOperation_bstart_tepl_32_d022db6dacb3;
     assert CommandHandlerOfForm(33) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_BSTART_SFU(CommandOperationOfForm(33));
-    assert InstructionContractHandler_BSTART_SFU() == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractAliasEngine_BSTART_SFU() == TileEngine_SFU;
+    assert BSTARTSFUEncodingMatches(CommandOperationOfForm(33));
+    assert SelectBSTARTSFUHandler() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTSFUAliasEngine() == TileEngine_SFU;
     return 0;
 end;

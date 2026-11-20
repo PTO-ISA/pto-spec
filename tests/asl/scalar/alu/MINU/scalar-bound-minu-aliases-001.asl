@@ -15,7 +15,7 @@ begin
     assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 0xffffffffffffffff;
     assert ReadTemporaryQueue(FALSE, 0) == Zeros{PTO_XLEN} + 0x0000000000000001;
     assert ReadTemporaryQueue(FALSE, 1) == Zeros{PTO_XLEN} + 0x0000000000000001;
-    assert InstructionContractResult_MINU(
+    assert ComputeMINUResult(
         Zeros{PTO_XLEN} + 0xffffffffffffffff,
         Zeros{PTO_XLEN} + 0x0000000000000001) == Zeros{PTO_XLEN} + 0x0000000000000001;
     return 0;

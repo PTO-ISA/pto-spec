@@ -108,7 +108,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/ACRC.asl -->
 ```asl
-readonly func InstructionContractOperation_ACRC()
+readonly func SelectACRCOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ACRC;
@@ -126,25 +126,25 @@ ACRC executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/ACRC.asl -->
 ```asl
-readonly func InstructionContractHandler_ACRC()
+readonly func SelectACRCHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ArchitectureCloseRequest;
 end;
 
-pure func InstructionContractRequiresSystemBlock_ACRC()
+pure func ACRCRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractRequestWidth_ACRC()
+pure func ACRCRequestWidth()
     => integer {4}
 begin
     return 4;
 end;
 
-pure func InstructionContractIsTerminalScalar_ACRC()
+pure func ACRCIsTerminalScalar()
     => boolean
 begin
     return TRUE;

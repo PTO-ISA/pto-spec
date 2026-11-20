@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ssrget-mechanism role=mechanism -->
 ## 系统机制
 
-`InstructionContractHandler_SSRGET` 选择 `ScalarHandler_ExecuteSystemRegisterGet`（`asl/scalar/sys/SSRGET.asl:18`），`InstructionContractSystemAddressWidth_SSRGET` 把地址宽度固定为 12（`asl/scalar/sys/SSRGET.asl:36`）。派发器把 `RegDst` 解码为 Reg5 选择器、把 `SSR_ID` 解码为系统寄存器地址，然后按该顺序调用读取辅助函数（`asl/scalar/model/dispatch/sys.asl:106`）。
+`SelectSSRGETHandler` 选择 `ScalarHandler_ExecuteSystemRegisterGet`（`asl/scalar/sys/SSRGET.asl:18`），`SSRGETSystemAddressWidth` 把地址宽度固定为 12（`asl/scalar/sys/SSRGET.asl:36`）。派发器把 `RegDst` 解码为 Reg5 选择器、把 `SSR_ID` 解码为系统寄存器地址，然后按该顺序调用读取辅助函数（`asl/scalar/model/dispatch/sys.asl:106`）。
 
 该辅助函数先读后写：`ExecuteSystemRegisterGet` 先读取被寻址的寄存器，只有未引发故障且读取未被更早的可故障工作阻塞时才写目的地（`asl/scalar/model/sys/registers.asl`）。
 
@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/SSRGET.asl -->
 ```asl
-readonly func InstructionContractOperation_SSRGET()
+readonly func SelectSSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SSRGET;
@@ -121,31 +121,31 @@ SSRGET executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/SSRGET.asl -->
 ```asl
-readonly func InstructionContractHandler_SSRGET()
+readonly func SelectSSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterGet;
 end;
 
-pure func InstructionContractRequiresSystemBlock_SSRGET()
+pure func SSRGETRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSystemTransferKind_SSRGET()
+pure func SSRGETSystemTransferKind()
     => bits(2)
 begin
     return '00';
 end;
 
-pure func InstructionContractSystemAddressWidth_SSRGET()
+pure func SSRGETSystemAddressWidth()
     => integer {5,12,24}
 begin
     return 12;
 end;
 
-pure func InstructionContractPushesTemporaryT_SSRGET()
+pure func SSRGETPushesTemporaryT()
     => boolean
 begin
     return FALSE;

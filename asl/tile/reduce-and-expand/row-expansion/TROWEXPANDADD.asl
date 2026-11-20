@@ -11,19 +11,19 @@
 // ExecutionMask, Predicate-GPR/PredicateCell, PredInv, and Zero retain their existing meanings; inactive destination coordinates continue to use the existing MERGE/ZERO policy.
 // NDF-END: PTO-TROWEXPANDADD-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TROWEXPANDADD() => TileOperation
+readonly func SelectTROWEXPANDADDOperation() => TileOperation
 begin
     return TileOperation_TROWEXPANDADD;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TROWEXPANDADD(
+pure func TROWEXPANDADDDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TROWEXPANDADD(
+readonly func TROWEXPANDADDOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex) => boolean
@@ -36,17 +36,17 @@ begin
         broadcast);
 end;
 
-readonly func InstructionContractHandler_TROWEXPANDADD() => TileSemanticHandler
+readonly func SelectTROWEXPANDADDHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;
 
-func InstructionContractExecute_TROWEXPANDADD(
+func ExecuteTROWEXPANDADD(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TROWEXPANDADD(
+    assert TROWEXPANDADDOperandsLegal(
         destination,
         source,
         broadcast);

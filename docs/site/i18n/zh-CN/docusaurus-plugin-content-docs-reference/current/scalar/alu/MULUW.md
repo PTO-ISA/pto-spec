@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-muluw-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `InstructionContractResult_MULUW`，它返回 `ScalarMultiplyW(left, right)`。该辅助函数把 `left[31:0]` 与 `right[31:0]` 零扩展，用 `MultiplyWord` 相乘，并对 `product[31:0]` 应用 `SignExtend{PTO_XLEN}`。
+所属 ASL 提供 `ComputeMULUWResult`，它返回 `ScalarMultiplyW(left, right)`。该辅助函数把 `left[31:0]` 与 `right[31:0]` 零扩展，用 `MultiplyWord` 相乘，并对 `product[31:0]` 应用 `SignExtend{PTO_XLEN}`。
 
 ```asm
 muluw SrcL, SrcR, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MULUW.asl -->
 ```asl
-readonly func InstructionContractOperation_MULUW() => ScalarOperation
+readonly func SelectMULUWOperation() => ScalarOperation
 begin
     return ScalarOperation_MULUW;
 end;
@@ -127,11 +127,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MULUW.asl -->
 ```asl
-readonly func InstructionContractHandler_MULUW() => ScalarSemanticHandler
+readonly func SelectMULUWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarMultiplyW;
 end;
-pure func InstructionContractResult_MULUW(left: Word, right: Word) => Word
+pure func ComputeMULUWResult(left: Word, right: Word) => Word
 begin
     return ScalarMultiplyW(left, right);
 end;

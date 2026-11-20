@@ -19,7 +19,7 @@ This page is a generated reference view of the normative ASL unit.
 
 - 普通 Matrix 输入类型与累加器类型规则。
 - 针对 `B.DIM` 值 LB0、LB1 与 LB2（M、N 与 K）的指令束维度检查。
-- 直接 Tile 合法性处理函数 `TileOperandsLegal_TMATMUL` 至 `TileOperandsLegal_TGEMV_MX_ACC`，十二条 Matrix 指令各一个。每条指令的元数据以 `legality_handler` 命名其处理函数，每个指令单元把它封装在同名的 `InstructionContractOperandsLegal_` 函数中，例如 `InstructionContractOperandsLegal_TMATMUL`。
+- 直接 Tile 合法性处理函数 `TileOperandsLegal_TMATMUL` 至 `TileOperandsLegal_TGEMV_MX_ACC`，十二条 Matrix 指令各一个。每条指令的元数据以 `legality_handler` 命名其处理函数，每个指令单元提供对应的封装函数，例如 `TMATMUL` 的 `TMATMULOperandsLegal`。
 
 它还定义基于 `TileInfo` 的检查，指令束路径在预检之后对其进行断言。
 

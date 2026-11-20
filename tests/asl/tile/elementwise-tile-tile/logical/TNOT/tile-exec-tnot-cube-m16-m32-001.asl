@@ -8,8 +8,8 @@ begin
         1, 128, 1, 1, TileDataType_U8, layout);
     assert source_configured && destination_configured;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x0f);
-    assert InstructionContractOperandsLegal_TNOT(1, 0);
-    InstructionContractExecute_TNOT(1, 0);
+    assert TNOTOperandsLegal(1, 0);
+    ExecuteTNOT(1, 0);
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 0xf0;
     assert _LastFault == Fault_None;
     return TRUE;

@@ -21,9 +21,9 @@ The current instruction contract is owned by the ASL source linked above.
 
 `MSCATTER` 是 TLSU Function 5，写作 `BSTART.MSCATTER DataType`。它读取一个 Local 数据 Tile 与一个 Local 索引 Tile，并针对索引 Tile 的每个活动有效坐标存储一个传输元素或一个打包字节，地址为 `B.IOR.RegSrc0` 指定的每 PE 基地址加上该索引值（按字节位移读取）。当没有 ExecutionMask 生效，或 `BundleExecutionMaskActiveAt` 选中该坐标时，该坐标即为活动坐标。
 
-拥有者声明 `InstructionContractUsesByteDisplacements_MSCATTER` 为 TRUE、`InstructionContractUsesMaskTile_MSCATTER` 为 FALSE、`InstructionContractWritesMemory_MSCATTER` 为 TRUE、`InstructionContractIsAtomicMemoryOperation_MSCATTER` 为 FALSE。分派器 `ExecuteBundleMSCATTEROperation` 解码 Function 5，检查绑定形状、维度与描述符，然后调用 `TileOperandsLegal_MSCATTER` 与执行体 `MSCATTER`。
+拥有者声明 `MSCATTERUsesByteDisplacements` 为 TRUE、`MSCATTERUsesMaskTile` 为 FALSE、`MSCATTERWritesMemory` 为 TRUE、`MSCATTERIsAtomicMemoryOperation` 为 FALSE。分派器 `ExecuteBundleMSCATTEROperation` 解码 Function 5，检查绑定形状、维度与描述符，然后调用 `TileOperandsLegal_MSCATTER` 与执行体 `MSCATTER`。
 
-设计要点：`InstructionContractUsesMaskTile_MSCATTER` 为 FALSE，且没有逐通道谓词操作数，因此索引 Tile 的每个活动有效坐标都会存储。该形式接受的唯一逐坐标过滤器是指令束 ExecutionMask，它在这里的坐标来源是索引 Tile。
+设计要点：`MSCATTERUsesMaskTile` 为 FALSE，且没有逐通道谓词操作数，因此索引 Tile 的每个活动有效坐标都会存储。该形式接受的唯一逐坐标过滤器是指令束 ExecutionMask，它在这里的坐标来源是索引 Tile。
 
 <!-- PTO-READER-BLOCK: tile-mscatter-mechanism role=mechanism -->
 ## 寻址、预检与存储提交
@@ -161,7 +161,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/irregular/MSCATTER.asl -->
 ```asl
-readonly func InstructionContractOperation_MSCATTER() => TileOperation
+readonly func SelectMSCATTEROperation() => TileOperation
 begin
     return TileOperation_MSCATTER;
 end;
@@ -186,30 +186,30 @@ When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiG
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/irregular/MSCATTER.asl -->
 ```asl
-readonly func InstructionContractHandler_MSCATTER() => TileSemanticHandler
+readonly func SelectMSCATTERHandler() => TileSemanticHandler
 begin
     return TileHandler_MSCATTER;
 end;
 
-pure func InstructionContractUsesByteDisplacements_MSCATTER()
+pure func MSCATTERUsesByteDisplacements()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesMaskTile_MSCATTER()
+pure func MSCATTERUsesMaskTile()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractIsAtomicMemoryOperation_MSCATTER()
+pure func MSCATTERIsAtomicMemoryOperation()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractWritesMemory_MSCATTER()
+pure func MSCATTERWritesMemory()
     => boolean
 begin
     return TRUE;

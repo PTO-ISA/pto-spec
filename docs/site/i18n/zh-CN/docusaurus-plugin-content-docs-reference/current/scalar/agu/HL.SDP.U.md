@@ -144,7 +144,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.SDP.U.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_SDP_U() => ScalarOperation
+readonly func SelectHLSDPUOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_SDP_U;
 end;
@@ -155,49 +155,49 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/HL.SDP.U.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_SDP_U()
+readonly func SelectHLSDPUHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStorePair;
 end;
 
-pure func InstructionContractAGUAction_HL_SDP_U()
+pure func HLSDPUAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_StorePair;
 end;
 
-pure func InstructionContractAGUAddressKind_HL_SDP_U()
+pure func HLSDPUAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_Register;
 end;
 
-pure func InstructionContractAGUSizeBytes_HL_SDP_U()
+pure func HLSDPUAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractAGUOffsetScale_HL_SDP_U()
+pure func HLSDPUAGUOffsetScale()
     => integer {0..3}
 begin
     return 0;
 end;
 
-pure func InstructionContractAGUUpdateMode_HL_SDP_U()
+pure func HLSDPUAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_None;
 end;
 
-pure func InstructionContractAGUSignedLoad_HL_SDP_U()
+pure func HLSDPUAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_HL_SDP_U()
+pure func HLSDPUAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

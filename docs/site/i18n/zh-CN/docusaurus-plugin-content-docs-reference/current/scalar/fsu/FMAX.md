@@ -122,7 +122,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FMAX.asl -->
 ```asl
-readonly func InstructionContractOperation_FMAX()
+readonly func SelectFMAXOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FMAX;
@@ -134,44 +134,44 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FMAX.asl -->
 ```asl
-readonly func InstructionContractHandler_FMAX()
+readonly func SelectFMAXHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingBinary;
 end;
 
-pure func InstructionContractSourceTypeLegal_FMAX(encoded: bits(2))
+pure func FMAXSourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return encoded == '00' || encoded == '01';
 end;
 
-pure func InstructionContractSourceCarrier_FMAX(encoded: bits(2))
+pure func DecodeFMAXSourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_FMAX(encoded);
+    assert FMAXSourceTypeLegal(encoded);
     return ScalarFPSourceTypeCode(encoded);
 end;
 
-pure func InstructionContractSourceArity_FMAX()
+pure func FMAXSourceArity()
     => integer {1..3}
 begin
     return 2;
 end;
 
-pure func InstructionContractUsesProfileFlags_FMAX()
+pure func FMAXUsesProfileFlags()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractUsesActiveRounding_FMAX()
+pure func FMAXUsesActiveRounding()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractBinaryOperation_FMAX()
+pure func SelectFMAXBinaryOperation()
     => FloatingBinaryOperation
 begin
     return FloatingBinary_MAX;

@@ -5,12 +5,12 @@ begin
         let encoded = Zeros{5} + raw;
         let expected = if raw <= 3 then encoded
             else Zeros{5} + raw + 4;
-        assert InstructionContractDestinationTypeLegal_FCVTZ(encoded);
-        assert InstructionContractDestinationCarrier_FCVTZ(encoded) ==
+        assert FCVTZDestinationTypeLegal(encoded);
+        assert DecodeFCVTZDestinationCarrier(encoded) ==
             expected;
     end;
     for raw = 8 to 31 do
-        assert !InstructionContractDestinationTypeLegal_FCVTZ(
+        assert !FCVTZDestinationTypeLegal(
             Zeros{5} + raw);
     end;
     return 0;

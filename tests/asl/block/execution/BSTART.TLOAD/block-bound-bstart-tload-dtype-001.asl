@@ -16,7 +16,7 @@ begin
     for code = 0 to 31 looplimit 32 do
         ResetProfileState();
         let status = ExecuteCommandInstruction(TLoadDataTypeWord(code), 32);
-        assert InstructionContractDataTypeLegal_TLOAD(Zeros{5} + code) ==
+        assert TLOADDataTypeLegal(Zeros{5} + code) ==
             !TLoadDataTypeReserved(code);
         if TLoadDataTypeReserved(code) then
             assert status == CommandExecution_Rejected;

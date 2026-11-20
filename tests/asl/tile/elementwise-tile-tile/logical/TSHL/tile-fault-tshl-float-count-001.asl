@@ -10,6 +10,6 @@ begin
         TileDataType_U16, TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x3f80);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
-    assert !InstructionContractOperandsLegal_TSHL(2, 0, 1);
+    assert !TSHLOperandsLegal(2, 0, 1);
     return 0;
 end;

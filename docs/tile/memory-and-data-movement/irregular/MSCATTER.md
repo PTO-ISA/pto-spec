@@ -21,9 +21,9 @@ The current instruction contract is owned by the ASL source linked above.
 
 `MSCATTER` is TLSU Function 5, written `BSTART.MSCATTER DataType`. It reads one Local data Tile and one Local index Tile and stores one transfer element, or one packed byte, per active valid coordinate of the index Tile, at the per-PE base address named by `B.IOR.RegSrc0` plus that coordinate's index value read as a byte displacement. A coordinate is active when no ExecutionMask is in force or when `BundleExecutionMaskActiveAt` selects it.
 
-The owner declares `InstructionContractUsesByteDisplacements_MSCATTER` TRUE, `InstructionContractUsesMaskTile_MSCATTER` FALSE, `InstructionContractWritesMemory_MSCATTER` TRUE, and `InstructionContractIsAtomicMemoryOperation_MSCATTER` FALSE. The dispatcher `ExecuteBundleMSCATTEROperation` decodes Function 5, checks the binding shape, the dimensions, and the descriptors, then calls `TileOperandsLegal_MSCATTER` and the body `MSCATTER`.
+The owner declares `MSCATTERUsesByteDisplacements` TRUE, `MSCATTERUsesMaskTile` FALSE, `MSCATTERWritesMemory` TRUE, and `MSCATTERIsAtomicMemoryOperation` FALSE. The dispatcher `ExecuteBundleMSCATTEROperation` decodes Function 5, checks the binding shape, the dimensions, and the descriptors, then calls `TileOperandsLegal_MSCATTER` and the body `MSCATTER`.
 
-Design point: `InstructionContractUsesMaskTile_MSCATTER` is FALSE and there is no per-lane predicate operand, so every active valid coordinate of the index Tile stores. The only per-coordinate filter this form accepts is the bundle ExecutionMask, whose coordinate source here is the index Tile.
+Design point: `MSCATTERUsesMaskTile` is FALSE and there is no per-lane predicate operand, so every active valid coordinate of the index Tile stores. The only per-coordinate filter this form accepts is the bundle ExecutionMask, whose coordinate source here is the index Tile.
 
 <!-- PTO-READER-BLOCK: tile-mscatter-mechanism role=mechanism -->
 ## Addressing, preflight, and store commit
@@ -161,7 +161,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/irregular/MSCATTER.asl -->
 ```asl
-readonly func InstructionContractOperation_MSCATTER() => TileOperation
+readonly func SelectMSCATTEROperation() => TileOperation
 begin
     return TileOperation_MSCATTER;
 end;
@@ -186,30 +186,30 @@ When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiG
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/irregular/MSCATTER.asl -->
 ```asl
-readonly func InstructionContractHandler_MSCATTER() => TileSemanticHandler
+readonly func SelectMSCATTERHandler() => TileSemanticHandler
 begin
     return TileHandler_MSCATTER;
 end;
 
-pure func InstructionContractUsesByteDisplacements_MSCATTER()
+pure func MSCATTERUsesByteDisplacements()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesMaskTile_MSCATTER()
+pure func MSCATTERUsesMaskTile()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractIsAtomicMemoryOperation_MSCATTER()
+pure func MSCATTERIsAtomicMemoryOperation()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractWritesMemory_MSCATTER()
+pure func MSCATTERWritesMemory()
     => boolean
 begin
     return TRUE;

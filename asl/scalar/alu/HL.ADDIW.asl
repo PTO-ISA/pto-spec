@@ -12,36 +12,36 @@
 // memory, Tile, block, reservation, privilege, numeric-status, or fault state.
 // NDF-END: PTO-HL-ADDIW-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_ADDIW() => ScalarOperation
+readonly func SelectHLADDIWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_ADDIW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_ADDIW() => ScalarSemanticHandler
+readonly func SelectHLADDIWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractImmediateWidth_HL_ADDIW()
+pure func HLADDIWImmediateWidth()
     => integer {1..64}
 begin
     return 24;
 end;
 
-pure func InstructionContractImmediateIsUnsigned_HL_ADDIW()
+pure func HLADDIWImmediateIsUnsigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_HL_ADDIW()
+pure func HLADDIWIsWordOperation()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractResult_HL_ADDIW(
+pure func ComputeHLADDIWResult(
     left: Word,
     immediate: bits(24))
     => Word

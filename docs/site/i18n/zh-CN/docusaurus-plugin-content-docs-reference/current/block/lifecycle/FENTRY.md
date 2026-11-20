@@ -130,7 +130,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/FENTRY.asl -->
 ```asl
-readonly func InstructionContractMatches_FENTRY(operation: CommandOperation) => boolean
+readonly func FENTRYEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_fentry_32_a47584ec13b6);
 end;
@@ -141,7 +141,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/FENTRY.asl -->
 ```asl
-readonly func InstructionContractHandler_FENTRY() => CommandSemanticHandler
+readonly func SelectFENTRYHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteFrameEntry;
 end;
@@ -153,13 +153,13 @@ begin
     EnterFrame(begin_reg, end_reg, frame_size);
 end;
 
-pure func InstructionContractUsesInclusiveRegisterRange_FENTRY()
+pure func FENTRYUsesInclusiveRegisterRange()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractRejectsInvalidFrameRange_FENTRY()
+pure func FENTRYRejectsInvalidFrameRange()
     => boolean
 begin
     return TRUE;

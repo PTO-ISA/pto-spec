@@ -48,9 +48,9 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_Release;
 
-    assert InstructionContractAtomicOperation_SD_UMIN() == Atomic_UMIN;
-    assert InstructionContractAtomicSizeBytes_SD_UMIN() == 8;
-    assert !InstructionContractPublishesOldValue_SD_UMIN();
+    assert SelectSDUMINAtomicOperation() == Atomic_UMIN;
+    assert SDUMINAtomicSizeBytes() == 8;
+    assert !SDUMINPublishesOldValue();
 end;
 
 func main() => integer

@@ -15,6 +15,6 @@ begin
     assert _LastFault == Fault_None;
     assert ReadGPR(3) == Zeros{PTO_XLEN} + 0x111;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert InstructionContractOperation_SSRGET() == ScalarOperation_SSRGET;
+    assert SelectSSRGETOperation() == ScalarOperation_SSRGET;
     return 0;
 end;

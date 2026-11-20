@@ -7,31 +7,31 @@
 // NDF-END: PTO-SB-SUB-CONTRACT-001
 // PTO-REVIEW: {"review_method":"formal-definition-read","outcome":"FORMAL-COMPLETE","reviewed_fields":["assembly","encoding","defaults","operation","state","memory","ordering","faults","reserved"]}
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SB_SUB() => ScalarOperation
+readonly func SelectSBSUBOperation() => ScalarOperation
 begin
     return ScalarOperation_SB_SUB;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SB_SUB()
+readonly func SelectSBSUBHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_SB_SUB()
+pure func SelectSBSUBAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_SUB;
 end;
 
-pure func InstructionContractAtomicSizeBytes_SB_SUB()
+pure func SBSUBAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 1;
 end;
 
-pure func InstructionContractPublishesOldValue_SB_SUB()
+pure func SBSUBPublishesOldValue()
     => boolean
 begin
     return FALSE;

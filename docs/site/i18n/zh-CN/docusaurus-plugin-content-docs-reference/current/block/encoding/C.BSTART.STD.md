@@ -123,7 +123,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/encoding/C.BSTART.STD.asl -->
 ```asl
-readonly func InstructionContractMatches_C_BSTART_STD(operation: CommandOperation) => boolean
+readonly func CBSTARTSTDEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_c_bstart_std_16_8b40f078c14a);
 end;
@@ -140,7 +140,7 @@ After any active predecessor block commits successfully, C.BSTART.STD opens one 
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/encoding/C.BSTART.STD.asl -->
 ```asl
-pure func InstructionContractBranchTypeLegal_C_BSTART_STD(
+pure func CBSTARTSTDBranchTypeLegal(
     branch_type: bits(3))
     => boolean
 begin
@@ -149,11 +149,11 @@ begin
            branch_type == '111';
 end;
 
-pure func InstructionContractTransfer_C_BSTART_STD(
+pure func CBSTARTSTDTransfer(
     branch_type: bits(3))
     => BundleTransfer
 begin
-    assert InstructionContractBranchTypeLegal_C_BSTART_STD(branch_type);
+    assert CBSTARTSTDBranchTypeLegal(branch_type);
     if branch_type == '001' then
         return BundleTransfer_Fallthrough;
     elsif branch_type == '101' then
@@ -163,7 +163,7 @@ begin
     end;
 end;
 
-readonly func InstructionContractHandler_C_BSTART_STD() => CommandSemanticHandler
+readonly func SelectCBSTARTSTDHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000101000010001000110000001', 32) == 77;
     assert CommandOperationOfForm(77) == CommandOperation_bstart_mgather_max_32_gm10;
     assert CommandHandlerOfForm(77) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_BSTART_MGATHER_MAX(CommandOperationOfForm(77));
-    assert InstructionContractHandler_BSTART_MGATHER_MAX() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTMGATHERMAXEncodingMatches(CommandOperationOfForm(77));
+    assert SelectBSTARTMGATHERMAXHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

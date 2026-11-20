@@ -12,6 +12,6 @@ begin
     assert _BARG.transfer_type == BundleTransfer_Fallthrough;
     assert !_BARG.taken;
     assert _BARG.bpcn == Zeros{PTO_XLEN};
-    assert InstructionContractKind_C_BSTART_SYS() == BundleKind_System;
+    assert CBSTARTSYSKind() == BundleKind_System;
     return 0;
 end;

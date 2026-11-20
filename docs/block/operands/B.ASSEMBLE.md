@@ -137,7 +137,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/operands/B.ASSEMBLE.asl -->
 ```asl
-readonly func InstructionContractMatches_B_ASSEMBLE(operation: CommandOperation) => boolean
+readonly func BASSEMBLEEncodingMatches(operation: CommandOperation) => boolean
 begin
     return operation == CommandOperation_b_assemble_32_122000000002;
 end;
@@ -154,12 +154,12 @@ Immediately follows B.IOT or B.IOS and is contiguous with the associated modifie
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/operands/B.ASSEMBLE.asl -->
 ```asl
-pure func InstructionContractWriterSizeCodeIsRawLegal_B_ASSEMBLE(code: integer {0..15}) => boolean
+pure func BASSEMBLEWriterSizeCodeIsRawLegal(code: integer {0..15}) => boolean
 begin
     return code <= 12;
 end;
 
-readonly func InstructionContractHandler_B_ASSEMBLE() => CommandSemanticHandler
+readonly func SelectBASSEMBLEHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ApplyBundleAssemble;
 end;

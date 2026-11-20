@@ -7,6 +7,7 @@ from dataclasses import replace
 from pathlib import Path
 
 from scripts.asl_units import AslUnit
+from scripts.instruction_symbols import contract_symbol
 
 
 SCRIPT = Path(__file__).resolve().parents[2] / "scripts/generate-mnemonic-avs.py"
@@ -154,11 +155,11 @@ class GenerateMnemonicAvsTest(unittest.TestCase):
         )
         self.assertIn(path, documents)
         self.assertIn(
-            "InstructionContractAcceptsTileOperation_BSTART_SFU(7) == FALSE",
+            "BSTARTSFUAcceptsTileOperation(7) == FALSE",
             documents[path],
         )
         self.assertIn(
-            "InstructionContractAcceptsTileOperation_BSTART_SFU(19) == TRUE",
+            "BSTARTSFUAcceptsTileOperation(19) == TRUE",
             documents[path],
         )
 
@@ -187,20 +188,20 @@ class GenerateMnemonicAvsTest(unittest.TestCase):
 
         _, document = self.render(unit)
 
-        self.assertIn("InstructionContractAGUAction_LD() == ScalarAGU_Load", document)
+        self.assertIn("LDAGUAction() == ScalarAGU_Load", document)
         self.assertIn(
-            "InstructionContractAGUAddressKind_LD() == ScalarAGU_Register",
+            "LDAGUAddressKind() == ScalarAGU_Register",
             document,
         )
-        self.assertIn("InstructionContractAGUSizeBytes_LD() == 8", document)
-        self.assertIn("InstructionContractAGUOffsetScale_LD() == 0", document)
+        self.assertIn("LDAGUSizeBytes() == 8", document)
+        self.assertIn("LDAGUOffsetScale() == 0", document)
         self.assertIn(
-            "InstructionContractAGUUpdateMode_LD() == AddressUpdate_None",
+            "LDAGUUpdateMode() == AddressUpdate_None",
             document,
         )
-        self.assertIn("InstructionContractAGUSignedLoad_LD() == FALSE", document)
+        self.assertIn("LDAGUSignedLoad() == FALSE", document)
         self.assertIn(
-            "InstructionContractAGUPrefetchReturnsAddress_LD() == FALSE",
+            "LDAGUPrefetchReturnsAddress() == FALSE",
             document,
         )
 
@@ -1109,7 +1110,7 @@ class GenerateMnemonicAvsTest(unittest.TestCase):
         self.assertIn(
             "CommandHandlerOfForm(3) == CommandHandler_BindBundleScalarIO", document
         )
-        self.assertIn("InstructionContractMatches_B_IOR", document)
+        self.assertIn("BIOREncodingMatches", document)
 
     def test_block_decode_witness_satisfies_operand_constraints(self) -> None:
         unit = instruction_unit(
@@ -1181,16 +1182,16 @@ class GenerateMnemonicAvsTest(unittest.TestCase):
                 identifier = mnemonic.replace(".", "_")
 
                 self.assertIn(
-                    f"InstructionContractTileOperation_{identifier}() == "
+                    f"{contract_symbol('TileOperation', identifier)}() == "
                     f"TileOperation_{operation}",
                     document,
                 )
                 self.assertIn(
-                    f"InstructionContractCubeFunction_{identifier}() == {function}",
+                    f"{contract_symbol('CubeFunction', identifier)}() == {function}",
                     document,
                 )
                 self.assertIn(
-                    f"InstructionContractSharedOperandsAllowed_{identifier}() == "
+                    f"{contract_symbol('SharedOperandsAllowed', identifier)}() == "
                     f"{shared}",
                     document,
                 )
@@ -1256,12 +1257,12 @@ class GenerateMnemonicAvsTest(unittest.TestCase):
         )
         unit.metadata["engine"] = "CUBE"
         source_text = """
-readonly func InstructionContractCubeFunction_TMATMUL()
+readonly func TMATMULCubeFunction()
     => integer {0..31}
 begin
     return 0;
 end;
-readonly func InstructionContractSharedOperandsAllowed_TMATMUL()
+readonly func TMATMULSharedOperandsAllowed()
     => boolean
 begin
     return TRUE;
@@ -1270,9 +1271,9 @@ end;
 
         _, document = self.render(unit, source_text=source_text)
 
-        self.assertIn("InstructionContractCubeFunction_TMATMUL() == 0", document)
+        self.assertIn("TMATMULCubeFunction() == 0", document)
         self.assertIn(
-            "InstructionContractSharedOperandsAllowed_TMATMUL() == TRUE",
+            "TMATMULSharedOperandsAllowed() == TRUE",
             document,
         )
 
@@ -1289,7 +1290,7 @@ end;
         )
         unit.metadata["engine"] = "CUBE"
         source_text = """
-readonly func InstructionContractCubeFunction_TMATMUL()
+readonly func TMATMULCubeFunction()
     => integer {0..31}
 begin
     return 0;

@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(72) == TileHandler_TLOAD;
     assert TileClassOfIndex(72) == TileClass_MemoryAndDataMovement;
     assert TileEngineOfIndex(72) == TileEngine_TLSU;
-    assert InstructionContractOperation_TLOAD() == TileOperation_TLOAD;
-    assert InstructionContractHandler_TLOAD() == TileHandler_TLOAD;
+    assert SelectTLOADOperation() == TileOperation_TLOAD;
+    assert SelectTLOADHandler() == TileHandler_TLOAD;
     return 0;
 end;

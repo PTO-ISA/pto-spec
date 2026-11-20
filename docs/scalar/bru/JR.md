@@ -112,7 +112,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/JR.asl -->
 ```asl
-readonly func InstructionContractOperation_JR() => ScalarOperation
+readonly func SelectJROperation() => ScalarOperation
 begin
     return ScalarOperation_JR;
 end;
@@ -123,18 +123,18 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/JR.asl -->
 ```asl
-readonly func InstructionContractHandler_JR() => ScalarSemanticHandler
+readonly func SelectJRHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_JumpRegister;
 end;
 
-pure func InstructionContractRequiresEvenTarget_JR()
+pure func JRRequiresEvenTarget()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractTarget_JR(
+pure func ResolveJRTarget(
     register_value: Word,
     halfword_offset: Word)
     => Word

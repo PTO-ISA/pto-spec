@@ -7,18 +7,18 @@
 // Each participating source word produces one complete valid 32-bit result word with selected bytes in its low bytes and zero in every remaining byte. U8/U16/U32 destinations publish that word directly; an M32 U64 destination joins each complete low/high result-word pair into one logical element and rejects an odd raw-word tail before effects. Destination columns are derived from raw-word count and BSTART element width. Validation precedes snapshot and atomic publication; TUNPACK performs no numeric conversion or status update.
 // NDF-END: PTO-TUNPACK-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TUNPACK() => TileOperation
+readonly func SelectTUNPACKOperation() => TileOperation
 begin
     return TileOperation_TUNPACK;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_TUNPACK() => TileSemanticHandler
+readonly func SelectTUNPACKHandler() => TileSemanticHandler
 begin
     return TileHandler_TUNPACK;
 end;
 
-pure func InstructionContractDataTypeLegal_TUNPACK(
+pure func TUNPACKDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_U8 ||
@@ -27,16 +27,16 @@ begin
            data_type == TileDataType_U64;
 end;
 
-readonly func InstructionContractOperandsLegal_TUNPACK(
+readonly func TUNPACKOperandsLegal(
     destination: TileIndex, source: TileIndex, control: Word) => boolean
 begin
     return TileOperandsLegal_TUNPACK(destination, source, control);
 end;
 
-func InstructionContractExecute_TUNPACK(
+func ExecuteTUNPACK(
     destination: TileIndex, source: TileIndex, control: Word)
 begin
-    assert InstructionContractOperandsLegal_TUNPACK(destination, source, control);
+    assert TUNPACKOperandsLegal(destination, source, control);
     TUNPACK(destination, source, control);
 end;
 // DOC-END: operation

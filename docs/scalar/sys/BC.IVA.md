@@ -107,7 +107,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/BC.IVA.asl -->
 ```asl
-readonly func InstructionContractOperation_BC_IVA()
+readonly func SelectBCIVAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BC_IVA;
@@ -125,31 +125,31 @@ BC.IVA executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/BC.IVA.asl -->
 ```asl
-readonly func InstructionContractHandler_BC_IVA()
+readonly func SelectBCIVAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_BC_IVA()
+pure func BCIVARequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_BC_IVA()
+pure func SelectBCIVAMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_BC_IVA;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_BC_IVA()
+pure func BCIVAMaintenanceUsesOperand()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_BC_IVA()
+pure func BCIVAMaintenanceRequiresRootRing()
     => boolean
 begin
     return FALSE;

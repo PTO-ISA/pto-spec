@@ -144,7 +144,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.SW.UPR.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_SW_UPR() => ScalarOperation
+readonly func SelectHLSWUPROperation() => ScalarOperation
 begin
     return ScalarOperation_HL_SW_UPR;
 end;
@@ -155,49 +155,49 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/HL.SW.UPR.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_SW_UPR()
+readonly func SelectHLSWUPRHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStore;
 end;
 
-pure func InstructionContractAGUAction_HL_SW_UPR()
+pure func HLSWUPRAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Store;
 end;
 
-pure func InstructionContractAGUAddressKind_HL_SW_UPR()
+pure func HLSWUPRAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_Register;
 end;
 
-pure func InstructionContractAGUSizeBytes_HL_SW_UPR()
+pure func HLSWUPRAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 4;
 end;
 
-pure func InstructionContractAGUOffsetScale_HL_SW_UPR()
+pure func HLSWUPRAGUOffsetScale()
     => integer {0..3}
 begin
     return 0;
 end;
 
-pure func InstructionContractAGUUpdateMode_HL_SW_UPR()
+pure func HLSWUPRAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_PreIndex;
 end;
 
-pure func InstructionContractAGUSignedLoad_HL_SW_UPR()
+pure func HLSWUPRAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_HL_SW_UPR()
+pure func HLSWUPRAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000001000010001000001000001', 32) == 63;
     assert CommandOperationOfForm(63) == CommandOperation_fexit_32_37b663f2a34d;
     assert CommandHandlerOfForm(63) == CommandHandler_ExecuteFrameExit;
-    assert InstructionContractMatches_FEXIT(CommandOperationOfForm(63));
-    assert InstructionContractHandler_FEXIT() == CommandHandler_ExecuteFrameExit;
+    assert FEXITEncodingMatches(CommandOperationOfForm(63));
+    assert SelectFEXITHandler() == CommandHandler_ExecuteFrameExit;
     return 0;
 end;

@@ -26,7 +26,7 @@ Both sources are read as unsigned magnitudes, so a source whose top bit is set c
 <!-- PTO-READER-BLOCK: scalar-hl-mulu-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `InstructionContractProduct_HL_MULU`, which returns `MultiplyWideUnsigned(left, right)`. That helper zero-extends both operands to 128 bits and accumulates `left` shifted by each set bit position of `right`. `InstructionContractLow_HL_MULU` and `InstructionContractHigh_HL_MULU` slice bits `63:0` and `127:64` of the result.
+The owning ASL exposes `ComputeHLMULUProduct`, which returns `MultiplyWideUnsigned(left, right)`. That helper zero-extends both operands to 128 bits and accumulates `left` shifted by each set bit position of `right`. `HLMULULow` and `HLMULUHigh` slice bits `63:0` and `127:64` of the result.
 
 ```asm
 hl.mulu SrcL, SrcR, ->Dst0, Dst1
@@ -122,7 +122,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.MULU.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_MULU() => ScalarOperation
+readonly func SelectHLMULUOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_MULU;
 end;
@@ -133,23 +133,23 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.MULU.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_MULU() => ScalarSemanticHandler
+readonly func SelectHLMULUHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarMultiplyPair;
 end;
-pure func InstructionContractProduct_HL_MULU(left: Word, right: Word) => DoubleWord
+pure func ComputeHLMULUProduct(left: Word, right: Word) => DoubleWord
 begin
     return MultiplyWideUnsigned(left, right);
 end;
 
-pure func InstructionContractLow_HL_MULU(left: Word, right: Word) => Word
+pure func HLMULULow(left: Word, right: Word) => Word
 begin
-    return InstructionContractProduct_HL_MULU(left, right)[63:0];
+    return ComputeHLMULUProduct(left, right)[63:0];
 end;
 
-pure func InstructionContractHigh_HL_MULU(left: Word, right: Word) => Word
+pure func HLMULUHigh(left: Word, right: Word) => Word
 begin
-    return InstructionContractProduct_HL_MULU(left, right)[127:64];
+    return ComputeHLMULUProduct(left, right)[127:64];
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->

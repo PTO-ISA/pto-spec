@@ -136,7 +136,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.asl -->
 ```asl
-readonly func InstructionContractOperation_TROWEXPANDMIN() => TileOperation
+readonly func SelectTROWEXPANDMINOperation() => TileOperation
 begin
     return TileOperation_TROWEXPANDMIN;
 end;
@@ -159,13 +159,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/reduce-and-expand/row-expansion/TROWEXPANDMIN.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TROWEXPANDMIN(
+pure func TROWEXPANDMINDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TROWEXPANDMIN(
+readonly func TROWEXPANDMINOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex) => boolean
@@ -178,17 +178,17 @@ begin
         broadcast);
 end;
 
-readonly func InstructionContractHandler_TROWEXPANDMIN() => TileSemanticHandler
+readonly func SelectTROWEXPANDMINHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;
 
-func InstructionContractExecute_TROWEXPANDMIN(
+func ExecuteTROWEXPANDMIN(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TROWEXPANDMIN(
+    assert TROWEXPANDMINOperandsLegal(
         destination,
         source,
         broadcast);

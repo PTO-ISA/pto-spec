@@ -8,17 +8,17 @@
 // SignExtend(result[63:32]). Sources MUST be snapshotted before either write.
 // NDF-END: PTO-HL-MADDW-WORD-HALVES-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_MADDW() => ScalarOperation
+readonly func SelectHLMADDWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_MADDW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_MADDW() => ScalarSemanticHandler
+readonly func SelectHLMADDWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarMultiplyAddPair;
 end;
-pure func InstructionContractResult_HL_MADDW(
+pure func ComputeHLMADDWResult(
     addend: Word,
     left: Word,
     right: Word)
@@ -31,23 +31,23 @@ begin
     return product[63:0] + effective_addend;
 end;
 
-pure func InstructionContractLow_HL_MADDW(
+pure func HLMADDWLow(
     addend: Word,
     left: Word,
     right: Word)
     => Word
 begin
     return SignExtend{PTO_XLEN}(
-        InstructionContractResult_HL_MADDW(addend, left, right)[31:0]);
+        ComputeHLMADDWResult(addend, left, right)[31:0]);
 end;
 
-pure func InstructionContractHigh_HL_MADDW(
+pure func HLMADDWHigh(
     addend: Word,
     left: Word,
     right: Word)
     => Word
 begin
     return SignExtend{PTO_XLEN}(
-        InstructionContractResult_HL_MADDW(addend, left, right)[63:32]);
+        ComputeHLMADDWResult(addend, left, right)[63:32]);
 end;
 // DOC-END: operation

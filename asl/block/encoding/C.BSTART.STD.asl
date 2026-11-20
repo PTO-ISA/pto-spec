@@ -8,13 +8,13 @@
 // before effects.
 // NDF-END: PTO-C-BSTART-STD-CONTROL-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_C_BSTART_STD(operation: CommandOperation) => boolean
+readonly func CBSTARTSTDEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_c_bstart_std_16_8b40f078c14a);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractBranchTypeLegal_C_BSTART_STD(
+pure func CBSTARTSTDBranchTypeLegal(
     branch_type: bits(3))
     => boolean
 begin
@@ -23,11 +23,11 @@ begin
            branch_type == '111';
 end;
 
-pure func InstructionContractTransfer_C_BSTART_STD(
+pure func CBSTARTSTDTransfer(
     branch_type: bits(3))
     => BundleTransfer
 begin
-    assert InstructionContractBranchTypeLegal_C_BSTART_STD(branch_type);
+    assert CBSTARTSTDBranchTypeLegal(branch_type);
     if branch_type == '001' then
         return BundleTransfer_Fallthrough;
     elsif branch_type == '101' then
@@ -37,7 +37,7 @@ begin
     end;
 end;
 
-readonly func InstructionContractHandler_C_BSTART_STD() => CommandSemanticHandler
+readonly func SelectCBSTARTSTDHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

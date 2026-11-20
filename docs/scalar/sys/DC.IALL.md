@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-iall-mechanism role=mechanism -->
 ## System mechanism
 
-The instruction selects the shared maintenance handler (`asl/scalar/sys/DC.IALL.asl:11`) and the operation token `Maintenance_DC_IALL` (`asl/scalar/sys/DC.IALL.asl:23`). Because `InstructionContractMaintenanceUsesOperand_DC_IALL` returns `FALSE` (`asl/scalar/sys/DC.IALL.asl:29`), the dispatcher passes `Zeros{PTO_XLEN}` instead of reading a register (`asl/scalar/model/dispatch/sys.asl:23`).
+The instruction selects the shared maintenance handler (`asl/scalar/sys/DC.IALL.asl:11`) and the operation token `Maintenance_DC_IALL` (`asl/scalar/sys/DC.IALL.asl:23`). Because `DCIALLMaintenanceUsesOperand` returns `FALSE` (`asl/scalar/sys/DC.IALL.asl:29`), the dispatcher passes `Zeros{PTO_XLEN}` instead of reading a register (`asl/scalar/model/dispatch/sys.asl:23`).
 
 That dispatch line is the practical difference from `DC.IVA` and its siblings: no scalar register is read at all, so a temporary queue that happens to be empty cannot make this instruction illegal.
 
@@ -86,7 +86,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.IALL.asl -->
 ```asl
-readonly func InstructionContractOperation_DC_IALL()
+readonly func SelectDCIALLOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DC_IALL;
@@ -104,31 +104,31 @@ DC.IALL executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.IALL.asl -->
 ```asl
-readonly func InstructionContractHandler_DC_IALL()
+readonly func SelectDCIALLHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_DC_IALL()
+pure func DCIALLRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_DC_IALL()
+pure func SelectDCIALLMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_DC_IALL;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_DC_IALL()
+pure func DCIALLMaintenanceUsesOperand()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_DC_IALL()
+pure func DCIALLMaintenanceRequiresRootRing()
     => boolean
 begin
     return FALSE;

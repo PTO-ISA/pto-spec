@@ -113,7 +113,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/arithmetic/TFMA.asl -->
 ```asl
-readonly func InstructionContractOperation_TFMA() => TileOperation
+readonly func SelectTFMAOperation() => TileOperation
 begin
     return TileOperation_TFMA;
 end;
@@ -137,13 +137,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/arithmetic/TFMA.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TFMA(
+pure func TFMADataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileFusedMultiplyAddDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TFMA(
+readonly func TFMAOperandsLegal(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex,
@@ -156,7 +156,7 @@ begin
         addend);
 end;
 
-func InstructionContractValue_TFMA(
+func ComputeTFMAValue(
     data_type: TileDataType,
     left: Word,
     right: Word,
@@ -169,12 +169,12 @@ begin
         addend);
 end;
 
-readonly func InstructionContractHandler_TFMA() => TileSemanticHandler
+readonly func SelectTFMAHandler() => TileSemanticHandler
 begin
     return TileHandler_TFMA;
 end;
 
-func InstructionContractExecute_TFMA(
+func ExecuteTFMA(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex,

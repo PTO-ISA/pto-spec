@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/ADDW.asl -->
 ```asl
-readonly func InstructionContractOperation_ADDW()
+readonly func SelectADDWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ADDW;
@@ -132,13 +132,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/ADDW.asl -->
 ```asl
-readonly func InstructionContractHandler_ADDW()
+readonly func SelectADDWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractRightModifier_ADDW(encoded: bits(2))
+pure func DecodeADDWRightModifier(encoded: bits(2))
     => ScalarRightModifier
 begin
     case encoded of
@@ -149,39 +149,39 @@ begin
     end;
 end;
 
-pure func InstructionContractPreparedRight_ADDW(
+pure func PrepareADDWRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let modifier = InstructionContractRightModifier_ADDW(encoded_modifier);
+    let modifier = DecodeADDWRightModifier(encoded_modifier);
     let transformed = ApplyScalarRightModifier(right, modifier, FALSE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func InstructionContractResult_ADDW(
+pure func ComputeADDWResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = InstructionContractPreparedRight_ADDW(
+    let prepared_right = PrepareADDWRightOperand(
         right,
         encoded_modifier,
         shift_amount);
     return ScalarBinaryW(ScalarBinary_ADD, left, prepared_right);
 end;
 
-pure func InstructionContractIsLogicalFamily_ADDW()
+pure func ADDWIsLogicalFamily()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractIsWordOperation_ADDW()
+pure func ADDWIsWordOperation()
     => boolean
 begin
     return TRUE;

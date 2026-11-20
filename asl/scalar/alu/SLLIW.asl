@@ -8,26 +8,26 @@
 // assigned destination or commit effect in alias-safe order.
 // NDF-END: PTO-SLLIW-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SLLIW()
+readonly func SelectSLLIWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SLLIW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SLLIW()
+readonly func SelectSLLIWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractShiftWidth_SLLIW()
+pure func SLLIWShiftWidth()
     => integer {1..64}
 begin
     return 5;
 end;
 
-pure func InstructionContractIsWordOperation_SLLIW()
+pure func SLLIWIsWordOperation()
     => boolean
 begin
     return TRUE;

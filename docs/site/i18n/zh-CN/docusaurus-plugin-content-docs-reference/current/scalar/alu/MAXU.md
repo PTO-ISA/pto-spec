@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-maxu-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `InstructionContractResult_MAXU`：当 `UInt(left) > UInt(right)` 时返回 `left`，否则返回 `right`；并提供返回假的 `InstructionContractUsesSignedComparison_MAXU`。分派路径通过 `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MAXU, FALSE)` 到达同一个辅助函数。
+所属 ASL 提供 `ComputeMAXUResult`：当 `UInt(left) > UInt(right)` 时返回 `left`，否则返回 `right`；并提供返回假的 `MAXUUsesSignedComparison`。分派路径通过 `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MAXU, FALSE)` 到达同一个辅助函数。
 
 ```asm
 maxu SrcL, SrcR, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MAXU.asl -->
 ```asl
-readonly func InstructionContractOperation_MAXU()
+readonly func SelectMAXUOperation()
     => ScalarOperation
 begin
     return ScalarOperation_MAXU;
@@ -128,13 +128,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MAXU.asl -->
 ```asl
-readonly func InstructionContractHandler_MAXU()
+readonly func SelectMAXUHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractResult_MAXU(left: Word, right: Word)
+pure func ComputeMAXUResult(left: Word, right: Word)
     => Word
 begin
     if UInt(left) > UInt(right) then
@@ -144,7 +144,7 @@ begin
     end;
 end;
 
-pure func InstructionContractUsesSignedComparison_MAXU()
+pure func MAXUUsesSignedComparison()
     => boolean
 begin
     return FALSE;

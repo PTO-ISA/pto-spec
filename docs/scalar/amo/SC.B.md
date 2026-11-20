@@ -133,7 +133,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SC.B.asl -->
 ```asl
-readonly func InstructionContractOperation_SC_B() => ScalarOperation
+readonly func SelectSCBOperation() => ScalarOperation
 begin
     return ScalarOperation_SC_B;
 end;
@@ -144,34 +144,34 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/SC.B.asl -->
 ```asl
-readonly func InstructionContractHandler_SC_B() => ScalarSemanticHandler
+readonly func SelectSCBHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_StoreConditional;
 end;
 
-pure func InstructionContractStoreSizeBytes_SC_B()
+pure func SCBStoreSizeBytes()
     => integer {1,2,4,8}
 begin
     return 1;
 end;
 
-pure func InstructionContractReservationGranuleBytes_SC_B()
+pure func SCBReservationGranuleBytes()
     => integer {1..262144}
 begin
     return PTO_RESERVATION_GRANULE_BYTES;
 end;
 
-pure func InstructionContractSuccessStatus_SC_B() => Word
+pure func SCBSuccessStatus() => Word
 begin
     return Zeros{PTO_XLEN};
 end;
 
-pure func InstructionContractMissStatus_SC_B() => Word
+pure func SCBMissStatus() => Word
 begin
     return Zeros{PTO_XLEN} + 1;
 end;
 
-pure func InstructionContractMissIsProbeFree_SC_B()
+pure func SCBMissIsProbeFree()
     => boolean
 begin
     return TRUE;

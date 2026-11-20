@@ -15,7 +15,7 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(1) == Ones{PTO_XLEN};
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x44;
-    assert InstructionContractShiftAmount_SRAW(Zeros{PTO_XLEN} + 31) == 31;
-    assert InstructionContractResult_SRAW(Zeros{PTO_XLEN} + 0x80000000, Zeros{PTO_XLEN} + 31) == Ones{PTO_XLEN};
+    assert DecodeSRAWShiftAmount(Zeros{PTO_XLEN} + 31) == 31;
+    assert ComputeSRAWResult(Zeros{PTO_XLEN} + 0x80000000, Zeros{PTO_XLEN} + 31) == Ones{PTO_XLEN};
     return 0;
 end;

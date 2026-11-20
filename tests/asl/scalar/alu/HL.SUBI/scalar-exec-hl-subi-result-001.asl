@@ -14,9 +14,9 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(1) == Ones{PTO_XLEN};
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x46;
-    assert InstructionContractImmediateWidth_HL_SUBI() == 24;
-    assert InstructionContractImmediateIsUnsigned_HL_SUBI();
-    assert !InstructionContractIsWordOperation_HL_SUBI();
-    assert InstructionContractResult_HL_SUBI(Zeros{PTO_XLEN}, immediate) == Ones{PTO_XLEN};
+    assert HLSUBIImmediateWidth() == 24;
+    assert HLSUBIImmediateIsUnsigned();
+    assert !HLSUBIIsWordOperation();
+    assert ComputeHLSUBIResult(Zeros{PTO_XLEN}, immediate) == Ones{PTO_XLEN};
     return 0;
 end;

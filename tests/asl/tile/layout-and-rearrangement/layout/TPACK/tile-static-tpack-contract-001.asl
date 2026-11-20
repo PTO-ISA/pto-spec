@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(96) == TileHandler_TPACK;
     assert TileClassOfIndex(96) == TileClass_LayoutAndRearrangement;
     assert TileEngineOfIndex(96) == TileEngine_SFU;
-    assert InstructionContractOperation_TPACK() == TileOperation_TPACK;
-    assert InstructionContractHandler_TPACK() == TileHandler_TPACK;
+    assert SelectTPACKOperation() == TileOperation_TPACK;
+    assert SelectTPACKHandler() == TileHandler_TPACK;
     return 0;
 end;

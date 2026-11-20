@@ -11,7 +11,7 @@ begin
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x80000000);
 
-    InstructionContractExecute_TSUB(2, 0, 1);
+    ExecuteTSUB(2, 0, 1);
     assert ReadTileElement(2, 0, 0) ==
         Zeros{PTO_XLEN} + 0x80000000;
     assert ReadTileElement(2, 0, 1) == Zeros{PTO_XLEN};

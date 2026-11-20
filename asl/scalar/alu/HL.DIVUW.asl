@@ -8,17 +8,17 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-HL-DIVUW-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_DIVUW() => ScalarOperation
+readonly func SelectHLDIVUWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_DIVUW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_DIVUW() => ScalarSemanticHandler
+readonly func SelectHLDIVUWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarDividePairW;
 end;
-pure func InstructionContractQuotient_HL_DIVUW(
+pure func ComputeHLDIVUWQuotient(
     dividend: Word,
     divisor: Word)
     => Word
@@ -28,7 +28,7 @@ begin
         divisor);
 end;
 
-pure func InstructionContractRemainder_HL_DIVUW(
+pure func ComputeHLDIVUWRemainder(
     dividend: Word,
     divisor: Word)
     => Word

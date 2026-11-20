@@ -9,8 +9,8 @@ begin
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 19);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 7);
 
-    assert InstructionContractOperandsLegal_TSUB(2, 0, 1);
-    InstructionContractExecute_TSUB(2, 0, 1);
+    assert TSUBOperandsLegal(2, 0, 1);
+    ExecuteTSUB(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 12;
     return 0;
 end;

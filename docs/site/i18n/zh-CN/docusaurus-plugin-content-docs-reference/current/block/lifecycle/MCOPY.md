@@ -127,7 +127,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/MCOPY.asl -->
 ```asl
-readonly func InstructionContractMatches_MCOPY(operation: CommandOperation) => boolean
+readonly func MCOPYEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_mcopy_32_4fc4a803e995);
 end;
@@ -144,18 +144,18 @@ MCOPY is one standalone template block. It retires only after the complete byte 
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/MCOPY.asl -->
 ```asl
-readonly func InstructionContractHandler_MCOPY() => CommandSemanticHandler
+readonly func SelectMCOPYHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteMemoryCopy;
 end;
 
-pure func InstructionContractMemoryStepRestartable_MCOPY()
+pure func MCOPYMemoryStepRestartable()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractForbidsOverlap_MCOPY()
+pure func MCOPYForbidsOverlap()
     => boolean
 begin
     return TRUE;

@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000001001110000010001000110000001', 32) == 94;
     assert CommandOperationOfForm(94) == CommandOperation_bstart_timg2col_32_7a0f8d6c3e21;
     assert CommandHandlerOfForm(94) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_BSTART_TIMG2COL(CommandOperationOfForm(94));
-    assert InstructionContractHandler_BSTART_TIMG2COL() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTTIMG2COLEncodingMatches(CommandOperationOfForm(94));
+    assert SelectBSTARTTIMG2COLHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

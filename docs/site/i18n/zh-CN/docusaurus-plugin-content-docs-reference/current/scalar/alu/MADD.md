@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-madd-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `InstructionContractResult_MADD`，它返回 `ScalarMultiplyAdd(addend, left, right)`。该辅助函数就是 `addend + MultiplyWord(left, right)`，而 `MultiplyWord` 按 `right` 的每个置位位置累加左移后的 `left`，并在每一步保留 `PTO_XLEN` 位以内的部分和。
+所属 ASL 提供 `ComputeMADDResult`，它返回 `ScalarMultiplyAdd(addend, left, right)`。该辅助函数就是 `addend + MultiplyWord(left, right)`，而 `MultiplyWord` 按 `right` 的每个置位位置累加左移后的 `left`，并在每一步保留 `PTO_XLEN` 位以内的部分和。
 
 ```asm
 madd SrcL, SrcR, SrcD, ->{t, u, Rd}
@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MADD.asl -->
 ```asl
-readonly func InstructionContractOperation_MADD() => ScalarOperation
+readonly func SelectMADDOperation() => ScalarOperation
 begin
     return ScalarOperation_MADD;
 end;
@@ -131,11 +131,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MADD.asl -->
 ```asl
-readonly func InstructionContractHandler_MADD() => ScalarSemanticHandler
+readonly func SelectMADDHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarMultiplyAdd;
 end;
-pure func InstructionContractResult_MADD(addend: Word, left: Word, right: Word) => Word
+pure func ComputeMADDResult(addend: Word, left: Word, right: Word) => Word
 begin
     return ScalarMultiplyAdd(addend, left, right);
 end;

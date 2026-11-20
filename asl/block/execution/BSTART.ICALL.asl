@@ -8,24 +8,24 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-BSTART-ICALL-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_ICALL(operation: CommandOperation) => boolean
+readonly func BSTARTICALLEncodingMatches(operation: CommandOperation) => boolean
 begin
     return operation == CommandOperation_bstart_icall_32_50166001;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSTART_ICALL() => CommandSemanticHandler
+readonly func SelectBSTARTICALLHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractTransfer_BSTART_ICALL()
+readonly func BSTARTICALLTransfer()
     => BundleTransfer
 begin
     return BundleTransfer_IndirectCall;
 end;
 
-pure func InstructionContractWritesReturnAddress_BSTART_ICALL()
+pure func BSTARTICALLWritesReturnAddress()
     => boolean
 begin
     return TRUE;

@@ -130,7 +130,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/FEXIT.asl -->
 ```asl
-readonly func InstructionContractMatches_FEXIT(operation: CommandOperation) => boolean
+readonly func FEXITEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_fexit_32_37b663f2a34d);
 end;
@@ -141,7 +141,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/FEXIT.asl -->
 ```asl
-readonly func InstructionContractHandler_FEXIT() => CommandSemanticHandler
+readonly func SelectFEXITHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteFrameExit;
 end;
@@ -153,13 +153,13 @@ begin
     ExitFrame(begin_reg, end_reg, frame_size);
 end;
 
-pure func InstructionContractUsesInclusiveRegisterRange_FEXIT()
+pure func FEXITUsesInclusiveRegisterRange()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractRejectsInvalidFrameRange_FEXIT()
+pure func FEXITRejectsInvalidFrameRange()
     => boolean
 begin
     return TRUE;

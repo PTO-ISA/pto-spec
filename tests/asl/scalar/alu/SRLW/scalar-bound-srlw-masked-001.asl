@@ -16,8 +16,8 @@ begin
     assert ReadTemporaryQueue(FALSE, 0) ==
         Zeros{PTO_XLEN} + 0xffffffff80000001;
     assert ReadTemporaryQueue(FALSE, 1) == Zeros{PTO_XLEN} + 32;
-    assert InstructionContractShiftAmount_SRLW(Zeros{PTO_XLEN} + 32) == 0;
-    assert InstructionContractResult_SRLW(
+    assert DecodeSRLWShiftAmount(Zeros{PTO_XLEN} + 32) == 0;
+    assert ComputeSRLWResult(
         Zeros{PTO_XLEN} + 0x80000001,
         Zeros{PTO_XLEN} + 32) ==
         Zeros{PTO_XLEN} + 0xffffffff80000001;

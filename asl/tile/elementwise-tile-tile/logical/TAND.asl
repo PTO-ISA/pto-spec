@@ -16,19 +16,19 @@
 // and predicate padding MUST follow the existing ExecutionMask and writer rules.
 // NDF-END: PTO-TAND-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TAND() => TileOperation
+readonly func SelectTANDOperation() => TileOperation
 begin
     return TileOperation_TAND;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TAND(
+pure func TANDDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecScalarIntegerDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TAND(
+readonly func TANDOperandsLegal(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex) => boolean
@@ -40,12 +40,12 @@ begin
         source_right);
 end;
 
-readonly func InstructionContractHandler_TAND() => TileSemanticHandler
+readonly func SelectTANDHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TAND(
+func ExecuteTAND(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex)

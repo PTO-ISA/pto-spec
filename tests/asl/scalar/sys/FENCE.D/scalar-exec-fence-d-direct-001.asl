@@ -26,6 +26,6 @@ begin
     assert _MemoryEvents[[0]].fence_predecessor == Ones{4};
     assert _MemoryEvents[[0]].fence_successor == Ones{4};
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert InstructionContractOperation_FENCE_D() == ScalarOperation_FENCE_D;
+    assert SelectFENCEDOperation() == ScalarOperation_FENCE_D;
     return 0;
 end;

@@ -21,7 +21,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `BSTART.GMOV` opens a Tile-memory-class block whose operation is `GMOV`: a collective copy of Local fragments between the four PEs of one Core. Each PE resolves a source fragment with its own `peer_tid`, and each selected PE publishes a destination that receives that fragment payload and definedness byte for byte. The command performs no global-memory access and no Shared-register effect.
 
-The single form is `BSTART.GMOV DataType`, one 32-bit word with match `0x00d11181` under mask `0x07ffffff`, so `DataType` sits in bits 31 to 27 and the fixed low bits carry TLSU selector 13, which `BundleGMOVSelected` matches. The operation is `TileOperation_GMOV` and `InstructionContractStartsTileBundle_BSTART_GMOV` returns TRUE.
+The single form is `BSTART.GMOV DataType`, one 32-bit word with match `0x00d11181` under mask `0x07ffffff`, so `DataType` sits in bits 31 to 27 and the fixed low bits carry TLSU selector 13, which `BundleGMOVSelected` matches. The operation is `TileOperation_GMOV` and `BSTARTGMOVStartsTileBundle` returns TRUE.
 
 Design point: `GMOV` has no index Tile and no base address, unlike `MGATHER`, which also publishes a Local destination. The source it copies is a peer-resolved snapshot, so the destination takes the source's own valid shape, physical columns, and capacity instead of the `B.DIM` shape.
 
@@ -166,7 +166,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.GMOV.asl -->
 ```asl
-readonly func InstructionContractMatches_BSTART_GMOV(operation: CommandOperation) => boolean
+readonly func BSTARTGMOVEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_gmov_32_6c21e223eaa7);
 end;
@@ -184,18 +184,18 @@ B.IOS and B.DIM are not members of a GMOV schema.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.GMOV.asl -->
 ```asl
-readonly func InstructionContractHandler_BSTART_GMOV() => CommandSemanticHandler
+readonly func SelectBSTARTGMOVHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractStartedTileOperation_BSTART_GMOV()
+readonly func BSTARTGMOVStartedTileOperation()
     => TileOperation
 begin
     return TileOperation_GMOV;
 end;
 
-pure func InstructionContractStartsTileBundle_BSTART_GMOV()
+pure func BSTARTGMOVStartsTileBundle()
     => boolean
 begin
     return TRUE;

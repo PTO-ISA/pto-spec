@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000100000010001000110000001', 32) == 23;
     assert CommandOperationOfForm(23) == CommandOperation_bstart_mgather_cas_32_fd8c8a3b720a;
     assert CommandHandlerOfForm(23) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_BSTART_MGATHER_CAS(CommandOperationOfForm(23));
-    assert InstructionContractHandler_BSTART_MGATHER_CAS() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTMGATHERCASEncodingMatches(CommandOperationOfForm(23));
+    assert SelectBSTARTMGATHERCASHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

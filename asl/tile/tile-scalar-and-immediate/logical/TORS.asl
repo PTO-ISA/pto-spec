@@ -14,19 +14,19 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TORS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TORS() => TileOperation
+readonly func SelectTORSOperation() => TileOperation
 begin
     return TileOperation_TORS;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TORS(
+pure func TORSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecScalarIntegerDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TORS(
+readonly func TORSOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word) => boolean
@@ -38,17 +38,17 @@ begin
         scalar);
 end;
 
-readonly func InstructionContractHandler_TORS() => TileSemanticHandler
+readonly func SelectTORSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileScalar;
 end;
 
-func InstructionContractExecute_TORS(
+func ExecuteTORS(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word)
 begin
-    assert InstructionContractOperandsLegal_TORS(
+    assert TORSOperandsLegal(
         destination,
         source,
         scalar);

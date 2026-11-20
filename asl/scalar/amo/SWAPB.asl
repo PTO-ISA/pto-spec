@@ -8,36 +8,36 @@
 // selected width, ordering, memory update, event, and result atomically.
 // NDF-END: PTO-SWAPB-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SWAPB() => ScalarOperation
+readonly func SelectSWAPBOperation() => ScalarOperation
 begin
     return ScalarOperation_SWAPB;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SWAPB() => ScalarSemanticHandler
+readonly func SelectSWAPBHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_SWAPB()
+pure func SelectSWAPBAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_SWAP;
 end;
 
-pure func InstructionContractAtomicSizeBytes_SWAPB()
+pure func SWAPBAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 1;
 end;
 
-pure func InstructionContractZeroExtendsOldValue_SWAPB()
+pure func SWAPBZeroExtendsOldValue()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSignExtendsOldValue_SWAPB()
+pure func SWAPBSignExtendsOldValue()
     => boolean
 begin
     return FALSE;

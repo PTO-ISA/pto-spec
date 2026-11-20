@@ -8,38 +8,38 @@
 // on rejection except for the ordinary instruction-attempt trap envelope.
 // NDF-END: PTO-SSRSET-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SSRSET()
+readonly func SelectSSRSETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SSRSET;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SSRSET()
+readonly func SelectSSRSETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterSet;
 end;
 
-pure func InstructionContractRequiresSystemBlock_SSRSET()
+pure func SSRSETRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSystemTransferKind_SSRSET()
+pure func SSRSETSystemTransferKind()
     => bits(2)
 begin
     return '01';
 end;
 
-pure func InstructionContractSystemAddressWidth_SSRSET()
+pure func SSRSETSystemAddressWidth()
     => integer {5,12,24}
 begin
     return 12;
 end;
 
-pure func InstructionContractPushesTemporaryT_SSRSET()
+pure func SSRSETPushesTemporaryT()
     => boolean
 begin
     return FALSE;

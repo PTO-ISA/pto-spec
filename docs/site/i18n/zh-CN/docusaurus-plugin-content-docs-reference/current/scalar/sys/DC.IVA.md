@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-iva-mechanism role=mechanism -->
 ## 系统机制
 
-DOC 区域把该指令绑定到 `ScalarHandler_ExecuteMaintenance`（`asl/scalar/sys/DC.IVA.asl:11`），操作令牌 `Maintenance_DC_IVA` 在执行器内选中数据缓存分支（`asl/scalar/model/sys/semantics.asl:134`）。派发器为该形式读取源寄存器，因为 `InstructionContractMaintenanceUsesOperand_DC_IVA` 为 `TRUE`（`asl/scalar/sys/DC.IVA.asl:29`）。
+DOC 区域把该指令绑定到 `ScalarHandler_ExecuteMaintenance`（`asl/scalar/sys/DC.IVA.asl:11`），操作令牌 `Maintenance_DC_IVA` 在执行器内选中数据缓存分支（`asl/scalar/model/sys/semantics.asl:134`）。派发器为该形式读取源寄存器，因为 `DCIVAMaintenanceUsesOperand` 为 `TRUE`（`asl/scalar/sys/DC.IVA.asl:29`）。
 
 块位置是适用性规则的一部分：在操作数合法性被考虑之前，bundle 必须活动，且其块体必须是 System 块（`asl/scalar/model/sys/semantics.asl:321`）。
 
@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.IVA.asl -->
 ```asl
-readonly func InstructionContractOperation_DC_IVA()
+readonly func SelectDCIVAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DC_IVA;
@@ -118,31 +118,31 @@ DC.IVA executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.IVA.asl -->
 ```asl
-readonly func InstructionContractHandler_DC_IVA()
+readonly func SelectDCIVAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_DC_IVA()
+pure func DCIVARequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_DC_IVA()
+pure func SelectDCIVAMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_DC_IVA;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_DC_IVA()
+pure func DCIVAMaintenanceUsesOperand()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_DC_IVA()
+pure func DCIVAMaintenanceRequiresRootRing()
     => boolean
 begin
     return FALSE;

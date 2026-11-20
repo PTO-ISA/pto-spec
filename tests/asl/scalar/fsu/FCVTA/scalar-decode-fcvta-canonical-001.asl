@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000001000001101011', 32) == 90;
     assert ScalarOperationOfForm(90) == ScalarOperation_FCVTA;
     assert ScalarHandlerOfForm(90) == ScalarHandler_ConvertFloatingEncoding;
-    assert InstructionContractOperation_FCVTA() == ScalarOperation_FCVTA;
-    assert InstructionContractHandler_FCVTA() == ScalarHandler_ConvertFloatingEncoding;
+    assert SelectFCVTAOperation() == ScalarOperation_FCVTA;
+    assert SelectFCVTAHandler() == ScalarHandler_ConvertFloatingEncoding;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001101011', 90, ScalarField_DstType) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001101011', 90, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001101011', 90, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';

@@ -15,7 +15,7 @@ begin
     assert execution == ScalarExecution_Executed;
     assert ReadGPR(3) == Zeros{PTO_XLEN} + 0xfffffffffffffffe;
     assert ReadGPR(4) == Zeros{PTO_XLEN} + 1;
-    assert InstructionContractLow_HL_MULU(left, right) == Zeros{PTO_XLEN} + 0xfffffffffffffffe;
-    assert InstructionContractHigh_HL_MULU(left, right) == Zeros{PTO_XLEN} + 1;
+    assert HLMULULow(left, right) == Zeros{PTO_XLEN} + 0xfffffffffffffffe;
+    assert HLMULUHigh(left, right) == Zeros{PTO_XLEN} + 1;
     return 0;
 end;

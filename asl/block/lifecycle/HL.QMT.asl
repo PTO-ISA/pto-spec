@@ -6,13 +6,13 @@
 // before reads or effects; SrcR MUST be read only when initialization is selected.
 // NDF-END: PTO-HL-QMT-GQM-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_HL_QMT(operation: CommandOperation) => boolean
+readonly func HLQMTEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_hl_qmt_48_eb9e41958045);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_QMT() => CommandSemanticHandler
+readonly func SelectHLQMTHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteQueueMove;
 end;
@@ -29,13 +29,13 @@ begin
         flags);
 end;
 
-pure func InstructionContractChangesQueueManagerState_HL_QMT()
+pure func HLQMTChangesQueueManagerState()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSnapshotsSourcesBeforeWrite_HL_QMT()
+pure func HLQMTSnapshotsSourcesBeforeWrite()
     => boolean
 begin
     return TRUE;

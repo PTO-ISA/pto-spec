@@ -48,7 +48,7 @@ Two callers exist in the current ASL. The generated Tile dispatcher `ExecuteTile
 
 Design point: `RMode` zero means "use the default of this operation", not a particular rounding mode. Code `001` names `RNE` explicitly. A program can therefore select `RNE` for a conversion whose own default is `RTZ`. Omitted `B.DATR` leaves the field at zero, so omission and an explicit `000` give the same result.
 
-Design point: the `TCVT` default truncates toward zero when a floating value is converted to an integer type and rounds to nearest, ties to even, otherwise; the same rule appears in `InstructionContractDefaultRounding_TCVT` in the `TCVT` owner. In the current type enumeration every type is either floating or integer, so "non-floating destination" and "integer destination" select the same pairs.
+Design point: the `TCVT` default truncates toward zero when a floating value is converted to an integer type and rounds to nearest, ties to even, otherwise; the same rule appears in `TCVTDefaultRounding` in the `TCVT` owner. In the current type enumeration every type is either floating or integer, so "non-floating destination" and "integer destination" select the same pairs.
 
 <!-- PTO-READER-BLOCK: block-model-dispatch-numeric-control-boundaries role=boundaries -->
 ## Architectural boundaries

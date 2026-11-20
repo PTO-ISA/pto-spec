@@ -114,13 +114,13 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/ESAVE.asl -->
 ```asl
-readonly func InstructionContractMatches_ESAVE(operation: CommandOperation)
+readonly func ESAVEEncodingMatches(operation: CommandOperation)
     => boolean
 begin
     return operation == CommandOperation_esave_32_4c4f79fe3171;
 end;
 
-pure func InstructionContractSupported_ESAVE() => boolean
+pure func ESAVESupported() => boolean
 begin
     return FALSE;
 end;
@@ -137,12 +137,12 @@ none; ESAVE is not an executable PTO command
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/ESAVE.asl -->
 ```asl
-readonly func InstructionContractHandler_ESAVE() => CommandSemanticHandler
+readonly func SelectESAVEHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SaveExecutionContext;
 end;
 
-pure func InstructionContractRejectsBeforeEffects_ESAVE() => boolean
+pure func ESAVERejectsBeforeEffects() => boolean
 begin
     return !CommandHandlerSupported(
         CommandHandler_SaveExecutionContext);

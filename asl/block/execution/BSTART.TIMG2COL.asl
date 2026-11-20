@@ -9,7 +9,7 @@
 // outside this portable per-bundle interface.
 // NDF-END: PTO-BSTART-TIMG2COL-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_TIMG2COL(
+readonly func BSTARTTIMG2COLEncodingMatches(
     operation: CommandOperation) => boolean
 begin
     return operation ==
@@ -20,12 +20,12 @@ end;
 // 0x01c11181; DataType occupies instruction bits [31:27].
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSTART_TIMG2COL() => CommandSemanticHandler
+readonly func SelectBSTARTTIMG2COLHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-pure func InstructionContractTIMG2COLLayoutLegal(layout: bits(5)) => boolean
+pure func TIMG2COLLayoutLegal(layout: bits(5)) => boolean
 begin
     return layout == Zeros{5} + 0 ||
            layout == Zeros{5} + 6 ||
@@ -35,27 +35,27 @@ begin
            layout == Zeros{5} + 31;
 end;
 
-pure func InstructionContractTIMG2COLIsLocalCube(layout: bits(5)) => boolean
+pure func TIMG2COLIsLocalCube(layout: bits(5)) => boolean
 begin
     return layout == Zeros{5} + 21 || layout == Zeros{5} + 22 ||
            layout == Zeros{5} + 29 || layout == Zeros{5} + 31;
 end;
 
-pure func InstructionContractTIMG2COLIsM32(layout: bits(5)) => boolean
+pure func TIMG2COLIsM32(layout: bits(5)) => boolean
 begin
     return layout == Zeros{5} + 21 || layout == Zeros{5} + 29;
 end;
 
-pure func InstructionContractTIMG2COLDATRLegal(
+pure func TIMG2COLDataAttributesLegal(
     layout: bits(5), data_type: bits(5), pad: bits(2), cmode: bits(3),
     rmode: bits(3), sat: boolean, canonicalize: boolean) => boolean
 begin
-    return InstructionContractTIMG2COLLayoutLegal(layout) &&
+    return TIMG2COLLayoutLegal(layout) &&
            data_type == DTYPE_NONE && pad == Zeros{2} &&
            cmode == Zeros{3} && rmode == Zeros{3} && !sat && !canonicalize;
 end;
 
-pure func InstructionContractTIMG2COLCoreMaskLegal(mask: bits(4)) => boolean
+pure func TIMG2COLCoreMaskLegal(mask: bits(4)) => boolean
 begin
     return mask == '1111';
 end;
@@ -63,13 +63,13 @@ end;
 
 // Symbolic layout applicability is the pre-encoding decode result.  Codes
 // 27/28 remain the already-assigned NZ transforms and are not repurposed.
-pure func InstructionContractTIMG2COLLayoutModeLegal(
+pure func TIMG2COLLayoutModeLegal(
     layout: TileDataLayout) => boolean
 begin
     return TileDataLayoutBSTARTTIMG2COLApplicable(layout);
 end;
 
-pure func InstructionContractTIMG2COLCellEffect(
+pure func TIMG2COLCellEffect(
     layout: TileDataLayout, data_type: TileDataType,
     parameters: BundleTIMG2COLParameters,
     row: integer {0..127}, col: integer {0..65534})

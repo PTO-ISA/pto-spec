@@ -129,7 +129,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduce-and-expand/row-reduction/TROWSUM.asl -->
 ```asl
-readonly func InstructionContractOperation_TROWSUM() => TileOperation
+readonly func SelectTROWSUMOperation() => TileOperation
 begin
     return TileOperation_TROWSUM;
 end;
@@ -152,13 +152,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/reduce-and-expand/row-reduction/TROWSUM.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TROWSUM(
+pure func TROWSUMDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TROWSUM(
+readonly func TROWSUMOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -169,16 +169,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TROWSUM() => TileSemanticHandler
+readonly func SelectTROWSUMHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileReduction;
 end;
 
-func InstructionContractExecute_TROWSUM(
+func ExecuteTROWSUM(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TROWSUM(
+    assert TROWSUMOperandsLegal(
         destination,
         source);
     ExecuteTileReduction(
