@@ -251,10 +251,10 @@ test('representative mnemonic, model, and architecture units use the generic wor
   expect(encodingPosition).toBeLessThan(aslPosition);
   expect(aslPosition).toBeLessThan(guidePosition);
   expect(sourcePosition).toBeGreaterThan(encodingPosition);
-  await expect(page.getByRole('heading', {name: 'Select ADD Operation', level: 3})).toBeVisible();
-  await expect(page.getByRole('heading', {name: 'Prepare ADD Right Operand', level: 3})).toBeVisible();
-  await expect(page.getByLabel(/SelectADDOperation/)).toContainText('SelectADDOperation');
-  await expect(page.getByLabel(/PrepareADDRightOperand/)).toContainText('PrepareADDRightOperand');
+  await expect(page.getByRole('heading', {name: 'ADD Operation', level: 3})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'ADD Right Operand', level: 3})).toBeVisible();
+  await expect(page.getByLabel(/ADDOperation/)).toContainText('ADDOperation');
+  await expect(page.getByLabel(/ADDRightOperand/)).toContainText('ADDRightOperand');
   await expect(page.getByText(/non-normative|unpublished release preview/i)).toHaveCount(0);
   const addEncoding = page.getByRole('heading', {name: 'Instruction encoding', level: 2}).locator('..');
   await expect(addEncoding.getByRole('region', {name: /add SrcL.*word 1/})).toBeVisible();
@@ -460,7 +460,7 @@ test('source-declared bundle template covers representative Tile families', asyn
   const taddBundle = page.getByRole('heading', {name: 'Physical bundle'}).locator('..');
   await expect(taddBundle.getByText(/BSTART\.VEC TADD/)).toBeVisible();
   await expect(taddBundle.getByText(/B\.IOT SrcLeft, SrcRight/)).toBeVisible();
-  await expect(page.getByRole('heading', {name: 'Instruction contract'})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Operational information'})).toBeVisible();
   await expect(page.getByRole('heading', {name: 'Legality and faults'})).toBeVisible();
   await expect(page.getByRole('heading', {name: 'Operation and architectural effects'})).toBeVisible();
   await expect(page.getByRole('heading', {name: 'Select TADD Operation'})).toBeVisible();
@@ -474,7 +474,7 @@ test('source-declared bundle template covers representative Tile families', asyn
   await expect(sharedVariant.getByText(/one source B\.IOS/).first()).toBeVisible();
   await expect(sharedVariant.getByText(/any nonzero consumer PE_MASK/).first()).toBeVisible();
   await expect(sharedVariant.getByText(/optional B\.SUBVIEW/).first()).toBeVisible();
-  await expect(page.getByRole('region', {name: 'Instruction contract'})).toContainText(
+  await expect(page.getByRole('region', {name: 'Operational information'})).toContainText(
     'B.SUBVIEW is the explicit source range mechanism',
   );
   await expect(page.getByText('Bundle source gap', {exact: true})).toHaveCount(0);
@@ -570,7 +570,7 @@ test('TLOAD workbench preserves source identity and evidence interaction', async
   }
   await expect(execution.getByText(/current owner exposes instruction selection/i)).toBeVisible();
   await expect(execution.getByText(/current owner binds the generic Tile handler/i)).toBeVisible();
-  await expect(execution.getByLabel(/TLOAD\.asl lines/).filter({hasText: 'ResolveTLOADGlobalAddress'})).toBeVisible();
+  await expect(execution.getByLabel(/TLOAD\.asl lines/).filter({hasText: 'TLOADGMAddress'})).toBeVisible();
   const localMemorySource = execution.getByText(new RegExp(
     `Show shared ASL: ${tloadFirstFaultSharedLabels['asl/tile/model/memory/load-store.asl']}`,
   ));
@@ -768,7 +768,7 @@ test.describe('no JavaScript fallback', () => {
     await expect(page.getByRole('heading', {name: 'Behavior', level: 2})).toBeVisible();
     await expect(page.getByRole('heading', {name: 'ASL execution path', level: 2})).toBeVisible();
     const execution = page.getByRole('region', {name: 'ASL execution path'});
-    await expect(execution.getByLabel(/TLOAD\.asl lines/).filter({hasText: 'ResolveTLOADGlobalAddress'})).toBeVisible();
+    await expect(execution.getByLabel(/TLOAD\.asl lines/).filter({hasText: 'TLOADGMAddress'})).toBeVisible();
     const cubeClause = page.locator('#ndf-pto-tload-cube-001');
     await expect(cubeClause).toBeVisible();
     await expect(cubeClause.getByText(/CUBE TLOAD MUST derive persistent CELL geometry/)).toBeVisible();

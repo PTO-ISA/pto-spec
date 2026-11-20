@@ -349,3 +349,14 @@
 .sourceRegion {
   scroll-margin-top: calc(var(--ifm-navbar-height) + 1rem);
 }
+
+.sourceDisclosure {
+  margin-top: 1rem;
+  padding: .65rem .75rem;
+  border: 1px solid var(--arm-rule);
+}
+
+.sourceDisclosure > summary {
+  cursor: pointer;
+  font-weight: 700;
+}

@@ -16,7 +16,7 @@ export type ManualAslPhase = 'decode' | 'operation';
 export interface ManualAslFunctionRegion {
   symbol: string;
   phase: ManualAslPhase;
-  role: 'owner';
+  role: 'owner' | 'shared';
   label: ManualAslText;
   purpose: ManualAslText;
   sourcePath: string;
@@ -150,6 +150,32 @@ function readableLabel(symbol: string): string {
     .trim();
 }
 
+function floatingFusedExecution(
+  index: ReadonlyMap<string, readonly Required<IndexedFunction>[]>,
+  ownerFunctions: ManualAslFunctionRegion[],
+): Required<IndexedFunction> | null | undefined {
+  const selectsFusedHandler = ownerFunctions.some((definition) =>
+    /return\s+ScalarHandler_FloatingFused\s*;/.test(definition.text),
+  );
+  if (!selectsFusedHandler) return undefined;
+
+  const operation = ownerFunctions
+    .map((definition) => definition.text.match(/return\s+ScalarOperation_([A-Z0-9_]+)\s*;/)?.[1])
+    .find((value): value is string => value !== undefined);
+  if (operation === undefined) return null;
+
+  const dispatch = new RegExp(
+    `when\\s+ScalarOperation_${operation}\\s*=>\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*\\(`,
+  );
+  const dispatcher = index.get('ExecuteDecodedFSUForm') ?? [];
+  if (dispatcher.length !== 1 ||
+      dispatcher[0].sourcePath !== 'asl/scalar/model/dispatch/fsu.asl') return null;
+  const calledSymbol = dispatcher[0].text.match(dispatch)?.[1];
+  if (calledSymbol === undefined) return null;
+  const definitions = index.get(calledSymbol) ?? [];
+  return definitions.length === 1 ? definitions[0] : null;
+}
+
 export function projectManualAsl(
   root: string,
   release: ManualAslRelease,
@@ -198,11 +224,38 @@ export function projectManualAsl(
     }
   }
 
+  const index = functionIndex(root);
+  const sharedExecution = floatingFusedExecution(index, functions);
+  if (sharedExecution === null) {
+    missingSymbols.push('shared fused execution in the scalar FSU dispatcher');
+  } else if (sharedExecution !== undefined) {
+    const fragmentSha256 = sha256(sharedExecution.text);
+    const label = readableLabel(sharedExecution.symbol);
+    functions.push({
+      symbol: sharedExecution.symbol,
+      phase: 'operation',
+      role: 'shared',
+      label: {en: label, 'zh-CN': label},
+      purpose: {
+        en: 'Exact shared execution selected for this instruction by the scalar dispatcher.',
+        'zh-CN': 'Scalar dispatcher 为该指令选择的精确共享执行定义。',
+      },
+      sourcePath: sharedExecution.sourcePath,
+      sourceUrl: `${GITHUB_REPOSITORY}/blob/${release.commit}/${sharedExecution.sourcePath}` +
+        `#L${sharedExecution.startLine}-L${sharedExecution.endLine}`,
+      sourceAssetUrl: `/evidence/asl-fragments/${fragmentSha256}.asl`,
+      sourceSha256: sha256(readFileSync(path.join(root, sharedExecution.sourcePath), 'utf8')),
+      fragmentSha256,
+      startLine: sharedExecution.startLine,
+      endLine: sharedExecution.endLine,
+      text: sharedExecution.text,
+    });
+  }
+
   const ownerSymbols = new Set(functions.map((definition) => definition.symbol));
   const referencedSymbols = new Set(functions.flatMap((definition) =>
     [...definition.text.matchAll(FUNCTION_CALL)].map((match) => match[1]),
   ));
-  const index = functionIndex(root);
   const references: ManualAslReference[] = [...referencedSymbols]
     .filter((symbol) => !ownerSymbols.has(symbol))
     .flatMap((symbol) => {

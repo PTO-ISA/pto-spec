@@ -275,7 +275,7 @@ function Contract({metadata, chinese}: {metadata: Record<string, unknown>; chine
   if (groups.length === 0) return null;
   return (
     <section className={styles.section} id="instruction-contract" aria-labelledby="instruction-contract-heading">
-      <h2 id="instruction-contract-heading">{chinese ? '指令契约' : 'Instruction contract'}</h2>
+      <h2 id="instruction-contract-heading">{chinese ? '操作信息' : 'Operational information'}</h2>
       <div className={styles.contractGrid}>{groups.map((group) => (
         <section key={group.id}><h3>{group.title}</h3>{group.id === 'examples'
           ? <div className={styles.examples}>{group.values.map((value) => <code key={value}>{value}</code>)}</div>
@@ -310,17 +310,13 @@ function ManualAsl({manual, unitData, chinese, phase}: {manual?: ManualData; uni
   return (
     <section className={styles.section} id={phase === undefined ? 'asl-pseudocode' : `${phase}-pseudocode`}>
       <h2>{sectionTitle}</h2>
-      <p>{chinese ? '函数按 Decode 与 Operation 分组；标题说明职责，代码保留正式函数身份。' : 'Functions are grouped into Decode and Operation. Labels explain responsibility while source names retain formal identity.'}</p>
       {projected?.missingSymbols.length && (phase === undefined || phase === 'decode') ? <aside className={styles.sourceGap} role="note"><strong>{chinese ? '源投影缺口' : 'Source projection gap'}</strong><p>{projected.missingSymbols.join(', ')}</p></aside> : null}
-      {(['decode', 'operation'] as SourcePhase[]).map((phase) => {
-        const functions = projectedFunctions.filter((fn) => fn.phase === phase);
+      {(['decode', 'operation'] as SourcePhase[]).map((currentPhase) => {
+        const functions = projectedFunctions.filter((fn) => fn.phase === currentPhase);
         if (functions.length === 0) return null;
-        return (
-          <section className={styles.aslPhase} id={phase} key={phase}>
-            <h3>{phase === 'decode' ? 'Decode' : 'Operation'}</h3>
-            {functions.map((fn) => (
+        const renderFunctions = (definitions: typeof functions) => definitions.map((fn) => (
               <section className={styles.sourceRegion} id={`${fn.phase}-${slug(fn.symbol)}`} key={`${fn.phase}-${fn.symbol}-${fn.sourcePath}`}>
-                <header><div><span>{fn.role}</span><h3>{localize(fn.label, chinese)}</h3><p>{localize(fn.purpose, chinese)}</p></div><a href={unitData.release.releaseEligible ? fn.sourceUrl : fn.sourceAssetUrl}><code>{fn.symbol}</code> ↗</a></header>
+                <header><div><span>{fn.role}</span><h3>{localize(fn.label, chinese)}</h3>{fn.role === 'shared' && <p>{localize(fn.purpose, chinese)}</p>}</div><a href={unitData.release.releaseEligible ? fn.sourceUrl : fn.sourceAssetUrl}><code>{fn.symbol}</code> ↗</a></header>
                 <AslCode
                   label={`${fn.symbol}, ${fn.sourcePath} lines ${fn.startLine} to ${fn.endLine}`}
                   startLine={fn.startLine}
@@ -329,9 +325,24 @@ function ManualAsl({manual, unitData, chinese, phase}: {manual?: ManualData; uni
                   symbolLinks={new Map(Array.from(symbolLinks).filter(([symbol]) => symbol !== fn.symbol))}
                 />
               </section>
-            ))}
-          </section>
+        ));
+        const shared = functions.filter((fn) => fn.role === 'shared');
+        const owner = functions.filter((fn) => fn.role === 'owner');
+        const content = shared.length === 0 ? renderFunctions(owner) : (
+          <>
+            {renderFunctions(shared)}
+            <details className={styles.sourceDisclosure}>
+              <summary>{chinese ? '指令绑定与契约 helper' : 'Instruction bindings and contract helpers'}</summary>
+              {renderFunctions(owner)}
+            </details>
+          </>
         );
+        return phase === undefined ? (
+          <section className={styles.aslPhase} id={currentPhase} key={currentPhase}>
+            <h3>{currentPhase === 'decode' ? 'Decode' : 'Operation'}</h3>
+            {content}
+          </section>
+        ) : <div id={currentPhase} key={currentPhase}>{content}</div>;
       })}
       {projected === undefined && fallback.map((region) => (
         <section className={styles.sourceRegion} id={region.name} key={region.name}><h3>{region.name === 'decode' ? 'Decode' : 'Operation'}</h3><AslCode label={`${region.name} ASL lines ${region.startLine} to ${region.endLine}`} startLine={region.startLine} text={region.text} tabIndex={0} /></section>
@@ -359,13 +370,13 @@ export default function ArmInstructionReference({unitData}: {unitData: PtoUnitWo
       {armOrder ? <AssemblyForms chinese={chinese} manual={manual} unitData={unitData} /> : <EncodingForms chinese={chinese} unitData={unitData} />}
       {armOrder && <ManualAsl chinese={chinese} manual={manual} phase="decode" unitData={unitData} />}
       <AssemblerSymbols chinese={chinese} symbols={unitData.assemblerSymbols} />
-      <Contract chinese={chinese} metadata={metadata} />
       {armOrder ? <ManualAsl chinese={chinese} manual={manual} phase="operation" unitData={unitData} /> : (
         <>
           {unitData.semanticExecution && <SemanticExecution chinese={chinese} execution={unitData.semanticExecution} />}
           <ManualAsl chinese={chinese} manual={manual} unitData={unitData} />
         </>
       )}
+      <Contract chinese={chinese} metadata={metadata} />
     </article>
   );
 }

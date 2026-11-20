@@ -2,13 +2,13 @@ import {createHash} from 'node:crypto';
 import {expect, test} from '@playwright/test';
 
 const representatives = [
-  {section: 'scalar', mnemonic: 'ADD', helper: 'ComputeADDResult'},
+  {section: 'scalar', mnemonic: 'ADD', helper: 'ADDResult'},
   {section: 'float', mnemonic: 'FMADD', helper: 'DecodeFMADDSourceCarrier'},
   {section: 'block', mnemonic: 'B.IOT', helper: 'BIOTZeroMaskNoEffect'},
   {section: 'cube', mnemonic: 'TMATMUL', helper: 'TMATMULOperandsLegal'},
   {section: 'vector', mnemonic: 'TADD', helper: 'ExecuteTADD'},
   {section: 'vector', mnemonic: 'TEXP', helper: 'ExecuteTEXP'},
-  {section: 'tma', mnemonic: 'TLOAD', helper: 'ResolveTLOADGlobalAddress'},
+  {section: 'tma', mnemonic: 'TLOAD', helper: 'TLOADGMAddress'},
 ] as const;
 
 test.describe('static manual', () => {
@@ -71,6 +71,24 @@ test.describe('static manual', () => {
     await expect(physicalBundle.getByRole('link', {name: /BSTART\.SFU definition/})).toBeVisible();
   });
 
+  test('FMADD Operation shows the dispatcher-selected execution before operational information', async ({page}) => {
+    await page.goto('/instructions/scalar/fsu/FMADD/');
+    const operation = page.getByRole('heading', {name: 'Operation', exact: true, level: 2});
+    const information = page.getByRole('heading', {name: 'Operational information', level: 2});
+    await expect(operation).toBeVisible();
+    await expect(page.getByRole('heading', {name: 'Execute FP Mul Add', level: 3})).toBeVisible();
+    const execution = page.locator('pre[aria-label^="ExecuteFPMulAdd,"]');
+    await expect(execution).toContainText('func ExecuteFPMulAdd(');
+    await expect(execution.getByRole('link', {name: 'FPMulAdd', exact: true})).toHaveAttribute(
+      'href',
+      /^\/evidence\/asl-fragments\/[0-9a-f]{64}\.asl$/,
+    );
+    await expect(page.getByText('Instruction bindings and contract helpers', {exact: true})).toBeVisible();
+    const operationPosition = await operation.evaluate((element) => element.getBoundingClientRect().top);
+    const informationPosition = await information.evaluate((element) => element.getBoundingClientRect().top);
+    expect(operationPosition).toBeLessThan(informationPosition);
+  });
+
   test('Chinese manual stays on localized canonical routes', async ({page}) => {
     await page.goto('/zh-CN/');
     const navigation = page.getByRole('navigation', {name: '指令手册分类'});
@@ -95,8 +113,8 @@ test('manual indexes hydrate and link to the same canonical instructions', async
   await expect(page.getByRole('navigation', {name: 'Encoding groups'}).getByRole('link', {name: 'SCOPED64'})).toBeVisible();
   await manual.getByRole('link', {name: 'Scalar', exact: true}).click();
   await page.locator('main table').getByRole('link', {name: 'ADD', exact: true}).click();
-  const call = page.locator('#operation-computeaddresult pre').getByRole('link', {name: 'PrepareADDRightOperand', exact: true});
-  await expect(call).toHaveAttribute('href', '#operation-prepareaddrightoperand');
+  const call = page.locator('#operation-addresult pre').getByRole('link', {name: 'ADDRightOperand', exact: true});
+  await expect(call).toHaveAttribute('href', '#operation-addrightoperand');
   await call.click();
-  await expect(page).toHaveURL(/#operation-prepareaddrightoperand$/);
+  await expect(page).toHaveURL(/#operation-addrightoperand$/);
 });

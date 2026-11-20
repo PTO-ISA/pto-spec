@@ -34,7 +34,7 @@ test('every mnemonic page projects exact owner-backed ASL functions', () => {
     for (const region of projection.functions) {
       assert.match(region.text, new RegExp(`func ${region.symbol}\\b`));
       assert.equal(region.text.trimEnd().split('\n').at(-1)?.trim(), 'end;');
-      assert.equal(region.sourcePath, unit.source);
+      if (region.role === 'owner') assert.equal(region.sourcePath, unit.source);
       assert.match(region.sourceUrl, new RegExp(
         `^https://github\\.com/PTO-ISA/pto-spec/blob/${commit}/asl/.+#L\\d+-L\\d+$`,
       ));
@@ -55,5 +55,21 @@ test('every mnemonic page projects exact owner-backed ASL functions', () => {
       assert.ok(reference.text?.includes(`func ${reference.symbol}`));
       assert.equal(reference.text?.trimEnd().split('\n').at(-1)?.trim(), 'end;');
     }
+  }
+});
+
+test('floating fused pages include the exact dispatcher-selected execution', () => {
+  const commit = '0123456789abcdef0123456789abcdef01234567';
+  for (const mnemonic of ['FMADD', 'FMSUB', 'FNMADD', 'FNMSUB']) {
+    const unit = traceability.units.find((candidate) => candidate.mnemonic === mnemonic);
+    assert.ok(unit, `${mnemonic} unit must exist`);
+    const projection = projectManualAsl(repositoryRoot, {commit}, unit.id, unit.source);
+    const shared = projection.functions.filter((definition) => definition.role === 'shared');
+    assert.equal(shared.length, 1, `${mnemonic} must project one exact shared execution`);
+    assert.equal(shared[0].symbol, 'ExecuteFPMulAdd');
+    assert.match(shared[0].text, /FPMulAdd/);
+    assert.ok(projection.references.some((reference) =>
+      reference.symbol === 'FPMulAdd',
+    ));
   }
 });
