@@ -28,6 +28,7 @@ SOURCE_PATHS = (
     "scripts/asl_release_suite.py",
     "scripts/asl_tests.py",
     "scripts/check-active-paths",
+    "scripts/check-adrs",
     "scripts/check-asl-layout",
     "scripts/check-asl-tests",
     "scripts/check-binary-closure",

@@ -158,6 +158,7 @@
     "scripts/asl_tests.py": "b7341ac723616f59880967709ab58050c5cdb260bcb31d2519520f747bb0335a",
     "scripts/aslref": "2939fb60f0e4e574ff5a7b2743fb0486b035bc51f9db3feac584dafd6d1d2ef5",
     "scripts/check-active-paths": "81cb71759976e6cdd9c337ed2640cf388391d825e6f64de82dcc831b5752666b",
+    "scripts/check-adrs": "9b314fcd006a302ac2459831b7fc5631eadb123929e03583460d80b4af91156c",
     "scripts/check-asl-layout": "5283ef77e8650d607c537e29de06fb544add29be6b76caf6e431f1954301e39f",
     "scripts/check-asl-tests": "3a0ef89d06725179960c8a7cd3a319d71f18ef76c798e4863036c860cbab2189",
     "scripts/check-binary-closure": "ea4f35077f19898093e1f8f683f30a2ee0ee83d27a4131f6c9af2f1d0df37cfd",

@@ -226,6 +226,10 @@ def _validate_baselines(records: tuple[AdrRecord, ...], root: Path) -> list[str]
             for legacy_id in record.legacy_ids
             if re.fullmatch(r"ADR-[0-9]{4}", legacy_id)
         ]
+        lineage_prefixes = (
+            f"{record.adr_id}-",
+            *(f"{legacy_id.removeprefix('ADR-')}-" for legacy_id in old_ids),
+        )
         filename = re.fullmatch(r"ADR-[A-Z]+-[0-9]{4}-(.+\.md)", relative.name)
         if len(old_ids) == 1 and filename is not None:
             candidates.append(
@@ -245,7 +249,8 @@ def _validate_baselines(records: tuple[AdrRecord, ...], root: Path) -> list[str]
                     str(root),
                     "log",
                     "--follow",
-                    "--format=%H %P",
+                    "--format=%x1e%H %P",
+                    "--name-status",
                     "--",
                     candidate.as_posix(),
                 ],
@@ -258,9 +263,27 @@ def _validate_baselines(records: tuple[AdrRecord, ...], root: Path) -> list[str]
                     result.stderr.strip()
                     or f"git log --follow failed for {candidate.as_posix()}"
                 )
-            history = result.stdout.splitlines()
-            if history:
-                landing = history[-1].split()
+            landing = None
+            for change in result.stdout.split("\x1e"):
+                if not change.strip():
+                    continue
+                header, *statuses = change.strip().splitlines()
+                landing = header.split()
+                copied_from = next(
+                    (
+                        status.split("\t")[1]
+                        for status in statuses
+                        if re.match(r"C\d+\t", status)
+                    ),
+                    None,
+                )
+                # A copy from a different ADR starts a new lineage. A move
+                # staged as copy then delete can retain the same identity.
+                if copied_from is not None and not Path(copied_from).name.startswith(
+                    lineage_prefixes
+                ):
+                    break
+            if landing is not None:
                 first_landing_commit = landing[0]
                 first_landing_parents = landing[1:]
                 break
