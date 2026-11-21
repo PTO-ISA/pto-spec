@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-value-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元为比较与选择操作生成分离的 Tile 值，使派发逻辑能够先计算结果，再提交目的 Tile。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-value-concepts role=concepts-state -->
+## 概念与状态
+
+比较路径构造谓词结果并汇总数值状态标志。选择路径根据谓词 Tile 或 CUBE 谓词载体构造数值结果，执行掩码决定非活动 CUBE 坐标的处理。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-value-rules role=rules-interactions -->
+## 规则与交互
+
+`ExecuteTileCompareAsToValue` 及其标量形式按解析后的操作类型比较每个有效坐标。`ExecuteTileSelectToValue` 与 `ExecuteTileSelectScalarToValue` 选择真值或假值输入，定义有效区域，并应用当前填充值。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-value-boundaries role=boundaries -->
+## 架构边界
+
+调用者负责确认操作数合法并提供已分配的输出目标。本单元不分配 Tile、不解析指令操作数，也不提交返回值。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-value-example role=example-usage -->
+## 非规范阅读示例
+
+对于一个二乘二谓词掩码，`ExecuteTileSelectToValue` 在每个有效坐标从 `source_true` 或 `source_false` 选择相应元素，随后返回一个完整的 `TileInfo` 值。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-value-related role=related-owners-navigation -->
+## 相关所有者
+
+- [相关所有者](comparison.md) 定义本单元使用的逐元素比较和谓词载体机制。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

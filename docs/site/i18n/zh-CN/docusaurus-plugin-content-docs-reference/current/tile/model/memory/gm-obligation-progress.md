@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-obligation-progress-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元推进某个 kernel invocation 捕获的 Tile 存储和原子存储全局内存义务。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-obligation-progress-concepts role=concepts-state -->
+## 概念与状态
+
+每个义务携带其所属 core、PE、invocation、程序顺序、collective 历史、编码请求、bundle 绑定、源快照和推进位置。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-obligation-progress-rules role=rules-interactions -->
+## 规则与交互
+
+`ProgressKernelGMObligationsForCore` 安装捕获的请求上下文，发出已验证义务，执行有界推进，记录完成或故障，再恢复调用者上下文，同时保留真实写入造成的 reservation 失效。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-obligation-progress-boundaries role=boundaries -->
+## 架构边界
+
+验证控制可以延迟推进。故障保留在捕获请求的 owner 中，abort 清理只在不可撤销义务静止后退役源生命周期。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-obligation-progress-example role=example-usage -->
+## 非规范阅读示例
+
+如果一个原子存储义务只剩一个 beat，调度器选择其保存的 PE 上下文，提交该 beat，在适当时完成 occurrence，随后恢复原先选择的 PE。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-obligation-progress-related role=related-owners-navigation -->
+## 相关所有者
+
+- [相关所有者](atomic-tstore.md) 定义捕获原子义务使用的原子存储推进函数。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

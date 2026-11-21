@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-operations-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元验证融合乘加、PredicateCell 比较和 Tile 选择操作的分离目的值。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-operations-concepts role=concepts-state -->
+## 概念与状态
+
+`TileOutputValueTarget` 携带尚未提交的输出描述符和值。PredicateCell 输出使用 `U8` CUBE 存储，数值选择输出必须匹配所选操作类型和源形状。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-operations-rules role=rules-interactions -->
+## 规则与交互
+
+每个合法性辅助函数检查源分配与已定义状态、载体宽度、描述符形状、布局一致性，以及相关执行掩码或谓词载体的适用性。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-operations-boundaries role=boundaries -->
+## 架构边界
+
+这些谓词只回答合法性，不执行算术、不读取内存、不分配 Tile，也不修改目的状态。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-operations-example role=example-usage -->
+## 非规范阅读示例
+
+当两个数值源具有相同 CUBE 形状和兼容载体，并且 PredicateCell 输出具有相同的行数、有效区域和布局时，比较到值请求合法。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-operations-related role=related-owners-navigation -->
+## 相关所有者
+
+- [相关所有者](destination-value.md) 定义这些操作专用谓词复用的通用分离目的检查。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

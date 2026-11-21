@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-schema-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit recognizes indexed TLSU operations and interprets their optional signed range descriptor. The range lets a participating PE reject out-of-order minimum and maximum bounds before memory effects.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-schema-concepts role=concepts-state -->
+## Descriptor state
+
+The first scalar binding supplies two GPR selectors when it is valid and is not an execution-mask binding. Tile bindings determine whether the current PE participates.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-schema-rules role=rules-interactions -->
+## Range rule
+
+For a participating PE, the selected GPRs are read as signed minimum and maximum values and must satisfy minimum less than or equal to maximum. A nonparticipating PE does not impose this comparison.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-schema-boundaries role=boundaries -->
+## Boundaries
+
+The operation set is limited to MGATHER and MSCATTER forms, including their mask, atomic, and reduction variants. An absent descriptor imposes no range ordering check.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-schema-example role=example-usage -->
+## Example
+
+If a participating PE supplies minimum -8 and maximum 15, the ordering check passes. Minimum 16 with maximum 15 fails the range contract.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-schema-related role=related-owners-navigation -->
+## Related owners
+
+- [Range command stream](indexed-tlsu-range-command-stream.md) enforces adjacency of the two bindings.
+- [Predicate carriers](../../../tile/model/execution/predicate-carriers.md) owns execution-mask carriers.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-writer-effects-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元把 CUBE destination write 分阶段记录为显式 writer effect，使 writer-view validation、payload merge 与计算数值的操作彼此分离。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-writer-effects-concepts role=concepts-state -->
+## Writer-effect record
+
+每个 effect 存储 destination、cell offset/count、size code、PE mask、完整 parent Tile 与 writer Tile view。计算得到的 operation result 会替换匹配的 writer view。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-writer-effects-rules role=rules-interactions -->
+## 分阶段记录与合并
+
+preflight 为声明的 range 导出合法 writer view。Finish 把每个已验证 writer view 的 defined element 复制到对应 parent range，重新计算 parent definedness，并把合并后的 parent 安装到 destination。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-writer-effects-boundaries role=boundaries -->
+## 边界
+
+effect 集合以 PTO_BUNDLE_TILE_BINDING_COUNT 为上限，当前为 16。writer view 非法或集合已满时拒绝加入。本单元不存储 captured generation、writer-PE identity 或 execution identity。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-writer-effects-example role=example-usage -->
+## 示例
+
+覆盖一个 CUBE cell range 的 writer view 可以接收计算后的 TMATMUL 值。Finish 把该 range 合并到保留的 parent，其他 parent element 保持不变。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-writer-effects-related role=related-owners-navigation -->
+## 相关 owner
+
+- [CUBE validation](local-generation-cube-validation.md) 在 finalization 前检查 writer range 与 cohort 一致性。
+- [CUBE TMATMUL writer values](../dispatch/cube-tmatmul-writer-values.md) 为这些 effect 计算矩阵输出。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

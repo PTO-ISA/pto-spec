@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-validation-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit validates the CUBE writers collected in one Local-generation slot before the parent destination is finalized. It requires the writer set to cover one coherent physical extent.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-validation-concepts role=concepts-state -->
+## Writer cohort
+
+Each prior LocalGenerationWriter is metadata: destination, cell range, PE mask, ready and descriptor fields, plus its speculation identity. The candidate current_writer is a separate TileInfo value passed to validation for the new range.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-validation-rules role=rules-interactions -->
+## Validation rules
+
+Validation checks the candidate writer value, complete cell ranges, descriptor consistency, and common per-PE extent. Each participating PE must have exactly one range ending at its extent. Nonterminal ranges use their full physical width; the terminal range derives that PE's valid columns, and those derived columns must agree across PEs.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-validation-boundaries role=boundaries -->
+## Boundaries
+
+Validation does not merge payload values or finalize the parent. A gap, overlap, invalid current_writer, inconsistent descriptor, missing or duplicate terminal range, PE-mask mismatch, or different derived terminal columns rejects the cohort.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-validation-example role=example-usage -->
+## Example
+
+Two participating PEs may use different writer records, but each must have one terminal range and derive the same final valid-column count. A second terminal range for either PE rejects finalization.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-validation-related role=related-owners-navigation -->
+## Related owners
+
+- [CUBE writer effects](local-generation-cube-writer-effects.md) stores writer ranges and merges validated values.
+- [Local-generation CUBE state](local-generation-cube.md) owns slots, writer metadata, and per-PE coverage.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

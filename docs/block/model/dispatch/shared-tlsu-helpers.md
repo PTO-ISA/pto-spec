@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-helpers-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit provides shape and carrier checks shared by Shared-store and Shared-to-Local TMOV dispatch. Centralizing them keeps both directions aligned with one resolved bundle schema.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-helpers-concepts role=concepts-state -->
+## Shared schema
+
+Bundle dimensions supply valid columns, valid rows, and physical columns when each value fits 16 bits. TMOV also compares capacity, shape, data type, layout, and the resolved operation carrier.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-helpers-rules role=rules-interactions -->
+## Compatibility rules
+
+E6M2 and RCPE6M2 require carrier-width compatibility with the Shared source interpretation. A Shared-to-Local destination needs exactly one Shared binding and one last Local destination with matching PE mask and schema.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-helpers-boundaries role=boundaries -->
+## Boundaries
+
+A dimension greater than 65535 maps to zero and is rejected by later positive-shape checks. Empty participant masks are handled before any Shared record is read.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-helpers-example role=example-usage -->
+## Example
+
+A Shared E6M2 source can populate a matching Local destination when capacity, valid region, physical columns, layout, PE mask, and carrier width all agree.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-helpers-related role=related-owners-navigation -->
+## Related owners
+
+- [Shared generation](../operands/shared-generation.md) resolves Shared subviews and participant masks.
+- [Destination shape](destination-shape.md) resolves the Local destination geometry.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

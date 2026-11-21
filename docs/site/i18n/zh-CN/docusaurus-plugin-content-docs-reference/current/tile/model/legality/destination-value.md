@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元为一元、标量、二元、归约、扩展、EXPDIF 和标量填充 Tile 操作提供分离目的合法性。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-concepts role=concepts-state -->
+## 概念与状态
+
+目的值独立记录其描述符和内容，不立即写入架构目的 Tile。源仍是架构 Tile 索引，必须已分配、形状兼容，并在读取位置已定义。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-rules role=rules-interactions -->
+## 规则与交互
+
+辅助函数解析载体操作类型，要求宽度兼容，执行普通或 CUBE 形状规则，并检查归约维度、广播源和 EXPDIF 操作数等操作专用输入。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-boundaries role=boundaries -->
+## 架构边界
+
+这里的合法性检查不执行操作，也不提交分离结果。操作派发仍拥有函数选择，数值 owner 定义结果值和标志。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-example role=example-usage -->
+## 非规范阅读示例
+
+对于二元到值请求，两个源 Tile 必须彼此匹配，并在布局和有效形状上匹配分离目的，之后逐元素执行器才能运行。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-related role=related-owners-navigation -->
+## 相关所有者
+
+- [相关所有者](operand-schema.md) 定义这些分离目的检查扩展的基础操作数模式规则。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

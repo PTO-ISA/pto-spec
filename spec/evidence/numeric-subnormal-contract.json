@@ -5,7 +5,7 @@
   "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
   "acceptance_record": "docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md",
   "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
-  "current_profile_evidence_id": "pto-hardware-numeric-0.59.0-ieee-v1",
+  "current_profile_evidence_id": "pto-hardware-numeric-0.59.1-ieee-v1",
   "policy": {
     "input_subnormals": "preserve-exact-source-value",
     "result_subnormals": "gradual-underflow-to-destination-format",
@@ -2364,15 +2364,15 @@
   "sources": [
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "e9005ec245ed7e825c399b7b30503ca78b61d443cc29473364986a2157b31bdb"
+      "sha256": "843d4c2c76823af57dc80f4b134c00e0166c0ba262f6924585854bdc44214325"
     },
     {
       "path": "spec/evidence/numeric-contract-decision-inputs.json",
-      "sha256": "3a2cdf03d2dda04b77cae761ac2b0098664a5ce63354e2970a2e875e4e44fcf9"
+      "sha256": "fcd4635a1a100991fee465bb5d2bf333f626809c93586bdaf7dd07c00ed97506"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "b0e6276a922998c90039d6da4744d2c254f7de172d5c369453e6ae518d8a3edf"
+      "sha256": "d3794039ae1b04e4b318116c68ed9962de1522d067c6b546498acb526b04c19f"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -2404,7 +2404,7 @@
     },
     {
       "path": "asl/arch/data-types/memory-model.asl",
-      "sha256": "b8472609df8e85562f7379bfb013d04a29b78e6987d9ce7b09390a6d38ffc8d4"
+      "sha256": "0a80543602060fae18da4aeef836905750ecd74e4e88e25868cd348c13cfb750"
     },
     {
       "path": "asl/arch/data-types/memory-operations.asl",
@@ -2428,7 +2428,7 @@
     },
     {
       "path": "asl/arch/data-types/system-registers.asl",
-      "sha256": "ca6e241606145b7fb26ebfbca7a6e735eaaff24952ddb8e2580491130dc0bf6d"
+      "sha256": "21da90f559fa9de5475ab48ed38985bb3210197c12ce2e03919c85bd62390695"
     },
     {
       "path": "asl/arch/data-types/tile-data-types.asl",
@@ -2436,11 +2436,11 @@
     },
     {
       "path": "asl/arch/data-types/trap-context.asl",
-      "sha256": "cf0361a5e1e262d15ad8ef5328f19528a7fcc781b4a575b703dc99e9647539b9"
+      "sha256": "4c28fd97eab7daa90f4e75f7dbca8cc097d460c6c12b1c14efc4202416e58229"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "e069fffc8971ee5fcdbb654b3a500da8ce11240f5112720a0676e090a47db0e9"
+      "sha256": "055fe47a00e2d5ca6d16b62c1f085ba6e5d8a82eb1c135ef83a4bdde30087bb4"
     },
     {
       "path": "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-001.asl",

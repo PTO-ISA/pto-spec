@@ -14,12 +14,6 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.current_source_form_inventory import (  # noqa: E402
-    CURRENT_SOURCE_PROJECTION_KEYS,
-    load_form_inventories,
-    project_forms,
-)
-
 OUTPUT = Path("spec/development-manifest.json")
 CATALOGS = {
     "scalar_forms": "spec/catalog/scalar-forms.json",
@@ -48,7 +42,6 @@ def build(root=ROOT):
     scalar_forms = catalogs["scalar_forms"]["forms"]
     scoped_scalar_forms = catalogs["scalar_forms"]["scoped_forms"]
     command_forms = catalogs["command_forms"]["forms"]
-    current_forms, _ = load_form_inventories(root)
     counts = {
         "scalar_forms": len(scalar_forms),
         "scoped_scalar_forms": len(scoped_scalar_forms),
@@ -64,14 +57,8 @@ def build(root=ROOT):
     release = generator(root)
     projection = release.encoding_projection(
         tiles,
-        form_counts={
-            "scalar_forms": counts["scalar_forms"],
-            "command_forms": counts["command_forms"],
-        },
+        form_counts=counts,
         command_family_counts=dict(Counter(row["semantic_family"] for row in command_forms)),
-    )
-    projection["scalar_and_command_forms"] = project_forms(
-        current_forms, CURRENT_SOURCE_PROJECTION_KEYS
     )
     sources = {
         path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()

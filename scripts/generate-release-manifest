@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the reproducible PTO ISA 0.59.0 release identity artifacts."""
+"""Generate the reproducible PTO ISA 0.59.1 release identity artifacts."""
 
 from __future__ import annotations
 
@@ -16,24 +16,28 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.current_source_form_inventory import (  # noqa: E402
+    CURRENT_SOURCE_PROJECTION_KEYS,
+    project_forms,
+)
 from scripts.release_selection import (  # noqa: E402
     evaluate_release_selection,
     manifest_selection,
 )
 
-RELEASE = "0.59.0"
-PUBLICATION_VERSION = "0.59.0.0"
-ENCODING_ABI = "pto-isa-0.59.0-mode-function-v1"
+RELEASE = "0.59.1"
+PUBLICATION_VERSION = "0.59.1.0"
+ENCODING_ABI = "pto-isa-0.59.1-mode-function-v1"
 MANIFEST_PATH = Path("spec/release-manifest.json")
-TOTALITY_PATH = Path("spec/evidence/pto-isa-0590-encoding-totality.json")
-ABI_VECTORS_PATH = Path("spec/evidence/pto-isa-0590-abi-vectors.json")
+TOTALITY_PATH = Path("spec/evidence/pto-isa-0591-encoding-totality.json")
+ABI_VECTORS_PATH = Path("spec/evidence/pto-isa-0591-abi-vectors.json")
 NUMERIC_PROFILE_PATH = Path("spec/hardware-conformance-profile.json")
-NUMERIC_VECTORS_PATH = Path("spec/evidence/pto-isa-0590-hardware-numeric-vectors.json")
-NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.59.0-ieee-v1"
-NUMERIC_PROFILE_RELEASE = "0.59.0"
+NUMERIC_VECTORS_PATH = Path("spec/evidence/pto-isa-0591-hardware-numeric-vectors.json")
+NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.59.1-ieee-v1"
+NUMERIC_PROFILE_RELEASE = "0.59.1"
 
 FAMILY_COUNTS = {'TEPL': 79, 'TLSU': 28, 'CUBE': 12}
-FORM_COUNTS = {'scalar_forms': 473, 'command_forms': 105}
+FORM_COUNTS = {'scalar_forms': 473, 'scoped_scalar_forms': 705, 'command_forms': 105}
 COMMAND_FAMILY_COUNTS = {'CMD': 101, 'BBD': 4}
 EXTENSION_ENCODING_RESERVATION_COUNT = 50
 VALID_DATATYPES = tuple(range(0, 15)) + tuple(range(16, 21)) + tuple(range(24, 29))
@@ -252,16 +256,6 @@ CANONICAL_STATIC_INPUTS = (
     "spec/catalog/system-registers.json",
     "spec/catalog/tile-operations.json",
 )
-FORM_PROJECTION_KEYS = (
-    "form_id",
-    "mnemonic",
-    "asm",
-    "length_bits",
-    "encoding_kind",
-    "encoding",
-    "fields",
-    "constraints",
-)
 
 
 def normalized_json_bytes(value: object) -> bytes:
@@ -352,7 +346,7 @@ def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
     if tepl_map != EXPECTED_TEPL_MAP:
         missing = sorted(set(EXPECTED_TEPL_MAP.items()) - set(tepl_map.items()))
         extra = sorted(set(tepl_map.items()) - set(EXPECTED_TEPL_MAP.items()))
-        raise SystemExit(f"TEPL 0.59.0 map mismatch; missing={missing}, unexpected={extra}")
+        raise SystemExit(f"TEPL 0.59.1 map mismatch; missing={missing}, unexpected={extra}")
 
     for family, expected in (
         ("TLSU", EXPECTED_TLSU_MAP),
@@ -360,7 +354,7 @@ def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
     ):
         actual = {operation_function(row): row["name"] for row in by_family[family]}
         if actual != expected:
-            raise SystemExit(f"{family} 0.59.0 function map must be {expected}, got {actual}")
+            raise SystemExit(f"{family} 0.59.1 function map must be {expected}, got {actual}")
 
     for row in operations:
         expected_command = (
@@ -402,25 +396,41 @@ def encoding_projection(tile_catalog: dict, *, form_counts: dict | None = None,
     # supply separately validated current-source inventory counts.
     form_counts = FORM_COUNTS if form_counts is None else form_counts
     command_family_counts = COMMAND_FAMILY_COUNTS if command_family_counts is None else command_family_counts
+    scalar_catalog = load_json("spec/catalog/scalar-forms.json")
+    command_catalog = load_json("spec/catalog/command-forms.json")
     forms: list[dict] = []
-    for label, relative in (
-        ("scalar_forms", "spec/catalog/scalar-forms.json"),
-        ("command_forms", "spec/catalog/command-forms.json"),
+    for label, catalog, rows_key, count_key in (
+        ("scalar_forms", scalar_catalog, "forms", "form_count"),
+        ("scoped_scalar_forms", scalar_catalog, "scoped_forms", "scoped_form_count"),
+        ("command_forms", command_catalog, "forms", "form_count"),
     ):
-        catalog = load_json(relative)
-        if catalog.get("form_count") != form_counts[label] or len(catalog.get("forms", [])) != form_counts[label]:
-            raise SystemExit(f"{label} closure must remain exactly {form_counts[label]}")
-        if label == "command_forms":
-            families = dict(Counter(row.get("semantic_family") for row in catalog["forms"]))
-            if families != command_family_counts:
-                raise SystemExit(
-                    f"command form families must remain exactly {command_family_counts}, got {families}"
-                )
-        forms.extend(catalog["forms"])
-    form_projection = [
-        {key: row[key] for key in FORM_PROJECTION_KEYS}
-        for row in sorted(forms, key=lambda row: row["form_id"])
-    ]
+        rows = catalog.get(rows_key)
+        expected = form_counts[label]
+        if (
+            catalog.get(count_key) != expected
+            or not isinstance(rows, list)
+            or len(rows) != expected
+        ):
+            raise SystemExit(f"{label} closure must remain exactly {expected}")
+        required_fields = set(CURRENT_SOURCE_PROJECTION_KEYS)
+        if label != "scoped_scalar_forms":
+            required_fields -= {
+                "operands", "base_form_id", "inner_length_bits", "scope", "scope_code",
+            }
+        if any(not isinstance(row, dict) or not required_fields <= row.keys() for row in rows):
+            raise SystemExit(f"{label} contains an incomplete encoding projection row")
+        forms.extend(rows)
+    families = dict(Counter(row.get("semantic_family") for row in command_catalog["forms"]))
+    if families != command_family_counts:
+        raise SystemExit(
+            f"command form families must remain exactly {command_family_counts}, got {families}"
+        )
+    form_ids = [row.get("form_id") for row in forms]
+    if any(not isinstance(form_id, str) or not form_id for form_id in form_ids):
+        raise SystemExit("accepted form inventory contains a missing form_id")
+    if len(form_ids) != len(set(form_ids)):
+        raise SystemExit("accepted form IDs are not globally unique")
+    form_projection = project_forms(forms, CURRENT_SOURCE_PROJECTION_KEYS)
     tile_projection = [
         {
             "family": row["family"],
@@ -722,7 +732,7 @@ def validate_numeric_profile() -> dict:
         "flush_to_zero": False,
         "input_subnormals": "preserve exact source value",
         "operation_override": False,
-        "profile_selection": "fixed by pto-hardware-numeric-0.59.0-ieee-v1",
+        "profile_selection": "fixed by pto-hardware-numeric-0.59.1-ieee-v1",
         "result_subnormals": "gradual underflow to the destination format",
         "scope": "Every otherwise-supported operation/type tuple whose source or destination format defines subnormal encodings.",
         "tininess_detection": "after-rounding",
@@ -1328,12 +1338,12 @@ def validate_owned_set() -> None:
             f"owned generated documentation set drift: expected {GENERATED_DOCS}, got {actual_docs}"
         )
     actual_evidence = tuple(
-        sorted(str(path.relative_to(ROOT)) for path in (ROOT / "spec/evidence").glob("*0590*.json"))
+        sorted(str(path.relative_to(ROOT)) for path in (ROOT / "spec/evidence").glob("*0591*.json"))
     )
     unexpected_evidence = tuple(sorted(set(actual_evidence) - set(EVIDENCE_FILES)))
     if unexpected_evidence:
         raise SystemExit(
-            f"unexpected owned 0.59.0 evidence files: {unexpected_evidence}"
+            f"unexpected owned 0.59.1 evidence files: {unexpected_evidence}"
         )
 
 
@@ -1393,7 +1403,11 @@ def build_artifacts() -> dict[str, dict]:
             "algorithm": "SHA-256",
             "json_encoding": "UTF-8 JSON with lexicographically sorted keys and separators ',' ':'",
             "content_projection": "object mapping each canonical input path to its file SHA-256",
-            "encoding_projection": "encoding ABI ID plus scalar/command forms, PTO extension-encoding reservations, tile selector/function assignments, and system-register locations",
+            "encoding_projection": (
+                "encoding ABI ID plus unqualified and scoped Scalar forms, command forms, "
+                "PTO extension-encoding reservations, tile selector/function assignments, "
+                "and system-register locations"
+            ),
         },
         "catalog_counts": {
             **FORM_COUNTS,

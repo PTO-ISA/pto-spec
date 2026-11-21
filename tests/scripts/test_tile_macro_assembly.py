@@ -101,10 +101,10 @@ class TileMacroAssemblyTest(unittest.TestCase):
         self.assertEqual(
             self.catalog["summary"], {"operation_count": 119, "form_count": 168}
         )
-        self.assertEqual(self.catalog["architecture_identity"], "0.59.0")
+        self.assertEqual(self.catalog["architecture_identity"], "0.59.1")
         self.assertTrue(
             all(
-                form["expansion"]["form_id"].startswith("pto0590-")
+                form["expansion"]["form_id"].startswith("pto0591-")
                 for operation in self.operations
                 for form in operation["forms"]
             )
@@ -699,7 +699,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
                 ("operations", tadd_index, "forms", 0, "macro_format"),
                 self.by_name["TADD"]["macro_format"] + "\nBSTOP",
             ),
-            "stale form ID": mutation(tadd + ("form_id",), "pto0590-tadd-stale"),
+            "stale form ID": mutation(tadd + ("form_id",), "pto0591-tadd-stale"),
             "configuration field": mutation(
                 tadd + ("configuration_bindings", 0, "field"), "LB9"
             ),
@@ -1105,7 +1105,7 @@ class TileMacroAssemblyTest(unittest.TestCase):
         self.assertEqual(len(predicate_sources), 2)
         self.assertEqual(predicate_sources[1]["condition"], "DataType=U8")
 
-    def test_transport_and_cube_variants_follow_current_0590_contract(self) -> None:
+    def test_transport_and_cube_variants_follow_current_0591_contract(self) -> None:
         self.assertEqual(
             [form["spelling"] for form in self.by_name["TLOAD"]["forms"]],
             ["TLOAD", "TLOAD", "TLOAD", "TLOAD"],
@@ -1500,9 +1500,9 @@ class TileMacroAssemblyTest(unittest.TestCase):
             self.catalog["shape_resolution"]["descriptor_inherited"],
         )
 
-    def test_reference_is_0590_and_uses_one_line_examples(self) -> None:
+    def test_reference_is_0591_and_uses_one_line_examples(self) -> None:
         reference = REFERENCE.read_text(encoding="utf-8")
-        self.assertIn("canonical PTO 0.59.0 macro-assembly format", reference)
+        self.assertIn("canonical PTO 0.59.1 macro-assembly format", reference)
         self.assertIn("all 119 current direct Tile operations", reference)
         self.assertIn("exactly one source line", reference)
         self.assertIn(

@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-nd-to-cube-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元把选定的行主序 Shared ND 片段物化为一个分离的 Local CUBE 值。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-nd-to-cube-concepts role=concepts-state -->
+## 概念与状态
+
+`SharedNDToCubeFragment` 记录起始行、有效区域、物理形状、容量、数据类型和目标 CUBE 布局。空片段被明确标记为无效。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-nd-to-cube-rules role=rules-interactions -->
+## 规则与交互
+
+`TMOVSharedNDToCubeToValue` 先把目的物理区域清为未定义零值，再从片段窗口复制每个已定义源坐标，并把有效结果标记为已定义。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-nd-to-cube-boundaries role=boundaries -->
+## 架构边界
+
+调用者提供有效片段和匹配的目的描述符。该辅助函数不选择片段、不发布 Shared 状态，也不把填充元素标记为已定义。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-nd-to-cube-example role=example-usage -->
+## 非规范阅读示例
+
+如果片段从源第 8 行开始且有四个有效行，它会把源第 8 至 11 行复制到目的第 0 至 3 行，同时保持目的填充未定义。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-nd-to-cube-related role=related-owners-navigation -->
+## 相关所有者
+
+- [相关所有者](shared-movement-values.md) 定义相关的 Shared 到 Local 值复制约定和已定义状态处理。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

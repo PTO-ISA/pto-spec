@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-cube-to-nd-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元把一个 Local CUBE source 转换为候选 Shared ND 值。它准备 candidate record，Shared-generation owner 继续负责组装与发布。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-cube-to-nd-concepts role=concepts-state -->
+## Candidate 状态
+
+选定 form 包含一个 Local source 和一个 Shared destination。helper 在转换 source 前验证 source descriptor、capacity、valid region、carrier type、allocation mask 与 destination generation mode。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-cube-to-nd-rules role=rules-interactions -->
+## Candidate 规则
+
+candidate 携带转换后的 Tile 值与 destination allocation mask。有当前 PE context 时，initialized mask 只包含该 PE bit；没有当前 context 时，使用传入的 Shared cohort mask。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-cube-to-nd-boundaries role=boundaries -->
+## 边界
+
+此路径只适用于 CUBE-to-ND Shared TMOV。candidate 构造不设置 whole-parent readiness 或 publication，也不从多个 Local source 组装 fragment。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-cube-to-nd-example role=example-usage -->
+## 示例
+
+当前 PE 具有一个已定义 CUBE_M16 source 时，会生成一个 initialized mask 只含该 PE bit 的 ND candidate。Shared-generation 处理随后组合或发布该 candidate。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-cube-to-nd-related role=related-owners-navigation -->
+## 相关 owner
+
+- [Shared bindings](../operands/shared-bindings.md) 标识 destination 与传入的 PE mask。
+- [Shared generation](../operands/shared-generation.md) 拥有跨 PE 组装与发布。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

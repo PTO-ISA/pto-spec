@@ -15,9 +15,7 @@
   "rejected": null,
   "superseded": null,
   "baseline": "e182c9b70d54a3a264bac54af9b915a0e43bb519",
-  "target_releases": [
-    "unassigned"
-  ],
+  "target_releases": ["0.59.1.0"],
   "affected_ndf": [
     "PTO-SYNC-CORE-DECISION-BINDING-001",
     "PTO-ARCH-PE-EXECUTION-CONTEXT-001",

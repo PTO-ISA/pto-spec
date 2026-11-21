@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-values-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元从 Shared Tile、按 PE 的 Tile 快照或 GMOV 源快照构造分离的 Local 值。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-values-concepts role=concepts-state -->
+## 概念与状态
+
+`SharedTileElementRegion` 把元素映射到四个容量区域之一。Shared 到 Local 路径保留描述符形状，并把载荷值复制到调用者提供的输出目标。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-values-rules role=rules-interactions -->
+## 规则与交互
+
+`TMOVSharedToLocalToValue` 读取已发布的 Shared Tile。没有有效当前 PE 上下文时，按 PE 形式扫描掩码选中的四个 PE 快照。有有效当前 PE 上下文时，它把扫描范围缩小到当前 PE，并且仅在该 PE 的掩码位被设置时复制对应快照。在两种情况下，掩码 `1111` 都把结果内容和有效区域标记为已定义；`GMOVFromSourceTileToValue` 复制载荷和已定义状态。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-values-boundaries role=boundaries -->
+## 架构边界
+
+零 PE 掩码返回未改变的目的值。调用者在运行这些辅助函数前确认分配、发布、描述符匹配和合法源 generation。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-values-example role=example-usage -->
+## 非规范阅读示例
+
+没有当前 PE 上下文时，掩码 `1111` 合并全部四个匹配快照。当前 PE 上下文为 PE2 时，同一掩码只复制 PE2 快照，但仍把结果标记为已定义；当前上下文选择已经把执行范围缩小到该 PE。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-values-related role=related-owners-navigation -->
+## 相关所有者
+
+- [相关所有者](shared-movement-types.md) 定义按 PE 快照使用的容器类型。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-values-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit validates detached outputs for `TPERMUTE`, `TSHUF`, `TPACK`, and `TUNPACK`.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-values-concepts role=concepts-state -->
+## Concepts and state
+
+The checks combine CUBE descriptor shape, source and destination layout, defined cell bytes, execution-mask applicability, and operation-specific control fields.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-values-rules role=rules-interactions -->
+## Rules and interactions
+
+`TPERMUTE` and `TSHUF` require compatible source, index, or control Tiles. `TPACK` and `TUNPACK` also constrain selected byte counts and the destination element type.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-values-boundaries role=boundaries -->
+## Architectural boundaries
+
+These functions do not inspect translated memory, change Tile contents, or select instruction encodings. They reject unsupported descriptor and control combinations before execution.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-values-example role=example-usage -->
+## Non-normative reading example
+
+A `TUNPACK` request with a byte range outside one source word is rejected before `TUNPACKToValue` reads any cell byte.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-values-related role=related-owners-navigation -->
+## Related owners
+
+- [Related owner](layout-rearrangement.md) defines the underlying rearrangement control and layout rules extended to detached destinations.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

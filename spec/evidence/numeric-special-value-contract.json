@@ -6,7 +6,7 @@
   "status": "named-hardware-special-value-checkpoint-accepted-adr0088-open",
   "acceptance_record": "docs/status/decisions/ADR-NUM-0011-hardware-special-value-checkpoint.md",
   "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
-  "current_profile_evidence_id": "pto-hardware-numeric-0.59.0-ieee-v1",
+  "current_profile_evidence_id": "pto-hardware-numeric-0.59.1-ieee-v1",
   "policy": {
     "produced_nan": "canonical-destination-format-nan",
     "comparison_nan": "NE-true-all-other-relations-false",
@@ -587,7 +587,7 @@
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "e9005ec245ed7e825c399b7b30503ca78b61d443cc29473364986a2157b31bdb"
+      "sha256": "843d4c2c76823af57dc80f4b134c00e0166c0ba262f6924585854bdc44214325"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -595,11 +595,11 @@
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "b0e6276a922998c90039d6da4744d2c254f7de172d5c369453e6ae518d8a3edf"
+      "sha256": "d3794039ae1b04e4b318116c68ed9962de1522d067c6b546498acb526b04c19f"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "840ae680f9193ae7a9422a0e7c0e264cd61fa83429149b7b0fff77d41282627d"
+      "sha256": "26be88e12235b31e13ab7206645fe419e708475476113835df90b9d0f2ad12ba"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
@@ -607,7 +607,7 @@
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "e069fffc8971ee5fcdbb654b3a500da8ce11240f5112720a0676e090a47db0e9"
+      "sha256": "055fe47a00e2d5ca6d16b62c1f085ba6e5d8a82eb1c135ef83a4bdde30087bb4"
     },
     {
       "path": "asl/scalar/model/fsu/arithmetic.asl",
@@ -619,43 +619,43 @@
     },
     {
       "path": "asl/scalar/model/fsu/reference-scalar-fp-specials.asl",
-      "sha256": "f4005e8d87791a0479196b656d98c339e7fa66b839a50aeb7d35b39108a8c6a8"
+      "sha256": "9117a0f1e58e0f915254d37915a68ce634182fe48eec90f2783012fbbf2125c1"
     },
     {
       "path": "asl/scalar/model/fsu/scalar-fp.asl",
-      "sha256": "28baac177cc1a57c5e5be667329ae061265a558b0c4332cb4a219dcd56b38e23"
+      "sha256": "afcd3d5944b894f777127a613dfd20c4ed256d1fe42d39cb42033c694c2777a5"
     },
     {
       "path": "asl/scalar/model/dispatch/agu.asl",
-      "sha256": "1e22037018ca860fef794052cda29bf99103c543ae2b6391fce292a5cba9f682"
+      "sha256": "3c0ea83f72c2f09fbb82d9789de238e19b04dfb4de1b1f4d44deb993bc5dff4c"
     },
     {
       "path": "asl/scalar/model/dispatch/alu.asl",
-      "sha256": "aae66b82e868949861a1a93427ac9a35091d4ad339ed4535b500b0a1fc408c45"
+      "sha256": "a4e825f4abc2598d522006c3dae0f72cb3f8441cb6dcd86682956fc3cf612d78"
     },
     {
       "path": "asl/scalar/model/dispatch/amo.asl",
-      "sha256": "0b1254f13d49c65d7013e7595f0f4f6d4334b8ca83a94e5eb6f504b750adf16d"
+      "sha256": "032309b003045f78c5cc489f868f41dcfc3cf722477eb40a85c04c5a43a9d21d"
     },
     {
       "path": "asl/scalar/model/dispatch/bru.asl",
-      "sha256": "ff1616fb96e8fa5f6add13f2ce39c54f985d38b558510370dee134cb09d845ee"
+      "sha256": "9371a8a6bdcb16c7fc9450ad829c75e7a219e6f0443eb9b30c34b19c8a44767c"
     },
     {
       "path": "asl/scalar/model/dispatch/decode.asl",
-      "sha256": "4a8ebb42308e5fcf27d70c4fbbe97a3544ed3d4f3fc0044dc294fc9d27c495e2"
+      "sha256": "bdbc1b9e736dcda1b5d0ef5b793463178fa955c2f9f958a5e20530b95dee98cd"
     },
     {
       "path": "asl/scalar/model/dispatch/fsu.asl",
-      "sha256": "68ce7c4ba391f84e581110ab55358004586a9d54e43b1a06eef1fe30455ec8c5"
+      "sha256": "9ae7ba6bf68afaf0b3adb047bddcb7fa011c613e1b5c4e93f60eec6f6a16da75"
     },
     {
       "path": "asl/scalar/model/dispatch/sys.asl",
-      "sha256": "d5bee4a6d78af882b6ad9a8d7ca6200d3df3f9495061a617f5b3532f45d8ad20"
+      "sha256": "6edcdd2b0ff8f752a7070ff6f6919189273e498d3b7bf34a68da1278ea2b8153"
     },
     {
       "path": "asl/scalar/model/dispatch/top-level.asl",
-      "sha256": "595e7805a9b0a5cb3c0691373b161ea906a8044339ed3dcadec08065d4f118a7"
+      "sha256": "0a0f11c0dc9914ec6127963843da74f907b2d0e63f2e3a54e4edffee36652435"
     },
     {
       "path": "tests/asl/scalar/model/fsu/scalar-fp/scalar-exec-concrete-001.asl",

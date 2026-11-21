@@ -17,7 +17,7 @@
   "baseline": "8a77c9f0eab36cc41051519366ff163171f81463",
   "target_releases": [
     "0.59.0",
-    "unassigned"
+    "0.59.1.0"
   ],
   "affected_ndf": [
     "PTO-B-IOR-BINDING-001",

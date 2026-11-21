@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-validation-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元在 finalize parent destination 前验证一个 Local-generation slot 收集的 CUBE writer，要求 writer 集合覆盖一个一致的 physical extent。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-validation-concepts role=concepts-state -->
+## Writer cohort
+
+已有 LocalGenerationWriter 是 metadata，包含 destination、cell range、PE mask、ready/descriptor field 与 speculation identity。候选 current_writer 是独立传入 validation 的 TileInfo 值，对应新的 range。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-validation-rules role=rules-interactions -->
+## 验证规则
+
+验证检查候选 writer value、完整 cell range、descriptor consistency 与共同 per-PE extent。每个参与 PE 必须恰有一个在 extent 结束的 range。非 terminal range 使用完整 physical width；terminal range 导出该 PE 的 valid columns，并要求各 PE 的导出列数一致。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-validation-boundaries role=boundaries -->
+## 边界
+
+验证不合并 payload value，也不 finalize parent。range gap/overlap、current_writer 非法、descriptor 不一致、terminal range 缺失或重复、PE-mask 不匹配或导出的 terminal columns 不同，都会拒绝 cohort。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-validation-example role=example-usage -->
+## 示例
+
+两个参与 PE 可使用不同 writer record，但每个 PE 都必须具有一个 terminal range，并导出相同的最终 valid-column count。任一 PE 出现第二个 terminal range 都会拒绝 finalization。
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-validation-related role=related-owners-navigation -->
+## 相关 owner
+
+- [CUBE writer effects](local-generation-cube-writer-effects.md) 存储 writer range 并合并已验证数值。
+- [Local-generation CUBE state](local-generation-cube.md) 拥有 slot、writer metadata 与 per-PE coverage。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

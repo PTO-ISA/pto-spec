@@ -15,10 +15,10 @@ class DevelopmentIdentityTests(unittest.TestCase):
         self.assertEqual(current, tracked)
         self.assertEqual(current["status"], "development-not-published")
         self.assertIsNone(current["publication"])
-        self.assertEqual(current["identity"]["release"], "0.59.0")
+        self.assertEqual(current["identity"]["release"], "0.59.1")
         self.assertEqual(
             current["identity"]["encoding_abi"],
-            "pto-isa-0.59.0-mode-function-v1",
+            "pto-isa-0.59.1-mode-function-v1",
         )
         self.assertEqual(current["catalog_counts"], {
             "scalar_forms": 473, "scoped_scalar_forms": 705,
@@ -59,7 +59,7 @@ class DevelopmentIdentityTests(unittest.TestCase):
         module = generator(ROOT)
         tiles = module.load_json("spec/catalog/tile-operations.json")
         projection = module.encoding_projection(tiles)
-        self.assertEqual(len(projection["scalar_and_command_forms"]), 578)
+        self.assertEqual(len(projection["scalar_and_command_forms"]), 1283)
         self.assertEqual(len(projection["extension_encoding_reservations"]), 50)
         self.assertEqual(len(projection["tile_operations"]), 119)
 
@@ -68,7 +68,7 @@ class DevelopmentIdentityTests(unittest.TestCase):
         tiles = module.load_json("spec/catalog/tile-operations.json")
         scalar = module.load_json("spec/catalog/scalar-forms.json")
         commands = module.load_json("spec/catalog/command-forms.json")
-        arguments = dict(form_counts={"scalar_forms": 473, "command_forms": 105},
+        arguments = dict(form_counts={"scalar_forms": 473, "scoped_scalar_forms": 705, "command_forms": 105},
                          command_family_counts=dict(Counter(x["semantic_family"] for x in commands["forms"])))
         before = digest(module.encoding_projection(tiles, **arguments))
         modified = copy.deepcopy(scalar)
@@ -78,8 +78,12 @@ class DevelopmentIdentityTests(unittest.TestCase):
             after = digest(module.encoding_projection(tiles, **arguments))
         self.assertNotEqual(before, after)
 
-    def test_scoped_encoding_mutation_changes_development_identity(self):
+    def test_scoped_encoding_mutation_changes_development_and_release_identity(self):
         expected = build()
+        release = generator(ROOT)
+        tiles = release.load_json("spec/catalog/tile-operations.json")
+        release_digest = digest(release.encoding_projection(tiles))
+        self.assertEqual(release_digest, expected["identity"]["encoding_projection_sha256"])
         scalar = json.loads((ROOT / "spec/catalog/scalar-forms.json").read_text())
         scalar["scoped_forms"][0]["encoding"][0]["mask"] = "0xffffffff"
         scalar_path = (ROOT / "spec/catalog/scalar-forms.json").resolve()
@@ -92,11 +96,12 @@ class DevelopmentIdentityTests(unittest.TestCase):
 
         with patch.object(Path, "read_text", autospec=True, side_effect=controlled_read):
             changed = build()
+            changed_release_digest = digest(release.encoding_projection(tiles))
         self.assertEqual(changed["catalog_counts"], expected["catalog_counts"])
-        self.assertNotEqual(
-            changed["identity"]["encoding_projection_sha256"],
-            expected["identity"]["encoding_projection_sha256"],
+        self.assertEqual(
+            changed_release_digest, changed["identity"]["encoding_projection_sha256"]
         )
+        self.assertNotEqual(changed_release_digest, release_digest)
 
 
 if __name__ == "__main__":

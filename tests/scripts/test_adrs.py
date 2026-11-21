@@ -293,6 +293,7 @@ class AdrRecordTest(unittest.TestCase):
                     "ADR-GOV-0010",
                     "ADR-GOV-0013",
                     "ADR-GOV-0014",
+                    "ADR-GOV-0015",
                     "ADR-TILE-0006",
                     "ADR-TILE-0008",
                     "ADR-TILE-0013",
@@ -594,6 +595,89 @@ class AdrRecordTest(unittest.TestCase):
 
             result = self.run_checker(root)
             self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_new_adr_copied_from_an_older_record_has_its_own_landing(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            original_baseline = self.initialize_repository(root)
+            decisions = root / "docs/status/decisions"
+            inventory = "\n".join(
+                f"Shared owner inventory entry PTO-EXAMPLE-{index:03d}"
+                for index in range(30)
+            )
+            original = self.write_adr(
+                decisions,
+                "ADR-BLOCK-0001-original.md",
+                json.dumps(self.metadata(
+                    baseline=original_baseline, legacy_ids=[], interface_change=True
+                )),
+                inventory,
+            )
+            self.land_adr(root, original)
+            new_baseline = subprocess.check_output(
+                ["git", "rev-parse", "HEAD"], cwd=root, text=True
+            ).strip()
+            metadata = self.metadata(
+                id="ADR-BLOCK-0002", title="Follow-up", baseline=new_baseline,
+                legacy_ids=[], interface_change=True,
+            )
+            copied = self.write_adr(
+                decisions, "ADR-BLOCK-0002-follow-up.md", json.dumps(metadata), inventory
+            )
+            self.land_adr(root, copied)
+
+            result = self.run_checker(root)
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+            metadata["baseline"] = subprocess.check_output(
+                ["git", "rev-parse", "HEAD"], cwd=root, text=True
+            ).strip()
+            self.write_adr(decisions, copied.name, json.dumps(metadata), inventory)
+            result = self.run_checker(root)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn(
+                f"first-landing parent {new_baseline}",
+                result.stderr,
+            )
+
+    def test_copy_then_delete_with_same_adr_id_preserves_first_landing(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            original_baseline = self.initialize_repository(root)
+            decisions = root / "docs/status/decisions"
+            inventory = "\n".join(
+                f"Shared owner inventory entry PTO-EXAMPLE-{index:03d}"
+                for index in range(30)
+            )
+            metadata = self.metadata(
+                baseline=original_baseline, legacy_ids=[], interface_change=True
+            )
+            original = self.write_adr(
+                decisions, "ADR-BLOCK-0001-original.md", json.dumps(metadata), inventory
+            )
+            self.land_adr(root, original)
+            metadata["baseline"] = subprocess.check_output(
+                ["git", "rev-parse", "HEAD"], cwd=root, text=True
+            ).strip()
+            copied = self.write_adr(
+                decisions, "ADR-BLOCK-0001-moved.md", json.dumps(metadata), inventory
+            )
+            self.land_adr(root, copied)
+            subprocess.run(
+                ["git", "rm", "--", str(original)],
+                cwd=root,
+                check=True,
+                stdout=subprocess.PIPE,
+            )
+            subprocess.run(
+                ["git", "commit", "-q", "-m", "complete ADR move"],
+                cwd=root,
+                check=True,
+            )
+
+            result = self.run_checker(root)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn(f"first-landing parent {original_baseline}", result.stderr)
 
     def test_baseline_must_be_ancestor_of_first_landing_parent(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

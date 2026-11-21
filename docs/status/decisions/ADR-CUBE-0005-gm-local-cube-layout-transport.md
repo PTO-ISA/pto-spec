@@ -17,7 +17,8 @@
   "baseline": "e9e9934f3cd4e857f44482f5e86779fd726d1733",
   "target_releases": [
     "0.58.3",
-    "0.59.0"
+    "0.59.0",
+    "0.59.1.0"
   ],
   "affected_ndf": [
     "PTO-B-DATR-FIELDS-001",

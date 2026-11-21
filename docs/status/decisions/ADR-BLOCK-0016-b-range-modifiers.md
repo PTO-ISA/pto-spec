@@ -17,7 +17,8 @@
   "baseline": "23ca8833fef3f97dbc65beef4924b0b4671cdfdf",
   "target_releases": [
     "0.58.6",
-    "0.59.0"
+    "0.59.0",
+    "0.59.1.0"
   ],
   "affected_ndf": [
     "PTO-B-IOT-STREAM-001",

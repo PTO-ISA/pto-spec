@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit supplies detached-destination legality for unary, scalar, binary, reduction, expansion, EXPDIF, and scalar-fill Tile operations.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-concepts role=concepts-state -->
+## Concepts and state
+
+The destination value records its descriptor and contents independently of the architectural destination Tile. Sources remain architectural Tile indices and must be allocated, shape-compatible, and defined where read.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-rules role=rules-interactions -->
+## Rules and interactions
+
+The helpers resolve carrier operation types, require compatible widths, enforce ordinary or CUBE shape rules, and check operation-specific inputs such as reduction dimensions, broadcast sources, and EXPDIF operands.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-boundaries role=boundaries -->
+## Architectural boundaries
+
+Legality here does not execute an operation or commit the detached result. Operation dispatch still owns function selection, and numeric owners define result values and flags.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-example role=example-usage -->
+## Non-normative reading example
+
+For a binary-to-value request, both source Tiles must match each other and the detached destination in layout and valid shape before the elementwise executor may run.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-related role=related-owners-navigation -->
+## Related owners
+
+- [Related owner](operand-schema.md) defines the base operand-schema rules extended by these detached-destination checks.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

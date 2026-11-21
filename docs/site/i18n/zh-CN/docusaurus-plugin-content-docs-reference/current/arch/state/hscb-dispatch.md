@@ -12,19 +12,39 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-高速配置总线（HSCB）通过各端点的消息缓冲区（MSGB）连接调度器与常驻工作线程。
-参考核心包含四个物理 PE，每个 PE 上有两个可独立寻址的硬件线程。工作线程初始化自己的
-bank 后发送 READY。调度器向该线程发送 LAUNCH，载荷包含派发 ID、kernel 入口 PC 和参数。
-kernel 返回后，线程用相同 ID 和返回值发送 DONE，再次等待派发。
+<!-- PTO-READER-BLOCK: arch-state-hscb-dispatch-purpose role=purpose-scope -->
+## HSCB 派发协调什么
+
+高速配置总线（HSCB）通过各端点的消息缓冲区（MSGB）连接调度器与常驻工作线程。参考核心包含四个物理 PE，每个 PE 上有两个可独立寻址的硬件线程。工作线程初始化自己的bank 后发送 READY。调度器向该线程发送 LAUNCH，载荷包含派发 ID、kernel 入口 PC 和参数。kernel 返回后，线程用相同 ID 和返回值发送 DONE，再次等待派发。派发身份与消息接收分开，使 worker 能在 kernel 返回前释放收件槽。
+
+<!-- PTO-READER-BLOCK: arch-state-hscb-dispatch-state role=concepts-state -->
+## Worker 与派发身份
+
+READY 根据可信的传输源识别 worker。未完成的派发记录 worker 的 invocation、派发 ID 和确切的 LAUNCH 消息身份。目标 ACR0 端点还为该次派发保存 `BLOCKNUM` 和 `BLOCKID`。
+
+<!-- PTO-READER-BLOCK: arch-state-hscb-dispatch-rules role=rules-interactions -->
+## 从接纳到完成
+
+就绪 worker 认领匹配的 LAUNCH，读完载荷后确认并释放快照。调度器消费该 worker 的匹配 DONE 时清除派发。
+
+<!-- PTO-READER-BLOCK: arch-state-hscb-dispatch-boundary role=boundaries -->
+## 几何绑定的生命周期
+
+派发未完成时，worker 读取绑定的几何。完成或清理 invocation 后，恢复基础寄存器视图。现有 `HSCBIssueLaunch` 入口提供 `1/0`。
 
 BWE 发布架构级 WaitEvent 请求后退休。启用 HSCB 的平台可以观察该请求，在 bank 为空时
 停驻请求线程。若已有消息排队，或后续接纳了新消息，工作线程可以继续执行。线程被唤醒后
 再次检查自己的 bank。
 
-接收端使用传输层分配的来源身份，将 READY 和 DONE 关联到具体工作线程。
-邮箱 ACK 表示报文已被消费；调度器收到匹配的 DONE 后才记录 kernel 完成。
-下文的调度服务使用[发送接纳](message-buffer-send.md)及[接收与确认](message-buffer.md)
-定义的操作，端点 bank 和消息身份的定义见[消息缓冲区状态](message-buffer-state.md)。
+<!-- PTO-READER-BLOCK: arch-state-hscb-dispatch-example role=example-usage -->
+## 交错执行的 worker
+
+同级 worker 可以使用不同的逻辑 block 编号。调度器消费其中一个 worker 的匹配 DONE 后，另一个 worker 继续读取自己的几何。
+
+<!-- PTO-READER-BLOCK: arch-state-hscb-dispatch-related role=related-owners-navigation -->
+## 相关规范源
+
+有关接纳，参见 [Message Buffer 发送](message-buffer-send.md)，有关接收流程，参见 [接收与确认](message-buffer.md)，有关端点选择，参见 [Message Buffer 状态](message-buffer-state.md)。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

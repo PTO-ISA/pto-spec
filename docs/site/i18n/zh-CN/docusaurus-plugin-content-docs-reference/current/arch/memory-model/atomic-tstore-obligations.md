@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-memory-model-atomic-tstore-obligations-purpose role=purpose-scope -->
+## 为何排空查询需要区分动态发生实例
 
+已接纳的 GM obligation 推进期间，原子 TSTORE 可能在提交时等待。这些查询按动态发生实例区分同一静态指令地址的多次执行。
+
+<!-- PTO-READER-BLOCK: arch-memory-model-atomic-tstore-obligations-state role=concepts-state -->
+## 查询身份
+
+当前 Core 和 PE 选择 obligation 表。Invocation、bundle PC 与执行域 token 区分表内不同的动态发生实例。
+
+<!-- PTO-READER-BLOCK: arch-memory-model-atomic-tstore-obligations-rules role=rules-interactions -->
+## 可见的记录
+
+`CurrentAtomicTStoreDrainPending` 识别已提交、已验证或已发出的捕获任务。`FindCurrentAtomicTStoreOccurrence` 也能找到已完成或已取消的记录，供同一执行域处理重试。
+
+<!-- PTO-READER-BLOCK: arch-memory-model-atomic-tstore-obligations-boundary role=boundaries -->
+## Invocation 清理
+
+`KernelHasIrrevocableAtomicTStore` 跨选定 Core 的各个 PE 查找目标 invocation 尚未完成的不可撤销任务。具体推进和清理由 GM obligation 与 kernel 生命周期的规范源负责。
+
+<!-- PTO-READER-BLOCK: arch-memory-model-atomic-tstore-obligations-example role=example-usage -->
+## 提交重试示例
+
+原子存储先完成而 bundle 随后重试提交时，发生实例查询仍可借相同 token 找到已完成的记录。后来在同一地址执行的动态 bundle 使用不同的 token。
+
+<!-- PTO-READER-BLOCK: arch-memory-model-atomic-tstore-obligations-related role=related-owners-navigation -->
+## 相关规范源
+
+有关请求状态，参见 [GM obligations](gm-obligations.md)，有关 invocation 清理，参见 [kernel 生命周期](../state/kernel-lifecycle.md)。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

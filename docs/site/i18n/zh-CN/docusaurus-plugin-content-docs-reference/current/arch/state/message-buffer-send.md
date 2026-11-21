@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-send-purpose role=purpose-scope -->
+## 发送发布什么内容
 
+已启用的 BSE 把暂存载荷送入一个目标 bank。模型采用原子接纳，因此即使发送方之后更新暂存字，接收方仍可处理一条稳定的消息。
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-send-state role=concepts-state -->
+## 控制字与回执
+
+控制字选择目标端点与有效字数。对于已接纳的 BSE，回执把该控制字和分配的传输身份绑定到 invocation、ACR、执行域 token 与指令 PC。
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-send-rules role=rules-interactions -->
+## 接纳与重试
+
+接纳在复制消息之前检查端点配置、域、目标可用性和身份容量。精确重试沿用回执记录的传输身份。同一发生实例使用改变后的控制字时，返回 `BadCommand`。
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-send-boundary role=boundaries -->
+## 为待完成的 DONE 预留空间
+
+HSCB 路径保留未完成派发所需的回执、发送序号和接收认领容量。本传输单元仅为识别匹配 DONE 的预留资源而检查载荷内容。
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-send-example role=example-usage -->
+## 发送重放示例
+
+消息接纳后，接收方可能在发送方重试 BSE 前就消费了消息。保留的回执仍能识别该发生实例，重试返回 `Duplicate`。
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-send-related role=related-owners-navigation -->
+## 相关规范源
+
+有关 bank 和回执的生命周期，参见 [Message Buffer 状态](message-buffer-state.md)，有关服务消息，参见 [HSCB 派发](hscb-dispatch.md)。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-nd-to-cube-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit converts a published Shared ND source into a Local CUBE writer value. Its validation scope depends on whether execution has selected a current PE context.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-nd-to-cube-concepts role=concepts-state -->
+## Fragment view
+
+The selected CUBE layout determines physical rows and columns. Each PE maps its Shared ND rows, optional subview offset, valid region, data type, and carrier type into one candidate CUBE fragment.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-nd-to-cube-rules role=rules-interactions -->
+## Validation and execution
+
+Without a current PE context, schema validation checks every participant in the Shared mask. With a valid context, it checks only the current participating PE. Execution materializes the current PE's fragment, or the first participating PE when no current context exists, and records the value in Local-generation writer effects.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-nd-to-cube-boundaries role=boundaries -->
+## Boundaries
+
+This path applies only to a published Shared ND source and one Local destination binding. Local-generation owners validate and publish the resulting writer cohort; this unit does not publish all participant destinations itself.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-nd-to-cube-example role=example-usage -->
+## Example
+
+In a current PE context, a valid CUBE_M16 fragment is checked and materialized only for that PE. Without a current context, preflight first verifies all masked PE fragments and execution uses the first participant's value.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-nd-to-cube-related role=related-owners-navigation -->
+## Related owners
+
+- [Local-generation CUBE validation](../operands/local-generation-cube-validation.md) checks writer-cohort agreement.
+- [Shared ND-to-CUBE memory model](../../../tile/model/memory/shared-nd-to-cube.md) owns fragment conversion.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

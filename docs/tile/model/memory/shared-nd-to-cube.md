@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-nd-to-cube-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit materializes one selected row-major Shared ND fragment as a detached Local CUBE value.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-nd-to-cube-concepts role=concepts-state -->
+## Concepts and state
+
+`SharedNDToCubeFragment` records the origin row, valid region, physical shape, capacity, data type, and target CUBE layout. An empty fragment is explicitly invalid.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-nd-to-cube-rules role=rules-interactions -->
+## Rules and interactions
+
+`TMOVSharedNDToCubeToValue` first clears the destination physical region to undefined zero, then copies each defined source coordinate from the fragment window and marks the valid result defined.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-nd-to-cube-boundaries role=boundaries -->
+## Architectural boundaries
+
+The caller supplies a valid fragment and matching destination descriptor. This helper does not choose the fragment, publish Shared state, or make padding elements defined.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-nd-to-cube-example role=example-usage -->
+## Non-normative reading example
+
+A fragment starting at source row 8 with four valid rows copies rows 8 through 11 into destination rows 0 through 3 while leaving destination padding undefined.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-nd-to-cube-related role=related-owners-navigation -->
+## Related owners
+
+- [Related owner](shared-movement-values.md) defines related Shared-to-Local value-copy conventions and definedness handling.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

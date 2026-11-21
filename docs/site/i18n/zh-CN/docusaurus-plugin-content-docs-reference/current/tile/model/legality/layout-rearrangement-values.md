@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-values-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元验证 `TPERMUTE`、`TSHUF`、`TPACK` 和 `TUNPACK` 的分离输出。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-values-concepts role=concepts-state -->
+## 概念与状态
+
+这些检查组合 CUBE 描述符形状、源和目的布局、已定义 CELL 字节、执行掩码适用性以及操作专用控制字段。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-values-rules role=rules-interactions -->
+## 规则与交互
+
+`TPERMUTE` 和 `TSHUF` 要求源、索引或控制 Tile 兼容。`TPACK` 和 `TUNPACK` 还约束所选字节数和目的元素类型。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-values-boundaries role=boundaries -->
+## 架构边界
+
+这些函数不检查地址翻译内存、不更改 Tile 内容，也不选择指令编码。它们在执行前拒绝不支持的描述符和控制组合。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-values-example role=example-usage -->
+## 非规范阅读示例
+
+如果 `TUNPACK` 请求的字节范围超出一个源字，它会在 `TUNPACKToValue` 读取任何 CELL 字节前被拒绝。
+
+<!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-values-related role=related-owners-navigation -->
+## 相关所有者
+
+- [相关所有者](layout-rearrangement.md) 定义扩展到分离目的的底层重排控制和布局规则。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

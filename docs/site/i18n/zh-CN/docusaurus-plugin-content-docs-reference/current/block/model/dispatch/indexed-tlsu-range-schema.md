@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-schema-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元识别 indexed TLSU 操作并解释可选的有符号 range descriptor。参与 PE 可在 memory effect 前拒绝顺序错误的最小值和最大值。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-schema-concepts role=concepts-state -->
+## Descriptor 状态
+
+第一个标量绑定在有效且不是 execution-mask 绑定时提供两个 GPR selector。Tile 绑定决定当前 PE 是否参与。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-schema-rules role=rules-interactions -->
+## Range 规则
+
+参与 PE 把所选 GPR 解释为有符号 minimum 和 maximum，并要求 minimum 小于或等于 maximum。未参与 PE 不执行该比较。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-schema-boundaries role=boundaries -->
+## 边界
+
+操作集合限于 MGATHER 与 MSCATTER form，包括 mask、atomic 和 reduction 变体。descriptor 不存在时不施加 range 顺序检查。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-schema-example role=example-usage -->
+## 示例
+
+参与 PE 提供 minimum -8、maximum 15 时顺序检查通过；minimum 16、maximum 15 时检查失败。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-schema-related role=related-owners-navigation -->
+## 相关 owner
+
+- [Range command stream](indexed-tlsu-range-command-stream.md) 强制两个绑定相邻。
+- [Predicate carriers](../../../tile/model/execution/predicate-carriers.md) 拥有 execution-mask carrier。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -56,9 +56,10 @@ class SpecificationCountsTest(unittest.TestCase):
         # The reviewed 0.59 candidate has its own exact inventory. Its metadata
         # does not establish publication; the previous immutable release stays
         # available under its original tag and must not be silently relabeled.
-        self.assertEqual(manifest["release"], "0.59.0")
-        self.assertEqual(manifest["publication_version"], "0.59.0.0")
+        self.assertEqual(manifest["release"], "0.59.1")
+        self.assertEqual(manifest["publication_version"], "0.59.1.0")
         self.assertEqual(counts["scalar_forms"], 473)
+        self.assertEqual(counts["scoped_scalar_forms"], 705)
         self.assertEqual(counts["command_forms"], 105)
         self.assertEqual(counts["tile_operations_total"], 119)
 

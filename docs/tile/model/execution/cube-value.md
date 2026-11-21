@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-value-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit computes detached outputs for Shared matrix operations, including the primary result and optional row-maximum and group-maximum outputs.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-value-concepts role=concepts-state -->
+## Concepts and state
+
+Ordinary matrix products use the accumulator type derived from the input types. MX products use `FP32` intermediate values and may consume left, right, and accumulator scales.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-value-rules role=rules-interactions -->
+## Rules and interactions
+
+`TMATMULSharedToValues` and `TMATMULMXSharedWithOptionalScalesToValues` form the product, optionally add bias, and either return a partial result or run the matrix postprocess for all requested outputs.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-value-boundaries role=boundaries -->
+## Architectural boundaries
+
+Legality, source publication, scale presence, and destination allocation are established by callers. A partial output deliberately bypasses final postprocessing and preserves the supplied auxiliary values.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-value-example role=example-usage -->
+## Non-normative reading example
+
+When `partial_output` is false and row maxima are enabled, the helper returns the postprocessed primary Tile together with the generated row-maximum Tile and the requested group-maximum Tile.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-cube-value-related role=related-owners-navigation -->
+## Related owners
+
+- [Related owner](cube.md) defines matrix product, bias, and postprocess behavior used by these value-returning wrappers.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

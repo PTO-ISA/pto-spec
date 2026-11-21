@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-state-purpose role=purpose-scope -->
+## Why each worker needs banked state
 
+Communication belongs to an endpoint. A separate bank lets sibling contexts stage, receive and acknowledge messages independently while preserving state across precise recovery.
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-state-state role=concepts-state -->
+## What an endpoint owns
+
+A model worker bank is selected by Core, PE, hardware-thread slot and ACR. It holds staging words, a queue, a receive snapshot, diagnostics, identity progress and replay receipts.
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-state-rules role=rules-interactions -->
+## Transport identity and receive identity
+
+An admitted message retains its source endpoint, source epoch and transmit sequence. Every receive claim has its own token built from the receive epoch and claim sequence.
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-state-boundary role=boundaries -->
+## State at retirement
+
+Retirement clears private invocation state once the affected banks are quiescent. The destination bank owns the queue copy of a packet already admitted to another Core. Domain binding and identity progress survive this cleanup.
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-state-example role=example-usage -->
+## Sibling endpoint example
+
+On Core `0`, PE `0`, ACR `0`, model thread slots `0` and `1` select endpoint indices `0` and `64`. Their claim state belongs to different banks.
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-state-related role=related-owners-navigation -->
+## Related owners
+
+See [Message Buffer registers](message-buffer.md) for access and [Message Buffer send](message-buffer-send.md) for admission and replay.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

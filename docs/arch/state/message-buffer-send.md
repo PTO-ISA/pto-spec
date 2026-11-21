@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-send-purpose role=purpose-scope -->
+## What a send publishes
 
+An enabled BSE takes the staged payload into one destination bank. The model makes admission atomic so a receiver can work with a stable message even if the sender later updates its staging words.
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-send-state role=concepts-state -->
+## Control and receipt
+
+The control word selects the destination and valid-word count. For an admitted BSE the receipt binds that control and the allocated transport identity to the invocation, ACR, execution-domain token and instruction PC.
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-send-rules role=rules-interactions -->
+## Admission and retry
+
+Admission checks endpoint configuration, domain, destination availability and identity capacity before copying the message. An exact retry uses the recorded transport identity. Changed control for the same occurrence reports `BadCommand`.
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-send-boundary role=boundaries -->
+## Space for outstanding DONE
+
+The HSCB path preserves receipt, transmit-sequence and receive-claim capacity needed by outstanding dispatches. This transport unit treats payload words as opaque except where it must recognize the matching DONE reservation.
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-send-example role=example-usage -->
+## Replaying a send
+
+After admission, the receiver may consume the message before the sender retries BSE. The retained receipt still identifies that occurrence and the retry reports `Duplicate`.
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-send-related role=related-owners-navigation -->
+## Related owners
+
+See [Message Buffer state](message-buffer-state.md) for bank and receipt lifetime and [HSCB dispatch](hscb-dispatch.md) for service messages.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

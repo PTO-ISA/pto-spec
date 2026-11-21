@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-cube-to-nd-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元把一个完整的 Local CUBE writer 片段转换成 Shared assemble 使用的行主序 ND 载荷。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-cube-to-nd-concepts role=concepts-state -->
+## 概念与状态
+
+源的数据类型、容量、逻辑列数、有效区域和元素值保持不变。结果清除 CUBE repeat 与 CELL 元数据，并按行主序坐标重建已定义状态。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-cube-to-nd-rules role=rules-interactions -->
+## 规则与交互
+
+`SharedTileFromLocalCubeToND` 验证源描述符和 writer 容量，复制每个已定义的有效坐标，并记录复制的有效元素数。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-cube-to-nd-boundaries role=boundaries -->
+## 架构边界
+
+调用者在进入前执行可故障的模式检查。该辅助函数只接受 `CUBE_M16` 或 `CUBE_M32`，不发布 Shared parent，也不推断缺失的源元素。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-cube-to-nd-example role=example-usage -->
+## 非规范阅读示例
+
+一个具有 16 行、8 个有效列的 `CUBE_M16` 片段会成为行主序片段，保留相同的 128 个逻辑值和 writer 容量。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-cube-to-nd-related role=related-owners-navigation -->
+## 相关所有者
+
+- [相关所有者](../shape/cube-cell.md) 定义转换源坐标时使用的 CUBE CELL 几何。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

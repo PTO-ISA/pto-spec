@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-atomic-tstore-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit implements strided atomic `TSTORE` as a preflighted sequence of per-element global-memory reductions.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-atomic-tstore-concepts role=concepts-state -->
+## Concepts and state
+
+Preflight records every execution-mask-selected translated target before any atomic effect. Progress then consumes a captured Tile snapshot and records exactly which elements have committed.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-atomic-tstore-rules role=rules-interactions -->
+## Rules and interactions
+
+`ExecuteAtomicTStoreSnapshotProgress` loads the old value, computes the selected reduction, stores the new value, marks the obligation irrevocable, and records one atomic event. Finalization updates occurrence and source-lifetime state after completion.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-atomic-tstore-boundaries role=boundaries -->
+## Architectural boundaries
+
+A preflight fault produces no atomic store. Once an element commits, later progress cannot roll it back; retries skip the recorded committed elements and preserve request identity.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-atomic-tstore-example role=example-usage -->
+## Non-normative reading example
+
+With a beat budget of one, a two-element obligation commits the first active element and returns pending. The next progress call resumes from the recorded element and completes the second.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-atomic-tstore-related role=related-owners-navigation -->
+## Related owners
+
+- [Related owner](load-store.md) defines ordinary Tile store addressing and progress conventions reused by atomic `TSTORE`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

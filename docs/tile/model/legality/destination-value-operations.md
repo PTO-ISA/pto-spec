@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-operations-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit validates detached destinations for fused multiply-add, PredicateCell comparison, and Tile select operations.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-operations-concepts role=concepts-state -->
+## Concepts and state
+
+A `TileOutputValueTarget` carries an output descriptor and value without committing it. PredicateCell outputs use `U8` CUBE storage, while numeric select outputs must match the chosen operation type and source shape.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-operations-rules role=rules-interactions -->
+## Rules and interactions
+
+Each legality helper checks source allocation and definedness, carrier widths, descriptor shape, layout agreement, and the relevant execution-mask or predicate-carrier applicability.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-operations-boundaries role=boundaries -->
+## Architectural boundaries
+
+These predicates only answer legality. They do not evaluate arithmetic, read memory, allocate Tiles, or modify destination state.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-operations-example role=example-usage -->
+## Non-normative reading example
+
+A compare-to-value request is legal when both numeric sources have matching CUBE shape and compatible carriers, and the PredicateCell output has the same rows, valid region, and layout.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-destination-value-operations-related role=related-owners-navigation -->
+## Related owners
+
+- [Related owner](destination-value.md) defines the common detached-destination checks reused by these operation-specific predicates.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL
