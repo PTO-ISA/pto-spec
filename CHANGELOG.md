@@ -3,6 +3,11 @@
 This file is generated from accepted ADR metadata. It is a navigation aid,
 not architecture authority; current meaning remains in the owning ASL/NDF.
 
+## Release 0.59.1.0
+
+### Cross-cutting
+- [ADR-STATE-0016](docs/status/decisions/ADR-STATE-0016-hscb-block-launch-geometry.md): HSCB one-dimensional block launch geometry
+
 ## Release 0.59.0
 
 ### Cross-cutting

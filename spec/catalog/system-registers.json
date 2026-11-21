@@ -670,12 +670,25 @@
       "registers": [
         "CORE_ID",
         "VENDOR",
-        "CORE_FEATURE",
+        "CORE_FEATURE"
+      ],
+      "reset": "zero",
+      "side_effects": [],
+      "write": "reject-read-only"
+    },
+    {
+      "id": "hscb-block-launch-geometry",
+      "behavior_status": "architectural-active",
+      "read": "current-worker-launch-value-or-base",
+      "registers": [
         "BLOCKNUM",
         "BLOCKID"
       ],
       "reset": "zero",
-      "side_effects": [],
+      "side_effects": [
+        "launch-admission-binds-value",
+        "matching-done-restores-base-value"
+      ],
       "write": "reject-read-only"
     },
     {

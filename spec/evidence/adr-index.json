@@ -5590,6 +5590,43 @@
       "title_zh": "High Speed Config Bus \u6295\u9012\u4e0e Message Buffer \u5de5\u4f5c\u7ebf\u7a0b\u8c03\u5ea6"
     },
     {
+      "accepted": "2026-11-21",
+      "affected_ndf": [
+        "PTO-ARCH-HSCB-BLOCK-LAUNCH-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-STATE-HSCB-DISPATCH",
+        "PTO-ARCH-STATE-MESSAGE-BUFFER-STATE",
+        "PTO-ARCH-DATA-TYPES-SYSTEM-REGISTERS",
+        "PTO-SCALAR-MODEL-SYS-SEMANTICS"
+      ],
+      "approvers": [
+        "PTO-SPEC release operator (Codex session)"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "7573753b99d9e9ffa750a0adf637eec014056f1a",
+      "created": "2026-11-17",
+      "id": "ADR-STATE-0016",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/433",
+      "interface_change": true,
+      "legacy_ids": [],
+      "path": "docs/status/decisions/ADR-STATE-0016-hscb-block-launch-geometry.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.59.1.0"
+      ],
+      "title": "HSCB one-dimensional block launch geometry",
+      "title_zh": "HSCB \u4e00\u7ef4 block \u542f\u52a8\u51e0\u4f55"
+    },
+    {
       "accepted": "2026-07-28",
       "affected_ndf": [
         "PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001"
@@ -16270,7 +16307,7 @@
   "summary": {
     "draft_count": 9,
     "legacy_id_count": 304,
-    "record_count": 119,
+    "record_count": 120,
     "type_counts": {
       "BLOCK": 19,
       "CUBE": 18,
@@ -16278,7 +16315,7 @@
       "MEM": 11,
       "NUM": 22,
       "SCALAR": 7,
-      "STATE": 15,
+      "STATE": 16,
       "TILE": 13
     }
   },
