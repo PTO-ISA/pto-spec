@@ -68,6 +68,20 @@ uses the [message-buffer send](message-buffer-send.md) and
 // may use identical payload bytes as ordinary data.
 // NDF-END: PTO-ARCH-HSCB-DISPATCH-001
 
+// NDF-BEGIN: PTO-ARCH-HSCB-BLOCK-LAUNCH-001
+// ndf: kind=contract level=L1 layer=state status=accepted
+// HSCBIssueBlockLaunch MUST bind a positive 32-bit BLOCKNUM and a 32-bit
+// BLOCKID smaller than BLOCKNUM to the addressed ACR0 endpoint's outstanding
+// dispatch without changing the four-word LAUNCH payload. From successful
+// admission until matching DONE is consumed, permitted reads at that endpoint
+// MUST return the zero-extended bound values. A rejected launch or unmatched
+// DONE MUST NOT change an existing binding. Other endpoints retain their
+// own bindings or read the ambient base registers when unbound.
+// Clearing a dispatch at matching DONE, invocation retirement, or reset
+// restores the ambient base-register view. Reset supplies zero for both.
+// HSCBIssueLaunch MUST bind BLOCKNUM=1 and BLOCKID=0.
+// NDF-END: PTO-ARCH-HSCB-BLOCK-LAUNCH-001
+
 func EnableHSCBService()
 begin
     // Platform cold-boot action. Repeated enables preserve transport identity.
@@ -115,11 +129,14 @@ begin
            pc != Zeros{64} && pc[0] == '0';
 end;
 
-func HSCBIssueLaunch(worker: MessageBufferEndpointIndex, dispatch_id: Word,
-                     kernel_pc: Word, argument: Word) => MessageBufferResult
+func HSCBIssueBlockLaunch(worker: MessageBufferEndpointIndex, dispatch_id: Word,
+                          kernel_pc: Word, argument: Word, block_num: Word,
+                          block_id: Word) => MessageBufferResult
 begin
     if !_MessageBufferBanks[[PTO_HSCB_BANK]].enabled || worker == PTO_HSCB_BANK || worker MOD PTO_ACR_COUNT != 0 ||
        kernel_pc == Zeros{64} || kernel_pc[0] == '1' ||
+       block_num == Zeros{64} || block_num[63:32] != Zeros{32} ||
+       block_id[63:32] != Zeros{32} || UInt(block_id) >= UInt(block_num) ||
        !_MessageBufferBanks[[worker]].hscb_ready then
         return MessageBufferResult_BadCommand;
     end;
@@ -155,8 +172,17 @@ begin
             _MessageBufferBanks[[worker]].queued.message_id_hi;
         _MessageBufferBanks[[worker]].hscb_launch_message_id_lo =
             _MessageBufferBanks[[worker]].queued.message_id_lo;
+        _MessageBufferBanks[[worker]].hscb_blocknum = block_num;
+        _MessageBufferBanks[[worker]].hscb_blockid = block_id;
     end;
     return status;
+end;
+
+func HSCBIssueLaunch(worker: MessageBufferEndpointIndex, dispatch_id: Word,
+                     kernel_pc: Word, argument: Word) => MessageBufferResult
+begin
+    return HSCBIssueBlockLaunch(worker, dispatch_id, kernel_pc, argument,
+                                Zeros{64} + 1, Zeros{64});
 end;
 
 func HSCBReceiveWorkerMessage() => MessageBufferResult
@@ -198,6 +224,8 @@ begin
         _MessageBufferBanks[[worker]].hscb_running = FALSE;
         _MessageBufferBanks[[worker]].hscb_launch_message_id_hi = Zeros{64};
         _MessageBufferBanks[[worker]].hscb_launch_message_id_lo = Zeros{64};
+        _MessageBufferBanks[[worker]].hscb_blocknum = Zeros{64};
+        _MessageBufferBanks[[worker]].hscb_blockid = Zeros{64};
         _MessageBufferBanks[[worker]].hscb_return_value = payload[[2]];
     else
         return MessageBufferResult_BadCommand;

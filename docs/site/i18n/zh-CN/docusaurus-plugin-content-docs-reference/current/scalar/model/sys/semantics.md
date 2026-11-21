@@ -95,7 +95,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/sys/semantics.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-SEMANTICS","surface":"scalar","classification":["model","sys","semantics"],"depends_on":["PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-BLOCK-MODEL-STATE-BARG","PTO-SCALAR-MODEL-AMO-SEMANTICS"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-SEMANTICS","surface":"scalar","classification":["model","sys","semantics"],"depends_on":["PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-ARCH-STATE-MESSAGE-BUFFER-STATE","PTO-BLOCK-MODEL-STATE-BARG","PTO-SCALAR-MODEL-AMO-SEMANTICS"]}
 // PTO-REQ-SCALAR-SYS-001, PTO-REQ-MEMORY-RC-001: PTO base SSR access,
 // architectural time, and data/instruction fences.
 
@@ -154,8 +154,16 @@ begin
         when SystemRegister_CORE_FEATURE_ENABLE =>
             return _SystemRegisters.core_feature_enable;
         when SystemRegister_TILE_CAPACITY => return _SystemRegisters.tile_capacity;
-        when SystemRegister_BLOCKNUM => return _SystemRegisters.blocknum;
-        when SystemRegister_BLOCKID  => return _SystemRegisters.blockid;
+        when SystemRegister_BLOCKNUM =>
+            let worker = CurrentMessageBufferIndex();
+            return if _MessageBufferBanks[[worker]].hscb_running then
+                _MessageBufferBanks[[worker]].hscb_blocknum
+            else _SystemRegisters.blocknum;
+        when SystemRegister_BLOCKID  =>
+            let worker = CurrentMessageBufferIndex();
+            return if _MessageBufferBanks[[worker]].hscb_running then
+                _MessageBufferBanks[[worker]].hscb_blockid
+            else _SystemRegisters.blockid;
         when SystemRegister_CYCLE    => return _SystemRegisters.cycle;
     end;
 end;

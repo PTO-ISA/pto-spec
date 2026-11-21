@@ -21,7 +21,7 @@
     },
     "system_registers": {
       "path": "spec/catalog/system-registers.json",
-      "sha256": "e755136f853cd996665f750433fbd6e216eb79935b41be15d4b8ac16dcf91386"
+      "sha256": "5694af24779c48bd81e87b0304ad97c9cb6bab8d4a11498c2ba5c5bb628171a2"
     },
     "tile_operations": {
       "path": "spec/catalog/tile-operations.json",
@@ -34,7 +34,7 @@
     "release": "0.59.0"
   },
   "normative_source_count": 960,
-  "normative_sources_sha256": "c618b49dad2deb66300a70fb6e9020f6d9068f4dfc018bfda143e36ebe6a7a6a",
+  "normative_sources_sha256": "66a12136d36f78fc2eab663a1265705e3c1b5c59e7ea1682f8d39ab4e2cf01b2",
   "publication": null,
   "schema": "pto.development-manifest.v1",
   "status": "development-not-published"
