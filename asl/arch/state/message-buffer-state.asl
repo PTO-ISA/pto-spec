@@ -157,6 +157,8 @@ type MessageBufferBank of record {
     hscb_dispatch_id: Word,
     hscb_launch_message_id_hi: Word,
     hscb_launch_message_id_lo: Word,
+    hscb_blocknum: Word,
+    hscb_blockid: Word,
     hscb_return_value: Word,
     receipts: MessageBufferReplayReceipts
 };
@@ -313,6 +315,8 @@ begin
     _MessageBufferBanks[[index]].hscb_dispatch_id = Zeros{64};
     _MessageBufferBanks[[index]].hscb_launch_message_id_hi = Zeros{64};
     _MessageBufferBanks[[index]].hscb_launch_message_id_lo = Zeros{64};
+    _MessageBufferBanks[[index]].hscb_blocknum = Zeros{64};
+    _MessageBufferBanks[[index]].hscb_blockid = Zeros{64};
     _MessageBufferBanks[[index]].hscb_return_value = Zeros{64};
     _MessageBufferBanks[[index]].last_accepted_control = Zeros{PTO_XLEN};
     _MessageBufferBanks[[index]].tx_result = MessageBufferResult_None;
@@ -357,6 +361,8 @@ begin
         _MessageBufferBanks[[index]].hscb_dispatch_id = Zeros{64};
         _MessageBufferBanks[[index]].hscb_launch_message_id_hi = Zeros{64};
         _MessageBufferBanks[[index]].hscb_launch_message_id_lo = Zeros{64};
+        _MessageBufferBanks[[index]].hscb_blocknum = Zeros{64};
+        _MessageBufferBanks[[index]].hscb_blockid = Zeros{64};
         _MessageBufferBanks[[index]].hscb_return_value = Zeros{64};
         _MessageBufferBanks[[index]].rx_epoch = Zeros{16};
         _MessageBufferBanks[[index]].source_epoch = Zeros{32};
@@ -400,6 +406,7 @@ begin
            bank.hscb_dispatch_id != Zeros{64} ||
            bank.hscb_launch_message_id_hi != Zeros{64} ||
            bank.hscb_launch_message_id_lo != Zeros{64} ||
+           bank.hscb_blocknum != Zeros{64} || bank.hscb_blockid != Zeros{64} ||
            bank.hscb_return_value != Zeros{64} || bank.enabled || bank.domain_bound ||
            bank.domain != Zeros{PTO_XLEN} || bank.bound_invocation != 0 ||
            bank.rx_epoch != Zeros{16} || bank.source_epoch != Zeros{32} ||

@@ -123,6 +123,18 @@
         "en": "The scheduler associates READY, LAUNCH and DONE with the individual worker and outstanding dispatch.",
         "zh-CN": "调度器按工作线程和当前调度任务关联 READY、LAUNCH 和 DONE。"
       }
+    },
+    {
+      "id": "PTO-ARCH-HSCB-BLOCK-LAUNCH-001",
+      "source_path": "asl/arch/state/hscb-dispatch.asl",
+      "title": {
+        "en": "One-dimensional logical block launch geometry",
+        "zh-CN": "一维逻辑 block 启动几何"
+      },
+      "summary": {
+        "en": "An addressed ACR0 worker reads its own 32-bit logical block count and identity while its dispatch is outstanding. Completion or invocation teardown restores the ambient register view.",
+        "zh-CN": "派发未完成时，目标 ACR0 worker 读取自己的 32 位逻辑 block 总数和编号。派发完成或清理 invocation 后，恢复基础寄存器视图。"
+      }
     }
   ]
 }
