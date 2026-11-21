@@ -36,6 +36,31 @@ from scripts.layout_relation_census import (
 
 
 class LayoutRelationCensusTest(unittest.TestCase):
+    def test_readable_helper_rename_rejects_changed_callers(self) -> None:
+        old_name = "ReadScalarRegisterOperand"
+        new_name = "ReadReg5"
+        owner = "asl/scalar/model/registers.asl"
+        helper = {"path": owner, "layouts": []}
+        definition = {"path": owner, "body": "return value;", "calls": []}
+        caller = {"path": owner, "calls": [(old_name, [])]}
+        before = {"helpers": {old_name: [helper]}}
+        after = {"helpers": {new_name: [helper]}}
+        before_defs = {old_name: [definition], "ExistingCaller": [caller]}
+        new_caller = {**caller, "calls": [(new_name, [])]}
+
+        for callers, accepted in (
+            ({"ExistingCaller": [new_caller]}, True),
+            ({"DifferentCaller": [new_caller]}, False),
+            ({}, False),
+            ({"ExistingCaller": [new_caller], "ExtraCaller": [new_caller]}, False),
+        ):
+            with self.subTest(callers=callers):
+                rows, errors = _helper_deltas(
+                    before, after, before_defs, {new_name: [definition], **callers}, set()
+                )
+                self.assertEqual(not errors, accepted)
+                self.assertEqual(rows[0]["classification"] != "UNCLASSIFIED", accepted)
+
     def test_issue341_lifetime_helper_inventory_is_exact_and_fail_closed(self) -> None:
         self.assertEqual(
             ISSUE360_GM_OBLIGATION_HELPERS["BundleGMOVPESourcePayloadLive"],

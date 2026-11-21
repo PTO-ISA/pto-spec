@@ -235,6 +235,36 @@ READABLE_SHARED_HELPER_RENAMES = {
     "TileDenseRowStrideBytes": "TileDenseRowBytes",
 }
 READABLE_SHARED_HELPER_CLASSIFICATION = "mechanical readable-helper rename"
+READABLE_TLSU_CALLER_RENAMES = {
+    f"InstructionContract{role}_{mnemonic}": contract_symbol(role, mnemonic)
+    for role in ("DenseStride", "GMAddress")
+    for mnemonic in ("TLOAD", "TSTORE")
+}
+# The frozen layout baseline predates the TSTORE (#398) and Scalar GM (#427)
+# changes. Preserve their exact caller changes when checking later renames.
+READABLE_TLSU_CALLER_CHANGES = {
+    "TileDenseRowStrideBytes": (
+        {("BundleTileInstructionOperands", "asl/block/model/dispatch/tile-schema.asl")},
+        {
+            ("BundleTileInstructionOperands", "asl/block/model/dispatch/tile-instruction-operands.asl"),
+            ("ExecuteBundleAtomicTSTOREOperation", "asl/block/model/dispatch/tlsu-atomic-tstore.asl"),
+        },
+    ),
+    "TileMemoryStridedByteAddress": (
+        {
+            ("TLOAD", "asl/tile/model/memory/load-store.asl"),
+            ("TSTORE", "asl/tile/model/memory/load-store.asl"),
+        },
+        {
+            ("ExecuteAtomicTStoreDirect", "asl/tile/model/memory/atomic-tstore.asl"),
+            ("ExecuteAtomicTStoreSnapshotProgress", "asl/tile/model/memory/atomic-tstore.asl"),
+            ("ExecuteTileStoreSnapshotProgress", "asl/tile/model/memory/load-store.asl"),
+            ("PreflightAtomicTStore", "asl/tile/model/memory/atomic-tstore.asl"),
+            ("TLOADToValue", "asl/tile/model/memory/load-store.asl"),
+            ("TileStoreFootprintIsValidated", "asl/tile/model/memory/load-store.asl"),
+        },
+    ),
+}
 BIAS = ("TMATMUL_BIAS", "TGEMV_BIAS", "TMATMUL_MX_BIAS", "TGEMV_MX_BIAS")
 INDEXED_TLSU = {
     "MGATHER", "MGATHER_MASK", "MGATHER_CAS",
@@ -3974,12 +4004,20 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 )
                 for path, body in old_bodies.items()
             }
-            old_caller_paths = sorted(path for _caller, path in _direct_callers(before_defs, name))
-            new_caller_paths = sorted(path for _caller, path in _direct_callers(after_defs, renamed))
+            old_callers = _direct_callers(before_defs, name)
+            new_callers = _direct_callers(after_defs, renamed)
+            expected_callers = {
+                (READABLE_TLSU_CALLER_RENAMES.get(caller, caller), path)
+                for caller, path in old_callers
+            }
+            removed, added = READABLE_TLSU_CALLER_CHANGES.get(name, (set(), set()))
+            if removed <= expected_callers:
+                expected_callers = (expected_callers - removed) | added
             valid = (
                 [(row["path"], row["layouts"]) for row in old_defs] ==
                 [(row["path"], row["layouts"]) for row in new_defs] and
-                normalized_old == new_bodies
+                normalized_old == new_bodies and
+                expected_callers == new_callers
             )
             if not valid:
                 errors.append(f"readable shared-helper rename mismatch: {name} -> {renamed}")
@@ -3991,8 +4029,8 @@ def _helper_deltas(before: dict[str, Any], after: dict[str, Any], before_defs: d
                 ),
                 "before": old_defs,
                 "after": new_defs,
-                "before_callers": sorted(_direct_callers(before_defs, name)),
-                "after_callers": sorted(_direct_callers(after_defs, renamed)),
+                "before_callers": sorted(old_callers),
+                "after_callers": sorted(new_callers),
             })
             continue
         old_defs, new_defs = before["helpers"].get(name, []), after["helpers"].get(name, [])
