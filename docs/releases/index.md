@@ -13,17 +13,15 @@ content and encoding fingerprints for that identity.
 
 ## Release candidate
 
-The `0.59.0` architecture candidate has first publication identity `0.59.0.0`.
-Its main themes are mask/predicate mechanisms and elementwise control flow,
-with the accepted atomic, reduction, scalar-encoding, and numeric changes since
-`v0.58.7.0`. The
-[compatibility boundary](../status/decisions/ADR-GOV-0014-0587-0-to-0590-compatibility.md)
-records the complete changed-owner inventory and the breaking migration impact.
+The `0.59.1` architecture candidate has first publication identity `0.59.1.0`.
+It includes scoped Scalar GM forms, strided atomic TSTORE, indexed TLSU range
+descriptors, Shared CUBE layout movement, and HSCB resident-worker launch
+geometry. The [compatibility boundary](../status/decisions/ADR-GOV-0015-0590-0-to-0591-compatibility.md)
+records the complete changed-owner inventory relative to `v0.59.0.0`.
 
-Current instruction applicability remains in the owning ASL/NDF. A candidate
-number does not establish release qualification: the signed `v0.59.0.0` tag and
-GitHub Release may be created only after the final candidate's complete Release
-workflow and artifact certification succeed.
+Current instruction applicability remains in the owning ASL/NDF. Qualification
+requires the final candidate's complete Release workflow and artifact
+certification.
 
 ## Evidence entry points
 

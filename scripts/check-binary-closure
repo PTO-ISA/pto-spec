@@ -14,13 +14,10 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.current_source_form_inventory import (  # noqa: E402
-    check_current_source_binary,
-    check_release_binary,
-)
+from scripts.current_source_form_inventory import check_current_source_binary  # noqa: E402
 
-EXPECTED_RELEASE = "0.59.0"
-EXPECTED_ENCODING_ABI = "pto-isa-0.59.0-mode-function-v1"
+EXPECTED_RELEASE = "0.59.1"
+EXPECTED_ENCODING_ABI = "pto-isa-0.59.1-mode-function-v1"
 
 
 def parse_args() -> argparse.Namespace:
@@ -28,7 +25,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--release",
         action="store_true",
-        help="also require the published release manifest to match current encodings",
+        help="also require the release candidate manifest to match current encodings",
     )
     return parser.parse_args()
 
@@ -60,9 +57,14 @@ def check_release_linkage() -> str:
             f"{manifest_encoding_hash}, computed {computed_encoding_hash}"
         )
     counts = manifest.get("catalog_counts", {})
-    if counts.get("scalar_forms") != 473 or counts.get("command_forms") != 105:
+    if (
+        counts.get("scalar_forms") != 473
+        or counts.get("scoped_scalar_forms") != 705
+        or counts.get("command_forms") != 105
+    ):
         raise SystemExit(
-            "release manifest scalar/command closure must remain exactly 473/105"
+            "release manifest unqualified Scalar/scoped Scalar/command closure "
+            "must remain exactly 473/705/105"
         )
     if counts.get("command_form_families") != {"CMD": 101, "BBD": 4}:
         raise SystemExit(
@@ -88,14 +90,10 @@ def main() -> int:
     except ValueError as error:
         raise SystemExit(str(error)) from error
     if args.release:
-        try:
-            release_count, release_fingerprint = check_release_binary(ROOT)
-        except ValueError as error:
-            raise SystemExit(str(error)) from error
         release_encoding = check_release_linkage()
         print(
             f"release binary closure passed: {current_count} current accepted forms, "
-            f"published identity {release_count} forms ({release_fingerprint}), "
+            f"current form fingerprint {current_fingerprint}, "
             f"release encoding {release_encoding}"
         )
     else:

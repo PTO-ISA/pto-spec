@@ -60,30 +60,30 @@ class ReleaseClosureTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "canonical GitHub HTTPS"):
             canonicalize("git@github.com:PTO-ISA/asl-model.git")
 
-    def test_release_identity_is_0590_and_owns_0590_evidence(self) -> None:
+    def test_release_identity_is_0591_and_owns_0591_evidence(self) -> None:
         specification = SPECIFICATION.read_text(encoding="utf-8")
         generator = RELEASE_GENERATOR.read_text(encoding="utf-8")
 
-        self.assertIn('architecture_version = "0.59.0"', specification)
-        self.assertIn('publication_version = "0.59.0.0"', specification)
+        self.assertIn('architecture_version = "0.59.1"', specification)
+        self.assertIn('publication_version = "0.59.1.0"', specification)
         self.assertIn(
-            'encoding_abi = "pto-isa-0.59.0-mode-function-v1"', specification
+            'encoding_abi = "pto-isa-0.59.1-mode-function-v1"', specification
         )
-        self.assertIn('RELEASE = "0.59.0"', generator)
+        self.assertIn('RELEASE = "0.59.1"', generator)
         self.assertIn(
-            'ENCODING_ABI = "pto-isa-0.59.0-mode-function-v1"', generator
+            'ENCODING_ABI = "pto-isa-0.59.1-mode-function-v1"', generator
         )
         self.assertIn(
-            'NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.59.0-ieee-v1"',
+            'NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.59.1-ieee-v1"',
             generator,
         )
-        self.assertIn("pto-isa-0590-encoding-totality.json", generator)
+        self.assertIn("pto-isa-0591-encoding-totality.json", generator)
 
-    def test_release_inventory_is_the_reviewed_0590_candidate(self) -> None:
+    def test_release_inventory_is_the_reviewed_0591_candidate(self) -> None:
         release = runpy.run_path(str(RELEASE_GENERATOR))
         self.assertEqual(
             release["FORM_COUNTS"],
-            {"scalar_forms": 473, "command_forms": 105},
+            {"scalar_forms": 473, "scoped_scalar_forms": 705, "command_forms": 105},
         )
         self.assertEqual(
             release["COMMAND_FAMILY_COUNTS"], {"CMD": 101, "BBD": 4}
@@ -214,9 +214,9 @@ class ReleaseClosureTest(unittest.TestCase):
         self.assertEqual(
             set(paths),
             {
-                "spec/evidence/pto-isa-0590-abi-vectors.json",
-                "spec/evidence/pto-isa-0590-encoding-totality.json",
-                "spec/evidence/pto-isa-0590-hardware-numeric-vectors.json",
+                "spec/evidence/pto-isa-0591-abi-vectors.json",
+                "spec/evidence/pto-isa-0591-encoding-totality.json",
+                "spec/evidence/pto-isa-0591-hardware-numeric-vectors.json",
                 "spec/evidence/architecture-readiness.json",
                 "spec/evidence/instruction-contract-closure.json",
                 "spec/evidence/release-gate-readiness.json",
