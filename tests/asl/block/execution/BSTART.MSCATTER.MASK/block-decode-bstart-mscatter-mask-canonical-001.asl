@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000011100010001000110000001', 32) == 25;
     assert CommandOperationOfForm(25) == CommandOperation_bstart_mscatter_mask_32_2a33eed646f7;
     assert CommandHandlerOfForm(25) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_BSTART_MSCATTER_MASK(CommandOperationOfForm(25));
-    assert InstructionContractHandler_BSTART_MSCATTER_MASK() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTMSCATTERMASKEncodingMatches(CommandOperationOfForm(25));
+    assert BSTARTMSCATTERMASKHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

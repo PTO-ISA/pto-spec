@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000100000111000000101011', 32) == 460;
     assert ScalarOperationOfForm(460) == ScalarOperation_TLB_IV;
     assert ScalarHandlerOfForm(460) == ScalarHandler_ExecuteMaintenance;
-    assert InstructionContractOperation_TLB_IV() == ScalarOperation_TLB_IV;
-    assert InstructionContractHandler_TLB_IV() == ScalarHandler_ExecuteMaintenance;
+    assert TLBIVOperation() == ScalarOperation_TLB_IV;
+    assert TLBIVHandler() == ScalarHandler_ExecuteMaintenance;
     assert DecodeScalarOperandRaw('000000000000000000000000000100000111000000101011', 460, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

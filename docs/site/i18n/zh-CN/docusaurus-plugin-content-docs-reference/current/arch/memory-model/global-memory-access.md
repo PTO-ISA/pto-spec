@@ -45,7 +45,7 @@ This page is a generated reference view of the normative ASL unit.
 
 该条款规定：被选中的 PE 访问在任何效果之前先被预检，且架构不定义它们之间的顺序。本文件既不含预检也不含顺序：传输执行体先探测每个元素，只有探测通过之后才记录或执行它；而该条款正是使得缺失的跨 PE 顺序成为已定义属性而不是遗漏的原因。因此，让两个参与 PE 触及相同 GM 字节的程序没有保证结果，必须避免该冲突。
 
-字节地址公式也不在这里计算。`asl/tile/model/memory/stride.asl` 中的 `TileMemoryStridedByteAddress` 先形成 `row_base` 为 `base_address + row * row_stride_bytes`，然后对四位数据加上 `column DIVRM 2`，否则加上 `column * TileElementBytes(data_type)`；`TileMemoryStridedByteHighNibble` 就是那个 `column MOD 2 == 1` 判定。`SharedStorePEMaskLegal` 的调用者例如有 `asl/tile/memory-and-data-movement/regular/TSTORE.asl` 与 `asl/block/model/dispatch/shared-tlsu.asl`。
+字节地址公式也不在这里计算。`asl/tile/model/memory/stride.asl` 中的 `TileElementAddress` 先形成 `row_base` 为 `base_address + row * row_stride_bytes`，然后对四位数据加上 `column DIVRM 2`，否则加上 `column * TileElementBytes(data_type)`；`TileMemoryStridedByteHighNibble` 就是那个 `column MOD 2 == 1` 判定。`SharedStorePEMaskLegal` 的调用者例如有 `asl/tile/memory-and-data-movement/regular/TSTORE.asl` 与 `asl/block/model/dispatch/shared-tlsu.asl`。
 
 <!-- PTO-READER-BLOCK: arch-gm-access-example role=example-usage -->
 ## 非规范性掩码示例

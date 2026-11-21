@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000001001010011000001000001', 32) == 65;
     assert CommandOperationOfForm(65) == CommandOperation_fret_stk_32_4fe246bd8241;
     assert CommandHandlerOfForm(65) == CommandHandler_ExecuteFrameReturnStack;
-    assert InstructionContractMatches_FRET_STK(CommandOperationOfForm(65));
-    assert InstructionContractHandler_FRET_STK() == CommandHandler_ExecuteFrameReturnStack;
+    assert FRETSTKEncodingMatches(CommandOperationOfForm(65));
+    assert FRETSTKHandler() == CommandHandler_ExecuteFrameReturnStack;
     return 0;
 end;

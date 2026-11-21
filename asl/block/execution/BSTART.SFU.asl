@@ -8,24 +8,24 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-BSTART-SFU-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_SFU(
+readonly func BSTARTSFUEncodingMatches(
     operation: CommandOperation) => boolean
 begin
-    return InstructionContractMatches_BSTART_TEPL(operation);
+    return BSTARTTEPLEncodingMatches(operation);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSTART_SFU() => CommandSemanticHandler
+readonly func BSTARTSFUHandler() => CommandSemanticHandler
 begin
-    return InstructionContractHandler_BSTART_TEPL();
+    return BSTARTTEPLHandler();
 end;
 
-pure func InstructionContractAliasEngine_BSTART_SFU() => TileExecutionEngine
+pure func BSTARTSFUAliasEngine() => TileExecutionEngine
 begin
     return TileEngine_SFU;
 end;
 
-pure func InstructionContractAcceptsTileOperation_BSTART_SFU(
+pure func BSTARTSFUAcceptsTileOperation(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
     return TileTEPLAliasAcceptsOperation(TileTEPLAlias_SFU, operation);

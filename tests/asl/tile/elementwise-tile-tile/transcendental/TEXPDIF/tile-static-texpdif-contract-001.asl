@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(117) == TileHandler_ExecuteTileExpdif;
     assert TileClassOfIndex(117) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(117) == TileEngine_SFU;
-    assert InstructionContractOperation_TEXPDIF() == TileOperation_TEXPDIF;
-    assert InstructionContractHandler_TEXPDIF() == TileHandler_ExecuteTileExpdif;
+    assert TEXPDIFOperation() == TileOperation_TEXPDIF;
+    assert TEXPDIFHandler() == TileHandler_ExecuteTileExpdif;
     return 0;
 end;

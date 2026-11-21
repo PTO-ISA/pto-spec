@@ -16,7 +16,7 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 0x0000000080000000;
     assert ReadTemporaryQueue(FALSE, 0) == Zeros{PTO_XLEN} + 0x0000000000000000;
-    assert InstructionContractResult_SUB(
+    assert SUBResult(
         Zeros{PTO_XLEN} + 0x0000000080000000,
         Zeros{PTO_XLEN} + 1,
         '11',

@@ -26,7 +26,7 @@ The division is total. A zero divisor and the signed minimum divided by `-1` bot
 <!-- PTO-READER-BLOCK: scalar-hl-rem-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `InstructionContractQuotient_HL_REM` and `InstructionContractRemainder_HL_REM`, which call `ScalarDivideSigned` and `ScalarRemainderSigned`. Dispatch calls `ExecuteScalarRemainderPair` with `signed_operation` true; that helper computes `quotient` and `remainder` first, then writes the remainder to `RegDst0` and the quotient to `RegDst1`.
+The owning ASL exposes `HLREMQuotient` and `HLREMRemainder`, which call `ScalarDivideSigned` and `ScalarRemainderSigned`. Dispatch calls `ExecuteScalarRemainderPair` with `signed_operation` true; that helper computes `quotient` and `remainder` first, then writes the remainder to `RegDst0` and the quotient to `RegDst1`.
 
 ```asm
 hl.rem SrcL, SrcR, ->Dst0, Dst1
@@ -122,7 +122,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.REM.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_REM() => ScalarOperation
+readonly func HLREMOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_REM;
 end;
@@ -133,11 +133,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.REM.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_REM() => ScalarSemanticHandler
+readonly func HLREMHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarRemainderPair;
 end;
-pure func InstructionContractQuotient_HL_REM(
+pure func HLREMQuotient(
     dividend: Word,
     divisor: Word)
     => Word
@@ -147,7 +147,7 @@ begin
         divisor);
 end;
 
-pure func InstructionContractRemainder_HL_REM(
+pure func HLREMRemainder(
     dividend: Word,
     divisor: Word)
     => Word
@@ -157,22 +157,22 @@ begin
         divisor);
 end;
 
-pure func InstructionContractDst0_HL_REM(
+pure func HLREMDst0(
     dividend: Word,
     divisor: Word)
     => Word
 begin
-    return InstructionContractRemainder_HL_REM(
+    return HLREMRemainder(
         dividend,
         divisor);
 end;
 
-pure func InstructionContractDst1_HL_REM(
+pure func HLREMDst1(
     dividend: Word,
     divisor: Word)
     => Word
 begin
-    return InstructionContractQuotient_HL_REM(
+    return HLREMQuotient(
         dividend,
         divisor);
 end;

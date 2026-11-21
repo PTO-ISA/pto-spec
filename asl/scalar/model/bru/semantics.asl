@@ -47,14 +47,14 @@ func ExecuteCompare(destination: Reg5Selector, condition: ScalarCondition,
 begin
     let result = if ConditionHolds(condition, left, right) then
         Zeros{PTO_XLEN} + 1 else Zeros{PTO_XLEN};
-    WriteScalarDestination(destination, result);
+    WriteReg5(destination, result);
 end;
 
 func ExecuteCompareLogical(destination: Reg5Selector, left: Word,
                            right: Word, combine_or: boolean)
 begin
     let logical_result = if combine_or then left OR right else left AND right;
-    WriteScalarDestination(destination,
+    WriteReg5(destination,
         if IsZero(logical_result) then Zeros{PTO_XLEN}
         else Zeros{PTO_XLEN} + 1);
 end;
@@ -92,5 +92,5 @@ end;
 
 func AddToPC(destination: Reg5Selector, page_offset: Word)
 begin
-    WriteScalarDestination(destination, ReadTPC() + LSL(page_offset, 12));
+    WriteReg5(destination, ReadTPC() + LSL(page_offset, 12));
 end;

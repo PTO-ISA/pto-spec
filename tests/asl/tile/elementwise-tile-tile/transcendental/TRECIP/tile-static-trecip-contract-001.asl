@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(18) == TileHandler_ExecuteTileUnary;
     assert TileClassOfIndex(18) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(18) == TileEngine_SFU;
-    assert InstructionContractOperation_TRECIP() == TileOperation_TRECIP;
-    assert InstructionContractHandler_TRECIP() == TileHandler_ExecuteTileUnary;
+    assert TRECIPOperation() == TileOperation_TRECIP;
+    assert TRECIPHandler() == TileHandler_ExecuteTileUnary;
     return 0;
 end;

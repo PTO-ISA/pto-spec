@@ -25,7 +25,7 @@ Its recorded summary is: SD.UMAX atomically replaces the aligned 64-bit memory v
 ## Atomic mechanism
 The instruction contract selects `ScalarHandler_AtomicReadModifyWrite` at width `8` and maps this operation to `Atomic_UMAX`. Scalar dispatch calls `AtomicReadModifyWrite`, which preflights the same address twice, reads, combines, and writes back; its return value is discarded.
 `Atomic_UMAX` compares `UInt(old_value)` with `UInt(operand)` and returns the larger.
-The helper returns the old memory value, but scalar dispatch passes `write_result` as `FALSE`, and the metadata helper `InstructionContractPublishesOldValue_SD_UMAX` also returns `FALSE`, so nothing is published.
+The helper returns the old memory value, but scalar dispatch passes `write_result` as `FALSE`, and the metadata helper `SDUMAXPublishesOldValue` also returns `FALSE`, so nothing is published.
 Design point: the read probe is built and checked before the write probe is built, so a permitted read with a refused write faults with memory untouched, before any load takes place.
 
 <!-- PTO-READER-BLOCK: scalar-sd-umax-inputs-outputs role=inputs-outputs -->
@@ -110,7 +110,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SD.UMAX.asl -->
 ```asl
-readonly func InstructionContractOperation_SD_UMAX() => ScalarOperation
+readonly func SDUMAXOperation() => ScalarOperation
 begin
     return ScalarOperation_SD_UMAX;
 end;
@@ -121,25 +121,25 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/SD.UMAX.asl -->
 ```asl
-readonly func InstructionContractHandler_SD_UMAX()
+readonly func SDUMAXHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_SD_UMAX()
+pure func SDUMAXAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_UMAX;
 end;
 
-pure func InstructionContractAtomicSizeBytes_SD_UMAX()
+pure func SDUMAXAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractPublishesOldValue_SD_UMAX()
+pure func SDUMAXPublishesOldValue()
     => boolean
 begin
     return FALSE;

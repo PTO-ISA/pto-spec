@@ -15,7 +15,7 @@ begin
 
     assert TileOperandsLegal_ExecuteTileScalar(
         TileBinary_AND, 1, 0, Zeros{PTO_XLEN} + 0x00ff);
-    InstructionContractExecute_TANDS(
+    ExecuteTANDS(
         1, 0, Zeros{PTO_XLEN} + 0x00ff);
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 0x008f;
     assert _Tiles[[1]].data_type == TileDataType_U16;

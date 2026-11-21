@@ -8,30 +8,30 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-C-CMP-NEI-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_C_CMP_NEI() => ScalarOperation
+readonly func CCMPNEIOperation() => ScalarOperation
 begin
     return ScalarOperation_C_CMP_NEI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_C_CMP_NEI() => ScalarSemanticHandler
+readonly func CCMPNEIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteCompare;
 end;
 
-pure func InstructionContractCondition_C_CMP_NEI()
+pure func CCMPNEICondition()
     => ScalarCondition
 begin
     return ScalarCondition_NE;
 end;
 
-pure func InstructionContractCompareResult_C_CMP_NEI(
+pure func CCMPNEIResult(
     left: Word,
     right: Word)
     => boolean
 begin
     return ConditionHolds(
-        InstructionContractCondition_C_CMP_NEI(),
+        CCMPNEICondition(),
         left,
         right);
 end;

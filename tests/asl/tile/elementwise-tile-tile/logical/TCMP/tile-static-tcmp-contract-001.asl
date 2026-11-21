@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(12) == TileHandler_ExecuteTileCompare;
     assert TileClassOfIndex(12) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(12) == TileEngine_VEC;
-    assert InstructionContractOperation_TCMP() == TileOperation_TCMP;
-    assert InstructionContractHandler_TCMP() == TileHandler_ExecuteTileCompare;
+    assert TCMPOperation() == TileOperation_TCMP;
+    assert TCMPHandler() == TileHandler_ExecuteTileCompare;
     return 0;
 end;

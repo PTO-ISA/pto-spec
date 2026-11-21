@@ -8,13 +8,13 @@
 // Fault_IllegalInstruction before effects.
 // NDF-END: PTO-C-BSTART-FP-CONTROL-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_C_BSTART_FP(operation: CommandOperation) => boolean
+readonly func CBSTARTFPEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_c_bstart_fp_16_9dcef7e3a85b);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractBranchTypeLegal_C_BSTART_FP(
+pure func CBSTARTFPBranchTypeLegal(
     branch_type: bits(3))
     => boolean
 begin
@@ -23,11 +23,11 @@ begin
            branch_type == '111';
 end;
 
-pure func InstructionContractTransfer_C_BSTART_FP(
+pure func CBSTARTFPTransfer(
     branch_type: bits(3))
     => BundleTransfer
 begin
-    assert InstructionContractBranchTypeLegal_C_BSTART_FP(branch_type);
+    assert CBSTARTFPBranchTypeLegal(branch_type);
     if branch_type == '001' then
         return BundleTransfer_Fallthrough;
     elsif branch_type == '101' then
@@ -37,7 +37,7 @@ begin
     end;
 end;
 
-readonly func InstructionContractHandler_C_BSTART_FP() => CommandSemanticHandler
+readonly func CBSTARTFPHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

@@ -2,13 +2,13 @@
 func main() => integer
 begin
     // TADD is operation index 0 and is assigned to VEC.
-    assert InstructionContractAcceptsTileOperation_BSTART_TEPL(0);
-    assert InstructionContractAcceptsTileOperation_BSTART_VEC(0);
-    assert !InstructionContractAcceptsTileOperation_BSTART_SFU(0);
+    assert BSTARTTEPLAcceptsTileOperation(0);
+    assert BSTARTVECAcceptsTileOperation(0);
+    assert !BSTARTSFUAcceptsTileOperation(0);
 
     // TEXP is operation index 16 and is assigned to SFU.
-    assert InstructionContractAcceptsTileOperation_BSTART_TEPL(16);
-    assert !InstructionContractAcceptsTileOperation_BSTART_VEC(16);
-    assert InstructionContractAcceptsTileOperation_BSTART_SFU(16);
+    assert BSTARTTEPLAcceptsTileOperation(16);
+    assert !BSTARTVECAcceptsTileOperation(16);
+    assert BSTARTSFUAcceptsTileOperation(16);
     return 0;
 end;

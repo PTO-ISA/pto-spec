@@ -26,7 +26,7 @@ The mnemonic names the unsigned reading of the operands, and the executable disp
 <!-- PTO-READER-BLOCK: scalar-mulu-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `InstructionContractResult_MULU`, which returns `MultiplyWord(left, right)`. The helper reduces every partial sum modulo `2^PTO_XLEN` while it accumulates, so the value it returns is the low XLEN bits of the exact product of the two source bit patterns.
+The owning ASL exposes `MULUResult`, which returns `MultiplyWord(left, right)`. The helper reduces every partial sum modulo `2^PTO_XLEN` while it accumulates, so the value it returns is the low XLEN bits of the exact product of the two source bit patterns.
 
 ```asm
 mulu SrcL, SrcR, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MULU.asl -->
 ```asl
-readonly func InstructionContractOperation_MULU() => ScalarOperation
+readonly func MULUOperation() => ScalarOperation
 begin
     return ScalarOperation_MULU;
 end;
@@ -127,11 +127,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MULU.asl -->
 ```asl
-readonly func InstructionContractHandler_MULU() => ScalarSemanticHandler
+readonly func MULUHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_MultiplyWord;
 end;
-pure func InstructionContractResult_MULU(left: Word, right: Word) => Word
+pure func MULUResult(left: Word, right: Word) => Word
 begin
     return MultiplyWord(left, right);
 end;

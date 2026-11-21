@@ -137,7 +137,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/HL.LWIP.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_LWIP() => ScalarOperation
+readonly func HLLWIPOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_LWIP;
 end;
@@ -148,49 +148,49 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/HL.LWIP.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_LWIP()
+readonly func HLLWIPHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarLoadPair;
 end;
 
-pure func InstructionContractAGUAction_HL_LWIP()
+pure func HLLWIPAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_LoadPair;
 end;
 
-pure func InstructionContractAGUAddressKind_HL_LWIP()
+pure func HLLWIPAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_Immediate;
 end;
 
-pure func InstructionContractAGUSizeBytes_HL_LWIP()
+pure func HLLWIPAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 4;
 end;
 
-pure func InstructionContractAGUOffsetScale_HL_LWIP()
+pure func HLLWIPAGUOffsetScale()
     => integer {0..3}
 begin
     return 2;
 end;
 
-pure func InstructionContractAGUUpdateMode_HL_LWIP()
+pure func HLLWIPAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_None;
 end;
 
-pure func InstructionContractAGUSignedLoad_HL_LWIP()
+pure func HLLWIPAGUSignedLoad()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_HL_LWIP()
+pure func HLLWIPAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

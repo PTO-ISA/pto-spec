@@ -21,8 +21,8 @@ It defines:
 
 - `ScalarSourceSelectorLegal` and `ScalarDestinationSelectorLegal`, which decide whether a selector is usable;
 - `ScalarImplicitSourceOperandsLegal`, which checks the hidden T#1 source of some compressed forms;
-- `ReadScalarRegisterOperand` and `ReadPEAbsoluteGPROperand`, which read a value;
-- `WriteScalarDestination` and `WriteCompressedTResult`, which publish a result.
+- `ReadReg5` and `ReadPEAbsoluteGPROperand`, which read a value;
+- `WriteReg5` and `WriteCompressedTResult`, which publish a result.
 
 <!-- PTO-READER-BLOCK: scalar-model-types-operands-concepts role=concepts-state -->
 ## Concepts and visible state
@@ -73,8 +73,8 @@ Start with the T queue holding A, B, C, and D at T#1 through T#4, all valid, and
 
 - An instruction that reads selector 25 gets B. The T queue does not change.
 - An instruction that reads selector 28 fails legality, because U#1 is not valid.
-- `WriteScalarDestination(31, X)` pushes X to T. T#1 is X, T#2 is A, T#3 is B, T#4 is C, and D is gone.
-- `WriteScalarDestination(26, Y)` does nothing, because 26 is a discard code.
+- `WriteReg5(31, X)` pushes X to T. T#1 is X, T#2 is A, T#3 is B, T#4 is C, and D is gone.
+- `WriteReg5(26, Y)` does nothing, because 26 is a discard code.
 
 <!-- PTO-READER-BLOCK: scalar-model-types-operands-related role=related-owners-navigation -->
 ## Related owners
@@ -130,7 +130,7 @@ begin
     end;
 end;
 
-readonly func ReadScalarRegisterOperand(selector: Reg5Selector) => Word
+readonly func ReadReg5(selector: Reg5Selector) => Word
 begin
     if selector < PTO_ABSOLUTE_GPR_COUNT then
         return ReadGPR(selector as GPRIndex);
@@ -153,7 +153,7 @@ begin
     return ReadPEGPR(pe, selector as GPRIndex);
 end;
 
-func WriteScalarDestination(selector: Reg5Selector, value: Word)
+func WriteReg5(selector: Reg5Selector, value: Word)
 begin
     if selector < PTO_ABSOLUTE_GPR_COUNT then
         WriteGPR(selector as GPRIndex, value);

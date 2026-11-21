@@ -135,7 +135,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/attributes/B.CATR.asl -->
 ```asl
-readonly func InstructionContractMatches_B_CATR(operation: CommandOperation) => boolean
+readonly func BCATREncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_b_catr_32_e90bd52fa480);
 end;
@@ -152,18 +152,18 @@ Optional header command after BSTART and before the first body instruction. At m
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/attributes/B.CATR.asl -->
 ```asl
-readonly func InstructionContractHandler_B_CATR() => CommandSemanticHandler
+readonly func BCATRHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleControlAttributes;
 end;
 
-pure func InstructionContractHeaderOnly_B_CATR()
+pure func BCATRHeaderOnly()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractDuplicateRejects_B_CATR()
+pure func BCATRDuplicateRejects()
     => boolean
 begin
     return TRUE;

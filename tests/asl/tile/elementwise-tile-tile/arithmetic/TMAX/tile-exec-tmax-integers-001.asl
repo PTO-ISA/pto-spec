@@ -13,16 +13,16 @@ begin
     ConfigureTmaxIntegerTiles(TileDataType_S8);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xff);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
-    assert InstructionContractOperandsLegal_TMAX(2, 0, 1);
-    InstructionContractExecute_TMAX(2, 0, 1);
+    assert TMAXOperandsLegal(2, 0, 1);
+    ExecuteTMAX(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 1;
 
     ResetProfileState();
     ConfigureTmaxIntegerTiles(TileDataType_U8);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xff);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
-    assert InstructionContractOperandsLegal_TMAX(2, 0, 1);
-    InstructionContractExecute_TMAX(2, 0, 1);
+    assert TMAXOperandsLegal(2, 0, 1);
+    ExecuteTMAX(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 0xff;
     return 0;
 end;

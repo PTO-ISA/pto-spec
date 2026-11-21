@@ -124,7 +124,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/operands/B.SUBVIEW.asl -->
 ```asl
-readonly func InstructionContractMatches_B_SUBVIEW(operation: CommandOperation) => boolean
+readonly func BSUBVIEWEncodingMatches(operation: CommandOperation) => boolean
 begin
     return operation == CommandOperation_b_subview_32_122000000001;
 end;
@@ -141,12 +141,12 @@ Immediately follows B.IOT or B.IOS and is contiguous with the associated modifie
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/operands/B.SUBVIEW.asl -->
 ```asl
-pure func InstructionContractSubviewSizeCodeIsAssigned_B_SUBVIEW(code: integer {0..15}) => boolean
+pure func BSUBVIEWSubviewSizeCodeIsAssigned(code: integer {0..15}) => boolean
 begin
     return 1 <= code && code <= 12;
 end;
 
-readonly func InstructionContractHandler_B_SUBVIEW() => CommandSemanticHandler
+readonly func BSUBVIEWHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ApplyBundleSubview;
 end;

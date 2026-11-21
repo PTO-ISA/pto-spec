@@ -25,7 +25,7 @@ The current instruction contract is owned by the ASL source linked above.
 ## 原子机制
 指令契约以宽度 `8` 选择 `ScalarHandler_AtomicReadModifyWrite`，并把该操作映射到 `Atomic_SMAX`。标量分派调用 `AtomicReadModifyWrite`：对同一地址做两次预检，然后读取、合并、写回；其返回值被丢弃。
 `Atomic_SMAX` 比较 `SInt(old_value)` 与 `SInt(operand)`，返回较大者。
-该辅助函数会返回内存旧值，但标量分派传入的 `write_result` 为 `FALSE`，且元数据辅助函数 `InstructionContractPublishesOldValue_SD_SMAX` 同样返回 `FALSE`，因此不会发布任何值。
+该辅助函数会返回内存旧值，但标量分派传入的 `write_result` 为 `FALSE`，且元数据辅助函数 `SDSMAXPublishesOldValue` 同样返回 `FALSE`，因此不会发布任何值。
 设计要点：先构造并检查读取预检，之后才构造写入预检，因此“读取被允许而写入被拒绝”会在任何加载发生之前、内存未被改动时报故障。
 
 <!-- PTO-READER-BLOCK: scalar-sd-smax-inputs-outputs role=inputs-outputs -->
@@ -110,7 +110,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SD.SMAX.asl -->
 ```asl
-readonly func InstructionContractOperation_SD_SMAX() => ScalarOperation
+readonly func SDSMAXOperation() => ScalarOperation
 begin
     return ScalarOperation_SD_SMAX;
 end;
@@ -121,25 +121,25 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/SD.SMAX.asl -->
 ```asl
-readonly func InstructionContractHandler_SD_SMAX()
+readonly func SDSMAXHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_SD_SMAX()
+pure func SDSMAXAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_SMAX;
 end;
 
-pure func InstructionContractAtomicSizeBytes_SD_SMAX()
+pure func SDSMAXAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractPublishesOldValue_SD_SMAX()
+pure func SDSMAXPublishesOldValue()
     => boolean
 begin
     return FALSE;

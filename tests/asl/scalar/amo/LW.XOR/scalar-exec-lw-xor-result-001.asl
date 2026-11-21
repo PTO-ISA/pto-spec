@@ -43,10 +43,10 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
 
-    assert InstructionContractAtomicOperation_LW_XOR() == Atomic_XOR;
-    assert InstructionContractAtomicSizeBytes_LW_XOR() == 4;
-    assert InstructionContractPublishesOldValue_LW_XOR();
-    assert InstructionContractSignExtendsOldValue_LW_XOR();
+    assert LWXORAtomicOperation() == Atomic_XOR;
+    assert LWXORAtomicSizeBytes() == 4;
+    assert LWXORPublishesOldValue();
+    assert LWXORSignExtendsOldValue();
 end;
 
 func main() => integer

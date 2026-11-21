@@ -12,8 +12,8 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(1) == Zeros{PTO_XLEN} + 0x7fffffff;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x44;
-    assert InstructionContractImmediateWidth_SUBIW() == 12;
-    assert InstructionContractImmediateIsUnsigned_SUBIW();
-    assert InstructionContractIsWordOperation_SUBIW();
+    assert SUBIWImmediateWidth() == 12;
+    assert SUBIWImmediateIsUnsigned();
+    assert SUBIWIsWordOperation();
     return 0;
 end;

@@ -103,74 +103,74 @@ begin
             ArchitectureEnterRequest(ScalarDecodedBits4(
                 instruction, form, ScalarField_RRA_Type));
         when ScalarOperation_ASSERT =>
-            ArchitectureAssert(ReadDecodedScalarRegister(
+            ArchitectureAssert(ReadDecodedReg5(
                 instruction, form, ScalarField_SrcL));
 
         when ScalarOperation_BC_IALL =>
             ExecuteMaintenance(Maintenance_BC_IALL, Zeros{PTO_XLEN});
         when ScalarOperation_BC_IVA =>
-            ExecuteMaintenance(Maintenance_BC_IVA, ReadDecodedScalarRegister(
+            ExecuteMaintenance(Maintenance_BC_IVA, ReadDecodedReg5(
                 instruction, form, ScalarField_SrcL));
         when ScalarOperation_DC_IALL =>
             ExecuteMaintenance(Maintenance_DC_IALL, Zeros{PTO_XLEN});
         when ScalarOperation_DC_IVA =>
-            ExecuteMaintenance(Maintenance_DC_IVA, ReadDecodedScalarRegister(
+            ExecuteMaintenance(Maintenance_DC_IVA, ReadDecodedReg5(
                 instruction, form, ScalarField_SrcL));
         when ScalarOperation_DC_ISW =>
-            ExecuteMaintenance(Maintenance_DC_ISW, ReadDecodedScalarRegister(
+            ExecuteMaintenance(Maintenance_DC_ISW, ReadDecodedReg5(
                 instruction, form, ScalarField_SrcL));
         when ScalarOperation_DC_ZVA =>
-            ExecuteMaintenance(Maintenance_DC_ZVA, ReadDecodedScalarRegister(
+            ExecuteMaintenance(Maintenance_DC_ZVA, ReadDecodedReg5(
                 instruction, form, ScalarField_SrcL));
         when ScalarOperation_DC_CVA =>
-            ExecuteMaintenance(Maintenance_DC_CVA, ReadDecodedScalarRegister(
+            ExecuteMaintenance(Maintenance_DC_CVA, ReadDecodedReg5(
                 instruction, form, ScalarField_SrcL));
         when ScalarOperation_DC_CIVA =>
-            ExecuteMaintenance(Maintenance_DC_CIVA, ReadDecodedScalarRegister(
+            ExecuteMaintenance(Maintenance_DC_CIVA, ReadDecodedReg5(
                 instruction, form, ScalarField_SrcL));
         when ScalarOperation_DC_CSW =>
-            ExecuteMaintenance(Maintenance_DC_CSW, ReadDecodedScalarRegister(
+            ExecuteMaintenance(Maintenance_DC_CSW, ReadDecodedReg5(
                 instruction, form, ScalarField_SrcL));
         when ScalarOperation_DC_CISW =>
-            ExecuteMaintenance(Maintenance_DC_CISW, ReadDecodedScalarRegister(
+            ExecuteMaintenance(Maintenance_DC_CISW, ReadDecodedReg5(
                 instruction, form, ScalarField_SrcL));
         when ScalarOperation_IC_IALL =>
             ExecuteMaintenance(Maintenance_IC_IALL, Zeros{PTO_XLEN});
         when ScalarOperation_IC_IVA =>
-            ExecuteMaintenance(Maintenance_IC_IVA, ReadDecodedScalarRegister(
+            ExecuteMaintenance(Maintenance_IC_IVA, ReadDecodedReg5(
                 instruction, form, ScalarField_SrcL));
         when ScalarOperation_TLB_IV =>
-            ExecuteMaintenance(Maintenance_TLB_IV, ReadDecodedScalarRegister(
+            ExecuteMaintenance(Maintenance_TLB_IV, ReadDecodedReg5(
                 instruction, form, ScalarField_SrcL));
         when ScalarOperation_TLB_IAV =>
-            ExecuteMaintenance(Maintenance_TLB_IAV, ReadDecodedScalarRegister(
+            ExecuteMaintenance(Maintenance_TLB_IAV, ReadDecodedReg5(
                 instruction, form, ScalarField_SrcL));
         when ScalarOperation_TLB_IA =>
-            ExecuteMaintenance(Maintenance_TLB_IA, ReadDecodedScalarRegister(
+            ExecuteMaintenance(Maintenance_TLB_IA, ReadDecodedReg5(
                 instruction, form, ScalarField_SrcL));
         when ScalarOperation_TLB_IALL =>
             ExecuteMaintenance(Maintenance_TLB_IALL, Zeros{PTO_XLEN});
 
         when ScalarOperation_BSE =>
             if MessageBufferEnabledForCurrentContext() then
-                ExecuteMessageBufferSend(ReadDecodedScalarRegister(
+                ExecuteMessageBufferSend(ReadDecodedReg5(
                     instruction, form, ScalarField_SrcL));
             else
                 ExecuteControlRequest(ExecutionControl_SendEvent,
-                    ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+                    ReadDecodedReg5(instruction, form, ScalarField_SrcL));
             end;
         when ScalarOperation_BWE =>
             ExecuteControlRequest(ExecutionControl_WaitEvent,
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL));
             // The enabled platform observes the issuing worker at publication;
             // its eligibility never delays architectural BWE retirement.
             HSCBObserveWaitEvent();
         when ScalarOperation_BWI =>
             ExecuteControlRequest(ExecutionControl_WaitInterrupt,
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL));
         when ScalarOperation_BWT =>
             ExecuteControlRequest(ExecutionControl_WaitTimeout,
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL));
 
         when ScalarOperation_C_EBREAK =>
             SoftwareBreakpoint(ScalarDecodedBits5(
@@ -191,37 +191,37 @@ begin
                     instruction, form, ScalarField_SSRID));
         when ScalarOperation_HL_SSRGET =>
             ExecuteSystemRegisterGet(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ScalarDecodedSystemRegisterAddress(
                     instruction, form, ScalarField_SSR_ID));
         when ScalarOperation_HL_SSRSET =>
             ExecuteSystemRegisterSet(
-                ScalarDecodedSelector(instruction, form, ScalarField_SrcL),
+                DecodeReg5(instruction, form, ScalarField_SrcL),
                 ScalarDecodedSystemRegisterAddress(
                     instruction, form, ScalarField_SSR_ID));
         when ScalarOperation_LSRGET =>
             ExecuteLocalStateRegisterGet(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 DecodeScalarOperandRaw(
                     instruction, form, ScalarField_LSR_ID)[11:0]);
         when ScalarOperation_SSRGET =>
             ExecuteSystemRegisterGet(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 ScalarDecodedSystemRegisterAddress(
                     instruction, form, ScalarField_SSR_ID));
         when ScalarOperation_SSRSET =>
             ExecuteSystemRegisterSet(
-                ScalarDecodedSelector(instruction, form, ScalarField_SrcL),
+                DecodeReg5(instruction, form, ScalarField_SrcL),
                 ScalarDecodedSystemRegisterAddress(
                     instruction, form, ScalarField_SSR_ID));
         when ScalarOperation_SSRSWAP =>
             ExecuteSystemRegisterSwap(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
-                ScalarDecodedSelector(instruction, form, ScalarField_SrcL),
+                DecodeReg5(instruction, form, ScalarField_RegDst),
+                DecodeReg5(instruction, form, ScalarField_SrcL),
                 ScalarDecodedSystemRegisterAddress(
                     instruction, form, ScalarField_SSR_ID));
         when ScalarOperation_SETC_TGT =>
-            SetCommitTarget(ReadDecodedScalarRegister(
+            SetCommitTarget(ReadDecodedReg5(
                 instruction, form, ScalarField_SrcL));
         otherwise => unreachable;
     end;

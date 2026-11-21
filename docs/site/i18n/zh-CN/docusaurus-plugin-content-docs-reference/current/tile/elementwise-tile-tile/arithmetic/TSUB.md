@@ -109,7 +109,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/arithmetic/TSUB.asl -->
 ```asl
-readonly func InstructionContractOperation_TSUB() => TileOperation
+readonly func TSUBOperation() => TileOperation
 begin
     return TileOperation_TSUB;
 end;
@@ -132,13 +132,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/arithmetic/TSUB.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TSUB(
+pure func TSUBDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TSUB(
+readonly func TSUBOperandsLegal(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex) => boolean
@@ -150,12 +150,12 @@ begin
         source_right);
 end;
 
-readonly func InstructionContractHandler_TSUB() => TileSemanticHandler
+readonly func TSUBHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TSUB(
+func ExecuteTSUB(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex)

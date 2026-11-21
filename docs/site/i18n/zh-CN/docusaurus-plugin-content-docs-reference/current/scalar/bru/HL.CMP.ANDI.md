@@ -114,7 +114,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/HL.CMP.ANDI.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_CMP_ANDI() => ScalarOperation
+readonly func HLCMPANDIOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_CMP_ANDI;
 end;
@@ -125,23 +125,23 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/HL.CMP.ANDI.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_CMP_ANDI() => ScalarSemanticHandler
+readonly func HLCMPANDIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteCompareLogical;
 end;
 
-pure func InstructionContractCombinesWithOR_HL_CMP_ANDI()
+pure func HLCMPANDICombinesWithOR()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractCompareLogicalValue_HL_CMP_ANDI(
+pure func HLCMPANDILogicalValue(
     left: Word,
     right: Word)
     => Word
 begin
-    if InstructionContractCombinesWithOR_HL_CMP_ANDI() then
+    if HLCMPANDICombinesWithOR() then
         return left OR right;
     end;
     return left AND right;

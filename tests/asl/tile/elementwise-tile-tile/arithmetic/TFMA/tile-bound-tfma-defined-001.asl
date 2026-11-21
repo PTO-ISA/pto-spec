@@ -8,7 +8,7 @@ begin
     end;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
-    assert !InstructionContractOperandsLegal_TFMA(0, 1, 2, 3);
+    assert !TFMAOperandsLegal(0, 1, 2, 3);
     assert !TileElementDefined(0, 0, 0);
     return 0;
 end;

@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000100000000000000101011', 32) == 18;
     assert ScalarOperationOfForm(18) == ScalarOperation_BWE;
     assert ScalarHandlerOfForm(18) == ScalarHandler_ExecuteControlRequest;
-    assert InstructionContractOperation_BWE() == ScalarOperation_BWE;
-    assert InstructionContractHandler_BWE() == ScalarHandler_ExecuteControlRequest;
+    assert BWEOperation() == ScalarOperation_BWE;
+    assert BWEHandler() == ScalarHandler_ExecuteControlRequest;
     assert DecodeScalarOperandRaw('000000000000000000000000000100000000000000101011', 18, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

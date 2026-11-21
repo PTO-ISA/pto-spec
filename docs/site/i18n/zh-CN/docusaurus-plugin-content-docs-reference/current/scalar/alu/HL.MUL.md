@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-mul-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `InstructionContractProduct_HL_MUL`，它返回 `MultiplyWideSigned(left, right)`。`InstructionContractLow_HL_MUL` 取该乘积的 `63:0` 位，`InstructionContractHigh_HL_MUL` 取 `127:64` 位。分派路径以 `signed_operation` 为真调用 `ExecuteScalarMultiplyPair`，得到相同的切片。
+所属 ASL 提供 `HLMULProduct`，它返回 `MultiplyWideSigned(left, right)`。`HLMULLow` 取该乘积的 `63:0` 位，`HLMULHigh` 取 `127:64` 位。分派路径以 `signed_operation` 为真调用 `ExecuteScalarMultiplyPair`，得到相同的切片。
 
 ```asm
 hl.mul SrcL, SrcR, ->Dst0, Dst1
@@ -122,7 +122,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.MUL.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_MUL() => ScalarOperation
+readonly func HLMULOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_MUL;
 end;
@@ -133,23 +133,23 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.MUL.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_MUL() => ScalarSemanticHandler
+readonly func HLMULHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarMultiplyPair;
 end;
-pure func InstructionContractProduct_HL_MUL(left: Word, right: Word) => DoubleWord
+pure func HLMULProduct(left: Word, right: Word) => DoubleWord
 begin
     return MultiplyWideSigned(left, right);
 end;
 
-pure func InstructionContractLow_HL_MUL(left: Word, right: Word) => Word
+pure func HLMULLow(left: Word, right: Word) => Word
 begin
-    return InstructionContractProduct_HL_MUL(left, right)[63:0];
+    return HLMULProduct(left, right)[63:0];
 end;
 
-pure func InstructionContractHigh_HL_MUL(left: Word, right: Word) => Word
+pure func HLMULHigh(left: Word, right: Word) => Word
 begin
-    return InstructionContractProduct_HL_MUL(left, right)[127:64];
+    return HLMULProduct(left, right)[127:64];
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->

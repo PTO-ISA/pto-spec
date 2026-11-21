@@ -3,9 +3,9 @@
 
 func main() => integer
 begin
-    assert DecodeScalarAddressRightModifier('00') == ScalarRight_None;
-    assert DecodeScalarAddressRightModifier('01') == ScalarRight_SignedWord;
-    assert DecodeScalarAddressRightModifier('10') == ScalarRight_UnsignedWord;
+    assert DecodeAddressModifier('00') == ScalarRight_None;
+    assert DecodeAddressModifier('01') == ScalarRight_SignedWord;
+    assert DecodeAddressModifier('10') == ScalarRight_UnsignedWord;
     assert ScalarFormOperandsLegal(Zeros{48} + 0x00007009, 370);
     assert ScalarFormOperandsLegal(Zeros{48} + 0x02007009, 370);
     assert ScalarFormOperandsLegal(Zeros{48} + 0x04007009, 370);

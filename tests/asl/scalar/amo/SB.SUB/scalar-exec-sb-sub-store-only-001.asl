@@ -50,9 +50,9 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_Release;
 
-    assert InstructionContractAtomicOperation_SB_SUB() == Atomic_SUB;
-    assert InstructionContractAtomicSizeBytes_SB_SUB() == 1;
-    assert !InstructionContractPublishesOldValue_SB_SUB();
+    assert SBSUBAtomicOperation() == Atomic_SUB;
+    assert SBSUBAtomicSizeBytes() == 1;
+    assert !SBSUBPublishesOldValue();
 end;
 
 func main() => integer

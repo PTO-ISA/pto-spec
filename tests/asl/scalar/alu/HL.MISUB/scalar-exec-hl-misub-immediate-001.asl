@@ -16,6 +16,6 @@ begin
     let execution = ExecuteScalarInstruction(instruction, 48);
     assert execution == ScalarExecution_Executed;
     assert ReadGPR(3) == Zeros{PTO_XLEN} - 7;
-    assert InstructionContractResult_HL_MISUB(left, right, immediate) == Zeros{PTO_XLEN} - 7;
+    assert HLMISUBResult(left, right, immediate) == Zeros{PTO_XLEN} - 7;
     return 0;
 end;

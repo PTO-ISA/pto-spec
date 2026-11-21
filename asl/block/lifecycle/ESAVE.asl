@@ -7,24 +7,24 @@
 // memory-command, trap-context, execution-context, or TPC state.
 // NDF-END: PTO-BLOCK-ESAVE-RESERVED-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_ESAVE(operation: CommandOperation)
+readonly func ESAVEEncodingMatches(operation: CommandOperation)
     => boolean
 begin
     return operation == CommandOperation_esave_32_4c4f79fe3171;
 end;
 
-pure func InstructionContractSupported_ESAVE() => boolean
+pure func ESAVESupported() => boolean
 begin
     return FALSE;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_ESAVE() => CommandSemanticHandler
+readonly func ESAVEHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SaveExecutionContext;
 end;
 
-pure func InstructionContractRejectsBeforeEffects_ESAVE() => boolean
+pure func ESAVERejectsBeforeEffects() => boolean
 begin
     return !CommandHandlerSupported(
         CommandHandler_SaveExecutionContext);

@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/ANDW.asl -->
 ```asl
-readonly func InstructionContractOperation_ANDW()
+readonly func ANDWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ANDW;
@@ -132,13 +132,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/ANDW.asl -->
 ```asl
-readonly func InstructionContractHandler_ANDW()
+readonly func ANDWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractRightModifier_ANDW(encoded: bits(2))
+pure func DecodeANDWRightModifier(encoded: bits(2))
     => ScalarRightModifier
 begin
     case encoded of
@@ -149,39 +149,39 @@ begin
     end;
 end;
 
-pure func InstructionContractPreparedRight_ANDW(
+pure func ANDWRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let modifier = InstructionContractRightModifier_ANDW(encoded_modifier);
-    let transformed = ApplyScalarRightModifier(right, modifier, TRUE);
+    let modifier = DecodeANDWRightModifier(encoded_modifier);
+    let transformed = ModifyScalarOperand(right, modifier, TRUE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func InstructionContractResult_ANDW(
+pure func ANDWResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = InstructionContractPreparedRight_ANDW(
+    let prepared_right = ANDWRightOperand(
         right,
         encoded_modifier,
         shift_amount);
     return ScalarBinaryW(ScalarBinary_AND, left, prepared_right);
 end;
 
-pure func InstructionContractIsLogicalFamily_ANDW()
+pure func ANDWIsLogicalFamily()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_ANDW()
+pure func ANDWIsWordOperation()
     => boolean
 begin
     return TRUE;

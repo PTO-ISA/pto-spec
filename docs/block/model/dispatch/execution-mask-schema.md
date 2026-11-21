@@ -352,10 +352,10 @@ begin
         return TRUE;
     end;
     let operation_sources = BundleExecutionMaskOperationGPRSourceCount(operation);
-    let mask_low = ReadScalarRegisterOperand(
+    let mask_low = ReadReg5(
         BundleExecutionMaskGPRSourceSelector(operation_sources));
     let mask_high = if _BundleExecutionMask.word_count == 2 then
-        ReadScalarRegisterOperand(
+        ReadReg5(
             BundleExecutionMaskGPRSourceSelector(
                 (operation_sources + 1) as integer {0..5}))
         else Zeros{PTO_XLEN};

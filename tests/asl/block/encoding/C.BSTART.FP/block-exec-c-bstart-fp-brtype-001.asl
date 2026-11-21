@@ -34,12 +34,12 @@ begin
     assert _BARG.transfer_type == BundleTransfer_Return;
     assert _BARG.bpcn == Zeros{PTO_XLEN} + 0x520;
 
-    assert InstructionContractBranchTypeLegal_C_BSTART_FP('001');
-    assert InstructionContractTransfer_C_BSTART_FP('001') ==
+    assert CBSTARTFPBranchTypeLegal('001');
+    assert CBSTARTFPTransfer('001') ==
         BundleTransfer_Fallthrough;
-    assert InstructionContractTransfer_C_BSTART_FP('101') ==
+    assert CBSTARTFPTransfer('101') ==
         BundleTransfer_Indirect;
-    assert InstructionContractTransfer_C_BSTART_FP('111') ==
+    assert CBSTARTFPTransfer('111') ==
         BundleTransfer_Return;
     return 0;
 end;

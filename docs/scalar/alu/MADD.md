@@ -26,7 +26,7 @@ The `L32` encoding class fixes the instruction length, not the operand width. Bo
 <!-- PTO-READER-BLOCK: scalar-madd-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `InstructionContractResult_MADD`, which returns `ScalarMultiplyAdd(addend, left, right)`. That helper is `addend + MultiplyWord(left, right)`, and `MultiplyWord` accumulates `left` shifted left by each set bit position of `right`, keeping the low `PTO_XLEN` bits of every partial sum.
+The owning ASL exposes `MADDResult`, which returns `ScalarMultiplyAdd(addend, left, right)`. That helper is `addend + MultiplyWord(left, right)`, and `MultiplyWord` accumulates `left` shifted left by each set bit position of `right`, keeping the low `PTO_XLEN` bits of every partial sum.
 
 ```asm
 madd SrcL, SrcR, SrcD, ->{t, u, Rd}
@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MADD.asl -->
 ```asl
-readonly func InstructionContractOperation_MADD() => ScalarOperation
+readonly func MADDOperation() => ScalarOperation
 begin
     return ScalarOperation_MADD;
 end;
@@ -131,11 +131,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MADD.asl -->
 ```asl
-readonly func InstructionContractHandler_MADD() => ScalarSemanticHandler
+readonly func MADDHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarMultiplyAdd;
 end;
-pure func InstructionContractResult_MADD(addend: Word, left: Word, right: Word) => Word
+pure func MADDResult(addend: Word, left: Word, right: Word) => Word
 begin
     return ScalarMultiplyAdd(addend, left, right);
 end;

@@ -9,24 +9,24 @@
 // encode zero.
 // NDF-END: PTO-BSTART-MSCATTER-MASK-SCHEMA-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_MSCATTER_MASK(operation: CommandOperation) => boolean
+readonly func BSTARTMSCATTERMASKEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_mscatter_mask_32_2a33eed646f7);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSTART_MSCATTER_MASK() => CommandSemanticHandler
+readonly func BSTARTMSCATTERMASKHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractStartedTileOperation_BSTART_MSCATTER_MASK()
+readonly func BSTARTMSCATTERMASKStartedTileOperation()
     => TileOperation
 begin
     return TileOperation_MSCATTER_MASK;
 end;
 
-pure func InstructionContractStartsTileBundle_BSTART_MSCATTER_MASK()
+pure func BSTARTMSCATTERMASKStartsTileBundle()
     => boolean
 begin
     return TRUE;

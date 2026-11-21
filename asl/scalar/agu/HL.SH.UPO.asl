@@ -8,55 +8,55 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-HL-SH-UPO-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_SH_UPO() => ScalarOperation
+readonly func HLSHUPOOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_SH_UPO;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_SH_UPO()
+readonly func HLSHUPOHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStore;
 end;
 
-pure func InstructionContractAGUAction_HL_SH_UPO()
+pure func HLSHUPOAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Store;
 end;
 
-pure func InstructionContractAGUAddressKind_HL_SH_UPO()
+pure func HLSHUPOAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_Register;
 end;
 
-pure func InstructionContractAGUSizeBytes_HL_SH_UPO()
+pure func HLSHUPOAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 2;
 end;
 
-pure func InstructionContractAGUOffsetScale_HL_SH_UPO()
+pure func HLSHUPOAGUOffsetScale()
     => integer {0..3}
 begin
     return 0;
 end;
 
-pure func InstructionContractAGUUpdateMode_HL_SH_UPO()
+pure func HLSHUPOAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_PostIndex;
 end;
 
-pure func InstructionContractAGUSignedLoad_HL_SH_UPO()
+pure func HLSHUPOAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_HL_SH_UPO()
+pure func HLSHUPOAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

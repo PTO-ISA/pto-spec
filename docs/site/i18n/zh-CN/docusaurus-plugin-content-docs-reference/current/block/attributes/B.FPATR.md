@@ -186,7 +186,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/attributes/B.FPATR.asl -->
 ```asl
-readonly func InstructionContractMatches_B_FPATR(operation: CommandOperation) => boolean
+readonly func BFPATREncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_b_fpatr_32_30c307e06d4a);
 end;
@@ -450,18 +450,18 @@ begin
     return TRUE;
 end;
 
-readonly func InstructionContractHandler_B_FPATR() => CommandSemanticHandler
+readonly func BFPATRHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleFixedPointAttributes;
 end;
 
-pure func InstructionContractHeaderOnly_B_FPATR()
+pure func BFPATRHeaderOnly()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractDuplicateRejects_B_FPATR()
+pure func BFPATRDuplicateRejects()
     => boolean
 begin
     return TRUE;

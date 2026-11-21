@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/C.ZEXT.B.asl -->
 ```asl
-readonly func InstructionContractOperation_C_ZEXT_B() => ScalarOperation
+readonly func CZEXTBOperation() => ScalarOperation
 begin
     return ScalarOperation_C_ZEXT_B;
 end;
@@ -114,12 +114,12 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/C.ZEXT.B.asl -->
 ```asl
-readonly func InstructionContractHandler_C_ZEXT_B() => ScalarSemanticHandler
+readonly func CZEXTBHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExtendScalarValue;
 end;
 
-pure func InstructionContractResult_C_ZEXT_B(value: Word)
+pure func CZEXTBResult(value: Word)
     => Word
 begin
     return ExtendScalarValue(

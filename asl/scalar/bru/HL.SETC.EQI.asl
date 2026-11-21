@@ -8,30 +8,30 @@
 // BARG.TAKEN. A rejected occurrence MUST NOT consume the shared marker.
 // NDF-END: PTO-HL-SETC-EQI-CONDITIONAL-SETTER-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_SETC_EQI() => ScalarOperation
+readonly func HLSETCEQIOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_SETC_EQI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_SETC_EQI() => ScalarSemanticHandler
+readonly func HLSETCEQIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommit;
 end;
 
-pure func InstructionContractCondition_HL_SETC_EQI()
+pure func HLSETCEQICondition()
     => ScalarCondition
 begin
     return ScalarCondition_EQ;
 end;
 
-pure func InstructionContractCommitResult_HL_SETC_EQI(
+pure func CommitHLSETCEQIResult(
     left: Word,
     right: Word)
     => boolean
 begin
     return ConditionHolds(
-        InstructionContractCondition_HL_SETC_EQI(),
+        HLSETCEQICondition(),
         left,
         right);
 end;

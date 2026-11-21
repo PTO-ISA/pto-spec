@@ -121,12 +121,12 @@ begin
         aligned_tpc[1:0] = Zeros{2};
         return aligned_tpc;
     elsif address_kind == ScalarAGU_Compressed then
-        return ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL);
+        return ReadDecodedReg5(instruction, form, ScalarField_SrcL);
     elsif (action == ScalarAGU_Store || action == ScalarAGU_StorePair) &&
           address_kind == ScalarAGU_Immediate then
-        return ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR);
+        return ReadDecodedReg5(instruction, form, ScalarField_SrcR);
     else
-        return ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL);
+        return ReadDecodedReg5(instruction, form, ScalarField_SrcL);
     end;
 end;
 
@@ -136,8 +136,8 @@ readonly func ScalarDecodedAGUOffset(
 begin
     let scale = ScalarAGUOffsetScaleOfForm(form);
     if address_kind == ScalarAGU_Register then
-        let unshifted = ApplyScalarRightModifier(
-            ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+        let unshifted = ModifyScalarOperand(
+            ReadDecodedReg5(instruction, form, ScalarField_SrcR),
             ScalarDecodedAddressRightModifier(instruction, form), FALSE);
         let shift_amount = if ScalarOperandPresent(form, ScalarField_shamt) then
             ScalarDecodedUInt6(instruction, form, ScalarField_shamt)
@@ -180,15 +180,15 @@ begin
         if ScalarAGUAddressKindOfForm(form) == ScalarAGU_Compressed then
             WriteCompressedTResult(normalized);
         elsif update_mode == AddressUpdate_None then
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst),
                 normalized);
         else
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst0),
                 normalized);
-            WriteScalarDestination(
-                ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
+            WriteReg5(
+                DecodeReg5(instruction, form, ScalarField_RegDst1),
                 updated_base);
         end;
     end;
@@ -211,12 +211,12 @@ begin
         MemoryOrder_Relaxed);
     RecordLoadEvent(second_probe.translated_address, size_bytes, second,
         MemoryOrder_Relaxed);
-    WriteScalarDestination(
-        ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
+    WriteReg5(
+        DecodeReg5(instruction, form, ScalarField_RegDst0),
         NormalizeScalarLoadResult(first, size_bytes,
             ScalarAGUSignedLoadOfForm(form)));
-    WriteScalarDestination(
-        ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
+    WriteReg5(
+        DecodeReg5(instruction, form, ScalarField_RegDst1),
         NormalizeScalarLoadResult(second, size_bytes,
             ScalarAGUSignedLoadOfForm(form)));
 end;
@@ -225,11 +225,11 @@ readonly func ReadDecodedAGUStoreSource(
     instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1}) => Word
 begin
     if ScalarOperandPresent(form, ScalarField_SrcD) then
-        return ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD);
+        return ReadDecodedReg5(instruction, form, ScalarField_SrcD);
     elsif ScalarAGUAddressKindOfForm(form) == ScalarAGU_Compressed then
-        return ReadScalarRegisterOperand(24);
+        return ReadReg5(24);
     else
-        return ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL);
+        return ReadDecodedReg5(instruction, form, ScalarField_SrcL);
     end;
 end;
 
@@ -241,8 +241,8 @@ begin
     let source = ReadDecodedAGUStoreSource(instruction, form);
     Store(address, size_bytes, source);
     if _LastFault == Fault_None && update_mode != AddressUpdate_None then
-        WriteScalarDestination(
-            ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+        WriteReg5(
+            DecodeReg5(instruction, form, ScalarField_RegDst),
             updated_base);
     end;
 end;
@@ -258,8 +258,8 @@ begin
     let second_probe = ProbeDataAccess(
         second_address, size_bytes, size_bytes, TRUE);
     if RaiseDataAccessFault(second_probe, second_address) then return; end;
-    let first = ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD);
-    let second = ReadDecodedScalarRegister(instruction, form, ScalarField_SrcD1);
+    let first = ReadDecodedReg5(instruction, form, ScalarField_SrcD);
+    let second = ReadDecodedReg5(instruction, form, ScalarField_SrcD1);
     StoreTranslated(address, first_probe.translated_address, size_bytes, first);
     RecordStoreEvent(first_probe.translated_address, size_bytes, first,
         MemoryOrder_Relaxed);
@@ -299,8 +299,8 @@ begin
                 instruction, form, ScalarField_model)[4:0];
             ScalarPrefetch(base, offset, size_bytes, model);
             if ScalarAGUPrefetchReturnsAddress(form) then
-                WriteScalarDestination(
-                    ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+                WriteReg5(
+                    DecodeReg5(instruction, form, ScalarField_RegDst),
                     ScalarPrefetchAddress(base, offset));
             end;
     end;

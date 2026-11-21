@@ -131,7 +131,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl -->
 ```asl
-readonly func InstructionContractOperation_TROWARGMIN() => TileOperation
+readonly func TROWARGMINOperation() => TileOperation
 begin
     return TileOperation_TROWARGMIN;
 end;
@@ -154,13 +154,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/reduce-and-expand/row-reduction/TROWARGMIN.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TROWARGMIN(
+pure func TROWARGMINDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileArgReductionSourceDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TROWARGMIN(
+readonly func TROWARGMINOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -171,16 +171,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TROWARGMIN() => TileSemanticHandler
+readonly func TROWARGMINHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileReduction;
 end;
 
-func InstructionContractExecute_TROWARGMIN(
+func ExecuteTROWARGMIN(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TROWARGMIN(
+    assert TROWARGMINOperandsLegal(
         destination,
         source);
     ExecuteTileReduction(

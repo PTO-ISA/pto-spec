@@ -7,19 +7,19 @@
 // The complete BSTART, B.DIM, B.DATR, layout, PE-mask, integer DIV, numeric-status, padding, alias, snapshot, and atomic-publication rules remain unchanged.
 // NDF-END: PTO-TCOLEXPANDMAX-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TCOLEXPANDMAX() => TileOperation
+readonly func TCOLEXPANDMAXOperation() => TileOperation
 begin
     return TileOperation_TCOLEXPANDMAX;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TCOLEXPANDMAX(
+pure func TCOLEXPANDMAXDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TCOLEXPANDMAX(
+readonly func TCOLEXPANDMAXOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex) => boolean
@@ -32,17 +32,17 @@ begin
         broadcast);
 end;
 
-readonly func InstructionContractHandler_TCOLEXPANDMAX() => TileSemanticHandler
+readonly func TCOLEXPANDMAXHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;
 
-func InstructionContractExecute_TCOLEXPANDMAX(
+func ExecuteTCOLEXPANDMAX(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TCOLEXPANDMAX(
+    assert TCOLEXPANDMAXOperandsLegal(
         destination,
         source,
         broadcast);

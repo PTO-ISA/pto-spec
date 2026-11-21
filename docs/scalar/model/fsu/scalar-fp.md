@@ -17,7 +17,7 @@ This page is a generated reference view of the normative ASL unit.
 
 This unit fixes the parts of scalar floating-point execution that do not depend on a numeric implementation: carriers, type codes, rounding-mode and flag access, NaN classification, comparison, and `FMIN`/`FMAX`. Arithmetic that does need a numeric implementation crosses an explicit profile hook defined here, such as `ScalarFPBinaryProfile` or `ScalarFPConvertProfile`.
 
-[FSU dispatch](../dispatch/fsu.md) calls these functions. Tile units also call two hooks: `ScalarFPBinaryProfile` from elementwise execution and `ScalarFPFusedProfile` from fused multiply-add.
+[FSU dispatch](../dispatch/fsu.md) calls these functions. Tile units also call two hooks: `ScalarFPBinaryProfile` from elementwise execution and `FPMulAdd` from fused multiply-add.
 
 <!-- PTO-READER-BLOCK: scalar-model-fsu-scalar-fp-concepts role=concepts-state -->
 ## Concepts and visible state
@@ -50,12 +50,12 @@ Design point: comparisons are ordered, so `FNE` of a NaN is FALSE, not the negat
 
 Design point: min and max give zero signs an order, so `FMIN(-0.0, +0.0)` and `FMIN(+0.0, -0.0)` both return -0.0. The result does not depend on operand order.
 
-Each profile hook asserts on the type codes it supports. `ScalarFPBinaryProfile` and `ScalarFPUnaryProfile` accept FP64, FP32, FP16 (code 4), and BF16 (code 5). `ScalarFPFusedProfile` accepts FP64, FP32, and FP16. The three conversion hooks delegate to `ReferenceCommonConvert` with saturation disabled.
+Each profile hook asserts on the type codes it supports. `ScalarFPBinaryProfile` and `ScalarFPUnaryProfile` accept FP64, FP32, FP16 (code 4), and BF16 (code 5). `FPMulAdd` accepts FP64, FP32, and FP16. The three conversion hooks delegate to `ReferenceCommonConvert` with saturation disabled.
 
 <!-- PTO-READER-BLOCK: scalar-model-fsu-scalar-fp-boundaries role=boundaries -->
 ## Architectural boundaries
 
-Decoded scalar FSU forms reach the binary, unary, and fused hooks only with FP64 or FP32; decoded conversions can also pass FP16 and E4M3 to the conversion hooks. The FP16 and BF16 codes of `ScalarFPBinaryProfile` and the FP16 code of `ScalarFPFusedProfile` serve tile elementwise execution and fused multiply-add. `ScalarFPUnaryProfile` has no tile caller, so its FP16 and BF16 codes are not reached.
+Decoded scalar FSU forms reach the binary, unary, and fused hooks only with FP64 or FP32; decoded conversions can also pass FP16 and E4M3 to the conversion hooks. The FP16 and BF16 codes of `ScalarFPBinaryProfile` and the FP16 code of `FPMulAdd` serve tile elementwise execution and fused multiply-add. `ScalarFPUnaryProfile` has no tile caller, so its FP16 and BF16 codes are not reached.
 
 The `FloatingBinary_MIN` and `FloatingBinary_MAX` arms inside `ScalarFPBinaryProfile` are marked by an ASL comment as not reached by decoded `FMIN`/`FMAX`; dispatch uses `ScalarFPMinMax` instead.
 
@@ -515,14 +515,14 @@ begin
         operation, rounding_mode, source_type, value);
 end;
 
-func ScalarFPFusedProfile(operation: FloatingFusedOperation,
+func FPMulAdd(operation: FloatingFusedOperation,
                                           rounding_mode: NumericRoundingMode,
                                           source_type: bits(5), addend: Word,
                                           left: Word, right: Word)
                                           => (Word, bits(5))
 begin
     assert ScalarFPTypeCodeSupported(source_type) || source_type == '00100';
-    return ReferenceScalarFPFusedProfile(
+    return ReferenceFPMulAdd(
         operation, rounding_mode, source_type, addend, left, right);
 end;
 

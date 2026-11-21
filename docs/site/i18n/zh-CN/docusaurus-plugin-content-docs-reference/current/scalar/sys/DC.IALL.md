@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-iall-mechanism role=mechanism -->
 ## 系统机制
 
-该指令选择共用的维护处理程序（`asl/scalar/sys/DC.IALL.asl:11`）与操作令牌 `Maintenance_DC_IALL`（`asl/scalar/sys/DC.IALL.asl:23`）。由于 `InstructionContractMaintenanceUsesOperand_DC_IALL` 返回 `FALSE`（`asl/scalar/sys/DC.IALL.asl:29`），派发器传入 `Zeros{PTO_XLEN}`，而不读取寄存器（`asl/scalar/model/dispatch/sys.asl:23`）。
+该指令选择共用的维护处理程序（`asl/scalar/sys/DC.IALL.asl:11`）与操作令牌 `Maintenance_DC_IALL`（`asl/scalar/sys/DC.IALL.asl:23`）。由于 `DCIALLMaintenanceUsesOperand` 返回 `FALSE`（`asl/scalar/sys/DC.IALL.asl:29`），派发器传入 `Zeros{PTO_XLEN}`，而不读取寄存器（`asl/scalar/model/dispatch/sys.asl:23`）。
 
 这一行派发代码就是它与 `DC.IVA` 及其同类指令的实际差别：完全不读取标量寄存器，因此某个恰好为空的临时队列不会让这条指令变得非法。
 
@@ -86,7 +86,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.IALL.asl -->
 ```asl
-readonly func InstructionContractOperation_DC_IALL()
+readonly func DCIALLOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DC_IALL;
@@ -104,31 +104,31 @@ DC.IALL executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.IALL.asl -->
 ```asl
-readonly func InstructionContractHandler_DC_IALL()
+readonly func DCIALLHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_DC_IALL()
+pure func DCIALLRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_DC_IALL()
+pure func DCIALLMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_DC_IALL;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_DC_IALL()
+pure func DCIALLMaintenanceUsesOperand()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_DC_IALL()
+pure func DCIALLMaintenanceRequiresRootRing()
     => boolean
 begin
     return FALSE;

@@ -114,7 +114,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/arithmetic/TMAX.asl -->
 ```asl
-readonly func InstructionContractOperation_TMAX() => TileOperation
+readonly func TMAXOperation() => TileOperation
 begin
     return TileOperation_TMAX;
 end;
@@ -137,13 +137,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/arithmetic/TMAX.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TMAX(
+pure func TMAXDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TMAX(
+readonly func TMAXOperandsLegal(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex) => boolean
@@ -155,12 +155,12 @@ begin
         source_right);
 end;
 
-pure func InstructionContractFloatingValue_TMAX(
+pure func TMAXFloatingValue(
     data_type: TileDataType,
     source_left: Word,
     source_right: Word) => (Word, boolean)
 begin
-    assert InstructionContractDataTypeLegal_TMAX(data_type);
+    assert TMAXDataTypeLegal(data_type);
     assert TileDataTypeIsFloating(data_type);
     return TileFloatingMinMaxValue(
         TileBinary_MAX,
@@ -169,12 +169,12 @@ begin
         source_right);
 end;
 
-readonly func InstructionContractHandler_TMAX() => TileSemanticHandler
+readonly func TMAXHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TMAX(
+func ExecuteTMAX(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex)

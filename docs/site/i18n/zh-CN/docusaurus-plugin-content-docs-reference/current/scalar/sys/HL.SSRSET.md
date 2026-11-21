@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-mechanism role=mechanism -->
 ## 系统机制
 
-`InstructionContractHandler_HL_SSRSET` 选择 `ScalarHandler_ExecuteSystemRegisterSet`（`asl/scalar/sys/HL.SSRSET.asl:18`），`InstructionContractSystemAddressWidth_HL_SSRSET` 把地址宽度固定为 24（`asl/scalar/sys/HL.SSRSET.asl:36`）。48 位汇编形式把地址携带为两个 12 位片段，派发器在调用之前把它们重新组合（`asl/scalar/model/dispatch/sys.asl:96`）。
+`HLSSRSETHandler` 选择 `ScalarHandler_ExecuteSystemRegisterSet`（`asl/scalar/sys/HL.SSRSET.asl:18`），`HLSSRSETSystemAddressWidth` 把地址宽度固定为 24（`asl/scalar/sys/HL.SSRSET.asl:36`）。48 位汇编形式把地址携带为两个 12 位片段，派发器在调用之前把它们重新组合（`asl/scalar/model/dispatch/sys.asl:96`）。
 
 该辅助函数先预检普通写权限；对于 MSGB，还会在读取源之前检查 kernel 上下文、Block 属性和更早的可故障工作。因此被拒绝或阻塞的尝试不会读取 Reg5 值。
 
@@ -33,7 +33,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `SrcL` 是来自 R0..R23、T#1..T#4 或 U#1..U#4 的 Reg5 源，`SSR_ID` 是 24 位寄存器地址（`asl/scalar/sys/HL.SSRSET.asl:1`）。没有目的地操作数。
 
-`InstructionContractPushesTemporaryT_HL_SSRSET` 返回 `FALSE`（`asl/scalar/sys/HL.SSRSET.asl:42`），且该指令没有目的地操作数，因此不写任何临时队列。`SrcL` 中的编码零命名架构零 GPR，它是已分配的值，也是写零的合法方式。
+`HLSSRSETPushesTemporaryT` 返回 `FALSE`（`asl/scalar/sys/HL.SSRSET.asl:42`），且该指令没有目的地操作数，因此不写任何临时队列。`SrcL` 中的编码零命名架构零 GPR，它是已分配的值，也是写零的合法方式。
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrset-effects role=effects -->
 ## 架构效果
@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/HL.SSRSET.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_SSRSET()
+readonly func HLSSRSETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_HL_SSRSET;
@@ -121,31 +121,31 @@ HL.SSRSET executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/HL.SSRSET.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_SSRSET()
+readonly func HLSSRSETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterSet;
 end;
 
-pure func InstructionContractRequiresSystemBlock_HL_SSRSET()
+pure func HLSSRSETRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSystemTransferKind_HL_SSRSET()
+pure func HLSSRSETSystemTransferKind()
     => bits(2)
 begin
     return '01';
 end;
 
-pure func InstructionContractSystemAddressWidth_HL_SSRSET()
+pure func HLSSRSETSystemAddressWidth()
     => integer {5,12,24}
 begin
     return 24;
 end;
 
-pure func InstructionContractPushesTemporaryT_HL_SSRSET()
+pure func HLSSRSETPushesTemporaryT()
     => boolean
 begin
     return FALSE;

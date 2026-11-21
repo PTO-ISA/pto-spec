@@ -125,7 +125,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/SUBIW.asl -->
 ```asl
-readonly func InstructionContractOperation_SUBIW()
+readonly func SUBIWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SUBIW;
@@ -137,25 +137,25 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/SUBIW.asl -->
 ```asl
-readonly func InstructionContractHandler_SUBIW()
+readonly func SUBIWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractImmediateWidth_SUBIW()
+pure func SUBIWImmediateWidth()
     => integer {1..64}
 begin
     return 12;
 end;
 
-pure func InstructionContractImmediateIsUnsigned_SUBIW()
+pure func SUBIWImmediateIsUnsigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_SUBIW()
+pure func SUBIWIsWordOperation()
     => boolean
 begin
     return TRUE;

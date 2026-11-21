@@ -13,6 +13,6 @@ begin
     let execution = ExecuteScalarInstruction(instruction, 32);
     assert execution == ScalarExecution_Executed;
     assert ReadGPR(3) == Zeros{PTO_XLEN} - 2;
-    assert InstructionContractResult_DIVW(dividend, divisor) == Zeros{PTO_XLEN} - 2;
+    assert DIVWResult(dividend, divisor) == Zeros{PTO_XLEN} - 2;
     return 0;
 end;

@@ -7,24 +7,24 @@
 // TYPE, and TAKEN as inapplicable non-selecting state.
 // NDF-END: PTO-BSTART-SYS-CONTROL-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_SYS(operation: CommandOperation) => boolean
+readonly func BSTARTSYSEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_sys_32_762d9d84a6d8);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSTART_SYS() => CommandSemanticHandler
+readonly func BSTARTSYSHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractBundleKind_BSTART_SYS()
+readonly func BSTARTSYSBundleKind()
     => BundleKind
 begin
     return BundleKind_System;
 end;
 
-pure func InstructionContractStartsBundle_BSTART_SYS()
+pure func BSTARTSYSStartsBundle()
     => boolean
 begin
     return TRUE;

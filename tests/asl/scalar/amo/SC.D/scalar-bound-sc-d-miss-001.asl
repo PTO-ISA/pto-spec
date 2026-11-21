@@ -26,8 +26,8 @@ begin
     assert !_ReservationValid;
     assert _MemoryEventCount == 0;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x84;
-    assert InstructionContractMissStatus_SC_D() == Zeros{PTO_XLEN} + 1;
-    assert InstructionContractMissIsProbeFree_SC_D();
+    assert SCDMissStatus() == Zeros{PTO_XLEN} + 1;
+    assert SCDMissIsProbeFree();
 end;
 
 func main() => integer

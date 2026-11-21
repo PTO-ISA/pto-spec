@@ -112,7 +112,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TRELU.asl -->
 ```asl
-readonly func InstructionContractOperation_TRELU() => TileOperation
+readonly func TRELUOperation() => TileOperation
 begin
     return TileOperation_TRELU;
 end;
@@ -135,13 +135,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/logical/TRELU.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TRELU(
+pure func TRELUDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileTReluDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TRELU(
+readonly func TRELUOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -151,7 +151,7 @@ begin
         source);
 end;
 
-pure func InstructionContractValue_TRELU(
+pure func TRELUValue(
     data_type: TileDataType,
     source: Word) => (Word, boolean)
 begin
@@ -161,12 +161,12 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TRELU() => TileSemanticHandler
+readonly func TRELUHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;
 
-func InstructionContractExecute_TRELU(
+func ExecuteTRELU(
     destination: TileIndex,
     source: TileIndex)
 begin

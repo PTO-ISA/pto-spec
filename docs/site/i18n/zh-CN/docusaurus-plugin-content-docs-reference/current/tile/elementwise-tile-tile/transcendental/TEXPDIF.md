@@ -175,7 +175,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl -->
 ```asl
-readonly func InstructionContractOperation_TEXPDIF() => TileOperation
+readonly func TEXPDIFOperation() => TileOperation
 begin
     return TileOperation_TEXPDIF;
 end;
@@ -197,7 +197,7 @@ B.IOT SrcTile0, SrcTile1, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/transcendental/TEXPDIF.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TEXPDIF(
+pure func TEXPDIFDataTypeLegal(
     source_operation_type: TileDataType,
     destination_type: TileDataType) => boolean
 begin
@@ -205,7 +205,7 @@ begin
         source_operation_type, destination_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TEXPDIF(
+readonly func TEXPDIFOperandsLegal(
     destination: TileIndex,
     source0: TileIndex,
     source1: TileIndex) => boolean
@@ -214,12 +214,12 @@ begin
         destination, source0, source1);
 end;
 
-readonly func InstructionContractHandler_TEXPDIF() => TileSemanticHandler
+readonly func TEXPDIFHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpdif;
 end;
 
-func InstructionContractExecute_TEXPDIF(
+func ExecuteTEXPDIF(
     destination: TileIndex,
     source0: TileIndex,
     source1: TileIndex)

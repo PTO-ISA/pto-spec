@@ -168,7 +168,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.TEPL.asl -->
 ```asl
-readonly func InstructionContractMatches_BSTART_TEPL(operation: CommandOperation) => boolean
+readonly func BSTARTTEPLEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_tepl_32_d022db6dacb3);
 end;
@@ -186,18 +186,18 @@ BSTART.TEPL remains accepted compatibility input, but canonical assembly and dis
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.TEPL.asl -->
 ```asl
-readonly func InstructionContractHandler_BSTART_TEPL() => CommandSemanticHandler
+readonly func BSTARTTEPLHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-pure func InstructionContractAcceptsEngineAlias_BSTART_TEPL(
+pure func BSTARTTEPLAcceptsEngineAlias(
     engine: TileExecutionEngine) => boolean
 begin
     return TileEngineHasCanonicalBundleStartAlias(engine);
 end;
 
-pure func InstructionContractAcceptsTileOperation_BSTART_TEPL(
+pure func BSTARTTEPLAcceptsTileOperation(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
     return TileTEPLAliasAcceptsOperation(TileTEPLAlias_TEPL, operation);

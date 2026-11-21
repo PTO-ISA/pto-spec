@@ -53,7 +53,7 @@ class ManualSemanticAuditTest(unittest.TestCase):
         if operation_region is None:
             operation_region = (
                 "// DOC-BEGIN: operation\n"
-                "pure func InstructionContractSelectorLegal_B_IOR(\n"
+                "pure func BIORSelectorLegal(\n"
                 "    selector: bits(5)) => boolean\n"
                 "begin\n"
                 "    return UInt(selector) < 24;\n"
@@ -94,7 +94,7 @@ class ManualSemanticAuditTest(unittest.TestCase):
             self.review(),
             operation_region=(
                 "// DOC-BEGIN: operation\n"
-                "readonly func InstructionContractHandler_B_IOR()\n"
+                "readonly func BIORHandler()\n"
                 "    => CommandSemanticHandler\n"
                 "begin\n"
                 "    return CommandHandler_BindBundleScalarIO;\n"

@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(80) == TileHandler_GM_ATOM_CAS;
     assert TileClassOfIndex(80) == TileClass_MemoryAndDataMovement;
     assert TileEngineOfIndex(80) == TileEngine_TLSU;
-    assert InstructionContractOperation_MGATHER_CAS() == TileOperation_MGATHER_CAS;
-    assert InstructionContractHandler_MGATHER_CAS() == TileHandler_GM_ATOM_CAS;
+    assert MGATHERCASOperation() == TileOperation_MGATHER_CAS;
+    assert MGATHERCASHandler() == TileHandler_GM_ATOM_CAS;
     return 0;
 end;

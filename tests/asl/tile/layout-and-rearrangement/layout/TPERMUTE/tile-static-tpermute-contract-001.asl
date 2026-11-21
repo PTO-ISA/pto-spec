@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(94) == TileHandler_TPERMUTE;
     assert TileClassOfIndex(94) == TileClass_LayoutAndRearrangement;
     assert TileEngineOfIndex(94) == TileEngine_SFU;
-    assert InstructionContractOperation_TPERMUTE() == TileOperation_TPERMUTE;
-    assert InstructionContractHandler_TPERMUTE() == TileHandler_TPERMUTE;
+    assert TPERMUTEOperation() == TileOperation_TPERMUTE;
+    assert TPERMUTEHandler() == TileHandler_TPERMUTE;
     return 0;
 end;

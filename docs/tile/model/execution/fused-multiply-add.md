@@ -37,7 +37,7 @@ For a floating type, three invalid cases are resolved first:
 - Zero times infinity in either order.
 - An infinite product added to an infinite addend of the opposite sign.
 
-Each returns the canonical quiet NaN with NV. Other inputs go to `ScalarFPFusedProfile` with RNE rounding.
+Each returns the canonical quiet NaN with NV. Other inputs go to `FPMulAdd` with RNE rounding.
 
 Design point: all three sources are snapshotted before any write. The handler copies the destination and the three source `TileInfo` records before the loop and builds the result privately. A destination that names a source therefore reads old values.
 
@@ -50,7 +50,7 @@ Operand legality is checked before the handler runs, and the handler itself rais
 
 Under an ExecutionMask, an inactive coordinate reads no source and takes the ZERO or MERGE value. It contributes no flags.
 
-`TileFusedMultiplyAddDataTypeSupported` admits exactly FP64, S64, U64, FP16, FP32, and BF16. `TileFixedFusedMultiplyAddValue` enforces that same set before selecting integer or floating execution. `ScalarFPFusedProfile` implements finite floating results for FP64, FP32, and FP16. BF16 remains admitted by the instruction contract, but outside those three invalid cases its finite-result profile is still an explicit model gap.
+`TileFusedMultiplyAddDataTypeSupported` admits exactly FP64, S64, U64, FP16, FP32, and BF16. `TileFixedFusedMultiplyAddValue` enforces that same set before selecting integer or floating execution. `FPMulAdd` implements finite floating results for FP64, FP32, and FP16. BF16 remains admitted by the instruction contract, but outside those three invalid cases its finite-result profile is still an explicit model gap.
 
 <!-- PTO-READER-BLOCK: tile-model-execution-fused-multiply-add-example role=example-usage -->
 ## Non-normative reading example
@@ -74,7 +74,7 @@ The destination element is 1 and no flag is recorded. U8 and S8 are outside the 
 
 - [TFMA](../../elementwise-tile-tile/arithmetic/TFMA.md) is the instruction that reaches this handler.
 - [Indexed layout legality](../legality/indexed-layout.md) owns `TileOperandsLegal_TFMA`.
-- [Scalar floating point](../../../scalar/model/fsu/scalar-fp.md) owns `ScalarFPFusedProfile`.
+- [Scalar floating point](../../../scalar/model/fsu/scalar-fp.md) owns `FPMulAdd`.
 - [Elementwise execution](elementwise.md) owns the shared element normalization helpers.
 - [Execution-mask state](execution-mask-state.md) owns inactive coordinate handling.
 <!-- SUPPLEMENTARY-END -->
@@ -90,7 +90,7 @@ func TileProfileFusedMultiplyAdd(
     left: Word,
     right: Word) => (Word, bits(5))
 begin
-    return ScalarFPFusedProfile(
+    return FPMulAdd(
         FloatingFused_MADD,
         DefaultNumericExecutionControl().rounding_mode,
         TileDataTypeToEncoding(data_type),

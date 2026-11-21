@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FSUB.asl -->
 ```asl
-readonly func InstructionContractOperation_FSUB()
+readonly func FSUBOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FSUB;
@@ -128,44 +128,44 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FSUB.asl -->
 ```asl
-readonly func InstructionContractHandler_FSUB()
+readonly func FSUBHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingBinary;
 end;
 
-pure func InstructionContractSourceTypeLegal_FSUB(encoded: bits(2))
+pure func FSUBSourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return encoded == '00' || encoded == '01';
 end;
 
-pure func InstructionContractSourceCarrier_FSUB(encoded: bits(2))
+pure func DecodeFSUBSourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_FSUB(encoded);
+    assert FSUBSourceTypeLegal(encoded);
     return ScalarFPSourceTypeCode(encoded);
 end;
 
-pure func InstructionContractSourceArity_FSUB()
+pure func FSUBSourceArity()
     => integer {1..3}
 begin
     return 2;
 end;
 
-pure func InstructionContractUsesProfileFlags_FSUB()
+pure func FSUBUsesProfileFlags()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesActiveRounding_FSUB()
+pure func FSUBUsesActiveRounding()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractBinaryOperation_FSUB()
+pure func FSUBBinaryOperation()
     => FloatingBinaryOperation
 begin
     return FloatingBinary_SUB;

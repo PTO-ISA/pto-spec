@@ -8,7 +8,7 @@ begin
     end;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xff);
 
-    assert !InstructionContractOperandsLegal_TABS(1, 0);
+    assert !TABSOperandsLegal(1, 0);
     assert !_Tiles[[1]].contents_defined;
     return 0;
 end;

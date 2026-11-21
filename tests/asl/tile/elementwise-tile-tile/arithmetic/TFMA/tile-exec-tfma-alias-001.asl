@@ -10,7 +10,7 @@ begin
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 4);
 
-    InstructionContractExecute_TFMA(0, 0, 1, 2);
+    ExecuteTFMA(0, 0, 1, 2);
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 10;
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 3;
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 4;

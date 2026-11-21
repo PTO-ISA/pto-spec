@@ -125,7 +125,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/SLLW.asl -->
 ```asl
-readonly func InstructionContractOperation_SLLW()
+readonly func SLLWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SLLW;
@@ -137,27 +137,27 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/SLLW.asl -->
 ```asl
-readonly func InstructionContractHandler_SLLW()
+readonly func SLLWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractShiftAmount_SLLW(right: Word)
+pure func DecodeSLLWShiftAmount(right: Word)
     => integer {0..31}
 begin
     return UInt(right[4:0]);
 end;
 
-pure func InstructionContractResult_SLLW(left: Word, right: Word)
+pure func SLLWResult(left: Word, right: Word)
     => Word
 begin
-    let amount = InstructionContractShiftAmount_SLLW(right);
+    let amount = DecodeSLLWShiftAmount(right);
     let shifted = LSL(left[31:0], amount);
     return SignExtend{PTO_XLEN}(shifted);
 end;
 
-pure func InstructionContractIsWordOperation_SLLW()
+pure func SLLWIsWordOperation()
     => boolean
 begin
     return TRUE;

@@ -26,7 +26,7 @@ Both operands are read as unsigned magnitudes, so a source with bit `63` set con
 <!-- PTO-READER-BLOCK: scalar-hl-remu-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `InstructionContractQuotient_HL_REMU` and `InstructionContractRemainder_HL_REMU`, which call `ScalarDivideUnsigned` and `ScalarRemainderUnsigned`. Dispatch calls `ExecuteScalarRemainderPair` with `signed_operation` false; the helper computes both values and then writes the remainder first and the quotient second.
+The owning ASL exposes `HLREMUQuotient` and `HLREMURemainder`, which call `ScalarDivideUnsigned` and `ScalarRemainderUnsigned`. Dispatch calls `ExecuteScalarRemainderPair` with `signed_operation` false; the helper computes both values and then writes the remainder first and the quotient second.
 
 ```asm
 hl.remu SrcL, SrcR, ->Dst0, Dst1
@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.REMU.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_REMU() => ScalarOperation
+readonly func HLREMUOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_REMU;
 end;
@@ -131,11 +131,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.REMU.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_REMU() => ScalarSemanticHandler
+readonly func HLREMUHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarRemainderPair;
 end;
-pure func InstructionContractQuotient_HL_REMU(
+pure func HLREMUQuotient(
     dividend: Word,
     divisor: Word)
     => Word
@@ -145,7 +145,7 @@ begin
         divisor);
 end;
 
-pure func InstructionContractRemainder_HL_REMU(
+pure func HLREMURemainder(
     dividend: Word,
     divisor: Word)
     => Word
@@ -155,22 +155,22 @@ begin
         divisor);
 end;
 
-pure func InstructionContractDst0_HL_REMU(
+pure func HLREMUDst0(
     dividend: Word,
     divisor: Word)
     => Word
 begin
-    return InstructionContractRemainder_HL_REMU(
+    return HLREMURemainder(
         dividend,
         divisor);
 end;
 
-pure func InstructionContractDst1_HL_REMU(
+pure func HLREMUDst1(
     dividend: Word,
     divisor: Word)
     => Word
 begin
-    return InstructionContractQuotient_HL_REMU(
+    return HLREMUQuotient(
         dividend,
         divisor);
 end;

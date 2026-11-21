@@ -23,12 +23,12 @@ The current instruction contract is owned by the ASL source linked above.
 
 A successful execution commits the whole copy and advances `TPC` by `4` bytes; a fault commits nothing and leaves `TPC` on the instruction.
 
-Design point: the copy length belongs to the mnemonic, not to the encoding. `InstructionContractCopySizeBytes_DMA` returns `64` and both probes request `64` bytes, so no field value selects another length.
+Design point: the copy length belongs to the mnemonic, not to the encoding. `DMACopySizeBytes` returns `64` and both probes request `64` bytes, so no field value selects another length.
 
 <!-- PTO-READER-BLOCK: scalar-dma-mechanism role=mechanism -->
 ## How the copy is ordered
 
-Dispatch routes the form to `ExecuteScalarDMACopy64` in `asl/scalar/model/amo/semantics.asl`. Both `ReadDecodedScalarRegister` arguments are evaluated before that call, so the two addresses are snapshotted before the first probe.
+Dispatch routes the form to `ExecuteScalarDMACopy64` in `asl/scalar/model/amo/semantics.asl`. Both `ReadDecodedReg5` arguments are evaluated before that call, so the two addresses are snapshotted before the first probe.
 
 The steps then run in a fixed order:
 
@@ -122,7 +122,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/DMA.asl -->
 ```asl
-readonly func InstructionContractOperation_DMA()
+readonly func DMAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DMA;
@@ -134,37 +134,37 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/DMA.asl -->
 ```asl
-readonly func InstructionContractHandler_DMA()
+readonly func DMAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarDMACopy64;
 end;
 
-pure func InstructionContractCopySizeBytes_DMA()
+pure func DMACopySizeBytes()
     => integer {1..262144}
 begin
     return 64;
 end;
 
-pure func InstructionContractEventChunkSizeBytes_DMA()
+pure func DMAEventChunkSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractEventChunkCount_DMA()
+pure func DMAEventChunkCount()
     => integer {1..16}
 begin
     return 8;
 end;
 
-pure func InstructionContractSourceProbePrecedesDestination_DMA()
+pure func DMASourceProbePrecedesDestination()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSnapshotsSourceBeforeCommit_DMA()
+pure func DMASnapshotsSourceBeforeCommit()
     => boolean
 begin
     return TRUE;

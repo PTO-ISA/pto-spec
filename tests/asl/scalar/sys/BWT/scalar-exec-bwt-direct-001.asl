@@ -17,6 +17,6 @@ begin
     assert _ControlRequestOperand == Zeros{PTO_XLEN} + 0x1000;
     assert _ArchitectureRequestEpoch == 1;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert InstructionContractOperation_BWT() == ScalarOperation_BWT;
+    assert BWTOperation() == ScalarOperation_BWT;
     return 0;
 end;

@@ -4,20 +4,20 @@ begin
     let word_value = Zeros{PTO_XLEN} + 0x80000000;
     let full_value = Zeros{PTO_XLEN} + 0x100000001;
 
-    assert DecodeScalarAddressRightModifier('00') == ScalarRight_None;
-    assert DecodeScalarAddressRightModifier('01') ==
+    assert DecodeAddressModifier('00') == ScalarRight_None;
+    assert DecodeAddressModifier('01') ==
         ScalarRight_SignedWord;
-    assert DecodeScalarAddressRightModifier('10') ==
+    assert DecodeAddressModifier('10') ==
         ScalarRight_UnsignedWord;
 
-    assert ApplyScalarRightModifier(
-        full_value, DecodeScalarAddressRightModifier('00'), FALSE) ==
+    assert ModifyScalarOperand(
+        full_value, DecodeAddressModifier('00'), FALSE) ==
         full_value;
-    assert ApplyScalarRightModifier(
-        word_value, DecodeScalarAddressRightModifier('01'), FALSE) ==
+    assert ModifyScalarOperand(
+        word_value, DecodeAddressModifier('01'), FALSE) ==
         Zeros{PTO_XLEN} + 0xffffffff80000000;
-    assert ApplyScalarRightModifier(
-        word_value, DecodeScalarAddressRightModifier('10'), FALSE) ==
+    assert ModifyScalarOperand(
+        word_value, DecodeAddressModifier('10'), FALSE) ==
         Zeros{PTO_XLEN} + 0x80000000;
 
     let reserved_instruction = Zeros{48} + 0x06007009;

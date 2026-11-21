@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-addtpc-mechanism role=mechanism -->
 ## 机制
 
-契约返回 `ScalarHandler_AddToPC`，其中 `InstructionContractUsesTPC_ADDTPC` 为真、`InstructionContractImmediateIsSigned_ADDTPC` 为真、`InstructionContractImmediateWidth_ADDTPC` 为 `20`、`InstructionContractPageShift_ADDTPC` 为 `12`。
+契约返回 `ScalarHandler_AddToPC`，其中 `ADDTPCUsesTPC` 为真、`ADDTPCImmediateIsSigned` 为真、`ADDTPCImmediateWidth` 为 `20`、`ADDTPCPageShift` 为 `12`。
 
 模型把左移 `12` 位后的 `SignExtend(imm20)` 加到 `TPC` 上，并把该和通过目的选择子写出。加法在 XLEN 处回绕。`TPC` 在加法之前只读取一次，因此该和相对于 `ADDTPC` 自身的地址，而绝不相对于下一条指令。
 
@@ -46,7 +46,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-addtpc-effects role=effects -->
 ## 效果与排序
 
-`ADDTPC` 只写一个目的值，别的什么都不做。`InstructionContractWritesTPC_ADDTPC` 返回假，状态契约也声明该指令既不安装控制流目标，也不直接修改 `TPC`。
+`ADDTPC` 只写一个目的值，别的什么都不做。`ADDTPCWritesTPC` 返回假，状态契约也声明该指令既不安装控制流目标，也不直接修改 `TPC`。
 
 在目的效果之后，标量派发让 `TPC` 前进 `4` 字节，即该形式的编码长度，因为 `ScalarHandlerWritesTPC` 对 `AddToPC` 为假。
 
@@ -117,7 +117,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/ADDTPC.asl -->
 ```asl
-readonly func InstructionContractOperation_ADDTPC() => ScalarOperation
+readonly func ADDTPCOperation() => ScalarOperation
 begin
     return ScalarOperation_ADDTPC;
 end;
@@ -128,42 +128,42 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/ADDTPC.asl -->
 ```asl
-readonly func InstructionContractHandler_ADDTPC() => ScalarSemanticHandler
+readonly func ADDTPCHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_AddToPC;
 end;
 
-pure func InstructionContractUsesTPC_ADDTPC()
+pure func ADDTPCUsesTPC()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractImmediateWidth_ADDTPC()
+pure func ADDTPCImmediateWidth()
     => integer {20}
 begin
     return 20;
 end;
 
-pure func InstructionContractImmediateIsSigned_ADDTPC()
+pure func ADDTPCImmediateIsSigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractPageShift_ADDTPC()
+pure func ADDTPCPageShift()
     => integer {12}
 begin
     return 12;
 end;
 
-pure func InstructionContractWritesTPC_ADDTPC()
+pure func ADDTPCWritesTPC()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractTarget_ADDTPC(
+pure func ADDTPCTarget(
     base: Word,
     page_offset: Word)
     => Word

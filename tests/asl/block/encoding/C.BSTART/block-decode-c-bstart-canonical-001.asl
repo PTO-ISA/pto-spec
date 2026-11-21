@@ -5,12 +5,12 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000000000000000100', 16) == 54;
     assert CommandOperationOfForm(54) == CommandOperation_c_bstart_16_c4e238a9227a;
     assert CommandHandlerOfForm(54) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_C_BSTART(CommandOperationOfForm(54));
-    assert InstructionContractHandler_C_BSTART() == CommandHandler_ExecuteBundleStart;
+    assert CBSTARTEncodingMatches(CommandOperationOfForm(54));
+    assert CBSTARTHandler() == CommandHandler_ExecuteBundleStart;
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000000000000000010', 16) == 55;
     assert CommandOperationOfForm(55) == CommandOperation_c_bstart_16_f833d2a4753c;
     assert CommandHandlerOfForm(55) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_C_BSTART(CommandOperationOfForm(55));
-    assert InstructionContractHandler_C_BSTART() == CommandHandler_ExecuteBundleStart;
+    assert CBSTARTEncodingMatches(CommandOperationOfForm(55));
+    assert CBSTARTHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

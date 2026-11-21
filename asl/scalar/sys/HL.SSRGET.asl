@@ -8,38 +8,38 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-HL-SSRGET-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_SSRGET()
+readonly func HLSSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_HL_SSRGET;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_SSRGET()
+readonly func HLSSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterGet;
 end;
 
-pure func InstructionContractRequiresSystemBlock_HL_SSRGET()
+pure func HLSSRGETRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSystemTransferKind_HL_SSRGET()
+pure func HLSSRGETSystemTransferKind()
     => bits(2)
 begin
     return '00';
 end;
 
-pure func InstructionContractSystemAddressWidth_HL_SSRGET()
+pure func HLSSRGETSystemAddressWidth()
     => integer {5,12,24}
 begin
     return 24;
 end;
 
-pure func InstructionContractPushesTemporaryT_HL_SSRGET()
+pure func HLSSRGETPushesTemporaryT()
     => boolean
 begin
     return FALSE;

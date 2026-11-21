@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ssrswap-mechanism role=mechanism -->
 ## System mechanism
 
-`InstructionContractHandler_SSRSWAP` selects `ScalarHandler_ExecuteSystemRegisterSwap` (`asl/scalar/sys/SSRSWAP.asl:18`), and the dispatcher decodes all three operands: `RegDst`, `SrcL`, and the 12-bit `SSR_ID` address (`asl/scalar/model/dispatch/sys.asl:116`). `InstructionContractSystemTransferKind_SSRSWAP` returns `'10'`, the transfer kind that distinguishes a swap from a get or a set (`asl/scalar/sys/SSRSWAP.asl:30`).
+`SSRSWAPHandler` selects `ScalarHandler_ExecuteSystemRegisterSwap` (`asl/scalar/sys/SSRSWAP.asl:18`), and the dispatcher decodes all three operands: `RegDst`, `SrcL`, and the 12-bit `SSR_ID` address (`asl/scalar/model/dispatch/sys.asl:116`). `SSRSWAPSystemTransferKind` returns `'10'`, the transfer kind that distinguishes a swap from a get or a set (`asl/scalar/sys/SSRSWAP.asl:30`).
 
 The helper preflights before it reads anything. Every MSGB address is rejected first because its read and write sides have different snapshot, staging, or command semantics. Other addresses require `SystemRegisterSwapPermitted`, which demands read permission, write permission, and the read-write access class.
 
@@ -106,7 +106,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/SSRSWAP.asl -->
 ```asl
-readonly func InstructionContractOperation_SSRSWAP()
+readonly func SSRSWAPOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SSRSWAP;
@@ -124,31 +124,31 @@ SSRSWAP executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/SSRSWAP.asl -->
 ```asl
-readonly func InstructionContractHandler_SSRSWAP()
+readonly func SSRSWAPHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterSwap;
 end;
 
-pure func InstructionContractRequiresSystemBlock_SSRSWAP()
+pure func SSRSWAPRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSystemTransferKind_SSRSWAP()
+pure func SSRSWAPSystemTransferKind()
     => bits(2)
 begin
     return '10';
 end;
 
-pure func InstructionContractSystemAddressWidth_SSRSWAP()
+pure func SSRSWAPSystemAddressWidth()
     => integer {5,12,24}
 begin
     return 12;
 end;
 
-pure func InstructionContractPushesTemporaryT_SSRSWAP()
+pure func SSRSWAPPushesTemporaryT()
     => boolean
 begin
     return FALSE;

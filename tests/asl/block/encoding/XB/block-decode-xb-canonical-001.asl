@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000110111110000001', 32) == 71;
     assert CommandOperationOfForm(71) == CommandOperation_xb_32_40ad190a0a7f;
     assert CommandHandlerOfForm(71) == CommandHandler_ExecuteCrossBlockTransfer;
-    assert InstructionContractMatches_XB(CommandOperationOfForm(71));
-    assert InstructionContractHandler_XB() == CommandHandler_ExecuteCrossBlockTransfer;
+    assert XBEncodingMatches(CommandOperationOfForm(71));
+    assert XBHandler() == CommandHandler_ExecuteCrossBlockTransfer;
     return 0;
 end;

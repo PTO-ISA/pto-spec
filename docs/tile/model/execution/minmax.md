@@ -17,7 +17,7 @@ This page is a generated reference view of the normative ASL unit.
 
 This unit defines one pure helper, `TileFloatingMinMaxValue`. It computes the floating minimum or maximum of two raw element carriers and reports whether the invalid-operation condition occurred.
 
-It is the Tile-level adapter over the architecture profile `HardwareNumericFloatingMinMax`. Callers include `TileProfileBinaryWithFlags` in [elementwise execution](elementwise.md) for floating MIN and MAX, and the `InstructionContractFloatingValue_TMAX` and `InstructionContractFloatingValue_TMIN` helpers of TMAX and TMIN.
+It is the Tile-level adapter over the architecture profile `HardwareNumericFloatingMinMax`. Callers include `TileProfileBinaryWithFlags` in [elementwise execution](elementwise.md) for floating MIN and MAX, and the `TMAXFloatingValue` and `TMINFloatingValue` helpers of TMAX and TMIN.
 
 <!-- PTO-READER-BLOCK: tile-model-execution-minmax-concepts role=concepts-state -->
 ## Concepts and visible state

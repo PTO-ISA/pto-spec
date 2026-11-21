@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-cva-mechanism role=mechanism -->
 ## System mechanism
 
-`InstructionContractHandler_DC_CVA` selects `ScalarHandler_ExecuteMaintenance`, the one handler shared by the whole cache and translation maintenance group (`asl/scalar/sys/DC.CVA.asl:11`). What makes this instruction distinct is its operation token: `Maintenance_DC_CVA` selects the data-cache branch of `ExecuteMaintenance`, which advances `_DataCacheEpoch` by one (`asl/scalar/model/sys/semantics.asl:135`).
+`DCCVAHandler` selects `ScalarHandler_ExecuteMaintenance`, the one handler shared by the whole cache and translation maintenance group (`asl/scalar/sys/DC.CVA.asl:11`). What makes this instruction distinct is its operation token: `Maintenance_DC_CVA` selects the data-cache branch of `ExecuteMaintenance`, which advances `_DataCacheEpoch` by one (`asl/scalar/model/sys/semantics.asl:135`).
 
 Placement is part of the mechanism rather than an afterthought. The instruction is applicable only in an active SYS block body, and the dispatcher rejects everything else before the handler is reached (`asl/scalar/model/sys/semantics.asl:321`).
 
@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.CVA.asl -->
 ```asl
-readonly func InstructionContractOperation_DC_CVA()
+readonly func DCCVAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DC_CVA;
@@ -118,31 +118,31 @@ DC.CVA executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.CVA.asl -->
 ```asl
-readonly func InstructionContractHandler_DC_CVA()
+readonly func DCCVAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_DC_CVA()
+pure func DCCVARequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_DC_CVA()
+pure func DCCVAMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_DC_CVA;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_DC_CVA()
+pure func DCCVAMaintenanceUsesOperand()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_DC_CVA()
+pure func DCCVAMaintenanceRequiresRootRing()
     => boolean
 begin
     return FALSE;

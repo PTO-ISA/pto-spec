@@ -25,7 +25,7 @@ Its recorded summary is: SD.XOR atomically replaces the aligned 64-bit memory va
 ## Atomic mechanism
 The instruction contract selects `ScalarHandler_AtomicReadModifyWrite` at width `8` and maps this operation to `Atomic_XOR`. Scalar dispatch calls `AtomicReadModifyWrite`, which preflights the same address twice, reads, combines, and writes back; its return value is discarded.
 `Atomic_XOR` returns `old_value XOR operand`.
-The helper returns the old memory value, but scalar dispatch passes `write_result` as `FALSE`, and the metadata helper `InstructionContractPublishesOldValue_SD_XOR` also returns `FALSE`, so nothing is published.
+The helper returns the old memory value, but scalar dispatch passes `write_result` as `FALSE`, and the metadata helper `SDXORPublishesOldValue` also returns `FALSE`, so nothing is published.
 Design point: the read probe is built and checked before the write probe is built, so a permitted read with a refused write faults with memory untouched, before any load takes place.
 
 <!-- PTO-READER-BLOCK: scalar-sd-xor-inputs-outputs role=inputs-outputs -->
@@ -110,7 +110,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SD.XOR.asl -->
 ```asl
-readonly func InstructionContractOperation_SD_XOR() => ScalarOperation
+readonly func SDXOROperation() => ScalarOperation
 begin
     return ScalarOperation_SD_XOR;
 end;
@@ -121,25 +121,25 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/SD.XOR.asl -->
 ```asl
-readonly func InstructionContractHandler_SD_XOR()
+readonly func SDXORHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_SD_XOR()
+pure func SDXORAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_XOR;
 end;
 
-pure func InstructionContractAtomicSizeBytes_SD_XOR()
+pure func SDXORAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractPublishesOldValue_SD_XOR()
+pure func SDXORPublishesOldValue()
     => boolean
 begin
     return FALSE;

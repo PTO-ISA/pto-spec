@@ -7,24 +7,24 @@
 // memory-command, trap-context, execution-context, or TPC state.
 // NDF-END: PTO-BLOCK-ERCOV-RESERVED-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_ERCOV(operation: CommandOperation)
+readonly func ERCOVEncodingMatches(operation: CommandOperation)
     => boolean
 begin
     return operation == CommandOperation_ercov_32_dc0be14a2d8b;
 end;
 
-pure func InstructionContractSupported_ERCOV() => boolean
+pure func ERCOVSupported() => boolean
 begin
     return FALSE;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_ERCOV() => CommandSemanticHandler
+readonly func ERCOVHandler() => CommandSemanticHandler
 begin
     return CommandHandler_RecoverExecutionContext;
 end;
 
-pure func InstructionContractRejectsBeforeEffects_ERCOV() => boolean
+pure func ERCOVRejectsBeforeEffects() => boolean
 begin
     return !CommandHandlerSupported(
         CommandHandler_RecoverExecutionContext);

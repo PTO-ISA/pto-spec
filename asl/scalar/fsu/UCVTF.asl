@@ -8,51 +8,51 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-UCVTF-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_UCVTF()
+readonly func UCVTFOperation()
     => ScalarOperation
 begin
     return ScalarOperation_UCVTF;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_UCVTF()
+readonly func UCVTFHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ConvertFloatingEncoding;
 end;
 
-pure func InstructionContractSourceTypeLegal_UCVTF(encoded: bits(2))
+pure func UCVTFSourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSourceCarrier_UCVTF(encoded: bits(2))
+pure func DecodeUCVTFSourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_UCVTF(encoded);
+    assert UCVTFSourceTypeLegal(encoded);
     return ScalarUnsignedIntegerSourceTypeCode(encoded);
 end;
 
-pure func InstructionContractDestinationTypeLegal_UCVTF(encoded: bits(5))
+pure func UCVTFDestinationTypeLegal(encoded: bits(5))
     => boolean
 begin
     return UInt(encoded) <= 3;
 end;
 
-pure func InstructionContractSourceArity_UCVTF()
+pure func UCVTFSourceArity()
     => integer {1..3}
 begin
     return 1;
 end;
 
-pure func InstructionContractUsesProfileFlags_UCVTF()
+pure func UCVTFUsesProfileFlags()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesActiveRounding_UCVTF()
+pure func UCVTFUsesActiveRounding()
     => boolean
 begin
     return TRUE;

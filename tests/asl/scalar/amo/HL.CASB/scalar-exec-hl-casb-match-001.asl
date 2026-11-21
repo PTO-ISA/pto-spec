@@ -38,8 +38,8 @@ begin
     assert _MemoryEvents[[0]].write_value == Zeros{PTO_XLEN} + 0x88;
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
-    assert InstructionContractCompareSizeBytes_HL_CASB() == 1;
-    assert InstructionContractHasFarField_HL_CASB() == TRUE;
+    assert HLCASBCompareSizeBytes() == 1;
+    assert HLCASBHasFarField() == TRUE;
 end;
 
 func main() => integer

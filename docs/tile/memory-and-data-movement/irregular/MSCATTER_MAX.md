@@ -125,7 +125,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/irregular/MSCATTER_MAX.asl -->
 ```asl
-readonly func InstructionContractMatches_MSCATTER_MAX(operation: TileOperation) => boolean
+readonly func MSCATTERMAXEncodingMatches(operation: TileOperation) => boolean
 begin
     return operation == TileOperation_MSCATTER_MAX;
 end;
@@ -149,11 +149,11 @@ When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiG
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/irregular/MSCATTER_MAX.asl -->
 ```asl
-readonly func InstructionContractHandler_MSCATTER_MAX() => TileSemanticHandler
+readonly func MSCATTERMAXHandler() => TileSemanticHandler
 begin
     return TileHandler_GM_RED_VALUE;
 end;
-readonly func InstructionContractOperation_MSCATTER_MAX() => TileOperation
+readonly func MSCATTERMAXOperation() => TileOperation
 begin
     return TileOperation_MSCATTER_MAX;
 end;

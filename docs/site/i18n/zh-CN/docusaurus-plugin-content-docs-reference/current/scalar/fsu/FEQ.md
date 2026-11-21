@@ -118,7 +118,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FEQ.asl -->
 ```asl
-readonly func InstructionContractOperation_FEQ()
+readonly func FEQOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FEQ;
@@ -130,50 +130,50 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FEQ.asl -->
 ```asl
-readonly func InstructionContractHandler_FEQ()
+readonly func FEQHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingCompare;
 end;
 
-pure func InstructionContractSourceTypeLegal_FEQ(encoded: bits(2))
+pure func FEQSourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return encoded == '00' || encoded == '01';
 end;
 
-pure func InstructionContractSourceCarrier_FEQ(encoded: bits(2))
+pure func DecodeFEQSourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_FEQ(encoded);
+    assert FEQSourceTypeLegal(encoded);
     return ScalarFPSourceTypeCode(encoded);
 end;
 
-pure func InstructionContractSourceArity_FEQ()
+pure func FEQSourceArity()
     => integer {1..3}
 begin
     return 2;
 end;
 
-pure func InstructionContractUsesProfileFlags_FEQ()
+pure func FEQUsesProfileFlags()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractUsesActiveRounding_FEQ()
+pure func FEQUsesActiveRounding()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractCompareOperation_FEQ()
+pure func FEQCompareOperation()
     => FloatingCompareOperation
 begin
     return FloatingCompare_EQ;
 end;
 
-pure func InstructionContractSignalingCompare_FEQ()
+pure func FEQSignalingCompare()
     => boolean
 begin
     return FALSE;

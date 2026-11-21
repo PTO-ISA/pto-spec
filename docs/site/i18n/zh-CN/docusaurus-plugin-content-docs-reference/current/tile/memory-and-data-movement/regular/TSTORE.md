@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tstore-mechanism role=mechanism -->
 ## 寻址与访问顺序
 
-每个被选中的 PE 与每个活动的有效坐标都通过 `TileMemoryStridedByteAddress` 写入 `base + row * row_stride_bytes + column * element_size`。对打包四位类型，列贡献 `floor(column / 2)` 字节，低半字节或高半字节由列奇偶性选择。
+每个被选中的 PE 与每个活动的有效坐标都通过 `TileElementAddress` 写入 `base + row * row_stride_bytes + column * element_size`。对打包四位类型，列贡献 `floor(column / 2)` 字节，低半字节或高半字节由列奇偶性选择。
 
 `B.IOR.RegSrc0` 提供每 PE 的 GM 基址，`B.IOR.RegSrc1` 提供字节行步幅。省略 `B.IOR` 时基址为零，步幅为从解析的物理 `Col` 与数据类型推导出的紧密步幅，即 `ceil(columns * element_bits / 8)`；显式编码的零选择子是真正的零步幅。
 
@@ -59,7 +59,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-c-tstore-constraints role=constraints -->
 ## 合法性、故障与顺序边界
 
-`InstructionContractDataTypeLegal_TSTORE` 接受 `TileRegularTLSUDataTypeSupported` 允许的编码，即 `0` 到 `14`、`16` 到 `20`，以及 `24` 到 `28`；其余编码为保留值，在任何效果之前被拒绝。
+`TSTOREDataTypeLegal` 接受 `TileRegularTLSUDataTypeSupported` 允许的编码，即 `0` 到 `14`、`16` 到 `20`，以及 `24` 到 `28`；其余编码为保留值，在任何效果之前被拒绝。
 
 `ValidCol` 与 `ValidRow` 非零，`ValidCol` 不得超过物理 `Col`，并且解析出的有效矩形必须适配持久源描述符。普通形式与 Shared 形式要求 `PadValue` 为零；Local CUBE 编码 `24` 到 `26` 要求 `DTYPE_NONE`，接受全部四种 `PadValue` 编码，并只存储有效元素而忽略物理填充。
 
@@ -162,7 +162,7 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/regular/TSTORE.asl -->
 ```asl
-readonly func InstructionContractOperation_TSTORE() => TileOperation
+readonly func TSTOREOperation() => TileOperation
 begin
     return TileOperation_TSTORE;
 end;
@@ -181,7 +181,7 @@ The Local CUBE form uses Function 1, explicit B.DATR M322ND, M162ND, or N82ND wi
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/regular/TSTORE.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TSTORE(code: bits(5)) => boolean
+pure func TSTOREDataTypeLegal(code: bits(5)) => boolean
 begin
     if !TileDataTypeEncodingValid(code as TileDataTypeEncoding) then
         return FALSE;
@@ -190,41 +190,41 @@ begin
     return TileRegularTLSUDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractHandler_TSTORE() => TileSemanticHandler
+readonly func TSTOREHandler() => TileSemanticHandler
 begin
     return TileHandler_TSTORE;
 end;
 
-readonly func InstructionContractGMAddress_TSTORE(
+readonly func TSTOREGMAddress(
     base_address: Word,
     row: integer {0..65535},
     column: integer {0..65535},
     row_stride_bytes: Word,
     data_type: TileDataType) => Word
 begin
-    return TileMemoryStridedByteAddress(
+    return TileElementAddress(
         base_address, row, column, row_stride_bytes, data_type);
 end;
 
-readonly func InstructionContractDenseStride_TSTORE(
+readonly func TSTOREDenseStride(
     columns: integer {0..65535}, data_type: TileDataType) => Word
 begin
-    return TileDenseRowStrideBytes(columns, data_type);
+    return TileDenseRowBytes(columns, data_type);
 end;
 
-pure func InstructionContractSharedMaskLegal_TSTORE(
+pure func TSTORESharedMaskLegal(
     function: integer {0..31}, pe_mask: bits(4)) => boolean
 begin
     return SharedStorePEMaskLegal(function, pe_mask);
 end;
 
-pure func InstructionContractZeroMaskNoEffect_TSTORE(
+pure func TSTOREZeroMaskNoEffect(
     pe_mask: bits(4)) => boolean
 begin
     return pe_mask == Zeros{4};
 end;
 
-pure func InstructionContractCubeDimensionsLegal_TSTORE(
+pure func TSTORECubeDimensionsLegal(
     lb0_present: boolean, lb0: integer {0..65535},
     lb1_present: boolean, lb1: integer {0..65535},
     lb2_present: boolean) => boolean

@@ -12,7 +12,7 @@ begin
            TileHandler_ExecuteTileExpdif;
     assert TileEngineOfIndex(
         decoded as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileEngine_SFU;
-    assert InstructionContractHandler_TEXPDIF() ==
+    assert TEXPDIFHandler() ==
            TileHandler_ExecuteTileExpdif;
     assert DecodeTileOperation(
         TileDecode_TEPL, Zeros{12} + 0x01E) == PTO_TILE_OPERATION_COUNT;

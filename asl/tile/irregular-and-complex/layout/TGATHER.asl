@@ -10,13 +10,13 @@
 // one complete same-type destination with Null physical padding atomically.
 // NDF-END: PTO-TGATHER-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TGATHER() => TileOperation
+readonly func TGATHEROperation() => TileOperation
 begin
     return TileOperation_TGATHER;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractOperandsLegal_TGATHER(
+readonly func TGATHEROperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     indices: TileIndex) => boolean
@@ -24,17 +24,17 @@ begin
     return TileOperandsLegal_TGATHER(destination, source, indices);
 end;
 
-readonly func InstructionContractHandler_TGATHER() => TileSemanticHandler
+readonly func TGATHERHandler() => TileSemanticHandler
 begin
     return TileHandler_TGATHER;
 end;
 
-func InstructionContractExecute_TGATHER(
+func ExecuteTGATHER(
     destination: TileIndex,
     source: TileIndex,
     indices: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TGATHER(
+    assert TGATHEROperandsLegal(
         destination,
         source,
         indices);

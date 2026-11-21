@@ -26,7 +26,7 @@ The 19-bit field is the multiplier. It is zero-extended to XLEN and multiplied b
 <!-- PTO-READER-BLOCK: scalar-hl-miadd-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `InstructionContractResult_HL_MIADD`, which returns `ScalarMultiplyImmediateAdd(left, right, immediate, FALSE)`. That helper computes `MultiplyWord(right, ZeroExtend{PTO_XLEN}(immediate))` and adds `left` to the product. Dispatch reaches it from the `ScalarOperation_HL_MIADD, ScalarOperation_HL_MISUB` alternative with `ScalarDecodedBits19(instruction, form, ScalarField_uimm19)`.
+The owning ASL exposes `HLMIADDResult`, which returns `ScalarMultiplyImmediateAdd(left, right, immediate, FALSE)`. That helper computes `MultiplyWord(right, ZeroExtend{PTO_XLEN}(immediate))` and adds `left` to the product. Dispatch reaches it from the `ScalarOperation_HL_MIADD, ScalarOperation_HL_MISUB` alternative with `ScalarDecodedBits19(instruction, form, ScalarField_uimm19)`.
 
 ```asm
 hl.miadd SrcL, SrcR, uimm, ->{t, u, Rd}
@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.MIADD.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_MIADD() => ScalarOperation
+readonly func HLMIADDOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_MIADD;
 end;
@@ -131,11 +131,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.MIADD.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_MIADD() => ScalarSemanticHandler
+readonly func HLMIADDHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarMultiplyImmediateAdd;
 end;
-pure func InstructionContractResult_HL_MIADD(
+pure func HLMIADDResult(
     left: Word,
     right: Word,
     immediate: bits(19))

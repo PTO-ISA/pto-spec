@@ -102,7 +102,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/layout-and-rearrangement/layout/TPACK.asl -->
 ```asl
-readonly func InstructionContractOperation_TPACK() => TileOperation
+readonly func TPACKOperation() => TileOperation
 begin
     return TileOperation_TPACK;
 end;
@@ -124,12 +124,12 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/layout-and-rearrangement/layout/TPACK.asl -->
 ```asl
-readonly func InstructionContractHandler_TPACK() => TileSemanticHandler
+readonly func TPACKHandler() => TileSemanticHandler
 begin
     return TileHandler_TPACK;
 end;
 
-pure func InstructionContractDataTypeLegal_TPACK(
+pure func TPACKDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_U8 ||
@@ -138,18 +138,18 @@ begin
            data_type == TileDataType_U64;
 end;
 
-readonly func InstructionContractOperandsLegal_TPACK(
+readonly func TPACKOperandsLegal(
     destination: TileIndex, source0: TileIndex,
     source1: TileIndex, control: Word) => boolean
 begin
     return TileOperandsLegal_TPACK(destination, source0, source1, control);
 end;
 
-func InstructionContractExecute_TPACK(
+func ExecuteTPACK(
     destination: TileIndex, source0: TileIndex,
     source1: TileIndex, control: Word)
 begin
-    assert InstructionContractOperandsLegal_TPACK(
+    assert TPACKOperandsLegal(
         destination, source0, source1, control);
     TPACK(destination, source0, source1, control);
 end;

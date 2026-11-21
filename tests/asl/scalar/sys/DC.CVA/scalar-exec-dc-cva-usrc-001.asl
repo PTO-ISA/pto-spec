@@ -19,6 +19,6 @@ begin
     assert _LastMaintenanceOperation == Maintenance_DC_CVA;
     assert _LastMaintenanceOperand == Zeros{PTO_XLEN} + 0x1000;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert InstructionContractOperation_DC_CVA() == ScalarOperation_DC_CVA;
+    assert DCCVAOperation() == ScalarOperation_DC_CVA;
     return 0;
 end;

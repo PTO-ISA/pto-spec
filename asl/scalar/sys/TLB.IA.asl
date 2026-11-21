@@ -8,38 +8,38 @@
 // on rejection except for the ordinary instruction-attempt trap envelope.
 // NDF-END: PTO-TLB-IA-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TLB_IA()
+readonly func TLBIAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_TLB_IA;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_TLB_IA()
+readonly func TLBIAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_TLB_IA()
+pure func TLBIARequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_TLB_IA()
+pure func TLBIAMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_TLB_IA;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_TLB_IA()
+pure func TLBIAMaintenanceUsesOperand()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_TLB_IA()
+pure func TLBIAMaintenanceRequiresRootRing()
     => boolean
 begin
     return TRUE;

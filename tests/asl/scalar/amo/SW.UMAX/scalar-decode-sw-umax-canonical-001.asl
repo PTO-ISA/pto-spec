@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000110000000000000011000000001011', 32) == 448;
     assert ScalarOperationOfForm(448) == ScalarOperation_SW_UMAX;
     assert ScalarHandlerOfForm(448) == ScalarHandler_AtomicReadModifyWrite;
-    assert InstructionContractOperation_SW_UMAX() == ScalarOperation_SW_UMAX;
-    assert InstructionContractHandler_SW_UMAX() == ScalarHandler_AtomicReadModifyWrite;
+    assert SWUMAXOperation() == ScalarOperation_SW_UMAX;
+    assert SWUMAXHandler() == ScalarHandler_AtomicReadModifyWrite;
     assert DecodeScalarOperandRaw('000000000000000000110000000000000011000000001011', 448, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000110000000000000011000000001011', 448, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000110000000000000011000000001011', 448, ScalarField_rl) == '000000000000000000000000000000000000000000000000';

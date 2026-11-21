@@ -5,7 +5,7 @@ begin
     ConfigureTile(0, 128, 1, 1, 1, 1,
         TileDataType_FP32, TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x80000000);
-    InstructionContractExecute_TEXP(0, 0);
+    ExecuteTEXP(0, 0);
     assert ReadTileElement(0, 0, 0) ==
         Zeros{PTO_XLEN} + 0x3f800000;
     return 0;

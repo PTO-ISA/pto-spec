@@ -24,29 +24,29 @@
 // representability, TSize, and capacity rejection MUST occur before effects.
 // NDF-END: PTO-TCI-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TCI() => TileOperation
+readonly func TCIOperation() => TileOperation
 begin
     return TileOperation_TCI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TCI(
+pure func TCIDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileTCIDataTypeSupported(data_type);
 end;
 
-pure func InstructionContractDefaultStart_TCI() => Word
+pure func TCIDefaultStart() => Word
 begin
     return Zeros{PTO_XLEN};
 end;
 
-pure func InstructionContractDefaultDescending_TCI() => boolean
+pure func TCIDefaultDescending() => boolean
 begin
     return FALSE;
 end;
 
-readonly func InstructionContractOperandsLegal_TCI(
+readonly func TCIOperandsLegal(
     destination: TileIndex,
     start: Word,
     descending: boolean) => boolean
@@ -57,17 +57,17 @@ begin
         descending);
 end;
 
-readonly func InstructionContractHandler_TCI() => TileSemanticHandler
+readonly func TCIHandler() => TileSemanticHandler
 begin
     return TileHandler_TCI;
 end;
 
-func InstructionContractExecute_TCI(
+func ExecuteTCI(
     destination: TileIndex,
     start: Word,
     descending: boolean)
 begin
-    assert InstructionContractOperandsLegal_TCI(
+    assert TCIOperandsLegal(
         destination,
         start,
         descending);

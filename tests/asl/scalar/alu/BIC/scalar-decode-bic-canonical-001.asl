@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000010000001100111', 32) == 15;
     assert ScalarOperationOfForm(15) == ScalarOperation_BIC;
     assert ScalarHandlerOfForm(15) == ScalarHandler_ModifyBitfield;
-    assert InstructionContractOperation_BIC() == ScalarOperation_BIC;
-    assert InstructionContractHandler_BIC() == ScalarHandler_ModifyBitfield;
+    assert BICOperation() == ScalarOperation_BIC;
+    assert BICHandler() == ScalarHandler_ModifyBitfield;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000010000001100111', 15, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000010000001100111', 15, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000010000001100111', 15, ScalarField_imml) == '000000000000000000000000000000000000000000000000';

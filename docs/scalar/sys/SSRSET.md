@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ssrset-mechanism role=mechanism -->
 ## System mechanism
 
-`InstructionContractHandler_SSRSET` selects `ScalarHandler_ExecuteSystemRegisterSet` (`asl/scalar/sys/SSRSET.asl:18`), and `InstructionContractSystemAddressWidth_SSRSET` fixes the address width at 12 (`asl/scalar/sys/SSRSET.asl:36`). The dispatcher decodes `SrcL` as a Reg5 selector and `SSR_ID` as a system-register address (`asl/scalar/model/dispatch/sys.asl:111`).
+`SSRSETHandler` selects `ScalarHandler_ExecuteSystemRegisterSet` (`asl/scalar/sys/SSRSET.asl:18`), and `SSRSETSystemAddressWidth` fixes the address width at 12 (`asl/scalar/sys/SSRSET.asl:36`). The dispatcher decodes `SrcL` as a Reg5 selector and `SSR_ID` as a system-register address (`asl/scalar/model/dispatch/sys.asl:111`).
 
 The helper checks before it reads. It first rejects an address that is not writable; for MSGB it then runs the kernel-context, Block-attribute, and older-faultable-work preflight. Only an admitted attempt reads the source register (`asl/scalar/model/sys/registers.asl`).
 
@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/SSRSET.asl -->
 ```asl
-readonly func InstructionContractOperation_SSRSET()
+readonly func SSRSETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SSRSET;
@@ -121,31 +121,31 @@ SSRSET executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/SSRSET.asl -->
 ```asl
-readonly func InstructionContractHandler_SSRSET()
+readonly func SSRSETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterSet;
 end;
 
-pure func InstructionContractRequiresSystemBlock_SSRSET()
+pure func SSRSETRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSystemTransferKind_SSRSET()
+pure func SSRSETSystemTransferKind()
     => bits(2)
 begin
     return '01';
 end;
 
-pure func InstructionContractSystemAddressWidth_SSRSET()
+pure func SSRSETSystemAddressWidth()
     => integer {5,12,24}
 begin
     return 12;
 end;
 
-pure func InstructionContractPushesTemporaryT_SSRSET()
+pure func SSRSETPushesTemporaryT()
     => boolean
 begin
     return FALSE;

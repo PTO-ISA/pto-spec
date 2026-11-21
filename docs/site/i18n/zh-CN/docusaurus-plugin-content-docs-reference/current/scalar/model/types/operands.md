@@ -21,8 +21,8 @@ This page is a generated reference view of the normative ASL unit.
 
 - `ScalarSourceSelectorLegal` 和 `ScalarDestinationSelectorLegal`，决定选择子是否可用；
 - `ScalarImplicitSourceOperandsLegal`，检查某些压缩形式的隐式 T#1 源；
-- `ReadScalarRegisterOperand` 和 `ReadPEAbsoluteGPROperand`，读取值；
-- `WriteScalarDestination` 和 `WriteCompressedTResult`，发布结果。
+- `ReadReg5` 和 `ReadPEAbsoluteGPROperand`，读取值；
+- `WriteReg5` 和 `WriteCompressedTResult`，发布结果。
 
 <!-- PTO-READER-BLOCK: scalar-model-types-operands-concepts role=concepts-state -->
 ## 概念与可见状态
@@ -73,8 +73,8 @@ GPR 源总是合法。队列源仅在该条目的有效位置位时合法。`Sca
 
 - 读取选择子 25 的指令得到 B。T 队列不变。
 - 读取选择子 28 的指令无法通过合法性检查，因为 U#1 无效。
-- `WriteScalarDestination(31, X)` 把 X 压入 T。T#1 为 X，T#2 为 A，T#3 为 B，T#4 为 C，D 被移出。
-- `WriteScalarDestination(26, Y)` 不做任何事，因为 26 是丢弃编码。
+- `WriteReg5(31, X)` 把 X 压入 T。T#1 为 X，T#2 为 A，T#3 为 B，T#4 为 C，D 被移出。
+- `WriteReg5(26, Y)` 不做任何事，因为 26 是丢弃编码。
 
 <!-- PTO-READER-BLOCK: scalar-model-types-operands-related role=related-owners-navigation -->
 ## 相关所有者
@@ -130,7 +130,7 @@ begin
     end;
 end;
 
-readonly func ReadScalarRegisterOperand(selector: Reg5Selector) => Word
+readonly func ReadReg5(selector: Reg5Selector) => Word
 begin
     if selector < PTO_ABSOLUTE_GPR_COUNT then
         return ReadGPR(selector as GPRIndex);
@@ -153,7 +153,7 @@ begin
     return ReadPEGPR(pe, selector as GPRIndex);
 end;
 
-func WriteScalarDestination(selector: Reg5Selector, value: Word)
+func WriteReg5(selector: Reg5Selector, value: Word)
 begin
     if selector < PTO_ABSOLUTE_GPR_COUNT then
         WriteGPR(selector as GPRIndex, value);

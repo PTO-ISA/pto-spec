@@ -25,7 +25,7 @@
 
 
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_TGEMVMX(
+readonly func BSTARTTGEMVMXEncodingMatches(
     operation: CommandOperation) => boolean
 begin
     return operation ==
@@ -33,25 +33,25 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractTileOperation_BSTART_TGEMVMX()
+readonly func BSTARTTGEMVMXTileOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV_MX;
 end;
 
-readonly func InstructionContractCubeFunction_BSTART_TGEMVMX()
+readonly func BSTARTTGEMVMXCubeFunction()
     => integer {0..31}
 begin
     return 20;
 end;
 
-readonly func InstructionContractSharedOperandsAllowed_BSTART_TGEMVMX()
+readonly func BSTARTTGEMVMXSharedOperandsAllowed()
     => boolean
 begin
     return FALSE;
 end;
 
-readonly func InstructionContractHandler_BSTART_TGEMVMX()
+readonly func BSTARTTGEMVMXHandler()
     => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;

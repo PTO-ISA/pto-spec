@@ -17,7 +17,7 @@ This page is a generated reference view of the normative ASL unit.
 
 This unit handles the special values of the reference scalar floating-point profile: NaNs, infinities, and zeros. Each operation first asks a special-case function whether the inputs force a fixed result. Only when they do not does the operation compute a finite result: `ABS` clears a sign bit, and the other operations evaluate a real value and encode it through [reference quantization](reference-quantization.md) or, for BF16, `ReferenceBinary16Encoding`.
 
-It defines the unary and fused special cases and profiles: `ReferenceScalarFPUnarySpecial`, `ReferenceScalarFPUnaryProfile`, `ReferenceScalarFPFusedSpecial`, and `ReferenceScalarFPFusedProfile`. The binary special cases live in reference quantization as `ReferenceScalarFPBinarySpecial`.
+It defines the unary and fused special cases and profiles: `ReferenceScalarFPUnarySpecial`, `ReferenceScalarFPUnaryProfile`, `ReferenceScalarFPFusedSpecial`, and `ReferenceFPMulAdd`. The binary special cases live in reference quantization as `ReferenceScalarFPBinarySpecial`.
 
 <!-- PTO-READER-BLOCK: scalar-model-fsu-reference-scalar-fp-specials-concepts role=concepts-state -->
 ## Concepts and visible state
@@ -59,7 +59,7 @@ Design point: the effective addend sign flips for `MSUB` and `NMSUB`, and the fi
 
 `ReferenceScalarFPFusedSpecial` returns no special result for a zero product with a finite addend. That case goes to the finite path. For FP32 and FP64 the finite encoder returns +0.0 whenever the exact result is zero, whatever the operand signs.
 
-These functions are reached through `ScalarFPUnaryProfile` and `ScalarFPFusedProfile`. Those hooks assert the supported type codes: FP64, FP32, FP16, and BF16 for unary, and FP64, FP32, and FP16 for fused.
+These functions are reached through `ScalarFPUnaryProfile` and `FPMulAdd`. Those hooks assert the supported type codes: FP64, FP32, FP16, and BF16 for unary, and FP64, FP32, and FP16 for fused.
 
 `FABS` in decoded dispatch clears the sign bit itself and does not call the unary profile.
 
@@ -238,7 +238,7 @@ begin
     return (FALSE, Zeros{PTO_XLEN}, Zeros{5});
 end;
 
-func ReferenceScalarFPFusedProfile(
+func ReferenceFPMulAdd(
     operation: FloatingFusedOperation, rounding_mode: NumericRoundingMode,
     source_type: bits(5), addend: Word, left: Word, right: Word)
     => (Word, bits(5))

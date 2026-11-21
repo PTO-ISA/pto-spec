@@ -173,7 +173,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-and-immediate/arithmetic/TMAXS.asl -->
 ```asl
-readonly func InstructionContractOperation_TMAXS() => TileOperation
+readonly func TMAXSOperation() => TileOperation
 begin
     return TileOperation_TMAXS;
 end;
@@ -197,7 +197,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/tile-scalar-and-immediate/arithmetic/TMAXS.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TMAXS(
+pure func TMAXSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileBinaryDataTypeSupported(
@@ -205,7 +205,7 @@ begin
         data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TMAXS(
+readonly func TMAXSOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word) => boolean
@@ -217,17 +217,17 @@ begin
         scalar);
 end;
 
-readonly func InstructionContractHandler_TMAXS() => TileSemanticHandler
+readonly func TMAXSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileScalar;
 end;
 
-func InstructionContractExecute_TMAXS(
+func ExecuteTMAXS(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word)
 begin
-    assert InstructionContractOperandsLegal_TMAXS(
+    assert TMAXSOperandsLegal(
         destination,
         source,
         scalar);

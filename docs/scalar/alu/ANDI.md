@@ -112,7 +112,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/ANDI.asl -->
 ```asl
-readonly func InstructionContractOperation_ANDI()
+readonly func ANDIOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ANDI;
@@ -124,25 +124,25 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/ANDI.asl -->
 ```asl
-readonly func InstructionContractHandler_ANDI()
+readonly func ANDIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractImmediateWidth_ANDI()
+pure func ANDIImmediateWidth()
     => integer {1..64}
 begin
     return 12;
 end;
 
-pure func InstructionContractImmediateIsSigned_ANDI()
+pure func ANDIImmediateIsSigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_ANDI()
+pure func ANDIIsWordOperation()
     => boolean
 begin
     return FALSE;

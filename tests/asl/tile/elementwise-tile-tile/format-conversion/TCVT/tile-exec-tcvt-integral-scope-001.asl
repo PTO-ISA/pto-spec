@@ -65,7 +65,7 @@ begin
     if !TileOperandsLegal_TCVT(1, 0, control) then
         return FALSE;
     end;
-    InstructionContractExecute_TCVT(1, 0, control);
+    ExecuteTCVT(1, 0, control);
     assert _LastFault == Fault_None;
     return ReadTileElement(1, 0, 0) == expected_value &&
            NumericStatusFlags() == expected_flags;
@@ -111,7 +111,7 @@ begin
     assert _Tiles[[0]].layout == CurrentBundleTileSourceLayout();
     assert _Tiles[[1]].layout == CurrentBundleTileLayout();
     assert TileOperandsLegal_TCVT(1, 0, control);
-    InstructionContractExecute_TCVT(1, 0, control);
+    ExecuteTCVT(1, 0, control);
     assert _LastFault == Fault_None;
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 0x4200;
     assert NumericStatusFlags() == Zeros{5} + 0x10;

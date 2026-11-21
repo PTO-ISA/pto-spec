@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-zva-mechanism role=mechanism -->
 ## 系统机制
 
-`InstructionContractHandler_DC_ZVA` 选择共用的维护处理程序（`asl/scalar/sys/DC.ZVA.asl:11`），而 `InstructionContractMaintenanceUsesOperand_DC_ZVA` 返回 `TRUE`，使派发器在调用之前读取源寄存器（`asl/scalar/model/dispatch/sys.asl:30`）。
+`DCZVAHandler` 选择共用的维护处理程序（`asl/scalar/sys/DC.ZVA.asl:11`），而 `DCZVAMaintenanceUsesOperand` 返回 `TRUE`，使派发器在调用之前读取源寄存器（`asl/scalar/model/dispatch/sys.asl:30`）。
 
 执行器的数据缓存组包含全部八个 `DC.*` 操作，因此 `Maintenance_DC_ZVA` 推进的是 `_DataCacheEpoch`，而不是装入一个建模的零块（`asl/scalar/model/sys/semantics.asl:134`）。
 
@@ -102,7 +102,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.ZVA.asl -->
 ```asl
-readonly func InstructionContractOperation_DC_ZVA()
+readonly func DCZVAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DC_ZVA;
@@ -120,31 +120,31 @@ DC.ZVA executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.ZVA.asl -->
 ```asl
-readonly func InstructionContractHandler_DC_ZVA()
+readonly func DCZVAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_DC_ZVA()
+pure func DCZVARequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_DC_ZVA()
+pure func DCZVAMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_DC_ZVA;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_DC_ZVA()
+pure func DCZVAMaintenanceUsesOperand()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_DC_ZVA()
+pure func DCZVAMaintenanceRequiresRootRing()
     => boolean
 begin
     return FALSE;

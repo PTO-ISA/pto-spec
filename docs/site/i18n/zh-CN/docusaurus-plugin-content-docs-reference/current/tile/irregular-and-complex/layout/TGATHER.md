@@ -111,7 +111,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/irregular-and-complex/layout/TGATHER.asl -->
 ```asl
-readonly func InstructionContractOperation_TGATHER() => TileOperation
+readonly func TGATHEROperation() => TileOperation
 begin
     return TileOperation_TGATHER;
 end;
@@ -134,7 +134,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/irregular-and-complex/layout/TGATHER.asl -->
 ```asl
-readonly func InstructionContractOperandsLegal_TGATHER(
+readonly func TGATHEROperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     indices: TileIndex) => boolean
@@ -142,17 +142,17 @@ begin
     return TileOperandsLegal_TGATHER(destination, source, indices);
 end;
 
-readonly func InstructionContractHandler_TGATHER() => TileSemanticHandler
+readonly func TGATHERHandler() => TileSemanticHandler
 begin
     return TileHandler_TGATHER;
 end;
 
-func InstructionContractExecute_TGATHER(
+func ExecuteTGATHER(
     destination: TileIndex,
     source: TileIndex,
     indices: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TGATHER(
+    assert TGATHEROperandsLegal(
         destination,
         source,
         indices);

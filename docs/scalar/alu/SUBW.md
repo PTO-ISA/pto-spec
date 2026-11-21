@@ -28,7 +28,7 @@ The transformation and the shift run at full width on `SrcR`; the narrowing appl
 <!-- PTO-READER-BLOCK: scalar-subw-mechanism role=mechanism -->
 ## How the word result is formed
 
-`ExecuteDecodedBinary` reads both sources and the two suffix fields, forms the right operand with `PrepareScalarRight(right, modifier, shift_amount, FALSE)`, and with `word_operation` true calls `ScalarBinaryW(ScalarBinary_SUB, left, right)` (`asl/scalar/model/dispatch/alu.asl:86-87`). That helper computes the difference at `32` bits and returns `SignExtend{PTO_XLEN}(result32)` (`asl/scalar/model/alu/semantics.asl:477`).
+`ExecuteDecodedBinary` reads both sources and the two suffix fields, forms the right operand with `ShiftModifiedScalar(right, modifier, shift_amount, FALSE)`, and with `word_operation` true calls `ScalarBinaryW(ScalarBinary_SUB, left, right)` (`asl/scalar/model/dispatch/alu.asl:86-87`). That helper computes the difference at `32` bits and returns `SignExtend{PTO_XLEN}(result32)` (`asl/scalar/model/alu/semantics.asl:477`).
 
 ```asm
 subw SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>, ->{t, u, Rd}
@@ -131,7 +131,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/SUBW.asl -->
 ```asl
-readonly func InstructionContractOperation_SUBW()
+readonly func SUBWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SUBW;
@@ -143,13 +143,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/SUBW.asl -->
 ```asl
-readonly func InstructionContractHandler_SUBW()
+readonly func SUBWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractRightModifier_SUBW(encoded: bits(2))
+pure func DecodeSUBWRightModifier(encoded: bits(2))
     => ScalarRightModifier
 begin
     case encoded of
@@ -160,39 +160,39 @@ begin
     end;
 end;
 
-pure func InstructionContractPreparedRight_SUBW(
+pure func SUBWRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let modifier = InstructionContractRightModifier_SUBW(encoded_modifier);
-    let transformed = ApplyScalarRightModifier(right, modifier, FALSE);
+    let modifier = DecodeSUBWRightModifier(encoded_modifier);
+    let transformed = ModifyScalarOperand(right, modifier, FALSE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func InstructionContractResult_SUBW(
+pure func SUBWResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = InstructionContractPreparedRight_SUBW(
+    let prepared_right = SUBWRightOperand(
         right,
         encoded_modifier,
         shift_amount);
     return ScalarBinaryW(ScalarBinary_SUB, left, prepared_right);
 end;
 
-pure func InstructionContractIsLogicalFamily_SUBW()
+pure func SUBWIsLogicalFamily()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractIsWordOperation_SUBW()
+pure func SUBWIsWordOperation()
     => boolean
 begin
     return TRUE;

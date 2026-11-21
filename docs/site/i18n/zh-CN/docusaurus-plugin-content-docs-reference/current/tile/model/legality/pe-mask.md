@@ -34,7 +34,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: tile-model-legality-pe-mask-rules role=rules-interactions -->
 ## 规则与交互
 
-`TileCoreAllocationBytes` 用于全核总量。例如，Local 容量单元中的 `TileCapacityInUse` 对每个已分配的 Local Tile 寄存器累加该值，`TileCapacityInUseExcept` 对除一个被排除寄存器外的所有已分配寄存器累加该值，`InstructionContractCoreCapacity_B_IOT` 用它报告 `B.IOT` 尺寸码的全核容量。
+`TileCoreAllocationBytes` 用于全核总量。例如，Local 容量单元中的 `TileCapacityInUse` 对每个已分配的 Local Tile 寄存器累加该值，`TileCapacityInUseExcept` 对除一个被排除寄存器外的所有已分配寄存器累加该值，`BIOTCoreCapacity` 用它报告 `B.IOT` 尺寸码的全核容量。
 
 设计要点：新 Local Tile 的准入不使用全核总量。`LocalTileAllocationFitsExcept` 将每个被选中 PE 自己的池与 `TileCapacityLimitBytes` 比较。因此只有当 Tile 能放入它指定的每一个 PE 时才能分配，而不是仅仅放得下这些池的总和。
 

@@ -12,36 +12,36 @@
 // memory, Tile, block, reservation, privilege, numeric-status, or fault state.
 // NDF-END: PTO-HL-ANDIW-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_ANDIW() => ScalarOperation
+readonly func HLANDIWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_ANDIW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_ANDIW() => ScalarSemanticHandler
+readonly func HLANDIWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractImmediateWidth_HL_ANDIW()
+pure func HLANDIWImmediateWidth()
     => integer {1..64}
 begin
     return 24;
 end;
 
-pure func InstructionContractImmediateIsSigned_HL_ANDIW()
+pure func HLANDIWImmediateIsSigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_HL_ANDIW()
+pure func HLANDIWIsWordOperation()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractResult_HL_ANDIW(
+pure func HLANDIWResult(
     left: Word,
     immediate: bits(24))
     => Word

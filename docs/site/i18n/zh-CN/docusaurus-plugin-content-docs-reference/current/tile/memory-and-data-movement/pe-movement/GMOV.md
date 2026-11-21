@@ -55,7 +55,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-gmov-constraints role=constraints -->
 ## 类型、布局与故障
 
-`InstructionContractDataTypeLegal_GMOV` 恰好接受 `TileCarrierOrPackedBaselineDataTypeSupported` 允许的类型：所有最高 64 位的非打包载体，加上打包四位基线。64 位源在 `RowMajor` 中仍合法；在 CUBE 布局中则要求 `CUBE_M32` double-CELL 存储。
+`GMOVDataTypeLegal` 恰好接受 `TileCarrierOrPackedBaselineDataTypeSupported` 允许的类型：所有最高 64 位的非打包载体，加上打包四位基线。64 位源在 `RowMajor` 中仍合法；在 CUBE 布局中则要求 `CUBE_M32` double-CELL 存储。
 
 源与目标必须在数据类型、布局、存储种类、行数、列数、有效行数与有效列数上一致（`TileOperandsLegal_GMOV`）。布局必须是 `RowMajor`、`CUBE_M16` 或 `CUBE_M32`；`CUBE_N8` 与 Shared 操作数非法。 64 位 CUBE 操作数要求 `CUBE_M32` double-CELL 映射；`CUBE_M16` 会拒绝。
 
@@ -113,7 +113,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/pe-movement/GMOV.asl -->
 ```asl
-readonly func InstructionContractOperation_GMOV() => TileOperation
+readonly func GMOVOperation() => TileOperation
 begin
     return TileOperation_GMOV;
 end;
@@ -134,24 +134,24 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/pe-movement/GMOV.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_GMOV(
+pure func GMOVDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractHandler_GMOV() => TileSemanticHandler
+readonly func GMOVHandler() => TileSemanticHandler
 begin
     return TileHandler_GMOV;
 end;
 
-pure func InstructionContractRequiresCoreFourReadiness_GMOV()
+pure func GMOVRequiresCoreFourReadiness()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractPartialMaskWritesSelectedPEs_GMOV()
+pure func GMOVPartialMaskWritesSelectedPEs()
     => boolean
 begin
     return TRUE;

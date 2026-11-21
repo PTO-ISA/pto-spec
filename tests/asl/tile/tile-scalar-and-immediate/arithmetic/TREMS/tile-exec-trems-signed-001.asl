@@ -31,7 +31,7 @@ begin
         1,
         Zeros{PTO_XLEN} + 5);
 
-    InstructionContractExecute_TREMS(
+    ExecuteTREMS(
         1,
         0,
         Zeros{PTO_XLEN} + 3);

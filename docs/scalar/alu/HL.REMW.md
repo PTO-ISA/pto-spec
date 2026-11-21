@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-remw-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `InstructionContractQuotient_HL_REMW` and `InstructionContractRemainder_HL_REMW`, which call `ScalarDivideSignedW` and `ScalarRemainderSignedW`. Those helpers sign-extend the low words, divide, and return `SignExtend{PTO_XLEN}` of the `32`-bit result. Dispatch calls `ExecuteScalarRemainderPairW` with `signed_operation` true, which writes the remainder first and the quotient second.
+The owning ASL exposes `HLREMWQuotient` and `HLREMWRemainder`, which call `ScalarDivideSignedW` and `ScalarRemainderSignedW`. Those helpers sign-extend the low words, divide, and return `SignExtend{PTO_XLEN}` of the `32`-bit result. Dispatch calls `ExecuteScalarRemainderPairW` with `signed_operation` true, which writes the remainder first and the quotient second.
 
 ```asm
 hl.remw SrcL, SrcR, ->Dst0, Dst1
@@ -122,7 +122,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.REMW.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_REMW() => ScalarOperation
+readonly func HLREMWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_REMW;
 end;
@@ -133,11 +133,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.REMW.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_REMW() => ScalarSemanticHandler
+readonly func HLREMWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarRemainderPairW;
 end;
-pure func InstructionContractQuotient_HL_REMW(
+pure func HLREMWQuotient(
     dividend: Word,
     divisor: Word)
     => Word
@@ -147,7 +147,7 @@ begin
         divisor);
 end;
 
-pure func InstructionContractRemainder_HL_REMW(
+pure func HLREMWRemainder(
     dividend: Word,
     divisor: Word)
     => Word
@@ -157,22 +157,22 @@ begin
         divisor);
 end;
 
-pure func InstructionContractDst0_HL_REMW(
+pure func HLREMWDst0(
     dividend: Word,
     divisor: Word)
     => Word
 begin
-    return InstructionContractRemainder_HL_REMW(
+    return HLREMWRemainder(
         dividend,
         divisor);
 end;
 
-pure func InstructionContractDst1_HL_REMW(
+pure func HLREMWDst1(
     dividend: Word,
     divisor: Word)
     => Word
 begin
-    return InstructionContractQuotient_HL_REMW(
+    return HLREMWQuotient(
         dividend,
         divisor);
 end;

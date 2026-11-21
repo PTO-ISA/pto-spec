@@ -124,7 +124,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FNMADD.asl -->
 ```asl
-readonly func InstructionContractOperation_FNMADD()
+readonly func FNMADDOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FNMADD;
@@ -136,44 +136,44 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FNMADD.asl -->
 ```asl
-readonly func InstructionContractHandler_FNMADD()
+readonly func FNMADDHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingFused;
 end;
 
-pure func InstructionContractSourceTypeLegal_FNMADD(encoded: bits(2))
+pure func FNMADDSourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return encoded == '00' || encoded == '01';
 end;
 
-pure func InstructionContractSourceCarrier_FNMADD(encoded: bits(2))
+pure func DecodeFNMADDSourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_FNMADD(encoded);
+    assert FNMADDSourceTypeLegal(encoded);
     return ScalarFPSourceTypeCode(encoded);
 end;
 
-pure func InstructionContractSourceArity_FNMADD()
+pure func FNMADDSourceArity()
     => integer {1..3}
 begin
     return 3;
 end;
 
-pure func InstructionContractUsesProfileFlags_FNMADD()
+pure func FNMADDUsesProfileFlags()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesActiveRounding_FNMADD()
+pure func FNMADDUsesActiveRounding()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractFusedOperation_FNMADD()
+pure func FNMADDFusedOperation()
     => FloatingFusedOperation
 begin
     return FloatingFused_NMADD;

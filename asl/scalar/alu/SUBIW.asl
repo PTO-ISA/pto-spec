@@ -8,32 +8,32 @@
 // assigned destination or commit effect in alias-safe order.
 // NDF-END: PTO-SUBIW-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SUBIW()
+readonly func SUBIWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SUBIW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SUBIW()
+readonly func SUBIWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractImmediateWidth_SUBIW()
+pure func SUBIWImmediateWidth()
     => integer {1..64}
 begin
     return 12;
 end;
 
-pure func InstructionContractImmediateIsUnsigned_SUBIW()
+pure func SUBIWImmediateIsUnsigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_SUBIW()
+pure func SUBIWIsWordOperation()
     => boolean
 begin
     return TRUE;

@@ -8,7 +8,7 @@ begin
     end;
     WriteTileElement(0, 0, 0,
         Zeros{PTO_XLEN} + 0x7fefffffffffffff);
-    InstructionContractExecute_TEXP(1, 0);
+    ExecuteTEXP(1, 0);
     assert ReadTileElement(1, 0, 0) ==
         Zeros{PTO_XLEN} + 0x7ff0000000000000;
     assert NumericStatusFlags() == Zeros{5} + 0x14;

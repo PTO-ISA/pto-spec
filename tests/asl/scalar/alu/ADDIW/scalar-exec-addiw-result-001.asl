@@ -12,8 +12,8 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(1) == '1111111111111111111111111111111110000000000000000000000000000000';
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x44;
-    assert InstructionContractImmediateWidth_ADDIW() == 12;
-    assert InstructionContractImmediateIsUnsigned_ADDIW();
-    assert InstructionContractIsWordOperation_ADDIW();
+    assert ADDIWImmediateWidth() == 12;
+    assert ADDIWImmediateIsUnsigned();
+    assert ADDIWIsWordOperation();
     return 0;
 end;

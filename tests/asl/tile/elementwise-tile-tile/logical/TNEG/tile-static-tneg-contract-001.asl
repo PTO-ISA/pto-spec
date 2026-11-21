@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(15) == TileHandler_ExecuteTileUnary;
     assert TileClassOfIndex(15) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(15) == TileEngine_VEC;
-    assert InstructionContractOperation_TNEG() == TileOperation_TNEG;
-    assert InstructionContractHandler_TNEG() == TileHandler_ExecuteTileUnary;
+    assert TNEGOperation() == TileOperation_TNEG;
+    assert TNEGHandler() == TileHandler_ExecuteTileUnary;
     return 0;
 end;

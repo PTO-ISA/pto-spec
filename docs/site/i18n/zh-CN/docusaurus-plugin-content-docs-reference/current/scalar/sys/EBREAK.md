@@ -24,16 +24,16 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-ebreak-mechanism role=mechanism -->
 ## 系统机制
 
-`InstructionContractHandler_EBREAK` 选择 `ScalarHandler_SoftwareBreakpoint`（`asl/scalar/sys/EBREAK.asl:11`）。派发器解码 4 位 `imm4` 字段，将其零扩展为 5 位，并调用 `SoftwareBreakpoint`（`asl/scalar/model/dispatch/sys.asl:78`）。该辅助函数以当前指令地址和零扩展后的原因引发 `Fault_SoftwareBreakpoint`（`asl/scalar/model/sys/semantics.asl:91`）。
+`EBREAKHandler` 选择 `ScalarHandler_SoftwareBreakpoint`（`asl/scalar/sys/EBREAK.asl:11`）。派发器解码 4 位 `imm4` 字段，将其零扩展为 5 位，并调用 `SoftwareBreakpoint`（`asl/scalar/model/dispatch/sys.asl:78`）。该辅助函数以当前指令地址和零扩展后的原因引发 `Fault_SoftwareBreakpoint`（`asl/scalar/model/sys/semantics.asl:91`）。
 
-故障类别决定陷阱身份：`Fault_SoftwareBreakpoint` 映射到陷阱号 50（`asl/arch/memory-model/fault-precision.asl:80`）。`InstructionContractBreakpointPublishesTrapCause_EBREAK` 返回 `TRUE`（`asl/scalar/sys/EBREAK.asl:36`），因此立即数作为原因发布，而不是保存在单独的断点寄存器中。
+故障类别决定陷阱身份：`Fault_SoftwareBreakpoint` 映射到陷阱号 50（`asl/arch/memory-model/fault-precision.asl:80`）。`EBREAKBreakpointPublishesTrapCause` 返回 `TRUE`（`asl/scalar/sys/EBREAK.asl:36`），因此立即数作为原因发布，而不是保存在单独的断点寄存器中。
 
 该指令只在活动 SYS 块的块体中适用（`asl/scalar/model/sys/semantics.asl:322`）。
 
 <!-- PTO-READER-BLOCK: scalar-ebreak-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
 
-`imm4` 是位于指令第 27:24 位的 4 位立即数（`asl/scalar/sys/EBREAK.asl:1`）。它的全部十六个值都已分配，`InstructionContractBreakpointImmediateWidth_EBREAK` 报告宽度为 4（`asl/scalar/sys/EBREAK.asl:30`）。
+`imm4` 是位于指令第 27:24 位的 4 位立即数（`asl/scalar/sys/EBREAK.asl:1`）。它的全部十六个值都已分配，`EBREAKBreakpointImmediateWidth` 报告宽度为 4（`asl/scalar/sys/EBREAK.asl:30`）。
 
 该指令不写寄存器。它的输出是架构陷阱状态：陷阱原因与故障地址。`imm4` 中的编码零是真实的零原因，不是省略的操作数。
 
@@ -102,7 +102,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/EBREAK.asl -->
 ```asl
-readonly func InstructionContractOperation_EBREAK()
+readonly func EBREAKOperation()
     => ScalarOperation
 begin
     return ScalarOperation_EBREAK;
@@ -120,25 +120,25 @@ EBREAK executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/EBREAK.asl -->
 ```asl
-readonly func InstructionContractHandler_EBREAK()
+readonly func EBREAKHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_SoftwareBreakpoint;
 end;
 
-pure func InstructionContractRequiresSystemBlock_EBREAK()
+pure func EBREAKRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractBreakpointImmediateWidth_EBREAK()
+pure func EBREAKBreakpointImmediateWidth()
     => integer {4,5}
 begin
     return 4;
 end;
 
-pure func InstructionContractBreakpointPublishesTrapCause_EBREAK()
+pure func EBREAKBreakpointPublishesTrapCause()
     => boolean
 begin
     return TRUE;

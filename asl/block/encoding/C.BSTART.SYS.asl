@@ -6,18 +6,18 @@
 // MUST NOT install a selecting BPCN, TYPE, or TAKEN continuation field.
 // NDF-END: PTO-C-BSTART-SYS-CONTROL-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_C_BSTART_SYS(operation: CommandOperation) => boolean
+readonly func CBSTARTSYSEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_c_bstart_sys_16_ec213ce96eb7);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractKind_C_BSTART_SYS() => BundleKind
+pure func CBSTARTSYSKind() => BundleKind
 begin
     return BundleKind_System;
 end;
 
-readonly func InstructionContractHandler_C_BSTART_SYS() => CommandSemanticHandler
+readonly func CBSTARTSYSHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

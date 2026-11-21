@@ -28,6 +28,6 @@ begin
     assert ReadGPR(7) == Zeros{PTO_XLEN} + 0x777;
     assert _DataCacheEpoch == 9;
     assert _ArchitectureRequestEpoch == 11;
-    assert InstructionContractOperation_EBREAK() == ScalarOperation_EBREAK;
+    assert EBREAKOperation() == ScalarOperation_EBREAK;
     return 0;
 end;

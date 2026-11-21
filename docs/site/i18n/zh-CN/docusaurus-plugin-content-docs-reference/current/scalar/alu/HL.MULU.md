@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-mulu-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `InstructionContractProduct_HL_MULU`，它返回 `MultiplyWideUnsigned(left, right)`。该辅助函数把两个操作数零扩展到 128 位，并按 `right` 的每个置位位置累加左移后的 `left`。`InstructionContractLow_HL_MULU` 与 `InstructionContractHigh_HL_MULU` 分别取结果的 `63:0` 位与 `127:64` 位。
+所属 ASL 提供 `HLMULUProduct`，它返回 `MultiplyWideUnsigned(left, right)`。该辅助函数把两个操作数零扩展到 128 位，并按 `right` 的每个置位位置累加左移后的 `left`。`HLMULULow` 与 `HLMULUHigh` 分别取结果的 `63:0` 位与 `127:64` 位。
 
 ```asm
 hl.mulu SrcL, SrcR, ->Dst0, Dst1
@@ -122,7 +122,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.MULU.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_MULU() => ScalarOperation
+readonly func HLMULUOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_MULU;
 end;
@@ -133,23 +133,23 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.MULU.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_MULU() => ScalarSemanticHandler
+readonly func HLMULUHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarMultiplyPair;
 end;
-pure func InstructionContractProduct_HL_MULU(left: Word, right: Word) => DoubleWord
+pure func HLMULUProduct(left: Word, right: Word) => DoubleWord
 begin
     return MultiplyWideUnsigned(left, right);
 end;
 
-pure func InstructionContractLow_HL_MULU(left: Word, right: Word) => Word
+pure func HLMULULow(left: Word, right: Word) => Word
 begin
-    return InstructionContractProduct_HL_MULU(left, right)[63:0];
+    return HLMULUProduct(left, right)[63:0];
 end;
 
-pure func InstructionContractHigh_HL_MULU(left: Word, right: Word) => Word
+pure func HLMULUHigh(left: Word, right: Word) => Word
 begin
-    return InstructionContractProduct_HL_MULU(left, right)[127:64];
+    return HLMULUProduct(left, right)[127:64];
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->

@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-sfu-mechanism role=mechanism -->
 ## 位置与机制
 
-别名所有者把每个部分映射到 `BSTART.TEPL`：`InstructionContractMatches_BSTART_SFU` 匹配 TEPL 形式，`InstructionContractHandler_BSTART_SFU` 返回 TEPL 处理器 `CommandHandler_ExecuteBundleStart`。因此执行过程与 TEPL 路径完全相同。
+别名所有者把每个部分映射到 `BSTART.TEPL`：`BSTARTSFUEncodingMatches` 匹配 TEPL 形式，`BSTARTSFUHandler` 返回 TEPL 处理器 `CommandHandler_ExecuteBundleStart`。因此执行过程与 TEPL 路径完全相同。
 
 1. [指令束启动分派](../model/dispatch/start.md)在提交任何前驱之前检查译码后的描述符。
 2. 它提交前驱、打开 Tile 元素块并安装描述符。
@@ -162,10 +162,10 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.SFU.asl -->
 ```asl
-readonly func InstructionContractMatches_BSTART_SFU(
+readonly func BSTARTSFUEncodingMatches(
     operation: CommandOperation) => boolean
 begin
-    return InstructionContractMatches_BSTART_TEPL(operation);
+    return BSTARTTEPLEncodingMatches(operation);
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
@@ -181,17 +181,17 @@ The resulting block uses the same descriptor, header composition, commit, and ro
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.SFU.asl -->
 ```asl
-readonly func InstructionContractHandler_BSTART_SFU() => CommandSemanticHandler
+readonly func BSTARTSFUHandler() => CommandSemanticHandler
 begin
-    return InstructionContractHandler_BSTART_TEPL();
+    return BSTARTTEPLHandler();
 end;
 
-pure func InstructionContractAliasEngine_BSTART_SFU() => TileExecutionEngine
+pure func BSTARTSFUAliasEngine() => TileExecutionEngine
 begin
     return TileEngine_SFU;
 end;
 
-pure func InstructionContractAcceptsTileOperation_BSTART_SFU(
+pure func BSTARTSFUAcceptsTileOperation(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
     return TileTEPLAliasAcceptsOperation(TileTEPLAlias_SFU, operation);

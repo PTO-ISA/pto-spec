@@ -54,12 +54,12 @@ A successful prefetch changes no Tile, Shared, descriptor, payload, definedness,
 
 Those events are the typed element load events that `TLOAD` would record for the same footprint, but no value is published anywhere.
 
-Design point: `InstructionContractPublishesTileDestination_TPREFETCH` is `FALSE` and the contract states that cache placement and retention are not architecturally visible, so the observable result is the event sequence rather than the presence of data in any cache.
+Design point: `TPREFETCHPublishesTileDestination` is `FALSE` and the contract states that cache placement and retention are not architecturally visible, so the observable result is the event sequence rather than the presence of data in any cache.
 
 <!-- PTO-READER-BLOCK: tile-tprefetch-constraints role=constraints -->
 ## Types, shapes, and faults
 
-`InstructionContractDataTypeLegal_TPREFETCH` accepts the types `TileCarrierOrPackedBaselineDataTypeSupported` admits: non-packed carriers through 64 bits, plus the packed four-bit baseline.
+`TPREFETCHDataTypeLegal` accepts the types `TileCarrierOrPackedBaselineDataTypeSupported` admits: non-packed carriers through 64 bits, plus the packed four-bit baseline.
 
 `ValidCol` and `ValidRow` are positive, `Col` is a nonzero power of two and at least `ValidCol`, and `ValidRow * ValidCol` may not exceed `PTO_MODEL_TILE_ELEMENTS`. `B.DATR` permits only `Layout` as a nonzero operation attribute and requires the pad union to remain zero.
 
@@ -117,7 +117,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/regular/TPREFETCH.asl -->
 ```asl
-readonly func InstructionContractOperation_TPREFETCH() => TileOperation
+readonly func TPREFETCHOperation() => TileOperation
 begin
     return TileOperation_TPREFETCH;
 end;
@@ -138,7 +138,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/regular/TPREFETCH.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TPREFETCH(
+pure func TPREFETCHDataTypeLegal(
     code: bits(5)) => boolean
 begin
     if !TileDataTypeEncodingValid(code as TileDataTypeEncoding) then
@@ -148,18 +148,18 @@ begin
     return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractHandler_TPREFETCH() => TileSemanticHandler
+readonly func TPREFETCHHandler() => TileSemanticHandler
 begin
     return TileHandler_TPREFETCH;
 end;
 
-pure func InstructionContractPublishesTileDestination_TPREFETCH()
+pure func TPREFETCHPublishesTileDestination()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractUsesTLOADFootprint_TPREFETCH()
+pure func TPREFETCHUsesTLOADFootprint()
     => boolean
 begin
     return TRUE;

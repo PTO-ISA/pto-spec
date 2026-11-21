@@ -22,24 +22,24 @@
 // Indexed TLSU MUST retain its separately owned byte-displacement semantics.
 // NDF-END: PTO-TLEA-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TLEA() => TileOperation
+readonly func TLEAOperation() => TileOperation
 begin
     return TileOperation_TLEA;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TLEA(data_type: TileDataType)
+pure func TLEADataTypeLegal(data_type: TileDataType)
     => boolean
 begin
     return TileLEAIndexDataTypeLegal(data_type);
 end;
 
-readonly func InstructionContractHandler_TLEA() => TileSemanticHandler
+readonly func TLEAHandler() => TileSemanticHandler
 begin
     return TileHandler_TLEA;
 end;
 
-func InstructionContractExecute_TLEA(
+func ExecuteTLEA(
     destination: TileIndex, source: TileIndex, element_bits: Word)
 begin
     assert TileOperandsLegal_TLEA(destination, source, element_bits);

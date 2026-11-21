@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(10) == TileHandler_ExecuteTileBinary;
     assert TileClassOfIndex(10) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(10) == TileEngine_VEC;
-    assert InstructionContractOperation_TMAX() == TileOperation_TMAX;
-    assert InstructionContractHandler_TMAX() == TileHandler_ExecuteTileBinary;
+    assert TMAXOperation() == TileOperation_TMAX;
+    assert TMAXHandler() == TileHandler_ExecuteTileBinary;
     return 0;
 end;

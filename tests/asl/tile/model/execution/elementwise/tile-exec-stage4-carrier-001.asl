@@ -54,7 +54,7 @@ begin
             TileDataType_TF32, TileLayout_RowMajor);
     end;
     WriteTileElement(8, 0, 0, invalid_left);
-    assert !InstructionContractOperandsLegal_TRELU(7, 8);
+    assert !TRELUOperandsLegal(7, 8);
     assert !_Tiles[[7]].contents_defined;
     return 0;
 end;

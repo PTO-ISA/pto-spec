@@ -137,7 +137,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/HL.QPUSH.asl -->
 ```asl
-readonly func InstructionContractMatches_HL_QPUSH(operation: CommandOperation) => boolean
+readonly func HLQPUSHEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_hl_qpush_48_3eab8e05d61a);
 end;
@@ -148,7 +148,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/HL.QPUSH.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_QPUSH() => CommandSemanticHandler
+readonly func HLQPUSHHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteQueuePush;
 end;
@@ -165,13 +165,13 @@ begin
         flags);
 end;
 
-pure func InstructionContractChangesQueueManagerState_HL_QPUSH()
+pure func HLQPUSHChangesQueueManagerState()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSnapshotsSourcesBeforeWrite_HL_QPUSH()
+pure func HLQPUSHSnapshotsSourcesBeforeWrite()
     => boolean
 begin
     return TRUE;

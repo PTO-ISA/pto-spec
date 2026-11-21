@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-mul-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `InstructionContractResult_MUL`，它返回 `MultiplyWord(left, right)`。该辅助函数从零开始，对 `right` 的每个置位位置把 `LSL(left, bit_index)` 加到一个 `Word` 累加器上，因此每个部分和都已按模 `2^PTO_XLEN` 约简。
+所属 ASL 提供 `MULResult`，它返回 `MultiplyWord(left, right)`。该辅助函数从零开始，对 `right` 的每个置位位置把 `LSL(left, bit_index)` 加到一个 `Word` 累加器上，因此每个部分和都已按模 `2^PTO_XLEN` 约简。
 
 ```asm
 mul SrcL, SrcR, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MUL.asl -->
 ```asl
-readonly func InstructionContractOperation_MUL() => ScalarOperation
+readonly func MULOperation() => ScalarOperation
 begin
     return ScalarOperation_MUL;
 end;
@@ -127,11 +127,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MUL.asl -->
 ```asl
-readonly func InstructionContractHandler_MUL() => ScalarSemanticHandler
+readonly func MULHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_MultiplyWord;
 end;
-pure func InstructionContractResult_MUL(left: Word, right: Word) => Word
+pure func MULResult(left: Word, right: Word) => Word
 begin
     return MultiplyWord(left, right);
 end;

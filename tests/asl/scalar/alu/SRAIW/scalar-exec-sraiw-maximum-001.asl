@@ -12,7 +12,7 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(1) == Ones{PTO_XLEN};
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x44;
-    assert InstructionContractShiftWidth_SRAIW() == 5;
-    assert InstructionContractIsWordOperation_SRAIW();
+    assert SRAIWShiftWidth() == 5;
+    assert SRAIWIsWordOperation();
     return 0;
 end;

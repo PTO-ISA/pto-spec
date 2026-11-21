@@ -5,13 +5,13 @@
 // effects, restore the inclusive ring, then publish only that retained target.
 // NDF-END: PTO-FRET-RA-RESTARTABLE-FRAME-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_FRET_RA(operation: CommandOperation) => boolean
+readonly func FRETRAEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_fret_ra_32_659c886221c1);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_FRET_RA() => CommandSemanticHandler
+readonly func FRETRAHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteFrameReturnAddress;
 end;
@@ -23,13 +23,13 @@ begin
     ReturnFromFrame(begin_reg, end_reg, frame_size, TRUE);
 end;
 
-pure func InstructionContractUsesInclusiveRegisterRange_FRET_RA()
+pure func FRETRAUsesInclusiveRegisterRange()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractRejectsInvalidFrameRange_FRET_RA()
+pure func FRETRARejectsInvalidFrameRange()
     => boolean
 begin
     return TRUE;

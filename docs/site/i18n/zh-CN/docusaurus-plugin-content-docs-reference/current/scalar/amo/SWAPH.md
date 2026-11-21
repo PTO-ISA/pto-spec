@@ -138,7 +138,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SWAPH.asl -->
 ```asl
-readonly func InstructionContractOperation_SWAPH() => ScalarOperation
+readonly func SWAPHOperation() => ScalarOperation
 begin
     return ScalarOperation_SWAPH;
 end;
@@ -149,30 +149,30 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/SWAPH.asl -->
 ```asl
-readonly func InstructionContractHandler_SWAPH() => ScalarSemanticHandler
+readonly func SWAPHHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_SWAPH()
+pure func SWAPHAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_SWAP;
 end;
 
-pure func InstructionContractAtomicSizeBytes_SWAPH()
+pure func SWAPHAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 2;
 end;
 
-pure func InstructionContractZeroExtendsOldValue_SWAPH()
+pure func SWAPHZeroExtendsOldValue()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSignExtendsOldValue_SWAPH()
+pure func SWAPHSignExtendsOldValue()
     => boolean
 begin
     return FALSE;

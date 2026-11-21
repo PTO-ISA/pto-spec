@@ -6,7 +6,7 @@ begin
     assert DecodeCommandForm(Zeros{64} + 0x00a11181, 32) != 47;
     assert DecodeCommandForm(Zeros{64} + 0x00b11181, 32) != 47;
     assert DecodeCommandForm(Zeros{64} + 0x00c11181, 32) != 47;
-    assert InstructionContractMatches_BSTART_TMOV(
+    assert BSTARTTMOVEncodingMatches(
         CommandOperationOfForm(47));
     return 0;
 end;

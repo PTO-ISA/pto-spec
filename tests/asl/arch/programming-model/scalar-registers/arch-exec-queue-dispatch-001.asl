@@ -12,7 +12,7 @@ begin
     let compressed_status = ExecuteScalarInstruction(compressed_add, 16);
     assert compressed_status == ScalarExecution_Executed;
     assert _LastFault == Fault_None;
-    assert ReadScalarRegisterOperand(24) == Zeros{PTO_XLEN} + 30;
+    assert ReadReg5(24) == Zeros{PTO_XLEN} + 30;
 
     ClearFault();
     PushTemporaryQueue(TRUE, Zeros{PTO_XLEN} + 7);

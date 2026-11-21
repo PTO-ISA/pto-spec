@@ -18,7 +18,7 @@ begin
     assert execution == ScalarExecution_Executed;
     assert ReadGPR(4) == Zeros{PTO_XLEN} + 0xfffffffffffffff9;
     assert ReadGPR(5) == Ones{PTO_XLEN};
-    assert InstructionContractLow_HL_MADDW(addend, left, right) == Zeros{PTO_XLEN} + 0xfffffffffffffff9;
-    assert InstructionContractHigh_HL_MADDW(addend, left, right) == Ones{PTO_XLEN};
+    assert HLMADDWLow(addend, left, right) == Zeros{PTO_XLEN} + 0xfffffffffffffff9;
+    assert HLMADDWHigh(addend, left, right) == Ones{PTO_XLEN};
     return 0;
 end;

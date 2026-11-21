@@ -23,6 +23,6 @@ begin
     assert _LastFencePredecessor == '1010';
     assert _LastFenceSuccessor == '0101';
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert InstructionContractOperation_FENCE_I() == ScalarOperation_FENCE_I;
+    assert FENCEIOperation() == ScalarOperation_FENCE_I;
     return 0;
 end;

@@ -6,6 +6,7 @@ import unittest
 from collections import Counter
 
 from scripts.instruction_docs import ROOT, load_instruction_index
+from scripts.instruction_symbols import contract_symbol
 
 
 EXPECTED_CLASSES = {
@@ -149,7 +150,7 @@ class TileClassificationTest(unittest.TestCase):
                 )
                 self.assertTrue(avs.is_file())
                 self.assertIn(
-                    f"InstructionContractAliasEngine_{mnemonic.replace('.', '_')}()",
+                    f"{contract_symbol('AliasEngine', mnemonic.replace('.', '_'))}()",
                     avs.read_text(encoding="utf-8"),
                 )
 
@@ -211,13 +212,13 @@ class TileClassificationTest(unittest.TestCase):
         ).stdout
 
         self.assertIn(
-            "InstructionContractAcceptsTileOperation_BSTART_TEPL", generated
+            "BSTARTTEPLAcceptsTileOperation", generated
         )
         self.assertIn(
-            "InstructionContractAcceptsTileOperation_BSTART_VEC", generated
+            "BSTARTVECAcceptsTileOperation", generated
         )
         self.assertIn(
-            "InstructionContractAcceptsTileOperation_BSTART_SFU", generated
+            "BSTARTSFUAcceptsTileOperation", generated
         )
 
 

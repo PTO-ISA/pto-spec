@@ -251,7 +251,6 @@
 }
 
 .architectureNarrative a,
-.surfaceCard a,
 .recordCard a {
   font-weight: 750;
 }
@@ -288,72 +287,9 @@
 }
 
 .surfaceSection {
-  padding: 5rem 0;
-  border-top: 1px solid var(--pto-border);
+  padding: 1.1rem 0;
   border-bottom: 1px solid var(--pto-border);
   background: var(--pto-surface-subtle);
-}
-
-.surfaceList {
-  display: grid;
-  gap: 1px;
-  overflow: hidden;
-  border: 1px solid var(--pto-border);
-  border-radius: 5px;
-  background: var(--pto-border);
-}
-
-.surfaceCard {
-  display: grid;
-  grid-template-columns: 5rem minmax(0, 1fr) auto;
-  gap: 1.5rem;
-  align-items: center;
-  min-height: 210px;
-  padding: 1.8rem 2rem;
-  background: var(--ifm-background-surface-color);
-  transition: background-color 130ms ease;
-}
-
-.surfaceCard:hover {
-  background: var(--pto-surface-focus);
-}
-
-.surfaceNumber {
-  align-self: start;
-  color: var(--ifm-color-primary);
-  font-family: var(--ifm-font-family-monospace);
-  font-size: 0.85rem;
-  font-weight: 800;
-}
-
-.surfaceInventory {
-  margin: 0 0 0.35rem;
-  color: var(--ifm-color-primary);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.surfaceCard h3 {
-  margin: 0;
-  font-size: clamp(1.65rem, 3vw, 2.4rem);
-  letter-spacing: -0.035em;
-}
-
-.surfaceCard p:not(.surfaceInventory) {
-  max-width: 760px;
-  margin: 0.65rem 0;
-  color: var(--pto-text-muted);
-  line-height: 1.7;
-}
-
-.surfaceCard small {
-  color: var(--pto-text-muted);
-}
-
-.surfaceCard > a {
-  white-space: nowrap;
 }
 
 .recordGrid {
@@ -544,13 +480,6 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .surfaceCard {
-    grid-template-columns: 3rem minmax(0, 1fr);
-  }
-
-  .surfaceCard > a {
-    grid-column: 2;
-  }
 }
 
 @media (max-width: 576px) {
@@ -587,19 +516,7 @@
     grid-template-columns: 1fr;
   }
 
-  .surfaceCard {
-    grid-template-columns: 1fr;
-    padding: 1.4rem;
-  }
-
-  .surfaceCard > a {
-    grid-column: 1;
-    white-space: normal;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .surfaceCard {
-    transition: none;
-  }
 }

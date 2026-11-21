@@ -26,19 +26,19 @@
 // For CUBE_M16/M32, destination Rows MUST equal source Rows and destination Columns MUST equal align_up(destination ValidColumns, destination CellCols), where destination CellCols is computed from destination DataType.
 // NDF-END: PTO-TCOLMIN-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TCOLMIN() => TileOperation
+readonly func TCOLMINOperation() => TileOperation
 begin
     return TileOperation_TCOLMIN;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TCOLMIN(
+pure func TCOLMINDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TCOLMIN(
+readonly func TCOLMINOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -49,16 +49,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TCOLMIN() => TileSemanticHandler
+readonly func TCOLMINHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileReduction;
 end;
 
-func InstructionContractExecute_TCOLMIN(
+func ExecuteTCOLMIN(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TCOLMIN(
+    assert TCOLMINOperandsLegal(
         destination,
         source);
     ExecuteTileReduction(

@@ -110,7 +110,7 @@ class ScalarFsuValidationShardTest(unittest.TestCase):
         end = dispatch.index("func ExecuteDecodedFSUForm(", start)
         conversion = dispatch[start:end]
 
-        source_read = conversion.index("let value = ReadDecodedScalarRegister(")
+        source_read = conversion.index("let value = ReadDecodedReg5(")
         legality_fault = conversion.index(
             "SetFault(Fault_IllegalInstruction, ReadPC());"
         )
@@ -138,32 +138,32 @@ class ScalarFsuValidationShardTest(unittest.TestCase):
         self.assertLessEqual(expected, set(functions))
         self.assertIn("ExecuteScalarInstruction", functions["ValidateScalarFSUExecute_FADD"])
         self.assertIn(
-            "InstructionContractBinaryOperation_FADD() == FloatingBinary_ADD",
+            "FADDBinaryOperation() == FloatingBinary_ADD",
             functions["ValidateScalarFSUExecute_FADD"],
         )
         self.assertIn(
-            "InstructionContractSourceArity_FADD() == 2",
+            "FADDSourceArity() == 2",
             functions["ValidateScalarFSUExecute_FADD"],
         )
         self.assertIn("FSU-TYPE-LEGAL", functions["ValidateScalarFSUTypesLegal_FADD"])
         self.assertIn(
-            "InstructionContractSourceTypeLegal_FADD('00')",
+            "FADDSourceTypeLegal('00')",
             functions["ValidateScalarFSUTypesLegal_FADD"],
         )
         self.assertIn("FSU-TYPE-RESERVED", functions["ValidateScalarFSUTypesReserved_FADD"])
         self.assertIn(
-            "!InstructionContractSourceTypeLegal_FADD('10')",
+            "!FADDSourceTypeLegal('10')",
             functions["ValidateScalarFSUTypesReserved_FADD"],
         )
         self.assertIn("FSU-BOUNDARY", functions["ValidateScalarFSUBounds_FADD"])
         self.assertIn("FSU-ROUNDING", functions["ValidateScalarFSURounding_FADD"])
         self.assertIn(
-            "InstructionContractUsesActiveRounding_FADD()",
+            "FADDUsesActiveRounding()",
             functions["ValidateScalarFSURounding_FADD"],
         )
         self.assertIn("FSU-FLAGS", functions["ValidateScalarFSUFlags_FADD"])
         self.assertIn(
-            "InstructionContractUsesProfileFlags_FADD()",
+            "FADDUsesProfileFlags()",
             functions["ValidateScalarFSUFlags_FADD"],
         )
         self.assertIn(

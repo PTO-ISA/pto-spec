@@ -11,19 +11,19 @@
 // ExecutionMask, Predicate-GPR/PredicateCell, PredInv, and Zero retain their existing meanings; inactive destination coordinates continue to use the existing MERGE/ZERO policy.
 // NDF-END: PTO-TROWEXPANDMAX-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TROWEXPANDMAX() => TileOperation
+readonly func TROWEXPANDMAXOperation() => TileOperation
 begin
     return TileOperation_TROWEXPANDMAX;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TROWEXPANDMAX(
+pure func TROWEXPANDMAXDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TROWEXPANDMAX(
+readonly func TROWEXPANDMAXOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex) => boolean
@@ -36,17 +36,17 @@ begin
         broadcast);
 end;
 
-readonly func InstructionContractHandler_TROWEXPANDMAX() => TileSemanticHandler
+readonly func TROWEXPANDMAXHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;
 
-func InstructionContractExecute_TROWEXPANDMAX(
+func ExecuteTROWEXPANDMAX(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TROWEXPANDMAX(
+    assert TROWEXPANDMAXOperandsLegal(
         destination,
         source,
         broadcast);

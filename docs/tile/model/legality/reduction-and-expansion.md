@@ -21,7 +21,7 @@ This unit holds the operand legality predicates for three instruction families:
 - `TileOperandsLegal_ExecuteTileExpand` for the row and column expansions, for example `TROWEXPAND`, `TROWEXPANDADD`, and `TCOLEXPANDEXPDIF`.
 - `TileOperandsLegal_ExecuteTileFillScalar` for `TEXPANDS`.
 
-Each instruction's `InstructionContractOperandsLegal_*` returns one of these predicates. `ExecuteTileReduction`, `ExecuteTileExpand`, and `ExecuteTileFillScalar` assert the same predicate before they build a result. A predicate returns FALSE instead of changing state, so an illegal operand set writes no destination element.
+Each instruction's `<MNEMONIC>OperandsLegal` wrapper returns one of these predicates. `ExecuteTileReduction`, `ExecuteTileExpand`, and `ExecuteTileFillScalar` assert the same predicate before they build a result. A predicate returns FALSE instead of changing state, so an illegal operand set writes no destination element.
 
 <!-- PTO-READER-BLOCK: tile-model-legality-reduction-and-expansion-concepts role=concepts-state -->
 ## Concepts and visible state

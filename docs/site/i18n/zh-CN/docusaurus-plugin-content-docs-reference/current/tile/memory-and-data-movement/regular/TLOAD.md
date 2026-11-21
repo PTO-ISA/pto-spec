@@ -26,9 +26,9 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: tile-tload-mechanism role=mechanism -->
 ## 寻址与访问顺序
 
-每个被选中的 PE 与每个有效坐标使用由 `TileMemoryStridedByteAddress` 构造的地址 `base + row * row_stride_bytes + column * element_size`。对打包四位类型，列贡献 `floor(column / 2)` 字节，半字节由列奇偶性选择。
+每个被选中的 PE 与每个有效坐标使用由 `TileElementAddress` 构造的地址 `base + row * row_stride_bytes + column * element_size`。对打包四位类型，列贡献 `floor(column / 2)` 字节，半字节由列奇偶性选择。
 
-`B.IOR.RegSrc0` 提供每 PE 的 GM 基址，`B.IOR.RegSrc1` 提供字节行步幅。省略 `B.IOR` 时基址为零，步幅为紧密宽度 `TileDenseRowStrideBytes(physical Col, data_type)`，即 `ceil(columns * element_bits / 8)`。
+`B.IOR.RegSrc0` 提供每 PE 的 GM 基址，`B.IOR.RegSrc1` 提供字节行步幅。省略 `B.IOR` 时基址为零，步幅为紧密宽度 `TileDenseRowBytes(physical Col, data_type)`，即 `ceil(columns * element_bits / 8)`。
 
 设计要点：紧密默认值只在省略时生效。显式编码的零选择子读取零 GPR，因此它是真正的零步幅，每一行都别名到 GM 的第 0 行。
 
@@ -60,13 +60,13 @@ CUBE 形式通过 CUBE 存储索引写入原始有效值，并把 `Zero`、`Max`
 <!-- PTO-READER-BLOCK: tile-tload-constraints role=constraints -->
 ## 类型、形状与故障
 
-`InstructionContractDataTypeLegal_TLOAD` 接受 `TileRegularTLSUDataTypeSupported` 允许的编码，即 `0` 到 `14`、`16` 到 `20`，以及 `24` 到 `28`；编码 `15`、`21` 到 `23` 与 `29` 到 `31` 在任何效果之前被拒绝。
+`TLOADDataTypeLegal` 接受 `TileRegularTLSUDataTypeSupported` 允许的编码，即 `0` 到 `14`、`16` 到 `20`，以及 `24` 到 `28`；编码 `15`、`21` 到 `23` 与 `29` 到 `31` 在任何效果之前被拒绝。
 
 `ValidCol` 与 `ValidRow` 非零，`ValidCol` 不得超过物理 `Col`，并且推导出的 `Rows` 与 `Col` 是 2 的幂且大到足以包含有效矩形。普通形式与 Shared 形式只允许 `Layout` 作为非零属性，并要求 `PadValue` 为零；Local CUBE 布局还要求 `DTYPE_NONE`，并接受全部四种 `PadValue` 编码。权重模式仅限显式使用，并在一个 `B.IOR` 中携带 GMBase、ShapeGPR 与 StartGPR。
 
 `PE_MASK=0000` 在 Local 路径上是严格空操作，它在操作数模式、GPR 读取、目标分配与 GM 访问之前返回；在 Shared 路径上，共享绑定掩码为零时立即返回。
 
-设计要点：CUBE 形式要求显式非零的 `LB0` 与 `LB1`，并且 `LB2` 必须缺省（`InstructionContractCubeDimensionsLegal_TLOAD`），因为 CELL 几何来自布局、数据类型与有效形状，而不是来自物理列数。
+设计要点：CUBE 形式要求显式非零的 `LB0` 与 `LB1`，并且 `LB2` 必须缺省（`TLOADCubeDimensionsLegal`），因为 CELL 几何来自布局、数据类型与有效形状，而不是来自物理列数。
 
 <!-- PTO-READER-BLOCK: tile-tload-example role=example -->
 ## 非规范契约草图
@@ -117,7 +117,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/regular/TLOAD.asl -->
 ```asl
-readonly func InstructionContractOperation_TLOAD() => TileOperation
+readonly func TLOADOperation() => TileOperation
 begin
     return TileOperation_TLOAD;
 end;
@@ -136,7 +136,7 @@ Weight Shared: B.DATR OHWI2NK/OIHW2NK selects the convolution-weight transformat
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/regular/TLOAD.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TLOAD(code: bits(5)) => boolean
+pure func TLOADDataTypeLegal(code: bits(5)) => boolean
 begin
     if !TileDataTypeEncodingValid(code as TileDataTypeEncoding) then
         return FALSE;
@@ -145,7 +145,7 @@ begin
     return TileRegularTLSUDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractDestinationShapeLegal_TLOAD(
+readonly func TLOADDestinationShapeLegal(
     size_code: integer {1..12}, columns: integer {0..65535},
     valid_rows: integer {0..65535},
     valid_columns: integer {0..65535},
@@ -155,33 +155,33 @@ begin
         valid_rows, valid_columns, data_type);
 end;
 
-readonly func InstructionContractHandler_TLOAD() => TileSemanticHandler
+readonly func TLOADHandler() => TileSemanticHandler
 begin
     return TileHandler_TLOAD;
 end;
 
-readonly func InstructionContractGMAddress_TLOAD(
+readonly func TLOADGMAddress(
     base_address: Word, row: integer {0..65535},
     column: integer {0..65535}, row_stride_bytes: Word,
     data_type: TileDataType) => Word
 begin
-    return TileMemoryStridedByteAddress(
+    return TileElementAddress(
         base_address, row, column, row_stride_bytes, data_type);
 end;
 
-readonly func InstructionContractDenseStride_TLOAD(
+readonly func TLOADDenseStride(
     columns: integer {0..65535}, data_type: TileDataType) => Word
 begin
-    return TileDenseRowStrideBytes(columns, data_type);
+    return TileDenseRowBytes(columns, data_type);
 end;
 
-pure func InstructionContractZeroMaskNoEffect_TLOAD(
+pure func TLOADZeroMaskNoEffect(
     pe_mask: bits(4)) => boolean
 begin
     return pe_mask == Zeros{4};
 end;
 
-pure func InstructionContractCubeDimensionsLegal_TLOAD(
+pure func TLOADCubeDimensionsLegal(
     lb0_present: boolean, lb0: integer {0..65535},
     lb1_present: boolean, lb1: integer {0..65535},
     lb2_present: boolean) => boolean

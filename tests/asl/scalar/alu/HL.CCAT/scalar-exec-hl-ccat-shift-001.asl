@@ -14,7 +14,7 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(3) == Zeros{PTO_XLEN} + 0x0123456789abcdef;
     assert ReadGPR(4) == Zeros{PTO_XLEN};
-    assert InstructionContractLowResult_HL_CCAT(Zeros{PTO_XLEN} + 0x0123456789abcdef, Zeros{PTO_XLEN} + 0xfedcba9876543210, 64) == Zeros{PTO_XLEN} + 0x0123456789abcdef;
-    assert InstructionContractHighResult_HL_CCAT(Zeros{PTO_XLEN} + 0x0123456789abcdef, Zeros{PTO_XLEN} + 0xfedcba9876543210, 64) == Zeros{PTO_XLEN};
+    assert HLCCATLowResult(Zeros{PTO_XLEN} + 0x0123456789abcdef, Zeros{PTO_XLEN} + 0xfedcba9876543210, 64) == Zeros{PTO_XLEN} + 0x0123456789abcdef;
+    assert HLCCATHighResult(Zeros{PTO_XLEN} + 0x0123456789abcdef, Zeros{PTO_XLEN} + 0xfedcba9876543210, 64) == Zeros{PTO_XLEN};
     return 0;
 end;

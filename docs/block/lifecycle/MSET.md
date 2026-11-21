@@ -129,13 +129,13 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/MSET.asl -->
 ```asl
-readonly func InstructionContractMatches_MSET(operation: CommandOperation)
+readonly func MSETEncodingMatches(operation: CommandOperation)
     => boolean
 begin
     return operation == CommandOperation_mset_32_0b932f291932;
 end;
 
-pure func InstructionContractAbsoluteGPRSelectorLegal_MSET(
+pure func MSETAbsoluteGPRSelectorLegal(
     selector: Reg5Selector) => boolean
 begin
     return selector <= 23;
@@ -153,24 +153,24 @@ MSET is a standalone template instruction and does not consume a BSTART/BSTOP bo
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/MSET.asl -->
 ```asl
-readonly func InstructionContractHandler_MSET() => CommandSemanticHandler
+readonly func MSETHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteMemorySet;
 end;
 
-pure func InstructionContractMemoryStepRestartable_MSET()
+pure func MSETMemoryStepRestartable()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractAcceptsCompleteXLENLength_MSET()
+pure func MSETAcceptsCompleteXLENLength()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractWritesMemory_MSET()
+pure func MSETWritesMemory()
     => boolean
 begin
     return TRUE;

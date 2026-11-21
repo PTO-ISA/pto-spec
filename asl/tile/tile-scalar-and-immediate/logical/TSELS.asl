@@ -20,19 +20,19 @@
 // ExecutionMask carrier MUST remain fully defined and canonical before capture.
 // NDF-END: PTO-TSELS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TSELS() => TileOperation
+readonly func TSELSOperation() => TileOperation
 begin
     return TileOperation_TSELS;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TSELS(
+pure func TSELSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileSelectDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TSELS(
+readonly func TSELSOperandsLegal(
     destination: TileIndex,
     predicate: TileIndex,
     source_true: TileIndex,
@@ -45,18 +45,18 @@ begin
         scalar_false);
 end;
 
-readonly func InstructionContractHandler_TSELS() => TileSemanticHandler
+readonly func TSELSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileSelectScalar;
 end;
 
-func InstructionContractExecute_TSELS(
+func ExecuteTSELS(
     destination: TileIndex,
     predicate: TileIndex,
     source_true: TileIndex,
     scalar_false: Word)
 begin
-    assert InstructionContractOperandsLegal_TSELS(
+    assert TSELSOperandsLegal(
         destination,
         predicate,
         source_true,

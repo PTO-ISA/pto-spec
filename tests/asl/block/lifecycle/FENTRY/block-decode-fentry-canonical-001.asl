@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000001000010000000001000001', 32) == 62;
     assert CommandOperationOfForm(62) == CommandOperation_fentry_32_a47584ec13b6;
     assert CommandHandlerOfForm(62) == CommandHandler_ExecuteFrameEntry;
-    assert InstructionContractMatches_FENTRY(CommandOperationOfForm(62));
-    assert InstructionContractHandler_FENTRY() == CommandHandler_ExecuteFrameEntry;
+    assert FENTRYEncodingMatches(CommandOperationOfForm(62));
+    assert FENTRYHandler() == CommandHandler_ExecuteFrameEntry;
     return 0;
 end;

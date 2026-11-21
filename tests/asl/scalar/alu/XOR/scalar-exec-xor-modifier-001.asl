@@ -17,7 +17,7 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(1) == Zeros{PTO_XLEN} + 0x0000000000000007;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x44;
-    assert InstructionContractResult_XOR(
+    assert XORResult(
         Zeros{PTO_XLEN} + 0xffffffffffffffff,
         Zeros{PTO_XLEN} + 0x0000000000000003,
         '10',

@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000011100000110000000101011', 32) == 80;
     assert ScalarOperationOfForm(80) == ScalarOperation_DC_ZVA;
     assert ScalarHandlerOfForm(80) == ScalarHandler_ExecuteMaintenance;
-    assert InstructionContractOperation_DC_ZVA() == ScalarOperation_DC_ZVA;
-    assert InstructionContractHandler_DC_ZVA() == ScalarHandler_ExecuteMaintenance;
+    assert DCZVAOperation() == ScalarOperation_DC_ZVA;
+    assert DCZVAHandler() == ScalarHandler_ExecuteMaintenance;
     assert DecodeScalarOperandRaw('000000000000000000000000011100000110000000101011', 80, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

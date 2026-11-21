@@ -39,9 +39,9 @@ REVIEW_KEYS = frozenset({"review_method", "outcome", "reviewed_fields"})
 RESERVATION_CATALOG = "extension-encoding-reservations"
 OPERATION_BEGIN = "// DOC-BEGIN: operation"
 OPERATION_END = "// DOC-END: operation"
-INSTRUCTION_CONTRACT_FUNCTION = re.compile(
+OPERATION_FUNCTION = re.compile(
     r"\b(?:pure\s+|readonly\s+|impdef\s+)?func\s+"
-    r"(InstructionContract[A-Za-z0-9_]+)\b"
+    r"([A-Za-z][A-Za-z0-9_]*)\b"
 )
 
 
@@ -107,9 +107,9 @@ def validate_formal_operation_region(root: Path, unit: AslUnit) -> list[str]:
             f"found {begin_count} begin and {end_count} end markers"
         ]
     operation = text.split(OPERATION_BEGIN, 1)[1].split(OPERATION_END, 1)[0]
-    functions = INSTRUCTION_CONTRACT_FUNCTION.findall(operation)
+    functions = OPERATION_FUNCTION.findall(operation)
     meaningful = tuple(
-        name for name in functions if not name.startswith("InstructionContractHandler_")
+        name for name in functions if not name.endswith("Handler")
     )
     if not meaningful:
         return [

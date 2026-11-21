@@ -151,7 +151,7 @@ begin
                 if actual_source && _BundleScalarBindings[[0]].valid then
                     ReadPEAbsoluteGPROperand(agent,
                         _BundleScalarBindings[[0]].source1)
-                else TileDenseRowStrideBytes(
+                else TileDenseRowBytes(
                     columns as integer {0..65535}, transfer_data_type);
         end;
         let assembling =
@@ -232,7 +232,7 @@ begin
                 if _BundleScalarBindings[[0]].valid then
                     ReadPEAbsoluteGPROperand(agent,
                         _BundleScalarBindings[[0]].source1)
-                else TileDenseRowStrideBytes(
+                else TileDenseRowBytes(
                     store_columns as integer {0..65535}, store_data_type);
         end;
         if has_subview then

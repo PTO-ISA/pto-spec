@@ -8,20 +8,20 @@
 // assigned destination or commit effect in alias-safe order.
 // NDF-END: PTO-SUB-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SUB()
+readonly func SUBOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SUB;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SUB()
+readonly func SUBHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractRightModifier_SUB(encoded: bits(2))
+pure func DecodeSUBRightModifier(encoded: bits(2))
     => ScalarRightModifier
 begin
     case encoded of
@@ -32,39 +32,39 @@ begin
     end;
 end;
 
-pure func InstructionContractPreparedRight_SUB(
+pure func SUBRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let modifier = InstructionContractRightModifier_SUB(encoded_modifier);
-    let transformed = ApplyScalarRightModifier(right, modifier, FALSE);
+    let modifier = DecodeSUBRightModifier(encoded_modifier);
+    let transformed = ModifyScalarOperand(right, modifier, FALSE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func InstructionContractResult_SUB(
+pure func SUBResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = InstructionContractPreparedRight_SUB(
+    let prepared_right = SUBRightOperand(
         right,
         encoded_modifier,
         shift_amount);
     return ScalarBinary(ScalarBinary_SUB, left, prepared_right);
 end;
 
-pure func InstructionContractIsLogicalFamily_SUB()
+pure func SUBIsLogicalFamily()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractIsWordOperation_SUB()
+pure func SUBIsWordOperation()
     => boolean
 begin
     return FALSE;

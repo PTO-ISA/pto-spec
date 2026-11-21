@@ -109,7 +109,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/arithmetic/TMUL.asl -->
 ```asl
-readonly func InstructionContractOperation_TMUL() => TileOperation
+readonly func TMULOperation() => TileOperation
 begin
     return TileOperation_TMUL;
 end;
@@ -132,7 +132,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/arithmetic/TMUL.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TMUL(
+pure func TMULDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileBinaryDataTypeSupported(
@@ -140,7 +140,7 @@ begin
         data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TMUL(
+readonly func TMULOperandsLegal(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex) => boolean
@@ -152,12 +152,12 @@ begin
         source_right);
 end;
 
-readonly func InstructionContractHandler_TMUL() => TileSemanticHandler
+readonly func TMULHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TMUL(
+func ExecuteTMUL(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex)

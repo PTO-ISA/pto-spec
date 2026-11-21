@@ -9,9 +9,9 @@ begin
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 4);
-    assert InstructionContractOperandsLegal_TFMA(0, 1, 2, 3);
+    assert TFMAOperandsLegal(0, 1, 2, 3);
 
     _Tiles[[3]].layout = TileLayout_ColumnMajor;
-    assert !InstructionContractOperandsLegal_TFMA(0, 1, 2, 3);
+    assert !TFMAOperandsLegal(0, 1, 2, 3);
     return 0;
 end;

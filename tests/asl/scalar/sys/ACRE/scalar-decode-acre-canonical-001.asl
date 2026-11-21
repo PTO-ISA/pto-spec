@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000001000000000011000000101011', 32) == 1;
     assert ScalarOperationOfForm(1) == ScalarOperation_ACRE;
     assert ScalarHandlerOfForm(1) == ScalarHandler_ArchitectureEnterRequest;
-    assert InstructionContractOperation_ACRE() == ScalarOperation_ACRE;
-    assert InstructionContractHandler_ACRE() == ScalarHandler_ArchitectureEnterRequest;
+    assert ACREOperation() == ScalarOperation_ACRE;
+    assert ACREHandler() == ScalarHandler_ArchitectureEnterRequest;
     assert DecodeScalarOperandRaw('000000000000000000000001000000000011000000101011', 1, ScalarField_RRA_Type) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

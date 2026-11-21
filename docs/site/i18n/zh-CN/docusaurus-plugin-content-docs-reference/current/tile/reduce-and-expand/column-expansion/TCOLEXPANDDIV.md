@@ -132,7 +132,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV.asl -->
 ```asl
-readonly func InstructionContractOperation_TCOLEXPANDDIV() => TileOperation
+readonly func TCOLEXPANDDIVOperation() => TileOperation
 begin
     return TileOperation_TCOLEXPANDDIV;
 end;
@@ -155,13 +155,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TCOLEXPANDDIV(
+pure func TCOLEXPANDDIVDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TCOLEXPANDDIV(
+readonly func TCOLEXPANDDIVOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex) => boolean
@@ -174,17 +174,17 @@ begin
         broadcast);
 end;
 
-readonly func InstructionContractHandler_TCOLEXPANDDIV() => TileSemanticHandler
+readonly func TCOLEXPANDDIVHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;
 
-func InstructionContractExecute_TCOLEXPANDDIV(
+func ExecuteTCOLEXPANDDIV(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TCOLEXPANDDIV(
+    assert TCOLEXPANDDIVOperandsLegal(
         destination,
         source,
         broadcast);

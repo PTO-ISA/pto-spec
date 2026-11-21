@@ -31,7 +31,7 @@
 // Separately typed ExecutionMask carriers retain their existing lifetime.
 // NDF-END: PTO-B-IOT-STREAM-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_B_IOT(operation: CommandOperation) => boolean
+readonly func BIOTEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_b_iot_32_10db6db84f5d) ||
            (operation == CommandOperation_b_iot_32_2c07e7177fad) ||
@@ -55,23 +55,23 @@ end;
 // optional RowMaxIn, vector QuantParam, vector PReLUParam, then D followed by
 // optional RowMaxOut and GroupMaxOut.  The carrier is bounded at eight source
 // and three destination ordinals; static operation catalogs remain unchanged.
-pure func InstructionContractCompleteBundleLocalSourceCapacity_B_IOT() => integer
+pure func BIOTCompleteBundleLocalSourceCapacity() => integer
 begin
     return 8;
 end;
 
-pure func InstructionContractCompleteBundleLocalDestinationCapacity_B_IOT() => integer
+pure func BIOTCompleteBundleLocalDestinationCapacity() => integer
 begin
     return 3;
 end;
 
-pure func InstructionContractZeroMaskIsNoOp_B_IOT(
+pure func BIOTZeroMaskNoEffect(
     pe_mask: bits(4)) => boolean
 begin
     return pe_mask == Zeros{4};
 end;
 
-pure func InstructionContractSource0Reuse_B_IOT(
+pure func BIOTSource0Reuse(
     operation: CommandOperation) => boolean
 begin
     return operation == CommandOperation_b_iot_32_10db6db84f5d ||
@@ -82,7 +82,7 @@ begin
            operation == CommandOperation_b_iot_32_rl_dst;
 end;
 
-pure func InstructionContractSource1Reuse_B_IOT(
+pure func BIOTSource1Reuse(
     operation: CommandOperation) => boolean
 begin
     return operation == CommandOperation_b_iot_32_2c07e7177fad ||
@@ -91,25 +91,25 @@ begin
            operation == CommandOperation_b_iot_32_lr_dst;
 end;
 
-pure func InstructionContractHasMaskOnlySharedCompanion_B_IOT() => boolean
+pure func BIOTHasMaskOnlySharedCompanion() => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractPerPECapacity_B_IOT(
+pure func BIOTPerPECapacity(
     size_code: integer {1..10}) => integer
 begin
     return TileSizeCodeBytes(size_code);
 end;
 
-pure func InstructionContractCoreCapacity_B_IOT(
+pure func BIOTCoreCapacity(
     size_code: integer {1..10}, pe_mask: bits(4)) => integer
 begin
     return TileCoreAllocationBytes(pe_mask,
-        InstructionContractPerPECapacity_B_IOT(size_code));
+        BIOTPerPECapacity(size_code));
 end;
 
-readonly func InstructionContractHandler_B_IOT() => CommandSemanticHandler
+readonly func BIOTHandler() => CommandSemanticHandler
 begin
     return CommandHandler_BindBundleTileIO;
 end;

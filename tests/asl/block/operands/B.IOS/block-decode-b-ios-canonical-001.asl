@@ -5,12 +5,12 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000001000000010011', 32) == 52;
     assert CommandOperationOfForm(52) == CommandOperation_b_ios_32_4ba5ef98fdaa;
     assert CommandHandlerOfForm(52) == CommandHandler_BindBundleSharedIO;
-    assert InstructionContractMatches_B_IOS(CommandOperationOfForm(52));
-    assert InstructionContractHandler_B_IOS() == CommandHandler_BindBundleSharedIO;
+    assert BIOSEncodingMatches(CommandOperationOfForm(52));
+    assert BIOSHandler() == CommandHandler_BindBundleSharedIO;
     assert DecodeCommandForm('0000000000000000000000000000000000000100000000000001000000010011', 32) == 104;
     assert CommandOperationOfForm(104) == CommandOperation_b_ios_32_last_src;
     assert CommandHandlerOfForm(104) == CommandHandler_BindBundleSharedIO;
-    assert InstructionContractMatches_B_IOS(CommandOperationOfForm(104));
-    assert InstructionContractHandler_B_IOS() == CommandHandler_BindBundleSharedIO;
+    assert BIOSEncodingMatches(CommandOperationOfForm(104));
+    assert BIOSHandler() == CommandHandler_BindBundleSharedIO;
     return 0;
 end;

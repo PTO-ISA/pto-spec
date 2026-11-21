@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(5) == TileHandler_ExecuteTileBinary;
     assert TileClassOfIndex(5) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(5) == TileEngine_VEC;
-    assert InstructionContractOperation_TAND() == TileOperation_TAND;
-    assert InstructionContractHandler_TAND() == TileHandler_ExecuteTileBinary;
+    assert TANDOperation() == TileOperation_TAND;
+    assert TANDHandler() == TileHandler_ExecuteTileBinary;
     return 0;
 end;

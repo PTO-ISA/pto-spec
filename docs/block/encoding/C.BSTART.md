@@ -118,7 +118,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/encoding/C.BSTART.asl -->
 ```asl
-readonly func InstructionContractMatches_C_BSTART(operation: CommandOperation) => boolean
+readonly func CBSTARTEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_c_bstart_16_c4e238a9227a) ||
            (operation == CommandOperation_c_bstart_16_f833d2a4753c);
@@ -136,7 +136,7 @@ After any active predecessor block commits successfully, C.BSTART opens one Stan
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/encoding/C.BSTART.asl -->
 ```asl
-pure func InstructionContractTarget_C_BSTART(
+pure func CBSTARTTarget(
     instruction_pc: Word,
     displacement: bits(12))
     => Word
@@ -145,7 +145,7 @@ begin
         LSL(SignExtend{PTO_XLEN}(displacement), 1);
 end;
 
-readonly func InstructionContractHandler_C_BSTART() => CommandSemanticHandler
+readonly func CBSTARTHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;

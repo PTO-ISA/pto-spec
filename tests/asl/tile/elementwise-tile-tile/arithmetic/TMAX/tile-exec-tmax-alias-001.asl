@@ -9,8 +9,8 @@ begin
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 5);
 
-    assert InstructionContractOperandsLegal_TMAX(0, 0, 1);
-    InstructionContractExecute_TMAX(0, 0, 1);
+    assert TMAXOperandsLegal(0, 0, 1);
+    ExecuteTMAX(0, 0, 1);
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 5;
     return 0;
 end;

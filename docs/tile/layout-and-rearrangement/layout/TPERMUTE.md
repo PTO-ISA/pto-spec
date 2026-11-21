@@ -108,7 +108,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/layout-and-rearrangement/layout/TPERMUTE.asl -->
 ```asl
-readonly func InstructionContractOperation_TPERMUTE() => TileOperation
+readonly func TPERMUTEOperation() => TileOperation
 begin
     return TileOperation_TPERMUTE;
 end;
@@ -130,29 +130,29 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/layout-and-rearrangement/layout/TPERMUTE.asl -->
 ```asl
-readonly func InstructionContractHandler_TPERMUTE() => TileSemanticHandler
+readonly func TPERMUTEHandler() => TileSemanticHandler
 begin
     return TileHandler_TPERMUTE;
 end;
 
-pure func InstructionContractDataTypeLegal_TPERMUTE(
+pure func TPERMUTEDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileCubeDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TPERMUTE(
+readonly func TPERMUTEOperandsLegal(
     destination: TileIndex, source0: TileIndex,
     source1: TileIndex, indices: TileIndex) => boolean
 begin
     return TileOperandsLegal_TPERMUTE(destination, source0, source1, indices);
 end;
 
-func InstructionContractExecute_TPERMUTE(
+func ExecuteTPERMUTE(
     destination: TileIndex, source0: TileIndex,
     source1: TileIndex, indices: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TPERMUTE(
+    assert TPERMUTEOperandsLegal(
         destination, source0, source1, indices);
     TPERMUTE(destination, source0, source1, indices);
 end;

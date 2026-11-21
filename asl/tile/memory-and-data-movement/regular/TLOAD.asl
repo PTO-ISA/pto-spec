@@ -23,13 +23,13 @@
 // defined but MUST NOT publish complete readiness.
 // NDF-END: PTO-TLOAD-CUBE-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TLOAD() => TileOperation
+readonly func TLOADOperation() => TileOperation
 begin
     return TileOperation_TLOAD;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TLOAD(code: bits(5)) => boolean
+pure func TLOADDataTypeLegal(code: bits(5)) => boolean
 begin
     if !TileDataTypeEncodingValid(code as TileDataTypeEncoding) then
         return FALSE;
@@ -38,7 +38,7 @@ begin
     return TileRegularTLSUDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractDestinationShapeLegal_TLOAD(
+readonly func TLOADDestinationShapeLegal(
     size_code: integer {1..12}, columns: integer {0..65535},
     valid_rows: integer {0..65535},
     valid_columns: integer {0..65535},
@@ -48,33 +48,33 @@ begin
         valid_rows, valid_columns, data_type);
 end;
 
-readonly func InstructionContractHandler_TLOAD() => TileSemanticHandler
+readonly func TLOADHandler() => TileSemanticHandler
 begin
     return TileHandler_TLOAD;
 end;
 
-readonly func InstructionContractGMAddress_TLOAD(
+readonly func TLOADGMAddress(
     base_address: Word, row: integer {0..65535},
     column: integer {0..65535}, row_stride_bytes: Word,
     data_type: TileDataType) => Word
 begin
-    return TileMemoryStridedByteAddress(
+    return TileElementAddress(
         base_address, row, column, row_stride_bytes, data_type);
 end;
 
-readonly func InstructionContractDenseStride_TLOAD(
+readonly func TLOADDenseStride(
     columns: integer {0..65535}, data_type: TileDataType) => Word
 begin
-    return TileDenseRowStrideBytes(columns, data_type);
+    return TileDenseRowBytes(columns, data_type);
 end;
 
-pure func InstructionContractZeroMaskNoEffect_TLOAD(
+pure func TLOADZeroMaskNoEffect(
     pe_mask: bits(4)) => boolean
 begin
     return pe_mask == Zeros{4};
 end;
 
-pure func InstructionContractCubeDimensionsLegal_TLOAD(
+pure func TLOADCubeDimensionsLegal(
     lb0_present: boolean, lb0: integer {0..65535},
     lb1_present: boolean, lb1: integer {0..65535},
     lb2_present: boolean) => boolean

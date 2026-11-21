@@ -10,19 +10,19 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TNOT-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TNOT() => TileOperation
+readonly func TNOTOperation() => TileOperation
 begin
     return TileOperation_TNOT;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TNOT(
+pure func TNOTDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecScalarIntegerDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TNOT(
+readonly func TNOTOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -32,7 +32,7 @@ begin
         source);
 end;
 
-pure func InstructionContractValue_TNOT(
+pure func TNOTValue(
     data_type: TileDataType,
     source: Word) => Word
 begin
@@ -43,12 +43,12 @@ begin
     return result;
 end;
 
-readonly func InstructionContractHandler_TNOT() => TileSemanticHandler
+readonly func TNOTHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;
 
-func InstructionContractExecute_TNOT(
+func ExecuteTNOT(
     destination: TileIndex,
     source: TileIndex)
 begin

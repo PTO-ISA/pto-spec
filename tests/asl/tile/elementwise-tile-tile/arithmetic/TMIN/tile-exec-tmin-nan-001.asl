@@ -5,17 +5,17 @@ begin
     let quiet_nan = Zeros{PTO_XLEN} + 0x7fc00001;
     let signaling_nan = Zeros{PTO_XLEN} + 0x7f800001;
 
-    let (one_nan, one_invalid) = InstructionContractFloatingValue_TMIN(
+    let (one_nan, one_invalid) = TMINFloatingValue(
         TileDataType_FP32, quiet_nan, numeric);
     assert one_nan == numeric;
     assert !one_invalid;
 
-    let (two_nan, two_invalid) = InstructionContractFloatingValue_TMIN(
+    let (two_nan, two_invalid) = TMINFloatingValue(
         TileDataType_FP32, quiet_nan, quiet_nan);
     assert two_nan == Zeros{PTO_XLEN} + 0x7fc00000;
     assert !two_invalid;
 
-    let (signal_result, signal_invalid) = InstructionContractFloatingValue_TMIN(
+    let (signal_result, signal_invalid) = TMINFloatingValue(
         TileDataType_FP32, signaling_nan, numeric);
     assert signal_result == numeric;
     assert signal_invalid;

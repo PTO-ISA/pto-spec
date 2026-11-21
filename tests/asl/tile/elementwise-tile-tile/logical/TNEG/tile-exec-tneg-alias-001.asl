@@ -6,8 +6,8 @@ begin
         TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
 
-    assert InstructionContractOperandsLegal_TNEG(0, 0);
-    InstructionContractExecute_TNEG(0, 0);
+    assert TNEGOperandsLegal(0, 0);
+    ExecuteTNEG(0, 0);
     assert ReadTileElement(0, 0, 0) ==
         Zeros{PTO_XLEN} + 0xff;
     return 0;

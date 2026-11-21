@@ -24,9 +24,9 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-mechanism role=mechanism -->
 ## 系统机制
 
-`InstructionContractHandler_TLB_IAV` 返回共用的维护处理程序（`asl/scalar/sys/TLB.IAV.asl:18`），而令牌 `Maintenance_TLB_IAV` 与 `Maintenance_TLB_IV` 一起位于执行器的地址分支（`asl/scalar/model/sys/semantics.asl:142`）。两者共用规范地址测试和同一条特权规则。
+`TLBIAVHandler` 返回共用的维护处理程序（`asl/scalar/sys/TLB.IAV.asl:18`），而令牌 `Maintenance_TLB_IAV` 与 `Maintenance_TLB_IV` 一起位于执行器的地址分支（`asl/scalar/model/sys/semantics.asl:142`）。两者共用规范地址测试和同一条特权规则。
 
-`InstructionContractMaintenanceRequiresRootRing_TLB_IAV` 返回 `TRUE`（`asl/scalar/sys/TLB.IAV.asl:42`），因此该操作在执行器检查操作数之前就拒绝 ACR0 之外的任何环。
+`TLBIAVMaintenanceRequiresRootRing` 返回 `TRUE`（`asl/scalar/sys/TLB.IAV.asl:42`），因此该操作在执行器检查操作数之前就拒绝 ACR0 之外的任何环。
 
 <!-- PTO-READER-BLOCK: scalar-tlb-iav-inputs-outputs role=inputs-outputs -->
 ## 输入与输出
@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/TLB.IAV.asl -->
 ```asl
-readonly func InstructionContractOperation_TLB_IAV()
+readonly func TLBIAVOperation()
     => ScalarOperation
 begin
     return ScalarOperation_TLB_IAV;
@@ -118,31 +118,31 @@ TLB.IAV executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/TLB.IAV.asl -->
 ```asl
-readonly func InstructionContractHandler_TLB_IAV()
+readonly func TLBIAVHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_TLB_IAV()
+pure func TLBIAVRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_TLB_IAV()
+pure func TLBIAVMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_TLB_IAV;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_TLB_IAV()
+pure func TLBIAVMaintenanceUsesOperand()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_TLB_IAV()
+pure func TLBIAVMaintenanceRequiresRootRing()
     => boolean
 begin
     return TRUE;

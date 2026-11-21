@@ -39,7 +39,7 @@ begin
     end;
 end;
 
-readonly func ReadScalarRegisterOperand(selector: Reg5Selector) => Word
+readonly func ReadReg5(selector: Reg5Selector) => Word
 begin
     if selector < PTO_ABSOLUTE_GPR_COUNT then
         return ReadGPR(selector as GPRIndex);
@@ -62,7 +62,7 @@ begin
     return ReadPEGPR(pe, selector as GPRIndex);
 end;
 
-func WriteScalarDestination(selector: Reg5Selector, value: Word)
+func WriteReg5(selector: Reg5Selector, value: Word)
 begin
     if selector < PTO_ABSOLUTE_GPR_COUNT then
         WriteGPR(selector as GPRIndex, value);

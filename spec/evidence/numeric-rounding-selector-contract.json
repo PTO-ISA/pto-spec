@@ -548,7 +548,7 @@
         "scalar:fnmsub_32_6542d56665b3"
       ],
       "hooks": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "candidate_profile_ids": [
         "pto-numeric-v1"

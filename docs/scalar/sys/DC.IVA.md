@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-iva-mechanism role=mechanism -->
 ## System mechanism
 
-The DOC region binds the instruction to `ScalarHandler_ExecuteMaintenance` (`asl/scalar/sys/DC.IVA.asl:11`), and the operation token `Maintenance_DC_IVA` selects the data-cache case inside the executor (`asl/scalar/model/sys/semantics.asl:134`). The dispatcher reads the source register for this form, because `InstructionContractMaintenanceUsesOperand_DC_IVA` is `TRUE` (`asl/scalar/sys/DC.IVA.asl:29`).
+The DOC region binds the instruction to `ScalarHandler_ExecuteMaintenance` (`asl/scalar/sys/DC.IVA.asl:11`), and the operation token `Maintenance_DC_IVA` selects the data-cache case inside the executor (`asl/scalar/model/sys/semantics.asl:134`). The dispatcher reads the source register for this form, because `DCIVAMaintenanceUsesOperand` is `TRUE` (`asl/scalar/sys/DC.IVA.asl:29`).
 
 Block placement is part of the applicability rule: the bundle must be active and its body must be a System block before operand legality is even considered (`asl/scalar/model/sys/semantics.asl:321`).
 
@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.IVA.asl -->
 ```asl
-readonly func InstructionContractOperation_DC_IVA()
+readonly func DCIVAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DC_IVA;
@@ -118,31 +118,31 @@ DC.IVA executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.IVA.asl -->
 ```asl
-readonly func InstructionContractHandler_DC_IVA()
+readonly func DCIVAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_DC_IVA()
+pure func DCIVARequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_DC_IVA()
+pure func DCIVAMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_DC_IVA;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_DC_IVA()
+pure func DCIVAMaintenanceUsesOperand()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_DC_IVA()
+pure func DCIVAMaintenanceRequiresRootRing()
     => boolean
 begin
     return FALSE;

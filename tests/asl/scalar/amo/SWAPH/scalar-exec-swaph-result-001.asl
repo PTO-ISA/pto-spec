@@ -36,8 +36,8 @@ begin
         NormalizeMemoryAccessValue(old_value, 2);
     assert _MemoryEvents[[0]].write_value == Zeros{PTO_XLEN} + 0x7788;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
-    assert InstructionContractAtomicOperation_SWAPH() == Atomic_SWAP;
-    assert InstructionContractAtomicSizeBytes_SWAPH() == 2;
+    assert SWAPHAtomicOperation() == Atomic_SWAP;
+    assert SWAPHAtomicSizeBytes() == 2;
 end;
 
 func main() => integer

@@ -12,36 +12,36 @@
 // memory, Tile, block, reservation, privilege, numeric-status, or fault state.
 // NDF-END: PTO-HL-XORIW-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_XORIW() => ScalarOperation
+readonly func HLXORIWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_XORIW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_XORIW() => ScalarSemanticHandler
+readonly func HLXORIWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractImmediateWidth_HL_XORIW()
+pure func HLXORIWImmediateWidth()
     => integer {1..64}
 begin
     return 24;
 end;
 
-pure func InstructionContractImmediateIsSigned_HL_XORIW()
+pure func HLXORIWImmediateIsSigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_HL_XORIW()
+pure func HLXORIWIsWordOperation()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractResult_HL_XORIW(
+pure func HLXORIWResult(
     left: Word,
     immediate: bits(24))
     => Word

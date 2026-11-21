@@ -38,9 +38,9 @@ begin
         NormalizeMemoryAccessValue(old_value, 4);
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
 
-    assert InstructionContractLoadSizeBytes_LR_W() == 4;
-    assert InstructionContractIgnoresSrcZero_LR_W();
-    assert InstructionContractReservationGranuleBytes_LR_W() == 64;
+    assert LRWLoadSizeBytes() == 4;
+    assert LRWIgnoresSrcZero();
+    assert LRWReservationGranuleBytes() == 64;
 end;
 
 func main() => integer

@@ -128,7 +128,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/LR.D.asl -->
 ```asl
-readonly func InstructionContractOperation_LR_D() => ScalarOperation
+readonly func LRDOperation() => ScalarOperation
 begin
     return ScalarOperation_LR_D;
 end;
@@ -139,36 +139,36 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/LR.D.asl -->
 ```asl
-readonly func InstructionContractHandler_LR_D() => ScalarSemanticHandler
+readonly func LRDHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_LoadReserved;
 end;
 
-pure func InstructionContractLoadSizeBytes_LR_D()
+pure func LRDLoadSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractIgnoresSrcZero_LR_D()
+pure func LRDIgnoresSrcZero()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractZeroExtendsResult_LR_D()
+pure func LRDZeroExtendsResult()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractSignExtendsResult_LR_D()
+pure func LRDSignExtendsResult()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractReservationGranuleBytes_LR_D()
+pure func LRDReservationGranuleBytes()
     => integer {1..262144}
 begin
     return PTO_RESERVATION_GRANULE_BYTES;

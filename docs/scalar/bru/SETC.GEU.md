@@ -112,7 +112,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/SETC.GEU.asl -->
 ```asl
-readonly func InstructionContractOperation_SETC_GEU() => ScalarOperation
+readonly func SETCGEUOperation() => ScalarOperation
 begin
     return ScalarOperation_SETC_GEU;
 end;
@@ -129,24 +129,24 @@ Applicable only in the body of an active block whose BARG.TYPE is Conditional. A
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/SETC.GEU.asl -->
 ```asl
-readonly func InstructionContractHandler_SETC_GEU() => ScalarSemanticHandler
+readonly func SETCGEUHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommit;
 end;
 
-pure func InstructionContractCondition_SETC_GEU()
+pure func SETCGEUCondition()
     => ScalarCondition
 begin
     return ScalarCondition_GEU;
 end;
 
-pure func InstructionContractCommitResult_SETC_GEU(
+pure func CommitSETCGEUResult(
     left: Word,
     right: Word)
     => boolean
 begin
     return ConditionHolds(
-        InstructionContractCondition_SETC_GEU(),
+        SETCGEUCondition(),
         left,
         right);
 end;

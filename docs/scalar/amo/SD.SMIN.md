@@ -25,7 +25,7 @@ Its recorded summary is: SD.SMIN atomically replaces the aligned 64-bit memory v
 ## Atomic mechanism
 The instruction contract selects `ScalarHandler_AtomicReadModifyWrite` at width `8` and maps this operation to `Atomic_SMIN`. Scalar dispatch calls `AtomicReadModifyWrite`, which preflights the same address twice, reads, combines, and writes back; its return value is discarded.
 `Atomic_SMIN` compares `SInt(old_value)` with `SInt(operand)` and returns the smaller.
-The helper returns the old memory value, but scalar dispatch passes `write_result` as `FALSE`, and the metadata helper `InstructionContractPublishesOldValue_SD_SMIN` also returns `FALSE`, so nothing is published.
+The helper returns the old memory value, but scalar dispatch passes `write_result` as `FALSE`, and the metadata helper `SDSMINPublishesOldValue` also returns `FALSE`, so nothing is published.
 Design point: the read probe is built and checked before the write probe is built, so a permitted read with a refused write faults with memory untouched, before any load takes place.
 
 <!-- PTO-READER-BLOCK: scalar-sd-smin-inputs-outputs role=inputs-outputs -->
@@ -110,7 +110,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SD.SMIN.asl -->
 ```asl
-readonly func InstructionContractOperation_SD_SMIN() => ScalarOperation
+readonly func SDSMINOperation() => ScalarOperation
 begin
     return ScalarOperation_SD_SMIN;
 end;
@@ -121,25 +121,25 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/SD.SMIN.asl -->
 ```asl
-readonly func InstructionContractHandler_SD_SMIN()
+readonly func SDSMINHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_SD_SMIN()
+pure func SDSMINAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_SMIN;
 end;
 
-pure func InstructionContractAtomicSizeBytes_SD_SMIN()
+pure func SDSMINAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractPublishesOldValue_SD_SMIN()
+pure func SDSMINPublishesOldValue()
     => boolean
 begin
     return FALSE;

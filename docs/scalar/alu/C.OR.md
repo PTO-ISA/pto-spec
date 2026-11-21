@@ -112,7 +112,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/C.OR.asl -->
 ```asl
-readonly func InstructionContractOperation_C_OR() => ScalarOperation
+readonly func COROperation() => ScalarOperation
 begin
     return ScalarOperation_C_OR;
 end;
@@ -123,12 +123,12 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/C.OR.asl -->
 ```asl
-readonly func InstructionContractHandler_C_OR() => ScalarSemanticHandler
+readonly func CORHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractResult_C_OR(
+pure func CORResult(
     left: Word,
     right: Word)
     => Word

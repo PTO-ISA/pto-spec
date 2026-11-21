@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000100000011111010000000000001110', 48) == 67;
     assert CommandOperationOfForm(67) == CommandOperation_hl_qpop_48_a2c57f5bc27b;
     assert CommandHandlerOfForm(67) == CommandHandler_ExecuteQueuePop;
-    assert InstructionContractMatches_HL_QPOP(CommandOperationOfForm(67));
-    assert InstructionContractHandler_HL_QPOP() == CommandHandler_ExecuteQueuePop;
+    assert HLQPOPEncodingMatches(CommandOperationOfForm(67));
+    assert HLQPOPHandler() == CommandHandler_ExecuteQueuePop;
     return 0;
 end;

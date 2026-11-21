@@ -51,26 +51,26 @@
 // Cache behavior MUST NOT alter results, faults, source lifetime, or ordering.
 // NDF-END: PTO-TMATMUL-MX-BIAS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TMATMUL_MX_BIAS()
+readonly func TMATMULMXBIASOperation()
     => TileOperation
 begin
     return TileOperation_TMATMUL_MX_BIAS;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractCubeFunction_TMATMUL_MX_BIAS()
+readonly func TMATMULMXBIASCubeFunction()
     => integer {0..31}
 begin
     return 5;
 end;
 
-readonly func InstructionContractSharedOperandsAllowed_TMATMUL_MX_BIAS()
+readonly func TMATMULMXBIASSharedOperandsAllowed()
     => boolean
 begin
     return TRUE;
 end;
 
-readonly func InstructionContractOperandsLegal_TMATMUL_MX_BIAS(
+readonly func TMATMULMXBIASOperandsLegal(
     destination: TileIndex,
     left: TileIndex,
     row_scale: TileIndex,
@@ -87,7 +87,7 @@ begin
         bias);
 end;
 
-readonly func InstructionContractHandler_TMATMUL_MX_BIAS()
+readonly func TMATMULMXBIASHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TMATMUL_MX_BIAS;

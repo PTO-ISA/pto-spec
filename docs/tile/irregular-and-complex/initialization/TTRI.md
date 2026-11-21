@@ -285,7 +285,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/irregular-and-complex/initialization/TTRI.asl -->
 ```asl
-readonly func InstructionContractOperation_TTRI() => TileOperation
+readonly func TTRIOperation() => TileOperation
 begin
     return TileOperation_TTRI;
 end;
@@ -309,24 +309,24 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/irregular-and-complex/initialization/TTRI.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TTRI(
+pure func TTRIDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileTTRIDataTypeSupported(data_type);
 end;
 
-pure func InstructionContractDefaultDiagonal_TTRI()
+pure func TTRIDefaultDiagonal()
     => integer {-65535..65535}
 begin
     return 0;
 end;
 
-pure func InstructionContractDefaultUpper_TTRI() => boolean
+pure func TTRIDefaultUpper() => boolean
 begin
     return FALSE;
 end;
 
-readonly func InstructionContractOperandsLegal_TTRI(
+readonly func TTRIOperandsLegal(
     destination: TileIndex,
     upper: boolean,
     diagonal: integer {-65535..65535}) => boolean
@@ -337,17 +337,17 @@ begin
         diagonal);
 end;
 
-readonly func InstructionContractHandler_TTRI() => TileSemanticHandler
+readonly func TTRIHandler() => TileSemanticHandler
 begin
     return TileHandler_TTRI;
 end;
 
-func InstructionContractExecute_TTRI(
+func ExecuteTTRI(
     destination: TileIndex,
     upper: boolean,
     diagonal: integer {-65535..65535})
 begin
-    assert InstructionContractOperandsLegal_TTRI(
+    assert TTRIOperandsLegal(
         destination,
         upper,
         diagonal);

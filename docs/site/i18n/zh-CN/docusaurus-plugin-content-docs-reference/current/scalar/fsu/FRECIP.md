@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FRECIP.asl -->
 ```asl
-readonly func InstructionContractOperation_FRECIP()
+readonly func FRECIPOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FRECIP;
@@ -128,44 +128,44 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FRECIP.asl -->
 ```asl
-readonly func InstructionContractHandler_FRECIP()
+readonly func FRECIPHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingUnary;
 end;
 
-pure func InstructionContractSourceTypeLegal_FRECIP(encoded: bits(2))
+pure func FRECIPSourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return encoded == '00' || encoded == '01';
 end;
 
-pure func InstructionContractSourceCarrier_FRECIP(encoded: bits(2))
+pure func DecodeFRECIPSourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_FRECIP(encoded);
+    assert FRECIPSourceTypeLegal(encoded);
     return ScalarFPSourceTypeCode(encoded);
 end;
 
-pure func InstructionContractSourceArity_FRECIP()
+pure func FRECIPSourceArity()
     => integer {1..3}
 begin
     return 1;
 end;
 
-pure func InstructionContractUsesProfileFlags_FRECIP()
+pure func FRECIPUsesProfileFlags()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesActiveRounding_FRECIP()
+pure func FRECIPUsesActiveRounding()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUnaryOperation_FRECIP()
+pure func FRECIPUnaryOperation()
     => FloatingUnaryOperation
 begin
     return FloatingUnary_RECIP;

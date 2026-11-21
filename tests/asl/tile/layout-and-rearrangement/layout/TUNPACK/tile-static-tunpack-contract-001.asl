@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(97) == TileHandler_TUNPACK;
     assert TileClassOfIndex(97) == TileClass_LayoutAndRearrangement;
     assert TileEngineOfIndex(97) == TileEngine_SFU;
-    assert InstructionContractOperation_TUNPACK() == TileOperation_TUNPACK;
-    assert InstructionContractHandler_TUNPACK() == TileHandler_TUNPACK;
+    assert TUNPACKOperation() == TileOperation_TUNPACK;
+    assert TUNPACKHandler() == TileHandler_TUNPACK;
     return 0;
 end;

@@ -113,7 +113,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/HL.ADDTPC.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_ADDTPC() => ScalarOperation
+readonly func HLADDTPCOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_ADDTPC;
 end;
@@ -124,42 +124,42 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/HL.ADDTPC.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_ADDTPC() => ScalarSemanticHandler
+readonly func HLADDTPCHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_AddToPC;
 end;
 
-pure func InstructionContractUsesTPC_HL_ADDTPC()
+pure func HLADDTPCUsesTPC()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractImmediateWidth_HL_ADDTPC()
+pure func HLADDTPCImmediateWidth()
     => integer {32}
 begin
     return 32;
 end;
 
-pure func InstructionContractImmediateIsSigned_HL_ADDTPC()
+pure func HLADDTPCImmediateIsSigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractPageShift_HL_ADDTPC()
+pure func HLADDTPCPageShift()
     => integer {12}
 begin
     return 12;
 end;
 
-pure func InstructionContractWritesTPC_HL_ADDTPC()
+pure func HLADDTPCWritesTPC()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractTarget_HL_ADDTPC(
+pure func HLADDTPCTarget(
     base: Word,
     page_offset: Word)
     => Word

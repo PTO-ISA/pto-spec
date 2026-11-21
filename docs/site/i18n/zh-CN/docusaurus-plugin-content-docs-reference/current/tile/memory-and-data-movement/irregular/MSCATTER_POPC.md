@@ -117,7 +117,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/memory-and-data-movement/irregular/MSCATTER_POPC.asl -->
 ```asl
-readonly func InstructionContractMatches_MSCATTER_POPC(operation: TileOperation) => boolean
+readonly func MSCATTERPOPCEncodingMatches(operation: TileOperation) => boolean
 begin
     return operation == TileOperation_MSCATTER_POPC;
 end;
@@ -141,11 +141,11 @@ When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiG
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/irregular/MSCATTER_POPC.asl -->
 ```asl
-readonly func InstructionContractHandler_MSCATTER_POPC() => TileSemanticHandler
+readonly func MSCATTERPOPCHandler() => TileSemanticHandler
 begin
     return TileHandler_GM_RED_POPC;
 end;
-readonly func InstructionContractOperation_MSCATTER_POPC() => TileOperation
+readonly func MSCATTERPOPCOperation() => TileOperation
 begin
     return TileOperation_MSCATTER_POPC;
 end;

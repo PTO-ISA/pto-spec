@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(40) == TileHandler_ExecuteTileReduction;
     assert TileClassOfIndex(40) == TileClass_ReduceAndExpand;
     assert TileEngineOfIndex(40) == TileEngine_SFU;
-    assert InstructionContractOperation_TROWSUM() == TileOperation_TROWSUM;
-    assert InstructionContractHandler_TROWSUM() == TileHandler_ExecuteTileReduction;
+    assert TROWSUMOperation() == TileOperation_TROWSUM;
+    assert TROWSUMHandler() == TileHandler_ExecuteTileReduction;
     return 0;
 end;

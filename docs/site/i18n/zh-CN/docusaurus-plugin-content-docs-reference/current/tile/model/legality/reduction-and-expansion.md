@@ -21,7 +21,7 @@ This page is a generated reference view of the normative ASL unit.
 - `TileOperandsLegal_ExecuteTileExpand` 用于行扩展与列扩展，例如 `TROWEXPAND`、`TROWEXPANDADD` 与 `TCOLEXPANDEXPDIF`。
 - `TileOperandsLegal_ExecuteTileFillScalar` 用于 `TEXPANDS`。
 
-每条指令的 `InstructionContractOperandsLegal_*` 返回其中一个谓词。`ExecuteTileReduction`、`ExecuteTileExpand` 与 `ExecuteTileFillScalar` 在构造结果之前断言同一谓词。谓词以返回 FALSE 代替修改状态，因此非法操作数组合不会写入任何目标元素。
+每条指令的 `<MNEMONIC>OperandsLegal` 封装函数返回其中一个谓词。`ExecuteTileReduction`、`ExecuteTileExpand` 与 `ExecuteTileFillScalar` 在构造结果之前断言同一谓词。谓词以返回 FALSE 代替修改状态，因此非法操作数组合不会写入任何目标元素。
 
 <!-- PTO-READER-BLOCK: tile-model-legality-reduction-and-expansion-concepts role=concepts-state -->
 ## 概念与可见状态

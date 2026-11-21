@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-lui-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `InstructionContractResult_LUI`，它返回 `MaterializeLUI(encoded_immediate)`。该辅助函数是 `LSL(SignExtend{PTO_XLEN}(immediate), 12)`：先对 `20` 位字段做符号扩展，然后左移。分派路径从 `ScalarOperation_LUI` 以 `ScalarDecodedBits20(instruction, form, ScalarField_imm20)` 调用它。
+所属 ASL 提供 `LUIResult`，它返回 `MaterializeLUI(encoded_immediate)`。该辅助函数是 `LSL(SignExtend{PTO_XLEN}(immediate), 12)`：先对 `20` 位字段做符号扩展，然后左移。分派路径从 `ScalarOperation_LUI` 以 `ScalarDecodedBits20(instruction, form, ScalarField_imm20)` 调用它。
 
 ```asm
 lui simm, ->{t, u, Rd}
@@ -112,7 +112,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/LUI.asl -->
 ```asl
-readonly func InstructionContractOperation_LUI() => ScalarOperation
+readonly func LUIOperation() => ScalarOperation
 begin
     return ScalarOperation_LUI;
 end;
@@ -123,12 +123,12 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/LUI.asl -->
 ```asl
-readonly func InstructionContractHandler_LUI() => ScalarSemanticHandler
+readonly func LUIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_MaterializeLUI;
 end;
 
-pure func InstructionContractResult_LUI(
+pure func LUIResult(
     encoded_immediate: bits(20))
     => Word
 begin

@@ -129,7 +129,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/transcendental/TSQRT.asl -->
 ```asl
-readonly func InstructionContractOperation_TSQRT() => TileOperation
+readonly func TSQRTOperation() => TileOperation
 begin
     return TileOperation_TSQRT;
 end;
@@ -152,7 +152,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/transcendental/TSQRT.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TSQRT(
+pure func TSQRTDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileUnaryDataTypeSupported(
@@ -160,7 +160,7 @@ begin
         data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TSQRT(
+readonly func TSQRTOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -170,16 +170,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TSQRT() => TileSemanticHandler
+readonly func TSQRTHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;
 
-func InstructionContractExecute_TSQRT(
+func ExecuteTSQRT(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TSQRT(
+    assert TSQRTOperandsLegal(
         destination,
         source);
     ExecuteTileUnary(

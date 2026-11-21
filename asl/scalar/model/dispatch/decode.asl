@@ -25,7 +25,7 @@ begin
            handler == ScalarHandler_ArchitectureEnterRequest;
 end;
 
-pure func ScalarDecodedSelector(instruction: bits(48),
+pure func DecodeReg5(instruction: bits(48),
                                 form: integer {0..PTO_SCALAR_FORM_COUNT-1},
                                 field: ScalarOperandField) => Reg5Selector
 begin
@@ -112,7 +112,7 @@ readonly func ScalarDecodedAtomicAddress(
     instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1},
     field: ScalarOperandField) => Word
 begin
-    let address = ReadDecodedScalarRegister(instruction, form, field);
+    let address = ReadDecodedReg5(instruction, form, field);
     let far = ScalarDecodedBoolean(instruction, form, ScalarField_far);
     return AtomicAddress(address, far);
 end;
@@ -145,7 +145,7 @@ begin
     return UInt(DecodeScalarOperandRaw(instruction, form, ScalarField_imml)[5:0]) + 1;
 end;
 
-pure func DecodeScalarBinaryRightModifier(raw: bits(2))
+pure func DecodeBinaryModifier(raw: bits(2))
                                            => ScalarRightModifier
 begin
     case raw of
@@ -156,7 +156,7 @@ begin
     end;
 end;
 
-pure func DecodeScalarComparisonRightModifier(raw: bits(2))
+pure func DecodeCompareModifier(raw: bits(2))
                                                => ScalarRightModifier
 begin
     case raw of
@@ -167,7 +167,7 @@ begin
     end;
 end;
 
-pure func DecodeScalarSelectRightModifier(raw: bits(2))
+pure func DecodeSelectModifier(raw: bits(2))
                                           => ScalarRightModifier
 begin
     if raw == '11' then
@@ -177,7 +177,7 @@ begin
     end;
 end;
 
-pure func DecodeScalarAddressRightModifier(raw: bits(2))
+pure func DecodeAddressModifier(raw: bits(2))
                                            => ScalarRightModifier
 begin
     case raw of
@@ -196,7 +196,7 @@ begin
         instruction,
         form,
         ScalarField_SrcRType)[1:0];
-    return DecodeScalarBinaryRightModifier(raw);
+    return DecodeBinaryModifier(raw);
 end;
 
 pure func ScalarDecodedComparisonRightModifier(
@@ -207,7 +207,7 @@ begin
         instruction,
         form,
         ScalarField_SrcRType)[1:0];
-    return DecodeScalarComparisonRightModifier(raw);
+    return DecodeCompareModifier(raw);
 end;
 
 pure func ScalarDecodedSelectRightModifier(
@@ -218,7 +218,7 @@ begin
         instruction,
         form,
         ScalarField_SrcRType)[1:0];
-    return DecodeScalarSelectRightModifier(raw);
+    return DecodeSelectModifier(raw);
 end;
 
 pure func ScalarDecodedAddressRightModifier(
@@ -229,12 +229,12 @@ begin
         instruction,
         form,
         ScalarField_SrcRType)[1:0];
-    return DecodeScalarAddressRightModifier(raw);
+    return DecodeAddressModifier(raw);
 end;
 
-readonly func ReadDecodedScalarRegister(instruction: bits(48),
+readonly func ReadDecodedReg5(instruction: bits(48),
                                         form: integer {0..PTO_SCALAR_FORM_COUNT-1},
                                         field: ScalarOperandField) => Word
 begin
-    return ReadScalarRegisterOperand(ScalarDecodedSelector(instruction, form, field));
+    return ReadReg5(DecodeReg5(instruction, form, field));
 end;

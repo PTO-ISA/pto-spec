@@ -17,6 +17,6 @@ begin
     assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 0x1000;
     assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 0x1000;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert InstructionContractOperation_ASSERT() == ScalarOperation_ASSERT;
+    assert ASSERTOperation() == ScalarOperation_ASSERT;
     return 0;
 end;

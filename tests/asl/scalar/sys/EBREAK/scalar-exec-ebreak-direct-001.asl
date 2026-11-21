@@ -19,6 +19,6 @@ begin
     assert _TrapContexts[[0]].valid;
     assert _TrapContexts[[0]].tpc == Zeros{PTO_XLEN} + 0x180;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x180;
-    assert InstructionContractOperation_EBREAK() == ScalarOperation_EBREAK;
+    assert EBREAKOperation() == ScalarOperation_EBREAK;
     return 0;
 end;

@@ -1093,7 +1093,7 @@
         "scalar:fnmsub_32_6542d56665b3"
       ],
       "hook_ids": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
@@ -1156,7 +1156,7 @@
         "scalar:fnmsub_32_6542d56665b3"
       ],
       "hook_ids": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
@@ -1200,7 +1200,7 @@
         "scalar:fnmsub_32_6542d56665b3"
       ],
       "hook_ids": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
@@ -1244,7 +1244,7 @@
         "scalar:fnmsub_32_6542d56665b3"
       ],
       "hook_ids": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
@@ -1288,7 +1288,7 @@
         "scalar:fnmsub_32_6542d56665b3"
       ],
       "hook_ids": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
@@ -3945,7 +3945,7 @@
       "operation_key": "scalar:fmadd_32_c616a17bcb12",
       "domain": "scalar-fused",
       "hooks": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "variation_point_ids": [
         "numeric-vp/scalar-fused/nan-and-infinity",
@@ -3964,7 +3964,7 @@
       "operation_key": "scalar:fmsub_32_b83012b83148",
       "domain": "scalar-fused",
       "hooks": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "variation_point_ids": [
         "numeric-vp/scalar-fused/nan-and-infinity",
@@ -4002,7 +4002,7 @@
       "operation_key": "scalar:fnmadd_32_7f45e606d299",
       "domain": "scalar-fused",
       "hooks": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "variation_point_ids": [
         "numeric-vp/scalar-fused/nan-and-infinity",
@@ -4021,7 +4021,7 @@
       "operation_key": "scalar:fnmsub_32_6542d56665b3",
       "domain": "scalar-fused",
       "hooks": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "variation_point_ids": [
         "numeric-vp/scalar-fused/nan-and-infinity",
@@ -5740,7 +5740,7 @@
       "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
-      "hook": "ScalarFPFusedProfile",
+      "hook": "FPMulAdd",
       "role": "portable-profile-boundary",
       "requirement": "PTO-REQ-SCALAR-FP-001",
       "domains": [
@@ -5765,7 +5765,7 @@
         "kind": "portable-rule",
         "contract_id": "pto-numeric-v1"
       },
-      "result_rule_id": "adr0047-rounding-hook/ScalarFPFusedProfile",
+      "result_rule_id": "adr0047-rounding-hook/FPMulAdd",
       "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {

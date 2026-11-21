@@ -350,7 +350,7 @@
         "scalar:fnmsub_32_6542d56665b3"
       ],
       "hooks": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "open_numeric_dimensions": [
         "single-rounding behavior",

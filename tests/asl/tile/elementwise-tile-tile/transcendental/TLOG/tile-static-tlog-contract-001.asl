@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(17) == TileHandler_ExecuteTileUnary;
     assert TileClassOfIndex(17) == TileClass_ElementwiseTileTile;
     assert TileEngineOfIndex(17) == TileEngine_SFU;
-    assert InstructionContractOperation_TLOG() == TileOperation_TLOG;
-    assert InstructionContractHandler_TLOG() == TileHandler_ExecuteTileUnary;
+    assert TLOGOperation() == TileOperation_TLOG;
+    assert TLOGHandler() == TileHandler_ExecuteTileUnary;
     return 0;
 end;

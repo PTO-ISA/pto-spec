@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(39) == TileHandler_ExecuteTileFillScalar;
     assert TileClassOfIndex(39) == TileClass_TileScalarAndImmediate;
     assert TileEngineOfIndex(39) == TileEngine_VEC;
-    assert InstructionContractOperation_TEXPANDS() == TileOperation_TEXPANDS;
-    assert InstructionContractHandler_TEXPANDS() == TileHandler_ExecuteTileFillScalar;
+    assert TEXPANDSOperation() == TileOperation_TEXPANDS;
+    assert TEXPANDSHandler() == TileHandler_ExecuteTileFillScalar;
     return 0;
 end;

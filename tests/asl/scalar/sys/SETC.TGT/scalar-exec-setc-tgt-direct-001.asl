@@ -19,6 +19,6 @@ begin
     assert !_BARG.taken;
     assert _BARG.bpcn == Zeros{PTO_XLEN} + 0x1000;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert InstructionContractOperation_SETC_TGT() == ScalarOperation_SETC_TGT;
+    assert SETCTGTOperation() == ScalarOperation_SETC_TGT;
     return 0;
 end;

@@ -272,7 +272,7 @@
 
 .genericBundleSequence li {
   display: grid;
-  grid-template-columns: 1.8rem minmax(12rem, 1fr) auto auto auto;
+  grid-template-columns: 1.8rem minmax(12rem, 1fr) repeat(4, auto);
   gap: .5rem;
   align-items: center;
   padding: .5rem 0;
@@ -298,6 +298,20 @@
   font-style: normal;
   font-weight: 700;
   white-space: nowrap;
+}
+
+.genericBundleDefinitions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem .55rem;
+}
+
+.genericBundleDefinitions a {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  text-decoration: underline;
+  text-underline-offset: .18em;
 }
 
 .bundleRequirement_optional,
@@ -1986,6 +2000,10 @@
   .genericBundleSequence em {
     grid-column: 2;
     justify-self: start;
+  }
+
+  .genericBundleDefinitions {
+    grid-column: 2;
   }
 
   .parameterList dd {

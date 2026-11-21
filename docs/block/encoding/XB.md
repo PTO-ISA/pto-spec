@@ -109,13 +109,13 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/encoding/XB.asl -->
 ```asl
-readonly func InstructionContractMatches_XB(operation: CommandOperation)
+readonly func XBEncodingMatches(operation: CommandOperation)
     => boolean
 begin
     return operation == CommandOperation_xb_32_40ad190a0a7f;
 end;
 
-pure func InstructionContractSupported_XB() => boolean
+pure func XBSupported() => boolean
 begin
     return FALSE;
 end;
@@ -132,12 +132,12 @@ none; XB is not an executable PTO block command
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/encoding/XB.asl -->
 ```asl
-readonly func InstructionContractHandler_XB() => CommandSemanticHandler
+readonly func XBHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteCrossBlockTransfer;
 end;
 
-pure func InstructionContractRejectsBeforeEffects_XB() => boolean
+pure func XBRejectsBeforeEffects() => boolean
 begin
     return !CommandHandlerSupported(
         CommandHandler_ExecuteCrossBlockTransfer);

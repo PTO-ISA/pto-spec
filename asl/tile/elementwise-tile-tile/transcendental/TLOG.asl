@@ -11,13 +11,13 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TLOG-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TLOG() => TileOperation
+readonly func TLOGOperation() => TileOperation
 begin
     return TileOperation_TLOG;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TLOG(
+pure func TLOGDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileUnaryDataTypeSupported(
@@ -25,7 +25,7 @@ begin
         data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TLOG(
+readonly func TLOGOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -35,16 +35,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TLOG() => TileSemanticHandler
+readonly func TLOGHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;
 
-func InstructionContractExecute_TLOG(
+func ExecuteTLOG(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TLOG(
+    assert TLOGOperandsLegal(
         destination,
         source);
     ExecuteTileUnary(

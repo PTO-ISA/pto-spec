@@ -130,7 +130,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/transcendental/TLOG.asl -->
 ```asl
-readonly func InstructionContractOperation_TLOG() => TileOperation
+readonly func TLOGOperation() => TileOperation
 begin
     return TileOperation_TLOG;
 end;
@@ -153,7 +153,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/transcendental/TLOG.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TLOG(
+pure func TLOGDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileUnaryDataTypeSupported(
@@ -161,7 +161,7 @@ begin
         data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TLOG(
+readonly func TLOGOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -171,16 +171,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TLOG() => TileSemanticHandler
+readonly func TLOGHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;
 
-func InstructionContractExecute_TLOG(
+func ExecuteTLOG(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TLOG(
+    assert TLOGOperandsLegal(
         destination,
         source);
     ExecuteTileUnary(

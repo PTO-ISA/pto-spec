@@ -35,38 +35,38 @@
 // consume Shared capacity.
 // NDF-END: PTO-B-IOS-SHARED-STATE-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_B_IOS(operation: CommandOperation) => boolean
+readonly func BIOSEncodingMatches(operation: CommandOperation) => boolean
 begin
     return operation == CommandOperation_b_ios_32_4ba5ef98fdaa ||
            operation == CommandOperation_b_ios_32_last_src;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractSharedSourceReuse_B_IOS(
+pure func BIOSSharedSourceReuse(
     operation: CommandOperation) => boolean
 begin
     return operation != CommandOperation_b_ios_32_last_src;
 end;
 
-pure func InstructionContractSharedIsSource_B_IOS(
+pure func BIOSSharedIsSource(
     size_code: integer {0..12}) => boolean
 begin
     return size_code == 0;
 end;
 
-pure func InstructionContractSharedCapacity_B_IOS(
+pure func BIOSSharedCapacity(
     size_code: integer {1..12}) => integer
 begin
     return TileSizeCodeBytes(size_code);
 end;
 
-pure func InstructionContractCoreCapacity_B_IOS(
+pure func BIOSCoreCapacity(
     size_code: integer {1..12}, pe_mask: bits(4)) => integer
 begin
-    return InstructionContractSharedCapacity_B_IOS(size_code);
+    return BIOSSharedCapacity(size_code);
 end;
 
-readonly func InstructionContractHandler_B_IOS() => CommandSemanticHandler
+readonly func BIOSHandler() => CommandSemanticHandler
 begin
     return CommandHandler_BindBundleSharedIO;
 end;

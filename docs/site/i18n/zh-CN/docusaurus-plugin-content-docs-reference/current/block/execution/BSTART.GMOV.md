@@ -21,7 +21,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `BSTART.GMOV` 打开一个 Tile-memory 类指令束，其操作为 `GMOV`：在一个 Core 的四个 PE 之间集体复制 Local 片段。每个 PE 用自己的 `peer_tid` 解析出一个源片段，每个被选中的 PE 发布一个目标，该目标逐字节接收该片段的载荷与已定义性。该命令不进行全局内存访问，也不产生 Shared 寄存器效果。
 
-唯一的形式是 `BSTART.GMOV DataType`，一个 32 位字，在掩码 `0x07ffffff` 下匹配 `0x00d11181`，因此 `DataType` 位于第 31 至 27 位，固定的低位携带 TLSU 选择子 13，由 `BundleGMOVSelected` 匹配。该操作是 `TileOperation_GMOV`，且 `InstructionContractStartsTileBundle_BSTART_GMOV` 返回 TRUE。
+唯一的形式是 `BSTART.GMOV DataType`，一个 32 位字，在掩码 `0x07ffffff` 下匹配 `0x00d11181`，因此 `DataType` 位于第 31 至 27 位，固定的低位携带 TLSU 选择子 13，由 `BundleGMOVSelected` 匹配。该操作是 `TileOperation_GMOV`，且 `BSTARTGMOVStartsTileBundle` 返回 TRUE。
 
 设计要点：与同样发布 Local 目标的 `MGATHER` 不同，`GMOV` 没有索引 Tile，也没有基地址。它复制的源是经过 peer 解析的快照，因此目标采用源自身的有效形状、物理列数与容量，而不是 `B.DIM` 形状。
 
@@ -166,7 +166,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.GMOV.asl -->
 ```asl
-readonly func InstructionContractMatches_BSTART_GMOV(operation: CommandOperation) => boolean
+readonly func BSTARTGMOVEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_gmov_32_6c21e223eaa7);
 end;
@@ -184,18 +184,18 @@ B.IOS and B.DIM are not members of a GMOV schema.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.GMOV.asl -->
 ```asl
-readonly func InstructionContractHandler_BSTART_GMOV() => CommandSemanticHandler
+readonly func BSTARTGMOVHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractStartedTileOperation_BSTART_GMOV()
+readonly func BSTARTGMOVStartedTileOperation()
     => TileOperation
 begin
     return TileOperation_GMOV;
 end;
 
-pure func InstructionContractStartsTileBundle_BSTART_GMOV()
+pure func BSTARTGMOVStartsTileBundle()
     => boolean
 begin
     return TRUE;

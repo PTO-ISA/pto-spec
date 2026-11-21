@@ -314,7 +314,7 @@ begin
             WriteGPR(gpr_destination, value);
         when TileOperation_TCMPS =>
             let source = BundleTileSourceIndex(0, FALSE);
-            let scalar = ReadScalarRegisterOperand(
+            let scalar = ReadReg5(
                 _BundleScalarBindings[[0]].source0);
             let gpr_destination = _BundleScalarBindings[[0]].destination
                 as GPRIndex;

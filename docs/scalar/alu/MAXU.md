@@ -26,7 +26,7 @@ The comparison covers all `64` bits, so a source with bit `63` set is the larges
 <!-- PTO-READER-BLOCK: scalar-maxu-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `InstructionContractResult_MAXU`, which returns `left` when `UInt(left) > UInt(right)` and `right` otherwise, and `InstructionContractUsesSignedComparison_MAXU`, which returns false. Dispatch reaches the same helper through `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MAXU, FALSE)`.
+The owning ASL exposes `MAXUResult`, which returns `left` when `UInt(left) > UInt(right)` and `right` otherwise, and `MAXUUsesSignedComparison`, which returns false. Dispatch reaches the same helper through `ExecuteDecodedSimpleBinary(instruction, form, ScalarBinary_MAXU, FALSE)`.
 
 ```asm
 maxu SrcL, SrcR, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MAXU.asl -->
 ```asl
-readonly func InstructionContractOperation_MAXU()
+readonly func MAXUOperation()
     => ScalarOperation
 begin
     return ScalarOperation_MAXU;
@@ -128,13 +128,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MAXU.asl -->
 ```asl
-readonly func InstructionContractHandler_MAXU()
+readonly func MAXUHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractResult_MAXU(left: Word, right: Word)
+pure func MAXUResult(left: Word, right: Word)
     => Word
 begin
     if UInt(left) > UInt(right) then
@@ -144,7 +144,7 @@ begin
     end;
 end;
 
-pure func InstructionContractUsesSignedComparison_MAXU()
+pure func MAXUUsesSignedComparison()
     => boolean
 begin
     return FALSE;

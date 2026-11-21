@@ -5,16 +5,16 @@ func main() => integer
 begin
     let value: Word = Zeros{PTO_XLEN} + 7;
 
-    assert InstructionContractRightModifier_CSEL('00') == ScalarRight_None;
-    assert InstructionContractRightModifier_CSEL('01') == ScalarRight_None;
-    assert InstructionContractRightModifier_CSEL('10') == ScalarRight_None;
-    assert InstructionContractRightModifier_CSEL('11') == ScalarRight_NegateOrNot;
+    assert DecodeCSELRightModifier('00') == ScalarRight_None;
+    assert DecodeCSELRightModifier('01') == ScalarRight_None;
+    assert DecodeCSELRightModifier('10') == ScalarRight_None;
+    assert DecodeCSELRightModifier('11') == ScalarRight_NegateOrNot;
 
     assert ApplySelectModifier(
         value,
-        InstructionContractRightModifier_CSEL('10')) == value;
+        DecodeCSELRightModifier('10')) == value;
     assert ApplySelectModifier(
         value,
-        InstructionContractRightModifier_CSEL('11')) == Zeros{PTO_XLEN} - value;
+        DecodeCSELRightModifier('11')) == Zeros{PTO_XLEN} - value;
     return 0;
 end;

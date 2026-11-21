@@ -249,7 +249,7 @@
         "scalar:fnmsub_32_6542d56665b3"
       ],
       "hooks": [
-        "ScalarFPFusedProfile"
+        "FPMulAdd"
       ],
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",

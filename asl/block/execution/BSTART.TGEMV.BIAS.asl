@@ -25,7 +25,7 @@
 
 
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_TGEMV_BIAS(
+readonly func BSTARTTGEMVBIASEncodingMatches(
     operation: CommandOperation) => boolean
 begin
     return operation ==
@@ -33,25 +33,25 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractTileOperation_BSTART_TGEMV_BIAS()
+readonly func BSTARTTGEMVBIASTileOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV_BIAS;
 end;
 
-readonly func InstructionContractCubeFunction_BSTART_TGEMV_BIAS()
+readonly func BSTARTTGEMVBIASCubeFunction()
     => integer {0..31}
 begin
     return 17;
 end;
 
-readonly func InstructionContractSharedOperandsAllowed_BSTART_TGEMV_BIAS()
+readonly func BSTARTTGEMVBIASSharedOperandsAllowed()
     => boolean
 begin
     return FALSE;
 end;
 
-readonly func InstructionContractHandler_BSTART_TGEMV_BIAS()
+readonly func BSTARTTGEMVBIASHandler()
     => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;

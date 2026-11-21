@@ -108,7 +108,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/C.MOVR.asl -->
 ```asl
-readonly func InstructionContractOperation_C_MOVR() => ScalarOperation
+readonly func CMOVROperation() => ScalarOperation
 begin
     return ScalarOperation_C_MOVR;
 end;
@@ -119,12 +119,12 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/C.MOVR.asl -->
 ```asl
-readonly func InstructionContractHandler_C_MOVR() => ScalarSemanticHandler
+readonly func CMOVRHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_MoveScalarValue;
 end;
 
-pure func InstructionContractResult_C_MOVR(value: Word)
+pure func CMOVRResult(value: Word)
     => Word
 begin
     return MoveScalarValue(value);

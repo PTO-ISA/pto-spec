@@ -24,7 +24,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-dc-zva-mechanism role=mechanism -->
 ## System mechanism
 
-`InstructionContractHandler_DC_ZVA` selects the shared maintenance handler (`asl/scalar/sys/DC.ZVA.asl:11`), and `InstructionContractMaintenanceUsesOperand_DC_ZVA` returning `TRUE` makes the dispatcher read the source register before the call (`asl/scalar/model/dispatch/sys.asl:30`).
+`DCZVAHandler` selects the shared maintenance handler (`asl/scalar/sys/DC.ZVA.asl:11`), and `DCZVAMaintenanceUsesOperand` returning `TRUE` makes the dispatcher read the source register before the call (`asl/scalar/model/dispatch/sys.asl:30`).
 
 The executor's data-cache group contains all eight `DC.*` operations, so `Maintenance_DC_ZVA` advances `_DataCacheEpoch` rather than installing a modelled zero block (`asl/scalar/model/sys/semantics.asl:134`).
 
@@ -102,7 +102,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.ZVA.asl -->
 ```asl
-readonly func InstructionContractOperation_DC_ZVA()
+readonly func DCZVAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DC_ZVA;
@@ -120,31 +120,31 @@ DC.ZVA executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.ZVA.asl -->
 ```asl
-readonly func InstructionContractHandler_DC_ZVA()
+readonly func DCZVAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_DC_ZVA()
+pure func DCZVARequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_DC_ZVA()
+pure func DCZVAMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_DC_ZVA;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_DC_ZVA()
+pure func DCZVAMaintenanceUsesOperand()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_DC_ZVA()
+pure func DCZVAMaintenanceRequiresRootRing()
     => boolean
 begin
     return FALSE;

@@ -26,19 +26,19 @@
 // For CUBE_M16/M32, destination Columns MUST equal source Columns and destination Rows MUST be the minimum legal physical Rows covering destination ValidRows (16 for M16, 32 for M32).
 // NDF-END: PTO-TROWPROD-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TROWPROD() => TileOperation
+readonly func TROWPRODOperation() => TileOperation
 begin
     return TileOperation_TROWPROD;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TROWPROD(
+pure func TROWPRODDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TROWPROD(
+readonly func TROWPRODOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -49,16 +49,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TROWPROD() => TileSemanticHandler
+readonly func TROWPRODHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileReduction;
 end;
 
-func InstructionContractExecute_TROWPROD(
+func ExecuteTROWPROD(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TROWPROD(
+    assert TROWPRODOperandsLegal(
         destination,
         source);
     ExecuteTileReduction(

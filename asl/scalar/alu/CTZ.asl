@@ -8,32 +8,32 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-CTZ-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_CTZ()
+readonly func CTZOperation()
     => ScalarOperation
 begin
     return ScalarOperation_CTZ;
 end;
 
-pure func InstructionContractWidth_CTZ(encoded_imml: bits(6))
+pure func CTZWidth(encoded_imml: bits(6))
     => integer {1..64}
 begin
     return UInt(encoded_imml) + 1;
 end;
 
-pure func InstructionContractOffset_CTZ(encoded_imms: bits(6))
+pure func DecodeCTZOffset(encoded_imms: bits(6))
     => integer {0..63}
 begin
     return UInt(encoded_imms);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_CTZ()
+readonly func CTZHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_CountBitfield;
 end;
 
-pure func InstructionContractResult_CTZ(
+pure func CTZResult(
     value: Word,
     width: integer {1..64},
     offset: integer {0..63})

@@ -42,10 +42,10 @@ begin
     assert _MemoryEvents[[0]].write_value == expected;
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_AcquireRelease;
-    assert InstructionContractAtomicOperation_LD_UMAX() == Atomic_UMAX;
-    assert InstructionContractAtomicSizeBytes_LD_UMAX() == 8;
-    assert InstructionContractPublishesOldValue_LD_UMAX();
-    assert !InstructionContractSignExtendsOldValue_LD_UMAX();
+    assert LDUMAXAtomicOperation() == Atomic_UMAX;
+    assert LDUMAXAtomicSizeBytes() == 8;
+    assert LDUMAXPublishesOldValue();
+    assert !LDUMAXSignExtendsOldValue();
 end;
 
 func main() => integer

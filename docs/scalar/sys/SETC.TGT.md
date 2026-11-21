@@ -24,9 +24,9 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-mechanism role=mechanism -->
 ## System mechanism
 
-`InstructionContractHandler_SETC_TGT` selects `ScalarHandler_SetCommitTarget` (`asl/scalar/sys/SETC.TGT.asl:18`), and `InstructionContractRequiresCommitTargetBlock_SETC_TGT` returns `TRUE` (`asl/scalar/sys/SETC.TGT.asl:30`). The applicability rule for the operation is `BundleCommitTargetWritable`, which requires an active bundle whose block type is Standard or Floating (`asl/scalar/model/sys/semantics.asl:316`).
+`SETCTGTHandler` selects `ScalarHandler_SetCommitTarget` (`asl/scalar/sys/SETC.TGT.asl:18`), and `SETCTGTRequiresCommitTargetBlock` returns `TRUE` (`asl/scalar/sys/SETC.TGT.asl:30`). The applicability rule for the operation is `BundleCommitTargetWritable`, which requires an active bundle whose block type is Standard or Floating (`asl/scalar/model/sys/semantics.asl:316`).
 
-`InstructionContractRequiresSystemBlock_SETC_TGT` returns `FALSE` (`asl/scalar/sys/SETC.TGT.asl:24`), so this instruction is not a SYS-block operation: it runs in the very block whose target it changes.
+`SETCTGTRequiresSystemBlock` returns `FALSE` (`asl/scalar/sys/SETC.TGT.asl:24`), so this instruction is not a SYS-block operation: it runs in the very block whose target it changes.
 
 <!-- PTO-READER-BLOCK: scalar-setc-tgt-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/SETC.TGT.asl -->
 ```asl
-readonly func InstructionContractOperation_SETC_TGT()
+readonly func SETCTGTOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SETC_TGT;
@@ -118,25 +118,25 @@ SETC.TGT is legal in the body of an active Standard or Floating block and is not
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/SETC.TGT.asl -->
 ```asl
-readonly func InstructionContractHandler_SETC_TGT()
+readonly func SETCTGTHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_SetCommitTarget;
 end;
 
-pure func InstructionContractRequiresSystemBlock_SETC_TGT()
+pure func SETCTGTRequiresSystemBlock()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractRequiresCommitTargetBlock_SETC_TGT()
+pure func SETCTGTRequiresCommitTargetBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractWritesBARGBPCN_SETC_TGT()
+pure func SETCTGTWritesBARGBPCN()
     => boolean
 begin
     return TRUE;

@@ -8,25 +8,25 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-BSTART-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART(operation: CommandOperation) => boolean
+readonly func BSTARTEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_32_7eb93b649748) ||
            (operation == CommandOperation_bstart_32_e11e678a32ac);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSTART() => CommandSemanticHandler
+readonly func BSTARTHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractBundleKind_BSTART()
+readonly func BSTARTBundleKind()
     => BundleKind
 begin
     return BundleKind_Standard;
 end;
 
-pure func InstructionContractStartsBundle_BSTART()
+pure func BSTARTStartsBundle()
     => boolean
 begin
     return TRUE;

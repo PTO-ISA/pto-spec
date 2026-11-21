@@ -39,7 +39,7 @@ begin
                 let element = TileLogicalLinearIndex(tile,
                     row as integer {0..65535},
                     column as integer {0..65535});
-                let address = TileMemoryStridedByteAddress(base_address,
+                let address = TileElementAddress(base_address,
                     row as integer {0..65535},
                     column as integer {0..65535}, row_stride_bytes,
                     tile.data_type);
@@ -98,7 +98,7 @@ begin
                 if beat_budget != 0 && committed_this_call >= beat_budget then
                     budget_reached = TRUE;
                 else
-                    let original_address = TileMemoryStridedByteAddress(
+                    let original_address = TileElementAddress(
                         obligation.base_address,
                         row as integer {0..65535},
                         column as integer {0..65535},
@@ -173,7 +173,7 @@ begin
                 let element = TileLogicalLinearIndex(tile,
                     row as integer {0..65535},
                     column as integer {0..65535});
-                let original_address = TileMemoryStridedByteAddress(
+                let original_address = TileElementAddress(
                     base_address, row as integer {0..65535},
                     column as integer {0..65535}, row_stride_bytes,
                     data_type);

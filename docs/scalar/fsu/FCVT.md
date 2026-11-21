@@ -120,7 +120,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FCVT.asl -->
 ```asl
-readonly func InstructionContractOperation_FCVT()
+readonly func FCVTOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FCVT;
@@ -132,44 +132,44 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FCVT.asl -->
 ```asl
-readonly func InstructionContractHandler_FCVT()
+readonly func FCVTHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ConvertFloatingEncoding;
 end;
 
-pure func InstructionContractSourceTypeLegal_FCVT(encoded: bits(2))
+pure func FCVTSourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSourceCarrier_FCVT(encoded: bits(2))
+pure func DecodeFCVTSourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_FCVT(encoded);
+    assert FCVTSourceTypeLegal(encoded);
     return ScalarConvertFloatingTypeCode(encoded);
 end;
 
-pure func InstructionContractDestinationTypeLegal_FCVT(encoded: bits(5))
+pure func FCVTDestinationTypeLegal(encoded: bits(5))
     => boolean
 begin
     return UInt(encoded) <= 3;
 end;
 
-pure func InstructionContractSourceArity_FCVT()
+pure func FCVTSourceArity()
     => integer {1..3}
 begin
     return 1;
 end;
 
-pure func InstructionContractUsesProfileFlags_FCVT()
+pure func FCVTUsesProfileFlags()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesActiveRounding_FCVT()
+pure func FCVTUsesActiveRounding()
     => boolean
 begin
     return TRUE;

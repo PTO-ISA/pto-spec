@@ -8,32 +8,32 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-HL-BFI-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_BFI()
+readonly func HLBFIOperation()
     => ScalarOperation
 begin
     return ScalarOperation_HL_BFI;
 end;
 
-pure func InstructionContractFirstBit_HL_BFI(encoded_immr: bits(6))
+pure func HLBFIFirstBit(encoded_immr: bits(6))
     => integer {0..63}
 begin
     return UInt(encoded_immr);
 end;
 
-pure func InstructionContractLastBit_HL_BFI(encoded_imms: bits(6))
+pure func HLBFILastBit(encoded_imms: bits(6))
     => integer {0..63}
 begin
     return UInt(encoded_imms);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_BFI()
+readonly func HLBFIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_InsertBitfield;
 end;
 
-pure func InstructionContractResult_HL_BFI(
+pure func HLBFIResult(
     base: Word,
     source: Word,
     first: integer {0..63},

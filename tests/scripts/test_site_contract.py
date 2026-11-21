@@ -27,10 +27,12 @@ class SiteContractTests(unittest.TestCase):
         self.assertEqual(package["devDependencies"]["@types/react"], "19.3.0")
         self.assertEqual(package["devDependencies"]["@types/react-dom"], "19.3.0")
         self.assertEqual(package["devDependencies"]["@axe-core/playwright"], "4.13.0")
-        self.assertEqual(package["devDependencies"]["lighthouse"], "13.4.1")
-        self.assertEqual(
-            package["pnpm"]["overrides"]["serialize-javascript"], "7.1.0"
-        )
+        self.assertEqual(package["devDependencies"]["lighthouse"], "13.6.0")
+        self.assertEqual(package["devDependencies"]["ajv"], "8.18.0")
+        overrides = package["pnpm"]["overrides"]
+        self.assertEqual(overrides["serialize-javascript"], "7.1.3")
+        self.assertEqual(overrides["tinypool"], "2.1.2")
+        self.assertEqual(overrides["zod"], "4.6.6")
         for group in ("dependencies", "devDependencies"):
             for name, version in package[group].items():
                 self.assertNotIn("latest", version, name)
@@ -81,11 +83,9 @@ class SiteContractTests(unittest.TestCase):
         homepage = (SITE / "src/pages/index.tsx").read_text(encoding="utf-8")
         for term in (
             "Architecture",
-            "Scalar, then Block, then Tile",
+            "Instruction reference",
+            "<ManualNav />",
             "ADR explains why. NDF points to what is current.",
-            "surface=scalar",
-            "surface=block",
-            "surface=tile",
             "surfaceCounts",
             "recordCounts",
         ):
@@ -102,6 +102,8 @@ class SiteContractTests(unittest.TestCase):
         self.assertIn("component: '@site/src/routes/Architecture'", plugin)
         self.assertIn("modules: {architecture: architectureDataModule}", plugin)
         self.assertIn("component: '@site/src/routes/InstructionIndex'", plugin)
+        self.assertIn("component: '@site/src/routes/ManualIndex'", plugin)
+        self.assertIn("manualSectionPath(index.section)", plugin)
         self.assertIn("component: '@site/src/routes/NdfCatalog'", plugin)
         self.assertIn("component: '@site/src/routes/NdfDetail'", plugin)
         self.assertIn("pto.site-architecture-guide.v1", plugin)

@@ -13,10 +13,10 @@ func main() => integer
 begin
     ResetProfileState();
     ConfigureDivisionTiles(TileDataType_U64);
-    assert !InstructionContractOperandsLegal_TDIV(2, 0, 1);
+    assert !TDIVOperandsLegal(2, 0, 1);
 
     ResetProfileState();
     ConfigureDivisionTiles(TileDataType_FP32);
-    assert InstructionContractOperandsLegal_TDIV(2, 0, 1);
+    assert TDIVOperandsLegal(2, 0, 1);
     return 0;
 end;

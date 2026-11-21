@@ -2,17 +2,17 @@
 
 // PTO-REVIEW: {"review_method":"formal-definition-read","outcome":"FORMAL-COMPLETE","reviewed_fields":["assembly","encoding","defaults","operation","state","memory","ordering","faults","reserved"]}
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_MGATHER_CAS(operation: TileOperation) => boolean
+readonly func MGATHERCASEncodingMatches(operation: TileOperation) => boolean
 begin
     return operation == TileOperation_MGATHER_CAS;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_MGATHER_CAS() => TileSemanticHandler
+readonly func MGATHERCASHandler() => TileSemanticHandler
 begin
     return TileHandler_GM_ATOM_CAS;
 end;
-readonly func InstructionContractOperation_MGATHER_CAS() => TileOperation
+readonly func MGATHERCASOperation() => TileOperation
 begin
     return TileOperation_MGATHER_CAS;
 end;

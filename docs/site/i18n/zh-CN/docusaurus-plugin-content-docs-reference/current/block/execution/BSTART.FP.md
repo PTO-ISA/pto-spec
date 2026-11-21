@@ -19,7 +19,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: block-bstart-fp-purpose role=purpose -->
 ## BSTART.FP 的作用
 
-`BSTART.FP` 关闭当前活动的指令束，并把下一个指令束作为 Floating 指令束打开。它有六种编码拼写：`BSTART.FP FALL`、`BSTART.FP DIRECT, <label>`、`BSTART.FP COND, <label>`、`BSTART.FP CALL, <label>`、`BSTART.FP IND` 与 `BSTART.FP RET`。`InstructionContractBundleKind_BSTART_FP` 返回 `BundleKind_Floating`，因此该命令选择的是指令束种类与转移规则，而不是一个 Tile 操作。
+`BSTART.FP` 关闭当前活动的指令束，并把下一个指令束作为 Floating 指令束打开。它有六种编码拼写：`BSTART.FP FALL`、`BSTART.FP DIRECT, <label>`、`BSTART.FP COND, <label>`、`BSTART.FP CALL, <label>`、`BSTART.FP IND` 与 `BSTART.FP RET`。`BSTARTFPBundleKind` 返回 `BundleKind_Floating`，因此该命令选择的是指令束种类与转移规则，而不是一个 Tile 操作。
 
 只有 `DIRECT`、`COND` 与 `CALL` 携带载荷：指令第 31 至 15 位中的有符号 17 位 `simm17` 标签位移。`FALL` 把该字段固定为零，而 `IND` 与 `RET` 完全没有字段。
 
@@ -128,7 +128,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.FP.asl -->
 ```asl
-readonly func InstructionContractMatches_BSTART_FP(operation: CommandOperation) => boolean
+readonly func BSTARTFPEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_fp_32_0c671a644214) ||
            (operation == CommandOperation_bstart_fp_32_58ad7954fb49) ||
@@ -151,18 +151,18 @@ COND publishes a candidate BPCN but SETC may update TAKEN before commit; IND req
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.FP.asl -->
 ```asl
-readonly func InstructionContractHandler_BSTART_FP() => CommandSemanticHandler
+readonly func BSTARTFPHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractBundleKind_BSTART_FP()
+readonly func BSTARTFPBundleKind()
     => BundleKind
 begin
     return BundleKind_Floating;
 end;
 
-pure func InstructionContractStartsBundle_BSTART_FP()
+pure func BSTARTFPStartsBundle()
     => boolean
 begin
     return TRUE;

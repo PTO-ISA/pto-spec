@@ -22,13 +22,13 @@
 // operation and numeric-status policy; mixed FP64 pairs remain unassigned.
 // NDF-END: PTO-TEXPDIF-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TEXPDIF() => TileOperation
+readonly func TEXPDIFOperation() => TileOperation
 begin
     return TileOperation_TEXPDIF;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TEXPDIF(
+pure func TEXPDIFDataTypeLegal(
     source_operation_type: TileDataType,
     destination_type: TileDataType) => boolean
 begin
@@ -36,7 +36,7 @@ begin
         source_operation_type, destination_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TEXPDIF(
+readonly func TEXPDIFOperandsLegal(
     destination: TileIndex,
     source0: TileIndex,
     source1: TileIndex) => boolean
@@ -45,12 +45,12 @@ begin
         destination, source0, source1);
 end;
 
-readonly func InstructionContractHandler_TEXPDIF() => TileSemanticHandler
+readonly func TEXPDIFHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpdif;
 end;
 
-func InstructionContractExecute_TEXPDIF(
+func ExecuteTEXPDIF(
     destination: TileIndex,
     source0: TileIndex,
     source1: TileIndex)

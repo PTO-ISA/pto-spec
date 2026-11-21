@@ -423,14 +423,14 @@ begin
         operation, rounding_mode, source_type, value);
 end;
 
-func ScalarFPFusedProfile(operation: FloatingFusedOperation,
+func FPMulAdd(operation: FloatingFusedOperation,
                                           rounding_mode: NumericRoundingMode,
                                           source_type: bits(5), addend: Word,
                                           left: Word, right: Word)
                                           => (Word, bits(5))
 begin
     assert ScalarFPTypeCodeSupported(source_type) || source_type == '00100';
-    return ReferenceScalarFPFusedProfile(
+    return ReferenceFPMulAdd(
         operation, rounding_mode, source_type, addend, left, right);
 end;
 

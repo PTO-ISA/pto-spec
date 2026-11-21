@@ -124,7 +124,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/LD.SMAX.asl -->
 ```asl
-readonly func InstructionContractOperation_LD_SMAX() => ScalarOperation
+readonly func LDSMAXOperation() => ScalarOperation
 begin
     return ScalarOperation_LD_SMAX;
 end;
@@ -135,31 +135,31 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/LD.SMAX.asl -->
 ```asl
-readonly func InstructionContractHandler_LD_SMAX()
+readonly func LDSMAXHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_LD_SMAX()
+pure func LDSMAXAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_SMAX;
 end;
 
-pure func InstructionContractAtomicSizeBytes_LD_SMAX()
+pure func LDSMAXAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractPublishesOldValue_LD_SMAX()
+pure func LDSMAXPublishesOldValue()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSignExtendsOldValue_LD_SMAX()
+pure func LDSMAXSignExtendsOldValue()
     => boolean
 begin
     return FALSE;

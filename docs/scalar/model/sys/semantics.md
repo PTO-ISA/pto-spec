@@ -291,7 +291,7 @@ begin
         return;
     end;
     let value = ReadCurrentBARGWord(identifier);
-    WriteScalarDestination(destination, value);
+    WriteReg5(destination, value);
 end;
 
 func BundleTransformHint()

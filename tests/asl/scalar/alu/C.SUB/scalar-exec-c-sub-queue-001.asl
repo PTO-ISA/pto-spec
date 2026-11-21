@@ -16,7 +16,7 @@ begin
     assert ReadTemporaryQueue(TRUE, 1) == Zeros{PTO_XLEN} + 5;
     assert ReadTemporaryQueue(FALSE, 0) == Zeros{PTO_XLEN} + 3;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x102;
-    assert InstructionContractResult_C_SUB(
+    assert CSUBResult(
         Zeros{PTO_XLEN} + 5,
         Zeros{PTO_XLEN} + 3) == Zeros{PTO_XLEN} + 0x0000000000000002;
     return 0;

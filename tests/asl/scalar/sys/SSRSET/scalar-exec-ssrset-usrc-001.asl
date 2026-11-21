@@ -17,6 +17,6 @@ begin
     assert _SystemRegisters.thread_ptr == Zeros{PTO_XLEN} + 0x222;
     assert ReadTemporaryQueue(FALSE, 0) == Zeros{PTO_XLEN} + 0x222;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert InstructionContractOperation_SSRSET() == ScalarOperation_SSRSET;
+    assert SSRSETOperation() == ScalarOperation_SSRSET;
     return 0;
 end;

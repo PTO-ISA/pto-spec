@@ -8,57 +8,57 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-FNE-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_FNE()
+readonly func FNEOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FNE;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_FNE()
+readonly func FNEHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingCompare;
 end;
 
-pure func InstructionContractSourceTypeLegal_FNE(encoded: bits(2))
+pure func FNESourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return encoded == '00' || encoded == '01';
 end;
 
-pure func InstructionContractSourceCarrier_FNE(encoded: bits(2))
+pure func DecodeFNESourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_FNE(encoded);
+    assert FNESourceTypeLegal(encoded);
     return ScalarFPSourceTypeCode(encoded);
 end;
 
-pure func InstructionContractSourceArity_FNE()
+pure func FNESourceArity()
     => integer {1..3}
 begin
     return 2;
 end;
 
-pure func InstructionContractUsesProfileFlags_FNE()
+pure func FNEUsesProfileFlags()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractUsesActiveRounding_FNE()
+pure func FNEUsesActiveRounding()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractCompareOperation_FNE()
+pure func FNECompareOperation()
     => FloatingCompareOperation
 begin
     return FloatingCompare_NE;
 end;
 
-pure func InstructionContractSignalingCompare_FNE()
+pure func FNESignalingCompare()
     => boolean
 begin
     return FALSE;

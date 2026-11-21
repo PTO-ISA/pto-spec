@@ -56,7 +56,7 @@
 // Bit 10 MUST remain reserved zero; disabled CScale MUST preserve prior results.
 // NDF-END: PTO-CUBE-CSCALE-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_B_FPATR(operation: CommandOperation) => boolean
+readonly func BFPATREncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_b_fpatr_32_30c307e06d4a);
 end;
@@ -307,18 +307,18 @@ begin
     return TRUE;
 end;
 
-readonly func InstructionContractHandler_B_FPATR() => CommandSemanticHandler
+readonly func BFPATRHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleFixedPointAttributes;
 end;
 
-pure func InstructionContractHeaderOnly_B_FPATR()
+pure func BFPATRHeaderOnly()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractDuplicateRejects_B_FPATR()
+pure func BFPATRDuplicateRejects()
     => boolean
 begin
     return TRUE;

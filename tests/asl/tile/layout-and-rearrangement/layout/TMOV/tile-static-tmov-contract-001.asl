@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(74) == TileHandler_TMOV;
     assert TileClassOfIndex(74) == TileClass_LayoutAndRearrangement;
     assert TileEngineOfIndex(74) == TileEngine_TLSU;
-    assert InstructionContractOperation_TMOV() == TileOperation_TMOV;
-    assert InstructionContractHandler_TMOV() == TileHandler_TMOV;
+    assert TMOVOperation() == TileOperation_TMOV;
+    assert TMOVHandler() == TileHandler_TMOV;
     return 0;
 end;

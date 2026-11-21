@@ -8,26 +8,26 @@
 // assigned destination or commit effect in alias-safe order.
 // NDF-END: PTO-SRAI-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SRAI()
+readonly func SRAIOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SRAI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SRAI()
+readonly func SRAIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractShiftWidth_SRAI()
+pure func SRAIShiftWidth()
     => integer {1..64}
 begin
     return 6;
 end;
 
-pure func InstructionContractIsWordOperation_SRAI()
+pure func SRAIIsWordOperation()
     => boolean
 begin
     return FALSE;

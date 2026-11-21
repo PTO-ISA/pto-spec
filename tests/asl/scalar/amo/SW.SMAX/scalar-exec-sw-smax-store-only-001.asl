@@ -48,9 +48,9 @@ begin
     assert _MemoryEvents[[0]].write_performed;
     assert _MemoryEvents[[0]].order == MemoryOrder_Release;
 
-    assert InstructionContractAtomicOperation_SW_SMAX() == Atomic_SMAX;
-    assert InstructionContractAtomicSizeBytes_SW_SMAX() == 4;
-    assert !InstructionContractPublishesOldValue_SW_SMAX();
+    assert SWSMAXAtomicOperation() == Atomic_SMAX;
+    assert SWSMAXAtomicSizeBytes() == 4;
+    assert !SWSMAXPublishesOldValue();
 end;
 
 func main() => integer

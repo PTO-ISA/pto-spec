@@ -7,7 +7,7 @@ begin
             TileDataType_FP64, TileLayout_RowMajor);
     end;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
-    InstructionContractExecute_TLOG(1, 0);
+    ExecuteTLOG(1, 0);
     assert ReadTileElement(1, 0, 0) ==
         Zeros{PTO_XLEN} + 0xc0874385446d71c3;
     return 0;

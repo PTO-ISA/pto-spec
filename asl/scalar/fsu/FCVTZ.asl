@@ -8,64 +8,64 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-FCVTZ-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_FCVTZ()
+readonly func FCVTZOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FCVTZ;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_FCVTZ()
+readonly func FCVTZHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ConvertFloatingEncoding;
 end;
 
-pure func InstructionContractSourceTypeLegal_FCVTZ(encoded: bits(2))
+pure func FCVTZSourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSourceCarrier_FCVTZ(encoded: bits(2))
+pure func DecodeFCVTZSourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_FCVTZ(encoded);
+    assert FCVTZSourceTypeLegal(encoded);
     return ScalarConvertFloatingTypeCode(encoded);
 end;
 
-pure func InstructionContractDestinationTypeLegal_FCVTZ(encoded: bits(5))
+pure func FCVTZDestinationTypeLegal(encoded: bits(5))
     => boolean
 begin
     return ScalarFPToIntegerDestinationRawLegal(encoded);
 end;
 
-pure func InstructionContractDestinationCarrier_FCVTZ(encoded: bits(5))
+pure func DecodeFCVTZDestinationCarrier(encoded: bits(5))
     => bits(5)
 begin
-    assert InstructionContractDestinationTypeLegal_FCVTZ(encoded);
+    assert FCVTZDestinationTypeLegal(encoded);
     return ScalarFPToIntegerDestinationTypeCode(encoded);
 end;
 
-pure func InstructionContractSourceArity_FCVTZ()
+pure func FCVTZSourceArity()
     => integer {1..3}
 begin
     return 1;
 end;
 
-pure func InstructionContractUsesProfileFlags_FCVTZ()
+pure func FCVTZUsesProfileFlags()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesActiveRounding_FCVTZ()
+pure func FCVTZUsesActiveRounding()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractFixedRounding_FCVTZ()
+pure func FCVTZFixedRounding()
     => NumericRoundingMode
 begin
     return NumericRound_RTZ;

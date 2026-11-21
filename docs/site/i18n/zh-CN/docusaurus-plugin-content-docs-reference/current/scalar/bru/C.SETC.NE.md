@@ -117,7 +117,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/bru/C.SETC.NE.asl -->
 ```asl
-readonly func InstructionContractOperation_C_SETC_NE() => ScalarOperation
+readonly func CSETCNEOperation() => ScalarOperation
 begin
     return ScalarOperation_C_SETC_NE;
 end;
@@ -134,24 +134,24 @@ Applicable only in the body of an active block whose BARG.TYPE is Conditional. A
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/C.SETC.NE.asl -->
 ```asl
-readonly func InstructionContractHandler_C_SETC_NE() => ScalarSemanticHandler
+readonly func CSETCNEHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommit;
 end;
 
-pure func InstructionContractCondition_C_SETC_NE()
+pure func CSETCNECondition()
     => ScalarCondition
 begin
     return ScalarCondition_NE;
 end;
 
-pure func InstructionContractCommitResult_C_SETC_NE(
+pure func CommitCSETCNEResult(
     left: Word,
     right: Word)
     => boolean
 begin
     return ConditionHolds(
-        InstructionContractCondition_C_SETC_NE(),
+        CSETCNECondition(),
         left,
         right);
 end;

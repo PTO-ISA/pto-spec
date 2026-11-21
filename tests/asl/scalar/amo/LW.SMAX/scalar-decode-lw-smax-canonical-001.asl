@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000100000000000000010000000001011', 32) == 345;
     assert ScalarOperationOfForm(345) == ScalarOperation_LW_SMAX;
     assert ScalarHandlerOfForm(345) == ScalarHandler_AtomicReadModifyWrite;
-    assert InstructionContractOperation_LW_SMAX() == ScalarOperation_LW_SMAX;
-    assert InstructionContractHandler_LW_SMAX() == ScalarHandler_AtomicReadModifyWrite;
+    assert LWSMAXOperation() == ScalarOperation_LW_SMAX;
+    assert LWSMAXHandler() == ScalarHandler_AtomicReadModifyWrite;
     assert DecodeScalarOperandRaw('000000000000000000100000000000000010000000001011', 345, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000100000000000000010000000001011', 345, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000100000000000000010000000001011', 345, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';

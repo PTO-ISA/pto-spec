@@ -6,18 +6,18 @@ begin
     for code = 1 to 12 looplimit 12 do
         let size_code = code as integer {1..12};
         assert TileSizeCodeBytes(size_code) == expected_bytes;
-        assert InstructionContractSharedCapacity_B_IOS(size_code) ==
+        assert BIOSSharedCapacity(size_code) ==
             expected_bytes;
-        assert InstructionContractCoreCapacity_B_IOS(
+        assert BIOSCoreCapacity(
             size_code, '1111') == expected_bytes;
-        assert InstructionContractCoreCapacity_B_IOS(
+        assert BIOSCoreCapacity(
             size_code, '1000') == expected_bytes;
         if code <= 10 then
             let local_size_code = code as integer {1..10};
             assert LocalTileSizeCodeIsLegal(code);
-            assert InstructionContractPerPECapacity_B_IOT(local_size_code) ==
+            assert BIOTPerPECapacity(local_size_code) ==
                 expected_bytes;
-            assert InstructionContractCoreCapacity_B_IOT(
+            assert BIOTCoreCapacity(
                 local_size_code, '1111') == expected_bytes * 4;
         else
             assert !LocalTileSizeCodeIsLegal(code);

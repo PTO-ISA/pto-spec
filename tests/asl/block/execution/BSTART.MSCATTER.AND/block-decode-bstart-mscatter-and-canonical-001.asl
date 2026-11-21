@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000001100000010001000110000001', 32) == 90;
     assert CommandOperationOfForm(90) == CommandOperation_bstart_mscatter_and_32_gm24;
     assert CommandHandlerOfForm(90) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_BSTART_MSCATTER_AND(CommandOperationOfForm(90));
-    assert InstructionContractHandler_BSTART_MSCATTER_AND() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTMSCATTERANDEncodingMatches(CommandOperationOfForm(90));
+    assert BSTARTMSCATTERANDHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

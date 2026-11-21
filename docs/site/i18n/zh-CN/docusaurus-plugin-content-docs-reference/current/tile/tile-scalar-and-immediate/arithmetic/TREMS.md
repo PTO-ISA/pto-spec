@@ -177,7 +177,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-and-immediate/arithmetic/TREMS.asl -->
 ```asl
-readonly func InstructionContractOperation_TREMS() => TileOperation
+readonly func TREMSOperation() => TileOperation
 begin
     return TileOperation_TREMS;
 end;
@@ -201,7 +201,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/tile-scalar-and-immediate/arithmetic/TREMS.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TREMS(
+pure func TREMSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileBinaryDataTypeSupported(
@@ -209,7 +209,7 @@ begin
         data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TREMS(
+readonly func TREMSOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word) => boolean
@@ -221,17 +221,17 @@ begin
         scalar);
 end;
 
-readonly func InstructionContractHandler_TREMS() => TileSemanticHandler
+readonly func TREMSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileScalar;
 end;
 
-func InstructionContractExecute_TREMS(
+func ExecuteTREMS(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word)
 begin
-    assert InstructionContractOperandsLegal_TREMS(
+    assert TREMSOperandsLegal(
         destination,
         source,
         scalar);

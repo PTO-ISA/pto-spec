@@ -118,7 +118,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FDIV.asl -->
 ```asl
-readonly func InstructionContractOperation_FDIV()
+readonly func FDIVOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FDIV;
@@ -130,44 +130,44 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FDIV.asl -->
 ```asl
-readonly func InstructionContractHandler_FDIV()
+readonly func FDIVHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingBinary;
 end;
 
-pure func InstructionContractSourceTypeLegal_FDIV(encoded: bits(2))
+pure func FDIVSourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return encoded == '00' || encoded == '01';
 end;
 
-pure func InstructionContractSourceCarrier_FDIV(encoded: bits(2))
+pure func DecodeFDIVSourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_FDIV(encoded);
+    assert FDIVSourceTypeLegal(encoded);
     return ScalarFPSourceTypeCode(encoded);
 end;
 
-pure func InstructionContractSourceArity_FDIV()
+pure func FDIVSourceArity()
     => integer {1..3}
 begin
     return 2;
 end;
 
-pure func InstructionContractUsesProfileFlags_FDIV()
+pure func FDIVUsesProfileFlags()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesActiveRounding_FDIV()
+pure func FDIVUsesActiveRounding()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractBinaryOperation_FDIV()
+pure func FDIVBinaryOperation()
     => FloatingBinaryOperation
 begin
     return FloatingBinary_DIV;

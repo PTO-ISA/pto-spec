@@ -7,24 +7,24 @@
 // no global-memory or Shared-register effect.
 // NDF-END: PTO-BSTART-GMOV-COLLECTIVE-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_GMOV(operation: CommandOperation) => boolean
+readonly func BSTARTGMOVEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_gmov_32_6c21e223eaa7);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSTART_GMOV() => CommandSemanticHandler
+readonly func BSTARTGMOVHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractStartedTileOperation_BSTART_GMOV()
+readonly func BSTARTGMOVStartedTileOperation()
     => TileOperation
 begin
     return TileOperation_GMOV;
 end;
 
-pure func InstructionContractStartsTileBundle_BSTART_GMOV()
+pure func BSTARTGMOVStartsTileBundle()
     => boolean
 begin
     return TRUE;

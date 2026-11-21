@@ -18,6 +18,6 @@ begin
     assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 0x222;
     assert _SystemRegisters.cycle == Zeros{PTO_XLEN} + 1;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x182;
-    assert InstructionContractDirectSystemIDLegal_C_SSRGET(        '00001');
+    assert CSSRGETDirectSystemIDLegal(        '00001');
     return 0;
 end;

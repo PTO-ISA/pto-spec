@@ -8,31 +8,31 @@
 // selected width, ordering, memory update, event, and result atomically.
 // NDF-END: PTO-SD-XOR-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SD_XOR() => ScalarOperation
+readonly func SDXOROperation() => ScalarOperation
 begin
     return ScalarOperation_SD_XOR;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SD_XOR()
+readonly func SDXORHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_SD_XOR()
+pure func SDXORAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_XOR;
 end;
 
-pure func InstructionContractAtomicSizeBytes_SD_XOR()
+pure func SDXORAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractPublishesOldValue_SD_XOR()
+pure func SDXORPublishesOldValue()
     => boolean
 begin
     return FALSE;

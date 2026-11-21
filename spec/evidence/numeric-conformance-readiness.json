@@ -183,7 +183,7 @@
       "hooks": [
         "FloatingExponential",
         "ScalarFPBinaryProfile",
-        "ScalarFPFusedProfile",
+        "FPMulAdd",
         "ScalarFPUnaryProfile"
       ],
       "counts": {

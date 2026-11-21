@@ -21,36 +21,36 @@
 // use two adjacent logical nibbles per indexed byte and one predicate per pair.
 // NDF-END: PTO-MGATHER-MASK-TYPE-002
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_MGATHER_MASK() => TileOperation
+readonly func MGATHERMASKOperation() => TileOperation
 begin
     return TileOperation_MGATHER_MASK;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_MGATHER_MASK() => TileSemanticHandler
+readonly func MGATHERMASKHandler() => TileSemanticHandler
 begin
     return TileHandler_MGATHER_MASK;
 end;
 
-pure func InstructionContractUsesByteDisplacements_MGATHER_MASK()
+pure func MGATHERMASKUsesByteDisplacements()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesMaskTile_MGATHER_MASK()
+pure func MGATHERMASKUsesMaskTile()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsAtomicMemoryOperation_MGATHER_MASK()
+pure func MGATHERMASKIsAtomicMemoryOperation()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractWritesMemory_MGATHER_MASK()
+pure func MGATHERMASKWritesMemory()
     => boolean
 begin
     return FALSE;

@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000011111010000000000001110', 48) == 66;
     assert CommandOperationOfForm(66) == CommandOperation_hl_qmt_48_eb9e41958045;
     assert CommandHandlerOfForm(66) == CommandHandler_ExecuteQueueMove;
-    assert InstructionContractMatches_HL_QMT(CommandOperationOfForm(66));
-    assert InstructionContractHandler_HL_QMT() == CommandHandler_ExecuteQueueMove;
+    assert HLQMTEncodingMatches(CommandOperationOfForm(66));
+    assert HLQMTHandler() == CommandHandler_ExecuteQueueMove;
     return 0;
 end;

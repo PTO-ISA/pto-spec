@@ -7,7 +7,7 @@ begin
     ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_U8,
         TileLayout_RowMajor);
 
-    assert !InstructionContractOperandsLegal_TNEG(1, 0);
+    assert !TNEGOperandsLegal(1, 0);
     assert !_Tiles[[1]].contents_defined;
     return 0;
 end;

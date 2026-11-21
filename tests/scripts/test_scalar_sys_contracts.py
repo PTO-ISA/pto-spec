@@ -4,6 +4,8 @@ import json
 import unittest
 from pathlib import Path
 
+from scripts.instruction_symbols import contract_symbol
+
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -46,7 +48,7 @@ class ScalarSysContractTest(unittest.TestCase):
             with self.subTest(mnemonic=owner.stem):
                 self.assertIn('"outcome":"FORMAL-COMPLETE"', text)
                 self.assertIn(
-                    f"InstructionContractRequiresSystemBlock_{mnemonic}", text
+                    contract_symbol("RequiresSystemBlock", mnemonic), text
                 )
                 self.assertGreaterEqual(len(text.splitlines()), 28)
 
@@ -114,7 +116,7 @@ class ScalarSysContractTest(unittest.TestCase):
         setter = registers[start:end]
 
         preflight = setter.index("SystemRegisterWritePermitted")
-        source_read = setter.index("ReadScalarRegisterOperand")
+        source_read = setter.index("ReadReg5")
         self.assertLess(preflight, source_read)
 
     def test_register_swap_preflights_before_source_read(self) -> None:
@@ -125,7 +127,7 @@ class ScalarSysContractTest(unittest.TestCase):
         swap = registers[start:]
 
         preflight = swap.index("SystemRegisterSwapPermitted")
-        source_read = swap.index("ReadScalarRegisterOperand")
+        source_read = swap.index("ReadReg5")
         self.assertLess(preflight, source_read)
 
     def test_scalar_placement_precedes_operand_legality(self) -> None:

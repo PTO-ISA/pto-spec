@@ -18,6 +18,6 @@ begin
     assert _ArchitectureRequestEpoch == 1;
     assert !MessageBufferEnabledForCurrentContext();
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert InstructionContractOperation_BSE() == ScalarOperation_BSE;
+    assert BSEOperation() == ScalarOperation_BSE;
     return 0;
 end;

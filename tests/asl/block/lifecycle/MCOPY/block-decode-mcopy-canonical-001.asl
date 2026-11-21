@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000000000000110001', 32) == 69;
     assert CommandOperationOfForm(69) == CommandOperation_mcopy_32_4fc4a803e995;
     assert CommandHandlerOfForm(69) == CommandHandler_ExecuteMemoryCopy;
-    assert InstructionContractMatches_MCOPY(CommandOperationOfForm(69));
-    assert InstructionContractHandler_MCOPY() == CommandHandler_ExecuteMemoryCopy;
+    assert MCOPYEncodingMatches(CommandOperationOfForm(69));
+    assert MCOPYHandler() == CommandHandler_ExecuteMemoryCopy;
     return 0;
 end;

@@ -22,6 +22,6 @@ begin
     assert preserved == Zeros{PTO_XLEN} + 21;
     assert ReadTileElement(5, 0, 0) == Zeros{PTO_XLEN} + 21;
     assert ReadTileElement(5, 0, 1) == Zeros{PTO_XLEN} + 22;
-    assert InstructionContractZeroMaskNoEffect_TSTORE('0000');
+    assert TSTOREZeroMaskNoEffect('0000');
     return 0;
 end;

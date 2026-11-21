@@ -105,7 +105,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/BWT.asl -->
 ```asl
-readonly func InstructionContractOperation_BWT()
+readonly func BWTOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BWT;
@@ -123,25 +123,25 @@ BWT executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/BWT.asl -->
 ```asl
-readonly func InstructionContractHandler_BWT()
+readonly func BWTHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteControlRequest;
 end;
 
-pure func InstructionContractRequiresSystemBlock_BWT()
+pure func BWTRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractControlRequest_BWT()
+pure func BWTControlRequest()
     => ExecutionControlRequest
 begin
     return ExecutionControl_WaitTimeout;
 end;
 
-pure func InstructionContractControlRequestIsNonblocking_BWT()
+pure func BWTControlRequestIsNonblocking()
     => boolean
 begin
     return TRUE;

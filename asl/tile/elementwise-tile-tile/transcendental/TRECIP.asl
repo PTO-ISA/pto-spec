@@ -11,13 +11,13 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TRECIP-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TRECIP() => TileOperation
+readonly func TRECIPOperation() => TileOperation
 begin
     return TileOperation_TRECIP;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TRECIP(
+pure func TRECIPDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileUnaryDataTypeSupported(
@@ -25,7 +25,7 @@ begin
         data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TRECIP(
+readonly func TRECIPOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -35,16 +35,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TRECIP() => TileSemanticHandler
+readonly func TRECIPHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;
 
-func InstructionContractExecute_TRECIP(
+func ExecuteTRECIP(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TRECIP(
+    assert TRECIPOperandsLegal(
         destination,
         source);
     ExecuteTileUnary(

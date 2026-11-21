@@ -192,7 +192,7 @@ begin
         saturating = saturating
     };
     assert TileOperandsLegal_TCVT(1, 0, control);
-    InstructionContractExecute_TCVT(1, 0, control);
+    ExecuteTCVT(1, 0, control);
     assert _LastFault == Fault_None;
     assert ReadTileElement(1, 0, 0) == TCVTBoundaryOutput(data_type, sample);
     assert NumericStatusFlags() == expected_flags;

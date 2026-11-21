@@ -24,8 +24,8 @@ end;
 
 func main() => integer
 begin
-    assert InstructionContractDataTypeLegal_TROWEXPANDEXPDIF(TileDataType_FP64);
-    assert InstructionContractDataTypeLegal_TCOLEXPANDEXPDIF(TileDataType_FP64);
+    assert TROWEXPANDEXPDIFDataTypeLegal(TileDataType_FP64);
+    assert TCOLEXPANDEXPDIFDataTypeLegal(TileDataType_FP64);
     ExpdifLocal64Decoded(Zeros{64} + 0x01d19181);
     ExpdifLocal64Decoded(Zeros{64} + 0x04b19181);
     ExpdifLocal64Decoded(Zeros{64} + 0x05b19181);

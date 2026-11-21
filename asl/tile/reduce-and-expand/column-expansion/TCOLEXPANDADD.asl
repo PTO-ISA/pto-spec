@@ -7,19 +7,19 @@
 // The complete BSTART, B.DIM, B.DATR, layout, PE-mask, integer DIV, numeric-status, padding, alias, snapshot, and atomic-publication rules remain unchanged.
 // NDF-END: PTO-TCOLEXPANDADD-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TCOLEXPANDADD() => TileOperation
+readonly func TCOLEXPANDADDOperation() => TileOperation
 begin
     return TileOperation_TCOLEXPANDADD;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TCOLEXPANDADD(
+pure func TCOLEXPANDADDDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TCOLEXPANDADD(
+readonly func TCOLEXPANDADDOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex) => boolean
@@ -32,17 +32,17 @@ begin
         broadcast);
 end;
 
-readonly func InstructionContractHandler_TCOLEXPANDADD() => TileSemanticHandler
+readonly func TCOLEXPANDADDHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;
 
-func InstructionContractExecute_TCOLEXPANDADD(
+func ExecuteTCOLEXPANDADD(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TCOLEXPANDADD(
+    assert TCOLEXPANDADDOperandsLegal(
         destination,
         source,
         broadcast);

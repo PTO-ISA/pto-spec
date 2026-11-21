@@ -141,7 +141,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/CASH.asl -->
 ```asl
-readonly func InstructionContractOperation_CASH() => ScalarOperation
+readonly func CASHOperation() => ScalarOperation
 begin
     return ScalarOperation_CASH;
 end;
@@ -152,30 +152,30 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/CASH.asl -->
 ```asl
-readonly func InstructionContractHandler_CASH() => ScalarSemanticHandler
+readonly func CASHHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_CompareAndSwap;
 end;
 
-pure func InstructionContractCompareSizeBytes_CASH()
+pure func CASHCompareSizeBytes()
     => integer {1,2,4,8}
 begin
     return 2;
 end;
 
-pure func InstructionContractHasFarField_CASH()
+pure func CASHHasFarField()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractZeroExtendsOldValue_CASH()
+pure func CASHZeroExtendsOldValue()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSignExtendsOldValue_CASH()
+pure func CASHSignExtendsOldValue()
     => boolean
 begin
     return FALSE;

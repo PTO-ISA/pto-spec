@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000100000001000000101011', 32) == 86;
     assert ScalarOperationOfForm(86) == ScalarOperation_EBREAK;
     assert ScalarHandlerOfForm(86) == ScalarHandler_SoftwareBreakpoint;
-    assert InstructionContractOperation_EBREAK() == ScalarOperation_EBREAK;
-    assert InstructionContractHandler_EBREAK() == ScalarHandler_SoftwareBreakpoint;
+    assert EBREAKOperation() == ScalarOperation_EBREAK;
+    assert EBREAKHandler() == ScalarHandler_SoftwareBreakpoint;
     assert DecodeScalarOperandRaw('000000000000000000000000000100000001000000101011', 86, ScalarField_imm4) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

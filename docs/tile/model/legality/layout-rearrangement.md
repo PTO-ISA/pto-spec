@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: tile-model-legality-layout-rearrangement-purpose role=purpose-scope -->
 ## Purpose and scope
 
-This unit holds the operand legality predicates for the four CUBE cell rearrangement instructions: `TileOperandsLegal_TPERMUTE`, `TileOperandsLegal_TSHUF`, `TileOperandsLegal_TPACK`, and `TileOperandsLegal_TUNPACK`. Each instruction's `InstructionContractOperandsLegal_*` returns its predicate, and its catalog record names the predicate as `legality_handler`.
+This unit holds the operand legality predicates for the four CUBE cell rearrangement instructions: `TileOperandsLegal_TPERMUTE`, `TileOperandsLegal_TSHUF`, `TileOperandsLegal_TPACK`, and `TileOperandsLegal_TUNPACK`. Each instruction's `<MNEMONIC>OperandsLegal` wrapper returns its predicate, and its catalog record names the predicate as `legality_handler`.
 
 A legality predicate is a read-only check. It inspects descriptors, types, control fields, and element definedness, and it returns FALSE instead of changing state. The model execution functions in the rearrangement execution unit assert the same predicate before they build a result, so no destination byte is written for an operand set that fails it.
 

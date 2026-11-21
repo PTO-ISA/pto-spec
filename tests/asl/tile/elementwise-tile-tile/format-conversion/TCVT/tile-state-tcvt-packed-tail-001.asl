@@ -55,7 +55,7 @@ begin
     SetTailPad(pad_code);
     let control = DefaultNumericExecutionControl();
     assert TileOperandsLegal_TCVT(1, 0, control);
-    InstructionContractExecute_TCVT(1, 0, control);
+    ExecuteTCVT(1, 0, control);
     assert NumericStatusFlags() == Zeros{5};
     if valid_columns >= 1 then
         assert ReadTileElement(1, 0, 0) ==
@@ -103,7 +103,7 @@ begin
     SetTailPad('11');
     let control = DefaultNumericExecutionControl();
     assert TileOperandsLegal_TCVT(1, 0, control);
-    InstructionContractExecute_TCVT(1, 0, control);
+    ExecuteTCVT(1, 0, control);
     assert NumericStatusFlags() == Zeros{5};
     assert !TileElementDefined(1, 0, valid_columns);
 end;
@@ -130,7 +130,7 @@ begin
     SetTailPad('11');
     let control = DefaultNumericExecutionControl();
     assert TileOperandsLegal_TCVT(1, 0, control);
-    InstructionContractExecute_TCVT(1, 0, control);
+    ExecuteTCVT(1, 0, control);
     assert NumericStatusFlags() == Zeros{5};
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 0x3f000000;
     // Logical nibble 5 decodes through the E2M1X2 reference policy to 3.0.
@@ -171,7 +171,7 @@ begin
     SetTailPad('00');
     let control = DefaultNumericExecutionControl();
     assert TileOperandsLegal_TCVT(1, 0, control);
-    InstructionContractExecute_TCVT(1, 0, control);
+    ExecuteTCVT(1, 0, control);
     assert NumericStatusFlags() == Zeros{5};
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 1;
     assert ReadTileElement(1, 0, 1) == Zeros{PTO_XLEN} + 2;
@@ -214,7 +214,7 @@ begin
     SetTailPad('11');
     let control = DefaultNumericExecutionControl();
     assert TileOperandsLegal_TCVT(1, 0, control);
-    InstructionContractExecute_TCVT(1, 0, control);
+    ExecuteTCVT(1, 0, control);
     assert NumericStatusFlags() == Zeros{5};
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 0x3f000000;
     assert ReadTileElement(1, 0, 1) == Zeros{PTO_XLEN} + 0x3f800000;

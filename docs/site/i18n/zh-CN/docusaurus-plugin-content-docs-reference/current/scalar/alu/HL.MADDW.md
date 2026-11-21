@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-maddw-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `InstructionContractResult_HL_MADDW`：它把 `addend[31:0]`、`left[31:0]` 与 `right[31:0]` 符号扩展到 XLEN，取 `MultiplyWideSigned` 的低 `64` 位，再加上扩展后的加数。分派路径以 `word_operation` 为真调用 `ExecuteScalarMultiplyAddPair`，得到同一个 64 位累加值。
+所属 ASL 提供 `HLMADDWResult`：它把 `addend[31:0]`、`left[31:0]` 与 `right[31:0]` 符号扩展到 XLEN，取 `MultiplyWideSigned` 的低 `64` 位，再加上扩展后的加数。分派路径以 `word_operation` 为真调用 `ExecuteScalarMultiplyAddPair`，得到同一个 64 位累加值。
 
 ```asm
 hl.maddw SrcL, SrcR, SrcD, ->Dst0, Dst1
@@ -126,7 +126,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.MADDW.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_MADDW() => ScalarOperation
+readonly func HLMADDWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_MADDW;
 end;
@@ -137,11 +137,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.MADDW.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_MADDW() => ScalarSemanticHandler
+readonly func HLMADDWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarMultiplyAddPair;
 end;
-pure func InstructionContractResult_HL_MADDW(
+pure func HLMADDWResult(
     addend: Word,
     left: Word,
     right: Word)
@@ -154,24 +154,24 @@ begin
     return product[63:0] + effective_addend;
 end;
 
-pure func InstructionContractLow_HL_MADDW(
+pure func HLMADDWLow(
     addend: Word,
     left: Word,
     right: Word)
     => Word
 begin
     return SignExtend{PTO_XLEN}(
-        InstructionContractResult_HL_MADDW(addend, left, right)[31:0]);
+        HLMADDWResult(addend, left, right)[31:0]);
 end;
 
-pure func InstructionContractHigh_HL_MADDW(
+pure func HLMADDWHigh(
     addend: Word,
     left: Word,
     right: Word)
     => Word
 begin
     return SignExtend{PTO_XLEN}(
-        InstructionContractResult_HL_MADDW(addend, left, right)[63:32]);
+        HLMADDWResult(addend, left, right)[63:32]);
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->

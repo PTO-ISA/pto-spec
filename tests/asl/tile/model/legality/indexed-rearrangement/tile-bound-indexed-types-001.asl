@@ -2,28 +2,28 @@
 
 func main() => integer
 begin
-    assert InstructionContractValueDataTypeLegal_TGATHER(
+    assert TGATHERValueDataTypeLegal(
         TileDataType_FP32);
-    assert InstructionContractValueDataTypeLegal_TGATHER(
+    assert TGATHERValueDataTypeLegal(
         TileDataType_U8);
-    assert !InstructionContractValueDataTypeLegal_TGATHER(
+    assert !TGATHERValueDataTypeLegal(
         TileDataType_E2M1X2);
-    assert InstructionContractIndexDataTypeLegal_TGATHER(
+    assert TGATHERIndexDataTypeLegal(
         TileDataType_S32);
-    assert InstructionContractIndexDataTypeLegal_TGATHER(
+    assert TGATHERIndexDataTypeLegal(
         TileDataType_U16);
-    assert InstructionContractIndexDataTypeLegal_TGATHER(
+    assert TGATHERIndexDataTypeLegal(
         TileDataType_U64);
-    assert InstructionContractTypePairLegal_TSCATTER(
+    assert TSCATTERTypePairLegal(
         TileDataType_U8,
         TileDataType_S16);
-    assert InstructionContractTypePairLegal_TSCATTER(
+    assert TSCATTERTypePairLegal(
         TileDataType_U8,
         TileDataType_U32);
-    assert InstructionContractTypePairLegal_TSCATTER(
+    assert TSCATTERTypePairLegal(
         TileDataType_U8,
         TileDataType_S64);
-    assert !InstructionContractTypePairLegal_TSCATTER(
+    assert !TSCATTERTypePairLegal(
         TileDataType_U8,
         TileDataType_S8);
     return 0;

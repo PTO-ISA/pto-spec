@@ -26,7 +26,7 @@ Only `32` result bits are computed, but the published word is a full XLEN value 
 <!-- PTO-READER-BLOCK: scalar-hl-oriw-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `InstructionContractResult_HL_ORIW`, which builds `right = SignExtend{PTO_XLEN}(immediate)` and returns `ScalarBinaryW(ScalarBinary_OR, left, right)`. `ScalarBinaryW` takes `left[31:0]` and `right[31:0]`, or-combines them into a 32-bit value, and returns `SignExtend{PTO_XLEN}` of that value. Dispatch selects the path with `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_OR, ScalarField_simm24, TRUE)`.
+The owning ASL exposes `HLORIWResult`, which builds `right = SignExtend{PTO_XLEN}(immediate)` and returns `ScalarBinaryW(ScalarBinary_OR, left, right)`. `ScalarBinaryW` takes `left[31:0]` and `right[31:0]`, or-combines them into a 32-bit value, and returns `SignExtend{PTO_XLEN}` of that value. Dispatch selects the path with `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_OR, ScalarField_simm24, TRUE)`.
 
 ```asm
 hl.oriw SrcL, simm, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.ORIW.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_ORIW() => ScalarOperation
+readonly func HLORIWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_ORIW;
 end;
@@ -127,30 +127,30 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.ORIW.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_ORIW() => ScalarSemanticHandler
+readonly func HLORIWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinaryW;
 end;
 
-pure func InstructionContractImmediateWidth_HL_ORIW()
+pure func HLORIWImmediateWidth()
     => integer {1..64}
 begin
     return 24;
 end;
 
-pure func InstructionContractImmediateIsSigned_HL_ORIW()
+pure func HLORIWImmediateIsSigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_HL_ORIW()
+pure func HLORIWIsWordOperation()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractResult_HL_ORIW(
+pure func HLORIWResult(
     left: Word,
     immediate: bits(24))
     => Word

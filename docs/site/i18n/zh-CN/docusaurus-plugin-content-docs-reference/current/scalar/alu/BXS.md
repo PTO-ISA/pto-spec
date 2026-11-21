@@ -120,19 +120,19 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/BXS.asl -->
 ```asl
-readonly func InstructionContractOperation_BXS()
+readonly func BXSOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BXS;
 end;
 
-pure func InstructionContractWidth_BXS(encoded_imml: bits(6))
+pure func BXSWidth(encoded_imml: bits(6))
     => integer {1..64}
 begin
     return UInt(encoded_imml) + 1;
 end;
 
-pure func InstructionContractOffset_BXS(encoded_imms: bits(6))
+pure func DecodeBXSOffset(encoded_imms: bits(6))
     => integer {0..63}
 begin
     return UInt(encoded_imms);
@@ -144,13 +144,13 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/BXS.asl -->
 ```asl
-readonly func InstructionContractHandler_BXS()
+readonly func BXSHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExtractBitfield;
 end;
 
-pure func InstructionContractResult_BXS(
+pure func BXSResult(
     value: Word,
     width: integer {1..64},
     offset: integer {0..63})

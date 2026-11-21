@@ -84,29 +84,29 @@
 // guarantee is introduced.
 // NDF-END: PTO-TMOV-SHARED-ND-TO-CUBE-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TMOV() => TileOperation
+readonly func TMOVOperation() => TileOperation
 begin
     return TileOperation_TMOV;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_TMOV() => TileSemanticHandler
+readonly func TMOVHandler() => TileSemanticHandler
 begin
     return TileHandler_TMOV;
 end;
 
-readonly func InstructionContractOperandsLegal_TMOV(
+readonly func TMOVOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
     return TileOperandsLegal_TMOV(destination, source);
 end;
 
-func InstructionContractExecute_TMOV(
+func ExecuteTMOV(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TMOV(destination, source);
+    assert TMOVOperandsLegal(destination, source);
     TMOV(destination, source);
 end;
 // DOC-END: operation

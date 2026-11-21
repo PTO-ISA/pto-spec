@@ -107,7 +107,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TXOR.asl -->
 ```asl
-readonly func InstructionContractOperation_TXOR() => TileOperation
+readonly func TXOROperation() => TileOperation
 begin
     return TileOperation_TXOR;
 end;
@@ -130,13 +130,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/logical/TXOR.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TXOR(
+pure func TXORDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecScalarIntegerDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TXOR(
+readonly func TXOROperandsLegal(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex) => boolean
@@ -148,12 +148,12 @@ begin
         source_right);
 end;
 
-readonly func InstructionContractHandler_TXOR() => TileSemanticHandler
+readonly func TXORHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TXOR(
+func ExecuteTXOR(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex)

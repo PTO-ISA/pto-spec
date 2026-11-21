@@ -11,7 +11,7 @@ begin
     let status = ExecuteScalarInstruction(instruction, 32);
     assert status == ScalarExecution_Executed;
     assert ReadGPR(2) == Zeros{PTO_XLEN} + 3;
-    assert InstructionContractResult_BXU(
+    assert BXUResult(
         Zeros{PTO_XLEN} + 0x8000000000000001,
         2,
         63) == Zeros{PTO_XLEN} + 3;

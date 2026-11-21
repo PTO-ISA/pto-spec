@@ -51,7 +51,7 @@
 
 
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_TMATMUL_BIAS(
+readonly func BSTARTTMATMULBIASEncodingMatches(
     operation: CommandOperation) => boolean
 begin
     return operation ==
@@ -59,25 +59,25 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractTileOperation_BSTART_TMATMUL_BIAS()
+readonly func BSTARTTMATMULBIASTileOperation()
     => TileOperation
 begin
     return TileOperation_TMATMUL_BIAS;
 end;
 
-readonly func InstructionContractCubeFunction_BSTART_TMATMUL_BIAS()
+readonly func BSTARTTMATMULBIASCubeFunction()
     => integer {0..31}
 begin
     return 1;
 end;
 
-readonly func InstructionContractSharedOperandsAllowed_BSTART_TMATMUL_BIAS()
+readonly func BSTARTTMATMULBIASSharedOperandsAllowed()
     => boolean
 begin
     return TRUE;
 end;
 
-readonly func InstructionContractHandler_BSTART_TMATMUL_BIAS()
+readonly func BSTARTTMATMULBIASHandler()
     => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;

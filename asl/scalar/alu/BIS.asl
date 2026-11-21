@@ -8,32 +8,32 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-BIS-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_BIS()
+readonly func BISOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BIS;
 end;
 
-pure func InstructionContractWidth_BIS(encoded_imml: bits(6))
+pure func BISWidth(encoded_imml: bits(6))
     => integer {1..64}
 begin
     return UInt(encoded_imml) + 1;
 end;
 
-pure func InstructionContractOffset_BIS(encoded_imms: bits(6))
+pure func DecodeBISOffset(encoded_imms: bits(6))
     => integer {0..63}
 begin
     return UInt(encoded_imms);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BIS()
+readonly func BISHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ModifyBitfield;
 end;
 
-pure func InstructionContractResult_BIS(
+pure func BISResult(
     value: Word,
     width: integer {1..64},
     offset: integer {0..63})

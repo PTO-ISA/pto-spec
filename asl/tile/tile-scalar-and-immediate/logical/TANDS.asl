@@ -14,19 +14,19 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TANDS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TANDS() => TileOperation
+readonly func TANDSOperation() => TileOperation
 begin
     return TileOperation_TANDS;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TANDS(
+pure func TANDSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecScalarIntegerDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TANDS(
+readonly func TANDSOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word) => boolean
@@ -38,17 +38,17 @@ begin
         scalar);
 end;
 
-readonly func InstructionContractHandler_TANDS() => TileSemanticHandler
+readonly func TANDSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileScalar;
 end;
 
-func InstructionContractExecute_TANDS(
+func ExecuteTANDS(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word)
 begin
-    assert InstructionContractOperandsLegal_TANDS(
+    assert TANDSOperandsLegal(
         destination,
         source,
         scalar);

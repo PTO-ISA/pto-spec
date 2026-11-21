@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/SH.PCR.asl -->
 ```asl
-readonly func InstructionContractOperation_SH_PCR() => ScalarOperation
+readonly func SHPCROperation() => ScalarOperation
 begin
     return ScalarOperation_SH_PCR;
 end;
@@ -127,49 +127,49 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/SH.PCR.asl -->
 ```asl
-readonly func InstructionContractHandler_SH_PCR()
+readonly func SHPCRHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStore;
 end;
 
-pure func InstructionContractAGUAction_SH_PCR()
+pure func SHPCRAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Store;
 end;
 
-pure func InstructionContractAGUAddressKind_SH_PCR()
+pure func SHPCRAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_PCRelative;
 end;
 
-pure func InstructionContractAGUSizeBytes_SH_PCR()
+pure func SHPCRAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 2;
 end;
 
-pure func InstructionContractAGUOffsetScale_SH_PCR()
+pure func SHPCRAGUOffsetScale()
     => integer {0..3}
 begin
     return 2;
 end;
 
-pure func InstructionContractAGUUpdateMode_SH_PCR()
+pure func SHPCRAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_None;
 end;
 
-pure func InstructionContractAGUSignedLoad_SH_PCR()
+pure func SHPCRAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_SH_PCR()
+pure func SHPCRAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

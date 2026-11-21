@@ -8,31 +8,31 @@
 // selected width, ordering, memory update, event, and result atomically.
 // NDF-END: PTO-SW-SMIN-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SW_SMIN() => ScalarOperation
+readonly func SWSMINOperation() => ScalarOperation
 begin
     return ScalarOperation_SW_SMIN;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SW_SMIN()
+readonly func SWSMINHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_SW_SMIN()
+pure func SWSMINAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_SMIN;
 end;
 
-pure func InstructionContractAtomicSizeBytes_SW_SMIN()
+pure func SWSMINAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 4;
 end;
 
-pure func InstructionContractPublishesOldValue_SW_SMIN()
+pure func SWSMINPublishesOldValue()
     => boolean
 begin
     return FALSE;

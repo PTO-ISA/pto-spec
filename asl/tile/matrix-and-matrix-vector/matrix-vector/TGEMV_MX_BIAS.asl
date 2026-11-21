@@ -22,26 +22,26 @@
 // Cache behavior MUST NOT alter results, faults, source lifetime, or ordering.
 // NDF-END: PTO-TGEMV-MX-BIAS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TGEMV_MX_BIAS()
+readonly func TGEMVMXBIASOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV_MX_BIAS;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractCubeFunction_TGEMV_MX_BIAS()
+readonly func TGEMVMXBIASCubeFunction()
     => integer {0..31}
 begin
     return 21;
 end;
 
-readonly func InstructionContractSharedOperandsAllowed_TGEMV_MX_BIAS()
+readonly func TGEMVMXBIASSharedOperandsAllowed()
     => boolean
 begin
     return FALSE;
 end;
 
-readonly func InstructionContractOperandsLegal_TGEMV_MX_BIAS(
+readonly func TGEMVMXBIASOperandsLegal(
     destination: TileIndex,
     left_vector: TileIndex,
     row_scale: TileIndex,
@@ -58,7 +58,7 @@ begin
         bias);
 end;
 
-readonly func InstructionContractHandler_TGEMV_MX_BIAS()
+readonly func TGEMVMXBIASHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TGEMV_MX_BIAS;

@@ -114,7 +114,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FEXP.asl -->
 ```asl
-readonly func InstructionContractOperation_FEXP()
+readonly func FEXPOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FEXP;
@@ -126,44 +126,44 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FEXP.asl -->
 ```asl
-readonly func InstructionContractHandler_FEXP()
+readonly func FEXPHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingUnary;
 end;
 
-pure func InstructionContractSourceTypeLegal_FEXP(encoded: bits(2))
+pure func FEXPSourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return encoded == '00' || encoded == '01';
 end;
 
-pure func InstructionContractSourceCarrier_FEXP(encoded: bits(2))
+pure func DecodeFEXPSourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_FEXP(encoded);
+    assert FEXPSourceTypeLegal(encoded);
     return ScalarFPSourceTypeCode(encoded);
 end;
 
-pure func InstructionContractSourceArity_FEXP()
+pure func FEXPSourceArity()
     => integer {1..3}
 begin
     return 1;
 end;
 
-pure func InstructionContractUsesProfileFlags_FEXP()
+pure func FEXPUsesProfileFlags()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesActiveRounding_FEXP()
+pure func FEXPUsesActiveRounding()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUnaryOperation_FEXP()
+pure func FEXPUnaryOperation()
     => FloatingUnaryOperation
 begin
     return FloatingUnary_EXP;

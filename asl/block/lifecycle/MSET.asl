@@ -8,37 +8,37 @@
 // MUST be preflighted before RegSrc1[7:0] is replicated to every byte.
 // NDF-END: PTO-BLOCK-MSET-FILL-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_MSET(operation: CommandOperation)
+readonly func MSETEncodingMatches(operation: CommandOperation)
     => boolean
 begin
     return operation == CommandOperation_mset_32_0b932f291932;
 end;
 
-pure func InstructionContractAbsoluteGPRSelectorLegal_MSET(
+pure func MSETAbsoluteGPRSelectorLegal(
     selector: Reg5Selector) => boolean
 begin
     return selector <= 23;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_MSET() => CommandSemanticHandler
+readonly func MSETHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteMemorySet;
 end;
 
-pure func InstructionContractMemoryStepRestartable_MSET()
+pure func MSETMemoryStepRestartable()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractAcceptsCompleteXLENLength_MSET()
+pure func MSETAcceptsCompleteXLENLength()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractWritesMemory_MSET()
+pure func MSETWritesMemory()
     => boolean
 begin
     return TRUE;

@@ -323,6 +323,12 @@ def validate_unit_routes() -> tuple[int, str, int]:
                     str(reader_projection["documentation_sha256"]),
                 ),
             )
+            if unit["id"] == "PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION":
+                asset = f"evidence/asl-fragments/{source_sha256}.asl"
+                require_text(page_relative, (f'href="/{asset}"',))
+                if file_sha256(require_file(asset)) != source_sha256:
+                    raise ValueError("classification owner ASL asset digest mismatch")
+
             label = unit["mnemonic"] or unit["id"]
             search_fragment = json.dumps(
                 {
@@ -379,8 +385,11 @@ def validate_instruction_coverage() -> int:
     required_fields = {
         "id", "mnemonic", "surface", "route", "layout_contract", "source",
         "source_sha256", "encoding", "syntax", "assembler_symbols",
+        "assembler_symbol_count",
         "decode_source", "operation_source", "behavior", "bundle_source",
+        "manual_source", "manual_function_count",
         "constraints_faults", "state_reads_writes_result", "bundle_status",
+        "bundle_presentation",
         "bundle_lines", "bundle_rules",
         "decisions", "ndf_owners", "evidence", "source_records", "examples",
         "locale", "content_locale", "locale_status", "specialized_projection",
@@ -417,6 +426,11 @@ def validate_instruction_coverage() -> int:
                 entry["source"] != unit["source"] or
                 entry["source_sha256"] != traceability["sources"][unit["source"]] or
                 entry["layout_contract"] != "UnitWorkbenchView.arm-style.v1" or
+                entry["manual_source"] != "complete" or
+                not isinstance(entry["manual_function_count"], int) or
+                entry["manual_function_count"] < 2 or
+                not isinstance(entry["assembler_symbol_count"], int) or
+                entry["assembler_symbol_count"] < 0 or
                 entry["locale"] != locale or
                 entry["unexplained_gaps"] != []
             ):
@@ -435,39 +449,51 @@ def validate_instruction_coverage() -> int:
                 raise ValueError(f"{relative} {unit['id']} lacks owner-backed bundle coverage")
             if unit["surface"] == "tile" and entry["bundle_status"] not in {"complete", "source-gap"}:
                 raise ValueError(f"{relative} {unit['id']} has invalid bundle status")
+            if unit["surface"] == "tile" and entry["bundle_presentation"] not in {
+                "composition", "source-variants", "physical-sequence",
+            }:
+                raise ValueError(f"{relative} {unit['id']} has invalid bundle presentation")
+            if unit["surface"] != "tile" and entry["bundle_presentation"] != "not-applicable":
+                raise ValueError(f"{relative} {unit['id']} has unexpected bundle presentation")
             if entry["bundle_status"] == "source-gap" and not entry["explained_gaps"]:
                 raise ValueError(f"{relative} {unit['id']} has an unexplained bundle gap")
             page_relative = f"{expected_route.lstrip('/')}index.html"
-            require_text(
-                page_relative,
-                (
-                    "Assembly syntax",
-                    "Assembler symbols",
+            conventional_bundle = unit["surface"] == "tile" and entry["bundle_presentation"] in {
+                "composition", "source-variants",
+            }
+            expected_page_terms = [
+                    "Assembly syntax" if conventional_bundle else "Assembler syntax",
                     "Behavior",
                     "NDF clauses",
                     "Evidence index",
                     "Sources and release identity",
-                ) if locale == "en" else (
+                ] if locale == "en" else [
                     "汇编格式",
-                    "汇编符号",
                     "行为",
                     "NDF 条款",
                     "Evidence index",
                     "来源与发布信息",
-                ),
-            )
+                ]
+            if entry["assembler_symbol_count"] > 0:
+                expected_page_terms.append("Assembler symbols" if locale == "en" else "汇编符号")
+            require_text(page_relative, tuple(expected_page_terms))
             if unit["surface"] == "tile":
+                require_text(page_relative, ("TileOp assembly" if locale == "en" else "TileOp 汇编",))
                 require_text(
                     page_relative,
-                    (
+                    ((
                         "High Level Assembly",
                         "Complete Bundle Assembly",
                         "Show High Level Assembly operands mapped to the owning ASL",
-                    ) if locale == "en" else (
+                    ) if conventional_bundle else (
+                        "Physical bundle",
+                    )) if locale == "en" else ((
                         "高层汇编",
                         "完整 Bundle Assembly",
                         "显示高层汇编 operand 到 owning ASL 的映射",
-                    ),
+                    ) if conventional_bundle else (
+                        "物理 Bundle",
+                    )),
                 )
     return len(instructions)
 
@@ -550,6 +576,11 @@ def main() -> int:
             "zh-CN/instructions/index.html",
             ("指令索引", "PTO-TILE-TLOAD", "PTO-SCALAR-ADD"),
         )
+        for locale_root in ("", "zh-CN/"):
+            for section in ("scalar", "float", "block", "cube", "vector", "tma", "encoding"):
+                route = f"{locale_root}instructions/{section}/"
+                require_text(f"{locale_root}index.html", (f'href="/{route}"',))
+                require_file(f"{route}index.html")
         require_text(
             "ndf/index.html",
             ("NDF index", "PTO-TLOAD-MEMORY-001"),
@@ -576,7 +607,7 @@ def main() -> int:
         )
         require_text(
             "zh-CN/index.html",
-            ("架构", "先 Scalar，再 Block，最后 Tile"),
+            ("架构", "指令参考手册"),
         )
         require_text(
             "architecture/index.html",

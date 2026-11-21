@@ -23,12 +23,12 @@ The current instruction contract is owned by the ASL source linked above.
 
 成功执行会提交整个复制并把 `TPC` 前进 `4` 字节；发生故障时不提交任何内容，`TPC` 停在出错指令上。
 
-设计要点：复制长度属于助记符而不属于编码。`InstructionContractCopySizeBytes_DMA` 返回 `64`，两个预检都请求 `64` 字节，因此没有任何字段取值能选择其他长度。
+设计要点：复制长度属于助记符而不属于编码。`DMACopySizeBytes` 返回 `64`，两个预检都请求 `64` 字节，因此没有任何字段取值能选择其他长度。
 
 <!-- PTO-READER-BLOCK: scalar-dma-mechanism role=mechanism -->
 ## 复制如何排序
 
-分派把该形式交给 `asl/scalar/model/amo/semantics.asl` 中的 `ExecuteScalarDMACopy64`。两个 `ReadDecodedScalarRegister` 参数都在该调用之前求值，因此在第一次预检之前两个地址都已快照。
+分派把该形式交给 `asl/scalar/model/amo/semantics.asl` 中的 `ExecuteScalarDMACopy64`。两个 `ReadDecodedReg5` 参数都在该调用之前求值，因此在第一次预检之前两个地址都已快照。
 
 随后各步骤按固定顺序执行：
 
@@ -122,7 +122,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/DMA.asl -->
 ```asl
-readonly func InstructionContractOperation_DMA()
+readonly func DMAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DMA;
@@ -134,37 +134,37 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/DMA.asl -->
 ```asl
-readonly func InstructionContractHandler_DMA()
+readonly func DMAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarDMACopy64;
 end;
 
-pure func InstructionContractCopySizeBytes_DMA()
+pure func DMACopySizeBytes()
     => integer {1..262144}
 begin
     return 64;
 end;
 
-pure func InstructionContractEventChunkSizeBytes_DMA()
+pure func DMAEventChunkSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractEventChunkCount_DMA()
+pure func DMAEventChunkCount()
     => integer {1..16}
 begin
     return 8;
 end;
 
-pure func InstructionContractSourceProbePrecedesDestination_DMA()
+pure func DMASourceProbePrecedesDestination()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSnapshotsSourceBeforeCommit_DMA()
+pure func DMASnapshotsSourceBeforeCommit()
     => boolean
 begin
     return TRUE;

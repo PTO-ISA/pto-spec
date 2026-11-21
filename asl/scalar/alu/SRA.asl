@@ -8,34 +8,34 @@
 // assigned destination or commit effect in alias-safe order.
 // NDF-END: PTO-SRA-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SRA()
+readonly func SRAOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SRA;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SRA()
+readonly func SRAHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractShiftAmount_SRA(right: Word)
+pure func DecodeSRAShiftAmount(right: Word)
     => integer {0..63}
 begin
     return UInt(right[5:0]);
 end;
 
-pure func InstructionContractResult_SRA(left: Word, right: Word)
+pure func SRAResult(left: Word, right: Word)
     => Word
 begin
-    let amount = InstructionContractShiftAmount_SRA(right);
+    let amount = DecodeSRAShiftAmount(right);
     let shifted = ASR(left, amount);
     return shifted;
 end;
 
-pure func InstructionContractIsWordOperation_SRA()
+pure func SRAIsWordOperation()
     => boolean
 begin
     return FALSE;

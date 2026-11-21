@@ -14,13 +14,13 @@
 // Omitted B.DATR or Layout=NORM MUST select RowMajor; Layout 29 MUST select CUBE_M32 and Layout 31 MUST select CUBE_M16. All numeric Local operands MUST use the selected layout; CUBE_N8, Shared and mixed layouts remain illegal.
 // NDF-END: PTO-TMAXS-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TMAXS() => TileOperation
+readonly func TMAXSOperation() => TileOperation
 begin
     return TileOperation_TMAXS;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TMAXS(
+pure func TMAXSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileBinaryDataTypeSupported(
@@ -28,7 +28,7 @@ begin
         data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TMAXS(
+readonly func TMAXSOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word) => boolean
@@ -40,17 +40,17 @@ begin
         scalar);
 end;
 
-readonly func InstructionContractHandler_TMAXS() => TileSemanticHandler
+readonly func TMAXSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileScalar;
 end;
 
-func InstructionContractExecute_TMAXS(
+func ExecuteTMAXS(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word)
 begin
-    assert InstructionContractOperandsLegal_TMAXS(
+    assert TMAXSOperandsLegal(
         destination,
         source,
         scalar);

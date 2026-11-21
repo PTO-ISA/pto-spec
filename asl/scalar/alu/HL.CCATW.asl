@@ -12,18 +12,18 @@
 // memory, Tile, block, reservation, privilege, numeric-status, and fault state.
 // NDF-END: PTO-HL-CCATW-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_CCATW() => ScalarOperation
+readonly func HLCCATWOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_CCATW;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_CCATW() => ScalarSemanticHandler
+readonly func HLCCATWHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteConcatenatePairW;
 end;
 
-pure func InstructionContractLowResult_HL_CCATW(
+pure func HLCCATWLowResult(
     left: Word,
     right: Word,
     shift_amount: integer {0..127})
@@ -40,7 +40,7 @@ begin
     end;
 end;
 
-pure func InstructionContractHighResult_HL_CCATW(
+pure func HLCCATWHighResult(
     left: Word,
     right: Word,
     shift_amount: integer {0..127})

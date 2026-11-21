@@ -11,7 +11,7 @@ begin
     let status = ExecuteScalarInstruction(instruction, 32);
     assert status == ScalarExecution_Executed;
     assert ReadGPR(2) == Zeros{PTO_XLEN} + 0x7ffffffffffffffe;
-    assert InstructionContractResult_BIC(Ones{PTO_XLEN}, 2, 63) ==
+    assert BICResult(Ones{PTO_XLEN}, 2, 63) ==
         Zeros{PTO_XLEN} + 0x7ffffffffffffffe;
     return 0;
 end;

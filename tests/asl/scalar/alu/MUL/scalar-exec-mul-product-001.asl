@@ -13,6 +13,6 @@ begin
     let execution = ExecuteScalarInstruction(instruction, 32);
     assert execution == ScalarExecution_Executed;
     assert ReadGPR(3) == Zeros{PTO_XLEN} - 6;
-    assert InstructionContractResult_MUL(left, right) == Zeros{PTO_XLEN} - 6;
+    assert MULResult(left, right) == Zeros{PTO_XLEN} - 6;
     return 0;
 end;

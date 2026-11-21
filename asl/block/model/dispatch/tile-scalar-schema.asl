@@ -72,7 +72,7 @@ begin
     if !_BundleScalarBindings[[0]].valid then
         return Zeros{PTO_XLEN};
     end;
-    return ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source0);
+    return ReadReg5(_BundleScalarBindings[[0]].source0);
 end;
 
 readonly func SelectedBundleTileScalarSourceLegal(

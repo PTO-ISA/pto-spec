@@ -8,20 +8,20 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-ADD-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_ADD()
+readonly func ADDOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ADD;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_ADD()
+readonly func ADDHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractRightModifier_ADD(encoded: bits(2))
+pure func DecodeADDRightModifier(encoded: bits(2))
     => ScalarRightModifier
 begin
     case encoded of
@@ -32,39 +32,39 @@ begin
     end;
 end;
 
-pure func InstructionContractPreparedRight_ADD(
+pure func ADDRightOperand(
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let modifier = InstructionContractRightModifier_ADD(encoded_modifier);
-    let transformed = ApplyScalarRightModifier(right, modifier, FALSE);
+    let modifier = DecodeADDRightModifier(encoded_modifier);
+    let transformed = ModifyScalarOperand(right, modifier, FALSE);
     let shifted = LSL(transformed, shift_amount);
     return shifted;
 end;
 
-pure func InstructionContractResult_ADD(
+pure func ADDResult(
     left: Word,
     right: Word,
     encoded_modifier: bits(2),
     shift_amount: integer {0..31})
     => Word
 begin
-    let prepared_right = InstructionContractPreparedRight_ADD(
+    let prepared_right = ADDRightOperand(
         right,
         encoded_modifier,
         shift_amount);
     return ScalarBinary(ScalarBinary_ADD, left, prepared_right);
 end;
 
-pure func InstructionContractIsLogicalFamily_ADD()
+pure func ADDIsLogicalFamily()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractIsWordOperation_ADD()
+pure func ADDIsWordOperation()
     => boolean
 begin
     return FALSE;

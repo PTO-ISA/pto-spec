@@ -100,7 +100,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/DC.CSW.asl -->
 ```asl
-readonly func InstructionContractOperation_DC_CSW()
+readonly func DCCSWOperation()
     => ScalarOperation
 begin
     return ScalarOperation_DC_CSW;
@@ -118,31 +118,31 @@ DC.CSW executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/DC.CSW.asl -->
 ```asl
-readonly func InstructionContractHandler_DC_CSW()
+readonly func DCCSWHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_DC_CSW()
+pure func DCCSWRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_DC_CSW()
+pure func DCCSWMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_DC_CSW;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_DC_CSW()
+pure func DCCSWMaintenanceUsesOperand()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_DC_CSW()
+pure func DCCSWMaintenanceRequiresRootRing()
     => boolean
 begin
     return FALSE;

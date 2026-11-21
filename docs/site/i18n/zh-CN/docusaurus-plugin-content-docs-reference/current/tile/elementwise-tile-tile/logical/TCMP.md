@@ -118,12 +118,12 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TCMP.asl -->
 ```asl
-readonly func InstructionContractOperation_TCMP() => TileOperation
+readonly func TCMPOperation() => TileOperation
 begin
     return TileOperation_TCMP;
 end;
 
-pure func InstructionContractComparisonCodeLegal_TCMP(
+pure func TCMPComparisonCodeLegal(
     comparison_code: bits(3)) => boolean
 begin
     return UInt(comparison_code) <= 5;
@@ -148,13 +148,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/logical/TCMP.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TCMP(
+pure func TCMPDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileCompareDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TCMP(
+readonly func TCMPOperandsLegal(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex,
@@ -167,18 +167,18 @@ begin
         comparison);
 end;
 
-readonly func InstructionContractHandler_TCMP() => TileSemanticHandler
+readonly func TCMPHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileCompare;
 end;
 
-func InstructionContractExecute_TCMP(
+func ExecuteTCMP(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex,
     comparison: TileComparison)
 begin
-    assert InstructionContractOperandsLegal_TCMP(
+    assert TCMPOperandsLegal(
         destination,
         source_left,
         source_right,

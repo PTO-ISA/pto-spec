@@ -71,7 +71,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/SYNC.CORE.asl -->
 ```asl
-readonly func InstructionContractOperation_SYNC_CORE() => ScalarOperation
+readonly func SYNCCOREOperation() => ScalarOperation
 begin
     return ScalarOperation_SYNC_CORE;
 end;
@@ -88,12 +88,12 @@ The only canonical body is BSTART.SYS FALL, sync.core, BSTOP.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/SYNC.CORE.asl -->
 ```asl
-readonly func InstructionContractHandler_SYNC_CORE() => ScalarSemanticHandler
+readonly func SYNCCOREHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_SyncCore;
 end;
 
-pure func InstructionContractRequiresSystemBlock_SYNC_CORE() => boolean
+pure func SYNCCORERequiresSystemBlock() => boolean
 begin
     return TRUE;
 end;
@@ -117,17 +117,17 @@ begin
     SyncCore();
 end;
 
-pure func InstructionContractParticipantCount_SYNC_CORE() => integer {4}
+pure func SYNCCOREParticipantCount() => integer {4}
 begin
     return 4;
 end;
 
-pure func InstructionContractExactMatch_SYNC_CORE() => bits(32)
+pure func SYNCCOREExactMatch() => bits(32)
 begin
     return '00000011001100001010000000101011';
 end;
 
-pure func InstructionContractExactMask_SYNC_CORE() => bits(32)
+pure func SYNCCOREExactMask() => bits(32)
 begin
     return Ones{32};
 end;

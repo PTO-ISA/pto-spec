@@ -99,7 +99,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/L.BSTOP.asl -->
 ```asl
-readonly func InstructionContractMatches_L_BSTOP(operation: CommandOperation) => boolean
+readonly func LBSTOPEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_l_bstop_64_94c7f0a5e8b3);
 end;
@@ -110,18 +110,18 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/L.BSTOP.asl -->
 ```asl
-readonly func InstructionContractHandler_L_BSTOP() => CommandSemanticHandler
+readonly func LBSTOPHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStop;
 end;
 
-pure func InstructionContractCommitsActiveBundle_L_BSTOP()
+pure func LBSTOPCommitsActiveBundle()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractClearsHeaderState_L_BSTOP()
+pure func LBSTOPClearsHeaderState()
     => boolean
 begin
     return TRUE;

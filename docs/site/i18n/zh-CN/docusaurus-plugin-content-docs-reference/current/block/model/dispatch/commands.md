@@ -211,7 +211,7 @@ begin
                 SetFault(Fault_BundleControl, ReadTPC());
                 return CommandExecution_Rejected;
             elsif CommandOperandPresent(form, CommandField_RegSrc) then
-                let sum = ReadScalarRegisterOperand(CommandDecodedReg5(instruction,
+                let sum = ReadReg5(CommandDecodedReg5(instruction,
                         form, CommandField_RegSrc)) +
                     if CommandOperandPresent(form, CommandField_uimm17) then
                         CommandDecodedWord(instruction, form, CommandField_uimm17)
@@ -252,7 +252,7 @@ begin
                 DecodeCommandOperandRaw(instruction, form,
                     CommandField_SharedTileID)[5:0] as SharedTileID,
                 shared_size, shared_mask,
-                InstructionContractSharedSourceReuse_B_IOS(CommandOperationOfForm(form)));
+                BIOSSharedSourceReuse(CommandOperationOfForm(form)));
             if _LastFault == Fault_None then
                 OpenBundleRangeSharedGroup(FALSE, shared_size == 0,
                     shared_size != 0);
@@ -338,7 +338,7 @@ begin
                 if CommandOperandPresent(form, CommandField_SrcTile1) then
                     CommandDecodedTile(instruction, form, CommandField_SrcTile1)
                 else 0,
-                InstructionContractSource0Reuse_B_IOT(CommandOperationOfForm(form)), InstructionContractSource1Reuse_B_IOT(CommandOperationOfForm(form)),
+                BIOTSource0Reuse(CommandOperationOfForm(form)), BIOTSource1Reuse(CommandOperationOfForm(form)),
                 CommandOperandPresent(form, CommandField_L) &&
                     CommandDecodedBool(instruction, form, CommandField_L));
             if _LastFault == Fault_None then
@@ -375,7 +375,7 @@ begin
                 return CommandExecution_Rejected;
             end;
             if !_BundleRangeGroup.zero_mode then
-                let offset = ReadScalarRegisterOperand(reg_src) +
+                let offset = ReadReg5(reg_src) +
                     ZeroExtend{PTO_XLEN}(uimm11);
                 RecordBundleRangeSubview(source_select, reg_src, uimm11,
                     size_code as integer {1..12}, offset);
@@ -406,7 +406,7 @@ begin
                 return CommandExecution_Rejected;
             end;
             if !_BundleRangeGroup.zero_mode then
-                let offset = ReadScalarRegisterOperand(reg_src) +
+                let offset = ReadReg5(reg_src) +
                     ZeroExtend{PTO_XLEN}(uimm11);
                 RecordBundleRangeAssemble(init, last, reg_src, uimm11,
                     size_code as integer {0..15}, offset);
@@ -470,19 +470,19 @@ begin
             BundleTransformHint();
         when CommandHandler_SaveExecutionContext =>
             SaveExecutionContextState(
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
+                ReadReg5(CommandDecodedReg5(instruction, form,
                     CommandField_RegSrc0)),
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
+                ReadReg5(CommandDecodedReg5(instruction, form,
                     CommandField_RegSrc1)),
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
+                ReadReg5(CommandDecodedReg5(instruction, form,
                     CommandField_RegSrc2)));
         when CommandHandler_RecoverExecutionContext =>
             RecoverExecutionContextState(
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
+                ReadReg5(CommandDecodedReg5(instruction, form,
                     CommandField_RegSrc0)),
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
+                ReadReg5(CommandDecodedReg5(instruction, form,
                     CommandField_RegSrc1)),
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
+                ReadReg5(CommandDecodedReg5(instruction, form,
                     CommandField_RegSrc2)));
         when CommandHandler_ExecuteFrameEntry =>
             ExecuteFENTRY(
@@ -507,7 +507,7 @@ begin
         when CommandHandler_ExecuteQueueMove =>
             let flags = CommandDecodedQueueMoveFlags(instruction, form);
             let capacity_source = if flags[3] == '1' then
-                ReadScalarRegisterOperand(CommandDecodedReg5(
+                ReadReg5(CommandDecodedReg5(
                     instruction,
                     form,
                     CommandField_SrcR))
@@ -515,7 +515,7 @@ begin
                 Zeros{PTO_XLEN};
             ExecuteHLQMT(
                 CommandDecodedReg5(instruction, form, CommandField_RegDst),
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
+                ReadReg5(CommandDecodedReg5(instruction, form,
                     CommandField_SrcL)),
                 capacity_source,
                 flags);
@@ -523,15 +523,15 @@ begin
             ExecuteHLQPOP(
                 CommandDecodedReg5(instruction, form, CommandField_RegDst0),
                 CommandDecodedReg5(instruction, form, CommandField_RegDst1),
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
+                ReadReg5(CommandDecodedReg5(instruction, form,
                     CommandField_SrcL)),
                 CommandDecodedQueuePopFlags(instruction, form));
         when CommandHandler_ExecuteQueuePush =>
             ExecuteHLQPUSH(
                 CommandDecodedReg5(instruction, form, CommandField_RegDst),
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
+                ReadReg5(CommandDecodedReg5(instruction, form,
                     CommandField_SrcL)),
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
+                ReadReg5(CommandDecodedReg5(instruction, form,
                     CommandField_SrcR)),
                 CommandDecodedQueuePushFlags(instruction, form));
         when CommandHandler_ExecuteMemoryCopy =>
@@ -560,11 +560,11 @@ begin
             end;
         when CommandHandler_ExecuteMemorySet =>
             ExecuteMemorySet(
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
+                ReadReg5(CommandDecodedReg5(instruction, form,
                     CommandField_RegSrc0)),
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
+                ReadReg5(CommandDecodedReg5(instruction, form,
                     CommandField_RegSrc1)),
-                ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
+                ReadReg5(CommandDecodedReg5(instruction, form,
                     CommandField_RegSrc2)));
         when CommandHandler_ExecuteCrossBlockTransfer =>
             ExecuteCrossBlockTransferState(

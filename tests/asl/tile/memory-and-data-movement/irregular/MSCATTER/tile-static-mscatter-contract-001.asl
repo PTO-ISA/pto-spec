@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(77) == TileHandler_MSCATTER;
     assert TileClassOfIndex(77) == TileClass_MemoryAndDataMovement;
     assert TileEngineOfIndex(77) == TileEngine_TLSU;
-    assert InstructionContractOperation_MSCATTER() == TileOperation_MSCATTER;
-    assert InstructionContractHandler_MSCATTER() == TileHandler_MSCATTER;
+    assert MSCATTEROperation() == TileOperation_MSCATTER;
+    assert MSCATTERHandler() == TileHandler_MSCATTER;
     return 0;
 end;

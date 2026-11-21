@@ -12,36 +12,36 @@
 // memory, Tile, block, reservation, privilege, numeric-status, or fault state.
 // NDF-END: PTO-HL-XORI-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_XORI() => ScalarOperation
+readonly func HLXORIOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_XORI;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_XORI() => ScalarSemanticHandler
+readonly func HLXORIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractImmediateWidth_HL_XORI()
+pure func HLXORIImmediateWidth()
     => integer {1..64}
 begin
     return 24;
 end;
 
-pure func InstructionContractImmediateIsSigned_HL_XORI()
+pure func HLXORIImmediateIsSigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_HL_XORI()
+pure func HLXORIIsWordOperation()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractResult_HL_XORI(
+pure func HLXORIResult(
     left: Word,
     immediate: bits(24))
     => Word

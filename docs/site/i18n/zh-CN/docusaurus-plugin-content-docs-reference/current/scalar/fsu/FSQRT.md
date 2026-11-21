@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/fsu/FSQRT.asl -->
 ```asl
-readonly func InstructionContractOperation_FSQRT()
+readonly func FSQRTOperation()
     => ScalarOperation
 begin
     return ScalarOperation_FSQRT;
@@ -128,44 +128,44 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/fsu/FSQRT.asl -->
 ```asl
-readonly func InstructionContractHandler_FSQRT()
+readonly func FSQRTHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_FloatingUnary;
 end;
 
-pure func InstructionContractSourceTypeLegal_FSQRT(encoded: bits(2))
+pure func FSQRTSourceTypeLegal(encoded: bits(2))
     => boolean
 begin
     return encoded == '00' || encoded == '01';
 end;
 
-pure func InstructionContractSourceCarrier_FSQRT(encoded: bits(2))
+pure func DecodeFSQRTSourceCarrier(encoded: bits(2))
     => bits(5)
 begin
-    assert InstructionContractSourceTypeLegal_FSQRT(encoded);
+    assert FSQRTSourceTypeLegal(encoded);
     return ScalarFPSourceTypeCode(encoded);
 end;
 
-pure func InstructionContractSourceArity_FSQRT()
+pure func FSQRTSourceArity()
     => integer {1..3}
 begin
     return 1;
 end;
 
-pure func InstructionContractUsesProfileFlags_FSQRT()
+pure func FSQRTUsesProfileFlags()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesActiveRounding_FSQRT()
+pure func FSQRTUsesActiveRounding()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUnaryOperation_FSQRT()
+pure func FSQRTUnaryOperation()
     => FloatingUnaryOperation
 begin
     return FloatingUnary_SQRT;

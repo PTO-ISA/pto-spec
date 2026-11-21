@@ -64,7 +64,7 @@
 
 
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_TMATMULMX_ACC(
+readonly func BSTARTTMATMULMXACCEncodingMatches(
     operation: CommandOperation) => boolean
 begin
     return operation ==
@@ -72,25 +72,25 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractTileOperation_BSTART_TMATMULMX_ACC()
+readonly func BSTARTTMATMULMXACCTileOperation()
     => TileOperation
 begin
     return TileOperation_TMATMUL_MX_ACC;
 end;
 
-readonly func InstructionContractCubeFunction_BSTART_TMATMULMX_ACC()
+readonly func BSTARTTMATMULMXACCCubeFunction()
     => integer {0..31}
 begin
     return 6;
 end;
 
-readonly func InstructionContractSharedOperandsAllowed_BSTART_TMATMULMX_ACC()
+readonly func BSTARTTMATMULMXACCSharedOperandsAllowed()
     => boolean
 begin
     return TRUE;
 end;
 
-readonly func InstructionContractHandler_BSTART_TMATMULMX_ACC()
+readonly func BSTARTTMATMULMXACCHandler()
     => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;

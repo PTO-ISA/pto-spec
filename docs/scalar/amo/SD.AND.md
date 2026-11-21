@@ -25,7 +25,7 @@ Its recorded summary is: SD.AND atomically replaces the aligned 64-bit memory va
 ## Atomic mechanism
 The instruction contract selects `ScalarHandler_AtomicReadModifyWrite` at width `8` and maps this operation to `Atomic_AND`. Scalar dispatch calls `AtomicReadModifyWrite`, which preflights the same address twice, reads, combines, and writes back; its return value is discarded.
 `Atomic_AND` returns `old_value AND operand`.
-The helper returns the old memory value, but scalar dispatch passes `write_result` as `FALSE`, and the metadata helper `InstructionContractPublishesOldValue_SD_AND` also returns `FALSE`, so nothing is published.
+The helper returns the old memory value, but scalar dispatch passes `write_result` as `FALSE`, and the metadata helper `SDANDPublishesOldValue` also returns `FALSE`, so nothing is published.
 Design point: the read probe is built and checked before the write probe is built, so a permitted read with a refused write faults with memory untouched, before any load takes place.
 
 <!-- PTO-READER-BLOCK: scalar-sd-and-inputs-outputs role=inputs-outputs -->
@@ -110,7 +110,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/SD.AND.asl -->
 ```asl
-readonly func InstructionContractOperation_SD_AND() => ScalarOperation
+readonly func SDANDOperation() => ScalarOperation
 begin
     return ScalarOperation_SD_AND;
 end;
@@ -121,25 +121,25 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/SD.AND.asl -->
 ```asl
-readonly func InstructionContractHandler_SD_AND()
+readonly func SDANDHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_SD_AND()
+pure func SDANDAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_AND;
 end;
 
-pure func InstructionContractAtomicSizeBytes_SD_AND()
+pure func SDANDAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractPublishesOldValue_SD_AND()
+pure func SDANDPublishesOldValue()
     => boolean
 begin
     return FALSE;

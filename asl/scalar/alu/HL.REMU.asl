@@ -9,17 +9,17 @@
 // identical to the corresponding quotient/remainder arithmetic contract.
 // NDF-END: PTO-HL-REMU-RESULT-ORDER-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_REMU() => ScalarOperation
+readonly func HLREMUOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_REMU;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_REMU() => ScalarSemanticHandler
+readonly func HLREMUHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarRemainderPair;
 end;
-pure func InstructionContractQuotient_HL_REMU(
+pure func HLREMUQuotient(
     dividend: Word,
     divisor: Word)
     => Word
@@ -29,7 +29,7 @@ begin
         divisor);
 end;
 
-pure func InstructionContractRemainder_HL_REMU(
+pure func HLREMURemainder(
     dividend: Word,
     divisor: Word)
     => Word
@@ -39,22 +39,22 @@ begin
         divisor);
 end;
 
-pure func InstructionContractDst0_HL_REMU(
+pure func HLREMUDst0(
     dividend: Word,
     divisor: Word)
     => Word
 begin
-    return InstructionContractRemainder_HL_REMU(
+    return HLREMURemainder(
         dividend,
         divisor);
 end;
 
-pure func InstructionContractDst1_HL_REMU(
+pure func HLREMUDst1(
     dividend: Word,
     divisor: Word)
     => Word
 begin
-    return InstructionContractQuotient_HL_REMU(
+    return HLREMUQuotient(
         dividend,
         divisor);
 end;

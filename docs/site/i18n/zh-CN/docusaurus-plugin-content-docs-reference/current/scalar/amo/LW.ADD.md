@@ -128,7 +128,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/amo/LW.ADD.asl -->
 ```asl
-readonly func InstructionContractOperation_LW_ADD() => ScalarOperation
+readonly func LWADDOperation() => ScalarOperation
 begin
     return ScalarOperation_LW_ADD;
 end;
@@ -139,30 +139,30 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/amo/LW.ADD.asl -->
 ```asl
-readonly func InstructionContractHandler_LW_ADD() => ScalarSemanticHandler
+readonly func LWADDHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
 
-pure func InstructionContractAtomicOperation_LW_ADD()
+pure func LWADDAtomicOperation()
     => AtomicOperation
 begin
     return Atomic_ADD;
 end;
 
-pure func InstructionContractAtomicSizeBytes_LW_ADD()
+pure func LWADDAtomicSizeBytes()
     => integer {1,2,4,8}
 begin
     return 4;
 end;
 
-pure func InstructionContractPublishesOldValue_LW_ADD()
+pure func LWADDPublishesOldValue()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSignExtendsOldValue_LW_ADD()
+pure func LWADDSignExtendsOldValue()
     => boolean
 begin
     return TRUE;

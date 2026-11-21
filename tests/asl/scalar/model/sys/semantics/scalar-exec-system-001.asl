@@ -146,7 +146,7 @@ begin
 
     WriteSystemRegister(SystemRegister_THREAD_PTR, Zeros{PTO_XLEN} + 0x77);
     ExecuteCompressedSystemRegisterGet(Zeros{24} + 0x0000);
-    assert ReadScalarRegisterOperand(24) == Zeros{PTO_XLEN} + 0x77;
+    assert ReadReg5(24) == Zeros{PTO_XLEN} + 0x77;
 
     let before_instruction_fence = _InstructionCacheEpoch;
     FenceInstruction();

@@ -15,7 +15,7 @@ begin
     assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 0x81;
     assert ReadTemporaryQueue(FALSE, 0) == Zeros{PTO_XLEN} + 0x81;
     assert ReadTemporaryQueue(FALSE, 1) == Zeros{PTO_XLEN} + 64;
-    assert InstructionContractShiftAmount_SLL(Zeros{PTO_XLEN} + 64) == 0;
-    assert InstructionContractResult_SLL(Zeros{PTO_XLEN} + 0x81, Zeros{PTO_XLEN} + 64) == Zeros{PTO_XLEN} + 0x81;
+    assert DecodeSLLShiftAmount(Zeros{PTO_XLEN} + 64) == 0;
+    assert SLLResult(Zeros{PTO_XLEN} + 0x81, Zeros{PTO_XLEN} + 64) == Zeros{PTO_XLEN} + 0x81;
     return 0;
 end;

@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000001000010000001', 32) == 32;
     assert CommandOperationOfForm(32) == CommandOperation_bstart_sys_32_762d9d84a6d8;
     assert CommandHandlerOfForm(32) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_BSTART_SYS(CommandOperationOfForm(32));
-    assert InstructionContractHandler_BSTART_SYS() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTSYSEncodingMatches(CommandOperationOfForm(32));
+    assert BSTARTSYSHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

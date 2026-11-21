@@ -10,32 +10,32 @@
 // message-buffer admission contract without changing the BSE encoding.
 // NDF-END: PTO-BSE-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_BSE()
+readonly func BSEOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BSE;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSE()
+readonly func BSEHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteControlRequest;
 end;
 
-pure func InstructionContractRequiresSystemBlock_BSE()
+pure func BSERequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractControlRequest_BSE()
+pure func BSEControlRequest()
     => ExecutionControlRequest
 begin
     return ExecutionControl_SendEvent;
 end;
 
-readonly func InstructionContractControlRequestIsNonblocking_BSE()
+readonly func BSEControlRequestIsNonblocking()
     => boolean
 begin
     return !MessageBufferEnabledForCurrentContext();

@@ -6,13 +6,13 @@
 // all four PE-private base/stride inputs and MUST NOT allocate or write a Tile.
 // NDF-END: PTO-TPREFETCH-FOOTPRINT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TPREFETCH() => TileOperation
+readonly func TPREFETCHOperation() => TileOperation
 begin
     return TileOperation_TPREFETCH;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TPREFETCH(
+pure func TPREFETCHDataTypeLegal(
     code: bits(5)) => boolean
 begin
     if !TileDataTypeEncodingValid(code as TileDataTypeEncoding) then
@@ -22,18 +22,18 @@ begin
     return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractHandler_TPREFETCH() => TileSemanticHandler
+readonly func TPREFETCHHandler() => TileSemanticHandler
 begin
     return TileHandler_TPREFETCH;
 end;
 
-pure func InstructionContractPublishesTileDestination_TPREFETCH()
+pure func TPREFETCHPublishesTileDestination()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractUsesTLOADFootprint_TPREFETCH()
+pure func TPREFETCHUsesTLOADFootprint()
     => boolean
 begin
     return TRUE;

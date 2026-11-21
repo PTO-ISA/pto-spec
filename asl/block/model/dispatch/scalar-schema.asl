@@ -359,7 +359,7 @@ begin
         if TileOperandPresent(operation, TileOperand_flag0) then
             let slot = BundleOperationGPRInputSlot(
                 operation, TileOperand_flag0);
-            let raw = ReadScalarRegisterOperand(
+            let raw = ReadReg5(
                 BundleExecutionMaskGPRSourceSelector(
                     slot as integer {0..5}));
             let value = UInt(raw);
@@ -368,7 +368,7 @@ begin
         if TileOperandPresent(operation, TileOperand_diagonal) then
             let slot = BundleOperationGPRInputSlot(
                 operation, TileOperand_diagonal);
-            let raw = ReadScalarRegisterOperand(
+            let raw = ReadReg5(
                 BundleExecutionMaskGPRSourceSelector(
                     slot as integer {0..5}));
             let value = SInt(raw);
@@ -382,14 +382,14 @@ begin
     if input_count > 3 then return FALSE; end;
     if TileOperandPresent(operation, TileOperand_flag0) then
         let slot = BundleOperationGPRInputSlot(operation, TileOperand_flag0);
-        let raw = ReadScalarRegisterOperand(
+        let raw = ReadReg5(
             BundleOperationGPRInputSelector(slot as integer {0..2}));
         let value = UInt(raw);
         if value != 0 && value != 1 then return FALSE; end;
     end;
     if TileOperandPresent(operation, TileOperand_diagonal) then
         let slot = BundleOperationGPRInputSlot(operation, TileOperand_diagonal);
-        let raw = ReadScalarRegisterOperand(
+        let raw = ReadReg5(
             BundleOperationGPRInputSelector(slot as integer {0..2}));
         let value = SInt(raw);
         if value < -65535 || value > 65535 then return FALSE; end;
@@ -413,7 +413,7 @@ begin
 
         if BundleFPATRModeUsesScalarParameter(
                _BundleFixedPointAttributes.pre_quant_mode) then
-            let raw = ReadScalarRegisterOperand(
+            let raw = ReadReg5(
                 BundleOperationGPRInputSelector(
                     post_slot as integer {0..2}));
             if !BundleFPATRQuantParameterWordLegal(
@@ -424,7 +424,7 @@ begin
         end;
         if BundleFPATRReluModeUsesScalarParameter(
                _BundleFixedPointAttributes.relu_mode) then
-            let raw = ReadScalarRegisterOperand(
+            let raw = ReadReg5(
                 BundleOperationGPRInputSelector(
                     post_slot as integer {0..2}));
             if !BundleFPATRReluParameterWordLegal(raw) then

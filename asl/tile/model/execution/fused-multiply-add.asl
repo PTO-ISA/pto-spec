@@ -5,7 +5,7 @@ func TileProfileFusedMultiplyAdd(
     left: Word,
     right: Word) => (Word, bits(5))
 begin
-    return ScalarFPFusedProfile(
+    return FPMulAdd(
         FloatingFused_MADD,
         DefaultNumericExecutionControl().rounding_mode,
         TileDataTypeToEncoding(data_type),

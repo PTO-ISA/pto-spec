@@ -7,32 +7,32 @@
 // It MUST NOT maintain a separate architectural breakpoint-tag state.
 // NDF-END: PTO-C-EBREAK-CAUSE-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_C_EBREAK()
+readonly func CEBREAKOperation()
     => ScalarOperation
 begin
     return ScalarOperation_C_EBREAK;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_C_EBREAK()
+readonly func CEBREAKHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_SoftwareBreakpoint;
 end;
 
-pure func InstructionContractRequiresSystemBlock_C_EBREAK()
+pure func CEBREAKRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractBreakpointImmediateWidth_C_EBREAK()
+pure func CEBREAKBreakpointImmediateWidth()
     => integer {4,5}
 begin
     return 5;
 end;
 
-pure func InstructionContractBreakpointPublishesTrapCause_C_EBREAK()
+pure func CEBREAKBreakpointPublishesTrapCause()
     => boolean
 begin
     return TRUE;

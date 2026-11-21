@@ -40,7 +40,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: scalar-model-bru-semantics-rules role=rules-interactions -->
 ## 规则与交互
 
-`ExecuteCompare` 和 `ExecuteCompareLogical` 通过 `WriteScalarDestination` 写入规范布尔字。逻辑变体用 AND 或 OR 组合两个字，并测试结果是否非零。
+`ExecuteCompare` 和 `ExecuteCompareLogical` 通过 `WriteReg5` 写入规范布尔字。逻辑变体用 AND 或 OR 组合两个字，并测试结果是否非零。
 
 `ExecuteSetCommit` 和 `ExecuteSetCommitLogical` 不写寄存器。它们把规范布尔字存入 `_CommitArgument`，在指令束活动时把它复制到 `_BARG.taken`，并设置 `_BundleConditionSet`。
 
@@ -141,14 +141,14 @@ func ExecuteCompare(destination: Reg5Selector, condition: ScalarCondition,
 begin
     let result = if ConditionHolds(condition, left, right) then
         Zeros{PTO_XLEN} + 1 else Zeros{PTO_XLEN};
-    WriteScalarDestination(destination, result);
+    WriteReg5(destination, result);
 end;
 
 func ExecuteCompareLogical(destination: Reg5Selector, left: Word,
                            right: Word, combine_or: boolean)
 begin
     let logical_result = if combine_or then left OR right else left AND right;
-    WriteScalarDestination(destination,
+    WriteReg5(destination,
         if IsZero(logical_result) then Zeros{PTO_XLEN}
         else Zeros{PTO_XLEN} + 1);
 end;
@@ -186,7 +186,7 @@ end;
 
 func AddToPC(destination: Reg5Selector, page_offset: Word)
 begin
-    WriteScalarDestination(destination, ReadTPC() + LSL(page_offset, 12));
+    WriteReg5(destination, ReadTPC() + LSL(page_offset, 12));
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

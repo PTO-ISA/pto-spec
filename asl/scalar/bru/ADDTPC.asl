@@ -8,48 +8,48 @@
 // advance TPC. Encoded immediate zero MUST produce the current TPC.
 // NDF-END: PTO-ADDTPC-PAGE-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_ADDTPC() => ScalarOperation
+readonly func ADDTPCOperation() => ScalarOperation
 begin
     return ScalarOperation_ADDTPC;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_ADDTPC() => ScalarSemanticHandler
+readonly func ADDTPCHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_AddToPC;
 end;
 
-pure func InstructionContractUsesTPC_ADDTPC()
+pure func ADDTPCUsesTPC()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractImmediateWidth_ADDTPC()
+pure func ADDTPCImmediateWidth()
     => integer {20}
 begin
     return 20;
 end;
 
-pure func InstructionContractImmediateIsSigned_ADDTPC()
+pure func ADDTPCImmediateIsSigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractPageShift_ADDTPC()
+pure func ADDTPCPageShift()
     => integer {12}
 begin
     return 12;
 end;
 
-pure func InstructionContractWritesTPC_ADDTPC()
+pure func ADDTPCWritesTPC()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractTarget_ADDTPC(
+pure func ADDTPCTarget(
     base: Word,
     page_offset: Word)
     => Word

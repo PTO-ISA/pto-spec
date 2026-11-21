@@ -109,7 +109,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/layout-and-rearrangement/layout/TSHUF.asl -->
 ```asl
-readonly func InstructionContractOperation_TSHUF() => TileOperation
+readonly func TSHUFOperation() => TileOperation
 begin
     return TileOperation_TSHUF;
 end;
@@ -131,29 +131,29 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/layout-and-rearrangement/layout/TSHUF.asl -->
 ```asl
-readonly func InstructionContractHandler_TSHUF() => TileSemanticHandler
+readonly func TSHUFHandler() => TileSemanticHandler
 begin
     return TileHandler_TSHUF;
 end;
 
-pure func InstructionContractDataTypeLegal_TSHUF(
+pure func TSHUFDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileCubeDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TSHUF(
+readonly func TSHUFOperandsLegal(
     destination: TileIndex, source: TileIndex,
     controls: TileIndex, control: Word) => boolean
 begin
     return TileOperandsLegal_TSHUF(destination, source, controls, control);
 end;
 
-func InstructionContractExecute_TSHUF(
+func ExecuteTSHUF(
     destination: TileIndex, source: TileIndex,
     controls: TileIndex, control: Word)
 begin
-    assert InstructionContractOperandsLegal_TSHUF(
+    assert TSHUFOperandsLegal(
         destination, source, controls, control);
     TSHUF(destination, source, controls, control);
 end;

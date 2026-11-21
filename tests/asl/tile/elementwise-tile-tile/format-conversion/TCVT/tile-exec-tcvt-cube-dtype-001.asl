@@ -30,7 +30,7 @@ begin
     assert TileOperandsLegal_TCVT(
         1, 0, DefaultNumericExecutionControl());
 
-    InstructionContractExecute_TCVT(
+    ExecuteTCVT(
         1, 0, DefaultNumericExecutionControl());
     assert _LastFault == Fault_None;
     assert _Tiles[[1]].layout == TileLayout_CUBE_M16;

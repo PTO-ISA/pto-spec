@@ -37,7 +37,7 @@ This page is a generated reference view of the normative ASL unit.
 - 零乘无穷，顺序不限。
 - 无穷乘积加上符号相反的无穷加数。
 
-每种情况都返回规范静默 NaN 并设置 NV。其他输入交给 `ScalarFPFusedProfile`，舍入为 RNE。
+每种情况都返回规范静默 NaN 并设置 NV。其他输入交给 `FPMulAdd`，舍入为 RNE。
 
 设计要点：三个源都在任何写入之前被快照。处理函数在循环前复制目标和三个源的 `TileInfo` 记录，并私下构建结果。因此目标即使命名某个源，读取的仍是旧值。
 
@@ -50,7 +50,7 @@ This page is a generated reference view of the normative ASL unit.
 
 在 ExecutionMask 下，非活动坐标不读取任何源，并取 ZERO 或 MERGE 值。它不贡献标志。
 
-`TileFusedMultiplyAddDataTypeSupported` 恰好允许 FP64、S64、U64、FP16、FP32 与 BF16。`TileFixedFusedMultiplyAddValue` 在选择整数或浮点执行之前强制执行同一类型集合。`ScalarFPFusedProfile` 为 FP64、FP32 与 FP16 实现有限浮点结果。BF16 仍由指令契约接纳，但除上述三种无效情况外，其有限结果配置仍是一个明确的模型缺口。
+`TileFusedMultiplyAddDataTypeSupported` 恰好允许 FP64、S64、U64、FP16、FP32 与 BF16。`TileFixedFusedMultiplyAddValue` 在选择整数或浮点执行之前强制执行同一类型集合。`FPMulAdd` 为 FP64、FP32 与 FP16 实现有限浮点结果。BF16 仍由指令契约接纳，但除上述三种无效情况外，其有限结果配置仍是一个明确的模型缺口。
 
 <!-- PTO-READER-BLOCK: tile-model-execution-fused-multiply-add-example role=example-usage -->
 ## 非规范阅读示例
@@ -74,7 +74,7 @@ TFMA <Row=32, Col=2, ValidRow=1, ValidCol=1, U64, Layout=CUBE_M32>, T#1, T#2, T#
 
 - [TFMA](../../elementwise-tile-tile/arithmetic/TFMA.md) 是到达该处理函数的指令。
 - [索引布局合法性](../legality/indexed-layout.md)拥有 `TileOperandsLegal_TFMA`。
-- [标量浮点](../../../scalar/model/fsu/scalar-fp.md)拥有 `ScalarFPFusedProfile`。
+- [标量浮点](../../../scalar/model/fsu/scalar-fp.md)拥有 `FPMulAdd`。
 - [逐元素执行](elementwise.md)拥有共享的元素规范化辅助函数。
 - [执行掩码状态](execution-mask-state.md)拥有非活动坐标的处理。
 <!-- SUPPLEMENTARY-END -->
@@ -90,7 +90,7 @@ func TileProfileFusedMultiplyAdd(
     left: Word,
     right: Word) => (Word, bits(5))
 begin
-    return ScalarFPFusedProfile(
+    return FPMulAdd(
         FloatingFused_MADD,
         DefaultNumericExecutionControl().rounding_mode,
         TileDataTypeToEncoding(data_type),

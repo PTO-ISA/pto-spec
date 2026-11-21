@@ -31,7 +31,7 @@ begin
         1,
         Zeros{PTO_XLEN} + 240);
 
-    InstructionContractExecute_TORS(
+    ExecuteTORS(
         1,
         0,
         Zeros{PTO_XLEN} + 15);

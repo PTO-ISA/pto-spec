@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 该指令选择共用的维护处理程序（`asl/scalar/sys/IC.IALL.asl:11`）与令牌 `Maintenance_IC_IALL`（`asl/scalar/sys/IC.IALL.asl:23`）。`Maintenance_IC_IALL` 是执行器中两个指令缓存分支之一，因此它推进 `_InstructionCacheEpoch`，而不是数据缓存纪元（`asl/scalar/model/sys/semantics.asl:138`）。
 
-由于 `InstructionContractMaintenanceUsesOperand_IC_IALL` 为 `FALSE`（`asl/scalar/sys/IC.IALL.asl:29`），派发器直接提供 `Zeros{PTO_XLEN}`，不读取任何标量寄存器（`asl/scalar/model/dispatch/sys.asl:46`）。
+由于 `ICIALLMaintenanceUsesOperand` 为 `FALSE`（`asl/scalar/sys/IC.IALL.asl:29`），派发器直接提供 `Zeros{PTO_XLEN}`，不读取任何标量寄存器（`asl/scalar/model/dispatch/sys.asl:46`）。
 
 `IC.IALL` 只在活动 SYS 块体中适用（`asl/scalar/model/sys/semantics.asl:322`）。
 
@@ -86,7 +86,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/IC.IALL.asl -->
 ```asl
-readonly func InstructionContractOperation_IC_IALL()
+readonly func ICIALLOperation()
     => ScalarOperation
 begin
     return ScalarOperation_IC_IALL;
@@ -104,31 +104,31 @@ IC.IALL executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/IC.IALL.asl -->
 ```asl
-readonly func InstructionContractHandler_IC_IALL()
+readonly func ICIALLHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_IC_IALL()
+pure func ICIALLRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_IC_IALL()
+pure func ICIALLMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_IC_IALL;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_IC_IALL()
+pure func ICIALLMaintenanceUsesOperand()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_IC_IALL()
+pure func ICIALLMaintenanceRequiresRootRing()
     => boolean
 begin
     return FALSE;

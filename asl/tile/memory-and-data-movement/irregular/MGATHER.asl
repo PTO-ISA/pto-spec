@@ -11,36 +11,36 @@
 // logical nibbles, with the low nibble first.
 // NDF-END: PTO-MGATHER-BYTE-DISPLACEMENT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_MGATHER() => TileOperation
+readonly func MGATHEROperation() => TileOperation
 begin
     return TileOperation_MGATHER;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_MGATHER() => TileSemanticHandler
+readonly func MGATHERHandler() => TileSemanticHandler
 begin
     return TileHandler_MGATHER;
 end;
 
-pure func InstructionContractUsesByteDisplacements_MGATHER()
+pure func MGATHERUsesByteDisplacements()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractUsesMaskTile_MGATHER()
+pure func MGATHERUsesMaskTile()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractIsAtomicMemoryOperation_MGATHER()
+pure func MGATHERIsAtomicMemoryOperation()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractWritesMemory_MGATHER()
+pure func MGATHERWritesMemory()
     => boolean
 begin
     return FALSE;

@@ -119,7 +119,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/agu/C.LDI.asl -->
 ```asl
-readonly func InstructionContractOperation_C_LDI() => ScalarOperation
+readonly func CLDIOperation() => ScalarOperation
 begin
     return ScalarOperation_C_LDI;
 end;
@@ -130,49 +130,49 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/C.LDI.asl -->
 ```asl
-readonly func InstructionContractHandler_C_LDI()
+readonly func CLDIHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarLoad;
 end;
 
-pure func InstructionContractAGUAction_C_LDI()
+pure func CLDIAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Load;
 end;
 
-pure func InstructionContractAGUAddressKind_C_LDI()
+pure func CLDIAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_Compressed;
 end;
 
-pure func InstructionContractAGUSizeBytes_C_LDI()
+pure func CLDIAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractAGUOffsetScale_C_LDI()
+pure func CLDIAGUOffsetScale()
     => integer {0..3}
 begin
     return 3;
 end;
 
-pure func InstructionContractAGUUpdateMode_C_LDI()
+pure func CLDIAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_None;
 end;
 
-pure func InstructionContractAGUSignedLoad_C_LDI()
+pure func CLDIAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_C_LDI()
+pure func CLDIAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

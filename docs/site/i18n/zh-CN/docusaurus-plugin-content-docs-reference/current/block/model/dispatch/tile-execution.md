@@ -161,12 +161,12 @@ begin
     };
     let mask_words = SelectedBundleComparisonGPRMaskWordCount(
         operation_type);
-    let low = ReadScalarRegisterOperand(
+    let low = ReadReg5(
         _BundleScalarBindings[[0]].source0);
     var output = writer_value;
     if TileOperationOfIndex(operation) == TileOperation_TSEL then
         let high = if mask_words == 2 then
-            ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
+            ReadReg5(_BundleScalarBindings[[0]].source1)
             else Zeros{PTO_XLEN};
         let source_false = BundleTileSourceIndex(0, TRUE);
         if !TileOperandsLegal_ExecuteTileSelectCUBEGPRAsToValue(
@@ -177,12 +177,12 @@ begin
             target, low, high, source_true, source_false, operation_type);
     elsif TileOperationOfIndex(operation) == TileOperation_TSELS then
         let mask_high = if mask_words == 2 then
-            ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
+            ReadReg5(_BundleScalarBindings[[0]].source1)
             else Zeros{PTO_XLEN};
         let scalar_selector = if mask_words == 2 then
             _BundleScalarBindings[[0]].source2
             else _BundleScalarBindings[[0]].source1;
-        let scalar_false = ReadScalarRegisterOperand(scalar_selector);
+        let scalar_false = ReadReg5(scalar_selector);
         if !TileOperandsLegal_ExecuteTileSelectScalarCUBEGPRAsToValue(
                target, source_true, scalar_false, operation_type) then
             return (FALSE, writer_effects);
@@ -510,7 +510,7 @@ begin
     if TileOperationOfIndex(operation) == TileOperation_TCI &&
        (CurrentBundleTileLayout() == TileLayout_CUBE_M16 ||
         CurrentBundleTileLayout() == TileLayout_CUBE_M32) then
-        let step2d = ReadScalarRegisterOperand(
+        let step2d = ReadReg5(
             BundleOperationGPRInputSelector(
                 BundleOperationGPRInputSlot(
                     operation, TileOperand_flag0) as integer {0..2}));

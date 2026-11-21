@@ -169,7 +169,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS.asl -->
 ```asl
-readonly func InstructionContractOperation_TEXPANDS() => TileOperation
+readonly func TEXPANDSOperation() => TileOperation
 begin
     return TileOperation_TEXPANDS;
 end;
@@ -193,13 +193,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TEXPANDS(
+pure func TEXPANDSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TEXPANDS(
+readonly func TEXPANDSOperandsLegal(
     destination: TileIndex,
     scalar: Word) => boolean
 begin
@@ -208,16 +208,16 @@ begin
         scalar);
 end;
 
-readonly func InstructionContractHandler_TEXPANDS() => TileSemanticHandler
+readonly func TEXPANDSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileFillScalar;
 end;
 
-func InstructionContractExecute_TEXPANDS(
+func ExecuteTEXPANDS(
     destination: TileIndex,
     scalar: Word)
 begin
-    assert InstructionContractOperandsLegal_TEXPANDS(
+    assert TEXPANDSOperandsLegal(
         destination,
         scalar);
     ExecuteTileFillScalar(

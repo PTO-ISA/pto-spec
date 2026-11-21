@@ -146,7 +146,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl -->
 ```asl
-readonly func InstructionContractOperation_TMATMUL_MX_BIAS()
+readonly func TMATMULMXBIASOperation()
     => TileOperation
 begin
     return TileOperation_TMATMUL_MX_BIAS;
@@ -174,19 +174,19 @@ BSTOP or the next BSTART completion boundary
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl -->
 ```asl
-readonly func InstructionContractCubeFunction_TMATMUL_MX_BIAS()
+readonly func TMATMULMXBIASCubeFunction()
     => integer {0..31}
 begin
     return 5;
 end;
 
-readonly func InstructionContractSharedOperandsAllowed_TMATMUL_MX_BIAS()
+readonly func TMATMULMXBIASSharedOperandsAllowed()
     => boolean
 begin
     return TRUE;
 end;
 
-readonly func InstructionContractOperandsLegal_TMATMUL_MX_BIAS(
+readonly func TMATMULMXBIASOperandsLegal(
     destination: TileIndex,
     left: TileIndex,
     row_scale: TileIndex,
@@ -203,7 +203,7 @@ begin
         bias);
 end;
 
-readonly func InstructionContractHandler_TMATMUL_MX_BIAS()
+readonly func TMATMULMXBIASHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TMATMUL_MX_BIAS;

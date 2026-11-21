@@ -142,7 +142,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl -->
 ```asl
-readonly func InstructionContractOperation_TGEMV_MX_BIAS()
+readonly func TGEMVMXBIASOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV_MX_BIAS;
@@ -169,19 +169,19 @@ BSTOP or the next BSTART completion boundary
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl -->
 ```asl
-readonly func InstructionContractCubeFunction_TGEMV_MX_BIAS()
+readonly func TGEMVMXBIASCubeFunction()
     => integer {0..31}
 begin
     return 21;
 end;
 
-readonly func InstructionContractSharedOperandsAllowed_TGEMV_MX_BIAS()
+readonly func TGEMVMXBIASSharedOperandsAllowed()
     => boolean
 begin
     return FALSE;
 end;
 
-readonly func InstructionContractOperandsLegal_TGEMV_MX_BIAS(
+readonly func TGEMVMXBIASOperandsLegal(
     destination: TileIndex,
     left_vector: TileIndex,
     row_scale: TileIndex,
@@ -198,7 +198,7 @@ begin
         bias);
 end;
 
-readonly func InstructionContractHandler_TGEMV_MX_BIAS()
+readonly func TGEMVMXBIASHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TGEMV_MX_BIAS;

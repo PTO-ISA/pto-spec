@@ -9,6 +9,6 @@ begin
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN});
-    assert !InstructionContractOperandsLegal_TFMA(0, 1, 2, 3);
+    assert !TFMAOperandsLegal(0, 1, 2, 3);
     return 0;
 end;

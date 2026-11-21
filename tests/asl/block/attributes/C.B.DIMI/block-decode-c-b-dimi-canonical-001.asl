@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000000000000111100', 16) == 53;
     assert CommandOperationOfForm(53) == CommandOperation_c_b_dimi_16_3f1b113c76ce;
     assert CommandHandlerOfForm(53) == CommandHandler_SetBundleDimension;
-    assert InstructionContractMatches_C_B_DIMI(CommandOperationOfForm(53));
-    assert InstructionContractHandler_C_B_DIMI() == CommandHandler_SetBundleDimension;
+    assert CBDIMIEncodingMatches(CommandOperationOfForm(53));
+    assert CBDIMIHandler() == CommandHandler_SetBundleDimension;
     return 0;
 end;

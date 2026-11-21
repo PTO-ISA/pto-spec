@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(115) == TileHandler_GM_RED_VALUE;
     assert TileClassOfIndex(115) == TileClass_MemoryAndDataMovement;
     assert TileEngineOfIndex(115) == TileEngine_TLSU;
-    assert InstructionContractOperation_MSCATTER_XOR() == TileOperation_MSCATTER_XOR;
-    assert InstructionContractHandler_MSCATTER_XOR() == TileHandler_GM_RED_VALUE;
+    assert MSCATTERXOROperation() == TileOperation_MSCATTER_XOR;
+    assert MSCATTERXORHandler() == TileHandler_GM_RED_VALUE;
     return 0;
 end;

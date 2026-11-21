@@ -16,6 +16,6 @@ begin
     assert _LastMaintenanceOperation == Maintenance_DC_IALL;
     assert _LastMaintenanceOperand == Zeros{PTO_XLEN} + 0x0;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert InstructionContractOperation_DC_IALL() == ScalarOperation_DC_IALL;
+    assert DCIALLOperation() == ScalarOperation_DC_IALL;
     return 0;
 end;

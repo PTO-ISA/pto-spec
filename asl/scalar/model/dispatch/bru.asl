@@ -37,12 +37,12 @@ func ExecuteDecodedCompareRegister(instruction: bits(48),
                                    operation: ScalarOperation)
 begin
     let right = ApplyRestrictedCompareModifier(
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcR),
         ScalarDecodedComparisonRightModifier(instruction, form));
     ExecuteCompare(
-        ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+        DecodeReg5(instruction, form, ScalarField_RegDst),
         ScalarConditionForOperation(operation),
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL), right);
+        ReadDecodedReg5(instruction, form, ScalarField_SrcL), right);
 end;
 
 func ExecuteDecodedCompareImmediate(instruction: bits(48),
@@ -51,9 +51,9 @@ func ExecuteDecodedCompareImmediate(instruction: bits(48),
                                     immediate_field: ScalarOperandField)
 begin
     ExecuteCompare(
-        ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+        DecodeReg5(instruction, form, ScalarField_RegDst),
         ScalarConditionForOperation(operation),
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcL),
         ScalarDecodedWord(instruction, form, immediate_field));
 end;
 
@@ -61,12 +61,12 @@ func ExecuteDecodedCompareLogicalRegister(
     instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1},
     combine_or: boolean)
 begin
-    let right = ApplyScalarRightModifier(
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+    let right = ModifyScalarOperand(
+        ReadDecodedReg5(instruction, form, ScalarField_SrcR),
         ScalarDecodedComparisonRightModifier(instruction, form), TRUE);
     ExecuteCompareLogical(
-        ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+        DecodeReg5(instruction, form, ScalarField_RegDst),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcL),
         right, combine_or);
 end;
 
@@ -75,8 +75,8 @@ func ExecuteDecodedCompareLogicalImmediate(
     immediate_field: ScalarOperandField, combine_or: boolean)
 begin
     ExecuteCompareLogical(
-        ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+        DecodeReg5(instruction, form, ScalarField_RegDst),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcL),
         ScalarDecodedWord(instruction, form, immediate_field), combine_or);
 end;
 
@@ -85,10 +85,10 @@ func ExecuteDecodedSetCommitRegister(instruction: bits(48),
                                      operation: ScalarOperation)
 begin
     let right = ApplyRestrictedCompareModifier(
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcR),
         ScalarDecodedComparisonRightModifier(instruction, form));
     ExecuteSetCommit(ScalarConditionForOperation(operation),
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL), right);
+        ReadDecodedReg5(instruction, form, ScalarField_SrcL), right);
 end;
 
 func ExecuteDecodedSetCommitImmediate(instruction: bits(48),
@@ -100,7 +100,7 @@ begin
         ScalarDecodedWord(instruction, form, immediate_field),
         ScalarDecodedUInt6(instruction, form, ScalarField_shamt));
     ExecuteSetCommit(ScalarConditionForOperation(operation),
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcL),
         shifted_immediate);
 end;
 
@@ -108,11 +108,11 @@ func ExecuteDecodedSetCommitLogicalRegister(
     instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1},
     combine_or: boolean)
 begin
-    let right = ApplyScalarRightModifier(
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+    let right = ModifyScalarOperand(
+        ReadDecodedReg5(instruction, form, ScalarField_SrcR),
         ScalarDecodedComparisonRightModifier(instruction, form), TRUE);
     ExecuteSetCommitLogical(
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcL),
         right, combine_or);
 end;
 
@@ -124,7 +124,7 @@ begin
         ScalarDecodedWord(instruction, form, immediate_field),
         ScalarDecodedUInt6(instruction, form, ScalarField_shamt));
     ExecuteSetCommitLogical(
-        ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+        ReadDecodedReg5(instruction, form, ScalarField_SrcL),
         shifted_immediate, combine_or);
 end;
 
@@ -170,7 +170,7 @@ begin
 
         when ScalarOperation_C_CMP_EQI, ScalarOperation_C_CMP_NEI =>
             ExecuteCompare(31, ScalarConditionForOperation(operation),
-                ReadScalarRegisterOperand(24),
+                ReadReg5(24),
                 ScalarDecodedWord(instruction, form, ScalarField_simm5));
 
         when ScalarOperation_SETC_EQ, ScalarOperation_SETC_NE,
@@ -209,22 +209,22 @@ begin
                 ScalarField_simm24, TRUE);
         when ScalarOperation_C_SETC_EQ, ScalarOperation_C_SETC_NE =>
             ExecuteSetCommit(ScalarConditionForOperation(operation),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR));
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL),
+                ReadDecodedReg5(instruction, form, ScalarField_SrcR));
 
         when ScalarOperation_J =>
             JumpRelative(ScalarDecodedWord(instruction, form, ScalarField_simm22));
         when ScalarOperation_JR =>
             JumpRegister(
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL) +
+                ReadDecodedReg5(instruction, form, ScalarField_SrcL) +
                 LSL(ScalarDecodedWord(instruction, form, ScalarField_simm12), 1));
 
         when ScalarOperation_ADDTPC =>
-            AddToPC(ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            AddToPC(DecodeReg5(instruction, form, ScalarField_RegDst),
                 SignExtend{PTO_XLEN}(
                     ScalarDecodedBits20(instruction, form, ScalarField_imm20)));
         when ScalarOperation_HL_ADDTPC =>
-            AddToPC(ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
+            AddToPC(DecodeReg5(instruction, form, ScalarField_RegDst),
                 SignExtend{PTO_XLEN}(
                     ScalarDecodedBits32(instruction, form, ScalarField_imm32)));
         when ScalarOperation_SETRET =>

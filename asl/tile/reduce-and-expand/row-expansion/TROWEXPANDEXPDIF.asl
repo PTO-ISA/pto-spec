@@ -13,13 +13,13 @@
 // operation and numeric-status policy; mixed FP64 pairs remain unassigned.
 // NDF-END: PTO-TROWEXPANDEXPDIF-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TROWEXPANDEXPDIF() => TileOperation
+readonly func TROWEXPANDEXPDIFOperation() => TileOperation
 begin
     return TileOperation_TROWEXPANDEXPDIF;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TROWEXPANDEXPDIF(
+pure func TROWEXPANDEXPDIFDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_FP64 ||
@@ -28,7 +28,7 @@ begin
            data_type == TileDataType_FP32;
 end;
 
-readonly func InstructionContractOperandsLegal_TROWEXPANDEXPDIF(
+readonly func TROWEXPANDEXPDIFOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex) => boolean
@@ -41,17 +41,17 @@ begin
         broadcast);
 end;
 
-readonly func InstructionContractHandler_TROWEXPANDEXPDIF() => TileSemanticHandler
+readonly func TROWEXPANDEXPDIFHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;
 
-func InstructionContractExecute_TROWEXPANDEXPDIF(
+func ExecuteTROWEXPANDEXPDIF(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TROWEXPANDEXPDIF(
+    assert TROWEXPANDEXPDIFOperandsLegal(
         destination,
         source,
         broadcast);

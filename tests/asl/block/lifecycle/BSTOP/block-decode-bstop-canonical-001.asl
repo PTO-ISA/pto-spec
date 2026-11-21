@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000000000000000001', 32) == 51;
     assert CommandOperationOfForm(51) == CommandOperation_bstop_32_d25b09fdd59c;
     assert CommandHandlerOfForm(51) == CommandHandler_ExecuteBundleStop;
-    assert InstructionContractMatches_BSTOP(CommandOperationOfForm(51));
-    assert InstructionContractHandler_BSTOP() == CommandHandler_ExecuteBundleStop;
+    assert BSTOPEncodingMatches(CommandOperationOfForm(51));
+    assert BSTOPHandler() == CommandHandler_ExecuteBundleStop;
     return 0;
 end;

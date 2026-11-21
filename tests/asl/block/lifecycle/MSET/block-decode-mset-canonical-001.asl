@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000001000000110001', 32) == 70;
     assert CommandOperationOfForm(70) == CommandOperation_mset_32_0b932f291932;
     assert CommandHandlerOfForm(70) == CommandHandler_ExecuteMemorySet;
-    assert InstructionContractMatches_MSET(CommandOperationOfForm(70));
-    assert InstructionContractHandler_MSET() == CommandHandler_ExecuteMemorySet;
+    assert MSETEncodingMatches(CommandOperationOfForm(70));
+    assert MSETHandler() == CommandHandler_ExecuteMemorySet;
     return 0;
 end;

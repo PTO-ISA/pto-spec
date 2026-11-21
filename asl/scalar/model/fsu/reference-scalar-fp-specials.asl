@@ -148,7 +148,7 @@ begin
     return (FALSE, Zeros{PTO_XLEN}, Zeros{5});
 end;
 
-func ReferenceScalarFPFusedProfile(
+func ReferenceFPMulAdd(
     operation: FloatingFusedOperation, rounding_mode: NumericRoundingMode,
     source_type: bits(5), addend: Word, left: Word, right: Word)
     => (Word, bits(5))

@@ -12,7 +12,7 @@ begin
 
     assert TileOperandsLegal_ExecuteTileScalar(
         TileBinary_MUL, 1, 0, Zeros{PTO_XLEN} + 0x3f80);
-    InstructionContractExecute_TMULS(
+    ExecuteTMULS(
         1, 0, Zeros{PTO_XLEN} + 0x3f80);
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN};
     assert _Tiles[[1]].data_type == TileDataType_BF16;

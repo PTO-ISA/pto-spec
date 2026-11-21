@@ -22,26 +22,26 @@
 // Cache behavior MUST NOT alter results, faults, source lifetime, or ordering.
 // NDF-END: PTO-TGEMV-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TGEMV()
+readonly func TGEMVOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractCubeFunction_TGEMV()
+readonly func TGEMVCubeFunction()
     => integer {0..31}
 begin
     return 16;
 end;
 
-readonly func InstructionContractSharedOperandsAllowed_TGEMV()
+readonly func TGEMVSharedOperandsAllowed()
     => boolean
 begin
     return FALSE;
 end;
 
-readonly func InstructionContractOperandsLegal_TGEMV(
+readonly func TGEMVOperandsLegal(
     destination: TileIndex,
     left_vector: TileIndex,
     right_matrix: TileIndex) => boolean
@@ -52,7 +52,7 @@ begin
         right_matrix);
 end;
 
-readonly func InstructionContractHandler_TGEMV()
+readonly func TGEMVHandler()
     => TileSemanticHandler
 begin
     return TileHandler_TGEMV;

@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000001100010001000110000001', 32) == 49;
     assert CommandOperationOfForm(49) == CommandOperation_bstart_tprefetch_32_d5f83e5aadf6;
     assert CommandHandlerOfForm(49) == CommandHandler_ExecuteBundleStart;
-    assert InstructionContractMatches_BSTART_TPREFETCH(CommandOperationOfForm(49));
-    assert InstructionContractHandler_BSTART_TPREFETCH() == CommandHandler_ExecuteBundleStart;
+    assert BSTARTTPREFETCHEncodingMatches(CommandOperationOfForm(49));
+    assert BSTARTTPREFETCHHandler() == CommandHandler_ExecuteBundleStart;
     return 0;
 end;

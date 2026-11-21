@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-rem-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `InstructionContractQuotient_HL_REM` 与 `InstructionContractRemainder_HL_REM`，它们分别调用 `ScalarDivideSigned` 与 `ScalarRemainderSigned`。分派路径以 `signed_operation` 为真调用 `ExecuteScalarRemainderPair`；该辅助函数先算出 `quotient` 与 `remainder`，再把余数写入 `RegDst0`、把商写入 `RegDst1`。
+所属 ASL 提供 `HLREMQuotient` 与 `HLREMRemainder`，它们分别调用 `ScalarDivideSigned` 与 `ScalarRemainderSigned`。分派路径以 `signed_operation` 为真调用 `ExecuteScalarRemainderPair`；该辅助函数先算出 `quotient` 与 `remainder`，再把余数写入 `RegDst0`、把商写入 `RegDst1`。
 
 ```asm
 hl.rem SrcL, SrcR, ->Dst0, Dst1
@@ -122,7 +122,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.REM.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_REM() => ScalarOperation
+readonly func HLREMOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_REM;
 end;
@@ -133,11 +133,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.REM.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_REM() => ScalarSemanticHandler
+readonly func HLREMHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarRemainderPair;
 end;
-pure func InstructionContractQuotient_HL_REM(
+pure func HLREMQuotient(
     dividend: Word,
     divisor: Word)
     => Word
@@ -147,7 +147,7 @@ begin
         divisor);
 end;
 
-pure func InstructionContractRemainder_HL_REM(
+pure func HLREMRemainder(
     dividend: Word,
     divisor: Word)
     => Word
@@ -157,22 +157,22 @@ begin
         divisor);
 end;
 
-pure func InstructionContractDst0_HL_REM(
+pure func HLREMDst0(
     dividend: Word,
     divisor: Word)
     => Word
 begin
-    return InstructionContractRemainder_HL_REM(
+    return HLREMRemainder(
         dividend,
         divisor);
 end;
 
-pure func InstructionContractDst1_HL_REM(
+pure func HLREMDst1(
     dividend: Word,
     divisor: Word)
     => Word
 begin
-    return InstructionContractQuotient_HL_REM(
+    return HLREMQuotient(
         dividend,
         divisor);
 end;

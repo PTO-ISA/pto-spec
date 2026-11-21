@@ -29,7 +29,7 @@
 // or rolled back.
 // NDF-END: PTO-B-IOR-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_B_IOR(operation: CommandOperation) => boolean
+readonly func BIOREncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_b_ior_32_c3ea71404eb3);
 end;
@@ -59,22 +59,22 @@ end;
 // surplus-zero, and raw-carrier policy is owned by the dynamic schema at
 // PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA and
 // spec/evidence/bundle-command-totality.json.
-pure func InstructionContractMatrixPostProcessGPRQuantSlot_B_IOR() => integer
+pure func BIORMatrixPostProcessGPRQuantSlot() => integer
 begin
     return 0;
 end;
 
-pure func InstructionContractMatrixPostProcessGPRLReLUSlot_B_IOR() => integer
+pure func BIORMatrixPostProcessGPRLReLUSlot() => integer
 begin
     return 1;
 end;
 
-pure func InstructionContractMatrixPostProcessGPRCapacity_B_IOR() => integer
+pure func BIORMatrixPostProcessGPRCapacity() => integer
 begin
     return 3;
 end;
 
-pure func InstructionContractAbsoluteGPRSelectorLegal_B_IOR(
+pure func BIORAbsoluteGPRSelectorLegal(
     selector: Reg5Selector) => boolean
 begin
     return selector < PTO_ABSOLUTE_GPR_COUNT;
@@ -91,26 +91,26 @@ end;
 // exactly two contiguous records, with the flag only on the final mask record.
 // RegDst remains zero. Current-participating-PE bound ordering faults occur
 // before that request's indexed effects and preserve peer commits.
-pure func InstructionContractTLSUBaseSource_B_IOR() => integer
+pure func BIORTLSUBaseSource() => integer
 begin
     return 0;
 end;
 
-pure func InstructionContractTLSURowStrideSource_B_IOR() => integer
+pure func BIORTLSURowStrideSource() => integer
 begin
     return 1;
 end;
-pure func InstructionContractTLSUMinimumDisplacementSource_B_IOR() => integer
+pure func BIORTLSUMinimumDisplacementSource() => integer
 begin
     return 1;
 end;
 
-pure func InstructionContractTLSUMaximumDisplacementSource_B_IOR() => integer
+pure func BIORTLSUMaximumDisplacementSource() => integer
 begin
     return 2;
 end;
 
-readonly func InstructionContractHandler_B_IOR() => CommandSemanticHandler
+readonly func BIORHandler() => CommandSemanticHandler
 begin
     return CommandHandler_BindBundleScalarIO;
 end;

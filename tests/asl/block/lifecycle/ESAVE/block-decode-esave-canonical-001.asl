@@ -5,7 +5,7 @@ begin
     assert DecodeCommandForm('0000000000000000000000000000000000000000000000000010000000110001', 32) == 61;
     assert CommandOperationOfForm(61) == CommandOperation_esave_32_4c4f79fe3171;
     assert CommandHandlerOfForm(61) == CommandHandler_SaveExecutionContext;
-    assert InstructionContractMatches_ESAVE(CommandOperationOfForm(61));
-    assert InstructionContractHandler_ESAVE() == CommandHandler_SaveExecutionContext;
+    assert ESAVEEncodingMatches(CommandOperationOfForm(61));
+    assert ESAVEHandler() == CommandHandler_SaveExecutionContext;
     return 0;
 end;

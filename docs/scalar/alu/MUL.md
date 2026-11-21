@@ -26,7 +26,7 @@ The `L32` class of the form is the instruction length, so the source operands st
 <!-- PTO-READER-BLOCK: scalar-mul-mechanism role=mechanism -->
 ## How the result is formed
 
-The owning ASL exposes `InstructionContractResult_MUL`, which returns `MultiplyWord(left, right)`. That helper starts from zero and, for every set bit position of `right`, adds `LSL(left, bit_index)` to a `Word` accumulator, so each partial sum is already reduced modulo `2^PTO_XLEN`.
+The owning ASL exposes `MULResult`, which returns `MultiplyWord(left, right)`. That helper starts from zero and, for every set bit position of `right`, adds `LSL(left, bit_index)` to a `Word` accumulator, so each partial sum is already reduced modulo `2^PTO_XLEN`.
 
 ```asm
 mul SrcL, SrcR, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/MUL.asl -->
 ```asl
-readonly func InstructionContractOperation_MUL() => ScalarOperation
+readonly func MULOperation() => ScalarOperation
 begin
     return ScalarOperation_MUL;
 end;
@@ -127,11 +127,11 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/MUL.asl -->
 ```asl
-readonly func InstructionContractHandler_MUL() => ScalarSemanticHandler
+readonly func MULHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_MultiplyWord;
 end;
-pure func InstructionContractResult_MUL(left: Word, right: Word) => Word
+pure func MULResult(left: Word, right: Word) => Word
 begin
     return MultiplyWord(left, right);
 end;

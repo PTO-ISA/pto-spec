@@ -4,6 +4,7 @@ import unittest
 from collections import Counter
 
 from scripts.asl_units import load_units
+from scripts.instruction_symbols import contract_symbol
 from scripts.instruction_contracts import (
     PLACEHOLDER_TEXT,
     ROOT,
@@ -122,13 +123,13 @@ class ScalarInstructionContractsTest(unittest.TestCase):
 
         source = (ROOT / unit.source_path).read_text(encoding="utf-8")
         for helper in (
-            "InstructionContractAGUAction_LD",
-            "InstructionContractAGUAddressKind_LD",
-            "InstructionContractAGUSizeBytes_LD",
-            "InstructionContractAGUOffsetScale_LD",
-            "InstructionContractAGUUpdateMode_LD",
-            "InstructionContractAGUSignedLoad_LD",
-            "InstructionContractAGUPrefetchReturnsAddress_LD",
+            "LDAGUAction",
+            "LDAGUAddressKind",
+            "LDAGUSizeBytes",
+            "LDAGUOffsetScale",
+            "LDAGUUpdateMode",
+            "LDAGUSignedLoad",
+            "LDAGUPrefetchReturnsAddress",
         ):
             self.assertIn(helper, source)
 
@@ -167,7 +168,7 @@ class ScalarInstructionContractsTest(unittest.TestCase):
                 "PrefetchReturnsAddress",
             ):
                 self.assertIn(
-                    f"InstructionContractAGU{stem}_{identifier}",
+                    contract_symbol(f"AGU{stem}", identifier),
                     source,
                     unit.source_path,
                 )
@@ -218,7 +219,7 @@ class ScalarInstructionContractsTest(unittest.TestCase):
         ).read_text(encoding="utf-8")
         implicit_legality = source.split(
             "readonly func ScalarImplicitSourceOperandsLegal", 1
-        )[1].split("readonly func ReadScalarRegisterOperand", 1)[0]
+        )[1].split("readonly func ReadReg5", 1)[0]
 
         for operation in ("ScalarOperation_C_SDI", "ScalarOperation_C_SWI"):
             self.assertIn(operation, implicit_legality)
@@ -338,7 +339,8 @@ class ScalarInstructionContractsTest(unittest.TestCase):
                 self.assertIn(f'"requirements":["PTO-INST-SCALAR-{width}-{operation}"]', source)
                 self.assertIn("ExecuteScalarInstruction", source)
                 self.assertIn("MemoryEvent_Atomic", source)
-                self.assertIn("InstructionContractPublishesOldValue", source)
+                identifier = mnemonic.replace(".", "_")
+                self.assertIn(contract_symbol("PublishesOldValue", identifier), source)
 
     def test_store_only_atomic_contracts_describe_precise_trap_recovery(self) -> None:
         units = load_units(ROOT / "asl")

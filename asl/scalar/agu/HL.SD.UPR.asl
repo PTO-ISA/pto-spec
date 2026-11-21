@@ -8,55 +8,55 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-HL-SD-UPR-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_HL_SD_UPR() => ScalarOperation
+readonly func HLSDUPROperation() => ScalarOperation
 begin
     return ScalarOperation_HL_SD_UPR;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_HL_SD_UPR()
+readonly func HLSDUPRHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStore;
 end;
 
-pure func InstructionContractAGUAction_HL_SD_UPR()
+pure func HLSDUPRAGUAction()
     => ScalarAGUAction
 begin
     return ScalarAGU_Store;
 end;
 
-pure func InstructionContractAGUAddressKind_HL_SD_UPR()
+pure func HLSDUPRAGUAddressKind()
     => ScalarAGUAddressKind
 begin
     return ScalarAGU_Register;
 end;
 
-pure func InstructionContractAGUSizeBytes_HL_SD_UPR()
+pure func HLSDUPRAGUSizeBytes()
     => integer {1,2,4,8}
 begin
     return 8;
 end;
 
-pure func InstructionContractAGUOffsetScale_HL_SD_UPR()
+pure func HLSDUPRAGUOffsetScale()
     => integer {0..3}
 begin
     return 0;
 end;
 
-pure func InstructionContractAGUUpdateMode_HL_SD_UPR()
+pure func HLSDUPRAGUUpdateMode()
     => AddressUpdateMode
 begin
     return AddressUpdate_PreIndex;
 end;
 
-pure func InstructionContractAGUSignedLoad_HL_SD_UPR()
+pure func HLSDUPRAGUSignedLoad()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractAGUPrefetchReturnsAddress_HL_SD_UPR()
+pure func HLSDUPRAGUPrefetchReturnsAddress()
     => boolean
 begin
     return FALSE;

@@ -9,35 +9,35 @@
 // checked before publication; SELF and ZERO define out-of-segment behavior.
 // NDF-END: PTO-TSHUF-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TSHUF() => TileOperation
+readonly func TSHUFOperation() => TileOperation
 begin
     return TileOperation_TSHUF;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_TSHUF() => TileSemanticHandler
+readonly func TSHUFHandler() => TileSemanticHandler
 begin
     return TileHandler_TSHUF;
 end;
 
-pure func InstructionContractDataTypeLegal_TSHUF(
+pure func TSHUFDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileCubeDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TSHUF(
+readonly func TSHUFOperandsLegal(
     destination: TileIndex, source: TileIndex,
     controls: TileIndex, control: Word) => boolean
 begin
     return TileOperandsLegal_TSHUF(destination, source, controls, control);
 end;
 
-func InstructionContractExecute_TSHUF(
+func ExecuteTSHUF(
     destination: TileIndex, source: TileIndex,
     controls: TileIndex, control: Word)
 begin
-    assert InstructionContractOperandsLegal_TSHUF(
+    assert TSHUFOperandsLegal(
         destination, source, controls, control);
     TSHUF(destination, source, controls, control);
 end;

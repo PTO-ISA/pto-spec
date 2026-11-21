@@ -15,6 +15,6 @@ begin
     assert _UQueueValid[[0]];
     assert ReadTemporaryQueue(FALSE, 0) == Zeros{PTO_XLEN} + 0x100;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x184;
-    assert InstructionContractOperation_LSRGET() == ScalarOperation_LSRGET;
+    assert LSRGETOperation() == ScalarOperation_LSRGET;
     return 0;
 end;

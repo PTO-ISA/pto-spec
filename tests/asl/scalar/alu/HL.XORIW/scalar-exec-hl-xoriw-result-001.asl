@@ -14,9 +14,9 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(1) == Zeros{PTO_XLEN} + 0xffffffff80000000;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x46;
-    assert InstructionContractImmediateWidth_HL_XORIW() == 24;
-    assert InstructionContractImmediateIsSigned_HL_XORIW();
-    assert InstructionContractIsWordOperation_HL_XORIW();
-    assert InstructionContractResult_HL_XORIW(Zeros{PTO_XLEN} + 0x7fffffff, immediate) == Zeros{PTO_XLEN} + 0xffffffff80000000;
+    assert HLXORIWImmediateWidth() == 24;
+    assert HLXORIWImmediateIsSigned();
+    assert HLXORIWIsWordOperation();
+    assert HLXORIWResult(Zeros{PTO_XLEN} + 0x7fffffff, immediate) == Zeros{PTO_XLEN} + 0xffffffff80000000;
     return 0;
 end;

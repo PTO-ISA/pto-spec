@@ -8,7 +8,7 @@ begin
     end;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x3f800001);
 
-    assert !InstructionContractOperandsLegal_TRELU(1, 0);
+    assert !TRELUOperandsLegal(1, 0);
     assert !_Tiles[[1]].contents_defined;
     return 0;
 end;

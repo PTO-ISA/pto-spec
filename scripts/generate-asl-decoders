@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.instruction_symbols import contract_symbol  # noqa: E402
 from scripts.asl_units import load_units  # noqa: E402
 from scripts.asl_validation_shards import (  # noqa: E402
     partition_generated_asl,
@@ -5152,32 +5153,32 @@ def emit_scalar_fsu_execute_validation(
         for field_name in ("SrcL", "SrcR", "SrcA")
     )
     print(
-        f"    assert InstructionContractSourceArity_{mnemonic}() == "
+        f"    assert {contract_symbol('SourceArity', mnemonic)}() == "
         f"{source_arity};"
     )
     operation = scalar_fsu_operation(row)
     if class_id in {"scalar-fp-absolute", "scalar-fp-unary-profile"}:
         print(
-            f"    assert InstructionContractUnaryOperation_{mnemonic}() == "
+            f"    assert {contract_symbol('UnaryOperation', mnemonic)}() == "
             f"FloatingUnary_{operation};"
         )
     elif class_id in {"scalar-fp-binary-profile", "scalar-fp-minmax"}:
         print(
-            f"    assert InstructionContractBinaryOperation_{mnemonic}() == "
+            f"    assert {contract_symbol('BinaryOperation', mnemonic)}() == "
             f"FloatingBinary_{operation};"
         )
     elif class_id.startswith("scalar-fp-compare"):
         print(
-            f"    assert InstructionContractCompareOperation_{mnemonic}() == "
+            f"    assert {contract_symbol('CompareOperation', mnemonic)}() == "
             f"FloatingCompare_{operation};"
         )
         print(
-            f"    assert InstructionContractSignalingCompare_{mnemonic}() == "
+            f"    assert {contract_symbol('SignalingCompare', mnemonic)}() == "
             f"{'TRUE' if class_id == 'scalar-fp-compare-signaling' else 'FALSE'};"
         )
     elif class_id == "scalar-fp-fused-profile":
         print(
-            f"    assert InstructionContractFusedOperation_{mnemonic}() == "
+            f"    assert {contract_symbol('FusedOperation', mnemonic)}() == "
             f"FloatingFused_{operation};"
         )
     print("    ResetProfileState();")
@@ -5317,14 +5318,14 @@ def emit_scalar_fsu_type_validation(
     for src_type in source_assertions:
         operator = "" if legal else "!"
         print(
-            f"    assert {operator}InstructionContractSourceTypeLegal_{mnemonic}("
+            f"    assert {operator}{contract_symbol('SourceTypeLegal', mnemonic)}("
             f"{bit_literal(src_type, 2)});"
         )
     if field_by_name(row, "DstType") is not None:
         destination_type = 0 if legal else 15
         operator = "" if legal else "!"
         print(
-            f"    assert {operator}InstructionContractDestinationTypeLegal_{mnemonic}("
+            f"    assert {operator}{contract_symbol('DestinationTypeLegal', mnemonic)}("
             f"{bit_literal(destination_type, 5)});"
         )
     print("    ResetProfileState();")
@@ -5424,11 +5425,11 @@ def emit_scalar_fsu_rounding_validation(
     print(f"func ValidateScalarFSURounding_{mnemonic}()")
     print("begin")
     if scalar_fsu_active_rounding_consumer(row):
-        print(f"    assert InstructionContractUsesActiveRounding_{mnemonic}();")
+        print(f"    assert {contract_symbol('UsesActiveRounding', mnemonic)}();")
     else:
-        print(f"    assert !InstructionContractUsesActiveRounding_{mnemonic}();")
+        print(f"    assert !{contract_symbol('UsesActiveRounding', mnemonic)}();")
         print(
-            f"    assert InstructionContractFixedRounding_{mnemonic}() == "
+            f"    assert {contract_symbol('FixedRounding', mnemonic)}() == "
             f"ScalarFPFixedConversionRoundingMode(ScalarOperation_{mnemonic});"
         )
     print("    ResetProfileState();")
@@ -5474,7 +5475,7 @@ def emit_scalar_fsu_flags_validation(
         "scalar-integer-to-fp",
     }
     print(
-        f"    assert InstructionContractUsesProfileFlags_{mnemonic}() == "
+        f"    assert {contract_symbol('UsesProfileFlags', mnemonic)}() == "
         f"{'TRUE' if profile_owned else 'FALSE'};"
     )
     print("    ResetProfileState();")
@@ -6624,7 +6625,7 @@ def emit_scalar_agu_source_alias_case(
     print(f"    {queue}[[{index}]] = {bit_literal(selected_value, 64)};")
     print(
         f"    let scalar_agu_source_alias_value_{case_index} = "
-        f"ReadDecodedScalarRegister({bit_literal(instruction, 48)}, "
+        f"ReadDecodedReg5({bit_literal(instruction, 48)}, "
         f"{row['_form_index']}, ScalarField_{field_name});"
     )
     print(
@@ -11764,7 +11765,7 @@ def _emit_monolithic() -> None:
             print("    end;")
             print(
                 f"    let scalar_sys_selector_source_{selector_case_index} = "
-                f"ReadScalarRegisterOperand({source});"
+                f"ReadReg5({source});"
             )
             print(
                 f"    let scalar_sys_selector_cycle_{selector_case_index} = _SystemRegisters.cycle;"
@@ -11849,7 +11850,7 @@ def _emit_monolithic() -> None:
                 )
                 print(
                     f"    let scalar_sys_selector_source_{selector_case_index} = "
-                    f"ReadScalarRegisterOperand({source});"
+                    f"ReadReg5({source});"
                 )
                 print(
                     f"    let scalar_sys_selector_cycle_{selector_case_index} = _SystemRegisters.cycle;"
@@ -13420,7 +13421,7 @@ def _emit_monolithic() -> None:
                 f"    assert TileTEPLAliasAcceptsOperation(TileTEPLAlias_TEPL, {index});"
             )
             print(
-                f"    assert InstructionContractAcceptsTileOperation_BSTART_TEPL({index});"
+                f"    assert BSTARTTEPLAcceptsTileOperation({index});"
             )
             print(
                 f"    assert TileTEPLAliasAcceptsOperation({canonical_alias}, {index});"
@@ -13435,14 +13436,14 @@ def _emit_monolithic() -> None:
                 f"    assert TileCanonicalTEPLAliasOfIndex({index}) == {canonical_alias};"
             )
             accepted_contract = (
-                "InstructionContractAcceptsTileOperation_BSTART_VEC"
+                "BSTARTVECAcceptsTileOperation"
                 if row["engine"] == "VEC"
-                else "InstructionContractAcceptsTileOperation_BSTART_SFU"
+                else "BSTARTSFUAcceptsTileOperation"
             )
             rejected_contract = (
-                "InstructionContractAcceptsTileOperation_BSTART_SFU"
+                "BSTARTSFUAcceptsTileOperation"
                 if row["engine"] == "VEC"
-                else "InstructionContractAcceptsTileOperation_BSTART_VEC"
+                else "BSTARTVECAcceptsTileOperation"
             )
             print(f"    assert {accepted_contract}({index});")
             print(f"    assert !{rejected_contract}({index});")

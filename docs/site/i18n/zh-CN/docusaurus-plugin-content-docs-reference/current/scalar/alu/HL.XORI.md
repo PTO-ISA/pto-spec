@@ -26,7 +26,7 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-xori-mechanism role=mechanism -->
 ## 结果形成方式
 
-所属 ASL 提供 `InstructionContractResult_HL_XORI`，它构造 `right = SignExtend{PTO_XLEN}(immediate)` 并返回 `ScalarBinary(ScalarBinary_XOR, left, right)`。分派路径用 `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_XOR, ScalarField_simm24, FALSE)` 选择同一条路径。
+所属 ASL 提供 `HLXORIResult`，它构造 `right = SignExtend{PTO_XLEN}(immediate)` 并返回 `ScalarBinary(ScalarBinary_XOR, left, right)`。分派路径用 `ExecuteDecodedImmediateBinary(instruction, form, ScalarBinary_XOR, ScalarField_simm24, FALSE)` 选择同一条路径。
 
 ```asm
 hl.xori SrcL, simm, ->{t, u, Rd}
@@ -116,7 +116,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/alu/HL.XORI.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_XORI() => ScalarOperation
+readonly func HLXORIOperation() => ScalarOperation
 begin
     return ScalarOperation_HL_XORI;
 end;
@@ -127,30 +127,30 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/HL.XORI.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_XORI() => ScalarSemanticHandler
+readonly func HLXORIHandler() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
 
-pure func InstructionContractImmediateWidth_HL_XORI()
+pure func HLXORIImmediateWidth()
     => integer {1..64}
 begin
     return 24;
 end;
 
-pure func InstructionContractImmediateIsSigned_HL_XORI()
+pure func HLXORIImmediateIsSigned()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractIsWordOperation_HL_XORI()
+pure func HLXORIIsWordOperation()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractResult_HL_XORI(
+pure func HLXORIResult(
     left: Word,
     immediate: bits(24))
     => Word

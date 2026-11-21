@@ -34,7 +34,7 @@ Per-PE and core-wide sizes are different quantities. A Tile allocated with capac
 <!-- PTO-READER-BLOCK: tile-model-legality-pe-mask-rules role=rules-interactions -->
 ## Rules and interactions
 
-`TileCoreAllocationBytes` is used for core-wide totals. For example, `TileCapacityInUse` in the Local capacity unit sums it over every allocated Local Tile register, `TileCapacityInUseExcept` sums it over all of them except one excluded register, and `InstructionContractCoreCapacity_B_IOT` uses it to report the core capacity of a `B.IOT` size code.
+`TileCoreAllocationBytes` is used for core-wide totals. For example, `TileCapacityInUse` in the Local capacity unit sums it over every allocated Local Tile register, `TileCapacityInUseExcept` sums it over all of them except one excluded register, and `BIOTCoreCapacity` uses it to report the core capacity of a `B.IOT` size code.
 
 Design point: admission of a new Local Tile does not use the core-wide total. `LocalTileAllocationFitsExcept` checks each selected PE's own pool against `TileCapacityLimitBytes`. A Tile therefore fits only if it fits in every PE it names, not merely in the sum of their pools.
 

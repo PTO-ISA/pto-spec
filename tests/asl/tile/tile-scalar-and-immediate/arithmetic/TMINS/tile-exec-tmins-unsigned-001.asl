@@ -31,7 +31,7 @@ begin
         1,
         Zeros{PTO_XLEN} + 250);
 
-    InstructionContractExecute_TMINS(
+    ExecuteTMINS(
         1,
         0,
         Zeros{PTO_XLEN} + 9);

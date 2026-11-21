@@ -23,11 +23,15 @@ export default function AslCode({
   startLine = 1,
   label,
   lineNumbers = true,
+  symbolLinks,
+  tabIndex,
 }: {
   text: string;
   startLine?: number;
   label: string;
   lineNumbers?: boolean;
+  symbolLinks?: ReadonlyMap<string, string>;
+  tabIndex?: number;
 }): React.JSX.Element {
   return (
     <Highlight
@@ -36,7 +40,7 @@ export default function AslCode({
       theme={ASL_THEME}
     >
       {({className, tokens, getLineProps, getTokenProps}) => (
-        <pre aria-label={label}>
+        <pre aria-label={label} tabIndex={tabIndex}>
           <code className={`${className} language-asl`}>
             {tokens.map((line, index) => {
               const lineProps = getLineProps({line});
@@ -52,9 +56,13 @@ export default function AslCode({
                     </span>
                   )}
                   <span className={styles.sourceLineText}>
-                    {line.map((token, tokenIndex) => (
-                      <span {...getTokenProps({token})} key={tokenIndex} />
-                    ))}
+                    {line.map((token, tokenIndex) => {
+                      const props = getTokenProps({token});
+                      const href = symbolLinks?.get(token.content);
+                      return href
+                        ? <a {...props} href={href} key={tokenIndex} />
+                        : <span {...props} key={tokenIndex} />;
+                    })}
                   </span>
                 </span>
               );

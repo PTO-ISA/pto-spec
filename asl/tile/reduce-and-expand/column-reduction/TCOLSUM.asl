@@ -26,19 +26,19 @@
 // For CUBE_M16/M32, destination Rows MUST equal source Rows and destination Columns MUST equal align_up(destination ValidColumns, destination CellCols), where destination CellCols is computed from destination DataType.
 // NDF-END: PTO-TCOLSUM-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TCOLSUM() => TileOperation
+readonly func TCOLSUMOperation() => TileOperation
 begin
     return TileOperation_TCOLSUM;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TCOLSUM(
+pure func TCOLSUMDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TCOLSUM(
+readonly func TCOLSUMOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -49,16 +49,16 @@ begin
         source);
 end;
 
-readonly func InstructionContractHandler_TCOLSUM() => TileSemanticHandler
+readonly func TCOLSUMHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileReduction;
 end;
 
-func InstructionContractExecute_TCOLSUM(
+func ExecuteTCOLSUM(
     destination: TileIndex,
     source: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TCOLSUM(
+    assert TCOLSUMOperandsLegal(
         destination,
         source);
     ExecuteTileReduction(

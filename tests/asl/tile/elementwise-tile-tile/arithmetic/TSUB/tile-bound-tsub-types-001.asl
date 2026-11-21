@@ -11,18 +11,18 @@ end;
 
 func main() => integer
 begin
-    assert InstructionContractDataTypeLegal_TSUB(TileDataType_FP32);
-    assert InstructionContractDataTypeLegal_TSUB(TileDataType_U8);
-    assert InstructionContractDataTypeLegal_TSUB(TileDataType_FP64);
-    assert !InstructionContractDataTypeLegal_TSUB(TileDataType_HiF8);
+    assert TSUBDataTypeLegal(TileDataType_FP32);
+    assert TSUBDataTypeLegal(TileDataType_U8);
+    assert TSUBDataTypeLegal(TileDataType_FP64);
+    assert !TSUBDataTypeLegal(TileDataType_HiF8);
 
     ResetProfileState();
     ConfigureTSUBType(TileDataType_FP32);
-    assert InstructionContractOperandsLegal_TSUB(2, 0, 1);
+    assert TSUBOperandsLegal(2, 0, 1);
 
     ResetProfileState();
     ConfigureTSUBType(TileDataType_HiF8);
-    assert !InstructionContractOperandsLegal_TSUB(2, 0, 1);
+    assert !TSUBOperandsLegal(2, 0, 1);
     assert !_Tiles[[2]].contents_defined;
     return 0;
 end;

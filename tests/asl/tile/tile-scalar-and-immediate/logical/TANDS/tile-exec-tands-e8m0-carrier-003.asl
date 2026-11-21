@@ -12,7 +12,7 @@ begin
 
     assert TileOperandsLegal_ExecuteTileScalar(
         TileBinary_AND, 1, 0, Zeros{PTO_XLEN} + 0x0f);
-    InstructionContractExecute_TANDS(
+    ExecuteTANDS(
         1, 0, Zeros{PTO_XLEN} + 0x0f);
     assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 0x0a;
     assert _Tiles[[1]].data_type == TileDataType_U8;

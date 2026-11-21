@@ -129,7 +129,7 @@ Carries the operation-selected PadValue or ByteId union field.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND.asl -->
 ```asl
-readonly func InstructionContractOperation_TCOLEXPAND() => TileOperation
+readonly func TCOLEXPANDOperation() => TileOperation
 begin
     return TileOperation_TCOLEXPAND;
 end;
@@ -152,13 +152,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TCOLEXPAND(
+pure func TCOLEXPANDDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TCOLEXPAND(
+readonly func TCOLEXPANDOperandsLegal(
     destination: TileIndex,
     broadcast: TileIndex) => boolean
 begin
@@ -170,16 +170,16 @@ begin
         broadcast);
 end;
 
-readonly func InstructionContractHandler_TCOLEXPAND() => TileSemanticHandler
+readonly func TCOLEXPANDHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;
 
-func InstructionContractExecute_TCOLEXPAND(
+func ExecuteTCOLEXPAND(
     destination: TileIndex,
     broadcast: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TCOLEXPAND(
+    assert TCOLEXPANDOperandsLegal(
         destination,
         broadcast);
     ExecuteTileExpand(

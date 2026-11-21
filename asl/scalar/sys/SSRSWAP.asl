@@ -8,38 +8,38 @@
 // on rejection except for the ordinary instruction-attempt trap envelope.
 // NDF-END: PTO-SSRSWAP-ADR-CONTRACT-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_SSRSWAP()
+readonly func SSRSWAPOperation()
     => ScalarOperation
 begin
     return ScalarOperation_SSRSWAP;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_SSRSWAP()
+readonly func SSRSWAPHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterSwap;
 end;
 
-pure func InstructionContractRequiresSystemBlock_SSRSWAP()
+pure func SSRSWAPRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSystemTransferKind_SSRSWAP()
+pure func SSRSWAPSystemTransferKind()
     => bits(2)
 begin
     return '10';
 end;
 
-pure func InstructionContractSystemAddressWidth_SSRSWAP()
+pure func SSRSWAPSystemAddressWidth()
     => integer {5,12,24}
 begin
     return 12;
 end;
 
-pure func InstructionContractPushesTemporaryT_SSRSWAP()
+pure func SSRSWAPPushesTemporaryT()
     => boolean
 begin
     return FALSE;

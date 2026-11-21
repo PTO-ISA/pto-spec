@@ -6,8 +6,8 @@ begin
         TileLayout_RowMajor);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xffffffff);
 
-    assert InstructionContractOperandsLegal_TRELU(0, 0);
-    InstructionContractExecute_TRELU(0, 0);
+    assert TRELUOperandsLegal(0, 0);
+    ExecuteTRELU(0, 0);
     assert ReadTileElement(0, 0, 0) ==
         Zeros{PTO_XLEN} + 0;
     return 0;

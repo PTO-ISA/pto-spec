@@ -5,8 +5,8 @@ begin
     assert DecodeScalarForm('000000000000000000000000000000000000000000001000', 16) == 23;
     assert ScalarOperationOfForm(23) == ScalarOperation_C_ADD;
     assert ScalarHandlerOfForm(23) == ScalarHandler_ScalarBinary;
-    assert InstructionContractOperation_C_ADD() == ScalarOperation_C_ADD;
-    assert InstructionContractHandler_C_ADD() == ScalarHandler_ScalarBinary;
+    assert CADDOperation() == ScalarOperation_C_ADD;
+    assert CADDHandler() == ScalarHandler_ScalarBinary;
     assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000001000', 23, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000001000', 23, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
     return 0;

@@ -10,24 +10,24 @@
 // encode zero.
 // NDF-END: PTO-BSTART-MGATHER-CAS-SCHEMA-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_BSTART_MGATHER_CAS(operation: CommandOperation) => boolean
+readonly func BSTARTMGATHERCASEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_mgather_cas_32_fd8c8a3b720a);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_BSTART_MGATHER_CAS() => CommandSemanticHandler
+readonly func BSTARTMGATHERCASHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractStartedTileOperation_BSTART_MGATHER_CAS()
+readonly func BSTARTMGATHERCASStartedTileOperation()
     => TileOperation
 begin
     return TileOperation_MGATHER_CAS;
 end;
 
-pure func InstructionContractStartsTileBundle_BSTART_MGATHER_CAS()
+pure func BSTARTMGATHERCASStartsTileBundle()
     => boolean
 begin
     return TRUE;

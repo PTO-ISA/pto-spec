@@ -173,7 +173,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-and-immediate/arithmetic/TMINS.asl -->
 ```asl
-readonly func InstructionContractOperation_TMINS() => TileOperation
+readonly func TMINSOperation() => TileOperation
 begin
     return TileOperation_TMINS;
 end;
@@ -197,7 +197,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/tile-scalar-and-immediate/arithmetic/TMINS.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TMINS(
+pure func TMINSDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileBinaryDataTypeSupported(
@@ -205,7 +205,7 @@ begin
         data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TMINS(
+readonly func TMINSOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word) => boolean
@@ -217,17 +217,17 @@ begin
         scalar);
 end;
 
-readonly func InstructionContractHandler_TMINS() => TileSemanticHandler
+readonly func TMINSHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileScalar;
 end;
 
-func InstructionContractExecute_TMINS(
+func ExecuteTMINS(
     destination: TileIndex,
     source: TileIndex,
     scalar: Word)
 begin
-    assert InstructionContractOperandsLegal_TMINS(
+    assert TMINSOperandsLegal(
         destination,
         source,
         scalar);

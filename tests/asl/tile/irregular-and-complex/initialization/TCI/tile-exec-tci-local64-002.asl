@@ -4,9 +4,9 @@ begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 2, 1, 2,
         TileDataType_U64, TileLayout_RowMajor);
-    assert InstructionContractOperandsLegal_TCI(
+    assert TCIOperandsLegal(
         0, Zeros{PTO_XLEN} + 0xffffffffffffffff, FALSE);
-    InstructionContractExecute_TCI(
+    ExecuteTCI(
         0, Zeros{PTO_XLEN} + 0xffffffffffffffff, FALSE);
     assert ReadTileElement(0, 0, 0) ==
         Zeros{PTO_XLEN} + 0xffffffffffffffff;

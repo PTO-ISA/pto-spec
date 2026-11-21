@@ -43,7 +43,7 @@ begin
     _LastQueueLeft = address;
     _LastQueueRight = capacity_source;
     _LastQueueFlags = flags;
-    WriteScalarDestination(destination, result);
+    WriteReg5(destination, result);
 end;
 
 func ExecuteQueueManagerPop(destination0: Reg5Selector,
@@ -61,8 +61,8 @@ begin
     _LastQueueLeft = address;
     _LastQueueRight = Zeros{PTO_XLEN};
     _LastQueueFlags = flags;
-    WriteScalarDestination(destination0, response.data);
-    WriteScalarDestination(destination1, response.result);
+    WriteReg5(destination0, response.data);
+    WriteReg5(destination1, response.result);
 end;
 
 func ExecuteQueueManagerPush(destination: Reg5Selector,
@@ -83,7 +83,7 @@ begin
     _LastQueueLeft = address;
     _LastQueueRight = entry;
     _LastQueueFlags = flags;
-    WriteScalarDestination(destination, result);
+    WriteReg5(destination, result);
 end;
 
 pure func MemoryRangeWraps(address: Word, length: Word) => boolean

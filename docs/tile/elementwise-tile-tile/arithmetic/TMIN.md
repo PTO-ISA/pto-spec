@@ -114,7 +114,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/arithmetic/TMIN.asl -->
 ```asl
-readonly func InstructionContractOperation_TMIN() => TileOperation
+readonly func TMINOperation() => TileOperation
 begin
     return TileOperation_TMIN;
 end;
@@ -137,13 +137,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/arithmetic/TMIN.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TMIN(
+pure func TMINDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TMIN(
+readonly func TMINOperandsLegal(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex) => boolean
@@ -155,12 +155,12 @@ begin
         source_right);
 end;
 
-pure func InstructionContractFloatingValue_TMIN(
+pure func TMINFloatingValue(
     data_type: TileDataType,
     source_left: Word,
     source_right: Word) => (Word, boolean)
 begin
-    assert InstructionContractDataTypeLegal_TMIN(data_type);
+    assert TMINDataTypeLegal(data_type);
     assert TileDataTypeIsFloating(data_type);
     return TileFloatingMinMaxValue(
         TileBinary_MIN,
@@ -169,12 +169,12 @@ begin
         source_right);
 end;
 
-readonly func InstructionContractHandler_TMIN() => TileSemanticHandler
+readonly func TMINHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileBinary;
 end;
 
-func InstructionContractExecute_TMIN(
+func ExecuteTMIN(
     destination: TileIndex,
     source_left: TileIndex,
     source_right: TileIndex)

@@ -21,7 +21,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 `BSTART.ICALL` 是融合的间接调用。它退役当前活动的指令束，把该指令束的 `BARG.BPCN` 快照为调用目标，打开一个新的 Standard 间接调用指令束，并把一个独立的返回目标发布到 `ra`。调用目标完全没有编码在本命令中；只有返回地址是编码的。
 
-唯一接受的拼写是 `BSTART.ICALL <rt_label>, ->ra`，一个 32 位字，在掩码 `0xf83fffff` 下匹配 `0x50166001`。该掩码固定了高位判别位与第 21 至 0 位，并让无符号 5 位 `uimm5` 显露在第 26 至 22 位。`InstructionContractTransfer_BSTART_ICALL` 返回 `BundleTransfer_IndirectCall`，`InstructionContractWritesReturnAddress_BSTART_ICALL` 返回 TRUE。
+唯一接受的拼写是 `BSTART.ICALL <rt_label>, ->ra`，一个 32 位字，在掩码 `0xf83fffff` 下匹配 `0x50166001`。该掩码固定了高位判别位与第 21 至 0 位，并让无符号 5 位 `uimm5` 显露在第 26 至 22 位。`BSTARTICALLTransfer` 返回 `BundleTransfer_IndirectCall`，`BSTARTICALLWritesReturnAddress` 返回 TRUE。
 
 设计要点：`BSTART.STD CALL, <label>` 与 `BSTART.FP CALL, <label>` 从 `simm17` 取目标、从顺序字取返回地址。`BSTART.ICALL` 把这一分工颠倒过来：目标来自正在退役指令束的 `BARG.BPCN`，返回目标来自 `uimm5`。可观察的后果是，调用方可以调用一个关闭中的指令束仅以其自身候选延续形式知道的目的地。
 
@@ -109,7 +109,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.ICALL.asl -->
 ```asl
-readonly func InstructionContractMatches_BSTART_ICALL(operation: CommandOperation) => boolean
+readonly func BSTARTICALLEncodingMatches(operation: CommandOperation) => boolean
 begin
     return operation == CommandOperation_bstart_icall_32_50166001;
 end;
@@ -126,18 +126,18 @@ BSTART.ICALL retires one active Standard or Floating block whose BARG.BPCN suppl
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.ICALL.asl -->
 ```asl
-readonly func InstructionContractHandler_BSTART_ICALL() => CommandSemanticHandler
+readonly func BSTARTICALLHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractTransfer_BSTART_ICALL()
+readonly func BSTARTICALLTransfer()
     => BundleTransfer
 begin
     return BundleTransfer_IndirectCall;
 end;
 
-pure func InstructionContractWritesReturnAddress_BSTART_ICALL()
+pure func BSTARTICALLWritesReturnAddress()
     => boolean
 begin
     return TRUE;

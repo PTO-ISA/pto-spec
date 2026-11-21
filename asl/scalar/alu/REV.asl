@@ -8,32 +8,32 @@
 // for every accepted decision that names this mnemonic.
 // NDF-END: PTO-REV-DECISION-BINDING-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_REV()
+readonly func REVOperation()
     => ScalarOperation
 begin
     return ScalarOperation_REV;
 end;
 
-pure func InstructionContractWidth_REV(encoded_imml: bits(6))
+pure func REVWidth(encoded_imml: bits(6))
     => integer {1..64}
 begin
     return UInt(encoded_imml) + 1;
 end;
 
-pure func InstructionContractOffset_REV(encoded_immr: bits(6))
+pure func DecodeREVOffset(encoded_immr: bits(6))
     => integer {0..63}
 begin
     return UInt(encoded_immr);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_REV()
+readonly func REVHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ReverseBitfieldBytes;
 end;
 
-pure func InstructionContractResult_REV(
+pure func REVResult(
     value: Word,
     width: integer {1..64},
     offset: integer {0..63})

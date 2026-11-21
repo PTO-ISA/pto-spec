@@ -102,7 +102,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/elementwise-tile-tile/logical/TNEG.asl -->
 ```asl
-readonly func InstructionContractOperation_TNEG() => TileOperation
+readonly func TNEGOperation() => TileOperation
 begin
     return TileOperation_TNEG;
 end;
@@ -125,13 +125,13 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/logical/TNEG.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TNEG(
+pure func TNEGDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileTNegDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractOperandsLegal_TNEG(
+readonly func TNEGOperandsLegal(
     destination: TileIndex,
     source: TileIndex) => boolean
 begin
@@ -141,7 +141,7 @@ begin
         source);
 end;
 
-pure func InstructionContractValue_TNEG(
+pure func TNEGValue(
     data_type: TileDataType,
     source: Word) => Word
 begin
@@ -152,12 +152,12 @@ begin
     return result;
 end;
 
-readonly func InstructionContractHandler_TNEG() => TileSemanticHandler
+readonly func TNEGHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileUnary;
 end;
 
-func InstructionContractExecute_TNEG(
+func ExecuteTNEG(
     destination: TileIndex,
     source: TileIndex)
 begin

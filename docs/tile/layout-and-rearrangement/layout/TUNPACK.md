@@ -101,7 +101,7 @@ This operation has no standalone opcode.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/layout-and-rearrangement/layout/TUNPACK.asl -->
 ```asl
-readonly func InstructionContractOperation_TUNPACK() => TileOperation
+readonly func TUNPACKOperation() => TileOperation
 begin
     return TileOperation_TUNPACK;
 end;
@@ -123,12 +123,12 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/layout-and-rearrangement/layout/TUNPACK.asl -->
 ```asl
-readonly func InstructionContractHandler_TUNPACK() => TileSemanticHandler
+readonly func TUNPACKHandler() => TileSemanticHandler
 begin
     return TileHandler_TUNPACK;
 end;
 
-pure func InstructionContractDataTypeLegal_TUNPACK(
+pure func TUNPACKDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_U8 ||
@@ -137,16 +137,16 @@ begin
            data_type == TileDataType_U64;
 end;
 
-readonly func InstructionContractOperandsLegal_TUNPACK(
+readonly func TUNPACKOperandsLegal(
     destination: TileIndex, source: TileIndex, control: Word) => boolean
 begin
     return TileOperandsLegal_TUNPACK(destination, source, control);
 end;
 
-func InstructionContractExecute_TUNPACK(
+func ExecuteTUNPACK(
     destination: TileIndex, source: TileIndex, control: Word)
 begin
-    assert InstructionContractOperandsLegal_TUNPACK(destination, source, control);
+    assert TUNPACKOperandsLegal(destination, source, control);
     TUNPACK(destination, source, control);
 end;
 ```

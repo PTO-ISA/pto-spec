@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(98) == TileHandler_TGPR2T;
     assert TileClassOfIndex(98) == TileClass_LayoutAndRearrangement;
     assert TileEngineOfIndex(98) == TileEngine_SFU;
-    assert InstructionContractOperation_TGPR2T() == TileOperation_TGPR2T;
-    assert InstructionContractHandler_TGPR2T() == TileHandler_TGPR2T;
+    assert TGPR2TOperation() == TileOperation_TGPR2T;
+    assert TGPR2THandler() == TileHandler_TGPR2T;
     return 0;
 end;

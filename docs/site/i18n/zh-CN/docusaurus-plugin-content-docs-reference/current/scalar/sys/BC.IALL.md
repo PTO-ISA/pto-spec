@@ -90,7 +90,7 @@ This instruction has no explicit operand fields.
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/BC.IALL.asl -->
 ```asl
-readonly func InstructionContractOperation_BC_IALL()
+readonly func BCIALLOperation()
     => ScalarOperation
 begin
     return ScalarOperation_BC_IALL;
@@ -108,31 +108,31 @@ BC.IALL executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/BC.IALL.asl -->
 ```asl
-readonly func InstructionContractHandler_BC_IALL()
+readonly func BCIALLHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteMaintenance;
 end;
 
-pure func InstructionContractRequiresSystemBlock_BC_IALL()
+pure func BCIALLRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractMaintenanceOperation_BC_IALL()
+pure func BCIALLMaintenanceOperation()
     => MaintenanceOperation
 begin
     return Maintenance_BC_IALL;
 end;
 
-pure func InstructionContractMaintenanceUsesOperand_BC_IALL()
+pure func BCIALLMaintenanceUsesOperand()
     => boolean
 begin
     return FALSE;
 end;
 
-pure func InstructionContractMaintenanceRequiresRootRing_BC_IALL()
+pure func BCIALLMaintenanceRequiresRootRing()
     => boolean
 begin
     return FALSE;

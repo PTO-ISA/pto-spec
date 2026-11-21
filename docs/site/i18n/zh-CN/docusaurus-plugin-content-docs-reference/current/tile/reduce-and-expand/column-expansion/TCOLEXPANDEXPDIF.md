@@ -177,7 +177,7 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF.asl -->
 ```asl
-readonly func InstructionContractOperation_TCOLEXPANDEXPDIF() => TileOperation
+readonly func TCOLEXPANDEXPDIFOperation() => TileOperation
 begin
     return TileOperation_TCOLEXPANDEXPDIF;
 end;
@@ -200,7 +200,7 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF.asl -->
 ```asl
-pure func InstructionContractDataTypeLegal_TCOLEXPANDEXPDIF(
+pure func TCOLEXPANDEXPDIFDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_FP64 ||
@@ -209,7 +209,7 @@ begin
            data_type == TileDataType_FP32;
 end;
 
-readonly func InstructionContractOperandsLegal_TCOLEXPANDEXPDIF(
+readonly func TCOLEXPANDEXPDIFOperandsLegal(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex) => boolean
@@ -222,17 +222,17 @@ begin
         broadcast);
 end;
 
-readonly func InstructionContractHandler_TCOLEXPANDEXPDIF() => TileSemanticHandler
+readonly func TCOLEXPANDEXPDIFHandler() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
 end;
 
-func InstructionContractExecute_TCOLEXPANDEXPDIF(
+func ExecuteTCOLEXPANDEXPDIF(
     destination: TileIndex,
     source: TileIndex,
     broadcast: TileIndex)
 begin
-    assert InstructionContractOperandsLegal_TCOLEXPANDEXPDIF(
+    assert TCOLEXPANDEXPDIFOperandsLegal(
         destination,
         source,
         broadcast);

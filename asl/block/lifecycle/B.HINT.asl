@@ -9,25 +9,25 @@
 // trace block MUST remain active until BSTOP or a following block start.
 // NDF-END: PTO-B-HINT-LIFECYCLE-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_B_HINT(operation: CommandOperation) => boolean
+readonly func BHINTEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_b_hint_32_69d942ff1583) ||
            (operation == CommandOperation_b_hint_32_f7d01d734925);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_B_HINT() => CommandSemanticHandler
+readonly func BHINTHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleHint;
 end;
 
-pure func InstructionContractIsBundleHint_B_HINT()
+pure func BHINTIsBundleHint()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractTraceFormMayTerminate_B_HINT()
+pure func BHINTTraceFormMayTerminate()
     => boolean
 begin
     return TRUE;

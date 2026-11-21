@@ -9,7 +9,7 @@ begin
     assert TileHandlerOfIndex(34) == TileHandler_ExecuteTileScalar;
     assert TileClassOfIndex(34) == TileClass_TileScalarAndImmediate;
     assert TileEngineOfIndex(34) == TileEngine_VEC;
-    assert InstructionContractOperation_TSHRS() == TileOperation_TSHRS;
-    assert InstructionContractHandler_TSHRS() == TileHandler_ExecuteTileScalar;
+    assert TSHRSOperation() == TileOperation_TSHRS;
+    assert TSHRSHandler() == TileHandler_ExecuteTileScalar;
     return 0;
 end;

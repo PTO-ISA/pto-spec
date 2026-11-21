@@ -3,6 +3,7 @@ import Link from '@docusaurus/Link';
 import {useHistory, useLocation} from '@docusaurus/router';
 import type {PtoInstructionIndexData} from '@site/src/types/pto';
 import PortalShell from '@site/src/components/PortalShell';
+import ManualNav from '@site/src/components/ManualNav';
 import styles from '@site/src/components/CatalogIndex.module.css';
 
 type Surface = 'all' | 'scalar' | 'block' | 'tile';
@@ -40,6 +41,7 @@ export default function InstructionIndex({index}: {index: PtoInstructionIndexDat
   return (
     <PortalShell title={title} description={title} currentPageLabel={title}>
       <main className={styles.page}>
+        <ManualNav />
         <header className={styles.hero}>
           <div>
             <div className={styles.kicker}>{chinese ? '单一 canonical workbench' : 'One canonical workbench'}</div>

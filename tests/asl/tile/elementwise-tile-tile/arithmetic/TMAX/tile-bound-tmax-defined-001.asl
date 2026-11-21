@@ -8,7 +8,7 @@ begin
     end;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 3);
 
-    assert !InstructionContractOperandsLegal_TMAX(2, 0, 1);
+    assert !TMAXOperandsLegal(2, 0, 1);
     assert !_Tiles[[2]].contents_defined;
     return 0;
 end;

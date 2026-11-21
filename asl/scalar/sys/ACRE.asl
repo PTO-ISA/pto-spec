@@ -9,32 +9,32 @@
 // then consume and restore the complete saved context atomically.
 // NDF-END: PTO-ACRE-IMPLICIT-STOP-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_ACRE()
+readonly func ACREOperation()
     => ScalarOperation
 begin
     return ScalarOperation_ACRE;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_ACRE()
+readonly func ACREHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ArchitectureEnterRequest;
 end;
 
-pure func InstructionContractRequiresSystemBlock_ACRE()
+pure func ACRERequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractRequestTypeLegal_ACRE(
+pure func ACRERequestTypeLegal(
     request_type: bits(4)) => boolean
 begin
     return request_type == '0000' || request_type == '0001';
 end;
 
-pure func InstructionContractIsImplicitBlockStop_ACRE()
+pure func ACREIsImplicitBlockStop()
     => boolean
 begin
     return TRUE;

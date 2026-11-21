@@ -130,7 +130,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/HL.QPOP.asl -->
 ```asl
-readonly func InstructionContractMatches_HL_QPOP(operation: CommandOperation) => boolean
+readonly func HLQPOPEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_hl_qpop_48_a2c57f5bc27b);
 end;
@@ -141,7 +141,7 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/HL.QPOP.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_QPOP() => CommandSemanticHandler
+readonly func HLQPOPHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteQueuePop;
 end;
@@ -158,13 +158,13 @@ begin
         flags);
 end;
 
-pure func InstructionContractChangesQueueManagerState_HL_QPOP()
+pure func HLQPOPChangesQueueManagerState()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSnapshotsSourcesBeforeWrite_HL_QPOP()
+pure func HLQPOPSnapshotsSourcesBeforeWrite()
     => boolean
 begin
     return TRUE;

@@ -11,8 +11,8 @@ begin
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 7);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 11);
 
-    assert InstructionContractOperandsLegal_TMUL(0, 0, 1);
-    InstructionContractExecute_TMUL(0, 0, 1);
+    assert TMULOperandsLegal(0, 0, 1);
+    ExecuteTMUL(0, 0, 1);
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 21;
     assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 55;
     return 0;

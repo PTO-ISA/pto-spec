@@ -62,13 +62,13 @@
 // MUST follow PTO-GM-FLOATING-ADD-NUMERIC-001 for indexed and strided forms.
 // NDF-END: PTO-TSTORE-STRIDED-ATOMIC-RED-001
 // DOC-BEGIN: decode
-readonly func InstructionContractOperation_TSTORE() => TileOperation
+readonly func TSTOREOperation() => TileOperation
 begin
     return TileOperation_TSTORE;
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-pure func InstructionContractDataTypeLegal_TSTORE(code: bits(5)) => boolean
+pure func TSTOREDataTypeLegal(code: bits(5)) => boolean
 begin
     if !TileDataTypeEncodingValid(code as TileDataTypeEncoding) then
         return FALSE;
@@ -77,41 +77,41 @@ begin
     return TileRegularTLSUDataTypeSupported(data_type);
 end;
 
-readonly func InstructionContractHandler_TSTORE() => TileSemanticHandler
+readonly func TSTOREHandler() => TileSemanticHandler
 begin
     return TileHandler_TSTORE;
 end;
 
-readonly func InstructionContractGMAddress_TSTORE(
+readonly func TSTOREGMAddress(
     base_address: Word,
     row: integer {0..65535},
     column: integer {0..65535},
     row_stride_bytes: Word,
     data_type: TileDataType) => Word
 begin
-    return TileMemoryStridedByteAddress(
+    return TileElementAddress(
         base_address, row, column, row_stride_bytes, data_type);
 end;
 
-readonly func InstructionContractDenseStride_TSTORE(
+readonly func TSTOREDenseStride(
     columns: integer {0..65535}, data_type: TileDataType) => Word
 begin
-    return TileDenseRowStrideBytes(columns, data_type);
+    return TileDenseRowBytes(columns, data_type);
 end;
 
-pure func InstructionContractSharedMaskLegal_TSTORE(
+pure func TSTORESharedMaskLegal(
     function: integer {0..31}, pe_mask: bits(4)) => boolean
 begin
     return SharedStorePEMaskLegal(function, pe_mask);
 end;
 
-pure func InstructionContractZeroMaskNoEffect_TSTORE(
+pure func TSTOREZeroMaskNoEffect(
     pe_mask: bits(4)) => boolean
 begin
     return pe_mask == Zeros{4};
 end;
 
-pure func InstructionContractCubeDimensionsLegal_TSTORE(
+pure func TSTORECubeDimensionsLegal(
     lb0_present: boolean, lb0: integer {0..65535},
     lb1_present: boolean, lb1: integer {0..65535},
     lb2_present: boolean) => boolean

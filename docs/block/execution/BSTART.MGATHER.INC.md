@@ -253,7 +253,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.MGATHER.INC.asl -->
 ```asl
-readonly func InstructionContractMatches_BSTART_MGATHER_INC(operation: CommandOperation) => boolean
+readonly func BSTARTMGATHERINCEncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_bstart_mgather_inc_32_gm14);
 end;
@@ -277,18 +277,18 @@ When a GPR ExecutionMask is combined with a descriptor: B.IOR MaskLoGPR, MaskHiG
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.MGATHER.INC.asl -->
 ```asl
-readonly func InstructionContractHandler_BSTART_MGATHER_INC() => CommandSemanticHandler
+readonly func BSTARTMGATHERINCHandler() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
 
-readonly func InstructionContractStartedTileOperation_BSTART_MGATHER_INC()
+readonly func BSTARTMGATHERINCStartedTileOperation()
     => TileOperation
 begin
     return TileOperation_MGATHER_INC;
 end;
 
-pure func InstructionContractStartsTileBundle_BSTART_MGATHER_INC()
+pure func BSTARTMGATHERINCStartsTileBundle()
     => boolean
 begin
     return TRUE;

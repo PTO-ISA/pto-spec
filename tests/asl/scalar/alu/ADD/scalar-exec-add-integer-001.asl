@@ -41,9 +41,9 @@ begin
     assert ScalarMultiplyW(Zeros{PTO_XLEN} + 0x80000000,
         Zeros{PTO_XLEN} + 1) == SignExtend{PTO_XLEN}(Zeros{32} + 0x80000000);
 
-    assert ApplyScalarRightModifier(Zeros{PTO_XLEN} + 0xffffffff,
+    assert ModifyScalarOperand(Zeros{PTO_XLEN} + 0xffffffff,
         ScalarRight_SignedWord, FALSE) == Ones{PTO_XLEN};
-    assert ApplyScalarRightModifier(Zeros{PTO_XLEN} + 3,
+    assert ModifyScalarOperand(Zeros{PTO_XLEN} + 3,
         ScalarRight_NegateOrNot, TRUE) == NOT(Zeros{PTO_XLEN} + 3);
     assert ApplyRestrictedCompareModifier(Zeros{PTO_XLEN} + 7,
         ScalarRight_NegateOrNot) == Zeros{PTO_XLEN} + 7;

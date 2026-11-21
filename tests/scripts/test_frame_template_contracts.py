@@ -3,6 +3,8 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
+from scripts.instruction_symbols import contract_symbol
+
 
 ROOT = Path(__file__).resolve().parents[2]
 FRAME_MNEMONICS = ("FENTRY", "FEXIT", "FRET.RA", "FRET.STK")
@@ -17,7 +19,7 @@ class FrameTemplateContractTest(unittest.TestCase):
                 ).read_text(encoding="utf-8")
                 identifier = mnemonic.replace(".", "_")
                 self.assertIn(
-                    f"InstructionContractUsesInclusiveRegisterRange_{identifier}",
+                    contract_symbol("UsesInclusiveRegisterRange", identifier),
                     text,
                 )
                 self.assertNotIn("UsesHalfOpenRegisterRange", text)

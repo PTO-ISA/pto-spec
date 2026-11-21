@@ -10,8 +10,8 @@ begin
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 7);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} - 3);
-    assert InstructionContractOperandsLegal_TREM(2, 0, 1);
-    InstructionContractExecute_TREM(2, 0, 1);
+    assert TREMOperandsLegal(2, 0, 1);
+    ExecuteTREM(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 2;
     assert ReadTileElement(2, 0, 1) == Zeros{PTO_XLEN} - 2;
     return 0;

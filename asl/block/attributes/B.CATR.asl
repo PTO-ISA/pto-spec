@@ -12,24 +12,24 @@
 // control contract.
 // NDF-END: PTO-B-CATR-CONTROL-001
 // DOC-BEGIN: decode
-readonly func InstructionContractMatches_B_CATR(operation: CommandOperation) => boolean
+readonly func BCATREncodingMatches(operation: CommandOperation) => boolean
 begin
     return (operation == CommandOperation_b_catr_32_e90bd52fa480);
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
-readonly func InstructionContractHandler_B_CATR() => CommandSemanticHandler
+readonly func BCATRHandler() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleControlAttributes;
 end;
 
-pure func InstructionContractHeaderOnly_B_CATR()
+pure func BCATRHeaderOnly()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractDuplicateRejects_B_CATR()
+pure func BCATRDuplicateRejects()
     => boolean
 begin
     return TRUE;

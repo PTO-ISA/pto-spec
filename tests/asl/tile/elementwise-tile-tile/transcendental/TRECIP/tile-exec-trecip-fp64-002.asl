@@ -8,7 +8,7 @@ begin
     end;
     WriteTileElement(0, 0, 0,
         Zeros{PTO_XLEN} + 0x4000000000000000);
-    InstructionContractExecute_TRECIP(1, 0);
+    ExecuteTRECIP(1, 0);
     assert ReadTileElement(1, 0, 0) ==
         Zeros{PTO_XLEN} + 0x3fe0000000000000;
     assert NumericStatusFlags() == Zeros{5};

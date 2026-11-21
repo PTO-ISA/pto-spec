@@ -15,7 +15,7 @@ begin
     assert status == ScalarExecution_Executed;
     assert ReadGPR(1) == '1000000000000000000000000000000000000000000000000000000000000000';
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x44;
-    assert InstructionContractShiftAmount_SLL(Zeros{PTO_XLEN} + 63) == 63;
-    assert InstructionContractResult_SLL(Zeros{PTO_XLEN} + 1, Zeros{PTO_XLEN} + 63) == '1000000000000000000000000000000000000000000000000000000000000000';
+    assert DecodeSLLShiftAmount(Zeros{PTO_XLEN} + 63) == 63;
+    assert SLLResult(Zeros{PTO_XLEN} + 1, Zeros{PTO_XLEN} + 63) == '1000000000000000000000000000000000000000000000000000000000000000';
     return 0;
 end;

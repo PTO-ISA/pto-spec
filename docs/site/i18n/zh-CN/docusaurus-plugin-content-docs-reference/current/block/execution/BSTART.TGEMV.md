@@ -200,7 +200,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/block/execution/BSTART.TGEMV.asl -->
 ```asl
-readonly func InstructionContractMatches_BSTART_TGEMV(
+readonly func BSTARTTGEMVEncodingMatches(
     operation: CommandOperation) => boolean
 begin
     return operation ==
@@ -228,25 +228,25 @@ BSTOP or the next BSTART completion boundary
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/execution/BSTART.TGEMV.asl -->
 ```asl
-readonly func InstructionContractTileOperation_BSTART_TGEMV()
+readonly func BSTARTTGEMVTileOperation()
     => TileOperation
 begin
     return TileOperation_TGEMV;
 end;
 
-readonly func InstructionContractCubeFunction_BSTART_TGEMV()
+readonly func BSTARTTGEMVCubeFunction()
     => integer {0..31}
 begin
     return 16;
 end;
 
-readonly func InstructionContractSharedOperandsAllowed_BSTART_TGEMV()
+readonly func BSTARTTGEMVSharedOperandsAllowed()
     => boolean
 begin
     return FALSE;
 end;
 
-readonly func InstructionContractHandler_BSTART_TGEMV()
+readonly func BSTARTTGEMVHandler()
     => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;

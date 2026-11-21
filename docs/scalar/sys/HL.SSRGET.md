@@ -24,14 +24,14 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-mechanism role=mechanism -->
 ## System mechanism
 
-`InstructionContractHandler_HL_SSRGET` selects `ScalarHandler_ExecuteSystemRegisterGet` (`asl/scalar/sys/HL.SSRGET.asl:18`), the same helper used by the 32-bit form. What changes is the address: `InstructionContractSystemAddressWidth_HL_SSRGET` fixes the width at 24 (`asl/scalar/sys/HL.SSRGET.asl:36`), and the assembly is a 48-bit form (`asl/scalar/sys/HL.SSRGET.asl:1`).
+`HLSSRGETHandler` selects `ScalarHandler_ExecuteSystemRegisterGet` (`asl/scalar/sys/HL.SSRGET.asl:18`), the same helper used by the 32-bit form. What changes is the address: `HLSSRGETSystemAddressWidth` fixes the width at 24 (`asl/scalar/sys/HL.SSRGET.asl:36`), and the assembly is a 48-bit form (`asl/scalar/sys/HL.SSRGET.asl:1`).
 
 The dispatcher builds that 24-bit address from two 12-bit pieces before calling the get helper (`asl/scalar/model/dispatch/sys.asl:91`).
 
 <!-- PTO-READER-BLOCK: scalar-hl-ssrget-inputs-outputs role=inputs-outputs -->
 ## Inputs and outputs
 
-`SSR_ID` is the 24-bit system-register address and `RegDst` is the destination selector `discard, R1..R23, push U, or push T` (`asl/scalar/sys/HL.SSRGET.asl:1`). `InstructionContractPushesTemporaryT_HL_SSRGET` returns `FALSE` (`asl/scalar/sys/HL.SSRGET.asl:42`), and the destination selector alone decides whether the value lands in a GPR or on a temporary queue.
+`SSR_ID` is the 24-bit system-register address and `RegDst` is the destination selector `discard, R1..R23, push U, or push T` (`asl/scalar/sys/HL.SSRGET.asl:1`). `HLSSRGETPushesTemporaryT` returns `FALSE` (`asl/scalar/sys/HL.SSRGET.asl:42`), and the destination selector alone decides whether the value lands in a GPR or on a temporary queue.
 
 Encoded zero in `SSR_ID` is the base register at address 0, and encoded zero in `RegDst` names the architectural zero GPR.
 
@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/HL.SSRGET.asl -->
 ```asl
-readonly func InstructionContractOperation_HL_SSRGET()
+readonly func HLSSRGETOperation()
     => ScalarOperation
 begin
     return ScalarOperation_HL_SSRGET;
@@ -121,31 +121,31 @@ HL.SSRGET executes as one scalar operation in the body of an active SYS block.
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/HL.SSRGET.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_SSRGET()
+readonly func HLSSRGETHandler()
     => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSystemRegisterGet;
 end;
 
-pure func InstructionContractRequiresSystemBlock_HL_SSRGET()
+pure func HLSSRGETRequiresSystemBlock()
     => boolean
 begin
     return TRUE;
 end;
 
-pure func InstructionContractSystemTransferKind_HL_SSRGET()
+pure func HLSSRGETSystemTransferKind()
     => bits(2)
 begin
     return '00';
 end;
 
-pure func InstructionContractSystemAddressWidth_HL_SSRGET()
+pure func HLSSRGETSystemAddressWidth()
     => integer {5,12,24}
 begin
     return 24;
 end;
 
-pure func InstructionContractPushesTemporaryT_HL_SSRGET()
+pure func HLSSRGETPushesTemporaryT()
     => boolean
 begin
     return FALSE;

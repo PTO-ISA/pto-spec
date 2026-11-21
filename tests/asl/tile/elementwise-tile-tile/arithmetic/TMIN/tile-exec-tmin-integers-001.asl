@@ -13,16 +13,16 @@ begin
     ConfigureTminIntegerTiles(TileDataType_S8);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xff);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
-    assert InstructionContractOperandsLegal_TMIN(2, 0, 1);
-    InstructionContractExecute_TMIN(2, 0, 1);
+    assert TMINOperandsLegal(2, 0, 1);
+    ExecuteTMIN(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Ones{PTO_XLEN};
 
     ResetProfileState();
     ConfigureTminIntegerTiles(TileDataType_U8);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xff);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
-    assert InstructionContractOperandsLegal_TMIN(2, 0, 1);
-    InstructionContractExecute_TMIN(2, 0, 1);
+    assert TMINOperandsLegal(2, 0, 1);
+    ExecuteTMIN(2, 0, 1);
     assert ReadTileElement(2, 0, 0) == Zeros{PTO_XLEN} + 1;
     return 0;
 end;

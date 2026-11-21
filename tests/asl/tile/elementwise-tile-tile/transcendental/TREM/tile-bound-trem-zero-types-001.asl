@@ -11,16 +11,16 @@ end;
 
 func main() => integer
 begin
-    assert InstructionContractDataTypeLegal_TREM(TileDataType_S64);
-    assert InstructionContractDataTypeLegal_TREM(TileDataType_FP32);
-    assert !InstructionContractDataTypeLegal_TREM(TileDataType_HiF8);
+    assert TREMDataTypeLegal(TileDataType_S64);
+    assert TREMDataTypeLegal(TileDataType_FP32);
+    assert !TREMDataTypeLegal(TileDataType_HiF8);
 
     ResetProfileState();
     ConfigureTREMZero(TileDataType_S64);
-    assert !InstructionContractOperandsLegal_TREM(2, 0, 1);
+    assert !TREMOperandsLegal(2, 0, 1);
 
     ResetProfileState();
     ConfigureTREMZero(TileDataType_FP32);
-    assert InstructionContractOperandsLegal_TREM(2, 0, 1);
+    assert TREMOperandsLegal(2, 0, 1);
     return 0;
 end;
