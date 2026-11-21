@@ -237,26 +237,26 @@
     ]
   },
   "predicate_version_boundary": {
-    "active_release": "PTO ISA 0.59.0",
+    "active_release": "PTO ISA 0.59.1",
     "current_public_source_release": "PTO ISA v0.6 micro-instruction surface",
     "disposition": "closed-no-direct-public-v06-typed-mask-mapping",
     "accepted_mapping": null,
-    "mapping_rule": "No public v0.6 typed mask has an accepted direct mapping to a PTO ISA 0.59.0 architectural register, ExecutionMask carrier, selector, encoding, producer, or consumer.",
+    "mapping_rule": "No public v0.6 typed mask has an accepted direct mapping to a PTO ISA 0.59.1 architectural register, ExecutionMask carrier, selector, encoding, producer, or consumer.",
     "concepts": [
       {
         "id": "pto-isa-0580-warp-predicate-registers",
-        "source_class": "active-0.59.0-architectural-state",
+        "source_class": "active-0.59.1-architectural-state",
         "representation": "P0-P7",
         "width_bits": 32,
         "count": 8,
         "lifecycle": "P0 hardwired all-ones; P1-P7 reset zero; all trap-preserved",
         "accepted_producers": [],
         "accepted_consumers": [],
-        "mapping_status": "closed-no-accepted-0.59.0-instruction-mapping"
+        "mapping_status": "closed-no-accepted-0.59.1-instruction-mapping"
       },
       {
-        "id": "pto-isa-0590-tile-execution-mask",
-        "source_class": "active-0.59.0-architectural-state",
+        "id": "pto-isa-0591-tile-execution-mask",
+        "source_class": "active-0.59.1-architectural-state",
         "representation": "per-bundle GPR or PredicateCell ExecutionMask carrier",
         "width_bits": null,
         "count": 1,
@@ -304,7 +304,7 @@
           "pto.p* algebra",
           "pto.pst*"
         ],
-        "mapping_status": "closed-no-direct-pto-isa-0.59.0-mapping"
+        "mapping_status": "closed-no-direct-pto-isa-0.59.1-mapping"
       },
       {
         "id": "future-encoded-physical-predicate-register-mapping",
@@ -4854,37 +4854,37 @@
       "name": "TALLOC",
       "public_symbol": "TALLOC",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TAXPY",
       "public_symbol": "TAXPY",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TCONCAT",
       "public_symbol": "TCONCAT",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TDEINTERLEAVE",
       "public_symbol": "TDEINTERLEAVE",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TDEQUANT",
       "public_symbol": "TDEQUANT",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TEXTRACT",
       "public_symbol": "TEXTRACT",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TFILLPAD",
@@ -4896,19 +4896,19 @@
       "name": "TFREE",
       "public_symbol": "TFREE",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TGATHERB",
       "public_symbol": "TGATHERB",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "THISTOGRAM",
       "public_symbol": "THISTOGRAM",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TIMG2COL",
@@ -4920,19 +4920,19 @@
       "name": "TINSERT",
       "public_symbol": "TINSERT",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TINTERLEAVE",
       "public_symbol": "TINTERLEAVE",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TMRGSORT",
       "public_symbol": "TMRGSORT",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TPARTADD",
@@ -4944,13 +4944,13 @@
       "name": "TPARTARGMAX",
       "public_symbol": "TPARTARGMAX",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TPARTARGMIN",
       "public_symbol": "TPARTARGMIN",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TPARTMAX",
@@ -4974,31 +4974,31 @@
       "name": "TPOP",
       "public_symbol": "TPOP",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TPUSH",
       "public_symbol": "TPUSH",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TQUANT",
       "public_symbol": "TQUANT",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TRESHAPE",
       "public_symbol": "TRESHAPE",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TSORT",
       "public_symbol": "TSORT32",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.0 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.59.1 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TTRANS",
