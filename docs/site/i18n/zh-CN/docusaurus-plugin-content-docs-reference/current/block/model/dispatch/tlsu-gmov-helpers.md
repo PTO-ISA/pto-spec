@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-gmov-helpers-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元提供 GMOV 在 PE 间传送 Tile 值时使用的 descriptor 检查，防止 destination 接收可见 shape 或 CUBE metadata 不同的 source。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-gmov-helpers-concepts role=concepts-state -->
+## Source 与 destination 视图
+
+CUBE source 必须具有合法 CUBE descriptor 和已定义内容。其他 layout 使用通用 Tile descriptor 检查。destination matching 比较 allocation、numeric storage、shape、valid region、data type 与 layout。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-gmov-helpers-rules role=rules-interactions -->
+## 匹配规则
+
+两个 source descriptor 只有在 capacity、physical/valid shape、data type、layout、storage kind、CUBE repeat、cell count 与 CUBE storage bytes 全部一致时才匹配。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-gmov-helpers-boundaries role=boundaries -->
+## 边界
+
+这些 helper 只比较 descriptor state，不选择 source PE、不预留 destination、不传送 payload byte，也不建立 source completion。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-gmov-helpers-example role=example-usage -->
+## 示例
+
+两个 CUBE_M32 source 即使 rows 和 columns 相同，只要 CUBE cell count 不同，exact-source match 仍失败。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-gmov-helpers-related role=related-owners-navigation -->
+## 相关 owner
+
+- [GMOV dispatch](tlsu-gmov.md) 选择 PE source 与 destination。
+- [Descriptor legality](descriptor-legality.md) 拥有通用 Tile descriptor 检查。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

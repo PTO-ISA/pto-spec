@@ -54,8 +54,8 @@
     "recognized_operation_legality_or_handler_failure": "TileExecution_Rejected",
     "unknown_or_reserved_selector": "TileExecution_Rejected"
   },
-  "encoding_abi": "pto-isa-0.59.0-mode-function-v1",
-  "encoding_projection_sha256": "91509080ca656eb124f47830dcb09c50389dc177266b3b8df9d2d11dc37d5697",
+  "encoding_abi": "pto-isa-0.59.1-mode-function-v1",
+  "encoding_projection_sha256": "d90c881754d66f2cd26f6014d0b582cba88307e70123583d87fc59a918229c28",
   "family_counts": {
     "CUBE": 12,
     "TEPL": 79,
@@ -321,7 +321,7 @@
       "raw": "0xC1C19181"
     }
   ],
-  "release": "0.59.0",
+  "release": "0.59.1",
   "schema_version": 2,
   "tepl": {
     "accepted_functions": {

@@ -13,7 +13,7 @@
     },
     "reservations": {
       "path": "spec/catalog/extension-encoding-reservations.json",
-      "sha256": "6c4abcaf0503c0876df94ab86afdd24dfff56c83fa975f0bdc69e24cc065bbe0"
+      "sha256": "2724ec017009507e9fcb118c93b3f3241ddaf5d744ce9a393d713a86a9248301"
     },
     "scalar_forms": {
       "path": "spec/catalog/scalar-forms.json",
@@ -29,9 +29,9 @@
     }
   },
   "identity": {
-    "encoding_abi": "pto-isa-0.59.0-mode-function-v1",
-    "encoding_projection_sha256": "8b5d8bf219706971776024ff09629063df14a023ad11f4e7f101f4cc405995df",
-    "release": "0.59.0"
+    "encoding_abi": "pto-isa-0.59.1-mode-function-v1",
+    "encoding_projection_sha256": "d90c881754d66f2cd26f6014d0b582cba88307e70123583d87fc59a918229c28",
+    "release": "0.59.1"
   },
   "normative_source_count": 960,
   "normative_sources_sha256": "66a12136d36f78fc2eab663a1265705e3c1b5c59e7ea1682f8d39ab4e2cf01b2",

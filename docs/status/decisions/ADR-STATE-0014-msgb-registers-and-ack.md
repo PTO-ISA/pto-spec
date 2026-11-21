@@ -15,9 +15,7 @@
   "rejected": null,
   "superseded": null,
   "baseline": "42067d0f2890b8c013a868bd1247ebc6437b3179",
-  "target_releases": [
-    "unassigned"
-  ],
+  "target_releases": ["0.59.1.0"],
   "affected_ndf": [
     "PTO-ARCH-MSGB-IDENTITY-001",
     "PTO-ARCH-MSGB-STATE-001",

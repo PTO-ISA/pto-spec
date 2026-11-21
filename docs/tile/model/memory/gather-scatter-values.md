@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-values-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit builds detached results for indexed gather operations, including the predicate-masked form.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-values-concepts role=concepts-state -->
+## Concepts and state
+
+The index Tile supplies byte displacements from the base address. Execution-mask-inactive destinations take zero or a merge-base value, while active but predicate-disabled lanes retain the selected pad initialization.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-values-rules role=rules-interactions -->
+## Rules and interactions
+
+`MGATHERToValue` and `MGATHER_MASKToValue` preflight every active access before loading. They record indexed-load events and decode four-bit transfers into two logical destination columns.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-values-boundaries role=boundaries -->
+## Architectural boundaries
+
+Source and destination layouts, index types, shape, and definedness are asserted from prior legality checks. A data-access fault returns the original destination value before any load result is installed.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-values-example role=example-usage -->
+## Non-normative reading example
+
+For a four-bit destination, one active index loads one byte and writes its low and high nibbles into two adjacent logical columns.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-values-related role=related-owners-navigation -->
+## Related owners
+
+- [Related owner](load-store.md) defines translated loads, event recording, and memory-element decoding reused by indexed gathers.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

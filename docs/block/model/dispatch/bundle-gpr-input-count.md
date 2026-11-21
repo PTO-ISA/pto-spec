@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-bundle-gpr-input-count-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit counts the GPR-backed inputs that a complete Tile bundle consumes. The count lets command assembly keep the scalar-input stream dense while operations expose different operand shapes.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-bundle-gpr-input-count-concepts role=concepts-state -->
+## Counted inputs
+
+The count includes each present address, scalar, diagonal, or flag operand. Matrix fixed-point modes may add scalar pre-quantization and ReLU parameters, while an indexed TLSU range descriptor contributes its minimum and maximum bounds.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-bundle-gpr-input-count-rules role=rules-interactions -->
+## Counting rule
+
+Each present ordinary input contributes one slot. The two fixed-point parameters contribute only when their selected modes use scalar values. A present indexed range contributes two slots as one ordered pair.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-bundle-gpr-input-count-boundaries role=boundaries -->
+## Boundaries
+
+This helper reports a count from zero through seven. It does not validate the values in those GPRs or decide whether an operation, descriptor, or range is legal.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-bundle-gpr-input-count-example role=example-usage -->
+## Example
+
+An indexed gather with an address input and a range descriptor consumes three GPR inputs: one address plus the two signed bounds.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-bundle-gpr-input-count-related role=related-owners-navigation -->
+## Related owners
+
+- [Indexed TLSU range schema](indexed-tlsu-range-schema.md) decides when the two-bound descriptor is present.
+- [Control state](../state/control-state.md) owns the captured bundle operation and scalar bindings.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

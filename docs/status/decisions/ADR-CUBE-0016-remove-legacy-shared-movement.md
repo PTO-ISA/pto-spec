@@ -16,7 +16,8 @@
   "superseded": null,
   "baseline": "5114fb699fa510abd9a3c42bcfa5c592cd724961",
   "target_releases": [
-    "0.58.5"
+    "0.58.5",
+    "0.59.1.0"
   ],
   "affected_ndf": [
     "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",

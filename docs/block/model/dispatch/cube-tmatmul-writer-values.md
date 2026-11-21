@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-writer-values-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit computes matrix-operation outputs for the destinations already reserved by a complete bundle. It keeps value production separate from destination allocation and final publication.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-writer-values-concepts role=concepts-state -->
+## Writer values
+
+The writer-effect set can contain the primary destination and optional row-maximum or group-maximum destinations. Each entry carries a candidate Tile value that the selected TMATMUL or TMATMULMX path may replace.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-writer-values-rules role=rules-interactions -->
+## Value selection
+
+MX functions use the optional left and right scales. Other functions use the ordinary matrix path. Bias, accumulator, C-scale, partial-output, row-maximum, and group-maximum controls select the matching result paths.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-writer-values-boundaries role=boundaries -->
+## Boundaries
+
+Only destinations already present in the writer-effect set receive computed values. This unit does not validate descriptors, allocate Tile storage, or publish results before finalization.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-writer-values-example role=example-usage -->
+## Example
+
+For TMATMULMX with row-maximum enabled, the helper computes the matrix result and row result, then attaches each value only to its matching reserved destination.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-writer-values-related role=related-owners-navigation -->
+## Related owners
+
+- [CUBE TMATMUL dispatch](cube-tmatmul.md) selects the function and inputs.
+- [Local-generation CUBE writer effects](../operands/local-generation-cube-writer-effects.md) owns reservation and publication.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

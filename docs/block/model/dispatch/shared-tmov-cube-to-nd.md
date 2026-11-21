@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-cube-to-nd-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit converts one Local CUBE source into a candidate Shared ND value. It prepares the candidate record while Shared-generation owners retain assembly and publication responsibility.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-cube-to-nd-concepts role=concepts-state -->
+## Candidate state
+
+The selected form has one Local source and one Shared destination. The helper validates the source descriptor, capacity, valid region, carrier type, allocation mask, and destination generation mode before converting the source.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-cube-to-nd-rules role=rules-interactions -->
+## Candidate rule
+
+The candidate carries the converted Tile value and the destination allocation mask. With a current PE context, its initialized mask contains only that PE bit; without one, it uses the supplied Shared cohort mask.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-cube-to-nd-boundaries role=boundaries -->
+## Boundaries
+
+This path applies only to CUBE-to-ND Shared TMOV. Candidate construction sets neither whole-parent readiness nor publication and does not assemble fragments from multiple Local sources.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-cube-to-nd-example role=example-usage -->
+## Example
+
+A current PE with one defined CUBE_M16 source produces one ND candidate whose initialized mask contains that PE bit. Shared-generation processing later combines or publishes the candidate.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-cube-to-nd-related role=related-owners-navigation -->
+## Related owners
+
+- [Shared bindings](../operands/shared-bindings.md) identifies the destination and supplied PE mask.
+- [Shared generation](../operands/shared-generation.md) owns cross-PE assembly and publication.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

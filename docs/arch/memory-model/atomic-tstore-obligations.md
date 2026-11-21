@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-memory-model-atomic-tstore-obligations-purpose role=purpose-scope -->
+## Why drain lookup needs an occurrence
 
+Atomic TSTORE may pause at commit while an admitted GM obligation progresses. These lookups distinguish the current occurrence from other uses of the same static instruction address.
+
+<!-- PTO-READER-BLOCK: arch-memory-model-atomic-tstore-obligations-state role=concepts-state -->
+## Lookup identity
+
+The current Core and PE select the obligation table. The invocation, bundle PC and execution-domain token distinguish dynamic occurrences within that table.
+
+<!-- PTO-READER-BLOCK: arch-memory-model-atomic-tstore-obligations-rules role=rules-interactions -->
+## Which records remain visible
+
+`CurrentAtomicTStoreDrainPending` recognizes submitted, validated or issued captured work. `FindCurrentAtomicTStoreOccurrence` can also find a completed or cancelled record so the same domain can resolve a retry.
+
+<!-- PTO-READER-BLOCK: arch-memory-model-atomic-tstore-obligations-boundary role=boundaries -->
+## Invocation teardown
+
+`KernelHasIrrevocableAtomicTStore` scans the selected Core across its PEs for unfinished irrevocable work of the requested invocation. The GM obligation and kernel lifecycle owners perform progress and teardown.
+
+<!-- PTO-READER-BLOCK: arch-memory-model-atomic-tstore-obligations-example role=example-usage -->
+## Commit retry example
+
+When an atomic store finishes before its bundle retries commit, the occurrence lookup can still find the completed record for the same token. A later dynamic bundle at the same address uses a different token.
+
+<!-- PTO-READER-BLOCK: arch-memory-model-atomic-tstore-obligations-related role=related-owners-navigation -->
+## Related owners
+
+See [GM obligations](gm-obligations.md) for request state and [kernel lifecycle](../state/kernel-lifecycle.md) for invocation teardown.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

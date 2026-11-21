@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-values-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元实现 `TPERMUTE`、`TSHUF`、`TPACK` 和 `TUNPACK` 的值返回形式，用于 CUBE CELL 重排。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-values-concepts role=concepts-state -->
+## 概念与状态
+
+这些操作按 CELL 字节或原始 32 位平面处理，同时保留目的描述符。执行掩码非活动坐标使用零值或选定的合并基值。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-values-rules role=rules-interactions -->
+## 规则与交互
+
+`TPERMUTEToValue` 在首次写入前验证全部索引。`TSHUFToValue` 根据分段控制选择行，`TPACKToValue` 和 `TUNPACKToValue` 则组合或提取配置的字节范围。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-values-boundaries role=boundaries -->
+## 架构边界
+
+操作数和控制字段合法性由重排合法性单元拥有。这些辅助函数保持有效区域契约并使用 `TilePad_Null`，不执行指令解码或目的提交。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-values-example role=example-usage -->
+## 非规范阅读示例
+
+如果 `TPACKToValue` 控制字段从每个源选择两个字节，它会把这些字节范围组合到每个活动目的字中，非活动组保持为零或合并基值。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-values-related role=related-owners-navigation -->
+## 相关所有者
+
+- [相关所有者](rearrangement.md) 定义这些值构造器共同使用的字节、行和控制解释。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

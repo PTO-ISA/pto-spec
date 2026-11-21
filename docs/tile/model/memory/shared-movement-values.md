@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-values-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit builds detached Local values from Shared Tiles, per-PE Tile snapshots, or a GMOV source snapshot.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-values-concepts role=concepts-state -->
+## Concepts and state
+
+`SharedTileElementRegion` maps an element to one of four capacity regions. Shared-to-Local paths preserve descriptor shape and copy payload values into a caller-provided output target.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-values-rules role=rules-interactions -->
+## Rules and interactions
+
+`TMOVSharedToLocalToValue` reads a published Shared Tile. Without a valid current PE context, the per-PE form scans all four PE snapshots selected by the mask. With a valid current PE context, it narrows the scan to the current PE and copies that snapshot only when its mask bit is set. In both cases, mask `1111` marks the result contents and valid region defined; `GMOVFromSourceTileToValue` copies payload and definedness.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-values-boundaries role=boundaries -->
+## Architectural boundaries
+
+A zero PE mask returns the unchanged destination value. Callers establish allocation, publication, matching descriptors, and legal source generations before these helpers run.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-values-example role=example-usage -->
+## Non-normative reading example
+
+Without a current PE context, mask `1111` incorporates all four matching snapshots. With current PE context PE2, the same mask copies only the PE2 snapshot and still marks the result defined; the current-context selection has already narrowed execution to that PE.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-movement-values-related role=related-owners-navigation -->
+## Related owners
+
+- [Related owner](shared-movement-types.md) defines the container types used for per-PE snapshots.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

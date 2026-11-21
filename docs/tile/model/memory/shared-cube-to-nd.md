@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-cube-to-nd-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit converts one complete Local CUBE writer fragment into the row-major ND payload used by Shared assembly.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-cube-to-nd-concepts role=concepts-state -->
+## Concepts and state
+
+The source keeps its data type, capacity, logical columns, valid region, and element values. The result clears CUBE repeat and CELL metadata and rebuilds definedness in row-major coordinates.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-cube-to-nd-rules role=rules-interactions -->
+## Rules and interactions
+
+`SharedTileFromLocalCubeToND` verifies the source descriptor and writer capacity, copies every defined valid coordinate, and reports the copied valid-element count.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-cube-to-nd-boundaries role=boundaries -->
+## Architectural boundaries
+
+The caller performs faulting schema checks before entry. This helper accepts only `CUBE_M16` or `CUBE_M32`, does not publish the Shared parent, and does not infer missing source elements.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-cube-to-nd-example role=example-usage -->
+## Non-normative reading example
+
+A 16-row `CUBE_M16` fragment with eight valid columns becomes a row-major fragment with the same 128 logical values and the same writer capacity.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-shared-cube-to-nd-related role=related-owners-navigation -->
+## Related owners
+
+- [Related owner](../shape/cube-cell.md) defines the CUBE CELL geometry used when translating source coordinates.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

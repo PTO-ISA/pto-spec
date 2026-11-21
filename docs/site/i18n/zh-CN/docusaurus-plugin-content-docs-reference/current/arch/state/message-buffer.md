@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-purpose role=purpose-scope -->
+## 为何接收需要认领
 
+接收方先认领稳定的快照，再读取载荷字。独立的确认步骤让模型在出队前检查接收方是否已读完全部载荷。
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-state role=concepts-state -->
+## 寄存器两侧与所有权
+
+执行上下文选择自己的操作 bank。写入 `MSGBD` 暂存发送字，读取 `MSGBD` 使用接收快照。`ACR0` 负责 bank 的选择和配置。
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-rules role=rules-interactions -->
+## 读取、确认与释放
+
+认领分配新 token。接收方读完有效字后把 token 写入 `MSGBACK`。成功的 ACK 消费入队消息，快照仍可读取，直到用精确 token 做 RELEASE。
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-boundary role=boundaries -->
+## 重试与耗尽
+
+重复的旧 ACK 保留较新的认领状态。当尚未确认的活动快照使用最后一个认领身份时，RELEASE 保留该快照，接收方仍可读完并确认消息。
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-example role=example-usage -->
+## 接收一条短消息
+
+对于只有一个有效字的消息，先认领快照，读取该字，再用认领 token 确认，最后释放。提前 ACK 返回 `NotRead`，入队消息仍可接收。
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-related role=related-owners-navigation -->
+## 相关规范源
+
+有关 token 与 bank，参见 [Message Buffer 状态](message-buffer-state.md)，有关发送侧，参见 [Message Buffer 发送](message-buffer-send.md)。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

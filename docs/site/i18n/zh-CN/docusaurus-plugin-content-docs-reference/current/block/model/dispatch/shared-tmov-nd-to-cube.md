@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-nd-to-cube-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元把已发布 Shared ND source 转换为 Local CUBE writer 值。验证范围取决于执行是否选择了当前 PE context。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-nd-to-cube-concepts role=concepts-state -->
+## Fragment 视图
+
+选定的 CUBE layout 决定 physical rows 与 columns。每个 PE 把自己的 Shared ND rows、可选 subview offset、valid region、data type 与 carrier type 映射为一个候选 CUBE fragment。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-nd-to-cube-rules role=rules-interactions -->
+## 验证与执行
+
+没有当前 PE context 时，schema validation 检查 Shared mask 中的全部 participant。有有效 context 时，只检查当前参与 PE。执行物化当前 PE 的 fragment；没有当前 context 时则物化第一个 participant，并把该值记录到 Local-generation writer effect。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-nd-to-cube-boundaries role=boundaries -->
+## 边界
+
+此路径只适用于已发布 Shared ND source 和一个 Local destination binding。Local-generation owner 验证并发布最终 writer cohort；本单元自身不发布所有 participant destination。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-nd-to-cube-example role=example-usage -->
+## 示例
+
+有当前 PE context 时，只为该 PE 检查并物化合法 CUBE_M16 fragment。没有当前 context 时，preflight 先验证全部 masked PE fragment，执行再使用第一个 participant 的值。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tmov-nd-to-cube-related role=related-owners-navigation -->
+## 相关 owner
+
+- [Local-generation CUBE validation](../operands/local-generation-cube-validation.md) 检查 writer-cohort 一致性。
+- [Shared ND-to-CUBE memory model](../../../tile/model/memory/shared-nd-to-cube.md) 拥有 fragment 转换。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

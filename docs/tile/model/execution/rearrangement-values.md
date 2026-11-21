@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-values-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit implements value-returning forms of `TPERMUTE`, `TSHUF`, `TPACK`, and `TUNPACK` for CUBE cell rearrangement.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-values-concepts role=concepts-state -->
+## Concepts and state
+
+The operations work in cell bytes or raw 32-bit planes while retaining the destination descriptor. Execution-mask inactive coordinates use zero or the selected merge base.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-values-rules role=rules-interactions -->
+## Rules and interactions
+
+`TPERMUTEToValue` validates every index before its first write. `TSHUFToValue` selects rows by segment controls, while `TPACKToValue` and `TUNPACKToValue` assemble or extract configured byte ranges.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-values-boundaries role=boundaries -->
+## Architectural boundaries
+
+Operand and control legality is owned by the rearrangement legality units. These helpers preserve the valid-region contract and use `TilePad_Null`; they do not perform instruction decode or destination commit.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-values-example role=example-usage -->
+## Non-normative reading example
+
+A `TPACKToValue` control that selects two bytes from each source joins those byte ranges into each active destination word, leaving inactive groups at zero or their merge-base value.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-rearrangement-values-related role=related-owners-navigation -->
+## Related owners
+
+- [Related owner](rearrangement.md) defines the shared byte, row, and control interpretation used by these value builders.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

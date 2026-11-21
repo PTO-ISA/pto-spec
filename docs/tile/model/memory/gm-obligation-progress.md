@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-obligation-progress-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit advances captured Tile-store and atomic-store global-memory obligations for one kernel invocation.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-obligation-progress-concepts role=concepts-state -->
+## Concepts and state
+
+Each obligation carries its owning core, PE, invocation, program order, collective history, encoded request, bundle bindings, source snapshot, and progress point.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-obligation-progress-rules role=rules-interactions -->
+## Rules and interactions
+
+`ProgressKernelGMObligationsForCore` installs the captured request context, issues validated obligations, runs bounded progress, records completion or fault, and restores the caller context while retaining real reservation invalidation.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-obligation-progress-boundaries role=boundaries -->
+## Architectural boundaries
+
+Progress may be deferred by the verification control. Faults stay with the captured request owner, and abort cleanup retires source lifetimes only after irrevocable obligations quiesce.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-obligation-progress-example role=example-usage -->
+## Non-normative reading example
+
+If one atomic-store obligation has one remaining beat, the scheduler selects its saved PE context, commits that beat, finalizes the occurrence when appropriate, then restores the originally selected PE.
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gm-obligation-progress-related role=related-owners-navigation -->
+## Related owners
+
+- [Related owner](atomic-tstore.md) defines the atomic-store progress function used for captured atomic obligations.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

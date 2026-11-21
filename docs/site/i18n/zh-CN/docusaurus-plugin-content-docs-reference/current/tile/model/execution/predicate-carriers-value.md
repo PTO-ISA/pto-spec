@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-value-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元把 GPR 谓词载体转换为分离的 CUBE 值，并把 GPR 承载的谓词应用到 CUBE 选择操作。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-value-concepts role=concepts-state -->
+## 概念与状态
+
+`TGPR2TToValue` 接收四个 GPR 源和一个 `U8` CUBE 目的。`CUBE_M32` 使用 32 乘 4 形状，`CUBE_M16` 使用 16 乘 8 形状；舍入模式字段选择字节偏移。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-value-rules role=rules-interactions -->
+## 规则与交互
+
+辅助函数先初始化填充，只写入执行掩码活动坐标，再把有效区域标记为已定义。选择辅助函数在应用高低 GPR 掩码字之前验证数值 CUBE 源。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-value-boundaries role=boundaries -->
+## 架构边界
+
+只有已接受的 CUBE 布局、精确形状、填充设置和舍入模式值合法。这些函数返回值，不分配或提交目的状态。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-value-example role=example-usage -->
+## 非规范阅读示例
+
+当目的为 `CUBE_M32` 且字节偏移为 2 时，`TGPR2TToValue` 把来自四个 GPR 的一个打包谓词字节写入每个活动行的第 2 列。
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-value-related role=related-owners-navigation -->
+## 相关所有者
+
+- [相关所有者](predicate-carriers.md) 定义本单元使用的谓词打包和 CUBE GPR 掩码解释。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

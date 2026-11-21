@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-purpose role=purpose-scope -->
+## Why receiving has a claim step
 
+A receiver claims a stable snapshot before reading payload words. A separate acknowledgement lets the model verify that the receiver read the complete payload before dequeuing it.
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-state role=concepts-state -->
+## Register sides and ownership
+
+The executing context selects its operational bank. An `MSGBD` write stages a transmit word and an `MSGBD` read uses the receive snapshot. `ACR0` owns bank selection and configuration.
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-rules role=rules-interactions -->
+## Read, acknowledge and release
+
+A claim allocates a fresh token. The receiver reads the valid words and writes the token to `MSGBACK`. A successful ACK consumes the queued message and keeps the snapshot readable until exact-token RELEASE.
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-boundary role=boundaries -->
+## Retries and exhaustion
+
+A duplicate old ACK leaves a newer claim intact. When a live unacknowledged snapshot uses the final claim identity, RELEASE preserves it so the receiver can finish reading and acknowledging the message.
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-example role=example-usage -->
+## A short receive
+
+For a packet with one valid word, claim the snapshot, read that word, acknowledge with its claim token and then release it. An early ACK reports `NotRead` and leaves the queued message available.
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-related role=related-owners-navigation -->
+## Related owners
+
+See [Message Buffer state](message-buffer-state.md) for tokens and banks and [Message Buffer send](message-buffer-send.md) for the transmitting side.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-atomic-tstore-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元从完整 bundle dispatch strided atomic TSTORE，并在接纳任何 global-memory 工作前执行 descriptor、mask、address、source 与 obligation preflight。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-atomic-tstore-concepts role=concepts-state -->
+## 每 PE request
+
+participant mask 独立选择各 PE。被选 PE 解析一个 Local 或 Shared source snapshot、stride、operation encoding、execution-mask state，以及拥有进度的 GM obligation。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-atomic-tstore-rules role=rules-interactions -->
+## 接纳规则
+
+所有 descriptor 与 snapshot encoding 必须合法，source data 必须已定义，bounds 与 execution mask 必须适配 source schema。preflight 成功后捕获 source lifetime，并启动或推进 atomic request。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-atomic-tstore-boundaries role=boundaries -->
+## 边界
+
+未参与 PE 不产生 request effect。preflight 失败既不产生 GM effect，也不创建不可变 source occurrence。已接纳且不可撤销的工作在 retry 处理中保留 obligation。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-atomic-tstore-example role=example-usage -->
+## 示例
+
+带 mask 的 TSTORE.ADD 只更新 active source element。mask coordinate 超出范围时，在接纳任何 atomic write 前拒绝 preflight。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-atomic-tstore-related role=related-owners-navigation -->
+## 相关 owner
+
+- [Atomic TSTORE source lifetime](../state/atomic-tstore-source-lifetime.md) 拥有 last-use capture。
+- [Atomic TSTORE memory model](../../../tile/model/memory/atomic-tstore.md) 拥有 snapshot progress 与 effect。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

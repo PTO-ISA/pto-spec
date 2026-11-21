@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-values-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元为索引 gather 操作构造分离结果，包括带谓词掩码的形式。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-values-concepts role=concepts-state -->
+## 概念与状态
+
+索引 Tile 提供相对基地址的字节位移。执行掩码非活动目的采用零值或合并基值，活动但谓词禁用的 lane 保持所选填充初始化。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-values-rules role=rules-interactions -->
+## 规则与交互
+
+`MGATHERToValue` 与 `MGATHER_MASKToValue` 在加载前预检全部活动访问。它们记录索引加载事件，并把四位传输解码到相邻的两个逻辑目的列。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-values-boundaries role=boundaries -->
+## 架构边界
+
+源与目的布局、索引类型、形状和已定义状态由先前合法性检查保证。数据访问故障会在安装任何加载结果前返回原始目的值。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-values-example role=example-usage -->
+## 非规范阅读示例
+
+对于四位目的，一个活动索引加载一个字节，并把低、高清 nibble 写入相邻的两个逻辑列。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-gather-scatter-values-related role=related-owners-navigation -->
+## 相关所有者
+
+- [相关所有者](load-store.md) 定义索引 gather 复用的翻译加载、事件记录和内存元素解码。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

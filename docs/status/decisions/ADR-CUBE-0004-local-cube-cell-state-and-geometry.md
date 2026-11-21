@@ -17,7 +17,8 @@
   "baseline": "0b8ce516ffe998b24c4bae4c1a9dbca2e0d76510",
   "target_releases": [
     "0.58.3",
-    "0.59.0"
+    "0.59.0",
+    "0.59.1.0"
   ],
   "affected_ndf": [
     "PTO-CUBE-AUX-CELLREG-001",

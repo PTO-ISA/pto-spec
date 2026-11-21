@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-gmov-helpers-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit supplies descriptor checks used while GMOV transfers Tile values between PEs. The checks keep a destination from accepting a source whose visible shape or CUBE metadata differs.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-gmov-helpers-concepts role=concepts-state -->
+## Source and destination views
+
+A CUBE source must have a legal CUBE descriptor and defined contents. Other layouts use the general Tile descriptor check. Destination matching compares allocation, numeric storage, shape, valid region, data type, and layout.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-gmov-helpers-rules role=rules-interactions -->
+## Match rules
+
+Two source descriptors match only when capacity, physical and valid shape, data type, layout, storage kind, CUBE repeats, cell count, and CUBE storage bytes all agree.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-gmov-helpers-boundaries role=boundaries -->
+## Boundaries
+
+These helpers compare descriptor state. They do not select the source PE, reserve a destination, transfer payload bytes, or establish source completion.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-gmov-helpers-example role=example-usage -->
+## Example
+
+Two CUBE_M32 sources with equal rows and columns still fail the exact-source match if their CUBE cell counts differ.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-gmov-helpers-related role=related-owners-navigation -->
+## Related owners
+
+- [GMOV dispatch](tlsu-gmov.md) selects PE sources and destinations.
+- [Descriptor legality](descriptor-legality.md) owns general Tile descriptor checks.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

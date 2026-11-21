@@ -12,25 +12,40 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
-The High Speed Config Bus (HSCB) connects the scheduler with resident worker
-threads through their Message Buffers (MSGBs). Each of the four physical PEs
-in the reference core runs two independently addressable hardware threads.
-A worker announces READY after it has initialized its bank. The scheduler
-sends it a LAUNCH containing a dispatch ID, the kernel entry PC, and an
-argument. After the kernel returns, that worker sends DONE with the same ID
-and the return value, then waits for another launch.
+<!-- PTO-READER-BLOCK: arch-state-hscb-dispatch-purpose role=purpose-scope -->
+## What HSCB dispatch coordinates
+
+The High Speed Config Bus (HSCB) connects the scheduler with resident worker threads through their Message Buffers (MSGBs). Each of the four physical PEs in the reference core runs two independently addressable hardware threads. A worker announces READY after it has initialized its bank. The scheduler sends it a LAUNCH containing a dispatch ID, the kernel entry PC, and an argument. After the kernel returns, that worker sends DONE with the same ID and the return value, then waits for another launch. Keeping dispatch identity separate from message receipt lets the worker release the inbox before the kernel returns.
+
+<!-- PTO-READER-BLOCK: arch-state-hscb-dispatch-state role=concepts-state -->
+## Worker and dispatch identity
+
+READY identifies the worker using the trusted transport source. An outstanding dispatch tracks the worker's invocation, dispatch ID and exact LAUNCH message identity. The addressed ACR0 endpoint also carries `BLOCKNUM` and `BLOCKID` for that dispatch.
+
+<!-- PTO-READER-BLOCK: arch-state-hscb-dispatch-rules role=rules-interactions -->
+## From admission to completion
+
+A ready worker claims the matching LAUNCH and reads its full payload before acknowledging and releasing the snapshot. The scheduler clears the dispatch when it consumes the worker's matching DONE.
+
+<!-- PTO-READER-BLOCK: arch-state-hscb-dispatch-boundary role=boundaries -->
+## Geometry lifetime
+
+The worker reads its bound geometry while the dispatch is outstanding. Completion or invocation teardown restores the ambient register view. The existing `HSCBIssueLaunch` entry supplies `1/0`.
 
 BWE retires after publishing the architectural WaitEvent request. An enabled
 HSCB platform can observe that request and park its caller while the bank is
 empty. An already queued or subsequently admitted message allows the worker
 to proceed. The worker checks its bank after waking.
 
-The receiver uses the transport source identity to associate READY and DONE
-with a worker. A mailbox ACK records consumption of a packet. Kernel
-completion is established by a matching DONE. The scheduler service below
-uses the [message-buffer send](message-buffer-send.md) and
-[receive and acknowledgement](message-buffer.md) rules; the
-[state owner](message-buffer-state.md) describes the banks and identifiers.
+<!-- PTO-READER-BLOCK: arch-state-hscb-dispatch-example role=example-usage -->
+## Interleaved workers
+
+Two sibling workers can run with different logical block IDs. When the scheduler consumes one worker's matching DONE, the other worker keeps reading its own geometry.
+
+<!-- PTO-READER-BLOCK: arch-state-hscb-dispatch-related role=related-owners-navigation -->
+## Related owners
+
+See [Message Buffer send](message-buffer-send.md) for admission, [receive and acknowledgement](message-buffer.md) for the receive protocol, and [Message Buffer state](message-buffer-state.md) for endpoint selection.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

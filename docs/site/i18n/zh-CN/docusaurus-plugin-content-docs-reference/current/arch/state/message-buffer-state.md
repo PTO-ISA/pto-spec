@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-state-purpose role=purpose-scope -->
+## 为何每个 worker 需要独立的 bank
 
+通信状态属于端点。独立 bank 让同级上下文分别暂存、接收和确认消息，同时在精确恢复期间保留状态。
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-state-state role=concepts-state -->
+## 端点拥有的状态
+
+模型按 Core、PE、硬件线程槽及 ACR 选择 worker bank。其状态包括暂存字、队列、接收快照、诊断、身份推进和重放回执。
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-state-rules role=rules-interactions -->
+## 传输身份与接收身份
+
+已接纳的消息保留源端点、源 epoch 和发送序号。每次接收认领都有自己的 token，由接收 epoch 与认领序号组成。
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-state-boundary role=boundaries -->
+## 退役时的状态
+
+相关 bank 达到静止状态后，退役清除 invocation 私有状态。已接纳到另一 Core 的包由目标 bank 持有队列副本。清理期间保留域绑定与身份推进状态。
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-state-example role=example-usage -->
+## 同级端点示例
+
+在 Core `0`、PE `0`、ACR `0` 上，模型线程槽 `0` 和 `1` 分别选择端点索引 `0` 和 `64`。各自的认领状态属于不同的 bank。
+
+<!-- PTO-READER-BLOCK: arch-state-message-buffer-state-related role=related-owners-navigation -->
+## 相关规范源
+
+有关访问，参见 [Message Buffer 寄存器](message-buffer.md)，有关接纳和重放，参见 [Message Buffer 发送](message-buffer-send.md)。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

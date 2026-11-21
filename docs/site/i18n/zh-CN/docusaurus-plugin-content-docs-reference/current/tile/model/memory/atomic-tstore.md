@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-memory-atomic-tstore-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元把带步长的原子 `TSTORE` 实现为经过预检的逐元素全局内存归约序列。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-atomic-tstore-concepts role=concepts-state -->
+## 概念与状态
+
+预检在任何原子效果发生前记录执行掩码选中的全部翻译目标。推进阶段随后使用捕获的 Tile 快照，并精确记录已提交的元素。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-atomic-tstore-rules role=rules-interactions -->
+## 规则与交互
+
+`ExecuteAtomicTStoreSnapshotProgress` 读取旧值、计算所选归约、存入新值、把义务标记为不可撤销，并记录一个原子事件。完成后，收尾逻辑更新 occurrence 和源生命周期状态。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-atomic-tstore-boundaries role=boundaries -->
+## 架构边界
+
+预检故障不会产生原子存储。一旦某元素提交，后续推进不能回滚它；重试会跳过已记录的提交元素并保持请求身份。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-atomic-tstore-example role=example-usage -->
+## 非规范阅读示例
+
+如果 beat 预算为一，一个两元素义务先提交第一个活动元素并返回 pending。下一次推进从已记录位置继续并完成第二个元素。
+
+<!-- PTO-READER-BLOCK: tile-model-memory-atomic-tstore-related role=related-owners-navigation -->
+## 相关所有者
+
+- [相关所有者](load-store.md) 定义原子 `TSTORE` 复用的普通 Tile 存储寻址和推进约定。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

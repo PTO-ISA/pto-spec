@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-value-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit converts GPR predicate carriers into detached CUBE values and applies GPR-carried predicates to CUBE select operations.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-value-concepts role=concepts-state -->
+## Concepts and state
+
+`TGPR2TToValue` accepts four GPR sources and a `U8` CUBE destination. `CUBE_M32` uses a 32-by-4 shape, while `CUBE_M16` uses a 16-by-8 shape; the rounding-mode field selects the byte offset.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-value-rules role=rules-interactions -->
+## Rules and interactions
+
+The helper initializes padding, writes only execution-mask-active coordinates, and marks the valid region defined. The select helpers validate numeric CUBE sources before applying the low and high GPR mask words.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-value-boundaries role=boundaries -->
+## Architectural boundaries
+
+Only the accepted CUBE layouts, exact shapes, pad setting, and rounding-mode values are legal. These functions return values and do not allocate or commit destination state.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-value-example role=example-usage -->
+## Non-normative reading example
+
+With a `CUBE_M32` destination and byte offset 2, `TGPR2TToValue` places one packed predicate byte from the four GPRs into column 2 of each active row.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-predicate-carriers-value-related role=related-owners-navigation -->
+## Related owners
+
+- [Related owner](predicate-carriers.md) defines the predicate packing and CUBE GPR-mask interpretation used here.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

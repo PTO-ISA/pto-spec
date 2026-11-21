@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-writer-effects-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit stages CUBE destination writes as explicit writer effects. Staging keeps writer-view validation and payload merging separate from the operation that computes a value.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-writer-effects-concepts role=concepts-state -->
+## Writer-effect record
+
+Each effect stores a destination, cell offset and count, size code, PE mask, the intact parent Tile, and a writer Tile view. A computed operation result replaces the matching writer view.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-writer-effects-rules role=rules-interactions -->
+## Staging and merge
+
+Preflight derives a legal writer view for the declared range. Finish copies defined elements from each validated writer view into that exact parent range, recomputes parent definedness, and installs the merged parent at the destination.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-writer-effects-boundaries role=boundaries -->
+## Boundaries
+
+The effect set is bounded by PTO_BUNDLE_TILE_BINDING_COUNT, currently 16. An illegal writer view or a full set rejects addition. This unit does not store captured generations, writer-PE identities, or execution identities.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-writer-effects-example role=example-usage -->
+## Example
+
+A writer view covering one CUBE cell range can receive a computed TMATMUL value. Finish merges that range into the preserved parent while leaving other parent elements intact.
+
+<!-- PTO-READER-BLOCK: block-model-operands-local-generation-cube-writer-effects-related role=related-owners-navigation -->
+## Related owners
+
+- [CUBE validation](local-generation-cube-validation.md) checks writer ranges and cohort agreement before finalization.
+- [CUBE TMATMUL writer values](../dispatch/cube-tmatmul-writer-values.md) computes matrix outputs for these effects.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

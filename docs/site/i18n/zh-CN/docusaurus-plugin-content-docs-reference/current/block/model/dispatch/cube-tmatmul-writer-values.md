@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-writer-values-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元为完整 bundle 已预留的 destination 计算矩阵操作输出。它将数值生成与 destination 分配、最终发布分开。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-writer-values-concepts role=concepts-state -->
+## Writer 数值
+
+writer-effect 集合可包含主 destination，以及可选的 row-maximum 或 group-maximum destination。每个条目携带候选 Tile 值，选定的 TMATMUL 或 TMATMULMX 路径可替换该值。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-writer-values-rules role=rules-interactions -->
+## 数值选择
+
+MX function 使用可选的左右 scale；其他 function 使用普通矩阵路径。bias、accumulator、C-scale、partial-output、row-maximum 与 group-maximum 控制选择对应结果。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-writer-values-boundaries role=boundaries -->
+## 边界
+
+只有 writer-effect 集合中已有的 destination 才取得计算值。本单元不验证 descriptor、不分配 Tile 存储，也不在 finalize 前发布结果。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-writer-values-example role=example-usage -->
+## 示例
+
+TMATMULMX 启用 row-maximum 时，helper 计算矩阵结果和行结果，并只把每个值附加到对应的已预留 destination。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-cube-tmatmul-writer-values-related role=related-owners-navigation -->
+## 相关 owner
+
+- [CUBE TMATMUL dispatch](cube-tmatmul.md) 选择 function 和输入。
+- [Local-generation CUBE writer effects](../operands/local-generation-cube-writer-effects.md) 拥有预留和发布。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

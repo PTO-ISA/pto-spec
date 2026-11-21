@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-helpers-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元提供 Shared store 与 Shared-to-Local TMOV dispatch 共用的 shape 和 carrier 检查，使两个方向都遵循同一套已解析 bundle schema。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-helpers-concepts role=concepts-state -->
+## Shared schema
+
+bundle dimension 在每个值可由 16 位表示时提供 valid columns、valid rows 和 physical columns。TMOV 还比较 capacity、shape、data type、layout 与解析后的 operation carrier。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-helpers-rules role=rules-interactions -->
+## 兼容规则
+
+E6M2 与 RCPE6M2 要求和 Shared source interpretation 具有兼容 carrier width。Shared-to-Local destination 要求恰好一个 Shared binding 与一个标记为 last 的 Local destination，并且 PE mask 与 schema 相符。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-helpers-boundaries role=boundaries -->
+## 边界
+
+大于 65535 的 dimension 映射为零，后续正数 shape 检查会拒绝它。空 participant mask 在读取 Shared record 前处理。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-helpers-example role=example-usage -->
+## 示例
+
+Shared E6M2 source 只有在 capacity、valid region、physical columns、layout、PE mask 与 carrier width 全部匹配时，才可填充 Local destination。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-shared-tlsu-helpers-related role=related-owners-navigation -->
+## 相关 owner
+
+- [Shared generation](../operands/shared-generation.md) 解析 Shared subview 与 participant mask。
+- [Destination shape](destination-shape.md) 解析 Local destination 几何。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

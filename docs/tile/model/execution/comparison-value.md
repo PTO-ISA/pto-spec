@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-value-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit produces detached Tile values for compare and select operations. It lets dispatch compute a result before the destination is committed.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-value-concepts role=concepts-state -->
+## Concepts and state
+
+Compare paths build predicate results and accumulate numeric status flags. Select paths build numeric results from a predicate Tile or CUBE predicate carrier, while the execution mask controls inactive CUBE coordinates.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-value-rules role=rules-interactions -->
+## Rules and interactions
+
+`ExecuteTileCompareAsToValue` and its scalar form compare every valid coordinate using the resolved operation type. `ExecuteTileSelectToValue` and `ExecuteTileSelectScalarToValue` choose the true or false input, define the valid region, and apply the current pad value.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-value-boundaries role=boundaries -->
+## Architectural boundaries
+
+The caller establishes operand legality and supplies an allocated output target. This unit does not allocate a Tile, resolve instruction operands, or commit the returned value.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-value-example role=example-usage -->
+## Non-normative reading example
+
+For a two-by-two predicate mask, `ExecuteTileSelectToValue` selects the matching element from `source_true` or `source_false` at each valid coordinate, then returns one complete `TileInfo` value.
+
+<!-- PTO-READER-BLOCK: tile-model-execution-comparison-value-related role=related-owners-navigation -->
+## Related owners
+
+- [Related owner](comparison.md) defines the element comparison and predicate-carrier mechanisms used here.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

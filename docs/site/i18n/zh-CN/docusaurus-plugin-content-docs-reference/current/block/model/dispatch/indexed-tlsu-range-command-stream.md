@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-command-stream-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元强制双 GPR indexed TLSU range descriptor 的命令流相邻关系，避免把无关命令误当成 descriptor 的第二个边界。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-command-stream-concepts role=concepts-state -->
+## 待接收的第二边界
+
+第一个合格 B.IOR record 之后，第二个标量绑定槽记录后续 B.IOR 是否可完成连续 range 对。该标记只适用于存在 range descriptor 的 indexed TLSU 操作。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-command-stream-rules role=rules-interactions -->
+## 命令流规则
+
+索引一处连续出现的第二个标量绑定合法。无关命令插入时会清除标记；之后再出现第二个 B.IOR，会在绑定和操作 effect 前触发 Fault_BundleControl。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-command-stream-boundaries role=boundaries -->
+## 边界
+
+只有第一个 descriptor 仍然合法。不使用 indexed range 的操作，以及不在相关第二绑定位置的命令，保持既有命令流行为。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-command-stream-example role=example-usage -->
+## 示例
+
+indexed gather range 使用两个相邻 B.IOR record 表示 minimum 与 maximum。在两者之间插入其他命令，会使后一个 B.IOR 不能作为第二边界。
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-command-stream-related role=related-owners-navigation -->
+## 相关 owner
+
+- [Indexed TLSU range schema](indexed-tlsu-range-schema.md) 识别适用操作与 descriptor。
+- [Scalar schema](scalar-schema.md) 拥有 B.IOR 绑定索引。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

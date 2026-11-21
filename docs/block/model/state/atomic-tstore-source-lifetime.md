@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-state-atomic-tstore-source-lifetime-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit pins Local or Shared source payloads used by admitted atomic TSTORE work. The lifetime prevents a Tile slot from being reused while an irrevocable global-memory request still depends on its captured value.
+
+<!-- PTO-READER-BLOCK: block-model-state-atomic-tstore-source-lifetime-concepts role=concepts-state -->
+## Lifetime identity
+
+A lifetime occurrence records Core, invocation, execution domain, operation identity, participant mask, source selector, payload generation, and per-PE completion. Atomic Local cohorts retain one exact tuple for each participating PE.
+
+<!-- PTO-READER-BLOCK: block-model-state-atomic-tstore-source-lifetime-rules role=rules-interactions -->
+## Capture and completion
+
+Capture occurs only after address, read, and write preflight succeeds. Completion consumes a captured payload generation only after all participants finish and no other incomplete lifetime pins the same source tuple.
+
+<!-- PTO-READER-BLOCK: block-model-state-atomic-tstore-source-lifetime-boundaries role=boundaries -->
+## Boundaries
+
+Reuse bindings do not create a new lifetime. Failed admission leaves no immutable occurrence. Domain squash removes reversible captures but retains a capture owned by exact irrevocable work; invocation retirement removes remaining records.
+
+<!-- PTO-READER-BLOCK: block-model-state-atomic-tstore-source-lifetime-example role=example-usage -->
+## Example
+
+If two atomic stores still reference Local Tile 5 at generation 11, completion of the first does not consume that generation. The second completion releases it after the final pin disappears.
+
+<!-- PTO-READER-BLOCK: block-model-state-atomic-tstore-source-lifetime-related role=related-owners-navigation -->
+## Related owners
+
+- [Source lifetime](source-lifetime.md) owns the common occurrence model.
+- [Atomic TSTORE dispatch](../dispatch/tlsu-atomic-tstore.md) captures the occurrence after successful preflight.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

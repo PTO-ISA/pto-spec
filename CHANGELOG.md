@@ -5,8 +5,22 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ## Release 0.59.1.0
 
+### Architecture
+- [ADR-STATE-0015](docs/status/decisions/ADR-STATE-0015-hscb-message-dispatch.md): High Speed Config Bus delivery and Message Buffer worker dispatch
+
 ### Cross-cutting
+- [ADR-BLOCK-0005](docs/status/decisions/ADR-BLOCK-0005-complete-bundle-bior-schema-and-defaults.md): Complete-Bundle B.IOR Schema and Defaults
+- [ADR-BLOCK-0016](docs/status/decisions/ADR-BLOCK-0016-b-range-modifiers.md): B.SUBVIEW and B.ASSEMBLE range-modifier association
+- [ADR-CUBE-0004](docs/status/decisions/ADR-CUBE-0004-local-cube-cell-state-and-geometry.md): Local CUBE CELL State and Geometry
+- [ADR-CUBE-0005](docs/status/decisions/ADR-CUBE-0005-gm-local-cube-layout-transport.md): GM/Local CUBE Layout Transport
+- [ADR-CUBE-0016](docs/status/decisions/ADR-CUBE-0016-remove-legacy-shared-movement.md): Remove legacy Shared movement Functions
+- [ADR-GOV-0015](docs/status/decisions/ADR-GOV-0015-0590-0-to-0591-compatibility.md): PTO ISA 0.59.0.0 to 0.59.1 compatibility and release identity
+- [ADR-MEM-0009](docs/status/decisions/ADR-MEM-0009-tlsu-and-global-memory-operations.md): TLSU and global-memory operations
+- [ADR-MEM-0011](docs/status/decisions/ADR-MEM-0011-cross-core-visibility-fence-atomic-replay.md): Cross-agent visibility, fence transport, atomic ordering, and precise replay
+- [ADR-SCALAR-0007](docs/status/decisions/ADR-SCALAR-0007-sync-core-collective-phase-barrier.md): SYNC.CORE collective architectural phase barrier
+- [ADR-STATE-0014](docs/status/decisions/ADR-STATE-0014-msgb-registers-and-ack.md): Opt-in MSGB registers, BSE admission and exact SSRSET ACK
 - [ADR-STATE-0016](docs/status/decisions/ADR-STATE-0016-hscb-block-launch-geometry.md): HSCB one-dimensional block launch geometry
+- [ADR-TILE-0008](docs/status/decisions/ADR-TILE-0008-tile-elementwise-and-irregular-operations.md): Tile elementwise and irregular operations
 
 ## Release 0.59.0
 
@@ -162,13 +176,11 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-STATE-0004](docs/status/decisions/ADR-STATE-0004-acr-routing-and-context-reset.md): PTO v0 ACR routing and context reset
 - [ADR-STATE-0005](docs/status/decisions/ADR-STATE-0005-visible-ebarg-snapshot.md): Make EBARG the visible PTO v0 trap snapshot
 - [ADR-STATE-0007](docs/status/decisions/ADR-STATE-0007-interrupt-pending-and-timer-state.md): Define interrupt pending and timer state
-- [ADR-STATE-0015](docs/status/decisions/ADR-STATE-0015-hscb-message-dispatch.md): High Speed Config Bus delivery and Message Buffer worker dispatch
 
 ### Block
 - [ADR-STATE-0011](docs/status/decisions/ADR-STATE-0011-bundle-operation-descriptor-and-commit.md): Bundle operation descriptor and transactional commit
 
 ### Cross-cutting
-- [ADR-BLOCK-0005](docs/status/decisions/ADR-BLOCK-0005-complete-bundle-bior-schema-and-defaults.md): Complete-Bundle B.IOR Schema and Defaults
 - [ADR-BLOCK-0006](docs/status/decisions/ADR-BLOCK-0006-tile-classification-and-engine-aliases.md): Tile Classification and Execution-Engine Aliases
 - [ADR-BLOCK-0007](docs/status/decisions/ADR-BLOCK-0007-complete-bundle-gpr-operand-resolution.md): Complete-Bundle GPR Operand Resolution
 - [ADR-BLOCK-0019](docs/status/decisions/ADR-BLOCK-0019-bstart-tload-convolution-weight-to-shared.md): BSTART.TLOAD convolution weights to Shared NK
@@ -178,7 +190,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-MEM-0002](docs/status/decisions/ADR-MEM-0002-production-memory-events-and-atomic-corners.md): Production memory events and atomic corners
 - [ADR-MEM-0006](docs/status/decisions/ADR-MEM-0006-tlsu-four-bit-memory-packing.md): TLSU four-bit memory packing and totality
 - [ADR-MEM-0007](docs/status/decisions/ADR-MEM-0007-pto-encoding-ownership-and-gm-access.md): PTO Encoding Ownership and Per-PE GM Access
-- [ADR-MEM-0011](docs/status/decisions/ADR-MEM-0011-cross-core-visibility-fence-atomic-replay.md): Cross-agent visibility, fence transport, atomic ordering, and precise replay
 - [ADR-NUM-0001](docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md): Numeric profile identity and bounded variation framework
 - [ADR-NUM-0002](docs/status/decisions/ADR-NUM-0002-scalar-numeric-flag-state-and-ownership.md): Scalar numeric flag state and producer ownership
 - [ADR-NUM-0003](docs/status/decisions/ADR-NUM-0003-numeric-rounding-selector-ownership.md): Numeric rounding selector ownership
@@ -190,7 +201,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-NUM-0010](docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md): Hardware numeric subnormal policy
 - [ADR-NUM-0011](docs/status/decisions/ADR-NUM-0011-hardware-special-value-checkpoint.md): Hardware special-value result checkpoint
 - [ADR-SCALAR-0004](docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md): Scalar FSU totality and numeric-profile boundary
-- [ADR-SCALAR-0007](docs/status/decisions/ADR-SCALAR-0007-sync-core-collective-phase-barrier.md): SYNC.CORE collective architectural phase barrier
 - [ADR-STATE-0001](docs/status/decisions/ADR-STATE-0001-pto-owned-system-register-names.md): Use PTO-owned system-register names
 - [ADR-STATE-0002](docs/status/decisions/ADR-STATE-0002-architectural-state-contract.md): Define the PTO architectural state contract
 - [ADR-STATE-0003](docs/status/decisions/ADR-STATE-0003-scalar-tpc-and-execution-status.md): scalar TPC and execution status
@@ -199,7 +209,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-STATE-0010](docs/status/decisions/ADR-STATE-0010-scalar-pc-relative-and-return-address.md): Scalar PC-relative and return-address state
 - [ADR-STATE-0012](docs/status/decisions/ADR-STATE-0012-uniform-instruction-attempt-status.md): Uniform instruction-attempt status and fault isolation
 - [ADR-STATE-0013](docs/status/decisions/ADR-STATE-0013-scalar-sys-totality-and-profile-boundaries.md): Scalar SYS totality and PTO-v0 profile boundaries
-- [ADR-STATE-0014](docs/status/decisions/ADR-STATE-0014-msgb-registers-and-ack.md): Opt-in MSGB registers, BSE admission and exact SSRSET ACK
 - [ADR-TILE-0001](docs/status/decisions/ADR-TILE-0001-tile-capacity-and-packed-storage.md): Define tile capacity and packed storage
 - [ADR-TILE-0002](docs/status/decisions/ADR-TILE-0002-element-level-tile-definedness.md): Track tile definedness per element
 - [ADR-TILE-0003](docs/status/decisions/ADR-TILE-0003-explicit-tile-handoff-slots.md): Define explicit tile handoff slots

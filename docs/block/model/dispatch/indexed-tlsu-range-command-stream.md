@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-command-stream-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit enforces the command-stream adjacency required by a two-GPR indexed TLSU range descriptor. It prevents an unrelated command from being mistaken for the descriptor's second bound.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-command-stream-concepts role=concepts-state -->
+## Pending second bound
+
+After the first eligible B.IOR record, the second scalar-binding slot records whether another B.IOR may complete the contiguous range pair. The marker applies only to an indexed TLSU operation with a present range descriptor.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-command-stream-rules role=rules-interactions -->
+## Stream rule
+
+A contiguous second scalar binding at index one is allowed. If an unrelated command intervenes, the marker is cleared; a later second B.IOR then raises Fault_BundleControl before binding or operation effects.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-command-stream-boundaries role=boundaries -->
+## Boundaries
+
+A lone first descriptor remains legal. Operations without an indexed range, and commands outside the relevant second-binding position, keep their existing stream behavior.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-command-stream-example role=example-usage -->
+## Example
+
+For an indexed gather range, two adjacent B.IOR records form minimum and maximum. Inserting another command between them makes the later B.IOR invalid as the second bound.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-indexed-tlsu-range-command-stream-related role=related-owners-navigation -->
+## Related owners
+
+- [Indexed TLSU range schema](indexed-tlsu-range-schema.md) identifies eligible operations and descriptors.
+- [Scalar schema](scalar-schema.md) owns B.IOR binding indices.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

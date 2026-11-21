@@ -12,7 +12,35 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-model-legality-tcvt-value-operands-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit validates the detached-destination form of `TCVT`.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-tcvt-value-operands-concepts role=concepts-state -->
+## Concepts and state
+
+The source is an allocated numeric Tile. The output value supplies the destination type and descriptor without committing it to an architectural Tile.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-tcvt-value-operands-rules role=rules-interactions -->
+## Rules and interactions
+
+`TileOperandsLegal_TCVTToValue` always requires equal valid rows and columns. For ordinary layouts, the source and output must also have equal physical rows and columns and must match the selected source and destination layouts. For CUBE layouts, both descriptors are checked using their own data type and capacity. They share one CUBE layout and valid region, so the layout fixes the same physical row count for both; their capacities and physical column counts may differ.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-tcvt-value-operands-boundaries role=boundaries -->
+## Architectural boundaries
+
+The predicate does not perform conversion, apply rounding, update flags, or write the destination. Those effects remain with the conversion executor and numeric contracts.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-tcvt-value-operands-example role=example-usage -->
+## Non-normative reading example
+
+A `CUBE_M16` conversion from a defined source to a detached `FP32` output keeps 16 physical rows in both descriptors. The output may use a different capacity and physical column count when each descriptor is legal for its own data type and capacity. The source and output still need equal valid rows and columns, and the source-to-`FP32` conversion must be supported.
+
+<!-- PTO-READER-BLOCK: tile-model-legality-tcvt-value-operands-related role=related-owners-navigation -->
+## Related owners
+
+- [Related owner](operand-schema.md) defines the common operand rules on which the detached `TCVT` check builds.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

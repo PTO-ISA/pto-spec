@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-state-atomic-tstore-source-lifetime-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元固定已接纳 atomic TSTORE 使用的 Local 或 Shared source payload，防止不可撤销 global-memory request 仍依赖捕获值时复用 Tile slot。
+
+<!-- PTO-READER-BLOCK: block-model-state-atomic-tstore-source-lifetime-concepts role=concepts-state -->
+## Lifetime identity
+
+lifetime occurrence 记录 Core、invocation、execution domain、operation identity、participant mask、source selector、payload generation 与每 PE completion。Atomic Local cohort 为每个参与 PE 保留一个精确 tuple。
+
+<!-- PTO-READER-BLOCK: block-model-state-atomic-tstore-source-lifetime-rules role=rules-interactions -->
+## 捕获与完成
+
+只有 address、read 与 write preflight 成功后才捕获 lifetime。全部参与者完成且没有其他未完成 lifetime 固定同一 source tuple 时，才消费捕获的 payload generation。
+
+<!-- PTO-READER-BLOCK: block-model-state-atomic-tstore-source-lifetime-boundaries role=boundaries -->
+## 边界
+
+reuse binding 不创建新 lifetime。接纳失败不留下不可变 occurrence。domain squash 移除可撤销 capture，但保留由精确不可撤销工作拥有的 capture；invocation retirement 移除剩余记录。
+
+<!-- PTO-READER-BLOCK: block-model-state-atomic-tstore-source-lifetime-example role=example-usage -->
+## 示例
+
+两个 atomic store 仍引用 generation 11 的 Local Tile 5 时，第一个完成不会消费该 generation；第二个完成并移除最后 pin 后才释放它。
+
+<!-- PTO-READER-BLOCK: block-model-state-atomic-tstore-source-lifetime-related role=related-owners-navigation -->
+## 相关 owner
+
+- [Source lifetime](source-lifetime.md) 拥有通用 occurrence 模型。
+- [Atomic TSTORE dispatch](../dispatch/tlsu-atomic-tstore.md) 在 preflight 成功后捕获 occurrence。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

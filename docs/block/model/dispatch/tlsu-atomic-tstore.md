@@ -12,7 +12,36 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-atomic-tstore-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit dispatches strided atomic TSTORE operations from a complete bundle. It performs descriptor, mask, address, source, and obligation preflight before admitting any global-memory work.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-atomic-tstore-concepts role=concepts-state -->
+## Per-PE request
+
+The participant mask selects PEs independently. A selected PE resolves one Local or Shared source snapshot, its stride and operation encoding, execution-mask state, and the GM obligation that owns progress.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-atomic-tstore-rules role=rules-interactions -->
+## Admission rules
+
+All descriptor and snapshot encodings must be legal, source data must be defined, and bounds and execution masks must fit the source schema. Successful preflight captures source lifetime and starts or advances the atomic request.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-atomic-tstore-boundaries role=boundaries -->
+## Boundaries
+
+A nonparticipating PE has no request effect. Failed preflight creates neither a GM effect nor an immutable source occurrence. Irrevocable admitted work retains its obligation across retry handling.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-atomic-tstore-example role=example-usage -->
+## Example
+
+A masked TSTORE.ADD can update only active source elements. An out-of-range mask coordinate rejects preflight before any atomic write is admitted.
+
+<!-- PTO-READER-BLOCK: block-model-dispatch-tlsu-atomic-tstore-related role=related-owners-navigation -->
+## Related owners
+
+- [Atomic TSTORE source lifetime](../state/atomic-tstore-source-lifetime.md) owns last-use capture.
+- [Atomic TSTORE memory model](../../../tile/model/memory/atomic-tstore.md) owns snapshot progress and effects.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -16,9 +16,7 @@
   "rejected": null,
   "superseded": null,
   "baseline": "9323e466512eb261eec084e5c5401214787fffe4",
-  "target_releases": [
-    "unassigned"
-  ],
+  "target_releases": ["0.59.1.0"],
   "affected_ndf": [
     "PTO-ARCH-MEMORY-MODEL-SCOPE-001",
     "PTO-ARCH-MEMORY-MODEL-REQUEST-CLASS-001",
@@ -485,7 +483,7 @@ contexts. Focused evidence must include real encoded ordinary/atomic effects,
 Scalar/Tile/IndexedGenerated interaction, cross-Core InterCore communication,
 capture-disabled reservation safety, malformed envelopes and legacy exclusions.
 No Tile.InterCore, domain conversion, cache maintenance or host coherence is
-added. Target release is unassigned; release evidence refresh and downstream
+added. PTO ISA `0.59.1.0` includes the change. Release evidence refresh and downstream
 assembler/compiler/ASL-model integration remain release obligations. Issue #416
 remains open until implementation/evidence acceptance. ADR-MEM-0010 remains
 superseded historical rationale; this accepted topic owns the amendment.
@@ -528,4 +526,4 @@ A present `MinIndex > MaxIndex` faults with `Fault_TileLegality` only for the cu
 
 The rejected alternatives were a one-sided limit, absolute rather than Base-relative bounds, hardware per-index certification checks, a new opcode/immediate encoding, treating the range as an ordering qualifier, and group-wide preflight or rollback. Compatibility retains all indexed instruction encodings, Base-only B.IOR, the legacy single-record GPR ExecutionMask form, existing IndexTile byte-displacement behavior, and exact MemoryEvent identity. The BLOCK schema and all affected BSTART/Tile operation owners carry the field interpretation; this MEM amendment owns range arithmetic, software certification, conservative alias fallback, and the local fault/order constraints.
 
-Release impact is `required`; the target for this delta remains `unassigned`. The downstream SSM/compiler carrier work and the separate `order_after_prior` / `order_before_later` encoding gap remain tracked follow-ups and are not claimed complete by this PTO-Spec change.
+Release impact is `required`. PTO ISA `0.59.1.0` includes this delta. The downstream SSM/compiler carrier work and the separate `order_after_prior` / `order_before_later` encoding gap remain tracked follow-ups and are not claimed complete by this PTO-Spec change.
