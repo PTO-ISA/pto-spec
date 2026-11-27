@@ -4507,7 +4507,10 @@
         "PTO-AVS-ARCH-CORE-PGAS-CONFIG-001",
         "PTO-AVS-ARCH-CORE-PGAS-EPOCH-001",
         "PTO-AVS-ARCH-SYSTEM-REGISTERS-ADDRESSING-STATIC-001",
-        "PTO-AVS-SCALAR-CORE-PGAS-READ-001"
+        "PTO-AVS-SCALAR-CORE-PGAS-ENDPOINTS-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-NO-PERMISSION-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-READ-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-TRANSLATION-CONTEXT-001"
       ]
     },
     {
@@ -4522,7 +4525,10 @@
       "tests": [
         "PTO-AVS-ARCH-CORE-PGAS-EPOCH-001",
         "PTO-AVS-SCALAR-CORE-PGAS-ACCESS-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-ENDPOINTS-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-NO-PERMISSION-001",
         "PTO-AVS-SCALAR-CORE-PGAS-READ-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-TRANSLATION-CONTEXT-001",
         "PTO-AVS-SCALAR-MODEL-SYS-SEMANTICS-STATIC-001"
       ]
     },
@@ -28336,11 +28342,14 @@
     "tests/asl/scalar/model/fsu/scalar-fp/scalar-static-scalar-fp-contract-001.asl": "a331b8ae7bd4e3ee2b881ac22a80600332b47f656eec5dd2d39cb17919de2a6c",
     "tests/asl/scalar/model/sys/registers/scalar-state-msgb-config-001.asl": "b0226c3c97abe9c615cdbaf53f9619b11e80e6adf31e0f051747d6412db08c34",
     "tests/asl/scalar/model/sys/registers/scalar-static-registers-contract-001.asl": "1e6ccc57aa4299b7e1b4bd480761016bfbbac7bfc31f860849926d3514fa56e0",
+    "tests/asl/scalar/model/sys/semantics/scalar-bound-core-pgas-endpoints-001.asl": "3d08df3440b97f2c5297f182d6aea473d65e619797ebf6f5d96a08418826cb33",
     "tests/asl/scalar/model/sys/semantics/scalar-exec-service-request-control-001.asl": "8b881d9ae8cd32714b66fbce1d06e2074aa2bd99f86fd39240ad43475b43d0c1",
     "tests/asl/scalar/model/sys/semantics/scalar-exec-system-001.asl": "a87761d9f2e8e110269e2c85f80877e100a8340043ad4ce19c48a45d0148ff95",
     "tests/asl/scalar/model/sys/semantics/scalar-exec-system-dispatch-effects-001.asl": "9ab846e982efce407efabe4e4e6ffb7b916446df537a4b6f8729e992f5d16a9f",
     "tests/asl/scalar/model/sys/semantics/scalar-fault-core-pgas-access-001.asl": "4107766ce8a3fb422cb23bc4ec8353649fcd207933358ef1e8ed952125a37b72",
+    "tests/asl/scalar/model/sys/semantics/scalar-fault-core-pgas-no-permission-001.asl": "17da3feade76d32cf65f0a2438c94f63648a4ba029919bfb013ceef588ab1965",
     "tests/asl/scalar/model/sys/semantics/scalar-state-core-pgas-read-001.asl": "482fff3e1555af54e312763ef15aa700cbb00e47b28af27f8071ffa2933fa7ce",
+    "tests/asl/scalar/model/sys/semantics/scalar-state-core-pgas-translation-context-001.asl": "3545bb625293a6075cf004af3bca06d1e4782cea8ce3c4e9981e8e8302971f79",
     "tests/asl/scalar/model/sys/semantics/scalar-state-thread-id-four-pe-001.asl": "b8a3132cb187eb1e0194bf3070ec90eaa441334370135e4d8ef62fd473fe9eb3",
     "tests/asl/scalar/model/sys/semantics/scalar-state-thread-id-lifecycle-001.asl": "15d5e70b22b288ea44aabb3ffaa44f18b9b18cf08e4355bc6bafc6a0fc57af55",
     "tests/asl/scalar/model/sys/semantics/scalar-state-thread-id-placement-001.asl": "770b32ce42ac647c41b77e33604120fd6c2b2fe9f732e28842a3f7e85f75d1e3",
@@ -29423,7 +29432,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1150,
     "status": "closed",
-    "test_count": 4552,
+    "test_count": 4555,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -58320,6 +58329,28 @@
       "source": "asl/scalar/model/sys/semantics.asl"
     },
     {
+      "id": "PTO-AVS-SCALAR-CORE-PGAS-ENDPOINTS-001",
+      "kind": "boundary",
+      "path": "tests/asl/scalar/model/sys/semantics/scalar-bound-core-pgas-endpoints-001.asl",
+      "requirements": [
+        "PTO-CORE-PGAS-RANGE-001",
+        "PTO-CORE-PGAS-SSR-001"
+      ],
+      "sha256": "3d08df3440b97f2c5297f182d6aea473d65e619797ebf6f5d96a08418826cb33",
+      "source": "asl/scalar/model/sys/semantics.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-CORE-PGAS-NO-PERMISSION-001",
+      "kind": "fault",
+      "path": "tests/asl/scalar/model/sys/semantics/scalar-fault-core-pgas-no-permission-001.asl",
+      "requirements": [
+        "PTO-CORE-PGAS-RANGE-001",
+        "PTO-CORE-PGAS-SSR-001"
+      ],
+      "sha256": "17da3feade76d32cf65f0a2438c94f63648a4ba029919bfb013ceef588ab1965",
+      "source": "asl/scalar/model/sys/semantics.asl"
+    },
+    {
       "id": "PTO-AVS-SCALAR-CORE-PGAS-READ-001",
       "kind": "state-transition",
       "path": "tests/asl/scalar/model/sys/semantics/scalar-state-core-pgas-read-001.asl",
@@ -58328,6 +58359,17 @@
         "PTO-CORE-PGAS-SSR-001"
       ],
       "sha256": "482fff3e1555af54e312763ef15aa700cbb00e47b28af27f8071ffa2933fa7ce",
+      "source": "asl/scalar/model/sys/semantics.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-CORE-PGAS-TRANSLATION-CONTEXT-001",
+      "kind": "state-transition",
+      "path": "tests/asl/scalar/model/sys/semantics/scalar-state-core-pgas-translation-context-001.asl",
+      "requirements": [
+        "PTO-CORE-PGAS-RANGE-001",
+        "PTO-CORE-PGAS-SSR-001"
+      ],
+      "sha256": "3545bb625293a6075cf004af3bca06d1e4782cea8ce3c4e9981e8e8302971f79",
       "source": "asl/scalar/model/sys/semantics.asl"
     },
     {
@@ -100470,7 +100512,10 @@
       ],
       "semantic_tests": [
         "PTO-AVS-SCALAR-CORE-PGAS-ACCESS-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-ENDPOINTS-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-NO-PERMISSION-001",
         "PTO-AVS-SCALAR-CORE-PGAS-READ-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-TRANSLATION-CONTEXT-001",
         "PTO-AVS-SCALAR-TESTSCALARSYSTEM-EXECUTION-001",
         "PTO-AVS-SCALAR-TESTSCALARSYSTEMDISPATCHEFFECTS-EXECUTION-001",
         "PTO-AVS-SCALAR-TESTSERVICEREQUESTCONTROL-EXECUTION-001",
@@ -100484,7 +100529,10 @@
       "surface": "scalar",
       "tests": [
         "PTO-AVS-SCALAR-CORE-PGAS-ACCESS-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-ENDPOINTS-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-NO-PERMISSION-001",
         "PTO-AVS-SCALAR-CORE-PGAS-READ-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-TRANSLATION-CONTEXT-001",
         "PTO-AVS-SCALAR-MODEL-SYS-SEMANTICS-STATIC-001",
         "PTO-AVS-SCALAR-TESTSCALARSYSTEM-EXECUTION-001",
         "PTO-AVS-SCALAR-TESTSCALARSYSTEMDISPATCHEFFECTS-EXECUTION-001",

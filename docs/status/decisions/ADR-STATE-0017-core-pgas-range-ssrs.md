@@ -25,7 +25,7 @@
 }
 ---
 
-# Decision
+# ADR-STATE-0017: Core PGAS range system registers
 
 The Core PGAS partition is exposed through mandatory read-only Base SSRs
 `CORE_PGAS_BASE` at `0x0028` and `CORE_PGAS_LIMIT` at `0x0029`. They report the
