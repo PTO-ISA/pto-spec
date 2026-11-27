@@ -410,7 +410,7 @@ def system_register_addresses(row: dict) -> list[int]:
 
 def system_register_reset_expression(behavior: dict) -> str:
     reset = behavior["reset"]
-    if reset == "zero":
+    if reset in {"zero", "platform-configuration-default-zero"}:
         return "Zeros{PTO_XLEN}"
     if reset == "one":
         return "Zeros{PTO_XLEN} + 1"
@@ -8695,7 +8695,7 @@ def _emit_monolithic() -> None:
         for row in scalar_sys_register_transfer_rows
     )
     expected_sys_register_transfer_cases = (
-        1872 + msgb_register_count * msgb_addressable_transfer_rows
+        1882 + msgb_register_count * msgb_addressable_transfer_rows
     )
     if len(scalar_sys_register_transfer_cases) != expected_sys_register_transfer_cases:
         raise ValueError(
@@ -8777,7 +8777,7 @@ def _emit_monolithic() -> None:
         + scalar_sys_control_totality_case_count
     )
     expected_scalar_sys_stage4_case_count = (
-        4336 + msgb_register_count * msgb_addressable_transfer_rows
+        4346 + msgb_register_count * msgb_addressable_transfer_rows
     )
     if scalar_sys_stage4_case_count != expected_scalar_sys_stage4_case_count:
         raise ValueError(

@@ -651,6 +651,18 @@
         "en": "Compilers, runtimes, platforms, models and workloads need a common-entry ELF and explicit startup evidence; platform bindings remain separate decisions.",
         "zh-CN": "编译器、runtime、平台、模型和工作负载需提供共同入口 ELF 及明确的启动证据；平台绑定仍由独立决策负责。"
       }
+    },
+    {
+      "id": "PTO-CORE-PGAS-RANGE-001",
+      "source_path": "asl/arch/system-registers/addressing.asl",
+      "title": {
+        "en": "Core PGAS range admission",
+        "zh-CN": "Core PGAS 范围接纳"
+      },
+      "summary": {
+        "en": "CORE_PGAS_BASE and CORE_PGAS_LIMIT are platform-owned, core-indexed XLEN values. The absent configuration is (0,0), while a nonempty configuration is a validated half-open range with BASE < LIMIT and disjoint Core ranges. Values remain immutable within an execution epoch and default to zero without platform configuration.",
+        "zh-CN": "CORE_PGAS_BASE 与 CORE_PGAS_LIMIT 是平台所有、按 Core 索引的 XLEN 值。缺省配置为 (0,0)，非空配置是经过验证且各 Core 不重叠的半开范围，并满足 BASE < LIMIT。值在执行 epoch 内保持不变，无平台配置时默认为零。"
+      }
     }
   ]
 }

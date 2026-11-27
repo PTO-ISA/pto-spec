@@ -25,12 +25,25 @@ class MessageBufferGeneratorTest(unittest.TestCase):
         cls.generated = completed.stdout
 
     def test_catalog_expansion_has_complete_transfer_tail(self) -> None:
-        self.assertIn(
-            "func ValidateCanonicalScalarSYSRegisterTransfers1792To2011()",
-            self.generated,
-        )
+        tail = "func ValidateCanonicalScalarSYSRegisterTransfers1792To2021()"
+        self.assertTrue(tail in self.generated, f"missing transfer tail {tail}")
         self.assertIn("/MSGBCR/0x000830", self.generated)
         self.assertIn("/MSGBDOMAIN/0x00084b", self.generated)
+        self.assertCountEqual(
+            re.findall(
+                r"// SYS-S4 transfer/([a-z_]+)_(?:32|48)_[a-f0-9]+/"
+                r"(CORE_PGAS_(?:BASE|LIMIT))/(0x[a-f0-9]{6})",
+                self.generated,
+            ),
+            [
+                (mnemonic, name, address)
+                for mnemonic in ("ssrget", "hl_ssrget", "ssrset", "hl_ssrset", "ssrswap")
+                for name, address in (
+                    ("CORE_PGAS_BASE", "0x000028"),
+                    ("CORE_PGAS_LIMIT", "0x000029"),
+                )
+            ],
+        )
 
     def test_reset_and_access_witnesses_use_message_semantics(self) -> None:
         self.assertIn("assert MessageBufferStateIsReset();", self.generated)

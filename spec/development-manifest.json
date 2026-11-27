@@ -21,7 +21,7 @@
     },
     "system_registers": {
       "path": "spec/catalog/system-registers.json",
-      "sha256": "5694af24779c48bd81e87b0304ad97c9cb6bab8d4a11498c2ba5c5bb628171a2"
+      "sha256": "b8b3a9b4e6a7764671636fda1142c9612bff1628e6135ad49f9e84c5e3f9c85d"
     },
     "tile_operations": {
       "path": "spec/catalog/tile-operations.json",
@@ -30,11 +30,11 @@
   },
   "identity": {
     "encoding_abi": "pto-isa-0.59.1-mode-function-v1",
-    "encoding_projection_sha256": "d90c881754d66f2cd26f6014d0b582cba88307e70123583d87fc59a918229c28",
+    "encoding_projection_sha256": "be4d660987088f32bd875ee324bc75fd9171512ea0ffaa439ed4aad1397bbb4f",
     "release": "0.59.1"
   },
   "normative_source_count": 960,
-  "normative_sources_sha256": "66a12136d36f78fc2eab663a1265705e3c1b5c59e7ea1682f8d39ab4e2cf01b2",
+  "normative_sources_sha256": "8231d5b64902524d88dacc950edec26692f26e123968615955a4253952cba54e",
   "publication": null,
   "schema": "pto.development-manifest.v1",
   "status": "development-not-published"

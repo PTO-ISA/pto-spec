@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-system-addressing-purpose-scope role=purpose-scope -->
 ## 用途与范围
 
-本单元拥有三样东西：基础系统寄存器记录类型、当前核心上该记录的唯一实例，以及安装参考配置档取值的复位函数。
+本单元负责基础系统寄存器存储、Core PGAS 平台配置和参考模型复位。
 
 该记录保存基础寄存器中具有存储字段的子集，便于读者在一处查看这些字段及其复位值。基础地址解码也包含 `TIME` 和 `THREAD_ID`，但它们的值由标量 SYS 归属单元派生，在此没有字段。跨 ACR 的上下文寄存器、24 位地址解码以及各个控制寄存器的副作用属于其他所有者。
 
@@ -39,14 +39,14 @@ This page is a generated reference view of the normative ASL unit.
 | `blockid` | 零 | 否 |
 | `cycle` | 零 | 否 |
 
-架构可见的所有者是变量 `_SystemRegisters`，其标识为 `PTO-STATE-ARCH-SYSTEM-REGISTERS`，成员为 `_SystemRegisters`。
+基础 SSR 存储由 `PTO-STATE-ARCH-SYSTEM-REGISTERS` 的 `_SystemRegisters` 表示。查阅 PGAS 范围时，参见单独的 `PTO-STATE-ARCH-CORE-PGAS-CONFIGURATION` 声明，以及下方的平台接纳和执行期辅助函数。
 
 <!-- PTO-READER-BLOCK: arch-system-addressing-rules-interactions role=rules-interactions -->
 ## 复位安装了哪些状态
 
 `ResetProfileState` 显式写入本记录的每个字段。它复位每一个 ACR 存储体，而不只是当前存储体，然后把 `_CurrentACR` 设为 ACR0 并为该环调用 `ClearFault`，因此一次复位执行不会从先前的当前环继承归档状态。
 
-该函数还承担参考复位的其余部分，包括通用寄存器、临时队列、谓词寄存器、模型内存、瓦片与共享瓦片描述符、描述符有效位与已定义性字段、预留状态、指令束控制状态、内存执行状态、每个 ACR 的陷阱上下文，以及分 bank 的消息缓冲状态。
+profile 复位也初始化模型执行状态，包括通用寄存器、临时队列、谓词寄存器、模型内存、瓦片与共享瓦片描述符、描述符有效位与已定义性字段、预留状态、指令束控制状态、内存执行状态、每个 ACR 的陷阱上下文，以及分 bank 的消息缓冲状态。在执行期之间使用 `ResetPlatformExecution` 进行完整平台复位。它与配置接纳的关系见下方 ASL。
 
 设计要点：即使复位取值为零，每个字段也会被写入，因此复位后 `version` 的取值是一、`tile_capacity` 的取值是 `PTO_MODEL_MAX_TILE_CAPACITY_BYTES`，而不依赖某个未被说明的初始状态。读者可以把一个正在运行的核心与这份清单对照，而无需追问某个配置档恰好初始化了哪些字段。
 
@@ -69,7 +69,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-system-addressing-related-owners role=related-owners-navigation -->
 ## 相关所有者
 
-- [陷阱上下文记录](../data-types/trap-context.md)是声明的依赖项；复位函数体为每个 ACR 初始化一个上下文。
+- 声明的依赖项提供 [Core 与 PE 拓扑](../programming-model/core-pe-topology.md)、[陷阱上下文记录](../data-types/trap-context.md)及[消息缓冲状态](../state/message-buffer-state.md)。
 - [上下文寄存器](context.md)把环号与低位索引映射到扩展寄存器文件；[消息缓冲状态](../state/message-buffer-state.md)拥有单独分 bank 的 MSGB 复位。
 - [数值状态](../state/numeric-status.md)读取本页拥有的 `core_state` 字段。
 <!-- SUPPLEMENTARY-END -->
@@ -78,7 +78,27 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/system-registers/addressing.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING","surface":"arch","classification":["system-registers","addressing"],"depends_on":["PTO-ARCH-DATA-TYPES-TRAP-CONTEXT","PTO-ARCH-STATE-MESSAGE-BUFFER-STATE"]}
+// PTO-UNIT: {"id":"PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING","surface":"arch","classification":["system-registers","addressing"],"depends_on":["PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY","PTO-ARCH-DATA-TYPES-TRAP-CONTEXT","PTO-ARCH-STATE-MESSAGE-BUFFER-STATE"]}
+// NDF-BEGIN: PTO-CORE-PGAS-RANGE-001
+// ndf: kind=contract level=L1 layer=state status=accepted
+// Each Core MUST report its platform-owned PGAS partition as an unsigned,
+// half-open global virtual byte range [BASE, LIMIT) in XLEN. (0,0) is the
+// only absence representation and the model default. A nonempty range MUST
+// have BASE < LIMIT, may start at zero, and has capacity LIMIT - BASE.
+// The platform MUST exclude invalid endpoints and overlapping nonempty
+// partitions before execution. Configuration rejection MUST occur outside
+// guest execution and has no guest-visible fault or state effect. Adjacent
+// and unequal ranges and gaps are permitted. This contract imposes no
+// alignment constraint. The platform is responsible for appropriate mappings
+// in contexts where software uses the region.
+// The [[PTO-STATE-ARCH-CORE-PGAS-CONFIGURATION]] pair is shared by all PEs
+// of its Core and immutable during an execution epoch, including across
+// ACR, kernel, address-space, trap, retry, context,
+// and ordinary reset transitions. Only explicit out-of-band platform
+// reinitialization between epochs may replace it. A pause does not end an
+// epoch.
+// NDF-END: PTO-CORE-PGAS-RANGE-001
+
 // PTO-STATE: {"id":"PTO-STATE-ARCH-SYSTEM-REGISTERS","classification":["architecture","system-registers"],"scope":"system","owner":"PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING","members":["_SystemRegisters"],"depends_on":[]}
 type BaseSystemRegisterState of record {
     thread_ptr: Word,
@@ -96,6 +116,59 @@ type BaseSystemRegisterState of record {
 };
 
 var _SystemRegisters : BaseSystemRegisterState;
+
+// PTO-STATE: {"id":"PTO-STATE-ARCH-CORE-PGAS-CONFIGURATION","classification":["architecture","system-registers","platform-configuration"],"scope":"core","owner":"PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING","members":["_CorePGASConfig"],"depends_on":[]}
+type CorePGASConfiguration of record {
+    base: Word,
+    limit: Word
+};
+
+var _CorePGASConfig : array [[PTO_MODEL_CORE_INSTANCES]] of
+    CorePGASConfiguration;
+
+// Model harness state. Architectural resets and context transitions do not
+// open configuration admission after an execution attempt has begun.
+// PTO-STATE: {"id":"PTO-STATE-ARCH-PLATFORM-EXECUTION-EPOCH","classification":["model","platform-configuration"],"scope":"system","owner":"PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING","members":["_CorePGASExecutionStarted"],"depends_on":[]}
+var _CorePGASExecutionStarted : boolean = FALSE;
+
+// Start is idempotent. External platform setup and the actual model
+// execution entry points may both close admission.
+func StartPlatformExecutionEpoch()
+begin
+    _CorePGASExecutionStarted = TRUE;
+end;
+
+// Out-of-band admission validates host integers before narrowing to XLEN.
+func ConfigureCorePGAS(core: PTOModelCoreIdentity, base: integer, limit: integer)
+    => boolean
+begin
+    if _CorePGASExecutionStarted then return FALSE; end;
+    if base != 0 || limit != 0 then
+        if base < 0 || base >= limit || limit > UInt(Ones{PTO_XLEN}) then
+            return FALSE;
+        end;
+        for other = 0 to PTO_MODEL_CORE_INSTANCES - 1 do
+            if other != core then
+                let other_base = UInt(_CorePGASConfig[[other]].base);
+                let other_limit = UInt(_CorePGASConfig[[other]].limit);
+                if other_limit != 0 && base < other_limit && other_base < limit then
+                    return FALSE;
+                end;
+            end;
+        end;
+    end;
+    _CorePGASConfig[[core]] = CorePGASConfiguration {
+        base = Zeros{PTO_XLEN} + base, limit = Zeros{PTO_XLEN} + limit
+    };
+    return TRUE;
+end;
+
+// Only the platform harness calls this after explicitly ending execution.
+// A return from an instruction, pause, or completed kernel is not this event.
+func FinishPlatformExecutionEpoch()
+begin
+    _CorePGASExecutionStarted = FALSE;
+end;
 
 func ResetProfileState()
 begin
@@ -312,6 +385,20 @@ begin
     ResetSourceLifetimeState();
     ResetKernelLifecycleState();
     ResetMessageBufferState();
+end;
+
+// The full platform reset is an out-of-band operation between epochs. A
+// platform can supply the next epoch's pairs before its first execution.
+func ResetPlatformExecution() => boolean
+begin
+    if _CorePGASExecutionStarted then return FALSE; end;
+    ResetProfileState();
+    for core = 0 to PTO_MODEL_CORE_INSTANCES - 1 do
+        _CorePGASConfig[[core]] = CorePGASConfiguration {
+            base = Zeros{PTO_XLEN}, limit = Zeros{PTO_XLEN}
+        };
+    end;
+    return TRUE;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

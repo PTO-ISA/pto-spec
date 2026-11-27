@@ -2,7 +2,7 @@
   "system_register_address_bits": 24,
   "system_register_file_index_bits": 16,
   "isa": "PTO Instruction Set Architecture",
-  "register_definition_count": 100,
+  "register_definition_count": 102,
   "registers": [
     {
       "access": "RW",
@@ -68,6 +68,18 @@
       "access": "RO",
       "address": "0x0027",
       "name": "TILE_CAPACITY",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0028",
+      "name": "CORE_PGAS_BASE",
+      "scope": "base"
+    },
+    {
+      "access": "RO",
+      "address": "0x0029",
+      "name": "CORE_PGAS_LIMIT",
       "scope": "base"
     },
     {
@@ -699,6 +711,18 @@
         "VERSION"
       ],
       "reset": "one",
+      "side_effects": [],
+      "write": "reject-read-only"
+    },
+    {
+      "id": "core-pgas-range",
+      "behavior_status": "architectural-active",
+      "read": "core-indexed-pgas-range",
+      "registers": [
+        "CORE_PGAS_BASE",
+        "CORE_PGAS_LIMIT"
+      ],
+      "reset": "platform-configuration-default-zero",
       "side_effects": [],
       "write": "reject-read-only"
     },

@@ -24,7 +24,7 @@ This page is a generated reference view of the normative ASL unit.
 
 SSR 地址是 24 位的 `SystemRegisterAddress`。分派器识别三条路由：
 
-- 普通基础寄存器是 `BaseSystemRegisterOfAddress` 映射的 14 个地址，例如 0x0000 `THREAD_PTR`、0x0020 `CORE_STATE`、0x0027 `TILE_CAPACITY` 和 0x0C00 `CYCLE`。0x0830 到 0x084B 的 MSGB 基础地址族绕过该枚举，路由到消息缓冲所有者。
+- 普通基础寄存器是 `BaseSystemRegisterOfAddress` 映射的地址，例如 0x0000 `THREAD_PTR`、0x0020 `CORE_STATE`、0x0027 `TILE_CAPACITY` 和 0x0C00 `CYCLE`。0x0830 到 0x084B 的 MSGB 基础地址族绕过该枚举，路由到消息缓冲所有者。
 - 扩展寄存器是其他地址。位 15:12 表示访问环存储体，位 11:0 表示其中的寄存器。大多数存放在按位 15:0 索引的 `_ExtendedSystemRegisters` 中。
 
 访问类别为只读、只写、读写或未知。生成的 `SystemRegisterAccessOf` 为每个地址返回其类别。
@@ -40,7 +40,7 @@ SSR 地址是 24 位的 `SystemRegisterAddress`。分派器识别三条路由：
 
 `ExecuteSystemRegisterSet` 在读取 Reg5 源之前执行 MSGB 写入预检。`ExecuteSystemRegisterSwap` 拒绝所有 MSGB 地址，对其他地址则在读取源之前检查普通读写权限。
 
-设计要点：失败的检查先于任何源读取或寄存器访问。因此被拒绝的转移不读取源、不写目标，也不改变寄存器。
+设计要点：权限和访问类别检查先于传送的源读取、目标写入及寄存器或队列效果。拒绝仍按既有架构规则进入陷阱。
 
 `SwapSystemRegisterAddress` 在读取之前要求读权限、写权限和读写类别。
 
@@ -109,6 +109,8 @@ begin
            address == Zeros{24} + 0x0025 ||
            address == Zeros{24} + 0x0026 ||
            address == Zeros{24} + 0x0027 ||
+           address == Zeros{24} + 0x0028 ||
+           address == Zeros{24} + 0x0029 ||
            address == Zeros{24} + 0x0050 ||
            address == Zeros{24} + 0x0051 ||
            address == Zeros{24} + 0x0c00;
@@ -128,6 +130,8 @@ begin
         when 0x0025 => return SystemRegister_CORE_FEATURE_ENABLE;
         when 0x0026 => return SystemRegister_THREAD_ID;
         when 0x0027 => return SystemRegister_TILE_CAPACITY;
+        when 0x0028 => return SystemRegister_CORE_PGAS_BASE;
+        when 0x0029 => return SystemRegister_CORE_PGAS_LIMIT;
         when 0x0050 => return SystemRegister_BLOCKNUM;
         when 0x0051 => return SystemRegister_BLOCKID;
         when 0x0c00 => return SystemRegister_CYCLE;

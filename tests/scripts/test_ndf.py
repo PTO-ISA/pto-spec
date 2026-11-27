@@ -288,6 +288,8 @@ class NdfTest(unittest.TestCase):
                 "_CurrentACR",
             ),
             "PTO-STATE-ARCH-SYSTEM-REGISTERS": ("_SystemRegisters",),
+            "PTO-STATE-ARCH-CORE-PGAS-CONFIGURATION": ("_CorePGASConfig",),
+            "PTO-STATE-ARCH-PLATFORM-EXECUTION-EPOCH": ("_CorePGASExecutionStarted",),
             "PTO-STATE-ARCH-MESSAGE-BUFFER": (
                 "_MessageBufferBanks",
                 "_MessageBufferConfigSelectors",
@@ -419,6 +421,8 @@ class NdfTest(unittest.TestCase):
         )
         expected_scopes = {
             "PTO-STATE-ARCH-KERNEL-LIFECYCLE": "core",
+            "PTO-STATE-ARCH-CORE-PGAS-CONFIGURATION": "core",
+            "PTO-STATE-ARCH-PLATFORM-EXECUTION-EPOCH": "system",
             "PTO-STATE-ARCH-MESSAGE-BUFFER": "system",
             "PTO-STATE-ARCH-GPR": "pe",
             "PTO-STATE-ARCH-TRAP-CONTEXT": "acr",

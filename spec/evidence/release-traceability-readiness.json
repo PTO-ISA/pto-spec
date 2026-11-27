@@ -4496,6 +4496,38 @@
     },
     {
       "executable": false,
+      "id": "PTO-CORE-PGAS-RANGE-001",
+      "owners": [
+        "asl/arch/system-registers/addressing.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-STATE-0017"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-CORE-PGAS-CONFIG-001",
+        "PTO-AVS-ARCH-CORE-PGAS-EPOCH-001",
+        "PTO-AVS-ARCH-SYSTEM-REGISTERS-ADDRESSING-STATIC-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-READ-001"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-CORE-PGAS-SSR-001",
+      "owners": [
+        "asl/scalar/model/sys/semantics.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-STATE-0017"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-CORE-PGAS-EPOCH-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-ACCESS-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-READ-001",
+        "PTO-AVS-SCALAR-MODEL-SYS-SEMANTICS-STATIC-001"
+      ]
+    },
+    {
+      "executable": false,
       "id": "PTO-CTZ-DECISION-BINDING-001",
       "owners": [
         "asl/scalar/alu/CTZ.asl"
@@ -22937,10 +22969,10 @@
     "asl/arch/data-types/numeric-formats.asl": "8ee9de4f827345dc26721d216327705c976f361411430f543807960a9c73ad1a",
     "asl/arch/data-types/packed.asl": "4ec9fb1eb2d1b14dcba562a5dc1462724c407fa67e5887ac99eb919887777d42",
     "asl/arch/data-types/rounding.asl": "0050120f15047421e9da2836731c9ac5acd525e17f502117ef01290d09895daa",
-    "asl/arch/data-types/system-registers.asl": "a505f583ab5e79aae15a38faaa01a14424a9d13bc7753c356ce245eb8780d303",
+    "asl/arch/data-types/system-registers.asl": "05a29bdd847ac88520f201b74b6c3c5214522097c5e1c18c7b4d876014835abc",
     "asl/arch/data-types/tile-data-types.asl": "70ed87af56adda4d346a76eced16dbb5d80dd53e04b1212d11aeb9d6448f94e0",
     "asl/arch/data-types/trap-context.asl": "4c28fd97eab7daa90f4e75f7dbca8cc097d460c6c12b1c14efc4202416e58229",
-    "asl/arch/dispatch/top-level.asl": "ee6eab8003174c2cbfacea5a5f9b21d53257472439714d1b803c2ce2901ff5d7",
+    "asl/arch/dispatch/top-level.asl": "d206442b9d3d30fd3c63f50ee2406189686885d33ffb77368f86edc1d1f09a0b",
     "asl/arch/features/extension-first-use.asl": "a93c85af7384b1330d0acef47ab21fc511ca36394c06cffe20ae3d48dfe164c2",
     "asl/arch/features/minmax.asl": "5e5f95621a7e1632b0013e444286fa954bff78754da68d9f49d01db5946ab5f3",
     "asl/arch/features/mx-formats.asl": "44639ab47cd2dec4c6a03231a07003e55835f42c9d58c622e05332e8bedfeb1d",
@@ -22950,7 +22982,7 @@
     "asl/arch/memory-model/address-space.asl": "38f51482e98372cf487b2f33f544ae9640e70f118e075b8f3285c5d6a10ebf52",
     "asl/arch/memory-model/atomic-tstore-obligations.asl": "2f910c4f957f327df36a382fd979ea7668896f33c4d420d162907ab0f9ea3a61",
     "asl/arch/memory-model/atomicity.asl": "29b4a6b0b13d138a81249b039dbbf33ddc4f5f1e132ac6c6c62e9b16791030a2",
-    "asl/arch/memory-model/fault-precision.asl": "4df2b58da92e0fe254d9559ffed9f291c84ab2e3e763d20736536e68ed37c767",
+    "asl/arch/memory-model/fault-precision.asl": "53f0af91b396ed853bc0f592225e14392efbfc605b3ba46683fe58ce98c1738f",
     "asl/arch/memory-model/global-memory-access.asl": "9d7deccaa7dd916f16c580e75ddc633d8476be88cf4f8213654540b1cda44a49",
     "asl/arch/memory-model/gm-obligations.asl": "99b60b12bdd6e1d0165aa083e209fbfc88d24c6f480a8e81e4afa61df3b4ba97",
     "asl/arch/memory-model/instruction-fetch.asl": "f9bf16659406ddc7cc4ae8ca050612d2c5fd6878d5dbc11ec9434467a9def162",
@@ -22969,7 +23001,7 @@
     "asl/arch/state/core-synchronization.asl": "a9f34342e9982ea84c4ebf797b32745807792a833c95a5d6e8d66157b66aeb53",
     "asl/arch/state/definedness.asl": "f68778534d67e736f701f8e24e03f27a018f3eabcec1421a6b33856030874ad1",
     "asl/arch/state/hscb-dispatch.asl": "548008401d896bd685346124c2062d2b79bb47322ca2e5f0b699e1a73d04e561",
-    "asl/arch/state/kernel-lifecycle.asl": "3c52b6fed33dd5ecf56e96ad476368aafee800375f2e4c53766906a124364ae8",
+    "asl/arch/state/kernel-lifecycle.asl": "c6b8c8ef820651ce9901a2a942fadee9f4a92144b77638e904a08ed5f1d300d7",
     "asl/arch/state/local-payload-generation.asl": "9e8b044814d0542eee5d21bfc995fe8d570e1e8d4c3651c823e68831533cae62",
     "asl/arch/state/message-buffer-send.asl": "18015764f2fd8f92855889720b0f5a66cab617de4e6c204b49f84891023cf664",
     "asl/arch/state/message-buffer-state.asl": "3228cd5abd3369ae68119028c15b27b14487ab0dc202d1f282e32bc298afc759",
@@ -22980,7 +23012,7 @@
     "asl/arch/state/tile-descriptor.asl": "52604c09f7171f5f530755929970b499296d3ce84a5ee337d7bc8c63eb8d7913",
     "asl/arch/state/trap-context.asl": "88c1ecc5b471fde61efd0d4b9aca8cf8de69b6f71f167daaa00050f512bf34e2",
     "asl/arch/system-registers/access-control.asl": "b902ec666fffe515cb48ef7f54c144d19b514561537489a670349369eee3a819",
-    "asl/arch/system-registers/addressing.asl": "9125d201772ef000275a1056e7afb8a3845f77a3978b7ae3e18b45f6d57c30dd",
+    "asl/arch/system-registers/addressing.asl": "696d974be6327235b62d3b520b9de60e116d4d8bf7ea86b1e1a1d3b453e5f7ec",
     "asl/arch/system-registers/context.asl": "ddac5a98c9b3cbc4029dd0ab5f42ea079a8a7a651b6eee2cf06d02dd2fa44e4e",
     "asl/arch/system-registers/interrupt.asl": "2341ac0204294c8619bbfc70f514e70f535ff7bc1ddb3d799639378d5071af34",
     "asl/arch/system-registers/maintenance.asl": "c69cc578f4021c416643dd2b5f608855ef9bfe89d7c280a574dff09783b9b5af",
@@ -23611,8 +23643,8 @@
     "asl/scalar/model/fsu/reference-quantization.asl": "4362fd87078b965d2e1730608497f0711da18a819a918e349c60952ce5c4fe5b",
     "asl/scalar/model/fsu/reference-scalar-fp-specials.asl": "9117a0f1e58e0f915254d37915a68ce634182fe48eec90f2783012fbbf2125c1",
     "asl/scalar/model/fsu/scalar-fp.asl": "afcd3d5944b894f777127a613dfd20c4ed256d1fe42d39cb42033c694c2777a5",
-    "asl/scalar/model/sys/registers.asl": "7f1078011adc609df12be0c4e52e3511e28b76d4c2123fccbddf0a73f9a8f2de",
-    "asl/scalar/model/sys/semantics.asl": "cbcb44fdc0179fd017e1bede639be3aa2e0dbc3733218d426b275b0b7ea8b8a8",
+    "asl/scalar/model/sys/registers.asl": "cce59fe60cae4a8a1b8aa9d5cf711c04cf393ade084e991118e4868a12b9322c",
+    "asl/scalar/model/sys/semantics.asl": "57a33104ed60bbc4b8350c7692d0535b044ba9730b2e3447dbdef87f663cc9a3",
     "asl/scalar/model/types/operands.asl": "deb5f9858869fa8c00a83091b134187c1cd0456db64c5e5a530cac130a26f3f7",
     "asl/scalar/model/types/operations.asl": "ace26d2dd88298716d8dafaacb18b3858639c87dc2caa0326327e703b3adcf88",
     "asl/scalar/sys/ACRC.asl": "cd83a6b8ff8b5b8261b234baaa65cb26c93c35af27234c8c49957b5f33998cd7",
@@ -23897,10 +23929,10 @@
     "docs/arch/data-types/numeric-formats.md": "407eb50ba29a2dda2818ac30f1af400da3d90c946d4745e0a15f5f843b125f62",
     "docs/arch/data-types/packed.md": "dab4770d3bfec6a78640e4e4fbfff019701f2cc5ea38e42ddc24b533003b4a25",
     "docs/arch/data-types/rounding.md": "cd6c2e1f4b836f2d1e50618d34f5fbca00d901e3d63964fe3eb6318294c6cd79",
-    "docs/arch/data-types/system-registers.md": "25d91f8fcf143336785e60460c06f65d090e76b634bd499bdf36732c62647c73",
+    "docs/arch/data-types/system-registers.md": "a6afc70350979d06b28453df70894a3e8bb50b3e20268db7d6b1a499cf7975cc",
     "docs/arch/data-types/tile-data-types.md": "0e38052304ad8ff66d11bbab0747b80660b6cb17413fa4793733b93a74424484",
     "docs/arch/data-types/trap-context.md": "367b3e6f1e2851cd0e87a5c5eb8ed4043826c88629344b9e9e919daacb198899",
-    "docs/arch/dispatch/top-level.md": "d5eb93e55f89e0568fdcd9d308886b94b234560fa2dac79521b2a19a992156e4",
+    "docs/arch/dispatch/top-level.md": "ba43229397a6308a0bb2ded6b5dce839f1e1d95b1b9940dc553c39fe43e826f9",
     "docs/arch/features/extension-first-use.md": "c1a5c4ee7a442c8c22a9afcc82a1202a11010055b8f5c71c5c5c1fa1ebcecfff",
     "docs/arch/features/minmax.md": "7ab233f63feea1b619b5a9b90c2afd3699128f169aa2b236339923d9132c6973",
     "docs/arch/features/mx-formats.md": "b4739ed0c6683798361b2763950abb56e6686da37c5eb4414e3483cdd24abe0e",
@@ -23910,7 +23942,7 @@
     "docs/arch/memory-model/address-space.md": "ffcf8efa869f61c51c8d8d7c52729cacef21af5593f2b369c4c7309a297f303f",
     "docs/arch/memory-model/atomic-tstore-obligations.md": "967868bd207d44992b9b3f6bf42cce3ae295b8a7b87de19e2d636d3d6758e841",
     "docs/arch/memory-model/atomicity.md": "78e9084b3ad3bb6cf11316d29b95779a81238f3280d3d990c90eaca926277e8d",
-    "docs/arch/memory-model/fault-precision.md": "c91843953e8e02522c43cae85bfb7e25aadee62c98db899761b0e43b077d6b41",
+    "docs/arch/memory-model/fault-precision.md": "70ebe592bfa34df00e7ecc3173f0e2fe12bc5664f0f310b29a53c85e812543eb",
     "docs/arch/memory-model/global-memory-access.md": "51e0e325df8d906ddb68931963a73de7e0279718d929839c845df24266517cad",
     "docs/arch/memory-model/gm-obligations.md": "f19333c8dda415ed1d9516b9a3d591228c052731c3693a467c5547573b45eb76",
     "docs/arch/memory-model/instruction-fetch.md": "99e3d3942db1d54a1141bc39c89a398ca4100d0a7e29d17787bd6201eee9d6c2",
@@ -23929,7 +23961,7 @@
     "docs/arch/state/core-synchronization.md": "213103de8013ffa95f1f545ccacbf5d6659c1c4f482e3da0d982c74c8c01c390",
     "docs/arch/state/definedness.md": "0c592e7785591408293173237e5ae537b04d33f1c15de2a02985605e8a0b8892",
     "docs/arch/state/hscb-dispatch.md": "9c2425204bb1e801c1a8356e6c9033a28c6bf80823257288f690bb13f39d3916",
-    "docs/arch/state/kernel-lifecycle.md": "7ddeed6c8b0e6e66bc80f770ad95410257af1841ec616bfb0449eb4be2b4825e",
+    "docs/arch/state/kernel-lifecycle.md": "b05268278b7ce9ee10cddc037fde063b4d3755aa2f31a169cbfc783ada4ebd13",
     "docs/arch/state/local-payload-generation.md": "e2c7cf72c098774fb518d0f8168a651f9b60f2d220009281adf3b0a95418708d",
     "docs/arch/state/message-buffer-send.md": "920f768db8fbdffdd8f6dee5634934d235015fccfc697b6a07ca5cc29872459e",
     "docs/arch/state/message-buffer-state.md": "aa408e2b2e1a5dd63fefed644568bb8c91bcf23610d65c068e9d9c0bdb8eaab8",
@@ -23940,7 +23972,7 @@
     "docs/arch/state/tile-descriptor.md": "553189c10a9b6ff1ca07f4f54865f6dabeccb7d05a48b6cae72ecd107bc15fc0",
     "docs/arch/state/trap-context.md": "ab2b9b76b3a7fd1dc1ac91121a9380154fbd7ff07b045ea7fa76c5c163683d19",
     "docs/arch/system-registers/access-control.md": "bd3b2b5ac66ca689da27eada9638e88fd8982c878128721d9f55bbd8737a3e28",
-    "docs/arch/system-registers/addressing.md": "e4b210e4659b93177e2028321db62f1f882cfc51ff9e37b534cbf38279c53e21",
+    "docs/arch/system-registers/addressing.md": "8877446f9f6e4aaedff4d3b47cdcd4687d5258527602b017605d0b72fdb8d4a3",
     "docs/arch/system-registers/context.md": "5083ce8cef4389fb7e812fdaa48877e523f1024a24a3160f798d9a2cec5c2d27",
     "docs/arch/system-registers/interrupt.md": "56719be1e34675dd43e3b7a19fa136c3fc1d80626afd2fcacf57579c8237b700",
     "docs/arch/system-registers/maintenance.md": "52b2ec4e6848f4842a4e5efbaaf8e951a65b0d9e7d379f3a2c54a38b0ec2e987",
@@ -24571,8 +24603,8 @@
     "docs/scalar/model/fsu/reference-quantization.md": "331f1b3b97ceb5f26a4807bb6226afeabae9091e8a5ad794b990d9d2c442df6d",
     "docs/scalar/model/fsu/reference-scalar-fp-specials.md": "135acd271f645868d48f99746cdb6759032b3e724bb9641955a0ac0bfcffaa99",
     "docs/scalar/model/fsu/scalar-fp.md": "b05228b3499c81c02f9105fd3d2cbbbde2ad718fc9cb7e233919449f32fb9cbb",
-    "docs/scalar/model/sys/registers.md": "aa965980e1354e97a22d68cab290d5786451445ac370a6fb6f929e6199ad9ac9",
-    "docs/scalar/model/sys/semantics.md": "d56b65f119f8a65023e621c4d80f9db1ba57df002d8b8724ea4a276ef3145238",
+    "docs/scalar/model/sys/registers.md": "1ba0a2ae2f7a046d9475a991016d7a112311e99f7901de7ea713668387cd44fe",
+    "docs/scalar/model/sys/semantics.md": "bcda76f7daf44f469770febadde2ebef365e3f614b3551bd87b2bd701dfb87ae",
     "docs/scalar/model/types/operands.md": "0c01ac259601aa6d6bac902e5ee398054cb6e6309f24c14803a8a0c99000b197",
     "docs/scalar/model/types/operations.md": "516bdff49135ddcef5334ce363464fb77c3cba592d9229afe53576d98585fa6f",
     "docs/scalar/sys/ACRC.md": "43c6815d588057ca199c239a6b5edd4e91fa463e7867727ab10f9df3bac2e64f",
@@ -24828,7 +24860,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "cc0047bd79eb3d920207e2c863e8acbf7aa2f618ca1e14013578d5b6f94be994",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "ec9ac4f1fdd4e034c299905ff4d92056010d4d5931ec3b0c642e595d7a1cc89b",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "d1a04684642a505383ff3d2bb8799815faa4ffde68b861eca704a06c70e07bbe",
-    "spec/evidence/adr-index.json": "f9841a733368fe16429b183d779ec94d6e9b36c13059992e10ba9b51f4cce5a1",
+    "spec/evidence/adr-index.json": "24a2b6bd23e64f3b22ccad9f09c03809c3b0c86ceef81ef8dcd45c6d0f6bf925",
     "spec/evidence/instruction-contract-closure.json": "4c1a272d217c35c5d58f477581f2cc9e2006735b062ca2f8c51231b22bb91214",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "6c18bfdff0279b6d4fbaf3cb3c8e1ee111b4d5e82e1688136b88be6fa7902ba3",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -25069,8 +25101,10 @@
     "tests/asl/arch/state/trap-context/arch-static-trap-context-contract-001.asl": "576010933b4c5e154f6e1319de00442b055b68d58b1666b00eda2b79929cb6fe",
     "tests/asl/arch/system-registers/access-control/arch-static-access-control-contract-001.asl": "84f205e7b465e1547898bc952ff27a94ded966a19ee9e2a3f822c428dfdb3e24",
     "tests/asl/arch/system-registers/addressing/arch-exec-concrete-reset-007.asl": "6ed1fdca3c4af959632e17dbc53929f277187160251968b6cfad03ca9ba1f9b0",
+    "tests/asl/arch/system-registers/addressing/arch-state-core-pgas-config-001.asl": "54071cfd957ab31b1b2b6f1fd353d7762c7721aa4e264428665a3c0eefb869b4",
+    "tests/asl/arch/system-registers/addressing/arch-state-core-pgas-epoch-001.asl": "3ca0e21746573547b67e20389cf5c1075c9c44661a31358967a5fe24d7b95f90",
     "tests/asl/arch/system-registers/addressing/arch-state-cube-reset-001.asl": "554a604c5dcc6141ed09c747be857a5d06171d86ac74c4fefc5ab6f9a5cba2a9",
-    "tests/asl/arch/system-registers/addressing/arch-static-addressing-contract-001.asl": "80b647c6e77d79d74d5139feed24c302ec0199d46bc0a399c5448bd7a6f333a5",
+    "tests/asl/arch/system-registers/addressing/arch-static-addressing-contract-001.asl": "9463be56b5c576f736b145287e21de638645ea9d39b21f5e2707fb799b75c63e",
     "tests/asl/arch/system-registers/context/arch-state-context-index-001.asl": "c2599449b319f065bfcc2df8d8c619832ac334060bf9dd225172a718e8e1edeb",
     "tests/asl/arch/system-registers/context/arch-static-context-contract-001.asl": "0dd60c8cc018584bbe0e704e8fc74a013b823b43093b0d2e83d62af2fc4e14df",
     "tests/asl/arch/system-registers/interrupt/arch-state-register-001.asl": "a64d42334a45d3834287228bb415e2c1d492d7d90323b099bea087aae3f7c78f",
@@ -28261,7 +28295,7 @@
     "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-1024-to-1279-001.asl": "5a685cb90c7b8fbfaf45be70d18bd6fcae0cb11712149bb74a602ff4e8251480",
     "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-1280-to-1535-001.asl": "69ea988ca7d2a77d7cb4829b77a83879adc08c198f2e2c861981e257b0508a79",
     "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-1536-to-1791-001.asl": "d0b4783e90afcc65ee30c54e8fd5743fa2a13fe76c97fe6c70cf1c76bf45da0d",
-    "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-1792-to-1871-001.asl": "d15c2cbc5680fc8c04bf8c5393f44d1f017435a0c668e54a2108c77223340898",
+    "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-1792-to-1871-001.asl": "71a35e5988a7721568dd3fe050b7953b7d6f5cab06d0b7490062231c5ca02c6e",
     "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-256-to-511-001.asl": "d5541d2e8fca94104b17c6e9f3b5346d48061cbdc83f608a4e6a09680c572bd6",
     "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-512-to-767-001.asl": "87ed95319520d5debc9e7c622f16788fe0e3b1069b9ed3eb6276730069fd8c93",
     "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-768-to-1023-001.asl": "70c85e1e9296db35de40a9cfbb71a540c5d31404c0f41578e32c55d0aecd955c",
@@ -28305,12 +28339,14 @@
     "tests/asl/scalar/model/sys/semantics/scalar-exec-service-request-control-001.asl": "8b881d9ae8cd32714b66fbce1d06e2074aa2bd99f86fd39240ad43475b43d0c1",
     "tests/asl/scalar/model/sys/semantics/scalar-exec-system-001.asl": "a87761d9f2e8e110269e2c85f80877e100a8340043ad4ce19c48a45d0148ff95",
     "tests/asl/scalar/model/sys/semantics/scalar-exec-system-dispatch-effects-001.asl": "9ab846e982efce407efabe4e4e6ffb7b916446df537a4b6f8729e992f5d16a9f",
+    "tests/asl/scalar/model/sys/semantics/scalar-fault-core-pgas-access-001.asl": "4107766ce8a3fb422cb23bc4ec8353649fcd207933358ef1e8ed952125a37b72",
+    "tests/asl/scalar/model/sys/semantics/scalar-state-core-pgas-read-001.asl": "482fff3e1555af54e312763ef15aa700cbb00e47b28af27f8071ffa2933fa7ce",
     "tests/asl/scalar/model/sys/semantics/scalar-state-thread-id-four-pe-001.asl": "b8a3132cb187eb1e0194bf3070ec90eaa441334370135e4d8ef62fd473fe9eb3",
     "tests/asl/scalar/model/sys/semantics/scalar-state-thread-id-lifecycle-001.asl": "15d5e70b22b288ea44aabb3ffaa44f18b9b18cf08e4355bc6bafc6a0fc57af55",
     "tests/asl/scalar/model/sys/semantics/scalar-state-thread-id-placement-001.asl": "770b32ce42ac647c41b77e33604120fd6c2b2fe9f732e28842a3f7e85f75d1e3",
     "tests/asl/scalar/model/sys/semantics/scalar-state-thread-id-rejections-001.asl": "9289da1b6bf34293325338ca1e1dc31ce389cd022a24d576f83fd40cbfd0eb35",
     "tests/asl/scalar/model/sys/semantics/scalar-state-thread-id-rings-001.asl": "3d9040292ad4488ac423e3b4c6b0ddb97a734712245d5ddba88ccb8d40ccd9d6",
-    "tests/asl/scalar/model/sys/semantics/scalar-static-semantics-contract-001.asl": "3e27c26edc525d9485c4bcf4f3a10c6459c784ce5a01b475bc471bdd69762f48",
+    "tests/asl/scalar/model/sys/semantics/scalar-static-semantics-contract-001.asl": "4b9d986cf00f6f3c2d149983fbbf9bdd648daf5444b70f02b64921d67b83fe2c",
     "tests/asl/scalar/model/types/operands/scalar-static-operands-contract-001.asl": "50309ed5f605efa5bf4f2ae949c3378d493d5591a2e7867cf3b3f7c13c1bde6a",
     "tests/asl/scalar/model/types/operations/scalar-static-operations-contract-001.asl": "d5cde4ceb9b26687390ccb6f6cd8366246f67b9afde9e8802b99b64d837399b9",
     "tests/asl/scalar/sys/ACRC/scalar-decode-acrc-canonical-001.asl": "783c057b20a69d066e89e7e28a5455a656deab4b211126b38ee4d7c63b6fdfb2",
@@ -29385,9 +29421,9 @@
     "mnemonic_count": 671,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 1148,
+    "requirement_count": 1150,
     "status": "closed",
-    "test_count": 4548,
+    "test_count": 4552,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -36792,6 +36828,27 @@
       "source": "asl/scalar/model/fsu/reference-quantization.asl"
     },
     {
+      "id": "PTO-AVS-ARCH-CORE-PGAS-CONFIG-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/system-registers/addressing/arch-state-core-pgas-config-001.asl",
+      "requirements": [
+        "PTO-CORE-PGAS-RANGE-001"
+      ],
+      "sha256": "54071cfd957ab31b1b2b6f1fd353d7762c7721aa4e264428665a3c0eefb869b4",
+      "source": "asl/arch/system-registers/addressing.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-CORE-PGAS-EPOCH-001",
+      "kind": "state-transition",
+      "path": "tests/asl/arch/system-registers/addressing/arch-state-core-pgas-epoch-001.asl",
+      "requirements": [
+        "PTO-CORE-PGAS-RANGE-001",
+        "PTO-CORE-PGAS-SSR-001"
+      ],
+      "sha256": "3ca0e21746573547b67e20389cf5c1075c9c44661a31358967a5fe24d7b95f90",
+      "source": "asl/arch/system-registers/addressing.asl"
+    },
+    {
       "id": "PTO-AVS-ARCH-CORE-SYNC-ENCODED-BRANCH-BYPASS-001",
       "kind": "state-transition",
       "path": "tests/asl/arch/state/core-synchronization/arch-state-sync-core-encoded-branch-bypass-001.asl",
@@ -38787,8 +38844,10 @@
       "id": "PTO-AVS-ARCH-SYSTEM-REGISTERS-ADDRESSING-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/arch/system-registers/addressing/arch-static-addressing-contract-001.asl",
-      "requirements": [],
-      "sha256": "80b647c6e77d79d74d5139feed24c302ec0199d46bc0a399c5448bd7a6f333a5",
+      "requirements": [
+        "PTO-CORE-PGAS-RANGE-001"
+      ],
+      "sha256": "9463be56b5c576f736b145287e21de638645ea9d39b21f5e2707fb799b75c63e",
       "source": "asl/arch/system-registers/addressing.asl"
     },
     {
@@ -58251,6 +58310,27 @@
       "source": "asl/scalar/bru/CMP.ORI.asl"
     },
     {
+      "id": "PTO-AVS-SCALAR-CORE-PGAS-ACCESS-001",
+      "kind": "fault",
+      "path": "tests/asl/scalar/model/sys/semantics/scalar-fault-core-pgas-access-001.asl",
+      "requirements": [
+        "PTO-CORE-PGAS-SSR-001"
+      ],
+      "sha256": "4107766ce8a3fb422cb23bc4ec8353649fcd207933358ef1e8ed952125a37b72",
+      "source": "asl/scalar/model/sys/semantics.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-CORE-PGAS-READ-001",
+      "kind": "state-transition",
+      "path": "tests/asl/scalar/model/sys/semantics/scalar-state-core-pgas-read-001.asl",
+      "requirements": [
+        "PTO-CORE-PGAS-RANGE-001",
+        "PTO-CORE-PGAS-SSR-001"
+      ],
+      "sha256": "482fff3e1555af54e312763ef15aa700cbb00e47b28af27f8071ffa2933fa7ce",
+      "source": "asl/scalar/model/sys/semantics.asl"
+    },
+    {
       "id": "PTO-AVS-SCALAR-CSEL-ALIASES-001",
       "kind": "boundary",
       "path": "tests/asl/scalar/alu/CSEL/scalar-bound-csel-aliases-001.asl",
@@ -63047,9 +63127,10 @@
       "kind": "static-invariant",
       "path": "tests/asl/scalar/model/sys/semantics/scalar-static-semantics-contract-001.asl",
       "requirements": [
-        "PTO-THREAD-ID-PE-IDENTITY-001"
+        "PTO-THREAD-ID-PE-IDENTITY-001",
+        "PTO-CORE-PGAS-SSR-001"
       ],
-      "sha256": "3e27c26edc525d9485c4bcf4f3a10c6459c784ce5a01b475bc471bdd69762f48",
+      "sha256": "4b9d986cf00f6f3c2d149983fbbf9bdd648daf5444b70f02b64921d67b83fe2c",
       "source": "asl/scalar/model/sys/semantics.asl"
     },
     {
@@ -65698,7 +65779,7 @@
       "kind": "state-transition",
       "path": "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-1792-to-1871-001.asl",
       "requirements": [],
-      "sha256": "d15c2cbc5680fc8c04bf8c5393f44d1f017435a0c668e54a2108c77223340898",
+      "sha256": "71a35e5988a7721568dd3fe050b7953b7d6f5cab06d0b7490062231c5ca02c6e",
       "source": "asl/scalar/model/dispatch/sys.asl"
     },
     {
@@ -76881,7 +76962,8 @@
         "ADR-GOV-0015",
         "ADR-STATE-0008",
         "ADR-STATE-0014",
-        "ADR-STATE-0016"
+        "ADR-STATE-0016",
+        "ADR-STATE-0017"
       ],
       "semantic_tests": [
         "PTO-AVS-ARCH-SYSREG-RESET-ACCESS-001"
@@ -76961,7 +77043,8 @@
         "ADR-GOV-0014",
         "ADR-GOV-0015",
         "ADR-MEM-0011",
-        "ADR-SCALAR-0007"
+        "ADR-SCALAR-0007",
+        "ADR-STATE-0017"
       ],
       "semantic_tests": [
         "PTO-AVS-ARCH-DECODER-COVERAGE-001",
@@ -77234,7 +77317,8 @@
         "ADR-GOV-0015",
         "ADR-MEM-0002",
         "ADR-MEM-0011",
-        "ADR-SCALAR-0007"
+        "ADR-SCALAR-0007",
+        "ADR-STATE-0017"
       ],
       "semantic_tests": [],
       "source": "asl/arch/memory-model/fault-precision.asl",
@@ -77794,7 +77878,8 @@
         "ADR-GOV-0014",
         "ADR-GOV-0015",
         "ADR-SCALAR-0007",
-        "ADR-STATE-0014"
+        "ADR-STATE-0014",
+        "ADR-STATE-0017"
       ],
       "semantic_tests": [
         "PTO-AVS-ARCH-GM-OBLIGATION-DELAYED-TSTORE-001",
@@ -78142,16 +78227,21 @@
         "ADR-STATE-0004",
         "ADR-STATE-0008",
         "ADR-STATE-0013",
+        "ADR-STATE-0017",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
         "PTO-AVS-ARCH-CONCRETE-RESET-EXEC-007",
+        "PTO-AVS-ARCH-CORE-PGAS-CONFIG-001",
+        "PTO-AVS-ARCH-CORE-PGAS-EPOCH-001",
         "PTO-AVS-ARCH-CUBE-RESET-001"
       ],
       "source": "asl/arch/system-registers/addressing.asl",
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-CONCRETE-RESET-EXEC-007",
+        "PTO-AVS-ARCH-CORE-PGAS-CONFIG-001",
+        "PTO-AVS-ARCH-CORE-PGAS-EPOCH-001",
         "PTO-AVS-ARCH-CUBE-RESET-001",
         "PTO-AVS-ARCH-SYSTEM-REGISTERS-ADDRESSING-STATIC-001"
       ]
@@ -100340,7 +100430,8 @@
         "ADR-NUM-0001",
         "ADR-NUM-0005",
         "ADR-NUM-0010",
-        "ADR-STATE-0014"
+        "ADR-STATE-0014",
+        "ADR-STATE-0017"
       ],
       "semantic_tests": [
         "PTO-AVS-MSGB-CONFIG-001"
@@ -100374,9 +100465,12 @@
         "ADR-SCALAR-0007",
         "ADR-STATE-0008",
         "ADR-STATE-0016",
+        "ADR-STATE-0017",
         "ADR-TILE-0008"
       ],
       "semantic_tests": [
+        "PTO-AVS-SCALAR-CORE-PGAS-ACCESS-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-READ-001",
         "PTO-AVS-SCALAR-TESTSCALARSYSTEM-EXECUTION-001",
         "PTO-AVS-SCALAR-TESTSCALARSYSTEMDISPATCHEFFECTS-EXECUTION-001",
         "PTO-AVS-SCALAR-TESTSERVICEREQUESTCONTROL-EXECUTION-001",
@@ -100389,6 +100483,8 @@
       "source": "asl/scalar/model/sys/semantics.asl",
       "surface": "scalar",
       "tests": [
+        "PTO-AVS-SCALAR-CORE-PGAS-ACCESS-001",
+        "PTO-AVS-SCALAR-CORE-PGAS-READ-001",
         "PTO-AVS-SCALAR-MODEL-SYS-SEMANTICS-STATIC-001",
         "PTO-AVS-SCALAR-TESTSCALARSYSTEM-EXECUTION-001",
         "PTO-AVS-SCALAR-TESTSCALARSYSTEMDISPATCHEFFECTS-EXECUTION-001",
