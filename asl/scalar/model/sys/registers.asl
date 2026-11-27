@@ -25,6 +25,8 @@ begin
            address == Zeros{24} + 0x0025 ||
            address == Zeros{24} + 0x0026 ||
            address == Zeros{24} + 0x0027 ||
+           address == Zeros{24} + 0x0028 ||
+           address == Zeros{24} + 0x0029 ||
            address == Zeros{24} + 0x0050 ||
            address == Zeros{24} + 0x0051 ||
            address == Zeros{24} + 0x0c00;
@@ -44,6 +46,8 @@ begin
         when 0x0025 => return SystemRegister_CORE_FEATURE_ENABLE;
         when 0x0026 => return SystemRegister_THREAD_ID;
         when 0x0027 => return SystemRegister_TILE_CAPACITY;
+        when 0x0028 => return SystemRegister_CORE_PGAS_BASE;
+        when 0x0029 => return SystemRegister_CORE_PGAS_LIMIT;
         when 0x0050 => return SystemRegister_BLOCKNUM;
         when 0x0051 => return SystemRegister_BLOCKID;
         when 0x0c00 => return SystemRegister_CYCLE;

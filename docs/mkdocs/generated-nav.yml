@@ -1083,6 +1083,7 @@ nav:
               - "ADR-STATE-0014: MSGB register and ACK interface": status/decisions/ADR-STATE-0014-msgb-registers-and-ack.md
               - "ADR-STATE-0015: High Speed Config Bus and Message Buffer dispatch": status/decisions/ADR-STATE-0015-hscb-message-dispatch.md
               - "ADR-STATE-0016: HSCB one-dimensional block launch geometry": status/decisions/ADR-STATE-0016-hscb-block-launch-geometry.md
+              - "ADR-STATE-0017: Core PGAS range system registers": status/decisions/ADR-STATE-0017-core-pgas-range-ssrs.md
           - MEM:
               - "ADR-MEM-0001: PTO total store order candidate model": status/decisions/ADR-MEM-0001-pto-total-store-order.md
               - "ADR-MEM-0002: Production memory events and atomic corners": status/decisions/ADR-MEM-0002-production-memory-events-and-atomic-corners.md

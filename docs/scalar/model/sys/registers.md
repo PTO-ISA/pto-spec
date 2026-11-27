@@ -24,7 +24,7 @@ The helpers are `ReadSystemRegisterAddress`, `WriteSystemRegisterAddress`, `Swap
 
 An SSR address is a `SystemRegisterAddress` of 24 bits. The dispatcher recognizes three routes:
 
-- Ordinary base registers are the 14 addresses mapped by `BaseSystemRegisterOfAddress`, such as 0x0000 `THREAD_PTR`, 0x0020 `CORE_STATE`, 0x0027 `TILE_CAPACITY`, and 0x0C00 `CYCLE`. The MSGB base-address family at 0x0830 through 0x084B bypasses that enumeration and routes to the message-buffer owner.
+- Ordinary base registers are the addresses mapped by `BaseSystemRegisterOfAddress`, such as 0x0000 `THREAD_PTR`, 0x0020 `CORE_STATE`, 0x0027 `TILE_CAPACITY`, and 0x0C00 `CYCLE`. The MSGB base-address family at 0x0830 through 0x084B bypasses that enumeration and routes to the message-buffer owner.
 - Extended registers are the other addresses. Bits 15:12 name an access-ring bank, and bits 11:0 name the register within it. Most are stored in `_ExtendedSystemRegisters`, indexed by bits 15:0.
 
 An access class is read-only, write-only, read-write, or unknown. The generated `SystemRegisterAccessOf` returns it for each address.
@@ -40,7 +40,7 @@ For ordinary registers, an address whose bits 11:0 are below 0x0F00 is open to e
 
 `ExecuteSystemRegisterSet` runs the MSGB write preflight before it reads a Reg5 source. `ExecuteSystemRegisterSwap` rejects every MSGB address and otherwise checks ordinary read/write permission before reading its source.
 
-Design point: a check that fails comes before any source read or register access. A rejected transfer therefore reads no source, writes no destination, and changes no register.
+Design point: the permission and access-class checks precede the transfer's source read, destination write, and register or queue effects. A rejection still enters the existing architectural trap envelope.
 
 `SwapSystemRegisterAddress` requires read permission, write permission, and the read-write class before it reads.
 
@@ -109,6 +109,8 @@ begin
            address == Zeros{24} + 0x0025 ||
            address == Zeros{24} + 0x0026 ||
            address == Zeros{24} + 0x0027 ||
+           address == Zeros{24} + 0x0028 ||
+           address == Zeros{24} + 0x0029 ||
            address == Zeros{24} + 0x0050 ||
            address == Zeros{24} + 0x0051 ||
            address == Zeros{24} + 0x0c00;
@@ -128,6 +130,8 @@ begin
         when 0x0025 => return SystemRegister_CORE_FEATURE_ENABLE;
         when 0x0026 => return SystemRegister_THREAD_ID;
         when 0x0027 => return SystemRegister_TILE_CAPACITY;
+        when 0x0028 => return SystemRegister_CORE_PGAS_BASE;
+        when 0x0029 => return SystemRegister_CORE_PGAS_LIMIT;
         when 0x0050 => return SystemRegister_BLOCKNUM;
         when 0x0051 => return SystemRegister_BLOCKID;
         when 0x0c00 => return SystemRegister_CYCLE;

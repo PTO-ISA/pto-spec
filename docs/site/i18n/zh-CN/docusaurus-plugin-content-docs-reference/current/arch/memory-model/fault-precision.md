@@ -75,7 +75,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/memory-model/fault-precision.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION","surface":"arch","classification":["memory-model","fault-precision"],"depends_on":["PTO-ARCH-STATE-TRAP-CONTEXT"]}
+// PTO-UNIT: {"id":"PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION","surface":"arch","classification":["memory-model","fault-precision"],"depends_on":["PTO-ARCH-STATE-TRAP-CONTEXT","PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING"]}
 // NDF-BEGIN: PTO-ARCH-MEMORY-MODEL-REPLAY-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
 // A scalar fault is precise: effects committed by older instructions remain,
@@ -291,6 +291,7 @@ end;
 
 func RaiseInterrupt(interrupt_id: InterruptID, cause: bits(24))
 begin
+    StartPlatformExecutionEpoch();
     let source_ring = CurrentACR();
     let ring = TrapTargetForInterrupt(source_ring);
     SetInterruptPending(ring, interrupt_id);

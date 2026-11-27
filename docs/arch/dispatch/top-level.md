@@ -81,7 +81,7 @@ For a `16`-bit length the carrier is assembled into a `Zeros{64}` value, so bits
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/dispatch/top-level.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-DISPATCH-TOP-LEVEL","surface":"arch","classification":["dispatch","top-level"],"depends_on":["PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH","PTO-BLOCK-MODEL-DISPATCH-TOP-LEVEL","PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL"]}
+// PTO-UNIT: {"id":"PTO-ARCH-DISPATCH-TOP-LEVEL","surface":"arch","classification":["dispatch","top-level"],"depends_on":["PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING","PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH","PTO-BLOCK-MODEL-DISPATCH-TOP-LEVEL","PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL"]}
 
 // NDF-BEGIN: PTO-REQ-INSTRUCTION-DISPATCH-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted
@@ -149,6 +149,8 @@ end;
 
 func ExecuteNextPTOInstruction() => PTOInstructionExecutionStatus
 begin
+    // A fetch fault can enter a guest trap before decoded dispatch.
+    StartPlatformExecutionEpoch();
     let instruction_pc = ReadTPC();
 
     if instruction_pc[0] == '1' then

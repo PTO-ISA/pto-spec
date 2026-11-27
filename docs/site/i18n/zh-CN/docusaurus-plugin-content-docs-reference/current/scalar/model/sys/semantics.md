@@ -31,7 +31,7 @@ This page is a generated reference view of the normative ASL unit.
 
 架构时间是 `_SystemRegisters.cycle`。`BeginArchitecturalInstructionAttempt` 清除 `_LastFault` 和 `_FaultAddress`，并把周期计数加一。`TIME` 和 `CYCLE` 都读取该计数。
 
-基本寄存器位于 `_SystemRegisters` 中。只有四个可写：`THREAD_PTR`、`GLOBAL_PTR`、`CORE_STATE` 和 `CORE_FEATURE_ENABLE`。写入 `CORE_STATE` 还会根据位 3:0 设置当前访问环。
+带存储字段的基础 SSR 位于 `_SystemRegisters` 中。PGAS 范围 SSR 读取独立的 [Core 平台配置](../../../arch/system-registers/addressing.md)。基础 SSR 中只有四个可写：`THREAD_PTR`、`GLOBAL_PTR`、`CORE_STATE` 和 `CORE_FEATURE_ENABLE`。写入 `CORE_STATE` 还会根据位 3:0 设置当前访问环。
 
 维护和栅栏推进纪元计数器，而不是对缓存建模：`_DataCacheEpoch`、`_InstructionCacheEpoch`、`_BundleCacheEpoch` 和 `_TLBEpoch`。
 
@@ -95,7 +95,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/sys/semantics.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-SEMANTICS","surface":"scalar","classification":["model","sys","semantics"],"depends_on":["PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-ARCH-STATE-MESSAGE-BUFFER-STATE","PTO-BLOCK-MODEL-STATE-BARG","PTO-SCALAR-MODEL-AMO-SEMANTICS"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-SEMANTICS","surface":"scalar","classification":["model","sys","semantics"],"depends_on":["PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING","PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT","PTO-ARCH-STATE-CORE-SYNCHRONIZATION","PTO-ARCH-STATE-MESSAGE-BUFFER-STATE","PTO-BLOCK-MODEL-STATE-BARG","PTO-SCALAR-MODEL-AMO-SEMANTICS"]}
 // PTO-REQ-SCALAR-SYS-001, PTO-REQ-MEMORY-RC-001: PTO base SSR access,
 // architectural time, and data/instruction fences.
 
@@ -114,6 +114,7 @@ end;
 // a fresh result attempt without erasing the visible trap-bank record.
 func BeginArchitecturalInstructionAttempt()
 begin
+    StartPlatformExecutionEpoch();
     _LastFault = Fault_None;
     _FaultAddress = Zeros{PTO_XLEN};
     _ScalarExecutionBlocked = FALSE;
@@ -138,6 +139,21 @@ end;
 // [[PTO-ARCH-KERNEL-LIFECYCLE-001]]; PE0 is the software leader convention.
 // NDF-END: PTO-THREAD-ID-PE-IDENTITY-001
 
+// NDF-BEGIN: PTO-CORE-PGAS-SSR-001
+// ndf: kind=contract level=L1 layer=state status=accepted
+// Every PTO Core MUST implement CORE_PGAS_BASE at 0x0028 and CORE_PGAS_LIMIT
+// at 0x0029 as read-only Base SSRs, without a feature bit. In an otherwise
+// legal SYS block, SSRGET and HL.SSRGET MUST return the selected SSR's full
+// XLEN platform-configured value for the executing Core under the ordinary
+// Base SSR and Reg5 rules. There is no compressed form for these addresses.
+// SSRSET, HL.SSRSET, and SSRSWAP MUST reject both addresses under the existing
+// read-only rules before operand or queue effects, apart from the normal trap
+// envelope. Reads do not access memory, install mappings, or perform address
+// translation. The reported range grants no access permission or residency
+// guarantee. An address outside the range does not fault because of these
+// SSRs. Existing memory semantics apply.
+// NDF-END: PTO-CORE-PGAS-SSR-001
+
 func ReadSystemRegister(reg: SystemRegister) => Word
 begin
     case reg of
@@ -154,6 +170,10 @@ begin
         when SystemRegister_CORE_FEATURE_ENABLE =>
             return _SystemRegisters.core_feature_enable;
         when SystemRegister_TILE_CAPACITY => return _SystemRegisters.tile_capacity;
+        when SystemRegister_CORE_PGAS_BASE =>
+            return _CorePGASConfig[[_CurrentModelCore]].base;
+        when SystemRegister_CORE_PGAS_LIMIT =>
+            return _CorePGASConfig[[_CurrentModelCore]].limit;
         when SystemRegister_BLOCKNUM =>
             let worker = CurrentMessageBufferIndex();
             return if _MessageBufferBanks[[worker]].hscb_running then
